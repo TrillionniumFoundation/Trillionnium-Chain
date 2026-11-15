@@ -135,6 +135,26 @@ class NativeMempoolQuotaTests(unittest.TestCase):
                         rows.append((op, total, reserve, rng.randrange(9),
                                      rng.randrange(9), rng.randrange(10),
                                      rng.randrange(10)))
+        # The original Rust oracle must cover usize::MAX boundaries, not
+        # merely the Python arithmetic model or small-capacity Rust cases.
+        # Queue lengths stay physically small (the original adapter allocates
+        # the corresponding Vecs); capacity/streak/burst retain full u64 width.
+        capacity_edges = (
+            (0, 0), (0, MAX), (1, MAX), (MAX - 1, MAX),
+            (MAX, 0), (MAX, 1), (MAX, MAX - 1), (MAX, MAX),
+        )
+        fairness_edges = (
+            (0, 0), (1, 0), (MAX - 1, MAX), (MAX, MAX - 1),
+            (MAX, MAX),
+        )
+        for op in range(13):
+            for total, reserve in capacity_edges:
+                for streak, burst in fairness_edges:
+                    for normal, critical in (
+                        (0, 0), (0, 1), (1, 0), (1, 1), (32, 32),
+                    ):
+                        rows.append((op, total, reserve, normal, critical,
+                                     streak, burst))
         with tempfile.TemporaryDirectory(prefix="trnm-hia-quota-rust-") as tmp:
             executable = Path(tmp) / "original-quota"
             built = subprocess.run(["rustc", "--edition=2021", "-O",

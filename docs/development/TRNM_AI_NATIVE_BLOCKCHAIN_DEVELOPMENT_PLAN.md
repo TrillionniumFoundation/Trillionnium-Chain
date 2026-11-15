@@ -1,3 +1,24 @@
+## HIA M05 full-width original-Rust differential expansion — 2026-11-15 UTC — PENDING EXACT-HEAD CI
+
+This continuation adds 2,600 distinct finite cases to the *actual original*
+`trnm-mempool` Rust-module differential, in addition to the existing 4,095
+small-capacity original comparisons. All 13 quota/fairness operation codes
+are exercised at `usize::MAX`, `MAX - 1`, over-reserved clamps,
+zero and saturated thresholds, with physically allocated original queue
+lengths at 0, 1 and 32. Every new row must be executed both through the
+unmodified original Rust methods and through the emitted HIA machine-code
+kernel, not merely checked against a Python model. Source selection and
+missing-Rust failure behavior remain unchanged.
+
+The 2,600 added comparisons have **NOT_RUN** status on this new source until
+the exact new commit's mandatory native CI finishes. Previously published
+results remain bound to their own commits. This improves differential
+qualification only: M05 queue mutation/deduplication, durable handoff, Node
+integration, service budget, secret-key lifecycle, all 26 Rust-package
+retirements, and all nine migration gates remain OPEN; PQ remains HOLD_NO_GO.
+No original service budget, production policy, toolchain pin, root README or
+historical-plan bytes are modified.
+
 ## HIA M05 normal-arrival fairness warm-up candidate — 2026-11-15 UTC
 
 The current integration candidate extends the real M05 native HIA quota
