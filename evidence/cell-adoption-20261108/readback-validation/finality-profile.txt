@@ -1,1 +1,0 @@
-{"result": "PASS", "scope": "disabled profile constraints only", "activation": false}

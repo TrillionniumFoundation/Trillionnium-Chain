@@ -1,4 +1,0 @@
-# Original execution streams are byte-pinned evidence.
-**/*.stdout -text -whitespace
-**/*.stderr -text -whitespace
-**/*.log -text -whitespace

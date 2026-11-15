@@ -1,0 +1,75 @@
+{
+  "schema": "trnm-branch-consolidation-review-package-v1",
+  "created_at_utc": "2026-11-15T14:57:10.969477+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "purpose": "independent evidence-only audit publication; no executable source changes",
+  "source": {
+    "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+    "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "prospective": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+    "tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb"
+  },
+  "manifest_indexes_itself": false,
+  "payload_file_count": 8,
+  "payload_bytes": 451355,
+  "files": [
+    {
+      "path": "README.md",
+      "size_bytes": 9964,
+      "sha256": "e11f37052711760f8be3498c056c0a563e679f2aa7d76cdb8afe5ad9f946dbd4",
+      "provenance": "generated review narrative"
+    },
+    {
+      "path": "admin-protection-readback.jsonl",
+      "size_bytes": 2950,
+      "sha256": "ab93a755dc06ee49cb2117adccea09035a5e94469a6e67a93cf11dc4f2e3f369",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "ancestry-summary.json",
+      "size_bytes": 12304,
+      "sha256": "a1a7636e687ae0e6f03277b14ada6b18682c8a0380d29b82ac4490c8092f102d",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "branches-initial.json",
+      "size_bytes": 275378,
+      "sha256": "98898876b8f438a0f6a7879ff4e6a937bc5a7712ceaa6990cae675401b83c327",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "current-protocol-evidence-summary.json",
+      "size_bytes": 24520,
+      "sha256": "c778d46fa99e88bbb188cb2238db6215cca99185d40b2e0845ed51fd57ff6884",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "pr847-live-gates.json",
+      "size_bytes": 73333,
+      "sha256": "fa8e507cb829ebadf520fd9ee956d1d23c9b8ff2e56adc08c027ec17f04d57d3",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "protocol-timing-summary.json",
+      "size_bytes": 43189,
+      "sha256": "1fc18c4eafc9d79d98bde311886efbc16034848fa018dc228213e68b40d395ec",
+      "provenance": "byte-for-byte review result"
+    },
+    {
+      "path": "required-lane-source-summary.json",
+      "size_bytes": 9717,
+      "sha256": "1dc0bd8d6009927eede7d24ac727765842d6fbe1fa8f9c32a8f9defa26fda6c4",
+      "provenance": "byte-for-byte review result"
+    }
+  ],
+  "operations_performed_by_this_package": {
+    "candidate_source_updated": false,
+    "main_merged": false,
+    "branches_deleted": false,
+    "branch_protection_changed": false,
+    "ci_rerun": false,
+    "remote_publication": false
+  },
+  "publication_note": "No publication result is claimed; verify the subsequently published tag and commit independently.",
+  "updated_at_utc": "2026-11-15T14:58:26.609059+00:00"
+}

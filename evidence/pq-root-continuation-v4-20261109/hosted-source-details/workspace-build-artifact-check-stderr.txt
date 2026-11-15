@@ -1,3 +1,0 @@
-Traceback (most recent call last):
-  File "<stdin>", line 20, in <module>
-AssertionError: wrong complete-workspace features for trnm-pon-node

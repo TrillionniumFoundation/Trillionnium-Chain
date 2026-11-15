@@ -1,4 +1,0 @@
-error: failed to download `jobserver v0.1.35`
-
-Caused by:
-  attempting to make an HTTP request, but --offline was specified

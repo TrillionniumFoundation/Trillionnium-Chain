@@ -1,0 +1,308 @@
+{
+  "observed_at_utc": "2026-11-15T14:47:26.882038+00:00",
+  "scope": "read-only complete branch ancestry and existing disposition audit; no new runtime execution or semantic certification",
+  "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+  "candidate_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+  "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "current_branch_names": 900,
+  "current_unique_tips": 884,
+  "candidate_reachable_commits": 16513,
+  "current_branches_in_candidate": 900,
+  "original_ledger_names": 908,
+  "original_ledger_unique_tips": 892,
+  "original_ledger_names_in_candidate": 908,
+  "duplicates": [
+    {
+      "sha": "376676974c537064b65b5507cbee2e2c7de00c91",
+      "names": [
+        "ci/pon-native-growth-delivery-20261008",
+        "fix/pon-architecture-boundaries-20261008"
+      ]
+    },
+    {
+      "sha": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "names": [
+        "dot/w2c-durable-crossprocess-spend-20261026",
+        "dot/w2c-receiver-cost-bound-20261025"
+      ]
+    },
+    {
+      "sha": "bd4be15a668495523703c3825bd8f1646ee4720a",
+      "names": [
+        "fix/chain-cpu-start-fifo-20261007",
+        "fix/chain-owner-transfer-20261007",
+        "recovery/library-bundle-bases-20261103/bd4be15a6684"
+      ]
+    },
+    {
+      "sha": "e87f92fd66d9025944c57ed04c9e85653cfef864",
+      "names": [
+        "fix/chain-model-package-pinned-read-20261007",
+        "recovery/library-bundle-bases-20261103/e87f92fd66d9"
+      ]
+    },
+    {
+      "sha": "adb9a386e109cdd80942020a4fc479a9b52730bc",
+      "names": [
+        "fix/chain-obligation-lifecycle-20261005",
+        "fix/chain-pon-priority-refactor-20261004",
+        "fix/chain-pon-w1-from-zero-cost-20261005"
+      ]
+    },
+    {
+      "sha": "5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f",
+      "names": [
+        "fix/chain-observation-convergence-20261007",
+        "recovery/library-bundle-bases-20261103/5a2549eef8e7"
+      ]
+    },
+    {
+      "sha": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5",
+      "names": [
+        "fix/chain-pon-next-cost-20261101",
+        "recovery/host-source-20261103/a1f6cd341168"
+      ]
+    },
+    {
+      "sha": "be8600b2ab0a62ff702ccf9dbb90540d19d86bee",
+      "names": [
+        "fix/chain-six-line-continuation-20261007",
+        "recovery/library-bundle-bases-20261103/be8600b2ab0a"
+      ]
+    },
+    {
+      "sha": "eee8db836b98cb5b9ca7c657cc94f23018555854",
+      "names": [
+        "fix/chain-sustained-owner-convergence-20261006",
+        "recovery/library-bundle-bases-20261103/eee8db836b98"
+      ]
+    },
+    {
+      "sha": "228b156dc14ea938300b9503092e1ddd55014e4a",
+      "names": [
+        "fix/pon-five-axis-pipeline-native-20261010",
+        "recovery/library-bundle-bases-20261103/228b156dc14e"
+      ]
+    },
+    {
+      "sha": "fecfcf93a51ad987262fa1752c344933ca786611",
+      "names": [
+        "fix/pon-five-axis-singleton-delivery-20261011",
+        "recovery/library-bundle-bases-20261103/fecfcf93a51a"
+      ]
+    },
+    {
+      "sha": "5c25ed9eadbb10e8193d062ee92c14ef8a9db1b5",
+      "names": [
+        "integration/pon-five-boundaries-20261011",
+        "recovery/library-bundle-bases-20261103/5c25ed9eadbb"
+      ]
+    },
+    {
+      "sha": "1b63ead7184df854ff6fb2047f33b8e876963aca",
+      "names": [
+        "integration/pon-five-track-qualification-20261011",
+        "recovery/library-bundle-bases-20261103/1b63ead7184d"
+      ]
+    },
+    {
+      "sha": "7837d7d65acb80a67f900f7b0bad050420e0d722",
+      "names": [
+        "perf/pon-complete-state-root-20261011",
+        "recovery/library-bundle-bases-20261103/7837d7d65acb"
+      ]
+    }
+  ],
+  "archive": {
+    "tag": "archive/all-branches-20261115-3ae705ab542b",
+    "annotated_object": "8fb3933b8bc7fa4dcd5e869976ca89e742aaf0e0",
+    "target": "3ddbb41afb3212f121d51f5f298ad17739ea5e9d",
+    "tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+    "parents": [
+      "3ae705ab542b6446fc9454b465407585346f9846",
+      "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b"
+    ],
+    "reachable_commits": 16515,
+    "current_names_retained": 900,
+    "original_names_retained": 908,
+    "annotation_snapshot_bytes": 142459,
+    "annotation_snapshot_sha256_verified": true,
+    "snapshot_identical_to_current_name_sha_protection_map": true,
+    "canonical_name_to_sha_protection_sha256": "95c464e8a2ff075f41649682860ca53b8e834259d33e6a433431208d9c668f69",
+    "annotation_canonical_sha256_matches": true,
+    "native_remote_readback": {
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "tag_object": "8fb3933b8bc7fa4dcd5e869976ca89e742aaf0e0",
+      "peeled_tag_target": "3ddbb41afb3212f121d51f5f298ad17739ea5e9d"
+    }
+  },
+  "ledger": {
+    "terminal_dispositions": 296,
+    "all_terminal_semantic_selection_flags_true": true,
+    "unclassified_refs": 0,
+    "terminal_disposition_counts": {
+      "MIXED_EXPLICIT_SELECTED_COMPONENTS_AND_UNSELECTED_HISTORICAL_CONTRACTS": 11,
+      "LOW_RANK_COMPONENT_PORTED_DISTINCT_PROOF_AND_RESOURCE_PROFILE_NOT_SELECTED": 4,
+      "resolved_under_explicit_selected_contract": 80,
+      "explicit_component_selection_and_separate_compatible_ports": 80,
+      "mixed_selected_successor": 4,
+      "retired_one_time_source_transport": 14,
+      "historical_experiment_retained": 19,
+      "retired_operational_workflow": 2,
+      "obsolete_inventory_snapshot_replaced_by_current_inventory": 1,
+      "HOST_WORKTREE_SNAPSHOT_NOT_SELECTED": 1,
+      "explicit_successor": 13,
+      "DISTINCT_OPTIONAL_PROOF_RESEARCH_NOT_SELECTED": 3,
+      "selected-current-contract-historical-api-not-selected": 9,
+      "exact_current_controls": 1,
+      "current_exact_effect": 2,
+      "CURRENT_NATIVE_FORK_OWNER_SELECTED_STANDALONE_PROPOSAL_NOT_SELECTED": 2,
+      "explicit_selected_successor": 5,
+      "STANDALONE_RESEARCH_FRAGMENTS_NOT_SELECTED": 1,
+      "mixed selected compatible ports, concretely retained current code, and explicit alternative-contract choices": 6,
+      "retired_transport_cached_sql_controls_retained": 1,
+      "CURRENT_DEPENDENCY_SUCCESSOR_SELECTED": 1,
+      "retired_transport_inner_fixed_blob_controls_retained": 1,
+      "retired_binary_transport_target_already_in_history": 1,
+      "retired_authoring_job_exact_roster_successor": 1,
+      "historical_intent_retained": 1,
+      "retired_transport_shared_branch_kernel_controls_retained": 1,
+      "ORIGINAL_NONIGNORED_CPU_RECOVERY_CONTROL_PORTED": 1,
+      "retired_fixed_source_campaign_no_body_port": 1,
+      "retired_authoring_job_named_commitment_kv_controls_retained": 1,
+      "OLDER_BUNDLE_HOST_VARIANTS_NOT_SELECTED": 1,
+      "mixed_current_controls_and_original_counterexamples_ported": 1,
+      "EXPLICIT_SP27_02_RESEARCH_COMPONENT_PORTED": 1,
+      "retired_transport_inner_collector_controls_retained": 1,
+      "INDEPENDENT_TASK_PRODUCT_FACT_CACHE_PORTED": 1,
+      "ported-current-thp2-fresh-time-research-api": 1,
+      "INERT_OBJECT_PROJECTIONS_NOT_SELECTED": 1,
+      "PROTOCOL_RELATIONS_RETAINED_OLD_NODE_OWNER_NOT_SELECTED": 1,
+      "selected_r19_cpu_conservation_alternative": 1,
+      "MATERIAL_PROGRESS_PORTED_ALTERNATE_HISTORY_OWNER_NOT_SELECTED": 1,
+      "DUPLICATE_RESEARCH_AND_ADDITIONAL_SOURCE_SNAPSHOTS": 1,
+      "COMPATIBLE_CAPABILITIES_PORTED": 1,
+      "LEGACY_BULK_DELETION_AND_PRIVATE_TEST_COST_VARIANT_NOT_SELECTED": 1,
+      "retired_operator_mutation_workflow": 1,
+      "INDEPENDENT_RUNTIME_ROOT_PORTED": 1,
+      "ported": 1,
+      "retired_authoring_job_branch_encoding_controls_retained": 1,
+      "retired_authoring_job_named_fixture_fix_retained": 1,
+      "RESEARCH_SOURCE_BYTES_ALREADY_RETAINED": 1,
+      "mixed_snapshot_port_and_selected_lineage_contract": 1,
+      "BUNDLE_SOURCE_VARIANTS_WITH_EXACT_COMPONENTS": 1,
+      "COMPATIBLE_TLS_ENDPOINT_API_PORTED": 1,
+      "retired_transport_nullable_blob_controls_retained": 1,
+      "INDEPENDENT_RESERVATION_V2_PORTED_OTHER_PROOF_CONTRACT_NOT_SELECTED": 1,
+      "retired_transport_mining_and_stream_controls_retained": 1,
+      "retired_authoring_job_batched_confirmation_controls_retained": 1,
+      "EXACT_NATIVE_C_RESEARCH_AND_HISTORICAL_REPLAY": 1,
+      "retired_transport_recent_batch_controls_retained": 1
+    },
+    "all_historical_source_bodies_manually_read_line_by_line": false,
+    "all_original_native_tests_executed": false,
+    "whole_head_equivalence_claimed": false
+  },
+  "current_names_absent_from_historical_ledger": [],
+  "historical_names_absent_from_current": [
+    "fix/chain-pon-followthrough-20261110-685a",
+    "fix/chain-quantum-daa-20261111-qdaa",
+    "fix/chain-security-ci-source-lock-20261110",
+    "fix/chain-system-security-20261111-4aa779",
+    "fix/pq-root-908-native-inventory-20261111-gpt6-1415",
+    "fix/pq-root-hash-use-reviewed-source-20261111-r11",
+    "fix/pq-root-reviewed-source-snapshot-20261111-r11",
+    "fix/pqroot-proof-descriptor-bind-20261111-r13"
+  ],
+  "changed_name_tips_since_historical_ledger": [
+    {
+      "name": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "old": "e40d7071c4724e6600deef8a2820bf35c1982289",
+      "current": "3ae705ab542b6446fc9454b465407585346f9846"
+    }
+  ],
+  "dependabot_current_versions": [
+    {
+      "branch": "dependabot/cargo/trillionnium/borsh-1.8.1",
+      "tip": "c64e560a5c46c209d3b1ba0708311c9cac46c57e",
+      "package": "borsh",
+      "requested": "1.8.1",
+      "candidate_versions": [
+        "1.8.1"
+      ],
+      "requested_present": true
+    },
+    {
+      "branch": "dependabot/cargo/trillionnium/clap-4.6.7",
+      "tip": "348615893ac8ca61fdd479bd769b04475a336184",
+      "package": "clap",
+      "requested": "4.6.7",
+      "candidate_versions": [
+        "4.6.7"
+      ],
+      "requested_present": true
+    },
+    {
+      "branch": "dependabot/cargo/trillionnium/ed25519-dalek-3.0.0",
+      "tip": "97817cba9c74fccfbebf0d3b7e0928a1b42cc4ab",
+      "package": "ed25519-dalek",
+      "requested": "3.0.0",
+      "candidate_versions": [
+        "3.0.0"
+      ],
+      "requested_present": true
+    },
+    {
+      "branch": "dependabot/cargo/trillionnium/rusqlite-0.40.2",
+      "tip": "5862e4427e918f10f50c10844e411f0ed3f70d66",
+      "package": "rusqlite",
+      "requested": "0.40.2",
+      "candidate_versions": [
+        "0.41.1"
+      ],
+      "requested_present": false
+    },
+    {
+      "branch": "dependabot/cargo/trillionnium/serde-1.0.229",
+      "tip": "0529d05780ada7a202643d205530e67cd7d7a797",
+      "package": "serde",
+      "requested": "1.0.229",
+      "candidate_versions": [
+        "1.0.229"
+      ],
+      "requested_present": true
+    }
+  ],
+  "protected_branches": [
+    {
+      "name": "fix/chain-bulk-state-tree-20261017",
+      "sha": "57c1ed545d067937cbd7aaa7570d5f22123265e6"
+    },
+    {
+      "name": "main",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+    }
+  ],
+  "merge_and_deletion_conditions": [
+    "Do not repeat history merges: every captured tip already reaches the candidate.",
+    "Satisfy actual protected-main exact-head and prospective checks on final source, using normal linear-history merge without bypass.",
+    "Archive any successor source before merge; existing tag preserves only the precise 3ae candidate and historical tips.",
+    "Read main after merge and verify its selected tree; squash integration does not preserve each historical tip in main ancestry, hence archive remains necessary.",
+    "Refresh all branch names, exact tips and protections; delete only against matching expected SHA after archive and main integration verified.",
+    "Resolve the explicit legacy branch deletion prohibition through repository governance; user merge request does not license bypassing it.",
+    "Refresh branch inventory after deletion; only actual single main ref permits completion claim."
+  ],
+  "runtime_qualification_open": [
+    "Original four-second 16-worker confirmation target; current acceptance comes from exact live CI, not this audit.",
+    "macOS physical-retention capacity finding in existing audit.",
+    "27 historical registry/yank-query timeouts in existing audit.",
+    "PoN/PQ/system qualification remains conditional as declared in existing report."
+  ],
+  "mutations": {
+    "repository_source": false,
+    "refs": false,
+    "remote": false,
+    "branch_deletions": false
+  }
+}

@@ -1,6 +1,0 @@
-{
-  "exit_code": 130,
-  "operator_interrupted": true,
-  "reason": "LD_LIBRARY_PATH had a trailing empty component; build.rs explicitly refused the native SQLite loader boundary. This incomplete check is not counted as a strict Clippy pass.",
-  "next_action": "Use only the absolute Rust toolchain lib directory; do not override any native fence or check."
-}

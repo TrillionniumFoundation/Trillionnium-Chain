@@ -1,9 +1,0 @@
-{
-  "argv": [
-    "python3",
-    "scripts/refresh_distributed_source_inventory.py",
-    "--check"
-  ],
-  "exit_code": 0,
-  "expected_exit": 0
-}

@@ -1,0 +1,254 @@
+[
+  {
+    "id": 14162175522,
+    "name": "rust-fanin-head-3ae705ab542b6446fc9454b465407585346f9846-1",
+    "zip_sha256": "2fd73637bb67dabe378f7c2083aa5bae2a65b17e8b135abe0956dae699e19e64",
+    "members": 2,
+    "source": {
+      "base": null,
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14161991592,
+    "name": "rust-shard-prospective-merge-3323b7cf6669e7142b60002c3b59480b43b693b6-1-runtime",
+    "zip_sha256": "b990a0db4c21af14524fa3e1f5b98363451ecc8aa5e0cff468867ee42fbfb4bf",
+    "members": 2,
+    "source": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "prospective-merge",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tracked_worktree_verified": true,
+      "tracked_entries": 41834,
+      "tracked_bytes": 3999565648,
+      "tests_executed_by_identity_check": false
+    },
+    "kind": "shard",
+    "exit_code": 0,
+    "shard": "runtime",
+    "before_after_equal": true
+  },
+  {
+    "id": 14161838602,
+    "name": "rust-fanin-prospective-merge-3323b7cf6669e7142b60002c3b59480b43b693b6-1",
+    "zip_sha256": "a88e9003ade96bb2c18f67f017fe8e33aab88f1b2f413dc990c803f788441198",
+    "members": 2,
+    "source": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "prospective-merge",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14161154184,
+    "name": "rust-shard-head-3ae705ab542b6446fc9454b465407585346f9846-1-runtime",
+    "zip_sha256": "ea468f2d5d5ab04eddcadc98e8e2ab2be95e681d71acf0857f82a85f9d733c35",
+    "members": 2,
+    "source": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 41834,
+      "tracked_bytes": 3999565648,
+      "tests_executed_by_identity_check": false
+    },
+    "kind": "shard",
+    "exit_code": 0,
+    "shard": "runtime",
+    "before_after_equal": true
+  },
+  {
+    "id": 14160648541,
+    "name": "rust-shard-prospective-merge-3323b7cf6669e7142b60002c3b59480b43b693b6-1-quality",
+    "zip_sha256": "d54c90c0afc11f8abeabf0596a990ecc3a06f946626dc23fdfdf2d1178909fa3",
+    "members": 2,
+    "source": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "prospective-merge",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tracked_worktree_verified": true,
+      "tracked_entries": 41834,
+      "tracked_bytes": 3999565648,
+      "tests_executed_by_identity_check": false
+    },
+    "kind": "shard",
+    "exit_code": 0,
+    "shard": "quality",
+    "before_after_equal": true
+  },
+  {
+    "id": 14160123282,
+    "name": "rust-shard-head-3ae705ab542b6446fc9454b465407585346f9846-1-quality",
+    "zip_sha256": "0dae079188c26b95df1861149b861f2bc7d7746fd53241b8310d17cf70470485",
+    "members": 2,
+    "source": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 41834,
+      "tracked_bytes": 3999565648,
+      "tests_executed_by_identity_check": false
+    },
+    "kind": "shard",
+    "exit_code": 0,
+    "shard": "quality",
+    "before_after_equal": true
+  },
+  {
+    "id": 14157397337,
+    "name": "head-fuzz-smoke-3ae705ab542b6446fc9454b465407585346f9846-1",
+    "zip_sha256": "2db7b8a7f1d129bbec9ddd3f63fed16a07eb5888713ddcf74fc0846d3cf4e1e9",
+    "members": 346,
+    "source": {
+      "base": null,
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14157257207,
+    "name": "merge-repository-truth-3323b7cf6669e7142b60002c3b59480b43b693b6-1",
+    "zip_sha256": "ffdd761c93f0de7891b71c9dff685b75fa5c7768358b7901a4d89e57780cac16",
+    "members": 14,
+    "source": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "prospective-merge",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14157058754,
+    "name": "head-repository-truth-3ae705ab542b6446fc9454b465407585346f9846-1",
+    "zip_sha256": "709cc25a628d1f3958535baf9fd82ad2819ae422432d530a2e3a9a2db956c659",
+    "members": 14,
+    "source": {
+      "base": null,
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14156579186,
+    "name": "merge-fuzz-smoke-3323b7cf6669e7142b60002c3b59480b43b693b6-1",
+    "zip_sha256": "aa0118d8edc25eaae461d61cf5912bf2f6a9e4b55e737eb79e25f2c31e4cf212",
+    "members": 314,
+    "source": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "prospective-merge",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14156394934,
+    "name": "head-external-evidence-contract-3ae705ab542b6446fc9454b465407585346f9846-1",
+    "zip_sha256": "199e9abbd7a7e7787ebe360e7eb62d6f41755db5e7b23f828efa4d76fb8e8d00",
+    "members": 1,
+    "source": {
+      "base": null,
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3ae705ab542b6446fc9454b465407585346f9846",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  },
+  {
+    "id": 14156218850,
+    "name": "merge-external-evidence-contract-3323b7cf6669e7142b60002c3b59480b43b693b6-1",
+    "zip_sha256": "f47d3a515444956deeace80af096219ea77cbcd9430985ec5cfd9fc7f3f50740",
+    "members": 1,
+    "source": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "3ae705ab542b6446fc9454b465407585346f9846",
+      "kind": "prospective-merge",
+      "prospective_merge": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "3323b7cf6669e7142b60002c3b59480b43b693b6",
+      "tested_tree": "4c554367bbbff5a8a7183b30eb37a7e321a561cb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3999565648,
+      "tracked_entries": 41834,
+      "tracked_worktree_verified": true
+    },
+    "kind": "source-and-successful-job"
+  }
+]
