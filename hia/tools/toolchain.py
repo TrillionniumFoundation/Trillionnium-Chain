@@ -48,9 +48,12 @@ def pinned_toolchain() -> tuple[Path, dict]:
 
 
 def _source_path(relative: str) -> Path:
+    if not isinstance(relative, str):
+        raise ValueError("Noncanonical HIA dependency path")
     path = Path(relative)
-    if (not isinstance(relative, str) or path.is_absolute() or ".." in path.parts
-            or path.as_posix() != relative or not relative.startswith("src/")
+    if (path.is_absolute() or ".." in path.parts
+            or path.as_posix() != relative
+            or not relative.startswith(("src/", "platform/", "storage/"))
             or path.suffix != ".hepta"):
         raise ValueError("Noncanonical HIA dependency path")
     current = HIA_ROOT

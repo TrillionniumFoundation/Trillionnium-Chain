@@ -1,6 +1,12 @@
 # Native Linux platform qualification fixture
 
-This directory contains one finite operating-system fixture, authored entirely
+This directory contains the finite operating-system fixture below and the
+separately qualified [current stream reactor](reactor/README.md). The reactor
+uses nonblocking streams and native epoll deadlines; this fixture retains its
+own blocking-read deadline failure and independent file/random/TCP coverage.
+Neither set of controls qualifies the other or a durable storage owner.
+
+The finite operating-system fixture is authored entirely
 as HIA runtime sources. The locked native compiler compiles the policy and the
 ELF byte emitter. The resulting emitter constructs a static Linux x86-64
 executable that performs real file, TCP, epoll, clock, randomness and signal

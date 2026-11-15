@@ -9,6 +9,48 @@ import lzma
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def source_inventory(inventory, root=ROOT):
+    """Account for kernels, runtime owners and their native qualification callers."""
+    components = inventory["components"]
+    foundations = inventory.get("native_foundations", [])
+    if not isinstance(components, list) or not isinstance(foundations, list):
+        raise ValueError("Invalid native source inventory")
+    records = components + foundations
+    ids = [row["id"] for row in records]
+    if any(not isinstance(value, str) for value in ids) or len(set(ids)) != len(ids):
+        raise ValueError("Duplicate or invalid HIA component identity")
+    declared = [row["source"] for row in components]
+    references = [name for row in components for name in [row["source"], *row["tests"]]]
+    for row in foundations:
+        if (not isinstance(row["sources"], list) or not row["sources"]
+                or not isinstance(row["tests"], list) or not row["tests"]
+                or row["node_integration_complete"] is not False
+                or row["retirement_accepted"] is not False):
+            raise ValueError("Unwitnessed runtime owner integration or retirement")
+        declared.extend(row["sources"])
+        references.extend(row["sources"] + row["tests"])
+    for name in references:
+        if not isinstance(name, str):
+            raise ValueError("Invalid migration source/test path")
+        relative = Path(name)
+        if (relative.is_absolute() or ".." in relative.parts or relative.as_posix() != name
+                or not name.startswith("hia/")):
+            raise ValueError("Escaping migration source/test path")
+        current = root
+        for part in relative.parts:
+            current = current / part
+            if current.is_symlink():
+                raise ValueError("Aliased migration source/test: " + name)
+        if not current.is_file():
+            raise ValueError("Missing migration source/test: " + name)
+    actual = {p.relative_to(root).as_posix() for p in (root / "hia").rglob("*.hepta")}
+    if len(declared) != len(set(declared)) or set(declared) != actual:
+        raise ValueError("HIA source inventory differs from the complete HIA tree")
+    if any(not row["source"].startswith("hia/src/") for row in components):
+        raise ValueError("Kernel source is outside hia/src")
+    return len(components), len(foundations), len(actual)
+
+
 def compiler_qualification(revision):
     root = ROOT / "hia/qualification"
     binding = json.loads((root / "compiler-binding.json").read_text())
@@ -58,17 +100,8 @@ def check(require_retirement=False):
     if len(rows) != len(original) or {row["package"] for row in rows} != set(original):
         raise ValueError("Migration inventory omitted or duplicated an original package")
     components = inventory["components"]
+    kernels, foundations, all_sources = source_inventory(inventory)
     ids = {row["id"] for row in components}
-    if len(ids) != len(components):
-        raise ValueError("Duplicate HIA component identity")
-    paths = {p.relative_to(ROOT).as_posix() for p in (ROOT / "hia/src").rglob("*.hepta")}
-    if {row["source"] for row in components} != paths:
-        raise ValueError("HIA source inventory differs from the actual source tree")
-    for component in components:
-        for name in [component["source"], *component["tests"]]:
-            path = ROOT / name
-            if Path(name).is_absolute() or ".." in Path(name).parts or not path.is_file() or path.is_symlink():
-                raise ValueError("Missing or aliased migration source/test: " + name)
     for row in rows:
         original_row = original[row["package"]]
         if row["legacy_path"] != original_row["path"] or row["module"] != original_row["module"]:
@@ -89,7 +122,8 @@ def check(require_retirement=False):
     if require_retirement:
         pending = [row["package"] for row in rows if not row["retirement_accepted"]]
         raise ValueError("Old stack retirement is not accepted: " + ", ".join(pending))
-    return {"result": "PASS", "native_source_units": len(components),
+    return {"result": "PASS", "native_source_units": kernels,
+            "native_foundations": foundations, "all_hia_source_files": all_sources,
             "legacy_packages_accounted_for": len(rows), "retired_packages": 0,
             "open_gates": [row["id"] for row in inventory["blocking_gates"] if row["state"] != "CLOSED"],
             "archive_index_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),

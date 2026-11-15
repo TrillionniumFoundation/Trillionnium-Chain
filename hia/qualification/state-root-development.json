@@ -1,0 +1,185 @@
+{
+  "baseline": {
+    "abi_status": 0,
+    "artifact_sha256": "f34ad86320254ae046f152c5fb240a6c131630711cab9e411e6d03f20a3b1a6f",
+    "maximum_state_count_executed": false,
+    "result": 0,
+    "root": "b3e914c9bf6e2d76fa094c47a84d0a6f1817205748a88b87f34e30e492929d59",
+    "rows": 1024,
+    "service_budget_qualified": false,
+    "source_sha256": "ee58edd59680ebcffab5211d172511e3b1abf08f391373ffd2058b15ab821604",
+    "status": "returned",
+    "wall_seconds": 26.874647021000783
+  },
+  "composition_and_inventory_controls": {
+    "corrected_invocation": "HIA_TOOLCHAIN_ROOT=/workspace/scratch/dfc64d0acfc2/hia-toolchain python3 -B -m unittest hia.tests.test_composition hia.tests.test_migration_inventory",
+    "elapsed_seconds": 0.036,
+    "errors": 0,
+    "failures": 0,
+    "initial_invocation": "test_composition setUpClass refused missing HIA_TOOLCHAIN_ROOT; five independent inventory tests ran; no compiler fallback",
+    "tests": 15
+  },
+  "final_product_source_sha256": "bf2903ac04881ed55523049195b936220c41cba1c26885278a95ad89c3dbb6eb",
+  "later_final_driver_controls": {
+    "maximum_count_reexecuted_in_this_later_run": false,
+    "observation": {
+      "artifact_sha256": "487124b23bba099995b6111eb7bdd685134060427d3546e751f6c6f43032f796",
+      "backend": "selfhost",
+      "build_receipt": {
+        "artifact_bytes": 209768,
+        "artifact_sha256": "487124b23bba099995b6111eb7bdd685134060427d3546e751f6c6f43032f796",
+        "borrowed_entry_profile": "legacy-f0-private-buffers",
+        "chain_migration": {
+          "backend": "selfhost",
+          "composed_source_sha256": "529c3d85465dc95b68a1502df183940f31a17cd4b49fd0c6770b8f9901db16e0",
+          "core_sha256": "8caf9729b6580c187cd846ec966c90af937acaf63037cd7b78cc3624a5dfabbb",
+          "hosted_build_driver": true,
+          "inputs": [
+            {
+              "path": "src/protocol/state_root.hepta",
+              "sha256": "bf2903ac04881ed55523049195b936220c41cba1c26885278a95ad89c3dbb6eb"
+            },
+            {
+              "path": "components.json",
+              "sha256": "b91d0eb8bd6c22d2302682127014db58a98ee72c3b6979b73fc358abfc419dd0"
+            },
+            {
+              "path": "src/crypto/sha256_arena.hepta",
+              "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+            }
+          ],
+          "source_sha256": "bf2903ac04881ed55523049195b936220c41cba1c26885278a95ad89c3dbb6eb",
+          "toolchain_repository": "TrillionniumFoundation/Hepta",
+          "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "whole_chain_native": false
+        },
+        "claims": {
+          "direct_machine_code": true,
+          "external_linker_used": true,
+          "fallback_used": false,
+          "python_emitter_used": false,
+          "self_hosted": true,
+          "whole_native_delivery_qualified": false
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compiler_wire_sha256": "134ce91e31f0bec450cdbe16e9500379e3ec180dcdaa150e2c6711ab3c30c4a4",
+        "exports": [
+          "f0"
+        ],
+        "kind": "shared",
+        "object_sha256": "a2fecfca87c6a9079956f47e083c388176271e000313f0a307727ad34de5fcec",
+        "ok": true,
+        "output": "/tmp/trnm-hia-native-nifh0bzq/module.so",
+        "output_profile_selection": "selfhost_elf",
+        "schema": "trnm.hia.selfhost-build.v1",
+        "status": "native_emitted_not_executed"
+      },
+      "maximum_state_count_executed": false,
+      "native_calls": 13,
+      "observations": [],
+      "oracle": "bottom-up integer-path levels with hashlib",
+      "production_activation": false,
+      "schema": "trnm.hia.state-root-adversarial-observation.v1",
+      "service_budget_qualified": false,
+      "source_sha256": {
+        "sha256_arena.hepta": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+        "state_root.hepta": "bf2903ac04881ed55523049195b936220c41cba1c26885278a95ad89c3dbb6eb"
+      },
+      "sources_unchanged": true,
+      "test_source_sha256": "0f16b9a8c640a23ec9eba454f58fc5b9d399b2de57cf550536748144d8eaeec7",
+      "whole_chain_native": false
+    },
+    "unittest_result": {
+      "elapsed_seconds": 1.335,
+      "errors": 0,
+      "failures": 0,
+      "tests": 2
+    }
+  },
+  "main_native_tests": {
+    "elapsed_seconds": 13.869,
+    "errors": 0,
+    "failures": 0,
+    "log_sha256": "59effa54b5ac5241427350dd77c247736172274d328df145ca5f3e50181cdf90",
+    "skip_reason": "Original Rust executable not available locally; exact-head CI requires it.",
+    "skips": 1,
+    "tests": 11
+  },
+  "maximum_count_qualification": {
+    "component_manifest_and_build_driver_frozen_during_this_run": false,
+    "full_build_receipt_serialized_in_this_first_run": false,
+    "observation": {
+      "artifact_sha256": "487124b23bba099995b6111eb7bdd685134060427d3546e751f6c6f43032f796",
+      "backend": "selfhost",
+      "native_calls": 86,
+      "observations": [
+        {
+          "abi_status": 0,
+          "canaries_preserved": true,
+          "cpu_budget_seconds": 570,
+          "input_bytes": 851976,
+          "input_sha256": "ac4db199284e77fde3b5b6b5d4bb06b1816735bf916fb3e39102d94a39c52b3d",
+          "native_cpu_seconds": 0.0,
+          "native_elapsed_seconds": 2.2703e-05,
+          "result": 100,
+          "root": null,
+          "rows": 65536,
+          "same_physical_arena_sequence": true,
+          "scratch_extent": 4351327,
+          "service_budget_qualified": false,
+          "wall_budget_seconds": 600
+        },
+        {
+          "abi_status": 0,
+          "canaries_preserved": true,
+          "cpu_budget_seconds": 570,
+          "input_bytes": 851976,
+          "input_sha256": "ac4db199284e77fde3b5b6b5d4bb06b1816735bf916fb3e39102d94a39c52b3d",
+          "native_cpu_seconds": 344.424354393,
+          "native_elapsed_seconds": 353.568397442,
+          "result": 0,
+          "root": "9bff66af0bc7e68256303b4e7941e0950372b8f394caeca15c9a302526bc8f8c",
+          "rows": 65536,
+          "same_physical_arena_sequence": true,
+          "scratch_extent": 4351328,
+          "service_budget_qualified": false,
+          "wall_budget_seconds": 600
+        }
+      ],
+      "oracle": "bottom-up integer-path levels with hashlib",
+      "production_activation": false,
+      "schema": "trnm.hia.state-root-adversarial-observation.v1",
+      "service_budget_qualified": false,
+      "source_sha256": {
+        "sha256_arena.hepta": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+        "state_root.hepta": "bf2903ac04881ed55523049195b936220c41cba1c26885278a95ad89c3dbb6eb"
+      },
+      "sources_unchanged": true,
+      "whole_chain_native": false
+    },
+    "original_four_second_service_budget_changed": false,
+    "test_source_sha256": "f23cb4c3e80646c0cf328e27b40164feb51c8fe242575647181316a12523a399",
+    "unittest_result": {
+      "elapsed_seconds": 359.324,
+      "errors": 0,
+      "failures": 0,
+      "tests": 7
+    }
+  },
+  "maximum_key_and_value_lengths_simultaneously_at_maximum_count_executed": false,
+  "observed_at": "2026-11-15T17:42:25.488226+00:00",
+  "original_four_second_service_budget_changed": false,
+  "original_rust_differential_executed_locally": false,
+  "production_activation": false,
+  "rejected_optimization": {
+    "backend_fallback_used": false,
+    "fixed_compiler_capacity": 2048,
+    "native_compiler_exit": 2,
+    "node_function_ssa_values": 10709,
+    "source_sha256": "123c5b26f78fd33f141532dca222acd39aa2020ebf7ead7ab6b72f0f269be6e0",
+    "stderr": ""
+  },
+  "schema": "trnm.hia.state-root-development.v2",
+  "scope": "Actual local observations before fourth-batch publication; independent raw-ABI maximum-count run and later final-driver controls remain separately bound.",
+  "whole_chain_native": false
+}

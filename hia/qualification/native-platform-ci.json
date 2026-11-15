@@ -1,0 +1,2118 @@
+{
+  "build": {
+    "adapter_prefix_bytes_including_elf_header": 1453,
+    "compiler_qualification_binding": {
+      "cleanup_limit_seconds": 3,
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compressed_sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9",
+      "nested_report": "compiler-cold-full.json.xz",
+      "observed_seconds": 154.807339324,
+      "outer_report": "compiler-cold.json",
+      "outer_sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab",
+      "schema": "trnm.hia.compiler-qualification-binding.v1",
+      "scope": "Original pinned Linux x86-64 fixed-core compiler profile; does not qualify the complete Chain runtime",
+      "source_inputs": 916,
+      "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+      "uncompressed_bytes": 53163943,
+      "uncompressed_sha256": "7d01bc56b6dc8c211549e9c4ba16f7c580933812a6952654403f399c0cc3fa13",
+      "wall_limit_seconds": 180,
+      "whole_chain_native": false
+    },
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "core_language_has_generic_syscall_opcode": false,
+    "emitter": {
+      "bytes": 56269,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "executable": {
+      "bytes": 56681,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "generic_runtime_or_durable_owner_qualified": false,
+    "hosted_build_and_test_driver": true,
+    "policy": {
+      "bytes": 55228,
+      "sha256": "d35dd868c1253226a875aa8cd4c24d3a99ebcc9cc39d75a56174fec9aed98e91"
+    },
+    "runtime_host_language_or_dynamic_loader": false,
+    "schema": "trnm.hia.platform-fixture-build.v1",
+    "source_inputs": {
+      "platform/README.md": {
+        "bytes": 11283,
+        "sha256": "9645db51a7863e227a573c0a5f1147a65679a326a833278eba1b1db7dd1fa77c"
+      },
+      "platform/abi.json": {
+        "bytes": 6864,
+        "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+      },
+      "platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "platform/linux_adapter_emitter.hepta": {
+        "bytes": 45152,
+        "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+      },
+      "platform/probe_policy.hepta": {
+        "bytes": 38621,
+        "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+      },
+      "qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "qualification/compiler-cold-full.json.xz": {
+        "bytes": 838544,
+        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+      },
+      "qualification/compiler-cold.json": {
+        "bytes": 108675,
+        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+      },
+      "tests/test_platform_cleanup.py": {
+        "bytes": 9301,
+        "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+      },
+      "toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "tools/qualify_platform.py": {
+        "bytes": 30055,
+        "sha256": "73f385f97dbac5fbe0fb0f316b426831bb4385555bc6a7431e086f2ebc141294"
+      }
+    },
+    "stages": [
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-policy",
+        "end_monotonic_ns": 585392893938,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 38621,
+        "input_sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27",
+        "output_bytes": 55228,
+        "output_sha256": "d35dd868c1253226a875aa8cd4c24d3a99ebcc9cc39d75a56174fec9aed98e91",
+        "stage": "compile-policy",
+        "start_monotonic_ns": 585339449305,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-emitter",
+        "end_monotonic_ns": 585451535413,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 45152,
+        "input_sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f",
+        "output_bytes": 56269,
+        "output_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "stage": "compile-emitter",
+        "start_monotonic_ns": 585394118654,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/emit-platform-elf",
+        "end_monotonic_ns": 585454169543,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 55228,
+        "input_sha256": "d35dd868c1253226a875aa8cd4c24d3a99ebcc9cc39d75a56174fec9aed98e91",
+        "output_bytes": 56681,
+        "output_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+        "stage": "emit-platform-elf",
+        "start_monotonic_ns": 585452525288,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-unknown-syscall",
+        "end_monotonic_ns": 590606664644,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7092,
+        "input_sha256": "db98eb94951063fd3321fce33e124e865bffda88364ae4d81e3b73d557fd8668",
+        "output_bytes": 5552,
+        "output_sha256": "2727414dbf40a29948a642a0a5751a28f8d612002344d54528749823f6ae219a",
+        "stage": "compile-unknown-syscall",
+        "start_monotonic_ns": 590597109516,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-unknown-syscall",
+        "end_monotonic_ns": 590609344302,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "2727414dbf40a29948a642a0a5751a28f8d612002344d54528749823f6ae219a",
+        "output_bytes": 7005,
+        "output_sha256": "37134341b5f6b15f594985c41a97005ee49118c57e22bbe2c533d59c32a6550f",
+        "stage": "pack-unknown-syscall",
+        "start_monotonic_ns": 590607386797,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-pointer-before-data",
+        "end_monotonic_ns": 590621210995,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7092,
+        "input_sha256": "76d6ea107cca5a2890e5901f61397aa9bc383ab7bf11965c4c2fe2fa5afc1857",
+        "output_bytes": 5552,
+        "output_sha256": "b5f4c2884d7129d1e109c7f15812b6922b1d8b8cd641b5845f566232ba75a8c2",
+        "stage": "compile-pointer-before-data",
+        "start_monotonic_ns": 590611648968,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-pointer-before-data",
+        "end_monotonic_ns": 590622321831,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "b5f4c2884d7129d1e109c7f15812b6922b1d8b8cd641b5845f566232ba75a8c2",
+        "output_bytes": 7005,
+        "output_sha256": "c576f76e572221ac57da656283b755c7df3f9ddbadb555892a8437c123a0475c",
+        "stage": "pack-pointer-before-data",
+        "start_monotonic_ns": 590621935221,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-pointer-end-overflow",
+        "end_monotonic_ns": 590634056578,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7093,
+        "input_sha256": "fdc0a63f2f4e2b1a6fa23c5b7cb0e42659f907eb5a85d0c145dff655638bc15a",
+        "output_bytes": 5552,
+        "output_sha256": "55422b5bd74cf5563f392b61893773674d1102457e3193dc32d2b3b50b92aaa7",
+        "stage": "compile-pointer-end-overflow",
+        "start_monotonic_ns": 590624522031,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-pointer-end-overflow",
+        "end_monotonic_ns": 590636163998,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "55422b5bd74cf5563f392b61893773674d1102457e3193dc32d2b3b50b92aaa7",
+        "output_bytes": 7005,
+        "output_sha256": "4712b7d92f499943ee123c7e46de1db84ce017f35b552e4572fe4fc1bb5eb683",
+        "stage": "pack-pointer-end-overflow",
+        "start_monotonic_ns": 590634740604,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-wrong-pointer-mask",
+        "end_monotonic_ns": 590647974218,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7092,
+        "input_sha256": "e94019b4e564cb5f72b901e9557b61b97e74830bc7d1705c391e01fefa13521f",
+        "output_bytes": 5552,
+        "output_sha256": "879caa9088c5fb877d16bb762d65a730ecc2654405120ac0316121deee79f0f1",
+        "stage": "compile-wrong-pointer-mask",
+        "start_monotonic_ns": 590638358469,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-wrong-pointer-mask",
+        "end_monotonic_ns": 590649041749,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "879caa9088c5fb877d16bb762d65a730ecc2654405120ac0316121deee79f0f1",
+        "output_bytes": 7005,
+        "output_sha256": "1794c4752b747210d11963848c4bbeb2f3a704a7feac28c4752e80899b56fcdb",
+        "stage": "pack-wrong-pointer-mask",
+        "start_monotonic_ns": 590648673106,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-epoll-multiple-events",
+        "end_monotonic_ns": 590660802794,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7096,
+        "input_sha256": "c2d072f5d7272e9e7c0bf44b8b3abbcc6a4c32dc9b07874f1cfd011c5a3145c6",
+        "output_bytes": 5552,
+        "output_sha256": "298836895c22207fcdaec0c66601607d466c3ac9992f59a44070339ce6064c52",
+        "stage": "compile-epoll-multiple-events",
+        "start_monotonic_ns": 590651244902,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-epoll-multiple-events",
+        "end_monotonic_ns": 590662999298,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "298836895c22207fcdaec0c66601607d466c3ac9992f59a44070339ce6064c52",
+        "output_bytes": 7005,
+        "output_sha256": "468d4666c5ca26ccc46ab5a75398df8ebe379d8f41494a646c81d531ffe1a38c",
+        "stage": "pack-epoll-multiple-events",
+        "start_monotonic_ns": 590661590145,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-accept4-raw-address",
+        "end_monotonic_ns": 590674817369,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7091,
+        "input_sha256": "18e9c3a16593cb5e76d1e3eb5c212dc3228eeb47cadd3edca2da1d77350d045c",
+        "output_bytes": 5552,
+        "output_sha256": "a924b54ffe8e2911b45182e7d661ed5feff3d0e051a453efecb42577170d6b9a",
+        "stage": "compile-accept4-raw-address",
+        "start_monotonic_ns": 590665221090,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-accept4-raw-address",
+        "end_monotonic_ns": 590675866973,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "a924b54ffe8e2911b45182e7d661ed5feff3d0e051a453efecb42577170d6b9a",
+        "output_bytes": 7005,
+        "output_sha256": "b3a9a0dc6a241fd10b0ec1849e6af75c3c9d9dcd89d3a112d63dd094068e1526",
+        "stage": "pack-accept4-raw-address",
+        "start_monotonic_ns": 590675513383,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-accept4-raw-length",
+        "end_monotonic_ns": 590687576481,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7091,
+        "input_sha256": "d5946171751c8f6f9e918970aa9503d7329dded5d85669e129fa030951f9f878",
+        "output_bytes": 5552,
+        "output_sha256": "4e6e0992e103272f52f43e375369e04b75e940f5da01b247a491bcff4dae6404",
+        "stage": "compile-accept4-raw-length",
+        "start_monotonic_ns": 590678131989,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-accept4-raw-length",
+        "end_monotonic_ns": 590688625925,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "4e6e0992e103272f52f43e375369e04b75e940f5da01b247a491bcff4dae6404",
+        "output_bytes": 7005,
+        "output_sha256": "29f6a34b2c6ae4b18cb5c446cef6cfff99573933f5f86dc3dd1d0f3b0e1417ab",
+        "stage": "pack-accept4-raw-length",
+        "start_monotonic_ns": 590688273967,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/compile-accept4-flags",
+        "end_monotonic_ns": 590700378708,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 7091,
+        "input_sha256": "f2234b0cab55e9b7e97ecbc142b72b15e2d4a5e16521239a69d83ae90be3e838",
+        "output_bytes": 5552,
+        "output_sha256": "566c7782af0249bb8e499f645a0c116c15ae4144960a0e34668838f7d02ebf8d",
+        "stage": "compile-accept4-flags",
+        "start_monotonic_ns": 590690905473,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/home/runner/work/_temp/hia-platform/build/pack-accept4-flags",
+        "end_monotonic_ns": 590701446289,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 56269,
+        "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+        "exit_code": 0,
+        "input_bytes": 5552,
+        "input_sha256": "566c7782af0249bb8e499f645a0c116c15ae4144960a0e34668838f7d02ebf8d",
+        "output_bytes": 7005,
+        "output_sha256": "fbce3f66b95c43239e386d42bb04c109e37a9369fa830655f85febbd5634cf0b",
+        "stage": "pack-accept4-flags",
+        "start_monotonic_ns": 590701096254,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      }
+    ],
+    "status": "PASS",
+    "toolchain": {
+      "assembly_schema": "hia-asm.v1",
+      "language_schema": "hepta.hia.program.v8",
+      "repository": "TrillionniumFoundation/Hepta",
+      "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+      "target": "x86_64-linux-gnu"
+    }
+  },
+  "controls": [
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "ordinary",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/ordinary",
+      "eintr_kernel_result_count": 0,
+      "elapsed_ns": 1655532,
+      "end_monotonic_ns": 585464474576,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "file_readback_matches": true,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "magic": "HIAOS002",
+      "monotonic_bracket": true,
+      "native_umask": "0o77",
+      "partial_kernel_result_count": 0,
+      "passed": true,
+      "pid": 7681,
+      "policy_calls_before_stdout": 27,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "random_bytes_hex": "4f0726b6695de18b09004b8adb3f5560",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "socket_payload_hex": "48494170726f6265",
+      "start_monotonic_ns": 585462819044,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 96,
+      "stdout_hex": "4849414f5330303249020000000000007f509b1b000000004902000000000000f100ae1b0000000048494170726f62654f0726b6695de18b09004b8adb3f5560000000000000000000000000000000001b0000000000000048494170726f6265",
+      "stdout_sha256": "7ca771a5f37265fc351b54208513ca6f4d01f0bf20aeaffe6a0116815bdaf641"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "native-private-umask",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/native-private-umask",
+      "eintr_kernel_result_count": 0,
+      "elapsed_ns": 1130615,
+      "end_monotonic_ns": 585466291731,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "file_readback_matches": true,
+      "group": "finite-os",
+      "launcher_umask": "0o777",
+      "magic": "HIAOS002",
+      "monotonic_bracket": true,
+      "native_umask": "0o77",
+      "partial_kernel_result_count": 0,
+      "passed": true,
+      "pid": 7682,
+      "policy_calls_before_stdout": 27,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "random_bytes_hex": "0b230068d6723c6a5911f96344c3656d",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "socket_payload_hex": "48494170726f6265",
+      "start_monotonic_ns": 585465161116,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 96,
+      "stdout_hex": "4849414f533030324902000000000000c517be1b00000000490200000000000096d6c91b0000000048494170726f62650b230068d6723c6a5911f96344c3656d000000000000000000000000000000001b0000000000000048494170726f6265",
+      "stdout_sha256": "3b2df3be984f17646ef326ce1f46558df3ee50607c6dc9b3866c9e9c547e2c8a"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "actual-short-reads",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/actual-short-reads",
+      "eintr_kernel_result_count": 0,
+      "elapsed_ns": 1528151,
+      "end_monotonic_ns": 585468405070,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "file_readback_matches": true,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "magic": "HIAOS002",
+      "monotonic_bracket": true,
+      "native_umask": "0o77",
+      "partial_kernel_result_count": 2,
+      "passed": true,
+      "pid": 7683,
+      "policy_calls_before_stdout": 29,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "random_bytes_hex": "049681c5adeae9bf8d4f9ab0f7a1587a",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [
+        {
+          "arguments": [
+            0,
+            140156265476480,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585467418621,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f78ac6ab180 0x8 0x0 0x0 0x0 0x7ffdbc4a9288 0x4005a2",
+          "voluntary_context_switches": 1
+        },
+        {
+          "action": "stdin_write",
+          "bytes_hex": "48",
+          "monotonic_ns": 585467438150
+        },
+        {
+          "arguments": [
+            0,
+            140156265476481,
+            7,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585467559833,
+          "observation": "blocked stdin read with remaining=7",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f78ac6ab181 0x7 0x0 0x0 0x0 0x7ffdbc4a9288 0x4005a2",
+          "voluntary_context_switches": 2
+        },
+        {
+          "action": "stdin_write",
+          "bytes_hex": "4941",
+          "monotonic_ns": 585467573513
+        },
+        {
+          "arguments": [
+            0,
+            140156265476483,
+            5,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585467682126,
+          "observation": "blocked stdin read with remaining=5",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f78ac6ab183 0x5 0x0 0x0 0x0 0x7ffdbc4a9288 0x4005a2",
+          "voluntary_context_switches": 3
+        },
+        {
+          "action": "stdin_write",
+          "bytes_hex": "70726f6265",
+          "monotonic_ns": 585467693153
+        }
+      ],
+      "sealed_image_inherited_fd": 3,
+      "socket_payload_hex": "48494170726f6265",
+      "start_monotonic_ns": 585466876919,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 96,
+      "stdout_hex": "4849414f533030324902000000000000fb18d81b0000000049020000000000007a08ea1b0000000048494170726f6265049681c5adeae9bf8d4f9ab0f7a1587a020000000000000000000000000000001d0000000000000048494170726f6265",
+      "stdout_sha256": "2619f85711f62af68c600f90ab0794c7799280dee6523e025eb369274b9f0ed8"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "actual-eintr",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/actual-eintr",
+      "eintr_kernel_result_count": 2,
+      "elapsed_ns": 1367652,
+      "end_monotonic_ns": 585470638469,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "file_readback_matches": true,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "magic": "HIAOS002",
+      "monotonic_bracket": true,
+      "native_umask": "0o77",
+      "partial_kernel_result_count": 0,
+      "passed": true,
+      "pid": 7684,
+      "policy_calls_before_stdout": 29,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "random_bytes_hex": "2f4438325d27459718a6d420527bde5e",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [
+        {
+          "arguments": [
+            0,
+            139898453188992,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585469774723,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f3ca59b6180 0x8 0x0 0x0 0x0 0x7ffff8e2c898 0x4005a2",
+          "voluntary_context_switches": 1
+        },
+        {
+          "action": "pidfd_send_signal",
+          "monotonic_ns": 585469795504,
+          "signal": 10
+        },
+        {
+          "arguments": [
+            0,
+            139898453188992,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585469911378,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f3ca59b6180 0x8 0x0 0x0 0x0 0x7ffff8e2c898 0x4005a2",
+          "voluntary_context_switches": 2
+        },
+        {
+          "action": "pidfd_send_signal",
+          "monotonic_ns": 585469923286,
+          "signal": 10
+        },
+        {
+          "arguments": [
+            0,
+            139898453188992,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585470077477,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58546,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f3ca59b6180 0x8 0x0 0x0 0x0 0x7ffff8e2c898 0x4005a2",
+          "voluntary_context_switches": 3
+        }
+      ],
+      "sealed_image_inherited_fd": 3,
+      "socket_payload_hex": "48494170726f6265",
+      "start_monotonic_ns": 585469270817,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 96,
+      "stdout_hex": "4849414f5330303249020000000000001282fc1b00000000490200000000000084220c1c0000000048494170726f62652f4438325d27459718a6d420527bde5e000000000000000002000000000000001d0000000000000048494170726f6265",
+      "stdout_sha256": "b8ffb7dde67db020d6e4e4f4977689ee4ca885fba724f359ac84c752c6f22b45"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "eof",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/eof",
+      "elapsed_ns": 1552418,
+      "end_monotonic_ns": 585473206861,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": 0,
+        "kernel_result_unsigned": 0,
+        "monotonic_nanoseconds": 472063776,
+        "monotonic_seconds": 585,
+        "phase": 2
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7685,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585471654443,
+      "stderr_bytes": 32,
+      "stderr_hex": "000000000000000002000000000000004902000000000000201f231c00000000",
+      "stderr_sha256": "8fef838885392edbb0062c95d651a1ba635f17ad40abf2b94361520bfd00fadb",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "wrong-input",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/wrong-input",
+      "elapsed_ns": 452388,
+      "end_monotonic_ns": 585474524757,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": 8,
+        "kernel_result_unsigned": 8,
+        "monotonic_nanoseconds": 474459469,
+        "monotonic_seconds": 585,
+        "phase": 2
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7686,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585474072369,
+      "stderr_bytes": 32,
+      "stderr_hex": "0800000000000000020000000000000049020000000000004dad471c00000000",
+      "stderr_sha256": "4873ba34943a95dcfa5036ad84fa02eaa7ade8502aa5168c9d328196cda9f335",
+      "stdin_hex": "58494170726f6265",
+      "stdin_sha256": "088a41b456a73b4cbfdc1df5c9d4df6af170c6180230215fbc213bbaac36ba75",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/5"
+      ],
+      "case": "actual-eagain-refusal",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/actual-eagain-refusal",
+      "eagain_policy": "refuse; no readiness retry is implemented",
+      "elapsed_ns": 380621,
+      "end_monotonic_ns": 585475795292,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": -11,
+        "kernel_result_unsigned": 18446744073709551605,
+        "monotonic_nanoseconds": 475640830,
+        "monotonic_seconds": 585,
+        "phase": 2
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "input_setup": "empty O_NONBLOCK pipe; parent writer kept open",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7687,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 5,
+      "start_monotonic_ns": 585475414671,
+      "stderr_bytes": 32,
+      "stderr_hex": "f5ffffffffffffff02000000000000004902000000000000feb3591c00000000",
+      "stderr_sha256": "f885e142e2358f0d06b765a5fb935c971cd3ea19465f5d2861c871ec556f58eb",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "existing-file",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/existing-file",
+      "elapsed_ns": 515383,
+      "end_monotonic_ns": 585477330975,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": -17,
+        "kernel_result_unsigned": 18446744073709551599,
+        "monotonic_nanoseconds": 477259096,
+        "monotonic_seconds": 585,
+        "phase": 4
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": true,
+      "file_hex": "4558495354494e47",
+      "file_is_symlink": false,
+      "file_mode": 420,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7688,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585476815592,
+      "stderr_bytes": 32,
+      "stderr_hex": "efffffffffffffff040000000000000049020000000000005865721c00000000",
+      "stderr_sha256": "367a5b0da6e3bfd52825aecd6e2a0792d247a1c2847e94d70f7f51703e809634",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "canary_unchanged": true,
+      "case": "symlink",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/symlink",
+      "elapsed_ns": 1501832,
+      "end_monotonic_ns": 585479851194,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": -17,
+        "kernel_result_unsigned": 18446744073709551599,
+        "monotonic_nanoseconds": 478724865,
+        "monotonic_seconds": 585,
+        "phase": 4
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": true,
+      "file_is_symlink": true,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7689,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585478349362,
+      "stderr_bytes": 32,
+      "stderr_hex": "efffffffffffffff0400000000000000490200000000000001c3881c00000000",
+      "stderr_sha256": "fbbad3f086de7f44c3e0e5151f8a5e8d49793cb3940768c325d2d88c1dd86891",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "closed-stdout-epipe",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/closed-stdout-epipe",
+      "elapsed_ns": 1116714,
+      "end_monotonic_ns": 585481940547,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": -32,
+        "kernel_result_unsigned": 18446744073709551584,
+        "monotonic_nanoseconds": 481869220,
+        "monotonic_seconds": 585,
+        "phase": 27
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "group": "finite-os",
+      "input_setup": "stdout pipe has no reader; actual EPIPE",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7690,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585480823833,
+      "stderr_bytes": 32,
+      "stderr_hex": "e0ffffffffffffff1b000000000000004902000000000000a4bdb81c00000000",
+      "stderr_sha256": "f41e877568bcc3e2b566ffa4f74cca1601c15e56c56691de8a7ba4bb4f47cbbd",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "closed-stderr-epipe",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/closed-stderr-epipe",
+      "elapsed_ns": 1559538,
+      "end_monotonic_ns": 585484516700,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "input_setup": "stderr pipe has no reader; actual EPIPE",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7691,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585482957162,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "sigterm-before-effects",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/sigterm-before-effects",
+      "elapsed_ns": 672499,
+      "end_monotonic_ns": 585486172273,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": -15,
+      "expected_exit": -15,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7692,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [
+        {
+          "arguments": [
+            0,
+            140156933083520,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585486067616,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58548,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f78d4359180 0x8 0x0 0x0 0x0 0x7ffe08ea2008 0x4005a2",
+          "voluntary_context_switches": 1
+        },
+        {
+          "action": "pidfd_send_signal",
+          "monotonic_ns": 585486085323,
+          "signal": 15
+        }
+      ],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585485499774,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "all_file_socket_epoll_descriptors_explicitly_closed": true,
+      "argv": [
+        "/proc/self/fd/5"
+      ],
+      "case": "descriptors-closed-before-report",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/descriptors-closed-before-report",
+      "descriptors_before_final_report": {
+        "0": "pipe:[33997]",
+        "1": "pipe:[33996]",
+        "2": "pipe:[33998]",
+        "5": "/memfd:descriptors-closed-before-report (deleted)"
+      },
+      "eintr_kernel_result_count": 0,
+      "elapsed_ns": 4037074,
+      "end_monotonic_ns": 585491263247,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "file_entry_exists": true,
+      "file_hex": "48494170726f6265",
+      "file_is_symlink": false,
+      "file_mode": 384,
+      "file_readback_matches": true,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "magic": "HIAOS002",
+      "monotonic_bracket": true,
+      "native_umask": "0o77",
+      "partial_kernel_result_count": 0,
+      "passed": true,
+      "pid": 7693,
+      "pipe_prefill_bytes": 65536,
+      "policy_calls_before_stdout": 27,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "random_bytes_hex": "bcbabab018d947722ff5b7beacbd84de",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [
+        {
+          "action": "stdin_write",
+          "bytes_hex": "48494170726f6265",
+          "monotonic_ns": 585487570219
+        },
+        {
+          "arguments": [
+            1,
+            140315355984384,
+            96,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585489970639,
+          "observation": "blocked final stdout write after all explicit closes",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58548,
+          "state": "S (sleeping)",
+          "syscall": 1,
+          "syscall_text": "1 0x1 0x7f9db6f33200 0x60 0x0 0x0 0x0 0x7ffcb04398f8 0x4005a2",
+          "voluntary_context_switches": 4
+        }
+      ],
+      "sealed_image_inherited_fd": 5,
+      "socket_payload_hex": "48494170726f6265",
+      "start_monotonic_ns": 585487226173,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "48494170726f6265",
+      "stdin_sha256": "04da44cdb7ed8c8395dea467e82d046068ee222892b3769dee71daee8f502d31",
+      "stdout_bytes": 96,
+      "stdout_hex": "4849414f53303032490200000000000020fe0d1d000000004902000000000000c5b41a1d0000000048494170726f6265bcbabab018d947722ff5b7beacbd84de000000000000000000000000000000001b0000000000000048494170726f6265",
+      "stdout_sha256": "638caf8086f60a0fa8326bf30c95a20bb0deae3338bc5aac7ad2a20dacdac260"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "externally-woken-elapsed-check",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/externally-woken-elapsed-check",
+      "deadline_scope": "elapsed checked only after an external signal returns the blocking syscall",
+      "elapsed_ns": 5102734452,
+      "end_monotonic_ns": 590595252571,
+      "environment": {
+        "PATH": ""
+      },
+      "error_event": {
+        "kernel_result_signed": -4,
+        "kernel_result_unsigned": 18446744073709551612,
+        "monotonic_nanoseconds": 594099421,
+        "monotonic_seconds": 590,
+        "phase": 2
+      },
+      "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "exit_code": 70,
+      "expected_exit": 70,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "finite-os",
+      "launcher_umask": "0o77",
+      "native_hard_deadline_qualified": false,
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7694,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [
+        {
+          "arguments": [
+            0,
+            140308369822080,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 585493106902,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58549,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f9c168ad180 0x8 0x0 0x0 0x0 0x7fffd15101a8 0x4005a2",
+          "voluntary_context_switches": 1
+        },
+        {
+          "arguments": [
+            0,
+            140308369822080,
+            8,
+            0,
+            0,
+            0
+          ],
+          "monotonic_ns": 590594053163,
+          "observation": "blocked stdin read with remaining=8",
+          "shared_sig_pending": 0,
+          "sig_caught": 512,
+          "sig_pending": 0,
+          "start_ticks": 58549,
+          "state": "S (sleeping)",
+          "syscall": 0,
+          "syscall_text": "0 0x0 0x7f9c168ad180 0x8 0x0 0x0 0x0 0x7fffd15101a8 0x4005a2",
+          "voluntary_context_switches": 1
+        },
+        {
+          "action": "pidfd_send_signal",
+          "monotonic_ns": 590594072722,
+          "signal": 10
+        }
+      ],
+      "sealed_image_inherited_fd": 3,
+      "start_monotonic_ns": 585492518119,
+      "stderr_bytes": 32,
+      "stderr_hex": "fcffffffffffffff02000000000000004e02000000000000dd3c692300000000",
+      "stderr_sha256": "bf13173d9d0b65fc539fbe49da6c95103917f61303760f23b1bf415444d443a6",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "unknown-syscall",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        9999,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/unknown-syscall",
+      "elapsed_ns": 490556,
+      "end_monotonic_ns": 590610067006,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "37134341b5f6b15f594985c41a97005ee49118c57e22bbe2c533d59c32a6550f",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7699,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "db98eb94951063fd3321fce33e124e865bffda88364ae4d81e3b73d557fd8668",
+      "start_monotonic_ns": 590609576450,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "pointer-before-data",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        1,
+        1,
+        127,
+        1,
+        0,
+        0,
+        0,
+        2,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/pointer-before-data",
+      "elapsed_ns": 354041,
+      "end_monotonic_ns": 590622898336,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "c576f76e572221ac57da656283b755c7df3f9ddbadb555892a8437c123a0475c",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7702,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "76d6ea107cca5a2890e5901f61397aa9bc383ab7bf11965c4c2fe2fa5afc1857",
+      "start_monotonic_ns": 590622544295,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "pointer-end-overflow",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        1,
+        1,
+        4095,
+        8,
+        0,
+        0,
+        0,
+        2,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/pointer-end-overflow",
+      "elapsed_ns": 343104,
+      "end_monotonic_ns": 590636724989,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "4712b7d92f499943ee123c7e46de1db84ce017f35b552e4572fe4fc1bb5eb683",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7705,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "fdc0a63f2f4e2b1a6fa23c5b7cb0e42659f907eb5a85d0c145dff655638bc15a",
+      "start_monotonic_ns": 590636381885,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "wrong-pointer-mask",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        1,
+        1,
+        128,
+        8,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/wrong-pointer-mask",
+      "elapsed_ns": 343175,
+      "end_monotonic_ns": 590649600707,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "1794c4752b747210d11963848c4bbeb2f3a704a7feac28c4752e80899b56fcdb",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7708,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "e94019b4e564cb5f72b901e9557b61b97e74830bc7d1705c391e01fefa13521f",
+      "start_monotonic_ns": 590649257532,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "epoll-multiple-events",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        232,
+        0,
+        128,
+        2,
+        100,
+        0,
+        0,
+        2,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/epoll-multiple-events",
+      "elapsed_ns": 342373,
+      "end_monotonic_ns": 590663578196,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "468d4666c5ca26ccc46ab5a75398df8ebe379d8f41494a646c81d531ffe1a38c",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7711,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "c2d072f5d7272e9e7c0bf44b8b3abbcc6a4c32dc9b07874f1cfd011c5a3145c6",
+      "start_monotonic_ns": 590663235823,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "accept4-raw-address",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        288,
+        0,
+        1,
+        0,
+        524288,
+        0,
+        0,
+        0,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/accept4-raw-address",
+      "elapsed_ns": 342834,
+      "end_monotonic_ns": 590676462286,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "b3a9a0dc6a241fd10b0ec1849e6af75c3c9d9dcd89d3a112d63dd094068e1526",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7714,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "18e9c3a16593cb5e76d1e3eb5c212dc3228eeb47cadd3edca2da1d77350d045c",
+      "start_monotonic_ns": 590676119452,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "accept4-raw-length",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        288,
+        0,
+        0,
+        1,
+        524288,
+        0,
+        0,
+        0,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/accept4-raw-length",
+      "elapsed_ns": 351627,
+      "end_monotonic_ns": 590689190682,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "29f6a34b2c6ae4b18cb5c446cef6cfff99573933f5f86dc3dd1d0f3b0e1417ab",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7717,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "d5946171751c8f6f9e918970aa9503d7329dded5d85669e129fa030951f9f878",
+      "start_monotonic_ns": 590688839055,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "accept4-flags",
+      "case_limit_seconds": 10,
+      "cleanup_limit_seconds": 3,
+      "command_words": [
+        288,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/accept4-flags",
+      "elapsed_ns": 357075,
+      "end_monotonic_ns": 590702021451,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_sha256": "fbce3f66b95c43239e386d42bb04c109e37a9369fa830655f85febbd5634cf0b",
+      "exit_code": 78,
+      "expected_exit": 78,
+      "file_entry_exists": false,
+      "file_is_symlink": false,
+      "group": "command-guard",
+      "launcher_umask": "0o77",
+      "native_umask": "0o77",
+      "passed": true,
+      "pid": 7720,
+      "process_ownership": "pidfd of direct child; fixed fixture has no fork/clone",
+      "readiness_limit_seconds": 2,
+      "readiness_observations": [],
+      "same_emitter_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "sealed_image_inherited_fd": 3,
+      "source_sha256": "f2234b0cab55e9b7e97ecbc142b72b15e2d4a5e16521239a69d83ae90be3e838",
+      "start_monotonic_ns": 590701664376,
+      "stderr_bytes": 0,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_hex": "",
+      "stdin_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_hex": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "empty-policy",
+      "cleanup": null,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/empty-policy/native-pack",
+      "end_monotonic_ns": 590704361951,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_bytes": 56269,
+      "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "exit_code": 3,
+      "group": "packer-guard",
+      "input_bytes": 0,
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output_bytes": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true,
+      "stage": "native-pack",
+      "start_monotonic_ns": 590704070194,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "wall_limit_seconds": 30
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "oversize-policy",
+      "cleanup": null,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/oversize-policy/native-pack",
+      "end_monotonic_ns": 590706751895,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_bytes": 56269,
+      "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "exit_code": 3,
+      "group": "packer-guard",
+      "input_bytes": 524289,
+      "input_sha256": "eda6e9fb7e8bed184a10de09683556f9fc1720ffc1af5fa73f4891c7dec70bca",
+      "output_bytes": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true,
+      "stage": "native-pack",
+      "start_monotonic_ns": 590705814139,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "wall_limit_seconds": 30
+    },
+    {
+      "argv": [
+        "/proc/self/fd/3"
+      ],
+      "case": "exact-native-repack",
+      "cleanup": null,
+      "cleanup_limit_seconds": 3,
+      "cwd": "/home/runner/work/_temp/hia-platform/cases/exact-native-repack/native-repack",
+      "end_monotonic_ns": 590709922550,
+      "environment": {
+        "PATH": ""
+      },
+      "executable_bytes": 56269,
+      "executable_sha256": "8790b591c5474365d9202e9208ea9993542aff989b77889e94909ad90bd16560",
+      "exit_code": 0,
+      "group": "packer-guard",
+      "input_bytes": 55228,
+      "input_sha256": "d35dd868c1253226a875aa8cd4c24d3a99ebcc9cc39d75a56174fec9aed98e91",
+      "output_bytes": 56681,
+      "output_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+      "passed": true,
+      "stage": "native-repack",
+      "start_monotonic_ns": 590708426927,
+      "stderr_hex": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "wall_limit_seconds": 30
+    }
+  ],
+  "durable_owner_gate": "OPEN",
+  "full_node_io_gate": "OPEN",
+  "generic_fd_capability_gate": "OPEN",
+  "hosted_build_test_and_observation_driver": true,
+  "native_hard_deadline": {
+    "after": {
+      "arguments": [
+        0,
+        139623003038080,
+        8,
+        0,
+        0,
+        0
+      ],
+      "monotonic_ns": 596717285309,
+      "observation": "blocked stdin read with remaining=8",
+      "shared_sig_pending": 0,
+      "sig_caught": 512,
+      "sig_pending": 0,
+      "start_ticks": 59071,
+      "state": "S (sleeping)",
+      "syscall": 0,
+      "syscall_text": "0 0x0 0x7efc837fa180 0x8 0x0 0x0 0x0 0x7ffdb9b6c628 0x4005a2",
+      "voluntary_context_switches": 1
+    },
+    "before": {
+      "arguments": [
+        0,
+        139623003038080,
+        8,
+        0,
+        0,
+        0
+      ],
+      "monotonic_ns": 590711886945,
+      "observation": "blocked stdin read with remaining=8",
+      "shared_sig_pending": 0,
+      "sig_caught": 512,
+      "sig_pending": 0,
+      "start_ticks": 59071,
+      "state": "S (sleeping)",
+      "syscall": 0,
+      "syscall_text": "0 0x0 0x7efc837fa180 0x8 0x0 0x0 0x0 0x7ffdb9b6c628 0x4005a2",
+      "voluntary_context_switches": 1
+    },
+    "cleanup": {
+      "already_exited_before_signal": [],
+      "complete": true,
+      "elapsed_ns": 1237035,
+      "exit_code": -15,
+      "signals": [
+        "SIGTERM"
+      ],
+      "wall_limit_seconds": 3
+    },
+    "counted_as_finite_control_pass": false,
+    "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+    "file_entry_exists": false,
+    "full_node_io_gate": "OPEN",
+    "idle_observed_ns": 6005398364,
+    "known_limitation_observed": true,
+    "native_hard_deadline_result": "FAIL",
+    "observation": "STILL_BLOCKED_WITHOUT_WAKEUP",
+    "reason": "Blocking read is not independently interrupted by the policy elapsed check",
+    "requirement": "native completion or cancellation within the five-second deadline",
+    "stderr_hex": "",
+    "stdout_hex": ""
+  },
+  "partial_getrandom_fault_qualification": "NOT_RUN",
+  "passed_control_count": 25,
+  "qualification_scope": "fixed trusted policy, finite OS controls, command/packer guards",
+  "required_control_count": 25,
+  "runtime_host_language_or_dynamic_loader": false,
+  "schema": "trnm.hia.platform-fixture-qualification.v1",
+  "short_write_fault_qualification": "NOT_RUN",
+  "source_inputs": {
+    "platform/README.md": {
+      "bytes": 11283,
+      "sha256": "9645db51a7863e227a573c0a5f1147a65679a326a833278eba1b1db7dd1fa77c"
+    },
+    "platform/abi.json": {
+      "bytes": 6864,
+      "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+    },
+    "platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "platform/linux_adapter_emitter.hepta": {
+      "bytes": 45152,
+      "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+    },
+    "platform/probe_policy.hepta": {
+      "bytes": 38621,
+      "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+    },
+    "qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "qualification/compiler-cold-full.json.xz": {
+      "bytes": 838544,
+      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+    },
+    "qualification/compiler-cold.json": {
+      "bytes": 108675,
+      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+    },
+    "tests/test_platform_cleanup.py": {
+      "bytes": 9301,
+      "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+    },
+    "toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "tools/qualify_platform.py": {
+      "bytes": 30055,
+      "sha256": "73f385f97dbac5fbe0fb0f316b426831bb4385555bc6a7431e086f2ebc141294"
+    }
+  },
+  "source_inputs_stable": true,
+  "status": "FINITE_FIXTURE_PASS",
+  "syscall_trace": {
+    "argv": [
+      "/usr/bin/strace",
+      "-f",
+      "-qq",
+      "-o",
+      "/home/runner/work/_temp/hia-platform/syscall-trace/trace.raw",
+      "/proc/self/fd/3"
+    ],
+    "cleanup": null,
+    "cleanup_limit_seconds": 3,
+    "counted_as_finite_control_pass": false,
+    "cwd": "/home/runner/work/_temp/hia-platform/syscall-trace",
+    "elapsed_ns": 102451327,
+    "environment": {
+      "PATH": ""
+    },
+    "executable_sha256": "cecd38b63c068f74259aafbf30532669c3befd59ad32aeb8ee10efffd4cbfd52",
+    "exit_code": 0,
+    "instrumentation": "strace ptrace",
+    "reason": "raw trace retained; semantic policy audit separate",
+    "status": "CAPTURED",
+    "stderr": "",
+    "stdout_hex": "4849414f53303032540200000000000011b8802f0000000054020000000000009f3ce82f0000000048494170726f62655cb3b76a82aeb9559f403a1da3cb8188000000000000000000000000000000001b0000000000000048494170726f6265",
+    "timed_out": false,
+    "trace_bytes": 4290,
+    "trace_sha256": "ada4b90a69e21e5e02f51fc7cbb4bb224d831d0a5e47034a31ba09c057d5a80d",
+    "tracer_sha256": "28f957c227012de0b18d1bd7fff2d396cb693ea60ed8013be68de071e84b5001",
+    "wall_limit_seconds": 10
+  },
+  "unqualified_requirements": [
+    "independent hard deadlines for blocking syscalls",
+    "EAGAIN readiness resumption",
+    "FD generation/rights capabilities",
+    "directory and peer authority",
+    "durable commit and crash recovery",
+    "authenticated transport",
+    "general policy object validation and static linking"
+  ]
+}

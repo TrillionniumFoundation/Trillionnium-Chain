@@ -220,6 +220,17 @@
         "hia/tests/test_ed25519_adversarial.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "protocol/state-root",
+      "source": "hia/src/protocol/state_root.hepta",
+      "scope": "complete original 256-bit sparse byte-state root with 65536 rows, 160-byte keys and 4096-byte values; no M06 JSON or owner authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_root.py",
+        "hia/tests/test_state_root_adversarial.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -292,7 +303,8 @@
         "protocol/ilf2",
         "protocol/ilf3",
         "crypto/pon_hash",
-        "protocol/pnx1"
+        "protocol/pnx1",
+        "protocol/state-root"
       ],
       "retirement_accepted": false
     },
@@ -505,5 +517,52 @@
     }
   ],
   "historical_failures_preserved": true,
-  "history_archive": "evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json"
+  "history_archive": "evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json",
+  "native_foundations": [
+    {
+      "id": "platform/os-fixture",
+      "sources": [
+        "hia/platform/probe_policy.hepta",
+        "hia/platform/linux_adapter_emitter.hepta"
+      ],
+      "scope": "finite file, entropy and loopback OS qualification fixture; blocking hard deadline remains unqualified",
+      "tests": [
+        "hia/tools/qualify_platform.py",
+        "hia/tests/test_platform_cleanup.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/stream-reactor",
+      "sources": [
+        "hia/platform/reactor/policy.hepta",
+        "hia/platform/reactor/linux_emitter.hepta",
+        "hia/platform/reactor/context_fixture.hepta",
+        "hia/platform/reactor/api_fixture.hepta"
+      ],
+      "scope": "current nonblocking connected-stream reactor and its native reusable-context qualification caller",
+      "tests": [
+        "hia/tools/qualify_platform.py",
+        "hia/tests/test_platform_reactor_cleanup.py",
+        "hia/tests/test_platform_reactor_contracts.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "storage/transaction-owner",
+      "sources": [
+        "hia/storage/owner_policy.hepta",
+        "hia/storage/linux_adapter_emitter.hepta"
+      ],
+      "scope": "finite fresh-namespace native transaction owner with exact payload recovery and atomic HEAD; typed Node reducers and original full-state capacity remain open",
+      "tests": [
+        "hia/tools/qualify_storage.py",
+        "hia/tests/test_storage_native.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    }
+  ]
 }

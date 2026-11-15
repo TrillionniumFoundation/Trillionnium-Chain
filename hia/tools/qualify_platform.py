@@ -585,7 +585,13 @@ class Qualification:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--reactor", action="store_true",
+                        help="qualify the separate current HIA stream reactor")
     args = parser.parse_args()
+    if args.reactor:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+        from hia.platform.reactor.qualify import main as qualify_reactor
+        return qualify_reactor(["--output", str(args.output)])
     output = new_output(args.output)
     try:
         return Qualification(output).run()

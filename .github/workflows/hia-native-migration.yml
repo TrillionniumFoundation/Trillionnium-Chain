@@ -13,6 +13,64 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 jobs:
+  source-and-archive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and complete archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind exact archive and source candidate
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-source-observations/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+      - name: Prepare the original scientific conformance environment
+        run: |
+          set -euo pipefail
+          test -x /usr/bin/time
+          /usr/bin/time --version
+          python3 -m venv "$RUNNER_TEMP/hia-evidence-python"
+          "$RUNNER_TEMP/hia-evidence-python/bin/python" -m pip install --disable-pip-version-check -r formal/pon-nakamoto-v1/requirements.txt
+          printf '%s/bin\n' "$RUNNER_TEMP/hia-evidence-python" >> "$GITHUB_PATH"
+      - name: Verify removed preparation files and retained failures
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_historical_archive.py
+          python3 scripts/ci/check_historical_archive.py --manifest evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
+          python3 -m unittest discover -s scripts/ci -p 'test_sealed_ci_archive.py' -v
+          python3 scripts/ci/check_sealed_ci_archive.py --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json
+          python3 -m unittest discover -s scripts/ci -p 'test_joint_resource_archive.py' -v
+          python3 scripts/ci/check_joint_resource_archive.py --manifest evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json
+          python3 -m unittest discover -s scripts/ci -p 'test_pq_triage_archive.py' -v
+          python3 scripts/ci/check_pq_triage_archive.py --manifest evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json
+          python3 -m unittest discover -s scripts/ci -p 'test_public_readiness_archive.py' -v
+          TRNM_GNU_TIME=/usr/bin/time python3 -m unittest discover -s scripts/ci -p 'test_public_readiness_evidence.py' -v
+          python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1 | tee "$RUNNER_TEMP/hia-source-observations/public-readiness.json"
+          python3 scripts/ci/check_pq_research_integration.py | tee "$RUNNER_TEMP/hia-source-observations/pq-source-consistency.json"
+          python3 -m unittest discover -s scripts/ci -p 'test_pq_research_integration.py' -v 2>&1 | tee "$RUNNER_TEMP/hia-source-observations/pq-negative-tests.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+          python3 scripts/ci/check_repository.py
+      - name: Verify archive candidate sources remained unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Retain archive and source observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-source-observations/
+          if-no-files-found: error
+          retention-days: 30
   native-components:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -50,21 +108,6 @@ jobs:
           bash scripts/project-preflight.sh --audit
           python3 hia/tools/check_migration.py
           printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
-      - name: Verify removed preparation files and retained failures
-        run: |
-          set -euo pipefail
-          python3 scripts/ci/test_historical_archive.py
-          python3 scripts/ci/check_historical_archive.py --manifest evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
-          python3 -m unittest discover -s scripts/ci -p 'test_sealed_ci_archive.py' -v
-          python3 scripts/ci/check_sealed_ci_archive.py --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json
-          python3 -m unittest discover -s scripts/ci -p 'test_joint_resource_archive.py' -v
-          python3 scripts/ci/check_joint_resource_archive.py --manifest evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json
-          python3 -m unittest discover -s scripts/ci -p 'test_pq_triage_archive.py' -v
-          python3 scripts/ci/check_pq_triage_archive.py --manifest evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json
-          python3 scripts/ci/check_pq_research_integration.py
-          python3 -m unittest discover -s scripts/ci -p 'test_pq_research_integration.py' -v
-          python3 scripts/refresh_distributed_source_inventory.py --check
-          python3 scripts/ci/check_repository.py
       - name: Bootstrap and self-reproduce the native HIA compiler
         run: |
           set -euo pipefail
@@ -81,6 +124,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify_platform.py --output "$RUNNER_TEMP/hia-platform"
+      - name: Execute native stream deadlines and reusable contexts
+        run: python3 -B hia/tools/qualify_platform.py --reactor --output "$RUNNER_TEMP/hia-reactor"
+      - name: Execute native transaction owner and crash recovery controls
+        run: python3 -B hia/tools/qualify_storage.py --output "$RUNNER_TEMP/hia-storage"
       - name: Compile the original Rust reference policies
         run: |
           set -euo pipefail
@@ -110,5 +157,7 @@ jobs:
             ${{ runner.temp }}/hia-observations/
             ${{ runner.temp }}/hia-bootstrap/bootstrap.json
             ${{ runner.temp }}/hia-platform/
+            ${{ runner.temp }}/hia-reactor/
+            ${{ runner.temp }}/hia-storage/
           if-no-files-found: error
           retention-days: 30

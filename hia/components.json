@@ -91,6 +91,30 @@
           "sha512_work_store64"
         ]
       }
+    ],
+    "src/protocol/state_root.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "storage/owner_policy.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
     ]
   }
 }

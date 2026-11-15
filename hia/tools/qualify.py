@@ -29,8 +29,11 @@ def sources():
     paths += sorted((ROOT / "hia/tools").glob("*.py"))
     paths += sorted((ROOT / "hia/tests").glob("*.py"))
     paths += sorted((ROOT / "hia/tests").glob("*.rs"))
-    paths += sorted((ROOT / "hia/platform").glob("*.py"))
-    paths += [ROOT / "hia/platform/abi.json", ROOT / "hia/platform/README.md"]
+    for name in ("platform", "storage"):
+        directory = ROOT / "hia" / name
+        paths += sorted(directory.rglob("*.py"))
+        paths += sorted(directory.rglob("abi.json"))
+        paths += sorted(directory.rglob("README.md"))
     paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
@@ -117,7 +120,7 @@ def main():
             "skipped": [(str(test), why) for test, why in result.skipped]},
         "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
                                                for (b, s), count in sorted(calls.items())],
-        "additional_raw_abi_probes": "The crypto and closed-round suites also execute explicit native pointer/capacity probes; these are not included in the shared-runner counts.",
+        "additional_raw_abi_probes": "The crypto, closed-round and state-root suites also execute explicit native pointer/capacity probes; these are not included in the shared-runner counts. The state-root suite executes the original 65536-row limit in an independently bounded native child. Reactor synthetic API contracts execute native ELF separately; their calls are also outside the shared-runner counts and are not real OS fault injection. Complete OS reactor and persistence controls run in their own mandatory workflow steps.",
         "builds": builds, "wall_seconds": time.monotonic() - started,
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),

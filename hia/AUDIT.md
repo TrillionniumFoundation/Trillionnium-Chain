@@ -9,11 +9,12 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Twenty HIA source units currently
-implement tested deterministic boundaries; no whole original package has an
-accepted retirement witness. There is no complete HIA node executable, durable
-node owner, native network stack or complete native identity/signing stack in this
-candidate. The nine integration/qualification gates remain open.
+**The full replacement is incomplete.** Twenty-one kernel units and three native
+foundations account for all 29 current HIA source files. Native connected-stream
+I/O and a finite transaction owner now exist, but no whole original package has
+an accepted retirement witness. There is no complete HIA node executable,
+typed branch/replay/outbox owner or complete native identity/signing stack. The
+nine integration/qualification gates remain open.
 
 ## Baseline inventory
 
@@ -47,7 +48,7 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Unported | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Unported | Application evidence aggregation, not ledger quorum or voting. |
 | [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Unported | Contribution/evaluation/lineage contracts independent of ledger consensus. |
-| [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
+| [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
 | [trnm-peer-lease](../trillionnium/crates/trnm-peer-lease) | M04 | Unported | Cross-process scope/generation fencing, append-only replay and bounded Unix transport. |
 | [trnm-data-availability](../trillionnium/crates/trnm-data-availability) | M09 | Unported | Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. |
 | [trnm-task-kernel](../trillionnium/crates/trnm-task-kernel) | M10 | Unported | Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality. |
@@ -84,13 +85,25 @@ owner, network readiness, clock/randomness/stop handling and separate native
 fault/recovery qualification. A byte buffer containing a descriptor number or a
 caller-supplied “authorized” boolean cannot provide those capabilities.
 
-A separate [Linux platform fixture](platform/README.md) now demonstrates a path
-through the fixed compiler: HIA emits a native adapter around compiled HIA
-policy, and the resulting static ELF performs real filesystem and loopback
-network operations. This does not require an invented foreign-call opcode.
-The fixture leaves fd-generation ownership, directory capability scope,
-readiness-driven hard deadlines and complete durable transactions open; the
-blocking-call deadline limitation is retained as an observed failure.
+The [Linux platform fixture](platform/README.md), [stream reactor](platform/reactor/README.md)
+and [transaction owner](storage/README.md) use the fixed compiler to emit native
+adapters around compiled HIA policy. The static ELFs perform actual syscalls;
+no invented foreign-call opcode or host-language runtime implements the policy.
+The first finite fixture's blocked-call deadline failure remains retained.
+The reactor admits connected FIFOs/streams and uses epoll, monotonic absolute
+deadlines, cancellation and private generation/rights slots. It does not admit
+ordinary files or certify a hard fsync deadline. The transaction owner performs
+actual locking, immutable transaction publication, HEAD replacement and sync,
+then validates persisted data on reopen. Its 16 MiB / 4,096-commit profile and
+fail-closed interrupted initialization do not replace the original Node's full
+capacity, typed state transitions or initialization recovery.
+
+The [state-root implementation](STATE.md) matched an independent bottom-up oracle
+at 65,536 actual entries in 353.568397442 seconds. The same artifact's source,
+maximum-count observation and later final-driver controls are bound separately
+in [the retained report](qualification/state-root-development.json). Maximum
+count with short values is not a test of every row holding its maximum value.
+The unchanged original four-second service acceptance is not qualified.
 The real Node directly owns `rusqlite::Connection` in `Node.db`, implemented
 in `store.rs`. `TransactionScope` records SQLite operation boundaries; the
 optional `OwnedConnection` wrapper is not that owner. Replacing checkpoint
@@ -102,18 +115,22 @@ inferred from the compiler fixed point.
 
 ## Observed integration failures
 
-The second candidate `1dfc9669172acbae4276b4fd941f2d426480f8e8` passed the new
-HIA workflow: 97 tests, 34,297 shared-runner native calls, no skips or failures.
-Its original Rust replay, round, PNX1 and checkpoint references actually compiled
-and ran. [The exact report](qualification/native-ci.json) applies to that source
-set; later crypto/platform components require new CI observations.
+The third candidate `79fc1d4c970f8ecb414f011605e0a6fbcf7332e8` passed the
+[HIA workflow](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43741974022):
+126 tests, 36,032 shared-runner native calls, no skips or failures. All four
+original Rust adapters compiled and executed, including the original crypto
+crate. [The exact report](qualification/native-ci.json) and
+[finite platform report](qualification/native-platform-ci.json) apply to that
+source set. Current state-root, reactor and storage additions need their own
+exact-head CI; prior green results do not qualify those later sources.
 
 The complete original CI also exposed these distinct outcomes:
 
 | Finding | Classification and action |
 | --- | --- |
+| Three original retained stderr logs were absent from the third published tree | Introduced by ignored-file staging. The unchanged PQ archive reader failed in run `43741641815`; exact original bytes were explicitly tracked in `79fc1d4`, whose run `43741974022` passed. The failure and repair remain visible. |
 | Distributed source inventory omitted `config/hia-migration-v1.json` | Introduced by the migration. Baseline had exactly 1,745 matching entries; candidate required 1,746. The unchanged original generator now adds the missing include and its original check passes. |
-| PQ source corpus retains stale plan and generated-inventory blob pins | Introduced by the first and second migration commits, respectively. Only those two current-source bindings were refreshed under the existing reconciliation procedure; all other 2,611 pins and all 1,177 evidence pins match. The unchanged checker succeeds with status HOLD_NO_GO, and all 113 original negative tests pass. This repairs source consistency and grants no native PQ acceptance. |
+| PQ source corpus retains stale plan and generated-inventory blob pins | Introduced by the first and second migration commits, respectively. Those exact current-source bindings were refreshed under the existing reconciliation procedure. The fourth cleanup also requires the precise current public-readiness CLI binding because it adds archive dispatch; original checker functions remain unchanged. All 1,177 evidence pins and all unrelated source pins remain fixed. The unchanged checker succeeds with status HOLD_NO_GO, and all 113 original negative tests pass. This repairs source consistency and grants no native PQ acceptance. |
 | Historical artifact `11531476198`, run `37730166589`, is unavailable | Existing retained evidence gap. The current download job found zero matching artifacts. No new sample substitutes for the missing original. |
 | W1 original/fresh and arm64 pressure confirmation miss the original deadline | Actual service failure. All seven honest submission ACKs were observed, but independent native history replay reached the four-second deadline before six-depth confirmation. The three pressure outcomes remain 0/1. |
 | Main baseline arm64 service gate already failed | Confirmed from run `43729710156`, job `132859243865`; only its outer controller was inspected, so its detailed cause is not asserted to equal the current deadline diagnosis. |
@@ -128,16 +145,18 @@ and native unit tests do not turn a failed business confirmation into a pass.
 ## Cleanup result and limits
 
 The current tree removes 607 obsolete checkout-repair files, 14 sealed CI ZIPs,
-13 joint-resource archives and four large PQ triage streams: 638 removed payload
-copies totaling 719,000,859 original bytes. All remain recoverable by exact
-historical Git object with original SHA-256/size bindings. The PQ capture's other
-29 smaller records remain as byte-identical current copies in its retained
-directory. This is cleanup of current-tree copies, not a rewrite of Git history.
+13 joint-resource archives, four large PQ triage streams and 885 public-readiness
+pre-correction payloads: **1,523 removed copies totaling 1,132,595,614 original
+bytes**. All remain recoverable by exact historical Git object with original
+SHA-256/size bindings. The PQ capture's other 29 smaller records remain as
+byte-identical current copies in its retained directory. This cleans current-tree
+copies; Git history is not rewritten.
 
 - [Checkout preparation archive](../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json)
 - [Sealed CI ZIP archive](../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json)
 - [Joint-resource archive](../evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json)
 - [PQ triage capture](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json)
+- [Public-readiness pre-correction archive](../evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json)
 
 The sealed reader still checks all 810 original checksum entries and the exact
 original seal, source observations and HOLD/FAIL counts. Missing or changed
@@ -147,13 +166,19 @@ sidecars and the 4,052-member denominator. The PQ reader preserves all 1,050
 original stored hashes, 147 gzip byte bindings and 543 followup bindings,
 including the original startup UNKNOWN, red/green receipts and HOLD. Current
 tests, authoritative ownership and historical counterexamples remain.
+The public-readiness reader reconstructs the exact historical package and runs
+its unchanged original checker against the measured source. It verifies 1,334
+manifest entries, 2,588 source blobs, 793 source SHA-256 values and current plus
+original Git tracking. Its [actual local PASS](qualification/public-readiness-cleanup.json)
+retains all false current/public/native/activation claims. Only the present CLI
+dispatch changes; the original checker functions stay byte-identical.
 
 The remaining large archive candidates identified by this inventory total
-909,310,260 bytes. Their current consumers prevent immediate deletion:
+495,715,505 bytes in 100 large files. Their exact historical readers and
+retained small records must be qualified before current copies are removed:
 
 | Candidate | Files / bytes | Existing obligation |
 | --- | ---: | --- |
-| Public-readiness pre-correction payloads | 885 / 413,594,755 | Preserve exact historical file sets and execution of the original checker |
 | Work-security hosted-cost containers | 32 / 180,351,232 | Verify the exact archive roster, shard order and internal manifests |
 | Historical CI SQLite snapshots | 8 / 176,597,049 | Preserve compressed/uncompressed hashes and immutable readback; no Node recovery |
 | Complete-work original containers | 60 / 138,767,224 | Preserve FILE_INDEX, CAPTURE_INDEX and all archive member checks |
@@ -163,7 +188,10 @@ The current PQ corpus pins 1,177 evidence files totaling 183,286,178 bytes acros
 specific evidence with `include_str!`. A historical-object resolver must preserve
 those readers' exact contracts before their current-tree inputs can be removed.
 The audit checked Git object existence/type/size for the candidate set; complete
-new SHA-256 archive manifests have only been made for the four completed sets.
+new SHA-256 archive manifests have been made for the five completed sets. The
+remaining candidate objects have also been compared against their actual Git
+blobs and SHA-256 values, but that read-only inventory alone does not authorize
+a weaker reader or deletion of a required retained record.
 
 ## Retirement decision
 

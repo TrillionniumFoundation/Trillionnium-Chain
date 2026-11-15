@@ -187,6 +187,7 @@
     "checker": "scripts/ci/check_pq_triage_archive.py",
     "failed_step": "Verify removed preparation files and retained failures",
     "failure": "Three exact stderr copies existed locally but were excluded from the committed tree by the existing log ignore rule. The strict archive checker failed at the first missing file.",
+    "fixed_commit": "79fc1d4c970f8ecb414f011605e0a6fbcf7332e8",
     "introduced_by_this_migration": true,
     "job_conclusion": "failure",
     "job_id": 132895885512,
@@ -215,10 +216,39 @@
     ],
     "new_crypto_and_platform_steps_executed": false,
     "observed_at": "2026-11-15T17:34:55.693969+00:00",
+    "passing_workflow_run": 43741974022,
     "repair": "Explicitly track the three unchanged original files. Preserve the checker and original archive index.",
-    "rerun_result": "pending",
+    "rerun_result": "PASS",
     "source_commit": "3861f5cf17f1bd354bd232df4643f4f1212d1800",
     "workflow_run": 43741641815
+  },
+  "third_candidate_native_ci": {
+    "all_four_original_rust_oracles_executed": true,
+    "artifact_id": 14173162454,
+    "artifact_zip_sha256": "8d944c61e612430e773f81f9455baf8e62b03f0d835102a09d47d30df3cc04ad",
+    "job_id": 132896898272,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1117,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 34915,
+        "outcome": "returned"
+      }
+    ],
+    "platform_report_sha256": "286ddfe1c5e60374da5a5c24dd11a84e84557abb420425da2002b3f71aeb11e3",
+    "production_activation": false,
+    "report_sha256": "455227380fb51e4e7b8bcd253d718e06d547f6bcd42a5052aa9f0a589d462c23",
+    "skipped": 0,
+    "source_commit": "79fc1d4c970f8ecb414f011605e0a6fbcf7332e8",
+    "source_set_sha256": "4f459ede08ad14419e57eeef1c0fcb6b27dd7b89954da47cfd34e14904c24a17",
+    "status": "PASS",
+    "tests": 126,
+    "whole_chain_native": false,
+    "workflow_run": 43741974022
   },
   "whole_chain_native": false
 }

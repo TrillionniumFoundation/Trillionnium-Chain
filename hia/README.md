@@ -1,9 +1,10 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **20
-native source units**; the 26 existing Rust packages remain until their complete
-replacement is qualified. The authoritative sequence remains the
+one complete HIA-native implementation. The current candidate contains **21
+kernel units and three native foundations**, accounting for all **29 HIA source
+files**. The 26 existing Rust packages remain until their complete replacement
+is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 [The migration inventory](../config/hia-migration-v1.json) accounts for every
 original package and every new HIA source file.
@@ -41,6 +42,7 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [PNH1](src/protocol/pnh1.hepta), [PGH2](src/protocol/pgh2.hepta) | Fixed header grammar and original error order | Original independent header oracle and byte mutations |
 | [ILF2](src/protocol/ilf2.hepta), [ILF3](src/protocol/ilf3.hepta) | Complete bounded factor/evolution witness grammar | Original vectors, every coefficient position, truncation and error precedence |
 | [PNX1](src/protocol/pnx1.hepta) | Complete current envelope grammar, all 24 tags, funded contracts and nested witness validation | Independent byte specification, refusal precedence and original-Rust CI |
+| [Sparse state root](src/protocol/state_root.hepta) | Original 256-level sparse root, exact domain framing, bounded heapsort and duplicate-path refusal | Independent bottom-up oracle, 65,536 actual rows, arena reuse and original-Rust CI adapter |
 | [SHA-256](src/crypto/sha256.hepta) | Hash inputs through 1 MiB | Known vectors, `hashlib`, padding, real unaligned pointers and canaries |
 | [SHA arena](src/crypto/sha256_arena.hepta) | One shared mutable arena for W1 hash input/output/work | Exact ranges, maximum length and no-write refusal |
 | [SHA-512](src/crypto/sha512_arena.hepta) | Full SHA-512 and shared arena helper for Ed25519 | Independent hash oracle, padding, large messages, real unaligned pointers and canaries |
@@ -54,7 +56,14 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [Checkpoint V2](src/checkpoint/value_v2.hepta) | Canonical value construction/decoding, watermark, SHA binding and successor relation | Every record byte, truncation, field/error identity, full-width counters and original-Rust CI |
 
 The [cryptography guide](CRYPTO.md) specifies the SHA-512 and Ed25519 ABIs,
-error order, arithmetic bounds and remaining key-ownership limitations.
+error order, arithmetic bounds and remaining key-ownership limitations. The
+[state-root guide](STATE.md) defines the byte descriptor, scratch extent and
+complete count/key/value limits. Its actual 65,536-row execution matched the
+independent oracle in 353.568397442 seconds. That run used small keys/values;
+simultaneously maximal rows and values were not executed. The original service
+time budget remains open. [Development observations](qualification/state-root-development.json)
+retain the rejected over-capacity compiler optimization, the maximum-count run
+and later controls with their distinct source and driver bindings.
 
 The byte entries use `f0(readbuf, mutbuf, mutbuf) -> u32`. The scalar field
 module uses explicit scalar exports. All tested algorithms execute emitted
@@ -105,12 +114,16 @@ timeout or missing report remains an execution failure.
 ### Shared HIA source
 
 [components.json](components.json) explicitly selects five functions from the
-single `sha256_arena.hepta` source for the PoN hash, W1 and checkpoint components.
+single `sha256_arena.hepta` source for the PoN hash, W1, checkpoint, state-root
+and storage-owner components.
 PNX1 explicitly includes the shared ILF2/ILF3 validators and coefficient scans. Their
 entry files therefore require package composition before admission. The driver
 checks each included source, joins only the named HIA functions and submits the
 complete program to the official Core verifier and native compiler. It refuses
 unknown names, duplicate symbols, traversal, symlinks and recursive includes.
+Sources are restricted to the explicit `src/`, `platform/` and `storage/` roots.
+The separate migration inventory rejects any unaccounted HIA source, duplicate
+owner, missing source or premature foundation-retirement claim.
 Receipts bind every input, the composed assembly and the resulting Core. There
 is no second copied SHA helper in the W1 or PoN source files.
 
@@ -120,7 +133,9 @@ The first test adapter directly imports the retained `trnm-transport` and
 `closed_round` modules. Three additional adapters link the unchanged original
 `trnm-protocol`, `trnm-checkpoint-types` and `trnm-crypto-primitives` crates with
 their locked dependencies.
-These adapters do not reimplement the policies they compare.
+The protocol adapter compares both PNX1 and the original
+`state_root_from_entries` function. These adapters do not reimplement the
+policies they compare.
 
 ```bash
 rustc --edition=2021 -O hia/tests/rust_reference.rs -o /absolute/new/path/rust-reference
@@ -219,18 +234,28 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
-The second published candidate `1dfc9669172acbae4276b4fd941f2d426480f8e8`
-passed the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43737855981):
-97 tests, 34,297 actual shared-runner native calls, no failures and no skips.
-Original Rust replay/round, PNX1 and checkpoint comparisons compiled and ran;
-17 original Rust unit tests also passed. The retained
-[CI report](qualification/native-ci.json) binds that exact source set
-(`2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675`).
-The downloaded artifact `14170997975` had ZIP SHA-256
-`33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36`;
-the report's SHA-256 is `9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92`.
-Later crypto/platform components require their own source-bound observations;
-this earlier result is not their qualification.
+The third published candidate `79fc1d4c970f8ecb414f011605e0a6fbcf7332e8`
+passed the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43741974022):
+126 tests, 36,032 actual shared-runner native calls, no failures and no skips.
+All four original Rust adapters compiled and ran, including actual Ed25519
+signing/strict-verification comparison; 17 original Rust unit tests also passed.
+The retained [CI report](qualification/native-ci.json) binds that exact source
+set (`4f459ede08ad14419e57eeef1c0fcb6b27dd7b89954da47cfd34e14904c24a17`).
+The downloaded artifact `14173162454` had ZIP SHA-256
+`8d944c61e612430e773f81f9455baf8e62b03f0d835102a09d47d30df3cc04ad`;
+the report's SHA-256 is `455227380fb51e4e7b8bcd253d718e06d547f6bcd42a5052aa9f0a589d462c23`.
+The [platform report](qualification/native-platform-ci.json) retains 25 finite
+controls, the actual blocking-call hard-deadline failure and unavailable ptrace.
+The first publication of that batch failed because three retained stderr logs
+were ignored during staging. Their original bytes were explicitly tracked and
+the unchanged archive gate then passed; both observations are preserved.
+
+The current state-root, reactor and storage-owner additions are later work.
+Their local source-bound reports do not inherit the previous CI result. The
+workflow now independently requires all historical/source gates and the native
+components, including the complete state-root count case and all four Rust
+oracles. Historical source checking runs in a separate job from native execution.
+No original service time budget is increased by that separation.
 
 ## Tree cleanup and remaining integration
 
@@ -255,7 +280,15 @@ The [PQ triage index](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_T
 removes four large streams (189,121,668 bytes) from one historical capture and
 retains its other 29 records byte-for-byte. Its checker verifies every one of
 1,050 original stored hashes, 147 gzip bindings and 543 followup bindings.
-All four sets therefore remove 638 payload copies / 719,000,859 original bytes;
+The [public-readiness index](../evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json)
+removes 885 pre-correction payloads (413,594,755 bytes). Its reader reconstructs
+the exact historical view and executes the original checker against its actual
+measured source, verifying all 1,334 manifest entries, 793 source SHA-256 values
+and 2,588 original source blobs. Current and historical tracking are checked;
+no network retrieval substitutes for missing objects. [The retained observation](qualification/public-readiness-cleanup.json)
+records the successful original semantic gate without promoting historical
+engineering results to current native or public readiness.
+All five sets remove **1,523 payload copies / 1,132,595,614 original bytes**;
 new metadata, code and retained receipts make the net tree reduction smaller.
 No original startup UNKNOWN, failure, or qualification HOLD is rewritten.
 
@@ -276,14 +309,28 @@ and [artifact publication boundary](https://github.com/TrillionniumFoundation/He
 define that distinction. The compiler cold gate did not execute every specialized
 file application gate and gives no socket, SQLite or node-lifecycle guarantee.
 
-The [native Linux platform fixture](platform/README.md) separately demonstrates
-HIA policy plus an HIA-written ELF/relative-call emitter executing real file,
-sync, loopback TCP, epoll, clock and random-byte operations. It is a qualification
-fixture with a closed command ABI, not a complete native node or durable owner.
-Its actual refusal and stop outcomes are retained. A blocking syscall can still
-prevent a policy-level deadline check until the syscall returns; this limitation
-remains open even when the ordinary finite controls pass. Ptrace availability
-and actual syscall traces are reported separately from observed I/O outcomes.
+The three native foundations have separate contracts and qualification:
+
+| Foundation | Native behavior | Remaining integration |
+| --- | --- | --- |
+| [Linux OS fixture](platform/README.md) | Real file publication, fsync, loopback TCP, epoll, clock and random operations through an HIA-emitted adapter | Finite fixture; its blocking-call deadline failure remains |
+| [Stream reactor](platform/reactor/README.md) | Connected FIFO/stream capabilities, generations, readiness, absolute deadline, partial-progress cursors and cancellation with explicit caller entrypoints | Node framing, admission, ownership and full transport integration; regular-file/fsync deadlines are outside its admitted descriptor class |
+| [Transaction owner](storage/README.md) | Private directory FD, process lock, immutable hash-linked transactions, atomic HEAD, fsync, reopen validation and exact payload readback | Typed Node reducers, replay/outbox/reorg, original initialization recovery, external anti-rollback witness, complete payload/lifetime limits and service qualification |
+
+The reactor and transaction owner are actual native implementations generated
+through the pinned HIA compiler. The literal ISA adapters remain separately
+trusted boundaries; Core verifies their HIA emitters rather than proving every
+emitted syscall effect. Hosted builders and independent test oracles are
+explicitly retained. The storage profile currently accepts 16 MiB per atomic
+payload and 4,096 retained commits; those bounds do not cover the original full
+State or a long-lived node. A missing COMMIT ACK never proves rollback: the
+caller must reopen and compare HEAD, including after a durable commit whose
+ACK encountered EPIPE.
+
+```bash
+python3 -B hia/tools/qualify_platform.py --reactor --output /absolute/new/path/reactor-results
+python3 -B hia/tools/qualify_storage.py --output /absolute/new/path/storage-results
+```
 
 The next integration obligations are general system I/O and capabilities,
 durable storage/recovery, complete PQ identity and transport, whole node/model

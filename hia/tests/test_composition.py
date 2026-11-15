@@ -102,6 +102,41 @@ class CompositionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assemble_program(wire)
 
+    def test_native_owner_roots_use_the_same_explicit_composition(self):
+        from hepta.hia_agent_assembly import assemble_program
+        for prefix in ("platform", "storage"):
+            with self.subTest(prefix=prefix):
+                (self.root / prefix).mkdir()
+                entry = self.root / prefix / "entry.hepta"
+                entry.write_bytes(ENTRY)
+                self.manifest["includes"][prefix + "/entry.hepta"] = [
+                    {"source": "src/dependency.hepta", "functions": ["helper"]}]
+                self.save()
+                wire, inputs = toolchain.compose_source(entry)
+                checked = assemble_program(wire)
+                self.assertEqual([fn["name"] for fn in checked.as_dict()["functions"]], ["f0", "helper"])
+                self.assertEqual(inputs[0][0], entry)
+                self.assertEqual(inputs[-1][0], self.root / "src/dependency.hepta")
+
+    def test_source_roots_do_not_admit_other_directories_or_types(self):
+        for prefix in ("qualification", "tests", "tools", "src_other", "storage_other", "platform_other"):
+            (self.root / prefix).mkdir()
+            (self.root / prefix / "dependency.hepta").write_bytes(GOOD)
+            with self.subTest(prefix=prefix), self.assertRaises(ValueError):
+                toolchain._source_path(prefix + "/dependency.hepta")
+        for value in (None, 1, [], {}, "storage/../src/dependency.hepta", "platform//entry.hepta"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                toolchain._source_path(value)
+
+    def test_native_owner_roots_keep_component_and_parent_symlink_refusal(self):
+        (self.root / "storage").mkdir()
+        (self.root / "storage/alias.hepta").symlink_to(self.root / "src/dependency.hepta")
+        with self.assertRaises(ValueError):
+            toolchain._source_path("storage/alias.hepta")
+        (self.root / "platform").symlink_to(self.root / "src", target_is_directory=True)
+        with self.assertRaises(ValueError):
+            toolchain._source_path("platform/dependency.hepta")
+
 
 if __name__ == "__main__":
     unittest.main()
