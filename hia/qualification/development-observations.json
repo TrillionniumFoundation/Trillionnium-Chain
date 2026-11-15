@@ -31,6 +31,18 @@
       "operation": "Published 893210a repository-truth source inventory",
       "result": "Both head and prospective-merge jobs refused a distributed source inventory missing config/hia-migration-v1.json",
       "resolution": "Compared the exact baseline and candidate trees: baseline1745 entries matched; first migration added one config path. Ran the unchanged original refresh_distributed_source_inventory.py to add its seven-line include and passed the original --check; no checker or scan scope was changed."
+    },
+    {
+      "operation": "Original PQ corpus check after the first and second HIA migration commits",
+      "result": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md; complete 2613-pin readback also identified the generated distributed_source_inventory.rs change",
+      "introduced_by_this_migration": true,
+      "first_plan_drift_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+      "first_generated_inventory_drift_commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "resolution": "Followed the existing sole-plan/source-inventory reconciliation procedure: refreshed only the two exact current blob pins; all 2611 other pins and every research-only/HOLD/false acceptance field remain identical. The unchanged checker succeeds as a source-consistency check while retaining status HOLD_NO_GO. Its original negative suite and exact committed CI remain required.",
+      "native_pq_acceptance_granted": false,
+      "acceptance_check_or_budget_changed": false,
+      "original_negative_suite_tests_passed": 113,
+      "source_consistency_receipt": "pq-source-consistency.json"
     }
   ],
   "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
@@ -145,5 +157,31 @@
     "existing_gap": true,
     "cause": "unknown_expiration_or_deletion",
     "substitute_supplied": false
-  }
+  },
+  "native_ci_observations": [
+    {
+      "commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+      "run_id": 43735956757,
+      "tests": 72,
+      "shared_runner_native_calls": 21593,
+      "skips": 0,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "run_id": 43737855981,
+      "job_id": 132884320405,
+      "artifact_id": 14170997975,
+      "artifact_zip_sha256": "33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36",
+      "report_sha256": "9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92",
+      "source_set_sha256": "2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675",
+      "tests": 97,
+      "shared_runner_native_calls": 34297,
+      "skips": 0,
+      "failures": 0,
+      "result": "PASS",
+      "later_crypto_and_platform_changes_qualified_by_this_run": false
+    }
+  ]
 }

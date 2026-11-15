@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **17
+one complete HIA-native implementation. The current candidate contains **20
 native source units**; the 26 existing Rust packages remain until their complete
 replacement is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -43,6 +43,8 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [PNX1](src/protocol/pnx1.hepta) | Complete current envelope grammar, all 24 tags, funded contracts and nested witness validation | Independent byte specification, refusal precedence and original-Rust CI |
 | [SHA-256](src/crypto/sha256.hepta) | Hash inputs through 1 MiB | Known vectors, `hashlib`, padding, real unaligned pointers and canaries |
 | [SHA arena](src/crypto/sha256_arena.hepta) | One shared mutable arena for W1 hash input/output/work | Exact ranges, maximum length and no-write refusal |
+| [SHA-512](src/crypto/sha512_arena.hepta) | Full SHA-512 and shared arena helper for Ed25519 | Independent hash oracle, padding, large messages, real unaligned pointers and canaries |
+| [Ed25519 group](src/crypto/ed25519_group.hepta), [strict verifier](src/crypto/ed25519_verify.hepta) | Public field/group operations and strict signature verification through 128 KiB messages | Big-integer arithmetic, RFC vectors, all torsion/scalar boundaries and original-Rust CI |
 | [PoN hash](src/crypto/pon_hash.hepta) | Original tag and per-part length framing | Original wire oracle, task/noise/header domains and ambiguous concatenations |
 | [W1 encoding](src/work/encoding.hepta) | Fixed PNW1 size, magic and all canonical field words | All matrix rows and boundary words |
 | [W1 field](src/work/field.hepta), [matrix](src/work/matrix.hepta) | Exact modular multiplication, addition, denoising and bounded matrices | Independent arbitrary-precision arithmetic, maximum values and dense products |
@@ -50,6 +52,9 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [Replay](src/transport/replay.hepta) | Session/nonce/pending checks, ACK and pure successor proposals | Two native backends, original boundary vectors and Rust-reference CI |
 | [Closed round](src/verification/closed_round.hepta) | Exact evaluator policy over canonical UTF-8 containers | Full-width scores, all arrival orders, Unicode, 1 MiB and Rust-reference CI |
 | [Checkpoint V2](src/checkpoint/value_v2.hepta) | Canonical value construction/decoding, watermark, SHA binding and successor relation | Every record byte, truncation, field/error identity, full-width counters and original-Rust CI |
+
+The [cryptography guide](CRYPTO.md) specifies the SHA-512 and Ed25519 ABIs,
+error order, arithmetic bounds and remaining key-ownership limitations.
 
 The byte entries use `f0(readbuf, mutbuf, mutbuf) -> u32`. The scalar field
 module uses explicit scalar exports. All tested algorithms execute emitted
@@ -112,8 +117,9 @@ is no second copied SHA helper in the W1 or PoN source files.
 ### Original Rust differential
 
 The first test adapter directly imports the retained `trnm-transport` and
-`closed_round` modules. Two additional adapters link the unchanged original
-`trnm-protocol` and `trnm-checkpoint-types` crates with their locked dependencies.
+`closed_round` modules. Three additional adapters link the unchanged original
+`trnm-protocol`, `trnm-checkpoint-types` and `trnm-crypto-primitives` crates with
+their locked dependencies.
 These adapters do not reimplement the policies they compare.
 
 ```bash
@@ -121,21 +127,26 @@ rustc --edition=2021 -O hia/tests/rust_reference.rs -o /absolute/new/path/rust-r
 export TRNM_HIA_RUST_REFERENCE=/absolute/new/path/rust-reference
 RUST_VALUE_TARGET=/absolute/new/path/rust-values
 cargo build --locked --manifest-path trillionnium/Cargo.toml \
-  -p trnm-protocol -p trnm-checkpoint-types --target-dir "$RUST_VALUE_TARGET"
+  -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives \
+  --target-dir "$RUST_VALUE_TARGET"
 rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs \
   --extern trnm_protocol="$RUST_VALUE_TARGET/debug/libtrnm_protocol.rlib" \
   -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-protocol
 rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs \
   --extern trnm_checkpoint_types="$RUST_VALUE_TARGET/debug/libtrnm_checkpoint_types.rlib" \
   -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-checkpoint
+rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs \
+  --extern trnm_crypto_primitives="$RUST_VALUE_TARGET/debug/libtrnm_crypto_primitives.rlib" \
+  -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-crypto
 export TRNM_HIA_RUST_PROTOCOL_REFERENCE=/absolute/new/path/rust-protocol
 export TRNM_HIA_RUST_CHECKPOINT_REFERENCE=/absolute/new/path/rust-checkpoint
+export TRNM_HIA_RUST_CRYPTO_REFERENCE=/absolute/new/path/rust-crypto
 python3 -B hia/tools/qualify.py --require-rust-oracle \
   --output /absolute/new/path/native-and-rust-results.json
 ```
 
 Without a corresponding environment variable, the local report explicitly
-records that original Rust differential as not run. CI requires all three, compiles the actual
+records that original Rust differential as not run. CI requires all four, compiles the actual
 original modules and preserves the exact head's observations. The fixed
 `SourceOk` in the test fixture only exposes pure transport boundaries; source
 authentication is an independent integration obligation.
@@ -208,13 +219,18 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
-The first published candidate `893210a45b44742edfe2510fea1d92e9974b5f95` also passed
-the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43735956757):
-72 tests, 21,593 actual native calls, no failures and no skips, including original
-Rust replay/round comparisons and 17 original Rust unit tests. The retained
-[CI report](qualification/native-ci.json) binds that exact tested source set.
-Later components must obtain their own differential results; this earlier run
-does not qualify later source changes.
+The second published candidate `1dfc9669172acbae4276b4fd941f2d426480f8e8`
+passed the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43737855981):
+97 tests, 34,297 actual shared-runner native calls, no failures and no skips.
+Original Rust replay/round, PNX1 and checkpoint comparisons compiled and ran;
+17 original Rust unit tests also passed. The retained
+[CI report](qualification/native-ci.json) binds that exact source set
+(`2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675`).
+The downloaded artifact `14170997975` had ZIP SHA-256
+`33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36`;
+the report's SHA-256 is `9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92`.
+Later crypto/platform components require their own source-bound observations;
+this earlier result is not their qualification.
 
 ## Tree cleanup and remaining integration
 
@@ -232,6 +248,17 @@ original seal and all HOLD/FAIL counts. Both cleanup sets remove 621 current-tre
 copies totaling 403,944,723 original bytes; metadata and validation additions
 make the net reduction smaller.
 
+The [joint-resource index](../evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json)
+removes another 13 archive copies (125,934,468 bytes), while checking all 74
+original checksums and the complete original archive-member denominator.
+The [PQ triage index](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json)
+removes four large streams (189,121,668 bytes) from one historical capture and
+retains its other 29 records byte-for-byte. Its checker verifies every one of
+1,050 original stored hashes, 147 gzip bindings and 543 followup bindings.
+All four sets therefore remove 638 payload copies / 719,000,859 original bytes;
+new metadata, code and retained receipts make the net tree reduction smaller.
+No original startup UNKNOWN, failure, or qualification HOLD is rewritten.
+
 ```bash
 python3 scripts/ci/check_historical_archive.py --manifest \
   evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
@@ -248,6 +275,15 @@ The locked [opcode catalog](https://github.com/TrillionniumFoundation/Hepta/blob
 and [artifact publication boundary](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/docs/HIA_ARTIFACT_PUBLICATION_NATIVE.md)
 define that distinction. The compiler cold gate did not execute every specialized
 file application gate and gives no socket, SQLite or node-lifecycle guarantee.
+
+The [native Linux platform fixture](platform/README.md) separately demonstrates
+HIA policy plus an HIA-written ELF/relative-call emitter executing real file,
+sync, loopback TCP, epoll, clock and random-byte operations. It is a qualification
+fixture with a closed command ABI, not a complete native node or durable owner.
+Its actual refusal and stop outcomes are retained. A blocking syscall can still
+prevent a policy-level deadline check until the syscall returns; this limitation
+remains open even when the ordinary finite controls pass. Ptrace availability
+and actual syscall traces are reported separately from observed I/O outcomes.
 
 The next integration obligations are general system I/O and capabilities,
 durable storage/recovery, complete PQ identity and transport, whole node/model

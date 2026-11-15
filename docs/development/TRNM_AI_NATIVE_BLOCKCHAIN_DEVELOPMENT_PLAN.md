@@ -7,21 +7,26 @@ remain explicitly accounted for in the [HIA migration inventory](../../config/hi
 The [native source and reproduction guide](../../hia/README.md) describes the
 actual code and local ABIs. This section extends the sole development plan.
 
-Seventeen HIA source units now implement exact protocol grammars, SHA-256 and PoN
+Twenty HIA source units now implement exact protocol grammars, SHA-256 and PoN
 hash framing, W1 field/matrix operations and the complete non-cancelling W1
 relation, pure replay transitions, bounded UTF-8 evaluator-round decisions,
 the complete current 24-tag PNX1 envelope grammar, and checkpoint V2 canonical
-values, watermarks and successor checks.
+values, watermarks and successor checks. Three additional crypto units implement
+SHA-512, canonical Edwards25519 field/group arithmetic, and strict public
+signature verification. Their exact bounded interfaces and private-key/PQ
+limitations are in [the crypto guide](../../hia/CRYPTO.md).
 Native code is emitted by the fixed Hepta self-hosted compiler at `f33d8da3`;
 its original 180-second cold gate passed in 154.807339324 seconds. That compiler
 qualification remains separate from whole-Chain service qualification.
 
-The first published native candidate `893210a45b44742edfe2510fea1d92e9974b5f95`
-passed [native CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43735956757):
-72 tests, 21,593 actual native calls, no skips/failures, including original-Rust
-replay/round differentials. Each subsequent component needs a new source-bound
-qualification. The PNX1 and checkpoint adapters link the unchanged original
-protocol/checkpoint crates with the original Cargo lockfile for those comparisons.
+The second published native candidate `1dfc9669172acbae4276b4fd941f2d426480f8e8`
+passed [native CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43737855981):
+97 tests, 34,297 actual shared-runner native calls, no skips/failures, including
+original Rust replay/round, PNX1 and checkpoint differentials. The unchanged
+original protocol/checkpoint crates and Cargo lockfile supplied the latter
+oracles. New crypto tests also link the unchanged original crypto crate for
+actual signing and strict-verification comparison; later source changes require
+their own qualification rather than inheriting the earlier result.
 
 Proceed from these native kernels to explicit system I/O/capability support,
 the single durable node owner and recovery cuts, PQ identity/transport, full
@@ -32,17 +37,51 @@ Adopt/NoUpdate evidence throughout. Each migrated package needs its full native
 integration and original acceptance evidence before retirement. The existing
 work-cost, STARK/QROM and consensus-economic obligations remain open.
 
+The next implementation sequence follows actual Node dependencies. The Node
+directly owns a `rusqlite::Connection` in `Node.db` (implemented in `store.rs`)
+for branch/replay/outbox state. It borrows `TransactionScope` for SQLite operation
+observations; the optional `OwnedConnection` wrapper is not its durable owner.
+The Node does not depend on checkpoint-types/store.
+Porting the latter service alone cannot replace the live Node owner. Establish
+an explicit HIA-generated native platform ABI with bounded buffers, fd generation
+and directory capabilities, readiness-driven I/O, cancellation and recovery
+controls. Compose HIA policy objects and an HIA-emitted adapter using the pinned
+HIA static ELF linker; do not add an unqualified host-language node as a bridge.
+The single durable HIA owner then needs the complete atomic branch/replay/outbox
+contract, crash-cut replay, and sync-before-ack behavior. Any new storage schema
+must use a fresh namespace; deployed stores and keys remain outside this scope.
+Private signing-key ownership/zeroization and complete PQ algorithms remain
+separate from the now implemented public Ed25519 verifier. Extend bounded or
+streaming interfaces to the original complete payload limits before claiming
+transport or whole-package equivalence. Preserve each original acceptance and
+error boundary, then retire its source only after complete native integration.
+
+The separately retained [Linux platform fixture](../../hia/platform/README.md)
+uses actual HIA policy and HIA ELF emission for filesystem, fsync, TCP loopback,
+epoll, monotonic clock and randomness observations. Its closed command ABI is
+an implementation starting point, not the final generalized owner. Preserve
+its real blocked-syscall deadline limitation and unavailable-trace observations;
+a policy clock comparison after return is not a hard I/O deadline. Do not infer
+full system, durability, rollback or capability qualification from these probes.
+
 The first cleanup removes 607 checkout-repair preparation files, with exact
 Git-object/SHA-256 recovery and original failure summaries retained in the
 [historical archive index](../../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json).
 The second cleanup removes 14 original CI ZIP copies (275,505,994 bytes) through
 an exact [sealed historical index](../../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json).
 Its reader still verifies all 810 original checksums and the unchanged seal and
-HOLD counts. Combined removed payloads total 621 paths and 403,944,723 bytes.
+HOLD counts. Further exact historical readers remove 13 joint-resource archive
+copies and four large PQ triage streams, retaining all original checksum, gzip,
+followup and failure bindings. The latter capture retains its other 29 records
+byte-for-byte. Combined removed payloads total 638 copies and 719,000,859 bytes.
 The [audit](../../hia/AUDIT.md) records all 26 package owners, remaining archive
 consumers and actual original-CI failures. The missing distributed inventory
 entry introduced by the new migration config was regenerated with the original
-tool; original service deadline failures and unavailable historical artifacts
+tool. The plan and generated inventory also require their two precise current
+PQ corpus blob pins to be refreshed under the existing source-consistency
+procedure; every other pin and all false/HOLD acceptance fields are preserved,
+and the unchanged checker and its negative tests remain mandatory. The original
+stale-pin failures are retained separately. Original service deadline failures and unavailable historical artifacts
 retain their own failure identities.
 No legacy runtime package has yet been retired. New native CI executes pinned
 bootstrap, whole-program admission, raw machine-code cases and original-Rust

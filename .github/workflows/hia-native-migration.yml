@@ -57,6 +57,12 @@ jobs:
           python3 scripts/ci/check_historical_archive.py --manifest evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
           python3 -m unittest discover -s scripts/ci -p 'test_sealed_ci_archive.py' -v
           python3 scripts/ci/check_sealed_ci_archive.py --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json
+          python3 -m unittest discover -s scripts/ci -p 'test_joint_resource_archive.py' -v
+          python3 scripts/ci/check_joint_resource_archive.py --manifest evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json
+          python3 -m unittest discover -s scripts/ci -p 'test_pq_triage_archive.py' -v
+          python3 scripts/ci/check_pq_triage_archive.py --manifest evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json
+          python3 scripts/ci/check_pq_research_integration.py
+          python3 -m unittest discover -s scripts/ci -p 'test_pq_research_integration.py' -v
           python3 scripts/refresh_distributed_source_inventory.py --check
           python3 scripts/ci/check_repository.py
       - name: Bootstrap and self-reproduce the native HIA compiler
@@ -71,6 +77,10 @@ jobs:
               out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
               out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
+      - name: Execute finite native Linux controls and retain open owner gates
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify_platform.py --output "$RUNNER_TEMP/hia-platform"
       - name: Compile the original Rust reference policies
         run: |
           set -euo pipefail
@@ -78,12 +88,14 @@ jobs:
           rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
           rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
           "$RUNNER_TEMP/trnm-rust-original-tests"
-          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types --target-dir "$RUNNER_TEMP/original-rust-values"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives --target-dir "$RUNNER_TEMP/original-rust-values"
           rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs --extern trnm_protocol="$RUNNER_TEMP/original-rust-values/debug/libtrnm_protocol.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-protocol"
           rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs --extern trnm_checkpoint_types="$RUNNER_TEMP/original-rust-values/debug/libtrnm_checkpoint_types.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-checkpoint"
+          rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs --extern trnm_crypto_primitives="$RUNNER_TEMP/original-rust-values/debug/libtrnm_crypto_primitives.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-crypto"
           printf 'TRNM_HIA_RUST_REFERENCE=%s/trnm-hia-rust-reference\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_PROTOCOL_REFERENCE=%s/trnm-rust-protocol\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Execute native HIA and independent reference cases
         run: python3 -B hia/tools/qualify.py --require-rust-oracle --output "$RUNNER_TEMP/hia-observations/qualification.json"
       - name: Verify candidate sources remained unchanged
@@ -97,5 +109,6 @@ jobs:
           path: |
             ${{ runner.temp }}/hia-observations/
             ${{ runner.temp }}/hia-bootstrap/bootstrap.json
+            ${{ runner.temp }}/hia-platform/
           if-no-files-found: error
           retention-days: 30

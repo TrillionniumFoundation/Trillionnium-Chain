@@ -17,7 +17,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
-                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE")
+                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE")
 
 
 def digest(raw):
@@ -29,11 +29,13 @@ def sources():
     paths += sorted((ROOT / "hia/tools").glob("*.py"))
     paths += sorted((ROOT / "hia/tests").glob("*.py"))
     paths += sorted((ROOT / "hia/tests").glob("*.rs"))
+    paths += sorted((ROOT / "hia/platform").glob("*.py"))
+    paths += [ROOT / "hia/platform/abi.json", ROOT / "hia/platform/README.md"]
     paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
-    for name in ("trnm-protocol", "trnm-checkpoint-types"):
+    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths.append(crate / "Cargo.toml")

@@ -188,6 +188,38 @@
         "hia/tests/test_checkpoint.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "crypto/sha512_arena",
+      "source": "hia/src/crypto/sha512_arena.hepta",
+      "scope": "SHA-512 single-arena hashing for up to 131168 bytes",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sha512.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/ed25519_group",
+      "source": "hia/src/crypto/ed25519_group.hepta",
+      "scope": "Canonical field and extended Edwards group arithmetic with full 256-bit public scalars",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ed25519.py",
+        "hia/tests/test_ed25519_adversarial.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/ed25519_verify",
+      "source": "hia/src/crypto/ed25519_verify.hepta",
+      "scope": "Strict public Ed25519 verification for messages at most 128 KiB; canonical and weak-point policy from original crypto crate",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ed25519.py",
+        "hia/tests/test_ed25519_adversarial.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -357,7 +389,10 @@
         "work/matrix",
         "work/verify",
         "crypto/sha256",
-        "crypto/sha256_arena"
+        "crypto/sha256_arena",
+        "crypto/sha512_arena",
+        "crypto/ed25519_group",
+        "crypto/ed25519_verify"
       ],
       "retirement_accepted": false
     },

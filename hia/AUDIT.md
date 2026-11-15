@@ -9,10 +9,10 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Seventeen HIA source units currently
+**The full replacement is incomplete.** Twenty HIA source units currently
 implement tested deterministic boundaries; no whole original package has an
 accepted retirement witness. There is no complete HIA node executable, durable
-node owner, native network stack or native identity/signature stack in this
+node owner, native network stack or complete native identity/signing stack in this
 candidate. The nine integration/qualification gates remain open.
 
 ## Baseline inventory
@@ -58,7 +58,7 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-release-bundle](../trillionnium/crates/trnm-release-bundle) | M15 | Unported | Build/SBOM/provenance contracts independent of consensus. |
 | [trnm-checkpoint-store](../trillionnium/crates/trnm-checkpoint-store) | M03 | Unported | Independent exact CAS and durable Unix service; generalized owner frontier only. |
 | [trnm-checkpoint-types](../trillionnium/crates/trnm-checkpoint-types) | M03 | Partial: `checkpoint/value_v2` | Extract canonical checkpoint/CAS record; remove safety-vote and validator types. |
-| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
+| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
 | [trnm-verification-profiles](../trillionnium/crates/trnm-verification-profiles) | M11 | Partial: `verification/closed_round` | Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority. |
 | [trnm-transport](../trillionnium/crates/trnm-transport) | M04 | Partial: `transport/replay` | Extract generation-bound authenticated frame admission; delete pacemaker and node scaffold. |
 | [trnm-audit-events](../trillionnium/crates/trnm-audit-events) | M17 | Unported | Normalized local audit event data; no consensus or durable owner. |
@@ -84,22 +84,36 @@ owner, network readiness, clock/randomness/stop handling and separate native
 fault/recovery qualification. A byte buffer containing a descriptor number or a
 caller-supplied “authorized” boolean cannot provide those capabilities.
 
+A separate [Linux platform fixture](platform/README.md) now demonstrates a path
+through the fixed compiler: HIA emits a native adapter around compiled HIA
+policy, and the resulting static ELF performs real filesystem and loopback
+network operations. This does not require an invented foreign-call opcode.
+The fixture leaves fd-generation ownership, directory capability scope,
+readiness-driven hard deadlines and complete durable transactions open; the
+blocking-call deadline limitation is retained as an observed failure.
+The real Node directly owns `rusqlite::Connection` in `Node.db`, implemented
+in `store.rs`. `TransactionScope` records SQLite operation boundaries; the
+optional `OwnedConnection` wrapper is not that owner. Replacing checkpoint
+values alone cannot retire this branch/replay/outbox store.
+
 The fixed source evidence is linked in [the native guide](README.md). No
 specialized filesystem, socket, cryptographic or full-node qualification is
 inferred from the compiler fixed point.
 
 ## Observed integration failures
 
-The first candidate `893210a45b44742edfe2510fea1d92e9974b5f95` passed the new
-HIA workflow: 72 tests, 21,593 native calls, no skips or failures. Its original
-Rust replay and round references actually compiled and ran. That result applies
-to that source set; later components require new CI observations.
+The second candidate `1dfc9669172acbae4276b4fd941f2d426480f8e8` passed the new
+HIA workflow: 97 tests, 34,297 shared-runner native calls, no skips or failures.
+Its original Rust replay, round, PNX1 and checkpoint references actually compiled
+and ran. [The exact report](qualification/native-ci.json) applies to that source
+set; later crypto/platform components require new CI observations.
 
 The complete original CI also exposed these distinct outcomes:
 
 | Finding | Classification and action |
 | --- | --- |
 | Distributed source inventory omitted `config/hia-migration-v1.json` | Introduced by the migration. Baseline had exactly 1,745 matching entries; candidate required 1,746. The unchanged original generator now adds the missing include and its original check passes. |
+| PQ source corpus retains stale plan and generated-inventory blob pins | Introduced by the first and second migration commits, respectively. Only those two current-source bindings were refreshed under the existing reconciliation procedure; all other 2,611 pins and all 1,177 evidence pins match. The unchanged checker succeeds with status HOLD_NO_GO, and all 113 original negative tests pass. This repairs source consistency and grants no native PQ acceptance. |
 | Historical artifact `11531476198`, run `37730166589`, is unavailable | Existing retained evidence gap. The current download job found zero matching artifacts. No new sample substitutes for the missing original. |
 | W1 original/fresh and arm64 pressure confirmation miss the original deadline | Actual service failure. All seven honest submission ACKs were observed, but independent native history replay reached the four-second deadline before six-depth confirmation. The three pressure outcomes remain 0/1. |
 | Main baseline arm64 service gate already failed | Confirmed from run `43729710156`, job `132859243865`; only its outer controller was inspected, so its detailed cause is not asserted to equal the current deadline diagnosis. |
@@ -113,31 +127,35 @@ and native unit tests do not turn a failed business confirmation into a pass.
 
 ## Cleanup result and limits
 
-The current tree removes 607 obsolete checkout-repair files and 14 historical CI
-ZIPs, totaling 403,944,723 original bytes. Both sets remain recoverable by exact
-historical Git object with original SHA-256/size bindings. This is cleanup of
-current-tree copies, not an erasure or rewrite of Git history.
+The current tree removes 607 obsolete checkout-repair files, 14 sealed CI ZIPs,
+13 joint-resource archives and four large PQ triage streams: 638 removed payload
+copies totaling 719,000,859 original bytes. All remain recoverable by exact
+historical Git object with original SHA-256/size bindings. The PQ capture's other
+29 smaller records remain as byte-identical current copies in its retained
+directory. This is cleanup of current-tree copies, not a rewrite of Git history.
 
 - [Checkout preparation archive](../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json)
 - [Sealed CI ZIP archive](../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json)
+- [Joint-resource archive](../evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json)
+- [PQ triage capture](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json)
 
-The latter reader still checks all 810 original checksum entries and the exact
+The sealed reader still checks all 810 original checksum entries and the exact
 original seal, source observations and HOLD/FAIL counts. Missing or changed
 retained files fail; they are not silently skipped or fetched from arbitrary
-sources. Current tests, authoritative source ownership and necessary historical
-counterexamples remain. Other evidence packages require their own consumer and
-seal audit before removal.
+sources. The joint-resource reader preserves all 74 original checksums, 13
+sidecars and the 4,052-member denominator. The PQ reader preserves all 1,050
+original stored hashes, 147 gzip byte bindings and 543 followup bindings,
+including the original startup UNKNOWN, red/green receipts and HOLD. Current
+tests, authoritative ownership and historical counterexamples remain.
 
 The remaining large archive candidates identified by this inventory total
-1,224,366,396 bytes. Their current consumers prevent immediate deletion:
+909,310,260 bytes. Their current consumers prevent immediate deletion:
 
 | Candidate | Files / bytes | Existing obligation |
 | --- | ---: | --- |
 | Public-readiness pre-correction payloads | 885 / 413,594,755 | Preserve exact historical file sets and execution of the original checker |
-| PQ authority hosted triage large payloads | 4 / 189,121,668 | Preserve artifact-index/compression mappings and original startup UNKNOWN |
 | Work-security hosted-cost containers | 32 / 180,351,232 | Verify the exact archive roster, shard order and internal manifests |
 | Historical CI SQLite snapshots | 8 / 176,597,049 | Preserve compressed/uncompressed hashes and immutable readback; no Node recovery |
-| Joint resource contract archives | 13 / 125,934,468 | Preserve all artifact/checksum inventories and original HOLD/NO-GO |
 | Complete-work original containers | 60 / 138,767,224 | Preserve FILE_INDEX, CAPTURE_INDEX and all archive member checks |
 
 The current PQ corpus pins 1,177 evidence files totaling 183,286,178 bytes across
@@ -145,7 +163,7 @@ The current PQ corpus pins 1,177 evidence files totaling 183,286,178 bytes acros
 specific evidence with `include_str!`. A historical-object resolver must preserve
 those readers' exact contracts before their current-tree inputs can be removed.
 The audit checked Git object existence/type/size for the candidate set; complete
-new SHA-256 archive manifests have only been made for the two completed sets.
+new SHA-256 archive manifests have only been made for the four completed sets.
 
 ## Retirement decision
 

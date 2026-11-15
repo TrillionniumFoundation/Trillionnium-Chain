@@ -15,7 +15,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/crypto/sha256_arena.hepta",
@@ -56,7 +56,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/crypto/sha256_arena.hepta",
@@ -108,7 +108,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
@@ -145,7 +145,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
@@ -192,7 +192,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff",
@@ -229,7 +229,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
@@ -266,7 +266,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/crypto/sha256_arena.hepta",
@@ -294,6 +294,226 @@
       "source": "hia/src/crypto/pon_hash.hepta"
     },
     {
+      "artifact_sha256": "c5762e00efa4c742dd9d9024f80ad5a6769ce1ed56d1b2aa75268eb689afa649",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972",
+        "core_sha256": "bf6488c88d7a31f437411f19b2a846a8bcd5240481b111f1de817f687e9afbb6",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/ed25519_group.hepta",
+            "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          }
+        ],
+        "source_sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "c7351b14118f715ccf1ed6a12b696801f6fb3e1843fae21e469f439cbd1f3bb3",
+      "source": "hia/src/crypto/ed25519_group.hepta"
+    },
+    {
+      "artifact_sha256": "ec157167db447aeb0495af062fb1d705fde88732eb8a7c149ffae37d8345e890",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "40cb00127f90d65b7df0ed3945848ec5bb0f5fd645a9e91c0450a1295078f09c",
+        "core_sha256": "400c7fed372208a0c4cd89b317086b0bbd10cbca12b8ae99912b0be02ff3952e",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/ed25519_verify.hepta",
+            "sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          },
+          {
+            "path": "src/crypto/ed25519_group.hepta",
+            "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+          },
+          {
+            "path": "src/crypto/sha512_arena.hepta",
+            "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+          }
+        ],
+        "source_sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "ddfc6e53653ef09c0cb414ab1d727c76cb6d52ab92b1f000ebbf7b333199a99b",
+      "source": "hia/src/crypto/ed25519_verify.hepta"
+    },
+    {
+      "artifact_sha256": "9a50cb9d087a82ff984b705310c771a795eb90160c3a73824552a1f1e0c6bef5",
+      "chain_migration": {
+        "backend": "direct",
+        "composed_source_sha256": "40cb00127f90d65b7df0ed3945848ec5bb0f5fd645a9e91c0450a1295078f09c",
+        "core_sha256": "400c7fed372208a0c4cd89b317086b0bbd10cbca12b8ae99912b0be02ff3952e",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/ed25519_verify.hepta",
+            "sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          },
+          {
+            "path": "src/crypto/ed25519_group.hepta",
+            "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+          },
+          {
+            "path": "src/crypto/sha512_arena.hepta",
+            "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+          }
+        ],
+        "source_sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "assembler_used": false,
+        "backend_refinement_proved": false,
+        "c_codegen_used": false,
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "foreign_buffer_entrypoints_exposed": true,
+        "llvm_codegen_used": false,
+        "llvm_ir_used": false,
+        "native_execution_qualified": false,
+        "rust_codegen_used": false,
+        "rust_reference_required": false,
+        "self_hosted": false,
+        "source_ast_required": false,
+        "standalone_core_reverified": true,
+        "whole_language_soundness_proved": false
+      },
+      "compiler_sha256": null,
+      "exports": [
+        "f0",
+        "sha512_rotr64"
+      ],
+      "object_sha256": "6b5930b3f3a2689d44c0b8d9a06cdc13bbd2e6540932cf39804894773b301734",
+      "source": "hia/src/crypto/ed25519_verify.hepta"
+    },
+    {
+      "artifact_sha256": "c5762e00efa4c742dd9d9024f80ad5a6769ce1ed56d1b2aa75268eb689afa649",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972",
+        "core_sha256": "bf6488c88d7a31f437411f19b2a846a8bcd5240481b111f1de817f687e9afbb6",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/ed25519_group.hepta",
+            "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          }
+        ],
+        "source_sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "c7351b14118f715ccf1ed6a12b696801f6fb3e1843fae21e469f439cbd1f3bb3",
+      "source": "hia/src/crypto/ed25519_group.hepta"
+    },
+    {
+      "artifact_sha256": "ec157167db447aeb0495af062fb1d705fde88732eb8a7c149ffae37d8345e890",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "40cb00127f90d65b7df0ed3945848ec5bb0f5fd645a9e91c0450a1295078f09c",
+        "core_sha256": "400c7fed372208a0c4cd89b317086b0bbd10cbca12b8ae99912b0be02ff3952e",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/ed25519_verify.hepta",
+            "sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          },
+          {
+            "path": "src/crypto/ed25519_group.hepta",
+            "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+          },
+          {
+            "path": "src/crypto/sha512_arena.hepta",
+            "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+          }
+        ],
+        "source_sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "ddfc6e53653ef09c0cb414ab1d727c76cb6d52ab92b1f000ebbf7b333199a99b",
+      "source": "hia/src/crypto/ed25519_verify.hepta"
+    },
+    {
       "artifact_sha256": "3ee05d417474cb0564cab48fdbb176e7db228f928962aed9a884dd5c2e94491d",
       "chain_migration": {
         "backend": "selfhost",
@@ -307,7 +527,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/protocol/ilf2.hepta",
@@ -352,7 +572,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/protocol/ilf2.hepta",
@@ -397,7 +617,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d",
@@ -434,7 +654,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758",
@@ -471,7 +691,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "4e31ec23d9d13fbc92f15569c87065dbfccd7ed7240203c2a6786c59d3f1c38b",
@@ -508,7 +728,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "9289d6a8b50fee4ace4385a320ae72541f78df3d3a82fee4dec6b4fce9a4c5e2",
@@ -545,7 +765,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "49ce3b638a5a3377547542712c50ef8e77350b791584e22be434879f65a08727",
@@ -582,7 +802,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "2fcd0b8a53ab356731e029f1772a61a579132c753fa9c6cc5a4409d232c6d26b",
@@ -619,7 +839,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
@@ -656,7 +876,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
@@ -690,6 +910,43 @@
       "source": "hia/src/transport/replay.hepta"
     },
     {
+      "artifact_sha256": "758b6c44da9c9aedeb0679034b0395739195876088b8d6afaad4d0210083c443",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777",
+        "core_sha256": "a590b28499ea86a9318b0a12e852b86476a6e438c95139d8ee4e80b385134522",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/sha512_arena.hepta",
+            "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
+          }
+        ],
+        "source_sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "be846ef66525f8ce0f393c14d215950853bc9c93bfea6d140c28cdb186faa5c7",
+      "source": "hia/src/crypto/sha512_arena.hepta"
+    },
+    {
       "artifact_sha256": "8493818d5adaa3972318521be572dacd458c9396473ed9bda6b040622226fb13",
       "chain_migration": {
         "backend": "selfhost",
@@ -703,7 +960,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           },
           {
             "path": "src/crypto/sha256_arena.hepta",
@@ -744,7 +1001,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "3bdb4aed27533722483d2d5476d0db676e5645ca0499c74a3246dbd464a2cd88",
@@ -781,7 +1038,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "228f0941ee389bb29de14ee6d36f28cec36ced5f55e74bfbeb9e773abc3ce941",
@@ -821,7 +1078,7 @@
           },
           {
             "path": "components.json",
-            "sha256": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3"
+            "sha256": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa"
           }
         ],
         "source_sha256": "3819ac9ba452f4a1d8a88d71a4a5acb0d036dfc0e661ef4a10470c1b5019e610",
@@ -848,16 +1105,16 @@
   "native_calls_through_shared_runner": [
     {
       "backend": "direct",
-      "count": 1106,
+      "count": 1117,
       "outcome": "returned"
     },
     {
       "backend": "selfhost",
-      "count": 28770,
+      "count": 30339,
       "outcome": "returned"
     }
   ],
-  "observed_at": "2026-11-15T16:43:35.395400+00:00",
+  "observed_at": "2026-11-15T17:08:09.215765+00:00",
   "old_stack_can_be_removed": false,
   "production_activation": false,
   "retained_compiler_binding_sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636",
@@ -865,21 +1122,24 @@
   "rust_reference": null,
   "schema": "trnm.hia.native-qualification.v1",
   "selfhost_compiler_matches_cold_qualified_image": true,
-  "source_commit_observed": "893210a45b44742edfe2510fea1d92e9974b5f95",
+  "source_commit_observed": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
   "source_inputs": {
-    ".github/workflows/hia-native-migration.yml": "6370fbdc648e7faa170705e604a02d276e9d008823fa6b3ba28aab75b3b6982a",
+    ".github/workflows/hia-native-migration.yml": "b085b5e19c4de15e406817927cedee24f5ee388d882225b08d3136ab0bc321db",
     "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
     "formal/pon-nakamoto-v1/vectors/header-short.bin": "e55f9ea7142e25ced369034404ec6497b1c6b669119808a1961fbd04f45ad55f",
     "formal/pon-nakamoto-v1/vectors/header-trailing.bin": "ac95ac689a744fe82a0b288667fc63069bd5e5ca0bab5489e9bfa187b61acc6e",
     "formal/pon-nakamoto-v1/vectors/header-version.bin": "20326f4dbe84c995dbe17f5586ceed9824a4cb8621f292e8d42a65bf3b1a5ec1",
     "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
     "formal/pon-nakamoto-v1/vectors/model-evolution-v5.json": "c572fea49b7ea4c1beee64623c499fe2565ab462bfe431747aeaea0dc27db1e5",
-    "hia/components.json": "8ab2ba865a2dab9cc70d3e2307ffcac07887d442441d076d6594df45dbd5acb3",
+    "hia/components.json": "9654ad80726adecde7de91ed7a52e04585b9e9eaff56540922b56ed60da55eaa",
     "hia/qualification/compiler-binding.json": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636",
     "hia/src/checkpoint/value_v2.hepta": "b9da5875c99f8388886aca7cf1f6f8b3ae337da065e6210211ca096d0e79701e",
+    "hia/src/crypto/ed25519_group.hepta": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972",
+    "hia/src/crypto/ed25519_verify.hepta": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200",
     "hia/src/crypto/pon_hash.hepta": "1812a7c38d5ef049eb84e43a8b23f7cd83dcec3c087fc19274e63c0e415d2f7d",
     "hia/src/crypto/sha256.hepta": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff",
     "hia/src/crypto/sha256_arena.hepta": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+    "hia/src/crypto/sha512_arena.hepta": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777",
     "hia/src/protocol/hash.hepta": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758",
     "hia/src/protocol/id.hepta": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d",
     "hia/src/protocol/ilf2.hepta": "49ce3b638a5a3377547542712c50ef8e77350b791584e22be434879f65a08727",
@@ -896,31 +1156,79 @@
     "hia/tests/__init__.py": "ee993341b42b684a9bdfb9df86302b0c52c39b7350aed8d10270c9106a804c30",
     "hia/tests/native_support.py": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4",
     "hia/tests/rust_checkpoint_reference.rs": "5af12025f238cfd92ebd478048cef7c8890d6014de911918cf3cacf3e1657203",
+    "hia/tests/rust_crypto_reference.rs": "c38b709625c5efab3cb3a8b75442f2983d4417d72e998bdd62f3b1f996cb4145",
     "hia/tests/rust_protocol_reference.rs": "412b358b1f53de311cc5ae62e80dfec07bdc9fd96ac86d56aeb56becdcb5d557",
     "hia/tests/rust_reference.rs": "93c3bd28a5e46597aab5790ccd41fdb5adb81b26de7a9fa8b8b30de7e2cd2fef",
     "hia/tests/test_checkpoint.py": "e5633df08625ff6c3cfc48403cdc99e15d10912957f6b2c15c99d809891d63ee",
     "hia/tests/test_closed_round.py": "945571dd971c66aa8aaf1441967c29f2823a8f8c6cb1a9cd54774b8c0e08e149",
     "hia/tests/test_composition.py": "eaae23af81c93629de58e78c9cd3c669d410f84be008ff07ecc64a56b66556d8",
     "hia/tests/test_crypto.py": "51cd3023ea274ff29dd1d2139e1eeb5fa38e074318117cdea554394eab8a0859",
+    "hia/tests/test_ed25519.py": "99c8c436f163faf99a3c24eaebddd5270604a8dcc83208bd23732b28709ef875",
+    "hia/tests/test_ed25519_adversarial.py": "cd72977f436e1ea0f3b822a50dd86b2cafcb48ad5ff1e28bf80fd373695ef344",
     "hia/tests/test_pnx1.py": "4d6c506e9808a1000c50c356a4eac1ca3f774e41ec7ac05f4b107cf0a43a8469",
     "hia/tests/test_pnx1_adversarial.py": "839965b29dbc4302e941406015ae456ab690b2019c442fa7eaddd8d1a8b3e45e",
     "hia/tests/test_protocol.py": "ce9b6a4b773f06546d6871c70c7e399d2a8632bb4ef891f2e91371f5711df1ff",
     "hia/tests/test_replay.py": "174c7778ae358b342da0fe3bc1907cb3fe7ca2ac1f06414ebc9f33601e16135d",
     "hia/tests/test_rust_differential.py": "ef64e74a1f8192f1515f4371193e37839b8b2319a7355a706b844fc2fddf396a",
+    "hia/tests/test_sha512.py": "2c4c9fba72b539935d6da0e473f2fc6222f4464bde2889875d6071aaf821fc34",
     "hia/tests/test_verifier.py": "9b029cb8a5610093d4f18e4e3e4668043255076961ef2b65203d8427a59335d2",
     "hia/tests/test_work.py": "30adde9a94f6abb71ca56a4ad4be2e00aa99bc8d065b0e41f217a97e73add171",
     "hia/toolchain.lock.json": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71",
     "hia/tools/bootstrap.py": "75fded24aa81a9b421bfdacaabe9942bf4208c674060bae2bdeec32d9417d437",
     "hia/tools/build.py": "c5a11c7d3edc528479c4f6e5069685f07297bef28f54c431ca221f90b669b7c4",
     "hia/tools/check_migration.py": "e5bc51c80f753f7b4b34958766e294c7cd0192daaf04b32e2309c69788d13ff1",
-    "hia/tools/qualify.py": "268e16bc570dc6fea39a1783e6e0e21f49fa5330c434967284cfb6ea17e27552",
+    "hia/tools/qualify.py": "905ababc62420e515fdd5ff4a7564738b71afbd556ee308a4d9bb966cf8441fd",
     "hia/tools/toolchain.py": "98bf6bf2d33a0569af2ab584f9dc19edaab2884e949dde5f777a84ac1300741d",
     "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "trillionnium/crates/trnm-checkpoint-types/Cargo.toml": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15",
     "trillionnium/crates/trnm-checkpoint-types/src/lib.rs": "68fb5b973d4a10ce436aea58171c9ac779affef9dca56157a4fbb32db2dbdd3d",
     "trillionnium/crates/trnm-checkpoint-types/src/record.rs": "591a253e098517a43bcd0215f1507e0ba1be1047b59948bdada371cb0458804c",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
+    "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": "7763bd52066366b0f30c9b4bc314ae713fbcf9063abd651c48c5c495cdfcad29",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs": "e9416457ee3df24cf5446ebffde6d7748a8eeff8f0f46e77b6ad9555e0ef6b0a",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "cb3d908e1a88e599d6f17b7678271cf9e93fe8b8dc973be30ff031abcc140b96",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "2fecf9fc65b9d3557f1cd92e7da3132ddd66e1d014c6d6b6497f35bfc1e06022",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs": "368a78996346f5e5005ba64da42cd85a4f906c25e2ae1bdc45f5e79d2b111a2e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs": "f94910f4eefc7be98c0741a48140d59d3a638f4613fdc1e7d0f6f5137c3fca73",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/profile_boundary_tests.rs": "0a5a6950d30d998ea3f89e8698d3aae64dd1c0126fc5435a57c9ee57942f5dd5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/tests.rs": "b96ec0d04833d8c69faeb958a6ddb4c0b7881bfae92035d3ba739f095d8b7ac7",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f",
     "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
     "trillionnium/crates/trnm-protocol/src/content_commitment.rs": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1",
     "trillionnium/crates/trnm-protocol/src/content_commitment/tests.rs": "8ed765a896ea89891c921b216f4a5dd7c3ee89b8f4eb1a5b6b9e1d7e5eec5fe6",
@@ -952,17 +1260,21 @@
     "trillionnium/crates/trnm-transport/src/proof_admission.rs": "0b1e848c410be79e6cacf297099757de42e7d21ac92d7e11c4ccfcf3b60e81e3",
     "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs": "472c2da36fc475c0a7e02f256e1e3ea932ac20a5062755e79613eb7f77aac730"
   },
-  "source_set_sha256": "8f17589814d17d8c4a4ac2185a5ae626bd8eb128a741f3539f7d53d5375fdddb",
+  "source_set_sha256": "0b908094195d8afb11ce56d8e8e352681cee4624bf23428d1adf74328430c623",
   "source_unchanged_during_tests": true,
   "status": "PASS_WITH_SKIPS",
   "tests": {
     "errors": [],
     "failures": [],
-    "run": 90,
+    "run": 113,
     "skipped": [
       [
         "test_original_rust_crate_differential_if_configured (hia.tests.test_checkpoint.CheckpointValueNativeTests.test_original_rust_crate_differential_if_configured)",
         "NOT_RUN: TRNM_HIA_RUST_CHECKPOINT_REFERENCE is not configured; the original Rust checkpoint value differential has not executed"
+      ],
+      [
+        "test_original_rust_crate_differential_and_original_signing (hia.tests.test_ed25519.Ed25519NativeTests.test_original_rust_crate_differential_and_original_signing)",
+        "Original Rust crypto oracle is explicitly absent locally; required by CI"
       ],
       [
         "setUpClass (hia.tests.test_pnx1.Pnx1RustDifferentialTests)",
@@ -975,7 +1287,7 @@
     ]
   },
   "upstream_cold_gate_executed_in_this_run": false,
-  "wall_seconds": 64.01753589500004,
+  "wall_seconds": 147.48653798399937,
   "whole_chain_native": false,
   "working_tree_dirty": true
 }
