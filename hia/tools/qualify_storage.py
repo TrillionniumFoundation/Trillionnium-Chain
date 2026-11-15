@@ -20,6 +20,13 @@ import subprocess
 import time
 import traceback
 
+# Direct script execution must not depend on an ambient PYTHONPATH.
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from hia.platform.build import new_output, sealed_executable, write_json
 from hia.storage.build import Build, digest
 

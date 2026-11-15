@@ -94,8 +94,8 @@
         "sha256": "8c4a4d8f7ec21a6d9b8a309902b5cdc34a0a5ff94ff110c46d61d4428dd0ee36"
       },
       "storage/build.py": {
-        "bytes": 8738,
-        "sha256": "206342c71898e772c02f6f2571c6c4ff62dd55b32e80348deae40863a68e9dd8"
+        "bytes": 8926,
+        "sha256": "c394587dbaf69cf15c834babf65c88900cccfd828d9611cae248565a5a881ff4"
       },
       "storage/linux_adapter_emitter.hepta": {
         "bytes": 37259,
@@ -110,16 +110,16 @@
         "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
       },
       "tests/test_storage_native.py": {
-        "bytes": 3255,
-        "sha256": "a0f2156ecdd9cf7d49228999bd2de279ea823ee244947329924fac11ba4ad5fa"
+        "bytes": 4245,
+        "sha256": "fbc0c7c783cfe828b596123f7626e64dd6b54f57a5927e2ff31b57c71d5e34ba"
       },
       "toolchain.lock.json": {
         "bytes": 221,
         "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
       },
       "tools/qualify_storage.py": {
-        "bytes": 34457,
-        "sha256": "1f8e440ca53a0c536166985e68440ec9c706491a38be3c456500e8359f05e5cb"
+        "bytes": 34645,
+        "sha256": "db48b50b0b3900cc5bdc0ec58eedfecc7f17443f39325d759610f10200508824"
       },
       "tools/toolchain.py": {
         "bytes": 12896,
@@ -133,8 +133,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-fifo-fixed/build/compile-policy",
-        "end_monotonic_ns": 16396453598491,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/compile-policy",
+        "end_monotonic_ns": 17035438265773,
         "environment": {
           "PATH": ""
         },
@@ -146,7 +146,7 @@
         "output_bytes": 256725,
         "output_sha256": "6929533a91b36cc6d7bb24a022360db17ae6eabb69b2232e096b97a0550f60e6",
         "stage": "compile-policy",
-        "start_monotonic_ns": 16396157135052,
+        "start_monotonic_ns": 17035178879017,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -158,8 +158,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-fifo-fixed/build/compile-emitter",
-        "end_monotonic_ns": 16396513414050,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/compile-emitter",
+        "end_monotonic_ns": 17035496215819,
         "environment": {
           "PATH": ""
         },
@@ -171,7 +171,7 @@
         "output_bytes": 46303,
         "output_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
         "stage": "compile-emitter",
-        "start_monotonic_ns": 16396455663917,
+        "start_monotonic_ns": 17035440636277,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -183,8 +183,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-fifo-fixed/build/emit-storage-elf",
-        "end_monotonic_ns": 16396519052601,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/emit-storage-elf",
+        "end_monotonic_ns": 17035501115411,
         "environment": {
           "PATH": ""
         },
@@ -196,7 +196,7 @@
         "output_bytes": 257922,
         "output_sha256": "efe038da0f9a2cb94b187472634ea973375cc1b300806628dabd4c765bb1a26e",
         "stage": "emit-storage-elf",
-        "start_monotonic_ns": 16396516194898,
+        "start_monotonic_ns": 17035498456961,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -214,10 +214,14 @@
     "whole_node_replaced": false
   },
   "complete_receipts": {
+    "ci_import_failure_report": {
+      "path": "/workspace/scratch/dfc64d0acfc2/storage-cli-import-regression/report.json",
+      "sha256": "891bca244787706dbc4ce0a3a6af60682d4248fdebef2f2bf03ab87f03f4a4b3"
+    },
     "location": "external scratch; full raw inputs/outputs/process and build transcripts retained",
     "native_entry_report": {
-      "path": "/workspace/scratch/dfc64d0acfc2/storage-abi-fifo-fixed/report.json",
-      "sha256": "057c874b65eba06ed440d94f66a23bb8847b9e5b7029931047cf6cff14dd017f"
+      "path": "/workspace/scratch/dfc64d0acfc2/storage-abi-clean-cli/report.json",
+      "sha256": "60374f94438bc5ec735905be3e5df618fab44c20188379e44a5b107fd545a89e"
     },
     "prior_44_report": {
       "path": "/workspace/scratch/dfc64d0acfc2/storage-qualification-final44/report.json",
@@ -227,9 +231,13 @@
       "path": "/workspace/scratch/dfc64d0acfc2/storage-fifo-pre-fix/report.json",
       "sha256": "021d34797dd45c2eeab977f29253d04ee43b61f40ebcb5ee2f7110a0b51a9242"
     },
-    "storage_qualification_report": {
+    "prior_fifo_fixed_48_report": {
       "path": "/workspace/scratch/dfc64d0acfc2/storage-qualification-fifo-fixed/report.json",
       "sha256": "0244c314f69a19c920f1b65a1c54dbdb87528e9476619ac22b893c515f1bf736"
+    },
+    "storage_qualification_report": {
+      "path": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/report.json",
+      "sha256": "2a5192c249cd6df480b2fa9c37569044679395836094e18ad4596dc8e9e0b07a"
     }
   },
   "controls": [
@@ -286,7 +294,7 @@
       "case": "sigkill-stage-10",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467015568664,
+        "observed_monotonic_ns": 17104730595045,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 10
@@ -301,7 +309,7 @@
       "case": "sigkill-stage-11",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467175994855,
+        "observed_monotonic_ns": 17104896516425,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 11
@@ -316,7 +324,7 @@
       "case": "sigkill-stage-12",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467340166149,
+        "observed_monotonic_ns": 17105071465833,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 12
@@ -331,7 +339,7 @@
       "case": "sigkill-stage-13",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467503304574,
+        "observed_monotonic_ns": 17105227527379,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 13
@@ -346,7 +354,7 @@
       "case": "sigkill-stage-14",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467665714403,
+        "observed_monotonic_ns": 17105396839180,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 14
@@ -361,7 +369,7 @@
       "case": "sigkill-stage-15",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467826235099,
+        "observed_monotonic_ns": 17105556955995,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 15
@@ -376,7 +384,7 @@
       "case": "sigkill-stage-16",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16467985242973,
+        "observed_monotonic_ns": 17105713239811,
         "positive_partial_results": 0,
         "sequence": 2,
         "tag": 16
@@ -391,7 +399,7 @@
       "case": "initialization-sigkill-1",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16468103774478,
+        "observed_monotonic_ns": 17105824147990,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 1
@@ -404,7 +412,7 @@
       "case": "initialization-sigkill-2",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16468114040058,
+        "observed_monotonic_ns": 17105830981982,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 2
@@ -417,7 +425,7 @@
       "case": "initialization-sigkill-3",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16468121047951,
+        "observed_monotonic_ns": 17105838740796,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 3
@@ -430,7 +438,7 @@
       "case": "initialization-sigkill-4",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16468130533284,
+        "observed_monotonic_ns": 17105847012921,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 4
@@ -443,7 +451,7 @@
       "case": "initialization-sigkill-20",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 16468137095767,
+        "observed_monotonic_ns": 17105851930850,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 20
@@ -640,10 +648,11 @@
       "bad shape leaves all argument bytes unchanged",
       "ABI status zero",
       "bad shape HIA return code 64",
-      "all five existing file open branches issue O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC read-only"
+      "all five existing file open branches issue O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC read-only",
+      "both absolute scripts start from fresh cwd without PYTHONPATH or PYTHONHOME"
     ],
     "command": [
-      "python",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
       "-B",
       "-m",
       "unittest",
@@ -655,14 +664,18 @@
     "native_open_command_cases": 5,
     "native_shape_cases": 9,
     "pure_command_contracts_are_not_syscall_trace": true,
+    "pythonhome_absent": true,
+    "pythonpath_absent": true,
     "returncode": 0,
     "schema": "trnm.hia.storage-abi-contracts.v1",
     "source_inputs_match_build": true,
     "source_inputs_stable": true,
+    "standalone_help_commands": 2,
     "status": "PASS",
-    "stderr": "test_native_policy_rejects_all_bad_buffer_shapes_before_effects (hia.tests.test_storage_native.StorageNativeTests.test_native_policy_rejects_all_bad_buffer_shapes_before_effects) ... ok\ntest_native_required_file_open_commands_are_nonblocking (hia.tests.test_storage_native.StorageNativeTests.test_native_required_file_open_commands_are_nonblocking) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 2.093s\n\nOK\n",
-    "stderr_sha256": "5f34727055f99c3401f76be26f1c3423b535a891975d917c9a984591e9dbc6aa",
-    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    "stderr": "test_absolute_scripts_start_without_import_environment (hia.tests.test_storage_native.StorageCliTests.test_absolute_scripts_start_without_import_environment) ... ok\ntest_native_policy_rejects_all_bad_buffer_shapes_before_effects (hia.tests.test_storage_native.StorageNativeTests.test_native_policy_rejects_all_bad_buffer_shapes_before_effects) ... ok\ntest_native_required_file_open_commands_are_nonblocking (hia.tests.test_storage_native.StorageNativeTests.test_native_required_file_open_commands_are_nonblocking) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 2.177s\n\nOK\n",
+    "stderr_sha256": "9ed74d7c710f654dee02b40ebe3f54404c13738a5bcdeefc1e721a17c58b2b15",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unittest_methods": 3
   },
   "not_qualified": [
     "physical power loss",
@@ -819,6 +832,32 @@
   "schema": "trnm.hia.storage-qualification.v1",
   "scope": "bounded generic transaction payload StoreOwner; not typed Node integration",
   "source_inputs_stable": true,
+  "standalone_cli_import_regression": {
+    "command": "python3 -B hia/tools/qualify_storage.py",
+    "earlier_platform_or_reactor_pass_is_not_storage_qualification": true,
+    "error": "ModuleNotFoundError: No module named 'hia'",
+    "failure_class": "CLI_IMPORT",
+    "job_id": 132909793199,
+    "log_path": "/workspace/scratch/dfc64d0acfc2/publication4-failed-native-job.log",
+    "log_sha256": "537c4ca45ae07887b1e94dca43ee6ba292e8e556ad0e64354570ce6f3dc0b12f",
+    "prior_development_report_sha256": "14e212af80f4fe8c68423609e34b44f973f495e96b5e1a44558fa69920566f8a",
+    "run_id": 43746152828,
+    "schema": "trnm.hia.storage-ci-startup-failure.v1",
+    "source_commit": "739aef3966f8896c161a0cd870fe404726b87c55",
+    "source_tree": "ecfa2a709a435044e038986eaf7fb1b18b5689f7",
+    "status": "FAIL",
+    "storage_native_status": "NOT_RUN"
+  },
+  "standalone_cli_repair_replay": {
+    "absolute_script_fresh_cwd_help_controls": 2,
+    "command": "env -u PYTHONPATH -u PYTHONHOME python3 -B hia/tools/qualify_storage.py --output /workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli",
+    "native_os_controls": 48,
+    "pythonhome_absent": true,
+    "pythonpath_absent": true,
+    "same_native_elf_as_before_import_fix": true,
+    "scope": "actual local clean-environment direct-script execution; repaired GitHub CI not yet claimed",
+    "status": "PASS"
+  },
   "status": "PASS",
   "syscall_trace": {
     "cleanup": null,

@@ -1,10 +1,30 @@
 """Real native StoreOwner qualification; absence of a compiler is explicit."""
 import os
+from pathlib import Path
 import struct
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from hia.storage.build import HIA
 from hia.tests.native_support import NativeModule
+
+
+class StorageCliTests(unittest.TestCase):
+    def test_absolute_scripts_start_without_import_environment(self):
+        environment = os.environ.copy()
+        environment.pop("PYTHONPATH", None)
+        environment.pop("PYTHONHOME", None)
+        with tempfile.TemporaryDirectory(prefix="trnm-storage-cli-cwd-") as directory:
+            for relative in ("tools/qualify_storage.py", "storage/build.py"):
+                with self.subTest(script=relative):
+                    script = (HIA / relative).resolve(strict=True)
+                    result = subprocess.run([sys.executable, "-B", str(script), "--help"],
+                                            cwd=Path(directory), env=environment,
+                                            text=True, capture_output=True, timeout=10)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn("usage:", result.stdout)
 
 
 class StorageNativeTests(unittest.TestCase):

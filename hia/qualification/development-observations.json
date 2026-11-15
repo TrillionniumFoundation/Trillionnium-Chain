@@ -44,6 +44,43 @@
       "source_consistency_receipt": "pq-source-consistency.json"
     }
   ],
+  "fourth_candidate_storage_cli_failure": {
+    "artifact_bytes": 1352023,
+    "artifact_id": 14174811521,
+    "artifact_zip_sha256": "7702e1f7c9db8dceddbf80f2838e3988cee5e284f17d50b53f0ef73f826fc84b",
+    "candidate": "739aef3966f8896c161a0cd870fe404726b87c55",
+    "cause": "The two documented storage direct-script entrypoints imported the hia namespace without adding their repository root; ambient local Python path had masked the startup error.",
+    "command": "python3 -B hia/tools/qualify_storage.py --output \"$RUNNER_TEMP/hia-storage\"",
+    "decoded_log_sha256": "537c4ca45ae07887b1e94dca43ee6ba292e8e556ad0e64354570ce6f3dc0b12f",
+    "failure": "ModuleNotFoundError: No module named hia",
+    "job": "native-components",
+    "job_id": 132909793199,
+    "later_rust_and_kernel_steps_in_this_ci": "NOT_RUN",
+    "native_algorithm_changed": false,
+    "prior_steps": {
+      "finite_os_controls": {
+        "passed": 25,
+        "required": 25,
+        "syscall_trace": "CAPTURED"
+      },
+      "stream_reactor": {
+        "native_synthetic_contracts_passed": 13,
+        "native_synthetic_contracts_required": 13,
+        "passed": 49,
+        "required": 49,
+        "syscall_trace": "CAPTURED"
+      }
+    },
+    "production_activation": false,
+    "repair": "Bind each direct-script entrypoint to its repository root before hia imports; regression launches both absolute paths from a fresh directory after removing PYTHONPATH/PYTHONHOME.",
+    "resolution": "Exact-head CI pending for the repaired candidate.",
+    "run_id": 43746152828,
+    "service_budgets_changed": false,
+    "status": "FAIL",
+    "step": "Execute native transaction owner and crash recovery controls",
+    "storage_native_controls_in_this_ci": "NOT_RUN",
+    "tree": "ecfa2a709a435044e038986eaf7fb1b18b5689f7"
+  },
   "historical_artifact_retrieval": {
     "artifact_id": 11531476198,
     "cause": "unknown_expiration_or_deletion",

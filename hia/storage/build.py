@@ -14,6 +14,13 @@ import platform
 import re
 import subprocess
 
+# Direct script execution must not depend on an ambient PYTHONPATH.
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from hia.platform.build import inspect_executable, new_output, require_success, run_native, write_json
 
 HIA = Path(__file__).resolve().parents[1]
