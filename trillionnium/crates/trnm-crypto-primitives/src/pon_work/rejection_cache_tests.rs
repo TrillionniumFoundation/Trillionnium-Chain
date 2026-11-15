@@ -177,7 +177,7 @@ fn complete_key_expiry_collision_and_restart_keep_current_native_verification() 
         assert!(actual.native_verifier_started && actual.native_verifier_returned);
     }
 
-    // One direct-mapped slot has really been replaced. Its prior key gets no
+    // The one-slot cache has really been replaced. Its prior key gets no
     // retained verdict; restoring the original proof incurs a complete replay.
     assert_ne!(cache.slots.lock().unwrap()[0].unwrap().key, key);
     let (_, evicted, tiles) = call(&cache, challenge, task, target, &proof, None);
@@ -256,4 +256,289 @@ fn cheap_statement_refusal_records_native_outcome_without_cache_work() {
         assert_eq!(observation.publication, RejectionPublication::None);
         assert_eq!(tiles, 0);
     }
+}
+
+fn cache_test_key(selector: u64, identity: u8) -> Hash {
+    let mut key = [0; 32];
+    key[..8].copy_from_slice(&selector.to_le_bytes());
+    key[31] = identity;
+    key
+}
+
+#[test]
+fn every_original_capacity_has_disjoint_bounded_sets_and_the_same_storage_bound() {
+    for capacity in 1..=256 {
+        let cache = RejectionCache::new(capacity, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+        assert_eq!(cache.capacity(), capacity);
+        let slots = cache.slots.lock().unwrap();
+        assert_eq!(slots.len(), capacity);
+        assert!(slots.iter().all(Option::is_none));
+        assert_eq!(
+            cache.software_bytes(),
+            size_of::<RejectionCache>() + slots.capacity() * size_of::<Option<InvalidFact>>()
+        );
+        assert!(cache.software_bytes() <= 32 * 1024);
+
+        let mut sets = std::collections::BTreeSet::new();
+        for selector in 0..=256 {
+            let indices = RejectionCache::set_indices(cache_test_key(selector, 0), capacity);
+            assert!((1..=4).contains(&indices.len()));
+            assert!(indices.end <= capacity);
+            sets.insert((indices.start, indices.end));
+        }
+        let mut covered = 0;
+        for (start, end) in sets {
+            assert_eq!(start, covered, "sets must neither overlap nor waste slots");
+            covered = end;
+        }
+        assert_eq!(covered, capacity);
+    }
+}
+
+#[test]
+fn full_set_evicts_earliest_expiry_without_aliasing_keys_or_other_sets() {
+    let cache = RejectionCache::new(8, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    let keys = [1, 2, 3, 4].map(|identity| cache_test_key(0, identity));
+    let neighbor = cache_test_key(1, 1);
+    for key in keys {
+        assert_eq!(
+            cache.insert(key, WorkError::Transcript),
+            RejectionPublication::Retained
+        );
+    }
+    assert_eq!(
+        cache.insert(neighbor, WorkError::Product),
+        RejectionPublication::Retained
+    );
+    let mut observation = RejectionObservation::default();
+    for key in keys {
+        assert_eq!(
+            cache.hit(key, &mut observation),
+            Some(WorkError::Transcript)
+        );
+    }
+    assert_eq!(cache.hit(cache_test_key(0, 99), &mut observation), None);
+    assert_eq!(
+        cache.hit(neighbor, &mut observation),
+        Some(WorkError::Product)
+    );
+
+    let indices = RejectionCache::set_indices(keys[0], cache.capacity());
+    assert_eq!(indices.len(), 4);
+    let now = Instant::now();
+    {
+        let mut entries = cache.slots.lock().unwrap();
+        for (entry, seconds) in entries[indices].iter_mut().zip([20, 18, 16, 19]) {
+            entry.as_mut().unwrap().expires = now + Duration::from_secs(seconds);
+        }
+    }
+    let fifth = cache_test_key(0, 5);
+    assert_eq!(
+        cache.insert(fifth, WorkError::Product),
+        RejectionPublication::Retained
+    );
+    for key in [keys[0], keys[1], keys[3]] {
+        assert_eq!(
+            cache.hit(key, &mut observation),
+            Some(WorkError::Transcript)
+        );
+    }
+    assert_eq!(cache.hit(keys[2], &mut observation), None);
+    assert_eq!(cache.hit(fifth, &mut observation), Some(WorkError::Product));
+    assert_eq!(
+        cache.hit(neighbor, &mut observation),
+        Some(WorkError::Product)
+    );
+}
+
+#[test]
+fn completed_republication_reuses_exact_key_before_an_empty_slot_or_eviction() {
+    let cache = RejectionCache::new(4, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    let first = cache_test_key(0, 1);
+    let retained = cache_test_key(0, 2);
+    cache.insert(first, WorkError::Transcript);
+    cache.insert(retained, WorkError::Product);
+    // A vacant slot preceding an existing key must not create duplicate facts.
+    cache.slots.lock().unwrap()[0] = None;
+    assert_eq!(
+        cache.insert(retained, WorkError::Product),
+        RejectionPublication::Retained
+    );
+    {
+        let entries = cache.slots.lock().unwrap();
+        assert!(entries[0].is_none());
+        assert_eq!(entries.iter().flatten().count(), 1);
+        assert_eq!(entries[1].unwrap().key, retained);
+    }
+    for key in [first, cache_test_key(0, 3), cache_test_key(0, 4)] {
+        cache.insert(key, WorkError::Transcript);
+    }
+    assert_eq!(
+        cache.insert(retained, WorkError::Product),
+        RejectionPublication::Retained
+    );
+    let entries = cache.slots.lock().unwrap();
+    assert_eq!(entries.iter().flatten().count(), 4);
+    assert_eq!(
+        entries
+            .iter()
+            .flatten()
+            .filter(|entry| entry.key == retained)
+            .count(),
+        1
+    );
+    assert_eq!(entries[1].unwrap().key, retained);
+}
+
+#[test]
+fn expired_entries_miss_hits_do_not_extend_expiry_and_equal_deadlines_evict_first() {
+    let cache = RejectionCache::new(4, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    let keys = [1, 2, 3, 4].map(|identity| cache_test_key(0, identity));
+    for key in keys {
+        cache.insert(key, WorkError::Transcript);
+    }
+    let deadline = Instant::now() + Duration::from_secs(20);
+    {
+        let mut entries = cache.slots.lock().unwrap();
+        for entry in entries.iter_mut().flatten() {
+            entry.expires = deadline;
+        }
+        entries[2].as_mut().unwrap().expires = Instant::now();
+    }
+    let mut observation = RejectionObservation::default();
+    assert_eq!(cache.hit(keys[2], &mut observation), None);
+    assert_eq!(
+        cache.hit(keys[0], &mut observation),
+        Some(WorkError::Transcript)
+    );
+    assert_eq!(cache.slots.lock().unwrap()[0].unwrap().expires, deadline);
+    let fifth = cache_test_key(0, 5);
+    cache.insert(fifth, WorkError::Product);
+    {
+        let mut entries = cache.slots.lock().unwrap();
+        assert_eq!(entries[2].unwrap().key, fifth);
+        for entry in entries.iter_mut().flatten() {
+            entry.expires = deadline;
+        }
+    }
+    let sixth = cache_test_key(0, 6);
+    cache.insert(sixth, WorkError::Product);
+    assert_eq!(cache.hit(keys[0], &mut observation), None);
+    for key in [keys[1], keys[3]] {
+        assert_eq!(
+            cache.hit(key, &mut observation),
+            Some(WorkError::Transcript)
+        );
+    }
+    assert_eq!(cache.hit(fifth, &mut observation), Some(WorkError::Product));
+    assert_eq!(cache.slots.lock().unwrap()[0].unwrap().key, sixth);
+}
+
+#[test]
+fn associative_publication_still_refuses_all_nonmathematical_errors() {
+    let cache = RejectionCache::new(4, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    for error in [
+        WorkError::Length,
+        WorkError::Version,
+        WorkError::Field,
+        WorkError::Task,
+        WorkError::Target,
+        WorkError::NoiseBudget,
+    ] {
+        assert_eq!(
+            cache.insert(cache_test_key(0, 1), error),
+            RejectionPublication::None
+        );
+    }
+    assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+}
+
+#[test]
+fn real_colliding_proofs_replay_once_each_then_retain_exact_cancelable_refusals() {
+    let cache = RejectionCache::new(8, MAX_REJECTION_CACHE_LIFETIME).unwrap();
+    let zeros = vec![0; CELLS];
+    let task = task_id(&zeros, &zeros).unwrap();
+    let challenge = [94; 32];
+    let target = [255; 32];
+    let valid = prove(challenge, &zeros, &zeros).unwrap();
+    let mut colliding = Vec::new();
+    let mut original_slot = None;
+    for nonce in 0_u64..1024 {
+        let mut proof = valid.clone();
+        let false_trace = hash(b"w1-associative-cache-test-v1", &[&nonce.to_le_bytes()]);
+        assert_ne!(false_trace.as_slice(), &valid[PROOF_BYTES - 32..]);
+        proof[PROOF_BYTES - 32..].copy_from_slice(&false_trace);
+        let key = RejectionCache::key(challenge, task, target, &proof).unwrap();
+        // Exercise an actual collision under the original direct-mapped rule,
+        // with independently generated mathematical statements, not CI packets.
+        let slot = u64::from_le_bytes(key[..8].try_into().unwrap()) as usize % 8;
+        if slot != *original_slot.get_or_insert(slot) {
+            continue;
+        }
+        colliding.push(proof);
+        if colliding.len() == 4 {
+            break;
+        }
+    }
+    assert_eq!(colliding.len(), 4, "bounded synthetic collision search");
+    for proof in &colliding {
+        let (result, cold, tiles) = call(&cache, challenge, task, target, proof, None);
+        assert_eq!(
+            result.unwrap_err(),
+            VerificationError::Relation(WorkError::Transcript)
+        );
+        assert!(cold.full_replay_started && cold.native_verifier_returned);
+        assert!(!cold.exact_fact_found && !cold.cached_rejection_returned);
+        assert_eq!(cold.publication, RejectionPublication::Retained);
+        assert_eq!(tiles, 512);
+    }
+    let expiry_before: Vec<_> = cache
+        .slots
+        .lock()
+        .unwrap()
+        .iter()
+        .flatten()
+        .map(|entry| (entry.key, entry.expires))
+        .collect();
+    assert_eq!(expiry_before.len(), 4);
+    for proof in colliding.iter().cycle().take(12) {
+        let (result, warm, tiles) = call(&cache, challenge, task, target, proof, None);
+        assert_eq!(
+            result.unwrap_err(),
+            VerificationError::Relation(WorkError::Transcript)
+        );
+        assert!(warm.exact_fact_found && warm.cached_rejection_returned);
+        assert!(!warm.full_replay_started && !warm.native_verifier_started);
+        assert_eq!(tiles, 0);
+    }
+    for proof in &colliding {
+        let (result, cancelled, tiles) = call(
+            &cache,
+            challenge,
+            task,
+            target,
+            proof,
+            Some(VerificationProgress::BeforeReplay),
+        );
+        assert_eq!(
+            result.unwrap_err(),
+            VerificationError::Cancelled("ORIGINAL_CALLER_CANCELLED")
+        );
+        assert!(cancelled.exact_fact_found);
+        assert!(!cancelled.cached_rejection_returned && !cancelled.full_replay_started);
+        assert_eq!(tiles, 0);
+    }
+    let (result, native, tiles) = call(&cache, challenge, task, target, &valid, None);
+    assert!(result.is_ok() && native.full_replay_started);
+    assert_eq!(native.publication, RejectionPublication::None);
+    assert_eq!(tiles, 512);
+    let expiry_after: Vec<_> = cache
+        .slots
+        .lock()
+        .unwrap()
+        .iter()
+        .flatten()
+        .map(|entry| (entry.key, entry.expires))
+        .collect();
+    assert_eq!(expiry_after, expiry_before);
 }

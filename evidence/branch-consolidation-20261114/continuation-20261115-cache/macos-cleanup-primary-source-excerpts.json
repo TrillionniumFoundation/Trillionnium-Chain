@@ -1,0 +1,71 @@
+{
+  "schema": "bounded-process-darwin-primary-source-excerpts-v1",
+  "scope": "Read-only primary source inspection. Explains a possible exit-transition mechanism; no exact runner-kernel source binding or live process observation.",
+  "sources": [
+    {
+      "repository": "apple-oss-distributions/xnu",
+      "path": "bsd/kern/kern_sig.c",
+      "ref_read": "default branch at read time; not bound to macOS runner build 24H232",
+      "source_git_blob": "93d9d7c614763d99b3b55e26af6db2030e4c79fc",
+      "display_url": "https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/kern_sig.c",
+      "immutable_blob_api_url": "https://api.github.com/repos/apple-oss-distributions/xnu/git/blobs/93d9d7c614763d99b3b55e26af6db2030e4c79fc",
+      "excerpts": [
+        {
+          "start_line": 1670,
+          "end_line": 1732,
+          "text": "\n/*\n * Common code for kill process group/broadcast kill.\n */\nint\nkillpg1(proc_t curproc, int signum, int pgid, int all, int posix)\n{\n\tkauth_cred_t uc;\n\tstruct pgrp *pgrp;\n\tint error = 0;\n\n\tuc = kauth_cred_proc_ref(curproc);\n\tstruct killpg1_iterargs karg = {\n\t\t.curproc = curproc, .uc = uc, .nfound = 0, .signum = signum\n\t};\n\n\tif (all) {\n\t\t/*\n\t\t * Broadcast to all processes that the user can signal (pid was -1).\n\t\t */\n\t\tstruct killpg1_filtargs kfarg = {\n\t\t\t.posix = posix, .curproc = curproc\n\t\t};\n\t\tproc_iterate(PROC_ALLPROCLIST | PROC_ZOMBPROCLIST, killpg1_callback,\n\t\t    &karg, killpg1_allfilt, &kfarg);\n\t} else {\n\t\tif (pgid == 0) {\n\t\t\t/*\n\t\t\t * Send to current the current process' process group.\n\t\t\t */\n\t\t\tpgrp = proc_pgrp(curproc, NULL);\n\t\t} else {\n\t\t\tpgrp = pgrp_find(pgid);\n\t\t\tif (pgrp == NULL) {\n\t\t\t\terror = ESRCH;\n\t\t\t\tgoto out;\n\t\t\t}\n\t\t}\n\n\t\tpgrp_iterate(pgrp, killpg1_callback, &karg, ^bool (proc_t p) {\n\t\t\tif (p == kernproc || p == initproc) {\n\t\t\t        return false;\n\t\t\t}\n\t\t\t/* XXX shouldn't this allow signalling zombies? */\n\t\t\treturn !(p->p_flag & P_SYSTEM) && p->p_stat != SZOMB;\n\t\t});\n\t\tpgrp_rele(pgrp);\n\t}\n\terror = (karg.nfound > 0 ? 0 : (posix ? EPERM : ESRCH));\nout:\n\tkauth_cred_unref(&uc);\n\treturn error;\n}\n\n/*\n * Send a signal to a process group.\n */\nvoid\ngsignal(int pgid, int signum)\n{\n\tstruct pgrp *pgrp;\n\n\tif (pgid && (pgrp = pgrp_find(pgid))) {"
+        }
+      ]
+    },
+    {
+      "repository": "apple-oss-distributions/xnu",
+      "path": "bsd/kern/kern_proc.c",
+      "ref_read": "default branch at read time; not bound to macOS runner build 24H232",
+      "source_git_blob": "a08362b2e777ee607e226d869131efd5e164e526",
+      "display_url": "https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/kern_proc.c",
+      "immutable_blob_api_url": "https://api.github.com/repos/apple-oss-distributions/xnu/git/blobs/a08362b2e777ee607e226d869131efd5e164e526",
+      "excerpts": [
+        {
+          "start_line": 801,
+          "end_line": 820,
+          "text": " * - the new refcount value (including bits) on success,\n * - 0 on failure.\n */\nstatic inline uint32_t\nproc_ref_try_fast(proc_t p)\n{\n\tuint32_t bits;\n\n\tproc_require(p, PROC_REQUIRE_ALLOW_ALL);\n\n\tbits = os_ref_retain_try_mask(&p->p_refcount, P_REF_BITS,\n\t    P_REF_NEW | P_REF_DEAD, NULL);\n\tif (bits) {\n\t\trecord_procref(p, 1);\n\t}\n\treturn bits;\n}\n\n/*!\n * @function proc_ref_wait()"
+        },
+        {
+          "start_line": 2360,
+          "end_line": 2405,
+          "text": "\nproc_t\nproc_find(int pid)\n{\n\tsmrh_key_t key = SMRH_SCALAR_KEY(pid);\n\tproc_t p;\n\tuint32_t bits;\n\tbool shadow_proc = false;\n\n\tLCK_MTX_ASSERT(&proc_list_mlock, LCK_MTX_ASSERT_NOTOWNED);\n\n\tif (!pid) {\n\t\treturn proc_ref(kernproc, false);\n\t}\n\nretry:\n\tp = PROC_NULL;\n\tbits = 0;\n\tshadow_proc = false;\n\n\tsmr_proc_task_enter();\n\tp = smr_hash_entered_find(&pid_hash, key, &pid_hash_traits);\n\tif (p) {\n\t\tbits = proc_ref_try_fast(p);\n\t\tshadow_proc = !!proc_is_shadow(p);\n\t}\n\tsmr_proc_task_leave();\n\n\t/* Retry if the proc is a shadow proc */\n\tif (shadow_proc) {\n\t\tif (bits) {\n\t\t\tproc_rele(p);\n\t\t}\n\t\tgoto retry;\n\t}\n\n\tif (__improbable(!bits)) {\n\t\treturn PROC_NULL;\n\t}\n\n\tif (__improbable(proc_ref_needs_wait_for_exec(bits))) {\n\t\tp = proc_ref_wait_for_exec(p, bits, false);\n\t\t/*\n\t\t * Retry if exec was successful since the old proc\n\t\t * would have become a shadow proc and might be in\n\t\t * middle of exiting."
+        },
+        {
+          "start_line": 4307,
+          "end_line": 4338,
+          "text": "\t}\n\n\tpgrp_unlock(pgrp);\n\n\tconst pidlist_entry_t *pe;\n\tSLIST_FOREACH(pe, &(pl->pl_head), pe_link) {\n\t\tfor (u_int i = 0; i < pe->pe_nused; i++) {\n\t\t\tconst pid_t pid = pe->pe_pid[i];\n\t\t\tif (0 == pid) {\n\t\t\t\tcontinue; /* skip kernproc */\n\t\t\t}\n\t\t\tp = proc_find(pid);\n\t\t\tif (!p) {\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tif (p->p_pgrpid != pgid) {\n\t\t\t\tproc_rele(p);\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tconst int callout_ret = callout(p, arg);\n\n\t\t\tswitch (callout_ret) {\n\t\t\tcase PROC_RETURNED:\n\t\t\t\tproc_rele(p);\n\t\t\t\tOS_FALLTHROUGH;\n\t\t\tcase PROC_CLAIMED:\n\t\t\t\tbreak;\n\t\t\tcase PROC_RETURNED_DONE:\n\t\t\t\tproc_rele(p);\n\t\t\t\tOS_FALLTHROUGH;\n\t\t\tcase PROC_CLAIMED_DONE:\n\t\t\t\tgoto out;"
+        }
+      ]
+    },
+    {
+      "repository": "apple-oss-distributions/xnu",
+      "path": "bsd/kern/kern_exit.c",
+      "ref_read": "default branch at read time; not bound to macOS runner build 24H232",
+      "source_git_blob": "1e79b94b13d36e6a6c21b4c2ba52fb74d89e5b67",
+      "display_url": "https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/kern_exit.c",
+      "immutable_blob_api_url": "https://api.github.com/repos/apple-oss-distributions/xnu/git/blobs/1e79b94b13d36e6a6c21b4c2ba52fb74d89e5b67",
+      "excerpts": [
+        {
+          "start_line": 2121,
+          "end_line": 2140,
+          "text": "\n#if CONFIG_MEMORYSTATUS\n\tproc_memorystatus_remove(p);\n#endif\n\n\tLIST_REMOVE(p, p_list);\n\tLIST_INSERT_HEAD(&zombproc, p, p_list); /* Place onto zombproc. */\n\t/* will not be visible via proc_find */\n\tos_atomic_or(&p->p_refcount, P_REF_DEAD, relaxed);\n\n\tproc_list_unlock();\n\n\t/*\n\t * If parent is waiting for us to exit or exec,\n\t * P_LPPWAIT is set; we will wakeup the parent below.\n\t */\n\tproc_lock(p);\n\tp->p_lflag &= ~(P_LTRACED | P_LPPWAIT);\n\tp->p_sigignore = ~(sigcantmask);\n"
+        },
+        {
+          "start_line": 2620,
+          "end_line": 2644,
+          "text": "\t\t}\n\t\t/* mark as a zombie */\n\t\t/* No need to take proc lock as all refs are drained and\n\t\t * no one except parent (reaping ) can look at this.\n\t\t * The write is to an int and is coherent. Also parent is\n\t\t *  keyed off of list lock for reaping\n\t\t */\n\t\tDTRACE_PROC2(exited, proc_t, p, int, exitval);\n\t\tKERNEL_DEBUG_CONSTANT_IST(KDEBUG_COMMON,\n\t\t    BSDDBG_CODE(DBG_BSD_PROC, BSD_PROC_EXIT) | DBG_FUNC_END,\n\t\t    pid, exitval, 0, 0, 0);\n\t\tp->p_stat = SZOMB;\n\t\t/*\n\t\t * The current process can be reaped so, no one\n\t\t * can depend on this\n\t\t */\n\n\t\tpsignal(pp, SIGCHLD);\n\n\t\t/* and now wakeup the parent */\n\t\tproc_list_lock();\n\t\twakeup((caddr_t)pp);\n\t\tproc_list_unlock();\n\t} else {\n\t\t/* should be fine as parent proc would be initproc */"
+        },
+        {
+          "start_line": 3230,
+          "end_line": 3260,
+          "text": "\t\tswitch (p->p_stat) {\n\t\tcase SZOMB:             /* Exited */\n\t\t\tif (!(uap->options & WEXITED)) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t\tproc_list_unlock();\n#if CONFIG_MACF\n\t\t\tif ((error = mac_proc_check_wait(q, p)) != 0) {\n\t\t\t\tgoto out;\n\t\t\t}\n#endif\n\t\t\tsiginfo.si_signo = SIGCHLD;\n\t\t\tsiginfo.si_pid = proc_getpid(p);\n\n\t\t\t/* If the child terminated abnormally due to a signal, the signum\n\t\t\t * needs to be preserved in the exit status.\n\t\t\t */\n\t\t\tif (WIFSIGNALED(p->p_xstat)) {\n\t\t\t\tsiginfo.si_code = WCOREDUMP(p->p_xstat) ?\n\t\t\t\t    CLD_DUMPED : CLD_KILLED;\n\t\t\t\tsiginfo.si_status = WTERMSIG(p->p_xstat);\n\t\t\t} else {\n\t\t\t\tsiginfo.si_code = CLD_EXITED;\n\t\t\t\tsiginfo.si_status = WEXITSTATUS(p->p_xstat) & 0x00FFFFFF;\n\t\t\t}\n\t\t\tsiginfo.si_status |= (((uint32_t)(p->p_xhighbits) << 24) & 0xFF000000);\n\t\t\tp->p_xhighbits = 0;\n\n\t\t\tif ((error = copyoutsiginfo(&siginfo,\n\t\t\t    caller64, uap->infop)) != 0) {\n\t\t\t\tgoto out;"
+        }
+      ]
+    }
+  ]
+}

@@ -5,22 +5,39 @@ sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLA
 It does not replace the historical implementation contract, its test roster,
 its failed workflow results or its unknown cryptographic obligations.
 
-## Active selected mapping, 2026-11-14
+## Active selected mapping, 2026-11-15
 
-The active contract binds checkpoint
-`5c04c60e463462d9df8884786e0d5bb32af08a64`, with 145 inputs in
-the same six local Cargo-reachable crates and 16 selected project paths.
-Its 50,313 bytes have SHA-256
-`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`.
-The paired proof descriptor is
-`8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`.
+The active contract retains `source_base_commit`
+`5c04c60e463462d9df8884786e0d5bb32af08a64` as its historical source anchor
+and binds the current bytes of 145 inputs in the same six local Cargo-reachable
+crates and 16 selected project paths. Its 50,313 bytes have SHA-256
+`b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1`. The current selected profile descriptor is
+`2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4`.
 
-The later local corrective checkpoint `fc39da5f35298ce8a4c34aa5bdb25849648612f9`
-does not change these 145 selected input bytes. Node `store.rs` and the
-CI reader fixes are outside this mapping's source inventory, so this mapping
-retains its existing checkpoint and digest. That equality does not qualify the
-whole successor checkout or reproduce a historical native run. The detailed
-145-input changes and current named CI correspondence are recorded below.
+The continuation from reviewed candidate
+`32989461a183dd5cc723100721e409a5450b72e3` updates exactly the two existing
+local-closure records for `pon_work/rejection_cache.rs` and
+`pon_work/rejection_cache_tests.rs`. A bounded four-way negative-fact cache
+replaces direct-map eviction, retaining the original 1–256 total slots,
+32 KiB retained-object ceiling, 30-second maximum lifetime, full-key comparisons,
+nonblocking locks, cheap checks and cancellation checkpoints. Lookup does not
+extend expiry; only original native mathematical refusals can be published.
+The source roster, constructor and retained structures do not change.
+
+The focused crypto cache suite actually ran 19 tests: all 13 retained controls
+and six new regression controls passed. This local observation does not execute
+the other 212 crypto lib tests, the original four-second pressure campaign or a
+prospective-merge gate. The full CI result remains required separately. Exact
+source and observation identities are retained in the
+[cache continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md).
+
+The preceding 50,313-byte mapping remains historical with SHA-256
+`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5` and selected descriptor
+`8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`. At the earlier corrective checkpoint
+`fc39da5f35298ce8a4c34aa5bdb25849648612f9`, node `store.rs` and CI-reader
+changes were outside that mapping's inventory. The present two-file cache
+continuation changes its selected input bytes and therefore needs its own
+current mapping and descriptor; it inherits no historical native qualification.
 All qualification flags remain false; the upstream current-approval list stays
 empty and the 15 proof obligations remain unresolved.
 

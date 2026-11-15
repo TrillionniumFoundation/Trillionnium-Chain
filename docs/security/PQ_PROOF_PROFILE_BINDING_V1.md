@@ -16,12 +16,24 @@ or failure budget.
 The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its active
 [QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) is
 50,313 bytes with SHA-256
-`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`.
-It binds checkpoint `5c04c60e463462d9df8884786e0d5bb32af08a64` and
+`b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1`.
+It retains historical source-base anchor
+`5c04c60e463462d9df8884786e0d5bb32af08a64` and binds the current bytes of
 145 local-closure inputs across the same six Cargo-reachable crates.
 The selected project roster still has 16 paths. Saved proof fixtures, guest
 image, SDK, control identity, verifier parameters and all 15 unresolved
 obligations retain their identities.
+
+The 2026-11-15 cache continuation changes exactly two existing local-closure
+records, `pon_work/rejection_cache.rs` and its existing external test file.
+The bounded association policy changes reuse of exact negative facts;
+all selected proof/image, parameter, project and saved-fixture identities remain
+unchanged. The preceding mapping `77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`
+and selected descriptor `8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`
+remain historical. The current selected descriptor changes because it binds the
+new mapping bytes. The 19 focused native cache tests and strict crypto Clippy
+are separate software observations; they do not grant proof security, original
+pressure-window confirmation or prospective-merge qualification.
 
 The earlier `39336622c63df1ae746d83a76bb53202cd01ba17` mapping contained
 138 inputs and had contract SHA-256
@@ -67,7 +79,7 @@ extracted identity, selected project and saved-fixture hashes, and upstream
 snapshot identity. For these reference inputs its SHA-256 is:
 
 ```text
-8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4
 ```
 
 The former frozen candidate descriptor was
@@ -139,7 +151,7 @@ The current command requires the descriptor of the 145-input mapping above:
 
 ```sh
 python3 scripts/ci/pq_proof_profile_binding.py \
-  --expected-profile-descriptor-sha256 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1
+  --expected-profile-descriptor-sha256 2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4
 python3 scripts/ci/test_pq_proof_profile_binding.py -v
 ```
 
@@ -170,10 +182,10 @@ whole_chain_pq_qualified = false
 production_activation = false
 ```
 
-## Consolidated current source review, 2026-11-14
+## Retained source review, 2026-11-14
 
-The explicit current mapping now binds source 5c04c60e463462d9df8884786e0d5bb32af08a64 and its 145-input local
-inventory. Its descriptor SHA-256 is 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1. The mapping,
+At that checkpoint, the explicit mapping bound source 5c04c60e463462d9df8884786e0d5bb32af08a64 and its 145-input local
+inventory. Its descriptor SHA-256 was 8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1. The mapping,
 profile descriptor, upstream-policy mapping pin and route-source pin are
 updated together; the candidate workflow and independent controls require the
 same descriptor. The preceding 9e5766a7 descriptor remains a rejected current

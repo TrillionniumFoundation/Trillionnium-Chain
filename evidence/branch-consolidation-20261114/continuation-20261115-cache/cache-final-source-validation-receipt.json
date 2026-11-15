@@ -1,0 +1,176 @@
+{
+  "schema": "trnm-associative-cache-final-python-validation-v1",
+  "completed_utc": "2026-11-15T09:44:17.805996+00:00",
+  "scope": "Final corpus negative controls and seven positive source/repository/Markdown checks after fixed C2 current bindings and four root documentation edits; no Rust or hosted runtime qualification.",
+  "base": "32989461a183dd5cc723100721e409a5450b72e3",
+  "base_unchanged": true,
+  "source_state": "dirty-candidate; current C2 bytes are bound by source snapshots, not by HEAD tree e578",
+  "preflight": {
+    "exit_code": 0,
+    "log": "preflight.log",
+    "sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+  },
+  "corpus": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "bytes": 525351,
+    "sha256": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
+    "pinned_blobs": 2613,
+    "required_paths": 2517,
+    "negative_tests": 113,
+    "reported_test_seconds": 283.812,
+    "positive_result": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    }
+  },
+  "source_window": {
+    "before": "source-before.json",
+    "before_sha256": "be5a67ab26eb12e608450ceb6fec45766eb34b07cebcc8bf38004468206a994a",
+    "after": "source-after.json",
+    "after_sha256": "48f0b875a1d3b0beb8ba6dd819404ab42db155d2b337005b47ee5d8aa3605184",
+    "observed_files": 24,
+    "changed_observed_files": [],
+    "all_observed_inputs_stable": true
+  },
+  "commands": [
+    {
+      "name": "corpus-negatives",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.205241+00:00",
+      "elapsed_seconds": 284.0225718380025,
+      "exit_code": 0,
+      "log_sha256": "1d150774591d3bed4b976006db8e44a2d9cfd05d9c664ffd453f9be805d0fedf"
+    },
+    {
+      "name": "corpus-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.227644+00:00",
+      "elapsed_seconds": 0.8664468959977967,
+      "exit_code": 0,
+      "log_sha256": "dd4704f6aa7af122fc2f599c54886115adf47d6c271a72217b06474ff833675f"
+    },
+    {
+      "name": "current-mapping-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/w1_qrom_current_implementation_audit.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.228178+00:00",
+      "elapsed_seconds": 0.4156596989996615,
+      "exit_code": 0,
+      "log_sha256": "76cef3b9f0d284b6ead15b44589e6297c0d23e84322d523910b63f246abc9b6c"
+    },
+    {
+      "name": "upstream-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_upstream_security.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.228663+00:00",
+      "elapsed_seconds": 0.16444638899702113,
+      "exit_code": 0,
+      "log_sha256": "ee34488048e35a2797411174cdfe4b74ec7ce8c2e09a7ea5e671cb2795f7ba29"
+    },
+    {
+      "name": "profile-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/pq_proof_profile_binding.py",
+        "--expected-profile-descriptor-sha256",
+        "2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4"
+      ],
+      "started_utc": "2026-11-15T09:38:52.393504+00:00",
+      "elapsed_seconds": 0.1643538729986176,
+      "exit_code": 0,
+      "log_sha256": "3beb37250255cc14a329fa1022e30c8c70e3feb0950b89e8ae50dd0c15d5683b"
+    },
+    {
+      "name": "route-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/w1_stark_route_audit.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.558170+00:00",
+      "elapsed_seconds": 0.1642760390022886,
+      "exit_code": 0,
+      "log_sha256": "a6a7fb9e285abd8436df9c27e848f3f2bdd9f3583f36f2c107ffb0a64a474a83"
+    },
+    {
+      "name": "hash-use-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/hash_use_contract.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.646814+00:00",
+      "elapsed_seconds": 0.0645438759966055,
+      "exit_code": 0,
+      "log_sha256": "d09cb6d3baee5f6cd94112f5cd91e28ade72b09fb8091b2c6d5f7c5d4f7cb400"
+    },
+    {
+      "name": "repository-markdown-positive",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "started_utc": "2026-11-15T09:38:52.711762+00:00",
+      "elapsed_seconds": 21.813381100000697,
+      "exit_code": 0,
+      "log_sha256": "9a1a10bd6bb91002332131af38c6dd36710651af0d014e3ba93a920c77b3af62"
+    }
+  ],
+  "repository_markdown_result": {
+    "activation": false,
+    "head": "32989461a183dd5cc723100721e409a5450b72e3",
+    "local_links": 8648,
+    "normal_dependency_edges": 27,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1621,
+    "source_state": "dirty-candidate",
+    "tree": "e5785f836110110fff9f8569f2e737c3ea72ce29",
+    "workspace_packages": 26
+  },
+  "prior_five_negative_suites": {
+    "receipt": "/workspace/scratch/b333277443cf/cache-associative-python-validation/attempt-2/receipt.json",
+    "sha256": "9018159196e4a5e048a445b0d568270626d067d6e7fa65ef75e87dc8469749a9",
+    "latest_distinct_tests": 130,
+    "not_repeated": true,
+    "initial_failed_attempt_preserved": true
+  },
+  "latest_six_suite_distinct_negative_tests": 243,
+  "scope_limits": [
+    "The seven positive commands exit0 while retaining source qualification/HOLD boundaries; this does not mean cryptographic, public-native, head/prospective CI or merge gates passed.",
+    "113 corpus tests execute controlled temporary source fixtures; the separate positive corpus check compares actual worktree source blobs.",
+    "Root is separately adding archive/validation evidence and updating its new continuation README/import index after this window; those additions are not represented as tested by this run.",
+    "The repository checker reports HEAD/tree as contextual base and source_state=dirty-candidate; it does not mint a commit identity for C2."
+  ],
+  "repository_source_modified_by_reviewer": false,
+  "remote_operations_performed": false,
+  "rust_tests_executed": 0
+}

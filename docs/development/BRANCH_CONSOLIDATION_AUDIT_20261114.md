@@ -240,7 +240,7 @@ new protocol profile by this consolidation.
 
 ## Current source bindings and historical observations
 
-The four current source contracts cover 44 authority inputs, 20 lifetime inputs,
+At the initial `5c04c60e…` checkpoint, four source contracts covered 44 authority inputs, 20 lifetime inputs,
 145 QROM local inputs, and 46 root-dependency inputs: **232 distinct files** after
 deduplication. Their reviewed physical bytes, SHA256 values and Git blobs match
 the selected source at `5c04c60e…`; the same selected bytes were independently
@@ -251,9 +251,9 @@ The five additions include the reviewed C36 example, low-rank prefix helper,
 statement-boundary controls, and task-product fact module and controls. The
 separate SP27 research example is outside this closure.
 
-The current proof-profile descriptor is
+The proof-profile descriptor at that checkpoint was
 `8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`;
-the canonical route source set is
+the canonical route source set was
 `0ecde8d4e43ba120318c9777e78e317f3f2fdfc12bc65d7e2e893abaec8bcdd7`.
 These bindings establish the declared source correspondence. HOLD, unknown
 security values, false qualification flags and the existing unbound-revision
@@ -1322,3 +1322,72 @@ The continuation index retains the composed-source review, original failed
 builds, dependency-bound result, credential-shaped scan and code-scanning API
 readback. These add bounded evidence; the protected-main and single-branch
 completion obligations remain unchanged.
+
+
+## 2026-11-15 continuation: exact negative-cache collision handling
+
+The published predecessor is `32989461a183dd5cc723100721e409a5450b72e3`,
+with tree `e5785f836110110fff9f8569f2e737c3ea72ce29` and parent f34.
+Independent GitHub readback confirmed the ordinary fast-forward; main and its
+protection remained unchanged. Two complete 900-name observations were identical,
+and all 884 distinct observed tips passed individual native ancestry checks.
+Those observations and the original 908-name history remain separate snapshots.
+
+Passive inspection of the original f34 head confirmation report identified a
+specific reuse defect: two different full proof keys collided in the one-slot
+mapping. Each incurred 20 complete replays; the other 14 inputs incurred one
+apiece. The 40 colliding-key replays strictly alternated without overlapping
+intervals and without contention/poison observations. Of the 38 repetitions
+beyond the two first necessary replays, 37 completed within the original
+four-second window and accumulated 46,179,030 ns of full-work calling-thread
+CPU. The remaining repetition straddled the deadline. All 38 total 47,508,285 ns;
+outer dispatch CPU is nested and is not an additional saving.
+
+The reviewed continuation changes only the existing negative-cache implementation
+and its existing test file: balanced sets contain up to four facts within the
+same 1–256 total slots, 32 KiB retained-object ceiling and 30-second maximum
+lifetime. Full keys are compared, hits do not refresh expiry, locks remain
+nonblocking, and all original cheap checks, native mathematical refusal rules,
+BeforeReplay cancellation and verification checkpoints remain intact. No
+workload, signed domain, stored schema, proof parameter or authority rule changes.
+More than four keys in a set can still evict one another. This is a general
+bounded policy, not an assertion of resistance to arbitrary fresh proofs.
+
+The original 13 cache controls and six new regressions all passed in a real
+crypto-library run: 19 passed, zero failed/ignored, and 212 other library tests
+explicitly filtered out. Crypto all-target/all-feature strict Clippy, formatting
+and whitespace checks passed. The five current Python binding suites have a
+latest total of 130 passing tests. Their initial stale-derived-identity failures
+remain preserved. These focused results do not substitute for a final workspace
+or hosted head/prospective run.
+
+Exactly two records change in the 145-input W1 current closure. Its current
+50,313-byte mapping SHA256 is
+`b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1`.
+The profile declaration JSON has its own raw-file SHA256; the derived selected
+profile descriptor used by the workflow is
+`2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4`.
+The current route source-set digest is
+`432b5433f46862458a6f0d4f7ff7a41d853f8c6eea1d30dc14270e85cb73cb51`;
+the current hash-use source-map digest is
+`5e0801d22adab09c2104b568a8427dafdc0b43b2124951fc1e67a968e49fc3c0`.
+Historical work-cost contracts, frozen comparisons, source-base anchor 5c04,
+proof/image identities, all 15 unresolved obligations and qualification flags
+remain unchanged. Selected source consistency supplies no new security theorem
+or production/consensus admission.
+
+The unchanged native four-second, sixteen-worker campaign remains the acceptance
+boundary. Cached refusals still pay hashing and checkpoints, and faster refusals
+can increase closed-loop pressure. The recorded 47.51 ms is not a measured net
+saving for the modified system. At the 09:11:24 UTC readback, predecessor C's
+required run 43696884200 was pending while f34's four Rust shards were still
+running. Other then-terminal checks included a macOS cleanup PermissionError,
+legacy driver/lock control refusals, finite service-target failures and an
+unavailable historical artifact; their actual scopes and original source
+identities are retained, not promoted to passing or blamed on an unobserved
+regression. Protected-main merge and expected-tip branch deletion require their
+own final gate and archive readbacks.
+
+See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
+for native receipts, per-call costs, independent review, failed/corrected binding
+observations, complete branch maps and source identities.

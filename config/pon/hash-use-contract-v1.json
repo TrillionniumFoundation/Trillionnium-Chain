@@ -1543,7 +1543,7 @@
   "source_files": {
     "config/pon/pq-proof-profile-binding-v1.json": {
       "bytes": 2378,
-      "sha256": "797eaa3aa2dd5c46fd67a6bbad634d693be0d73b833f581c64d2cf341cc5a8fd"
+      "sha256": "0dc3c01c24a56b298b3ca905c71ae288f467f6cf74032d1d73f69cab969a313b"
     },
     "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": {
       "bytes": 5246,

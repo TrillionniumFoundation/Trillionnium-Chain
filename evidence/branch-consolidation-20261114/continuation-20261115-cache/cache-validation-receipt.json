@@ -1,0 +1,150 @@
+{
+  "schema": "bounded-associative-rejection-cache-validation-v1",
+  "utc": "2026-11-15T09:24:06.729182+00:00",
+  "source_base": "32989461a183dd5cc723100721e409a5450b72e3",
+  "source_patch": "patch.diff",
+  "source_files": {
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": {
+      "bytes": 30988,
+      "sha256": "2fecf9fc65b9d3557f1cd92e7da3132ddd66e1d014c6d6b6497f35bfc1e06022",
+      "git_blob": "28c8365cf04d36289e09c3a4d64c9483fc483cfd"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs": {
+      "bytes": 20358,
+      "sha256": "368a78996346f5e5005ba64da42cd85a4f906c25e2ae1bdc45f5e79d2b111a2e",
+      "git_blob": "29bb0e83808c323348e8570298181a7c76a6ead6"
+    }
+  },
+  "runtime_files_changed": [
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs"
+  ],
+  "tests": {
+    "command": [
+      "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--manifest-path",
+      "/workspace/scratch/b333277443cf/Trillionnium-Chain/trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-j",
+      "1",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib",
+      "rejection_cache::",
+      "--",
+      "--nocapture"
+    ],
+    "passed": 19,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_out": 212,
+    "old_tests_retained": 13,
+    "new_tests": 6,
+    "scope": "crypto library rejection_cache module, repository default feature/test profile; source stable before/after"
+  },
+  "strict_clippy": {
+    "command": [
+      "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--manifest-path",
+      "/workspace/scratch/b333277443cf/Trillionnium-Chain/trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-j",
+      "1",
+      "-p",
+      "trnm-crypto-primitives",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "passed": true,
+    "scope": "small crypto crate all targets/all features -D warnings; source stable before/after"
+  },
+  "fmt_check_passed": true,
+  "diff_check_passed": true,
+  "production_cache_structures_and_verify_boundaries_byte_equal_to_base": true,
+  "host_deadlines_cpu_cancellation_fixtures_unchanged": true,
+  "performance_gate_executed": false,
+  "confirmation_target_qualified": false,
+  "limitations": [
+    "No node or whole-workspace tests executed by this scoped change.",
+    "19 native cache tests do not establish 4-second/16-worker system confirmation target.",
+    "Observed 38 extra f34 replays cost47.508285ms full-work calling-thread CPU including1 late interval; mandatory hit cost and load feedback prevent guaranteed net saving.",
+    "More than four exact negative keys in one set can still evict each other; this is bounded optional exact retransmission reuse, not arbitrary-input/Sybil protection."
+  ],
+  "artifacts": {
+    "boundary-byte-review.json": {
+      "bytes": 1678,
+      "sha256": "559d89d2ef53374b15b48043c721083db7db4441814d32753b43d3ab07b732cb"
+    },
+    "cache-tests.receipt.json": {
+      "bytes": 3818,
+      "sha256": "76e5ebaaad870929f2b919bb4c6917711f71c2d841d088f8a80ead94237edf52"
+    },
+    "cache-tests.stderr": {
+      "bytes": 1202,
+      "sha256": "9ef167963602a7ef2f5e157a8953f3f2d95eed9aad1185adc01e9d02701c8573"
+    },
+    "cache-tests.stdout": {
+      "bytes": 2385,
+      "sha256": "660f1998da97d03a12e787743a03a43ef0c6c0b37ace7840af6b86f1986a105b"
+    },
+    "clippy.receipt.json": {
+      "bytes": 3517,
+      "sha256": "da9963400634f6972fc2813bc87d7e211a90b8a026925a40846d0846d583909c"
+    },
+    "clippy.stderr": {
+      "bytes": 817,
+      "sha256": "521af320aaca4387f2c65d3ae0df2e3dcf30f87f441fe13949ba93582304a747"
+    },
+    "clippy.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "collision-cost-and-design.json": {
+      "bytes": 33962,
+      "sha256": "b45cf6d4ec4ff0d541ee6da5540da223cde084edf09f18572a8d525e6055f9aa"
+    },
+    "diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diff-check.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-check.receipt.json": {
+      "bytes": 343,
+      "sha256": "95b1510458591e91a4ba9e9dad5372d8b790ab2f61c5bbec114bcc16aa5768ce"
+    },
+    "fmt-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-check.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt.receipt.json": {
+      "bytes": 1159,
+      "sha256": "15f20c7639e73ff8b6dbd8bd8031bed8f4bdbeee56b2da8d2c00991cd29f9ed4"
+    },
+    "fmt.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "patch.diff": {
+      "bytes": 16011,
+      "sha256": "7236f3c1a7f544670da4195406df1a44386bc0195577ce6eb4b0bbbe647e79cb"
+    }
+  }
+}

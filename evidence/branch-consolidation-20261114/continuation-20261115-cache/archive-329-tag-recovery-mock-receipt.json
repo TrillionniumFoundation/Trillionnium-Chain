@@ -1,0 +1,37 @@
+{
+  "schema": "archive-tag-recovery-offline-controls-v1",
+  "utc": "2026-11-15T09:33:42.454415+00:00",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_archive_tag_recovery"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.7330257119974704,
+  "remote_calls": 0,
+  "scope": "Pure mocks and validate CLI with synthetic old records; actual Mac recovery logs must pass validate before publish. No GitHub write or live lookup from this review.",
+  "files": {
+    "resume_chain_history_archive_tag.py": {
+      "bytes": 19488,
+      "sha256": "e605f9189e11b134c161d554e452f82037e079a9b531e5894d74ad894ad44228"
+    },
+    "test_archive_tag_recovery.py": {
+      "bytes": 14763,
+      "sha256": "b54cdcf45f096d84232ef46f6be5a93b7bc534173211f3ef61b8f276e8f7d539"
+    },
+    "publish_chain_history_archive_v2.py": {
+      "bytes": 27609,
+      "sha256": "21daf67a057243675c8ca3c89af524348621d8917660ae8b2a4c4e358103b7cf"
+    },
+    "archive-329-request.json": {
+      "bytes": 304484,
+      "sha256": "664964a5d99b2ac5fbec19d34ac5818b981ab3070d234ec061da0dbb22cefff1"
+    },
+    "archive-329-native-message-readback.json": {
+      "bytes": 694,
+      "sha256": "b6588e67d59178266a921b371f5aa25182b0acde3c2ccce2922fcbe8d79d6af6"
+    }
+  }
+}

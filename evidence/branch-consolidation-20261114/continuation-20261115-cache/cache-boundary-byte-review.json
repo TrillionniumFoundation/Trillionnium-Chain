@@ -1,0 +1,37 @@
+{
+  "schema": "rejection-cache-boundary-byte-review-v1",
+  "base": "32989461a183dd5cc723100721e409a5450b72e3",
+  "sections": {
+    "native_entry_and_cache_hit_boundary": {
+      "equal": true,
+      "before_sha256": "5d37f0b2a9d1105399cadb919a35f0be4db360e7c8a912af86b7fa53f6686f92",
+      "after_sha256": "5d37f0b2a9d1105399cadb919a35f0be4db360e7c8a912af86b7fa53f6686f92"
+    },
+    "retained_structures": {
+      "equal": true,
+      "before_sha256": "25ae44ca8317e8e39e49609af952ab946bb19b9e168104467fda8641e89b934a",
+      "after_sha256": "25ae44ca8317e8e39e49609af952ab946bb19b9e168104467fda8641e89b934a"
+    },
+    "original_constructor": {
+      "equal": true,
+      "before_sha256": "daa2bb0054bfad9aa124e56d0563e2f8b8770196ced8783db6f59e315fe7ea86",
+      "after_sha256": "daa2bb0054bfad9aa124e56d0563e2f8b8770196ced8783db6f59e315fe7ea86"
+    },
+    "original_hash_key": {
+      "equal": true,
+      "before_sha256": "c0b06c7f41e76291318f22f233e036b01354c24839072d47dad68717e96e4759",
+      "after_sha256": "c0b06c7f41e76291318f22f233e036b01354c24839072d47dad68717e96e4759"
+    }
+  },
+  "old_test_count": 13,
+  "new_test_count": 19,
+  "old_tests_retained": true,
+  "added_tests": [
+    "associative_publication_still_refuses_all_nonmathematical_errors",
+    "completed_republication_reuses_exact_key_before_an_empty_slot_or_eviction",
+    "every_original_capacity_has_disjoint_bounded_sets_and_the_same_storage_bound",
+    "expired_entries_miss_hits_do_not_extend_expiry_and_equal_deadlines_evict_first",
+    "full_set_evicts_earliest_expiry_without_aliasing_keys_or_other_sets",
+    "real_colliding_proofs_replay_once_each_then_retain_exact_cancelable_refusals"
+  ]
+}

@@ -20,6 +20,7 @@ pub const MAX_REJECTION_CACHE_LIFETIME: Duration = Duration::from_secs(30);
 // Retained Rust objects only: fixed owner and allocated slot capacity. This
 // excludes allocator metadata and per-call verifier workspace, and is not RSS.
 pub const MAX_REJECTION_CACHE_SOFTWARE_BYTES: usize = 32 * 1024;
+const REJECTION_CACHE_WAYS: usize = 4;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum RejectionPublication {
@@ -73,7 +74,8 @@ pub struct RejectionCache {
 }
 
 impl RejectionCache {
-    /// A finite direct-mapped cache is deliberately not a second block registry.
+    /// A finite set-associative cache is not a second block registry. Up to four
+    /// exact negative facts share each set within the original total slot bound.
     /// No caller ID, header height or work score grants priority or authority.
     pub fn new(slots: usize, lifetime: Duration) -> Option<Self> {
         if !(1..=MAX_REJECTION_CACHE_SLOTS).contains(&slots)
@@ -127,6 +129,15 @@ impl RejectionCache {
         ))
     }
 
+    fn set_indices(key: Hash, slots: usize) -> std::ops::Range<usize> {
+        // Constructor bounds make every set nonempty, at most four entries,
+        // and keep these products small. Balanced ranges use every slot even
+        // when the caller's original capacity is not a multiple of four.
+        let sets = slots.div_ceil(REJECTION_CACHE_WAYS);
+        let set = u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize % sets;
+        set * slots / sets..(set + 1) * slots / sets
+    }
+
     fn hit(&self, key: Hash, observation: &mut RejectionObservation) -> Option<WorkError> {
         // Optional reuse must not wait outside the caller's cancellation and
         // deadline checkpoints. Contention, like poison, is a cache miss.
@@ -141,9 +152,10 @@ impl RejectionCache {
                 return None;
             }
         };
-        let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
-        entries[i]
-            .filter(|entry| entry.key == key && Instant::now() < entry.expires)
+        entries[Self::set_indices(key, entries.len())]
+            .iter()
+            .flatten()
+            .find(|entry| entry.key == key && Instant::now() < entry.expires)
             .map(|entry| entry.error)
     }
 
@@ -155,9 +167,26 @@ impl RejectionCache {
         // changes the already completed mathematical refusal.
         match self.slots.try_lock() {
             Ok(mut entries) => {
-                let i = (u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize)
-                    % entries.len();
-                entries[i] = Some(InvalidFact {
+                let indices = Self::set_indices(key, entries.len());
+                let set = &mut entries[indices];
+                let mut replacement = 0;
+                for (index, candidate) in set.iter().enumerate() {
+                    match (candidate, set[replacement].as_ref()) {
+                        (Some(entry), _) if entry.key == key => {
+                            replacement = index;
+                            break;
+                        }
+                        (None, Some(_)) => replacement = index,
+                        (Some(entry), Some(oldest)) if entry.expires < oldest.expires => {
+                            replacement = index;
+                        }
+                        _ => {}
+                    }
+                }
+                // A completed native refusal may publish again. A lookup never
+                // refreshes this deadline. Empty slots precede eviction, and the
+                // earliest expiry (first slot on a tie) precedes younger facts.
+                set[replacement] = Some(InvalidFact {
                     key,
                     error,
                     expires: Instant::now() + self.lifetime,
