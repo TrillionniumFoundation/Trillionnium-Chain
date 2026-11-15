@@ -66,6 +66,17 @@ fn main() {
                 gate.record_pop_fairness(false);
                 gate.critical_served_streak as u64
             },
+            7..=12 => {
+                let normal_was_empty = ((mode - 7) & 1) != 0;
+                let outcome = match (mode - 7) / 2 {
+                    0 => AdmitOutcome::Accepted,
+                    1 => AdmitOutcome::Duplicate,
+                    2 => AdmitOutcome::Backpressured,
+                    _ => unreachable!("bounded original outcome"),
+                };
+                gate.maybe_warm_normal_fairness(normal_was_empty, outcome);
+                gate.critical_served_streak as u64
+            },
             _ => panic!("unknown original query"),
         };
         println!("{value}");

@@ -1,3 +1,38 @@
+## HIA M05 normal-arrival fairness warm-up candidate — 2026-11-15 UTC
+
+The current integration candidate extends the real M05 native HIA quota
+kernel with all six explicit outcomes of the original
+lane_fairness::maybe_warm_normal_fairness transition, after an admission
+attempt. Opcodes 7–12 distinguish Accepted, Duplicate and Backpressured
+and the original normal_was_empty bit. Only Accepted with an initially
+empty normal queue, a positive dedicated-normal capacity and both
+post-admission queues nonempty warms the streak to burst_limit.
+All other cases preserve streak, including u64 extremes. Earlier opcodes
+0–6, their byte framing, capacity arithmetic and refusal behavior stay
+unchanged. The original Rust functions are compiled unchanged through
+the source-bound reference adapter.
+
+On a separate clean, pinned Hepta f33d8da checkout, official Core
+admitted all three functions. An explicitly selected direct machine-code
+backend executed 1,917 full-width finite cases, malformed/refusal
+controls and 4,095 new actual-original-Rust comparison cases without
+a reported mismatch. Separately, 6,552 actual original-Rust queries
+matched the algebraic reference, and 279,936 finite warm-up boundary
+tuples satisfied the u64 result bound. These are local development
+observations; the fixed self-hosted compiler's emitted machine code
+and exact committed CI are NOT_RUN for this candidate, and the prior
+4cc/b0d exact-head results are not transplanted to a changed source.
+
+No persistent queue/nonce owner, external witness commit, reorganization
+or full Node state transaction is implemented by these pure kernels.
+All 26 original Rust packages remain, all nine migration gates OPEN,
+PQ HOLD_NO_GO, and production activation forbidden. The original
+service limits, root README and failed observations are unchanged.
+The existing development-plan text following this section is preserved
+byte-for-byte.
+
+---
+
 ## HIA M05 queue admission quota/fairness candidate — 2026-11-15 UTC
 
 The sole integration lane has an independent **M05 pure native HIA candidate**

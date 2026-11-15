@@ -16,8 +16,15 @@ queue counts **must be post-pop** lengths, as the original Rust method
 observes the queues after dequeue. The returned number is the updated
 critical-served streak. The saturating increment is evaluated as
 `streak < burst ? streak + 1 : burst`, which avoids overflow at
-`u64::MAX`. Reserve requests are clamped to total capacity. Ops above
-6 are rejected without writing output.
+`u64::MAX`. Reserve requests are clamped to total capacity. Ops **7–12** cover the original maybe_warm_normal_fairness transition
+after an admission attempt, with **post-admission** queue counts. In order,
+the opcode pairs encode (normal_was_empty=false, true) for each outcome:
+7–8 Accepted, 9–10 Duplicate, 11–12 Backpressured. Only opcode 8 may warm
+the streak to burst_limit, and only when dedicated normal capacity and
+both nonempty queues exist. All other combinations preserve the incoming
+streak, including the full u64 range. This makes the original method's
+acceptance and before/after-queue ordering explicit without inferring it
+from queue counts. Ops above **12** are rejected without writing output.
 
 These are *pure decisions/transitions* on supplied queue counts.
 There is no HIA-owned queue, duplicate cache, nonce reservation,
