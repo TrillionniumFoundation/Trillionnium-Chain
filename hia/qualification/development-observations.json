@@ -1,187 +1,224 @@
 {
-  "schema": "trnm.hia.development-observations.v1",
   "baseline_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
   "failed_observations": [
     {
       "operation": "HeptaRuntime hia_describe manifest",
-      "result": "MCP request timed out",
-      "resolution": "Read the fixed official Hepta source and executed its local native compiler; the timed-out MCP request is not counted as discovery success."
+      "resolution": "Read the fixed official Hepta source and executed its local native compiler; the timed-out MCP request is not counted as discovery success.",
+      "result": "MCP request timed out"
     },
     {
       "operation": "First M11 container-count corruption test",
-      "result": "One of thirteen tests failed: observed 102, expected 100",
-      "resolution": "Added a minimum encoded-capacity check for declared roster/vote counts; kept the original assertion and reran the complete suite."
+      "resolution": "Added a minimum encoded-capacity check for declared roster/vote counts; kept the original assertion and reran the complete suite.",
+      "result": "One of thirteen tests failed: observed 102, expected 100"
     },
     {
       "operation": "Initial full cold qualification preflight",
-      "result": "Required pinned source tests/test_hia_agent_data_json_native.py was missing in a sparse checkout; qualification did not start",
-      "resolution": "Materialized the exact original source set in an isolated checkout and ran the unmodified 180-second qualification and 3-second cleanup gate."
+      "resolution": "Materialized the exact original source set in an isolated checkout and ran the unmodified 180-second qualification and 3-second cleanup gate.",
+      "result": "Required pinned source tests/test_hia_agent_data_json_native.py was missing in a sparse checkout; qualification did not start"
     },
     {
       "operation": "Native builds during sparse-source materialization",
-      "result": "Tracked-source dirty checks refused builds; a timed-out checkout left one incomplete test file",
-      "resolution": "Restored only that exact Git blob, verified a clean pinned source tree, moved further cold work to an isolated checkout and reran native tests. No dirty guard was disabled."
+      "resolution": "Restored only that exact Git blob, verified a clean pinned source tree, moved further cold work to an isolated checkout and reran native tests. No dirty guard was disabled.",
+      "result": "Tracked-source dirty checks refused builds; a timed-out checkout left one incomplete test file"
     },
     {
       "operation": "PNX1 selfhost compile of implicit mutable-to-readonly call arguments",
-      "result": "Hosted Core accepted the program; pinned selfhost compiler exited 2 with no object or stderr",
-      "resolution": "Confirmed both call sites independently; established explicit shared borrow.read/loan.end around each ILF validator call. Kept the same compiler, source semantics and resource budgets. Native compilation and full PNX1 plus prior protocol tests then passed."
+      "resolution": "Confirmed both call sites independently; established explicit shared borrow.read/loan.end around each ILF validator call. Kept the same compiler, source semantics and resource budgets. Native compilation and full PNX1 plus prior protocol tests then passed.",
+      "result": "Hosted Core accepted the program; pinned selfhost compiler exited 2 with no object or stderr"
     },
     {
       "operation": "Published 893210a repository-truth source inventory",
-      "result": "Both head and prospective-merge jobs refused a distributed source inventory missing config/hia-migration-v1.json",
-      "resolution": "Compared the exact baseline and candidate trees: baseline1745 entries matched; first migration added one config path. Ran the unchanged original refresh_distributed_source_inventory.py to add its seven-line include and passed the original --check; no checker or scan scope was changed."
+      "resolution": "Compared the exact baseline and candidate trees: baseline1745 entries matched; first migration added one config path. Ran the unchanged original refresh_distributed_source_inventory.py to add its seven-line include and passed the original --check; no checker or scan scope was changed.",
+      "result": "Both head and prospective-merge jobs refused a distributed source inventory missing config/hia-migration-v1.json"
     },
     {
-      "operation": "Original PQ corpus check after the first and second HIA migration commits",
-      "result": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md; complete 2613-pin readback also identified the generated distributed_source_inventory.rs change",
-      "introduced_by_this_migration": true,
-      "first_plan_drift_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
-      "first_generated_inventory_drift_commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
-      "resolution": "Followed the existing sole-plan/source-inventory reconciliation procedure: refreshed only the two exact current blob pins; all 2611 other pins and every research-only/HOLD/false acceptance field remain identical. The unchanged checker succeeds as a source-consistency check while retaining status HOLD_NO_GO. Its original negative suite and exact committed CI remain required.",
-      "native_pq_acceptance_granted": false,
       "acceptance_check_or_budget_changed": false,
+      "first_generated_inventory_drift_commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "first_plan_drift_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+      "introduced_by_this_migration": true,
+      "native_pq_acceptance_granted": false,
+      "operation": "Original PQ corpus check after the first and second HIA migration commits",
       "original_negative_suite_tests_passed": 113,
+      "resolution": "Followed the existing sole-plan/source-inventory reconciliation procedure: refreshed only the two exact current blob pins; all 2611 other pins and every research-only/HOLD/false acceptance field remain identical. The unchanged checker succeeds as a source-consistency check while retaining status HOLD_NO_GO. Its original negative suite and exact committed CI remain required.",
+      "result": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md; complete 2613-pin readback also identified the generated distributed_source_inventory.rs change",
       "source_consistency_receipt": "pq-source-consistency.json"
     }
   ],
-  "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
-  "whole_chain_native": false,
-  "old_stack_can_be_removed": false,
-  "original_service_ci": {
-    "source_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
-    "status": "FAIL",
-    "diagnosis": "honest_history_native_replay_reached_original_deadline_before_six_depth_confirmation",
-    "source_before_after_verified": true,
-    "cargo_preparation_passed": true,
-    "host_errors": [],
-    "measurement_failures": 0,
-    "oom_events": 0,
-    "unchanged_budget": {
-      "business_window_ns": 4000000000,
-      "confirmation_depth": 6,
-      "attack_workers": 16,
-      "cpu_max": "25000 100000",
-      "memory_max": 2147483648,
-      "memory_swap_max": 0,
-      "pids_max": 256
-    },
-    "jobs": [
-      {
-        "run_id": 43735978622,
-        "job_id": 132878556137,
-        "artifact_id": 14169943744,
-        "artifact_zip_sha256": "a788b4f060398e232e69aa8bddd570b30d9fa1d7e93efd4d360ade5bc8885387",
-        "gate": "W1 fresh challenge service",
-        "systemd_run_exit": 1,
-        "failures": [
-          "CONFIRMATION_TARGET",
-          "FRESH_NATIVE_TEST_FAILED"
-        ],
-        "observations": [
-          {
-            "variant": "original",
-            "baseline_confirmed": 1,
-            "baseline_latency_ns": 2496705059,
-            "pressure_confirmed": 0,
-            "expected_confirmed": 1,
-            "successful_submit_acks": 7,
-            "last_replay_history_call_index": 4,
-            "last_replay_ended_ns": 4001016833,
-            "verification_errors": [
-              "PUBLIC_REQUEST_DEADLINE"
-            ]
-          },
-          {
-            "variant": "fresh",
-            "baseline_confirmed": 1,
-            "baseline_latency_ns": 2397282255,
-            "pressure_confirmed": 0,
-            "expected_confirmed": 1,
-            "successful_submit_acks": 7,
-            "last_replay_history_call_index": 1,
-            "last_replay_ended_ns": 4097919316,
-            "verification_errors": [
-              "PUBLIC_REQUEST_DEADLINE"
-            ]
-          }
-        ]
-      },
-      {
-        "run_id": 43735978720,
-        "job_id": 132878556357,
-        "artifact_id": 14170339809,
-        "artifact_zip_sha256": "a5f973f5567aee7349e5a7887538dc907f640b2a4cecc6d27b7b53e89f93d93e",
-        "gate": "cross-arch-cost arm64",
-        "systemd_run_exit": 1,
-        "failures": [
-          "CONFIRMATION_TARGET"
-        ],
-        "all_five_named_rust_tests_passed": true,
-        "baseline_confirmed": 1,
-        "baseline_latency_ns": 1882963429,
-        "pressure_confirmed": 0,
-        "expected_confirmed": 1,
-        "successful_submit_acks": 7,
-        "last_replay_history_call_index": 5,
-        "last_replay_ended_ns": 4000908403,
-        "verification_errors": [
-          "PUBLIC_REQUEST_DEADLINE"
-        ]
-      }
-    ],
-    "base59_existing_gate_readback": {
-      "source_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
-      "run_id": 43729710156,
-      "job_id": 132859243865,
-      "artifact_id": 14168246168,
-      "conclusion": "failure",
-      "cargo_preparation_passed": true,
-      "source_before_after_verified": true,
-      "host_errors": [],
-      "source_error": null,
-      "systemd_run_exit": 1,
-      "native_failure_detail": "not_read",
-      "artifact_downloaded_in_this_triage": false
-    },
-    "original_rust_tree_and_relevant_gate_scripts_changed_from_base59": false,
-    "rerun_performed": false,
-    "budget_relaxed": false,
-    "hia_kernel_results_replace_service_gate": false
-  },
   "historical_artifact_retrieval": {
     "artifact_id": 11531476198,
-    "run_id": 37730166589,
+    "cause": "unknown_expiration_or_deletion",
+    "existing_gap": true,
     "observed_job_id": 132878556625,
     "result": "zero_matching_artifacts",
-    "existing_gap": true,
-    "cause": "unknown_expiration_or_deletion",
+    "run_id": 37730166589,
     "substitute_supplied": false
   },
   "native_ci_observations": [
     {
       "commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
-      "run_id": 43735956757,
-      "tests": 72,
-      "shared_runner_native_calls": 21593,
-      "skips": 0,
-      "failures": 0,
-      "result": "PASS"
-    },
-    {
-      "commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
-      "run_id": 43737855981,
-      "job_id": 132884320405,
-      "artifact_id": 14170997975,
-      "artifact_zip_sha256": "33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36",
-      "report_sha256": "9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92",
-      "source_set_sha256": "2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675",
-      "tests": 97,
-      "shared_runner_native_calls": 34297,
-      "skips": 0,
       "failures": 0,
       "result": "PASS",
-      "later_crypto_and_platform_changes_qualified_by_this_run": false
+      "run_id": 43735956757,
+      "shared_runner_native_calls": 21593,
+      "skips": 0,
+      "tests": 72
+    },
+    {
+      "artifact_id": 14170997975,
+      "artifact_zip_sha256": "33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36",
+      "commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "failures": 0,
+      "job_id": 132884320405,
+      "later_crypto_and_platform_changes_qualified_by_this_run": false,
+      "report_sha256": "9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92",
+      "result": "PASS",
+      "run_id": 43737855981,
+      "shared_runner_native_calls": 34297,
+      "skips": 0,
+      "source_set_sha256": "2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675",
+      "tests": 97
     }
-  ]
+  ],
+  "old_stack_can_be_removed": false,
+  "original_service_ci": {
+    "base59_existing_gate_readback": {
+      "artifact_downloaded_in_this_triage": false,
+      "artifact_id": 14168246168,
+      "cargo_preparation_passed": true,
+      "conclusion": "failure",
+      "host_errors": [],
+      "job_id": 132859243865,
+      "native_failure_detail": "not_read",
+      "run_id": 43729710156,
+      "source_before_after_verified": true,
+      "source_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+      "source_error": null,
+      "systemd_run_exit": 1
+    },
+    "budget_relaxed": false,
+    "cargo_preparation_passed": true,
+    "diagnosis": "honest_history_native_replay_reached_original_deadline_before_six_depth_confirmation",
+    "hia_kernel_results_replace_service_gate": false,
+    "host_errors": [],
+    "jobs": [
+      {
+        "artifact_id": 14169943744,
+        "artifact_zip_sha256": "a788b4f060398e232e69aa8bddd570b30d9fa1d7e93efd4d360ade5bc8885387",
+        "failures": [
+          "CONFIRMATION_TARGET",
+          "FRESH_NATIVE_TEST_FAILED"
+        ],
+        "gate": "W1 fresh challenge service",
+        "job_id": 132878556137,
+        "observations": [
+          {
+            "baseline_confirmed": 1,
+            "baseline_latency_ns": 2496705059,
+            "expected_confirmed": 1,
+            "last_replay_ended_ns": 4001016833,
+            "last_replay_history_call_index": 4,
+            "pressure_confirmed": 0,
+            "successful_submit_acks": 7,
+            "variant": "original",
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "baseline_confirmed": 1,
+            "baseline_latency_ns": 2397282255,
+            "expected_confirmed": 1,
+            "last_replay_ended_ns": 4097919316,
+            "last_replay_history_call_index": 1,
+            "pressure_confirmed": 0,
+            "successful_submit_acks": 7,
+            "variant": "fresh",
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "run_id": 43735978622,
+        "systemd_run_exit": 1
+      },
+      {
+        "all_five_named_rust_tests_passed": true,
+        "artifact_id": 14170339809,
+        "artifact_zip_sha256": "a5f973f5567aee7349e5a7887538dc907f640b2a4cecc6d27b7b53e89f93d93e",
+        "baseline_confirmed": 1,
+        "baseline_latency_ns": 1882963429,
+        "expected_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "gate": "cross-arch-cost arm64",
+        "job_id": 132878556357,
+        "last_replay_ended_ns": 4000908403,
+        "last_replay_history_call_index": 5,
+        "pressure_confirmed": 0,
+        "run_id": 43735978720,
+        "successful_submit_acks": 7,
+        "systemd_run_exit": 1,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    ],
+    "measurement_failures": 0,
+    "oom_events": 0,
+    "original_rust_tree_and_relevant_gate_scripts_changed_from_base59": false,
+    "rerun_performed": false,
+    "source_before_after_verified": true,
+    "source_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+    "status": "FAIL",
+    "unchanged_budget": {
+      "attack_workers": 16,
+      "business_window_ns": 4000000000,
+      "confirmation_depth": 6,
+      "cpu_max": "25000 100000",
+      "memory_max": 2147483648,
+      "memory_swap_max": 0,
+      "pids_max": 256
+    }
+  },
+  "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
+  "schema": "trnm.hia.development-observations.v1",
+  "third_candidate_archive_publication_failure": {
+    "checker": "scripts/ci/check_pq_triage_archive.py",
+    "failed_step": "Verify removed preparation files and retained failures",
+    "failure": "Three exact stderr copies existed locally but were excluded from the committed tree by the existing log ignore rule. The strict archive checker failed at the first missing file.",
+    "introduced_by_this_migration": true,
+    "job_conclusion": "failure",
+    "job_id": 132895885512,
+    "missing_records": [
+      {
+        "blob_sha1": "6f3a9982889de99dbfc572970e5ff7dc7609b123",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-1.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-1.stderr.log",
+        "sha256": "24f1e6b62f79a4a3f8494b52a1b968fa208515d7fef77632da28d4b5d9080954"
+      },
+      {
+        "blob_sha1": "82905ada2cb45a7d246ae25059ef27aeff405ed5",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-2.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-2.stderr.log",
+        "sha256": "495f25639e8e171c145ee7569d9cd90e11b24a1e05823726cb3d6a038a8f53ba"
+      },
+      {
+        "blob_sha1": "a378f6d58a05b8e1520a2fef5e0d2c39b3b349dc",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-3.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-3.stderr.log",
+        "sha256": "27cc81f1ed9dc6af0fbb2f75f2cb7ca0fddd91d0728fe39ae19c5532b71128bb"
+      }
+    ],
+    "new_crypto_and_platform_steps_executed": false,
+    "observed_at": "2026-11-15T17:34:55.693969+00:00",
+    "repair": "Explicitly track the three unchanged original files. Preserve the checker and original archive index.",
+    "rerun_result": "pending",
+    "source_commit": "3861f5cf17f1bd354bd232df4643f4f1212d1800",
+    "workflow_run": 43741641815
+  },
+  "whole_chain_native": false
 }
