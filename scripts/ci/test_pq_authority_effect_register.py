@@ -69,7 +69,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual(result['curated_routes_checked'], 7)
         self.assertEqual(len(result['source_files_sha256']), 44)
         self.assertEqual(result['reviewed_source_lock_sha256'],
-                         'b094411537c272446a3bd5e18c08fecf2c70af5e5abf513d1b27133f55d5161b')
+                         '67583ec38887eabe00536dc4cd5ec7cc7fd48acc4397a52165bf4f591c9fa4a7')
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],

@@ -25,9 +25,50 @@ REGISTRY_SHA256 = {
     'node': '357025f7f34769299392d01f26e33047f4b81d8e25594ef5158a474f47175865',
 }
 POSTWRITE_PREFIX = PREFIX + 'post_write_readback::tests::'
+LEGACY_TAIL_PREFIX = PREFIX + 'history_arithmetic::legacy_activation_tail::tests::'
+LEGACY_TAIL_CONTROLS = {
+    LEGACY_TAIL_PREFIX + 'disabled_paths_do_not_read_diagnostic_clocks',
+    LEGACY_TAIL_PREFIX + 'known_boundaries_and_completed_prefix_are_fixed_and_relative',
+    LEGACY_TAIL_PREFIX + 'missing_reversed_overflow_and_cross_thread_clocks_remain_unknown',
+    LEGACY_TAIL_PREFIX + 'unwinding_retains_prefix_without_error_or_panic_payload',
+    LEGACY_TAIL_PREFIX + 'completion_counts_do_not_reset_and_overflow_is_null',
+    LEGACY_TAIL_PREFIX + 'unavailable_accounting_does_not_replace_native_results',
+}
+
+# Frozen verbatim from the c3e53d2 workflow. These four observations established
+# the historical 97-control roster; they cannot establish the current 103.
+HISTORICAL_LOG_SHA256 = {
+    127701926958: '244f253489f52e62e8985323ca2041de293039981b1c2bd86f1ddab6a5f0e692',
+    127701927002: 'e51a5d58671626c3d6e48b4e908a18724da393de0bcedd7c1d1ffeece2a4dc62',
+    127701927160: '466c1fa743cf135ef9f1b92d4a0dd1dde971f2e9e5d34976e52345aaaaa1586f',
+    127701927200: '5b8bc65500824b156b70359a53879864f1023fe52570612bbb9f89878569a5c9',
+}
+HISTORICAL_GREP = r'^test result: ok\. 97 passed; 0 failed; 0 ignored;'
+HISTORICAL_INLINE = r"""import re, sys
+from pathlib import Path
+lines = Path(sys.argv[1]).read_text().splitlines()
+names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
+summaries = [line for line in lines if line.startswith('test result:')]
+post_write = [name for name in names if name.startswith('store::native_authenticated::post_write_readback::tests::')]
+current_accounts = {
+    'store::native_authenticated::current_accounts_tests::cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints',
+    'store::native_authenticated::current_accounts_tests::current_projection_is_bound_to_exact_state_and_never_hides_account_changes',
+    'store::native_authenticated::current_accounts_tests::current_projection_preserves_complete_root_and_late_error_priority',
+    'store::native_authenticated::current_accounts_tests::current_projection_rereads_corrupt_sql_and_preserves_every_cancellation',
+    'store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate',
+}
+observed_current = {name for name in names if name.startswith('store::native_authenticated::current_accounts_tests::')}
+if (len(names) != 97 or len(set(names)) != 97 or len(post_write) != 25
+        or observed_current != current_accounts
+        or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 97 passed; 0 failed; 0 ignored;')):
+    raise SystemExit('current authenticated module requires 72 non-post-write and 25 post-write executions, including all five current-account controls, in one log')
+"""
+HISTORICAL_GUARD_SHA256 = '5a904c2a6eb22c9b38f1853b599a83ea6194488173ca90a423b67a2883d2b007'
 
 
-def workflow_guards():
+def workflow_guards(historical=False):
+    if historical:
+        return HISTORICAL_GREP, HISTORICAL_INLINE
     text = WORKFLOW.read_text()
     start = text.index('if test "$suite" = store::native_authenticated::; then\n              grep')
     section = text[start:text.index('          PYLOG', start)]
@@ -36,9 +77,10 @@ def workflow_guards():
     return grep, code
 
 
-def check(log, old=False):
-    pattern, code = workflow_guards()
+def check(log, old=False, historical=False):
+    pattern, code = workflow_guards(historical=historical)
     if old:
+        assert historical, 'the 91-control comparison is historical only'
         pattern = pattern.replace('97 passed', '91 passed')
         code = code.replace('97 passed', '91 passed').replace('!= 97', '!= 91').replace('!= 25', '!= 23')
     grep = subprocess.run(['grep', '-E', pattern], input=log, text=True, capture_output=True)
@@ -50,7 +92,21 @@ def check(log, old=False):
 
 
 def fixture(job):
-    return gzip.decompress((EVIDENCE / f'{job}.txt.gz').read_bytes()).decode()
+    raw = gzip.decompress((EVIDENCE / f'{job}.txt.gz').read_bytes())
+    assert hashlib.sha256(raw).hexdigest() == HISTORICAL_LOG_SHA256[job], \
+        'original 97-control native log changed'
+    return raw.decode()
+
+
+def synthetic_current_parser_control():
+    """Parser input only: it is not a native observation or execution receipt."""
+    names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
+                       fixture(JOBS[0]), re.M)
+    names += sorted(LEGACY_TAIL_CONTROLS)
+    return ('SYNTHETIC READER CONTROL ONLY; no native execution\n'
+            + ''.join(f'test {name} ... ok\n' for name in names)
+            + 'test result: ok. 103 passed; 0 failed; 0 ignored; 0 measured; '
+              '0 filtered out; finished in 0.00s\n')
 
 
 def registry_fixtures():
@@ -85,44 +141,96 @@ class AuthenticatedSuiteCount(unittest.TestCase):
     def test_all_four_original_logs_pass_both_corrected_guards_and_fail_old(self):
         for job in JOBS:
             with self.subTest(job=job):
-                self.assertEqual(check(fixture(job)), (True, True))
-                self.assertEqual(check(fixture(job), old=True), (False, False))
+                self.assertEqual(check(fixture(job), historical=True), (True, True))
+                self.assertEqual(check(fixture(job), old=True, historical=True), (False, False))
 
     def test_complete_roster_matches_source_owners_and_subgroups(self):
         store = ROOT / 'trillionnium/crates/trnm-pon-node/src/store'
         files = [store / 'native_authenticated.rs', store / 'native_fixed_blob_tests.rs']
         files += list((store / 'native_authenticated').rglob('*.rs'))
-        source = [name for path in files for name in re.findall(
-            r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(', path.read_text())]
-        self.assertEqual(len(source), 97)
+        owned = {path: re.findall(r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(',
+                                 path.read_text()) for path in files}
+        source = [name for names in owned.values() for name in names]
+        tail = store / 'native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs'
+        added = owned[tail]
+        self.assertEqual(len(source), 103)
+        self.assertEqual(len(added), 6)
+        self.assertCountEqual([LEGACY_TAIL_PREFIX + name for name in added],
+                              LEGACY_TAIL_CONTROLS)
+        retained = [name for path, names in owned.items() if path != tail for name in names]
+        self.assertEqual(len(retained), 97)
         for job in JOBS:
             names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', fixture(job), re.M)
             self.assertEqual(len(names), 97)
             self.assertEqual(len(set(names)), 97)
-            self.assertCountEqual(source, [name.rsplit('::', 1)[1] for name in names])
+            historical_names = [name.rsplit('::', 1)[1] for name in names]
+            self.assertCountEqual(retained, historical_names)
+            self.assertCountEqual(source, historical_names + added)
             self.assertEqual(sum('::post_write_readback::tests::' in name for name in names), 25)
             self.assertEqual(sum('::current_accounts_tests::' in name for name in names), 5)
 
     def test_missing_duplicate_wrong_group_and_current_identity_rejected(self):
-        log = fixture(JOBS[0])
-        names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', log, re.M)
-        first = f'test {names[0]} ... ok\n'
-        for changed in (log.replace(first, '', 1), log + first,
-                        log.replace('::post_write_readback::tests::', '::other::', 1),
-                        log.replace('::current_accounts_tests::', '::other::', 1)):
-            with self.subTest(changed=changed[:60]):
-                self.assertFalse(check(changed)[1])
+        for log, historical in ((fixture(JOBS[0]), True),
+                                (synthetic_current_parser_control(), False)):
+            self.assertEqual(check(log, historical=historical), (True, True))
+            names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', log, re.M)
+            first = f'test {names[0]} ... ok\n'
+            for changed in (log.replace(first, '', 1), log + first,
+                            log.replace('::post_write_readback::tests::', '::other::', 1),
+                            log.replace('::current_accounts_tests::', '::other::', 1)):
+                with self.subTest(historical=historical, changed=changed[:60]):
+                    self.assertNotEqual(changed, log)
+                    self.assertFalse(check(changed, historical=historical)[1])
 
     def test_reduced_extra_failed_ignored_partial_and_repeated_summary_rejected(self):
-        log = fixture(JOBS[0])
-        for old, new in [('97 passed', '91 passed'), ('97 passed', '96 passed'),
-                         ('97 passed', '98 passed'), ('0 failed', '1 failed'),
-                         ('0 ignored', '1 ignored'), ('result: ok.', 'result: FAILED.')]:
-            with self.subTest(new=new):
-                self.assertEqual(check(log.replace(old, new)), (False, False))
-        summary = next(line for line in log.splitlines() if line.startswith('test result:'))
-        self.assertEqual(check(log.replace(summary, '')), (False, False))
-        self.assertFalse(check(log + summary + '\n')[1])
+        for log, historical, count in ((fixture(JOBS[0]), True, 97),
+                                       (synthetic_current_parser_control(), False, 103)):
+            changes = [(f'{count} passed', f'{value} passed')
+                       for value in (count - 6, count - 1, count + 1)]
+            changes += [('0 failed', '1 failed'), ('0 ignored', '1 ignored'),
+                        ('result: ok.', 'result: FAILED.')]
+            for old, new in changes:
+                with self.subTest(historical=historical, new=new):
+                    changed = log.replace(old, new)
+                    self.assertNotEqual(changed, log)
+                    self.assertEqual(check(changed, historical=historical), (False, False))
+            summary = next(line for line in log.splitlines() if line.startswith('test result:'))
+            self.assertEqual(check(log.replace(summary, ''), historical=historical), (False, False))
+            self.assertFalse(check(log + summary + '\n', historical=historical)[1])
+
+    def test_historical_guard_stays_frozen(self):
+        pattern, code = workflow_guards(historical=True)
+        self.assertEqual(hashlib.sha256((pattern + '\0' + code).encode()).hexdigest(),
+                         HISTORICAL_GUARD_SHA256)
+        self.assertEqual(set(HISTORICAL_LOG_SHA256), set(JOBS))
+
+    def test_current_guard_requires_current_roster_and_refuses_historical_qualification(self):
+        current = synthetic_current_parser_control()
+        self.assertEqual(check(current), (True, True))
+        self.assertEqual(check(current, historical=True), (False, False))
+        for job in JOBS:
+            with self.subTest(job=job):
+                self.assertEqual(check(fixture(job)), (False, False))
+
+    def test_each_new_control_must_be_unique_named_and_successful(self):
+        log = synthetic_current_parser_control()
+        self.assertEqual(check(log), (True, True))
+        for name in LEGACY_TAIL_CONTROLS:
+            line = f'test {name} ... ok\n'
+            duplicate = next(other for other in LEGACY_TAIL_CONTROLS if other != name)
+            changes = {
+                'missing': log.replace(line, '', 1),
+                'extra-duplicate': log + line,
+                'same-count-duplicate': log.replace(line, f'test {duplicate} ... ok\n', 1),
+                'substitute': log.replace(line, f'test {LEGACY_TAIL_PREFIX}unexpected_control ... ok\n', 1),
+                'wrong-group': log.replace(line, line.replace(LEGACY_TAIL_PREFIX, PREFIX + 'other::'), 1),
+                'failed': log.replace(line, line.replace(' ... ok', ' ... FAILED'), 1),
+                'ignored': log.replace(line, line.replace(' ... ok', ' ... ignored'), 1),
+            }
+            for label, changed in changes.items():
+                with self.subTest(control=name, change=label):
+                    self.assertNotEqual(changed, log)
+                    self.assertFalse(check(changed)[1])
 
     def test_original_execution_and_downstream_requirements_unchanged(self):
         text = WORKFLOW.read_text()

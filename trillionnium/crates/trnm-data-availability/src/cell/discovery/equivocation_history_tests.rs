@@ -117,7 +117,13 @@ struct Rendezvous {
 }
 
 impl Rendezvous {
-    fn start(path: &Path, providers: &[SocketAddr], setup_deadline: Instant) -> Self {
+    fn start(
+        path: &Path,
+        providers: &[SocketAddr],
+        setup_deadline: Instant,
+        timing: super::timing_probe::Token,
+        service_ordinal: usize,
+    ) -> Self {
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let addresses = policy(providers);
@@ -126,6 +132,7 @@ impl Rendezvous {
         let stop = shutdown.clone();
         let (ready, accepting) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
+            let _timing = timing.install("server", Some(service_ordinal));
             super::transport::serve_cell_rendezvous_with_ready(
                 &listener,
                 &directory,
@@ -341,6 +348,8 @@ impl Drop for WireBootstrap {
 #[test]
 fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
     let setup_deadline = deadline();
+    let timing = super::timing_probe::Capture::new();
+    let caller_timing = timing.token().install("caller", None);
     let temp = tempfile::tempdir().unwrap();
     let (manifest, _bytes, _source) = fixture(temp.path());
     let a = SilentTrap::start(setup_deadline);
@@ -351,16 +360,22 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         &temp.path().join("a-rendezvous.sqlite"),
         &endpoints,
         setup_deadline,
+        timing.token(),
+        0,
     );
     let second = Rendezvous::start(
         &temp.path().join("c-rendezvous.sqlite"),
         &endpoints,
         setup_deadline,
+        timing.token(),
+        1,
     );
     let third = Rendezvous::start(
         &temp.path().join("b-rendezvous.sqlite"),
         &endpoints,
         setup_deadline,
+        timing.token(),
+        2,
     );
     let addresses = policy(&[
         a.address,
@@ -395,11 +410,15 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         conflict_record.statement().sequence
     );
     assert_ne!(first_record.encode(), conflict_record.encode());
-    for (value, rendezvous) in [
+    for (service_ordinal, (value, rendezvous)) in [
         (&first_record, first.address),
         (&higher_record, second.address),
         (&conflict_record, third.address),
-    ] {
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        super::timing_probe::service(Some(service_ordinal));
         let receipt =
             announce_cell_provider(value, rendezvous, &addresses, limits(), deadline()).unwrap();
         assert_eq!(receipt.connection_attempts, 1);
@@ -440,6 +459,7 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         assert!((2..=3).contains(&served.connections));
         assert_eq!(served.rejected_requests, 0);
     }
+    super::timing_probe::service(None);
     let rows = directory
         .records(pin, wall_now().unwrap().as_secs(), deadline())
         .unwrap();
@@ -448,6 +468,10 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         rows[0], higher_record,
         "durable high water remains seq2 despite exclusion from this operation"
     );
+    // Every original network/SQLite operation and service join is complete.
+    // Keep buffered diagnostic output before the strict evidence assertion.
+    drop(caller_timing);
+    timing.emit();
     assert_eq!(
         observation,
         CellDiscoveryObservationV1 {

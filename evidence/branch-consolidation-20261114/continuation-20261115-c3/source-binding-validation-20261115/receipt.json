@@ -1,0 +1,225 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_seconds": 0.07866096496582031,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "00-project-preflight.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 180,
+          "filename": "00-project-preflight.stdout",
+          "sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_lifetime_current_v2.py"
+      ],
+      "elapsed_seconds": 0.22437286376953125,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 124,
+          "filename": "01-test_pq_lifetime_current_v2.stderr",
+          "sha256": "b0a50bb98e16c98e9ee331ea86b27408713b7320be5e9eeb4773febd40f6f95c"
+        },
+        "stdout": {
+          "bytes": 0,
+          "filename": "01-test_pq_lifetime_current_v2.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/pq_lifetime_current_v2.py"
+      ],
+      "elapsed_seconds": 0.04703211784362793,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "02-pq_lifetime_current_v2.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 16212,
+          "filename": "02-pq_lifetime_current_v2.stdout",
+          "sha256": "2df5ef6eb7e85cea63823ae5150135d162ead4616d2616a6f0f87a832e353a7d"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_lifetime_composition.py"
+      ],
+      "elapsed_seconds": 0.7154457569122314,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 159,
+          "filename": "03-test_pq_lifetime_composition.stderr",
+          "sha256": "40b57064efef21f77a9497f96c01adffe3c9d388e0e0b8f12dd1c90fb927e006"
+        },
+        "stdout": {
+          "bytes": 0,
+          "filename": "03-test_pq_lifetime_composition.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/pq_lifetime_composition.py"
+      ],
+      "elapsed_seconds": 0.04701733589172363,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "04-pq_lifetime_composition.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 25763,
+          "filename": "04-pq_lifetime_composition.stdout",
+          "sha256": "c4c48dbab2b441000ee26d8825867f21c8213074c7165a92cc414ed35c640d1d"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "elapsed_seconds": 269.30723333358765,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 215,
+          "filename": "05-test_pq_research_integration.stderr",
+          "sha256": "6361af1435ffa41548b7f64a796e5563a3f88b24c7829db338aca3148e151cd0"
+        },
+        "stdout": {
+          "bytes": 0,
+          "filename": "05-test_pq_research_integration.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "elapsed_seconds": 2.98418927192688,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 6414,
+          "filename": "06--B.stderr",
+          "sha256": "f43cd7c811a3990fdb0b01f015b60f9da01be59c9fd26591f37ab0b29deb2f56"
+        },
+        "stdout": {
+          "bytes": 484,
+          "filename": "06--B.stdout",
+          "sha256": "fae9086dc2c2e1b014737b82eec7fc325ca60004cb8f916a6f8e2b46408e65bd"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 22.828336238861084,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "07-check_repository.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 307,
+          "filename": "07-check_repository.stdout",
+          "sha256": "41269164915bbeb54088a420dbd99f9eb5435e2e9b70a5a04b9e3aa16cbc45a4"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.05657243728637695,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "08-refresh_distributed_source_inventory.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 35,
+          "filename": "08-refresh_distributed_source_inventory.stdout",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "elapsed_seconds": 0.05515933036804199,
+      "exit_code": 0,
+      "logs": {
+        "stderr": {
+          "bytes": 0,
+          "filename": "09-diff.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 0,
+          "filename": "09-diff.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "scope": "Uncommitted runtime/current-binding delta on c3. The validation ran before this audit documentation/evidence was added; it is not a complete repository-truth lane or a hosted native qualification.",
+  "source_files_sha256_at_validation": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "952e372cad398fbdbf55048f7bdaf8a322496290b59db1cd893c756a04017635",
+    "config/pon/pq128-lifetime-composition-current-v3.json": "536efb3875840d98b98ee2904f2dd80bd8fe7d76bb1e11db8933ae4dc1925e81",
+    "config/pon/pq128-source-correspondence-current-v2.json": "77729ed60da423795f27b56c2cf0c7b79dfa89927c3acff05ed7f54e04693fb5",
+    "scripts/ci/pq_lifetime_composition.py": "5770901cb87df34a39ddfb650b2c312d3e38336389bcecb3e67f428bb396c8f7",
+    "scripts/ci/pq_lifetime_current_v2.py": "e1f0b03583aad4c527e1bd032a1fb25c33b24d68be7c9047eaa6b470a57eb324",
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": "7a6fdd2f6d24c94a28b5425d0f77ebd78b6a967071b664fae9c624d0e5acae16",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "6b2928d69a0d67343c2e201af9b29868c3445ba13c5afe26c769b46f0b64a0f1",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "52c3e5446c9352647c81cf675437811c4a907bdcf7d557bb0fbea273afe94cfe",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs": "ea5d9f9e3dc9a873b5186310ab84838299be2fea274858f00851df5604a932f2",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "5c2548a7d9fe1a9ea563fe59675e689202c64d66f413ec6b56c8c3fb5a040299",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "47bfc516027c89115d47d7e7bd02805f632a53b2deb791edc1d528b55feccbf2",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs": "2c028480d5d4cacc51c5200779e58243c81db5c41681daabfd88c2768902f0a5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs": "62162467bed8e4d89b4691dc453d1d1333b55d8ed3cc080b467b16e7c10774ec"
+  },
+  "source_head_before_changes": "c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636"
+}

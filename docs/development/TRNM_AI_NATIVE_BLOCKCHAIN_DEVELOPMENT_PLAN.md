@@ -15630,6 +15630,7 @@ preservation and fresh reference-cleanup checks stay explicit obligations.
 This file remains the sole development plan.
 
 
+
 ### 2026-11-14 reconcile the concurrent 4def runtime successor
 
 The candidate advanced during final publication preparation from
@@ -15681,3 +15682,49 @@ verify a new complete remote inventory, the final combined ancestry and its
 separate remotely preserved annotated history archive. No remote deletion,
 protected-main exception, production activation or qualification is granted
 by this entry. This file remains the sole development plan.
+
+### 2026-11-15 continue the c3 branch consolidation
+
+Continue PR 847 from `c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636`.
+The fresh 900-name/884-tip inventory is entirely ancestral to c3; retain the
+original 908-name/892-tip disposition ledger and the separately verified remote
+annotated c3 archive. The [continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-c3/README.md)
+records the final 15-success/six-failure result of run 43658725402.
+
+Select the shared checkpoint frame-read deadline and the equivalent typed
+Submit encoding, retaining every original signed domain, packet check and
+failure precedence. Keep the DA instrumentation test-only and its original
+200/250 ms limits and strict six-response assertion unchanged. The offline
+frame controls and client component measurements have limited scopes; the
+failed four-second pressure confirmations and unresolved TCP timeout require
+new native results on the exact committed successor.
+
+Refresh only reviewed current correspondence/corpus pins and the embedded
+source inventory. Preserve frozen model, lock, composition, old failed runs
+and all false/null production and PQ fields. The local complete Rust test
+builds stopped at SIGKILL and did not execute DA's 941 tests; do not substitute
+a reduced graph or changed profile for those results. A successor must pass
+the original hosted head/prospective gates, acquire a separately verified
+remote archive before automatic PR-head deletion, and recheck every remote
+tip before ordinary protected-main integration and final reference cleanup.
+This file remains the sole development plan.
+
+### 2026-11-15 reconcile the concurrent f34 diagnostics
+
+The publication lease advanced to
+`f34f432c6c533c651ab74f69f4f43aef326eedcb`, whose single parent is
+c3. Preserve the saved local c3 delta and select the reviewed incoming
+Legacy opt-in diagnostics and Witness/TLS regressions. The composed current
+map must bind both incoming `store.rs` and local `public_v3.rs`; retain frozen
+identities and all false/null qualification fields. The composed corpus
+contains 2,613 pins and 2,517 required paths.
+
+Repair the incoming stale authenticated-test roster: execute and require all
+103 current tests, including the six exact new names, without changing the
+native command or limits. Keep the original four 97-test logs under their
+frozen historical guard; do not promote them to the 103-test source. Synthetic
+parser checks do not replace native execution. Preserve both local node
+SIGKILL build failures and the dependency-bound helper measurement under
+their limited scopes. Require the final combined source's original hosted
+gates and remote archive before protected-main integration and branch cleanup.
+This file remains the sole development plan.

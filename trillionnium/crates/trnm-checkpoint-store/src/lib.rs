@@ -29,9 +29,11 @@ use trnm_checkpoint_types::{
     EXTERNAL_CHECKPOINT_RECORD_BYTES_V2,
 };
 
+mod frame_read_v2;
 mod journal_checkpoint_v1;
 mod live_journal_v2;
 mod socket_owner_v1;
+use frame_read_v2::read_frame_v2;
 pub use journal_checkpoint_v1::{
     read_external_journal_checkpoint_v1, write_new_external_journal_checkpoint_v1,
     ExternalJournalCheckpointV1, EXTERNAL_JOURNAL_CHECKPOINT_BYTES_V1,
@@ -849,7 +851,7 @@ impl ExternalCheckpointAuthorityV2 {
                 stage: "set response timeout",
                 source,
             })?;
-        let frame = read_frame_v2(&mut stream)?;
+        let frame = read_frame_v2(&mut stream, Duration::from_secs(5))?;
         // Reading an admitted peer may block; fence listener replacement again
         // before a complete request can read or advance the journal.
         socket_owner.revalidate()?;
@@ -1062,7 +1064,7 @@ impl UnixExternalCheckpointStoreV2 {
                 source,
             })?;
         write_frame_v2(&mut stream, request)?;
-        read_frame_v2(&mut stream)
+        read_frame_v2(&mut stream, self.timeout)
     }
 }
 
@@ -1273,28 +1275,6 @@ fn decode_response_v2(body: &[u8]) -> Result<ResponseV2, ExternalCheckpointAutho
             "response shape",
         )),
     }
-}
-
-fn read_frame_v2(stream: &mut UnixStream) -> Result<Vec<u8>, ExternalCheckpointAuthorityErrorV2> {
-    let mut header = [0u8; 4];
-    stream
-        .read_exact(&mut header)
-        .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
-            stage: "read frame length",
-            source,
-        })?;
-    let length = u32::from_be_bytes(header) as usize;
-    if length == 0 || length > MAX_FRAME_BYTES_V2 {
-        return Err(ExternalCheckpointAuthorityErrorV2::Protocol("frame length"));
-    }
-    let mut body = vec![0u8; length];
-    stream
-        .read_exact(&mut body)
-        .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
-            stage: "read frame body",
-            source,
-        })?;
-    Ok(body)
 }
 
 fn write_frame_v2(

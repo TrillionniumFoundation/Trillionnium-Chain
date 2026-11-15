@@ -2,7 +2,7 @@
 //! The owned oracle is the retained d26 implementation, independent of this
 //! module's witness constructor; native dispatch still performs real PNW1 work.
 use super::super::*;
-use super::{CanonicalPacketText, DecodedTaskBody};
+use super::{CanonicalPacketText, DecodedTaskBody, EncodedClientRequest};
 use trnm_crypto_primitives::pon_work;
 
 fn server() -> PublicServer {
@@ -48,6 +48,195 @@ fn round_trip(packet: Result<crate::Packet>) -> std::result::Result<Vec<u8>, Str
     packet
         .and_then(|packet| packet.encode())
         .map_err(|e| e.to_string())
+}
+
+fn assert_client_encoding_matches_original(request: &Request, op: u8) {
+    let original = serde_json::to_vec(request).unwrap();
+    let encoded = EncodedClientRequest::new(request).unwrap();
+    assert_eq!(encoded.bytes, original, "exact original serde bytes");
+    let expected = canonical_request(&original, op)
+        .map(|_| original)
+        .map_err(|error| error.to_string());
+    let observed = encoded
+        .into_validated_bytes(op)
+        .map_err(|error| error.to_string());
+    assert_eq!(observed, expected, "original canonical outcome for op {op}");
+}
+
+#[test]
+fn client_submit_encoding_keeps_serde_bytes_escaping_and_size_error_order() {
+    for length in [
+        0,
+        1,
+        2,
+        63,
+        64,
+        65,
+        99_014,
+        2 * MAX_PACKET - 2,
+        2 * MAX_PACKET - 1,
+        2 * MAX_PACKET,
+        2 * MAX_PACKET + 1,
+        2 * MAX_PACKET + 2,
+        2 * MAX_PACKET + 64,
+    ] {
+        assert_client_encoding_matches_original(
+            &Request::Submit {
+                packet: "a".repeat(length),
+            },
+            1,
+        );
+    }
+    // All ASCII spelling/escape cases, followed by multibyte Unicode. Invalid
+    // strings still pass through serde before the original canonical refusal.
+    for character in (0..=127)
+        .map(char::from)
+        .chain(['é', '中', '\u{2028}', '🙂', '\u{10ffff}'])
+    {
+        for packet in [
+            format!("{character}0"),
+            format!("00{character}ff"),
+            format!("00{character}"),
+        ] {
+            assert_client_encoding_matches_original(&Request::Submit { packet }, 1);
+        }
+    }
+    for packet in [
+        "0123456789abcdef",
+        "\\u0061a",
+        "\\n",
+        "Aa",
+        "aA",
+        "g0",
+        "0g",
+    ] {
+        assert_client_encoding_matches_original(
+            &Request::Submit {
+                packet: packet.into(),
+            },
+            1,
+        );
+    }
+    for index in [0, MAX_PACKET, 2 * MAX_PACKET - 1] {
+        let mut bytes = vec![b'a'; 2 * MAX_PACKET];
+        bytes[index] = b'g';
+        assert_client_encoding_matches_original(
+            &Request::Submit {
+                packet: String::from_utf8(bytes).unwrap(),
+            },
+            1,
+        );
+    }
+}
+
+#[test]
+fn client_encoding_keeps_other_requests_and_mismatched_operation_refusals() {
+    let cases = [
+        Request::Submit {
+            packet: "00".into(),
+        },
+        Request::Submit {
+            packet: "\"\\\n".into(),
+        },
+        Request::Head,
+        Request::History {
+            tip: hex::encode([3; 32]),
+            after: "\"\\\n中".into(),
+        },
+        Request::PoolSubmitBundle {
+            pool_context: hex::encode([4; 32]),
+            transactions: vec![hex::encode([0; MIN_POOL_RAW])],
+        },
+        Request::PoolSubmitBundle {
+            pool_context: "\"\\\n".into(),
+            transactions: vec!["g0".into(), "000".into()],
+        },
+        Request::PoolStatus,
+        Request::GrowthSubmitV1 {
+            packet: "00".into(),
+        },
+        Request::GrowthPacketStatusV1 {
+            packet: "\"\\\n".into(),
+        },
+        Request::GrowthHeadV1,
+    ];
+    for request in cases {
+        for op in 0..=9 {
+            assert_client_encoding_matches_original(&request, op);
+        }
+    }
+    let body = EncodedClientRequest::new(&Request::Submit {
+        packet: "00".into(),
+    })
+    .unwrap()
+    .into_validated_bytes(1)
+    .unwrap();
+    assert_eq!(
+        CanonicalPacketText::from_body(&body)
+            .unwrap()
+            .decode()
+            .err()
+            .unwrap()
+            .to_string(),
+        "PACKET_LIMIT",
+        "canonical transport bytes grant no Packet admission"
+    );
+}
+
+#[test]
+fn client_profile_isolation_still_precedes_submit_grammar_refusal() {
+    let settings = Settings::development(Some(1_700_000_000)).unwrap();
+    let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap();
+    let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+    for packet in [
+        "00".into(),
+        "\"\\\n".into(),
+        "g".repeat(2 * MAX_PACKET + 64),
+    ] {
+        let (result, metrics) = call_public_protected_v3_with_profile(
+            "127.0.0.1:1".parse().unwrap(),
+            &Request::Submit { packet },
+            &settings,
+            caller.public_key(),
+            &caller,
+            (policy, ClientProfile::NativeGrowthV1),
+            None,
+        );
+        assert_eq!(
+            result.err().unwrap().to_string(),
+            "PUBLIC_OPERATION_PROFILE"
+        );
+        assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
+    }
+}
+
+#[test]
+fn chunked_lower_hex_matches_original_for_every_byte_and_vector_boundary() {
+    let original = |text: &[u8]| {
+        text.iter()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+    };
+    assert!(lower_hex(&[]));
+    for length in [1, 2, 15, 16, 17, 31, 32, 33, 63, 64, 65, 127, 128, 129] {
+        let mut bytes: Vec<_> = b"0123456789abcdef"
+            .iter()
+            .copied()
+            .cycle()
+            .take(length)
+            .collect();
+        for index in 0..length {
+            let saved = bytes[index];
+            for byte in 0..=u8::MAX {
+                bytes[index] = byte;
+                assert_eq!(
+                    lower_hex(&bytes),
+                    original(&bytes),
+                    "{length}/{index}/{byte}"
+                );
+            }
+            bytes[index] = saved;
+        }
+    }
 }
 
 #[test]

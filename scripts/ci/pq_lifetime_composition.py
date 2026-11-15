@@ -45,7 +45,7 @@ INPUTS = {
     },
 }
 FROZEN_COMPOSITION = {'path': 'config/pon/pq128-lifetime-composition-v2.json', 'sha256': '5b527fbd56885bf7a7cba7516a45f0f911479b0d2867d03ff5361ee3e7a8b052'}
-CURRENT_CORRESPONDENCE = {'path': 'config/pon/pq128-source-correspondence-current-v2.json', 'sha256': '1cf3e676835e89254fe1bef76ba94235f46a40951738f68d41c19b0ff77724db', 'source_snapshot_sha256': '7e063b348b488351895c33f95f49be31f850500bc0f5b69f14deb302ab890bf6'}
+CURRENT_CORRESPONDENCE = {'path': 'config/pon/pq128-source-correspondence-current-v2.json', 'sha256': '5328f618642aa14125b6325ebcc2285f8be85cf39843a11c6d9157863a0c27c6', 'source_snapshot_sha256': 'f9991545b8b43b870559106d7be807d286f4b2ac555a2a10dbaf6c6e850ac8fd'}
 PRIMITIVES = {
     "sha256": "FIPS180-4/SHA-256", "sha512": "FIPS180-4/SHA-512",
     "shake128": "FIPS202/SHAKE128", "shake256": "FIPS202/SHAKE256",

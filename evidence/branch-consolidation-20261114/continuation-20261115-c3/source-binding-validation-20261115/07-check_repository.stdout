@@ -1,0 +1,1 @@
+{"activation": false, "head": "c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636", "local_links": 8610, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1618, "source_state": "dirty-candidate", "tree": "b6e240d2bd7a861b9bb56044fe40373c81ac2786", "workspace_packages": 26}

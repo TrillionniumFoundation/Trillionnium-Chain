@@ -1,47 +1,45 @@
 {
-  "schema": "trnm-pq-authority-effects-v1",
-  "source_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
-  "purpose": "curated-source-consistency-only",
   "coverage_complete": false,
-  "whole_chain_pq_qualified": false,
   "production_activation": false,
+  "purpose": "curated-source-consistency-only",
   "routes": [
     {
-      "id": "compat_transfer_type_v1",
+      "authentication_sources": [
+        "trillionnium/crates/trnm-types/src/transfer.rs"
+      ],
       "effect_scope": "validation-result-only",
-      "reachability_observation": "no-in-repository-native-consumer-found",
-      "profile_boundary": "classic-type-without-a-selected-node-profile",
       "entry_sources": [
         "trillionnium/crates/trnm-types/src/transfer.rs",
         "trillionnium/crates/trnm-types/src/lib.rs"
       ],
-      "authentication_sources": [
-        "trillionnium/crates/trnm-types/src/transfer.rs"
-      ],
-      "state_or_effect_sources": [],
-      "profile_sources": [],
+      "id": "compat_transfer_type_v1",
       "negative_test_sources": [
         "trillionnium/crates/trnm-types/src/transfer.rs"
-      ]
+      ],
+      "profile_boundary": "classic-type-without-a-selected-node-profile",
+      "profile_sources": [],
+      "reachability_observation": "no-in-repository-native-consumer-found",
+      "state_or_effect_sources": []
     },
     {
-      "id": "native_pnx1_account_transfer",
+      "authentication_sources": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+      ],
       "effect_scope": "native-account-state-and-node-persistence",
-      "reachability_observation": "native-owner-source-connection",
-      "profile_boundary": "distinct-pq-account-and-network-owner-selection",
       "entry_sources": [
         "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs",
         "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
-      "authentication_sources": [
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
-        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+      "id": "native_pnx1_account_transfer",
+      "negative_test_sources": [
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
+        "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs"
       ],
-      "state_or_effect_sources": [
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
-      ],
+      "profile_boundary": "distinct-pq-account-and-network-owner-selection",
       "profile_sources": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs",
@@ -49,101 +47,97 @@
         "trillionnium/crates/trnm-pon-node/src/ingress.rs",
         "trillionnium/crates/trnm-pon-node/src/public_submit.rs"
       ],
-      "negative_test_sources": [
-        "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
-        "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
-        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs"
+      "reachability_observation": "native-owner-source-connection",
+      "state_or_effect_sources": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ]
     },
     {
-      "id": "portable_consumption_settlement_v1",
-      "effect_scope": "portable-settlement-store-only",
-      "reachability_observation": "portable-kernel-no-native-consumer-found",
-      "profile_boundary": "fixed-classical-bilateral-signature-schema",
-      "entry_sources": [
-        "trillionnium/crates/trnm-service-settlement/src/store.rs"
-      ],
       "authentication_sources": [
         "trillionnium/crates/trnm-service-settlement/src/engine.rs",
         "trillionnium/crates/trnm-service-settlement/src/types.rs"
       ],
-      "state_or_effect_sources": [
-        "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+      "effect_scope": "portable-settlement-store-only",
+      "entry_sources": [
         "trillionnium/crates/trnm-service-settlement/src/store.rs"
       ],
-      "profile_sources": [
-        "trillionnium/crates/trnm-service-settlement/src/types.rs"
-      ],
+      "id": "portable_consumption_settlement_v1",
       "negative_test_sources": [
         "trillionnium/crates/trnm-service-settlement/src/tests.rs"
+      ],
+      "profile_boundary": "fixed-classical-bilateral-signature-schema",
+      "profile_sources": [
+        "trillionnium/crates/trnm-service-settlement/src/types.rs"
+      ],
+      "reachability_observation": "portable-kernel-no-native-consumer-found",
+      "state_or_effect_sources": [
+        "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+        "trillionnium/crates/trnm-service-settlement/src/store.rs"
       ]
     },
     {
-      "id": "research_command_state_v1",
-      "effect_scope": "research-protocol-state-only",
-      "reachability_observation": "local-state-machine-no-native-consumer-found",
-      "profile_boundary": "fixed-classical-research-command-schema",
-      "entry_sources": [
-        "trillionnium/crates/trnm-research-protocol/src/command.rs",
-        "trillionnium/crates/trnm-research-protocol/src/state.rs"
-      ],
       "authentication_sources": [
         "trillionnium/crates/trnm-research-protocol/src/command.rs",
         "trillionnium/crates/trnm-research-protocol/src/state.rs"
       ],
-      "state_or_effect_sources": [
+      "effect_scope": "research-protocol-state-only",
+      "entry_sources": [
+        "trillionnium/crates/trnm-research-protocol/src/command.rs",
         "trillionnium/crates/trnm-research-protocol/src/state.rs"
       ],
-      "profile_sources": [
-        "trillionnium/crates/trnm-research-protocol/src/command.rs"
-      ],
+      "id": "research_command_state_v1",
       "negative_test_sources": [
         "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
         "trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs"
+      ],
+      "profile_boundary": "fixed-classical-research-command-schema",
+      "profile_sources": [
+        "trillionnium/crates/trnm-research-protocol/src/command.rs"
+      ],
+      "reachability_observation": "local-state-machine-no-native-consumer-found",
+      "state_or_effect_sources": [
+        "trillionnium/crates/trnm-research-protocol/src/state.rs"
       ]
     },
     {
-      "id": "hepta_admission_compare_v1",
-      "effect_scope": "owner-context-comparison-only",
-      "reachability_observation": "comparison-result-no-final-use-consumer-found",
-      "profile_boundary": "classical-v1-and-separate-pq-v2-comparators",
-      "entry_sources": [
-        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
-      ],
       "authentication_sources": [
         "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
         "trillionnium/crates/trnm-research-protocol/src/state.rs"
       ],
-      "state_or_effect_sources": [],
+      "effect_scope": "owner-context-comparison-only",
+      "entry_sources": [
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs"
+      ],
+      "id": "hepta_admission_compare_v1",
+      "negative_test_sources": [
+        "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+        "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs"
+      ],
+      "profile_boundary": "classical-v1-and-separate-pq-v2-comparators",
       "profile_sources": [
         "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
         "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs"
       ],
-      "negative_test_sources": [
-        "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
-        "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs"
-      ]
+      "reachability_observation": "comparison-result-no-final-use-consumer-found",
+      "state_or_effect_sources": []
     },
     {
-      "id": "cell_discovery_v1_fetch_cache",
-      "effect_scope": "provider-directory-and-content-cache-only",
-      "reachability_observation": "cli-transport-store-file-source-connection",
-      "profile_boundary": "explicit-v1-v2-cli-wire-and-directory-selection",
-      "entry_sources": [
-        "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs"
-      ],
       "authentication_sources": [
         "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
         "trillionnium/crates/trnm-data-availability/src/types.rs"
       ],
-      "state_or_effect_sources": [
-        "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+      "effect_scope": "provider-directory-and-content-cache-only",
+      "entry_sources": [
+        "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs"
       ],
+      "id": "cell_discovery_v1_fetch_cache",
+      "negative_test_sources": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs"
+      ],
+      "profile_boundary": "explicit-v1-v2-cli-wire-and-directory-selection",
       "profile_sources": [
         "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
         "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs",
@@ -152,36 +146,40 @@
         "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
         "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs"
       ],
-      "negative_test_sources": [
-        "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs"
+      "reachability_observation": "cli-transport-store-file-source-connection",
+      "state_or_effect_sources": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
       ]
     },
     {
-      "id": "reference_release_finality_v2_observer",
-      "effect_scope": "read-only-certificate-facts",
-      "reachability_observation": "reference-and-native-read-only-observation",
-      "profile_boundary": "classical-reference-profile-without-activation",
-      "entry_sources": [
-        "formal/release-finality-v2/verify_certificate.py",
-        "trillionnium/crates/trnm-pon-node/src/release_finality.rs"
-      ],
       "authentication_sources": [
         "formal/release-finality-v2/verify_certificate.py",
         "formal/pon-nakamoto-v1/strict_signature.py",
         "trillionnium/crates/trnm-pon-node/src/release_finality.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
       ],
-      "state_or_effect_sources": [],
+      "effect_scope": "read-only-certificate-facts",
+      "entry_sources": [
+        "formal/release-finality-v2/verify_certificate.py",
+        "trillionnium/crates/trnm-pon-node/src/release_finality.rs"
+      ],
+      "id": "reference_release_finality_v2_observer",
+      "negative_test_sources": [
+        "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"
+      ],
+      "profile_boundary": "classical-reference-profile-without-activation",
       "profile_sources": [
         "config/release-finality-v2.json",
         "formal/release-finality-v2/protocol.py"
       ],
-      "negative_test_sources": [
-        "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"
-      ]
+      "reachability_observation": "reference-and-native-read-only-observation",
+      "state_or_effect_sources": []
     }
   ],
+  "schema": "trnm-pq-authority-effects-v1",
   "source_files_sha256": {
     "config/release-finality-v2.json": "e845063344f5245296e4e3483f8158a56d6084f8385bfefd9707ff4d10e3cfe8",
     "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
@@ -190,14 +188,14 @@
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
     "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs": "16d3b164f80c0e22e2457bb99291e901a4dc30aa7e7a0fa636713e6a80d91fe2",
     "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs": "4dbf789d4b56036042c2562f52c39285511c7a077416ea8d25bc43e55abee303",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "5459086595bdaedcd1f74881b51a4b14eb83524948a1a2c05a36cc5b37b1943f",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "b3913d57df8ff8f779633b92d28f41a2e703f330272087abbf3ade1b88d8a854",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "6b2928d69a0d67343c2e201af9b29868c3445ba13c5afe26c769b46f0b64a0f1",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "52c3e5446c9352647c81cf675437811c4a907bdcf7d557bb0fbea273afe94cfe",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs": "81513ddc42841478c1a9380e47fdf28586bf57ed88ca76f5acc0907bde3a452c",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs": "8ce505a7d2e8909fc4169d271ee3a9caba05fad873f0af7ecc2543a2fc8a9fec",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs": "2a304727c6f7bc81898d839579e2e7f5961d146cb75a372697f8f1b4b0262a05",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "ce9efc2dc6160bcd1fc47163167deffb5b1f51926e98405bba7f7344fbdf179e",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "5c2548a7d9fe1a9ea563fe59675e689202c64d66f413ec6b56c8c3fb5a040299",
     "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "dd82a7a03e3b64ec74929734d0a9cdc99af61da5e2d4cf2614a578c7b2374924",
     "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "70889e05e7df573c06d6d5387e31cace34220180e091c6a809e4b03589bce95a",
     "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
@@ -227,5 +225,7 @@
     "trillionnium/crates/trnm-service-settlement/src/types.rs": "002c1fd3fdc7f04e63d30cde86bd3ca60c87d30c1b0f616e3f64a1fd886a6992",
     "trillionnium/crates/trnm-types/src/lib.rs": "ab9e48f0e70c44e714394b0455d1d12c5a52f280a4a51f1490525400d2b793d4",
     "trillionnium/crates/trnm-types/src/transfer.rs": "05ab34afcfa625248315ddd23bf46a147f7c111d338bc6a11be8885b9584d083"
-  }
+  },
+  "source_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "whole_chain_pq_qualified": false
 }

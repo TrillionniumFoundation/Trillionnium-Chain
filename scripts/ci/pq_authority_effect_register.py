@@ -31,7 +31,7 @@ MAX_BYTES = 1024 * 1024
 # It does not establish exact git-show identity at an anchor or a candidate commit.
 # Source consistency does not authenticate provenance or grant qualification.
 # SOURCE_REVISION is the retained anchor; the lock also covers the current map.
-REVIEWED_SOURCE_LOCK_SHA256 = "b094411537c272446a3bd5e18c08fecf2c70af5e5abf513d1b27133f55d5161b"
+REVIEWED_SOURCE_LOCK_SHA256 = "67583ec38887eabe00536dc4cd5ec7cc7fd48acc4397a52165bf4f591c9fa4a7"
 
 CRATES = 'trillionnium/crates/'
 TRANSFER = CRATES + 'trnm-types/src/transfer.rs'

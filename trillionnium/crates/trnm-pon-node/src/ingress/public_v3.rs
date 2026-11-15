@@ -750,8 +750,15 @@ fn body_maximum(op: u8) -> Result<usize> {
     }
 }
 fn lower_hex(text: &[u8]) -> bool {
-    text.iter()
-        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
+    // Reduce fixed small chunks to allow vectorization, then short-circuit
+    // between them: an invalid prefix never scans the rest of a large body.
+    // Wrapping ranges preserve the exact lowercase ASCII grammar, including
+    // rejection of non-ASCII, without unchecked access or wider input bounds.
+    text.chunks(64).all(|chunk| {
+        chunk.iter().fold(true, |valid, &byte| {
+            valid & ((byte.wrapping_sub(b'0') < 10) | (byte.wrapping_sub(b'a') < 6))
+        })
+    })
 }
 /// Check cardinality and every hex row before serde can allocate a Vec<String>.
 fn pool_bundle_body_guard(bytes: &[u8]) -> Result<()> {
@@ -3850,13 +3857,13 @@ fn call_public_authenticated_with_timing(
             "PUBLIC_CLASSICAL_FOR_PQ_PROFILE",
         )?;
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
-        let raw = serde_json::to_vec(request)?;
+        let encoded = canonical_packet::EncodedClientRequest::new(request)?;
         let op = request_op(request)?;
         ensure(
             client_profile.operation_allowed(op),
             "PUBLIC_OPERATION_PROFILE",
         )?;
-        canonical_request(&raw, op)?;
+        let raw = encoded.into_validated_bytes(op)?;
         let hello = Hello {
             op,
             len: raw.len(),

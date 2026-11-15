@@ -179,7 +179,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 97 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 103 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -196,10 +196,20 @@ jobs:
               'store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate',
           }
           observed_current = {name for name in names if name.startswith('store::native_authenticated::current_accounts_tests::')}
-          if (len(names) != 97 or len(set(names)) != 97 or len(post_write) != 25
+          legacy_tail = {
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::disabled_paths_do_not_read_diagnostic_clocks',
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::known_boundaries_and_completed_prefix_are_fixed_and_relative',
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::missing_reversed_overflow_and_cross_thread_clocks_remain_unknown',
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::unwinding_retains_prefix_without_error_or_panic_payload',
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::completion_counts_do_not_reset_and_overflow_is_null',
+              'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::unavailable_accounting_does_not_replace_native_results',
+          }
+          observed_tail = {name for name in names if name.startswith('store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::')}
+          if (len(names) != 103 or len(set(names)) != 103 or len(post_write) != 25
                   or observed_current != current_accounts
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 97 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 72 non-post-write and 25 post-write executions, including all five current-account controls, in one log')
+                  or observed_tail != legacy_tail
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 103 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires all 103 executions (the original 97 plus six exact legacy-tail controls), including 25 post-write and all five current-account controls, in one log')
           PYLOG
             fi
           done

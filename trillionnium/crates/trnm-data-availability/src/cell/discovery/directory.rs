@@ -189,14 +189,22 @@ impl CellProviderDirectoryV1 {
             "discovery directory context",
         )?;
         self.identity()?;
-        let mut state = lock_before(&self.state, deadline)?;
+        let mut state = cell_discovery_timing!(
+            "directory_owner_lock",
+            deadline,
+            lock_before(&self.state, deadline)
+        )?;
         let State {
             db,
             observed_revision,
         } = &mut *state;
         let minimum = *observed_revision;
         with_sqlite_deadline(db, deadline, |db, wait| {
-            let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            let tx = cell_discovery_timing!(
+                "directory_begin_immediate",
+                deadline,
+                db.transaction_with_behavior(TransactionBehavior::Immediate)
+            )?;
             wait.before_sql(&tx)?;
             validate_schema(&tx)?;
             let (clock, revision) = metadata(&tx, self.context)?;
@@ -264,7 +272,11 @@ impl CellProviderDirectoryV1 {
                 )?;
             }
             check_deadline(deadline)?;
-            let next = advance_clock(&tx, clock, revision, now)?;
+            let next = cell_discovery_timing!(
+                "directory_clock_cas",
+                deadline,
+                advance_clock(&tx, clock, revision, now)
+            )?;
             validate_schema(&tx)?;
             let expected = Stored {
                 sequence: record.statement.sequence,
@@ -289,12 +301,13 @@ impl CellProviderDirectoryV1 {
             )?;
             self.identity()?;
             wait.before_sql(&tx)?;
-            tx.commit()?;
+            cell_discovery_timing!("directory_write_commit", deadline, tx.commit())?;
             // The durable high water remains committed on a failed post-COMMIT
             // check. Retry reconciles it; no caller receives a fabricated ACK.
             self.identity()?;
             wait.before_sql(db)?;
-            let readback = db.transaction()?;
+            let readback =
+                cell_discovery_timing!("directory_readback_begin", deadline, db.transaction())?;
             wait.before_sql(&readback)?;
             validate_schema(&readback)?;
             require(
@@ -309,7 +322,7 @@ impl CellProviderDirectoryV1 {
                 "discovery committed readback",
             )?;
             wait.before_sql(&readback)?;
-            readback.commit()?;
+            cell_discovery_timing!("directory_readback_commit", deadline, readback.commit())?;
             self.identity()?;
             *observed_revision = next;
             check_deadline(deadline)
@@ -329,14 +342,22 @@ impl CellProviderDirectoryV1 {
             request.context == self.context,
             "discovery directory context",
         )?;
-        let mut state = lock_before(&self.state, deadline)?;
+        let mut state = cell_discovery_timing!(
+            "directory_owner_lock",
+            deadline,
+            lock_before(&self.state, deadline)
+        )?;
         let State {
             db,
             observed_revision,
         } = &mut *state;
         let minimum = *observed_revision;
         with_sqlite_deadline(db, deadline, |db, wait| {
-            let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            let tx = cell_discovery_timing!(
+                "directory_begin_immediate",
+                deadline,
+                db.transaction_with_behavior(TransactionBehavior::Immediate)
+            )?;
             wait.before_sql(&tx)?;
             validate_schema(&tx)?;
             let (clock, revision) = metadata(&tx, self.context)?;
@@ -347,7 +368,11 @@ impl CellProviderDirectoryV1 {
             // A still-valid signed old wire is not the current high water. Read
             // every returned row through the same key/sequence/digest checks as a
             // publication; accepting wire alone would hide a partial SQL rewind.
-            let rows = manifest_rows(&tx, request.manifest, deadline)?;
+            let rows = cell_discovery_timing!(
+                "directory_rows",
+                deadline,
+                manifest_rows(&tx, request.manifest, deadline)
+            )?;
             let mut records = Vec::with_capacity(rows.len());
             for (_, row) in &rows {
                 check_deadline(deadline)?;
@@ -359,7 +384,11 @@ impl CellProviderDirectoryV1 {
                 records.push(record);
             }
             check_deadline(deadline)?;
-            let next = advance_clock(&tx, clock, revision, now)?;
+            let next = cell_discovery_timing!(
+                "directory_clock_cas",
+                deadline,
+                advance_clock(&tx, clock, revision, now)
+            )?;
             validate_schema(&tx)?;
             require(
                 metadata(&tx, self.context)? == (now, next),
@@ -367,19 +396,24 @@ impl CellProviderDirectoryV1 {
             )?;
             self.identity()?;
             wait.before_sql(&tx)?;
-            tx.commit()?;
+            cell_discovery_timing!("directory_write_commit", deadline, tx.commit())?;
             self.identity()?;
             wait.before_sql(db)?;
-            let readback = db.transaction()?;
+            let readback =
+                cell_discovery_timing!("directory_readback_begin", deadline, db.transaction())?;
             wait.before_sql(&readback)?;
             validate_schema(&readback)?;
             require(
                 metadata(&readback, self.context)? == (now, next)
-                    && manifest_rows(&readback, request.manifest, deadline)? == rows,
+                    && cell_discovery_timing!(
+                        "directory_readback_rows",
+                        deadline,
+                        manifest_rows(&readback, request.manifest, deadline)
+                    )? == rows,
                 "discovery committed lookup readback",
             )?;
             wait.before_sql(&readback)?;
-            readback.commit()?;
+            cell_discovery_timing!("directory_readback_commit", deadline, readback.commit())?;
             self.identity()?;
             *observed_revision = next;
             check_deadline(deadline)?;

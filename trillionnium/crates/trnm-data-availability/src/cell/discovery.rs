@@ -11,6 +11,28 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
+// Private observation only for the one explicitly opted-in Unix test. The
+// non-test expansion is exactly the original expression.
+macro_rules! cell_discovery_timing {
+    ($stage:literal, $deadline:expr, $operation:expr) => {{
+        #[cfg(all(test, unix))]
+        {
+            let timing_deadline = $deadline;
+            super::timing_probe::begin($stage, timing_deadline);
+            let timing_result = $operation;
+            super::timing_probe::finish($stage, timing_deadline, &timing_result);
+            timing_result
+        }
+        #[cfg(not(all(test, unix)))]
+        {
+            $operation
+        }
+    }};
+}
+
+#[cfg(all(test, unix))]
+mod timing_probe;
+
 mod directory;
 #[cfg(all(test, unix))]
 mod directory_deadline_tests;

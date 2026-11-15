@@ -205,6 +205,8 @@ pub(super) fn discover(
     let mut equivocated = BTreeSet::new();
     // The local directory is replay protection only. These rows are discarded
     // and cannot manufacture a candidate when no bootstrap supplies one.
+    #[cfg(all(test, unix))]
+    super::timing_probe::service(None);
     directory.records(options.request, wall_now()?.as_secs(), transport.overall)?;
     for _round in 0..2 {
         // A reply's first eight identities must not occupy the durable
@@ -218,6 +220,8 @@ pub(super) fn discover(
             // this same bounded round may carry their newer signed high water.
             #[cfg(test)]
             let started = Instant::now();
+            #[cfg(all(test, unix))]
+            super::timing_probe::service(Some(source));
             let response = exchange(
                 *bootstrap,
                 1,
@@ -249,6 +253,8 @@ pub(super) fn discover(
             }
             let received_at = Instant::now();
             let wall = wall_now()?;
+            #[cfg(all(test, unix))]
+            super::timing_probe::service(Some(source));
             directory.records(options.request, wall.as_secs(), transport.overall)?;
             replies.push((source, *bootstrap, wire, received_at, wall));
         }
@@ -322,6 +328,8 @@ pub(super) fn discover(
                     observation.rejected_records += 1;
                     continue;
                 }
+                #[cfg(all(test, unix))]
+                super::timing_probe::service(Some(*source));
                 match directory.accept_verified(
                     &record,
                     bootstrap.ip(),
@@ -392,6 +400,8 @@ pub(super) fn discover(
     // Reconcile against the current complete high-water snapshot. A concurrent
     // operation may have advanced a key while we queried another bootstrap;
     // its newer local row is never imported as an unobserved provider.
+    #[cfg(all(test, unix))]
+    super::timing_probe::service(None);
     let sampled_at = Instant::now();
     let wall = wall_now()?;
     let current: BTreeMap<_, _> = directory
@@ -518,6 +528,8 @@ pub(super) fn exchange(
         .map_err(|_| CellErrorV1::Invalid("connection budget exhausted"))?;
     observation.connection_attempts += 1;
     let deadline = transport.overall.min(Instant::now() + transport.timeout);
+    #[cfg(all(test, unix))]
+    super::timing_probe::request(observation.connection_attempts, Some(kind), deadline);
     #[cfg(test)]
     let started = Instant::now();
     #[cfg(test)]
@@ -525,7 +537,11 @@ pub(super) fn exchange(
     #[cfg(test)]
     let mut phase = "connect";
     let response = (|| {
-        let mut stream = TcpStream::connect_timeout(&peer, network::remaining(deadline)?)?;
+        let mut stream = cell_discovery_timing!(
+            "client_connect",
+            deadline,
+            TcpStream::connect_timeout(&peer, network::remaining(deadline)?)
+        )?;
         let mut query = b"CDQ1".to_vec();
         query.push(kind);
         query.extend((body.len() as u16).to_be_bytes());
@@ -534,18 +550,26 @@ pub(super) fn exchange(
         {
             phase = "query_write";
         }
-        network::write_deadline(&mut stream, &query, deadline)?;
+        cell_discovery_timing!(
+            "client_query_write",
+            deadline,
+            network::write_deadline(&mut stream, &query, deadline)
+        )?;
         let mut header = [0; 9];
         #[cfg(test)]
         {
             phase = "reply_header";
         }
-        read_response(
-            &mut stream,
-            &mut header,
+        cell_discovery_timing!(
+            "client_reply_header",
             deadline,
-            transport.responses,
-            observation,
+            read_response(
+                &mut stream,
+                &mut header,
+                deadline,
+                transport.responses,
+                observation,
+            )
         )?;
         #[cfg(test)]
         {
@@ -570,12 +594,16 @@ pub(super) fn exchange(
         {
             phase = "reply_body";
         }
-        read_response(
-            &mut stream,
-            &mut wire,
+        cell_discovery_timing!(
+            "client_reply_body",
             deadline,
-            transport.responses,
-            observation,
+            read_response(
+                &mut stream,
+                &mut wire,
+                deadline,
+                transport.responses,
+                observation,
+            )
         )?;
         #[cfg(test)]
         {
@@ -583,6 +611,8 @@ pub(super) fn exchange(
         }
         Ok(wire)
     })();
+    #[cfg(all(test, unix))]
+    super::timing_probe::finish("client_exchange", deadline, &response);
     #[cfg(test)]
     eprintln!(
         "cell_discovery phase=exchange ordinal={} kind={kind} last_stage={phase} elapsed_ns={} received_bytes={} failure={:?}",
@@ -695,12 +725,16 @@ fn serve_cell_rendezvous_inner(
     addresses.validate()?;
     listener.set_nonblocking(true)?;
     let overall = Instant::now() + limits.lifetime;
+    #[cfg(all(test, unix))]
+    super::timing_probe::mark("server_loop_start", Some(overall), 0);
     let mut report = CellRendezvousReportV1::default();
     while !shutdown.load(Ordering::Relaxed)
         && report.connections < limits.max_connections
         && report.record_validation_attempts < MAX_DISCOVERY_RECORDS
         && Instant::now() < overall
     {
+        #[cfg(all(test, unix))]
+        let accept_started = super::timing_probe::poll_start();
         match listener.accept() {
             Ok((mut stream, source)) => {
                 if let Some(ready) = ready.take() {
@@ -708,13 +742,21 @@ fn serve_cell_rendezvous_inner(
                 }
                 report.connections += 1;
                 let deadline = overall.min(Instant::now() + limits.request_timeout);
-                let response = serve_one(
-                    &mut stream,
-                    source,
-                    directory,
-                    addresses,
+                #[cfg(all(test, unix))]
+                super::timing_probe::accepted(report.connections, accept_started);
+                #[cfg(all(test, unix))]
+                super::timing_probe::request(report.connections, None, deadline);
+                let response = cell_discovery_timing!(
+                    "server_serve_one",
                     deadline,
-                    &mut report,
+                    serve_one(
+                        &mut stream,
+                        source,
+                        directory,
+                        addresses,
+                        deadline,
+                        &mut report,
+                    )
                 );
                 let (status, body) = match response {
                     Ok(body) => (0, body),
@@ -727,17 +769,32 @@ fn serve_cell_rendezvous_inner(
                         (1, Vec::new())
                     }
                 };
+                #[cfg(all(test, unix))]
+                super::timing_probe::mark("server_frame_begin", Some(deadline), 0);
                 let mut frame = b"CDS1".to_vec();
                 frame.push(status);
                 frame.extend((body.len() as u32).to_be_bytes());
                 frame.extend(body);
-                let _ = network::write_deadline(&mut stream, &frame, deadline);
+                #[cfg(all(test, unix))]
+                super::timing_probe::mark("server_frame_ready", Some(deadline), frame.len() as u64);
+                // Observe the existing write Result; preserve its original discard.
+                let _ = cell_discovery_timing!(
+                    "server_final_write",
+                    deadline,
+                    network::write_deadline(&mut stream, &frame, deadline)
+                );
             }
             Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                #[cfg(all(test, unix))]
+                super::timing_probe::idle_start(accept_started);
                 if let Some(ready) = ready.take() {
                     let _ = ready.send(());
+                    #[cfg(all(test, unix))]
+                    super::timing_probe::mark("ready_sent", Some(overall), 0);
                 }
-                thread::sleep(Duration::from_millis(5))
+                thread::sleep(Duration::from_millis(5));
+                #[cfg(all(test, unix))]
+                super::timing_probe::idle_end();
             }
             Err(error) if error.kind() == io::ErrorKind::Interrupted => (),
             Err(error) => return Err(error.into()),
@@ -754,7 +811,11 @@ fn serve_one(
     report: &mut CellRendezvousReportV1,
 ) -> CellResultV1<Vec<u8>> {
     let mut header = [0; 7];
-    network::read_deadline(stream, &mut header, deadline, None)?;
+    cell_discovery_timing!(
+        "server_header_read",
+        deadline,
+        network::read_deadline(stream, &mut header, deadline, None)
+    )?;
     require(&header[..4] == b"CDQ1", "discovery request version")?;
     let length = u16::from_be_bytes([header[5], header[6]]) as usize;
     require(
@@ -762,8 +823,14 @@ fn serve_one(
             || (header[4] == 2 && length == CELL_PROVIDER_RECORD_BYTES_V1),
         "discovery request bound",
     )?;
+    #[cfg(all(test, unix))]
+    super::timing_probe::kind(header[4]);
     let mut body = vec![0; length];
-    network::read_deadline(stream, &mut body, deadline, None)?;
+    cell_discovery_timing!(
+        "server_body_read",
+        deadline,
+        network::read_deadline(stream, &mut body, deadline, None)
+    )?;
     let now = wall_now()?.as_secs();
     if header[4] == 2 {
         require(
@@ -772,12 +839,26 @@ fn serve_one(
         )?;
         report.record_validation_attempts += 1;
         let record = CellProviderRecordV1::decode(&body)?;
-        record.verify_at(record.statement.request, now, addresses)?;
-        directory.accept_verified(&record, source.ip(), now, deadline)?;
+        cell_discovery_timing!(
+            "server_announce_signature",
+            deadline,
+            record.verify_at(record.statement.request, now, addresses)
+        )?;
+        cell_discovery_timing!(
+            "server_directory_accept",
+            deadline,
+            directory.accept_verified(&record, source.ip(), now, deadline)
+        )?;
         Ok(record.digest().to_vec())
     } else {
         let request = CellDiscoveryRequestV1::decode(&body)?;
-        let records = directory.records(request, now, deadline)?;
+        let records = cell_discovery_timing!(
+            "server_directory_records",
+            deadline,
+            directory.records(request, now, deadline)
+        )?;
+        #[cfg(all(test, unix))]
+        super::timing_probe::mark("server_records_count", Some(deadline), records.len() as u64);
         let mut body = vec![0];
         for record in records {
             if body[0] as usize == MAX_DISCOVERED_PROVIDERS {
@@ -791,11 +872,25 @@ fn serve_one(
                 "discovery server signature budget",
             )?;
             report.record_validation_attempts += 1;
-            record.verify_at(request, now, addresses)?;
+            #[cfg(all(test, unix))]
+            super::timing_probe::mark(
+                "server_signature_slot",
+                Some(deadline),
+                report.record_validation_attempts as u64,
+            );
+            cell_discovery_timing!(
+                "server_lookup_signature",
+                deadline,
+                record.verify_at(request, now, addresses)
+            )?;
             body.extend(record.encode());
             body[0] += 1;
         }
-        check_deadline(deadline)?;
+        cell_discovery_timing!(
+            "server_response_deadline",
+            deadline,
+            check_deadline(deadline)
+        )?;
         Ok(body)
     }
 }

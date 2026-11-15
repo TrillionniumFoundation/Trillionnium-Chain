@@ -2,7 +2,56 @@
 //! It grants no packet, Work, owner, State, deadline or resource authority.
 //! Only this module can construct the borrowed witness; ordinary strings keep
 //! the original checked decoder and the full Packet codec remains mandatory.
-use super::{body_maximum, ensure, lower_hex, Request, Result, MAX_PACKET};
+use super::{body_maximum, ensure, lower_hex, Request, Result, MAX_BODY, MAX_PACKET};
+
+/// Bytes for one client call, with a private proof of canonical Submit text.
+/// Valid lowercase hexadecimal needs no JSON escaping. Build that exact serde
+/// envelope once, without allocating an owned Packet string merely to discard
+/// it. All other input retains the original serializer and checked decoder.
+pub(super) struct EncodedClientRequest {
+    bytes: Vec<u8>,
+    canonical_submit: bool,
+}
+
+impl EncodedClientRequest {
+    pub(super) fn new(request: &Request) -> Result<Self> {
+        const PREFIX: &[u8] = br#"{"op":"submit","packet":""#;
+        const SUFFIX: &[u8] = br#""}"#;
+        if let Request::Submit { packet } = request {
+            let text = packet.as_bytes();
+            if text.len() <= 2 * MAX_PACKET
+                && text.len().is_multiple_of(2)
+                && PREFIX.len() + text.len() + SUFFIX.len() <= MAX_BODY
+                && lower_hex(text)
+            {
+                let mut bytes = Vec::with_capacity(PREFIX.len() + text.len() + SUFFIX.len());
+                bytes.extend_from_slice(PREFIX);
+                bytes.extend_from_slice(text);
+                bytes.extend_from_slice(SUFFIX);
+                return Ok(Self {
+                    bytes,
+                    canonical_submit: true,
+                });
+            }
+        }
+        // Malformed/escaped/oversized strings still serialize before the
+        // caller's original profile check. Validation remains after that
+        // check, preserving the original error precedence for every input.
+        Ok(Self {
+            bytes: serde_json::to_vec(request)?,
+            canonical_submit: false,
+        })
+    }
+
+    pub(super) fn into_validated_bytes(self, op: u8) -> Result<Vec<u8>> {
+        if !self.canonical_submit || op != 1 {
+            super::canonical_request(&self.bytes, op)?;
+        }
+        // Only transport grammar is established. The signed body digest,
+        // complete Packet codec, Work and current native owner still run.
+        Ok(self.bytes)
+    }
+}
 
 pub(super) struct CanonicalPacketText<'a> {
     text: &'a str,

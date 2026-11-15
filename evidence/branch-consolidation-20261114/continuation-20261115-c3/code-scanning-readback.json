@@ -1,0 +1,10 @@
+{
+  "schema": "chain-code-scanning-api-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "query": "GET /repos/TrillionniumFoundation/Trillionnium-Chain/code-scanning/alerts?state=open&per_page=100, all pages",
+  "observed_at_unix_ms": 1794729825095,
+  "exit_code": 0,
+  "output_complete": true,
+  "open_alerts_observed": 0,
+  "scope": "API query returned no open alerts. This does not establish that the uncommitted composed source or all historical source was analyzed."
+}

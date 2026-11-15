@@ -1,0 +1,160 @@
+{
+  "encoding": {
+    "original_serde_owned_validation": {
+      "median_cpu_ns": 142267.06787109375,
+      "paired_saved_ns": 0.0,
+      "faster_rounds": 0
+    },
+    "typed_canonical": {
+      "median_cpu_ns": 82747.92138671875,
+      "paired_saved_ns": 59816.662109375,
+      "faster_rounds": 12
+    },
+    "typed_canonical_vector_hex": {
+      "median_cpu_ns": 6748.90576171875,
+      "paired_saved_ns": 135636.48193359375,
+      "faster_rounds": 12
+    }
+  },
+  "hex": {
+    "valid": {
+      "original": 1642632.7890625,
+      "chunked": 136167.421875
+    },
+    "invalid_first": {
+      "original": 1.1004325000000001,
+      "chunked": 3.6836624999999996
+    },
+    "invalid_middle": {
+      "original": 812020.7734375,
+      "chunked": 66813.234375
+    },
+    "invalid_last": {
+      "original": 1670011.6796875,
+      "chunked": 125895.859375
+    }
+  },
+  "debug_assertions": false,
+  "source_report_sha256": "e3a3cb3863ab57a3969d66ac3ff3f29ed0c0e355712fa4ee3766b4a2ef2f5f0a",
+  "inputs": [
+    {
+      "index": 0,
+      "bytes": 99043,
+      "recorded_request_digest": "37be8184adbc74c401b17ad45ca0c31339e7ae3ce954fce18e65a25b9eb5e2b0",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 1,
+      "bytes": 99043,
+      "recorded_request_digest": "710dd1cb50eae93822b580b73c58fb315f3cef8b8e203a8e5e39c82b35c362db",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 2,
+      "bytes": 99043,
+      "recorded_request_digest": "5f3d1f388de7ec457c32e6096964a8bdc169f8e714834007afcf8ded12e69fe1",
+      "matched_original_call_records": 26
+    },
+    {
+      "index": 3,
+      "bytes": 99043,
+      "recorded_request_digest": "2ba60e6ba633167d015019c440776c16219d664efc9b1bd7362226abdaec0a57",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 4,
+      "bytes": 99043,
+      "recorded_request_digest": "b9d6df1ec3d1cc6fc89be43ca3039d929b46771e3b9c7b195f1063b055b1c8e1",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 5,
+      "bytes": 99043,
+      "recorded_request_digest": "153374aefbba503460e9829b482277fa05822639a478b87ba1f4f89b6c7664bc",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 6,
+      "bytes": 99043,
+      "recorded_request_digest": "5d578ac66da9cb8e5e5c39d233f18ac6d2ec3b026f0b194c2b28574fbe5d17da",
+      "matched_original_call_records": 24
+    },
+    {
+      "index": 7,
+      "bytes": 99043,
+      "recorded_request_digest": "ef8e42df8856257ac9a75bb75ae9aa6365f6f3348fba379becd70da6ccd63b51",
+      "matched_original_call_records": 24
+    },
+    {
+      "index": 8,
+      "bytes": 99043,
+      "recorded_request_digest": "a5a59df5dfe6b23eaeca5e7c76f3ab676be4f0a56eeca170e0405948defea89b",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 9,
+      "bytes": 99043,
+      "recorded_request_digest": "4478c76e652c0370071319c0dc284a01a4e3fbe1bed81124538943d5ca1a8be6",
+      "matched_original_call_records": 23
+    },
+    {
+      "index": 10,
+      "bytes": 99043,
+      "recorded_request_digest": "d642bd396631b10e20bc059238567186e356dfc5536bae9aeb81c49fda8bd78e",
+      "matched_original_call_records": 25
+    },
+    {
+      "index": 11,
+      "bytes": 99043,
+      "recorded_request_digest": "2bf0f45344ea74dca2cfc66967676984213ecfea294f9cb80a3968eb1b7463e2",
+      "matched_original_call_records": 22
+    },
+    {
+      "index": 12,
+      "bytes": 99043,
+      "recorded_request_digest": "0c676d084afba3e2db38105c0cf0e7de393f4c0a3e1f45c9f219fee7a9478897",
+      "matched_original_call_records": 24
+    },
+    {
+      "index": 13,
+      "bytes": 99043,
+      "recorded_request_digest": "7f83acde788d05a660fbadf9ee695bd22b8246913ff16d2364d4c18793e55e52",
+      "matched_original_call_records": 23
+    },
+    {
+      "index": 14,
+      "bytes": 99043,
+      "recorded_request_digest": "56fa52210ec4c261873522e9345e2bd36c3b2cf30941939231761ccbcebfeedd",
+      "matched_original_call_records": 26
+    },
+    {
+      "index": 15,
+      "bytes": 99043,
+      "recorded_request_digest": "5fe28bff1c365ac3d0d86e711ec6441f1849c9c792283befec2818f253463185",
+      "matched_original_call_records": 25
+    }
+  ],
+  "production_unit_tests": "0 executed: sole default-feature release crate lib-test compilation ended rustc SIGKILL, cargo exit 101, 341.333s; no retry",
+  "original_confirmation_gate": "not executed; fixed-count savings do not predict dynamic false-call throughput",
+  "helper_dependency_versions": {
+    "itoa": "1.0.18",
+    "memchr": "2.8.3",
+    "rustix": "1.1.6",
+    "serde": "1.0.229",
+    "serde_core": "1.0.229",
+    "serde_derive": "1.0.229",
+    "serde_json": "1.0.151",
+    "zmij": "1.0.23"
+  },
+  "repository_dependency_versions": {
+    "itoa": "1.0.18",
+    "memchr": "2.8.0",
+    "rustix": "1.1.6",
+    "serde": "1.0.229",
+    "serde_core": "1.0.229",
+    "serde_derive": "1.0.229",
+    "serde_json": "1.0.149",
+    "zmij": "1.0.21"
+  },
+  "dependency_scope": "release optimization settings match; helper is not the original full locked graph. In particular helper serde_json 1.0.151 differs from repository 1.0.149; component timing is observational only."
+}

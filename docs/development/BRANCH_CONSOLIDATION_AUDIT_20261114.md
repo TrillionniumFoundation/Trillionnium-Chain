@@ -1192,3 +1192,133 @@ complete ancestry check and a separately verified remote annotated archive
 before the protected linear-main process and any branch cleanup. Main
 integration and the requested single-branch remote state remain pending at
 this entry.
+
+## 2026-11-15 continuation from c3 and current native failures
+
+The continuation [evidence index](../../evidence/branch-consolidation-20261114/continuation-20261115-c3/README.md)
+retains the fresh branch mapping, exact original CI artifact identities,
+current-source bindings and bounded validation receipts. It supplements the
+earlier review; it does not change its historical results or coverage claims.
+
+The current non-atomic inventory has 900 names and 884 distinct tips, all
+ancestors of `c3e53d2ff55d41b1e5ea2b01f97efaf61a2fd636`.
+The original 908-name/892-tip ledger and all 296 terminal dispositions remain
+preserved. The remote annotated tag
+`archive/all-branches-20261115-c3e53d2ff55d`, object
+`959b6f27c5e0d0baede9f8e3669ec8bfa415b8e0`, was independently read
+as targeting c3 with the original manifest. A successor needs a new archive;
+the repository deletes the PR head automatically after merge.
+
+All 21 jobs of run 43658725402 are terminal: 15 passed, six failed. Head and
+prospective protocol-contract failures remain blocking. Both architecture
+cost jobs also failed their unchanged pressure confirmation; their report
+consistency pass is not acceptance. The prospective Rust runtime shard failed
+the strict six-response DA equivocation control, causing its fan-in to fail.
+No reviews or unresolved review threads were observed, but that does not
+replace protected-main status checks.
+
+Four original protocol/cost ZIPs were downloaded and their full digests matched
+GitHub. The unchanged four-second, 16-worker pressure cases confirmed zero
+transactions on head, prospective merge, x64 and arm64; their attack-free cases
+each confirmed one. The independent pressure replays completed only 2, 2, 4
+and 5 pages respectively, out of the seven required submitted-history pages.
+No false packet was accepted. The fixed 0.25 CPU, 2 GiB, zero-swap and 256-PID
+parent envelope remains authoritative. Deadline expansion, worker reduction,
+post-window draining and source-only acceptance are not used.
+
+The current audit confirmed a separate checkpoint frame-read budget defect:
+successive partial reads could each reuse the socket timeout. The selected
+correction shares one monotonic budget across header and body and rejects
+completion at the deadline. Owner revalidation still precedes journal effects.
+Nine deterministic memory-reader tests, package formatting and strict Clippy
+passed. This does not qualify connect, response writes, serial scheduling or
+whole-service availability. The retained original observation is not an
+additional active experiment of the corrected daemon.
+
+The selected typed Submit encoder preserves the original JSON bytes and
+validation fallback while avoiding redundant owned decoding of already bounded
+lowercase hexadecimal. Its 64-byte predicate blocks retain bounded early
+refusal. A helper benchmark using all 16 actual failed-run request payloads
+observed 142.27 to 6.75 microseconds per call, with a paired 135.64 microsecond
+saving. The 1,024-call-per-worker cap means faster clients may issue more work;
+these component results cannot certify the original system liveness gate.
+
+The DA change adds test-only bounded timing records around the original
+operations. Independent review confirmed that non-test expansion evaluates
+the original expression once, and that the original 200/250 ms limits and
+six-response/2,070-byte assertions are byte-identical. Test instrumentation
+adds real timing overhead and may have incomplete records. It is not a TCP
+runtime fix. The complete local workspace test build received SIGKILL at both
+jobs=2 and jobs=1; the DA 941-test suite was not produced or executed. Those
+failed builds remain failed, and the original hosted WouldBlock remains
+unattributed at this entry.
+
+The changed current 21-source map updates only PublicV3. Its current readers
+and composition follow that map; frozen model, lock, composition and root
+register bytes remain unchanged. The expanded corpus has 2,609 source pins
+and 2,513 required paths, including both new modules and the previously unpinned
+DA test. The 25 current-map, 60 composition, 113 corpus-integrity and 43
+tracked-source controls passed on this runtime/binding delta. The final
+documentation and exact committed successor still require fresh hosted checks.
+
+Coverage includes complete current ref ancestry, the preserved disposition
+ledger, workspace/inventory and action-pin scans, and focused review of current
+consensus, custody, recovery, authority, worker, SQLite and transport owners.
+The active source scan covered 1,616 Rust files before the two added modules;
+it is not a line-by-line semantic audit of every historical blob. No new
+cryptographic, native, physical rollback, model-efficacy, public-testnet or
+release qualification is claimed. Historical retention failures, missing
+artifacts and unresolved dependency audit results remain unresolved unless a
+separate exact-source result explicitly closes them.
+
+Ordinary protected linear-main integration and branch cleanup remain pending
+until the current required gates pass and the final history archive and fresh
+tip comparisons are verified. Main protection has not been weakened.
+
+### Concurrent f34 source and the exact current roster
+
+A fresh publication check found the candidate had advanced to
+`f34f432c6c533c651ab74f69f4f43aef326eedcb`. This is an ordinary
+single-parent successor of c3, with 33 changed files and tree
+`d2c34fb4474aba3c268163abe1ec94211b8e9c7f`. The local c3 delta was
+preserved before applying the incoming source. Five overlapping current
+binding files were reconciled; no force update or stale-head publication
+occurred. Both incoming runtime changes and every incoming test are retained.
+
+Independent review found no bypass in the opt-in Legacy tail diagnostics.
+Removing only their observer additions restored five complete existing
+source files to c3 bytes. New measurements remain limited to fixed stages and
+have no consensus or durable-operation authority. Incoming Witness/TLS
+regression code is preserved; a live-deadline guard control is not described
+as a complete TLS/BIO transport test.
+
+The incoming six additional authenticated-module controls exposed a real
+stale-roster failure in both f34 repository-truth jobs. The repair requires
+the complete current 103-test execution and all six new exact names. It
+keeps the four original 97-test logs byte-pinned as historical observations
+under their frozen guard. Current parsing rejects those old logs. Parser
+positive/negative fixtures are synthetic controls, not replacement native
+successes. Original execution flags, deadlines and downstream requirements
+are unchanged.
+
+The composed current map binds both the incoming store and the selected
+PublicV3 source. Its SHA256 is
+`5328f618642aa14125b6325ebcc2285f8be85cf39843a11c6d9157863a0c27c6`,
+with source snapshot
+`f9991545b8b43b870559106d7be807d286f4b2ac555a2a10dbaf6c6e850ac8fd`.
+The other 19 declared paths and all 46 root-register paths keep their old
+identities. The composed corpus has 2,613 pins and 2,517 required paths.
+
+The first helper benchmark used newer dependencies than the repository lock.
+Its evidence now explicitly retains that limit. A separate single helper
+run reused the actual locked release dependency artifacts from the failed
+c3 node build and checked their complete fingerprint/archive provenance.
+On the same 16 actual requests and 12 paired rounds, it observed 143.591 to
+6.898 microseconds per encoding call, with a paired saving of 136.593
+microseconds. The actual release node lib-test build was killed before any
+unit test ran; neither helper result counts as a crate or business-gate pass.
+
+The continuation index retains the composed-source review, original failed
+builds, dependency-bound result, credential-shaped scan and code-scanning API
+readback. These add bounded evidence; the protected-main and single-branch
+completion obligations remain unchanged.
