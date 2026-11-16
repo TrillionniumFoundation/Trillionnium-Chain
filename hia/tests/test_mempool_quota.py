@@ -79,6 +79,17 @@ def expected(op: int, total: int, requested: int, normal: int,
         if normal > 0 and (prefer_normal or critical == 0):
             return 1
         return 2 if critical > 0 else 0
+    if op == 19:
+        # Original pop_ready chooses a lane, records fairness after dequeue,
+        # and zeroes streak again at the full-drain boundary.
+        lane = expected(18, total, requested, normal, critical, streak, burst)
+        if lane == 2:
+            return (min(streak + 1, burst)
+                    if normal_capacity > 0 and (normal > 0 or critical > 1) else 0)
+        if lane == 1:
+            return (max(0, burst - 1)
+                    if normal_capacity > 0 and normal > 1 and critical > 0 else 0)
+        return 0
     raise AssertionError("Unknown test mode")
 
 
@@ -93,12 +104,12 @@ def finite_cases():
         (1, MAX, 0, 1, 0, 0),
         (2, MAX, 0, 1, MAX, MAX),
     ]:
-        for op in range(19):
+        for op in range(20):
             yield op, total, reserve, normal, critical, streak, burst
     values = [0, 1, 2, 3, 4, 7, 8, 15, 16, 32, 63,
               MAX // 2, MAX - 2, MAX - 1, MAX]
     for _ in range(1800):
-        yield (rng.randrange(19), *(rng.choice(values) for _ in range(6)))
+        yield (rng.randrange(20), *(rng.choice(values) for _ in range(6)))
 
 
 class NativeMempoolQuotaTests(unittest.TestCase):
@@ -132,7 +143,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         wrong_magic = b"BAD!" + valid[4:]
         wrong_reserved = valid[:6] + b"\x01" + valid[7:]
         bad_opcode = valid[:4] + b"\xff" + valid[5:]
-        next_unimplemented = valid[:4] + b"\x13" + valid[5:]
+        next_unimplemented = valid[:4] + b"\x14" + valid[5:]
         cases = [(valid[:-1], 16, 1), (valid + b"\x00", 16, 1),
                  (valid, 7, 2), (wrong_magic, 16, 3),
                  (wrong_reserved, 16, 3), (bad_opcode, 16, 4),
@@ -152,7 +163,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         # compiler, source, compile or runtime failure is a test failure.
         rng = random.Random(0xC17E)
         rows = []
-        for op in range(13):
+        for op in (*range(13), 19):
             for total in range(7):
                 for reserve in range(9):
                     for _ in range(5):
@@ -171,7 +182,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
             (0, 0), (1, 0), (MAX - 1, MAX), (MAX, MAX - 1),
             (MAX, MAX),
         )
-        for op in range(13):
+        for op in (*range(13), 19):
             for total, reserve in capacity_edges:
                 for streak, burst in fairness_edges:
                     for normal, critical in (

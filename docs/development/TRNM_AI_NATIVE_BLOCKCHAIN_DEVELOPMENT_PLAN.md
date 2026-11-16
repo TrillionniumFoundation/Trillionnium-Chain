@@ -1,3 +1,22 @@
+## HIA M05 full-drain-aware post-pop fairness — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+M05 LQV1 opcode 19 adds the original post-pop critical fairness streak as a
+pure HIA native-machine result from caller-owned pre-pop counts. It selects
+the original next lane (opcode 18), decrements that queue in its logical
+decision, invokes the original fairness transition, and cold-resets at full
+drain. This is deliberately distinct from calling the fairness predicate
+without the original public dequeue/reset lifecycle.
+
+The unchanged original lane_fairness.rs is actually executed by the
+independent Rust adapter with physical bounded queues, and the required
+native CI includes full 64-bit streak/burst cases. A separate 98,784-case
+arithmetic-model consistency check preceded publication, but does not
+qualify the emitted code or original-Rust oracle. Exact-head CI is NOT_RUN
+until observed. No queue, nonce, local-pool, persistent Node state, PQ
+identity, network, deployment or release owner is replaced here.
+All 26 original packages and nine migration gates remain OPEN. The
+previous unique development plan follows as an exact byte-preserved suffix.
+
 ## HIA M05 original dequeue-side selection — 2026-11-16 UTC — PENDING EXACT-HEAD CI
 
 The LQV1 pure native HIA M05 policy adds opcode 18 to select the original

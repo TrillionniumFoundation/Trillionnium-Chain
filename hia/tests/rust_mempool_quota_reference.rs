@@ -77,6 +77,32 @@ fn main() {
                 gate.maybe_warm_normal_fairness(normal_was_empty, outcome);
                 gate.critical_served_streak as u64
             },
+            19 => {
+                // Execute the unchanged original fairness method on the
+                // selected lane. IDs do not affect this pure transition.
+                let served = if gate.prefer_normal_on_pop()
+                    || (gate.critical.queue.is_empty() && !gate.normal.queue.is_empty())
+                {
+                    Some(false)
+                } else if !gate.critical.queue.is_empty() {
+                    Some(true)
+                } else {
+                    None
+                };
+                if let Some(critical) = served {
+                    if critical {
+                        gate.critical.queue.pop();
+                    } else {
+                        gate.normal.queue.pop();
+                    }
+                    gate.record_pop_fairness(critical);
+                    if gate.normal.queue.is_empty() && gate.critical.queue.is_empty() {
+                        // Public pop_ready cold-resets after full drain.
+                        gate.critical_served_streak = 0;
+                    }
+                }
+                gate.critical_served_streak as u64
+            },
             _ => panic!("unknown original query"),
         };
         println!("{value}");

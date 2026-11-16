@@ -390,7 +390,7 @@
     {
       "id": "mempool/lane_quota",
       "source": "hia/src/mempool/lane_quota.hepta",
-      "scope": "Original M05 lane global capacity, critical reserve, bounded borrowing, fairness transitions and five real-QoS-snapshot headroom/admissibility fields plus next-dequeue lane selection on supplied counts; does not implement admission caches, queue mutation, nonce reservation or persistent Node authority",
+      "scope": "Original M05 lane global capacity, critical reserve, bounded borrowing, fairness transitions and five real-QoS-snapshot headroom/admissibility fields plus next-dequeue lane selection and full-drain-aware post-pop fairness on supplied counts; does not implement admission caches, queue mutation, nonce reservation or persistent Node authority",
       "state": "native-candidate-awaiting-qualification",
       "tests": [
         "hia/tests/test_mempool_quota.py"

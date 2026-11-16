@@ -41,6 +41,7 @@ little-endian unsigned 64-bit words:
 | 16 | fresh normal admission eligibility, including critical spillover borrowing and global limit |
 | 17 | fresh critical admission eligibility, including normal-lane spillover and global limit |
 | 18 | original `pop_ready` queue selection: 0 idle, 1 normal, 2 critical, using the post-admission critical streak and the live queue counts |
+| 19 | full-drain-aware post-pop critical streak from the selected lane and the pre-pop counts, matching the original fairness update plus idle reset |
 
 The caller must supply queue lengths, fairness counts and a complete authenticated
 context from its own authority. This primitive **does not** derive or authorize
@@ -111,3 +112,18 @@ original dequeue side with both the finite independent rule and the native HIA
 result, and separately exercises full unsigned-64-bit boundary values. No
 claim is made for actual Node queue ownership, concurrency, crash recovery or
 an original service-budget pass.
+
+## Fused next-pop fairness transition — opcode 19
+
+The native opcode 19 composes the next-lane selection and the original fairness
+update from the **pre-pop** snapshot. It decrements the selected queue before
+checking whether both queues remain backlogged, and zeroes the streak at full
+drain, including the final critical item. The independent Rust adapter invokes
+the unchanged original `lane_fairness.rs` method on bounded physical queues.
+Shared native qualification includes full 64-bit streak/burst edge cases and
+unchanged borrowed buffers.
+
+This remains a pure proposed transition; it does **not** mutate the real queue,
+repair stale duplicate caches, reserve nonces, transfer local-pool ownership,
+or commit Node state. Exact-head native/original qualification is **NOT_RUN**
+until the new published commit has CI observations.
