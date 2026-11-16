@@ -1,5 +1,8 @@
 """Fail-closed production qualifier controls; these grant no physical Host pass."""
 import os
+from contextlib import redirect_stderr
+import io
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -107,6 +110,29 @@ class HostProductionControls(unittest.TestCase):
         self.assertEqual(bytes(stdout), b'incomplete-native-receipt')
         self.assertEqual(bytes(stderr), b'actual-early-failure')
         self.assertEqual(process.returncode, 23)
+
+    def test_real_failure_log_tail_is_bounded_and_workflow_text_is_escaped(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            (output / 'controller').mkdir()
+            raw = b'x' * 70000 + b'\n::error::child text\n'
+            (output / 'controller/systemd-run.log').write_bytes(raw)
+            captured = io.StringIO()
+            with redirect_stderr(captured):
+                production.emit_failure_evidence(output)
+            lines = captured.getvalue().splitlines()
+            self.assertEqual(len(lines), 1)
+            record = json.loads(lines[0])
+            self.assertEqual(record['observed_file_bytes'], len(raw))
+            self.assertEqual(record['bytes'], 65536)
+            self.assertEqual(record['offset'], len(raw) - 65536)
+            self.assertEqual(record['text'].encode(), raw[-65536:])
+            self.assertEqual(record['emitted_bytes_sha256'], production.digest(raw[-65536:]))
+            self.assertFalse(lines[0].startswith('::'))
+            closed = io.StringIO()
+            closed.close()
+            with redirect_stderr(closed):
+                production.emit_failure_evidence(output)
 
     def test_production_trace_mapping_cannot_accept_other_parent_or_process_leader(self):
         source = synthetic_trace()

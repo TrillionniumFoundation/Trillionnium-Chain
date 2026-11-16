@@ -1,3 +1,13 @@
+## 2026-11-16 UTC — 保留首次 Host 生产路径失败，修复资格证据收集
+
+已发布dcd72f7的push43835950065和PR43835980615都实际通过独立Host syscall trace与145原Rust对照；production服务随后退出失败。完整外层job日志保留在hia/qualification/host-production-ci-failure.json。上传工具又因原native fixture故意设为search-only的目录产生真实EACCES，内部systemd-run/child详细报告未能取回；因此不推断或编造内部失败原因，不计production正向。
+
+本次把artifact输入改为显式report/build/实际trace/原Rust分阶段日志位置，避免递归遍历故意不可读的物理fixture和原Cargo副本。production控制器还把实际失败报告及子日志的有界末尾以JSON转义打印到job日志，保留原始失败优先级。新增实际70000字节文件控制核对65536字节上限、offset、精确SHA和workflow命令文本转义；Host相关13测试及8个compiler gate的4项优化Python控制通过。
+
+原HIA policy/emitter/fixture三份源、原Rust实现和原资源限制均未修改。本次是证据收集修复，必须在新exact source再次执行生产路径，不能借作runtime修复或整体资格。候选仍41内核/8 foundations/59 HIA，26 Rust包保留、0退役、9总门OPEN。typed Store的603控制、392实际原Rust对照与完整容量produce已通过，cold仍在执行；不包含在这次修复源码中。
+
+此前计划以下方原字节后缀完整保留。
+
 ## 2026-11-16 UTC — HIA Host 完整新鲜检查、实际原 Rust 对照及生产路径资格
 
 本批新增 Host 原生基础组件，候选合计 41 内核、8 foundations、59 HIA 源文件。26 原 Rust 包保留、0 退役、9 全项目门 OPEN。

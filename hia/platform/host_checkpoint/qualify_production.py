@@ -82,6 +82,37 @@ def write_new(path, value):
         stream.write('\n')
 
 
+def emit_failure_evidence(output):
+    """Keep bounded real diagnostics in the job log if artifact upload fails."""
+    for relative in ('report.json', 'controller/systemd-run.log',
+                     'child/inside-report.json', 'child/native.json'):
+        path = output / relative
+        try:
+            if not path.exists():
+                continue
+            require(not path.is_symlink() and path.resolve(strict=True) == path
+                    and path.is_file(), 'NONCANONICAL_FAILURE_EVIDENCE')
+            with path.open('rb') as stream:
+                size = os.fstat(stream.fileno()).st_size
+                offset = max(0, size - 65536)
+                stream.seek(offset)
+                raw = stream.read(65536)
+            record = {'schema': 'trnm.hia.production-failure-log.v1', 'path': relative,
+                      'observed_file_bytes': size, 'offset': offset, 'bytes': len(raw),
+                      'emitted_bytes_sha256': digest(raw),
+                      'text': raw.decode('utf-8', errors='backslashreplace')}
+        except BaseException as error:
+            record = {'schema': 'trnm.hia.production-failure-log.v1', 'path': relative,
+                      'diagnostic_read_error': repr(error)}
+        # JSON escaping prevents child text from becoming workflow commands.
+        try:
+            print(json.dumps(record, sort_keys=True), file=sys.stderr, flush=True)
+        except (OSError, ValueError):
+            # A closed job-log pipe must not replace the primary failure. The
+            # original report and raw file remain the artifact inputs.
+            return
+
+
 def regular(path):
     require(path.is_absolute() and path.resolve(strict=True) == path
             and not path.is_symlink() and path.is_file(), 'NONCANONICAL_REGULAR_INPUT')
@@ -495,7 +526,11 @@ def outer(directory, output):
         result['failure'] = type(error).__name__ + ': ' + str(error)
         raise
     finally:
-        write_new(output / 'report.json', result)
+        try:
+            write_new(output / 'report.json', result)
+        finally:
+            if result['status'] != 'PASS':
+                emit_failure_evidence(output)
     return 0
 
 

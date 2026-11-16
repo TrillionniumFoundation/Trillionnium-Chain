@@ -1,5 +1,21 @@
 # Whole-tree inventory and HIA migration audit
 
+## First hosted production observation and evidence repair — 2026-11-16 UTC
+
+Both `dcd72f7` Host jobs passed real fixture syscall tracing and 145 actual
+original Rust comparisons. Their production services then failed. Artifact
+collection also failed with EACCES while traversing the intentional search-only
+private fixture, so the inner production cause could not be retrieved and is
+not inferred. The [complete job logs](qualification/host-production-ci-failure.json)
+retain the actual source identity, both failures and passed preceding stages.
+
+Artifact inputs now explicitly select reports, native builds, actual traces
+and original-stage raw logs. Failure reports and child-log tails are also
+printed with a strict byte bound and JSON escaping. Thirteen Host controls and
+all four optimized-mode cases at each of eight compiler gates passed. No HIA
+instruction source, original Rust or resource budget changed. A new exact-source
+production execution is mandatory; this evidence repair grants no native PASS.
+
 ## Fresh physical Host checkpoint candidate — 2026-11-16 UTC
 
 The candidate has 41 kernels, eight foundations and 59 HIA source files.

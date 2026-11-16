@@ -72,6 +72,11 @@ failures separately, and stops only its uniquely owned service. Job-created
 parent resources remain for ephemeral-runner teardown. It refuses local or
 self-hosted provisioning; these checks grant no production-positive PASS until
 the actual hosted run succeeds.
+Failures also emit bounded, JSON-escaped tails of the actual controller and child
+logs. Artifact collection selects explicit reports, builds, syscall traces and
+original-stage logs; intentionally unreadable physical fixture directories are
+not traversed by the uploader. No diagnostic observation substitutes for a native
+success receipt or a successful independent syscall trace.
 
 The standalone image is not yet the HIA full-node Host. It must execute in the
 actual worker thread at every original checkpoint; a sidecar cannot attest

@@ -81,7 +81,7 @@ whole exact committed source and permits provisioning only a previously absent
 parent on an ephemeral hosted runner. Its production controller passed eight
 refusal/evidence tests. A real early-exit race that lost 283 stderr bytes was
 reproduced and fixed; primary and cleanup failures are retained separately.
-The new production-positive check is pending actual hosted execution. Resource
+The first two hosted production services failed, and a fixture-permission error also blocked their artifact upload. The [retained logs](qualification/host-production-ci-failure.json) record both failures; the inner production cause is unobserved. Explicit artifact selection and bounded real child diagnostics are now wired for the next exact-source execution. Resource
 sampling, same-worker embedding, the complete Node and original four-second/
 16-worker service acceptance remain open.
 

@@ -338,8 +338,37 @@ jobs:
           path: |
             ${{ runner.temp }}/hia-observations/
             ${{ runner.temp }}/hia-bootstrap/bootstrap.json
-            ${{ runner.temp }}/hia-native-host-checkpoint/
-            ${{ runner.temp }}/hia-native-host-original/
+            ${{ runner.temp }}/hia-native-host-checkpoint/report.json
+            ${{ runner.temp }}/hia-native-host-checkpoint/build/
+            ${{ runner.temp }}/hia-native-host-checkpoint/adapter-negatives/
+            ${{ runner.temp }}/hia-native-host-checkpoint/actual-production-fixed-parent/
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/fresh-checks/syscalls.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/fresh-checks/stdout.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/fresh-checks/stderr.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/fresh-checks/result.json
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/ancestor-link/syscalls.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/ancestor-link/stdout.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/ancestor-link/stderr.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/ancestor-link/result.json
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/last-limit-unavailable/syscalls.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/last-limit-unavailable/stdout.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/last-limit-unavailable/stderr.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/last-limit-unavailable/result.json
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/growing-context/syscalls.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/growing-context/stdout.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/growing-context/stderr.raw
+            ${{ runner.temp }}/hia-native-host-checkpoint/independent-trace/growing-context/result.json
+            ${{ runner.temp }}/hia-native-host-original/native/native-comparison.json
+            ${{ runner.temp }}/hia-native-host-original/native/corpus.jsonl
+            ${{ runner.temp }}/hia-native-host-original/native/build/
+            ${{ runner.temp }}/hia-native-host-original/original/report.json
+            ${{ runner.temp }}/hia-native-host-original/original/comparison.json
+            ${{ runner.temp }}/hia-native-host-original/original/corpus.jsonl
+            ${{ runner.temp }}/hia-native-host-original/original/rustc-version/
+            ${{ runner.temp }}/hia-native-host-original/original/cargo-original-test-build/
+            ${{ runner.temp }}/hia-native-host-original/original/list-original-tests/
+            ${{ runner.temp }}/hia-native-host-original/original/retained-original-host-tests/
+            ${{ runner.temp }}/hia-native-host-original/original/actual-original-private-corpus/
             ${{ runner.temp }}/hia-native-host-production/
           if-no-files-found: error
           retention-days: 30
