@@ -4,6 +4,7 @@ import copy
 import fnmatch
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 import unittest
@@ -25,6 +26,33 @@ class Controls(unittest.TestCase):
                 for path in [root/'history-native',root/'other',ROOT/'history-diagnostic']:
                     with self.assertRaises(ValueError):diagnostic.output_path(path)
                 with self.assertRaises(ValueError):original.output_path(root/'history-diagnostic')
+    def test_shared_helpers_keep_diagnostic_failure_and_readback_semantics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            command = [sys.executable, '-I', '-S', '-c',
+                       "from pathlib import Path; import sys; print(Path.cwd()); "
+                       "sys.stderr.write('diagnostic child failure\\n'); sys.exit(17)"]
+            result = diagnostic.run_process(command, root/'stdout', stderr=root/'stderr')
+            self.assertEqual(result['exit_code'], 17)
+            self.assertTrue(result['started'])
+            self.assertIsNone(result['failure'])
+            self.assertEqual(result['cleanup_errors'], [])
+            self.assertFalse(diagnostic.process_succeeded(result, command))
+            observation, raw = diagnostic.file_observation(root/'stdout', 4096, retain=True)
+            self.assertEqual(raw, (str(ROOT)+'\n').encode())
+            self.assertEqual(observation['size_bytes'], len(raw))
+            self.assertEqual((root/'stderr').read_bytes(), b'diagnostic child failure\n')
+            with self.assertRaises(ValueError):
+                diagnostic.file_observation(root/'stdout', len(raw)-1)
+            (root/'alias').symlink_to(root/'stdout')
+            with self.assertRaises(ValueError):
+                diagnostic.file_observation(root/'alias', 4096)
+            identity = dict(GITHUB_RUN_ID='123', GITHUB_RUN_ATTEMPT='2', GITHUB_JOB='history-diagnostic')
+            with patch.dict(os.environ, identity):
+                self.assertEqual(diagnostic.job_identity(), identity)
+                with patch.dict(os.environ, {'GITHUB_JOB': 'invalid/job'}):
+                    with self.assertRaises(ValueError):
+                        diagnostic.job_identity()
     def test_diagnostic_log_denominators_fail_closed(self):
         names=['decode','context_owner_wait','context','work','admission_owner_wait','admission','submit_result','admission_prepare','execution','commit_owner_wait','commit','cpu_wait','body_decode','response_encoding','history_epoch_open','history_epoch_close','history_import','cpu_settle','root_commitment']
         phases=[dict(phase=name,started=True,completed=True,accepted=True,wall_ns=1,thread_cpu_ns=1) for name in names]
@@ -91,7 +119,7 @@ class Controls(unittest.TestCase):
         self.assertNotIn('workflow_dispatch',s)
         paths=[line.strip()[2:] for line in s.split('    paths:\n',1)[1].split('permissions:',1)[0].splitlines()
                if line.strip().startswith('- ')]
-        for path in ['trillionnium/crates/trnm-pon-node/src/store.rs', 'trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs', 'trillionnium/crates/trnm-pon-node/src/ingress.rs', 'trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs', 'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs', 'trillionnium/crates/trnm-protocol/src/pon_state.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs', 'trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs', 'scripts/ci/run_from_zero_host.py', 'scripts/ci/public_host_ci_observation.py', 'scripts/ci/public_fixture_host_lease.py', 'config/systemd/trnmponpublic.slice']:
+        for path in ['trillionnium/crates/trnm-pon-node/src/store.rs', 'trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs', 'trillionnium/crates/trnm-pon-node/src/ingress.rs', 'trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs', 'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs', 'trillionnium/crates/trnm-protocol/src/pon_state.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs', 'trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs', 'scripts/ci/run_from_zero_host.py', 'scripts/ci/run_history_native.py', 'scripts/ci/public_host_ci_observation.py', 'scripts/ci/public_fixture_host_lease.py', 'config/systemd/trnmponpublic.slice']:
             self.assertTrue(any(fnmatch.fnmatchcase(path,pattern) for pattern in paths),path)
         for path in ['README.md','docs/unrelated.md','trillionnium/crates/trnm-cli/src/main.rs']:
             self.assertFalse(any(fnmatch.fnmatchcase(path,pattern) for pattern in paths),path)

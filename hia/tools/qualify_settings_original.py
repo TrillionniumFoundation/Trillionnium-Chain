@@ -117,10 +117,16 @@ class RustOracle:
         self.output.mkdir(mode=0o700)
         self.isolated = self.output / 'isolated-source'
         self.isolated.mkdir(mode=0o700)
-        sys.path.insert(0, str(self.repository))
-        from hia.platform.transport_request.rust_oracle import command
-        self.command = command
-        self.command_source = self.repository / 'hia/platform/transport_request/rust_oracle.py'
+        # --repository selects original Rust bytes, not the current Python harness.
+        sys.path.insert(0, str(ROOT))
+        from hia.platform.transport_request import rust_oracle as process_receipts
+        self.command_source = ROOT / 'hia/platform/transport_request/rust_oracle.py'
+        command_code = getattr(process_receipts.command, '__code__', None)
+        if (Path(process_receipts.__file__).resolve() != self.command_source
+                or command_code is None
+                or Path(command_code.co_filename).resolve() != self.command_source):
+            raise ValueError('Process receipt helper is not from the current HIA candidate')
+        self.command = process_receipts.command
         self.command_bytes = self.command_source.read_bytes()
         self.sources = {}
         for directory in ('trillionnium', 'config', 'formal'):

@@ -16359,3 +16359,67 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+## 2026-11-16: retire disconnected Rust split copies and recover useful tests
+
+The cleanup baseline is `8690b8bbeb581b4ae1fdde577a2e4b98024dc999`.
+The audit enumerated all 26 Cargo packages, their 459 source roots, external
+module/include edges, current source readers, and historical contracts. It
+found 283 Rust files outside the Cargo module closure. Three have active
+external consumers and remain: the HIA lane fairness/quota Rust oracles and
+`trnm-protocol/tests/support/native_pq_fixture.rs`.
+
+The remaining 280 files are disconnected split copies and abandoned split
+variants. Their original bytes remain in the baseline Git tree. This removes
+28,860 physical source lines (986,152 bytes), with the following ownership:
+
+| Package | Retired files |
+| --- | ---: |
+| trnm-executor | 14 |
+| trnm-mempool | 36 |
+| trnm-oracle | 10 |
+| trnm-types | 44 |
+| trnm-worker-agent | 176 |
+
+The content review distinguishes 181 files whose functions match current
+implementations or contain module scaffolding, 64 unused implementation
+variants, and 35 files requiring individual review of unregistered tests.
+Useful missing assertions from that last group now execute in the retained
+test modules: nine Executor tests, seven Mempool tests, four Oracle tests, and
+eight Worker tests. The Worker retry test covers eleven receipt combinations;
+an existing adapter test also covers an escape-only audit value. Old assertions
+that contradict current queue capacity, receipt replacement, error taxonomy,
+or sampling contracts remain historical observations. They do not justify
+changing current production behavior during cleanup.
+
+The current workspace contains 1,342 Rust files. Its 459 Cargo source roots are
+unchanged. All 1,338 previously reachable workspace files remain reachable;
+the added Mempool regression module raises this count to 1,339. The three
+external reference inputs remain explicit exceptions. The existing external
+fuzz support module remains reachable too.
+
+Two duplicate dev-dependency declarations are removed: checkpoint-store's
+`trnm-checkpoint-types` and mvcc-fee's `serde_json`. Their ordinary dependency
+declarations remain. Validation compares resolved package versions, features,
+effective dependency edges and target rosters, and retains the exact lockfile.
+The History diagnostic runner now imports four identical helpers from the
+native History runner; its workflow watches that shared dependency and its
+negative tests exercise the imported functions.
+
+The Executor and Settings original-oracle jobs explicitly select the unchanged
+baseline Rust checkout. They verify that reference's exact source before and
+after use, while the current HIA qualifier, compiler tooling and native source
+remain bound to the candidate. The Settings qualifier keeps `--repository`
+limited to original Rust inputs; it rejects receipt helpers imported from a
+different checkout. Original source pins and their refusal rules remain intact.
+Current Rust compilation and tests are a separate obligation and cannot borrow
+a result from the frozen reference.
+
+The embedded distributed-source inventory and affected current PQ source pins
+are refreshed together. Historical model policy bytes, signed domains,
+source identities, work-cost rosters and failed observations retain their
+original meaning. Rust test listing, retained tests, strict Clippy, formatting,
+source-integrity negatives, local links and HIA original-source boundaries
+must be checked on the committed candidate. Execution results belong to the
+exact-source receipts, rather than this implementation description. This
+cleanup does not close any whole-chain HIA migration or production gate.

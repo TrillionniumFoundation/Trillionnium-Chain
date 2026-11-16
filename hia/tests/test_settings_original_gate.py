@@ -8,7 +8,10 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
+import textwrap
 import unittest
 from unittest.mock import patch
 
@@ -104,6 +107,85 @@ class SettingsOriginalGateControls(unittest.TestCase):
             source.symlink_to(actual)
             with self.assertRaisesRegex(ValueError, 'Symlinked'):
                 gate.verify_original(root)
+
+    def test_original_repository_cannot_shadow_current_python_harness(self):
+        root = Path(self.work.name)
+        original = root / 'original-chain'
+        library = original / gate.LIB
+        library.parent.mkdir(parents=True)
+        library.write_bytes(b'// original Rust fixture; never compiled\n')
+        # A distinct reference checkout may contain an older HIA namespace.
+        # Neither its process helper nor its late-loaded toolchain may execute.
+        for relative in ('hia/platform/transport_request/rust_oracle.py',
+                         'hia/tools/toolchain.py'):
+            source = original / relative
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_text("raise RuntimeError('original checkout Python was imported')\n")
+        child = textwrap.dedent('''
+            import importlib, json, subprocess, sys
+            from pathlib import Path
+            from unittest.mock import patch
+            sys.path.insert(0, sys.argv[1])
+            from hia.tools import qualify_settings_original as gate
+            from hia.tests.native_support import NativeModule
+
+            class StopBeforeRust(RuntimeError):
+                pass
+
+            oracle = object.__new__(gate.RustOracle)
+            with patch.object(subprocess, 'Popen', side_effect=StopBeforeRust) as launch:
+                try:
+                    oracle.__init__(Path(sys.argv[2]), Path(sys.argv[3]))
+                except StopBeforeRust:
+                    pass
+                else:
+                    raise RuntimeError('did not reach the current process helper')
+            # NativeModule performs this import lazily, after RustOracle setup.
+            toolchain = importlib.import_module('hia.tools.toolchain')
+            print(json.dumps({
+                'helper': str(oracle.command_source),
+                'helper_code': str(Path(oracle.command.__code__.co_filename).resolve()),
+                'toolchain_root': str(toolchain.HIA_ROOT),
+                'native_support_root': str(Path(sys.modules[NativeModule.__module__].__file__).resolve().parents[2]),
+                'original_lib_preserved': oracle.original_lib == (Path(sys.argv[2]) / gate.LIB).read_bytes(),
+                'isolated_lib_preserved': (oracle.isolated / gate.LIB).read_bytes() == oracle.original_lib + gate.DECLARATION,
+                'attempts': launch.call_count,
+                'command': launch.call_args.args[0],
+            }))
+        ''')
+        completed = subprocess.run(
+            [sys.executable, '-I', '-S', '-B', '-c', child, str(gate.ROOT),
+             str(original), str(root / 'observation')],
+            capture_output=True, text=True, check=False, timeout=15,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        helper = str(gate.ROOT / 'hia/platform/transport_request/rust_oracle.py')
+        self.assertEqual(json.loads(completed.stdout), {
+            'helper': helper, 'helper_code': helper,
+            'toolchain_root': str(gate.ROOT / 'hia'),
+            'native_support_root': str(gate.ROOT),
+            'original_lib_preserved': True, 'isolated_lib_preserved': True,
+            'attempts': 1, 'command': ['rustc', '-Vv'],
+        })
+
+    def test_cached_foreign_helper_module_or_function_is_refused_before_execution(self):
+        from hia.platform.transport_request import rust_oracle as process_receipts
+
+        def foreign_command(*args, **kwargs):
+            raise AssertionError('a foreign helper must never execute')
+
+        root = Path(self.work.name)
+        for index, (attribute, value) in enumerate((
+            ('__file__', str(root / 'foreign-rust-oracle.py')),
+            ('command', foreign_command),
+        )):
+            with (self.subTest(attribute=attribute),
+                  patch.object(sys, 'path', list(sys.path)),
+                  patch.object(process_receipts, attribute, value),
+                  patch.object(subprocess, 'Popen') as launch):
+                with self.assertRaisesRegex(ValueError, 'not from the current HIA candidate'):
+                    gate.RustOracle(root / 'original-chain', root / f'refused-{index}')
+                launch.assert_not_called()
 
     def test_corpus_retains_full_unsigned_time_values_and_none(self):
         rows = gate.corpus()

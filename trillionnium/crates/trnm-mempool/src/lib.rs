@@ -1,5 +1,8 @@
 use std::collections::{HashSet, VecDeque};
 
+#[cfg(test)]
+mod lane_fairness_regressions;
+
 mod typed_admission;
 
 pub use typed_admission::{

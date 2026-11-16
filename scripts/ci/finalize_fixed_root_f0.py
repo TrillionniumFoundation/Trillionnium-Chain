@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import run_fixed_host_root_f0 as runner
 import run_fixed_root_phase_host as phase_host
 from fixed_root_f0_ownership import (
-    MANAGER_PROPERTIES, controller_intent, controller_unit, identity_environment,
+    MANAGER_PROPERTIES, controller_intent, identity_environment,
     kernel_text, manager_matches, observe_group, parse_manager, phase_unit_matches,
     process_start, receipt, regular_bytes, require, validate_live,
 )

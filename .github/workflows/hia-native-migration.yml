@@ -375,6 +375,8 @@ jobs:
   native-executor:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      HIA_ORIGINAL_CHAIN_SHA: 8690b8bbeb581b4ae1fdde577a2e4b98024dc999
     defaults:
       run:
         shell: bash
@@ -409,6 +411,19 @@ jobs:
           bash scripts/project-preflight.sh --audit
           python3 hia/tools/check_migration.py
           printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Materialize and bind the frozen original Rust source
+        run: |
+          set -euo pipefail
+          original="$RUNNER_TEMP/hia-original-chain"
+          test ! -e "$original"
+          git clone --shared --no-checkout "$GITHUB_WORKSPACE/chain" "$original"
+          git -C "$original" remote set-url origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+          git -C "$original" checkout --detach "$HIA_ORIGINAL_CHAIN_SHA"
+          (
+            cd "$original"
+            bash scripts/project-preflight.sh --audit
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$HIA_ORIGINAL_CHAIN_SHA" --output "$RUNNER_TEMP/hia-observations/original-source-before.json"
+          )
       - name: Bootstrap and self-reproduce the native HIA compiler
         run: |
           set -euo pipefail
@@ -429,7 +444,13 @@ jobs:
       - name: Compare all scheduler strategies with the original Rust implementation
         run: |
           set -euo pipefail
-          python3 -B hia/tools/qualify_executor_original.py --repository "$GITHUB_WORKSPACE/chain" --output "$RUNNER_TEMP/hia-observations/executor-original.json" --work-dir "$RUNNER_TEMP/executor-original-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B hia/tools/qualify_executor_original.py --repository "$RUNNER_TEMP/hia-original-chain" --output "$RUNNER_TEMP/hia-observations/executor-original.json" --work-dir "$RUNNER_TEMP/executor-original-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Verify the frozen original Rust source remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/hia-original-chain"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$HIA_ORIGINAL_CHAIN_SHA" --output "$RUNNER_TEMP/hia-observations/original-source-after.json"
       - name: Verify candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -668,6 +689,8 @@ jobs:
   native-node-settings:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      HIA_ORIGINAL_CHAIN_SHA: 8690b8bbeb581b4ae1fdde577a2e4b98024dc999
     defaults:
       run:
         shell: bash
@@ -702,6 +725,19 @@ jobs:
           bash scripts/project-preflight.sh --audit
           python3 hia/tools/check_migration.py
           printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Materialize and bind the frozen original Rust source
+        run: |
+          set -euo pipefail
+          original="$RUNNER_TEMP/hia-original-chain"
+          test ! -e "$original"
+          git clone --shared --no-checkout "$GITHUB_WORKSPACE/chain" "$original"
+          git -C "$original" remote set-url origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+          git -C "$original" checkout --detach "$HIA_ORIGINAL_CHAIN_SHA"
+          (
+            cd "$original"
+            bash scripts/project-preflight.sh --audit
+            python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$HIA_ORIGINAL_CHAIN_SHA" --output "$RUNNER_TEMP/hia-observations/original-source-before.json"
+          )
       - name: Bootstrap and self-reproduce the native HIA compiler
         run: |
           set -euo pipefail
@@ -720,7 +756,13 @@ jobs:
               out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
       - name: Compare complete default Settings with the original public constructor
-        run: python3 -B hia/tools/qualify_settings_original.py --output "$RUNNER_TEMP/hia-node-settings" --require-rust
+        run: python3 -B hia/tools/qualify_settings_original.py --repository "$RUNNER_TEMP/hia-original-chain" --output "$RUNNER_TEMP/hia-node-settings" --require-rust
+      - name: Verify the frozen original Rust source remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/hia-original-chain"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$HIA_ORIGINAL_CHAIN_SHA" --output "$RUNNER_TEMP/hia-observations/original-source-after.json"
       - name: Verify exact Settings candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
