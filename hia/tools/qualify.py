@@ -82,6 +82,10 @@ def sources():
         "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
         "trillionnium/crates/trnm-pon-node/src/lib.rs",
         "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md")]
+    # Bind the complete retained original Host implementation and typed errors.
+    paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+              ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+              ROOT / "trillionnium/crates/trnm-pon-node/src/error.rs"]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 

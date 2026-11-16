@@ -850,6 +850,24 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/host-checkpoint",
+      "sources": [
+        "hia/platform/host_checkpoint/owner_policy.hepta",
+        "hia/platform/host_checkpoint/linux_emitter.hepta",
+        "hia/platform/host_checkpoint/fixture_entry.hepta"
+      ],
+      "scope": "Fresh fixed-parent Linux acquisition and each complete calling-thread/boot/identity/five-limit check in native HIA; actual physical refusal controls, explicit fixture and mandatory syscall trace; resource sampling, worker embedding and original service budget remain OPEN",
+      "tests": [
+        "hia/platform/host_checkpoint/qualify.py",
+        "hia/platform/host_checkpoint/rust_oracle.py",
+        "hia/platform/host_checkpoint/qualify_production.py",
+        "hia/tests/test_host_checkpoint.py",
+        "hia/tests/test_host_production.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }

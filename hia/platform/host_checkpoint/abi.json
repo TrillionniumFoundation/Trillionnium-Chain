@@ -1,0 +1,21 @@
+{
+  "schema": "trnm.hia.fresh-host-abi.v2",
+  "target": "x86_64-linux-gnu",
+  "entry": {"function": "f0", "arguments": ["readbuf:event[64]", "mutbuf:command[4096]", "mutbuf:private-state[dynamic]"], "returns": "u32: 0 issue, 128..255 terminal exit status plus 128"},
+  "event": {"0": "actual preceding syscall result bits", "8": "preceding command phase", "40": "adapter-owned state capacity"},
+  "command": {"0": "syscall number", "8..48": "six u64 arguments", "56": "pointer mask", "64": "phase", "128..4095": "bounded command data"},
+  "pointer_masks": {"0": "scalar", "2": "argument2 command-relative", "6": "arguments2,3 command-relative", "128": "read argument2 state-relative, offset >=4096"},
+  "state": {"initial_bytes": 8192, "mapping": "private anonymous RW, distinct from 16 KiB adapter/event/command mapping", "growth": "mremap opcode25 requires args 0,current_capacity,2*current_capacity,1,0,0; native adapter substitutes only its own mapping base; checked doubling and bounded state pointers"},
+  "syscalls": ["read", "write(stdout/stderr)", "close", "fstat", "mremap(private state only)", "getuid", "gettid", "clock_gettime(monotonic/thread CPU)", "openat(read-only fixed profiles)", "newfstatat"],
+  "fixed_paths": {"parent": "/sys/fs/cgroup/trnmponpublic.slice", "controllers": "/sys/fs/cgroup/cgroup.controllers", "boot": "/proc/sys/kernel/random/boot_id", "membership": "/proc/thread-self/cgroup"},
+  "production_authority": "fixed root-owned parent identity; no input-supplied resource identity, paths, limits or verdicts",
+  "fixture_authority": "none; explicit fixture entry, actual getuid and private relative files; receipt fixture flag1",
+  "input": "after initial receipt, repeated 24-byte little-endian u64 count 1..1000000, gate 0..4, read chunk1..4096; production requires gate0 and chunk4096; EOF ends process",
+  "gates": {"1": "after fresh boot", "2": "after fresh parent identity", "3": "after all five limit EOF reads, before parse", "4": "after limits parse, before final path fence", "protocol": "fixture writes 8-byte gate number to stderr, then requires actual stdin byte1"},
+  "receipt": {"bytes": 128, "magic": "HIAHK002", "u64_fields": ["magic", "fixture", "error", "sequence", "full_checks", "opens", "reads", "read_bytes", "EINTR", "close_errors", "TID", "thread_CPU_ns", "wall_ns", "state_capacity", "boot_trimmed_bytes", "positive_short_reads"], "timing": "initial/error receipt zero means unmeasured; positive batch clocks are finite observations"},
+  "errors": {"0":"PASS", "1":"PARENT", "2":"UNSUPPORTED", "3":"CONTEXT", "4":"REPLACED", "5":"UNAVAILABLE", "6":"LIMITS", "7":"LIMITS_CHANGED", "8":"ABI", "9":"CONTROL", "10":"ALLOCATION", "11":"PROTOCOL", "12":"IO"},
+  "exit": {"0":"clean EOF", "64+error":"full ordinary error receipt", "88":"adapter profile refusal", "89":"adapter bootstrap failure"},
+  "implicit_effects": ["two private RW mmaps", "ignore SIGPIPE in standalone process", "non-SA_RESTART SIGUSR1 handler/restorer", "exit"],
+  "open_boundaries": ["actual production fixed-parent positive", "independent syscall trace when ptrace denied", "calling-worker-thread embedding", "resource counter sampler", "whole HIA node", "original 4-second/16-worker service gate"],
+  "inherited_old_candidate_qualification": false
+}

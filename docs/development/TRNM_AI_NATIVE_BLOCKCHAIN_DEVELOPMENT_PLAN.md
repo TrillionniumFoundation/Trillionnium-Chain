@@ -1,3 +1,17 @@
+## 2026-11-16 UTC — HIA Host 完整新鲜检查、实际原 Rust 对照及生产路径资格
+
+本批新增 Host 原生基础组件，候选合计 41 内核、8 foundations、59 HIA 源文件。26 原 Rust 包保留、0 退役、9 全项目门 OPEN。
+
+- HIA 独立静态 ELF 实际执行固定 parent 获取以及每次完整 boot、调用线程 cgroup、parent inode/UID 和五个资源限制检查；不缓存文件、FD 或成功判定。新重建源码重新通过151物理控制和26恶意adapter控制，4个CLI/证据测试通过，最终ELF SHA256 b4b410d1b45cf7cea9100b68a9f9ba20113ecce97d16b2593d28614f2241a714。
+- 完整1,791字节adapter独立反汇编复查：command/state范围、只读syscall profiles、私有mremap地址/原尺寸/翻倍溢出约束及真实event传递；Core结构检查不冒充ISA语义证明。
+- 145真实文件案例实际匹配原Rust私有实现和fixture检查序列；44原Host测试通过，原默认ignored的child probe仍由parent显式执行。完整生产host_kernel_parent.rs保持原字节，仅原test-only include末尾追加测试child。首次adapter E0753编译失败保留；未宣称原生产fixed-path owner或resource sampler完成。
+- 本地strace实际PTRACE_TRACEME EPERM，trace为UNKNOWN；实际--require-trace在同177控制后退出失败。独立native-host托管job强制真实trace、实际原Rust对照和production fixed-parent正向；保留各job原20分钟限制及原platform全部步骤。新增后共9 jobs、8个独立compiler bootstrap gates，4项优化Python检查覆盖每一gate。
+- 生产controller只允许精确source的ephemeral GitHub-hosted job创建之前不存在的原fixed parent；实际UID/GID、root-owned lease、sealed production ELF、TID membership和22次新鲜检查的实际trace必须一致。8个拒绝/证据测试通过；真实进程先退出的调度条件下复现丢失283字节stderr，修复后全量保留，primary/cleanup失败分开记录。两次native观察仍正确FAIL，不计production正向；真实托管执行尚待完成。
+- 453326b的push43828760883与PR43828945597均8/8SUCCESS、257 tests/0 skipped/92,509 shared native calls，source_set 58336866b3ce1a61c142d98283f938e3c20636e0f4e83f3844bba34ebda77fbb；Audit11、Raw8均含实际原Rust运行。相同head的W1 job133169304908真实FAIL，原4秒/16攻击者两压力阶段均0confirmed，无压分别2.374779837/2.308299376秒各1confirmed；原资源限额未改。这是保留的原Rust Node结果，未计为HIA完整Node实测。
+- 当前development报告按各自原source manifest保留，不把旧PASS重标给新增build/README/CI绑定；新提交强制重新资格。同worker线程嵌入、resource sampler、完整Node与原服务门继续推进。独立typed Store候选不混入本批，所有过程作者/临时构建留在仓库外。
+
+此前计划以下方原字节后缀完整保留。
+
 ## 2026-11-16 UTC — HIA AuditEvent 与 RawBindings 完整有限单元，故障恢复后重新资格
 
 本批候选为 41 内核、7 native foundation、56 HIA 源文件。26 原 Rust 包均保留、0 退役、9 全项目门 OPEN。

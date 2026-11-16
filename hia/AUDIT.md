@@ -1,9 +1,44 @@
 # Whole-tree inventory and HIA migration audit
 
+## Fresh physical Host checkpoint candidate — 2026-11-16 UTC
+
+The candidate has 41 kernels, eight foundations and 59 HIA source files.
+The fixed-parent Host owner freshly performs actual Linux reads and native
+identity, context and five-limit checks. The rebuilt source passed 151 physical
+controls plus 26 hostile-adapter controls; the complete 1,791-byte syscall
+adapter instructions were independently reviewed. Core shape acceptance is not
+a formal machine-code proof or a complete Node Host implementation.
+
+Actual original Rust execution matched 145 private-file cases and retained 44
+original Host tests. Its one default-ignored helper was explicitly called by
+the original parent test. The full production Rust file was unchanged; a child
+adapter was appended only to the existing test-only include. The initial E0753
+adapter compilation failure is retained. This comparison does not claim the
+original fixed-path production owner or resource sampler has been replaced.
+
+Local tracing failed with actual PTRACE_TRACEME EPERM; mandatory tracing correctly
+failed after the physical controls passed. A separate 20-minute hosted Host job
+requires real tracing, actual original Rust comparison and a fresh production
+image execution inside the fixed parent. The controller refuses existing parents,
+local provisioning and source drift. Eight controls passed, including an actual
+already-exited-child pipe capture. A real scheduled early-exit observation lost
+283 bytes before the fix and retained all bytes after it; both native attempts
+still failed, as the host lacks ptrace permission. The new hosted production
+positive remains unobserved. Resource sampling, same-worker integration and the
+original service gates remain open. All 26 Rust packages remain retained.
+
+Both exact `453326b` HIA workflows completed all eight jobs: 257 component tests,
+zero skips and 92,509 shared native calls in each. Its separate original W1
+service campaign still failed in both pressure phases with zero confirmations;
+attack-free latencies were 2.374779837 and 2.308299376 seconds. Those observations
+are bound to that prior source and do not certify this new Host increment.
+The mandatory Host job adds an eighth independently guarded compiler bootstrap;
+all four optimized-mode checks execute at each of the eight gates.
+
 ## Native audit values and private raw bindings — 2026-11-16 UTC
 
-The current candidate contains 41 kernels and seven native foundations, covering
-all 56 HIA source files. AuditEvent passed ten native tests/2,847 calls; its
+The preceding AuditEvent/RawBindings increment contained 41 kernels and seven
+native foundations, covering all 56 HIA source files. AuditEvent passed ten native tests/2,847 calls; its
 unchanged original Rust crate passed three original unit tests and 1,849 semantic
 cases. RawBindings passed seven native tests/16,597 calls; 16,471 original Rust
 operations in 1,220 histories match its actual native output hashes. Both full
@@ -136,8 +171,8 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Forty-one kernel units and seven native
-foundations account for all 56 candidate HIA source files. Native connected-stream
+**The full replacement is incomplete.** Forty-one kernel units and eight native
+foundations account for all 59 candidate HIA source files. Native connected-stream
 I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The
