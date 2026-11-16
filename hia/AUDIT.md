@@ -1,5 +1,17 @@
 # Whole-tree inventory and HIA migration audit
 
+## Optimized Python qualification refusal — 2026-11-16 UTC
+
+The native StoreOwner's physical test controller had assertion-based disk,
+readback and crash-cut checks, which Python `-O` and `PYTHONOPTIMIZE` would
+otherwise remove. Its startup now refuses optimized execution before any
+native operation. Three actual isolated optimized-interpreter refusal controls
+(`-O`, `-OO`, `PYTHONOPTIMIZE=2`) and compilation of both changed Python
+files passed. Exact-head hosted native/PQ qualification remains pending.
+This changes neither the HIA machine code nor Node transaction ownership,
+original service budgets, the 26 retained Rust packages or nine OPEN gates.
+
+
 New M05 opcode 24 is a one-call **pure QoS snapshot proposal** with five
 original-headroom/admissibility fields. Its qualification requires emitted HIA
 machine code to match one actual original Rust `qos_snapshot` for each real
