@@ -151,6 +151,39 @@ class HostProductionControls(unittest.TestCase):
             with self.assertRaises(ValueError):
                 audit_trace(production.normalize_trace(changed), expected_checks=2, expected_error=0)
 
+    def test_escaped_payload_and_known_path_payload_remain_byte_exact(self):
+        parent = '/sys/fs/cgroup/trnmponpublic.slice'
+        for prefix in ('', '5794  ', '[pid 5794] '):
+            for payload in (r'line\nquote\"back\\slash', parent,
+                            r'openat(AT_FDCWD, \"/\", O_RDONLY)'):
+                read = prefix + 'read(4, "' + payload + '", 4096) = 36\n'
+                metadata = prefix + 'newfstatat(AT_FDCWD, "' + parent + '", {st_mode=S_IFDIR|0755}, AT_SYMLINK_NOFOLLOW) = 0\n'
+                expected = read + metadata.replace('"' + parent + '"',
+                    '"' + production.PRODUCTION_PATHS[parent] + '"')
+                with self.subTest(prefix=prefix, payload=payload):
+                    self.assertEqual(production.normalize_trace(read + metadata), expected)
+        unknown = 'openat(AT_FDCWD, "/tmp/quote\\\"slash\\\\", O_RDONLY) = -1 ENOENT\n'
+        self.assertEqual(production.normalize_trace(unknown), unknown)
+
+    def test_original_failed_production_trace_is_replayed_without_rewriting_status(self):
+        record = json.loads((production.ROOT /
+            'hia/qualification/host-production-trace-parser-development.json').read_text())
+        raw = record['original_trace_text'].encode()
+        self.assertEqual(len(raw), record['trace']['bytes'])
+        self.assertEqual(production.digest(raw), record['trace']['sha256'])
+        self.assertEqual(record['actual_job_conclusion'], 'failure')
+        self.assertEqual(record['actual_native_record_status'], 'FAIL')
+        self.assertIs(record['new_production_execution_by_this_review'], False)
+        parsed = audit_trace(production.normalize_trace(raw.decode()), expected_checks=22, expected_error=0)
+        self.assertEqual(parsed, record['after_parser_replay'])
+        self.assertEqual(parsed['syscalls'], 888)
+        for old, replacement in (
+                ('/proc/thread-self/cgroup', '/proc/self/cgroup'),
+                ('/sys/fs/cgroup/trnmponpublic.slice', '/sys/fs/cgroup/trnmponpublic.slice-other')):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                audit_trace(production.normalize_trace(raw.decode().replace(old, replacement)),
+                            expected_checks=22, expected_error=0)
+
 
 if __name__ == '__main__':
     unittest.main()

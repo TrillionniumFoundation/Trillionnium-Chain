@@ -868,6 +868,38 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/typed-store",
+      "sources": [
+        "hia/platform/typed_store/stage_policy.hepta",
+        "hia/platform/typed_store/root_finalize.hepta",
+        "hia/platform/typed_store/linux_stage_emitter.hepta"
+      ],
+      "scope": "Native Linux sealed-input streaming Delta merge, complete stored State decoding and optional complete classical root with real descriptor admission and writes; no namespace, continuity, expected-root, COMMIT, replay or ACK authority; growth GSC2 and full Node integration remain OPEN",
+      "tests": [
+        "hia/platform/typed_store/qualify.py",
+        "hia/platform/typed_store/rust_oracle.py",
+        "hia/platform/typed_store/capacity.py",
+        "hia/platform/typed_store/test_integrity.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/host-resource",
+      "sources": [
+        "hia/platform/host_resource/resource_policy.hepta",
+        "hia/platform/host_resource/fixture_entry.hepta"
+      ],
+      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. Production positive, Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
+      "tests": [
+        "hia/platform/host_resource/qualify.py",
+        "hia/platform/host_resource/rust_oracle.py",
+        "hia/platform/host_resource/test_integrity.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }

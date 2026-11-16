@@ -78,6 +78,20 @@ original-stage logs; intentionally unreadable physical fixture directories are
 not traversed by the uploader. No diagnostic observation substitutes for a native
 success receipt or a successful independent syscall trace.
 
+The first hosted jobs failed and their artifact upload was blocked by an
+intentionally unreadable fixture. After explicit artifact selection was added,
+the `8690b8b` push job retained its actual production trace: the native process
+exited zero after 22 successful fresh checks, but the trace verifier failed.
+Its quoted-string mapper incorrectly paired quotes across syscall lines when a
+read payload contained escapes. Mapping now recognizes complete escaped strings
+only in the path argument of `openat` and `newfstatat`; read/receipt payloads
+remain byte-exact. The unchanged 888-call trace is retained in the
+[diagnostic record](../../qualification/host-production-trace-parser-development.json)
+and independently replays through all 22 checks. The failed job stays FAIL;
+this offline regression is not a new production execution. Eleven production
+controller tests and four fixture/evidence tests pass. New committed-source
+production execution remains mandatory.
+
 The standalone image is not yet the HIA full-node Host. It must execute in the
 actual worker thread at every original checkpoint; a sidecar cannot attest
 another thread's membership or CPU clock. Resource sampling, original service

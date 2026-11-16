@@ -1,5 +1,126 @@
 # Whole-tree inventory and HIA migration audit
 
+## Complete typed State staging and capacity lineage — 2026-11-16 UTC
+
+The candidate adds three HIA sources for streaming typed staging, a separately
+compiled native root image in the same ELF, and its Linux emitter. Together
+with the two new resource-owner sources, the complete inventory now has 41
+kernels, ten foundations and 64 HIA files. All 26 original
+Rust packages remain, zero retirements are accepted, and all nine whole-project
+gates remain OPEN.
+
+The frozen development candidate passed 603 native controls and ten controller
+controls. Actual unchanged original Node methods matched 392 cases; all three
+original bounded State tests passed. The first original-Rust comparison exposed
+an empty-key SQL projection discrepancy. The final source preserves stored
+empty-key and empty-value NULL projection refusal, callback order, dimension
+checks before conversion, key-before-value conversion, and Delta repair/deletion
+of invalid old rows. The original 374 inputs were retained and 18 added. This
+is not complete SQL storage-type conversion or full serde error-chain parity.
+
+The full classical State has 65,536 rows with 160-byte keys and 4,096-byte
+values, totalling 279,969,808 typed-stream bytes. Its SHA-256 is
+`cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3`;
+native and independent full-root calculations agree at
+`f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702`.
+Produce, fresh-process cold restoration and bounds stages passed in
+644.13996704, 621.776575668 and 71.819485816 seconds. All three bind the same
+native executable, complete native/original source maps, head, run and attempt;
+the cold and bounds reports include the exact prior report hashes. A corrupt
+final value byte and a classical count overflow fail with zero output. The
+growth dimension plus-one case passes without a GSC2 root claim.
+
+The [complete development record](platform/typed_store/qualification/development-observations.json)
+preserves these actual observations, initial/interrupted failures and their
+exact source identities. Its base Git head is `453326b335af`; the new component
+was an unpublished overlay, so `native_source_inputs_match_git_head` remains
+false in those records. New mandatory exact-source CI must rerun all four jobs.
+The full source is verified before and after each job, artifacts are tied to
+head/run/attempt, and each capacity dependency must preserve the prior receipt.
+FIFOs are archived as metadata rather than opened by artifact collection.
+
+The final bundle entry independently reconstructs the current owned-source and
+canonical dependency closure, verifies the complete set and its digest, and
+regenerates the entire source-defined input corpus. It rejects missing or extra
+inputs, digest forgery, noncanonical or aliased paths, dependency cycles and
+re-exported helper claims. Actual XZ decoding is bounded by the source-defined
+corpus extent and rejects truncation or trailing data. The integrated tests
+passed nine groups, 81 controls and 11 public CLI invocations before any Rust or
+native execution. Fourteen owned files now contribute to 28 native inputs;
+the preserved 13-file development runtime records keep their original identities.
+
+The 4,587,520-byte private native arena does not include memfd/tmpfs captures or
+hosted-controller memory. Fresh-process cold restoration is not a cache-flush,
+power-loss or durable commit witness. This owner has no namespace, continuity,
+expected-root, COMMIT, replay, outbox or ACK authority. The original four-second
+service gate and all original resource limits remain unchanged.
+
+## Aggregate Host resource owner — 2026-11-16 UTC
+
+The resource owner composes its two new HIA sources with all 35 byte-identical
+Host helpers and the existing reviewed read-only adapter. Both generic explicit
+include graphs were independently admitted and are Core-identical to the
+specialized native builder's 48-function programs. The original Host HIA source
+and all original Rust implementation bytes remain unchanged.
+
+Each actual sample performs a complete fresh check, retains that exact parent
+FD while reading CPU/memory/PID counters, validates all three bounded regular
+files through EOF and UTF-8, parses in original order, closes the parent, and
+performs the second fresh check. CPU deltas use a private baseline and four
+checked subtractions; memory and PID values are point-in-time samples.
+Failure does not publish qualified values or credit. The production parent
+must be owned by UID 0; that is not a requirement to run the native image as root.
+
+The [source-bound development record](qualification/host-resource-development.json)
+retains the actual 183 native controls and 172 original-Rust case comparisons
+covering 180 operations, plus 44 original Host tests. The original ignored child
+probe remains ignored and is exercised by its original parent. In 148 cases the
+actual unchanged `sample_counters` function owns the entire sequence; 23 use
+explicit private mutation-phase fixtures and one checks the added private
+baseline protocol. The fixed production `KernelBudget::open` and
+`checked_parent` were not qualified by those fixtures.
+
+Local ptrace denial remains UNKNOWN. A separate actual execution traced the
+same fixture ELF and verified the CPU-to-memory-to-PID order, same captured
+parent FD, EOF/type checks, and close before the second full fresh check. The
+initial socket-creation denial and source-bundle omission finding are retained.
+After complete source-set admission was added, all native and actual original
+comparisons ran again; three integrity groups and seven actual malformed-bundle
+CLI calls passed their required refusals. The final mandatory CI uses one native
+run and the same source-bound corpus for actual Rust, and requires real trace
+PASS rather than accepting UNKNOWN. It excludes live fixture namespaces from
+artifact traversal while retaining complete direct receipts, build inputs and
+original compiler/test logs.
+
+Development results preserve their exact 30-input source map and the full
+4,361-file original binding. New committed source requires fresh CI. Resource
+production-positive execution, same-worker placement, paid per-thread CPU,
+external child ownership, Node completion authority and original four-second/
+16-attacker acceptance remain OPEN. No Rust package is retired.
+
+## Observed production trace-normalization failure — 2026-11-16 UTC
+
+After artifact collection was repaired, the actual `8690b8b` push Host job
+`133202337683` retained its failed production evidence. The HIA process exited
+zero, emitted four zero-error receipts with cumulative full-check counts
+1, 2, 5 and 22, and matched its actual TID, fixed-parent membership and running
+executable. The subsequent independent trace verifier failed with
+`Unexpected metadata path`.
+
+The original quote pattern could not consume escaped payload characters and
+instead paired a closing quote with a quote on a later syscall line. Thus an
+actual absolute metadata path was not normalized. The fix consumes a complete
+escaped token and restricts normalization to the path argument of anchored
+`openat`/`newfstatat` calls; it preserves read payloads and unknown paths.
+The [diagnostic record](qualification/host-production-trace-parser-development.json)
+retains the complete original 54,038-byte trace, job log, artifact identity,
+receipts and failed status. Offline reinspection of those same bytes verifies
+888 calls, all 22 complete checks and resource-descriptor cleanup. Fifteen
+fixture/production controls pass, including escaped payloads, the exact failed
+trace and refusal of a different parent or process-leader membership path.
+No failed job was changed to PASS, and the revised committed source must still
+execute a fresh production qualification.
+
 ## First hosted production observation and evidence repair — 2026-11-16 UTC
 
 Both `dcd72f7` Host jobs passed real fixture syscall tracing and 145 actual

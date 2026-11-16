@@ -32,6 +32,7 @@ INPUTS = (
     'hia/platform/host_checkpoint/README.md',
     'hia/tests/test_host_checkpoint.py',
     'hia/tests/test_host_production.py',
+    'hia/qualification/host-production-trace-parser-development.json',
     'hia/platform/transport_request/rust_oracle.py',
     'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs',
     'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs',
