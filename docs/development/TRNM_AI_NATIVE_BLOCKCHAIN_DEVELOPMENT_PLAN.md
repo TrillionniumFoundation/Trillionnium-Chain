@@ -1,3 +1,21 @@
+## 2026-11-16 UTC — 修复云端线程信号观测；最终源码连续性三段资格通过
+
+当前仍为 **41 kernels / 12 native foundations / 71 HIA sources；26原Rust包保留 / 0退役 / 9全项目门OPEN**。公开前驱为 `44b3c6e622d009b6b92b270b4e1f5c82fc844b81`（tree `63ac94db48912564acae652ce6c771513d3f70dd`）。本修复候选仍须自己的18-job exact-head CI。
+
+44b3 push43884564137/job133359090163与PR43884851140/job133360095846的线程资格均真实FAIL。65 semantic histories已完成，首个physical signal control的live wait随后失败，原Rust未运行。原trace实际记录TID2882/2895的SIGUSR1→rt_sigreturn=-1 EINTR；云端strace在四位TID后填两个空格，而旧正则只接受一个。两个原ZIP、完整job log、各560members/483regular及38原提交源已独立复核；原FAIL不改写。
+
+仅修改thread_cpu/qualify.py与test_integrity.py：live wait接受水平空格/TAB且不跨行，完整信号配对审计不变；错误TID、数字前后缀、跨行、其他syscall、缺失/错误返回均有负例。9组完整性测试通过。其余36输入不变，最终38源SHA256为 `e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b`。
+
+同一新源真正重跑 **65 native histories /724operations /74physical**，7.735951695秒；actual original真正通过 **65/65 histories /724operations /518原方法调用 /36retained tests及mandatory Linux positive**，274.251040508秒。源、锁定rustix依赖和独立原binary前后MATCH。HIA policy、adapter及原Rust没有变化；两个125683B ELF与前驱逐字相同，生产SHA6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd，fixtureSHA312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7。
+
+新native report1069111B/SHAa8fe006a739699734379e61858aa69151fdef4c8ec6a799b24e2b76a0b0ffa3c；original report1076870B/SHAbb35e8c0e86f6c4b35751abe70a4b36c7fde8731a77a18dda668e0e43fb10bbc。最新单一thread-cpu-development.json与tar.xz保留本次完整实测、两次云端FAIL和旧V7/更早失败的原身份。archive7793524B/SHAba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94，1488members/1217regular/20642315regular bytes，内置member-manifest；可重建Cargo副本与612MB原binary不重复加入仓库。首包装调用的错误编译器路径另列为native/Rust均未运行，不能冒充资格失败或成功。
+
+44b3两条流程的continuity-native/original/capacity六个作业均实际SUCCESS，每条完整执行659native、572actual-original+4retained、7capacity，全部使用最终62源 `a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`。格式后的源码现在有真实CI执行，格式前8711开发结果仍保留原身份。两份native artifact各4151members/3454regular全hash验证；依赖链核对同head/run/attempt、完整下载与原始源闭包。容量不缩：1065536rows/1000000accounts/65536working；cold消费上一步实际完整36837812B stream，SHA716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702。不能据此声称原Rust最大规模、物理掉电、GSC2或Node COMMIT资格。44b3线程任务失败，因此整条workflow不是全绿。
+
+继续实现真正genesis/State/fresh namespace持久初始化与cold reopen、并发paid i128 CPU账户、实际锁序/live debit/残额结算，再接完整M06、expected-root、单一Node事务、reorg/replay/outbox/ACK及剩余所有包。原服务预算、跨目标、模型和研究门不放宽；旧栈只能在完整等价替代及原验收真实通过后退役。作者脚本与中间构建留仓库外，最终目录只保留当前实现与必要验证证据。
+
+以下为44b3中唯一计划的完整原字节后缀。
+
 ## 2026-11-16 UTC — 连续性与线程 CPU 原生 owner、完整原 Rust 对照及固定父级生产实测
 
 本候选为 **41 kernels / 12 native foundations / 71 HIA sources**；全部 **26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。当前新增的是实际执行的连续性与线程 CPU owner 及其强制资格链，不据此声明整个 Node、原始服务预算、PQ 或完整配置域已闭合。

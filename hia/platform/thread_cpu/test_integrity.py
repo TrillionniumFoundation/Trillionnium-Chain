@@ -13,6 +13,7 @@ from .build import INPUTS,OWNED,ORIGINAL_SOURCE,ORIGINAL_SHA256
 from .rust_oracle import ROOT,complete_source_manifest,validate_source_bindings,parse_json,original_clock_trace
 from .cases import corpus
 from .trace_audit import primitive_clock_result,complete_calls
+from .qualify import observed_signal_eintr
 
 
 class ThreadCpuIntegrityTests(unittest.TestCase):
@@ -185,6 +186,32 @@ class ThreadCpuIntegrityTests(unittest.TestCase):
                     trace.write_text(mutated)
                     with self.assertRaises(ValueError):
                         original_clock_trace(trace,case)
+
+    def test_hosted_actual_sigreturn_tid_padding(self):
+        # Exact return line from failed hosted job 133359090163. The actual
+        # signal happened; its two-space TID padding defeated the live wait.
+        actual='2882  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)\n'
+        for spacing in (' ','  ','       ','\t',' \t '):
+            with self.subTest(spacing=repr(spacing)):
+                line=actual.replace('2882  ','2882'+spacing,1)
+                self.assertTrue(observed_signal_eintr(line,2882))
+                resumed=line.replace('rt_sigreturn({mask=[]})',
+                                     '<... rt_sigreturn resumed>{mask=[]}')
+                self.assertTrue(observed_signal_eintr(resumed,2882))
+        variants={
+            'other-tid':actual.replace('2882','2883',1),
+            'tid-prefix':actual.replace('2882','28820',1),
+            'tid-suffix':actual.replace('2882','12882',1),
+            'cross-line':actual.replace('2882  ','2882\n',1),
+            'cross-line-other-task':actual.replace('2882  ','2882\n2883 ',1),
+            'other-syscall':actual.replace('rt_sigreturn','read'),
+            'successful-return':actual.replace('-1 EINTR (Interrupted system call)','0'),
+            'different-error':actual.replace('EINTR','EIO'),
+            'partial-return':actual.split('=')[0],
+        }
+        for name,line in variants.items():
+            with self.subTest(name=name):
+                self.assertFalse(observed_signal_eintr(line,2882))
 
     def test_optimized_public_entry_rejects_before_output(self):
         with tempfile.TemporaryDirectory(prefix='trnm-thread-cpu-python-optimize-') as temporary:

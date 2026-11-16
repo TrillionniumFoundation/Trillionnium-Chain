@@ -1,867 +1,198 @@
 {
-  "actual_final_handoff": {
-    "actual_original": {
-      "comparison": {
-        "bytes": 780260,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-original/original/comparison.json",
-        "sha256": "0d6468cbdf1a2a032844c910308ef575e80f41d7d971efada864fab1f024b0cc"
-      },
-      "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
-      "controlled_syscall_histories": 44,
-      "durable_job_id": "1a1e4845525-392-373d",
-      "elapsed_seconds": 359.10480406699935,
-      "exit_code": 0,
-      "histories": 65,
-      "independent_binary": {
-        "bytes": 612166040,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-original/original/original-test-binary",
-        "sha256": "ae232c3378e8a0e0486c0497b262b1d6a374beecf2670494124f96fcd3f4cc24"
-      },
-      "locked_clock_dependency_after": "MATCH",
-      "mandatory_linux_positive": true,
-      "operations": 724,
-      "original_calls": 518,
-      "output_complete": true,
-      "report": {
-        "bytes": 1070635,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-original/original/report.json",
-        "sha256": "b0ab0a403f22e84c31a6b7463b9bae849533d49f42dc13100249fde7358733ff"
-      },
-      "retained_test_count": 36,
-      "retained_test_summary": [
-        "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 1541 filtered out; finished in 0.35s"
+  "actual_original": {
+    "comparison": {
+      "bytes": 780217,
+      "sha256": "7c01aefb9c522ba2cd76fe456f90d076fea7eb50d4c932514fbcb1046c0ff87d"
+    },
+    "histories": 65,
+    "independent_binary": {
+      "bytes": 612180384,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/thread-cpu-hosted-whitespace-qualification-v2/original-run/original/original-test-binary",
+      "sha256": "f9fb0689b0b478e2ea8f63761f43a465ac46ec9fbb05c7037e1d33b9ab974253"
+    },
+    "locked_clock_dependency_after": "MATCH",
+    "mandatory_linux_positive": true,
+    "operations": 724,
+    "original_calls": 518,
+    "report": {
+      "bytes": 1076870,
+      "sha256": "bb35e8c0e86f6c4b35751abe70a4b36c7fde8731a77a18dda668e0e43fb10bbc"
+    },
+    "retained_test_count": 36,
+    "retained_test_summary": [
+      "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 1541 filtered out; finished in 0.23s"
+    ],
+    "seconds": 274.2510405079811,
+    "source_after": "MATCH",
+    "status": "PASS"
+  },
+  "base_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+  "complete_corpus": {
+    "bytes": 68539,
+    "sha256": "42c9e9b8d04505fb64d1d3852d092450d181df036523761083e4ba946832fa52"
+  },
+  "current_source_matches_native_and_original": true,
+  "execution": {
+    "bytes": 3086,
+    "sha256": "6d45e0784469a9db779de4127576407bdcbd7c96306b0c0fbf988f68adf7a841"
+  },
+  "hosted_predecessor_failures": [
+    {
+      "actual_signal_return": [
+        {
+          "actual_return_line": "2882  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)",
+          "fixed_live_wait_matches": true,
+          "legacy_live_wait_matches": false,
+          "padding_hex": "2020",
+          "tid": 2882
+        }
       ],
-      "source_after": "MATCH",
-      "status": "PASS",
-      "stderr_bytes": 0,
-      "stdout_bytes": 2340
-    },
-    "complete_corpus": {
-      "bytes": 68539,
-      "sha256": "42c9e9b8d04505fb64d1d3852d092450d181df036523761083e4ba946832fa52"
-    },
-    "corrected_nine_actual_histories": [
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_start_EINTR",
-        "native_actual_clock_calls": 4,
-        "original_actual_clock_calls": 4,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
+      "archive_zip": {
+        "bytes": 2341146,
+        "sha256": "6e1aabe88c0f536f61859c1d3fcc36c7bec79ceef7a791965d5a4cead96981dc"
       },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_checkpoint_EINTR",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 56828,
+        "sha256": "d371bfba654c95e90d9d2625557f61aa3a3b00d32864b7cf9054061406d76dd5"
       },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_finish_EINTR",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
+      "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+      "job": 133359090163,
+      "original_execution": "NOT_RUN",
+      "partial_semantic_histories": 65,
+      "physical_controls_completed": 0,
+      "review": {
+        "bytes": 1040,
+        "sha256": "5247b999c7298a03d8a96e9e00c11b74feef3aecef82434af2c5750123742bfa"
       },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_start_ENOSYS",
-        "native_actual_clock_calls": 4,
-        "original_actual_clock_calls": 4,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_checkpoint_ENOSYS",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_finish_ENOSYS",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_start_EIO",
-        "native_actual_clock_calls": 4,
-        "original_actual_clock_calls": 4,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_checkpoint_EIO",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      },
-      {
-        "current_v7_status": "PASS",
-        "name": "clock_errno_finish_EIO",
-        "native_actual_clock_calls": 5,
-        "original_actual_clock_calls": 5,
-        "original_injected_clock_calls": 1,
-        "prior_v6_status": "FAIL"
-      }
-    ],
-    "earlier_failure_proof_archives": [
-      {
-        "bytes": 151800,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-first-original-failure.tar.xz",
-        "sha256": "299238f7178bc1b10fef8a0fb78662721f0ce9c3fee2a0ab759546ca59ecae8e"
-      },
-      {
-        "bytes": 198288,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-first-exact-timespec-verifier-failure.tar.xz",
-        "sha256": "ea1a4f6da23db3eb590033f00b9332d01bcfe44063ad35dca7695bd564131011"
-      },
-      {
-        "bytes": 14200,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-prior-lifecycle-verifier-review.tar.xz",
-        "sha256": "c3a69c0007d4f03be65b6bb68a375df5da6fb228d5c5733539386703cb5da5d4"
-      },
-      {
-        "bytes": 726256,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-locked-rustix-readonly-review.tar.xz",
-        "sha256": "f257f50b758922e95a945ce6d8be1306aadd47e94358d710631a81f0efaec8e5"
-      }
-    ],
-    "hia_source_count": 3,
-    "locked_clock_dependency": {
-      "all_crate_regular_files_match_compiled_registry": true,
-      "clock_wrapper": {
-        "bytes": 21092,
-        "sha256": "cf31e9520c46293e05f1cba001269d9b56db6e3114326ea132e095903a310e9a"
-      },
-      "crate": {
-        "bytes": 426484,
-        "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/rustix-1.1.6.crate",
-        "sha256": "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
-      },
-      "name": "rustix",
-      "package_checksum_matches_lock": true,
-      "regular_files": 332,
-      "scope": "source and actual Cargo metadata checked before and after original test execution",
-      "version": "1.1.6"
-    },
-    "mandatory_ci_commands": [
-      "python -B -m unittest hia.platform.thread_cpu.test_integrity -v",
-      "python -B -m hia.platform.thread_cpu.rust_oracle --repository \"$PWD\" --native-only --output \"$RUNNER_TEMP/hia-native-thread-cpu-input\"",
-      "python -B -m hia.platform.thread_cpu.rust_oracle --repository \"$PWD\" --bundle \"$RUNNER_TEMP/hia-native-thread-cpu-input\" --output \"$RUNNER_TEMP/hia-native-thread-cpu-original\" --target-dir \"$RUNNER_TEMP/hia-thread-cpu-cargo-target\""
-    ],
-    "native": {
-      "actual_signal_pairing_negative_controls": 4,
-      "adapter": {
-        "bytes": 1900,
-        "sha256": "c7dcfa89e31f0570f032f6683b3eb6c13de02e67cc5718c0572273bb34800878"
-      },
-      "build": {
-        "bytes": 15619,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-native-bundle/physical/build/build.json",
-        "sha256": "992773974b6e2c1fc9d561377d2a97d3133b477dcff9237c046953fd30f6c01d"
-      },
-      "controlled_syscall_histories": 44,
-      "controlled_timespec_histories": 20,
-      "durable_job_id": "1a1e47dcf6c-392-372d",
-      "exit_code": 0,
-      "fixture_executable": {
-        "adapter_prefix_bytes": 2076,
-        "bytes": 125683,
-        "dynamic_linker": false,
-        "entry": 4194480,
-        "format": "ELF64LE",
-        "instruction_semantics_verified_by_this_check": false,
-        "interpreter": null,
-        "load_flags": "RX",
-        "machine": "x86_64",
-        "sha256": "312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7",
-        "stack_flags": "RW",
-        "type": "ET_EXEC"
-      },
-      "histories": 65,
-      "integrity_test_methods": 8,
-      "kernel_clock_histories": 21,
-      "kernel_clock_private_baseline_fixture_histories": 2,
-      "native_comparison": {
-        "bytes": 1995588,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-native-bundle/native-comparison.json",
-        "sha256": "35c71ef0388421e6a4b6f52eef5ec2e43dce22131ffd9878e661be4ea1af6951"
-      },
-      "nonpersistent_errno_histories": 12,
-      "operations": 724,
-      "ordinary_trace_refusals": 12,
-      "persistent_errno_histories": 12,
-      "production_entry_kernel_clock_histories": 19,
-      "production_executable": {
-        "adapter_prefix_bytes": 2076,
-        "bytes": 125683,
-        "dynamic_linker": false,
-        "entry": 4194480,
-        "format": "ELF64LE",
-        "instruction_semantics_verified_by_this_check": false,
-        "interpreter": null,
-        "load_flags": "RX",
-        "machine": "x86_64",
-        "sha256": "6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd",
-        "stack_flags": "RW",
-        "type": "ET_EXEC"
-      },
-      "protocol_controls": 74,
-      "report": {
-        "bytes": 1066820,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v7-native-bundle/physical/report.json",
-        "sha256": "15d391eeda9ccc6ca0cae0b687cc6f8df279d609846e352b14e952787fc983fc"
-      },
-      "status": "PASS"
-    },
-    "new_persistent_errno_actual_histories": [
-      {
-        "name": "clock_persistent_errno_start_EINTR",
-        "native_actual_clock_calls": 2,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 2,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_checkpoint_EINTR",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_finish_EINTR",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_start_EINVAL",
-        "native_actual_clock_calls": 1,
-        "native_injected_clock_calls": 1,
-        "original_actual_clock_calls": 1,
-        "original_injected_clock_calls": 1,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_checkpoint_EINVAL",
-        "native_actual_clock_calls": 2,
-        "native_injected_clock_calls": 1,
-        "original_actual_clock_calls": 2,
-        "original_injected_clock_calls": 1,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_finish_EINVAL",
-        "native_actual_clock_calls": 2,
-        "native_injected_clock_calls": 1,
-        "original_actual_clock_calls": 2,
-        "original_injected_clock_calls": 1,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_start_ENOSYS",
-        "native_actual_clock_calls": 2,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 2,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_checkpoint_ENOSYS",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_finish_ENOSYS",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_start_EIO",
-        "native_actual_clock_calls": 2,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 2,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_checkpoint_EIO",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      },
-      {
-        "name": "clock_persistent_errno_finish_EIO",
-        "native_actual_clock_calls": 3,
-        "native_injected_clock_calls": 2,
-        "original_actual_clock_calls": 3,
-        "original_injected_clock_calls": 2,
-        "status": "PASS"
-      }
-    ],
-    "node_worker_embedding_qualified": false,
-    "original_53_prefix": {
-      "bytes": 62803,
-      "sha256": "7fe7f2801fc5e10bc7efca54797b228bbcc064c1389bc81815d7164674ebe2ef",
-      "unchanged": true
-    },
-    "original_corpus_history_deleted": false,
-    "original_four_second_sixteen_attacker_service_gate_qualified": false,
-    "original_production_rust_modified": false,
-    "owned_file_count": 13,
-    "owned_sources": {
-      "hia/platform/thread_cpu/README.md": {
-        "bytes": 8128,
-        "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
-      },
-      "hia/platform/thread_cpu/abi.json": {
-        "bytes": 5172,
-        "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
-      },
-      "hia/platform/thread_cpu/build.py": {
-        "bytes": 8419,
-        "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
-      },
-      "hia/platform/thread_cpu/cases.py": {
-        "bytes": 7248,
-        "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
-      },
-      "hia/platform/thread_cpu/fixture_entry.hepta": {
-        "bytes": 288,
-        "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
-      },
-      "hia/platform/thread_cpu/linux_emitter.hepta": {
-        "bytes": 39791,
-        "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
-      },
-      "hia/platform/thread_cpu/native_io.py": {
-        "bytes": 9894,
-        "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
-      },
-      "hia/platform/thread_cpu/owner_policy.hepta": {
-        "bytes": 85504,
-        "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
-      },
-      "hia/platform/thread_cpu/qualify.py": {
-        "bytes": 26762,
-        "sha256": "c8d52e72fc0a8d276ac05bcd91d2c3c2978591b6a47b6066dc73e0e37df422bf"
-      },
-      "hia/platform/thread_cpu/rust_oracle.py": {
-        "bytes": 29369,
-        "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
-      },
-      "hia/platform/thread_cpu/rust_reference.rs": {
-        "bytes": 13897,
-        "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
-      },
-      "hia/platform/thread_cpu/test_integrity.py": {
-        "bytes": 12211,
-        "sha256": "62c3c77f8a4d1b2bbfca9781b7606beed36dc2efe32e5993fd0616de767c7c64"
-      },
-      "hia/platform/thread_cpu/trace_audit.py": {
-        "bytes": 26502,
-        "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
-      }
-    },
-    "paid_cpu_account_or_full_scoped_executor_qualified": false,
-    "prior_v6_actual_differential": {
-      "durable_job_id": "1a1e4602891-392-36fc",
-      "failed": 9,
-      "histories": 53,
-      "passed": 44,
-      "preserved_private_complete_archive": {
-        "bytes": 537004,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-v6-original-fallback-failure-complete.tar.xz",
-        "sha256": "f5ec560de6987a74d250c267d9200801d8ba009d675b3885db9195a534d5d9be"
-      },
-      "report": {
-        "bytes": 975842,
-        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/thread-cpu-v6-original/original/report.json",
-        "sha256": "96db393e443c8f194ce43613863a46588aa2b4952f1880580c410a86b868ec1b"
-      },
-      "runtime_root_cause": "locked rustix 1.1.6 linux_raw dynamic clock makes one fallback after first non-EINVAL error",
+      "run": 43884564137,
       "status": "FAIL"
     },
-    "raw_archive": {
-      "bytes": 1598400,
-      "members": 2610,
-      "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-v7-final-raw-evidence.tar.xz",
-      "sha256": "196409e6fe67ed8993f34910c830782d71d1c38c5ae4cf80349f68dce9255996"
+    {
+      "actual_signal_return": [
+        {
+          "actual_return_line": "2895  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)",
+          "fixed_live_wait_matches": true,
+          "legacy_live_wait_matches": false,
+          "padding_hex": "2020",
+          "tid": 2895
+        }
+      ],
+      "archive_zip": {
+        "bytes": 2341465,
+        "sha256": "09f4685d42ca19c1872a39103ebb027854159c6cf7feafa1f2d9e4f2f5de8ddb"
+      },
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 57149,
+        "sha256": "52247cef3588365aec54813cb0e462c5af02e9d93cb760d87934901863102254"
+      },
+      "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+      "job": 133360095846,
+      "original_execution": "NOT_RUN",
+      "partial_semantic_histories": 65,
+      "physical_controls_completed": 0,
+      "review": {
+        "bytes": 1040,
+        "sha256": "58319453a2b6287c25a4816df6202a7af93572bb4750c96a7bef6929df48d68e"
+      },
+      "run": 43884851140,
+      "status": "FAIL"
+    }
+  ],
+  "native": {
+    "actual_signal_pairing_negative_controls": 4,
+    "build": {
+      "bytes": 15779,
+      "sha256": "e9a96b4bde32dc76a0c7557402d90abf295b65afe8471d9a1c64b4381d5d9d8d"
     },
-    "raw_archive_manifest_sha256": "48f405898217223ad5a7335cc3d5301a81cec7b2184ae5d8f2cc1dee842f2b24",
-    "raw_archive_policy": {
-      "authoring_files_included": false,
-      "independent_612mb_binary_included": false,
-      "isolated_source_or_cargo_artifacts_included": false,
-      "previous_failed_observations_preserved": true
+    "fixture_executable": {
+      "adapter_prefix_bytes": 2076,
+      "bytes": 125683,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
     },
-    "repository_context": {
-      "complete_original_graph_validated": true,
-      "full_tracked_checkout_claimed": false,
-      "head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
-      "original_graph_files": 4361,
-      "published_integrated_head_ci_qualified_by_this_record": false,
-      "source_repository": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/repo"
+    "histories": 65,
+    "native_comparison": {
+      "bytes": 1995799,
+      "sha256": "768d881367c43ffd815b37740f2797bae6b744ead4be87082864fa78ac4836bb"
     },
-    "runtime_host_clock_identity_or_permission": false,
-    "rust_retirement_authorized_by_this_component": false,
-    "schema": "trnm.hia.thread-cpu-final-handoff.v7",
-    "source_after": "MATCH",
-    "source_archive": {
-      "bytes": 53548,
-      "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/recovery/thread-cpu-v7-final-sources.tar.xz",
-      "sha256": "37c7d09e4f10aa596f34ab12756a4eb4336e1a25ab8cd995571531aaecef408b"
+    "native_report": {
+      "bytes": 1069111,
+      "sha256": "a8fe006a739699734379e61858aa69151fdef4c8ec6a799b24e2b76a0b0ffa3c"
     },
-    "source_inputs": {
-      "hia/platform/README.md": {
-        "bytes": 11641,
-        "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
-      },
-      "hia/platform/abi.json": {
-        "bytes": 6864,
-        "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
-      },
-      "hia/platform/build.py": {
-        "bytes": 11808,
-        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
-      },
-      "hia/platform/linux_adapter_emitter.hepta": {
-        "bytes": 45152,
-        "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
-      },
-      "hia/platform/probe_policy.hepta": {
-        "bytes": 38621,
-        "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
-      },
-      "hia/platform/thread_cpu/README.md": {
-        "bytes": 8128,
-        "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
-      },
-      "hia/platform/thread_cpu/abi.json": {
-        "bytes": 5172,
-        "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
-      },
-      "hia/platform/thread_cpu/build.py": {
-        "bytes": 8419,
-        "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
-      },
-      "hia/platform/thread_cpu/cases.py": {
-        "bytes": 7248,
-        "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
-      },
-      "hia/platform/thread_cpu/fixture_entry.hepta": {
-        "bytes": 288,
-        "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
-      },
-      "hia/platform/thread_cpu/linux_emitter.hepta": {
-        "bytes": 39791,
-        "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
-      },
-      "hia/platform/thread_cpu/native_io.py": {
-        "bytes": 9894,
-        "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
-      },
-      "hia/platform/thread_cpu/owner_policy.hepta": {
-        "bytes": 85504,
-        "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
-      },
-      "hia/platform/thread_cpu/qualify.py": {
-        "bytes": 26762,
-        "sha256": "c8d52e72fc0a8d276ac05bcd91d2c3c2978591b6a47b6066dc73e0e37df422bf"
-      },
-      "hia/platform/thread_cpu/rust_oracle.py": {
-        "bytes": 29369,
-        "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
-      },
-      "hia/platform/thread_cpu/rust_reference.rs": {
-        "bytes": 13897,
-        "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
-      },
-      "hia/platform/thread_cpu/test_integrity.py": {
-        "bytes": 12211,
-        "sha256": "62c3c77f8a4d1b2bbfca9781b7606beed36dc2efe32e5993fd0616de767c7c64"
-      },
-      "hia/platform/thread_cpu/trace_audit.py": {
-        "bytes": 26502,
-        "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
-      },
-      "hia/platform/transport_request/rust_oracle.py": {
-        "bytes": 12311,
-        "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
-      },
-      "hia/qualification/compiler-binding.json": {
-        "bytes": 878,
-        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
-      },
-      "hia/qualification/compiler-cold-full.json.xz": {
-        "bytes": 838544,
-        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
-      },
-      "hia/qualification/compiler-cold.json": {
-        "bytes": 108675,
-        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
-      },
-      "hia/tests/test_platform_cleanup.py": {
-        "bytes": 9301,
-        "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
-      },
-      "hia/toolchain.lock.json": {
-        "bytes": 221,
-        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
-      },
-      "hia/tools/qualify_platform.py": {
-        "bytes": 30419,
-        "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
-      },
-      "hia/tools/toolchain.py": {
-        "bytes": 14157,
-        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
-      },
-      "trillionnium/Cargo.lock": {
-        "bytes": 42127,
-        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
-      },
-      "trillionnium/Cargo.toml": {
-        "bytes": 2204,
-        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
-      },
-      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
-        "bytes": 161926,
-        "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
-      },
-      "trillionnium/crates/trnm-pon-node/Cargo.toml": {
-        "bytes": 2357,
-        "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
-        "bytes": 446331,
-        "sha256": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
-        "bytes": 114097,
-        "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
-        "bytes": 82351,
-        "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": {
-        "bytes": 30919,
-        "sha256": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs": {
-        "bytes": 10769,
-        "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": {
-        "bytes": 15568,
-        "sha256": "a9e4d1705335925d0f3c2a01cac7855155c61b4c54b3e42dd6caaaecf3720696"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
-        "bytes": 15351,
-        "sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs": {
-        "bytes": 10954,
-        "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
-      }
+    "operations": 724,
+    "ordinary_trace_refusals": 12,
+    "physical_controls": 74,
+    "production_executable": {
+      "adapter_prefix_bytes": 2076,
+      "bytes": 125683,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
     },
-    "source_set_sha256": "5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead",
-    "status": "NATIVE_AND_ACTUAL_ORIGINAL_PASS",
-    "worker_os_tid_reuse_qualification": false
+    "seconds": 7.735951694980031,
+    "status": "PASS"
   },
-  "base_commit": "2e3e5dcaa6f899e4f42f2b390fb869255364824d",
-  "current_source_matches_native_and_original": true,
+  "native_adapter_changed": false,
   "new_exact_commit_ci": "NOT_RUN",
   "paid_cpu_account_qualified": false,
   "preserved_raw_archive": {
-    "bytes": 1598400,
-    "manifest_sha256": "48f405898217223ad5a7335cc3d5301a81cec7b2184ae5d8f2cc1dee842f2b24",
-    "members": 2610,
+    "bytes": 7793524,
+    "manifest": {
+      "bytes": 296439,
+      "member": "member-manifest.json",
+      "scope": "all remaining archive members",
+      "sha256": "dd14366f28773f0d54a14d5787addd35abe0855b9fb2ff8150d8214976ca54c6"
+    },
+    "members": 1488,
     "path": "hia/qualification/thread-cpu-development.tar.xz",
-    "sha256": "196409e6fe67ed8993f34910c830782d71d1c38c5ae4cf80349f68dce9255996"
+    "regular_bytes": 20642315,
+    "regular_files": 1217,
+    "sha256": "ba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94"
+  },
+  "prior_published_record": {
+    "actual_results_not_relabelled": true,
+    "bytes": 41445,
+    "commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+    "preserved_as": "prior/previous-development.json",
+    "previous_source_set_sha256": "5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead",
+    "record_path": "hia/qualification/thread-cpu-development.json",
+    "sha256": "f645b155bcced6338580e5cc0a3f9db3a7df0195ef42a0d45d0efda50e5e3c85"
+  },
+  "qualifier_fix": {
+    "changed_source_inputs": [
+      "hia/platform/thread_cpu/qualify.py",
+      "hia/platform/thread_cpu/test_integrity.py"
+    ],
+    "cross_line_or_other_tid_not_accepted": true,
+    "full_signal_pairing_audit_unchanged": true,
+    "horizontal_whitespace_only": true,
+    "integrity_log": {
+      "bytes": 1654,
+      "sha256": "ce4ec6bc8dcaa6b29d510b6361a10c797970273ff2dcf22c5f445f4e9e3d13c8"
+    },
+    "integrity_test_groups": 9,
+    "reason": "The actual hosted strace padded four-digit TIDs with two spaces; the live wait required exactly one"
   },
   "retirement_accepted": false,
-  "root_final_source_integration": {
-    "actual_original_rust": "NOT_RUN",
-    "continuity_sources_unchanged": 62,
-    "excluded_authoring_files": {
-      "recovery/adapter_author_v1.S": {
-        "bytes": 9083,
-        "sha256": "bcb123ee417d0c34f570b020b71d30817a38181c58ddf996ad1548de0f6ee603"
-      },
-      "recovery/lower_policy_v1.py": {
-        "bytes": 11929,
-        "sha256": "df0f4be352395d579edcdf5ed0c556ea6c7e9ca0fe0b640481ad1d913fb56a99"
-      },
-      "recovery/policy_author_v3.pyfrag": {
-        "bytes": 15767,
-        "sha256": "127305ac7d4cb0a3725debbbf9b356133645d0f885fb7180a38f854c81125f93"
-      }
-    },
-    "owned_count": 13,
-    "previous_owned_sources": {
-      "hia/platform/thread_cpu/README.md": {
-        "bytes": 6850,
-        "sha256": "c7820bf33f56ef2b632bd42b999adef4d9205ebc458c2b7acc2f71e24ffdfa17"
-      },
-      "hia/platform/thread_cpu/abi.json": {
-        "bytes": 4234,
-        "sha256": "7f240f1c6a6300e40842412f6f8e2304473ae48b9ff1dd62bebe455511d707e0"
-      },
-      "hia/platform/thread_cpu/build.py": {
-        "bytes": 8310,
-        "sha256": "c002d5762c5d36d3c6e839916215a047b72646da6499ee19805de88b9c576699"
-      },
-      "hia/platform/thread_cpu/cases.py": {
-        "bytes": 6359,
-        "sha256": "3cd481783c9ce1248067f09d1299e4436f8df001b77cc999b0ca278aa6fc1029"
-      },
-      "hia/platform/thread_cpu/fixture_entry.hepta": {
-        "bytes": 288,
-        "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
-      },
-      "hia/platform/thread_cpu/linux_emitter.hepta": {
-        "bytes": 39791,
-        "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
-      },
-      "hia/platform/thread_cpu/native_io.py": {
-        "bytes": 9894,
-        "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
-      },
-      "hia/platform/thread_cpu/owner_policy.hepta": {
-        "bytes": 83714,
-        "sha256": "9b011638dc28015a7dd3742e645d5796109572b3be56669cf0dabc282e39a6b6"
-      },
-      "hia/platform/thread_cpu/qualify.py": {
-        "bytes": 26762,
-        "sha256": "c8d52e72fc0a8d276ac05bcd91d2c3c2978591b6a47b6066dc73e0e37df422bf"
-      },
-      "hia/platform/thread_cpu/rust_oracle.py": {
-        "bytes": 23250,
-        "sha256": "6abcc1ce2eaca37a515f491f1d99daf5b7459c28764b2cc0ad42b2a1ae62fd97"
-      },
-      "hia/platform/thread_cpu/rust_reference.rs": {
-        "bytes": 13897,
-        "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
-      },
-      "hia/platform/thread_cpu/test_integrity.py": {
-        "bytes": 8447,
-        "sha256": "abb35dd7018d9fbb083a6608a3204d4d8e2ecaf22aa66800200cec559f92743a"
-      },
-      "hia/platform/thread_cpu/trace_audit.py": {
-        "bytes": 24095,
-        "sha256": "4a4ee7210ccf6ecf7425c9d35ee799832aff157d0d8a96caa14b4e039c86d41b"
-      }
-    },
-    "prior_rejected_archive_roster": "v1 refused 16-entry recovery checkpoint before copying any sources; only 13 final owned sources are permitted in the repository",
-    "source_count": 38,
-    "source_only_integration": true,
-    "sources": {
-      "hia/platform/README.md": {
-        "bytes": 11641,
-        "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
-      },
-      "hia/platform/abi.json": {
-        "bytes": 6864,
-        "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
-      },
-      "hia/platform/build.py": {
-        "bytes": 11808,
-        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
-      },
-      "hia/platform/linux_adapter_emitter.hepta": {
-        "bytes": 45152,
-        "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
-      },
-      "hia/platform/probe_policy.hepta": {
-        "bytes": 38621,
-        "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
-      },
-      "hia/platform/thread_cpu/README.md": {
-        "bytes": 8128,
-        "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
-      },
-      "hia/platform/thread_cpu/abi.json": {
-        "bytes": 5172,
-        "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
-      },
-      "hia/platform/thread_cpu/build.py": {
-        "bytes": 8419,
-        "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
-      },
-      "hia/platform/thread_cpu/cases.py": {
-        "bytes": 7248,
-        "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
-      },
-      "hia/platform/thread_cpu/fixture_entry.hepta": {
-        "bytes": 288,
-        "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
-      },
-      "hia/platform/thread_cpu/linux_emitter.hepta": {
-        "bytes": 39791,
-        "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
-      },
-      "hia/platform/thread_cpu/native_io.py": {
-        "bytes": 9894,
-        "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
-      },
-      "hia/platform/thread_cpu/owner_policy.hepta": {
-        "bytes": 85504,
-        "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
-      },
-      "hia/platform/thread_cpu/qualify.py": {
-        "bytes": 26762,
-        "sha256": "c8d52e72fc0a8d276ac05bcd91d2c3c2978591b6a47b6066dc73e0e37df422bf"
-      },
-      "hia/platform/thread_cpu/rust_oracle.py": {
-        "bytes": 29369,
-        "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
-      },
-      "hia/platform/thread_cpu/rust_reference.rs": {
-        "bytes": 13897,
-        "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
-      },
-      "hia/platform/thread_cpu/test_integrity.py": {
-        "bytes": 12211,
-        "sha256": "62c3c77f8a4d1b2bbfca9781b7606beed36dc2efe32e5993fd0616de767c7c64"
-      },
-      "hia/platform/thread_cpu/trace_audit.py": {
-        "bytes": 26502,
-        "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
-      },
-      "hia/platform/transport_request/rust_oracle.py": {
-        "bytes": 12311,
-        "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
-      },
-      "hia/qualification/compiler-binding.json": {
-        "bytes": 878,
-        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
-      },
-      "hia/qualification/compiler-cold-full.json.xz": {
-        "bytes": 838544,
-        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
-      },
-      "hia/qualification/compiler-cold.json": {
-        "bytes": 108675,
-        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
-      },
-      "hia/tests/test_platform_cleanup.py": {
-        "bytes": 9301,
-        "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
-      },
-      "hia/toolchain.lock.json": {
-        "bytes": 221,
-        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
-      },
-      "hia/tools/qualify_platform.py": {
-        "bytes": 30419,
-        "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
-      },
-      "hia/tools/toolchain.py": {
-        "bytes": 14157,
-        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
-      },
-      "trillionnium/Cargo.lock": {
-        "bytes": 42127,
-        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
-      },
-      "trillionnium/Cargo.toml": {
-        "bytes": 2204,
-        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
-      },
-      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
-        "bytes": 161926,
-        "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
-      },
-      "trillionnium/crates/trnm-pon-node/Cargo.toml": {
-        "bytes": 2357,
-        "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
-        "bytes": 446331,
-        "sha256": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
-        "bytes": 114097,
-        "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
-        "bytes": 82351,
-        "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": {
-        "bytes": 30919,
-        "sha256": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs": {
-        "bytes": 10769,
-        "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": {
-        "bytes": 15568,
-        "sha256": "a9e4d1705335925d0f3c2a01cac7855155c61b4c54b3e42dd6caaaecf3720696"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
-        "bytes": 15351,
-        "sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f"
-      },
-      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs": {
-        "bytes": 10954,
-        "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
-      }
-    },
-    "status": "SOURCE_INTEGRATION_PASS_ORIGINAL_PENDING",
-    "steps": [
-      {
-        "exit": 0,
-        "name": "preflight",
-        "seconds": 0.0974645449896343
-      },
-      {
-        "exit": 0,
-        "name": "final-source-controls",
-        "seconds": 7.948564110993175
-      }
-    ]
-  },
-  "root_integration_initial_roster_refusal": {
-    "actual_original_rust": "NOT_RUN",
-    "error": "ValueError('source archive roster')",
-    "source_only_integration": true,
-    "status": "FAIL",
-    "steps": [
-      {
-        "exit": 0,
-        "name": "preflight",
-        "seconds": 0.46058845601510257
-      }
-    ]
-  },
-  "schema": "trnm.hia.thread-cpu.development.v1",
+  "runtime_hia_changed": false,
+  "schema": "trnm.hia.thread-cpu.development.v2",
   "source_inputs": {
     "hia/platform/README.md": {
       "bytes": 11641,
@@ -916,8 +247,8 @@
       "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
     },
     "hia/platform/thread_cpu/qualify.py": {
-      "bytes": 26762,
-      "sha256": "c8d52e72fc0a8d276ac05bcd91d2c3c2978591b6a47b6066dc73e0e37df422bf"
+      "bytes": 27075,
+      "sha256": "bac411778ea968f681ab3ea5b28e531212aa206d1fc218521b5fcb1d432d5c3e"
     },
     "hia/platform/thread_cpu/rust_oracle.py": {
       "bytes": 29369,
@@ -928,8 +259,8 @@
       "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
     },
     "hia/platform/thread_cpu/test_integrity.py": {
-      "bytes": 12211,
-      "sha256": "62c3c77f8a4d1b2bbfca9781b7606beed36dc2efe32e5993fd0616de767c7c64"
+      "bytes": 13774,
+      "sha256": "8947ae215dbf939d119d2125206078258524ee8f28abecdb16ceed8368e639f4"
     },
     "hia/platform/thread_cpu/trace_audit.py": {
       "bytes": 26502,
@@ -1016,7 +347,7 @@
       "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
     }
   },
-  "source_set_sha256": "5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead",
-  "status": "FINAL_CURRENT_SOURCE_NATIVE_AND_ACTUAL_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING",
+  "source_set_sha256": "e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b",
+  "status": "CURRENT_SOURCE_NATIVE_AND_ACTUAL_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING",
   "whole_node_qualified": false
 }

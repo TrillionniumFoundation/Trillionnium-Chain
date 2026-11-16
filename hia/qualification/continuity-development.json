@@ -1541,6 +1541,2389 @@
   "current_original_source_count": 4361,
   "current_original_source_set_sha256": "d42b53ab0b15f16e2e5efeb6f163d07fc36851b3f6e7d8624c6b048cdae997d3",
   "current_source_count": 62,
+  "current_source_hosted_ci": {
+    "complete_raw_artifacts_checked": true,
+    "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+    "newer_commit_acceptance_inherited": false,
+    "raw_ci_archives_embedded_in_this_json": false,
+    "raw_ci_archives_retained_outside_worktree": true,
+    "runs": [
+      {
+        "attempt": 1,
+        "continuity_jobs": "ALL_THREE_PASS",
+        "event": "push",
+        "full_workflow": "NOT_SUCCESSFUL_THREAD_JOB_FAILED",
+        "run_id": 43884564137,
+        "stages": [
+          {
+            "actual_binding": {
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884564137"
+              },
+              "native_comparison_sha256": "59cd7364cfa39934cb205d49a029d256ab1fee46a4c817d3004b9a0dbf8e0ccf",
+              "native_controls": 659,
+              "native_report": {
+                "bytes": 3637710,
+                "sha256": "de6fa5d774f42f272cd83c409f71907155970f1e3c2c27777d4e24470daf8c8c"
+              },
+              "original_rust": "NOT_RUN",
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "semantic_cases": 572,
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-native",
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14233412927/zip",
+            "artifact_review": {
+              "archive": {
+                "bytes": 7240100,
+                "sha256": "6f107aac7b80f32df5336bc438b111f3176fe74e26aa813628f11223088dc008"
+              },
+              "artifact": 14233412927,
+              "attempt": 1,
+              "binding": {
+                "bytes": 11398,
+                "sha256": "f0b9334e64dfe16e6cf802d55a4853b1283bbe3cf6943903d2fc82b131eed016"
+              },
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133359090413,
+              "members": 4151,
+              "native_controls": 659,
+              "original_rust": "NOT_RUN",
+              "regular_bytes": 249009164,
+              "regular_files": 3454,
+              "run": 43884564137,
+              "scope": "complete actual hosted native artifact integrity and source/report binding",
+              "semantic_cases": 572,
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "special_members": [
+                {
+                  "linkname": "",
+                  "path": "native/physical/cap-gate-opath-fifo/gate.fifo",
+                  "type": "6"
+                },
+                {
+                  "linkname": "",
+                  "path": "native/physical/cap-gate-rdwr-fifo/gate.fifo",
+                  "type": "6"
+                },
+                {
+                  "linkname": "native/physical/cap-output-link/linked.kv",
+                  "path": "native/physical/cap-output-link/staging.kv",
+                  "type": "1"
+                }
+              ],
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 7263472,
+                "sha256": "33808bfbbe3475ddc1b7153a6e1cb62ed8201ea4a830e291ba7170e6a28c80c6"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-push-continuity-native-v4/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "native"
+          },
+          {
+            "actual_binding": {
+              "actual_original_cases": 572,
+              "actual_original_executable_sha256": "01859429450e7d7fd278e714b459e8fcc0354780b39e9c6961efa9d958b72461",
+              "actual_original_tests": [
+                "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+                "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+                "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+                "store::continuity_tests::recovery_rejects_missing_genesis_maintenance_even_with_recomputed_state_root"
+              ],
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884564137"
+              },
+              "native_binding": {
+                "bytes": 11398,
+                "sha256": "f0b9334e64dfe16e6cf802d55a4853b1283bbe3cf6943903d2fc82b131eed016"
+              },
+              "native_comparison_sha256": "59cd7364cfa39934cb205d49a029d256ab1fee46a4c817d3004b9a0dbf8e0ccf",
+              "native_report": {
+                "bytes": 3637710,
+                "sha256": "de6fa5d774f42f272cd83c409f71907155970f1e3c2c27777d4e24470daf8c8c"
+              },
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-original",
+              "stage_report": {
+                "bytes": 944637,
+                "sha256": "7021568ca61a41d5fcfa9bc038953f02f20c31c771c09f71a673075ad7f4e282"
+              },
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14234154025/zip",
+            "artifact_review": {
+              "actual_executable_sha256": "01859429450e7d7fd278e714b459e8fcc0354780b39e9c6961efa9d958b72461",
+              "actual_original_cases": 572,
+              "archive": {
+                "bytes": 8854980,
+                "sha256": "f109c9ca63953689909fa3923cc2f3d99ead596b4a71947650b365f42a6488d9"
+              },
+              "artifact": 14234154025,
+              "attempt": 1,
+              "binding": {
+                "bytes": 12182,
+                "sha256": "11a1d78da2dc61cd7c7c7768ee54fa948644eb06ea4bdd5db9318418c77bd1a2"
+              },
+              "committed_sources_checked": 4415,
+              "complete_source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "downloaded_predecessor_all_bytes_verified": true,
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133361889110,
+              "members": 53,
+              "regular_bytes": 203377582,
+              "regular_files": 42,
+              "retained_tests": [
+                "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+                "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+                "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+                "store::continuity_tests::recovery_rejects_missing_genesis_maintenance_even_with_recomputed_state_root"
+              ],
+              "run": 43884564137,
+              "same_head_run_attempt": true,
+              "scope": "full actual hosted dependent artifact/source/predecessor verification",
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "special_members": [],
+              "stage": "continuity-original",
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 8848762,
+                "sha256": "d9c29cfd79cfcdcfa24e2ff16bfb5c2bf6ed7446d592907d59a6c4cab9603fee"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-push-continuity-original-review-v1/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "original"
+          },
+          {
+            "actual_binding": {
+              "capacity_controls": 7,
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884564137"
+              },
+              "maximum_rows": 1065536,
+              "native_binding": {
+                "bytes": 11398,
+                "sha256": "f0b9334e64dfe16e6cf802d55a4853b1283bbe3cf6943903d2fc82b131eed016"
+              },
+              "native_comparison_sha256": "59cd7364cfa39934cb205d49a029d256ab1fee46a4c817d3004b9a0dbf8e0ccf",
+              "native_report": {
+                "bytes": 3637710,
+                "sha256": "de6fa5d774f42f272cd83c409f71907155970f1e3c2c27777d4e24470daf8c8c"
+              },
+              "original_rust_large_extent": "NOT_RUN",
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-capacity",
+              "stage_report": {
+                "bytes": 984104,
+                "sha256": "4d6a081ae2918f9806a9938bb0a1cb08ba07471f2384fba77030f6dd877418be"
+              },
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14233714283/zip",
+            "artifact_review": {
+              "archive": {
+                "bytes": 12578752,
+                "sha256": "351f376dc86c895eb5fef9f63a8d85109a9dc32fa5d754b9d561f6e3e0c566c8"
+              },
+              "artifact": 14233714283,
+              "attempt": 1,
+              "binding": {
+                "bytes": 11670,
+                "sha256": "46dfb2dcad0ec36c6d04638a6b2de81a28f07f1eb4a1b427a00152dfe0ab7d1b"
+              },
+              "capacity_controls": 7,
+              "committed_sources_checked": 4415,
+              "complete_source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "complete_stream": {
+                "bytes": 36837812,
+                "sha256": "716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702"
+              },
+              "downloaded_predecessor_all_bytes_verified": true,
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133361889135,
+              "maximum_permanent_accounts": 1000000,
+              "maximum_rows": 1065536,
+              "maximum_working_keys": 65536,
+              "members": 166,
+              "original_rust_large_extent": "NOT_RUN",
+              "physical_power_loss": false,
+              "regular_bytes": 231684403,
+              "regular_files": 147,
+              "run": 43884564137,
+              "same_head_run_attempt": true,
+              "scope": "full actual hosted dependent artifact/source/predecessor verification",
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "special_members": [],
+              "stage": "continuity-capacity",
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 12089864,
+                "sha256": "c00b0021906dd713c71097a0235ac4e597ebdcca3263ed5082543f80768c9e6d"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-push-continuity-capacity-review-v1/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "capacity"
+          }
+        ],
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884564137"
+      },
+      {
+        "attempt": 1,
+        "continuity_jobs": "ALL_THREE_PASS",
+        "event": "pr",
+        "full_workflow": "NOT_SUCCESSFUL_THREAD_JOB_FAILED",
+        "run_id": 43884851140,
+        "stages": [
+          {
+            "actual_binding": {
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884851140"
+              },
+              "native_comparison_sha256": "048a8c3899235603ab8b1fb51fbf59a7d34278762cb2b36218b64064ea3d33b4",
+              "native_controls": 659,
+              "native_report": {
+                "bytes": 3638211,
+                "sha256": "1823d88caf6e2078c436f3fceb7f844cca0922b017ddac06a5c31283fcd4a095"
+              },
+              "original_rust": "NOT_RUN",
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "semantic_cases": 572,
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-native",
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14235275459/zip",
+            "artifact_review": {
+              "archive": {
+                "bytes": 7242284,
+                "sha256": "a83dce94fe3321f88484e32207bd6a928108c6eb2af8ede43013a4aab3f616ca"
+              },
+              "artifact": 14235275459,
+              "attempt": 1,
+              "binding": {
+                "bytes": 11398,
+                "sha256": "6b604d21744fadd1f060491fbe5feb427e488cecceff7014de89ed49db1cb352"
+              },
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133360095632,
+              "members": 4151,
+              "native_controls": 659,
+              "original_rust": "NOT_RUN",
+              "regular_bytes": 249010674,
+              "regular_files": 3454,
+              "run": 43884851140,
+              "scope": "complete actual hosted native artifact integrity and source/report binding",
+              "semantic_cases": 572,
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "special_members": [
+                {
+                  "linkname": "",
+                  "path": "native/physical/cap-gate-opath-fifo/gate.fifo",
+                  "type": "6"
+                },
+                {
+                  "linkname": "",
+                  "path": "native/physical/cap-gate-rdwr-fifo/gate.fifo",
+                  "type": "6"
+                },
+                {
+                  "linkname": "native/physical/cap-output-link/linked.kv",
+                  "path": "native/physical/cap-output-link/staging.kv",
+                  "type": "1"
+                }
+              ],
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 7265426,
+                "sha256": "321a737da3da5221e1ee2388bc1bc79a5f0fdfc39e625c9f1a924a10d638e35d"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-pr-continuity-native-v4/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "native"
+          },
+          {
+            "actual_binding": {
+              "actual_original_cases": 572,
+              "actual_original_executable_sha256": "01859429450e7d7fd278e714b459e8fcc0354780b39e9c6961efa9d958b72461",
+              "actual_original_tests": [
+                "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+                "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+                "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+                "store::continuity_tests::recovery_rejects_missing_genesis_maintenance_even_with_recomputed_state_root"
+              ],
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884851140"
+              },
+              "native_binding": {
+                "bytes": 11398,
+                "sha256": "6b604d21744fadd1f060491fbe5feb427e488cecceff7014de89ed49db1cb352"
+              },
+              "native_comparison_sha256": "048a8c3899235603ab8b1fb51fbf59a7d34278762cb2b36218b64064ea3d33b4",
+              "native_report": {
+                "bytes": 3638211,
+                "sha256": "1823d88caf6e2078c436f3fceb7f844cca0922b017ddac06a5c31283fcd4a095"
+              },
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-original",
+              "stage_report": {
+                "bytes": 944638,
+                "sha256": "c04e68f52ff9dc327167c9e580d2c3e11eae859b98f908dc09a8648ee9bd5bdc"
+              },
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14235860296/zip",
+            "artifact_review": {
+              "actual_executable_sha256": "01859429450e7d7fd278e714b459e8fcc0354780b39e9c6961efa9d958b72461",
+              "actual_original_cases": 572,
+              "archive": {
+                "bytes": 8853604,
+                "sha256": "6761645cc343efec5b98f1246114cb79d748b2740cb331cad1c716e258c1d1f7"
+              },
+              "artifact": 14235860296,
+              "attempt": 1,
+              "binding": {
+                "bytes": 12182,
+                "sha256": "bff9f0e250b09653beb120a8d3f32a5eb924acd89838ccc9dbc10f6d0338feec"
+              },
+              "committed_sources_checked": 4415,
+              "complete_source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "downloaded_predecessor_all_bytes_verified": true,
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133363641809,
+              "members": 53,
+              "regular_bytes": 203379768,
+              "regular_files": 42,
+              "retained_tests": [
+                "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+                "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+                "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+                "store::continuity_tests::recovery_rejects_missing_genesis_maintenance_even_with_recomputed_state_root"
+              ],
+              "run": 43884851140,
+              "same_head_run_attempt": true,
+              "scope": "full actual hosted dependent artifact/source/predecessor verification",
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "special_members": [],
+              "stage": "continuity-original",
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 8847270,
+                "sha256": "a9e0ea16bb7a466f02d4b6a90343507703f0a60eee9975c50fd7f0d92f4837fd"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-pr-continuity-original-review-v1/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "original"
+          },
+          {
+            "actual_binding": {
+              "capacity_controls": 7,
+              "corpus": {
+                "bytes": 90044661,
+                "sha256": "ee34bbb31806534bd7e22cada7e88be7f10efcd0f780be51852377f29093a676"
+              },
+              "executable": {
+                "bytes": 1398300,
+                "sha256": "43c2011cbece7f183268aac6d58cf59194587892c28459ac3c9434a6b50266c4"
+              },
+              "lineage": {
+                "attempt": 1,
+                "git_head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "run_id": "43884851140"
+              },
+              "maximum_rows": 1065536,
+              "native_binding": {
+                "bytes": 11398,
+                "sha256": "6b604d21744fadd1f060491fbe5feb427e488cecceff7014de89ed49db1cb352"
+              },
+              "native_comparison_sha256": "048a8c3899235603ab8b1fb51fbf59a7d34278762cb2b36218b64064ea3d33b4",
+              "native_report": {
+                "bytes": 3638211,
+                "sha256": "1823d88caf6e2078c436f3fceb7f844cca0922b017ddac06a5c31283fcd4a095"
+              },
+              "original_rust_large_extent": "NOT_RUN",
+              "original_source_set_sha256": "8962b2a7c8a7766e947b5702c42d082582a09d1a73f97d974175252c0446bfbc",
+              "physical_power_loss": false,
+              "schema": "trnm.hia.foundation-ci-binding.v1",
+              "source_inputs": {
+                "config/pon/continuity-v1.json": {
+                  "bytes": 1980,
+                  "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+                },
+                "config/pon/devnet-v1.json": {
+                  "bytes": 1964,
+                  "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+                },
+                "config/pon/growth-reference-v2.json": {
+                  "bytes": 696,
+                  "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+                },
+                "config/pon/ledger-v1.json": {
+                  "bytes": 7793,
+                  "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+                },
+                "config/pon/model-family-v1.json": {
+                  "bytes": 1383,
+                  "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+                },
+                "config/pon/public-evaluation-native-v1.json": {
+                  "bytes": 1098,
+                  "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+                },
+                "config/pon/qualified-task-lifecycle-v4.json": {
+                  "bytes": 6207,
+                  "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+                },
+                "config/pon/work-profile-v1.json": {
+                  "bytes": 1596,
+                  "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+                },
+                "hia/components.json": {
+                  "bytes": 25346,
+                  "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+                },
+                "hia/platform/build.py": {
+                  "bytes": 11808,
+                  "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+                },
+                "hia/platform/continuity_store/README.md": {
+                  "bytes": 14121,
+                  "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+                },
+                "hia/platform/continuity_store/abi.json": {
+                  "bytes": 3459,
+                  "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+                },
+                "hia/platform/continuity_store/build.py": {
+                  "bytes": 10023,
+                  "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+                },
+                "hia/platform/continuity_store/capacity.py": {
+                  "bytes": 9808,
+                  "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+                },
+                "hia/platform/continuity_store/cases.py": {
+                  "bytes": 14317,
+                  "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+                },
+                "hia/platform/continuity_store/context.hepta": {
+                  "bytes": 259622,
+                  "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+                },
+                "hia/platform/continuity_store/context_qualification.py": {
+                  "bytes": 6189,
+                  "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+                },
+                "hia/platform/continuity_store/continuity_policy.hepta": {
+                  "bytes": 116145,
+                  "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+                },
+                "hia/platform/continuity_store/includes.json": {
+                  "bytes": 6581,
+                  "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+                },
+                "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+                  "bytes": 40830,
+                  "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+                },
+                "hia/platform/continuity_store/native_io.py": {
+                  "bytes": 2268,
+                  "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+                },
+                "hia/platform/continuity_store/primary_policy.hepta": {
+                  "bytes": 18584,
+                  "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+                },
+                "hia/platform/continuity_store/qualify.py": {
+                  "bytes": 17059,
+                  "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+                },
+                "hia/platform/continuity_store/reference.py": {
+                  "bytes": 7529,
+                  "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+                },
+                "hia/platform/continuity_store/rust_oracle.py": {
+                  "bytes": 25897,
+                  "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+                },
+                "hia/platform/continuity_store/rust_reference.rs": {
+                  "bytes": 11757,
+                  "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+                },
+                "hia/platform/continuity_store/source-inputs.json": {
+                  "bytes": 401,
+                  "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+                },
+                "hia/platform/continuity_store/test_integrity.py": {
+                  "bytes": 13779,
+                  "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+                },
+                "hia/platform/transport_request/rust_oracle.py": {
+                  "bytes": 12311,
+                  "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+                },
+                "hia/platform/typed_store/README.md": {
+                  "bytes": 15284,
+                  "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+                },
+                "hia/platform/typed_store/abi.json": {
+                  "bytes": 3086,
+                  "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+                },
+                "hia/platform/typed_store/build.py": {
+                  "bytes": 9591,
+                  "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+                },
+                "hia/platform/typed_store/capacity.py": {
+                  "bytes": 18585,
+                  "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+                },
+                "hia/platform/typed_store/cases.py": {
+                  "bytes": 11529,
+                  "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+                },
+                "hia/platform/typed_store/includes.json": {
+                  "bytes": 2672,
+                  "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+                },
+                "hia/platform/typed_store/linux_stage_emitter.hepta": {
+                  "bytes": 27195,
+                  "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+                },
+                "hia/platform/typed_store/native_io.py": {
+                  "bytes": 11872,
+                  "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+                },
+                "hia/platform/typed_store/qualify.py": {
+                  "bytes": 14302,
+                  "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+                },
+                "hia/platform/typed_store/root_finalize.hepta": {
+                  "bytes": 6116,
+                  "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+                },
+                "hia/platform/typed_store/rust_oracle.py": {
+                  "bytes": 23181,
+                  "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+                },
+                "hia/platform/typed_store/rust_reference.rs": {
+                  "bytes": 7561,
+                  "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+                },
+                "hia/platform/typed_store/stage_policy.hepta": {
+                  "bytes": 206730,
+                  "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+                },
+                "hia/platform/typed_store/test_integrity.py": {
+                  "bytes": 23984,
+                  "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+                },
+                "hia/qualification/compiler-binding.json": {
+                  "bytes": 878,
+                  "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+                },
+                "hia/src/codec/json_number.hepta": {
+                  "bytes": 66485,
+                  "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+                },
+                "hia/src/codec/json_primitives.hepta": {
+                  "bytes": 8258,
+                  "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+                },
+                "hia/src/codec/json_value_encode.hepta": {
+                  "bytes": 33335,
+                  "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+                },
+                "hia/src/codec/json_value_wire.hepta": {
+                  "bytes": 39174,
+                  "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+                },
+                "hia/src/crypto/ed25519_group.hepta": {
+                  "bytes": 73381,
+                  "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+                },
+                "hia/src/crypto/ed25519_sign.hepta": {
+                  "bytes": 33639,
+                  "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+                },
+                "hia/src/crypto/sha256_arena.hepta": {
+                  "bytes": 28919,
+                  "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+                },
+                "hia/src/crypto/sha256_stream.hepta": {
+                  "bytes": 39017,
+                  "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+                },
+                "hia/src/crypto/sha512_arena.hepta": {
+                  "bytes": 32447,
+                  "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+                },
+                "hia/src/math/binary64.hepta": {
+                  "bytes": 21416,
+                  "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+                },
+                "hia/src/node/settings_development.hepta": {
+                  "bytes": 179998,
+                  "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+                },
+                "hia/src/protocol/state_root.hepta": {
+                  "bytes": 221073,
+                  "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+                },
+                "hia/src/protocol/state_root_compact.hepta": {
+                  "bytes": 35045,
+                  "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+                },
+                "hia/src/state/json_string.hepta": {
+                  "bytes": 22061,
+                  "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+                },
+                "hia/tests/native_support.py": {
+                  "bytes": 9793,
+                  "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+                },
+                "hia/tests/test_state_root.py": {
+                  "bytes": 9901,
+                  "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+                },
+                "hia/toolchain.lock.json": {
+                  "bytes": 221,
+                  "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+                },
+                "hia/tools/toolchain.py": {
+                  "bytes": 14157,
+                  "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+                }
+              },
+              "source_observation": {
+                "base": null,
+                "candidate": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "kind": "head",
+                "prospective_merge": null,
+                "schema": "trnm-ci-source-v1",
+                "tested_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+                "tested_tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+                "tests_executed_by_identity_check": false,
+                "tracked_bytes": 2415679778,
+                "tracked_entries": 40552,
+                "tracked_worktree_verified": true
+              },
+              "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "stage": "continuity-capacity",
+              "stage_report": {
+                "bytes": 984103,
+                "sha256": "58305e256dbc202accb2864d13020aeb0a80e28b120449e4bbd2b39e8367291e"
+              },
+              "status": "PASS",
+              "whole_node_or_commit_authority": false
+            },
+            "artifact_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14234572136/zip",
+            "artifact_review": {
+              "archive": {
+                "bytes": 12577084,
+                "sha256": "143b7ee3eb4c88f5650687d6ec72323be82d8176363623585eb5925f6100d917"
+              },
+              "artifact": 14234572136,
+              "attempt": 1,
+              "binding": {
+                "bytes": 11670,
+                "sha256": "1c851ea81f356c27b1905cc8ffa7bb6436a89c2f8438b5603a2196e717cb4b92"
+              },
+              "capacity_controls": 7,
+              "committed_sources_checked": 4415,
+              "complete_source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+              "complete_stream": {
+                "bytes": 36837812,
+                "sha256": "716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702"
+              },
+              "downloaded_predecessor_all_bytes_verified": true,
+              "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+              "job": 133363641679,
+              "maximum_permanent_accounts": 1000000,
+              "maximum_rows": 1065536,
+              "maximum_working_keys": 65536,
+              "members": 166,
+              "original_rust_large_extent": "NOT_RUN",
+              "physical_power_loss": false,
+              "regular_bytes": 231686583,
+              "regular_files": 147,
+              "run": 43884851140,
+              "same_head_run_attempt": true,
+              "scope": "full actual hosted dependent artifact/source/predecessor verification",
+              "source_before_after": "MATCH",
+              "source_count": 62,
+              "special_members": [],
+              "stage": "continuity-capacity",
+              "status": "PASS",
+              "whole_project_accepted": false,
+              "zip": {
+                "bytes": 12089181,
+                "sha256": "448897846b44b885a11dcf17ccac79fad604d10b70f016ea3e3faa98fef6b38e"
+              }
+            },
+            "complete_raw_archive_retained_at": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-44b3-pr-continuity-capacity-review-v1/complete-evidence.tar.xz",
+            "job_conclusion": "success",
+            "stage": "capacity"
+          }
+        ],
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884851140"
+      }
+    ],
+    "source_inputs": {
+      "config/pon/continuity-v1.json": {
+        "bytes": 1980,
+        "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821"
+      },
+      "config/pon/devnet-v1.json": {
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      "config/pon/growth-reference-v2.json": {
+        "bytes": 696,
+        "sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf"
+      },
+      "config/pon/ledger-v1.json": {
+        "bytes": 7793,
+        "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+      },
+      "config/pon/model-family-v1.json": {
+        "bytes": 1383,
+        "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+      },
+      "config/pon/public-evaluation-native-v1.json": {
+        "bytes": 1098,
+        "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c"
+      },
+      "config/pon/qualified-task-lifecycle-v4.json": {
+        "bytes": 6207,
+        "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de"
+      },
+      "config/pon/work-profile-v1.json": {
+        "bytes": 1596,
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      "hia/components.json": {
+        "bytes": 25346,
+        "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+      },
+      "hia/platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "hia/platform/continuity_store/README.md": {
+        "bytes": 14121,
+        "sha256": "8e8dddd9af133b4d14cfe73d47815bb6db9aa11650d07b693ad99499ee86dbb1"
+      },
+      "hia/platform/continuity_store/abi.json": {
+        "bytes": 3459,
+        "sha256": "1a87be943320f378e147e5572cd7f5adac2f712f06f0e8edcc600e198d4ff818"
+      },
+      "hia/platform/continuity_store/build.py": {
+        "bytes": 10023,
+        "sha256": "ff73604aefd5a268b13c476f6681f6bd8ca023f150638cfbf5a85b61d272deb3"
+      },
+      "hia/platform/continuity_store/capacity.py": {
+        "bytes": 9808,
+        "sha256": "ccd87f2da7cc6c3ef3e0b00dabf2ac3e362eb8fd8fcbe53a0be5e089bb6819c4"
+      },
+      "hia/platform/continuity_store/cases.py": {
+        "bytes": 14317,
+        "sha256": "ae1b049a185f75aa14461843a8176436321717b5251e45aed0d2910cc75cb47e"
+      },
+      "hia/platform/continuity_store/context.hepta": {
+        "bytes": 259622,
+        "sha256": "42c6c05f64766a12c83e821975fef7229a3d2392db73512749413b1d90a687b0"
+      },
+      "hia/platform/continuity_store/context_qualification.py": {
+        "bytes": 6189,
+        "sha256": "b2d19cce02feb719a45457bff52620f9c442bafeaf89627aa8054aece0871648"
+      },
+      "hia/platform/continuity_store/continuity_policy.hepta": {
+        "bytes": 116145,
+        "sha256": "af6f29bea99327519e57f57cf7423448e58fe0c50191b13e3a0ce87af13796b0"
+      },
+      "hia/platform/continuity_store/includes.json": {
+        "bytes": 6581,
+        "sha256": "d3b89b03bd5366f4c19e73e7d33dfe55bedf43910de790b52fa3bbbb5cfb2691"
+      },
+      "hia/platform/continuity_store/linux_continuity_emitter.hepta": {
+        "bytes": 40830,
+        "sha256": "51b7bbf831596901242f9175a48c48a14b2cf80494fbf82f383bba722153dceb"
+      },
+      "hia/platform/continuity_store/native_io.py": {
+        "bytes": 2268,
+        "sha256": "511ce8f00a02c3f7d8036694e5e157a36ea56da939a46f739d477cca094fb7b3"
+      },
+      "hia/platform/continuity_store/primary_policy.hepta": {
+        "bytes": 18584,
+        "sha256": "857f060729572ff13253a9133b30686f54eb68d16be661f1b9058eae6b46743d"
+      },
+      "hia/platform/continuity_store/qualify.py": {
+        "bytes": 17059,
+        "sha256": "88ce49ae76c6c6f61d38b77c89b5c316420aee9d55cecafd87b61720279c02a1"
+      },
+      "hia/platform/continuity_store/reference.py": {
+        "bytes": 7529,
+        "sha256": "0af2f01ebcc379aba24649332e81b7e9c9ed62ee79ea48e0e2d0ed0a58759e27"
+      },
+      "hia/platform/continuity_store/rust_oracle.py": {
+        "bytes": 25897,
+        "sha256": "0402601dd7d8405aeb318f613e26974810e7c15c7b76373b58960656671e855d"
+      },
+      "hia/platform/continuity_store/rust_reference.rs": {
+        "bytes": 11757,
+        "sha256": "08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a"
+      },
+      "hia/platform/continuity_store/source-inputs.json": {
+        "bytes": 401,
+        "sha256": "37cda2f9cd29edc159b56fdd7257666a0f141672472ee298c801467f204ca7c2"
+      },
+      "hia/platform/continuity_store/test_integrity.py": {
+        "bytes": 13779,
+        "sha256": "ecde496774e8e0d1a03ecbfa037ec3f0db63eb2d2169c1007562d7413e0a7c32"
+      },
+      "hia/platform/transport_request/rust_oracle.py": {
+        "bytes": 12311,
+        "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+      },
+      "hia/platform/typed_store/README.md": {
+        "bytes": 15284,
+        "sha256": "ee0cc34e8505174bd6ad73a2057a5d6ae8215a1f7783d90623bce01fc6acdc82"
+      },
+      "hia/platform/typed_store/abi.json": {
+        "bytes": 3086,
+        "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+      },
+      "hia/platform/typed_store/build.py": {
+        "bytes": 9591,
+        "sha256": "8bf64ae4f768bdb33dff85d81798f9428e17af187b9474c53697226ff7395a73"
+      },
+      "hia/platform/typed_store/capacity.py": {
+        "bytes": 18585,
+        "sha256": "deab73550589b7db2a0f34429c41b07cd5f48f6a9215b9a62957867b2436b97c"
+      },
+      "hia/platform/typed_store/cases.py": {
+        "bytes": 11529,
+        "sha256": "954d8f15497de2b16434696e41445a51b22a0f2c5a83e549729fc4cb85ef7df1"
+      },
+      "hia/platform/typed_store/includes.json": {
+        "bytes": 2672,
+        "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+      },
+      "hia/platform/typed_store/linux_stage_emitter.hepta": {
+        "bytes": 27195,
+        "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+      },
+      "hia/platform/typed_store/native_io.py": {
+        "bytes": 11872,
+        "sha256": "dca4a25640627ddcc79613b39afcd84cd8892f39e27ad7a86f810518824ad16e"
+      },
+      "hia/platform/typed_store/qualify.py": {
+        "bytes": 14302,
+        "sha256": "c95fed436025514160117154e04a0932b5d924b683360a0a9703809e632d8d1c"
+      },
+      "hia/platform/typed_store/root_finalize.hepta": {
+        "bytes": 6116,
+        "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+      },
+      "hia/platform/typed_store/rust_oracle.py": {
+        "bytes": 23181,
+        "sha256": "83ad1d07e9a01a641a03841e95f0a0ea3ca03483b98ed2621594fefd6df7a427"
+      },
+      "hia/platform/typed_store/rust_reference.rs": {
+        "bytes": 7561,
+        "sha256": "ebd9f27eb49702dc053086e37456bb6cb0234eaec62ce53915658b70b6989ab4"
+      },
+      "hia/platform/typed_store/stage_policy.hepta": {
+        "bytes": 206730,
+        "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+      },
+      "hia/platform/typed_store/test_integrity.py": {
+        "bytes": 23984,
+        "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_number.hepta": {
+        "bytes": 66485,
+        "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/codec/json_value_encode.hepta": {
+        "bytes": 33335,
+        "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+      },
+      "hia/src/codec/json_value_wire.hepta": {
+        "bytes": 39174,
+        "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+      },
+      "hia/src/crypto/ed25519_group.hepta": {
+        "bytes": 73381,
+        "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+      },
+      "hia/src/crypto/ed25519_sign.hepta": {
+        "bytes": 33639,
+        "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+      },
+      "hia/src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 39017,
+        "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+      },
+      "hia/src/crypto/sha512_arena.hepta": {
+        "bytes": 32447,
+        "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+      },
+      "hia/src/math/binary64.hepta": {
+        "bytes": 21416,
+        "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+      },
+      "hia/src/node/settings_development.hepta": {
+        "bytes": 179998,
+        "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+      },
+      "hia/src/protocol/state_root.hepta": {
+        "bytes": 221073,
+        "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+      },
+      "hia/src/protocol/state_root_compact.hepta": {
+        "bytes": 35045,
+        "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+      },
+      "hia/src/state/json_string.hepta": {
+        "bytes": 22061,
+        "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/test_state_root.py": {
+        "bytes": 9901,
+        "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+    "status": "ALL_NATIVE_ORIGINAL_CAPACITY_STAGES_PASS_IN_BOTH_RUNS",
+    "tree": "63ac94db48912564acae652ce6c771513d3f70dd",
+    "whole_project_accepted": false
+  },
   "current_source_inputs": {
     "config/pon/continuity-v1.json": {
       "bytes": 1980,
@@ -1793,17 +4176,41 @@
   },
   "current_source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
   "final_current_source_actual_original_rust": {
-    "all_non_whitespace_hook_bytes_unchanged": true,
-    "prior_actual_retained_tests": 4,
-    "prior_actual_semantic_cases": 572,
-    "required_in_final_commit_ci": true,
-    "status": "NOT_RUN_AFTER_ONE_LF_FORMAT_CHANGE"
+    "complete_source_inputs_checked": 4415,
+    "retained_tests": 4,
+    "semantic_cases": 572,
+    "status": "ACTUAL_CI_PASS",
+    "workflow_runs": [
+      43884564137,
+      43884851140
+    ]
   },
-  "final_current_source_capacity": "NOT_RUN_AT_PREPARATION",
+  "final_current_source_capacity": {
+    "controls": 7,
+    "full_stream": {
+      "bytes": 36837812,
+      "sha256": "716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702"
+    },
+    "maximum_rows": 1065536,
+    "original_rust_large_extent": "NOT_RUN",
+    "permanent_accounts": 1000000,
+    "physical_power_loss": false,
+    "status": "ACTUAL_CI_PASS",
+    "workflow_runs": [
+      43884564137,
+      43884851140
+    ],
+    "working_rows": 65536
+  },
   "final_current_source_full_native": {
-    "required_in_final_commit_ci": true,
-    "same_native_images_as_actual_659": true,
-    "status": "NOT_RUN_AFTER_ONE_LF_FORMAT_CHANGE"
+    "controls": 659,
+    "semantic_cases": 572,
+    "source_set_sha256": "a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0",
+    "status": "ACTUAL_CI_PASS",
+    "workflow_runs": [
+      43884564137,
+      43884851140
+    ]
   },
   "final_format_source_identity": {
     "all_other_inputs_unchanged": 61,
@@ -3261,6 +5668,28 @@
     "scope": "Finite fast-activation apply/slot_state/continuity/optional classic-root subsegment; no namespace/expected-root/Node commit authority.",
     "status": "PASS"
   },
+  "pre_hosted_ci_preparation_observation": {
+    "final_current_source_actual_original_rust": {
+      "all_non_whitespace_hook_bytes_unchanged": true,
+      "prior_actual_retained_tests": 4,
+      "prior_actual_semantic_cases": 572,
+      "required_in_final_commit_ci": true,
+      "status": "NOT_RUN_AFTER_ONE_LF_FORMAT_CHANGE"
+    },
+    "final_current_source_capacity": "NOT_RUN_AT_PREPARATION",
+    "final_current_source_full_native": {
+      "required_in_final_commit_ci": true,
+      "same_native_images_as_actual_659": true,
+      "status": "NOT_RUN_AFTER_ONE_LF_FORMAT_CHANGE"
+    },
+    "status": "FINAL_SOURCE_ADMISSION_BUILD_PASS_IDENTICAL_NATIVE_IMAGE_PRE_FORMAT_NATIVE_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING"
+  },
+  "previous_record": {
+    "bytes": 177087,
+    "commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+    "path": "hia/qualification/continuity-development.json",
+    "sha256": "397d768ca44c15648b6ef691c1b077164c9d079bec6ef0406be23cd70606f50a"
+  },
   "prior_integrated_base_native_execution": {
     "base_head": "2e3e5dcaa6f899e4f42f2b390fb869255364824d",
     "native_controls": 659,
@@ -3353,7 +5782,7 @@
   ],
   "rust_retirement_accepted": false,
   "schema": "trnm.hia.continuity-development.v1",
-  "status": "FINAL_SOURCE_ADMISSION_BUILD_PASS_IDENTICAL_NATIVE_IMAGE_PRE_FORMAT_NATIVE_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING",
+  "status": "FINAL_SOURCE_NATIVE_ACTUAL_ORIGINAL_AND_CAPACITY_CI_PASS_WHOLE_NODE_OPEN",
   "v2_missing_partial_raw_logs_are_not_reconstructed": true,
   "v3_v5_original_failures_are_not_reclassified": true,
   "whole_node_or_commit_or_ack": false

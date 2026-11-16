@@ -1,5 +1,36 @@
 # Whole-tree inventory and HIA migration audit
 
+## Hosted signal failure and current repair — 2026-11-16 UTC
+
+Published `44b3c6e622d009b6b92b270b4e1f5c82fc844b81` exposed a real
+thread-qualification defect in both the [push workflow](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884564137)
+and [PR workflow](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884851140).
+Both completed 65 semantic histories, then failed in the first physical signal
+control. The real SIGUSR1 and rt_sigreturn(-EINTR) were present; the live wait
+expected one space after the TID while hosted strace used two. Original Rust
+was not run in either failed job. Complete artifacts and failures are retained.
+
+The repair changes only the qualifier and its regression tests. Horizontal
+whitespace cannot cross trace lines or substitute another TID; full signal
+pairing remains mandatory. Nine integrity groups passed. The new 38-input set
+`e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b`
+then passed **65 native histories / 724 operations / 74 physical controls** and
+**65 actual original histories, 518 original-method calls, 36 retained tests
+and the mandatory positive Linux clock test**. Both native ELFs are unchanged.
+The [current record](qualification/thread-cpu-development.json) and
+[self-contained evidence](qualification/thread-cpu-development.tar.xz) preserve
+the new executions, both hosted failures and earlier source-specific results.
+The repaired source still requires its own exact-commit hosted CI.
+
+All three continuity jobs succeeded in each `44b3` workflow: 659 native
+controls, 572 actual original comparisons plus four retained tests and seven
+capacity controls. These actual executions use the final 62-input
+`a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`
+source set. Full 1,065,536-row capacity and fresh-process reread remain intact.
+The thread failures prevent either workflow from being called fully successful.
+**41 kernels / 12 foundations / 71 HIA files; 26 Rust packages retained, zero
+retirements and all nine whole-project gates OPEN.**
+
 ## Continuity, thread lifetime and actual resource production — 2026-11-16 UTC
 
 The current candidate inventory is **41 kernels / 12 native foundations / 71

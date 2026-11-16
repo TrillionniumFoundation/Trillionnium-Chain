@@ -127,6 +127,14 @@ def normal_trace(native,output,**kwargs):
                        bytes(native.stdout),**kwargs)
 
 
+def observed_signal_eintr(text,tid):
+    """Observe a live return; complete signal pairing is still audited later."""
+    # strace pads short decimal TIDs with horizontal whitespace. Do not let
+    # whitespace matching cross a newline into a different task's trace.
+    pattern=re.compile(r'^'+str(tid)+r'[ \t]+(?:rt_sigreturn|<\.\.\. rt_sigreturn resumed>).*?= -1 EINTR\b',re.MULTILINE)
+    return pattern.search(text) is not None
+
+
 def actual_signal_control(image,output):
     """Interrupt only this captured native process, after observing blocking."""
     output.parent.mkdir(parents=True,exist_ok=True)
@@ -143,9 +151,8 @@ def actual_signal_control(image,output):
         raise ValueError('Owned native thread did not block in the expected syscall')
     def wait_return(tid):
         deadline=time.monotonic()+5
-        pattern=re.compile(r'^'+str(tid)+r' (?:rt_sigreturn|<\.\.\. rt_sigreturn resumed>).*?= -1 EINTR\b',re.MULTILINE)
         while time.monotonic()<deadline:
-            if pattern.search((output/'syscalls.raw').read_text()) is not None:
+            if observed_signal_eintr((output/'syscalls.raw').read_text(),tid):
                 return
             time.sleep(.002)
         raise ValueError('Actual delivered SIGUSR1 did not produce an observed EINTR return')
