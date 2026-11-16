@@ -18,6 +18,8 @@ from hia.tests.native_support import NativeModule
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "hia/src/mempool/lane_quota.hepta"
 RUST = ROOT / "hia/tests/rust_mempool_quota_reference.rs"
+RUST_SNAPSHOT = ROOT / "hia/tests/rust_mempool_snapshot_reference.rs"
+RUST_LIB = ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs"
 MAX = (1 << 64) - 1
 
 
@@ -55,6 +57,19 @@ def expected(op: int, total: int, requested: int, normal: int,
         if outcome == 0 and normal_was_empty and normal_capacity > 0 and normal > 0 and critical > 0:
             return burst
         return streak
+    if op == 13:
+        return max(0, total - normal - critical)
+    if op == 14:
+        return max(0, normal_capacity - normal)
+    if op == 15:
+        return free
+    if op == 16:
+        may_borrow = free > 0 and (normal_capacity == 0 or free > 1
+                                  or (critical == 0 and free == 1))
+        return int(normal + critical < total and (normal < normal_capacity or may_borrow))
+    if op == 17:
+        return int(normal + critical < total and
+                   (critical < reserve or normal < normal_capacity))
     raise AssertionError("Unknown test mode")
 
 
@@ -69,12 +84,12 @@ def finite_cases():
         (1, MAX, 0, 1, 0, 0),
         (2, MAX, 0, 1, MAX, MAX),
     ]:
-        for op in range(13):
+        for op in range(18):
             yield op, total, reserve, normal, critical, streak, burst
     values = [0, 1, 2, 3, 4, 7, 8, 15, 16, 32, 63,
               MAX // 2, MAX - 2, MAX - 1, MAX]
     for _ in range(1800):
-        yield (rng.randrange(13), *(rng.choice(values) for _ in range(6)))
+        yield (rng.randrange(18), *(rng.choice(values) for _ in range(6)))
 
 
 class NativeMempoolQuotaTests(unittest.TestCase):
@@ -108,7 +123,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         wrong_magic = b"BAD!" + valid[4:]
         wrong_reserved = valid[:6] + b"\x01" + valid[7:]
         bad_opcode = valid[:4] + b"\xff" + valid[5:]
-        next_unimplemented = valid[:4] + b"\x0d" + valid[5:]
+        next_unimplemented = valid[:4] + b"\x12" + valid[5:]
         cases = [(valid[:-1], 16, 1), (valid + b"\x00", 16, 1),
                  (valid, 7, 2), (wrong_magic, 16, 3),
                  (wrong_reserved, 16, 3), (bad_opcode, 16, 4),
@@ -171,6 +186,63 @@ class NativeMempoolQuotaTests(unittest.TestCase):
             self.assertEqual(len(answers), len(rows))
         self.assertEqual(answers, [expected(*row) for row in rows])
         self.check_cases(rows)
+
+    def test_actual_original_qos_snapshot_after_real_admissions(self):
+        # This invokes the full original trnm-mempool public API, not the
+        # narrow quota/fairness shell or a copied approximation. Every native
+        # decision is compared with the resulting original queue snapshot.
+        rng = random.Random(0x513035)
+        scenarios = []
+        for total in range(9):
+            for reserve in range(11):
+                for variant in range(8):
+                    commands = []
+                    for _ in range(36 if variant else 0):
+                        opcode = rng.randrange(3)
+                        txid = rng.randrange(17) if opcode < 2 else 0
+                        commands.append((opcode, txid))
+                    scenarios.append((total, reserve, commands))
+        with tempfile.TemporaryDirectory(prefix="trnm-hia-qos-rust-") as tmp:
+            temporary = Path(tmp)
+            library = temporary / "libtrnm_mempool.rlib"
+            executable = temporary / "original-qos"
+            compiled = subprocess.run([
+                "rustc", "--edition=2021", "--crate-type=rlib",
+                "--crate-name", "trnm_mempool", "-O", str(RUST_LIB),
+                "-o", str(library),
+            ], cwd=ROOT, capture_output=True, text=True,
+                timeout=120, check=False)
+            self.assertEqual(compiled.returncode, 0, compiled.stderr)
+            compiled = subprocess.run([
+                "rustc", "--edition=2021", "-O", str(RUST_SNAPSHOT),
+                "--extern", "trnm_mempool=" + str(library),
+                "-o", str(executable),
+            ], cwd=ROOT, capture_output=True, text=True,
+                timeout=120, check=False)
+            self.assertEqual(compiled.returncode, 0, compiled.stderr)
+            request = "".join(
+                " ".join(map(str, [total, reserve] +
+                             [word for pair in commands for word in pair])) + "\n"
+                for total, reserve, commands in scenarios
+            )
+            reference = subprocess.run([str(executable)], input=request,
+                                       capture_output=True, text=True,
+                                       timeout=60, check=False)
+            self.assertEqual(reference.returncode, 0, reference.stderr)
+            snapshots = [tuple(map(int, row.split()))
+                         for row in reference.stdout.splitlines()]
+        self.assertEqual(len(snapshots), len(scenarios))
+        native_rows = []
+        for (total, reserve, _), row in zip(scenarios, snapshots):
+            self.assertEqual(len(row), 7, row)
+            normal, critical, total_free, normal_free, critical_free, allow_normal, allow_critical = row
+            for op, actual in zip(range(13, 18),
+                                  (total_free, normal_free, critical_free,
+                                   allow_normal, allow_critical)):
+                state = (op, total, reserve, normal, critical, 0, 0)
+                self.assertEqual(expected(*state), actual, state)
+                native_rows.append(state)
+        self.check_cases(native_rows)
 
 
 if __name__ == "__main__":

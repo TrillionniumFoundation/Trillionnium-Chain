@@ -64,7 +64,10 @@ def sources():
     # M05: bind the exact original implementation files compiled by the
     # independent quota/fairness source adapter, not only its wrapper.
     paths += [ROOT / "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
-              ROOT / "trillionnium/crates/trnm-mempool/src/lane_fairness.rs"]
+              ROOT / "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml"]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 

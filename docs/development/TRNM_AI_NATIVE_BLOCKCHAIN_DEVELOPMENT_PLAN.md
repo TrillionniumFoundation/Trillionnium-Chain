@@ -1,3 +1,33 @@
+## HIA M05 actual original QoS-snapshot native candidate — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+The native M05 `LQV1` kernel now implements five additional original
+`LaneAdmissionGate::qos_snapshot()` outputs (opcodes 13–17):
+total, normal and critical headroom plus fresh normal and critical admission
+eligibility, including reserve clamps, global capacity and both cross-lane
+spillover guards. This is deterministic pure policy on caller-supplied counts,
+not a real queue, duplicate cache, nonce reservation or Node transaction owner.
+The existing 13 opcodes and 56-byte ABI remain unchanged.
+
+The mandatory differential test additionally compiles the **actual unchanged
+original `trnm-mempool/src/lib.rs`** (with its typed admission module), performs
+792 deterministic scenarios of real original normal/critical admission and
+dequeue, then checks five original QoS fields in each snapshot against the
+HIA-emitted machine-code results: **3,960 new original-Rust/HIA comparisons**.
+The independent original quota/fairness adapter still executes its 6,695
+small/full-width cases. The 65,762 native calls / 220 tests / zero skips
+and six successful [HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43772265993)
+belong strictly to the **preceding `ddcd5791`** source. New-source native
+Core admission, original comparison, artifact/source identity and negative
+controls are **NOT_RUN** until its exact-head CI actually finishes.
+
+The original M05 `lib.rs`, `typed_admission.rs`, `Cargo.toml`, quota and
+fairness modules are now all explicitly included in the qualifying source
+digest. No old package or historical evidence is removed, no deployed keys
+or services touched. All 26 original packages remain, all nine migration
+gates stay OPEN, PQ stays HOLD_NO_GO, the original service limits and empty
+root README remain unchanged. The complete previous sole-plan bytes are
+preserved below this prefix without alteration.
+
 ## HIA M05 full-width original-Rust differential expansion — 2026-11-15 UTC — PENDING EXACT-HEAD CI
 
 This continuation adds 2,600 distinct finite cases to the *actual original*
