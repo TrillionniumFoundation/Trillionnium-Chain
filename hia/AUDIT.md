@@ -1,5 +1,34 @@
 # Whole-tree inventory and HIA migration audit
 
+## Native audit values and private raw bindings — 2026-11-16 UTC
+
+The current candidate contains 41 kernels and seven native foundations, covering
+all 56 HIA source files. AuditEvent passed ten native tests/2,847 calls; its
+unchanged original Rust crate passed three original unit tests and 1,849 semantic
+cases. RawBindings passed seven native tests/16,597 calls; 16,471 original Rust
+operations in 1,220 histories match its actual native output hashes. Both full
+records are retained under `hia/qualification/` and exact committed-source direct
+Rust/native CI remains mandatory. All 26 Rust packages remain, with zero accepted
+retirements and all nine whole-project gates OPEN.
+
+During development, two retained-compiler checks exited 137 before the Cloud
+environment disconnected. Its temporary volume was recreated; unpublished source
+and reports there were unavailable. The original cause is not established. The
+published `1550620` tree was restored exactly, and the two new components were
+rebuilt from the original contracts and recovered reference tests. Their new
+native artifacts were independently compiled and executed. Old native passes
+were not applied to the new source hashes. A new Core bool-to-integer cast
+rejection and the earlier original-Rust adapter type error are retained with
+their corrected successful observations; no compiler guard was weakened.
+
+Both `1550620` HIA workflows completed eight successful jobs, 238 component
+tests without skips and 87,813 shared native calls. The original service campaign
+on that head still failed under 16-attacker pressure. Three historical budget
+comparisons refused before native execution because Cargo.lock differed; their
+same-input guards remain intact. A green component workflow does not certify
+whole-node latency, model outcomes, PQ identity or retirement.
+
+
 ## Real private M05 queue ownership — 2026-11-16 UTC
 
 The lane owner retains real queue bytes and fairness between native calls.
@@ -107,8 +136,8 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Thirty-nine kernel units and seven native
-foundations account for all 54 candidate HIA source files. Native connected-stream
+**The full replacement is incomplete.** Forty-one kernel units and seven native
+foundations account for all 56 candidate HIA source files. Native connected-stream
 I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The
@@ -160,7 +189,7 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream`, `crypto/ed25519-sign` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
 | [trnm-verification-profiles](../trillionnium/crates/trnm-verification-profiles) | M11 | Partial: `verification/closed_round` | Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority. |
 | [trnm-transport](../trillionnium/crates/trnm-transport) | M04 | Partial: `transport/replay` | Extract generation-bound authenticated frame admission; delete pacemaker and node scaffold. |
-| [trnm-audit-events](../trillionnium/crates/trnm-audit-events) | M17 | Unported | Normalized local audit event data; no consensus or durable owner. |
+| [trnm-audit-events](../trillionnium/crates/trnm-audit-events) | M17 | Partial: complete public constructor, builders, Clone and Eq in `audit/event` | Consumer integration and dependency retirement remain open; the value has no consensus or durable authority. |
 | [trnm-governance-guard](../trillionnium/crates/trnm-governance-guard) | M01 | Unported | Local proposal/timelock, role separation and optimistic version checks; no network governance authority. |
 | [trnm-escrow-vault](../trillionnium/crates/trnm-escrow-vault) | M12 | Unported | Pure in-memory escrow conservation reference; no second production ledger or durability claim. |
 | [trnm-pon-node](../trillionnium/crates/trnm-pon-node) | M15 | Partial: `transport/authenticated_request`, `codec/json-number`, `codec/json-value-wire`, `codec/json-value-encode`, `transport/authenticated-response`, `transport/signed-response`, `node/settings-development` | Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed. |

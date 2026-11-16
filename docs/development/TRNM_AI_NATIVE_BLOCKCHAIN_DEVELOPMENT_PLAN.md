@@ -1,3 +1,15 @@
+## 2026-11-16 UTC — HIA AuditEvent 与 RawBindings 完整有限单元，故障恢复后重新资格
+
+本批候选为 41 内核、7 native foundation、56 HIA 源文件。26 原 Rust 包均保留、0 退役、9 全项目门 OPEN。
+
+- AuditEvent 实现完整公开 new、六个 consuming builder、Clone/Eq，精确保留 optional presence、逐字段 UTF-8 和全部 u128 位。新源码 10 native tests/2,847 实际调用通过；不变原 Rust crate 的 3 原单测及 1,849 cases 实际通过。原 Rust adapter 的首次类型编译失败和新 native Core 的 bool/int cast 拒绝均保留，实际修正后重新执行，没有弱化 verifier。
+- RawBindings 的新原生私有上下文真实保存摘要与完整正文，保留先消费摘要再拒绝正文不符的原序。7 native tests/16,597 调用通过；1,220 histories/16,471 operations 的实际 native 输出与实际原 Rust 逐字 hash 一致。完整签名、nonce、durable local_pool 与 Node 集成仍 OPEN。
+- 本地 compiler 保留证据检查两次 exit137 后 Cloud 断连，临时卷重建，未发布源码不可恢复；原因未证实。已逐字恢复远端1550620的 Git tree 8e8d83eb12a3b4b9da4ce2317f244aef53e87daa，并在 workspace 保全唯一源码/作者文件，两个组件重建并重新实际资格。旧 native PASS 不复用到新源。Host 与 typed Store 的未完成候选不包含在本批交付中。
+- 已发布1550620的push43821794104和PR43821814743均8/8SUCCESS：238 tests/0 skipped/87,813 shared native calls，52 storage真实tracePASS、197恢复PASS。原4秒/16攻击者W1压力两路线仍0confirmed，baseline为2.829236646/2.851075077秒各1confirmed。历史budget-before三组在native启动前因Cargo.lock不一致拒绝；保持原约束，不伪称测试通过。
+- 新提交仍必须跑 exact-source actual-Rust/native CI。只保留最终组件源、必要测试、合同和来源绑定证据；作者生成器/中间构建在仓库外，不进入产品树。完整Node、服务预算和研究门未闭合前不删除旧实现。
+
+此前计划以下方原字节后缀完整保留。
+
 ## M05 native lane owner and original public-operation comparison — 2026-11-16 UTC
 
 The native LaneAdmissionGate owner now retains actual normal/critical ring

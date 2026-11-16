@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **39
-kernel units and seven native foundations**, accounting for all **54 HIA source
+one complete HIA-native implementation. The current candidate contains **41
+kernel units and seven native foundations**, accounting for all **56 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -35,18 +35,48 @@ service, model-use, consensus-security and cross-architecture failures retain
 their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
 
-## Exact-source observation update
+## Observed qualification and current scope
 
-The prior `5524ce8b` [HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43791117254)
-completed six jobs successfully (222 native tests, 70,998 shared machine-code
-calls, no skips). The new post-dequeue queue-length projections require their
-own exact-commit qualification and do not establish M05 owner or Node retirement.
+The preceding `155062089bbc` source completed all eight HIA jobs in both
+[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43821794104)
+and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43821814743)
+qualification. It ran 238 component tests, zero skips and 87,813 shared native
+calls, including direct original-Rust consensus and mempool comparison. Its
+52 physical storage controls passed with actual syscall tracing; all 197
+initialization recovery controls passed. Every new source requires its own run.
 
-One-call LQV1 opcode 24 additionally exposes all five original QoS snapshot
-fields from one caller-supplied input; real Rust snapshot comparison is required
-by native CI. This does not capture or own the physical queues.
+The original four-second/16-attacker service campaign still failed on that same
+head: both original and fresh pressure runs had zero confirmations. Baselines
+confirmed one request in 2.829236646 and 2.851075077 seconds. Three historical
+budget comparisons refused before native execution because their Cargo.lock
+bytes differed from the current source. No service limit or same-input guard
+was relaxed. HIA component qualification and whole-node service acceptance
+remain separate obligations.
 
-One-call LQV1 opcode 23 now returns a five-field post-pop projection from one input invocation; see [the M05 contract](MEMPOOL.md). It has no persistent or queue-mutation authority and requires its own exact-head CI qualification.
+## Native AuditEvent values and exact RawBindings
+
+The [AuditEvent component](src/audit/README.md) implements the original public
+constructor, all six consuming builders, Clone and Eq. Its ten native tests
+passed 2,847 calls, including every optional mask, field-local Unicode bounds,
+all 128 amount bits, long middle-field replacement, and atomic refusal. The
+unchanged original crate passed its three original unit tests and the same
+1,849 semantic cases in an actual separate Rust execution. Its source-bound
+[qualification record](qualification/audit-event-development.json) retains the
+initial Rust adapter compilation failure, corrected run and native evidence.
+AuditEvent is descriptive data; it does not prove that an event occurred.
+
+The [RawBindings owner](src/mempool/RAW_BINDINGS.md) stores full digest/body
+bytes in its own native private context. Seven tests passed 16,597 native
+calls; 1,220 histories containing 16,471 operations match the complete actual
+original Rust methods. A known digest is consumed before rejecting a mismatched
+body, exactly as in the original. The [bound observations](qualification/raw-bindings-development.json)
+retain actual input and output hashes. Signature checking, signer nonce state,
+durable local-pool transactions and Node integration remain open.
+
+These two sources were rebuilt and re-executed after an interrupted development
+environment lost its temporary volume. Earlier native passes do not qualify
+the replacement bytes. Mandatory final-source CI compares native results with
+the actual original Rust implementations again; missing tools cannot skip it.
 
 ## Complete M02 arithmetic and physical initialization recovery
 
@@ -67,20 +97,14 @@ previously reproduced changed-prefix false acknowledgement is retained as a
 regression and now refuses with no opened receipt. This closes the stated
 initialization unit; full typed Node publication remains a separate integration.
 
-## Independent M05 queue decision candidate
+## M05 lane policy and queue ownership
 
-The M05 [lane quota/fairness HIA kernel](src/mempool/lane_quota.hepta) emits
-native decisions for total admission headroom, reserved critical slots,
-normal-lane spillover, last-slot borrowing, fairness transitions and five
-original QoS snapshot fields plus the original next-dequeue lane choice. The separate
-[finite-ABI and original Rust differential contract](MEMPOOL.md) is a candidate
-qualification, not a completed admission, mempool, persistent queue or Node
-owner. Its tests execute the unchanged original Rust quota/fairness modules
-and now compile the full original mempool crate to exercise real ingress,
-dequeue and QoS snapshots. The preceding `54a3f02b` candidate passed its actual native QoS snapshot
-comparison in [its exact-head HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43782301850);
-new dequeue selection opcode 18 requires independent exact-head native/original
-Rust qualification before PASS.
+The [lane quota/fairness kernel](src/mempool/lane_quota.hepta) implements original
+capacity, critical reserve, borrowing, dequeue and QoS decisions. The separate
+[lane owner](src/mempool/OWNER.md) retains two actual private FIFO rings, exact
+ID membership and fairness across native calls. The [policy contract](MEMPOOL.md)
+and owner tests require the real original Rust crate. Signed admission, nonce
+ownership and the Node's durable local pool need their own complete integration.
 
 ## Implemented native components
 
@@ -97,6 +121,8 @@ local-pool handoff and Node integration still require their own native owners.
 
 | Source | Implemented behavior | Native tests |
 | --- | --- | --- |
+| [AuditEvent](src/audit/README.md) | Complete public value constructor, six builders, Clone and Eq | 2,847 native calls; 1,849 actual original Rust cases and three original unit tests |
+| [RawBindings](src/mempool/RAW_BINDINGS.md) | Actual private digest/body ownership and consume-before-mismatch semantics | 16,597 native calls; 16,471 actual original Rust operations across 1,220 histories |
 | [ID](src/protocol/id.hepta), [hash text](src/protocol/hash.hepta) | Exact identifier alphabet/length and lowercase hash grammar | Complete byte alphabet and boundary controls |
 | [PNH1](src/protocol/pnh1.hepta), [PGH2](src/protocol/pgh2.hepta) | Fixed header grammar and original error order | Original independent header oracle and byte mutations |
 | [ILF2](src/protocol/ilf2.hepta), [ILF3](src/protocol/ilf3.hepta) | Complete bounded factor/evolution witness grammar | Original vectors, every coefficient position, truncation and error precedence |
@@ -118,7 +144,6 @@ local-pool handoff and Node integration still require their own native owners.
 | [State String and Value](STATE_VALUE.md) | ASCII string codec and iterative typed Value construction, sorted last-wins objects, M06 grammar and canonical serialization | 1,518 native controls including a 7,280-level array; finite constructor profile and complete-State gate remain distinct |
 | [Incremental SHA256](src/crypto/sha256_stream.hepta) | One continuous context, all compression blocks and one final padding | Fourteen controls through 2 MiB + 1,024 bytes |
 | [Authenticated request](platform/transport_request/README.md) | All five classical request variants, complete 2 MiB frame and strict authentication equation | 178 native controls, complete payload mutation, original-default serde behavior and mandatory private original-Node oracle |
-
 | [Shared JSON primitives](src/codec/json_primitives.hepta) | Single UTF-8, string and integer primitive closure, independently admitted before selection | 1,518 extraction controls; caller dependencies remain explicit |
 | [JSON number](src/codec/json_number.hepta), [Value wire](src/codec/json_value_wire.hepta), [Value encoder](src/codec/json_value_encode.hepta) | Exact original-default serde number parsing/formatting, Unicode, complete Value construction and response serialization | 6,955 number, 3,546 Value parse and 372 Value encode controls; original Rust required in dedicated CI |
 | [Ed25519 signing](src/crypto/ed25519_sign.hepta), [response verification](src/transport/authenticated_response.hepta), [signed response](src/transport/signed_response.hepta) | Complete classical response domains, signature production and strict verification | 73 signing, 33 producer and 125 verifier controls; producer uses a guarded private stack |

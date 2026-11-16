@@ -416,6 +416,26 @@
         "hia/tests/test_consensus_work.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "audit/event",
+      "source": "hia/src/audit/event.hepta",
+      "scope": "Complete original public AuditEvent new, six builders, value Clone and Eq; exact optional presence, independent UTF-8 fields and all u128 bits; no event-origin, durable or ledger authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_audit_event.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "mempool/raw-bindings-owner",
+      "source": "hia/src/mempool/raw_bindings_owner.hepta",
+      "scope": "Actual private Node RawBindings digest/body owner, duplicate/capacity order and consume-before-mismatch semantics, with full erasure and explicit clear/close; no signature, signer nonce, durable local-pool or Node commit authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_raw_bindings_owner.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -633,8 +653,10 @@
       "package": "trnm-audit-events",
       "module": "M17",
       "legacy_path": "trillionnium/crates/trnm-audit-events",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "audit/event"
+      ],
       "retirement_accepted": false
     },
     {
@@ -666,7 +688,8 @@
         "transport/authenticated-response",
         "transport/signed-response",
         "node/settings-development",
-        "consensus/work"
+        "consensus/work",
+        "mempool/raw-bindings-owner"
       ],
       "retirement_accepted": false
     },

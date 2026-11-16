@@ -75,6 +75,13 @@ def sources():
               ROOT / "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json",
               ROOT / "formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json",
               ROOT / "hia/src/consensus/README.md"]
+    # Exact original data/owner bodies and their complete native contracts.
+    paths += [ROOT / name for name in (
+        "trillionnium/crates/trnm-audit-events/src/lib.rs",
+        "trillionnium/crates/trnm-audit-events/Cargo.toml",
+        "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md")]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 

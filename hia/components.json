@@ -1,6 +1,7 @@
 {
   "schema": "trnm.hia.component-includes.v1",
   "includes": {
+    "src/audit/event.hepta": [{"source": "src/codec/json_primitives.hepta", "functions": ["value_utf8"]}],
     "src/mempool/lane_owner.hepta": [
       {
         "source": "src/mempool/lane_quota.hepta",
