@@ -190,6 +190,17 @@ class NativeMempoolQuotaTests(unittest.TestCase):
                     ):
                         rows.append((op, total, reserve, normal, critical,
                                      streak, burst))
+        # The original public pop_ready idle-poll branch clears stale fairness,
+        # even in zero-capacity mode; unlike active-pop, this branch does not
+        # invoke record_pop_fairness. Bind the real original module adapter to
+        # that original owner behavior at explicit wide-counter boundaries.
+        rows.extend([
+            (19, 0, 0, 0, 0, 5, 5),
+            (19, 0, MAX, 0, 0, MAX, 1),
+            (19, MAX, 0, 0, 0, MAX, MAX),
+            (19, MAX, MAX, 0, 0, MAX, MAX),
+            (19, 8, 1, 0, 0, MAX, MAX - 1),
+        ])
         with tempfile.TemporaryDirectory(prefix="trnm-hia-quota-rust-") as tmp:
             executable = Path(tmp) / "original-quota"
             built = subprocess.run(["rustc", "--edition=2021", "-O",
@@ -204,7 +215,12 @@ class NativeMempoolQuotaTests(unittest.TestCase):
             self.assertEqual(reference.returncode, 0, reference.stderr)
             answers = [int(row) for row in reference.stdout.splitlines()]
             self.assertEqual(len(answers), len(rows))
-        self.assertEqual(answers, [expected(*row) for row in rows])
+        for index, (row, actual) in enumerate(zip(rows, answers)):
+            self.assertEqual(
+                actual, expected(*row),
+                ("original Rust/native comparison fixture diverged at "
+                 f"index={index} opcode={row[0]} row={row}"),
+            )
         self.check_cases(rows)
 
     def test_actual_original_qos_snapshot_after_real_admissions(self):

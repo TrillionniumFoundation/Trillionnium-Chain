@@ -1,3 +1,21 @@
+## Original idle-poll oracle correction (exact-head requalification required)
+
+The previous `ac0d7b78` six-job HIA run
+([run 43786960479](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43786960479))
+finished **five SUCCESS, one FAILURE**. The `native-components` test
+`test_actual_original_lane_modules` failed at record 4,126, when opcode 19
+received empty normal/critical queues and a nonzero injected fairness streak.
+The **test adapter** had not modeled the original `LaneAdmissionGate::pop_ready`
+idle-poll call to `reset_idle_state(true)`; consequently it returned a stale
+streak even though the original full node resets that counter to zero. The
+emitted HIA opcode 19 correctly returned zero for the empty state. The adapter
+now preserves the zero-capacity metadata exception while explicitly resetting
+the fairness counter, adds five nonzero-streak idle regressions, and reports
+the exact failing row on future divergences. Neither the original Rust crate
+nor the HIA native kernel was changed in this correction. New exact-head Rust
+execution and emitted-machine differential remain **NOT_RUN** until CI reports
+results. All nine migration gates and PQ HOLD_NO_GO remain unchanged.
+
 # HIA M05 lane quota and fairness predicate candidate
 
 This independent finite native HIA component targets the original **pure quota, fairness and QoS snapshot decisions**

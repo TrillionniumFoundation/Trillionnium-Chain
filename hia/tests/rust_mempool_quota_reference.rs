@@ -100,6 +100,13 @@ fn main() {
                         // Public pop_ready cold-resets after full drain.
                         gate.critical_served_streak = 0;
                     }
+                } else {
+                    // The original public pop_ready() calls reset_idle_state(true)
+                    // on an empty queue, including an existing stale fairness
+                    // streak. This adapter must reproduce that branch instead
+                    // of returning the caller-injected stale streak unchanged.
+                    // Zero-capacity mode preserves seen metadata, not fairness.
+                    gate.critical_served_streak = 0;
                 }
                 gate.critical_served_streak as u64
             },

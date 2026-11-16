@@ -1,3 +1,25 @@
+## HIA M05 original idle-poll fairness oracle correction — 2026-11-16 UTC — exact-head CI not yet run
+
+The prior `ac0d7b78` native-components CI is a real FAILURE
+([run 43786960479](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43786960479)):
+five of six HIA jobs succeeded, but `test_actual_original_lane_modules`
+mismatched at record 4,126 (empty normal and critical queues, nonzero stale
+fairness streak). The original public `LaneAdmissionGate::pop_ready` calls
+`reset_idle_state(true)` for idle polls, clearing fairness even when the
+zero-capacity exception preserves duplicate metadata. The separate narrow
+Rust differential adapter had omitted that reset on its no-pop path. The
+adapter now reproduces the original idle reset and adds explicit boundary
+regressions and row-index diagnostics; no change to the unchanged original
+crate or the emitted HIA opcode 19 is claimed. A local arithmetic-model check
+of 40,000 combinations was consistent with the corrected adapter model,
+but this is not Rust execution or native CI. Requalification is NOT_RUN for
+the new source until an exact-head six-job run records it.
+
+The unique prior plan text below remains an exact byte-preserved suffix.
+Twenty-six Rust packages remain; all nine gates OPEN; PQ HOLD_NO_GO.
+Node SQLite ownership, durable reorg/replay/outbox, whole-key zeroization,
+constant-time ISA and service budgets remain unqualified.
+
 ## HIA M05 full-drain-aware post-pop fairness — 2026-11-16 UTC — PENDING EXACT-HEAD CI
 
 M05 LQV1 opcode 19 adds the original post-pop critical fairness streak as a
