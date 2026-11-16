@@ -1,5 +1,17 @@
 # Whole-tree inventory and HIA migration audit
 
+## Fail-closed exact-source compiler bootstrap controls — 2026-11-16 UTC
+
+Seven HIA native CI compiler-bootstrap blocks previously used optimizable
+Python `assert` for their PASS decision. They now fail closed under `-O/-OO`
+and check the exact compiler SHA-256 and nonempty path before exporting
+environment variables. The Rust serde_json reference artifact checks were
+made optimization-independent. A new 4-test/28-case adversarial controller
+is wired into the source/archive job. This changes neither native HIA machine
+code nor any original Rust code. Hosted exact-source outcomes are required;
+all package retirement, Node, PQ and nine integration gates remain open.
+
+
 ## Independent qualification jobs — 2026-11-16 UTC
 
 Exact-source push run `43813295781` executed 224 component tests with zero

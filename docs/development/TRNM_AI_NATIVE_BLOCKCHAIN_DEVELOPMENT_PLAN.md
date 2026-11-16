@@ -1,3 +1,17 @@
+## HIA bootstrap and original Rust oracle fail-closed CI — 2026-11-16 UTC
+
+The exact-source HIA migration workflow now uses explicit, optimization-independent
+rejection at each of its seven compiler-bootstrap gates, requiring status PASS,
+the pinned SHA-256 87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54, and a nonempty compiler path before exporting
+the compiler into the runner environment. The Rust serde_json reference link
+also refuses wrong package identity/features or missing/ambiguous rlib without
+using optimizable Python assertions. The source-and-archive job executes
+adversarial optimized Python (-O/-OO/PYTHONOPTIMIZE=2) regression controls for
+all seven compiler-bootstrap snippets, checking reject-with-no-environment-write
+and exact accepted output. This is CI qualification integrity, not a new HIA
+native runtime component, Node owner, original budget closure or PQ acceptance.
+The exact published-head workflow must pass before any PASS is attributed to it.
+
 ## HIA exact-source qualification job separation — 2026-11-16 UTC
 
 The exact `4e1c1ada` source completed all 224 component tests with zero skips
