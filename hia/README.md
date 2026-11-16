@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **38
-kernel units and seven native foundations**, accounting for all **53 HIA source
+one complete HIA-native implementation. The current candidate contains **39
+kernel units and seven native foundations**, accounting for all **54 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -83,6 +83,17 @@ new dequeue selection opcode 18 requires independent exact-head native/original
 Rust qualification before PASS.
 
 ## Implemented native components
+
+The [M05 native lane owner](src/mempool/OWNER.md) now retains both physical
+FIFO rings, exact ID membership and fairness across calls in one private
+allocation. Its local native controls passed 41,365 owner calls and 2,042
+canonical-policy regression calls. A separate real Rust compiler built the
+complete unchanged original mempool crate and matched all 41,248 public
+operations across 1,862 histories. The exact hosted test additionally compares
+original Rust and native replies directly and cannot skip a missing oracle.
+The [bound development record](qualification/mempool-owner-development.json)
+retains both observations. Typed signed admission, nonce ownership, durable
+local-pool handoff and Node integration still require their own native owners.
 
 | Source | Implemented behavior | Native tests |
 | --- | --- | --- |

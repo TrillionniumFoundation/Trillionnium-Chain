@@ -1,5 +1,17 @@
 # Whole-tree inventory and HIA migration audit
 
+## Real private M05 queue ownership — 2026-11-16 UTC
+
+The lane owner retains real queue bytes and fairness between native calls.
+Local controls passed 41,365 owner calls and 2,042 canonical-policy regression
+calls. The unchanged complete original mempool crate, separately compiled with
+Rust 1.95, matched 41,248 public operations in 1,862 histories. Physical ring
+wrap, interleaved owners, full clear/close erasure and actual allocator denial
+are exercised. [Source-bound observations](qualification/mempool-owner-development.json)
+remain distinct from the mandatory final-source hosted original/native run.
+The Node's durable local-pool, signed admission and signer nonce ownership
+remain open; a public in-process lane owner does not retire the M05 package.
+
 ## Observed qualification and bootstrap regression correction — 2026-11-16 UTC
 
 Both exact-source workflows for `85b0b85c` completed all eight jobs: push
@@ -95,8 +107,8 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Thirty-eight kernel units and seven native
-foundations account for all 53 candidate HIA source files. Native connected-stream
+**The full replacement is incomplete.** Thirty-nine kernel units and seven native
+foundations account for all 54 candidate HIA source files. Native connected-stream
 I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The
@@ -130,7 +142,7 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-types](../trillionnium/crates/trnm-types) | M00 | Unported | Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls. |
 | [trnm-executor](../trillionnium/crates/trnm-executor) | M06 | Partial: `executor/schedule`, `math/binary64` | Deterministic conflict scheduling independent of consensus. |
 | [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Unported | Retained executor microbenchmark; not ledger throughput. |
-| [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota` pure predicates; native CI pending | Bounded admission, nonce reservations and durable handoff independent of BFT. |
+| [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota` pure policy and `mempool/lane_owner` real private queue | Typed signed admission, nonce reservations and durable local-pool/Node handoff independent of BFT. |
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Unported | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Unported | Application evidence aggregation, not ledger quorum or voting. |
 | [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Unported | Contribution/evaluation/lineage contracts independent of ledger consensus. |

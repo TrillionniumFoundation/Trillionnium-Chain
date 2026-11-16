@@ -1,6 +1,12 @@
 {
   "schema": "trnm.hia.component-includes.v1",
   "includes": {
+    "src/mempool/lane_owner.hepta": [
+      {
+        "source": "src/mempool/lane_quota.hepta",
+        "functions": ["lane_policy", "f1", "f2"]
+      }
+    ],
     "src/crypto/pon_hash.hepta": [
       {
         "source": "src/crypto/sha256_arena.hepta",

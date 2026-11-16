@@ -1,3 +1,24 @@
+## M05 native lane owner and original public-operation comparison — 2026-11-16 UTC
+
+The native LaneAdmissionGate owner now retains actual normal/critical ring
+contents and fairness in one private allocation across calls. Duplicate checks,
+slot insertion/removal, exact dequeue IDs, clear and complete close erasure run
+in emitted HIA machine code, using the canonical existing lane policy. The
+local owner controls passed 41,365 native calls plus 2,042 scalar-policy
+regression calls. A separate real Rust 1.95 build of the complete unchanged
+original crate matched the same 41,248 public operations in 1,862 histories;
+source, adapter, input and reply digests are bound in the development record.
+The mandatory hosted test performs a direct original/native comparison and
+cannot skip Rust. Allocation denial and malformed calls preserve owner/output
+bytes; close still erases its full extent without allocating.
+
+This is a genuine in-process public queue owner. Node PendingPreview constructs
+a TypedAdmissionGate over its durable local_pool records and drains that view;
+its full signed-body, signer nonce, replay and durable handoff ownership is still
+being ported. The inventory now has 39 kernels, seven foundations and 54 HIA
+sources. All 26 original packages and all nine full migration gates remain
+accounted for and OPEN. The complete prior plan follows unchanged.
+
 ## HIA complete M02 arithmetic and native genesis recovery — 2026-11-16 UTC
 
 The candidate now includes the entire pure original consensus.rs closure in

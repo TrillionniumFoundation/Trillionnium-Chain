@@ -398,6 +398,16 @@
       "node_integration_complete": false
     },
     {
+      "id": "mempool/lane_owner",
+      "source": "hia/src/mempool/lane_owner.hepta",
+      "scope": "Real private in-process LaneAdmissionGate owner with two persistent FIFO rings, exact ID membership, canonical lane/fairness/QoS policy, atomic resource refusal and explicit clear/close; no signed/nonce/local-pool/Node or restart authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_mempool_owner.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
       "id": "consensus/work",
       "source": "hia/src/consensus/work.hepta",
       "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
@@ -442,7 +452,8 @@
       "legacy_path": "trillionnium/crates/trnm-mempool",
       "state": "partially-ported",
       "components": [
-        "mempool/lane_quota"
+        "mempool/lane_quota",
+        "mempool/lane_owner"
       ],
       "retirement_accepted": false
     },

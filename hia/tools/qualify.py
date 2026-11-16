@@ -67,7 +67,8 @@ def sources():
               ROOT / "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
               ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs",
               ROOT / "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
-              ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml"]
+              ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml",
+              ROOT / "hia/src/mempool/OWNER.md"]
     # The complete original M02 module is actually compiled by the independent
     # reference; bind its bytes and both pre-existing integer vector corpora.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/consensus.rs",
@@ -138,7 +139,7 @@ def main():
             "skipped": [(str(test), why) for test, why in result.skipped]},
         "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
                                                for (b, s), count in sorted(calls.items())],
-        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original and transport-original controls run in their own mandatory workflow steps.",
+        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original and transport-original controls run in their own mandatory workflow steps.",
         "builds": builds, "wall_seconds": time.monotonic() - started,
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),

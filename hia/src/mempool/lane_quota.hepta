@@ -1,5 +1,10 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_mempool_quota
-fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  status:u32 = call(input,output,scratch) {"function":"lane_policy"}
+  ret(status)
+end
+fn lane_policy(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(v0:readbuf,v1:mutbuf,v2:mutbuf)
   v6:usize = buffer.len(v0)
   v7:usize = const() {"value":56}
