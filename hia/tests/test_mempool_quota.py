@@ -90,6 +90,13 @@ def expected(op: int, total: int, requested: int, normal: int,
             return (max(0, burst - 1)
                     if normal_capacity > 0 and normal > 1 and critical > 0 else 0)
         return 0
+    if op in (20, 21, 22):
+        lane = expected(18, total, requested, normal, critical, streak, burst)
+        if op == 20:
+            return normal - int(lane == 1)
+        if op == 21:
+            return critical - int(lane == 2)
+        return int(lane != 0)
     raise AssertionError("Unknown test mode")
 
 
@@ -104,12 +111,12 @@ def finite_cases():
         (1, MAX, 0, 1, 0, 0),
         (2, MAX, 0, 1, MAX, MAX),
     ]:
-        for op in range(20):
+        for op in range(23):
             yield op, total, reserve, normal, critical, streak, burst
     values = [0, 1, 2, 3, 4, 7, 8, 15, 16, 32, 63,
               MAX // 2, MAX - 2, MAX - 1, MAX]
     for _ in range(1800):
-        yield (rng.randrange(20), *(rng.choice(values) for _ in range(6)))
+        yield (rng.randrange(23), *(rng.choice(values) for _ in range(6)))
 
 
 class NativeMempoolQuotaTests(unittest.TestCase):
@@ -143,7 +150,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         wrong_magic = b"BAD!" + valid[4:]
         wrong_reserved = valid[:6] + b"\x01" + valid[7:]
         bad_opcode = valid[:4] + b"\xff" + valid[5:]
-        next_unimplemented = valid[:4] + b"\x14" + valid[5:]
+        next_unimplemented = valid[:4] + b"\x17" + valid[5:]
         cases = [(valid[:-1], 16, 1), (valid + b"\x00", 16, 1),
                  (valid, 7, 2), (wrong_magic, 16, 3),
                  (wrong_reserved, 16, 3), (bad_opcode, 16, 4),
@@ -163,7 +170,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         # compiler, source, compile or runtime failure is a test failure.
         rng = random.Random(0xC17E)
         rows = []
-        for op in (*range(13), 19):
+        for op in (*range(13), 19, 20, 21, 22):
             for total in range(7):
                 for reserve in range(9):
                     for _ in range(5):
@@ -182,7 +189,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
             (0, 0), (1, 0), (MAX - 1, MAX), (MAX, MAX - 1),
             (MAX, MAX),
         )
-        for op in (*range(13), 19):
+        for op in (*range(13), 19, 20, 21, 22):
             for total, reserve in capacity_edges:
                 for streak, burst in fairness_edges:
                     for normal, critical in (
@@ -317,11 +324,17 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         self.assertEqual(len(rows), len(scenarios))
         native_rows = []
         for (total, reserve, _), row in zip(scenarios, rows):
-            self.assertEqual(len(row), 5, row)
-            normal, critical, streak, burst, original_pop_lane = row
-            state = (18, total, reserve, normal, critical, streak, burst)
-            self.assertEqual(expected(*state), original_pop_lane, state)
-            native_rows.append(state)
+            self.assertEqual(len(row), 8, row)
+            normal, critical, streak, burst, original_pop_lane, after_normal, after_critical, popped = row
+            for op, original in (
+                (18, original_pop_lane),
+                (20, after_normal),
+                (21, after_critical),
+                (22, popped),
+            ):
+                state = (op, total, reserve, normal, critical, streak, burst)
+                self.assertEqual(expected(*state), original, state)
+                native_rows.append(state)
         self.check_cases(native_rows)
 
 

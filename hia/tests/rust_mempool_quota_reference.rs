@@ -110,6 +110,22 @@ fn main() {
                 }
                 gate.critical_served_streak as u64
             },
+            20..=22 => {
+                // Exact finite queue counts after a selected dequeue. The
+                // unchanged full public pop_ready is also compared separately.
+                let served_normal = gate.prefer_normal_on_pop()
+                    || (gate.critical.queue.is_empty() && !gate.normal.queue.is_empty());
+                let popped = if served_normal {
+                    gate.normal.queue.pop().is_some()
+                } else {
+                    gate.critical.queue.pop().is_some()
+                };
+                match mode {
+                    20 => gate.normal.queue.len() as u64,
+                    21 => gate.critical.queue.len() as u64,
+                    _ => u64::from(popped),
+                }
+            },
             _ => panic!("unknown original query"),
         };
         println!("{value}");

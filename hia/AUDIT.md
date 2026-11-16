@@ -1,5 +1,13 @@
 # Whole-tree inventory and HIA migration audit
 
+## New M05 projection candidate and source-bound qualification
+
+The `5524ce8b` six-job native CI completed successfully on its exact source:
+222 tests and 70,998 shared native calls, with mandatory original Rust execution.
+The newer queue post-pop count and dequeue-presence opcodes (20–22) require a
+new exact-head run. The complete Node owner, all 26 original Rust packages, all
+nine OPEN migration gates and PQ HOLD_NO_GO are unchanged.
+
 ## Scope and conclusion
 
 The audited consolidated baseline is `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`.

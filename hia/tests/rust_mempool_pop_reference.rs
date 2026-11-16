@@ -60,8 +60,10 @@ fn main() {
             assert!(popped.is_none());
             0u8
         };
-        println!("{} {} {} {} {}",
+        println!("{} {} {} {} {} {} {} {}",
                  before.normal_queued, before.critical_queued,
-                 streak, burst, lane);
+                 streak, burst, lane,
+                 after.normal_queued, after.critical_queued,
+                 u8::from(popped.is_some()));
     }
 }

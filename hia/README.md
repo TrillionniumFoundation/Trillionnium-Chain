@@ -35,6 +35,13 @@ service, model-use, consensus-security and cross-architecture failures retain
 their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
 
+## Exact-source observation update
+
+The prior `5524ce8b` [HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43791117254)
+completed six jobs successfully (222 native tests, 70,998 shared machine-code
+calls, no skips). The new post-dequeue queue-length projections require their
+own exact-commit qualification and do not establish M05 owner or Node retirement.
+
 ## Independent M05 queue decision candidate
 
 The M05 [lane quota/fairness HIA kernel](src/mempool/lane_quota.hepta) emits

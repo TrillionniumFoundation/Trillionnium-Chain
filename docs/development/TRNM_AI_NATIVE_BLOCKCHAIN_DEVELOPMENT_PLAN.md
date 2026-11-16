@@ -1,3 +1,26 @@
+## HIA M05 post-pop queue projections — 2026-11-16 UTC — exact-source CI pending
+
+The previous exact-source commit `5524ce8b` has completed
+[all six HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43791117254)
+SUCCESS: native-components 222 tests, 70,998 shared machine-code calls, zero
+skips, including the fixed original Rust idle-poll oracle; standalone executor
+5,274 original/native cases retains PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT.
+Typed Delta executed 8,551 native controls and actual original Rust comparison,
+while Settings, response, transport and source/archive jobs also succeeded.
+The earlier `ac0d7b78` 5/6 failure is historical and remains a failure.
+
+This candidate extends M05 HIA LQV1 with opcodes 20, 21, 22 for exact normal
+and critical queue lengths after one selected dequeue, and dequeue presence,
+composed from existing opcode 18. Native outputs are pure proposals, never
+authoritative queue ownership. The unchanged full original Rust
+`LaneAdmissionGate::pop_ready` now supplies actual observed after-counts and
+popped presence; finite/64-bit cases and malformed-frame refusals are extended.
+New emitted-native/original Rust exact-source results are NOT_RUN until the new
+commit's CI finishes. No change to 26 Rust package retention, nine OPEN gates,
+PQ HOLD_NO_GO, unknown Node transaction owner, original four-second service
+limit, main, production or signed/storage namespaces.
+
+---
 ## HIA M05 original idle-poll fairness oracle correction — 2026-11-16 UTC — exact-head CI not yet run
 
 The prior `ac0d7b78` native-components CI is a real FAILURE

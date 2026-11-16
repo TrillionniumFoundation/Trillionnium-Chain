@@ -1,3 +1,25 @@
+## Native post-dequeue queue projections — 2026-11-16 UTC
+
+The HIA LQV1 policy now includes opcodes 20 (normal count after one original-selected
+dequeue), 21 (critical count after one original-selected dequeue), and 22
+(whether a dequeue would occur). These compose the *same* opcode-18 choice rather
+than recomputing a distinct priority order; zero-length lanes remain unchanged and
+no unsigned count wraps on the selected path. The full original Rust
+`LaneAdmissionGate::pop_ready` fixture now reports its actual post-pop counts
+and popped flag, with the independent Rust shell and all 64-bit model edges also
+covered by mandatory native tests. This is a pure proposed projection, **not** a
+queue mutation, durable reservation, Node ownership or a package retirement witness.
+New exact-source CI is NOT_RUN until its execution; all nine gates remain OPEN,
+all 26 Rust packages remain, and PQ remains HOLD_NO_GO.
+
+The exact prior `5524ce8b` [run 43791117254](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43791117254)
+completed six SUCCESS: 222 native-components tests, 70,998 shared native calls,
+zero skipped, and the actual original-Rust adapter; standalone executor ran
+5,274 original/native comparisons with its explicit original safety defect.
+Typed Delta ran 8,551 native controls with actual original Rust PASS, and the
+response, transport, settings and source/archive jobs also succeeded. This is
+qualification of **only that prior source**, not the new opcodes or whole Node.
+
 ## Original idle-poll oracle correction (exact-head requalification required)
 
 The previous `ac0d7b78` six-job HIA run
