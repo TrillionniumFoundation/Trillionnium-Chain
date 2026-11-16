@@ -26,7 +26,7 @@
     "fields": [
       "magic HIAST002 (8)",
       "inherited directory FD (8)",
-      "mode: 1 fresh, 2 existing (8)",
+      "mode: 1 fresh, 2 existing, 3 explicit interrupted-genesis recovery (8)",
       "expected context (32)",
       "explicit observer write FD or UINT64_MAX (8)",
       "explicit gate read FD or UINT64_MAX (8)",
@@ -98,7 +98,8 @@
     "existing": "FORMAT and HEAD must exist and validate. Referenced transactions must be regular files with one hardlink, exact UID/mode/length and a valid complete hash chain. Unreferenced own temporary/next-transaction files are never promoted to committed state.",
     "scope": "Exclusive directory capability and cooperating owner lock; hostile same-UID mutation, filesystem rollback, network filesystem semantics, and privileged mount replacement are not qualified.",
     "required_data_file_open": "FORMAT, HEAD, and referenced transaction files use O_RDONLY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC (657408). fstat type/UID/mode/link checks precede any data read; transaction length bounds precede header reading, and exact header-derived size is rechecked afterward.",
-    "unreferenced_remnants": "Allowed-name objects not referenced by HEAD are not type-qualified or read during recovery and never establish committed state. A subsequent commit may remove only its exact unreferenced successor/temp names."
+    "unreferenced_remnants": "Allowed-name objects not referenced by HEAD are not type-qualified or read during recovery and never establish committed state. A subsequent commit may remove only its exact unreferenced successor/temp names.",
+    "explicit_genesis_recovery": "Mode 3 admits owner.lock, exactly one of HEAD or HEAD.tmp, and optional FORMAT only. No txn objects. Complete selected genesis must equal independent expected context-bound genesis. FORMAT must be absent or an exact 0..64 byte prefix of the expected record, with correct regular-file UID/mode/link ownership. Recovery completes only the missing suffix and publishes HEAD with no replacement. Lock-only, ambiguous, malformed and transaction namespaces refuse."
   },
   "format_record": {
     "bytes": 64,
@@ -208,7 +209,15 @@
       "14": "new HEAD file fsync returned success",
       "15": "HEAD rename returned success; directory not yet synced",
       "16": "HEAD directory fsync returned success",
-      "20": "owner initialization/recovery complete"
+      "20": "owner initialization/recovery complete",
+      "30": "selected exact context-bound genesis fsync succeeded; no format mutation yet",
+      "31": "complete FORMAT suffix written",
+      "32": "FORMAT fsync succeeded",
+      "33": "genesis HEAD rename succeeded; directory not yet synced",
+      "34": "before exclusive FORMAT create attempt; uncertainty set",
+      "35": "before FORMAT suffix pwrite; uncertainty set",
+      "36": "new FORMAT file created; before metadata validation",
+      "37": "publication directory fsync succeeded; before native complete HEAD/FORMAT readback and opened receipt"
     },
     "authority": "An explicit diagnostic pause capability, not a request deadline, peer permission, or physical power-loss simulator."
   },
@@ -252,5 +261,40 @@
     "old_version_1": "refused without import or rewrite",
     "old_sqlite": "refused",
     "fresh_namespace_required": true
+  },
+  "initialization_recovery": {
+    "mode": 3,
+    "disk_schema_change": false,
+    "runtime_host_proxy": false,
+    "private_fields": {
+      "140232": "initial namespace bit mask: HEAD=1, HEAD.tmp=2, FORMAT=4",
+      "140240": "validated FORMAT prefix byte count"
+    },
+    "validation_before_mutation": [
+      "exclusive original owner lock and directory ownership",
+      "strict initialization-only name inventory",
+      "unique complete 128-byte context-bound genesis identity",
+      "existing FORMAT regular-file ownership and exact record prefix"
+    ],
+    "publication": [
+      "synchronize selected genesis file",
+      "exclusively create FORMAT if absent, or preserve existing inode and prefix",
+      "pwrite only absent FORMAT suffix with exact positive-partial cursor",
+      "synchronize FORMAT",
+      "rename selected HEAD.tmp to HEAD with RENAME_NOREPLACE when needed",
+      "synchronize directory",
+      "reopen and validate full published HEAD and FORMAT metadata and exact bytes",
+      "publish opened receipt and enter the unchanged ordinary request loop"
+    ],
+    "uncertainty": "From first possible FORMAT create/write or HEAD publication until successful directory fsync plus final published-record readback, failure is code 71; repeat mode 3 and compare actual opened identity. Missing opened receipt always requires reopening.",
+    "not_admitted": [
+      "lock-only namespace",
+      "both HEAD and HEAD.tmp",
+      "any transaction object",
+      "arbitrary corrupt FORMAT repair",
+      "SQLite import",
+      "wrong context or non-genesis HEAD"
+    ],
+    "qualification_entry": "python -B -m hia.tools.qualify_storage_recovery --output /absolute/fresh/output"
   }
 }

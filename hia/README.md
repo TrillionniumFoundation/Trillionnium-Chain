@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **37
-kernel units and seven native foundations**, accounting for all **52 HIA source
+one complete HIA-native implementation. The current candidate contains **38
+kernel units and seven native foundations**, accounting for all **53 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -47,6 +47,25 @@ fields from one caller-supplied input; real Rust snapshot comparison is required
 by native CI. This does not capture or own the physical queues.
 
 One-call LQV1 opcode 23 now returns a five-field post-pop projection from one input invocation; see [the M05 contract](MEMPOOL.md). It has no persistent or queue-mutation authority and requires its own exact-head CI qualification.
+
+## Complete M02 arithmetic and physical initialization recovery
+
+The [M02 Work and time-policy module](src/consensus/README.md) now implements the
+complete original pure `consensus.rs` closure: 512-bit checked arithmetic, work
+credit, target adjustment, parent-window selection and median-time checks.
+The native source passed 6,308 emitted-machine calls. A real independent Rust
+compiler executed the unchanged original module on the same 5,344 semantic
+inputs, with every result matching the mathematical oracle also checked by HIA.
+The mandatory hosted suite repeats a direct original/native comparison.
+
+The [native StoreOwner](storage/README.md) adds explicit context-bound genesis
+initialization recovery. It validates the exact genesis and any existing FORMAT
+prefix, completes durable initialization, and reads the physical records back
+before acknowledging success. The 197 physical controls include genuine process
+interruptions, partial writes, cold reopen and concurrent object insertion. The
+previously reproduced changed-prefix false acknowledgement is retained as a
+regression and now refuses with no opened receipt. This closes the stated
+initialization unit; full typed Node publication remains a separate integration.
 
 ## Independent M05 queue decision candidate
 

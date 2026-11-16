@@ -36,6 +36,7 @@ class Build:
         self.captured = dict(inputs)
         names = ("storage/README.md", "storage/abi.json", "storage/build.py",
                  "storage/linux_adapter_emitter.hepta", "tools/qualify_storage.py",
+                 "tools/qualify_storage_recovery.py",
                  "platform/build.py", "tools/toolchain.py", "tests/native_support.py",
                  "toolchain.lock.json", "qualification/compiler-binding.json",
                  "qualification/compiler-cold.json", "qualification/compiler-cold-full.json.xz")

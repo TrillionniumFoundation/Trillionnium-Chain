@@ -68,6 +68,12 @@ def sources():
               ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs",
               ROOT / "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
               ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml"]
+    # The complete original M02 module is actually compiled by the independent
+    # reference; bind its bytes and both pre-existing integer vector corpora.
+    paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+              ROOT / "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json",
+              ROOT / "formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json",
+              ROOT / "hia/src/consensus/README.md"]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 

@@ -246,6 +246,8 @@ jobs:
         run: python3 -B hia/tools/qualify_platform.py --reactor --output "$RUNNER_TEMP/hia-reactor"
       - name: Execute native transaction owner and crash recovery controls
         run: python3 -B hia/tools/qualify_storage.py --output "$RUNNER_TEMP/hia-storage"
+      - name: Execute native interrupted initialization recovery controls
+        run: python3 -B -m hia.tools.qualify_storage_recovery --output "$RUNNER_TEMP/hia-native-storage-recovery"
       - name: Verify candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -260,6 +262,7 @@ jobs:
             ${{ runner.temp }}/hia-platform/
             ${{ runner.temp }}/hia-reactor/
             ${{ runner.temp }}/hia-storage/
+            ${{ runner.temp }}/hia-native-storage-recovery/
           if-no-files-found: error
           retention-days: 30
   native-executor:

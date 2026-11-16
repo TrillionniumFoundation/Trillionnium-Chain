@@ -1,5 +1,18 @@
 # Whole-tree inventory and HIA migration audit
 
+## Observed qualification and bootstrap regression correction — 2026-11-16 UTC
+
+Both exact-source workflows for `85b0b85c` completed all eight jobs: push
+`43817777731` and PR `43817996123`. Each ran 224 component tests, zero skips
+and 76,161 native calls. The newer source still requires its own qualification.
+
+The concurrent `2f6556e7` bootstrap hardening is retained. Executing its
+unmodified regression test exposed seven successful-control failures because
+two expected strings used literal backslash-n characters while the actual
+workflow correctly wrote newline-separated environment values. Correcting
+only these expectations passed four tests and 28 optimized-mode controls.
+The failed observation is recorded here; no rejection guard was weakened.
+
 ## Fail-closed exact-source compiler bootstrap controls — 2026-11-16 UTC
 
 Seven HIA native CI compiler-bootstrap blocks previously used optimizable
@@ -11,6 +24,25 @@ is wired into the source/archive job. This changes neither native HIA machine
 code nor any original Rust code. Hosted exact-source outcomes are required;
 all package retirement, Node, PQ and nine integration gates remain open.
 
+
+## M02 closure and StoreOwner initialization recovery — 2026-11-16 UTC
+
+The new M02 HIA module implements the whole pure original consensus arithmetic
+and time-policy closure, including all 512 Work bits, checked target adjustment,
+parent-window error order and median-time admission. Actual native testing passed
+6,308 calls. A separately compiled unchanged Rust original passed the same 5,344
+semantic inputs against the independent oracle; the new hosted direct comparison
+remains mandatory. Both source-bound observations are retained in
+[the development record](qualification/consensus-work-development.json).
+
+StoreOwner mode 3 now recovers only a unique verified context-bound genesis.
+Its 197 physical controls passed, including all valid FORMAT prefixes, genuine
+SIGKILL cuts, short writes, unknown outcomes, lock exclusion and cold readback.
+An additional adversarial test exposed a prefix replacement between validation
+and write; the native implementation now reopens and checks complete HEAD and
+FORMAT records before an opened receipt. The initial bad observation is preserved
+and the three final readback adversaries are refusals. This is a bounded physical
+initialization closure, with no accepted whole-package retirement yet.
 
 ## Independent qualification jobs — 2026-11-16 UTC
 
@@ -63,8 +95,8 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Thirty-seven kernel units and seven native
-foundations account for all 52 candidate HIA source files. Native connected-stream
+**The full replacement is incomplete.** Thirty-eight kernel units and seven native
+foundations account for all 53 candidate HIA source files. Native connected-stream
 I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The

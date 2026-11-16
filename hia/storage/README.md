@@ -60,10 +60,11 @@ or consuming queued pipe data. It does not impose a hard deadline on ordinary
 file I/O. The process holds `owner.lock` exclusively until close or exit. It
 rejects old SQLite filenames, unrelated names, symlinks in required file
 positions, wrong contexts, and a nonempty fresh namespace. Allowed-name,
-unreferenced remnants are ignored during recovery regardless of their type;
-they are never read or promoted into committed state. A crashed incomplete fresh
-initialization with no valid FORMAT is rejected; it is not silently initialized
-over existing material.
+unreferenced remnants are ignored during ordinary recovery regardless of their
+type; they are never read or promoted into committed state. Modes 1 (fresh) and
+2 (existing) preserve their original refusal of an incomplete initialization.
+Explicit mode 3 can complete a narrowly validated interrupted genesis as
+described below.
 
 After an opened receipt, requests compare both sequence and digest with the live
 owner HEAD. Commit streams fixed 32 KiB chunks, with checked cumulative positions.
@@ -92,10 +93,74 @@ and disk use still grow with history. Checkpointing, reference-aware compaction,
 typed State/Node integration, and the original service budgets remain open.
 
 Original `Node::open_selected_mode` uses its context-bound initialization marker
-to recover interrupted creation. This owner currently refuses a nonempty partial
-initialization when FORMAT has not become valid. The actual initialization-cut
-controls preserve that refusal and verify that it does not overwrite old bytes;
-they do not claim parity with the original automatic initialization recovery.
+to recover interrupted creation. Native mode 3 now supplies an explicit recovery
+operation for this StoreOwner's own genesis namespace. Its authority and format
+remain separate from the original SQLite marker and branch transaction owner.
+
+## Explicit interrupted-genesis recovery
+
+Bootstrap mode 3 holds the same private directory capability and exclusive owner
+lock. It admits only `owner.lock`, exactly one of `HEAD` or `HEAD.tmp`, and an
+optional `FORMAT`. Every transaction filename, unrelated entry, or ambiguous
+pair of HEAD objects is refused before writing. A lock-only directory has no
+context-bound genesis evidence and is refused by mode 3; the existing fresh-mode
+retry remains available for that original state.
+
+The native policy independently recomputes the genesis record from the supplied
+context and compares all 128 bytes of the selected HEAD object. The object must
+be a regular file with the original exact UID, mode, link count and size. A
+nonzero sequence, payload length, predecessor, reserved field, wrong context or
+digest cannot authorize repair. This operation never adopts an arbitrary
+transaction or performs a SQLite import.
+
+`FORMAT` may be absent or contain any exact prefix of its 64-byte expected
+record, including zero or all 64 bytes. Existing format bytes, file identity,
+permissions and length are validated before the first mutation. The owner uses
+positioned writes to complete only the missing suffix; it does not truncate or
+overwrite the validated prefix. Malformed prefixes and special files are
+refused unchanged. A new format file is exclusively created with no symlink
+following. The selected genesis file and completed format are synchronized;
+`HEAD.tmp`, when selected, is then renamed to `HEAD` without replacement, and
+the directory is synchronized. The native owner then reopens and checks the
+exact published HEAD and complete FORMAT, including their metadata and every
+record byte, before the opened receipt. The resulting disk
+record and hash domains are the exact existing version-2 bytes.
+
+The first potential format creation/write and the HEAD publication introduce
+an initialization uncertainty interval. I/O failure in that interval terminates
+with code 71; the interval remains open through the final record readback. A
+caller must repeat mode 3 with the same context to inspect and
+complete the actual prefix, then compare the opened identity. Missing receipts
+always require reopening, including when response I/O fails after successful
+directory synchronization. Once a transaction has been committed, mode 3 is
+refused and ordinary mode 2 performs full retained-chain recovery.
+
+Run the independent physical qualification with the same locked compiler:
+
+```sh
+python -B -m hia.tools.qualify_storage_recovery --output /absolute/fresh/output
+```
+
+The qualification creates both partial-genesis seeds by actually killing the
+native initializer, then covers absent FORMAT and every 0..64-byte prefix. It
+checks exact cold readback and a real post-recovery transaction, context and
+record corruption, ambiguous names, symlinks/FIFOs/hardlinks/mode errors, writer
+contention, nine recovery SIGKILL cuts, and nine actual gate-EOF failures.
+A real 16-byte file-size limit forces a partial `pwrite` and its next-write
+failure; the resulting exact prefix must then recover successfully. Every
+refusal preceding a mutation is checked against the complete object snapshot.
+Controlled file-object interleavings verify exclusive creation and no-replace
+publication. A replaced FORMAT prefix after its initial validation, or a changed
+published HEAD/FORMAT before final readback, must produce no opened receipt.
+The driver refuses optimized Python so these physical oracles cannot disappear.
+
+Native observer tags 30..37 identify the selected genesis synchronization,
+completed format suffix, synchronized format, HEAD rename, pre-create command,
+pre-write command, created-format boundary and pre-readback publication boundary.
+They remain an explicit diagnostic
+capability. These process and filesystem controls do not simulate power loss,
+qualify hostile same-UID mutation, or replace typed Node/reorg/replay/outbox
+integration and the original service budget.
 
 ## Atomic publication and recovery
 

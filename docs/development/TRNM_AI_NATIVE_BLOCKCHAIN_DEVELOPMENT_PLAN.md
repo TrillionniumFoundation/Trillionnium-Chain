@@ -1,3 +1,40 @@
+## HIA complete M02 arithmetic and native genesis recovery — 2026-11-16 UTC
+
+The candidate now includes the entire pure original consensus.rs closure in
+HIA: checked 512-bit Work arithmetic, target conversion/work credit, retarget,
+parent-window selection and median-time policy. Local emitted-machine tests
+passed 6,308 calls; a separate real Rust 1.95 compiler built the unchanged
+original module and passed the same 5,344 semantic cases. Source/adapter/input/
+output hashes and artifacts are retained. The mandatory hosted test still runs
+its direct original/native comparison on the new exact source.
+
+Native StoreOwner mode 3 validates one unique context-bound genesis and the
+exact existing FORMAT prefix before completing durable initialization. It then
+physically reopens and reads complete HEAD/FORMAT bytes before an opened
+receipt. The final same-source run passed all 197 recovery controls, all 52
+original physical storage controls (including 279,445,512-byte State and 4,105
+transactions), and eight native/CLI tests. Local syscall tracing is UNKNOWN
+because ptrace returned EPERM; hosted tracing is still required. A reproduced
+prefix-replacement false acknowledgement and one test-controller gate timeout
+remain recorded, alongside the corrected native readback refusals.
+
+The exact earlier CI-split commit 85b0b85c completed both push run
+43817777731 and PR run 43817996123 with all eight jobs successful. Each ran
+224 component tests, zero skips and 76,161 native calls. Concurrent compiler-
+bootstrap hardening from 2f6556e7 is retained. Running its unmodified new test
+exposed seven successful-control failures: the expected environment text used
+literal backslash-n characters instead of actual newlines. Correcting the two
+expected literals passed all four tests and 28 controls; the workflow's actual
+rejection and accepted-output logic are unchanged. This observation does not
+qualify the newly combined source until its hosted execution completes.
+
+Inventory is 38 kernels, seven foundations and 53 HIA source files. Every
+original Rust package remains accounted for. The nine full migration gates,
+including typed Node/reorg/replay/outbox, service pressure, PQ and retirement,
+remain OPEN. New-source eight-job qualification is pending until its actual
+execution. Active M05 queue-owner and fresh Host-checkpoint work is separate
+from this frozen increment. The complete prior plan follows unchanged.
+
 ## HIA bootstrap and original Rust oracle fail-closed CI — 2026-11-16 UTC
 
 The exact-source HIA migration workflow now uses explicit, optimization-independent

@@ -396,6 +396,16 @@
         "hia/tests/test_mempool_quota.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "consensus/work",
+      "source": "hia/src/consensus/work.hepta",
+      "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_consensus_work.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -644,7 +654,8 @@
         "codec/json-value-encode",
         "transport/authenticated-response",
         "transport/signed-response",
-        "node/settings-development"
+        "node/settings-development",
+        "consensus/work"
       ],
       "retirement_accepted": false
     },
@@ -745,10 +756,12 @@
         "hia/storage/linux_adapter_emitter.hepta",
         "hia/storage/sha256_framing.hepta"
       ],
-      "scope": "Fresh-v2 streaming immutable transactions, actual directory FD/lock/CAS/fsync/reopen, full 279445512-byte State extent and 4105 commits; checked off_t payload and u64 sequence limits; typed Node and original service budget remain OPEN",
+      "scope": "Fresh-v2 streaming immutable transactions with directory FD/lock/CAS/fsync/reopen, complete bounded genesis initialization recovery and post-publication readback; full 279445512-byte State extent and 4105 commits; typed Node integration and original service budget remain OPEN",
       "tests": [
         "hia/tools/qualify_storage.py",
-        "hia/tests/test_storage_native.py"
+        "hia/tests/test_storage_native.py",
+        "hia/tools/qualify_storage_recovery.py",
+        "hia/tests/test_storage_recovery.py"
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
