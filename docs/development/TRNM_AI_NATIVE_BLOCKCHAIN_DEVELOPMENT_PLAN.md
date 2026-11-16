@@ -1,3 +1,22 @@
+## HIA StoreOwner optimized-interpreter qualification refusal — 2026-11-16 UTC
+
+The external physical qualification driver relied on Python `assert` checks
+for independent disk-chain, process-result, crash-cut and readback oracles.
+Under `python -O` / `-OO` or `PYTHONOPTIMIZE`, those assertions disappear.
+The driver now refuses those execution modes before importing the native
+builder or starting an owner. Its independent CLI regression requires three
+real optimized interpreter refusals. The normal byte-for-byte native HIA
+storage implementation, original service budgets and fixed compiler are
+unchanged.
+
+Local isolated observations: changed Python files compile; `-O`, `-OO`,
+and `PYTHONOPTIMIZE=2` actually fail closed with the intended diagnostic.
+Exact new-source hosted CI, full native storage and PQ source negative tests
+remain pending until executed on the resulting Git commit. This is qualifier
+integrity repair, not a new Node transaction owner or retirement witness.
+All 26 original Rust packages and nine migration gates remain OPEN, and PQ
+remains HOLD_NO_GO. No protected or deployed state is changed.
+
 ## HIA M05 one-call QoS snapshot proposal — 2026-11-16 UTC — exact-source qualification pending
 
 The HIA native LQV1 implementation now includes opcode 24, which returns
