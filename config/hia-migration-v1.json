@@ -892,11 +892,13 @@
         "hia/platform/host_resource/resource_policy.hepta",
         "hia/platform/host_resource/fixture_entry.hepta"
       ],
-      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. Production positive, Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
+      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. A same-job production controller reuses only the preceding exact-source Host lease and audits all actual sample syscalls. Fresh production execution, Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
       "tests": [
         "hia/platform/host_resource/qualify.py",
         "hia/platform/host_resource/rust_oracle.py",
-        "hia/platform/host_resource/test_integrity.py"
+        "hia/platform/host_resource/test_integrity.py",
+        "hia/platform/host_resource/qualify_production.py",
+        "hia/platform/host_resource/test_production.py"
       ],
       "node_integration_complete": false,
       "retirement_accepted": false

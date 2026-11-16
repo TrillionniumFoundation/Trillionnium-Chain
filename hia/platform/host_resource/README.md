@@ -60,3 +60,58 @@ source identities. Exact committed-source CI separately requires real tracing
 and the same native corpus in actual original Rust. Fixed-parent production
 resource sampling, the complete Node and original service budget remain open.
 No Rust source or original service gate is retired by this component.
+
+## Same-job production qualification
+
+The production controller reuses only the sealed fixed parent created by this
+same hosted job's successful exact-source Host qualification. It never creates
+or repairs a parent and never substitutes a fixture, supplied counter or cached
+Host verdict. Before acquiring its controller lock, it validates the complete
+Host build and actual production report against the current source, executable,
+run and attempt. The previous before/after records must have the same complete
+eight-key binding; the original creator must equal the previous current service.
+It compares the original lease and immutable parent identity again. Only the
+newly owned current service may differ during fresh resource execution.
+
+The controller creates only its uniquely named resource service inside that
+already qualified parent. Native acquisition, one sample and two checked deltas
+must emit four receipts with full-check counts 1, 3, 5 and 7. The per-sample
+counter_reads field is 3 for every successful sample; it is not a cumulative
+3/6/9 counter. An independent trace must observe the actual CPU, memory and PID
+files through each captured parent FD, regular-file checks, exact bounded reads,
+real EOF and close before the next complete Host check. All remaining Host
+syscalls are audited with the existing complete Host trace verifier. Live TID,
+membership and executable observations bind the actual process. The image owns
+every read and decision; the controller only verifies its observations.
+
+The source set now contains 52 exact inputs, including the complete Host build
+closure, both production controllers and their tests, the three CI execution
+helpers and the reviewed systemd unit. The source set is checked before and
+after execution and in the finally path, including when native execution or
+cleanup fails. The old 30-input development/CI records retain their identities.
+Old valid reports cannot qualify changed current sources or a new kernel lease.
+
+The native-host CI job runs all 18 production-controller refusal groups before
+any parent provisioning. After actual Host production success it builds the
+exact resource image and invokes:
+
+```sh
+python3 -B -m hia.platform.host_resource.qualify_production \\
+  --build "$RUNNER_TEMP/hia-native-resource-production/build" \\
+  --lease-receipts "$RUNNER_TEMP/hia-native-host-production" \\
+  --output "$RUNNER_TEMP/hia-native-host-production/resource"
+```
+
+TRNM_CI_RECEIPT_DIR is the same Host production receipt root. Failure observations
+and both builds are retained by always-run source checks and explicit artifact
+collection. This extends the existing 20-minute Host job without weakening any
+original limit or adding a fixture fallback.
+
+The [production development record](../../qualification/host-resource-production-development.json)
+preserves the first real fixture-trace failure, its corrected actual execution,
+the final pre-lock lease guard and the complete controller sources. That fixture
+is not a production parent. The [preceding committed Host successes](../../qualification/host-production-ci-success.json)
+belong to exact head 34ecf1b; both its push and PR workflows completed all 14 HIA
+jobs. Fresh fixed-parent resource production on this new source remains NOT_RUN
+until its own exact-source hosted job completes. No full Node, paid-thread CPU,
+original service budget or package retirement is accepted by this controller.

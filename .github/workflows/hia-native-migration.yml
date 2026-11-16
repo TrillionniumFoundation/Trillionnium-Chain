@@ -319,6 +319,10 @@ jobs:
               out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
               out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
+      - name: Refuse resource production controller and trace boundary violations
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest hia.platform.host_resource.test_production -v 2>&1 | tee "$RUNNER_TEMP/hia-observations/resource-production-controller.log"
       - name: Execute fresh native Host checkpoints with independent syscall tracing
         run: python3 -B -m hia.platform.host_checkpoint.qualify --require-trace --output "$RUNNER_TEMP/hia-native-host-checkpoint"
       - name: Compare native Host sequences with actual retained original Rust
@@ -327,6 +331,12 @@ jobs:
         env:
           TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/hia-native-host-production
         run: python3 -B -m hia.platform.host_checkpoint.qualify_production --build "$RUNNER_TEMP/hia-native-host-checkpoint/build" --output "$RUNNER_TEMP/hia-native-host-production"
+      - name: Build the exact native resource image and complete production source set
+        run: python3 -B -m hia.platform.host_resource.build --output "$RUNNER_TEMP/hia-native-resource-production"
+      - name: Sample actual resources through this job's freshly validated sealed parent
+        env:
+          TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/hia-native-host-production
+        run: python3 -B -m hia.platform.host_resource.qualify_production --build "$RUNNER_TEMP/hia-native-resource-production/build" --lease-receipts "$RUNNER_TEMP/hia-native-host-production" --output "$RUNNER_TEMP/hia-native-host-production/resource"
       - name: Verify candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -370,6 +380,7 @@ jobs:
             ${{ runner.temp }}/hia-native-host-original/original/retained-original-host-tests/
             ${{ runner.temp }}/hia-native-host-original/original/actual-original-private-corpus/
             ${{ runner.temp }}/hia-native-host-production/
+            ${{ runner.temp }}/hia-native-resource-production/
           if-no-files-found: error
           retention-days: 30
   native-executor:
