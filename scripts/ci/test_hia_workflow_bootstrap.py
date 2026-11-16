@@ -48,8 +48,8 @@ class BootstrapGuards(unittest.TestCase):
             if succeed:
                 self.assertEqual(
                     output.read_text(encoding="utf-8"),
-                    "HIA_NATIVE_COMPILER=/tmp/test-native-compiler\\n"
-                    + f"HIA_NATIVE_COMPILER_SHA256={COMPILER_SHA256}\\n",
+                    "HIA_NATIVE_COMPILER=/tmp/test-native-compiler\n"
+                    + f"HIA_NATIVE_COMPILER_SHA256={COMPILER_SHA256}\n",
                 )
             else:
                 self.assertFalse(
