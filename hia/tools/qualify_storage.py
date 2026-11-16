@@ -23,6 +23,14 @@ import traceback
 # Direct script execution must not depend on an ambient PYTHONPATH.
 import sys
 
+# The physical acceptance driver uses assertions for original-byte, crash-cut
+# and readback oracles. Python -O/-OO/PYTHONOPTIMIZE must never erase them.
+if not __debug__:
+    raise RuntimeError(
+        "optimized Python is forbidden for native HIA storage qualification: "
+        "assert-based oracle checks must execute"
+    )
+
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
