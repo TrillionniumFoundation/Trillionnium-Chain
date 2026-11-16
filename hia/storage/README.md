@@ -129,6 +129,14 @@ and network filesystem guarantees are outside this component's qualification.
 
 ## Qualification scope
 
+The external physical qualification driver uses Python assertions for independent
+disk, crash-cut and process-result oracles. Running it with `python -O`,
+`python -OO` or `PYTHONOPTIMIZE` would remove those assertions; its startup
+now explicitly refuses all optimized interpreter modes before issuing native
+operations. The non-optimized qualifier and the HIA runtime ABI are unchanged.
+This is a fail-closed harness admission control, not new storage/recovery coverage.
+
+
 The optional gate is activated only by the explicit bootstrap capability. At
 documented physical stages the native policy reports a tag and waits for one
 continuation byte. The qualifier can SIGKILL the real process at that point,
