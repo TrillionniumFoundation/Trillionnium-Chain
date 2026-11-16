@@ -1,40 +1,40 @@
 {
   "actual_original": {
     "comparison": {
-      "bytes": 780217,
-      "sha256": "7c01aefb9c522ba2cd76fe456f90d076fea7eb50d4c932514fbcb1046c0ff87d"
+      "bytes": 780232,
+      "sha256": "227b913d503107cd63986ccf7d4b6c8bdc656167e1535dd7b4ac3ceb9fd1fcd5"
     },
     "histories": 65,
     "independent_binary": {
-      "bytes": 612180384,
-      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/thread-cpu-hosted-whitespace-qualification-v2/original-run/original/original-test-binary",
-      "sha256": "f9fb0689b0b478e2ea8f63761f43a465ac46ec9fbb05c7037e1d33b9ab974253"
+      "bytes": 612182000,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/thread-cpu-hosted-terminal-qualification-v1/original-run/original/original-test-binary",
+      "sha256": "4e4cee93eb14dc8f2e3edf394d69ab1ae7c27eb210a992cfa78ea76b42c655eb"
     },
     "locked_clock_dependency_after": "MATCH",
     "mandatory_linux_positive": true,
     "operations": 724,
     "original_calls": 518,
     "report": {
-      "bytes": 1076870,
-      "sha256": "bb35e8c0e86f6c4b35751abe70a4b36c7fde8731a77a18dda668e0e43fb10bbc"
+      "bytes": 1076579,
+      "sha256": "85e8c3cd97a1433b827d57d98edba9eb135115be4a5cf67e815bcc626072b852"
     },
     "retained_test_count": 36,
     "retained_test_summary": [
-      "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 1541 filtered out; finished in 0.23s"
+      "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 1541 filtered out; finished in 0.16s"
     ],
-    "seconds": 274.2510405079811,
+    "seconds": 237.52858459198615,
     "source_after": "MATCH",
     "status": "PASS"
   },
-  "base_commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+  "base_commit": "535ce9865d6764de8184aab04204459f6f05001b",
   "complete_corpus": {
     "bytes": 68539,
     "sha256": "42c9e9b8d04505fb64d1d3852d092450d181df036523761083e4ba946832fa52"
   },
   "current_source_matches_native_and_original": true,
   "execution": {
-    "bytes": 3086,
-    "sha256": "6d45e0784469a9db779de4127576407bdcbd7c96306b0c0fbf988f68adf7a841"
+    "bytes": 1952,
+    "sha256": "c9028fcc9dee84da303b59b56f8fda14e28efa3c63ea01a67014ad5f11b1b786"
   },
   "hosted_predecessor_failures": [
     {
@@ -98,13 +98,73 @@
       },
       "run": 43884851140,
       "status": "FAIL"
+    },
+    {
+      "actual_terminal_lines": [
+        "2625  exit_group(0)                     = ?"
+      ],
+      "archive_zip": {
+        "bytes": 2407779,
+        "sha256": "c584b4f4f27868d5c9fd6369c1dd07dcb099940b1c233d7925dbf4636981f5a6"
+      },
+      "artifact": 14237529740,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 56528,
+        "sha256": "754ed34cf3b918d30dc3b2bd5b7bff1b86e8b4635fbcafd9ea24187d2c1bf500"
+      },
+      "head": "535ce9865d6764de8184aab04204459f6f05001b",
+      "job": 133396542521,
+      "operations_observed": 724,
+      "original_execution": "NOT_RUN",
+      "physical_controls_completed": 74,
+      "review": {
+        "bytes": 9044,
+        "sha256": "91f04897a05cf3f6483e6f90a848f2cd3edc19edbf001b48da60bc6c62f96fd5"
+      },
+      "run": 43895143250,
+      "semantic_histories_observed": 65,
+      "status": "FAIL",
+      "trace_negative_controls_completed": 0
+    },
+    {
+      "actual_terminal_lines": [
+        "2633  exit_group(0)                     = ?"
+      ],
+      "archive_zip": {
+        "bytes": 2407726,
+        "sha256": "88ae9528a41bf013f9f19c30f94cfdd4004fd58c8bf0f01c6c43b0df51f3b9a1"
+      },
+      "artifact": 14238872248,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 50013,
+        "sha256": "376d68415924f1065c6f1dc8ffa714a21da1cf01e48c1bbcf890f08cbcae2f15"
+      },
+      "head": "535ce9865d6764de8184aab04204459f6f05001b",
+      "job": 133399336863,
+      "operations_observed": 724,
+      "original_execution": "NOT_RUN",
+      "physical_controls_completed": 74,
+      "review": {
+        "bytes": 9044,
+        "sha256": "78a54f86c46226a62552edf15fb8c0490bb13c5ad4739f9e2c2977e7dff78432"
+      },
+      "run": 43895921099,
+      "semantic_histories_observed": 65,
+      "status": "FAIL",
+      "trace_negative_controls_completed": 0
     }
   ],
+  "independent_verification": {
+    "bytes": 993,
+    "sha256": "169630fd356d2b380c53971693646b6362b4f96b7e360abccb1cfb7be254d1df"
+  },
   "native": {
     "actual_signal_pairing_negative_controls": 4,
     "build": {
-      "bytes": 15779,
-      "sha256": "e9a96b4bde32dc76a0c7557402d90abf295b65afe8471d9a1c64b4381d5d9d8d"
+      "bytes": 15769,
+      "sha256": "5fec752bdfb597e3bc9451ac7f4e036cbb270d3517ad3c53fd9a79cc391cc439"
     },
     "fixture_executable": {
       "adapter_prefix_bytes": 2076,
@@ -122,12 +182,12 @@
     },
     "histories": 65,
     "native_comparison": {
-      "bytes": 1995799,
-      "sha256": "768d881367c43ffd815b37740f2797bae6b744ead4be87082864fa78ac4836bb"
+      "bytes": 1996083,
+      "sha256": "78b10af640e4440d27c0ffe8f04c387e8647e2cecd6104931a89004b03c2808e"
     },
     "native_report": {
-      "bytes": 1069111,
-      "sha256": "a8fe006a739699734379e61858aa69151fdef4c8ec6a799b24e2b76a0b0ffa3c"
+      "bytes": 1069265,
+      "sha256": "2e78491c20f054cc38f9585a42917a5ea021fcf313b12d4ea31fb48224c713e4"
     },
     "operations": 724,
     "ordinary_trace_refusals": 12,
@@ -146,49 +206,77 @@
       "stack_flags": "RW",
       "type": "ET_EXEC"
     },
-    "seconds": 7.735951694980031,
+    "seconds": 17.425923250004416,
     "status": "PASS"
   },
   "native_adapter_changed": false,
   "new_exact_commit_ci": "NOT_RUN",
   "paid_cpu_account_qualified": false,
   "preserved_raw_archive": {
-    "bytes": 7793524,
+    "bytes": 5830600,
     "manifest": {
-      "bytes": 296439,
+      "bytes": 319399,
       "member": "member-manifest.json",
       "scope": "all remaining archive members",
-      "sha256": "dd14366f28773f0d54a14d5787addd35abe0855b9fb2ff8150d8214976ca54c6"
+      "sha256": "d47acd7acd51fd02bb9f31d4c50bda87402cc8ef73e8e8f71bca888eeb2ef4e6"
     },
-    "members": 1488,
+    "members": 1479,
     "path": "hia/qualification/thread-cpu-development.tar.xz",
-    "regular_bytes": 20642315,
-    "regular_files": 1217,
-    "sha256": "ba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94"
+    "regular_bytes": 18980186,
+    "regular_files": 1212,
+    "sha256": "82faf2bb89d4883751537e077a3a095df08b8e26f08807af71e1be48aa8f4e73"
   },
   "prior_published_record": {
     "actual_results_not_relabelled": true,
-    "bytes": 41445,
-    "commit": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+    "bytes": 13300,
+    "commit": "535ce9865d6764de8184aab04204459f6f05001b",
+    "complete_previous_archive": {
+      "redundant_nested_copy_removed": true,
+      "retained_in_git": {
+        "bytes": 7793524,
+        "commit": "535ce9865d6764de8184aab04204459f6f05001b",
+        "git_blob": "ea1b7270262f00c458b92890627e21e5678cede8",
+        "path": "hia/qualification/thread-cpu-development.tar.xz",
+        "sha256": "ba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94"
+      }
+    },
     "preserved_as": "prior/previous-development.json",
-    "previous_source_set_sha256": "5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead",
+    "previous_source_set_sha256": "e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b",
     "record_path": "hia/qualification/thread-cpu-development.json",
-    "sha256": "f645b155bcced6338580e5cc0a3f9db3a7df0195ef42a0d45d0efda50e5e3c85"
+    "sha256": "45a005badd8581473f974a5c8501d70d14cb509793e1c7de1d8eb849f8f8c0ab"
+  },
+  "publication_packaging": {
+    "branch_or_tree_changed_by_refusal": false,
+    "first_expanded_archive": {
+      "bytes": 13630612,
+      "sha256": "697ce25ca049ed60e3372e385dd639bd104b57618ac26ae5f9b624000ce1d049"
+    },
+    "first_upload": "REFUSED_BY_CONNECTOR_16_MIB_REQUEST_LIMIT",
+    "remediation": "Remove only exact duplicate of already published predecessor archive; preserve its immutable Git identity and every new execution/failure member"
   },
   "qualifier_fix": {
     "changed_source_inputs": [
       "hia/platform/thread_cpu/qualify.py",
       "hia/platform/thread_cpu/test_integrity.py"
     ],
-    "cross_line_or_other_tid_not_accepted": true,
-    "full_signal_pairing_audit_unchanged": true,
-    "horizontal_whitespace_only": true,
-    "integrity_log": {
-      "bytes": 1654,
-      "sha256": "ce4ec6bc8dcaa6b29d510b6361a10c797970273ff2dcf22c5f445f4e9e3d13c8"
+    "child_exit_mutation_removes_exact_parsed_lines": true,
+    "complete_actual_hosted_fixture": {
+      "horizontal_padding_forms": 5,
+      "job": 133396542521,
+      "negative_controls_each": 12,
+      "trace_input_output": {
+        "bytes": 35304,
+        "sha256": "328b6ceb234f1cc672d7117e436d97663ccb16fe4498be2d299ddbe9149ae83e"
+      }
     },
-    "integrity_test_groups": 9,
-    "reason": "The actual hosted strace padded four-digit TIDs with two spaces; the live wait required exactly one"
+    "full_trace_audit_unchanged": true,
+    "integrity_log": {
+      "bytes": 1851,
+      "sha256": "a1899f5bb87744e7e71c0bec4bec2bdc7637d038b46b6a3a0f4d2ea682339168"
+    },
+    "integrity_test_groups": 10,
+    "reason": "The actual hosted negative-control builder still searched for exactly one space before exit_group after the earlier live-wait repair",
+    "trace_mutations_use_parsed_task_syscall_and_line_positions": true
   },
   "retirement_accepted": false,
   "runtime_hia_changed": false,
@@ -247,8 +335,8 @@
       "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
     },
     "hia/platform/thread_cpu/qualify.py": {
-      "bytes": 27075,
-      "sha256": "bac411778ea968f681ab3ea5b28e531212aa206d1fc218521b5fcb1d432d5c3e"
+      "bytes": 27441,
+      "sha256": "d64de5eb7a9627e9c9cda0dc307efc48dcba7f0d1165a192813f0a72566e89d2"
     },
     "hia/platform/thread_cpu/rust_oracle.py": {
       "bytes": 29369,
@@ -259,8 +347,8 @@
       "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
     },
     "hia/platform/thread_cpu/test_integrity.py": {
-      "bytes": 13774,
-      "sha256": "8947ae215dbf939d119d2125206078258524ee8f28abecdb16ceed8368e639f4"
+      "bytes": 51546,
+      "sha256": "206aebe04c4b9d18bb46d70dd7b188508a62389871b1df0920bea7ed5e34f268"
     },
     "hia/platform/thread_cpu/trace_audit.py": {
       "bytes": 26502,
@@ -347,7 +435,7 @@
       "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
     }
   },
-  "source_set_sha256": "e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b",
+  "source_set_sha256": "5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805",
   "status": "CURRENT_SOURCE_NATIVE_AND_ACTUAL_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING",
   "whole_node_qualified": false
 }

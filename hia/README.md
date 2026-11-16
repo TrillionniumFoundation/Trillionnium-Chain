@@ -2,7 +2,7 @@
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
 one complete HIA-native implementation. The current candidate contains **41
-kernel units and twelve native foundations**, accounting for all **71 HIA source
+kernel units and thirteen native foundations**, accounting for all **73 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -37,36 +37,82 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 
 ## Observed qualification and current scope
 
-### Hosted signal failure and current repair
+### Genesis persistence and current Thread CPU repair
 
-Published `44b3c6e622d009b6b92b270b4e1f5c82fc844b81` exposed a real
-thread-qualification defect in both the [push workflow](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884564137)
-and [PR workflow](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43884851140).
-Both completed 65 semantic histories, then failed in the first physical signal
-control. The real SIGUSR1 and rt_sigreturn(-EINTR) were present; the live wait
-expected one space after the TID while hosted strace used two. Original Rust
-was not run in either failed job. Complete artifacts and failures are retained.
+The current inventory is **41 kernels / 13 native foundations / 73 HIA source
+files**. All **26 original Rust packages remain**, zero package retirements are
+accepted and all **nine whole-project gates remain OPEN**.
 
-The repair changes only the qualifier and its regression tests. Horizontal
-whitespace cannot cross trace lines or substitute another TID; full signal
-pairing remains mandatory. Nine integrity groups passed. The new 38-input set
-`e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b`
-then passed **65 native histories / 724 operations / 74 physical controls** and
-**65 actual original histories, 518 original-method calls, 36 retained tests
-and the mandatory positive Linux clock test**. Both native ELFs are unchanged.
-The [current record](qualification/thread-cpu-development.json) and
-[self-contained evidence](qualification/thread-cpu-development.tar.xz) preserve
-the new executions, both hosted failures and earlier source-specific results.
-The repaired source still requires its own exact-commit hosted CI.
+The [Genesis owner](platform/genesis_store/README.md) constructs the complete
+default Settings, genesis catalog, active selector, slot zero and seven-row
+State inside the native HIA executable. It holds the private directory and
+exclusive lock, writes and synchronizes the actual files, rereads their complete
+contents, computes the native M06 State root and performs cold recovery before
+opening the owner. The directory model remains private with cooperative flock;
+continuous hostile same-UID mutation and physical power loss are not qualified.
+Successor execution/admission, expected-root acceptance, arbitrary COMMIT,
+reorg/replay/outbox/ACK, PQ/GSC2 and arbitrary Configs remain open.
 
-All three continuity jobs succeeded in each `44b3` workflow: 659 native
-controls, 572 actual original comparisons plus four retained tests and seven
-capacity controls. These actual executions use the final 62-input
-`a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`
-source set. Full 1,065,536-row capacity and fresh-process reread remain intact.
-The thread failures prevent either workflow from being called fully successful.
-**41 kernels / 12 foundations / 71 HIA files; 26 Rust packages retained, zero
-retirements and all nine whole-project gates OPEN.**
+The executed 45-input Genesis source set before final formatting is
+`a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b`.
+It actually passed **30 native semantic controls / 62 processes** and
+**30 actual original comparisons / all three retained original tests**.
+Final staged formatting removed exactly one terminal LF from each of the two
+hosted Python verifier/test files. All other 43 inputs and both Python ASTs are
+identical. The integrated 45-input set is
+`032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305`.
+The actual native/original results above remain bound to the pre-format a0c3
+set; final-source execution is required in the new committed-source CI.
+
+The earlier `a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046`
+source actually passed all five native suites: 254 controls and 356 processes.
+Only the registry-source verifier and its tests changed afterward; all nine
+runtime artifacts remained byte-identical. The four earlier physical suites
+retain their earlier source identity and are required again in current-head CI.
+The [complete current record](qualification/genesis-development.json),
+[current raw evidence](qualification/genesis-development.tar.xz),
+[earlier native evidence](qualification/genesis-native-history.tar.xz) and
+[first original failure](qualification/genesis-original-failure.tar.xz)
+preserve the complete outcomes. The original source closure includes migration
+and plan-pin metadata: these differ during integration, while all remaining
+4,359 original inputs match. The earlier 4,361-input original execution keeps
+its own identity; complete committed-source CI must execute the integrated set.
+
+Published `535ce9865d6764de8184aab04204459f6f05001b` exposed a second real
+Thread CPU controller defect in the
+[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43895143250)
+and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43895921099).
+Both completed 65 semantic histories, 724 operations and 74 physical controls,
+then the negative-control builder failed before its 12 mutations because it
+still searched for exactly one space before `exit_group`. Original Rust did
+not run in those failed jobs. The complete artifacts and job logs remain FAIL.
+
+The repaired builder uses the already-parsed task, syscall and exact trace-line
+positions for both the terminal insertion and child-exit removal. Ten integrity
+groups include the full actual hosted trace, input and output; five padding
+forms each reject all 12 mutations. The final 38-input set
+`5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805`
+actually passed **65 native histories / 724 operations / 74 physical controls /
+12 trace refusals / four signal-pairing refusals**, then **65 actual original
+histories / 518 original-method calls / 36 retained tests and the mandatory
+positive Linux clock test**. Native HIA, the adapter and both executable images
+are unchanged. The [Thread record](qualification/thread-cpu-development.json)
+and [current evidence](qualification/thread-cpu-development.tar.xz) retain the
+new executions and both new hosted failures. The exact duplicate predecessor
+archive is retained in immutable Git commit `535ce986`, with its path, Git blob
+and SHA256 bound in the current record, rather than nested again in this archive.
+
+The workflow now contains **24 jobs and 21 independent native bootstrap gates**.
+Five independent Genesis native jobs cover semantic, crash, prefix, namespace
+and corruption controls; the sixth requires the same run's complete semantic
+artifact and actually executes original Rust. They retain the 20-minute job,
+240-second native child and three-second cleanup limits. Every new job verifies
+the complete current tracked source before and after execution; dependent
+artifacts bind the same commit, run and attempt. The six new jobs use depth-one
+checkouts because these checks require the full current tree and its Git blobs.
+The existing history-audit job retains full history. New committed-source CI
+results remain pending; these component observations do not close whole Node
+or permit retirement of the retained stack.
 
 ### Earlier source-specific observations
 
@@ -84,8 +130,8 @@ preserves both exact run lineages. These results belong to that published head.
 
 Published `44b3` added finite native continuity and thread CPU owners plus
 four mandatory CI jobs. Earlier development observations below retain their
-own complete source maps and execution records. All eighteen jobs must execute
-on the repaired head. The nine whole-project gates
+own complete source maps and execution records. The current 24-job workflow must execute
+on the integrated head. The nine whole-project gates
 remain OPEN and all 26 original Rust packages remain required.
 
 Exact head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec` completed **14/14 HIA

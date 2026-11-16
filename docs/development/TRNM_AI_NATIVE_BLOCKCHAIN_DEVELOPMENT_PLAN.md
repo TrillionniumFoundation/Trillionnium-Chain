@@ -1,3 +1,39 @@
+## 2026-11-16 UTC — 原生 Genesis 持久 owner、完整原 Rust 对照与线程终态观测修复
+
+当前候选 **41 kernels / 13 native foundations / 73 HIA sources；26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。直接前驱为 `535ce9865d6764de8184aab04204459f6f05001b`（tree `a506c358cdff588cb8c6cc0a2bed7c58e7e8e091`）。本增量须自己的 **24 jobs / 21 native bootstrap gates** 精确提交 CI，不继承前驱绿灯。
+
+### Genesis 的真实执行、源身份和范围
+
+新增两份 HIA 源，在真实原生 ELF 内构造完整 default Settings、genesis catalog、active selector、slot0 与七行 State；持有 private directory 与排他 flock，实际持久初始化、完整读取、native M06 root、冷恢复与 CLOSE。不接收外部成功位。执行文件 753794 B / SHA256 `304dfb77e6c4909d703995fafb523419dfb2f09ee432c2cf6a95a9956af17f85`；literal ISA 适配层仍为独立可信边界，非 HIA 指令语义证明。
+
+旧45源 `a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046` 的五组真正通过：semantic30/62process、crash25/64、prefix29/59、namespace104/105、corruption66/66，合计254controls/356process。旧交错测试失败、冷恢复边界、全部 raw 与18项特殊文件元数据保留。FD 定向 seccomp EIO/SIGKILL 不等于物理断电，未声称清空 page cache。
+
+第一次 actual original 在 Cargo 前错误要求 registry 源存在 vendor 的 .cargo-checksum.json，因此真实 FAIL，0 cases/0 retained tests；该失败原样保全。修复仅核对锁定 .crate 的真实 checksum、archive 内88源文件与实际 registry89文件（唯一额外 .cargo-ok），不改 registry、缓存、锁文件或生产 Rust。新45源 `a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b` 真正重跑 native30/62，并实际通过 original30/30与全部3个retained tests及必要ignored child。完整8个原执行阶段、before/after源与binary、真实SQLite fixtures与stdout全部保留。原binary611585296B / `08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d` 已独立核验。10完整性组140controls及8CLI、CI证据控制器10组133controls及4真实CLI通过；它们不额外计作native语义。
+
+新旧源码只有 verifier 与 integrity test 两项变化；9个 runtime artifacts逐字相同。旧四组physical结果不改标为新源执行，新提交五组CI均须实际运行。初次整合45源与a0c3实测件逐字匹配。随后staged whitespace门真实拒绝rust_oracle.py和test_integrity.py末尾各一条空行；只移除各最后1个LF，两Python AST与其余43项输入逐字/结构相同，未修改HIA、adapter或原生产Rust。最终45源为 `032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305`。a0c3实测保留原身份，最终格式源须新提交CI实际重跑五native组与actualoriginal，不借用旧PASS。components.json保持25346B原件，不为注册owner改compose include图。
+
+整合时严格4361源比较真实拒绝：仅 config/hia-migration-v1.json 与 config/pon/pq-cross-branch-corpus-v1.json 两项资格/计划元数据不同，其余4359原始输入逐字相同。旧actual original保持自己的完整4361源身份；新记录明确转换差异，最终CI须重新捕获并执行完整当前源，不能把元数据核对写成新原Rust实测。
+
+当前记录 hia/qualification/genesis-development.json 绑定三份必要证据：当前native/original archive 2902896B/SHA695b12c467056dc2f9d6280f18d58ac51ac741351b017ae9fcc166a95f22acce；旧native档8150988B/SHAc17aa5f11f10544c8a2ff3762f1700abc0c243220ca99ab42c3be6a0adc40506；首次原失败档1577608B/SHA8bcf545b68da2d061f3863b60ed72d56997247eac8e29cdb2463bb8955d4dbef。所有成员重读/hash，特殊文件只保留metadata而不open/restore。
+
+Genesis 目前只覆盖可信私有目录/cooperative flock和default配置。successor M06执行、private AdmissionPersistence、expected-root、任意COMMIT、重组/回放/outbox/ACK、PQ/GSC2、全部Config与原服务预算仍OPEN，不能删除原Node。
+
+### 第二个 hosted Thread CPU 控制器缺陷
+
+535ce push43895143250/job133396542521与PR43895921099/job133399336863均真实完成65 histories/724operations/74physical，然后在12项trace negative controls之前FAIL；原Rust未运行。根因为negative builder仍以单空格查找 exit_group，而实际TID2625/2633后是双空格。两个完整ZIP、job log、各998members/848regular、原535ce全部38源和实际before/after均已独立核对，失败不改写。
+
+修复采用已有 complete_calls 的task/syscall与精确start/end行号，终态插入和child exit移除均不依赖显示空格；trace auditor、原HIA/adapter/生产Rust不变。10完整性组包含完整155行真实hosted trace与stdin/stdout，五种空格/TAB形式各12负例，以及错误TID/歧义终态拒绝。
+
+最终38源 `5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805` 真正通过65native/724ops/74physical+12trace+4signal negatives，继而actual original65/65、518原方法调用、36retained tests和mandatory Linux positive。源码、锁定rustix、独立原binary before/after一致；两个125683B ELF与前驱逐字相同。完整新执行和两次新hosted失败保存在单一当前thread-cpu-development档。旧已发布archive在535ce Git历史中完整保留并绑定blob/SHA，当前档只去掉该精确重复嵌套件，未删除任何新执行或失败成员；首次过大上传被connector拒绝也记录，未改ref/tree。
+
+### 强制当前源码 CI 与下一步
+
+新增五个独立genesis native任务与一个依赖semantic的actual original任务；同head/run/attempt、完整Git HEAD blobs、before→执行→after→binding、真实输出重解析、完整archive与失败下载保全均强制。五个native任务各自bootstrap，原20分钟job/240秒child/3秒cleanup不放宽。新增六个chain checkout使用depth1并以真实浅克隆测试验证完整当前tracked bytes；既有18任务和full-history archive审计保持原义。
+
+继续实际 State/View/Patch、PNX1签名与prepare、nonce/fee/M06应用、mandatory/reward/funds/root、私有准入与单一事务，以及并发paid i128账户、scoped worker、请求截止/清理与原服务门。所有原Rust/formal/portability生产实现保留；只有完整等价替代和原验收真实通过后才退役。作者脚本、中间源码树和构建在仓库外，最终组件保持单一当前实现，必要原始失败按精确来源保存。
+
+以下为535ce唯一计划的完整原字节后缀。
+
 ## 2026-11-16 UTC — 修复云端线程信号观测；最终源码连续性三段资格通过
 
 当前仍为 **41 kernels / 12 native foundations / 71 HIA sources；26原Rust包保留 / 0退役 / 9全项目门OPEN**。公开前驱为 `44b3c6e622d009b6b92b270b4e1f5c82fc844b81`（tree `63ac94db48912564acae652ce6c771513d3f70dd`）。本修复候选仍须自己的18-job exact-head CI。

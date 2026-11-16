@@ -373,10 +373,16 @@ def trace_negative_controls(physical,output):
                ', FUTEX_WAIT_PRIVATE, '+str(child)+', NULL) = 0\n')
     # Add the forbidden effect before the real terminal syscall. This control
     # does not depend on whether the short genuine join happened to block.
-    terminal=raw.rfind(str(physical['trace']['main_tid'])+' exit_group(')
-    need(terminal>=0,'Missing actual terminal call in trace control')
-    private_wait=raw[:terminal]+forbidden+raw[terminal:]
     lines=raw.splitlines(keepends=True)
+    terminal=[call for call in calls if call['tid']==physical['trace']['main_tid']
+              and call['name']=='exit_group']
+    need(len(terminal)==1,'Missing or ambiguous actual terminal call in trace control')
+    terminal_line=terminal[0]['start']-1
+    private_wait=''.join(lines[:terminal_line])+forbidden+''.join(lines[terminal_line:])
+    exit_lines={line for call in calls if call['name']=='exit'
+                for line in (call['start'],call['end'])}
+    need(exit_lines,'Missing actual child exit in trace control')
+    missing_exit=''.join(line for number,line in enumerate(lines,1) if number not in exit_lines)
     lifetime=physical['trace']['children'][0]
     extra_tid=str(child)+' gettid() = '+str(child)+'\n'
     after=lifetime['exit_line']
@@ -390,7 +396,7 @@ def trace_negative_controls(physical,output):
         ('worker-effect-before-birth',before_birth,data_out),
         ('removed-parent-settid',raw.replace('|CLONE_PARENT_SETTID','',1),data_out),
         ('wrong-stack-protection',raw.replace('1056768, PROT_NONE','1056768, PROT_READ|PROT_WRITE',1),data_out),
-        ('missing-child-exit','\n'.join(line for line in raw.splitlines() if ' exit(0)' not in line)+'\n',data_out),
+        ('missing-child-exit',missing_exit,data_out),
         ('duplicated-native-exec',raw+raw.splitlines()[0]+'\n',data_out),
         ('extra-syscall',raw+str(physical['trace']['main_tid'])+' getuid() = 1000\n',data_out),
         ('truncated-stdout',raw,data_out[:-1]),

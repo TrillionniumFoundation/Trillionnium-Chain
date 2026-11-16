@@ -939,6 +939,24 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/genesis-store",
+      "sources": [
+        "hia/platform/genesis_store/owner_policy.hepta",
+        "hia/platform/genesis_store/linux_emitter.hepta"
+      ],
+      "scope": "Native default Settings/genesis catalog/active selector/slot-zero seven-row State construction, private directory and cooperative exclusive flock, full file reads, native M06 root, durable initialization and cold reopen. Trusted private directory; no continuous hostile same-UID claim. Successor M06 execution/admission, expected-root, arbitrary COMMIT, reorg/replay/outbox/ACK, PQ/GSC2, all Configs and the original service budget remain OPEN.",
+      "tests": [
+        "hia/platform/genesis_store/build.py",
+        "hia/platform/genesis_store/qualify.py",
+        "hia/platform/genesis_store/rust_oracle.py",
+        "hia/platform/genesis_store/test_integrity.py",
+        "hia/tools/qualify_genesis_ci.py",
+        "hia/tests/test_genesis_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }
