@@ -92,9 +92,18 @@ this offline regression is not a new production execution. Eleven production
 controller tests and four fixture/evidence tests pass. New committed-source
 production execution remains mandatory.
 
+The subsequent exact 34ecf1b push and PR jobs both passed actual fixed-parent
+production qualification with the corrected trace mapper. Each observed 22
+fresh native checks and verified the actual TID, membership and executable.
+The [complete success record](../../qualification/host-production-ci-success.json)
+preserves the full push production files, complete job logs and artifact/source
+identities; the preceding failed jobs remain failed. Both complete HIA workflows
+finished all fourteen jobs successfully. These observations belong to that exact
+source and do not confer a reusable lease on another job or changed source.
+
 The standalone image is not yet the HIA full-node Host. It must execute in the
 actual worker thread at every original checkpoint; a sidecar cannot attest
 another thread's membership or CPU clock. Resource sampling, original service
-budgets, actual production fixed-parent positives and full-node integration are
+budgets and full-node integration are
 separate gates. Process-wide signal disposition also requires ownership review
 before embedding. See `abi.json` for the finite protocol and error meanings.

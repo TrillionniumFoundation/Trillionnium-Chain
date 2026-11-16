@@ -37,6 +37,16 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 
 ## Observed qualification and current scope
 
+Exact head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec` completed **14/14 HIA
+jobs successfully** in both the
+[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43848902425)
+and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43849236024).
+Actual Host production, independent resource syscall tracing and original Rust,
+and the full typed-State produce → fresh-process cold restore → bounds chain
+passed. The [Host success record](qualification/host-production-ci-success.json)
+preserves the actual production bytes. These are exact-source component results;
+all nine whole-project gates and all 26 package retirements remain open.
+
 The `8690b8bbeb58` PR completed eight of nine HIA jobs. It ran 270 component
 tests with zero skips and 92,509 shared native calls; its Host production job
 failed in independent trace normalization after actual native checks completed.
@@ -166,6 +176,16 @@ intentionally unreadable fixture namespaces. Fixed-parent production resource
 sampling, same-worker embedding, paid per-thread CPU, child process ownership
 and original service acceptance remain open. Whole-parent resource values do
 not grant any individual worker's paid-CPU or consensus authority.
+
+The same-job [production controller](platform/host_resource/README.md#same-job-production-qualification)
+now binds all 52 resource/Host inputs, checks the previous complete lease before
+locking, and runs only after that job's actual Host production success. It
+requires three actual samples and seven complete checks in one sealed native
+process, with independent trace verification. Its 18 refusal groups run before
+parent provisioning. The [development record](qualification/host-resource-production-development.json)
+retains the real fixture failure and correction separately from actual production.
+This new source requires its own fresh native/original and production CI; the
+preceding 34ecf1b successes are not relabeled as this source.
 
 ## Native AuditEvent values and exact RawBindings
 

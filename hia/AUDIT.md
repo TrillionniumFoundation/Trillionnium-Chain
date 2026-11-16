@@ -1,5 +1,45 @@
 # Whole-tree inventory and HIA migration audit
 
+## Exact-source CI completion and same-job resource production — 2026-11-16 UTC
+
+Exact head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec`, tree
+`6e21f6fe51fad0a7e89fbbe6042c175bb5cba246`, passed all fourteen HIA
+jobs in both push run 43848902425 and PR run 43849236024. The full typed-State
+produce, fresh-process restore and bounds stages completed successfully in both
+lineages. The actual Host production jobs passed 22 fresh checks with actual
+TID, cgroup membership and executable observations; independent resource traces
+and actual original-Rust comparisons also passed. The [Host success record](qualification/host-production-ci-success.json)
+retains the complete production files and original log bytes. All prior failed
+jobs preserve their original status.
+
+The new resource production controller reuses only that same job's successful,
+sealed parent. It checks the full previous eight-key before/after binding and
+creator/current-service equality before locking. A fresh resource service must
+preserve immutable parent identity and the original five limits, and may only
+change its own current service identity. No previous report, fixture or supplied
+counter acts as a fresh kernel lease. The source set now includes the complete
+Host closure and all execution helpers: 52 exact inputs.
+
+The production trace parser requires actual bounded reads through EOF for all
+three counter files, exact captured parent FD ownership and close before the
+second full check. The remaining Host calls undergo complete independent audit.
+Actual fixture execution exposed an incorrect expectation that counter_reads
+was cumulative; the owner correctly returns three reads per sample. Both the
+failed observation and corrected real fixture execution are retained in the
+[development record](qualification/host-resource-production-development.json).
+The final pre-lock lease guard extends those sources; complete source and AST
+bindings distinguish each observation. Synthetic refusal controls are not native
+runtime or production success evidence.
+
+CI runs all 18 new controller test groups before any parent provisioning, then
+builds and runs the resource production image after successful Host production
+in the same 20-minute job. Always-run checks retain source integrity and explicit
+failure artifacts. The new source has no inherited production PASS: its own
+exact-source execution remains required. Counts remain 41 kernels, ten native
+foundations and 64 HIA files, with all 26 Rust packages retained and all nine
+whole-project gates OPEN. Continuous State, paid per-thread CPU, full Node,
+original service budget and retirement acceptance are not inferred.
+
 ## Complete typed State staging and capacity lineage — 2026-11-16 UTC
 
 The candidate adds three HIA sources for streaming typed staging, a separately

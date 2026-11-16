@@ -11,10 +11,11 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from hia.platform.build import Build as PinnedBuild
 from hia.platform.build import inspect_executable, new_output, sha256, write_json
+from hia.platform.host_checkpoint.build import INPUTS as HOST_INPUTS
 
 HERE = Path(__file__).resolve().parent
 PREFIX = 'hia/platform/host_resource/'
-INPUTS = (
+INPUTS = tuple(dict.fromkeys((
     PREFIX + 'resource_policy.hepta', PREFIX + 'fixture_entry.hepta',
     PREFIX + 'build.py', PREFIX + 'README.md', PREFIX + 'abi.json',
     PREFIX + 'cases.py', PREFIX + 'native_io.py', PREFIX + 'qualify.py',
@@ -28,7 +29,13 @@ INPUTS = (
     'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs',
     'trillionnium/crates/trnm-pon-node/src/main.rs',
     'trillionnium/crates/trnm-pon-node/src/error.rs',
-)
+    *HOST_INPUTS,
+    PREFIX + 'qualify_production.py', PREFIX + 'test_production.py',
+    'scripts/ci/run_history_native.py',
+    'scripts/ci/check_required_native_test.py',
+    'scripts/ci/replay_pinned_native.py',
+    'config/systemd/trnmponpublic.slice',
+)))
 HOST_SOURCE_SHA256 = '474aa5ce229c23723fe1f8bdcf7047c3e1bd3f2b95ed24f1a4c183702e86f3be'
 HOST_EMITTER_SHA256 = '1f8911ee0d044d0df2f19c4986c49baffd580864c4c91982b413aae32a59572d'
 

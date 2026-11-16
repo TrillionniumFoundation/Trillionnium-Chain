@@ -1,3 +1,13 @@
+## 2026-11-16 UTC — 实际 Host 生产通过，接入同作业资源生产采样
+
+已发布 HIA head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec`（tree `6e21f6fe51fad0a7e89fbbe6042c175bb5cba246`）的 push `43848902425` 与 PR `43849236024` 均实际完成 **14/14 SUCCESS**。完整 typed-State produce → 独立进程 cold restore → bounds 两套链路全部通过；实际固定父级 Host 生产检查、资源真实 syscall trace 和原始 Rust 比较亦通过。旧失败原样保留；这不代表整链、原始服务预算或任何旧包退役验收。
+
+本增量把资源生产控制器接入同一个 native-host CI 作业。控制器在加锁前核对前一实际 Host 报告、完整源码/镜像绑定、八字段 before/after、原始 seal creator 与旧 current service；新服务只能改变自身 current identity。它复用同作业已验证父级，不提供计数器、Host 成功结论或 fixture 退路。三次实际采样对应四条 receipt 和 1/3/5/7 完整检查；每样本 counter_reads 固定 3，独立 trace 审计真实 EOF、同一个 parent FD、关闭顺序和剩余完整 Host calls。完整资源 source closure 扩为 52 inputs；18 组生产控制器拒绝测试在任何父级配置之前运行。所有原始资源限制、20 分钟资格时限和源码前后复核不变。
+
+完整生产开发记录保留真实 fixture 首次失败、修复后实际执行和最终 pre-lock guard 的准确源身份，不能提升为新源码生产 PASS。新源码需要自己的原生、原始 Rust 与实际固定父级 CI。连续性测试旧轮 exit 137 的 566 个已完成控制和缺失终态报告保留，退出原因仍 UNKNOWN；有界日志控制器、完整连续性原生/原始比较与真实线程 CPU owner 继续推进。
+
+当前仍为 **41 kernels / 10 foundations / 64 HIA files**；**26 Rust packages retained / 0 retirement accepted / 9 gates OPEN**。未删除未被等价替代的实现，未改原始 Rust/formal/portability ownership，未放宽服务门槛。完成整链替代、各目标资格和原始验收之后，再执行最终旧栈退役与仓库清理。以下既有唯一计划字节完整保留。
+
 ## 2026-11-16 UTC — HIA 完整 State staging、Host 资源采样和实际生产轨迹修复
 
 本轮候选覆盖41内核、10个native foundations、全部64份HIA源文件；26原Rust包保留、0退役、9个全项目门继续OPEN。新增的是实际原生有限owner及强制资格链，完整Node、PQ身份、服务预算、模型与研究验收尚未完成，不据此删除旧栈。
