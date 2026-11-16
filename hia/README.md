@@ -2,7 +2,7 @@
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
 one complete HIA-native implementation. The current candidate contains **41
-kernel units and sixteen native foundations**, accounting for all **83 HIA source
+kernel units and eighteen native foundations**, accounting for all **95 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -37,9 +37,131 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 
 ## Observed qualification and current scope
 
-### PaidCPU and execution foundations — current candidate
+### Application and typed mempool — current candidate
 
-The current inventory is **41 kernels / 16 native foundations / 83 HIA source
+The current inventory is **41 kernels / 18 native foundations / 95 HIA source
+files**. This increment adds 37 final owned component files, including 12 HIA
+files. The 26 original Rust packages remain; zero packages have accepted
+retirement and all nine whole-project gates remain OPEN.
+
+| Native owner | Source-bound development execution | Remaining integration |
+| --- | --- | --- |
+| [Default M06 application](platform/execution_application/README.md) | 328 histories, 335 real PNX1 transactions, 8,784 State commands and nine native processes; actual original 328 comparisons and eight retained tests; 32 physical controls and 181 public/source controls including 16 real CLI calls | Complete batch and worker ownership, all configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT |
+| [Typed M05 mempool](platform/mempool_typed/README.md) | 323 fresh native processes and 9,332 commands matched the complete original library; 153 retained original tests; 38 physical processes / 50 commands, 26 guarded calls, 18 source controls, five altered-byte refusals, eight self-consistent witness refusals and eighteen real public CLI calls | Production PNX/signature adapters, real Node nonce leases, persistent local pool, recovery and original service budget |
+
+Application's 104-input source set is
+`05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`.
+Its fourteen-image Linux executable is 4,246,848 bytes, SHA256
+`898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a`.
+The private owner calls the actual native preparation, signature, State/View/Patch
+and root images. It implements all twelve commands reachable under the original
+default installed configuration, including account access, nonce/error order,
+fees, application continuations, cancellation, typed Values and consuming Patch
+ownership. External Prepared values or signature verdicts confer no authority.
+Nondefault branches and block admission remain separate obligations.
+
+Typed M05's 26-input source set is
+`cfb0f4a9a0320f58f6ade7249e1304e1b7acf73219d3a16ca6931d28d6cd1242`.
+Its 179,254-byte executable has SHA256
+`c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c`.
+Queue ownership, exact duplicate behavior, canonical metadata, pending leases,
+handoff and terminal cleanup execute in HIA. The current signature/replay/nonce
+traits are explicit test adapters, so this component cannot authorize production
+transactions. Ready handles refuse exhaustion before queue mutation and do not
+revive consumed handles. Only the original unordered HashMap destruction events
+in operations 20, 21 and 22 use multiset comparison; all raw orders are retained.
+
+The previous M05 evidence reader admitted eight self-consistent invalid
+witnesses despite real native execution having passed. The final reader now
+reconstructs the exact ELF extent and payload, consumes all eight selected syscall
+traces, checks every physical response and release tag, and follows all 26 guarded
+calls with complete arena continuity. It permits exactly one private eight-byte
+fixture write and checks that exhaustion leaves the queue unchanged and close
+erases the full arena. The final frozen source reran the entire native/original
+qualification; all five altered-byte and eight self-consistent witness controls
+were refused by their intended invariant, with 18 actual CLI outcomes. Earlier
+incorrect acceptance and reader-development failures remain in the final archive.
+CI also verifies each complete baseline-to-mutated-file transition and rebound
+summary; it cannot accept a negative-test count without the corresponding bytes.
+
+The final staged check removed one redundant terminal newline from three Python
+files; their parsed ASTs are unchanged. Because the owned source identity changed,
+the exact final source reran every native, original, physical, guarded and public
+control. A compiler-path error before the first compile remains a failed attempt;
+the corrected launch used the same pinned compiler bytes. All 62 CI-reader tests
+also passed again on the final helper source.
+
+The [application record](qualification/execution-application-development.json)
+and [M05 record](qualification/mempool-typed-development.json) bind their
+[application archive](qualification/execution-application-development.tar.xz)
+and [M05 archive](qualification/mempool-typed-development.tar.xz).
+Both archives were read back member by member. Application preserves the complete
+recovered native bundle, actual Desktop physical-build streams, physical/private
+journals, public gate streams and original execution. Some earlier Cloud build
+and development outputs remain explicitly pending recovery. The separately
+retained 91,946,536-byte application original binary is not embedded in its
+development archive; the hosted artifact must contain it in full. The M05 archive
+includes its complete independent original binary and all available Desktop
+failures. Archive creation is not a new native execution.
+
+The application development original graph contains 4,363 inputs. Integration
+changes the migration inventory and the development-plan source pin; the original
+development result retains its original source identity. Every new committed
+candidate must execute a fresh actual original comparison. M05 binds its complete
+208-input original package graph and the selected Rust compiler/sysroot before
+and after execution. The initial M05 original linker failure and the application
+uppercase-public-key differential failure remain failed historical observations.
+
+The [CI development evidence record](qualification/application-mempool-ci-development.json)
+keeps actual helper tests, complete archive readbacks, workflow syntax checks and
+failed attempts separate from hosted CI. Development packaging remains NOT_BOUND
+until the committed-source/run/attempt gate executes on GitHub.
+
+The workflow adds two complete source-bound jobs, bringing it to **31 jobs /
+27 independent native bootstrap gates**. Each job verifies all committed bytes
+before and after execution, runs native and actual-original suites, checks full
+raw evidence, binds the exact commit/run/attempt, and packages available success
+or failure bytes. Packaging reopens the complete compressed archive and checks
+members against both the captured bytes and the successful binding. It does not
+turn an incomplete run into a qualification. The original 20-minute job limit,
+resource limits and service acceptance criteria remain unchanged.
+
+### Audited predecessor 326837e
+
+At predecessor `326837e4c5a8a6b3b99390063c08a47dc4f9d6a0`, the HIA
+[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43938876560)
+and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229249)
+both completed all 29 jobs successfully. The ten new PaidCPU/State/Prepare
+artifact ZIPs were fully hashed and independently read back. Those results
+belong to that predecessor and do not qualify this candidate.
+
+The [exact-326 failure diagnosis](qualification/ci-326-observed-failures.json)
+and its [raw evidence](qualification/ci-326-observed-failures.tar.xz) retain
+nine complete original ZIP identities and 9,478 members. Three before-budget
+groups refused incompatible lock/dependency/test inputs before any native control.
+The requested historical pressure artifact remains unavailable. Four actual
+from-zero runs passed their five native tests and each confirmed one baseline
+request, but their 4-second / 16-attacker pressure phases confirmed zero, with
+one unconfirmed request and zero unknown outcomes. Both x64 history servers
+actually exited normally at their original 1,800-second limit before the client
+received RPC connection refusal. The 3,297 and 3,973 returned import calls are
+not counted as durable commits; total resource-cost causality remains unresolved.
+
+The [protocol-contract supplement](qualification/ci-326-protocol-contract-failures.json)
+and [complete small raw archive](qualification/ci-326-protocol-contract-failures.tar.xz)
+independently cover both lanes of run 43939229469. Each actually ran all five
+native tests successfully; each baseline confirmed one request, while its
+4-second / 16-worker pressure phase confirmed zero and left one unconfirmed,
+with no unknown result. Business started within the pressure window. The
+controller returned CONFIRMATION_TARGET failure. Preparation's
+native_tests_executed=false describes its no-run build stage, and does not
+describe the later execution. The head also recorded PUBLIC_REQUEST_DEADLINE;
+the merge lane had no verification error. These observations do not establish
+an infrastructure or Host-only cause and do not close original service gates.
+
+### Published predecessor 326837e — PaidCPU and execution foundations
+
+The predecessor inventory was **41 kernels / 16 native foundations / 83 HIA source
 files**. The 26 original Rust packages remain, with zero accepted retirements
 and all nine whole-project gates OPEN. This increment adds 47 final owned
 source files, including ten HIA files. Each component has one implementation

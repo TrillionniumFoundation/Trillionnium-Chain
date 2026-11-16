@@ -1,0 +1,128 @@
+{
+  "actual_github_ci_run": false,
+  "application_ci": {
+    "all_actual_existing_evidence_readback": "PASS",
+    "complete_independent_original_binary_pack": "PASS",
+    "hosted_ci_claim": false,
+    "unit_controls": 150,
+    "unit_tests": 12,
+    "whole_elf_payload_reconstruction_negative": "PASS"
+  },
+  "current_ci_sources": {
+    ".github/workflows/hia-native-migration.yml": {
+      "bytes": 206764,
+      "sha256": "0d2032219054d11f32626ba70620c12eb30029ea13b222ff4fb97ca5c09d8c40"
+    },
+    "hia/tests/test_application_ci.py": {
+      "bytes": 32022,
+      "sha256": "3f46bcc35c67ff8f82485ca45d254f77c0ce5c701dd5c8406c0afd984044f6a2"
+    },
+    "hia/tests/test_mempool_ci.py": {
+      "bytes": 13972,
+      "sha256": "404c15d7f0a5baa4fe64afed759eff3da3500178d69201478a9a2ccfb51fcf19"
+    },
+    "hia/tools/qualify_application_ci.py": {
+      "bytes": 75353,
+      "sha256": "650b1132f48ca6fa02c8d843a9c5a55f8c6eaedf8aa3b332d645bd4e687d55b3"
+    },
+    "hia/tools/qualify_mempool_ci.py": {
+      "bytes": 24242,
+      "sha256": "59bcd5502096b3203ad6a4927d63bffb97da266b428bd83998099766821ec67c"
+    },
+    "scripts/ci/test_hia_workflow_bootstrap.py": {
+      "bytes": 3901,
+      "sha256": "f3891a04f0b955aeb3880bf2cfbbe67a39fc2c64d7807675dea200fe432e1ecc"
+    }
+  },
+  "evidence": {
+    "bytes": 2666804,
+    "every_member_reopened": true,
+    "index": {
+      "bytes": 34343,
+      "sha256": "53f63f62a8c290ed1658cea578f0b75cb67c2ea9d50edd6a62bc469936d57977"
+    },
+    "logical_bytes": 9905813,
+    "logical_files": 177,
+    "path": "hia/qualification/application-mempool-ci-development.tar.xz",
+    "regular_members": 117,
+    "sha256": "fcea25214b5e7b53b5c086c017e458e8fcab26f4e879c5b6d24dff3089db8220"
+  },
+  "final_ci_test_report": {
+    "bytes": 1928,
+    "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/application-mempool-integration-v1/final-ci-reader-tests-v5/report.json",
+    "sha256": "28962b5bb95fc5a3a7ccc8f35a7052bd022a7317e7abc8231ffb75ebeef7e645"
+  },
+  "final_integrated_ci_unit_tests": 62,
+  "final_native_bootstrap_guard_groups": 4,
+  "final_source_validation": {
+    "local_markdown_links": 795,
+    "report": {
+      "bytes": 3541,
+      "sha256": "b9c604f44a52a63cec0de165552376747512d3faf7781638588b0611b32d2379"
+    },
+    "status": "PASS"
+  },
+  "historical_failures": [
+    "Initial M05 reader accepted8 self-consistent witnesses; repaired V4 full execution and refusals remain separate.",
+    "Initial integration whitespace error and210s PQ observer timeout are preserved.",
+    "Application old-source binding refusal remains a refusal; the actual development execution is not rebound to new source metadata.",
+    "Final staged check refused three redundant Python EOF newlines; removed with identical AST and actual final-source requalification.",
+    "Initial final-source launch used an incorrect compiler path and failed before compilation; all raw is retained. Correct verified path used the unchanged pinned compiler for full passing execution."
+  ],
+  "mempool_ci": {
+    "actual_public_cli_processes": 18,
+    "additional_witness_binding_negative_variants": 23,
+    "full_actual_archive_package": {
+      "archive": {
+        "bytes": 3459300,
+        "sha256": "92fb4e0c418caedf6e246b99d2d49c3c0cf0a84faf4730f12de54f0faff39211"
+      },
+      "files": 2772,
+      "metadata_only_nodes": 0,
+      "packing_status": "PASS",
+      "qualification_status": "NOT_BOUND",
+      "qualification_status_not_changed_by_packaging": true,
+      "stage": "mempool-typed"
+    },
+    "hosted_ci_claim": false,
+    "public_byte_controls": 5,
+    "public_control_report": {
+      "bytes": 20768,
+      "sha256": "3b542425ba048ff700e7b1c29e2ba253bb4e5c4ce7292877e318f56453cfc8c6"
+    },
+    "public_witness_controls": 8,
+    "source_control_report": {
+      "bytes": 2726,
+      "sha256": "cfda877162c887fa2c6fa74df189da861d71c297799a8fec5090b67f5b96e8b4"
+    },
+    "source_controls": 18,
+    "unit_tests": 9
+  },
+  "native_or_original_execution_relabelled": false,
+  "old_packages_retired": 0,
+  "pq_source_suite": {
+    "actual_test_methods": 99,
+    "elapsed_ns": 995273877865,
+    "final_plan_pin_checker": "PASS",
+    "historical_first_observer": "TIMEOUT at210s; exception retained, partial raw not captured",
+    "ran_before_final_plan_pin_refresh": true,
+    "status": "PASS"
+  },
+  "production_activation": false,
+  "qualification_status": "NOT_BOUND",
+  "schema": "trnm.hia.application-mempool-ci-development.v1",
+  "source_origin_git_head": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+  "status": "DEVELOPMENT_VALIDATED_HOSTED_CI_REQUIRED",
+  "whole_migration_complete": false,
+  "workflow": {
+    "all_python_heredocs_checked": 39,
+    "bash_fragments_checked": 238,
+    "independent_native_bootstraps": 27,
+    "jobs": 31,
+    "only_change_after_original_syntax_review": "Remove exactly one terminal LF; all executable run fragments remain byte-identical",
+    "source": {
+      "bytes": 206764,
+      "sha256": "0d2032219054d11f32626ba70620c12eb30029ea13b222ff4fb97ca5c09d8c40"
+    }
+  }
+}

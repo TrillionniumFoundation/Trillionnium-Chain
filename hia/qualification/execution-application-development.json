@@ -1,0 +1,162 @@
+{
+  "additional_native_semantic_build_raw_pending_recovery": {
+    "all_original_compiler_streams_recovered": false,
+    "availability": "Earlier Cloud build stream paths are unavailable in the new instance; the separate Desktop build retains its own actual source and execution identity.",
+    "available_independent_build": "Actual canonical Desktop physical/build binds identical 104 inputs, 14 runtime images and ELF; it is a separate actual build, not a substituted same-run stream.",
+    "not_in_historical_16_path_list": true,
+    "observed_receipt_cwd": "/tmp/trnm-application-canonical-native-2/build"
+  },
+  "admission_persistence": false,
+  "batch_execution_qualified": false,
+  "complete_node": false,
+  "coverage": {
+    "actual_original_histories": 328,
+    "actual_original_retained": 8,
+    "actual_original_stages": 15,
+    "admission_persistence": false,
+    "integrity_controls": 181,
+    "integrity_groups": 9,
+    "integrity_public_cli_controls": 16,
+    "native_histories": 328,
+    "native_processes": 9,
+    "native_state_commands": 8784,
+    "physical_controls": 32,
+    "physical_mandatory_trace": "PASS",
+    "transactions": 335,
+    "whole_node": false
+  },
+  "evidence": {
+    "all_archive_payload_members_reopened": true,
+    "bytes": 7970008,
+    "format": "trnm.application-content-evidence-archive.v1",
+    "git_anchor": {
+      "all_referenced_blob_bytes_independently_verified": true,
+      "commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+      "tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a"
+    },
+    "git_references": 4697,
+    "independent_original_binary_embedded": false,
+    "logical_regular_bytes": 577027784,
+    "logical_regular_files": 5264,
+    "path": "hia/qualification/execution-application-development.tar.xz",
+    "regular_members": 383,
+    "sha256": "c6202e525064b9bff0db2a4abf1b6565bdc3b6cb3657259689d37dd515b1c588",
+    "unique_embedded_bytes": 225937641,
+    "unique_embedded_objects": 382
+  },
+  "github_ci_artifact_must_include_complete_independent_binary": true,
+  "hia_source_files": 10,
+  "historical_cloud_outputs_pending_recovery": {
+    "availability": "Earlier outputs remain unavailable in the newly provisioned Cloud instance; no original raw was silently regenerated.",
+    "paths": [
+      "/tmp/trnm-application-canonical-source-first-failure.json",
+      "/tmp/trnm-application-canonical-integrity-1",
+      "/tmp/trnm-application-canonical-integrity-2",
+      "/tmp/trnm-application-canonical-physical-1",
+      "/tmp/trnm-application-canonical-physical-2",
+      "/tmp/trnm-application-physical-fixture-corrections.json",
+      "/tmp/trnm-application-physical-root-fixture-review-1.json",
+      "/tmp/trnm-application-physical-root-fixture-review-correction.json",
+      "/tmp/trnm-application-large-ascii-probe-1",
+      "/tmp/trnm-application-canonical-physical-3",
+      "/tmp/trnm-application-canonical-native-1",
+      "/tmp/trnm-application-canonical-bundle-admission-1.json",
+      "/tmp/trnm-application-canonical-staged-check-before.json",
+      "/tmp/trnm-application-terminal-lf-transition.json",
+      "/tmp/trnm-application-canonical-integrity-final-1",
+      "/tmp/trnm-application-integrity-137-observation.json"
+    ]
+  },
+  "history": {
+    "first_original": "Actual 322/323 application histories; uppercase quota-use public-key acceptance differed from original. Failed source/raw retained. Final328 histories and eight retained tests actually rerun.",
+    "unavailable_cloud_outputs": "Pending recovery as explicitly listed; missing raw never inferred successful."
+  },
+  "independent_original_binary": {
+    "bytes": 91946536,
+    "metadata": {
+      "ctime_ns": 1794864947651477316,
+      "mode": "0o500",
+      "mtime_ns": 1794864947651477316,
+      "nlink": 1
+    },
+    "observed_path": "/tmp/trnm-application-canonical-20261116-igmq23hi/original/original-test-binary",
+    "sha256": "b523bcdc532c78f8e85f0068ed4ff21966aba9ac6ff08a7322e85c80ce8370a8",
+    "storage": {
+      "kind": "external-retained-independent-binary",
+      "path": "/tmp/trnm-application-canonical-20261116-igmq23hi/original/original-test-binary",
+      "reason": "Full verified binary remains independent; final GitHub CI artifact must include full bytes."
+    }
+  },
+  "integration_source_transition": {
+    "changed_original_inputs": [
+      {
+        "development": {
+          "bytes": 35965,
+          "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
+        },
+        "integration": {
+          "bytes": 41993,
+          "sha256": "e5ebb84c352ff789580e984a30377489513b05bf4657f030624f21947cd365a2"
+        },
+        "path": "config/hia-migration-v1.json"
+      },
+      {
+        "development": {
+          "bytes": 525351,
+          "sha256": "547fd79699f1968c6b2496131ed301ddfd304585032a59c140c7fa91cdd30732"
+        },
+        "integration": {
+          "bytes": 525351,
+          "sha256": "e679ec2f05ba43c5494373cbecc62d1613f7c4d902a6ce895e1d2143e76e39e8"
+        },
+        "path": "config/pon/pq-cross-branch-corpus-v1.json"
+      }
+    ],
+    "development_original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
+    "integration_original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
+    "native_source_files": 104,
+    "native_source_inputs_unchanged": true,
+    "new_committed_source_original_execution_required": true,
+    "unchanged_original_inputs": 4361
+  },
+  "native_build_evidence_scope": "Complete recovered native bundle and actual Desktop physical-build source/images/ELF/raw. Earlier Cloud native-build streams are not all available and are not relabeled as the Desktop execution.",
+  "native_source_files": 104,
+  "nondefault_configurations_qualified": false,
+  "old_packages_retired": 0,
+  "original_source_files": 4363,
+  "original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
+  "owned_source_files": 22,
+  "production_activation": false,
+  "qualification_scope": "Frozen development native and actual original execution; new integrated-source CI required",
+  "reports": {
+    "integrity": {
+      "bytes": 72672,
+      "path": "/tmp/trnm-application-canonical-20261116-igmq23hi/public-gates/report.json",
+      "sha256": "e1fb3dfa326aad76b08a35d384c12dd91eb4aafedf27c454c60f0d85958b4cb7"
+    },
+    "native": {
+      "bytes": 1019510,
+      "path": "/tmp/trnm-application-canonical-20261116-igmq23hi/native-bundle/native-report.json",
+      "sha256": "2fe5f86e860d7f24c3a2a7595d5dc8da337afa43976d2c3fa17dfec8ff7e5b28"
+    },
+    "original": {
+      "bytes": 1009139,
+      "path": "/tmp/trnm-application-canonical-20261116-igmq23hi/original/report.json",
+      "sha256": "238b235d7e9db77747fe60489daab12703d2e8770b3c225e34783a73b06f6d92"
+    },
+    "physical": {
+      "bytes": 9409431,
+      "path": "/tmp/trnm-application-canonical-20261116-igmq23hi/physical/report.json",
+      "sha256": "4bd49ca42fb845f72eb98f101a2eb96b8525fd062877409dc88923f7f765bf51"
+    }
+  },
+  "runtime_executable": {
+    "bytes": 4246848,
+    "images": 14,
+    "sha256": "898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a"
+  },
+  "schema": "trnm.hia.execution-application-development.v1",
+  "source_set_sha256": "05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1",
+  "status": "PASS",
+  "whole_migration_complete": false
+}

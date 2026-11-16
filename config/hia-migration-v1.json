@@ -1019,6 +1019,53 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/execution-application",
+      "sources": [
+        "hia/platform/execution_application/claim.hepta",
+        "hia/platform/execution_application/core.hepta",
+        "hia/platform/execution_application/linux_emitter.hepta",
+        "hia/platform/execution_application/model.hepta",
+        "hia/platform/execution_application/prepare_bridge.hepta",
+        "hia/platform/execution_application/quota.hepta",
+        "hia/platform/execution_application/relation.hepta",
+        "hia/platform/execution_application/release.hepta",
+        "hia/platform/execution_application/support.hepta",
+        "hia/platform/execution_application/task.hepta"
+      ],
+      "scope": "Native private default M06 application tags 1..12 with actual preparation/signature, State/View/Patch, fees/nonce/error ordering, callbacks and consuming Patch ownership; 328 histories, 32 physical controls and actual original comparison. Full batch/scoped workers, all configurations/PQ, expected-root block admission and durable Node COMMIT remain OPEN.",
+      "tests": [
+        "hia/platform/execution_application/build.py",
+        "hia/platform/execution_application/qualify.py",
+        "hia/platform/execution_application/physical.py",
+        "hia/platform/execution_application/rust_oracle.py",
+        "hia/platform/execution_application/test_integrity.py",
+        "hia/tools/qualify_application_ci.py",
+        "hia/tests/test_application_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/mempool-typed",
+      "sources": [
+        "hia/platform/mempool_typed/linux_emitter.hepta",
+        "hia/platform/mempool_typed/typed_fixture.hepta"
+      ],
+      "scope": "Native typed M05 queue, canonical metadata, Ready lifetime and pending-lease cleanup under explicit test traits; 323 histories/9332 commands, full unchanged original library and 153 retained tests, 38 physical processes and 26 guarded calls. Production PNX/signature/Node nonce adapters, persistent local pool/recovery and original service qualification remain OPEN.",
+      "tests": [
+        "hia/platform/mempool_typed/build.py",
+        "hia/platform/mempool_typed/qualify.py",
+        "hia/platform/mempool_typed/physical.py",
+        "hia/platform/mempool_typed/guarded.py",
+        "hia/platform/mempool_typed/rust_oracle.py",
+        "hia/platform/mempool_typed/test_integrity.py",
+        "hia/tools/qualify_mempool_ci.py",
+        "hia/tests/test_mempool_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }

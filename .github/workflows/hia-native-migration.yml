@@ -3345,3 +3345,231 @@ jobs:
           path: ${{ runner.temp }}/hia-prepare-artifact/
           if-no-files-found: error
           retention-days: 30
+
+  native-mempool-typed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-mempool-typed-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-mempool-typed-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject altered cross-run or incomplete evidence packages
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest hia.tests.test_foundation_ci hia.tests.test_genesis_ci hia.tests.test_mempool_ci -v 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/evidence-integrity.log"
+      - name: Require the actual Linux tracing dependency
+        run: |
+          set -euo pipefail
+          command -v strace
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/strace-version.log"
+      - name: Refuse missing extra changed or aliased source inputs
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_typed.test_integrity --output "$RUNNER_TEMP/hia-mempool-typed-source-controls" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/source-controls.log"
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+      - name: Execute the complete native original physical and guarded qualification
+        run: |
+          set -euo pipefail
+          trnm_mempool_rustc="$(rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc)"
+          python3 -B -m hia.platform.mempool_typed.qualify --output "$RUNNER_TEMP/hia-mempool-typed-complete" --rustc "$trnm_mempool_rustc" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/complete.log"
+      - name: Exercise all altered-byte refusals through the actual public CLI
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_typed.test_integrity --bundle "$RUNNER_TEMP/hia-mempool-typed-complete" --output "$RUNNER_TEMP/hia-mempool-typed-public-controls" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/public-controls.log"
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-mempool-typed-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-mempool-typed-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/source-after.log"
+      - name: Bind the complete actual result to this exact commit run and attempt
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_mempool_ci bind 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/binding.log"
+      - name: Preserve complete actual evidence and the independent original binary
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_mempool_ci pack 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-package.log"
+      - name: Preserve packaging diagnostics after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-mempool-typed-artifact"
+          if test -f "$RUNNER_TEMP/hia-mempool-typed-package.log"; then
+            cp -- "$RUNNER_TEMP/hia-mempool-typed-package.log" "$RUNNER_TEMP/hia-mempool-typed-artifact/package.log"
+          fi
+      - name: Retain complete native original physical and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-mempool-typed-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-mempool-typed-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  native-execution-application:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-execution-application-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-execution-application-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Refuse cross-source transfers and altered raw execution evidence
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest hia.tests.test_foundation_ci hia.tests.test_genesis_ci hia.tests.test_execution_ci hia.tests.test_application_ci -v 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/evidence-integrity.log"
+      - name: Execute all private Prepared to application histories
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.execution_application.qualify --output "$RUNNER_TEMP/hia-execution-application-native" 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/native.log"
+      - name: Execute all 32 actual physical controls and mandatory syscall traces
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.execution_application.physical --output "$RUNNER_TEMP/hia-execution-application-physical" --require-trace 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/physical.log"
+      - name: Reject altered sources artifacts pipes observations and unsafe public execution inputs
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.execution_application.test_integrity --output "$RUNNER_TEMP/hia-execution-application-integrity" --bundle "$RUNNER_TEMP/hia-execution-application-native/bundle" 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/integrity.log"
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+      - name: Compare all histories with actual original Rust and all eight retained tests
+        env:
+          RUSTUP_TOOLCHAIN: 1.95.0-x86_64-unknown-linux-gnu
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.execution_application.rust_oracle --repository "$PWD" --bundle "$RUNNER_TEMP/hia-execution-application-native/bundle" --output "$RUNNER_TEMP/hia-execution-application-original" --target-dir "$RUNNER_TEMP/hia-execution-application-cargo-target" 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/original.log"
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-execution-application-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-execution-application-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/source-after.log"
+      - name: Bind full application pipes physical journals and original comparisons
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_application_ci bind 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-observations/binding.log"
+      - name: Preserve complete actual evidence including the independent original binary
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_application_ci pack 2>&1 | tee "$RUNNER_TEMP/hia-execution-application-package.log"
+      - name: Preserve packaging diagnostics after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-execution-application-artifact"
+          if test -f "$RUNNER_TEMP/hia-execution-application-package.log"; then
+            cp -- "$RUNNER_TEMP/hia-execution-application-package.log" "$RUNNER_TEMP/hia-execution-application-artifact/package.log"
+          fi
+      - name: Retain complete native physical original and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-execution-application-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-execution-application-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
