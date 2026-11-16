@@ -28,6 +28,28 @@ class StorageCliTests(unittest.TestCase):
                     self.assertIn("usage:", result.stdout)
 
 
+    def test_optimized_python_cannot_silently_disable_storage_oracles(self):
+        """-O, -OO and PYTHONOPTIMIZE must refuse before any qualification."""
+        environment = os.environ.copy()
+        for name in ("PYTHONPATH", "PYTHONHOME", "PYTHONOPTIMIZE"):
+            environment.pop(name, None)
+        script = (HIA / "tools/qualify_storage.py").resolve(strict=True)
+        with tempfile.TemporaryDirectory(prefix="trnm-storage-opt-refusal-") as directory:
+            for args, optimization in ((("-O",), None), (("-OO",), None),
+                                       ((), "2")):
+                with self.subTest(args=args, env=optimization):
+                    child_env = environment.copy()
+                    if optimization is not None:
+                        child_env["PYTHONOPTIMIZE"] = optimization
+                    result = subprocess.run(
+                        [sys.executable, *args, "-B", str(script), "--help"],
+                        cwd=Path(directory), env=child_env, text=True,
+                        capture_output=True, timeout=10)
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn("optimized Python is forbidden", result.stderr)
+                    self.assertNotIn('"result": "PASS"', result.stdout)
+
+
 class StorageNativeTests(unittest.TestCase):
     def setUp(self):
         missing = [name for name in ("HIA_TOOLCHAIN_ROOT", "HIA_NATIVE_COMPILER", "HIA_NATIVE_COMPILER_SHA256")
