@@ -1,5 +1,18 @@
 # Whole-tree inventory and HIA migration audit
 
+## Independent qualification jobs — 2026-11-16 UTC
+
+Exact-source push run `43813295781` executed 224 component tests with zero
+skips and 76,161 shared native calls successfully, then exhausted the combined
+20-minute job while starting the original executor comparison. Physical native
+StoreOwner qualification passed 52 controls in that same run. The whole run and
+the matching PR run `43813498662` remain CANCELLED. The unchanged component,
+physical-owner and original-executor commands now have independent jobs with
+the same 20-minute limit, source/compiler checks and retained artifacts. The
+eight-job new-source result remains pending until observed. The failing W1
+16-attacker service campaign and mismatched-input historical budget controls
+are separate open gates; no original service resource limit was widened.
+
 ## Optimized Python qualification refusal — 2026-11-16 UTC
 
 The native StoreOwner's physical test controller had assertion-based disk,

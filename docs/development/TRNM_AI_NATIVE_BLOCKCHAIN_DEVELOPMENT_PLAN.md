@@ -1,3 +1,25 @@
+## HIA exact-source qualification job separation — 2026-11-16 UTC
+
+The exact `4e1c1ada` source completed all 224 component tests with zero skips
+and 76,161 shared native calls in push run `43813295781`; physical StoreOwner
+qualification also passed 52 controls. The combined job then reached its
+20-minute limit while starting the independent original executor comparison.
+Both push and PR HIA workflows are CANCELLED, not complete qualifications.
+
+The workflow now runs the unchanged component corpus, physical platform/stream/
+storage controls, and full original executor comparison as three independent
+jobs. Every original command and evidence path is retained. Each job still
+has its 20-minute limit, frozen source checks, compiler binding and failure
+artifacts. No original four-second service or hostile-client budget is changed.
+The resulting exact-source eight-job workflow must complete before it is PASS.
+
+The independent W1 service run `43813498834` still fails the 16-attacker,
+four-second confirmation requirement despite passing its no-attacker baseline.
+Three historical budget controls refuse nonidentical lockfile/manifest inputs
+before any native child starts. These failed observations are preserved.
+All 26 original packages and nine migration gates remain open; original stack
+removal awaits full functional replacements and accepted integration evidence.
+
 ## HIA StoreOwner optimized-interpreter qualification refusal — 2026-11-16 UTC
 
 The external physical qualification driver relied on Python `assert` checks
