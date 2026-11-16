@@ -779,3 +779,1177 @@ jobs:
             !${{ runner.temp }}/hia-node-settings/original/isolated-source/**
           if-no-files-found: error
           retention-days: 30
+  native-typed-store:
+    env:
+      TRNM_TYPED_STAGE: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Refuse incomplete or altered typed Store source and corpus bundles
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.test_integrity --repository "$PWD" --output "$RUNNER_TEMP/hia-typed-store-observations/integrity.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/integrity.log"
+      - name: Execute all native typed Store controls and capture the exact corpus
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.qualify --output "$RUNNER_TEMP/hia-typed-store-native" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/native.log"
+      - name: Require actual original Node Rust for every semantic case and all three State tests
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.rust_oracle --repository "$GITHUB_WORKSPACE/chain" --bundle "$RUNNER_TEMP/hia-typed-store-native" --output "$RUNNER_TEMP/hia-typed-store-original" --target-dir "$RUNNER_TEMP/hia-typed-store-cargo-target" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/original-rust.log"
+      - name: Bind actual outcomes to the exact native original and capacity lineage
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_BINDING'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          from hia.platform.typed_store.rust_oracle import ORIGINAL_TESTS
+
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          observations = root / 'hia-typed-store-observations'
+          def require(value, message):
+              if not value:
+                  raise ValueError(message)
+          def read(path):
+              require(path.is_file() and not path.is_symlink(), 'Missing regular receipt: ' + str(path))
+              raw = path.read_bytes()
+              return json.loads(raw), hashlib.sha256(raw).hexdigest()
+          def original_hash(build):
+              return hashlib.sha256(json.dumps(build['original_sources'], sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          expected = {'git_head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'attempt': int(os.environ['GITHUB_RUN_ATTEMPT'])}
+          if stage == 'native':
+              native, native_sha = read(root / 'hia-typed-store-native/report.json')
+              comparison, comparison_sha = read(root / 'hia-typed-store-native/native-comparison.json')
+              original, original_sha = read(root / 'hia-typed-store-original/report.json')
+              require(native['status'] == 'NATIVE_PASS_ORIGINAL_NOT_RUN' and native['native'] == 'PASS', 'Native owner did not pass')
+              require(native['original_rust'] == 'NOT_RUN', 'Do not rewrite the native-only original-Rust field')
+              require(native['native_controls'] == len(native['controls']) == 603 and native['semantic_cases'] == 392,
+                      'Complete frozen native controls and semantic corpus required')
+              require(all(row['status'] == 'PASS' for row in native['controls']), 'A native control failed')
+              require(comparison['status'] == 'PASS' and len(comparison['cases']) == 392, 'Native comparison incomplete')
+              build = comparison['build']
+              require(build == native['build'] and build['status'] == 'PASS', 'Native build identities differ')
+              require(original['status'] == 'PASS' and original['controls'] == 392 and original['failed'] == 0,
+                      'Mandatory actual original Rust did not pass')
+              require(original['retained_original_tests'] == list(ORIGINAL_TESTS), 'The three original State tests are required')
+              require(original['actual_private_original_apply_slot_state_and_root_called'] is True
+                      and original['original_production_function_bytes_preserved'] is True, 'Actual retained Node implementation required')
+              require(original['native_comparison_sha256'] == comparison_sha
+                      and original['native_source_set_sha256'] == build['source_set_sha256']
+                      and original['original_sources'] == build['original_sources']
+                      and original['exact_corpus'] == comparison['corpus'], 'Native and actual original source/corpus binding differs')
+              lineage = dict(expected, source_set_sha256=build['source_set_sha256'],
+                  original_source_set_sha256=original_hash(build), executable_sha256=build['executable']['sha256'],
+                  native_source_inputs_match_git_head=True)
+              binding = {'schema': 'trnm.hia.typed-store.ci-native-binding.v1', 'status': 'PASS',
+                  'lineage': lineage, 'source_inputs': build['source_inputs'],
+                  'native_controls': 603, 'semantic_cases': 392, 'original_tests': list(ORIGINAL_TESTS),
+                  'native_report_sha256': native_sha, 'original_report_sha256': original_sha,
+                  'comparison_sha256': comparison_sha, 'corpus': comparison['corpus'],
+                  'whole_node_or_commit_authority': False, 'physical_power_loss_qualified': False}
+              with (observations / 'native-binding.json').open('x') as stream:
+                  json.dump(binding, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          else:
+              previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+              prior = root / ('hia-typed-store-prior-' + previous)
+              binding, binding_sha = read(prior / 'native-binding.json')
+              require(binding['schema'] == 'trnm.hia.typed-store.ci-native-binding.v1'
+                      and binding['status'] == 'PASS', 'Actual native/original dependency binding required')
+              require(all(binding['lineage'][key] == value for key, value in expected.items()), 'Native binding belongs to another source/run/attempt')
+              report, report_sha = read(root / ('hia-typed-store-' + stage) / 'report.json')
+              require(report['schema'] == 'trnm.hia.typed-staging-capacity-stage.v1'
+                      and report['status'] == 'PASS' and report['stage'] == stage, 'Physical capacity stage did not pass')
+              require(report['lineage'] == binding['lineage'] and report['lineage']['native_source_inputs_match_git_head'] is True,
+                      'Capacity differs from exact committed native/original source or executable')
+              require(report['build']['source_inputs'] == binding['source_inputs']
+                      and original_hash(report['build']) == binding['lineage']['original_source_set_sha256'], 'Complete source maps differ')
+              checked = {'stage_report_sha256': report_sha, 'native_binding_sha256': binding_sha}
+              if previous != 'native':
+                  parent, parent_sha = read(prior / 'report.json')
+                  require(parent['status'] == 'PASS' and parent['stage'] == previous
+                          and parent['lineage'] == report['lineage']
+                          and report['prior_receipt_sha256'] == parent_sha, 'Direct prior receipt link differs')
+                  checked['prior_receipt_sha256'] = parent_sha
+              if stage == 'bounds':
+                  producer, producer_sha = read(prior / 'ancestry/produce-report.json')
+                  require(producer['status'] == 'PASS' and producer['stage'] == 'produce'
+                          and producer['lineage'] == report['lineage']
+                          and parent['prior_receipt_sha256'] == producer_sha, 'Produce-to-cold ancestral receipt link differs')
+                  require(producer['independent_root_hex'] == parent['independent_root_hex'] == report['independent_root_hex'],
+                          'Complete State root ancestry differs')
+                  checked['produce_receipt_sha256'] = producer_sha
+              with (observations / 'lineage-check.json').open('x') as stream:
+                  json.dump({'status': 'PASS', 'lineage': report['lineage'], **checked}, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_BINDING
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-after.log"
+      - name: Package all actual reports snapshots logs and build evidence without traversing FIFOs
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_ARTIFACT'
+          import hashlib, json, os, shutil, sys, tarfile
+          from pathlib import Path
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          output = root / 'hia-typed-store-artifact'
+          output.mkdir(mode=0o700)
+          stage_path = root / ('hia-typed-store-' + stage)
+          record = {'schema': 'trnm.hia.typed-store.ci-evidence-package.v1', 'stage': stage,
+              'source': os.environ.get('TRNM_EXPECTED_SOURCE_SHA'), 'run_id': os.environ.get('GITHUB_RUN_ID'),
+              'attempt': os.environ.get('GITHUB_RUN_ATTEMPT'), 'job': os.environ.get('GITHUB_JOB'),
+              'qualification_status_not_changed_by_packaging': True,
+              'excluded_reconstructible_original_source': 'original/isolated-source',
+              'excluded_cargo_target': str(root / 'hia-typed-store-cargo-target'), 'files': {}, 'error': None}
+          def identity(path):
+              value, size = hashlib.sha256(), 0
+              with path.open('rb') as stream:
+                  while block := stream.read(1 << 20):
+                      value.update(block)
+                      size += len(block)
+              return {'bytes': size, 'sha256': value.hexdigest()}
+          def copy_if_present(source, relative):
+              if not source.exists():
+                  return
+              if source.is_symlink() or not source.is_file():
+                  raise ValueError('Expected regular direct handoff: ' + str(source))
+              before = identity(source)
+              destination = output / relative
+              destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+              shutil.copyfile(source, destination)
+              if identity(destination) != before or identity(source) != before:
+                  raise ValueError('Handoff changed during packaging: ' + str(source))
+              record['files'][relative] = before
+          try:
+              roots = {'observations': root / 'hia-typed-store-observations',
+                       'bootstrap': root / 'hia-bootstrap', 'stage': stage_path}
+              if stage == 'native':
+                  roots['original'] = root / 'hia-typed-store-original'
+              # Tar records FIFO/hardlink metadata without reading FIFO endpoints. Upload
+              # only this regular archive and regular handoffs, never a live fixture tree.
+              def retain(member):
+                  if member.name == 'original/isolated-source' or member.name.startswith('original/isolated-source/'):
+                      return None
+                  return member
+              archive = output / 'complete-evidence.tar.xz'
+              with tarfile.open(archive, 'x:xz', preset=1, dereference=False) as stream:
+                  for label, path in roots.items():
+                      if path.exists():
+                          stream.add(path, arcname=label, filter=retain)
+              record['files'][archive.name] = identity(archive)
+              copy_if_present(stage_path / 'report.json', 'report.json')
+              copy_if_present(stage_path / 'maximum-state.kv.xz', 'maximum-state.kv.xz')
+              if stage == 'native':
+                  copy_if_present(root / 'hia-typed-store-observations/native-binding.json', 'native-binding.json')
+              else:
+                  previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+                  prior = root / ('hia-typed-store-prior-' + previous)
+                  copy_if_present(prior / 'native-binding.json', 'native-binding.json')
+                  copy_if_present(prior / 'ci-provenance.json', 'ancestry/' + previous + '-ci-provenance.json')
+                  if previous != 'native':
+                      copy_if_present(prior / 'report.json', 'ancestry/' + previous + '-report.json')
+                  if stage == 'bounds':
+                      copy_if_present(prior / 'ancestry/produce-report.json', 'ancestry/produce-report.json')
+          finally:
+              error = sys.exc_info()[1]
+              if error is not None:
+                  record['error'] = type(error).__name__ + ': ' + str(error)
+              with (output / 'ci-provenance.json').open('x') as stream:
+                  json.dump(record, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_ARTIFACT
+      - name: Retain exact native success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-typed-store-native-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+  native-typed-store-produce:
+    needs: native-typed-store
+    env:
+      TRNM_TYPED_STAGE: produce
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Download only this run and attempt's exact native dependency
+        # With no external token/repository override, download-artifact selects
+        # this workflow run; the exact name also binds head, run and attempt.
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-typed-store-native-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-prior-native
+      - name: Produce and independently root all 65536 maximal State rows
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.capacity --stage produce --output "$RUNNER_TEMP/hia-typed-store-produce" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/capacity-produce.log"
+      - name: Bind actual outcomes to the exact native original and capacity lineage
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_BINDING'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          from hia.platform.typed_store.rust_oracle import ORIGINAL_TESTS
+
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          observations = root / 'hia-typed-store-observations'
+          def require(value, message):
+              if not value:
+                  raise ValueError(message)
+          def read(path):
+              require(path.is_file() and not path.is_symlink(), 'Missing regular receipt: ' + str(path))
+              raw = path.read_bytes()
+              return json.loads(raw), hashlib.sha256(raw).hexdigest()
+          def original_hash(build):
+              return hashlib.sha256(json.dumps(build['original_sources'], sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          expected = {'git_head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'attempt': int(os.environ['GITHUB_RUN_ATTEMPT'])}
+          if stage == 'native':
+              native, native_sha = read(root / 'hia-typed-store-native/report.json')
+              comparison, comparison_sha = read(root / 'hia-typed-store-native/native-comparison.json')
+              original, original_sha = read(root / 'hia-typed-store-original/report.json')
+              require(native['status'] == 'NATIVE_PASS_ORIGINAL_NOT_RUN' and native['native'] == 'PASS', 'Native owner did not pass')
+              require(native['original_rust'] == 'NOT_RUN', 'Do not rewrite the native-only original-Rust field')
+              require(native['native_controls'] == len(native['controls']) == 603 and native['semantic_cases'] == 392,
+                      'Complete frozen native controls and semantic corpus required')
+              require(all(row['status'] == 'PASS' for row in native['controls']), 'A native control failed')
+              require(comparison['status'] == 'PASS' and len(comparison['cases']) == 392, 'Native comparison incomplete')
+              build = comparison['build']
+              require(build == native['build'] and build['status'] == 'PASS', 'Native build identities differ')
+              require(original['status'] == 'PASS' and original['controls'] == 392 and original['failed'] == 0,
+                      'Mandatory actual original Rust did not pass')
+              require(original['retained_original_tests'] == list(ORIGINAL_TESTS), 'The three original State tests are required')
+              require(original['actual_private_original_apply_slot_state_and_root_called'] is True
+                      and original['original_production_function_bytes_preserved'] is True, 'Actual retained Node implementation required')
+              require(original['native_comparison_sha256'] == comparison_sha
+                      and original['native_source_set_sha256'] == build['source_set_sha256']
+                      and original['original_sources'] == build['original_sources']
+                      and original['exact_corpus'] == comparison['corpus'], 'Native and actual original source/corpus binding differs')
+              lineage = dict(expected, source_set_sha256=build['source_set_sha256'],
+                  original_source_set_sha256=original_hash(build), executable_sha256=build['executable']['sha256'],
+                  native_source_inputs_match_git_head=True)
+              binding = {'schema': 'trnm.hia.typed-store.ci-native-binding.v1', 'status': 'PASS',
+                  'lineage': lineage, 'source_inputs': build['source_inputs'],
+                  'native_controls': 603, 'semantic_cases': 392, 'original_tests': list(ORIGINAL_TESTS),
+                  'native_report_sha256': native_sha, 'original_report_sha256': original_sha,
+                  'comparison_sha256': comparison_sha, 'corpus': comparison['corpus'],
+                  'whole_node_or_commit_authority': False, 'physical_power_loss_qualified': False}
+              with (observations / 'native-binding.json').open('x') as stream:
+                  json.dump(binding, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          else:
+              previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+              prior = root / ('hia-typed-store-prior-' + previous)
+              binding, binding_sha = read(prior / 'native-binding.json')
+              require(binding['schema'] == 'trnm.hia.typed-store.ci-native-binding.v1'
+                      and binding['status'] == 'PASS', 'Actual native/original dependency binding required')
+              require(all(binding['lineage'][key] == value for key, value in expected.items()), 'Native binding belongs to another source/run/attempt')
+              report, report_sha = read(root / ('hia-typed-store-' + stage) / 'report.json')
+              require(report['schema'] == 'trnm.hia.typed-staging-capacity-stage.v1'
+                      and report['status'] == 'PASS' and report['stage'] == stage, 'Physical capacity stage did not pass')
+              require(report['lineage'] == binding['lineage'] and report['lineage']['native_source_inputs_match_git_head'] is True,
+                      'Capacity differs from exact committed native/original source or executable')
+              require(report['build']['source_inputs'] == binding['source_inputs']
+                      and original_hash(report['build']) == binding['lineage']['original_source_set_sha256'], 'Complete source maps differ')
+              checked = {'stage_report_sha256': report_sha, 'native_binding_sha256': binding_sha}
+              if previous != 'native':
+                  parent, parent_sha = read(prior / 'report.json')
+                  require(parent['status'] == 'PASS' and parent['stage'] == previous
+                          and parent['lineage'] == report['lineage']
+                          and report['prior_receipt_sha256'] == parent_sha, 'Direct prior receipt link differs')
+                  checked['prior_receipt_sha256'] = parent_sha
+              if stage == 'bounds':
+                  producer, producer_sha = read(prior / 'ancestry/produce-report.json')
+                  require(producer['status'] == 'PASS' and producer['stage'] == 'produce'
+                          and producer['lineage'] == report['lineage']
+                          and parent['prior_receipt_sha256'] == producer_sha, 'Produce-to-cold ancestral receipt link differs')
+                  require(producer['independent_root_hex'] == parent['independent_root_hex'] == report['independent_root_hex'],
+                          'Complete State root ancestry differs')
+                  checked['produce_receipt_sha256'] = producer_sha
+              with (observations / 'lineage-check.json').open('x') as stream:
+                  json.dump({'status': 'PASS', 'lineage': report['lineage'], **checked}, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_BINDING
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-after.log"
+      - name: Package all actual reports snapshots logs and build evidence without traversing FIFOs
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_ARTIFACT'
+          import hashlib, json, os, shutil, sys, tarfile
+          from pathlib import Path
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          output = root / 'hia-typed-store-artifact'
+          output.mkdir(mode=0o700)
+          stage_path = root / ('hia-typed-store-' + stage)
+          record = {'schema': 'trnm.hia.typed-store.ci-evidence-package.v1', 'stage': stage,
+              'source': os.environ.get('TRNM_EXPECTED_SOURCE_SHA'), 'run_id': os.environ.get('GITHUB_RUN_ID'),
+              'attempt': os.environ.get('GITHUB_RUN_ATTEMPT'), 'job': os.environ.get('GITHUB_JOB'),
+              'qualification_status_not_changed_by_packaging': True,
+              'excluded_reconstructible_original_source': 'original/isolated-source',
+              'excluded_cargo_target': str(root / 'hia-typed-store-cargo-target'), 'files': {}, 'error': None}
+          def identity(path):
+              value, size = hashlib.sha256(), 0
+              with path.open('rb') as stream:
+                  while block := stream.read(1 << 20):
+                      value.update(block)
+                      size += len(block)
+              return {'bytes': size, 'sha256': value.hexdigest()}
+          def copy_if_present(source, relative):
+              if not source.exists():
+                  return
+              if source.is_symlink() or not source.is_file():
+                  raise ValueError('Expected regular direct handoff: ' + str(source))
+              before = identity(source)
+              destination = output / relative
+              destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+              shutil.copyfile(source, destination)
+              if identity(destination) != before or identity(source) != before:
+                  raise ValueError('Handoff changed during packaging: ' + str(source))
+              record['files'][relative] = before
+          try:
+              roots = {'observations': root / 'hia-typed-store-observations',
+                       'bootstrap': root / 'hia-bootstrap', 'stage': stage_path}
+              if stage == 'native':
+                  roots['original'] = root / 'hia-typed-store-original'
+              # Tar records FIFO/hardlink metadata without reading FIFO endpoints. Upload
+              # only this regular archive and regular handoffs, never a live fixture tree.
+              def retain(member):
+                  if member.name == 'original/isolated-source' or member.name.startswith('original/isolated-source/'):
+                      return None
+                  return member
+              archive = output / 'complete-evidence.tar.xz'
+              with tarfile.open(archive, 'x:xz', preset=1, dereference=False) as stream:
+                  for label, path in roots.items():
+                      if path.exists():
+                          stream.add(path, arcname=label, filter=retain)
+              record['files'][archive.name] = identity(archive)
+              copy_if_present(stage_path / 'report.json', 'report.json')
+              copy_if_present(stage_path / 'maximum-state.kv.xz', 'maximum-state.kv.xz')
+              if stage == 'native':
+                  copy_if_present(root / 'hia-typed-store-observations/native-binding.json', 'native-binding.json')
+              else:
+                  previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+                  prior = root / ('hia-typed-store-prior-' + previous)
+                  copy_if_present(prior / 'native-binding.json', 'native-binding.json')
+                  copy_if_present(prior / 'ci-provenance.json', 'ancestry/' + previous + '-ci-provenance.json')
+                  if previous != 'native':
+                      copy_if_present(prior / 'report.json', 'ancestry/' + previous + '-report.json')
+                  if stage == 'bounds':
+                      copy_if_present(prior / 'ancestry/produce-report.json', 'ancestry/produce-report.json')
+          finally:
+              error = sys.exc_info()[1]
+              if error is not None:
+                  record['error'] = type(error).__name__ + ': ' + str(error)
+              with (output / 'ci-provenance.json').open('x') as stream:
+                  json.dump(record, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_ARTIFACT
+      - name: Retain exact produce success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-typed-store-produce-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+  native-typed-store-cold:
+    needs: native-typed-store-produce
+    env:
+      TRNM_TYPED_STAGE: cold
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Download only this run and attempt's exact produce dependency
+        # With no external token/repository override, download-artifact selects
+        # this workflow run; the exact name also binds head, run and attempt.
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-typed-store-produce-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-prior-produce
+      - name: Restore the complete prior snapshot and root it in a fresh native process
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.capacity --stage cold --output "$RUNNER_TEMP/hia-typed-store-cold" --prior "$RUNNER_TEMP/hia-typed-store-prior-produce" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/capacity-cold.log"
+      - name: Bind actual outcomes to the exact native original and capacity lineage
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_BINDING'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          from hia.platform.typed_store.rust_oracle import ORIGINAL_TESTS
+
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          observations = root / 'hia-typed-store-observations'
+          def require(value, message):
+              if not value:
+                  raise ValueError(message)
+          def read(path):
+              require(path.is_file() and not path.is_symlink(), 'Missing regular receipt: ' + str(path))
+              raw = path.read_bytes()
+              return json.loads(raw), hashlib.sha256(raw).hexdigest()
+          def original_hash(build):
+              return hashlib.sha256(json.dumps(build['original_sources'], sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          expected = {'git_head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'attempt': int(os.environ['GITHUB_RUN_ATTEMPT'])}
+          if stage == 'native':
+              native, native_sha = read(root / 'hia-typed-store-native/report.json')
+              comparison, comparison_sha = read(root / 'hia-typed-store-native/native-comparison.json')
+              original, original_sha = read(root / 'hia-typed-store-original/report.json')
+              require(native['status'] == 'NATIVE_PASS_ORIGINAL_NOT_RUN' and native['native'] == 'PASS', 'Native owner did not pass')
+              require(native['original_rust'] == 'NOT_RUN', 'Do not rewrite the native-only original-Rust field')
+              require(native['native_controls'] == len(native['controls']) == 603 and native['semantic_cases'] == 392,
+                      'Complete frozen native controls and semantic corpus required')
+              require(all(row['status'] == 'PASS' for row in native['controls']), 'A native control failed')
+              require(comparison['status'] == 'PASS' and len(comparison['cases']) == 392, 'Native comparison incomplete')
+              build = comparison['build']
+              require(build == native['build'] and build['status'] == 'PASS', 'Native build identities differ')
+              require(original['status'] == 'PASS' and original['controls'] == 392 and original['failed'] == 0,
+                      'Mandatory actual original Rust did not pass')
+              require(original['retained_original_tests'] == list(ORIGINAL_TESTS), 'The three original State tests are required')
+              require(original['actual_private_original_apply_slot_state_and_root_called'] is True
+                      and original['original_production_function_bytes_preserved'] is True, 'Actual retained Node implementation required')
+              require(original['native_comparison_sha256'] == comparison_sha
+                      and original['native_source_set_sha256'] == build['source_set_sha256']
+                      and original['original_sources'] == build['original_sources']
+                      and original['exact_corpus'] == comparison['corpus'], 'Native and actual original source/corpus binding differs')
+              lineage = dict(expected, source_set_sha256=build['source_set_sha256'],
+                  original_source_set_sha256=original_hash(build), executable_sha256=build['executable']['sha256'],
+                  native_source_inputs_match_git_head=True)
+              binding = {'schema': 'trnm.hia.typed-store.ci-native-binding.v1', 'status': 'PASS',
+                  'lineage': lineage, 'source_inputs': build['source_inputs'],
+                  'native_controls': 603, 'semantic_cases': 392, 'original_tests': list(ORIGINAL_TESTS),
+                  'native_report_sha256': native_sha, 'original_report_sha256': original_sha,
+                  'comparison_sha256': comparison_sha, 'corpus': comparison['corpus'],
+                  'whole_node_or_commit_authority': False, 'physical_power_loss_qualified': False}
+              with (observations / 'native-binding.json').open('x') as stream:
+                  json.dump(binding, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          else:
+              previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+              prior = root / ('hia-typed-store-prior-' + previous)
+              binding, binding_sha = read(prior / 'native-binding.json')
+              require(binding['schema'] == 'trnm.hia.typed-store.ci-native-binding.v1'
+                      and binding['status'] == 'PASS', 'Actual native/original dependency binding required')
+              require(all(binding['lineage'][key] == value for key, value in expected.items()), 'Native binding belongs to another source/run/attempt')
+              report, report_sha = read(root / ('hia-typed-store-' + stage) / 'report.json')
+              require(report['schema'] == 'trnm.hia.typed-staging-capacity-stage.v1'
+                      and report['status'] == 'PASS' and report['stage'] == stage, 'Physical capacity stage did not pass')
+              require(report['lineage'] == binding['lineage'] and report['lineage']['native_source_inputs_match_git_head'] is True,
+                      'Capacity differs from exact committed native/original source or executable')
+              require(report['build']['source_inputs'] == binding['source_inputs']
+                      and original_hash(report['build']) == binding['lineage']['original_source_set_sha256'], 'Complete source maps differ')
+              checked = {'stage_report_sha256': report_sha, 'native_binding_sha256': binding_sha}
+              if previous != 'native':
+                  parent, parent_sha = read(prior / 'report.json')
+                  require(parent['status'] == 'PASS' and parent['stage'] == previous
+                          and parent['lineage'] == report['lineage']
+                          and report['prior_receipt_sha256'] == parent_sha, 'Direct prior receipt link differs')
+                  checked['prior_receipt_sha256'] = parent_sha
+              if stage == 'bounds':
+                  producer, producer_sha = read(prior / 'ancestry/produce-report.json')
+                  require(producer['status'] == 'PASS' and producer['stage'] == 'produce'
+                          and producer['lineage'] == report['lineage']
+                          and parent['prior_receipt_sha256'] == producer_sha, 'Produce-to-cold ancestral receipt link differs')
+                  require(producer['independent_root_hex'] == parent['independent_root_hex'] == report['independent_root_hex'],
+                          'Complete State root ancestry differs')
+                  checked['produce_receipt_sha256'] = producer_sha
+              with (observations / 'lineage-check.json').open('x') as stream:
+                  json.dump({'status': 'PASS', 'lineage': report['lineage'], **checked}, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_BINDING
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-after.log"
+      - name: Package all actual reports snapshots logs and build evidence without traversing FIFOs
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_ARTIFACT'
+          import hashlib, json, os, shutil, sys, tarfile
+          from pathlib import Path
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          output = root / 'hia-typed-store-artifact'
+          output.mkdir(mode=0o700)
+          stage_path = root / ('hia-typed-store-' + stage)
+          record = {'schema': 'trnm.hia.typed-store.ci-evidence-package.v1', 'stage': stage,
+              'source': os.environ.get('TRNM_EXPECTED_SOURCE_SHA'), 'run_id': os.environ.get('GITHUB_RUN_ID'),
+              'attempt': os.environ.get('GITHUB_RUN_ATTEMPT'), 'job': os.environ.get('GITHUB_JOB'),
+              'qualification_status_not_changed_by_packaging': True,
+              'excluded_reconstructible_original_source': 'original/isolated-source',
+              'excluded_cargo_target': str(root / 'hia-typed-store-cargo-target'), 'files': {}, 'error': None}
+          def identity(path):
+              value, size = hashlib.sha256(), 0
+              with path.open('rb') as stream:
+                  while block := stream.read(1 << 20):
+                      value.update(block)
+                      size += len(block)
+              return {'bytes': size, 'sha256': value.hexdigest()}
+          def copy_if_present(source, relative):
+              if not source.exists():
+                  return
+              if source.is_symlink() or not source.is_file():
+                  raise ValueError('Expected regular direct handoff: ' + str(source))
+              before = identity(source)
+              destination = output / relative
+              destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+              shutil.copyfile(source, destination)
+              if identity(destination) != before or identity(source) != before:
+                  raise ValueError('Handoff changed during packaging: ' + str(source))
+              record['files'][relative] = before
+          try:
+              roots = {'observations': root / 'hia-typed-store-observations',
+                       'bootstrap': root / 'hia-bootstrap', 'stage': stage_path}
+              if stage == 'native':
+                  roots['original'] = root / 'hia-typed-store-original'
+              # Tar records FIFO/hardlink metadata without reading FIFO endpoints. Upload
+              # only this regular archive and regular handoffs, never a live fixture tree.
+              def retain(member):
+                  if member.name == 'original/isolated-source' or member.name.startswith('original/isolated-source/'):
+                      return None
+                  return member
+              archive = output / 'complete-evidence.tar.xz'
+              with tarfile.open(archive, 'x:xz', preset=1, dereference=False) as stream:
+                  for label, path in roots.items():
+                      if path.exists():
+                          stream.add(path, arcname=label, filter=retain)
+              record['files'][archive.name] = identity(archive)
+              copy_if_present(stage_path / 'report.json', 'report.json')
+              copy_if_present(stage_path / 'maximum-state.kv.xz', 'maximum-state.kv.xz')
+              if stage == 'native':
+                  copy_if_present(root / 'hia-typed-store-observations/native-binding.json', 'native-binding.json')
+              else:
+                  previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+                  prior = root / ('hia-typed-store-prior-' + previous)
+                  copy_if_present(prior / 'native-binding.json', 'native-binding.json')
+                  copy_if_present(prior / 'ci-provenance.json', 'ancestry/' + previous + '-ci-provenance.json')
+                  if previous != 'native':
+                      copy_if_present(prior / 'report.json', 'ancestry/' + previous + '-report.json')
+                  if stage == 'bounds':
+                      copy_if_present(prior / 'ancestry/produce-report.json', 'ancestry/produce-report.json')
+          finally:
+              error = sys.exc_info()[1]
+              if error is not None:
+                  record['error'] = type(error).__name__ + ': ' + str(error)
+              with (output / 'ci-provenance.json').open('x') as stream:
+                  json.dump(record, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_ARTIFACT
+      - name: Retain exact cold success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-typed-store-cold-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+  native-typed-store-bounds:
+    needs: native-typed-store-cold
+    env:
+      TRNM_TYPED_STAGE: bounds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Download only this run and attempt's exact cold dependency
+        # With no external token/repository override, download-artifact selects
+        # this workflow run; the exact name also binds head, run and attempt.
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-typed-store-cold-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-prior-cold
+      - name: Execute final-byte corruption and classical versus growth count boundaries
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.typed_store.capacity --stage bounds --output "$RUNNER_TEMP/hia-typed-store-bounds" --prior "$RUNNER_TEMP/hia-typed-store-prior-cold" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/capacity-bounds.log"
+      - name: Bind actual outcomes to the exact native original and capacity lineage
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_BINDING'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          from hia.platform.typed_store.rust_oracle import ORIGINAL_TESTS
+
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          observations = root / 'hia-typed-store-observations'
+          def require(value, message):
+              if not value:
+                  raise ValueError(message)
+          def read(path):
+              require(path.is_file() and not path.is_symlink(), 'Missing regular receipt: ' + str(path))
+              raw = path.read_bytes()
+              return json.loads(raw), hashlib.sha256(raw).hexdigest()
+          def original_hash(build):
+              return hashlib.sha256(json.dumps(build['original_sources'], sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          expected = {'git_head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'attempt': int(os.environ['GITHUB_RUN_ATTEMPT'])}
+          if stage == 'native':
+              native, native_sha = read(root / 'hia-typed-store-native/report.json')
+              comparison, comparison_sha = read(root / 'hia-typed-store-native/native-comparison.json')
+              original, original_sha = read(root / 'hia-typed-store-original/report.json')
+              require(native['status'] == 'NATIVE_PASS_ORIGINAL_NOT_RUN' and native['native'] == 'PASS', 'Native owner did not pass')
+              require(native['original_rust'] == 'NOT_RUN', 'Do not rewrite the native-only original-Rust field')
+              require(native['native_controls'] == len(native['controls']) == 603 and native['semantic_cases'] == 392,
+                      'Complete frozen native controls and semantic corpus required')
+              require(all(row['status'] == 'PASS' for row in native['controls']), 'A native control failed')
+              require(comparison['status'] == 'PASS' and len(comparison['cases']) == 392, 'Native comparison incomplete')
+              build = comparison['build']
+              require(build == native['build'] and build['status'] == 'PASS', 'Native build identities differ')
+              require(original['status'] == 'PASS' and original['controls'] == 392 and original['failed'] == 0,
+                      'Mandatory actual original Rust did not pass')
+              require(original['retained_original_tests'] == list(ORIGINAL_TESTS), 'The three original State tests are required')
+              require(original['actual_private_original_apply_slot_state_and_root_called'] is True
+                      and original['original_production_function_bytes_preserved'] is True, 'Actual retained Node implementation required')
+              require(original['native_comparison_sha256'] == comparison_sha
+                      and original['native_source_set_sha256'] == build['source_set_sha256']
+                      and original['original_sources'] == build['original_sources']
+                      and original['exact_corpus'] == comparison['corpus'], 'Native and actual original source/corpus binding differs')
+              lineage = dict(expected, source_set_sha256=build['source_set_sha256'],
+                  original_source_set_sha256=original_hash(build), executable_sha256=build['executable']['sha256'],
+                  native_source_inputs_match_git_head=True)
+              binding = {'schema': 'trnm.hia.typed-store.ci-native-binding.v1', 'status': 'PASS',
+                  'lineage': lineage, 'source_inputs': build['source_inputs'],
+                  'native_controls': 603, 'semantic_cases': 392, 'original_tests': list(ORIGINAL_TESTS),
+                  'native_report_sha256': native_sha, 'original_report_sha256': original_sha,
+                  'comparison_sha256': comparison_sha, 'corpus': comparison['corpus'],
+                  'whole_node_or_commit_authority': False, 'physical_power_loss_qualified': False}
+              with (observations / 'native-binding.json').open('x') as stream:
+                  json.dump(binding, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          else:
+              previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+              prior = root / ('hia-typed-store-prior-' + previous)
+              binding, binding_sha = read(prior / 'native-binding.json')
+              require(binding['schema'] == 'trnm.hia.typed-store.ci-native-binding.v1'
+                      and binding['status'] == 'PASS', 'Actual native/original dependency binding required')
+              require(all(binding['lineage'][key] == value for key, value in expected.items()), 'Native binding belongs to another source/run/attempt')
+              report, report_sha = read(root / ('hia-typed-store-' + stage) / 'report.json')
+              require(report['schema'] == 'trnm.hia.typed-staging-capacity-stage.v1'
+                      and report['status'] == 'PASS' and report['stage'] == stage, 'Physical capacity stage did not pass')
+              require(report['lineage'] == binding['lineage'] and report['lineage']['native_source_inputs_match_git_head'] is True,
+                      'Capacity differs from exact committed native/original source or executable')
+              require(report['build']['source_inputs'] == binding['source_inputs']
+                      and original_hash(report['build']) == binding['lineage']['original_source_set_sha256'], 'Complete source maps differ')
+              checked = {'stage_report_sha256': report_sha, 'native_binding_sha256': binding_sha}
+              if previous != 'native':
+                  parent, parent_sha = read(prior / 'report.json')
+                  require(parent['status'] == 'PASS' and parent['stage'] == previous
+                          and parent['lineage'] == report['lineage']
+                          and report['prior_receipt_sha256'] == parent_sha, 'Direct prior receipt link differs')
+                  checked['prior_receipt_sha256'] = parent_sha
+              if stage == 'bounds':
+                  producer, producer_sha = read(prior / 'ancestry/produce-report.json')
+                  require(producer['status'] == 'PASS' and producer['stage'] == 'produce'
+                          and producer['lineage'] == report['lineage']
+                          and parent['prior_receipt_sha256'] == producer_sha, 'Produce-to-cold ancestral receipt link differs')
+                  require(producer['independent_root_hex'] == parent['independent_root_hex'] == report['independent_root_hex'],
+                          'Complete State root ancestry differs')
+                  checked['produce_receipt_sha256'] = producer_sha
+              with (observations / 'lineage-check.json').open('x') as stream:
+                  json.dump({'status': 'PASS', 'lineage': report['lineage'], **checked}, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_BINDING
+      - name: Verify all committed source bytes again after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-typed-store-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-typed-store-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-typed-store-observations/source-after.log"
+      - name: Package all actual reports snapshots logs and build evidence without traversing FIFOs
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$TRNM_TYPED_STAGE" <<'PY_TYPED_ARTIFACT'
+          import hashlib, json, os, shutil, sys, tarfile
+          from pathlib import Path
+          stage = sys.argv[1]
+          root = Path(os.environ['RUNNER_TEMP'])
+          output = root / 'hia-typed-store-artifact'
+          output.mkdir(mode=0o700)
+          stage_path = root / ('hia-typed-store-' + stage)
+          record = {'schema': 'trnm.hia.typed-store.ci-evidence-package.v1', 'stage': stage,
+              'source': os.environ.get('TRNM_EXPECTED_SOURCE_SHA'), 'run_id': os.environ.get('GITHUB_RUN_ID'),
+              'attempt': os.environ.get('GITHUB_RUN_ATTEMPT'), 'job': os.environ.get('GITHUB_JOB'),
+              'qualification_status_not_changed_by_packaging': True,
+              'excluded_reconstructible_original_source': 'original/isolated-source',
+              'excluded_cargo_target': str(root / 'hia-typed-store-cargo-target'), 'files': {}, 'error': None}
+          def identity(path):
+              value, size = hashlib.sha256(), 0
+              with path.open('rb') as stream:
+                  while block := stream.read(1 << 20):
+                      value.update(block)
+                      size += len(block)
+              return {'bytes': size, 'sha256': value.hexdigest()}
+          def copy_if_present(source, relative):
+              if not source.exists():
+                  return
+              if source.is_symlink() or not source.is_file():
+                  raise ValueError('Expected regular direct handoff: ' + str(source))
+              before = identity(source)
+              destination = output / relative
+              destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+              shutil.copyfile(source, destination)
+              if identity(destination) != before or identity(source) != before:
+                  raise ValueError('Handoff changed during packaging: ' + str(source))
+              record['files'][relative] = before
+          try:
+              roots = {'observations': root / 'hia-typed-store-observations',
+                       'bootstrap': root / 'hia-bootstrap', 'stage': stage_path}
+              if stage == 'native':
+                  roots['original'] = root / 'hia-typed-store-original'
+              # Tar records FIFO/hardlink metadata without reading FIFO endpoints. Upload
+              # only this regular archive and regular handoffs, never a live fixture tree.
+              def retain(member):
+                  if member.name == 'original/isolated-source' or member.name.startswith('original/isolated-source/'):
+                      return None
+                  return member
+              archive = output / 'complete-evidence.tar.xz'
+              with tarfile.open(archive, 'x:xz', preset=1, dereference=False) as stream:
+                  for label, path in roots.items():
+                      if path.exists():
+                          stream.add(path, arcname=label, filter=retain)
+              record['files'][archive.name] = identity(archive)
+              copy_if_present(stage_path / 'report.json', 'report.json')
+              copy_if_present(stage_path / 'maximum-state.kv.xz', 'maximum-state.kv.xz')
+              if stage == 'native':
+                  copy_if_present(root / 'hia-typed-store-observations/native-binding.json', 'native-binding.json')
+              else:
+                  previous = {'produce': 'native', 'cold': 'produce', 'bounds': 'cold'}[stage]
+                  prior = root / ('hia-typed-store-prior-' + previous)
+                  copy_if_present(prior / 'native-binding.json', 'native-binding.json')
+                  copy_if_present(prior / 'ci-provenance.json', 'ancestry/' + previous + '-ci-provenance.json')
+                  if previous != 'native':
+                      copy_if_present(prior / 'report.json', 'ancestry/' + previous + '-report.json')
+                  if stage == 'bounds':
+                      copy_if_present(prior / 'ancestry/produce-report.json', 'ancestry/produce-report.json')
+          finally:
+              error = sys.exc_info()[1]
+              if error is not None:
+                  record['error'] = type(error).__name__ + ': ' + str(error)
+              with (output / 'ci-provenance.json').open('x') as stream:
+                  json.dump(record, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_TYPED_ARTIFACT
+      - name: Retain exact bounds success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-typed-store-bounds-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-typed-store-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+  native-host-resource:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-resource-observations/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete and altered resource source bindings
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest hia.platform.host_resource.test_integrity -v 2>&1 | tee "$RUNNER_TEMP/hia-resource-observations/integrity.log"
+      - name: Execute every native resource control and capture one exact corpus
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.host_resource.rust_oracle --native-only --repository "$GITHUB_WORKSPACE/chain" --output "$RUNNER_TEMP/hia-native-host-resource" 2>&1 | tee "$RUNNER_TEMP/hia-resource-observations/native.log"
+          python3 -B - "$RUNNER_TEMP/hia-native-host-resource/native/native-comparison.json" <<'PY_RESOURCE_TRACE'
+          import json, pathlib, sys
+          report = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          if (report['status'] != 'NATIVE_PASS_ORIGINAL_NOT_RUN'
+                  or report['native_trace']['status'] != 'PASS'
+                  or len(report['cases']) != 172
+                  or len(report['native_physical_observations']) != 172
+                  or len(report['native_protocol_controls']) != 11
+                  or sum(len(row['comparison']) for row in report['cases']) != 180):
+              raise SystemExit('Complete native resource controls and actual independent trace are mandatory')
+          PY_RESOURCE_TRACE
+      - name: Compare that exact native corpus with actual original Host Rust
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.host_resource.rust_oracle --repository "$GITHUB_WORKSPACE/chain" --bundle "$RUNNER_TEMP/hia-native-host-resource/native" --output "$RUNNER_TEMP/hia-native-host-resource-original" --target-dir "$RUNNER_TEMP/host-resource-original-rust" 2>&1 | tee "$RUNNER_TEMP/hia-resource-observations/original.log"
+          python3 -B - "$RUNNER_TEMP/hia-native-host-resource-original/original/report.json" <<'PY_RESOURCE_ORIGINAL'
+          import json, pathlib, sys
+          report = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          if (report['status'] != 'PASS' or report['controls'] != 172
+                  or report['operations'] != 180 or report['failed'] != 0
+                  or report['original_sample_counters_cases'] != 148):
+              raise SystemExit('The complete actual original resource comparison is required')
+          PY_RESOURCE_ORIGINAL
+      - name: Verify complete committed source again after success or failure
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-resource-observations/source-after.json"
+      - name: Package all resource evidence without descending into physical fixtures
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY_RESOURCE_ARTIFACT'
+          import hashlib, json, os, sys, tarfile
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          output = root / 'hia-resource-artifact'
+          output.mkdir(mode=0o700)
+          record = {'schema': 'trnm.hia.host-resource.ci-evidence-package.v1',
+              'source': os.environ.get('TRNM_EXPECTED_SOURCE_SHA'),
+              'run_id': os.environ.get('GITHUB_RUN_ID'), 'attempt': os.environ.get('GITHUB_RUN_ATTEMPT'),
+              'job': os.environ.get('GITHUB_JOB'), 'qualification_status_not_changed_by_packaging': True,
+              'excluded': ['physical fixture namespaces', 'original isolated-source', 'Cargo target'],
+              'files': {}, 'error': None}
+          def identity(path):
+              size, digest = 0, hashlib.sha256()
+              with path.open('rb') as stream:
+                  while block := stream.read(1 << 20):
+                      size += len(block)
+                      digest.update(block)
+              return {'bytes': size, 'sha256': digest.hexdigest()}
+          def add_file(stream, path, name):
+              if not path.exists() and not path.is_symlink():
+                  return
+              if path.is_symlink() or not path.is_file():
+                  raise ValueError('Evidence is not a regular file: ' + str(path))
+              before = identity(path)
+              stream.add(path, arcname=name, recursive=False)
+              if identity(path) != before:
+                  raise ValueError('Evidence changed during packaging: ' + str(path))
+              record['files'][name] = before
+          def regular_tree(stream, path, name):
+              if not path.exists():
+                  return
+              if path.is_symlink() or not path.is_dir():
+                  raise ValueError('Evidence root is not a directory: ' + str(path))
+              for current in sorted(path.rglob('*')):
+                  if current.is_symlink():
+                      raise ValueError('Aliased evidence: ' + str(current))
+                  if current.is_dir():
+                      continue
+                  add_file(stream, current, name + '/' + current.relative_to(path).as_posix())
+          try:
+              archive = output / 'complete-evidence.tar.xz'
+              with tarfile.open(archive, 'x:xz', preset=1, dereference=False) as stream:
+                  regular_tree(stream, root / 'hia-resource-observations', 'observations')
+                  add_file(stream, root / 'hia-bootstrap/bootstrap.json', 'bootstrap.json')
+                  native = root / 'hia-native-host-resource/native'
+                  physical = native / 'physical'
+                  for name in ('native-comparison.json', 'corpus.jsonl'):
+                      add_file(stream, native / name, 'native/' + name)
+                  for name in ('report.json', 'cases.jsonl'):
+                      add_file(stream, physical / name, 'native/physical/' + name)
+                  regular_tree(stream, physical / 'build', 'native/physical/build')
+                  for name in ('syscalls.log', 'stdout.raw', 'stderr.raw'):
+                      add_file(stream, physical / 'trace' / name, 'native/physical/trace/' + name)
+                  # Only the direct receipt names are read. Test namespaces can
+                  # contain unreadable directories, FIFOs, sockets and symlinks.
+                  for group in ('semantic', 'controls'):
+                      cases = physical / group
+                      if not cases.exists():
+                          continue
+                      for case in sorted(cases.iterdir()):
+                          if case.is_symlink() or not case.is_dir():
+                              raise ValueError('Unexpected physical case root: ' + str(case))
+                          for name in ('stdin.raw', 'stdout.raw', 'stderr.raw', 'observation.json'):
+                              add_file(stream, case / name, 'native/physical/' + group + '/' + case.name + '/' + name)
+                  original = root / 'hia-native-host-resource-original/original'
+                  for name in ('report.json', 'comparison.json', 'corpus.jsonl'):
+                      add_file(stream, original / name, 'original/' + name)
+                  for name in ('rustc-version', 'cargo-original-test-build', 'list-original-tests',
+                               'retained-original-host-tests', 'actual-original-resource-corpus'):
+                      regular_tree(stream, original / name, 'original/' + name)
+              record['archive'] = dict(identity(archive), name=archive.name)
+          finally:
+              error = sys.exc_info()[1]
+              if error is not None:
+                  record['error'] = type(error).__name__ + ': ' + str(error)
+              with (output / 'ci-provenance.json').open('x') as stream:
+                  json.dump(record, stream, sort_keys=True, indent=2)
+                  stream.write('\n')
+          PY_RESOURCE_ARTIFACT
+      - name: Retain actual resource native original and trace evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-host-resource-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-resource-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30

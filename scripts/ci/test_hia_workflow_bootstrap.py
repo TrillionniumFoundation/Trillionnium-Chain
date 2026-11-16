@@ -1,4 +1,4 @@
-"""Fail-closed HIA compiler bootstrap and frozen Rust reference wiring controls."""
+"""Fail-closed tests for thirteen HIA compiler bootstrap gates and frozen Rust reference wiring."""
 from __future__ import annotations
 
 import json
@@ -29,9 +29,9 @@ class BootstrapGuards(unittest.TestCase):
     def setUpClass(cls):
         text = WORKFLOW.read_text(encoding="utf-8")
         cls.bodies = [textwrap.dedent(m.group("body")) for m in BOOTSTRAP.finditer(text)]
-        if len(cls.bodies) != 8:
+        if len(cls.bodies) != 13:
             raise AssertionError(
-                f"expected eight independent native bootstrap gates, found {len(cls.bodies)}"
+                f"expected thirteen independent native bootstrap gates, found {len(cls.bodies)}"
             )
 
     def check_case(self, body, payload, *, python_args, succeed):

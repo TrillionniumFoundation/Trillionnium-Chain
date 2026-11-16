@@ -2,7 +2,7 @@
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
 one complete HIA-native implementation. The current candidate contains **41
-kernel units and eight native foundations**, accounting for all **59 HIA source
+kernel units and ten native foundations**, accounting for all **64 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -37,14 +37,20 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 
 ## Observed qualification and current scope
 
-The preceding `453326b335af` source completed all eight HIA jobs in both
+The `8690b8bbeb58` PR completed eight of nine HIA jobs. It ran 270 component
+tests with zero skips and 92,509 shared native calls; its Host production job
+failed in independent trace normalization after actual native checks completed.
+The actual failure and offline parser diagnosis are retained below. None of
+those prior observations is relabeled as qualification of the current source.
+
+The earlier `453326b335af` source completed all eight HIA jobs in both
 [push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828760883)
 and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828945597)
 qualification. Both ran 257 component tests, zero skips and 92,509 shared native
 calls, including actual original-Rust consensus, mempool, AuditEvent and
 RawBindings comparison. Its 52 physical storage controls passed with actual
 syscall tracing; all 197 initialization recovery controls passed. These results
-belong to that source; the new Host increment requires its own exact-source run.
+belong to that source; the current increment requires its own exact-source run.
 
 The [original service campaign on the same head](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828945620/job/133169304908)
 still failed in the original four-second/16-attacker window: original and fresh
@@ -55,6 +61,46 @@ nested intervals, not additive costs. This is the retained original Rust Node,
 not a measurement of an integrated HIA Node. No service or identity guard was
 relaxed. Earlier historical budget comparisons also refused before native
 execution because their Cargo.lock differed; those failures remain recorded.
+
+## Complete classical State staging and root
+
+The [typed Store owner](platform/typed_store/README.md) performs actual Linux
+descriptor admission, streaming Delta merge, complete stored-State decoding and
+an optional complete classical sparse root in one HIA-generated executable. Its
+private arena is 4,587,520 bytes; immutable input captures also consume operating
+system storage. The runtime performs its own reads, writes, parsing and root
+arithmetic. The test controller supplies physical capabilities and observations.
+
+The [development evidence](platform/typed_store/qualification/development-observations.json)
+retains 603 native controls, 392 actual original-Rust semantic comparisons,
+three retained original State tests and ten controller controls. The original
+Rust comparison exposed an empty-key SQL projection mismatch. The correction
+also preserves empty-value projection refusal, dimension/callback/conversion
+order and the ability to delete or repair invalid pre-State rows. The original
+374 cases remain, with 18 additional cases. Earlier failures are retained.
+
+All three complete-capacity development stages passed with 65,536 rows, 160-byte
+keys and 4,096-byte values: 279,969,808 bytes in the typed stream format. Native
+generation and an independent full root calculation agreed. A fresh process
+restored and scanned every byte, producing the same root. The bounds stage
+refused final-byte corruption and a classical row-count overflow without
+publishing output; the growth dimension profile admitted the extra row without
+claiming a GSC2 root. These stages took 644.13996704, 621.776575668 and
+71.819485816 seconds under their separate 20-minute qualification limits.
+
+These records bind the earlier development overlay, not this new committed
+source. Four mandatory CI jobs rerun native/original comparison and the three
+capacity stages in order, checking the complete source before and after each
+job and binding each handoff to its exact head, run, attempt, executable and
+prior receipt. Bundle admission independently reconstructs the complete current
+source dependency closure and all source-defined corpus bytes. Missing inputs,
+self-consistent forged digests, recursive dependency changes and truncated or
+trailing compressed input are refused before Rust tool discovery or copying.
+The integrated controller passed nine groups, 81 controls and 11 public CLI
+invocations; these are admission tests, not additional native-runtime cases.
+Fresh-process recovery does not establish physical power-loss
+recovery or cache flushing. Namespace, continuity, expected-root admission,
+COMMIT, replay, peer ACK and complete Node authority remain open.
 
 ## Fresh native Host checkpoint owner
 
@@ -78,12 +124,48 @@ An independent 20-minute Host CI job now requires all physical controls with
 real syscall tracing, the actual original Rust comparison, and a production
 fixed-parent check inside the unchanged original resource limits. It binds the
 whole exact committed source and permits provisioning only a previously absent
-parent on an ephemeral hosted runner. Its production controller passed eight
+parent on an ephemeral hosted runner. Its production controller passed eleven
 refusal/evidence tests. A real early-exit race that lost 283 stderr bytes was
 reproduced and fixed; primary and cleanup failures are retained separately.
-The first two hosted production services failed, and a fixture-permission error also blocked their artifact upload. The [retained logs](qualification/host-production-ci-failure.json) record both failures; the inner production cause is unobserved. Explicit artifact selection and bounded real child diagnostics are now wired for the next exact-source execution. Resource
-sampling, same-worker embedding, the complete Node and original four-second/
+The first two hosted production services failed, and a fixture-permission error
+also blocked artifact upload. The [retained logs](qualification/host-production-ci-failure.json)
+record both failures. After collection was repaired, the `8690b8b` push job
+returned an actual zero-exit native execution with 22 fresh checks and valid
+thread membership, then failed in trace normalization. Escaped read contents
+had caused quotes to be matched across lines. The corrected mapper touches only
+complete path arguments; [the unchanged actual trace](qualification/host-production-trace-parser-development.json)
+now passes offline reinspection. That job remains FAIL, and a new exact-source
+production execution is required. Resource sampling, same-worker embedding,
+the complete Node and original four-second/
 16-worker service acceptance remain open.
+
+## Native aggregate Host resource sampling
+
+The [resource owner](platform/host_resource/README.md) reads actual `cpu.stat`,
+`memory.current` and `pids.current` through the same parent FD returned by its
+first complete fresh Host check. All three bounded regular-file reads and
+UTF-8 checks finish before parsing. The owner preserves duplicate-key refusal,
+the original unsigned parsing rules and field/error order, closes that exact
+parent FD, then performs a second complete fresh check. A private baseline
+supports checked CPU deltas; failed samples publish no qualified numeric values.
+
+The [development evidence](qualification/host-resource-development.json) retains
+183 native controls, 172 actual original-Rust cases covering 180 operations,
+44 original Host tests and actual independent syscall tracing. Of the 172
+cases, 148 exercise the unchanged original `sample_counters` sequence; 23
+exercise explicit private reader/parser mutation phases and one tests the
+additional private baseline protocol. The original ignored helper remains
+ignored and is invoked by its original parent. Three integrity test groups and
+seven real malformed-bundle CLI invocations verify complete source admission.
+
+The development source retains its own 30-input binding. A separate mandatory
+20-minute CI job runs the native controls once, requires the real trace, and
+passes the same exact corpus to the actual original Rust implementation.
+Artifact collection reads explicit receipt paths without descending into
+intentionally unreadable fixture namespaces. Fixed-parent production resource
+sampling, same-worker embedding, paid per-thread CPU, child process ownership
+and original service acceptance remain open. Whole-parent resource values do
+not grant any individual worker's paid-CPU or consensus authority.
 
 ## Native AuditEvent values and exact RawBindings
 
@@ -532,7 +614,7 @@ and [artifact publication boundary](https://github.com/TrillionniumFoundation/He
 define that distinction. The compiler cold gate did not execute every specialized
 file application gate and gives no socket, SQLite or node-lifecycle guarantee.
 
-The eight native foundations have separate contracts and qualification:
+The ten native foundations have separate contracts and qualification:
 
 | Foundation | Native behavior | Remaining integration |
 | --- | --- | --- |
@@ -544,6 +626,8 @@ The eight native foundations have separate contracts and qualification:
 | [Private stack](platform/private_stack/README.md) | Two guard pages, dedicated native call stack, full ordinary-return wipe, unmap and explicit cleanup failure | Caller seed lifetime, asynchronous termination, complete key owner and machine-code timing proof |
 | [Response qualification caller](platform/transport_response/README.md) | Variable-length output, redzones, complete signed response and actual cleanup-error publication refusal | Private connection, replay commit and terminal response authority |
 | [Fresh Host checkpoint](platform/host_checkpoint/README.md) | Actual fixed-parent acquisition and fresh boot, calling-thread, identity and five-limit checks, with bounded read-only syscall profiles | Production positive, resource sampling, same-worker embedding and original service qualification |
+| [Typed Store staging](platform/typed_store/README.md) | Sealed-input streaming Delta merge, complete stored State scan and classical root, physical descriptor checks and synchronized output | Namespace/continuity authority, expected-root admission, durable Node transaction, GSC2 root and peer ACK |
+| [Aggregate Host resource](platform/host_resource/README.md) | Three bounded actual counter reads under two fresh checks, private baselines and checked CPU deltas | Production resource positive, Node worker placement, paid per-thread CPU, child ownership and service acceptance |
 
 The reactor and transaction owner are actual native implementations generated
 through the pinned HIA compiler. The literal ISA adapters remain separately

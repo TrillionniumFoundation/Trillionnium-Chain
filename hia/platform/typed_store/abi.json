@@ -1,0 +1,121 @@
+{
+  "schema": "trnm.hia.native-typed-staging-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "native_entry": "f0(readbuf[65536],mutbuf[65536],mutbuf[4456448])->u32",
+  "arena_bytes": 4587520,
+  "copy_chunk_bytes": 32768,
+  "bootstrap": {
+    "magic": "TSTAGE01",
+    "bytes": 96,
+    "words": [
+      "base_fd",
+      "delta_fd",
+      "output_fd",
+      "detach",
+      "progress_write_fd",
+      "callback_read_fd",
+      "row_profile",
+      "classical_root_requested",
+      "zero",
+      "zero",
+      "zero"
+    ]
+  },
+  "captures": {
+    "base_magic": "TKVSTR01",
+    "delta_magic": "NDLT0001",
+    "required_immutable_seals": 15,
+    "total_state_byte_cap": null,
+    "max_signed_extent": "9223372036854775807",
+    "key_before_state_byte_cap": null,
+    "value_before_state_byte_cap": null
+  },
+  "gate": {
+    "actual_type": "FIFO",
+    "write_access": "O_WRONLY",
+    "read_access": "O_RDONLY",
+    "reject_o_path": true,
+    "distinct_device_inode": true,
+    "admitted_before_first_progress": true,
+    "record_bytes": 32,
+    "reply_bytes": 24,
+    "callback_errors_are_opaque": true
+  },
+  "state": {
+    "max_key_bytes": 160,
+    "max_value_bytes": 4096,
+    "classical_max_rows": 65536,
+    "growth_profile_max_rows": 1065536,
+    "complete_stored_json_parser": "jv_parse",
+    "stored_parser_outer_mode": 0,
+    "canonical_flag_offset": 64,
+    "legacy_stored_projection": {
+      "key": "CAST(substr(CAST(key AS BLOB),1,161) AS TEXT)",
+      "value": "substr(value,1,4097)",
+      "empty_key_projection": "SQL NULL; stored decode refusal",
+      "empty_value_projection": "SQL NULL; stored decode refusal",
+      "dimensions_before_conversions": true,
+      "key_before_value": true,
+      "row_callback_before_conversions": true,
+      "delta_may_delete_or_repair_prior_invalid_stored_rows": true,
+      "empty_key_not_globally_forbidden_by_protocol_root": true
+    }
+  },
+  "syscalls": [
+    0,
+    1,
+    3,
+    5,
+    17,
+    18,
+    72,
+    73,
+    74,
+    77,
+    107
+  ],
+  "bootstrap_syscalls": [
+    9,
+    13,
+    60
+  ],
+  "internal_root_call": 4096,
+  "receipt": {
+    "magic": "TSRESULT",
+    "bytes": 128,
+    "kinds": {
+      "1": "stored_rows",
+      "2": "stored_rows_and_classical_root"
+    }
+  },
+  "authority": {
+    "namespace": false,
+    "commit": false,
+    "continuity": false,
+    "expected_root_admission": false,
+    "replay": false,
+    "outbox": false,
+    "gsc2_root": false
+  },
+  "qualification": {
+    "original_sql_conversion_order": false,
+    "full_serde_error_text_source_chain": false,
+    "physical_power_loss": false,
+    "same_uid_continuous_attacker": false
+  },
+  "full_extent_qualification": {
+    "stages": [
+      "produce",
+      "cold",
+      "bounds"
+    ],
+    "entry": "hia.platform.typed_store.capacity",
+    "raw_state_bytes": 279969808,
+    "snapshot_archive": "maximum-state.kv.xz",
+    "each_stage_independent_native_build": true,
+    "exact_head_run_attempt_binding": true,
+    "archive_is_transport_only": true,
+    "full_output_sha_rechecked_each_stage": true,
+    "growth_maximum_extent_qualified": false
+  }
+}

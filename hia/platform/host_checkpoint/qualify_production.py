@@ -165,9 +165,17 @@ def hosted_context(environment=None, uid=None):
 
 
 def normalize_trace(text):
-    """Map only exact quoted fixed path arguments to the shared trace grammar."""
-    return re.sub(r'"([^"\\]*)"',
-                  lambda found: '"' + PRODUCTION_PATHS.get(found[1], found[1]) + '"', text)
+    """Map fixed path arguments without rewriting escaped strace payloads."""
+    # Consume a complete escaped string on this syscall line. Restrict mapping
+    # to the path argument so a read payload cannot be mistaken for a path.
+    pattern = (r'(?m)^([ \t]*(?:(?:\[pid[ \t]+\d+\]|\d+)[ \t]+)?'
+               r'(?:openat|newfstatat)\([^,\r\n]+,[ \t]*)'
+               r'("(?:[^"\\\r\n]|\\[^\r\n])*")')
+    def mapped(found):
+        token = found[2]
+        path = PRODUCTION_PATHS.get(token[1:-1])
+        return found[1] + (token if path is None else '"' + path + '"')
+    return re.sub(pattern, mapped, text)
 
 
 def service_argv(service, directory, output, uid, gid, environment):

@@ -1,3 +1,18 @@
+## 2026-11-16 UTC — HIA 完整 State staging、Host 资源采样和实际生产轨迹修复
+
+本轮候选覆盖41内核、10个native foundations、全部64份HIA源文件；26原Rust包保留、0退役、9个全项目门继续OPEN。新增的是实际原生有限owner及强制资格链，完整Node、PQ身份、服务预算、模型与研究验收尚未完成，不据此删除旧栈。
+
+- Typed Store的HIA ELF真实执行sealed输入/独占输出FD检查、32KiB流式Delta归并、完整stored State读取和可选classical root；私有arena 4,587,520B，输入memfd/tmpfs另占操作系统存储，不能当作零成本。原生603控制、实际原Rust392差分及3个原State测试通过；首次374案例中空key的SQL projection差异实际暴露后修复，同时保留empty value、dimensions→callback→key/value conversion→JSON顺序和删除/修复无效旧行，原374全部保留并加18例。
+- 全量65,536行×160B键×4,096B值的typed stream为279,969,808B，SHA256 cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3。produce/cold/bounds三个实际阶段分别644.13996704、621.776575668、71.819485816秒通过，原生及独立全量root一致f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702。cold新进程恢复全部原字节并重新计算root；末字节损坏和classical count+1均真实拒绝且输出归零，growth dimension+1通过不计GSC2 root。保留原每阶段20分钟资格限额，不放宽4秒服务门。冷进程恢复不等于cache flush、power loss或COMMIT。
+- Typed Store原开发证据仍绑定453326b overlay/13 owned/27 native inputs，native_source_inputs_match_git_head=false，不移植旧PASS到新提交。新bundle入口在Rust工具发现前独立重建owned+explicit+recursive canonical source闭包、完整source摘要和source-defined392语料，拒绝缺项/假hash/路径别名/伪reexport/截断或尾随XZ。整合后14 owned/28 native inputs，9组81个实际控制及11次CLI通过；这是hosted admission资格，不新增native运行计数。完整State之后的continuity、expected-root准入、namespace、Node COMMIT/replay/outbox/ACK仍OPEN。
+- Host resource两个HIA源复用原35个Host helpers和同一只读adapter；两条显式include图已独立Core核验，与原builder的48函数程序完全一致。每次CPU/memory/PID计数都在第一次fresh check所得同一parent FD读取，完整EOF/UTF-8后按原序解析，先close再第二次fresh check；private baseline保存和四项checked subtraction不接受host输入计数或成功位。重新实际183 native控制、172原Rust histories/180 operations及44原Host tests通过；148 histories调用完整原sample_counters，23为原reader/parser私有阶段fixture，1为新baseline协议。原ignored child probe保持原状态。3组source tests与7个实际坏bundle在Cargo前拒绝，独立真实trace通过；本地ptrace拒绝仍UNKNOWN。固定parent生产计数positive、同worker嵌入、per-thread paid CPU、wait4和原服务门未完成。
+- 8690b8b的PR43839178104实际9 jobs终态为8成功/Host失败；native-components为270 tests/0 skipped/92,509 shared calls，698.99216432秒，source_set 7f175b52ecfecda209f2c705321a65f711568768ad6686ffd7d7e7725014cbf5。push43838900349与PR的Host实际HIA进程均exit0、4次真实TID/运行ELF/cgroup观察、22次完整检查；但原独立trace checker在Unexpected metadata path处失败，原job保持FAIL。本轮从完整artifact定位escaped read字符串造成旧quote regex跨行配对，仅对anchored openat/newfstatat的完整path token归一化，未知路径及read payload原字节不改。完整原push 54,038B/888syscall轨迹离线重审22×37 core/EOF/fence/FD close通过，15个Host测试通过；不计新生产执行，必须新source再次真实CI。
+- 强制CI现14 jobs、13个独立compiler bootstrap gate；完整保留原步骤与20分钟单job限制。Typed native/actualRust→produce→cold→bounds四段同head/run/attempt链，每段前后全仓逐字source核验，完整snapshot/receipt SHA连续绑定。独立resource job只执行一次183，再要求actual trace PASS并将同bundle交实际原Rust；保存direct receipts/build/原编译测试日志，避免递归故意不可读的fixture目录。新增代码只有最终组件、合同、测试和必要失败/来源证据，作者生成器、候选补丁与临时构建均在仓库之外。
+
+继续实现实际State→continuity全关联→M06 root→record root admission→原生持久事务的原顺序，并补完整私有Config/PQ anchor、Node生命周期和其他全项目门。不能把TSRESULT或独立Host sidecar作为另一个owner/worker的准入授权。原453 W1仍保留0.25CPU/2GiB/0swap/256pid/4秒/16攻击者下两压力0confirmed失败，无压2.374779837/2.308299376秒。全量HIA替换和原门真实闭合前不退休旧包。
+
+此前计划以下方原字节后缀完整保留。
+
 ## 2026-11-16 UTC — 保留首次 Host 生产路径失败，修复资格证据收集
 
 已发布dcd72f7的push43835950065和PR43835980615都实际通过独立Host syscall trace与145原Rust对照；production服务随后退出失败。完整外层job日志保留在hia/qualification/host-production-ci-failure.json。上传工具又因原native fixture故意设为search-only的目录产生真实EACCES，内部systemd-run/child详细报告未能取回；因此不推断或编造内部失败原因，不计production正向。
