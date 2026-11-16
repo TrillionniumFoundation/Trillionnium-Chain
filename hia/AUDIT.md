@@ -1,5 +1,7 @@
 # Whole-tree inventory and HIA migration audit
 
+The newest M05 candidate adds a single-call pure five-field post-dequeue projection (LQV1 opcode 23), checked against one actual original Rust dequeue observation plus an independent fairness-module differential. Exact-head CI qualification is pending. The projected fields do not authorize or mutate the real mempool; the complete Node owner and retirement gates remain OPEN.
+
 ## New M05 projection candidate and source-bound qualification
 
 The `5524ce8b` six-job native CI completed successfully on its exact source:

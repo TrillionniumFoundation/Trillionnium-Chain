@@ -1,3 +1,7 @@
+## One-call native M05 post-pop projection — 2026-11-16 UTC
+
+LQV1 opcode **23** returns a 40-byte little-endian `(selected_lane, normal_after, critical_after, fairness_after, popped)` projection using **one immutable 56-byte request and one emitted HIA machine-code invocation**. The caller must provide a `mutbuf` of at least 40 bytes; smaller output buffers return status 2 without writing anything. The remaining bytes of a larger buffer and the distinct scratch buffer are unchanged. This avoids mixing separately sampled caller inputs when inspecting lane/fairness proposals, but is **not an atomic dequeue, thread-safety guarantee, a queue owner, a local-pool handoff, a persistent Node transaction or a package-retirement witness**. The complete original Rust `pop_ready` tests compare its observed lane/count/popped fields; the original fairness module differential checks the fairness field separately. New exact-head machine-code and Rust CI results must be observed before PASS; all 26 original packages, nine gates and PQ HOLD_NO_GO remain.
+
 ## Native post-dequeue queue projections — 2026-11-16 UTC
 
 The HIA LQV1 policy now includes opcodes 20 (normal count after one original-selected

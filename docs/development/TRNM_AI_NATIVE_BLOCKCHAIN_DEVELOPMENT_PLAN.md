@@ -1,3 +1,26 @@
+## HIA M05 single-invocation post-pop projection — 2026-11-16 UTC — exact-head qualification pending
+
+The LQV1 native HIA kernel adds opcode **23**: one 56-byte immutable
+caller-supplied request returns five 64-bit words in one 40-byte output:
+selected lane, post-pop normal/critical counts, post-pop fairness and
+popped flag. Unlike multiple scalar calls, this is one input snapshot
+per emitted machine-code invocation. A short output buffer is rejected
+without partial writes; surplus output canaries and scratch are preserved.
+A mandatory unchanged original Rust public pop_ready fixture supplies
+actual lane/count/popped outcomes; the original fairness module is also
+differentially executed. These are *pure projections only*, not queue
+ownership, an atomic operation on shared queues, persisted Node state,
+reorg/replay/outbox integration, a private-key fix, or service admission.
+
+Exact new-source native, original-Rust and negative PQ CI are NOT_RUN
+until their actual job observations. The immediately preceding ba57ac83
+HIA run 43797925014 completed all six jobs SUCCESS; the distinct
+concurrent run 43797908905 was CANCELLED and must not be counted PASS.
+The previously failed budget and W1-security jobs remain separate
+historical failures. 26 original packages remain; all nine migration
+gates OPEN; PQ HOLD_NO_GO. Do not remove the Rust implementation or
+change old service limits. All text below this preface is unchanged.
+
 ## HIA M05 post-pop queue projections — 2026-11-16 UTC — exact-source CI pending
 
 The previous exact-source commit `5524ce8b` has completed
