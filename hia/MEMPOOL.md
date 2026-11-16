@@ -40,6 +40,7 @@ little-endian unsigned 64-bit words:
 | 15 | critical reserved headroom, saturating at zero |
 | 16 | fresh normal admission eligibility, including critical spillover borrowing and global limit |
 | 17 | fresh critical admission eligibility, including normal-lane spillover and global limit |
+| 18 | original `pop_ready` queue selection: 0 idle, 1 normal, 2 critical, using the post-admission critical streak and the live queue counts |
 
 The caller must supply queue lengths, fairness counts and a complete authenticated
 context from its own authority. This primitive **does not** derive or authorize
@@ -69,11 +70,11 @@ failure, never a skip. The main qualification's source manifest includes
 these two original Rust implementation files so their mutation invalidates
 the comparison.
 
-The exact prior `ddcd5791` [HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43772265993)
-executed all 6,695 original Rust quota/fairness comparisons against emitted native
-machine code. Its main native qualification passed 220 tests and 65,762
-machine-code calls, with zero skips. These results bind only the previous
-source and **do not** qualify the newly added QoS snapshot operations.
+The exact preceding `54a3f02b` [HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43782301850)
+executed the original Rust QoS snapshot comparison against emitted native
+machine code: 221 native tests / 69,767 shared machine-code calls and zero
+skips. This prior source has opcodes 0–17 only; **opcode 18 is newly added and
+its exact-head native/original Rust comparison is NOT_RUN until CI finishes**.
 
 The dedicated QoS test compiles the actual unchanged original
 `trnm-mempool/src/lib.rs`, including the typed admission module, executes real
@@ -87,3 +88,26 @@ The remaining M05 owner includes authoritative queue state, deduplication
 repair after restored-state skew, critical-vs-normal scheduling, mutations,
 nonce reservations, persistent handoff, cancellation and cold recovery.
 Those are neither delegated to this primitive nor qualified as finished.
+
+## Original dequeue lane choice — opcode 18
+
+The source now emits the pure next-dequeue lane decision from the actual
+`LaneAdmissionGate::pop_ready` priority order: when the normal lane exists,
+contains work and has reached the critical burst threshold, prefer normal;
+otherwise prefer critical if nonempty, then normal if nonempty, else idle.
+This is only a proposed lane-selection decision. It neither removes items,
+repairs restored duplicate caches, mutates the fairness streak, nor owns a
+persistent transaction or outbox.
+
+The [original dequeue adapter](tests/rust_mempool_pop_reference.rs) compiles the
+unchanged complete M05 crate, performs real admissions and one real
+`pop_ready` for each of 693 small-queue scenarios, and infers the actual
+popped lane from **before/after original `qos_snapshot`** counts, including
+cross-lane spillover. Its finite scenarios have no intermediate dequeues, so
+the expected pre-pop fairness streak follows from accepted admission outcomes
+and the original initial burst rule. The
+[mandatory native test](tests/test_mempool_quota.py) compares the observable
+original dequeue side with both the finite independent rule and the native HIA
+result, and separately exercises full unsigned-64-bit boundary values. No
+claim is made for actual Node queue ownership, concurrency, crash recovery or
+an original service-budget pass.

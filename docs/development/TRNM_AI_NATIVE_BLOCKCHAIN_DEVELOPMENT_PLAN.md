@@ -1,3 +1,35 @@
+## HIA M05 original dequeue-side selection — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+The LQV1 pure native HIA M05 policy adds opcode 18 to select the original
+`LaneAdmissionGate::pop_ready` queue from caller-owned normal/critical counts
+and the current fairness streak: 0=idle, 1=normal, 2=critical. This extends
+the existing original quota, fairness and five QoS snapshot selectors without
+modifying their input/output ABI or original Rust source.
+
+A new independent original Rust adapter compiles the unchanged full
+`trnm-mempool` crate, performs actual classed admissions and real
+`pop_ready` calls, then checks the side dequeued using before/after original
+QoS counts across 693 bounded scenarios. The native test binds its actual
+answers to emitted HIA code, full-u64 arithmetic edges and malformed-frame
+refusals. There is **no local pinned compiler/Rust qualification claim** for
+this new exact source; the mandatory CI must execute before promotion.
+
+The preceding exact `54a3f02b` HIA native-components job is SUCCESS:
+221 tests / 69,767 shared-runner machine-code calls / zero skips,
+including actual original Rust M05 QoS snapshots. Its transport, Settings,
+Delta and response jobs are also SUCCESS; its historical source/archive
+job was still in progress when this new candidate was prepared. A result
+for one source revision is never transplanted to its successor.
+
+The 26 original Rust packages remain, all nine gates stay OPEN, the
+real Node SQLite owner/reorg/replay/outbox and complete key/constant-time
+lifecycle remain absent, and PQ stays HOLD_NO_GO. The new pure choice
+does not dequeue, mutate/repair queues or commit to persistent storage.
+Historical plan text is preserved byte-for-byte as an unchanged suffix.
+No service-budget, public-network or production admission is claimed.
+
+---
+
 ## HIA M05 actual original QoS-snapshot native candidate — 2026-11-16 UTC — PENDING EXACT-HEAD CI
 
 The native M05 `LQV1` kernel now implements five additional original

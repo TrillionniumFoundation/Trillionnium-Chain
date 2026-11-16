@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "hia/src/mempool/lane_quota.hepta"
 RUST = ROOT / "hia/tests/rust_mempool_quota_reference.rs"
 RUST_SNAPSHOT = ROOT / "hia/tests/rust_mempool_snapshot_reference.rs"
+RUST_POP = ROOT / "hia/tests/rust_mempool_pop_reference.rs"
 RUST_LIB = ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs"
 MAX = (1 << 64) - 1
 
@@ -70,6 +71,14 @@ def expected(op: int, total: int, requested: int, normal: int,
     if op == 17:
         return int(normal + critical < total and
                    (critical < reserve or normal < normal_capacity))
+    if op == 18:
+        # Original pop_ready chooses the normal lane after fairness threshold
+        # or when the critical queue is empty; otherwise it serves critical.
+        normal_cap = normal_capacity > 0
+        prefer_normal = normal_cap and streak >= burst and normal > 0
+        if normal > 0 and (prefer_normal or critical == 0):
+            return 1
+        return 2 if critical > 0 else 0
     raise AssertionError("Unknown test mode")
 
 
@@ -84,12 +93,12 @@ def finite_cases():
         (1, MAX, 0, 1, 0, 0),
         (2, MAX, 0, 1, MAX, MAX),
     ]:
-        for op in range(18):
+        for op in range(19):
             yield op, total, reserve, normal, critical, streak, burst
     values = [0, 1, 2, 3, 4, 7, 8, 15, 16, 32, 63,
               MAX // 2, MAX - 2, MAX - 1, MAX]
     for _ in range(1800):
-        yield (rng.randrange(18), *(rng.choice(values) for _ in range(6)))
+        yield (rng.randrange(19), *(rng.choice(values) for _ in range(6)))
 
 
 class NativeMempoolQuotaTests(unittest.TestCase):
@@ -123,7 +132,7 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         wrong_magic = b"BAD!" + valid[4:]
         wrong_reserved = valid[:6] + b"\x01" + valid[7:]
         bad_opcode = valid[:4] + b"\xff" + valid[5:]
-        next_unimplemented = valid[:4] + b"\x12" + valid[5:]
+        next_unimplemented = valid[:4] + b"\x13" + valid[5:]
         cases = [(valid[:-1], 16, 1), (valid + b"\x00", 16, 1),
                  (valid, 7, 2), (wrong_magic, 16, 3),
                  (wrong_reserved, 16, 3), (bad_opcode, 16, 4),
@@ -242,6 +251,50 @@ class NativeMempoolQuotaTests(unittest.TestCase):
                 state = (op, total, reserve, normal, critical, 0, 0)
                 self.assertEqual(expected(*state), actual, state)
                 native_rows.append(state)
+        self.check_cases(native_rows)
+
+    def test_original_pop_lane_choice_after_actual_ingress(self):
+        # Run the unchanged complete original mempool implementation, observe
+        # which authoritative queue is decremented by pop_ready, and compare
+        # that selection with HIA-emitted native opcode 18.
+        scenarios = [(total, reserve, pattern)
+                     for total in range(9)
+                     for reserve in range(11)
+                     for pattern in range(7)]
+        with tempfile.TemporaryDirectory(prefix="trnm-hia-pop-rust-") as tmp:
+            temporary = Path(tmp)
+            library = temporary / "libtrnm_mempool.rlib"
+            executable = temporary / "original-pop"
+            built = subprocess.run([
+                "rustc", "--edition=2021", "--crate-type=rlib",
+                "--crate-name", "trnm_mempool", "-O", str(RUST_LIB),
+                "-o", str(library),
+            ], cwd=ROOT, capture_output=True, text=True,
+                timeout=120, check=False)
+            self.assertEqual(built.returncode, 0, built.stderr)
+            built = subprocess.run([
+                "rustc", "--edition=2021", "-O", str(RUST_POP),
+                "--extern", "trnm_mempool=" + str(library),
+                "-o", str(executable),
+            ], cwd=ROOT, capture_output=True, text=True,
+                timeout=120, check=False)
+            self.assertEqual(built.returncode, 0, built.stderr)
+            request = "".join(f"{total} {reserve} {pattern}\n"
+                              for total, reserve, pattern in scenarios)
+            reference = subprocess.run([str(executable)], input=request,
+                                       capture_output=True, text=True,
+                                       timeout=60, check=False)
+            self.assertEqual(reference.returncode, 0, reference.stderr)
+            rows = [tuple(map(int, line.split()))
+                    for line in reference.stdout.splitlines()]
+        self.assertEqual(len(rows), len(scenarios))
+        native_rows = []
+        for (total, reserve, _), row in zip(scenarios, rows):
+            self.assertEqual(len(row), 5, row)
+            normal, critical, streak, burst, original_pop_lane = row
+            state = (18, total, reserve, normal, critical, streak, burst)
+            self.assertEqual(expected(*state), original_pop_lane, state)
+            native_rows.append(state)
         self.check_cases(native_rows)
 
 

@@ -51,7 +51,7 @@ block check_header(v14:readbuf,v15:mutbuf)
 block check_opcode(v52:readbuf,v53:mutbuf)
   v54:usize = const() {"value":4}
   v55:u8 = buffer.load(v52,v54)
-  v56:u8 = const() {"value":17}
+  v56:u8 = const() {"value":18}
   v57:bool = compare.le(v55,v56)
   branch v57 calculate(v52,v53,v55) bad_opcode()
 block calculate(v58:readbuf,v59:mutbuf,v60:u8)
@@ -164,8 +164,16 @@ block calculate(v58:readbuf,v59:mutbuf,v60:u8)
   v422:u8 = const() {"value":17}
   v423:bool = compare.eq(v60,v422)
   v424:u64 = select(v423,v421,v418)
+  v425:bool = bool.or(v99,v89)
+  v426:bool = bool.and(v97,v425)
+  v427:u64 = const() {"value":2}
+  v428:u64 = select(v206,v427,v73)
+  v429:u64 = select(v426,v74,v428)
+  v430:u8 = const() {"value":18}
+  v431:bool = compare.eq(v60,v430)
+  v432:u64 = select(v431,v429,v424)
   v116:usize = const() {"value":0}
-  v117:u32 = call(v59,v116,v424) {"function":"f2"}
+  v117:u32 = call(v59,v116,v432) {"function":"f2"}
   v118:u32 = const() {"value":0}
   ret(v118)
 block bad_length()

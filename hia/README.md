@@ -40,14 +40,15 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 The M05 [lane quota/fairness HIA kernel](src/mempool/lane_quota.hepta) emits
 native decisions for total admission headroom, reserved critical slots,
 normal-lane spillover, last-slot borrowing, fairness transitions and five
-original QoS snapshot fields. The separate
+original QoS snapshot fields plus the original next-dequeue lane choice. The separate
 [finite-ABI and original Rust differential contract](MEMPOOL.md) is a candidate
 qualification, not a completed admission, mempool, persistent queue or Node
 owner. Its tests execute the unchanged original Rust quota/fairness modules
 and now compile the full original mempool crate to exercise real ingress,
-dequeue and QoS snapshots. The prior `ddcd5791` candidate passed its
-[exact-head HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43772265993);
-the new snapshot operations require their own exact-head CI before PASS.
+dequeue and QoS snapshots. The preceding `54a3f02b` candidate passed its actual native QoS snapshot
+comparison in [its exact-head HIA CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43782301850);
+new dequeue selection opcode 18 requires independent exact-head native/original
+Rust qualification before PASS.
 
 ## Implemented native components
 
