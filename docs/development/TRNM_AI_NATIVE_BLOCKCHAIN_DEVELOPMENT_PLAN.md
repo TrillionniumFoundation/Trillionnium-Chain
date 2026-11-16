@@ -1,3 +1,41 @@
+## 2026-11-16 UTC — 连续性与线程 CPU 原生 owner、完整原 Rust 对照及固定父级生产实测
+
+本候选为 **41 kernels / 12 native foundations / 71 HIA sources**；全部 **26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。当前新增的是实际执行的连续性与线程 CPU owner 及其强制资格链，不据此声明整个 Node、原始服务预算、PQ 或完整配置域已闭合。
+
+### 已发布精确源的生产结果
+
+已发布 head `2e3e5dcaa6f899e4f42f2b390fb869255364824d`、tree `266035460dde623358ce5e9ab0124d9453b8d5ce` 的 push `43863320729` 与 PR `43863349518` 均实际完成 **14/14 SUCCESS，attempt 1**。每个 Host 作业均在其自己的成功 Host 生产之后运行固定父级资源生产；三次采样、四条 receipt、1/3/5/7 全检查、实际 TID/ELF 与不变 seal 均通过。Root 独立核对两个 ZIP 的 API digest、各 514 个常规文件及完整 raw trace，52 个源输入与生产 ELF 完整绑定。此复查不是新执行；完整 bytes、原始 job log、run/job/artifact 身份进入 hia/qualification/host-resource-production-ci-success.json。既有 typed-State produce→cold→bounds 两套链也全通过。这些结果归属 2e3 精确源，不转借给新提交。
+
+### 连续性 owner 与完整 State
+
+四份新 HIA 源真实构造四个 installed Config，上接冻结 typed Store 的 Delta 与完整 State materialization，实际读 staged FD 完成 maintenance、各 liability、精确 account 查询、reward due 集合、recipient 排序去重和 classic/growth capacity，再按原 fast-activation 前缀顺序执行 callback 与可选 classical root。不接收外供 membership/reward count/成功位。四个配置全部使用原 Node::open(..., 1)/StateBackend::Legacy；growth-reference task 不等于 PermanentAccountGrowthV2。其他合法 Config、disabled profile、可变网络/参数/成熟期、PQ 私有 anchor/retained rewards 和 GSC2 仍需继续移植。growth 不接受 classical root 替代。
+
+最终格式整理前 current62 源闭包 `8711a557c1b3ecc42e0d95ff980324dcba7176a735dddce0206b33263799c9d4` 已真正重跑 **659 native controls（572 semantic + 13 context ABI + 74 physical）**，309.141244876 秒通过，源前后全匹配。4 个 HIA images、emitter、prefix 与最终 ELF 均绑定最终构建。native report 3,696,506 B / SHA256 `a97ab3912f175d1da5bfce6b1c137b339f6c3e0864fe20392e352bc4bd895f21`。
+同一格式整理前 current62 V6 的实际原 Rust 阶段亦通过 **572/572 semantic 与全部4个retained tests**；isolated wrapper348.060553935秒退出0，无采证错误。完整918,196B source-before/after同SHA256 `988bd741317a5f29db26bff65a48da278236adaba39c496991f93149977be803`。实际原report944,940B / `b523d694a14bf84fdec647e7a6f26ca5b306770ba8daf14722f249d181d5a52b`，执行后二进制独立保全610,970,008B / `87f0594efd7870f282f583eb70b0b4c6339475976b26f158bc591e0f4265c374`。保留完整original stages/context/corpus/source fences，原生产Rust字节不变；这是该源的真实开发执行，不代替新exact-commit CI。
+
+提交前staged格式门发现rust_reference.rs末尾一条空行，现只删最后1个LF（11,758→11,757B，SHA `08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a`），其余61输入逐字不变。最终62闭包为 `a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`；source admission与18.802374730秒actual Build通过，4images/emitter/prefix/ELF与已执行前身逐字相同。659与572+4仍绑定格式前8711源，不冒称格式后新执行；最终exact-commit CI必须真正重跑。staged空行拒绝和完整格式前后证明亦保全。
+
+完整容量的既有 7 个实际阶段仍按其原源身份保留：1,065,536 行、1,000,000 account、65,536 working、65,515 精确 recipient；全 stream 36,837,812 B / SHA256 `716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702`。七阶段总 649.249914634 秒，各原 240 秒 child 限额不变；新精确提交必须重跑完整七阶段。最大行/index资格不等于每行最大 value 同时占满，也不等于 cache flush、power loss、GSC2 或 COMMIT。保留 V2 exit137 原因 UNKNOWN/原 raw 未恢复，V3 retained-test 名称拒绝和 V5 四原测试通过后 constructor2 GROWTH_PROFILE panic，不能把这些旧失败改成 PASS。
+
+### 线程 CPU 的实际差异修正
+
+HIA main/one-worker 原生 owner 实现真实 CLOCK_THREAD_CPUTIME_ID、private generation、独立 clone、checkpoint、先消费再 finish 以及 value drop；actual clone、guarded stack、private futex handoff 与 shared clear-TID join 由真实 native adapter 执行。64 live stamp 与 one-worker 是该入口的显式有限 profile，不冒充完整 Node worker/account。
+
+V6 native-only 53 histories/676 operations/74 physical 曾通过，但实际原 Rust 对照只有 **44/53 PASS、9 FAIL**。EINTR/ENOSYS/EIO 在 start/checkpoint/finish 的差异源于锁定 rustix1.1.6 linux_raw backend：首成功直接返回，首 EINVAL 立即失败，其他首错恰再 syscall 一次，之后才由 ThreadCpuStamp .ok() 处理。独立核对全部332依赖源与锁定 crate、实际 linux_raw/time cfg 与 ELF64。HIA phase22已实现同一分支；原53输入62803B前缀逐字不变，新增12 persistent-error履历。完整源闭包扩到38，绑定 Cargo.lock/两个 Cargo 清单及 exact rustix 后端。新 native 已通过 **65 histories / 724 operations / 74 physical**，实际时钟21组、受控语义44组，8 source-integrity测试通过。
+V7 的实际原 Rust 随后真正通过 **65/65 histories、724 protocol operations、518 original-method calls**，全部36个原retained tests和mandatory Linux positive通过。44个受控clock履历全部完成，其余21组使用实际clock；所有original/native38源、执行后独立binary和locked rustix332源before/after均MATCH。最终source-set `5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead`；原report1,070,635B / `b0ab0a403f22e84c31a6b7463b9bae849533d49f42dc13100249fde7358733ff`，独立binary612,166,040B / `ae232c3378e8a0e0486c0497b262b1d6a374beecf2670494124f96fcd3f4cc24`。原生产源码未改，V6原44/53失败不改写；最终仍须新exact-commit CI。
+
+原 V6 44/9、ptrace注释解析拒绝、有符号 timespec 表示差异、生命周期 before-birth/after-exit 审查修复和 actual signal/SIGKILL 结果均保留。受控 same-numeric-TID 只验证 private generation ABA，不宣称内核实际重用 TID。完整 paid i128 epoch、reservation/live debit/residual settlement、Unknown-on-drop、poisoning、scoped-worker spawn/join/panic、Node 实际工作嵌入和原4秒/16攻击者门继续OPEN。
+
+### 强制 CI、源身份与后续工作
+
+CI 增至 **18 jobs / 16 独立 native bootstrap gates**；新增 continuity-native、actual-original、full-capacity、thread-cpu。每个 dependent artifact绑定同 head/run/attempt，全 native/original source逐实际 Git HEAD blob核对，完整 canonical corpus重新构造，archive每项metadata和bytes校验，只向新目录 materialize regular files，不open FIFO或激活links。original-only job无HIA工具链依赖已独立核实。完整capacity cold必须消费上一步实际全output且绑定同一ELF/全源。
+
+审查发现并修复 upload-artifact sibling log 改变公共根目录的真实缺陷，改为单目录上传、always把packaging log复制入内；failed unpack也保留完整实际下载根、binding和transfer receipt。8 transfer/source测试组、4 bootstrap测试组覆盖16片段、18job YAML布局实际通过。CI控制器检查不算native语义执行。全部新任务仍须新exact-commit实际运行，不继承2e3绿灯。
+
+下一条运行时主线是 HIA 自己构造 genesis/catalog/active/State、fresh namespace 独占锁、真实持久初始化与全量 cold reopen/root 检查；随后接完整 M06 private admitted output、expected-root、单一Node事务域、reorg/replay/outbox/ACK，以及剩余所有包。当前仅保留一套当前组件源；作者脚本、临时patch、构建与中间源码树在仓库外。必要失败/原始实测证据不当作冗余丢弃。未改变原 Rust/formal/portability 实现、资源限额和服务验收；旧包只能在完整替代和原资格真实通过之后退休。
+
+以下既有唯一计划字节完整保留。
+
 ## 2026-11-16 UTC — 实际 Host 生产通过，接入同作业资源生产采样
 
 已发布 HIA head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec`（tree `6e21f6fe51fad0a7e89fbbe6042c175bb5cba246`）的 push `43848902425` 与 PR `43849236024` 均实际完成 **14/14 SUCCESS**。完整 typed-State produce → 独立进程 cold restore → bounds 两套链路全部通过；实际固定父级 Host 生产检查、资源真实 syscall trace 和原始 Rust 比较亦通过。旧失败原样保留；这不代表整链、原始服务预算或任何旧包退役验收。

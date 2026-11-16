@@ -2,7 +2,7 @@
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
 one complete HIA-native implementation. The current candidate contains **41
-kernel units and ten native foundations**, accounting for all **64 HIA source
+kernel units and twelve native foundations**, accounting for all **71 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -36,6 +36,24 @@ their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
 
 ## Observed qualification and current scope
+
+Exact published head `2e3e5dcaa6f899e4f42f2b390fb869255364824d` completed
+**14/14 HIA jobs successfully** in both the
+[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43863320729)
+and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43863349518),
+both on attempt 1. Each Host job actually executed the fixed-parent resource
+production owner after its own successful Host production. Independent review
+rehashed the complete downloaded artifact, all 514 extracted regular files and
+the complete raw syscall traces. The 52-source resource image performed three
+samples, four receipts and checks 1, 3, 5 and 7 with actual TID, executable and
+sealed-parent observations. The [resource production success record](qualification/host-resource-production-ci-success.json)
+preserves both exact run lineages. These results belong to that published head.
+
+The current increment adds finite native continuity and thread CPU owners plus
+four mandatory CI jobs. Development observations below have their own complete
+source maps and actual execution records; they are not an exact-commit CI PASS.
+All eighteen jobs must execute on the new head. The nine whole-project gates
+remain OPEN and all 26 original Rust packages remain required.
 
 Exact head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec` completed **14/14 HIA
 jobs successfully** in both the
@@ -71,6 +89,112 @@ nested intervals, not additive costs. This is the retained original Rust Node,
 not a measurement of an integrated HIA Node. No service or identity guard was
 relaxed. Earlier historical budget comparisons also refused before native
 execution because their Cargo.lock differed; those failures remain recorded.
+
+## Native complete-State continuity
+
+The [continuity owner](platform/continuity_store/README.md) extends the frozen
+typed State materialization with actual native construction of four installed
+configurations, maintenance validation, complete liability relationships,
+recipient deduplication and capacity checks. Its four compiled HIA images run
+inside one Linux executable and read the actual staged State descriptor.
+No supplied account-membership result, imported reward count or continuity
+success bit is accepted. It preserves the original Delta → complete State →
+continuity → progress → optional classical-root order for its selected
+fast-activation prefix.
+
+All four installed configurations use the original Legacy backend. The growth
+reference task changes continuity/capacity rules; it does not implicitly select
+PermanentAccountGrowthV2. The component's configuration domain is explicitly
+finite: arbitrary configuration values, disabled profiles, PQ anchors and
+retained rewards, and GSC2 remain outside this entry. A growth request cannot
+silently substitute the classical root. Expected-root admission, persistent
+namespace, active records, COMMIT, replay, outbox and peer ACK still belong to
+the remaining Node owner.
+
+The captured 62-input development candidate, before final hook whitespace
+formatting, actually passed all **659 native
+controls**: 572 semantic cases, 13 direct context ABI controls and 74 physical
+owner controls, in 309.141244876 seconds. The before/after source maps matched;
+the report and full build identity are retained in the
+[continuity development record](qualification/continuity-development.json).
+The same captured source also passed **572/572 actual original-Rust semantic
+comparisons and all four retained original tests**. The isolated original
+wrapper completed in 348.060553935 seconds, retained the actual Rust binary,
+and recorded identical complete before/after source observations. The earlier
+retained-test-name refusal and GROWTH_PROFILE constructor panic remain failed
+observations. This development execution still requires the new committed
+source's mandatory CI run.
+
+Final formatting removes exactly one trailing LF from the original-test hook
+(11,758 to 11,757 bytes); all other 61 inputs are unchanged. The final 62-input
+source-set SHA256 is
+`a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`.
+Its source admission and actual 18.802374730-second build passed, and all four
+images, emitter, prefix and ELF are byte-identical to the executed predecessor.
+The full native/original results retain their pre-format source identity;
+complete post-format execution is required in the new committed-source CI.
+
+Seven earlier complete capacity executions are retained under their original
+source identities. They generated and reread all 1,065,536 rows, checked
+1,000,000-account and 65,536-working-key boundaries, refused final-byte
+corruption, and sorted 65,515 complete recipient identities. The full stream
+contains 36,837,812 bytes. These are maximum-row/index observations, not a claim
+that every row simultaneously has a maximum-size value, and not power-loss or
+GSC2 qualification. The final committed source must rerun all seven controls
+with the unchanged 240-second per-child limits.
+
+## Native thread CPU ownership
+
+The [thread CPU owner](platform/thread_cpu/README.md) measures actual
+CLOCK_THREAD_CPUTIME_ID on the executing main thread or one native worker.
+Private generation identity supplements the actual TID; unforgeable stamp
+capabilities, independent clones, consuming finish and explicit value drop are
+implemented in HIA. Native clone, guarded worker-stack reuse, private futex
+handoff and shared clear-child-TID join have actual syscall-trace controls.
+The profile has 64 live stamps and one worker at a time; it does not implement
+the complete Node executor or paid CPU account.
+
+Actual original-Rust comparison exposed nine differences in the initial 53
+histories. The exact locked rustix 1.1.6 Linux backend returns immediately on
+first success or EINVAL and otherwise performs exactly one syscall fallback.
+The corrected native owner now preserves that exact single-fallback behavior.
+All **65 histories, 724 protocol operations and 74 physical controls** passed
+in native execution. All **65/65 histories** also matched actual original Rust,
+with 518 original-method calls, 36 retained original tests and a mandatory
+successful Linux clock control. The original 53 inputs remain a byte-identical
+prefix, and 12 persistent-error histories were added. The final 38-input
+closure includes the project lockfile and both relevant Cargo manifests;
+all source and actual locked-backend before/after checks matched.
+The dependency and actual backend identity, complete source maps, original
+failed comparisons, raw traces and final observations are retained in the
+[thread CPU development record](qualification/thread-cpu-development.json).
+
+The native signal controls require a real interrupted read/futex, matching
+signal delivery and rt_sigreturn, subsequent work and successful join.
+SIGKILL is recorded as a killed process with no terminal receipt, not normal
+join. Same-numeric-TID fixture controls isolate generation ABA refusal; they
+do not claim that the kernel actually reused a TID. Paid i128 epochs,
+reservations, live debit/residual settlement, Unknown-on-drop, poisoning,
+scoped-worker panic behavior, Node worker embedding and the original
+four-second/16-attacker service gate remain open.
+
+## Exact-source foundation CI transfer
+
+Four additional jobs require the complete continuity native run, all original
+Rust continuity comparisons, the seven capacity stages, and the actual thread
+CPU/original-Rust differential. Dependencies bind to the same Git head, run and
+attempt. The helper checks every complete native and original source against
+the committed Git blob, verifies all archive entries and required handoff bytes,
+and only materializes verified regular files. FIFO and link metadata remains
+in the raw archive without opening or activating those entries.
+
+Independent review found that a sibling packaging log changed upload-artifact's
+common directory, breaking the expected handoff layout. The fixed workflow
+uploads one directory and copies the packaging log inside it. Failed transfer
+inputs, bindings and receipts are retained even when unpack refuses. Eight
+source/transfer test groups, all sixteen guarded bootstrap snippets and the
+eighteen-job YAML layout passed; the [CI development record](qualification/foundation-ci-development.json)
+separates these controller checks from actual native and original execution.
 
 ## Complete classical State staging and root
 

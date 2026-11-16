@@ -892,13 +892,50 @@
         "hia/platform/host_resource/resource_policy.hepta",
         "hia/platform/host_resource/fixture_entry.hepta"
       ],
-      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. A same-job production controller reuses only the preceding exact-source Host lease and audits all actual sample syscalls. Fresh production execution, Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
+      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. Same-job production execution reuses only the preceding exact-source Host lease and audits all sample syscalls; both 2e3e5dc hosted runs passed with independently replayed full traces. Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
       "tests": [
         "hia/platform/host_resource/qualify.py",
         "hia/platform/host_resource/rust_oracle.py",
         "hia/platform/host_resource/test_integrity.py",
         "hia/platform/host_resource/qualify_production.py",
         "hia/platform/host_resource/test_production.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/continuity-store",
+      "sources": [
+        "hia/platform/continuity_store/primary_policy.hepta",
+        "hia/platform/continuity_store/continuity_policy.hepta",
+        "hia/platform/continuity_store/context.hepta",
+        "hia/platform/continuity_store/linux_continuity_emitter.hepta"
+      ],
+      "scope": "Native streaming typed State staging, exact installed constructor contexts, maintenance/liability/capacity validation and optional complete classical root. Four installed configurations and a full 1065536-row growth extent are explicit finite profiles. Actual original Rust is mandatory in CI; directory namespace, expected-root acceptance, COMMIT, replay, ACK, PQ/GSC2 and complete Node integration remain OPEN.",
+      "tests": [
+        "hia/platform/continuity_store/qualify.py",
+        "hia/platform/continuity_store/rust_oracle.py",
+        "hia/platform/continuity_store/capacity.py",
+        "hia/platform/continuity_store/test_integrity.py",
+        "hia/tools/qualify_foundation_ci.py",
+        "hia/tests/test_foundation_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/thread-cpu",
+      "sources": [
+        "hia/platform/thread_cpu/owner_policy.hepta",
+        "hia/platform/thread_cpu/fixture_entry.hepta",
+        "hia/platform/thread_cpu/linux_emitter.hepta"
+      ],
+      "scope": "Native Linux ThreadCpuStamp value and finite main/one-worker lifetime owner using real thread CPU clocks, private generation identity, independent clone/drop/consuming finish, actual clone and clear-TID join. Complete natural and controlled-error histories require actual original Rust and independent syscall traces. Numeric kernel TID reuse, complete paid-account/scoped-executor ownership, Node worker embedding and the original service budget remain OPEN.",
+      "tests": [
+        "hia/platform/thread_cpu/qualify.py",
+        "hia/platform/thread_cpu/rust_oracle.py",
+        "hia/platform/thread_cpu/test_integrity.py",
+        "hia/tools/qualify_foundation_ci.py"
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
