@@ -957,6 +957,68 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/paid-cpu",
+      "sources": [
+        "hia/platform/paid_cpu/arithmetic_fixture.hepta",
+        "hia/platform/paid_cpu/linux_arithmetic_emitter.hepta",
+        "hia/platform/paid_cpu/linux_owner_emitter.hepta",
+        "hia/platform/paid_cpu/owner.hepta"
+      ],
+      "scope": "Native Linux shared signed-i128 paid CPU accounting and actual main/one-worker scoped ownership with real CPU clocks, mutex/futex ordering, cleanup and complete finite original comparisons. Six owner profiles, boundary arithmetic and thirteen physical fault scenarios are qualified in the recorded development source. General worker pools, complete application/executor integration, original public-service budget and full Node ownership remain OPEN.",
+      "tests": [
+        "hia/platform/paid_cpu/build.py",
+        "hia/platform/paid_cpu/qualify.py",
+        "hia/platform/paid_cpu/rust_oracle.py",
+        "hia/platform/paid_cpu/test_integrity.py",
+        "hia/platform/paid_cpu/trace_audit.py",
+        "hia/platform/paid_cpu/fault_audit.py",
+        "hia/tools/qualify_paid_cpu_ci.py",
+        "hia/tests/test_paid_cpu_ci.py",
+        "hia/tools/qualify_foundation_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/execution-state",
+      "sources": [
+        "hia/platform/execution_state/linux_emitter.hepta",
+        "hia/platform/execution_state/map.hepta",
+        "hia/platform/execution_state/owner.hepta",
+        "hia/platform/execution_state/value.hepta"
+      ],
+      "scope": "Native typed Value/State/View/Patch lifetime owner with point/prefix snapshots, semantic equality, patch current checks, explicit consuming apply, complete State root, actual relocation and exhaustion refusal. Application commands, fee/reward/fund conservation, canonical M06 workers and replay, expected-root admission and durable Node COMMIT remain OPEN.",
+      "tests": [
+        "hia/platform/execution_state/build.py",
+        "hia/platform/execution_state/qualify.py",
+        "hia/platform/execution_state/physical.py",
+        "hia/platform/execution_state/rust_oracle.py",
+        "hia/platform/execution_state/test_integrity.py",
+        "hia/tools/qualify_execution_ci.py",
+        "hia/tests/test_execution_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/execution-prepare",
+      "sources": [
+        "hia/platform/execution_prepare/linux_emitter.hepta",
+        "hia/platform/execution_prepare/owner_policy.hepta"
+      ],
+      "scope": "Private default-configuration legacy PNX1 preparation with native SHA256 and strict Ed25519, attempt counters, callback/cancellation order and private Prepared generations. Complete actual original preparation comparison is required. Batch workers, State application/revalidation/replay, block mandatory/reward/receipts, PQ and private durable Node admission remain OPEN.",
+      "tests": [
+        "hia/platform/execution_prepare/build.py",
+        "hia/platform/execution_prepare/qualify.py",
+        "hia/platform/execution_prepare/rust_oracle.py",
+        "hia/platform/execution_prepare/test_integrity.py",
+        "hia/tools/qualify_execution_ci.py",
+        "hia/tests/test_execution_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }

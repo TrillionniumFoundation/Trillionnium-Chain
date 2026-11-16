@@ -1,5 +1,130 @@
 # Whole-tree inventory and HIA migration audit
 
+## Execution owner integration and published-source findings — 2026-11-16 UTC
+
+### PaidCPU and execution foundations — current candidate
+
+The current inventory is **41 kernels / 16 native foundations / 83 HIA source
+files**. The 26 original Rust packages remain, with zero accepted retirements
+and all nine whole-project gates OPEN. This increment adds 47 final owned
+source files, including ten HIA files. Each component has one implementation
+directory; authoring trees and intermediate builds stay outside the repository.
+
+| Native owner | Actual final development execution | Boundaries still requiring integration |
+| --- | --- | --- |
+| [PaidCPU](platform/paid_cpu/README.md) | Six native owner histories, 83 observed budget operations, 67 arithmetic boundaries, 13 fault histories, 40 protocol controls and 10 trace refusals; actual original 83 budget calls, 67 boundaries, five scoped profiles, all 13 faults, 23 retained tests and the mandatory Linux clock positive | Complete paid request/account lifetime, general executor placement and original public-service budget |
+| [State/View/Patch](platform/execution_state/README.md) | 68 native and original histories, 1,075 observations on each side, nine physical groups with 97 native calls, five retained original tests; 13 source groups / 141 controls and eight actual-bundle CLI refusals | Application commands, M06 batch/replay, mandatory transitions, fees/rewards/funds, expected-root admission and durable COMMIT |
+| [Private preparation](platform/execution_prepare/README.md) | 723 native semantic cases, 52 physical controls and 52 processes, 723 actual private original comparisons and three retained tests; 13 integrity groups / 164 controls including 34 actual CLI refusals | Full batch workers and application, all configurations/PQ, block receipts and private Node admission |
+
+PaidCPU's 58-input source set is
+`9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f`.
+The observed count of 83 budget operations is bound to the complete native
+event streams and actual original calls; CI does not impose a scheduler-dependent
+constant. The original comparison binds Rust 1.95.0, its full version output,
+absolute compiler/Cargo bytes, 14 actual standard-library source files and two
+compiled standard-library files. Complete fault captures bind task births,
+terminal/reap state, actual executable arguments, auxiliary-vector changes,
+private role markers and every raw output stream.
+
+State's final 33-input source set is
+`5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8`.
+The 97 physical calls include complete private journals with 53, five and two
+direct calls, plus 37 process commands. The journal verifier rechecks full
+65,536-byte heap observations, input/output bytes, continuity, unchanged rejected
+calls, unused output tails and the two explicitly private counter injections.
+Real moving `mremap` and the native response to syscall-level `ENOMEM` injection
+are recorded separately from private ABI fixtures; host memory exhaustion is not claimed. Original comparison runs all 12 recorded stages with
+absolute rustc/Cargo/rustdoc identities and exact production-source prefixes.
+
+Preparation's final 47-input source set is
+`77df26a897da5437f0d0ba2191558e49c615dc17966a793c241ea15e731a147b`.
+The private owner performs complete legacy PNX1 validation, native SHA256 and
+strict Ed25519, default installed Settings construction, attempt counting,
+callback/cancellation order and Prepared lifetime handling. The actual original
+comparison binds all ten stages, the selected compiler, independently retained
+serde library objects and unchanged production functions with the sole test hook.
+These preparation results carry no block-commit or Node admission authority.
+
+The records and complete source-specific evidence are
+[PaidCPU](qualification/paid-cpu-development.json),
+[State](qualification/execution-state-development.json) and
+[preparation](qualification/execution-prepare-development.json).
+Their corresponding [Paid archive](qualification/paid-cpu-development.tar.xz),
+[State archive](qualification/execution-state-development.tar.xz) and
+[preparation archive](qualification/execution-prepare-development.tar.xz)
+preserve the actual raw observations and historical failures. Exact repeated
+bytes use content objects. State's 4,381 already-committed source files were
+independently read from Git at `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c`;
+matching archive members explicitly name that commit, path, Git blob, byte count
+and SHA256. The full 6,666-member source/raw archive can be reconstructed from
+those existing Git blobs and the retained objects. No source or raw observation
+is replaced by a summary. Original Rust test executables remain separately
+retained in full during development; new hosted artifacts include the complete
+independent executables.
+
+Actual failures keep their original status. The first final State original
+attempt exited 101 after stdout reported `ENOSPC`; its partial output and
+zero-byte final report remain. After the original processes were confirmed
+absent, the same frozen source passed all 68 histories and five retained tests
+in a fresh output directory. Preparation's interrupted physical attempt retains
+45 process receipts, a zero-byte report and an unavailable terminal outcome.
+A fresh same-source execution subsequently passed all 52 controls. The Paid
+component's earlier missing-import original failure and all earlier authoring
+and comparison failures remain in their own source-specific records.
+
+### Exact-source CI and the audited published predecessor
+
+The workflow now contains **29 jobs and 25 independent native bootstrap gates**.
+The added jobs cover PaidCPU, combined State native/physical/original execution,
+preparation semantics, preparation physical controls and preparation original
+comparison. Original preparation accepts only the complete native artifact from
+the same commit, run and attempt. All five jobs verify every committed source
+byte before and after execution, then bind raw outcomes. Failure packaging
+preserves available streams and binaries while retaining special-file metadata
+without opening those files. The original 20-minute job limits remain.
+
+The integrated evidence and ownership tests passed **46 groups**. The complete
+workflow passed 189 Bash fragment syntax checks, 37 Python heredoc parses, all
+four bootstrap-test groups across 25 gates and duplicate-key YAML/structure
+checks. The [CI development record](qualification/execution-ci-development.json)
+and [full review evidence](qualification/execution-ci-development.tar.xz) retain
+the 12 Paid and 11 execution-evidence boundary groups, actual recorded-fault
+replays, source-specific reader checks, earlier rejected proposals and uncertain
+launch observations. These development reviews do not count as new native or
+hosted execution. The new committed-source workflow remains required.
+
+Published predecessor `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c` actually
+completed all 24 HIA jobs in both the
+[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907395835)
+and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690872).
+Fourteen original GitHub ZIPs were fully hashed and independently checked:
+all five Genesis native suites, actual Genesis originals and Thread CPU evidence
+from both lineages. Each Genesis lineage passed 254 controls / 356 native
+processes and 30 original cases / three retained tests; the Thread lineages
+passed their complete 65-history native/original and physical evidence.
+The [Genesis CI record](qualification/genesis-ci.json) and
+[Thread CI record](qualification/thread-cpu-ci.json) bind that exact source.
+These predecessor results do not qualify a later commit.
+
+The [whole-project CI findings](qualification/whole-project-ci-findings.json)
+and [priority diagnosis](qualification/priority-ci-diagnostic.json) preserve
+other failures on the same published source. Both x64 history services reached
+their original 1,800-second lifetime and exited normally; the next RPC was
+refused before full synchronization completed. All three failed service lanes
+retained `CONFIRMATION_TARGET` failures despite five successful named test exits.
+The x64 no-attack baseline confirmed zero, while both ARM64 baselines confirmed
+one; all three 16-worker pressure runs confirmed zero. Full Host/W1 page
+observations identify a concrete implementation cost without manufacturing a
+causal CPU fraction across caller threads and scoped workers. The original
+0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and 16-worker conditions remain.
+
+Next work joins the actual application commands, scoped batch workers, complete
+joins and panic/cancellation order, one canonical replay, mandatory/reward/fund
+semantics and private durable Node admission. Host/resource/W1 checks must run
+inside the actual execution worker with fresh authority checks at every original
+boundary. PQ/TLS, all targets, the model product loop, research obligations and
+complete replacement of every retained package remain on the closure matrix.
+
 ## Genesis integration and second hosted Thread CPU repair — 2026-11-16 UTC
 
 The current inventory is **41 kernels / 13 native foundations / 73 HIA source

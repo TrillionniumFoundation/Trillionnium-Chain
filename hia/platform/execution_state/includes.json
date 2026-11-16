@@ -1,0 +1,170 @@
+{
+  "includes": {
+    "platform/execution_state/linux_emitter.hepta": [],
+    "platform/execution_state/map.hepta": [
+      {
+        "functions": [
+          "ev_r",
+          "ev_g",
+          "ev_p",
+          "ev_p32",
+          "ev_g32",
+          "ev_take",
+          "ev_move",
+          "ev_same",
+          "ev_node",
+          "ev_payload_valid",
+          "ev_add",
+          "ev_parse_child",
+          "ev_parse",
+          "ev_key_compare",
+          "ev_less",
+          "ev_swap",
+          "ev_sift",
+          "ev_sort",
+          "ev_object",
+          "ev_normalize",
+          "ev_next",
+          "ev_emit_one",
+          "ev_construct",
+          "ev_node_equal",
+          "ev_equal",
+          "ev_ascii",
+          "ev_validate",
+          "ev_string_size",
+          "ev_json_size",
+          "ev_string_write",
+          "ev_json_atom",
+          "ev_json_close",
+          "ev_json_write"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "platform/execution_state/owner.hepta": [
+      {
+        "functions": [
+          "ev_r",
+          "ev_g",
+          "ev_p",
+          "ev_p32",
+          "ev_g32",
+          "ev_take",
+          "ev_move",
+          "ev_same",
+          "ev_node",
+          "ev_payload_valid",
+          "ev_add",
+          "ev_parse_child",
+          "ev_parse",
+          "ev_key_compare",
+          "ev_less",
+          "ev_swap",
+          "ev_sift",
+          "ev_sort",
+          "ev_object",
+          "ev_normalize",
+          "ev_next",
+          "ev_emit_one",
+          "ev_construct",
+          "ev_node_equal",
+          "ev_equal",
+          "ev_ascii",
+          "ev_validate",
+          "ev_string_size",
+          "ev_json_size",
+          "ev_string_write",
+          "ev_json_atom",
+          "ev_json_close",
+          "ev_json_write"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "eh_unlink",
+          "eh_link",
+          "eh_alloc",
+          "eh_free",
+          "eh_trim",
+          "er_hold",
+          "er_drop",
+          "em_init",
+          "em_height",
+          "em_recalc",
+          "em_replace",
+          "em_rotate_left",
+          "em_rotate_right",
+          "em_balance",
+          "em_byte",
+          "em_compare",
+          "em_find",
+          "em_lower",
+          "em_first",
+          "em_next",
+          "em_prefix",
+          "em_value_bytes",
+          "em_update",
+          "em_add",
+          "em_insert",
+          "em_remove_node",
+          "em_drop_values",
+          "em_drop_scans",
+          "em_copy",
+          "em_copy_prefix",
+          "em_copy_scans",
+          "em_equal",
+          "em_prefix_equal",
+          "em_clone_budget",
+          "em_scan_budget"
+        ],
+        "source": "platform/execution_state/map.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "platform/execution_state/value.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ]
+  },
+  "schema": "trnm.hia.execution-state-includes.v1"
+}

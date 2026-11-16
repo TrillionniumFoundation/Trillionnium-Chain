@@ -19,7 +19,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 COMPILER = "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
-STAGES = ("continuity-native", "continuity-original", "continuity-capacity", "thread-cpu")
+STAGES = ('continuity-native', 'continuity-original', 'continuity-capacity', 'thread-cpu', 'paid-cpu')
 SCHEMA = "trnm.hia.foundation-ci-binding.v1"
 PACKAGE = "trnm.hia.foundation-ci-evidence.v1"
 
@@ -245,6 +245,9 @@ def bind(stage, root):
                     "Fresh-process input is not the complete preceding native output")
             result.update(capacity_controls=7, maximum_rows=1065536,
                           original_rust_large_extent="NOT_RUN")
+    elif stage == "paid-cpu":
+        from hia.tools.qualify_paid_cpu_ci import paid_binding
+        result.update(paid_binding(root, expected))
     else:
         from hia.platform.thread_cpu.rust_oracle import validate_source_bindings
         directory = root / "hia-thread-cpu-native"
@@ -328,8 +331,9 @@ def pack(stage, root):
     output.mkdir(mode=0o700)
     roots = {"observations": root / "hia-foundation-observations",
              "bootstrap": root / "hia-bootstrap"}
-    if stage == "thread-cpu":
-        roots.update(native=root / "hia-thread-cpu-native", original=root / "hia-thread-cpu-original")
+    if stage in ("thread-cpu", "paid-cpu"):
+        roots.update(native=root / ("hia-" + stage + "-native"),
+                     original=root / ("hia-" + stage + "-original"))
     elif stage == "continuity-native":
         roots["native"] = root / "hia-continuity-native"
     else:

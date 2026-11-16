@@ -1,0 +1,701 @@
+{
+  "budget": {
+    "attack_workers": [
+      0,
+      16
+    ],
+    "business_window_ns": 4000000000,
+    "cpu_cores": 0.25,
+    "long_history_service_lifetime_seconds": 1800,
+    "memory_bytes": 2147483648,
+    "pids": 256,
+    "swap_bytes": 0
+  },
+  "evidence": {
+    "all_raw_objects_reopened_and_verified": true,
+    "bytes": 1739072,
+    "logical_members": 185,
+    "path": "hia/qualification/priority-ci-diagnostic.tar.xz",
+    "sha256": "6ac1d2b689f0edb49fe83f6eea20f25555097d2ec6e0b2a3809fdddac83608c0",
+    "unique_objects": 126
+  },
+  "full_diagnostic_summary": {
+    "bytes": 754648,
+    "sha256": "e71ea510d7003316b9eaa9697adb69c5de7e221e71b654ae77c4d10f7dfe7d6a"
+  },
+  "interpretation_limits": [
+    "Successful returning history imports are not a measured durable-commit count.",
+    "Original business validation failed; named test exits and completed observations do not override CONFIRMATION_TARGET.",
+    "Host checkpoint calls are freshly invoked authority checks; no cached authorization is proposed.",
+    "Host CPU sums each invoking thread. Native phase CPU is only the importer thread and excludes separately owned workers.",
+    "Host, native and packet intervals are nested. Call wall sums can overlap and are not elapsed time. Do not add them or subtract cross-scope CPU totals.",
+    "The long-history run did not capture per-call Host CPU. Similar service call paths identify an optimization target, not a measured causal fraction for the 1800-second history failure.",
+    "Service counters cover the whole service including shutdown; they are not request p99, in-window throughput or complete process CPU.",
+    "These are finite native source observations, not public WAN, operator independence, model utility, Node migration completion or production release qualification."
+  ],
+  "lanes": {
+    "arm64-head-priority-service-model": {
+      "actual_job_conclusion": "failure",
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14248677430/zip",
+        "created_at": "2026-11-16T16:56:26Z",
+        "digest": "sha256:f82eee775db618aad20b8c4533767304800ec80404e4706ead4400c5e529ccf2",
+        "expired": false,
+        "expires_at": "2026-12-16T16:56:24Z",
+        "id": 14248677430,
+        "name": "priority-ubuntu-24.04-arm-head-service-model-5c3d7089f24271a0ba6dbcc9d924fe505a361a3c-1",
+        "size_in_bytes": 9396965,
+        "updated_at": "2026-11-16T16:56:26Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14248677430",
+        "workflow_run": {
+          "head_branch": "feature/chain-hia-native",
+          "head_repository_id": 1323087357,
+          "head_sha": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+          "id": 43907690822,
+          "repository_id": 1323087357
+        }
+      },
+      "complete_original_member_index": {
+        "bytes": 68361,
+        "member": "original-index/arm64-head-priority-service-model.json",
+        "sha256": "b6a79c00a7cd4c7034f5b3b0a0223473594ad65f46987632a11a41ab7fb10c74"
+      },
+      "complete_original_members_reverified": 289,
+      "host_failure": null,
+      "host_final_errors": [],
+      "job_id": 133441831973,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822/job/133441831973",
+      "original_archive": {
+        "bytes": 9396965,
+        "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-5c3d-arm64-head-priority-service-model-range-v1/original-artifact.zip",
+        "sha256": "f82eee775db618aad20b8c4533767304800ec80404e4706ead4400c5e529ccf2"
+      },
+      "service": {
+        "all_named_tests_passed": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "full_confirmation_report": {
+          "bytes": 16467983,
+          "sha256": "3e3c798b72ee5f9807548632aa668b0c953724eff2c6964bac0ff68f77f630a5"
+        },
+        "manifest_passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 159798,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 1878183485,
+              "original_window_remaining_at_business_start_ns": 3999840202,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": 1878183485,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 1878183485,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 1
+              },
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": true,
+            "client_confirmed_transactions": 1,
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 0,
+              "known_calling_thread_cpu_sum_ns": 289956248
+            },
+            "mode": "attack-free-baseline",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "workers": 0
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 6295740,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "original_window_remaining_at_business_start_ns": 3993704260,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3993704260,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": false,
+            "client_confirmed_transactions": 0,
+            "history_response": {
+              "attempts": 6,
+              "failed_or_late": 0,
+              "successful_in_original_window": 6
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 5,
+              "attempts": 6,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 1,
+              "known_calling_thread_cpu_sum_ns": 225597152
+            },
+            "mode": "from-zero-pressure",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "workers": 16
+          }
+        ]
+      },
+      "source_archive_before_after": "MATCH"
+    },
+    "arm64-merge-priority-service-model": {
+      "actual_job_conclusion": "failure",
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14247608129/zip",
+        "created_at": "2026-11-16T16:57:01Z",
+        "digest": "sha256:c377a8c49beea9dd0124b2009ffa773558aa40164e2049757db9b309c18e7532",
+        "expired": false,
+        "expires_at": "2026-12-16T16:56:59Z",
+        "id": 14247608129,
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-5c3d7089f24271a0ba6dbcc9d924fe505a361a3c-1",
+        "size_in_bytes": 9396464,
+        "updated_at": "2026-11-16T16:57:01Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14247608129",
+        "workflow_run": {
+          "head_branch": "feature/chain-hia-native",
+          "head_repository_id": 1323087357,
+          "head_sha": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+          "id": 43907690822,
+          "repository_id": 1323087357
+        }
+      },
+      "complete_original_member_index": {
+        "bytes": 68375,
+        "member": "original-index/arm64-merge-priority-service-model.json",
+        "sha256": "a915187b17a5c4f761d71a6650b2d30c9c92e14a916d72032a8349970f598664"
+      },
+      "complete_original_members_reverified": 289,
+      "host_failure": null,
+      "host_final_errors": [],
+      "job_id": 133441832466,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822/job/133441832466",
+      "original_archive": {
+        "bytes": 9396464,
+        "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-5c3d-arm64-merge-priority-service-model-range-v1/original-artifact.zip",
+        "sha256": "c377a8c49beea9dd0124b2009ffa773558aa40164e2049757db9b309c18e7532"
+      },
+      "service": {
+        "all_named_tests_passed": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "full_confirmation_report": {
+          "bytes": 16263240,
+          "sha256": "5c82507671de02c35de8a769083415dbae3e5f2755c11e707292906e73f41df9"
+        },
+        "manifest_passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 168493,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "lower_bound_reaches_original_window_end": null,
+              "observed_success_latency_ns": 1877385123,
+              "original_window_remaining_at_business_start_ns": 3999831507,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": true,
+              "reported_independently_confirmed_in_window": 1,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": 1877385123,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": 1877385123,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 1
+              },
+              "unconfirmed": 0,
+              "unconfirmed_latency_lower_bound_ns": null,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": true,
+            "client_confirmed_transactions": 1,
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 0,
+              "known_calling_thread_cpu_sum_ns": 288763304
+            },
+            "mode": "attack-free-baseline",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [],
+            "workers": 0
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 5329444,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "original_window_remaining_at_business_start_ns": 3994670556,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3994670556,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": false,
+            "client_confirmed_transactions": 0,
+            "history_response": {
+              "attempts": 5,
+              "failed_or_late": 0,
+              "successful_in_original_window": 5
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 4,
+              "attempts": 5,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 1,
+              "known_calling_thread_cpu_sum_ns": 200005456
+            },
+            "mode": "from-zero-pressure",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "workers": 16
+          }
+        ]
+      },
+      "source_archive_before_after": "MATCH"
+    },
+    "head-priority-history": {
+      "actual_job_conclusion": "failure",
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14253320023/zip",
+        "created_at": "2026-11-16T17:27:15Z",
+        "digest": "sha256:23f3484c9076a34efa6050592d04ffb0105b210a6902d478909705fcb535e0a3",
+        "expired": false,
+        "expires_at": "2026-12-16T17:27:09Z",
+        "id": 14253320023,
+        "name": "priority-ubuntu-24.04-head-history-5c3d7089f24271a0ba6dbcc9d924fe505a361a3c-1",
+        "size_in_bytes": 56386839,
+        "updated_at": "2026-11-16T17:27:15Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14253320023",
+        "workflow_run": {
+          "head_branch": "feature/chain-hia-native",
+          "head_repository_id": 1323087357,
+          "head_sha": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+          "id": 43907690822,
+          "repository_id": 1323087357
+        }
+      },
+      "complete_original_member_index": {
+        "bytes": 1092839,
+        "member": "original-index/head-priority-history.json",
+        "sha256": "c717cee6bc1c6415be19a19a2ff4a87ced99c93155e9159873ab19c3c70cf918"
+      },
+      "complete_original_members_reverified": 4140,
+      "history": {
+        "direct_cause": "The actual loopback server reached its original 1800-second lifetime and exited successfully; the next history RPC received ECONNREFUSED (111).",
+        "durable_commit_count": null,
+        "failure_location": {
+          "activation_cursor": null,
+          "advertised_page_complete": null,
+          "completed_import_calls": 3281,
+          "durable_committed_blocks": null,
+          "head_rpc_elapsed_ns": 5971184,
+          "last_history_rpc_elapsed_ns": 134283,
+          "last_import_call_expression_elapsed_ns": null,
+          "last_requested_after": "f5389abe8f69003e671d8c2d9b875203469654da9b456460a8330f6f6823ccba",
+          "last_successful_after": "f5389abe8f69003e671d8c2d9b875203469654da9b456460a8330f6f6823ccba",
+          "pinned_tip": "43104921fc6c6cd34eee63a96d734cbfd0f206cc5c0c5c81bd2cc13d6ec751fb",
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-failure-location-v1",
+          "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+          "stage": "history-rpc"
+        },
+        "per_call_host_cpu_observed_in_this_history_run": false,
+        "server": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000770895,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001538164,
+          "stop_requested_when_exited": true
+        },
+        "successful_import_returns": 3281
+      },
+      "host_failure": null,
+      "host_final_errors": [],
+      "job_id": 133441831853,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822/job/133441831853",
+      "original_archive": {
+        "bytes": 56386839,
+        "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-5c3d-head-priority-history-range-v1/original-artifact.zip",
+        "sha256": "23f3484c9076a34efa6050592d04ffb0105b210a6902d478909705fcb535e0a3"
+      },
+      "source_archive_before_after": "MATCH"
+    },
+    "merge-priority-history": {
+      "actual_job_conclusion": "failure",
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14252502234/zip",
+        "created_at": "2026-11-16T17:30:51Z",
+        "digest": "sha256:ac08f207e76b774ca867d8d67b7808b1477fbd4c195bcdc8244b77fb3f3c5fc0",
+        "expired": false,
+        "expires_at": "2026-12-16T17:30:45Z",
+        "id": 14252502234,
+        "name": "priority-ubuntu-24.04-prospective-merge-history-5c3d7089f24271a0ba6dbcc9d924fe505a361a3c-1",
+        "size_in_bytes": 56488911,
+        "updated_at": "2026-11-16T17:30:51Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14252502234",
+        "workflow_run": {
+          "head_branch": "feature/chain-hia-native",
+          "head_repository_id": 1323087357,
+          "head_sha": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+          "id": 43907690822,
+          "repository_id": 1323087357
+        }
+      },
+      "complete_original_member_index": {
+        "bytes": 1092853,
+        "member": "original-index/merge-priority-history.json",
+        "sha256": "b6bb5939529645899078cbe6d9f3565ed782855c748f904a77c8262fbb029039"
+      },
+      "complete_original_members_reverified": 4140,
+      "history": {
+        "direct_cause": "The actual loopback server reached its original 1800-second lifetime and exited successfully; the next history RPC received ECONNREFUSED (111).",
+        "durable_commit_count": null,
+        "failure_location": {
+          "activation_cursor": null,
+          "advertised_page_complete": null,
+          "completed_import_calls": 3305,
+          "durable_committed_blocks": null,
+          "head_rpc_elapsed_ns": 6195981,
+          "last_history_rpc_elapsed_ns": 118033,
+          "last_import_call_expression_elapsed_ns": null,
+          "last_requested_after": "4c1a3183f4a2fa70df222c04701e234c7f2eefd6095edcc83d13652be34e7c99",
+          "last_successful_after": "4c1a3183f4a2fa70df222c04701e234c7f2eefd6095edcc83d13652be34e7c99",
+          "pinned_tip": "e047953c634349574dabd1641729742e998434d0b6dbdf6b9368dc8abc2f1ed5",
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-failure-location-v1",
+          "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+          "stage": "history-rpc"
+        },
+        "per_call_host_cpu_observed_in_this_history_run": false,
+        "server": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000679971,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001461428,
+          "stop_requested_when_exited": true
+        },
+        "successful_import_returns": 3305
+      },
+      "host_failure": null,
+      "host_final_errors": [],
+      "job_id": 133441831656,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822/job/133441831656",
+      "original_archive": {
+        "bytes": 56488911,
+        "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-5c3d-merge-priority-history-range-v1/original-artifact.zip",
+        "sha256": "ac08f207e76b774ca867d8d67b7808b1477fbd4c195bcdc8244b77fb3f3c5fc0"
+      },
+      "source_archive_before_after": "MATCH"
+    },
+    "x64-head-priority-service-model": {
+      "actual_job_conclusion": "failure",
+      "artifact": {
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14248113270/zip",
+        "created_at": "2026-11-16T16:59:13Z",
+        "digest": "sha256:969b41c2d9390b1ee76ef7231f0d5e056ea2e398d8c70ef85fef72c5c434469c",
+        "expired": false,
+        "expires_at": "2026-12-16T16:59:11Z",
+        "id": 14248113270,
+        "name": "priority-ubuntu-24.04-head-service-model-5c3d7089f24271a0ba6dbcc9d924fe505a361a3c-1",
+        "size_in_bytes": 9308068,
+        "updated_at": "2026-11-16T16:59:13Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14248113270",
+        "workflow_run": {
+          "head_branch": "feature/chain-hia-native",
+          "head_repository_id": 1323087357,
+          "head_sha": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+          "id": 43907690822,
+          "repository_id": 1323087357
+        }
+      },
+      "complete_original_member_index": {
+        "bytes": 68359,
+        "member": "original-index/x64-head-priority-service-model.json",
+        "sha256": "05cc7381122cd2cac3d01ba6b439f9bae7a096332faf1fd718c18713f19b36f1"
+      },
+      "complete_original_members_reverified": 289,
+      "host_failure": null,
+      "host_final_errors": [],
+      "job_id": 133441831936,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822/job/133441831936",
+      "original_archive": {
+        "bytes": 9308068,
+        "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/ci-5c3d-x64-head-priority-service-model-range-v1/original-artifact.zip",
+        "sha256": "969b41c2d9390b1ee76ef7231f0d5e056ea2e398d8c70ef85fef72c5c434469c"
+      },
+      "service": {
+        "all_named_tests_passed": true,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "full_confirmation_report": {
+          "bytes": 11810479,
+          "sha256": "bc173b562d414be072e21e957e8568dd8a2a6164ede3f3f5addcb538edc5f343"
+        },
+        "manifest_passed": false,
+        "phases": [
+          {
+            "business": {
+              "business_start_delay_ns": 178573,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "original_window_remaining_at_business_start_ns": 3999821427,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3999821427,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": false,
+            "client_confirmed_transactions": 0,
+            "history_response": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 6,
+              "attempts": 7,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 1,
+              "known_calling_thread_cpu_sum_ns": 706566420
+            },
+            "mode": "attack-free-baseline",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "workers": 0
+          },
+          {
+            "business": {
+              "business_start_delay_ns": 88117696,
+              "business_started_before_original_window_end": true,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "lower_bound_reaches_original_window_end": true,
+              "observed_success_latency_ns": null,
+              "original_window_remaining_at_business_start_ns": 3911882304,
+              "pre_business_window_overrun_ns": 0,
+              "reported_finite_business_target_met": false,
+              "reported_independently_confirmed_in_window": 0,
+              "required_signed_transactions": 1,
+              "successful_latency": {
+                "max_ns": null,
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "min_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "missing_samples": 0,
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null,
+                "samples": 0
+              },
+              "unconfirmed": 1,
+              "unconfirmed_latency_lower_bound_ns": 3911882304,
+              "unknown": 0
+            },
+            "client_confirmed_before_original_window_end": false,
+            "client_confirmed_transactions": 0,
+            "history_response": {
+              "attempts": 1,
+              "failed_or_late": 0,
+              "successful_in_original_window": 1
+            },
+            "independent_page_replay": {
+              "accepted_in_original_window": 0,
+              "attempts": 1,
+              "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+              "failed_or_late": 1,
+              "known_calling_thread_cpu_sum_ns": 106852333
+            },
+            "mode": "from-zero-pressure",
+            "requested_window_ns": 4000000000,
+            "signed_submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "workers": 16
+          }
+        ]
+      },
+      "source_archive_before_after": "MATCH"
+    }
+  },
+  "new_native_or_cargo_execution": false,
+  "original_budgets_changed": false,
+  "original_production_sources_changed": false,
+  "prospective_merge": "7f54c33fe1e6eec285ae3bd0a41dd071eb0ea27a",
+  "retained_pressure_failure": {
+    "artifact_ids_observed": 0,
+    "job": 133441830671,
+    "missing_artifact_does_not_establish_historical_native_outcome": true
+  },
+  "run_id": 43907690822,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690822",
+  "schema": "trnm.hia.priority-ci-diagnostic.v1",
+  "status": "ACTUAL_FAILURES_PRESERVED",
+  "tested_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+  "tested_tree": "5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33"
+}

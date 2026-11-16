@@ -1,3 +1,54 @@
+## 2026-11-16 UTC — PaidCPU、State/View/Patch 与 private Prepare 最终源整合；原始服务失败定位
+
+当前候选为 **41 kernels / 16 native foundations / 83 HIA sources；26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。父提交 `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c`、tree `5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33`。新增47份最终owned源，其中10份HIA；每个组件只保留一个当前实现目录。新工作流为29 jobs /25个独立native bootstrap门，仍须本提交自己的真实CI，不能借用父提交结果。
+
+### 已实际运行并冻结的三套原生 owner
+
+| owner | 最终开发源与真实结果 | 尚需连通 |
+| --- | --- | --- |
+| PaidCPU（20 owned /58 inputs /4 HIA） | 源9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f；native6 histories、实测83 budget operations、67 arithmetic、13 fault、40 protocol及10 trace拒绝；actual original83 calls/67 boundaries/5 scoped profiles/13 faults/23 retained加mandatory Linux positive，323.659s | 完整paid账户/请求/执行器与原服务门 |
+| State/View/Patch（15 owned /33 inputs /4 HIA） | 源5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8；native与actual original各68 histories/1075 observations，原5 retained；physical9组/97 calls；13组141完整性controls和8 actual-bundle CLI拒绝 | 全应用、M06 batch/replay、mandatory/reward/funds、expected-root与持久COMMIT |
+| private Prepare（12 owned /47 inputs /2 HIA） | 源77df26a897da5437f0d0ba2191558e49c615dc17966a793c241ea15e731a147b；723 semantic，52 physical/52实际进程，原723 comparisons/3 retained，13组164 controls含34实际CLI拒绝 | 全batch/apply、所有Config/PQ、完整block输出、Node私有准入 |
+
+Paid采用真实CPU clocks、mutex/futex与scoped child；i128预算方法逐完整native event与真实原调用对照。83是这次真实观察，不是跨调度恒定的CI门限。锁定Rust1.95.0完整version、绝对rustc/Cargo、14份真实std源与2份compiled std；13fault重新核对实际任务出生/终态/回收、argv、auxv私有改动、role marker和全部raw。最终原report SHA fe7f3727a37aab6f1e70de0563085984e96f41880af7a7bd7218f6a8cbad3ab9；独立612093040B原binary完整保留。
+
+State真实拥有typed Value/State/View/Patch、首读/写和完整prefix snapshots、Value语义相等、current及消耗式apply、native完整root。三份private journals逐条保存65536B heap前后与输入输出：53+5+2直接调用，另37过程commands；counter注入明确为private fixture，不冒充生产输入。实际moving mremap与syscall-level ENOMEM注入的原生拒绝独立保留，不声称真实Host内存耗尽。原对照12完整stage绑定rustc/Cargo/rustdoc实际字节、serde1.0.149、原production prefix与唯一test hook。
+
+Prepare在原生ELF内部完成legacy PNX1、native SHA256/strict Ed25519、default installed Config、attempt/callback/cancel和private Prepared生命周期。原对照10完整stage、实际compiler与独立serde库、全部8份before/after源/产物栅栏均通过；Prepared外部观察接口不获得block COMMIT或Node准入权。最终原report SHA c6f22c5bcffc4783338948cff6a8903392b69a937c72916a83b39869aa4ebe20。
+
+### 真实失败与恢复按各自源身份保留
+
+State最终V5首次actual original明确发生stdout ENOSPC panic、exit101、部分输出和0B总report，不能升格为PASS。只读确认旧wrapper/test及相关目标所有进程已不存在后，在同冻结源码的新original-retry1完整重跑68+5，实际70.026s PASS；新report SHA7b1280e4e8ae5b3f2b828eec1d0734f954d4c698d5a4d3b17d7a2392a34f61b9，独立92584200B binary SHA68001b2763576e404036cf6d289c7f0aeda21c87407388a0f9fd35019746e5e6。
+
+Prepare physical-v2保留45份实际process receipt、0B总report和丢失终态，保持INCOMPLETE。确认旧controller/owner和固定native可执行身份无存活后，同77df源新physical-v3实际52/52、52process、229.615810839s PASS。此前13bb/7b28的52结果不转记新源。Paid旧缺struct导入、原adapter编译与错误账目断言等失败都保留，未改原Rust生产函数。
+
+磁盘恢复只清空已全SHA一致、version绑定的603755968B Genesis PR提取二进制重复件；push全件和两完整GitHub ZIP仍完整。记录未知启动身份并先观察目标/进程，未把通信错误认作运行结果，未重启或修改HeptaRuntime配置。只读和新create-only资格输出保持独立身份。
+
+### 精确源CI和原始证据
+
+新增Paid、State combined、Prepare semantic/physical/original五job。每job全tracked before/after检查后才binding；Prepare原比较只取同head/run/attempt真实semantic前驱。保留20分钟job与原children/cleanup界限；所有失败都执行证据打包，包含完整独立原binary，特殊文件只记metadata。State/Prepare明确选择Rust1.95.0；Paid另强制rust-src。
+
+新CI reader独立重读完整实际证据：State全部native build/97物理/三journals/12原阶段，Prepare723 semantic/52physical/10原阶段均PASS；没有因此新增native执行次数。Paid admission12组含32负控/9正控及实际13fault+2baseline离线重验；execution reader11组覆盖绝对toolchain、原始bytes、source/run/attempt、private heap和fixture边界。整合后46组测试实际通过；189 Bash片段、37 Python heredoc、25bootstrap门的4组tests及完整唯一键YAML/29job结构均通过，staged whitespace检查0。
+
+开发原比较保留整合前4361或4363源身份。新inventory与唯一计划pin属于整合元数据变化；新提交CI必须重新捕获并执行当前完整源。组件HIA及冻结owned源不靠重新标注旧PASS获得资格。
+
+[Paid记录](../../hia/qualification/paid-cpu-development.json)、[State记录](../../hia/qualification/execution-state-development.json)、[Prepare记录](../../hia/qualification/execution-prepare-development.json)和[CI复核记录](../../hia/qualification/execution-ci-development.json)绑定完整raw。State81,599,124B原交付经内容对象去重、逐字Git blob证明成为5,235,712B归档；4381份已存在的5c3d源用commit/path/blob/bytes/SHA显式引用，6,666逻辑成员完整可复原。Prepare两包1,581逻辑成员合成3,180,156B单一档，所有raw重读；Paid4,763,040B包全部1,753声明成员及manifest逐SHA核。开发大原binary单列完整路径/身份，CI全量保留；不删原观察，不恢复特殊文件。
+
+### 父提交真实CI与全项目尚存失败
+
+5c3d push43907395835与PR43907690872均24/24 SUCCESS。14完整原ZIP全SHA核、每成员独立读，10个Genesis native、2原对照与2Thread完整证据通过。每Genesis lineage254controls/356process、原30+3及必要ignored child；Thread65histories/724native ops/74physical/12trace+4signal、原518方法calls/36retained与mandatory clock。归属5c3d，见[Genesis CI](../../hia/qualification/genesis-ci.json)和[Thread CI](../../hia/qualification/thread-cpu-ci.json)，不替代本提交29job。
+
+[全项目CI记录](../../hia/qualification/whole-project-ci-findings.json)保留before-budget三旧subject在0controls即source compatibility拒绝、W1实际确认/期限失败、CodeQL export未稳定及取消根因未明等。priority43907690822两x64 history服务实际到1800s lifetime_expired后正常退出，下一RPC connection refused；3281/3305是成功返回的import次数，不等durable commits。三from-zero服务五个命名测试都exit0但CONFIRMATION_TARGET仍FAIL；x64基线确认0且第7import deadline，两ARM基线确认1、压力确认0，三压力最终都PUBLIC_REQUEST_DEADLINE。
+
+完整33page Host/W1原观察无Host拒绝或计量失败；密集fresh Host成本是具体优化对象。各调用线程累计CPU、仅caller CPU、嵌套wall口径不同，不机械加减或把service观察冒充history直接因果占比。0.25CPU/2GiB/0swap/256PIDs/4s/0与16攻击worker/1800s lifetime及全部fresh authority checks保持原约束。完整诊断与原packet/database ZIP身份见[priority记录](../../hia/qualification/priority-ci-diagnostic.json)。
+
+### 连续推进次序和退役条件
+
+继续真实application1..12及全部account/nonce/fee语义，再连原接受workers域1/2/4/8的实际scoped batch、mutex保护State、全部join、panic/cancel优先级、canonical BeforeApply消费Prepared错误、stale/Err恰一次replay、mandatory/reward/funds/root。Host/resource/W1需同真实worker私有continuation，保留每个原checkpoint与资源freshchecks。然后接private AdmissionPersistence、单一durable Node事务、重组/rollback/replay/outbox/ACK、网络/PQ/TLS、完整跨目标、真实模型产品闭环与全部研究义务。
+
+最终删除旧26包必须以完整等价替代和原验收真实通过为前提。当前保留唯一最终组件源和必要审计证据；作者脚本、中间checkout/build在仓库外。不得扩大期限、缩小语料、移除fresh检查、用外供成功位或stub制造闭合。
+
+以下为5c3d唯一计划的完整原字节后缀。
 ## 2026-11-16 UTC — 原生 Genesis 持久 owner、完整原 Rust 对照与线程终态观测修复
 
 当前候选 **41 kernels / 13 native foundations / 73 HIA sources；26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。直接前驱为 `535ce9865d6764de8184aab04204459f6f05001b`（tree `a506c358cdff588cb8c6cc0a2bed7c58e7e8e091`）。本增量须自己的 **24 jobs / 21 native bootstrap gates** 精确提交 CI，不继承前驱绿灯。
