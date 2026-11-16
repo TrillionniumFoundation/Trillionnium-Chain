@@ -42,6 +42,10 @@ completed six jobs successfully (222 native tests, 70,998 shared machine-code
 calls, no skips). The new post-dequeue queue-length projections require their
 own exact-commit qualification and do not establish M05 owner or Node retirement.
 
+One-call LQV1 opcode 24 additionally exposes all five original QoS snapshot
+fields from one caller-supplied input; real Rust snapshot comparison is required
+by native CI. This does not capture or own the physical queues.
+
 One-call LQV1 opcode 23 now returns a five-field post-pop projection from one input invocation; see [the M05 contract](MEMPOOL.md). It has no persistent or queue-mutation authority and requires its own exact-head CI qualification.
 
 ## Independent M05 queue decision candidate

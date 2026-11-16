@@ -1,3 +1,26 @@
+## HIA M05 one-call QoS snapshot proposal — 2026-11-16 UTC — exact-source qualification pending
+
+The HIA native LQV1 implementation now includes opcode 24, which returns
+five original M05 QoS fields in one 40-byte output from a 56-byte immutable
+caller-owned snapshot. It shares the already implemented scalar headroom and
+admissibility predicates; the fused result cannot mix different invocation
+inputs. The mandatory test runs the actual original Rust `LaneAdmissionGate`
+and obtains one `qos_snapshot` after each of 792 real admission/dequeue
+scenarios, then calls the emitted HIA machine code with matching queue lengths.
+It also exercises all 64-bit extremes and short-output refusal. This is
+not a queue owner, a database transaction, real admission, reorg/outbox/ACK,
+a PQ witness, a private key owner, or evidence of original service latency.
+
+The immediately preceding `03c84d28` exact-source run
+`43802991240` completed six HIA CI jobs SUCCESS. It qualifies only the
+preceding opcode-23 source, not this changed source. New native and original
+Rust execution remain NOT_RUN until new exact-head CI reports them.
+The 26 original Rust packages remain retained, all nine migration/retirement
+gates remain OPEN, and PQ remains HOLD_NO_GO. The historic plan text below
+is intentionally preserved byte-for-byte as the complete suffix.
+
+---
+
 ## HIA M05 single-invocation post-pop projection — 2026-11-16 UTC — exact-head qualification pending
 
 The LQV1 native HIA kernel adds opcode **23**: one 56-byte immutable

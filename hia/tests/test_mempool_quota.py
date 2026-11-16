@@ -98,10 +98,14 @@ def expected(op: int, total: int, requested: int, normal: int,
             return critical - int(lane == 2)
         return int(lane != 0)
     if op == 23:
-        # One native call publishes a coherent pure projection from one input.
-        # This is not an owned dequeue, atomic storage update, or durability.
+        # One immutable input publishes the whole predicted post-pop tuple.
         return tuple(expected(field, total, requested, normal, critical,
                               streak, burst) for field in (18, 20, 21, 19, 22))
+    if op == 24:
+        # Five original QoS fields from one direct native invocation.
+        # No authority to sample, mutate or commit the actual queues.
+        return tuple(expected(field, total, requested, normal, critical,
+                              streak, burst) for field in range(13, 18))
     raise AssertionError("Unknown test mode")
 
 
@@ -116,12 +120,12 @@ def finite_cases():
         (1, MAX, 0, 1, 0, 0),
         (2, MAX, 0, 1, MAX, MAX),
     ]:
-        for op in range(24):
+        for op in range(25):
             yield op, total, reserve, normal, critical, streak, burst
     values = [0, 1, 2, 3, 4, 7, 8, 15, 16, 32, 63,
               MAX // 2, MAX - 2, MAX - 1, MAX]
     for _ in range(1800):
-        yield (rng.randrange(24), *(rng.choice(values) for _ in range(6)))
+        yield (rng.randrange(25), *(rng.choice(values) for _ in range(6)))
 
 
 class NativeMempoolQuotaTests(unittest.TestCase):
@@ -136,14 +140,15 @@ class NativeMempoolQuotaTests(unittest.TestCase):
     def check_cases(self, records):
         for start in range(0, len(records), 96):
             batch = records[start:start + 96]
-            arguments = [[wire(*row), b"\xa5" * (48 if row[0] == 23 else 16),
+            arguments = [[wire(*row), b"\xa5" * (48 if row[0] in (23, 24) else 16),
                           b"\x5a" * 19] for row in batch]
             observed = self.native.call_many([("f0", row) for row in arguments], timeout=60)
             self.assertEqual(len(observed), len(batch))
             for state, sent, actual in zip(batch, arguments, observed):
                 actual.require_returned()
                 self.assertEqual(actual.value, 0, state)
-                result = (struct.pack("<5Q", *expected(*state)) if state[0] == 23
+                result = (struct.pack("<5Q", *expected(*state))
+                          if state[0] in (23, 24)
                           else struct.pack("<Q", expected(*state)))
                 self.assertEqual(actual.arguments[0], sent[0])
                 self.assertEqual(actual.arguments[1],
@@ -158,13 +163,14 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         wrong_magic = b"BAD!" + valid[4:]
         wrong_reserved = valid[:6] + b"\x01" + valid[7:]
         bad_opcode = valid[:4] + b"\xff" + valid[5:]
-        next_unimplemented = valid[:4] + b"\x18" + valid[5:]
+        next_unimplemented = valid[:4] + b"\x19" + valid[5:]
         composite = wire(23, 3, 1, 1, 1, 1, 2)
+        qos_composite = wire(24, 3, 1, 1, 1, 1, 2)
         cases = [(valid[:-1], 16, 1), (valid + b"\x00", 16, 1),
                  (valid, 7, 2), (wrong_magic, 16, 3),
                  (wrong_reserved, 16, 3), (bad_opcode, 16, 4),
                  (next_unimplemented, 16, 4),
-                 (composite, 39, 2),
+                 (composite, 39, 2), (qos_composite, 39, 2),
                  (wrong_magic, 0, 2)]
         sent = [[data, b"\xa5" * length, b"\x5a" * 13]
                 for data, length, _ in cases]
@@ -178,7 +184,10 @@ class NativeMempoolQuotaTests(unittest.TestCase):
         self.check_cases([(23, 3, 1, 2, 1, 2, 2),
                           (23, 0, MAX, 0, 0, MAX, MAX),
                           (23, MAX, MAX, MAX, MAX, MAX, MAX),
-                          (23, MAX, 1, 0, 1, MAX, MAX)])
+                          (23, MAX, 1, 0, 1, MAX, MAX),
+                          (24, 0, MAX, 0, 0, MAX, MAX),
+                          (24, MAX, 0, 0, MAX, 1, MAX),
+                          (24, MAX, MAX, MAX, MAX, MAX, MAX)])
 
     def test_actual_original_lane_modules(self):
         # Compile the repository's actual Rust methods rather than a Python
@@ -301,6 +310,12 @@ class NativeMempoolQuotaTests(unittest.TestCase):
                 state = (op, total, reserve, normal, critical, 0, 0)
                 self.assertEqual(expected(*state), actual, state)
                 native_rows.append(state)
+            # Full original public API: one snapshot produces five fields.
+            fused = (24, total, reserve, normal, critical, 0, 0)
+            self.assertEqual(expected(*fused),
+                             (total_free, normal_free, critical_free,
+                              allow_normal, allow_critical), fused)
+            native_rows.append(fused)
         self.check_cases(native_rows)
 
     def test_original_pop_lane_choice_after_actual_ingress(self):

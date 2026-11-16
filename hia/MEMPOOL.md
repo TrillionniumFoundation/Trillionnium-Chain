@@ -1,3 +1,26 @@
+## Single-call M05 original QoS snapshot candidate — 2026-11-16 UTC
+
+LQV1 opcode **24** produces the original five-field `qos_snapshot` decision
+tuple `(total_headroom, normal_headroom, critical_headroom,
+fresh_normal_admissible, fresh_critical_admissible)` as 40 little-endian
+bytes from one immutable 56-byte caller request. The HIA machine code
+reuses the same underlying exact-capacity and saturated headroom predicates
+as scalar operations 13–17, and rejects a 39-byte output without partial
+publication. This is a pure mathematical snapshot, not a read of actual
+authoritative queues or a transaction. The mandatory test now obtains all
+five fields from a **single actual original Rust LaneAdmissionGate::qos_snapshot**
+after 792 real admission/dequeue scenarios and compares them to one
+emitted-machine invocation; it also retains the earlier five independent
+scalar comparisons and full u64-boundary testing.
+
+The preceding exact-head `03c84d28` [native HIA run 43802991240](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43802991240)
+completed all six tasks successfully, including original-Rust M05 comparisons.
+This is evidence for the **previous opcode-23 source only**, not PASS for
+new opcode 24. The new source's exact-head native/Rust execution and original
+PQ negative qualification remain NOT_RUN until its own CI completes.
+All 26 Rust packages and all nine retirement gates remain OPEN; PQ remains
+HOLD_NO_GO.
+
 ## One-call native M05 post-pop projection — 2026-11-16 UTC
 
 LQV1 opcode **23** returns a 40-byte little-endian `(selected_lane, normal_after, critical_after, fairness_after, popped)` projection using **one immutable 56-byte request and one emitted HIA machine-code invocation**. The caller must provide a `mutbuf` of at least 40 bytes; smaller output buffers return status 2 without writing anything. The remaining bytes of a larger buffer and the distinct scratch buffer are unchanged. This avoids mixing separately sampled caller inputs when inspecting lane/fairness proposals, but is **not an atomic dequeue, thread-safety guarantee, a queue owner, a local-pool handoff, a persistent Node transaction or a package-retirement witness**. The complete original Rust `pop_ready` tests compare its observed lane/count/popped fields; the original fairness module differential checks the fairness field separately. New exact-head machine-code and Rust CI results must be observed before PASS; all 26 original packages, nine gates and PQ HOLD_NO_GO remain.

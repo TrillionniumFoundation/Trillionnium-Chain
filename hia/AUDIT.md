@@ -1,5 +1,12 @@
 # Whole-tree inventory and HIA migration audit
 
+New M05 opcode 24 is a one-call **pure QoS snapshot proposal** with five
+original-headroom/admissibility fields. Its qualification requires emitted HIA
+machine code to match one actual original Rust `qos_snapshot` for each real
+ingress/dequeue case; the preceding opcode-23 CI has six SUCCESS jobs, but
+cannot qualify newly changed source. Nothing here owns the Node queue or
+reduces any of the nine open migration gates.
+
 The newest M05 candidate adds a single-call pure five-field post-dequeue projection (LQV1 opcode 23), checked against one actual original Rust dequeue observation plus an independent fairness-module differential. Exact-head CI qualification is pending. The projected fields do not authorize or mutate the real mempool; the complete Node owner and retirement gates remain OPEN.
 
 ## New M05 projection candidate and source-bound qualification
