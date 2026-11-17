@@ -735,4 +735,161 @@ mod tests {
             "failed"
         );
     }
+
+    #[test]
+    fn classify_flush_ack_preserves_recovered_receipt_cases() {
+        struct Case {
+            name: &'static str,
+            previous: [Option<&'static str>; 2],
+            observed: [(bool, i32, Option<&'static str>); 2],
+            decision: (&'static str, &'static str),
+            receipts: [Option<&'static str>; 2],
+        }
+
+        // These expectations came from the disconnected retry_outcome tests.
+        // Exercise the current fallible classifier and the actual receipt staging
+        // helpers without restoring the old FlushAckDecision implementation.
+        let cases = [
+            Case {
+                name: "trim live receipts",
+                previous: [None, None],
+                observed: [
+                    (true, RC_OK, Some("  commit-hash  ")),
+                    (true, RC_OK, Some("\treveal-hash\n")),
+                ],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-hash"), Some("reveal-hash")],
+            },
+            Case {
+                name: "blank live receipts",
+                previous: [None, None],
+                observed: [(true, RC_OK, Some("   ")), (true, RC_OK, Some("\n\t"))],
+                decision: ("failed", "missing_tx_hash_receipt"),
+                receipts: [None, None],
+            },
+            Case {
+                name: "invisible live receipt boundaries",
+                previous: [None, None],
+                observed: [
+                    (true, RC_OK, Some("\u{feff}\u{200b}commit-live\u{2060}")),
+                    (true, RC_OK, Some("\u{200d}reveal-live\u{200c}")),
+                ],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-live"), Some("reveal-live")],
+            },
+            Case {
+                name: "terminal commit cannot borrow old receipts",
+                previous: [Some("commit-old"), Some("reveal-old")],
+                observed: [(false, RC_SKIPPED, None), (false, RC_SKIPPED, None)],
+                decision: ("rejected", "commit_rejected_skip_reveal"),
+                receipts: [None, None],
+            },
+            Case {
+                name: "duplicate resume with both prior receipts",
+                previous: [Some("commit-old"), Some("reveal-old")],
+                observed: [(false, RC_DUPLICATE, None), (false, RC_DUPLICATE, None)],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-old"), Some("reveal-old")],
+            },
+            Case {
+                name: "duplicate resume with only one prior receipt",
+                previous: [Some("commit-old"), None],
+                observed: [(false, RC_DUPLICATE, None), (false, RC_DUPLICATE, None)],
+                decision: ("failed", "missing_tx_hash_receipt"),
+                receipts: [Some("commit-old"), None],
+            },
+            Case {
+                name: "mixed previous commit and live reveal",
+                previous: [Some("commit-old"), None],
+                observed: [
+                    (false, RC_DUPLICATE, None),
+                    (true, RC_OK, Some("reveal-new")),
+                ],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-old"), Some("reveal-new")],
+            },
+            Case {
+                name: "invisible prior receipt boundaries",
+                previous: [
+                    Some("\u{feff}  commit-old\u{200b}"),
+                    Some("\t\u{200d}reveal-old\n"),
+                ],
+                observed: [(false, RC_DUPLICATE, None), (false, RC_DUPLICATE, None)],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-old"), Some("reveal-old")],
+            },
+            Case {
+                name: "blank prior receipts cannot authorize duplicate resume",
+                previous: [Some("\u{200b}\t "), Some("\u{feff}\n")],
+                observed: [(false, RC_DUPLICATE, None), (false, RC_DUPLICATE, None)],
+                decision: ("failed", "missing_tx_hash_receipt"),
+                receipts: [None, None],
+            },
+            Case {
+                name: "terminal reveal cannot borrow an old receipt",
+                previous: [Some("commit-old"), Some("reveal-old")],
+                observed: [
+                    (true, RC_OK, Some("commit-live")),
+                    (false, RC_SKIPPED, None),
+                ],
+                decision: ("rejected", "deterministic_rejection"),
+                receipts: [Some("commit-live"), None],
+            },
+            Case {
+                name: "live receipts take precedence over older receipts",
+                previous: [Some("commit-old"), Some("reveal-old")],
+                observed: [
+                    (true, RC_OK, Some("  commit-live  ")),
+                    (true, RC_OK, Some("\treveal-live\n")),
+                ],
+                decision: ("accepted", "idempotent_ok"),
+                receipts: [Some("commit-live"), Some("reveal-live")],
+            },
+        ];
+
+        for (index, case) in cases.into_iter().enumerate() {
+            let directory = tempfile::tempdir().unwrap();
+            let ack_log = directory.path().join("ack.jsonl");
+            let task_id = 9000 + index as u64;
+            if case.previous.iter().any(Option::is_some) {
+                append_ack(
+                    &ack_log,
+                    task_id,
+                    "failed",
+                    case.previous[0].map(str::to_owned),
+                    case.previous[1].map(str::to_owned),
+                    Some("missing_tx_hash_receipt".to_string()),
+                    Some("prior-run".to_string()),
+                )
+                .unwrap();
+            }
+            let [commit, reveal] = case.observed.map(|(ok, rc, tx_hash)| AdapterExecResult {
+                ok,
+                rc,
+                tx_hash: tx_hash.map(str::to_owned),
+                terminal: true,
+            });
+            let (status, reason, _) =
+                classify_flush_ack(&commit, &reveal, &ack_log, task_id).unwrap();
+            assert_eq!((status, reason), case.decision, "{}", case.name);
+
+            let previous = crate::persisted_ack_hashes_for_task(&ack_log, task_id).unwrap();
+            let commit_hash = super::stage_tx_hash_for_ack(
+                super::normalize_adapter_tx_hash(commit.tx_hash.as_deref()),
+                previous.commit_tx_hash,
+                commit.rc,
+            );
+            let reveal_hash = super::stage_tx_hash_for_ack(
+                super::normalize_adapter_tx_hash(reveal.tx_hash.as_deref()),
+                previous.reveal_tx_hash,
+                reveal.rc,
+            );
+            assert_eq!(
+                [commit_hash.as_deref(), reveal_hash.as_deref()],
+                case.receipts,
+                "{}",
+                case.name
+            );
+        }
+    }
 }

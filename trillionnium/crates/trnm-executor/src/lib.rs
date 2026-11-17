@@ -6710,4 +6710,193 @@ mod tests {
         assert_eq!(profile.avg_group_size, 1.0);
         assert_eq!(profile.conflict_hits, 2);
     }
+
+    // Regression cases retained from disconnected split files.
+    #[test]
+    fn read_only_same_object_different_versions_remains_non_conflicting() {
+        let older = tx(1, vec![ObjectRef { id: 77, version: 1 }], vec![]);
+        let newer = tx(2, vec![ObjectRef { id: 77, version: 2 }], vec![]);
+
+        assert!(
+            !detect_conflict(&older, &newer),
+            "pure read/read access must remain non-conflicting even when equivalent Sui-style object refs carry different versions"
+        );
+    }
+
+    #[test]
+    fn object_version_updates_still_conflict_on_same_object_id() {
+        let older = tx(1, vec![ObjectRef { id: 77, version: 1 }], vec![]);
+        let newer = tx(2, vec![], vec![ObjectRef { id: 77, version: 2 }]);
+
+        assert!(
+            detect_conflict(&older, &newer),
+            "executor conflict domains must stay object-scoped even when refs carry different versions"
+        );
+    }
+
+    #[test]
+    fn mixed_read_write_echo_still_conflicts_with_same_object_version_update() {
+        let echoed = tx(
+            1,
+            vec![ObjectRef { id: 77, version: 1 }],
+            vec![ObjectRef { id: 77, version: 1 }],
+        );
+        let version_update = tx(2, vec![], vec![ObjectRef { id: 77, version: 2 }]);
+
+        assert!(
+            detect_conflict(&echoed, &version_update),
+            "same-object read/write echoes must serialize against later writes even when the peer carries a newer object ref version"
+        );
+        assert!(
+            detect_conflict(&version_update, &echoed),
+            "conflict classification must stay symmetric for mixed echo domains under version updates"
+        );
+    }
+
+    #[test]
+    fn same_object_different_versions_land_in_separate_groups() {
+        let txs = vec![
+            Tx {
+                id: 1,
+                read_set: vec![ObjectRef { id: 55, version: 1 }],
+                write_set: vec![],
+                payload: vec![],
+            },
+            Tx {
+                id: 2,
+                read_set: vec![],
+                write_set: vec![ObjectRef { id: 55, version: 2 }],
+                payload: vec![],
+            },
+        ];
+
+        let groups = build_parallel_groups(&txs);
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0][0].id, 1);
+        assert_eq!(groups[1][0].id, 2);
+    }
+
+    #[test]
+    fn object_zero_different_versions_land_in_separate_groups() {
+        let txs = vec![
+            Tx {
+                id: 10,
+                read_set: vec![ObjectRef { id: 0, version: 1 }],
+                write_set: vec![],
+                payload: vec![],
+            },
+            Tx {
+                id: 11,
+                read_set: vec![],
+                write_set: vec![ObjectRef { id: 0, version: 2 }],
+                payload: vec![],
+            },
+        ];
+
+        // Object id 0 is a real execution-domain key, not a sentinel. Mixed-domain
+        // version skew on object 0 must still force separate groups.
+        let groups = build_parallel_groups(&txs);
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0][0].id, 10);
+        assert_eq!(groups[1][0].id, 11);
+    }
+
+    #[test]
+    fn read_only_same_object_different_versions_share_one_group() {
+        let txs = vec![
+            Tx {
+                id: 1,
+                read_set: vec![ObjectRef { id: 55, version: 1 }],
+                write_set: vec![],
+                payload: vec![],
+            },
+            Tx {
+                id: 2,
+                read_set: vec![ObjectRef { id: 55, version: 2 }],
+                write_set: vec![],
+                payload: vec![],
+            },
+        ];
+
+        let groups = build_parallel_groups(&txs);
+        assert_eq!(groups.len(), 1);
+        assert_eq!(
+            groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(),
+            vec![1, 2]
+        );
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_leading_comma_percent_values_with_grouping(
+    ) {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+,2_5%' ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+,5_0%\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+,7_5%' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+,2_5%\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.0025);
+        assert_eq!(auto_reorder_min_margin(), 0.005);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.0025);
+    }
+
+    #[test]
+    fn candidate_groups_per_reused_placement_tracks_speculative_retry_cost() {
+        let profile = GroupingProfile {
+            tx_count: 8,
+            group_count: 3,
+            grouped_count: 8,
+            max_group_size: 3,
+            min_group_size: 2,
+            avg_group_size: 8.0 / 3.0,
+            hot_object_share: 0.5,
+            conflict_checks: 10,
+            conflict_hits: 2,
+            candidate_groups_scanned: 10,
+            retry_fallback_new_groups: 1,
+            stage_ww_checks: 3,
+            stage_ww_hits: 1,
+            stage_wr_checks: 4,
+            stage_wr_hits: 1,
+            stage_rw_checks: 3,
+            stage_rw_hits: 0,
+        };
+
+        assert_eq!(profile.reused_group_placements(), 5);
+        assert!((profile.candidate_groups_per_retry_hit() - 5.0).abs() < f64::EPSILON);
+        assert!((profile.candidate_groups_per_reused_placement() - 2.0).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_scan_share() - 0.1).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_reuse_rate() - 0.5).abs() < f64::EPSILON);
+        assert!((profile.retry_scan_overhang_per_reused_placement() - 1.6).abs() < f64::EPSILON);
+        assert!((profile.retry_fallback_share_of_new_groups() - (1.0 / 3.0)).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn retry_fallback_share_of_retry_misses_fails_closed_without_scan_misses() {
+        let profile = GroupingProfile {
+            tx_count: 6,
+            group_count: 2,
+            grouped_count: 6,
+            max_group_size: 3,
+            min_group_size: 3,
+            avg_group_size: 3.0,
+            hot_object_share: 0.5,
+            conflict_checks: 4,
+            conflict_hits: 4,
+            candidate_groups_scanned: 4,
+            retry_fallback_new_groups: 2,
+            stage_ww_checks: 2,
+            stage_ww_hits: 2,
+            stage_wr_checks: 2,
+            stage_wr_hits: 2,
+            stage_rw_checks: 0,
+            stage_rw_hits: 0,
+        };
+
+        assert_eq!(profile.retry_scan_misses(), 0);
+        assert_eq!(profile.retry_scan_miss_rate(), 0.0);
+        assert_eq!(profile.retry_fallback_share_of_retry_misses(), 0.0);
+    }
 }

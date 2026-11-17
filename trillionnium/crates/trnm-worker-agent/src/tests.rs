@@ -6054,3 +6054,164 @@ fn bounded_state_log_loaders_reject_oversized_and_malformed_input() {
     let _ = std::fs::remove_file(ack_log);
     let _ = std::fs::remove_file(ingress_log);
 }
+
+// Regression cases recovered from disconnected split sources.
+#[test]
+fn persisted_ack_hashes_ignore_blank_receipt_values_when_scanning_backwards() {
+    let directory = tempfile::tempdir().unwrap();
+    let ack_log = directory.path().join("ack.jsonl");
+
+    append_ack(
+        &ack_log,
+        501,
+        "accepted",
+        Some("commit-ok".to_string()),
+        Some("reveal-ok".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write baseline ack");
+    append_ack(
+        &ack_log,
+        501,
+        "accepted",
+        Some("   ".to_string()),
+        Some("\n\t".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-2".to_string()),
+    )
+    .expect("write blank hash ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 501).unwrap();
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-ok"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-ok"));
+}
+
+#[test]
+fn persisted_ack_hashes_keep_fail_closed_when_only_blank_receipt_values_exist() {
+    let directory = tempfile::tempdir().unwrap();
+    let ack_log = directory.path().join("ack.jsonl");
+
+    append_ack(
+        &ack_log,
+        502,
+        "accepted",
+        Some("  ".to_string()),
+        Some("\u{2003}".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write blank-only hash ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 502).unwrap();
+    assert_eq!(hashes.commit_tx_hash, None);
+    assert_eq!(hashes.reveal_tx_hash, None);
+}
+
+#[test]
+fn persisted_ack_hashes_trim_bom_and_zero_width_receipt_fillers() {
+    let directory = tempfile::tempdir().unwrap();
+    let ack_log = directory.path().join("ack.jsonl");
+
+    append_ack(
+        &ack_log,
+        503,
+        "accepted",
+        Some("\u{feff}\u{200b}commit-ok\u{2060}".to_string()),
+        Some("\u{200d}reveal-ok\u{200c}".to_string()),
+        Some("idempotent_ok".to_string()),
+        Some("run-1".to_string()),
+    )
+    .expect("write filler-padded hash ack");
+
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 503).unwrap();
+    assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-ok"));
+    assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-ok"));
+}
+
+#[test]
+fn enterprise_audit_export_projects_canonical_reputation_surface_axes() {
+    let rec = MessageIngressRecord {
+        request_id: "r-audit-reputation-surface".to_string(),
+        task_id: 7401,
+        channel: "telegram".to_string(),
+        user_id: "u1".to_string(),
+        session_id: "s1".to_string(),
+        text: "hello".to_string(),
+        idempotency_key: "ik-audit-reputation-surface".to_string(),
+        status: RequestStatus::Assigned.as_str().to_string(),
+        created_at_unix_ms: 1,
+        assigned_worker: Some("worker-1".to_string()),
+        assigned_at_unix_ms: Some(2),
+        model_output: None,
+        provider_request_id: Some("provider-7401".to_string()),
+        provenance_schema_version: Some("llm.v2".to_string()),
+        llm_provenance: Some(LlmProvenanceRecord {
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }),
+        result_hash: None,
+        verifier_status: None,
+        resolution_code: None,
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+        adapter_error: None,
+        reputation_delta: Some(reputation_delta(ReputationSignal::VerifierRejected)),
+    };
+
+    let export = to_enterprise_audit_export(&rec);
+    let expected = reputation_surface(ReputationSignal::VerifierRejected);
+
+    assert_eq!(export.reputation_label.as_deref(), Some(expected.label));
+    assert_eq!(export.reputation_delta, Some(expected.delta));
+    assert_eq!(export.reputation_tier, Some(expected.tier));
+    assert_eq!(export.reputation_weight_bps, Some(expected.weight_bps));
+    assert_eq!(export.reputation_score_bps, Some(expected.score_bps));
+    assert_eq!(export.reputation_rank_ordinal, Some(expected.rank_ordinal));
+    assert_eq!(
+        export.reputation_gap_bps_from_best,
+        Some(reputation_gap_bps_from_best(
+            ReputationSignal::VerifierRejected
+        ))
+    );
+}
+
+#[test]
+fn enterprise_audit_export_drops_non_canonical_reputation_delta_fail_closed() {
+    let rec = MessageIngressRecord {
+        request_id: "r-audit-reputation-invalid".to_string(),
+        task_id: 7402,
+        channel: "telegram".to_string(),
+        user_id: "u1".to_string(),
+        session_id: "s1".to_string(),
+        text: "hello".to_string(),
+        idempotency_key: "ik-audit-reputation-invalid".to_string(),
+        status: RequestStatus::Assigned.as_str().to_string(),
+        created_at_unix_ms: 1,
+        assigned_worker: Some("worker-1".to_string()),
+        assigned_at_unix_ms: Some(2),
+        model_output: None,
+        provider_request_id: Some("provider-7402".to_string()),
+        provenance_schema_version: Some("llm.v2".to_string()),
+        llm_provenance: None,
+        result_hash: None,
+        verifier_status: None,
+        resolution_code: None,
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+        adapter_error: None,
+        reputation_delta: Some(42),
+    };
+
+    let export = to_enterprise_audit_export(&rec);
+    assert_eq!(export.reputation_label, None);
+    assert_eq!(export.reputation_delta, None);
+    assert_eq!(export.reputation_tier, None);
+    assert_eq!(export.reputation_weight_bps, None);
+    assert_eq!(export.reputation_score_bps, None);
+    assert_eq!(export.reputation_rank_ordinal, None);
+    assert_eq!(export.reputation_gap_bps_from_best, None);
+}

@@ -39,4 +39,3 @@ trnm-checkpoint-types = { version = "0.1.0", path = "../trnm-checkpoint-types" }
 
 [dev-dependencies]
 tempfile = "3"
-trnm-checkpoint-types = { version = "0.1.0", path = "../trnm-checkpoint-types" }

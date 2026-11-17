@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/pon-history-stage-diagnostic.yml
       - scripts/ci/run_history_diagnostic.py
+      - scripts/ci/run_history_native.py
       - scripts/ci/test_history_stage_diagnostic.py
       - trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs
       # Relevant replay/Host changes need stage evidence too. This is not a

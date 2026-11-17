@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from ci_observation import ROOT, checked, digest, finish, pin_source, receipt_root, run, tool_root, tool_versions
+from ci_observation import checked, digest, finish, pin_source, receipt_root, run, tool_root, tool_versions
 
 MANIFESTS = ['trillionnium/Cargo.toml', 'tests/fuzz/Cargo.toml']
 
