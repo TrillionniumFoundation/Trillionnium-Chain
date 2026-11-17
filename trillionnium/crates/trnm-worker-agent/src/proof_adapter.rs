@@ -458,6 +458,10 @@ mod tests {
         assert!(!ok);
         assert_eq!(code, "empty_output");
 
+        let (ok, code) = adapter.verify("\u{001b}", 8);
+        assert!(!ok);
+        assert_eq!(code, "empty_output");
+
         let (ok, code) = adapter.verify("helloabc", 4);
         assert!(!ok);
         assert_eq!(code, "output_too_long");
@@ -1591,5 +1595,20 @@ mod tests {
             assert!(ok, "zk separator alias should verify: {label}");
             assert_eq!(code, "zk_receipt_ok", "zk alias code mismatch: {label}");
         }
+    }
+
+    #[test]
+    fn has_non_empty_auditable_value_handles_whitespace_and_quotes() {
+        assert!(!super::has_non_empty_auditable_value(None));
+        assert!(!super::has_non_empty_auditable_value(Some("   \"\"   ")));
+        assert!(super::has_non_empty_auditable_value(Some("abc")));
+    }
+
+    #[test]
+    fn build_proof_adapter_rejects_unsupported_names() {
+        assert_eq!(
+            build_proof_adapter("quantum-proof").err().as_deref(),
+            Some("unsupported-proof-adapter:quantum-proof")
+        );
     }
 }

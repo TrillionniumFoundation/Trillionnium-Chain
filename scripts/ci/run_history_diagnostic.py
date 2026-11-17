@@ -8,20 +8,19 @@ existing native outcome; it supplies neither a State oracle nor qualification.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import signal
-import stat
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
 from check_required_native_test import validate as validate_named_test
 from public_host_ci_observation import write_new
 from replay_pinned_native import json_load, require
+from run_history_native import (file_observation, job_identity, process_succeeded,
+                                run_process)
 from verify_ci_source import verify as verify_source
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,33 +44,6 @@ BUILD_ENVIRONMENT = (
 )
 
 
-def file_observation(path: Path, limit: int, *, retain: bool = False) -> tuple[dict, bytes]:
-    """Bounded regular-file observations, including replacement during hashing."""
-    require(path.is_absolute() and path.resolve(strict=True) == path,
-            'HISTORY_CANONICAL_FILE_REQUIRED')
-    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
-    with os.fdopen(os.open(path, flags), 'rb') as stream:
-        before = os.fstat(stream.fileno())
-        require(stat.S_ISREG(before.st_mode) and 0 < before.st_size <= limit,
-                'HISTORY_REGULAR_FILE_BOUND')
-        fingerprint = lambda value: (value.st_dev, value.st_ino, value.st_mode,
-                                     value.st_size, value.st_mtime_ns, value.st_ctime_ns)
-        require(fingerprint(path.lstat()) == fingerprint(before), 'HISTORY_FILE_CHANGED')
-        digest, chunks, remaining = hashlib.sha256(), [], before.st_size
-        while remaining:
-            chunk = stream.read(min(1024 * 1024, remaining))
-            require(bool(chunk), 'HISTORY_FILE_TRUNCATED')
-            digest.update(chunk)
-            if retain:
-                chunks.append(chunk)
-            remaining -= len(chunk)
-        require(not stream.read(1) and fingerprint(os.fstat(stream.fileno())) == fingerprint(before)
-                and fingerprint(path.lstat()) == fingerprint(before), 'HISTORY_FILE_CHANGED')
-    return ({'path': str(path), 'sha256': digest.hexdigest(), 'size_bytes': before.st_size,
-             'device': before.st_dev, 'inode': before.st_ino,
-             'mtime_ns': before.st_mtime_ns, 'ctime_ns': before.st_ctime_ns}, b''.join(chunks))
-
-
 def load_object(path: Path) -> tuple[dict, dict]:
     observation, raw = file_observation(path, JSON_LIMIT, retain=True)
     value = json_load(raw)
@@ -87,15 +59,6 @@ def output_path(out: Path) -> Path:
             and receipts.is_dir() and out == receipts / 'history-diagnostic',
             'HISTORY_CURRENT_RECEIPT_DIRECTORY_REQUIRED')
     return out
-
-
-def job_identity() -> dict:
-    result = {name: os.environ.get(name, '') for name in (
-        'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_JOB')}
-    require(result['GITHUB_RUN_ID'].isdecimal() and result['GITHUB_RUN_ATTEMPT'].isdecimal()
-            and re.fullmatch(r'[A-Za-z0-9_-]{1,80}', result['GITHUB_JOB']) is not None,
-            'HISTORY_CURRENT_JOB_REQUIRED')
-    return result
 
 
 def source_identity() -> dict:
@@ -156,56 +119,6 @@ def select_binary(raw: bytes) -> Path:
     file_observation(paths[0], BINARY_LIMIT)
     require(os.access(paths[0], os.X_OK), 'HISTORY_EXECUTABLE_REQUIRED')
     return paths[0]
-
-
-def run_process(command: list[str], log: Path, *, environment: dict | None = None,
-                stderr: Path | None = None) -> dict:
-    """No new execution timeout; the original workflow/native owners keep theirs."""
-    result = {'command': command, 'started': False, 'pid': None, 'exit_code': None,
-              'failure': None, 'cleanup_errors': []}
-    child = None
-    error_stream = None
-    try:
-        with log.open('xb') as stream:
-            if stderr is not None:
-                error_stream = stderr.open('xb')
-            child = subprocess.Popen(command, cwd=ROOT, env=environment, stdout=stream,
-                                     stderr=error_stream if stderr is not None else subprocess.STDOUT,
-                                     start_new_session=True)
-            result.update(started=True, pid=child.pid)
-            result['exit_code'] = child.wait()
-    except BaseException as error:
-        result['failure'] = type(error).__name__ + ':' + str(error)
-        if child is not None:
-            # Only this newly started process group is owned. Unknown exit stays null.
-            try:
-                if child.poll() is None:
-                    os.killpg(child.pid, signal.SIGKILL)
-            except BaseException as cleanup:
-                result['cleanup_errors'].append(type(cleanup).__name__ + ':' + str(cleanup))
-            try:
-                result['exit_code'] = child.wait(timeout=5)
-            except BaseException as cleanup:
-                result['cleanup_errors'].append(type(cleanup).__name__ + ':' + str(cleanup))
-                result['exit_code'] = child.returncode
-    finally:
-        if error_stream is not None:
-            try:
-                error_stream.close()
-            except BaseException as error:
-                failure = type(error).__name__ + ':' + str(error)
-                if result['failure'] is None:
-                    result['failure'] = failure
-                else:
-                    result['cleanup_errors'].append(failure)
-    return result
-
-
-def process_succeeded(process: dict, command: list[str]) -> bool:
-    return (process.get('command') == command and process.get('started') is True
-            and type(process.get('pid')) is int and process['pid'] > 0
-            and type(process.get('exit_code')) is int and process['exit_code'] == 0
-            and process.get('failure') is None and process.get('cleanup_errors') == [])
 
 
 def prepare(out: Path) -> dict:

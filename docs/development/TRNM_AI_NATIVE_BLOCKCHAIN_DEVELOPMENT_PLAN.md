@@ -15797,3 +15797,48 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+## Original Rust source consolidation — 2026-11-16 America/New_York
+
+Continue the full 26-package Rust audit on main source
+`59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. The original Rust implementation,
+tests and Cargo manifests match the audited HIA branch's retained Rust sources;
+only the generated distributed source inventory differs. Apply the reviewed
+Rust and existing-tooling changes from cleanup commit
+`bc76c89348c536de11de8e943cd14a0999bfc016` directly to this main baseline.
+The HIA implementation continues on its existing feature branches.
+
+The source audit identified 283 files outside the Cargo module closure. Retain
+the two externally compiled mempool quota/fairness references and the current
+native PQ fixture byte for byte. Remove the remaining 280 disconnected files:
+executor 14, mempool 36, oracle 10, types 44 and worker-agent 176, totalling
+28,860 old physical lines. Preserve all 459 Cargo source roots and every
+previously connected source. Migrate 28 useful test functions into connected
+modules: executor 9, oracle 4, mempool 7 and worker-agent 8. The worker receipt
+test contains 11 cases, with a further ESC-only refusal assertion in an existing
+test. Existing production Rust behavior and public APIs are unchanged by this
+source consolidation.
+
+Remove two identical duplicate dev-dependency declarations while keeping their
+normal dependencies and the original Cargo.lock. Reuse the shared history
+diagnostic helpers, preserve their controls and add their workflow path trigger.
+Regenerate the distributed inventory from this candidate's actual main paths.
+Update only existing current PQ pins for changed inputs; keep its keyset,
+required-path roster and all other declarations intact. The unchanged 145-input
+W1 current closure and all frozen historical source contracts retain their
+original bytes and execution identities.
+
+The four HIA-only original-oracle wiring changes in the earlier cleanup remain
+separately attributable to that commit and PR #950. Preserve their Git history
+before retiring the superseded Rust cleanup branch; porting them into the active
+HIA workflow must preserve its newer jobs and controls. Both HIA feature branches
+remain outside Rust branch retirement. The intended final Rust development tree
+is main's single authoritative workspace, with no alternate active Rust cleanup
+branch after its changes are accepted.
+
+Final exact-source Cargo, retained tests, formatting, strict Clippy, source
+negative controls and required hosted checks remain the merge criteria. Earlier
+pre-commit test feedback and the successful Rust shards on bc76 keep their own
+identities. The existing native four-second, sixteen-worker confirmation failure
+remains a real protocol-contract failure until an unchanged-contract execution
+succeeds; source cleanup and branch consolidation do not change that boundary.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only portable-source integrity. Does not certify a runnable consensus."""
 from __future__ import annotations
-import decimal,hashlib,json,math,pathlib,re,subprocess,sys,tomllib
+import decimal,json,math,pathlib,re,subprocess,sys,tomllib
 from urllib.parse import unquote,urlsplit
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 MODULES={f'M{i:02d}' for i in range(18)}
