@@ -15797,3 +15797,20 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+## 2026-11-17 authenticate the fixed-W1 execution receipt origin
+
+Compose the current fixed-W1 scalar/accounting reader with a new, strictly
+reviewer-pinned Ed25519 receipt reader. Bind one canonical signed receipt to the
+exact challenge, target, task, proof digest, verified product, output roots,
+source commit/tree, binary digest, command digest and environment digest. Require
+source-before/source-after and binary-before/binary-after equality, successful
+completion, exit code zero, independent review pins and complete V2 replay.
+
+The new flag authenticates only that the pinned public key signed those exact
+receipt bytes. It must remain separate from physical-process attestation,
+running-image provenance, signer independence, native header/admission,
+cross-proposition equivalence, real customer demand, future full-cost net
+benefit and any all-algorithm or all-coalition lower bound. Preserve all four
+propositions as false, all authority as false, and the universal cost fields as
+null. Register the new strict negative controls exactly once in the existing CI
