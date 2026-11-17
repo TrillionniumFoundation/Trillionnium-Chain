@@ -3250,6 +3250,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py\n',
             '    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py\n',
             '    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py\n',
+            '    python3 formal/pon-nakamoto-v1/test_joint_lifetime_service_v1.py\n',
         ), '    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v\n'),
         'joint_resource_competition': ('repository-truth',
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v\n", (

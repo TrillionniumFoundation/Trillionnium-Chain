@@ -16,10 +16,18 @@ task/resource debt across joins, departures and rejoining. It supplies no native
 membership authority, authenticated clock, positive production-rate law or
 all-algorithm work lower bound.
 
+The [joint lifetime/service continuation](../../docs/protocol/pon-nakamoto-v1/details/JOINT_LIFETIME_SERVICE_V1.md)
+keeps parent target/time/credit, `A+E-J`, residual active starts, participation,
+entry debt, complete delivery/service and non-refundable lifetime spending in
+one exact finite history. Its Bellman result and union allowance are conditional
+finite-model quantities. They do not close any actual qualification obligation.
+
 ```bash
 python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
 python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
 python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py
+python3 formal/pon-nakamoto-v1/test_joint_lifetime_service_v1.py
 ```
 
 The Python ledger is the existing modules' executable design and persistence reference,

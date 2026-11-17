@@ -15797,3 +15797,27 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+## 2026-11-17 continuation: conditional joint lifetime/service composition
+
+The consolidated main at `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`
+already contains the #843/#863 joint qualification, production-tail and resource
+competition work. Do not revive the closed stacked branches or relabel their
+historical native results. Continue from current main with one additive research
+checker that places parent target/time/credit, `A+E-J`, residual adaptive starts,
+dynamic participation and entry debt, complete delivery/service and lifetime
+spending in the same declared finite history.
+
+Registration charges crossing allowance before the outcome; external bad-event
+allowance is also charged before the outcome. Every successor retains cumulative
+spend and active starts, including restart/rejoin paths. Bad service remains in
+the original probability denominator, and the lifetime union adds allowances
+without multiplying marginals. The exact Bellman calculation is diagnostic for
+the declared finite action set only.
+
+Keep all eighteen joint-environment inputs and thirteen actual obligations open.
+CP/CG/CQ, six-successor and lifetime failure bounds remain null. Source identity,
+receiver acknowledgement, timeout and finite tests do not establish physical
+resource, wall-clock, complete-delivery or native-reduction theorems. No installed
+threshold, signed domain, schema, production flag or activation path changes.
+This file remains the sole development plan.
