@@ -3422,7 +3422,7 @@ jobs:
         run: |
           set -euo pipefail
           trnm_mempool_rustc="$(rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc)"
-          python3 -B -m hia.platform.mempool_typed.qualify --output "$RUNNER_TEMP/hia-mempool-typed-complete" --rustc "$trnm_mempool_rustc" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/complete.log"
+          python3 -B -m hia.platform.mempool_typed.qualify --audit --output "$RUNNER_TEMP/hia-mempool-typed-complete" --rustc "$trnm_mempool_rustc" 2>&1 | tee "$RUNNER_TEMP/hia-mempool-typed-observations/complete.log"
       - name: Exercise all altered-byte refusals through the actual public CLI
         run: |
           set -euo pipefail
@@ -3570,6 +3570,184 @@ jobs:
         with:
           name: hia-execution-application-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/hia-execution-application-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  native-work-owner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite Work Host scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-work-owner-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-work-owner-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Install the exact original compiler and standard library source
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rust-src
+      - name: Refuse altered Work Host sources and incomplete CI evidence
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_work_owner_ci controls 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/integrity.log"
+      - name: Execute complete same-worker Host resource W1 and real fault traces
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.work_owner.qualify --output "$RUNNER_TEMP/hia-work-owner-native" --require-trace 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/native.log"
+      - name: Require all original same-worker histories and retained Host tests
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.work_owner.rust_oracle --repository "$PWD" --bundle "$RUNNER_TEMP/hia-work-owner-native" --output "$RUNNER_TEMP/hia-work-owner-original" --target-dir "$RUNNER_TEMP/hia-work-owner-cargo-target" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/original.log"
+      - name: Verify all committed source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-work-owner-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-work-owner-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/source-after.log"
+      - name: Bind every actual input output source and original executable to this run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_work_owner_ci bind 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-observations/binding.log"
+      - name: Preserve complete success and failure evidence including the original binary
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_work_owner_ci pack 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-packaging.log"
+      - name: Retain packaging diagnostics after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-work-owner-artifact"
+          if test -f "$RUNNER_TEMP/hia-work-owner-packaging.log"; then
+            cp -- "$RUNNER_TEMP/hia-work-owner-packaging.log" "$RUNNER_TEMP/hia-work-owner-artifact/packaging.log"
+          fi
+      - name: Upload the complete current Work Host evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-work-owner-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-work-owner-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  native-work-owner-readback:
+    needs: native-work-owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the same exact chain source for independent readback
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind the readback checkout to the current source
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-work-owner-readback-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-work-owner-readback-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-readback-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+      - name: Download the complete evidence from this exact producer and attempt
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-work-owner-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-work-owner-artifact
+      - name: Require qualified producer evidence from this exact head run and attempt
+        run: |
+          set -euo pipefail
+          python3 -B - "$RUNNER_TEMP/hia-work-owner-artifact" <<'PY'
+          from pathlib import Path
+          import sys
+          from hia.tools import qualify_work_owner_ci as q
+          package_root = Path(sys.argv[1])
+          package = q.read(package_root / "package-manifest.json")
+          expected = q.base.lineage()
+          q.need(package.get("qualification_status") == "PASS"
+                 and q.same(package.get("lineage"), expected),
+                 "Consumer requires qualified evidence from this exact head/run/attempt")
+          binding = q.read(package_root / "binding.json")
+          q.check_binding(binding, expected)
+          q.need(q.same(q.identity(package_root / "binding.json"), package.get("binding")),
+                 "Downloaded producer binding bytes differ")
+          PY
+      - name: Independently read every archived byte and repeat complete evidence admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_work_owner_ci readback --package "$RUNNER_TEMP/hia-work-owner-artifact" --output "$RUNNER_TEMP/hia-work-owner-readback" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-readback-observations/readback.log"
+          python3 -B - "$RUNNER_TEMP/hia-work-owner-readback/readback-result.json" <<'PY'
+          from pathlib import Path
+          import sys
+          from hia.tools import qualify_work_owner_ci as q
+          value = q.read(Path(sys.argv[1]))
+          q.need(value.get("status") == "QUALIFIED_COMPLETE_READBACK",
+                 "Development replay cannot satisfy mandatory hosted readback")
+          PY
+          cp -- "$RUNNER_TEMP/hia-work-owner-readback/readback-result.json" "$RUNNER_TEMP/hia-work-owner-readback-observations/readback-result.json"
+      - name: Verify all committed source bytes after readback success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-work-owner-readback-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-work-owner-readback-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-readback-observations/source-after.log"
+      - name: Upload the independent complete readback result and source observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-work-owner-readback-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-work-owner-readback-observations/
           if-no-files-found: error
           compression-level: 0
           retention-days: 30

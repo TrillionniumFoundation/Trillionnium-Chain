@@ -1,16 +1,20 @@
 {
   "actual_public_cli_processes": 18,
   "ci_reader_development_validation": {
+    "actual_detached_checkout": true,
     "actual_github_ci_run": false,
     "actual_source_byte_witness_readback": "PASS",
-    "actual_unit_tests": 9,
+    "actual_unit_tests": 11,
     "additional_witness_binding_negative_variants": 23,
     "complete_binary_pack_and_reopen": "PASS",
+    "default_development_mode_preserved": true,
+    "integrated_ci_unit_tests": 64,
     "qualification_status": "NOT_BOUND",
+    "readback_rejects_audit_flag": true,
     "report": {
-      "bytes": 2011,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/ci-final-byte-source-v5/report.json",
-      "sha256": "6b4df3bc25989d7693395d4322c44f1eb5ee6a9d2f0946090feffff4f076b1af"
+      "bytes": 1959,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/ci-readback-pack/report.json",
+      "sha256": "61acdace0ebd911a55dcb309f9c13377b2345d8e3a551bf0966d8c55781c085c"
     }
   },
   "cloud_pending_recovery": {
@@ -47,18 +51,27 @@
   "evidence": {
     "all_archive_payload_members_reopened": true,
     "all_available_desktop_failures_retained": true,
-    "bytes": 10548680,
+    "bytes": 975,
     "complete_original_binary_included": true,
-    "format": "trnm.mempool-typed-development-evidence.v1",
+    "complete_reassembly_verified": true,
+    "execution_status_changed_by_storage": false,
+    "format": "trnm.hia.contiguous-archive.v1",
     "index": {
-      "bytes": 2246882,
-      "sha256": "9c3c6b651d32e21e7455942045a59c8060eab8139da6b8ff4c39f27ded782d71"
+      "bytes": 2764783,
+      "sha256": "97a08f1a3142e98ced7ac716c11f81c3db3d9b14f61187e9c7406b7824bda784"
     },
-    "logical_bytes": 606961839,
-    "logical_files": 11956,
-    "path": "hia/qualification/mempool-typed-development.tar.xz",
-    "regular_members": 3501,
-    "sha256": "5d0d257db356f70dbf2ddf2157e04cece4822f02fba79b544cdc50f254e48f0e"
+    "logical_archive_format": "trnm.mempool-typed-development-evidence.v1",
+    "logical_bytes": 731050561,
+    "logical_files": 14389,
+    "parts": 3,
+    "path": "hia/qualification/mempool-typed-development.parts/manifest.json",
+    "reconstructed_archive": {
+      "bytes": 13481848,
+      "name": "mempool-typed-development.tar.xz",
+      "sha256": "b6e7094c222029bd7aab426af8528720d35b288f8960675ef021341cd800750c"
+    },
+    "regular_members": 3993,
+    "sha256": "90539bb0c4ba5224b63ddc42195426c8812f3fa48fcd0480c2d00f665fc5b020"
   },
   "evidence_admission_repairs": [
     {
@@ -126,8 +139,25 @@
     "canonical_complete_v3": "Actual native/original/physical/guarded execution passed. Later eight self-consistent invalid witnesses were accepted by the old public reader; this older reader does not satisfy final evidence admission.",
     "canonical_complete_v4": "Frozen 0e0e4f63 source actually reran all323/9332 native and original histories,153 retained tests,38 physical/50commands and26 guarded calls. All18 source,5 byte and8 self-consistent witness controls passed, with18 actual public CLI processes.",
     "canonical_complete_v5": "Exactly one terminal LF removed from each of the owned integrity-test file and two CI Python files; their parsed ASTs are unchanged. The first launch used an incorrect compiler path and failed before compilation. With the exact unchanged pinned compiler at its verified path, final cfb0f4a9 source actually reran all native/original/physical/guarded suites and all18 source/5 byte/8 witness/18 CLI controls; full failed and successful bytes retained.",
+    "canonical_complete_v6_detached_audit": "c61 hosted CI refused detached HEAD at the component's default development preflight before M05 native compilation. The final explicit --audit option calls the existing audit boundary; default development mode, canonical origin, activation and all workspace checks remain enforced. Current 7461a680 source actually reran every native/original/physical/guarded/source/byte/witness control on a real detached checkout; no old result was rebound.",
     "independent_reader_failures": "Wrong preflight path before editing, first guarded empty-header assumption and later harness regex error are retained. The guarded reader was corrected from the actual native f0 header semantics; no native execution failure was relabeled.",
     "static_review_v1": "Actual AST syntax failure before mutation; retained and corrected."
+  },
+  "hosted_ci_observation": {
+    "artifact": 14283633703,
+    "attempt": 1,
+    "component_native_compilation_reached": false,
+    "current_candidate_hosted_ci": "NOT_RUN",
+    "failure": "project boundary failed: not an allowed development branch",
+    "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+    "job": 133706836672,
+    "original_zip": {
+      "bytes": 2142981,
+      "sha256": "4254e5c4906d7a13caea973f0480228882d7930804724b5320c05bddc3de4680"
+    },
+    "raw_logical_root": "actual-c61-ci-failure",
+    "run": 43983845998,
+    "status": "FAIL"
   },
   "independent_original_binary": {
     "bytes": 7630840,
@@ -142,6 +172,14 @@
   "original_source_inputs_unchanged_by_integration": true,
   "original_source_set_sha256": "3bc6870d32cc41252461888580556600da252d14d4b8f2ab10c71fa2935bd8e3",
   "owned_source_files": 15,
+  "preflight_mode": {
+    "boundary_implementation_changed": false,
+    "canonical_origin_required": true,
+    "default": "--dev",
+    "explicit_detached_read_only": "--audit",
+    "production_activation_refused": true,
+    "readback_executes_preflight": false
+  },
   "private_ready_counter_fixture": {
     "actual_interventions": 1,
     "offset": 96,
@@ -153,41 +191,46 @@
   "production_signature_or_replay_authority": false,
   "public_byte_controls": 5,
   "public_witness_controls": 8,
-  "qualification_scope": "Frozen development typed test-trait owner; new exact-commit CI required",
+  "qualification_scope": "Frozen development typed test-trait owner qualified on real detached checkout; fresh exact-commit hosted CI required",
   "reports": {
+    "actual_detached_qualification": {
+      "bytes": 618,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/full-detached-qualification-v1/report.json",
+      "sha256": "25da7039e28bd033ef70041b619b870022341e8a3d78617fd2519dd3df5fe30c"
+    },
     "complete": {
-      "bytes": 326138,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-complete-v5-final/report.json",
-      "sha256": "f4cbb4ee984c8327b14e12e3f5de0a9436688497f3e7a4d9234d0c94fa1f1b1b"
+      "bytes": 326155,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/report.json",
+      "sha256": "77d8f2a88024953f6d0a799453e49aaa32390898a937f484327ad4b54022bbb6"
     },
     "guarded": {
       "bytes": 16872,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-complete-v5-final/guarded/report.json",
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/guarded/report.json",
       "sha256": "61e31ee4c8923d475a50c67a822d1332a1e7a7aaa931488812bff5141eab9473"
     },
     "native": {
-      "bytes": 327481,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-complete-v5-final/native/report.json",
-      "sha256": "bb1c93ab97f5d2419594391868ae2451f8a9600daca2c02677c1a1af72707715"
+      "bytes": 320698,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/native/report.json",
+      "sha256": "33ee3e117af6f58a503cda1ba56f93591df7afedf7bf2b66622470ff5ac30a05"
     },
     "original": {
-      "bytes": 262480,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-complete-v5-final/original/report.json",
-      "sha256": "6aba34478767552ef65f3dcd5099cfaf6f45eaf2b66576b91333c559b3944d11"
+      "bytes": 262052,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/original/report.json",
+      "sha256": "8784c70a050150fad21880c2b2715c7364cc6b7010011c6ffede98c111e61ad8"
     },
     "physical": {
       "bytes": 31465,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-complete-v5-final/physical/report.json",
-      "sha256": "6cdcc1a9d036e44619677c42bc481039649a7800bc1cfab2fb46d5753fd48d56"
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/physical/report.json",
+      "sha256": "2b150d9f4f7d695c8619b0417f86e5133125b6b1ea76e5a20b654a3fa22e4cb5"
     },
     "public_controls": {
-      "bytes": 20768,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-public-controls-v5/report.json",
-      "sha256": "3b542425ba048ff700e7b1c29e2ba253bb4e5c4ce7292877e318f56453cfc8c6"
+      "bytes": 20690,
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/public-controls/report.json",
+      "sha256": "521deaf836c0c6cd7a872c1ffdc58d75f95e45d80a3c9625378d6a3411e27a56"
     },
     "source_controls": {
       "bytes": 2726,
-      "path": "/tmp/trnm-m05-mempool-native-20261116-dn4q515k/canonical-source-controls-v5/report.json",
+      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/source-controls/report.json",
       "sha256": "cfda877162c887fa2c6fa74df189da861d71c297799a8fec5090b67f5b96e8b4"
     }
   },
@@ -198,8 +241,8 @@
   "schema": "trnm.hia.mempool-typed-development.v1",
   "source_after": "MATCH",
   "source_controls": 18,
-  "source_origin_git_head": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
-  "source_set_sha256": "cfb0f4a9a0320f58f6ade7249e1304e1b7acf73219d3a16ca6931d28d6cd1242",
+  "source_origin_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+  "source_set_sha256": "7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b",
   "status": "PASS",
   "unordered_comparison_scope": {
     "both_raw_orders_retained": true,

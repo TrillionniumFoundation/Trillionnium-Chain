@@ -8,18 +8,35 @@
     "unit_tests": 12,
     "whole_elf_payload_reconstruction_negative": "PASS"
   },
+  "current_application_native_sources": {
+    "files": 109,
+    "fresh_exact_source_execution_required": true,
+    "source_set_sha256": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70"
+  },
   "current_ci_sources": {
     ".github/workflows/hia-native-migration.yml": {
-      "bytes": 206764,
-      "sha256": "0d2032219054d11f32626ba70620c12eb30029ea13b222ff4fb97ca5c09d8c40"
+      "bytes": 216496,
+      "sha256": "14bcf90dc224a908d658dff97d62ebff424eb23851a8fbfb67134846e7c009c8"
+    },
+    "config/hia-migration-v1.json": {
+      "bytes": 43394,
+      "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
+    },
+    "hia/components.json": {
+      "bytes": 30941,
+      "sha256": "add302a78f9af55b757354fb7c408094d8c7dafc694fdb3ddfbe05372d0f58e8"
     },
     "hia/tests/test_application_ci.py": {
       "bytes": 32022,
       "sha256": "3f46bcc35c67ff8f82485ca45d254f77c0ce5c701dd5c8406c0afd984044f6a2"
     },
     "hia/tests/test_mempool_ci.py": {
-      "bytes": 13972,
-      "sha256": "404c15d7f0a5baa4fe64afed759eff3da3500178d69201478a9a2ccfb51fcf19"
+      "bytes": 17841,
+      "sha256": "0dd31d809c160c41b360146604e589e3c11e3e00fcb565b5a266f86b21df5b10"
+    },
+    "hia/tests/test_work_owner_ci.py": {
+      "bytes": 15036,
+      "sha256": "b215ece318fa38d4242b3d0a3a7621f678a70b8122ef7bca3db589ae9a22bd5d"
     },
     "hia/tools/qualify_application_ci.py": {
       "bytes": 75353,
@@ -29,36 +46,41 @@
       "bytes": 24242,
       "sha256": "59bcd5502096b3203ad6a4927d63bffb97da266b428bd83998099766821ec67c"
     },
+    "hia/tools/qualify_work_owner_ci.py": {
+      "bytes": 59952,
+      "sha256": "7db0bb88f1d79551cfb710262a5936c33ace2f498698f46bca5dc63cf7d3f107"
+    },
     "scripts/ci/test_hia_workflow_bootstrap.py": {
       "bytes": 3901,
-      "sha256": "f3891a04f0b955aeb3880bf2cfbbe67a39fc2c64d7807675dea200fe432e1ecc"
+      "sha256": "3088a8f8326557e66a76f444c29f254527a489970e5c93cb8719df8589cb5a6d"
     }
   },
   "evidence": {
-    "bytes": 2666804,
+    "bytes": 3518652,
     "every_member_reopened": true,
     "index": {
-      "bytes": 34343,
-      "sha256": "53f63f62a8c290ed1658cea578f0b75cb67c2ea9d50edd6a62bc469936d57977"
+      "bytes": 59759,
+      "sha256": "e2b9c9fde02be9f7c1757d369032a44fc927a56b355de7a065b5db3c658c2c06"
     },
-    "logical_bytes": 9905813,
-    "logical_files": 177,
+    "logical_bytes": 14445009,
+    "logical_files": 310,
     "path": "hia/qualification/application-mempool-ci-development.tar.xz",
-    "regular_members": 117,
-    "sha256": "fcea25214b5e7b53b5c086c017e458e8fcab26f4e879c5b6d24dff3089db8220"
+    "regular_members": 192,
+    "sha256": "24cd4ff16830ca1de624e89e0f85f2cb7440f1311ff43bcac75b51d8dde643af"
   },
   "final_ci_test_report": {
-    "bytes": 1928,
-    "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/application-mempool-integration-v1/final-ci-reader-tests-v5/report.json",
-    "sha256": "28962b5bb95fc5a3a7ccc8f35a7052bd022a7317e7abc8231ffb75ebeef7e645"
+    "bytes": 3434,
+    "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/work-owner-integration-v1/final-validation-v1/report.json",
+    "scope": "All89 actual tests pass; final external syntax validator later failed on an incorrect bootstrap-name counter; corrected validation reuses the actual test raw without claiming a new test execution.",
+    "sha256": "9e71b1805cd193482d7acfa1857468210d2c72a938c2de6c290aa74fbbfaa2b6"
   },
-  "final_integrated_ci_unit_tests": 62,
+  "final_integrated_ci_unit_tests": 89,
   "final_native_bootstrap_guard_groups": 4,
   "final_source_validation": {
-    "local_markdown_links": 795,
+    "local_markdown_links": 806,
     "report": {
-      "bytes": 3541,
-      "sha256": "b9c604f44a52a63cec0de165552376747512d3faf7781638588b0611b32d2379"
+      "bytes": 6446,
+      "sha256": "26f6a6991a85f3f2b31636c1bf419b06eb111a4f5fcd5659ce1622f5acf3c92a"
     },
     "status": "PASS"
   },
@@ -67,15 +89,40 @@
     "Initial integration whitespace error and210s PQ observer timeout are preserved.",
     "Application old-source binding refusal remains a refusal; the actual development execution is not rebound to new source metadata.",
     "Final staged check refused three redundant Python EOF newlines; removed with identical AST and actual final-source requalification.",
-    "Initial final-source launch used an incorrect compiler path and failed before compilation; all raw is retained. Correct verified path used the unchanged pinned compiler for full passing execution."
+    "Initial final-source launch used an incorrect compiler path and failed before compilation; all raw is retained. Correct verified path used the unchanged pinned compiler for full passing execution.",
+    "c61 M05 actual hosted CLI failed default development preflight on detached HEAD before native compile; fixed with explicit audit opt-in and actual detached full qualification.",
+    "Host V4 reader accepted three strict-type/domain corruptions; V5 actual schema controls refuse all three; retained evidence is in the separate final Host CI archive.",
+    "Documentation transition first asserted a one-file delta but discovered six legitimate Application dependencies; corrected to109 files. Plan pin first write completed before an authoring KeyError; preserved before bytes prove the single intended JSON leaf.",
+    "External final syntax validator initially counted a nonexistent bootstrap shell filename and reported zero; actual four guard groups and89 tests passed. Corrected counter reads28 exact workflow gates without relabelling test execution.",
+    "The immutable full13.48MB Git blob upload exceeded the connector16MiB request envelope. Final contiguous6MiB parts were fully reassembled and checked before publication."
   ],
+  "history": {
+    "c61_ci_development_archive": {
+      "bytes": 2666804,
+      "sha256": "fcea25214b5e7b53b5c086c017e458e8fcab26f4e879c5b6d24dff3089db8220"
+    },
+    "c61_ci_development_record": {
+      "bytes": 5051,
+      "sha256": "a976233b07bc14ec3d5f3b6237859b866a8158a85a158c7fd48275185c37f4a6"
+    }
+  },
+  "last_actual_application_ci": {
+    "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+    "independent_complete_readback": "PASS",
+    "is_current_candidate_qualification": false,
+    "job_id": 133706836939,
+    "record": "hia/qualification/execution-application-ci.json",
+    "status": "PASS"
+  },
   "mempool_ci": {
+    "actual_detached_audit_qualification": "PASS",
     "actual_public_cli_processes": 18,
     "additional_witness_binding_negative_variants": 23,
+    "default_detached_dev_refusal": "PASS",
     "full_actual_archive_package": {
       "archive": {
-        "bytes": 3459300,
-        "sha256": "92fb4e0c418caedf6e246b99d2d49c3c0cf0a84faf4730f12de54f0faff39211"
+        "bytes": 3459224,
+        "sha256": "3ddeeb4b6027aa993144fb0514b8fe5eeb64191609822855ef87ec64d3d358c3"
       },
       "files": 2772,
       "metadata_only_nodes": 0,
@@ -87,8 +134,8 @@
     "hosted_ci_claim": false,
     "public_byte_controls": 5,
     "public_control_report": {
-      "bytes": 20768,
-      "sha256": "3b542425ba048ff700e7b1c29e2ba253bb4e5c4ce7292877e318f56453cfc8c6"
+      "bytes": 20690,
+      "sha256": "521deaf836c0c6cd7a872c1ffdc58d75f95e45d80a3c9625378d6a3411e27a56"
     },
     "public_witness_controls": 8,
     "source_control_report": {
@@ -96,12 +143,17 @@
       "sha256": "cfda877162c887fa2c6fa74df189da861d71c297799a8fec5090b67f5b96e8b4"
     },
     "source_controls": 18,
-    "unit_tests": 9
+    "unit_tests": 11,
+    "verify_audit_option_refusal": "PASS"
   },
   "native_or_original_execution_relabelled": false,
   "old_packages_retired": 0,
   "pq_source_suite": {
     "actual_test_methods": 99,
+    "current_pin_check_report": {
+      "bytes": 558,
+      "sha256": "dd4704f6aa7af122fc2f599c54886115adf47d6c271a72217b06474ff833675f"
+    },
     "elapsed_ns": 995273877865,
     "final_plan_pin_checker": "PASS",
     "historical_first_observer": "TIMEOUT at210s; exception retained, partial raw not captured",
@@ -111,18 +163,28 @@
   "production_activation": false,
   "qualification_status": "NOT_BOUND",
   "schema": "trnm.hia.application-mempool-ci-development.v1",
-  "source_origin_git_head": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+  "source_origin_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
   "status": "DEVELOPMENT_VALIDATED_HOSTED_CI_REQUIRED",
   "whole_migration_complete": false,
+  "work_owner_ci": {
+    "ci_reader_test_groups": 14,
+    "complete_primitive_arena_bytes_retained": false,
+    "full_independent_development_pack_and_readback": "PASS",
+    "new_exact_commit_hosted_execution_required": true,
+    "qualification_status": "NOT_BOUND",
+    "record": "hia/qualification/work-owner-development.json",
+    "semantic_source_test_groups": 11,
+    "split_workflow_inline_controls": 14,
+    "total_test_groups": 25
+  },
   "workflow": {
-    "all_python_heredocs_checked": 39,
-    "bash_fragments_checked": 238,
-    "independent_native_bootstraps": 27,
-    "jobs": 31,
-    "only_change_after_original_syntax_review": "Remove exactly one terminal LF; all executable run fragments remain byte-identical",
+    "all_python_heredocs_checked": 42,
+    "bash_fragments_checked": 252,
+    "independent_native_bootstraps": 28,
+    "jobs": 33,
     "source": {
-      "bytes": 206764,
-      "sha256": "0d2032219054d11f32626ba70620c12eb30029ea13b222ff4fb97ca5c09d8c40"
+      "bytes": 216496,
+      "sha256": "14bcf90dc224a908d658dff97d62ebff424eb23851a8fbfb67134846e7c009c8"
     }
   }
 }

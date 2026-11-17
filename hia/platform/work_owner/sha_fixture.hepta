@@ -1,0 +1,76 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_hia_work_private_sha_entry_recovered_v2
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":131136}
+  v6:bool = compare.gt(v4,v5)
+  branch v6 b2(v0,v1,v2,v4,v6) b1(v0,v1,v2,v4)
+block b1(v7:readbuf,v8:mutbuf,v9:mutbuf,v10:u64)
+  v17:usize = buffer.len(v8)
+  v18:u64 = int.cast(v17) {"mode":"wrap"}
+  v19:u64 = const() {"value":32}
+  v20:bool = compare.ne(v18,v19)
+  jump b2(v7,v8,v9,v10,v20)
+block b2(v12:readbuf,v13:mutbuf,v14:mutbuf,v15:u64,v16:bool)
+  branch v16 b4(v12,v13,v14,v15,v16) b3(v12,v13,v14,v15)
+block b3(v21:readbuf,v22:mutbuf,v23:mutbuf,v24:u64)
+  v31:usize = buffer.len(v23)
+  v32:u64 = int.cast(v31) {"mode":"wrap"}
+  v33:u64 = const() {"value":132256}
+  v34:bool = compare.lt(v32,v33)
+  jump b4(v21,v22,v23,v24,v34)
+block b4(v26:readbuf,v27:mutbuf,v28:mutbuf,v29:u64,v30:bool)
+  branch v30 b5(v26,v27,v28) b6(v26,v27,v28,v29)
+block b5(v35:readbuf,v36:mutbuf,v37:mutbuf)
+  v43:u64 = const() {"value":4294967293}
+  v44:u32 = int.cast(v43) {"mode":"wrap"}
+  ret(v44)
+block b6(v39:readbuf,v40:mutbuf,v41:mutbuf,v42:u64)
+  v45:u64 = const() {"value":0}
+  jump b7(v39,v40,v41,v42,v45)
+block b7(v46:readbuf,v47:mutbuf,v48:mutbuf,v49:u64,v50:u64)
+  v51:bool = compare.lt(v50,v49)
+  branch v51 b8(v46,v47,v48,v49,v50) b9(v46,v47,v48,v49)
+block b8(v52:readbuf,v53:mutbuf,v54:mutbuf,v55:u64,v56:u64)
+  v62:usize = int.cast(v56) {"mode":"wrap"}
+  v63:u8 = buffer.load(v52,v62)
+  v64:u64 = int.cast(v63) {"mode":"wrap"}
+  v65:u8 = int.cast(v64) {"mode":"wrap"}
+  _ = buffer.store(v54,v62,v65)
+  v66:u64 = const() {"value":1}
+  v67:u64 = int.add.wrap(v56,v66)
+  jump b7(v52,v53,v54,v55,v67)
+block b9(v57:readbuf,v58:mutbuf,v59:mutbuf,v60:u64)
+  v68:u64 = call(v59,v60) {"function":"work_sha256_arena"}
+  v69:u64 = const() {"value":32}
+  v70:bool = compare.ne(v68,v69)
+  branch v70 b10(v57,v58,v59) b11(v57,v58,v59)
+block b10(v71:readbuf,v72:mutbuf,v73:mutbuf)
+  v83:u64 = const() {"value":4294967293}
+  v84:u32 = int.cast(v83) {"mode":"wrap"}
+  ret(v84)
+block b11(v77:readbuf,v78:mutbuf,v79:mutbuf)
+  v85:u64 = const() {"value":0}
+  jump b12(v77,v78,v79,v85)
+block b12(v86:readbuf,v87:mutbuf,v88:mutbuf,v90:u64)
+  v92:u64 = const() {"value":32}
+  v93:bool = compare.lt(v90,v92)
+  branch v93 b13(v86,v87,v88,v90) b14(v86,v87,v88)
+block b13(v94:readbuf,v95:mutbuf,v96:mutbuf,v98:u64)
+  v106:u64 = const() {"value":131136}
+  v107:u64 = int.add.wrap(v106,v98)
+  v108:usize = int.cast(v107) {"mode":"wrap"}
+  v109:u8 = buffer.load(v96,v108)
+  v110:u64 = int.cast(v109) {"mode":"wrap"}
+  v111:usize = int.cast(v98) {"mode":"wrap"}
+  v112:u8 = int.cast(v110) {"mode":"wrap"}
+  _ = buffer.store(v95,v111,v112)
+  v113:u64 = const() {"value":1}
+  v114:u64 = int.add.wrap(v98,v113)
+  jump b12(v94,v95,v96,v114)
+block b14(v100:readbuf,v101:mutbuf,v102:mutbuf)
+  v115:u64 = const() {"value":32}
+  v116:u32 = int.cast(v115) {"mode":"wrap"}
+  ret(v116)
+end

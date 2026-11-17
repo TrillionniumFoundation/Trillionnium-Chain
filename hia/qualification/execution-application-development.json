@@ -68,6 +68,38 @@
     ]
   },
   "history": {
+    "c61_integration_source_transition": {
+      "changed_original_inputs": [
+        {
+          "development": {
+            "bytes": 35965,
+            "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
+          },
+          "integration": {
+            "bytes": 41993,
+            "sha256": "e5ebb84c352ff789580e984a30377489513b05bf4657f030624f21947cd365a2"
+          },
+          "path": "config/hia-migration-v1.json"
+        },
+        {
+          "development": {
+            "bytes": 525351,
+            "sha256": "547fd79699f1968c6b2496131ed301ddfd304585032a59c140c7fa91cdd30732"
+          },
+          "integration": {
+            "bytes": 525351,
+            "sha256": "e679ec2f05ba43c5494373cbecc62d1613f7c4d902a6ce895e1d2143e76e39e8"
+          },
+          "path": "config/pon/pq-cross-branch-corpus-v1.json"
+        }
+      ],
+      "development_original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
+      "integration_original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
+      "native_source_files": 104,
+      "native_source_inputs_unchanged": true,
+      "new_committed_source_original_execution_required": true,
+      "unchanged_original_inputs": 4361
+    },
     "first_original": "Actual 322/323 application histories; uppercase quota-use public-key acceptance differed from original. Failed source/raw retained. Final328 histories and eight retained tests actually rerun.",
     "unavailable_cloud_outputs": "Pending recovery as explicitly listed; missing raw never inferred successful."
   },
@@ -88,6 +120,59 @@
     }
   },
   "integration_source_transition": {
+    "changed_native_inputs": [
+      {
+        "executed_c61": {
+          "bytes": 25346,
+          "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+        },
+        "integration": {
+          "bytes": 30941,
+          "sha256": "add302a78f9af55b757354fb7c408094d8c7dafc694fdb3ddfbe05372d0f58e8"
+        },
+        "path": "hia/components.json"
+      },
+      {
+        "executed_c61": null,
+        "integration": {
+          "bytes": 312,
+          "sha256": "63ec617c059a93b8e8e829bf44dcef77b089bb7b7df8db43a0a67a56400c2243"
+        },
+        "path": "hia/platform/work_owner/host_fixture.hepta"
+      },
+      {
+        "executed_c61": null,
+        "integration": {
+          "bytes": 17815,
+          "sha256": "38dda5ec03f8b325a7f810f66d5e94819b8c81bbc7039471ce6eebac81904840"
+        },
+        "path": "hia/platform/work_owner/host_method.hepta"
+      },
+      {
+        "executed_c61": null,
+        "integration": {
+          "bytes": 308,
+          "sha256": "8cfb7caa9a249efdf37e8cd0475cc4e95ef3b483a96286f8f217b84641d48701"
+        },
+        "path": "hia/platform/work_owner/owner_fixture.hepta"
+      },
+      {
+        "executed_c61": null,
+        "integration": {
+          "bytes": 3050,
+          "sha256": "c4caf30ba10d8d7a3d374e07499798cb03394cbbd9bc8511a500c113e96c1d3e"
+        },
+        "path": "hia/platform/work_owner/sha_fixture.hepta"
+      },
+      {
+        "executed_c61": null,
+        "integration": {
+          "bytes": 81537,
+          "sha256": "189251711007fc1e2c278180de57343d453a40c7a7d535a58e8faa978cb55295"
+        },
+        "path": "hia/platform/work_owner/work_policy.hepta"
+      }
+    ],
     "changed_original_inputs": [
       {
         "development": {
@@ -95,8 +180,8 @@
           "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
         },
         "integration": {
-          "bytes": 41993,
-          "sha256": "e5ebb84c352ff789580e984a30377489513b05bf4657f030624f21947cd365a2"
+          "bytes": 43394,
+          "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
         },
         "path": "config/hia-migration-v1.json"
       },
@@ -107,16 +192,26 @@
         },
         "integration": {
           "bytes": 525351,
-          "sha256": "e679ec2f05ba43c5494373cbecc62d1613f7c4d902a6ce895e1d2143e76e39e8"
+          "sha256": "b66f39ed5585b172c18fa9fd7ca36f647a69f73916e1d71582e0cf4e50d74159"
         },
         "path": "config/pon/pq-cross-branch-corpus-v1.json"
       }
     ],
+    "development_native_source_set_sha256": "05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1",
     "development_original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
-    "integration_original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
-    "native_source_files": 104,
-    "native_source_inputs_unchanged": true,
+    "integration_native_source_set_sha256": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70",
+    "integration_original_source_set_sha256": "1e6fd3f4bd1e9ee23ce85f569ae7075685ecbccc0cd3c9a36c376a92a4498c39",
+    "last_actual_hosted_ci": {
+      "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+      "is_current_candidate_qualification": false,
+      "native_source_set_sha256": "05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1",
+      "original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
+      "record": "hia/qualification/execution-application-ci.json"
+    },
+    "native_source_files": 109,
+    "native_source_inputs_unchanged": false,
     "new_committed_source_original_execution_required": true,
+    "new_native_execution_required": true,
     "unchanged_original_inputs": 4361
   },
   "native_build_evidence_scope": "Complete recovered native bundle and actual Desktop physical-build source/images/ELF/raw. Earlier Cloud native-build streams are not all available and are not relabeled as the Desktop execution.",
@@ -127,7 +222,7 @@
   "original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
   "owned_source_files": 22,
   "production_activation": false,
-  "qualification_scope": "Frozen development native and actual original execution; new integrated-source CI required",
+  "qualification_scope": "Exact frozen development source only; new integrated native and original graphs require fresh exact-commit hosted execution",
   "reports": {
     "integrity": {
       "bytes": 72672,

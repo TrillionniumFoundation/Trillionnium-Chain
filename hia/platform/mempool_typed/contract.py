@@ -151,10 +151,12 @@ def fresh_output(path,repository=ROOT):
     path.mkdir(mode=0o700)
     return path
 
-def preflight(repository,output):
-    result=subprocess.run(["bash","scripts/project-preflight.sh"],cwd=repository,
+def preflight(repository,output,*,audit=False):
+    need(type(audit) is bool,"Preflight audit mode must be explicit")
+    mode="--audit" if audit else "--dev"
+    result=subprocess.run(["bash","scripts/project-preflight.sh",mode],cwd=repository,
         capture_output=True,timeout=60)
     (output/"preflight.stdout").write_bytes(result.stdout)
     (output/"preflight.stderr").write_bytes(result.stderr)
     need(result.returncode==0,"Project preflight failed")
-    return {"exit_code":result.returncode,"stdout":identity(result.stdout),"stderr":identity(result.stderr)}
+    return {"mode":mode,"exit_code":result.returncode,"stdout":identity(result.stdout),"stderr":identity(result.stderr)}

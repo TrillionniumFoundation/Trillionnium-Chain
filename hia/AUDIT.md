@@ -1,95 +1,101 @@
 # Whole-tree inventory and HIA migration audit
 
-## Application and typed mempool integration — 2026-11-16 UTC
+## Work/Host integration and detached M05 repair — 2026-11-17 UTC
 
-### Application and typed mempool — current candidate
+### Host owner, Application and typed mempool — current candidate
 
-The current inventory is **41 kernels / 18 native foundations / 95 HIA source
-files**. This increment adds 37 final owned component files, including 12 HIA
-files. The 26 original Rust packages remain; zero packages have accepted
-retirement and all nine whole-project gates remain OPEN.
+The current inventory is **41 kernels / 19 native foundations / 103 HIA source
+files**. The same-worker Work/Host owner adds 23 final owned files, including
+eight HIA sources, with two independent CI reader files. Every component has
+one implementation directory. The 26 original Rust packages remain, with zero
+accepted retirements and all nine whole-project gates OPEN.
 
-| Native owner | Source-bound development execution | Remaining integration |
+| Native owner | Exact-source actual execution | Remaining integration |
 | --- | --- | --- |
-| [Default M06 application](platform/execution_application/README.md) | 328 histories, 335 real PNX1 transactions, 8,784 State commands and nine native processes; actual original 328 comparisons and eight retained tests; 32 physical controls and 181 public/source controls including 16 real CLI calls | Complete batch and worker ownership, all configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT |
-| [Typed M05 mempool](platform/mempool_typed/README.md) | 323 fresh native processes and 9,332 commands matched the complete original library; 153 retained original tests; 38 physical processes / 50 commands, 26 guarded calls, 18 source controls, five altered-byte refusals, eight self-consistent witness refusals and eighteen real public CLI calls | Production PNX/signature adapters, real Node nonce leases, persistent local pool, recovery and original service budget |
+| [Same-worker Work/Host](platform/work_owner/README.md) | 61 native histories / 27,843 progress records, 175 primitive controls, three actual traces, 27 trace and 14 signal controls, 18 native CLOCK1 faults; 57 actual-original histories / 27,841 progress records, 56 joined workers and 44 retained original tests | Earlier request deadline, shared Paid account/checkpoint, production fixed-parent positive, actual original CLOCK1 faults, Node/batch lifetime and original service acceptance |
+| [Default M06 Application](platform/execution_application/README.md) | At c61: 328 native and original histories, 335 real PNX1 transactions, 8,784 State commands and nine native processes; 32 physical controls, 181 integrity controls / 16 actual CLI refusals and eight retained original tests | Complete batch and workers, all configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT |
+| [Typed M05 mempool](platform/mempool_typed/README.md) | Final detached-checkout source: 323 fresh native processes / 9,332 commands and complete original comparison / 153 retained tests; 38 physical processes / 50 commands, 26 guarded calls, 18 source controls, five byte and eight coherent-witness refusals / 18 actual public CLI calls | Production PNX/signature adapters, actual Node nonce leases, persistent pool/recovery and original service budget |
 
-Application's 104-input source set is
-`05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`.
-Its fourteen-image Linux executable is 4,246,848 bytes, SHA256
-`898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a`.
-The private owner calls the actual native preparation, signature, State/View/Patch
-and root images. It implements all twelve commands reachable under the original
-default installed configuration, including account access, nonce/error order,
-fees, application continuations, cancellation, typed Values and consuming Patch
-ownership. External Prepared values or signature verdicts confer no authority.
-Nondefault branches and block admission remain separate obligations.
+Work/Host's 126-input source is
+`e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91`.
+The actual worker retains the original acquired boot/parent/limit identity and
+performs every original W1 progress checkpoint against that immutable snapshot.
+The verified parent FD remains live across CPU, memory and PID reads; all three
+reads finish before parsing, and the FD closes before the second fresh Host check.
+The main thread joins the real child before after-sampling or output. Ordinary
+Host, cancellation, deadline and CLOCK panic paths retain their different error
+orders. A new standalone entry cannot renew an earlier Node request budget.
 
-Typed M05's 26-input source set is
-`cfb0f4a9a0320f58f6ade7249e1304e1b7acf73219d3a16ca6931d28d6cd1242`.
-Its 179,254-byte executable has SHA256
+The Work/Host reader previously accepted three self-consistent changes to actual
+Rust stdout: domain integer to boolean, progress integer to boolean, and thread
+identity integer to string. The final reader checks the complete original row
+schemas and rejects all three. Its 25 development test groups, complete original
+binary pack/readback, four archive negatives and actual detached native build
+passed. The 175 earlier primitive guard arenas were not retained as complete
+raw snapshots; this missing evidence is explicit and cannot be reconstructed
+from success counts. Original controlled CLOCK faults also remain OPEN.
+
+Typed M05's final 26-input source is
+`7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b`.
+Its 179,254-byte ELF remains
 `c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c`.
-Queue ownership, exact duplicate behavior, canonical metadata, pending leases,
-handoff and terminal cleanup execute in HIA. The current signature/replay/nonce
-traits are explicit test adapters, so this component cannot authorize production
-transactions. Ready handles refuse exhaustion before queue mutation and do not
-revive consumed handles. Only the original unordered HashMap destruction events
-in operations 20, 21 and 22 use multiset comparison; all raw orders are retained.
+At c61, the component's default development preflight rejected GitHub's exact-SHA
+detached checkout before native qualification. The complete original failed CI
+ZIP and raw preflight error remain retained. The explicit `--audit` option now
+selects the existing read-only boundary for this checkout; default `--dev`,
+canonical origin, disabled activation and workspace checks remain enforced.
+Readback rejects the execution-only option. The new source genuinely reran every
+native, original, physical, guarded and public control in a real detached checkout.
+Earlier eight reader false accepts, compiler-path and linker failures remain
+historical failures. Signature/replay/nonce traits remain explicit test adapters.
 
-The previous M05 evidence reader admitted eight self-consistent invalid
-witnesses despite real native execution having passed. The final reader now
-reconstructs the exact ELF extent and payload, consumes all eight selected syscall
-traces, checks every physical response and release tag, and follows all 26 guarded
-calls with complete arena continuity. It permits exactly one private eight-byte
-fixture write and checks that exhaustion leaves the queue unchanged and close
-erases the full arena. The final frozen source reran the entire native/original
-qualification; all five altered-byte and eight self-consistent witness controls
-were refused by their intended invariant, with 18 actual CLI outcomes. Earlier
-incorrect acceptance and reader-development failures remain in the final archive.
-CI also verifies each complete baseline-to-mutated-file transition and rebound
-summary; it cannot accept a negative-test count without the corresponding bytes.
+Application's executed c61 104-input source is
+`05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`.
+Its fourteen-image 4,246,848-byte ELF is
+`898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a`.
+The [exact c61 CI record](qualification/execution-application-ci.json) binds
+[run 43983845998](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998),
+job 133706836939 and artifact 14283854229. The complete 36,198,231-byte original ZIP,
+every native/physical/control stream and actual original stdout were independently
+read back. Its 91,371,888-byte original binary is retained in full. Remote compiler
+paths remain original CI observations; no local path or execution was fabricated.
 
-The final staged check removed one redundant terminal newline from three Python
-files; their parsed ASTs are unchanged. Because the owned source identity changed,
-the exact final source reran every native, original, physical, guarded and public
-control. A compiler-path error before the first compile remains a failed attempt;
-the corrected launch used the same pinned compiler bytes. All 62 CI-reader tests
-also passed again on the final helper source.
+This integration adds five Work/Host include mappings to `hia/components.json`.
+The gate also binds every inspected component key, growing Application's closure
+from 104 to 109 inputs. Its new source set is
+`b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70` and requires fresh exact-commit CI.
+The previous c61 native/original result remains bound to c61. The development
+original graph and every actual earlier execution also retain their own identity.
+The inventory and final plan pin changes require fresh original comparisons.
 
-The [application record](qualification/execution-application-development.json)
-and [M05 record](qualification/mempool-typed-development.json) bind their
-[application archive](qualification/execution-application-development.tar.xz)
-and [M05 archive](qualification/mempool-typed-development.tar.xz).
-Both archives were read back member by member. Application preserves the complete
-recovered native bundle, actual Desktop physical-build streams, physical/private
-journals, public gate streams and original execution. Some earlier Cloud build
-and development outputs remain explicitly pending recovery. The separately
-retained 91,946,536-byte application original binary is not embedded in its
-development archive; the hosted artifact must contain it in full. The M05 archive
-includes its complete independent original binary and all available Desktop
-failures. Archive creation is not a new native execution.
+The [Work/Host record](qualification/work-owner-development.json),
+[M05 record](qualification/mempool-typed-development.json),
+[Application development record](qualification/execution-application-development.json)
+and exact c61 CI record distinguish development, hosted execution and remaining
+work. The final Work/Host semantic archive is 26,328,788 bytes; its
+[CI repair archive](qualification/work-owner-ci-development.tar.xz) is 4,748,140 bytes.
+M05's final archive is 13,481,848 bytes, preserving 14,389 logical files and
+3,993 regular payload members, including the complete original binary.
+The c61 Application CI archive is 35,301,924 bytes and contains its original ZIP.
+[Archive manifests and reconstruction instructions](qualification/ARCHIVES.md)
+bind every volume and the complete original archive. Each volume set was actually
+reassembled and compared with the original bytes. Archive storage does not run a
+test again or change its qualification.
 
-The application development original graph contains 4,363 inputs. Integration
-changes the migration inventory and the development-plan source pin; the original
-development result retains its original source identity. Every new committed
-candidate must execute a fresh actual original comparison. M05 binds its complete
-208-input original package graph and the selected Rust compiler/sysroot before
-and after execution. The initial M05 original linker failure and the application
-uppercase-public-key differential failure remain failed historical observations.
+The workflow now has **33 jobs / 28 independent native bootstrap gates**.
+Work/Host uses a producer followed by a separate complete-readback consumer;
+both retain the original 20-minute job limit. The consumer requires a successful
+binding from the exact head/run/attempt and refuses development NOT_BOUND or
+PRIVATE_DEVELOPMENT_READBACK_PASS. The producer still reopens its complete package.
+Fourteen actual inline admission controls passed, including the complete real
+development package's refusal. The final integration's 89 source/evidence tests
+passed. [CI development evidence](qualification/application-mempool-ci-development.json)
+keeps this validation separate from the next committed source's hosted result.
 
-The [CI development evidence record](qualification/application-mempool-ci-development.json)
-keeps actual helper tests, complete archive readbacks, workflow syntax checks and
-failed attempts separate from hosted CI. Development packaging remains NOT_BOUND
-until the committed-source/run/attempt gate executes on GitHub.
-
-The workflow adds two complete source-bound jobs, bringing it to **31 jobs /
-27 independent native bootstrap gates**. Each job verifies all committed bytes
-before and after execution, runs native and actual-original suites, checks full
-raw evidence, binds the exact commit/run/attempt, and packages available success
-or failure bytes. Packaging reopens the complete compressed archive and checks
-members against both the captured bytes and the successful binding. It does not
-turn an incomplete run into a qualification. The original 20-minute job limit,
-resource limits and service acceptance criteria remain unchanged.
+All original resource profiles, four-second / 16-attacker acceptance conditions,
+1,800-second history limits, configuration coverage and security/model obligations
+remain in force. A finite owner, a storage archive or a successful HIA workflow
+does not authorize old-package retirement or establish durable Node COMMIT.
 
 ### Audited predecessor 326837e
 

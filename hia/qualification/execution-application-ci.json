@@ -1,0 +1,96 @@
+{
+  "admission_persistence": false,
+  "artifact": 14283854229,
+  "batch_execution_qualified": false,
+  "complete_actual_serde_library": {
+    "bytes": 4442132,
+    "sha256": "55546c6f9c38b49efd22fd85c7006cc046d87c7c6bcd5f1d6061c793a949555b"
+  },
+  "complete_original_binary": {
+    "bytes": 91371888,
+    "sha256": "dbbea2de963d09d1e94f5069066db28541359b6dc3f44e68c8df6b0f5078b0ba"
+  },
+  "coverage": {
+    "integrity_controls": 181,
+    "integrity_groups": 9,
+    "native_histories": 328,
+    "native_processes": 9,
+    "original_histories": 328,
+    "original_stages": 15,
+    "physical_controls": 32,
+    "physical_processes": 23,
+    "public_cli_rejections": 16,
+    "retained_original_tests": 8,
+    "state_commands": 8784,
+    "transactions": 335
+  },
+  "evidence": {
+    "all_members_reopened": true,
+    "bytes": 1491,
+    "complete_original_binary_included_in_original_zip": true,
+    "complete_original_zip_included": true,
+    "complete_reassembly_verified": true,
+    "execution_status_changed_by_storage": false,
+    "format": "trnm.hia.contiguous-archive.v1",
+    "index": {
+      "bytes": 2703,
+      "sha256": "0bdbe7fc982b4442ac8b6d70c6d3749c0a5886e8b1942bdf8db176b7ee5b1f91"
+    },
+    "logical_bytes": 37981398,
+    "logical_files": 13,
+    "parts": 6,
+    "path": "hia/qualification/execution-application-ci.parts/manifest.json",
+    "reconstructed_archive": {
+      "bytes": 35301924,
+      "name": "execution-application-ci.tar.xz",
+      "sha256": "3019de38c6f00a12de4e6276ffd70f1115d7345ea5082216972fbc07886b696b"
+    },
+    "regular_members": 14,
+    "sha256": "ee2fe39dd7ad77929441e1738096884ee2e6d16f44c168d7b7ecfb08dc443a8a"
+  },
+  "independent_readback": {
+    "actual_runtime_reexecuted": false,
+    "original_runner_tool_paths_recreated": false,
+    "report": {
+      "bytes": 827341,
+      "sha256": "d7832c719716a04a463a556109ea15cbcdaa27d4554c22751e35e3c7151b55d0"
+    },
+    "runner_tool_identity_scope": "Original CI bound fences preserved; not locally reexecuted or rebound",
+    "status": "PASS"
+  },
+  "job": 133706836939,
+  "job_conclusion": "success",
+  "latest_candidate_qualified_by_this_old_run": false,
+  "lineage": {
+    "attempt": 1,
+    "git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+    "run_id": "43983845998"
+  },
+  "native_source_and_evidence_after": "MATCH",
+  "native_source_files": 104,
+  "native_source_set_sha256": "05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1",
+  "nondefault_configurations": false,
+  "old_packages_retired": 0,
+  "original_source_files": 4363,
+  "original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
+  "original_zip": {
+    "bytes": 36198231,
+    "sha256": "29e74d4133b99beb5690fb669fcbfda2fb3e2ab5cf788d82ea01d0352ead33bc"
+  },
+  "physical_power_loss": false,
+  "production_activation": false,
+  "qualification_scope": "Exact c61 hosted Application job only; independent archive/raw differential reread",
+  "retained_readback_failure": {
+    "reason": "The unchanged CI reader compared recorded original argv with the relocated local extraction paths and refused; the portable reader separates those two roots, leaving raw argv and all remaining invariants unchanged.",
+    "report": {
+      "bytes": 826838,
+      "sha256": "affea857f2f421a55e5363c100efd04f7729615546fbc658c571431dbd198765"
+    }
+  },
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998",
+  "schema": "trnm.hia.execution-application-ci.v1",
+  "status": "PASS",
+  "whole_migration_complete": false,
+  "whole_node_or_commit_authority": false,
+  "whole_workflow_success_claim": false
+}

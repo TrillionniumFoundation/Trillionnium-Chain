@@ -190,4 +190,61 @@ class MempoolCIWitnessTests(unittest.TestCase):
                 with self.assertRaises((ValueError,OSError,KeyError,TypeError)):
                     ci.witness_reports(public_directory,complete,public)
 
+class MempoolPreflightBoundaryTests(unittest.TestCase):
+    def test_real_detached_checkout_requires_explicit_audit_and_keeps_project_boundaries(self):
+        import shutil,subprocess
+        from hia.platform.mempool_typed.contract import preflight
+        with tempfile.TemporaryDirectory(prefix="trnm-mempool-preflight-boundary-") as temporary:
+            base=Path(temporary);root=base/"source";root.mkdir()
+            names=["PROJECT_ID","PROJECT_BOUNDARY.json","config/portability-inventory-v1.json",
+                   "trillionnium/Cargo.toml","scripts/project-preflight.sh","scripts/ci/project_boundary.py"]
+            inventory=json.loads((ci.ROOT/"config/portability-inventory-v1.json").read_bytes())
+            names.extend("trillionnium/crates/"+row["package"]+"/Cargo.toml" for row in inventory["packages"])
+            for name in names:
+                target=root/name;target.parent.mkdir(parents=True,exist_ok=True)
+                shutil.copyfile(ci.ROOT/name,target)
+            def git(*arguments):
+                return subprocess.run(["git","-C",str(root),*arguments],capture_output=True,check=True)
+            git("init","--quiet","--initial-branch=feature/chain-preflight-fixture")
+            origin="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
+            git("remote","add","origin",origin);git("add","--",".")
+            git("-c","user.name=HIA boundary fixture","-c","user.email=fixture@example.invalid",
+                "commit","--quiet","-m","Exact repository boundary metadata fixture")
+            def observe(name,audit=False,rejected=None):
+                directory=base/name;directory.mkdir()
+                if rejected is None:
+                    result=preflight(root,directory,audit=audit)
+                    self.assertEqual(result["mode"],"--audit" if audit else "--dev")
+                    self.assertEqual(result["exit_code"],0)
+                    self.assertEqual((directory/"preflight.stderr").read_bytes(),b"")
+                    return
+                with self.assertRaisesRegex(ValueError,"Project preflight failed"):
+                    preflight(root,directory,audit=audit)
+                self.assertIn(rejected.encode(),(directory/"preflight.stderr").read_bytes())
+            observe("development")
+            git("switch","--detach","HEAD")
+            self.assertEqual(git("branch","--show-current").stdout,b"")
+            observe("detached-default",rejected="not an allowed development branch")
+            observe("detached-audit",audit=True)
+            git("remote","set-url","origin","https://github.com/foreign/other.git")
+            observe("foreign-origin",audit=True,rejected="origin mismatch")
+            git("remote","set-url","origin",origin)
+            boundary=root/"PROJECT_BOUNDARY.json";original=boundary.read_bytes()
+            altered=json.loads(original);altered["consensus"]["production_consensus_activation"]=True
+            boundary.write_text(json.dumps(altered))
+            observe("activation-changed",audit=True,rejected="activation changed")
+            boundary.write_bytes(original)
+            self.assertEqual(git("status","--porcelain").stdout,b"")
+
+    def test_public_readback_rejects_audit_mode_without_opening_evidence(self):
+        import subprocess,sys
+        with tempfile.TemporaryDirectory(prefix="trnm-mempool-preflight-readback-") as temporary:
+            absent=Path(temporary)/"must-not-be-opened"
+            result=subprocess.run([sys.executable,"-B","-m","hia.platform.mempool_typed.qualify",
+                "--verify",str(absent),"--audit"],cwd=ci.ROOT,capture_output=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn(b"Readback does not execute a compiler or preflight",result.stderr)
+            self.assertEqual(result.stdout,b"")
+            self.assertFalse(absent.exists())
+
 if __name__=="__main__":unittest.main()

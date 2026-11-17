@@ -1066,6 +1066,30 @@
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
+    },
+    {
+      "id": "platform/work-owner",
+      "sources": [
+        "hia/platform/work_owner/closed_fd_fixture_emitter.hepta",
+        "hia/platform/work_owner/host_fixture.hepta",
+        "hia/platform/work_owner/host_method.hepta",
+        "hia/platform/work_owner/linux_emitter.hepta",
+        "hia/platform/work_owner/owner_fixture.hepta",
+        "hia/platform/work_owner/owner_policy.hepta",
+        "hia/platform/work_owner/sha_fixture.hepta",
+        "hia/platform/work_owner/work_policy.hepta"
+      ],
+      "scope": "Complete same-worker W1 relation and immutable acquired Host/resource owner: 61 native histories, 175 primitive controls, 3 actual traces, 27 trace/14 signal controls, 18 native CLOCK1 fault processes, 57 actual-original histories and 44 retained original tests. Earlier Node request deadline, shared Paid checkpoint/account, production fixed-parent positive, original Rust controlled CLOCK1 comparison, durable Node/batch integration and original service acceptance remain OPEN.",
+      "tests": [
+        "hia/platform/work_owner/build.py",
+        "hia/platform/work_owner/qualify.py",
+        "hia/platform/work_owner/rust_oracle.py",
+        "hia/platform/work_owner/test_integrity.py",
+        "hia/tools/qualify_work_owner_ci.py",
+        "hia/tests/test_work_owner_ci.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
     }
   ]
 }

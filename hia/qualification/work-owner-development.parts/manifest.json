@@ -1,0 +1,43 @@
+{
+  "archive": {
+    "bytes": 26328788,
+    "sha256": "b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db"
+  },
+  "chunk_bytes": 6291456,
+  "logical_name": "work-owner-development.tar.xz",
+  "parts": [
+    {
+      "bytes": 6291456,
+      "offset": 0,
+      "path": "part-000",
+      "sha256": "4d760591bdd68887a54fa013cdc3fd838c6dc4581de614cf1f4d60ebd672a243"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 6291456,
+      "path": "part-001",
+      "sha256": "2bf1a973b6c4ce8f0b56908ab380dd3a5f8adfb043d20eba604735f41977db5e"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 12582912,
+      "path": "part-002",
+      "sha256": "2ee93b21589c44bc51a46132f28acc569e02961f5b1d850a5713fad27208f7c0"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 18874368,
+      "path": "part-003",
+      "sha256": "eef431cdd74759438e3bf0c596646d7ce098877407b88d4d4454f61a68e11b9a"
+    },
+    {
+      "bytes": 1162964,
+      "offset": 25165824,
+      "path": "part-004",
+      "sha256": "b3320ba5933c3885ac8955db0f47491a1d249889386a970ce5b856689e6e621c"
+    }
+  ],
+  "qualification_is_not_changed_by_storage": true,
+  "reassembly": "Concatenate the regular files in the declared order, verify each part identity and the full archive identity before opening it.",
+  "schema": "trnm.hia.contiguous-archive.v1"
+}

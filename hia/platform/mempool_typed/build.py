@@ -78,7 +78,8 @@ class Build:
 def main():
     need(__debug__ and not os.environ.get("PYTHONOPTIMIZE"),"Optimized Python is not admitted")
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--output",type=Path,required=True)
-    args=parser.parse_args();out=fresh_output(args.output);preflight(ROOT,out)
+    parser.add_argument("--audit",action="store_true",help="Use the existing read-only project audit boundary for a detached CI checkout")
+    args=parser.parse_args();out=fresh_output(args.output);preflight(ROOT,out,audit=args.audit)
     _,report=Build(out/"build").build()
     print(__import__("json").dumps({k:report[k] for k in ("status","source_set_sha256","core","executable")}))
 

@@ -108,8 +108,8 @@ def verify(root,repository=ROOT):
         "actual_original_histories_read":323,"actual_commands_compared":9332,"retained_tests_read":153,
         "physical_processes_read":38,"guarded_native_calls_read":26,"actual_runtime_reexecuted":False}
 
-def qualify(output,compiler):
-    out=fresh_output(output);preflight_result=preflight(ROOT,out)
+def qualify(output,compiler,*,audit=False):
+    out=fresh_output(output);preflight_result=preflight(ROOT,out,audit=audit)
     source=source_manifest(ROOT);original=original_manifest(ROOT)
     report={"schema":"trnm.hia.mempool-typed-qualification.v1","status":"FAIL",
         "source_inputs":source,"original_sources":original,"source_set_sha256":manifest_sha(source),
@@ -147,13 +147,14 @@ def main():
     modes=parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--output",type=Path);modes.add_argument("--verify",type=Path)
     parser.add_argument("--rustc",type=Path)
+    parser.add_argument("--audit",action="store_true",help="Use the existing read-only project audit boundary for a detached CI checkout")
     args=parser.parse_args()
     if args.verify:
-        need(args.rustc is None,"Readback does not execute a compiler")
+        need(args.rustc is None and not args.audit,"Readback does not execute a compiler or preflight")
         result=verify(args.verify)
     else:
         need(args.rustc is not None,"Complete qualification requires explicit original rustc")
-        _,result=qualify(args.output,args.rustc)
+        _,result=qualify(args.output,args.rustc,audit=args.audit)
     print(json.dumps(result,sort_keys=True))
 
 if __name__=="__main__":main()

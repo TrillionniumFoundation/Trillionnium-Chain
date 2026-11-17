@@ -37,6 +37,12 @@ compiler qualification. Run from the repository root with bytecode disabled:
 
     python3 -B -m hia.platform.mempool_typed.qualify --output /absolute/fresh/output --rustc /absolute/rustc
 
+A detached CI checkout must pass the explicit `--audit` option to the qualification
+or standalone build command. This selects the existing read-only project audit
+mode; the default remains the development-branch check. Origin, project identity,
+workspace ownership and activation boundaries are checked in both modes. Readback
+rejects `--audit` because it performs neither a build nor a new preflight.
+
 The qualification compiles typed_fixture.hepta and linux_emitter.hepta with the
 pinned native compiler. The native HIA emitter constructs the executable containing
 the exact native-compiled owner image. Python does not assemble instructions or

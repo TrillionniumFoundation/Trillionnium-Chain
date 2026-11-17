@@ -1,52 +1,50 @@
-## 2026-11-16 UTC — 默认 M06 application 与 typed M05 原生 owner 整合
+## 2026-11-17 UTC — 同 worker Work/Host 整合、M05 detached 修复与真实 Application CI
 
-当前候选为 **41 kernels /18 native foundations /95 HIA sources；26 原 Rust 包保留 /0 退役 /9 全项目门 OPEN**，父提交为 `326837e4c5a8a6b3b99390063c08a47dc4f9d6a0`，tree `f2fb6ef7c4f5da9f3462c52230be490a02479f6a`。本增量登记37份最终owned源、12份HIA，组件各保留一个实现目录；作者脚本、过程checkout和编译目录不加入仓库。工作流为31 jobs /27个独立native bootstrap门，每个新提交仍需自己的实际执行。
+当前候选 **41 kernels /19 native foundations /103 HIA sources；26 原 Rust 包保留 /0 退役 /9 全项目门 OPEN**。已发布前驱为 `c61ce2cea44a1bc1ef0f7a716abb3113af86cd03`，tree `d36973260e841c8bae223ba0f30fd427abd66bfc`。本次新增 Work/Host 的23份最终owned源（8 HIA）及2份CI reader文件，修复M05内部预检模式；每个组件只有一个实现目录。工作流33 jobs /28独立native bootstrap；新提交必须取得自己的真实CI，不能继承c61或326的结果。
 
-### 两个新增组件的实际结果与权限边界
+### 实际源、运行结果与剩余边界
 
-| owner | 冻结来源与实际观察 | 仍须完成 |
+| owner | 已真实执行的精确来源 | 尚须完成 |
 | --- | --- | --- |
-| 默认application（22 owned /104 inputs /10 HIA） | 源 `05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`；328 histories/335真实PNX1 transactions/8784 State commands/9 native processes；原328 comparisons+8 retained；32 physical、181 source/public controls含16实际CLI | 完整batch/scoped workers、全部Config/PQ、block接受/expected-root/私有AdmissionPersistence/Node持久COMMIT |
-| Typed M05（15 owned /26 inputs /2 HIA） | 源 `cfb0f4a9a0320f58f6ade7249e1304e1b7acf73219d3a16ca6931d28d6cd1242`；323独立native processes/9332 commands与整个原库对照；153 retained；38 physical/50 commands、26 guarded calls、18 source controls、5字节篡改拒绝、8自洽伪造证据拒绝及18实际公共CLI | 生产PNX/真签名/Node nonce lease、持久local pool、恢复及原始服务预算 |
+| Work/Host，23 owned /126 inputs /8 HIA | `e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91`；61 native histories/27843 progress、175 primitive、3实际trace、27 trace和14 signal controls、18 native CLOCK1故障；原57 histories/27841 progress/56真实joined workers及44 retained | 原请求更早deadline、共享Paid账户/checkpoint、真实固定parent positive、原Rust controlled CLOCK1差分、Node/batch生命周期与原服务门 |
+| 默认Application，22 owned /104 inputs /10 HIA | c61源 `05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`；真实CI native/原Rust各328历史，335 PNX1 transactions/8784 State commands/9 native processes，32 physical、181 integrity含16真实CLI，原8 retained | 完整batch、全部Config/PQ、block认证/expected-root、私有AdmissionPersistence与持久Node COMMIT |
+| Typed M05，15 owned /26 inputs /2 HIA | 新源 `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b` 在真实detached重跑323 native processes/9332 commands、整个原库323/9332及153 retained，38 physical/50commands/8traces、26 guarded、18 source/5 byte/8 witness/18 CLI | 生产PNX/签名/Node nonce lease、持久local pool/恢复与原服务预算 |
 
-Application通过真实native Prepare/strict Ed25519和State/View/Patch/root，覆盖default installed配置全部12种可达命令，保留account/nonce/fees/error优先级、typed Value、prefix snapshots、callback/cancel和Patch生命周期。14个原生image组成4,246,848B ELF，SHA `898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a`。外部Prepared/验签成功位不能导入内部权限。这一组件的通过不等于batch、全配置或block COMMIT闭合。
+Work/Host使用实际worker的TID与fresh membership，对同一份初始boot/parent inode/owner/五项limit快照执行全部W1 checkpoint；成功关系保留1099 progress与1101 worker Host检查。聚合资源读持有真实校验过的parent FD，CPU/memory/PID三次read全部完成后才解析，关闭该FD后再fresh Host检查；主线程真实clear-TID join后才after-sampling或输出。cancel、deadline、ordinary Host error与CLOCK panic的次序分别保留，启动新有限owner不能续期原Node请求预算。该组件不授予Paid许可或block COMMIT。
 
-M05的队列、规范化完整metadata、duplicate路径、reserve/handoff/commit/cancel/release和终态清理均在HIA内运行；当前signature/replay/nonce traits明确是测试适配器，不具有生产认证权。179,254B ELF，SHA `c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c`。Ready handle耗尽在队列变化前拒绝，不回绕复活旧handle；一次private计数器介入单列为测试。原HashMap销毁只在op20/21/22采用multiset比对，其余字段与callback次序严格逐字，双侧原始顺序仍保存。
+M05仍是显式test-trait owner。PNX生产签名、nonce/lease和persistent pool未闭合；不能将外供成功位变成权限。其179254B ELF SHA `c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c` 未改变。Ready耗尽在队列变化前拒绝，旧handle不能复活；唯一private fixture为offset96的8字节计数器。原HashMap销毁只在op20/21/22作multiset比较，所有其他字段和顺序逐字比较，双侧raw仍保留。
 
-### 真实原执行、失败保留和可读证据
+### 真实失败、修复与完整证据
 
-Application原比较真实执行15 stages、328全部历史和8 retained，完整before/after栅栏通过；独立91,946,536B binary SHA `b523bcdc532c78f8e85f0068ed4ff21966aba9ac6ff08a7322e85c80ce8370a8`完整另存。最初uppercase public-key差异实为322/323，不改为成功；修复后扩大为328，真实原对照全部重跑。其4,363原输入仍按开发时的 `b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e`记录，当前登记与唯一计划pin变化必须在新CI重跑原始执行，不能给旧PASS换source SHA。
+c61 push43983845998的M05 job133706836672在内部默认development preflight拒绝detached HEAD，实际stderr为 `project boundary failed: not an allowed development branch`，组件native/original/physical/guarded尚未执行。这不是HIA运行时失败，也不能由旧Desktop PASS抵消。原ZIP2142981B/`4254e5c4906d7a13caea973f0480228882d7930804724b5320c05bddc3de4680` 与完整67成员、原job日志和精确失败全部保留。
 
-M05完整208原package输入、698 compiler/sysroot输入、系统linker、isolated源、完整binary与原corpus均在前后复核。首次canonical完整运行native/physical/guarded通过，但原编译因PATH缺系统cc失败；保留真实stderr和exit，不归为PASS。显式绑定已解析linker后完整重跑，再收紧公共入口和源检查后以d4af源全量重跑。随后实际发现旧reader接受8类自洽伪造证据，旧reader不能作为最终准入。修复完整ELF组合、全部38 physical/50commands/8条syscall trace和26 guarded calls的逐字验证后，以0e0e源真正重跑全部native/原Rust/physical/guarded；18 source、5字节篡改、8自洽witness和18实际公共CLI全部通过。每个witness保留完整overlay、原文件身份、修改后summary及实际拒绝stderr；CI独立核验全部关联。最后原binary7,630,840B，SHA `5a14bf48002f0cc5ea244bb77b7f1fe7411a5b2c6555e6bac10fefe07f428da4`。
+修复只在显式请求时把 `--audit` 传入已有只读boundary；默认仍 `--dev`，真实origin、activation=false、26包workspace等检查不变，readback拒绝执行模式选项。真实Git检出分别证明开发分支通过、detached默认拒绝、detached显式audit通过、错误origin及activation改动仍拒绝。新7461源重跑全部native、原Rust、physical、guarded、source与公共反例，独立全字节回读/完整原binary封包均PASS；开发pack仍NOT_BOUND。64项CI测试通过，Host整合后89项也真实通过。
 
-[Application记录](../../hia/qualification/execution-application-development.json)绑定7,970,008B archive（SHA `c6202e525064b9bff0db2a4abf1b6565bdc3b6cb3657259689d37dd515b1c588`）：383 regular members，5264逻辑文件，已存在的4697源条目逐字引用326 Git blob；完整已恢复native bundle、Desktop同源同ELF physical build的真实编译流、32 physical/private journals、181 gate raw与15原执行stage均保留。开发archive明确不内嵌单列独立原binary；hosted artifact必须全量带入。更早Cloud native build部分原始流及16旧输出路径尚不可读取，明确列为待恢复，不宣称全部历史字节已归档。
+以前M05八个自洽witness错误接受、V4修复、V5冗余EOF修正及错误compiler路径、最初原链接cc缺失均保留原状态；并非旧native结果失败。旧Cloud输出和49561终态仍UNAVAILABLE/UNKNOWN，未伪造恢复。新[M05记录](../../hia/qualification/mempool-typed-development.json)绑定原档13481848B/`b6e7094c222029bd7aab426af8528720d35b288f8960675ef021341cd800750c`：14389逻辑文件、3993regular members，包含完整7630840B原binary及全部可读历史。
 
-[M05记录](../../hia/qualification/mempool-typed-development.json)绑定10,548,680B archive（SHA `5d0d257db356f70dbf2ddf2157e04cece4822f02fba79b544cdc50f254e48f0e`）：3501 regular members/11956逻辑文件/606961839逻辑字节，包含完整原binary、最终源和全部可读取Desktop失败；Cloud遗留输出仍列待恢复。两个archive均逐成员重读，封包不计作新native执行。
+Work/Host旧V4 reader把真实原stdout中domain 0改false、progress 1改true、main_tid整数改字符串的自洽伪造都误收。V5严格重查JSON每字段类型/范围和完整行形状，三项实际反例全部拒绝；完整240423952B包、611226784B独立原binary全字节回读PASS，保留为开发NOT_BOUND。25组reader/source tests、四archive实际反例、真实detached build和14实际workflow入口控制均通过。175个旧primitive guard的完整原arena没有留存，明确不可重放；18个native CLOCK1故障不能替代尚缺的原Rust controlled故障差分。
 
-最终暂存检查另发现三个Python文件各有一个冗余终端换行。仅删除这三个LF，AST完全相同；owned test源身份随之变化，所以以最终cfb0f4a9源重新实际执行全部native、原Rust、physical、guarded及公共反例。首次重跑因错误的compiler路径在编译前退出，原错误完整保留；正确路径的compiler仍为同一固定SHA，随后全套通过。62项CI证据测试也在最终helper源码上实际重跑通过。
+[Work/Host记录](../../hia/qualification/work-owner-development.json)绑定26328788B语义归档（SHA `b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db`），以及4748140B的[CI修复证据](../../hia/qualification/work-owner-ci-development.tar.xz)（SHA `b6f11bd920db880705e231bfbd2c210c4b6ebd92f7fb027284780a956ae26ac4`；389逻辑文件/257成员）。较大的原binary和两代完整CI开发包在精确索引位置另存，不伪称已嵌入26MB语义档。
 
-### 精确提交CI和仍未通过的原始服务门
+### 精确c61 Application与新提交验证
 
-新增application与typed-mempool两job，保持20分钟job限额。每job先后验证全部tracked源、固定native compiler SHA `87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54`，实际运行全部native/physical/完整Rust对照及公共反例；独立reader重读完整raw，只绑定同head/run/attempt。always封包保存失败、全独立binary与special-file metadata，写后解开全部归档成员核对type/size/hash及绑定时的完整证据集合，缺项/篡改/跨run不得成为PASS。
+c61 [push43983845998](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998) 的Application job133706836939真实SUCCESS。[独立记录](../../hia/qualification/execution-application-ci.json)绑定artifact14283854229，完整原ZIP36198231B SHA `29e74d4133b99beb5690fb669fcbfda2fb3e2ab5cf788d82ea01d0352ead33bc`，完整原binary91371888B SHA `dbbea2de963d09d1e94f5069066db28541359b6dc3f44e68c8df6b0f5078b0ba`。全部archive成员、104 native/4363 original source、完整14-image ELF/编译流、native stdin/stdout、32 physical与private journals、181完整性控制/16 CLI及原328+8实际stdout均独立核对。原runner工具路径只保留其CI fence；没有在Desktop伪造同名目录或重标原执行。首离线reader因原argv绝对路径与提取路径不同拒绝，其失败保留；只分离这两个路径含义后，其余判据不变，全量回读PASS。
 
-父提交326的[push43938876560](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43938876560)与[PR43939229249](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229249)真实29/29 SUCCESS，十个新增PaidCPU/State/Prepare原GitHub ZIP全SHA及完整成员已独立核验。结果只归属326，不能替代本增量31job。
+当前5项Work/Host generic include映射与冻结build的8个完整HIA程序逐字相同、实际Core检查通过；126 Host源不变。Application gate也绑定每个实际检查的common component key文件，因此本次为改动components.json并新增5份检入源，完整输入从104增至109；整合后native source-set为 `b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70`，必须新CI重跑。原c61的 `05bc...`/`a986...` 与开发 `b439...` 原图各自保留；inventory和最终计划pin变化也须新original执行。[开发Application记录](../../hia/qualification/execution-application-development.json)单列这些transition，不给旧PASS换源身份。
 
-326三个before-budget组的真实拒绝是 `IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED`，均在0 native controls时停止。完整历史输入核对证实Cargo.lock、Node依赖和预算测试语义发生改变；workspace/toolchain及其余指定tests相同。必须建立合规同输入组或真实新反例，不得倒换旧锁或跳过gate。priority所需旧artifact11531476198未取得；精确仓库归档 `evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/ci-retained-pressure-unavailable-v1.tar.gz`只有52个404/空列表与诊断成员，明确不含原artifact，不得作为它的替代。
+新的Host producer保留controls/native/原57+44、sourcebefore-after、binding、完整封包写后回读及失败原件上传；独立consumer只取同head/run/attempt且qualification=PASS的全量包，再完整读证并检查自己的sourcebefore-after。开发NOT_BOUND与PRIVATE_DEVELOPMENT_READBACK_PASS不能满足consumer。各job仍20分钟。实测原串行阶段合计约985.38s（部分为PTY壁钟，不是全部单调精确值，且未含hosted checkout/rustup变化），拆作producer约817.68s与consumer约167.70s；不把这一估计说成hosted已合格。
 
-四个326 from-zero实际运行均五个native tests exit0，且无攻击baseline各有1 confirmation；原4s/16攻击worker压力阶段全部0 confirmations，`CONFIRMATION_TARGET`仍FAIL。两个x64 history的本次完整server日志确认均在原1800s正常结束后，client收到RPC ConnectionRefused111/exit101；3297/3973次returned import call不计作durable COMMIT。总成本和Host归因仍未隔离。以上预算/确认/历史artifact缺口均保留原约束与失败状态。
+[整合CI开发记录](../../hia/qualification/application-mempool-ci-development.json)保留真实89组检查、bootstrap/完整workflow语法、原99项PQ source suite实际995.273877865s PASS及此前210s observer timeout；未捕获的partial raw仍不可用。最终计划仅刷新真正变更的source blob pin，不改历史测量，也不以source checker代替原运行。
 
+大档按[最终连续卷索引与恢复说明](../../hia/qualification/ARCHIVES.md)保存：M05三卷、Application CI六卷、Work/Host五卷，每卷≤6MiB。每组均实际拼回完整原档并核全部bytes/SHA；原归档内部对象、原CI ZIP、完整binary和失败没有改变。这些卷是同一最终档的组成部分，不是中间版本。root冗余整档仅在完整重组相等且外部原件仍在后移除；归档不新增任何native执行。
 
-[精确326诊断](../../hia/qualification/ci-326-observed-failures.json)及[原始小证据包](../../hia/qualification/ci-326-observed-failures.tar.xz)绑定九个完整原ZIP/9478成员；[protocol-contract补充](../../hia/qualification/ci-326-protocol-contract-failures.json)及[其小证据包](../../hia/qualification/ci-326-protocol-contract-failures.tar.xz)另外完整核验run43939229469两lane的两个ZIP（各109成员）。后两lane实际执行的5项native tests均PASS；4秒无攻击baseline各确认1，16worker压力各确认0/未确认1/unknown0，业务都在窗口内开始。控制器明确CONFIRMATION_TARGET失败；head另有PUBLIC_REQUEST_DEADLINE，merge verification_errors为空。准备阶段native_tests_executed=false仅指--no-run，不代表后续未执行；不归因于systemd无法启动，也不套用其他四个服务run的原因。
+### 原始门与继续闭合
 
-[本增量CI开发证据](../../hia/qualification/application-mempool-ci-development.json)记录独立reader测试、完整二进制封包回读、workflow语法及失败/超时。PQ原样99项完整source controls实际exit0，用时995.273877865s；此前210秒观察wrapper超时保留，未捕获的partial raw明确不可用。该完整测试发生在最终文档pin刷新前，最终pin仍单独核验；不将开发NOT_BOUND封包当成GitHub同head/run/attempt通过。
+326 push43938876560/PR43939229249的29/29只属于326；c61单组件Application成功也不等于整workflow或全项目通过。此前四from-zero和两protocol真实五native全部PASS、无攻击baseline各确认1，原4秒/16worker压力确认0/未确认1/unknown0、CONFIRMATION_TARGET仍FAIL。两x64 history实际1800s正常结束后RPC111；3297/3973 returned imports不能当durable COMMIT。三budget门因真实lock/tests/profile输入不兼容，在0native拒绝；缺失artifact11531476198不能用52成员404诊断包代替。见[326诊断](../../hia/qualification/ci-326-observed-failures.json)与[protocol补充](../../hia/qualification/ci-326-protocol-contract-failures.json)。不盲repin、skip、放宽0.25CPU/2GiB/0swap/256PID/4s/16attackers/1800s，UNKNOWN仍UNKNOWN。
 
-### 后续连续实现与最终清理条件
+继续完整TransactionPrefix/CheckedPrefix、batch/scoped workers/mandatory/reward/funds/root，将实际持锁磁盘和私有State/Prepared/ParentObservation接入Node的一个真实持久事务域；完成M05生产签名/nonce/local pool、Paid共享账户与原请求预算，再闭合reorg/rollback/replay/outbox/ACK、网络/PQ/TLS、所有目标、全部26包和真实模型/安全研究验收。迁移期Rust oracle和Python构建/读证工具不算“最终仅HIA”已经完成。只有旧包全功能替代与原验收真正通过后才退役；whole_chain_native、old_stack_can_be_removed、production_activation仍false，九门仍OPEN。
 
-继续完成真实TransactionPrefix、CheckedTransactionPrefix、batch worker生命周期、mandatory/reward/funds/root以及Host/W1工作owner；将默认应用的私有Prepared/State权限连入实际Node持久事务。M05继续替换生产PNX/签名/nonce和local pool，随后闭合reorg/rollback/replay/outbox/ACK、网络/PQ/TLS、全部目标与真实模型产品验收。组件证明、源清单或通过的HIA workflow都不等于这些运行义务已经完成。
-
-仅在旧包的全量替代和原验收实际通过后删除旧栈。当前仓库保留最终组件源和必要审计证据，9个全项目gate保持OPEN，whole_chain_native、old_stack_can_be_removed与production_activation保持false；不以外供成功位、stub、缩减语料或放宽期限伪造闭合。
-
-以下为326提交中唯一计划的完整原字节后缀，各历史“当前”均只指当时记录。
+以下为326提交中唯一计划的完整原字节后缀；历史“当前”只指当时记录。
 
 ## 2026-11-16 UTC — PaidCPU、State/View/Patch 与 private Prepare 最终源整合；原始服务失败定位
 
