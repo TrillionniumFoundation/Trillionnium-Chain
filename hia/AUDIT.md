@@ -1,5 +1,98 @@
 # Whole-tree inventory and HIA migration audit
 
+## Complete Work/Host evidence and bounded CI stages — 2026-11-17 UTC
+
+Parent is `c3901ff19c26815205d9cdd6975fc24ecc51ae88`. The inventory remains
+**41 kernels /20 foundations /119 HIA files**, with all 26 Rust packages retained,
+zero retirements and nine whole-project gates OPEN. This candidate has
+**46 jobs /36 native bootstrap gates**, each still limited to 20 minutes.
+
+### Actual findings and repairs
+
+The PR component job in [run 44019959997](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019959997)
+was cancelled at its actual 20-minute limit: 339 printed successful test lines
+did not constitute a completed suite. The run ended with 41 successes and one
+cancellation. The separate [push run 44019939486](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019939486)
+completed 42/42 jobs; that result does not replace the PR cancellation.
+
+Full discovery now assigns all 383 tests to disjoint general (376) and State
+root (7) jobs. An independent consumer requires complete started/completed test
+rosters, zero skips, both actual successful predecessors, exact head/run/attempt,
+the consumer's actual Git tree, all original-adapter results and all six raw
+artifact files. No test or deadline was removed. The first private consumer
+missed comparison with its own tree; an actual synthetic helper counterexample
+and the corrected negative control remain recorded. This was a helper-level
+finding, not an observed hosted or runtime exploit.
+
+The old foundation helper separately accepted eleven synthetic negative
+controls: floating counts, boolean/floating attempts, nonfinite JSON constants,
+overflowing numeric literals and floating archive/source byte counts. Exact
+recursive JSON comparison, finite-number parsing and strict member metadata now
+reject those cases. Thirty-three Foundation/Execution/Genesis controls and two
+actual optimized-entry refusals passed. An initial validation driver used the
+wrong cwd and failed one module launch; the corrected driver ran the same full
+roster. The observed failure remains distinct from runtime behavior.
+
+### Complete new Work/Host development qualification
+
+The frozen 133-input source
+`ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c`
+actually reran all native histories and the original implementation. Its 175
+primitive controls now retain 9,489 calls, 538 buffers, 7,800 full snapshots and
+6,010,134,406 logical captured bytes. Native execution includes 61 histories,
+27,843 progress records, three traces, 27 trace controls, 14 signal controls and
+18 CLOCK faults. Actual original execution includes 57 histories, 44 retained
+tests, two CLOCK positives and 18 controlled faults, with 20 raw-reader controls.
+Normal vDSO fault behavior is not inferred from the private fault adapter.
+
+Two coherent c248 public-reader false accepts remain preserved. The repaired
+source actually passed one positive and fourteen negative full public bundle
+controls. Full private review/pack took 352.407 seconds and independent complete
+readback took 240.630 seconds. Their status is PRIVATE/NOT_BOUND; neither is a
+hosted four-job qualification. The eight HIA inputs and full 133-input graph
+match this integrated candidate. The common foundation helper changes only the
+separate CI-reader closure, to
+`106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca`.
+The integrated original graph and exact committed CI still require execution.
+
+Native, original, complete qualification/pack and independent readback are now
+four dependent jobs. Their complete predecessor packages retain the actual
+original executable, sources and raw evidence. Observed native plus original
+development time was 1,171.858 seconds before bootstrap and packaging, so this
+separation preserves the 1,200-second job limit. Hosted stage times remain
+unobserved for this candidate.
+
+### Readback, current evidence and cleanup
+
+Root independently read all nine c390 Batch/Prefix packages, M05, Application
+and Work/Host, including complete original executables and source observations.
+The old c390 Host scope still lacks its earlier full primitive arenas and
+controlled original CLOCK comparison; new ded evidence is not grafted onto it.
+Of 1,011 declared Prefix fixture methods, 936 executed and 75 remained
+unexecuted paths.
+
+The current Work/Host development view is 50,018,340 bytes in eight volumes:
+20,178 content objects, 4,004 verified Git objects supplying 4,675 logical
+references, and one explicitly external 574,468,200-byte original executable.
+It represents all 25,677 primary members plus 194 supplements. The complete
+261,160,948-byte original package remains separately retained. The final reader
+uses immutable Git object semantics and root actually reread the full view and
+external binary. The [history index](qualification/work-owner-development-history.json)
+binds every replaced old volume and record to complete, byte-compared c390 Git
+objects. No Git history was rewritten.
+
+Ten duplicate c390 Batch/Host extraction trees were removed only after exact
+whole-member comparison: 30,509 files /2,976,163,272 bytes. Original ZIPs, complete
+archives, unique readback reports and failures remain. The
+[root integration record](qualification/work-host-integration.json) and its
+complete 1,947,276-byte observations archive retain the actual control/readback
+evidence. Merged checks passed 80 groups with zero skips, 357 Bash fragments and
+50 Python heredocs. Discovery inventories business tests; it does not execute them.
+
+Production fixed-parent success, Node/Paid lifetime, original service budgets,
+Some/CheckedApply, durable COMMIT and the other whole-project gates remain OPEN.
+Private Node and M05 work is not claimed as part of this committed increment.
+
 ## Batch/Prefix integration and strict M05 evidence — 2026-11-17 UTC
 
 Current parent is `876eb577dac61854c535a91ab1480f312d1d6173`.

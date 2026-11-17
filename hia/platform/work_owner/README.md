@@ -81,6 +81,17 @@ trace audit covers both an interrupted ACK read and delivery immediately after
 that read succeeds, without replaying a successful read. Fourteen separate
 signal controls retain three accepted observations and eleven corrupt cases.
 
+The primitive observer captures each complete backing buffer immediately before
+and after every actual native flat call, including both 32-byte guards. Original
+bytes are retained as 4 KiB content-addressed chunks, whole-buffer snapshots and
+an ordered call stream. The separate reader reconstructs every byte and checks
+the complete 175-control roster, initial inputs, immutable inputs, continuation
+chains, progress, products, extent refusals and owner-identity refusals. It also
+checks exact file rosters, strict JSON types and directory-descriptor fences.
+The recorded native CPU intervals surround only the actual function calls;
+chunk hashing and evidence I/O are separate observation overhead. Earlier
+records that did not retain these buffers remain explicitly non-replayable.
+
 ## Integration limits
 
 The standalone entry owns one finite four-second interval. A Node caller must
@@ -96,3 +107,44 @@ window with 16 attackers and 1,800-second history limit are unchanged. Finite
 native relation or original-method PASS does not imply those full service gates
 passed. Failed and unknown development observations are retained separately;
 they are never relabelled as a new source candidate's successful result.
+
+## Next closure candidate evidence
+
+This private candidate retains complete guarded before/after bytes for every primitive invocation.
+The original CLOCK observer adds a parent-owned observation that survives its actual scoped child
+panic and consumed join. It calls the unchanged original task_alive, W1 progress verifier and
+final resource helper. In the controlled no-vDSO fixture, exactly one selected worker
+CLOCK_MONOTONIC call fails; the four-second original deadline remains unchanged.
+
+The independent raw reader binds every event to the actual clone lifetime, actual per-thread
+clock ordinal, actual child exit and consumed original glibc join. The kernel's zero at a
+captured futex return remains distinct from glibc's subsequent joined-TID value of -1.
+A child that already exited need not cause a futex wait; an unobserved zero is never invented.
+The CLOCK input uses the same explicit original_cases projection as the ordinary original
+observer, preserving the request bytes and all default control values. The request deadline
+uses the actual CLOCK1 sample after the owner role marker; captured test-harness clocks before
+that role are retained as observations and never define or renew the four-second interval.
+It rereads counter file bytes and
+the live parent descriptor spanning all three reads. A panic must retain the progress prefix,
+join, perform no after-sampling and publish no product. Normal-vDSO and private raw-fallback
+positives are distinct controls; fault behavior is not inferred for ordinary vDSO execution.
+
+These additional controls require a fresh full-source qualification and original comparison.
+They do not qualify fixed-parent production authority, the complete Node, paid checkpoints,
+or the unchanged four-second / sixteen-request production service gate.
+
+## Exact evidence types
+
+The public bundle reader compares complete decoded native frames with their raw
+bytes using exact recursive JSON types. Integer counters, domains, progress
+ordinals and byte lengths cannot be replaced with equal-valued booleans or
+floating-point numbers. The same comparison binds source maps, build receipts,
+trace observations and required control counts. Duplicate fields and non-finite
+JSON numbers are refused. These checks apply to the canonical reader used before
+original execution, in addition to the CI archive reader.
+
+A prior candidate accepted coherent metadata edits from integer zero to false
+and from integer one to 1.0 while the actual native output remained unchanged.
+That reader failure and the prior real executions remain separate evidence; a
+new reader source identity does not relabel those executions as a new complete
+source qualification.

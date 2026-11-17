@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path, PurePosixPath
 import shutil
@@ -37,6 +38,30 @@ def unique_object(pairs):
     return result
 
 
+def same(left, right):
+    """Compare JSON data without Python's bool/int/float equality coercion."""
+    if type(left) is not type(right):
+        return False
+    kind = type(left)
+    if kind is dict:
+        return left.keys() == right.keys() and all(same(left[key], right[key]) for key in left)
+    if kind is list:
+        return len(left) == len(right) and all(same(a, b) for a, b in zip(left, right))
+    if kind is float:
+        return math.isfinite(left) and math.isfinite(right) and left == right
+    return kind in (str, int, bool, type(None)) and left == right
+
+
+def finite_float(token):
+    value = float(token)
+    require(math.isfinite(value), "Non-finite JSON number: " + token)
+    return value
+
+
+def reject_constant(token):
+    raise ValueError("Non-finite JSON constant: " + token)
+
+
 def regular(path):
     path = Path(path).absolute()
     require(path.resolve(strict=True) == path and path.is_file(),
@@ -55,17 +80,18 @@ def identity(path):
 
 def read(path):
     path = regular(path)
-    return json.loads(path.read_bytes(), object_pairs_hook=unique_object)
+    return json.loads(path.read_bytes(), object_pairs_hook=unique_object,
+                      parse_float=finite_float, parse_constant=reject_constant)
 
 
 def write_new(path, value):
     with Path(path).open("x", encoding="utf-8") as stream:
-        json.dump(value, stream, sort_keys=True, indent=2)
+        json.dump(value, stream, sort_keys=True, indent=2, allow_nan=False)
         stream.write("\n")
 
 
 def object_hash(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 
 def lineage(environment=None):
@@ -82,8 +108,8 @@ def check_parent(value, expected):
     require(type(value) is dict and value.get("schema") == SCHEMA
             and value.get("stage") == "continuity-native" and value.get("status") == "PASS",
             "Successful native predecessor required")
-    require(value.get("lineage") == expected, "Predecessor source, run or attempt differs")
-    require(value.get("native_controls") == 659 and value.get("semantic_cases") == 572
+    require(same(value.get("lineage"), expected), "Predecessor source, run or attempt differs")
+    require(same(value.get("native_controls"), 659) and same(value.get("semantic_cases"), 572)
             and value.get("original_rust") == "NOT_RUN", "Complete native predecessor required")
     require(value.get("whole_node_or_commit_authority") is False
             and value.get("physical_power_loss") is False, "Predecessor scope changed")
@@ -128,7 +154,7 @@ def check_committed_sources(sources, repository=ROOT):
                     remaining -= len(block)
                     digest.update(block)
                 require(child.stdout.read(1) == b"\n", "Malformed committed source framing")
-                require(sources[name] == {"bytes": total, "sha256": digest.hexdigest()},
+                require(same(sources[name], {"bytes": total, "sha256": digest.hexdigest()}),
                         "Captured input differs from committed source: " + name)
             require(not child.stdout.read() and child.wait(timeout=30) == 0,
                     "Committed source reader did not complete")
@@ -147,16 +173,16 @@ def continuity_build(build, directory):
             and build.get("status") == "PASS" and build.get("source_inputs_stable") is True,
             "Successful continuity build required")
     sources = complete_source_manifest(ROOT)
-    require(build.get("source_inputs") == sources
+    require(same(build.get("source_inputs"), sources)
             and build.get("source_set_sha256") == object_hash(sources),
             "Complete current continuity source closure differs")
-    require(build.get("original_sources") == original_manifest(ROOT), "Original source closure differs")
+    require(same(build.get("original_sources"), original_manifest(ROOT)), "Original source closure differs")
     check_committed_sources({**build["original_sources"], **sources})
     require(build.get("compiler_sha256") == COMPILER
-            and build.get("compiler_qualification_binding") == read(ROOT / "hia/qualification/compiler-binding.json"),
+            and same(build.get("compiler_qualification_binding"), read(ROOT / "hia/qualification/compiler-binding.json")),
             "Pinned compiler qualification differs")
-    require(identity(directory / "continuity-stage.elf") ==
-            {key: build["executable"][key] for key in ("bytes", "sha256")},
+    require(same(identity(directory / "continuity-stage.elf"),
+                 {key: build["executable"][key] for key in ("bytes", "sha256")}),
             "Actual continuity executable differs")
     return {"source_inputs": sources, "source_set_sha256": object_hash(sources),
             "original_source_set_sha256": object_hash(build["original_sources"]),
@@ -178,12 +204,12 @@ def bind(stage, root):
         require(report.get("status") == "NATIVE_PASS_ORIGINAL_NOT_RUN"
                 and report.get("original_rust") == "NOT_RUN"
                 and report.get("source_inputs_stable") is True
-                and report.get("semantic_cases") == 572
-                and report.get("control_count") == len(report["controls"]) == 659
+                and same(report.get("semantic_cases"), 572)
+                and same(report.get("control_count"), 659) and len(report["controls"]) == 659
                 and all(row["status"] == "PASS" for row in report["controls"]),
                 "All actual continuity native controls required")
-        require(report["build"] == comparison["build"] and report["contexts"] == comparison["contexts"]
-                and report["corpus"] == comparison["corpus"] and len(comparison["cases"]) == 572,
+        require(same(report["build"], comparison["build"]) and same(report["contexts"], comparison["contexts"])
+                and same(report["corpus"], comparison["corpus"]) and len(comparison["cases"]) == 572,
                 "Native report, contexts or corpus differ")
         result.update(continuity_build(report["build"], directory / "build"),
                       native_controls=659, semantic_cases=572, original_rust="NOT_RUN",
@@ -206,13 +232,13 @@ def bind(stage, root):
         if stage == "continuity-original":
             from hia.platform.continuity_store.rust_oracle import ORIGINAL_TESTS
             require(report.get("schema") == "trnm.hia.original-continuity-staging-differential.v1"
-                    and report.get("controls") == 572 and report.get("failed") == 0
+                    and same(report.get("controls"), 572) and same(report.get("failed"), 0)
                     and report.get("retained_original_tests") == list(ORIGINAL_TESTS),
                     "All actual original cases and four retained tests required")
             require(report.get("native_comparison_sha256") == parent["native_comparison_sha256"]
                     and report.get("native_source_set_sha256") == parent["source_set_sha256"]
                     and object_hash(report["original_sources"]) == parent["original_source_set_sha256"]
-                    and report.get("exact_corpus") == parent["corpus"],
+                    and same(report.get("exact_corpus"), parent["corpus"]),
                     "Original result is not bound to this exact native predecessor")
             require(report.get("actual_private_original_apply_slot_state_continuity_and_root_called") is True
                     and report.get("original_production_function_bytes_preserved") is True
@@ -223,25 +249,26 @@ def bind(stage, root):
                           actual_original_executable_sha256=report["executable_sha256"])
         else:
             checked = continuity_build(report["build"], directory / "build")
-            require(all(checked[key] == parent[key] for key in checked),
+            require(all(same(checked[key], parent[key]) for key in checked),
                     "Capacity build differs from native predecessor")
             names = ["complete-maximum", "fresh-process-complete-cold", "corrupt-last-byte",
                      "row-1065537", "account-1000001", "working-65537",
                      "65515-exact-recipient-identities"]
             require(report.get("schema") == "trnm.hia.continuity-growth-capacity.v1"
-                    and report.get("control_count") == 7
+                    and same(report.get("control_count"), 7)
                     and [row["name"] for row in report["controls"]] == names
-                    and all(row["status"] == "PASS" and all(row["checks"].values())
+                    and all(row["status"] == "PASS" and type(row["checks"]) is dict and row["checks"]
+                            and all(check is True for check in row["checks"].values())
                             for row in report["controls"]), "All physical capacity controls required")
-            require(report.get("maximum_rows") == 1065536
-                    and report.get("maximum_permanent_accounts") == 1000000
-                    and report.get("maximum_working_keys") == 65536
+            require(same(report.get("maximum_rows"), 1065536)
+                    and same(report.get("maximum_permanent_accounts"), 1000000)
+                    and same(report.get("maximum_working_keys"), 65536)
                     and report.get("physical_power_loss") is False
                     and report.get("original_rust_large_extent") == "NOT_RUN",
                     "Full capacity or explicit qualification scope changed")
             first, cold = report["controls"][:2]
-            require(cold["source"] == {"bytes": first["actual"]["output_bytes"],
-                                       "sha256": first["actual"]["output_sha256"]},
+            require(same(cold["source"], {"bytes": first["actual"]["output_bytes"],
+                                          "sha256": first["actual"]["output_sha256"]}),
                     "Fresh-process input is not the complete preceding native output")
             result.update(capacity_controls=7, maximum_rows=1065536,
                           original_rust_large_extent="NOT_RUN")
@@ -258,11 +285,11 @@ def bind(stage, root):
                 and len(native["native_protocol_controls"]) == 74
                 and all(row["status"] == "PASS" for row in native["native_protocol_controls"]),
                 "Complete actual thread CPU native histories and physical controls required")
-        require(original.get("status") == "PASS" and original.get("histories") == 65
-                and original.get("operations") == 724 and original.get("source_after") == "MATCH"
-                and original.get("source_inputs") == sources == native["source_inputs"]
-                and original.get("original_sources") == native["original_sources"]
-                and original.get("exact_corpus") == native["corpus"]
+        require(original.get("status") == "PASS" and same(original.get("histories"), 65)
+                and same(original.get("operations"), 724) and original.get("source_after") == "MATCH"
+                and same(original.get("source_inputs"), sources) and same(sources, native["source_inputs"])
+                and same(original.get("original_sources"), native["original_sources"])
+                and same(original.get("exact_corpus"), native["corpus"])
                 and original.get("native_comparison_sha256") ==
                     identity(directory / "native-comparison.json")["sha256"]
                 and original.get("mandatory_original_clock_available") is True
@@ -291,6 +318,7 @@ def member_path(name):
 def extract_regular(archive, destination, entries):
     """Check the full roster first, then copy only verified regular files."""
     require(not destination.exists() and not destination.is_symlink(), "Fresh extraction directory required")
+    require(type(entries) is dict, "Archive member mapping required")
     with tarfile.open(regular(archive), "r:xz") as stream:
         members = stream.getmembers()
         names = [member.name for member in members]
@@ -300,6 +328,16 @@ def extract_regular(archive, destination, entries):
             path = member_path(member.name)
             require(path.parts[0] in {"native", "observations", "bootstrap"}, "Unexpected bundle root")
             expected = entries[member.name]
+            fields = {"type", "bytes", "linkname"} | ({"sha256"} if member.isfile() else set())
+            require(type(expected) is dict and set(expected) == fields
+                    and type(expected.get("type")) is str
+                    and type(expected.get("bytes")) is int and expected["bytes"] >= 0
+                    and type(expected.get("linkname")) is str, "Invalid archive member metadata")
+            if member.isfile():
+                digest = expected["sha256"]
+                require(type(digest) is str and len(digest) == 64
+                        and all(c in "0123456789abcdef" for c in digest),
+                        "Invalid regular member digest")
             require(expected["type"] == member.type.decode("ascii")
                     and expected["bytes"] == member.size
                     and expected["linkname"] == member.linkname, "Archive metadata changed")
@@ -320,8 +358,8 @@ def extract_regular(archive, destination, entries):
                     output.write(block)
                     digest.update(block)
                     size += len(block)
-            require({"bytes": size, "sha256": digest.hexdigest()} ==
-                    {"bytes": entries[member.name]["bytes"], "sha256": entries[member.name]["sha256"]},
+            require(same({"bytes": size, "sha256": digest.hexdigest()},
+                         {"bytes": entries[member.name]["bytes"], "sha256": entries[member.name]["sha256"]}),
                     "Transferred evidence bytes changed")
         return omitted
 
@@ -401,7 +439,7 @@ def unpack(root):
     download = root / "hia-continuity-download"
     package = read(download / "package-manifest.json")
     require(package.get("schema") == PACKAGE and package.get("stage") == "continuity-native"
-            and package.get("lineage") == lineage()
+            and same(package.get("lineage"), lineage())
             and package.get("qualification_status_not_changed_by_packaging") is True,
             "Downloaded package belongs to another qualification")
     binding_path = download / "native-binding.json"
@@ -410,21 +448,21 @@ def unpack(root):
     from hia.platform.continuity_store.rust_oracle import complete_source_manifest
     from hia.platform.typed_store.build import original_manifest
     current = complete_source_manifest(ROOT)
-    require(parent.get("source_inputs") == current
+    require(same(parent.get("source_inputs"), current)
             and parent.get("source_set_sha256") == object_hash(current)
             and parent.get("original_source_set_sha256") == object_hash(original_manifest(ROOT)),
             "Predecessor complete source closure differs before execution")
     check_committed_sources({**original_manifest(ROOT), **current})
-    require(identity(binding_path) == package["binding"], "Native binding bytes changed")
+    require(same(identity(binding_path), package["binding"]), "Native binding bytes changed")
     archive = download / "complete-evidence.tar.xz"
-    require(identity(archive) == package["archive"], "Native archive bytes changed")
+    require(same(identity(archive), package["archive"]), "Native archive bytes changed")
     output = root / "hia-continuity-prior"
     omitted = extract_regular(archive, output, package["entries"])
     shutil.copyfile(binding_path, output / "native-binding.json")
-    require(identity(output / "native/report.json") == parent["native_report"]
+    require(same(identity(output / "native/report.json"), parent["native_report"])
             and identity(output / "native/native-comparison.json")["sha256"] ==
                 parent["native_comparison_sha256"]
-            and identity(output / "native/corpus.jsonl") == parent["corpus"],
+            and same(identity(output / "native/corpus.jsonl"), parent["corpus"]),
             "Extracted native results differ from predecessor")
     write_new(output / "transfer-receipt.json",
               {"status": "VERIFIED_REGULAR_BYTES_TRANSFERRED", "lineage": lineage(),

@@ -14,78 +14,67 @@ accounts for every old package and new HIA source.
 ## Current source and qualification
 
 Published parent
-[`876eb577dac61854c535a91ab1480f312d1d6173`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/876eb577dac61854c535a91ab1480f312d1d6173)
-completed all **33 HIA jobs** in
-[run 44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130).
-Its complete Application and Work/Host artifacts were independently reopened.
-The current integration adds nine Batch/Prefix jobs and repairs M05 evidence
-admission. It requires fresh execution on its own committed source.
+[`c3901ff19c26815205d9cdd6975fc24ecc51ae88`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c3901ff19c26815205d9cdd6975fc24ecc51ae88)
+completed **42/42 push HIA jobs** in
+[run 44019939486](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019939486).
+Its PR run ended with **41 successes and one component-job cancellation** at the
+20-minute limit. Full Batch/Prefix, M05, Application and Work/Host evidence was
+independently reread. The cancellation remains distinct from push success.
 
-| Owner | Actual source-specific results | Remaining boundary |
-| --- | --- | --- |
-| [Batch and TransactionPrefix](platform/execution_batch/README.md) | Frozen 146-input source: 102 Batch methods / 2,133 progress records; 186 Prefix histories / 936 executed methods / 4,419 progress records; 30 physical controls and six scoped lifecycles / 69 methods. Actual original: 102 Batch methods plus nine retained tests and 186 Prefix histories plus six retained tests. | Default Config, AccountPointAccess=None and workers 1/2/4/8 only. Custom Config, PQ/growth, Paid/Host lifetime, authenticated Node, durable COMMIT and original service acceptance remain open. |
-| [Typed M05](platform/mempool_typed/README.md) | Repaired 26-input source: 323 native processes / 9,332 commands and actual original comparison / 153 retained tests; 38 physical processes, 26 guarded calls, 21 source controls, five byte and 12 coherent-witness refusals / 22 actual public CLI calls. | Signature/replay/nonce traits are fixture adapters. Production PNX/signature/State adapters, persistent pool, Node lifetime and original service acceptance remain open. |
-| [Default M06 Application](platform/execution_application/README.md) | Exact 876: 328 native and original histories, 335 transactions, 8,784 State commands, nine native processes, 32 physical controls, 186 integrity controls, 16 CLI refusals and eight retained original tests. | The integrated original graph changed. All configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT remain open. |
-| [Same-worker Work/Host](platform/work_owner/README.md) | Exact 876: 61 native histories / 27,843 progress records; 175 primitive controls, three traces, 27 trace controls, 14 signal controls and 18 native CLOCK1 faults. Actual original: 57 histories / 27,841 progress records, 56 joined workers and 44 retained tests. | Those 175 historical controls lack full raw guard arenas. Original CLOCK1 faults, production fixed-parent authority, shared Paid account/request deadline and original service acceptance remain open. |
+The current Work/Host source has 133 inputs,
+`ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c`.
+Actual development execution includes 61 native histories /27,843 progress
+records, 175 complete primitive controls /9,489 calls /7,800 full snapshots,
+three traces, 27 trace controls, 14 signal controls and 18 CLOCK faults.
+Actual original execution includes 57 histories, 44 retained tests, two CLOCK
+positives, 18 controlled faults and 20 raw-reader controls. This repairs the
+new source's evidence; the old c390 missing-arena/CLOCK scope stays historical.
 
-The Prefix corpus declares 1,011 fixture methods; **936 actually ran** and
-75 were unexecuted paths after the observed fixture outcome. Those 75 are not
-passed methods or skipped original tests. The observed 256-transaction Batch
-case took 24.3928 seconds and the largest Prefix history took 140.676 seconds.
-These development results do not satisfy the original four-second service gate.
+The [current Work/Host record](qualification/work-owner-development.json) binds
+complete development execution and full private readback. Its native graph
+matches the integrated source. The six-file CI-reader graph changes to
+`106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca`,
+and the original graph changes with the reviewed inventory and sole-plan pin.
+Fresh exact-commit hosted qualification remains required.
 
-### Exact source transitions
-
-| Source graph | Frozen execution identity | Integrated identity and obligation |
-| --- | --- | --- |
-| Batch native | 146 inputs, `408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d` | 151 inputs, `63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f`; all 60 composed runtime inputs are byte-identical, but the complete graph needs fresh CI. |
-| M05 native | Old 876: `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b` | Repaired and locally reexecuted: `455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7`; fresh hosted qualification remains required. |
-| Application native | 109 inputs, `b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70` | Native inputs unchanged; inventory and sole-plan pin change the original graph. |
-| Work/Host native | 126 inputs, `e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91` | Native inputs unchanged; the original graph requires fresh committed-source execution. |
-
-The M05 audit reproduced four false accepts against the actual old public CLI:
-integer zero replaced by boolean false in scalar and nested observations, an
-integer callback count replaced by a float, and an observation index replaced
-by a boolean. Altered original stdout, receipt and summary stayed mutually
-consistent. Recursive strict type checks now reject all four; full native,
-actual original and public-control qualification reran on the repaired source.
-Three additional float count substitutions were reproduced and refused at the
-CI summary helper. Those helper checks are not public CLI executions.
-
-The [M05 record](qualification/mempool-typed-development.json),
-[Batch record](qualification/execution-batch-development.json),
-[Application development record](qualification/execution-application-development.json),
-[exact 876 Application record](qualification/execution-application-ci.json),
-[Work/Host development record](qualification/work-owner-development.json) and
-[exact 876 Work/Host record](qualification/work-owner-ci.json) retain separate
-source maps and evidence scopes.
+[Batch/Prefix](platform/execution_batch/README.md) actually executed 102 Batch
+methods and 186 Prefix histories /936 methods, 30 physical controls and six
+scoped lifecycles. Its 75 unexecuted fixture paths are not passed methods.
+[Typed M05](platform/mempool_typed/README.md) executed 323 native/original
+histories /9,332 commands and 153 retained tests.
+[Application](platform/execution_application/README.md) executed 328 histories,
+335 transactions, 8,784 State commands and eight retained original tests.
+Their explicit Config/fixture, Node, persistence, PQ and service boundaries
+remain in the individual records. Private Node/M05 integration is ongoing.
 
 ## CI and retained evidence
 
-The integrated workflow has **42 jobs and 35 independent native bootstrap gates**.
-Seven new Batch native jobs require explicit transport-test scope; the two
-actual-original jobs require full original-test scope. Missing or conflicting
-scope arguments are refused. Actual local suites passed six transport groups /
-70 controls and, for each original profile, nine groups / 102 controls. Every
-scope recorded zero skipped tests. Original 20-minute job limits and
-240-second process / three-second cleanup bounds remain.
+The integrated workflow has **46 jobs and 36 independent native bootstrap
+gates**, with the original 20-minute job limit. Full component discovery
+partitions all 383 tests into general (376) and State root (7). A third job
+requires the exact disjoint executed rosters, original adapters, complete raw
+artifacts and the consumer's own source tree and run/attempt. Work/Host uses
+four dependent stages: native, original, full qualification/package, and
+independent readback. All original executable bytes remain mandatory in CI.
 
-Integration checks passed all 89 existing CI/evidence tests, six transport
-groups, 173 Batch source-integrity controls / 18 CLI calls and four bootstrap
-guard groups. The [CI development record](qualification/application-mempool-ci-development.json)
-keeps those checks separate from runtime execution and hosted qualification.
+Merged validation passed 80 control groups with zero skips, all 357 Bash
+fragments and 50 Python heredocs. The
+[root integration record](qualification/work-host-integration.json) distinguishes
+these checks from native execution. The component timeout, old reader false
+accepts, initial driver failures and all corrected controls remain preserved.
 
-The [archive manifests and restoration instructions](qualification/ARCHIVES.md)
-describe five final volume sets. Every member was reopened, every part hashed
-and every archive physically reconstructed. Application CI preserves complete
-c61 and 876 ZIPs. Work/Host CI preserves complete producer/consumer ZIPs,
-including the 611,199,752-byte original executable. Batch's two original
-executables remain separately preserved with explicit identities and locations;
-they are not embedded archive members.
+The [archive guide](qualification/ARCHIVES.md) identifies the current volume
+sets. Work/Host's 50,018,340-byte development view contains 20,178 content objects
+and verified Git references, with an explicitly external original executable.
+The [portable reader](tools/read_work_owner_development.py) checks every logical
+member and the full external binary. It is not a self-sufficient hosted package;
+the complete original 261,160,948-byte package remains separately retained.
+The [history index](qualification/work-owner-development-history.json) restores
+the replaced predecessor view from exact c390 Git objects.
 
-Failed executions, unknown outcomes and original source identities remain
-evidence. Archive verification does not execute a runtime again or qualify a
-later commit.
+Source-specific failed outcomes, unknown observations and original source
+identities remain evidence. Storage verification does not execute a runtime,
+qualify a later commit, close the service gates or authorize package retirement.
 
 ## Foundations and whole-project gates
 

@@ -16,6 +16,9 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+from hia.tools.component_partition import (
+    GROUPS, ObservedResult, lineage, record_completion, select_suite,
+)
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
                 "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
                 "TRNM_HIA_RUST_STATE_REFERENCE")
@@ -93,12 +96,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--require-rust-oracle", action="store_true")
+    parser.add_argument("--shard", choices=(*GROUPS, "all"), default="all")
     args = parser.parse_args()
+    if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
+        parser.error("Native component qualification refuses optimized Python")
     if args.output.exists() or args.output.is_symlink():
         parser.error("Observation output must be a new file")
     missing = [key for key in RUST_ORACLES if not os.environ.get(key)]
     if args.require_rust_oracle and missing:
         parser.error("The independent Rust oracles are required: " + ", ".join(missing))
+    actual_lineage = lineage()
+    head_before = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    if actual_lineage is not None and actual_lineage["git_head"] != head_before:
+        parser.error("Actual component checkout differs from CI lineage")
     before = sources()
     from hia.tests.native_support import NativeModule
     builds, calls = [], Counter()
@@ -126,12 +136,17 @@ def main():
     try:
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
                                                    pattern="test_*.py", top_level_dir=str(ROOT))
-        result = unittest.TextTestRunner(stream=sys.stderr, verbosity=2).run(suite)
+        suite, partition = select_suite(suite, args.shard)
+        result = unittest.TextTestRunner(stream=sys.stderr, verbosity=2,
+                                         resultclass=ObservedResult).run(suite)
     finally:
         NativeModule.__init__, NativeModule.call_many = original_init, original_many
     after = sources()
-    stable = before == after
-    accepted = result.wasSuccessful() and stable and (not args.require_rust_oracle or not result.skipped)
+    head_after = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    stable = before == after and head_before == head_after
+    partition = record_completion(partition, result)
+    accepted = (result.wasSuccessful() and stable and partition["all_selected_completed"]
+                and (not args.require_rust_oracle or not result.skipped))
     binding_path = ROOT / "hia/qualification/compiler-binding.json"
     compiler_binding = json.loads(binding_path.read_text())
     compiler_matches = all(b["compiler_sha256"] == compiler_binding["compiler_sha256"]
@@ -141,7 +156,10 @@ def main():
     report = {"schema": "trnm.hia.native-qualification.v1",
         "observed_at": datetime.now(timezone.utc).isoformat(),
         "status": "PASS" if accepted and not result.skipped else "PASS_WITH_SKIPS" if accepted else "FAIL",
-        "source_commit_observed": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "source_commit_observed": head_before,
+        "lineage": actual_lineage,
+        "test_partition": partition,
+        "independent_rust_oracles_required": args.require_rust_oracle,
         "working_tree_dirty": bool(subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT, text=True)),
         "source_inputs": before, "source_set_sha256": digest(json.dumps(before, sort_keys=True, separators=(",", ":")).encode()),
         "source_unchanged_during_tests": stable,
@@ -166,7 +184,7 @@ def main():
     with args.output.open("x") as stream:
         json.dump(report, stream, indent=2, sort_keys=True)
         stream.write("\n")
-    print(json.dumps({"status": report["status"], "tests": result.testsRun,
+    print(json.dumps({"status": report["status"], "tests": result.testsRun, "shard": args.shard,
                       "skipped": len(result.skipped), "source_set_sha256": report["source_set_sha256"],
                       "shared_runner_calls": sum(calls.values()), "wall_seconds": report["wall_seconds"]}))
     return 0 if accepted else 1

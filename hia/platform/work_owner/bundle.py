@@ -13,6 +13,7 @@ from .cases import corpus, corpus_bytes, native_options, require_semantics
 from .native_io import decode
 from .trace_audit import audit_trace
 from .faults import profiles
+from .primitive_evidence import validate as validate_primitive_bytes, same
 
 OMIT = frozenset(("report.json", "artifacts.json"))
 SKIP = frozenset(("target", "__pycache__", ".pytest_cache"))
@@ -48,10 +49,12 @@ def validate_control_roster(report, profile, schema):
     rows = report.get("rows")
     need(type(rows) is list and len(rows) == len(profile)
          and type(report.get("count")) is int and report["count"] == len(profile)
-         and report.get("positive") == sum(accepted for _, accepted in profile)
-         and report.get("negative") == sum(not accepted for _, accepted in profile),
+         and same(report.get("positive"), sum(accepted for _, accepted in profile))
+         and same(report.get("negative"), sum(not accepted for _, accepted in profile)),
          "Incomplete actual control roster")
-    need([(r.get("name"), r.get("expected_acceptance")) for r in rows] == list(profile),
+    need(all(type(r) is dict for r in rows)
+         and same([[r.get("name"), r.get("expected_acceptance")] for r in rows],
+                  [[name, accepted] for name, accepted in profile]),
          "Actual control names/order/expectations differ")
     need(all(type(r.get("expected_acceptance")) is bool and type(r.get("actual_acceptance")) is bool
              and r["actual_acceptance"] is r["expected_acceptance"] and r.get("status") == "PASS"
@@ -190,14 +193,15 @@ def snapshot(directory):
 def source_bindings(report):
     need(type(report) is dict and type(report.get("build")) is dict, "Missing native build binding")
     current = source_manifest()
-    need(report.get("source_inputs") == report["build"].get("source_inputs") == current,
+    need(same(report.get("source_inputs"), current)
+         and same(report["build"].get("source_inputs"), current),
          "Top-level/build/current complete source maps differ")
     need(set("hia/platform/work_owner/" + n for n in OWNED) <= set(current), "Missing mandatory owner source")
     return current
 
 def validate_build(root, report):
     build = read_json(root / "build/build.json")
-    need(build == report["build"] and build["status"] == "PASS" and build["compiler_sha256"] == COMPILER,
+    need(same(build, report["build"]) and build["status"] == "PASS" and build["compiler_sha256"] == COMPILER,
          "Native build report/compiler binding differs")
     captured = {name: (HERE / name).read_bytes() for name in OWNED if name.endswith(".hepta")}
     from .build import FROZEN
@@ -209,29 +213,29 @@ def validate_build(root, report):
     need([row["stage"] for row in build["stages"]] == labels, "Complete actual compile/emission stage roster differs")
     for name, raw in programs.items():
         need((root / "build" / (name + ".hepta")).read_bytes() == raw
-             and build["composed_sources"][name] == {"bytes": len(raw), "sha256": digest(raw)},
+             and same(build["composed_sources"][name], {"bytes": len(raw), "sha256": digest(raw)}),
              "Composed full HIA source differs")
         flat = root / "build" / (name + (".elf" if name.endswith("emitter") else ".flat.bin"))
-        need(identity(flat) == build["native_images"][name], "Actual compiled native section differs")
+        need(same(identity(flat), build["native_images"][name]), "Actual compiled native section differs")
         stage = root / "build" / ("compile-" + name)
         need((stage / "stdin.raw").read_bytes() == raw
              and (stage / "stdout.raw").read_bytes() == flat.read_bytes(),
              "Actual compiler stdin/source or stdout/flat linkage differs")
     for stage in build["stages"]:
         directory = root / "build" / stage["stage"]
-        need(read_json(directory / "receipt.json") == stage and stage["exit_code"] == 0
+        need(same(read_json(directory / "receipt.json"), stage) and same(stage["exit_code"], 0)
              and stage["timed_out"] is False and stage["cleanup"] is None and stage["stderr_hex"] == "",
              "Actual native build stage did not complete cleanly")
         for filename, prefix in (("stdin.raw", "input"), ("stdout.raw", "output"), ("stderr.raw", "stderr")):
-            need(identity(directory / filename) == {"bytes": (len(bytes.fromhex(stage["stderr_hex"])) if prefix == "stderr" else stage[prefix + "_bytes"]),
-                 "sha256": stage[prefix + "_sha256"]}, "Native build raw stream differs")
+            need(same(identity(directory / filename), {"bytes": (len(bytes.fromhex(stage["stderr_hex"])) if prefix == "stderr" else stage[prefix + "_bytes"]),
+                 "sha256": stage[prefix + "_sha256"]}), "Native build raw stream differs")
     contract = read_json(HERE / "abi.json")
     need(set(build["images"]) == {"owner", "fixture", "closed-fd"}, "Final native image roster differs")
     for name, owner, host in (("owner", "owner", "host"), ("fixture", "owner-fixture", "host-fixture"),
                              ("closed-fd", "owner-fixture", "host-fixture")):
         raw = (root / "build" / (name + ".elf")).read_bytes()
         inspect_owner(raw); binding = contract["images"][name]
-        need(identity(root / "build" / (name + ".elf")) == binding["executable"],
+        need(same(identity(root / "build" / (name + ".elf")), binding["executable"]),
              "Native image no longer equals the reviewed adapter/HIA")
         a, work, c = [(root / "build" / (part + ".flat.bin")).read_bytes() for part in (owner, "work", host)]
         need(all(0 < len(part) <= 524288 for part in (a, work, c)), "Captured flat exceeds the fixed native profile")
@@ -243,30 +247,41 @@ def validate_build(root, report):
         need((stage / "stdin.raw").read_bytes() == payload and (stage / "stdout.raw").read_bytes() == raw,
              "Actual emitter input/payload or output/native image linkage differs")
         image = build["images"][name]
-        need(image["path"] == name + ".elf" and image["bytes"] == len(raw)
-             and image["sha256"] == digest(raw) and image["prefix_bytes"] == prefix,
+        need(image["path"] == name + ".elf" and same(image["bytes"], len(raw))
+             and image["sha256"] == digest(raw) and same(image["prefix_bytes"], prefix),
              "Final native image receipt differs from the retained executable")
 
-def validate_physical(case, physical, directory, image_sha):
-    need(read_json(directory / "physical.json") == physical and physical["image_sha256"] == image_sha,
-         "Physical receipt or actual image differs")
+def physical_frame(physical, directory, image_sha):
+    """Compare every decoded field with bytes, preserving JSON numeric types."""
+    need(type(physical) is dict and same(read_json(directory / "physical.json"), physical)
+         and physical["image_sha256"] == image_sha, "Physical receipt or actual image differs")
     for name in ("stdout", "stderr"):
-        need(identity(directory / (name + ".raw")) == physical[name], "Actual native raw output changed")
+        need(same(identity(directory / (name + ".raw")), physical[name]), "Actual native raw output changed")
     raw = (directory / "stdout.raw").read_bytes()
-    need(decode(raw) == physical["decoded"], "Claimed native decoded frame differs from actual bytes")
+    actual = decode(raw)
+    need(same(actual, physical["decoded"]), "Claimed native decoded frame differs from actual bytes or types")
+    need(physical.get("status") == "PHYSICAL_FRAME_PASS_SEMANTIC_EXPECTATIONS_PENDING"
+         and physical.get("fixture") is True and actual["header"]["fixture"] == 1
+         and physical.get("production_authority") is False
+         and physical.get("actual_original_rust") is False, "Physical observation scope differs")
+    domain = actual["header"]["domain"]
+    need(same(physical["exit_code"], 0 if domain == 0 else 64 + domain)
+         and physical["stderr_hex"] == "" and not (directory / "stderr.raw").read_bytes(),
+         "Actual process terminal/stderr differs")
+    return actual
+
+
+def validate_physical(case, physical, directory, image_sha):
+    physical_frame(physical, directory, image_sha)
     expected = struct.pack("<8Q", int.from_bytes(b"WOFIX001", "little"),
                            case["options"].get("gate_sequence", 0), case["options"].get("gate_stage", 0),
                            0, 0, 0, 0, 0) + bytes.fromhex(case["request_hex"])
     need((directory / "stdin.raw").read_bytes() == expected, "Actual native proof or private callback differs")
     options = case["options"]
-    need(physical["fixture"] is True and physical["gate_sequence"] == options.get("gate_sequence", 0)
-         and physical["gate_stage"] == options.get("gate_stage", 0)
-         and physical["signal_number"] == options.get("signal_number")
-         and physical["actions"] == options.get("actions", []), "Actual private callback profile differs")
-    h = physical["decoded"]["header"]
-    need(physical["exit_code"] == (0 if h["domain"] == 0 else 64 + h["domain"])
-         and physical["stderr_hex"] == "" and not (directory / "stderr.raw").read_bytes(),
-         "Actual process terminal/stderr differs")
+    need(same(physical["gate_sequence"], options.get("gate_sequence", 0))
+         and same(physical["gate_stage"], options.get("gate_stage", 0))
+         and same(physical["signal_number"], options.get("signal_number"))
+         and same(physical["actions"], options.get("actions", [])), "Actual private callback profile differs")
     return require_semantics(case, physical)
 
 def validate_bundle(directory, repository, *, require_trace=True):
@@ -277,16 +292,17 @@ def validate_bundle(directory, repository, *, require_trace=True):
          and report.get("status") == "PASS", "No complete successful native qualification")
     sources = source_bindings(report)
     original = original_manifest(repository)
-    need(report.get("original_sources") == original, "Complete current original Node graph differs")
-    need(read_json(root / "artifacts.json") == artifacts(root), "Native artifact inventory omitted or changed a file")
+    need(same(report.get("original_sources"), original), "Complete current original Node graph differs")
+    need(same(read_json(root / "artifacts.json"), artifacts(root)), "Native artifact inventory omitted or changed a file")
     before = read_json(root / "source-before.json"); after = read_json(root / "source-after.json")
-    need(before == after and before["source_inputs"] == sources and before["original_sources"] == original
-         and before["original_include_graph"] == include_graph(repository) and report.get("source_after") == "MATCH",
+    need(same(before, after) and same(before["source_inputs"], sources)
+         and same(before["original_sources"], original)
+         and same(before["original_include_graph"], include_graph(repository)) and report.get("source_after") == "MATCH",
          "Native source-before/after closure differs")
     validate_build(root, report)
     cases = corpus()
     need((root / "cases.json").read_bytes() == corpus_bytes()
-         and report["corpus"] == identity(root / "cases.json"), "Complete independent corpus changed")
+         and same(report["corpus"], identity(root / "cases.json")), "Complete independent corpus changed")
     need(len(report["semantic"]) == len(cases) == 61
          and [r["name"] for r in report["semantic"]] == [r["name"] for r in cases],
          "Native semantic case roster/order differs")
@@ -296,14 +312,16 @@ def validate_bundle(directory, repository, *, require_trace=True):
         need(row["status"] == "PASS", "Failed native case")
         native.append(validate_physical(case, row["physical"], root / "semantic" / case["name"], fixture_sha))
     primitive = read_json(root / "primitives/report.json")
-    need(primitive == report["primitives"] and primitive["status"] == "PASS"
-         and [primitive.get(k) for k in ("sha_vectors", "sha_bounds", "work_histories", "work_bounds", "owner_identity_controls")]
-             == [150, 4, 13, 4, 4]
+    need(same(primitive, report["primitives"]) and primitive["status"] == "PASS"
+         and same([primitive.get(k) for k in ("sha_vectors", "sha_bounds", "work_histories", "work_bounds", "owner_identity_controls")],
+                  [150, 4, 13, 4, 4])
          and len(primitive["rows"]) == 175 and all(r["status"] == "PASS" for r in primitive["rows"]),
          "Primitive arithmetic/bounds/identity qualification incomplete")
     for name in ("sha", "work", "owner"):
-        need(primitive["images"][name] == identity(root / "build" / (name + ".flat.bin")),
+        need(same(primitive["images"][name], identity(root / "build" / (name + ".flat.bin"))),
              "Primitive was not executed from this actual native section")
+    need(primitive.get("raw_readback") == "PASS", "Complete primitive byte readback is mandatory")
+    validate_primitive_bytes(root / "primitives/raw-buffers", primitive, cases, primitive["images"])
     if require_trace:
         need(report["trace_status"] == "PASS", "Actual syscall tracing is mandatory")
         names = ("baseline", "late-cancel", "closed-parent")
@@ -313,60 +331,60 @@ def validate_bundle(directory, repository, *, require_trace=True):
             audit = audit_trace((d / "syscalls.raw").read_text(), (d / "stdin.raw").read_bytes(),
                                 (d / "stdout.raw").read_bytes(), expected_signal=row["signal"],
                                 fault_profile=row["fault_profile"])
-            need(audit == row["audit"] == read_json(d / "trace-audit.json"), "Complete actual trace audit differs")
-            need(read_json(d / "physical.json") == row["physical"], "Actual traced process receipt differs")
+            need(same(audit, row["audit"]) and same(audit, read_json(d / "trace-audit.json")), "Complete actual trace audit differs")
+            physical_frame(row["physical"], d, report["build"]["images"][
+                "closed-fd" if row["name"] == "closed-parent" else "fixture"]["sha256"])
         controls = read_json(root / "trace-controls/report.json")
-        need(controls == report["trace_controls"] and controls["status"] == "PASS"
-             and controls["count"] == 27 and controls["positive"] == 5 and controls["negative"] == 22,
+        need(same(controls, report["trace_controls"]) and controls["status"] == "PASS"
+             and same([controls["count"], controls["positive"], controls["negative"]], [27, 5, 22]),
              "Concrete trace admission controls incomplete")
         validate_control_roster(controls, TRACE_CONTROL_PROFILE, "trnm.hia.work-owner-trace-controls.v1")
         d = root / "traces/baseline"; stdin = (d / "stdin.raw").read_bytes(); stdout = (d / "stdout.raw").read_bytes()
         for row in controls["rows"]:
             packed = (root / "trace-controls" / (row["name"] + ".trace.xz")).read_bytes()
-            need({"bytes": len(packed), "sha256": digest(packed)} == row["compressed_trace"], "Trace mutant archive differs")
+            need(same({"bytes": len(packed), "sha256": digest(packed)}, row["compressed_trace"]), "Trace mutant archive differs")
             raw = lzma.decompress(packed)
-            need({"bytes": len(raw), "sha256": digest(raw)} == row["trace"], "Complete trace mutant bytes differ")
+            need(same({"bytes": len(raw), "sha256": digest(raw)}, row["trace"]), "Complete trace mutant bytes differ")
             frame_path = root / "trace-controls" / (row["name"] + ".stdout.raw")
             frame = frame_path.read_bytes() if frame_path.exists() else stdout
-            need({"bytes": len(frame), "sha256": digest(frame)} == row["stdout"], "Trace mutant frame differs")
+            need(same({"bytes": len(frame), "sha256": digest(frame)}, row["stdout"]), "Trace mutant frame differs")
             try: audit_trace(raw.decode(), stdin, frame); accepted = True
             except (ValueError, KeyError, IndexError, StopIteration): accepted = False
-            need(accepted == row["expected_acceptance"] == row["actual_acceptance"]
+            need(accepted is row["expected_acceptance"] is row["actual_acceptance"]
                  and row["status"] == "PASS", "Concrete corrupt trace was accepted")
         signal_controls = read_json(root / "signal-controls/report.json")
-        need(signal_controls == report["signal_controls"] and signal_controls["status"] == "PASS"
-             and signal_controls["count"] == 14 and signal_controls["positive"] == 3
-             and signal_controls["negative"] == 11, "Concrete signal interleaving controls incomplete")
+        need(same(signal_controls, report["signal_controls"]) and signal_controls["status"] == "PASS"
+             and same([signal_controls["count"], signal_controls["positive"], signal_controls["negative"]], [14, 3, 11]), "Concrete signal interleaving controls incomplete")
         validate_control_roster(signal_controls, SIGNAL_CONTROL_PROFILE, "trnm.hia.work-owner-signal-trace-controls.v1")
         d = root / "traces/late-cancel"; stdin = (d / "stdin.raw").read_bytes(); stdout = (d / "stdout.raw").read_bytes()
         for row in signal_controls["rows"]:
             packed = (root / "signal-controls" / (row["name"] + ".trace.xz")).read_bytes()
-            need({"bytes": len(packed), "sha256": digest(packed)} == row["compressed_trace"],
+            need(same({"bytes": len(packed), "sha256": digest(packed)}, row["compressed_trace"]),
                  "Signal trace mutant archive differs")
             raw = lzma.decompress(packed)
-            need({"bytes": len(raw), "sha256": digest(raw)} == row["trace"]
-                 and {"bytes": len(stdout), "sha256": digest(stdout)} == row["stdout"],
+            need(same({"bytes": len(raw), "sha256": digest(raw)}, row["trace"])
+                 and same({"bytes": len(stdout), "sha256": digest(stdout)}, row["stdout"]),
                  "Signal trace mutant or native frame differs")
             try: audit_trace(raw.decode(), stdin, stdout, expected_signal=1); accepted = True
             except (ValueError, KeyError, IndexError, StopIteration): accepted = False
-            need(accepted == row["expected_acceptance"] == row["actual_acceptance"]
+            need(accepted is row["expected_acceptance"] is row["actual_acceptance"]
                  and row["status"] == "PASS", "Corrupt signal scheduling trace was accepted")
         faults = read_json(root / "clock-faults/report.json")
-        need(faults == report["clock_faults"] and faults["status"] == "PASS" and faults["count"] == 18
-             and [r["profile"] for r in faults["rows"]] == profiles(), "Complete actual CLOCK1 fault roster differs")
+        need(same(faults, report["clock_faults"]) and faults["status"] == "PASS" and same(faults["count"], 18)
+             and same([r["profile"] for r in faults["rows"]], profiles()), "Complete actual CLOCK1 fault roster differs")
         for row in faults["rows"]:
             d = root / "clock-faults" / row["name"]; profile = row["profile"]
             audit = audit_trace((d / "syscalls.raw").read_text(), (d / "stdin.raw").read_bytes(),
                                 (d / "stdout.raw").read_bytes(),
                                 fault_profile="worker-clock-" + profile["errno"] + "-" + str(profile["ordinal"]))
-            need(audit == row["trace"] == read_json(d / "trace-audit.json")
-                 and read_json(d / "physical.json") == row["physical"]
-                 and row["physical"]["image_sha256"] == fixture_sha, "Actual controlled clock trace differs")
-    need(source_manifest() == sources and original_manifest(repository) == original,
+            need(same(audit, row["trace"]) and same(audit, read_json(d / "trace-audit.json")),
+                 "Actual controlled clock trace differs")
+            physical_frame(row["physical"], d, fixture_sha)
+    need(same(source_manifest(), sources) and same(original_manifest(repository), original),
          "Source changed during native admission")
     return {"report": report, "native": native, "source_inputs": sources,
             "original_sources": original, "snapshot": snapshot(root)}
 
 def check_snapshot(directory, accepted):
-    need(snapshot(directory) == accepted["snapshot"], "Previously admitted complete native bundle changed")
-    need(source_manifest() == accepted["source_inputs"], "Complete current owner source changed")
+    need(same(snapshot(directory), accepted["snapshot"]), "Previously admitted complete native bundle changed")
+    need(same(source_manifest(), accepted["source_inputs"]), "Complete current owner source changed")

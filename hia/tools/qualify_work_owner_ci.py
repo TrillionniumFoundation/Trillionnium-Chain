@@ -20,23 +20,32 @@ import time
 import traceback
 import unittest
 
+import hia.tests
 from hia.tools import qualify_foundation_ci as base
+from hia.tools import work_owner_clock_ci as next_evidence
+from hia.tools import work_owner_transfer_ci as transfer
 from hia.platform.work_owner import build, bundle, cases, rust_oracle as oracle
 
 ROOT = build.ROOT
 PREFIX = "hia-work-owner"
 STAGE = "work-owner"
-SCHEMA = "trnm.hia.work-owner-ci-binding.v1"
-PACKAGE = "trnm.hia.work-owner-ci-evidence.v1"
-REVIEW = "trnm.hia.work-owner-development-readback.v1"
+SCHEMA = "trnm.hia.work-owner-ci-binding.v3"
+PACKAGE = "trnm.hia.work-owner-ci-evidence.v3"
+REVIEW = "trnm.hia.work-owner-development-readback.v3"
 READERS = ("hia/tools/qualify_work_owner_ci.py", "hia/tests/test_work_owner_ci.py",
-           "hia/tools/qualify_foundation_ci.py")
+           "hia/tools/qualify_foundation_ci.py", "hia/tools/work_owner_clock_ci.py",
+           "hia/tools/work_owner_transfer_ci.py", "hia/tests/test_work_owner_transfer_ci.py")
 COUNTS = {"native_histories": 61, "native_progress_points": 27843,
           "primitive_controls": 175, "actual_syscall_traces": 3, "trace_controls": 27,
           "signal_controls": 14, "native_clock_fault_controls": 18,
           "original_histories": 57, "original_progress_points": 27841,
           "original_worker_histories": 56, "retained_original_test_count": 44,
-          "original_process_stages": 48}
+          "original_process_stages": 48,
+          "primitive_actual_calls": 9489, "primitive_buffers": 538, "primitive_snapshots": 7800,
+          "primitive_logical_capture_bytes": 6010134406, "primitive_chunk_count": 19413,
+          "original_clock_positive_processes": 2, "original_clock_fault_processes": 18,
+          "original_clock_processes": 20, "original_clock_raw_controls": 20,
+          "original_clock_raw_positive_controls": 2, "original_clock_raw_negative_controls": 18}
 SCOPES = ("production_fixed_parent_authority", "whole_Node_or_paid_checkpoint_closed",
           "original_4s_16_service_gate_closed", "physical_power_loss")
 ROOT_LABELS = frozenset(("native", "original", "observations", "bootstrap", "capture"))
@@ -174,7 +183,7 @@ def positive_test(raw, name):
 
 
 def validate_primitives(report):
-    """Read every retained value; extent/guard rows have no separately captured raw arenas."""
+    """Read values and bind the independently reconstructed complete guarded arenas."""
     p = report["primitives"]
     need(p.get("schema") == "trnm.hia.work-owner-primitives.v1" and p.get("status") == "PASS"
          and p.get("production_authority") is False and p.get("actual_original_Rust") is False
@@ -210,8 +219,7 @@ def validate_primitives(report):
         expected.append({"name": name, "kind": "owner-identity", "status": "PASS",
                          "fixture_is_production_authority": False})
     need(same(rows, expected), "Primitive digest/progress/product/extent/identity observations differ")
-    return {"primitive_controls": 175, "primitive_raw_guard_arenas_retained": False,
-            "primitive_readback_scope": "All retained SHA/progress/product values and exact 12 extent/identity rows; initial native execution checks guards, no unrecorded guard arena bytes invented."}
+    return {"primitive_controls": 175, **next_evidence.primitive_summary(sys.modules[__name__], report)}
 
 
 def native(directory, repository):
@@ -377,7 +385,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
          and report.get("final_fence_failure") is None and report.get("source_after") == "MATCH"
          and report.get("binary_after") == "MATCH", "Complete original source/native/binary fences required")
     need(all(report.get(k) is False for k in SCOPES[:3])
-         and report.get("original_controlled_CLOCK1_fault_comparison") == "OPEN"
+         and report.get("original_controlled_CLOCK1_fault_comparison") == "PASS"
          and report.get("native_protocol_controls_without_original_equivalent") == sorted(cases.PROTOCOL_ONLY),
          "Original observation scope expanded")
     for key, count in (("passed", 57), ("total", 57), ("actual_original_progress_points", 27841),
@@ -400,6 +408,8 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
     declarations = {k: v.hex() for k, v in oracle.DECLARATIONS.items()}
     need(before.get("appended_declarations") == declarations, "Private original declaration differs")
     hooks = {
+        "trillionnium/crates/trnm-pon-node/src/hia_work_owner_clock.rs":
+            repository / "hia/platform/work_owner/rust_clock_reference.rs",
         "trillionnium/crates/trnm-pon-node/src/hia_work_owner_oracle.rs":
             repository / "hia/platform/work_owner/rust_reference.rs",
         "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs":
@@ -451,7 +461,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
          and not bundle.overlap(target, repository)
          and (expected_target is None or target == expected_target),
          "Actual Cargo target overlaps a protected tree or differs")
-    build_argv = [standard["cargo_executable"]["path"], "test", "--locked", "--manifest-path",
+    build_argv = [standard["cargo_executable"]["path"], "--config", "build.incremental=false", "test", "--locked", "--manifest-path",
                   str(observed_isolated / "trillionnium/Cargo.toml"), "-p", "trnm-pon-node",
                   "--lib", "--no-run", "--message-format=json", "--target-dir", str(target)]
     need(rows["cargo-original-test-build"][0]["argv"] == build_argv
@@ -459,6 +469,8 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
          "Actual original Cargo/working-directory entry differs")
     events = [json.loads(line, object_pairs_hook=unique)
               for line in rows["cargo-original-test-build"][1]["stdout"].splitlines() if line.startswith(b"{")]
+    sqlite = next_evidence.sqlite_and_loader(sys.modules[__name__], directory, observed, before, report,
+                                            events, standard, capture, live)
     artifact = oracle.original_artifact(events, observed_isolated)
     need(same(artifact, report["artifact"]) and artifact["executable"] == report["compiled_executable"]["path"]
          and target in Path(artifact["executable"]).parents,
@@ -471,7 +483,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
     ignored = {line.removesuffix(": test")
                for line in rows["list-original-ignored-tests"][1]["stdout"].decode().splitlines()
                if line.startswith("host_kernel_parent::kernel_parent::") and line.endswith(": test")}
-    need(ignored == {oracle.IGNORED} and oracle.TEST in tests, "Original ignored probe or private observer roster differs")
+    need(ignored == {oracle.IGNORED} and oracle.TEST in tests and oracle.CLOCK_TEST in tests, "Original ignored probe or private observer roster differs")
     linked = sorted(name for name in tests if name.startswith("host_kernel_parent::kernel_parent::")
                     and "::hia_work_owner_oracle::" not in name and name not in ignored)
     need(linked == retained and report.get("ignored_direct_probe") == {
@@ -505,6 +517,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
          and sum(len(row["progress"]) for row in actual) == 27841
          and sum(row.get("joined") is True for row in actual) == 56,
          "Complete original/native differential differs from actual stdout")
+    clock = next_evidence.original_clock(sys.modules[__name__], directory, observed, report, admitted, binary_id)
     need(identity(binary) == binary_id and same(read(directory / "source-after.json"), before),
          "Original independent binary/source changed during readback")
     need(file_tree(directory) == artifact_before, "Complete original raw evidence changed during admission")
@@ -516,7 +529,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
             "original_rust": "PASS", "original_source_before": identity(directory / "source-before.json"),
             "original_source_after": identity(directory / "source-after.json"),
             "original_dependency": standard,
-            "original_controlled_CLOCK1_fault_comparison": "OPEN"}
+            "original_controlled_CLOCK1_fault_comparison": "PASS", **sqlite, **clock}
 
 
 def assess(repository, native_directory, original_directory, capture=None, *, live=True, expected_target=None):
@@ -586,14 +599,19 @@ def evidence_inventory(roots, *, omit_binding=True):
 
 def check_binding(value, expected):
     need(type(value) is dict and value.get("schema") == SCHEMA and value.get("stage") == STAGE
-         and value.get("status") == "PASS" and same(value.get("lineage"), expected),
+         and value.get("status") == "PASS" and same(value.get("lineage"), expected)
+         and value.get("pipeline") == "native-original-qualification-readback-v1"
+         and value.get("complete_predecessor_regular_bytes_retained") is True
+         and value.get("complete_predecessor_archives_retained") is True,
          "Work owner binding is failed or from another head/run/attempt")
     need(all(type(value.get(k)) is int and value[k] == count for k, count in COUNTS.items())
          and value.get("physical_trace") == value.get("original_rust") == "PASS",
          "Binding omits a complete actual stage")
     need(all(value.get(k) is False for k in SCOPES)
-         and value.get("original_controlled_CLOCK1_fault_comparison") == "OPEN"
-         and value.get("primitive_raw_guard_arenas_retained") is False,
+         and value.get("original_controlled_CLOCK1_fault_comparison") == "PASS"
+         and value.get("primitive_raw_guard_arenas_retained") is True
+         and value.get("primitive_raw_readback") == "PASS"
+         and value.get("original_sqlite_build_fence") == "sqlite-3.54.1-normal-native-linux-layout-v4",
          "Work owner binding scope expanded")
     need(type(value.get("source_inputs")) is dict and type(value.get("original_sources")) is dict
          and value["source_inputs"] and value["original_sources"]
@@ -616,9 +634,21 @@ def check_binding(value, expected):
     for name, key in (("native/report.json", "native_report"), ("original/report.json", "original_report"),
                       ("original/original-test-binary", "original_binary"),
                       ("original/source-before.json", "original_source_before"),
-                      ("original/source-after.json", "original_source_after")):
+                      ("original/source-after.json", "original_source_after"),
+                      ("original/controlled-clock/report.json", "original_clock_report"),
+                      ("original/controlled-clock/actual-reader-controls/report.json", "original_clock_raw_controls_report"),
+                      ("original/actual-sqlite-qualification.json", "original_sqlite_qualification")):
         need(file_id(value.get(key)) and files.get(name) == value[key], "Mandatory full artifact missing: " + name)
     need(value["original_binary"]["bytes"] > 0, "Empty original binary is not evidence")
+    raw = value.get("primitive_raw_evidence")
+    need(type(raw) is dict and raw.get("guards_and_complete_bodies_retained") is True
+         and all(type(raw.get(name)) is int and raw[name] == count
+                 for name, count in next_evidence.RAW_COUNTS.items()),
+         "Complete primitive byte evidence accounting is required")
+    for name, key in (("native/primitives/raw-buffers/manifest.json", "manifest"),
+                      ("native/primitives/raw-buffers/calls.jsonl", "calls")):
+        need(file_id(raw.get(key)) and same(files.get(name), raw[key]),
+             "Mandatory complete primitive byte artifact missing")
     need(set(value.get("ci_reader_sources", {})) == set(READERS)
          and all(file_id(row) for row in value["ci_reader_sources"].values()), "Complete CI reader source roster required")
 
@@ -627,7 +657,10 @@ def reader_paths():
     own = Path(__file__).resolve()
     return {"hia/tools/qualify_work_owner_ci.py": own,
             "hia/tests/test_work_owner_ci.py": own.parents[1] / "tests/test_work_owner_ci.py",
-            "hia/tools/qualify_foundation_ci.py": Path(base.__file__).resolve()}
+            "hia/tools/qualify_foundation_ci.py": Path(base.__file__).resolve(),
+            "hia/tools/work_owner_clock_ci.py": Path(next_evidence.__file__).resolve(),
+            "hia/tools/work_owner_transfer_ci.py": Path(transfer.__file__).resolve(),
+            "hia/tests/test_work_owner_transfer_ci.py": own.parents[1] / "tests/test_work_owner_transfer_ci.py"}
 
 
 def reader_manifest():
@@ -635,7 +668,9 @@ def reader_manifest():
 
 
 def control_roster():
-    modules = ("hia.platform.work_owner.test_integrity", "hia.tests.test_work_owner_ci")
+    modules = ("hia.tests.test_work_owner_ci", "hia.tests.test_work_owner_transfer_ci",
+               "hia.platform.work_owner.test_integrity",
+               "hia.platform.work_owner.test_primitive_evidence", "hia.platform.work_owner.test_clock_evidence")
     suite = unittest.defaultTestLoader.loadTestsFromNames(modules)
     def names(value):
         if isinstance(value, unittest.TestSuite):
@@ -647,8 +682,8 @@ def control_roster():
     return modules, roster
 
 
-def controls(root):
-    out = observations(root) / "source-controls"
+def controls(root, *, directory=None):
+    out = (observations(root) if directory is None else directory) / "source-controls"
     out.mkdir(parents=True, mode=0o700)
     modules, roster = control_roster()
     argv = [sys.executable, "-P", "-B", "-m", "unittest", *modules, "-v"]
@@ -701,30 +736,6 @@ def validate_controls(directory):
              for path in report["module_search_roots"]),
          "Actual source-control entry differs")
     return {"source_control_tests": len(roster), "source_controls": identity(directory / "report.json")}
-
-
-def bind(root):
-    expected = base.lineage()
-    pair = source_pair(observations(root), expected)
-    capture = root / (PREFIX + "-capture")
-    capture.mkdir(mode=0o700)
-    result = assess(ROOT, root / (PREFIX + "-native"), root / (PREFIX + "-original"),
-                    capture, expected_target=root / (PREFIX + "-cargo-target"))
-    result.update(validate_controls(observations(root) / "source-controls"))
-    need(reader_paths() == {name: ROOT / name for name in READERS}, "Hosted reader loaded outside exact repository")
-    readers = reader_manifest()
-    for name, wanted in readers.items():
-        capture_file(ROOT / name, capture / "ci-readers" / member_name(name), wanted)
-    base.check_committed_sources({**result["original_sources"], **result["source_inputs"], **readers}, ROOT)
-    result.update(schema=SCHEMA, stage=STAGE, status="PASS", lineage=expected,
-                  source_observations=pair, ci_reader_sources=readers)
-    need(same(pair, source_pair(observations(root), expected)), "CI source observation changed during binding")
-    files, specials = evidence_inventory(evidence_roots(root))
-    need(not specials, "Successful Work owner evidence contains special files")
-    result.update(evidence_files=files, evidence_set_sha256=object_hash(files))
-    check_binding(result, expected)
-    write_new(observations(root) / "binding.json", result)
-    return result
 
 
 def verify_archive(archive, entries, *, destination=None):
@@ -868,35 +879,6 @@ def pack_roots(roots, output, expected=None, binding=None, precondition_error=No
     return record
 
 
-def pack(root):
-    observed = observations(root)
-    binding_path = observed / "binding.json"
-    expected = None
-    binding = None
-    precondition_error = None
-    try:
-        expected = base.lineage()
-        binding = read(binding_path) if binding_path.exists() else None
-        if binding is not None:
-            check_binding(binding, expected)
-            need(same(source_pair(observed, expected), binding["source_observations"]),
-                 "CI source observation changed before pack")
-            need(same(build.source_manifest(), binding["source_inputs"])
-                 and same(bundle.original_manifest(ROOT), binding["original_sources"]),
-                 "Complete source closure changed")
-            need(binding["ci_reader_sources"] == {name: identity(ROOT / name) for name in READERS},
-                 "CI reader source changed before pack")
-            base.check_committed_sources({**binding["source_inputs"], **binding["original_sources"],
-                                          **binding["ci_reader_sources"]}, ROOT)
-    except BaseException as error:
-        precondition_error = repr(error)
-        observed.mkdir(parents=True, exist_ok=True)
-        write_new(observed / "pack-precondition-error.json",
-                  {"status": "FAIL", "error": precondition_error, "traceback": traceback.format_exc()})
-    return pack_roots(evidence_roots(root), root / (PREFIX + "-artifact"),
-                      expected, binding, precondition_error)
-
-
 def review(repository, native_directory, original_directory, output):
     output.mkdir(mode=0o700)
     capture = output / "capture"
@@ -920,7 +902,7 @@ def review(repository, native_directory, original_directory, output):
             "package": identity(output / "artifact/package-manifest.json"), "archive": package["archive"]}
 
 
-def readback(package_directory, output):
+def readback(package_directory, output, *, require_qualified=False):
     package = read(package_directory / "package-manifest.json")
     need(package.get("schema") == PACKAGE and package.get("stage") == STAGE
          and package.get("packing_status") == "PASS" and package.get("capture_errors") == []
@@ -929,6 +911,12 @@ def readback(package_directory, output):
          and package.get("complete_isolated_original_source_is_not_excluded") is True
          and package.get("qualification_status_not_changed_by_packaging") is True,
          "Complete package required")
+    if require_qualified:
+        need(package.get("qualification_status") == "PASS",
+             "Final CI readback requires an actually qualified complete package")
+        expected = base.lineage()
+        need(same(package.get("lineage"), expected), "Final CI package belongs to another head/run/attempt")
+        check_binding(read(package_directory / "binding.json"), expected)
     archive = package_directory / "complete-evidence.tar.xz"
     need(identity(archive) == package.get("archive"), "Actual package archive identity differs")
     verification = verify_archive(archive, package["entries"], destination=output)
@@ -939,7 +927,7 @@ def readback(package_directory, output):
         binding = read(package_directory / "binding.json")
         expected = base.lineage()
         check_binding(binding, expected)
-        need(package.get("lineage") == expected and identity(package_directory / "binding.json") == package["binding"]
+        need(same(package.get("lineage"), expected) and same(identity(package_directory / "binding.json"), package["binding"])
              and regular(package_directory / "binding.json").read_bytes() ==
                  regular(output / "observations/binding.json").read_bytes(),
              "Transferred binding belongs to another actual run or differs")
@@ -957,6 +945,7 @@ def readback(package_directory, output):
         base.check_committed_sources({**binding["source_inputs"], **binding["original_sources"],
                                       **binding["ci_reader_sources"]}, ROOT)
         validate_controls(output / "observations/source-controls")
+        transfer.validate_chain(sys.modules[__name__], {name: output / name for name in ROOT_LABELS}, binding)
         status = "QUALIFIED_COMPLETE_READBACK"
     else:
         need(package.get("qualification_status") == "NOT_BOUND" and package.get("lineage") is None,
@@ -973,21 +962,30 @@ def readback(package_directory, output):
     result = {"status": status, "archive": verification["archive"],
               "original_binary": current["original_binary"], **COUNTS,
               "qualification_status_not_changed_by_readback": True,
-              "original_controlled_CLOCK1_fault_comparison": "OPEN"}
+              "original_controlled_CLOCK1_fault_comparison": "PASS"}
     write_new(output / "readback-result.json", result)
     return result
+
+
+def prerequisite(name):
+    need(os.environ.get(name) == "success", "Actual prerequisite CI job did not succeed: " + name)
 
 
 def main():
     need(__debug__ and not os.environ.get("PYTHONOPTIMIZE"), "Optimized CI evidence reader refused")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("controls", "bind", "pack", "review", "readback"))
+    parser.add_argument("action", choices=("controls", "native-controls", "native-pack", "native-unpack",
+                                          "original-pack", "original-unpack", "qualify-pack",
+                                          "review", "readback"))
     parser.add_argument("--repository", type=Path)
     parser.add_argument("--native", type=Path)
     parser.add_argument("--original", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--package", type=Path)
+    parser.add_argument("--require-qualified", action="store_true")
     args = parser.parse_args()
+    need(not args.require_qualified or args.action == "readback",
+         "Qualified-package requirement applies only to complete final readback")
     if args.action == "review":
         need(all(x is not None for x in (args.repository, args.native, args.original, args.output))
              and args.package is None, "Explicit isolated development replay paths required")
@@ -996,12 +994,33 @@ def main():
     elif args.action == "readback":
         need(args.package is not None and args.output is not None
              and args.repository is args.native is args.original is None, "Explicit package/readback paths required")
-        result = readback(bundle.canonical_root(args.package), args.output.absolute())
+        if args.require_qualified:
+            prerequisite("TRNM_WORK_QUALIFICATION_RESULT")
+        result = readback(bundle.canonical_root(args.package), args.output.absolute(),
+                          require_qualified=args.require_qualified)
     else:
         need(all(x is None for x in (args.repository, args.native, args.original, args.output, args.package)),
              "Hosted commands use only the actual runner roots")
         root = bundle.canonical_root(os.environ["RUNNER_TEMP"])
-        result = globals()[args.action](root)
+        module = sys.modules[__name__]
+        if args.action == "controls":
+            result = controls(root)
+        elif args.action == "native-controls":
+            result = controls(root, directory=transfer.stage_observations(module, root, "native"))
+        elif args.action == "native-pack":
+            result = transfer.pack_native(module, root)
+        elif args.action == "original-pack":
+            prerequisite("TRNM_WORK_NATIVE_RESULT")
+            result = transfer.pack_original(module, root)
+        elif args.action == "qualify-pack":
+            prerequisite("TRNM_WORK_NATIVE_RESULT")
+            prerequisite("TRNM_WORK_ORIGINAL_RESULT")
+            result = transfer.qualify_pack(module, root)
+        else:
+            phase = args.action.removesuffix("-unpack")
+            prerequisite("TRNM_WORK_" + phase.upper() + "_RESULT")
+            result = transfer.read_transfer(module, root / (PREFIX + "-" + phase + "-download"),
+                                           root / (PREFIX + "-" + phase + "-prior"), phase)
     print(json.dumps({key: value for key, value in result.items() if key not in {
         "source_inputs", "original_sources", "native_snapshot", "evidence_files", "entries", "original_artifacts",
         "ci_reader_sources", "original_dependency"}}, sort_keys=True))

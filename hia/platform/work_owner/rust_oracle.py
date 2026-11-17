@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import shutil
 import subprocess
@@ -13,6 +15,8 @@ from hia.platform.host_resource.rust_oracle import REQUIRED_TESTS
 from .build import ROOT, HERE, identity, need, read_json, source_manifest, write_json
 from .bundle import canonical_root, check_snapshot, original_manifest, require_output_and_target, validate_bundle
 from .cases import corpus, original_cases, PROTOCOL_ONLY
+from .clock_comparison import run as compare_clock_faults
+from .clock_evidence import TEST as CLOCK_TEST
 
 RESOURCE = "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs"
 PUBLIC = "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
@@ -75,6 +79,52 @@ def compare(actual, native, cases):
                      "different_fields": differences, "actual_original": observed, "actual_native": frame})
     return rows
 
+def capture_loader(standard):
+    path = Path(standard["sysroot"]) / "lib"
+    need(path.is_absolute() and path.resolve(strict=True) == path and not path.is_symlink(),
+         "Normal compiler loader directory is not canonical")
+    value = path.stat()
+    need(stat.S_ISDIR(value.st_mode), "Normal compiler loader path is not a directory")
+    # This is the actual selected compiler's directory, not the production
+    # cgroup parent. Its complete metadata is fenced without inventing a new
+    # permission restriction absent from the original SQLite build contract.
+    return {"path": str(path), "device": value.st_dev, "inode": value.st_ino,
+            "mode": value.st_mode, "uid": value.st_uid, "gid": value.st_gid}
+
+def capture_sqlite(events, isolated, target, output):
+    crate = isolated / "trillionnium/crates/trnm-sqlite-io-boundary"
+    prefix = "path+" + crate.as_uri() + "#"
+    rows = [row for row in events if row.get("reason") == "build-script-executed"
+            and type(row.get("package_id")) is str and row["package_id"].startswith(prefix)]
+    need(len(rows) == 1, "Unique actual original SQLite boundary build result missing")
+    row = rows[0]; environment = dict(row.get("env", []))
+    need(row.get("cfgs") == ["trnm_sqlite_layout_witness"]
+         and environment.get("TRNM_SQLITE3_BUILD_FENCE") == "sqlite-3.54.1-normal-native-linux-layout-v4"
+         and environment.get("TRNM_SQLITE3_AMALGAMATION_SHA256") ==
+             "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52"
+         and "TRNM_SQLITE3_UNQUALIFIED_REASON" not in environment,
+         "Unmodified original SQLite build qualification did not pass")
+    need(b"trnm SQLite I/O boundary UNQUALIFIED" not in
+         (output / "cargo-original-test-build/stderr.raw").read_bytes(),
+         "Original SQLite gate emitted an unqualified warning")
+    directory = Path(row["out_dir"]).absolute()
+    need(directory.resolve(strict=True) == directory and target.resolve() in directory.parents,
+         "Actual SQLite build output escaped the bound Cargo target")
+    saved = output / "actual-sqlite-qualification"; saved.mkdir(mode=0o700)
+    files = {}
+    names = ("libtrnm_sqlite_layout_witness.a", "trnm-witness-symbols.stdout", "trnm-witness-symbols.stderr")
+    pairs = [(directory / name, saved / name) for name in names]
+    pairs += [(directory.parent / name, saved / ("build-script-" + name + ".raw")) for name in ("output", "stderr")]
+    for source, destination in pairs:
+        captured = identity(source)
+        shutil.copyfile(source, destination)
+        need(identity(source) == identity(destination) == captured, "Actual SQLite artifact copy changed")
+        files[str(source)] = captured; files[str(destination)] = captured
+    result = {"artifact": row, "build_fence": environment["TRNM_SQLITE3_BUILD_FENCE"], "files": files,
+              "production_Node_execution_claimed": False}
+    write_json(output / "actual-sqlite-qualification.json", result)
+    return result, files
+
 def original_comparison(repository, bundle, output, target):
     need(__debug__, "Original Work owner admission refuses optimized Python")
     environment()
@@ -82,14 +132,19 @@ def original_comparison(repository, bundle, output, target):
     output, target = require_output_and_target(output, target, ROOT, repository, bundle)
     admitted = validate_bundle(bundle, repository, require_trace=True)
     standard = captured_std(); env = bound_build_environment(standard)
+    loader = capture_loader(standard)
+    need(not env.get("LD_LIBRARY_PATH"), "Caller loader override survived admission")
+    env["LD_LIBRARY_PATH"] = loader["path"]
+    rustdoc = Path(standard["compiler_executable"]["path"]).parent / "rustdoc"
+    rustdoc_identity = identity(rustdoc); env["RUSTDOC"] = str(rustdoc)
     output.mkdir(parents=True, mode=0o700)
     report = {"schema": "trnm.hia.work-owner-original.v1", "status": "FAIL",
               "retained_original_tests": [], "stages": [], "comparisons": [],
               "production_fixed_parent_authority": False, "whole_Node_or_paid_checkpoint_closed": False,
               "original_4s_16_service_gate_closed": False,
-              "original_controlled_CLOCK1_fault_comparison": "OPEN",
+              "original_controlled_CLOCK1_fault_comparison": "NOT_RUN",
               "native_protocol_controls_without_original_equivalent": sorted(PROTOCOL_ONLY)}
-    fence = None; binary = None; binary_identity = None; original = admitted["original_sources"]
+    fence = None; binary = None; binary_identity = None; sqlite_files = {}; original = admitted["original_sources"]
     try:
         cases = original_cases()
         actual_native = {case["name"]: row for case, row in zip(corpus(), admitted["native"], strict=True)}
@@ -105,6 +160,7 @@ def original_comparison(repository, bundle, output, target):
             shutil.copyfile(source, destination)
         prefixes = {}
         hooks = {
+            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_clock.rs": (HERE / "rust_clock_reference.rs").read_bytes(),
             "trillionnium/crates/trnm-pon-node/src/hia_work_owner_oracle.rs": (HERE / "rust_reference.rs").read_bytes(),
             "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs":
                 (ROOT / "hia/platform/host_resource/rust_reference.rs").read_bytes(),
@@ -124,12 +180,19 @@ def original_comparison(repository, bundle, output, target):
                   "input": input_identity, "private_hooks": hook_ids,
                   "appended_declarations": {key: value.hex() for key, value in DECLARATIONS.items()},
                   "actual_cargo": standard["cargo_executable"], "actual_rustc": standard["compiler_executable"],
-                  "target_dir": str(target), "original_histories": len(cases)}
+                  "target_dir": str(target), "original_histories": len(cases),
+                  "controlled_CLOCK1_profiles": 18, "derived_normal_compiler_loader": loader,
+                  "actual_rustdoc": {"path": str(rustdoc), **rustdoc_identity},
+                  "cargo_configuration": ["build.incremental=false"]}
         write_json(output / "source-before.json", before)
         def check():
             check_snapshot(bundle, admitted)
             need(original_manifest(repository) == original, "Complete original source graph changed")
             need(captured_std() == standard, "Bound compiler/std/runtime dependency changed")
+            need(capture_loader(standard) == loader and identity(rustdoc) == rustdoc_identity,
+                 "Derived normal compiler loader or rustdoc changed")
+            for path, expected in sqlite_files.items():
+                need(identity(Path(path)) == expected, "Actual SQLite witness changed")
             need(identity(input_path) == input_identity, "Exact original corpus changed")
             observed = {path.relative_to(isolated).as_posix() for path in isolated.rglob("*") if path.is_file()}
             need(observed == set(original) | set(hooks), "Isolated original file roster changed")
@@ -153,10 +216,11 @@ def original_comparison(repository, bundle, output, target):
                 path = output / label / "receipt.json"
                 if path.exists(): report["stages"].append(read_json(path))
                 raise
-        raw = call([standard["cargo_executable"]["path"], "test", "--locked", "--manifest-path",
+        raw = call([standard["cargo_executable"]["path"], "--config", "build.incremental=false", "test", "--locked", "--manifest-path",
                     str(isolated / "trillionnium/Cargo.toml"), "-p", "trnm-pon-node", "--lib", "--no-run",
                     "--message-format=json", "--target-dir", str(target)], "cargo-original-test-build", 900)
         events = [json.loads(line) for line in raw.splitlines() if line.startswith(b"{")]
+        report["sqlite_qualification"], sqlite_files = capture_sqlite(events, isolated, target, output)
         artifact = original_artifact(events, isolated)
         compiled = Path(artifact["executable"]).resolve(strict=True)
         binary_identity = identity(compiled)
@@ -181,7 +245,7 @@ def original_comparison(repository, bundle, output, target):
              in relative_tests.read_text(), "Ignored original probe no longer belongs to its bounded parent tests")
         retained = sorted(name for name in tests if name.startswith("host_kernel_parent::kernel_parent::")
                           and "::hia_work_owner_oracle::" not in name and name not in ignored)
-        need(TEST in tests and len(retained) == 44 and set(REQUIRED_TESTS) <= set(retained),
+        need(TEST in tests and CLOCK_TEST in tests and len(retained) == 44 and set(REQUIRED_TESTS) <= set(retained),
              "Mandatory complete original Host tests/observer were not linked")
         report["ignored_direct_probe"] = {"name": IGNORED, "ordinary_pass_claimed": False,
             "reason": "executed by its original bounded nonregular-limit parent tests"}
@@ -200,6 +264,15 @@ def original_comparison(repository, bundle, output, target):
         report["actual_original_progress_points"] = sum(len(r["progress"]) for r in actual)
         report["actual_original_worker_histories"] = sum(r.get("joined") is True for r in actual)
         need(report["passed"] == report["total"] == 57, "Actual original Host/W1 methods differ from native")
+        check()
+        report["original_controlled_CLOCK1_fault_comparison"] = "RUNNING"
+        try:
+            report["controlled_clock"] = compare_clock_faults(binary, binary_identity, output / "controlled-clock",
+                                                             admitted, check=check)
+            report["original_controlled_CLOCK1_fault_comparison"] = "PASS"
+        except BaseException:
+            report["original_controlled_CLOCK1_fault_comparison"] = "FAIL"
+            raise
         check(); report["status"] = "PASS"
     except BaseException as error:
         report.update(failure=repr(error), traceback=traceback.format_exc())
@@ -211,6 +284,9 @@ def original_comparison(repository, bundle, output, target):
             except BaseException as error:
                 report.update(status="FAIL", source_after="FAIL", final_fence_failure=repr(error))
         else: report["source_after"] = "ADMISSION_DID_NOT_COMPLETE"
+        clock_report = output / "controlled-clock/report.json"
+        if clock_report.exists():
+            report["controlled_clock_report"] = identity(clock_report)
         write_json(output / "report.json", report)
     return report
 

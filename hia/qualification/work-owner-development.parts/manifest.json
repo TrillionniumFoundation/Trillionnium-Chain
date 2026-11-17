@@ -1,43 +1,60 @@
 {
   "archive": {
-    "bytes": 26328788,
-    "sha256": "b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db"
+    "bytes": 50018340,
+    "sha256": "b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325"
   },
-  "chunk_bytes": 6291456,
+  "development_view_requires_exact_Git_and_external_original_binary": true,
   "logical_name": "work-owner-development.tar.xz",
+  "part_max_bytes": 6291456,
   "parts": [
     {
       "bytes": 6291456,
       "offset": 0,
       "path": "part-000",
-      "sha256": "4d760591bdd68887a54fa013cdc3fd838c6dc4581de614cf1f4d60ebd672a243"
+      "sha256": "30d0eef27d7501dbb09b7a7024e8c9eafbe86534ed32dd98c3f78e489b627626"
     },
     {
       "bytes": 6291456,
       "offset": 6291456,
       "path": "part-001",
-      "sha256": "2bf1a973b6c4ce8f0b56908ab380dd3a5f8adfb043d20eba604735f41977db5e"
+      "sha256": "7a6b688d388a25d4c540f87dd58be74e28b6c9b729c9550f5e9e688650d01927"
     },
     {
       "bytes": 6291456,
       "offset": 12582912,
       "path": "part-002",
-      "sha256": "2ee93b21589c44bc51a46132f28acc569e02961f5b1d850a5713fad27208f7c0"
+      "sha256": "611c5ddd282447f89c6d3fda43d9aaefd18871c63ec28570639a1d903a943f35"
     },
     {
       "bytes": 6291456,
       "offset": 18874368,
       "path": "part-003",
-      "sha256": "eef431cdd74759438e3bf0c596646d7ce098877407b88d4d4454f61a68e11b9a"
+      "sha256": "d4f49f404fd73ebf573c00e5ac9aad71f31695bb9a5a88f6bc2782dd1f54eef7"
     },
     {
-      "bytes": 1162964,
+      "bytes": 6291456,
       "offset": 25165824,
       "path": "part-004",
-      "sha256": "b3320ba5933c3885ac8955db0f47491a1d249889386a970ce5b856689e6e621c"
+      "sha256": "820fea5536b47b4c419160b8e771900bfd30f16ae4e8f1a2c9029029dc2a505f"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 31457280,
+      "path": "part-005",
+      "sha256": "ce69c7de4ee86a1cfbdbd24c99627ca4061f0323d338642ac107e4107377d87c"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 37748736,
+      "path": "part-006",
+      "sha256": "73503062963593cd8c7f706dcdb954dbace3e5581ea25319318d4f146d2913fd"
+    },
+    {
+      "bytes": 5978148,
+      "offset": 44040192,
+      "path": "part-007",
+      "sha256": "03dfa615f7c23441578beb8b7f8c483d85b1520293d5efe58e750f58dd5ef806"
     }
   ],
-  "qualification_is_not_changed_by_storage": true,
-  "reassembly": "Concatenate the regular files in the declared order, verify each part identity and the full archive identity before opening it.",
   "schema": "trnm.hia.contiguous-archive.v1"
 }

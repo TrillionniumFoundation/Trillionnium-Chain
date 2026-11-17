@@ -31,13 +31,22 @@ class EvidenceAdmission(unittest.TestCase):
                            for i in range(44 - len(set(q.oracle.REQUIRED_TESTS)))})
         self.assertEqual(len(retained), 44)
         files = {name: tiny for name in ("native/report.json", "original/report.json",
-                 "original/original-test-binary", "original/source-before.json", "original/source-after.json")}
+                 "original/original-test-binary", "original/source-before.json", "original/source-after.json",
+                 "original/controlled-clock/report.json", "original/controlled-clock/actual-reader-controls/report.json",
+                 "original/actual-sqlite-qualification.json",
+                 "native/primitives/raw-buffers/manifest.json", "native/primitives/raw-buffers/calls.jsonl")}
         value = {"schema": q.SCHEMA, "stage": q.STAGE, "status": "PASS",
                  "lineage": {"git_head": "a" * 40, "run_id": "42", "attempt": 1},
+                 "pipeline": "native-original-qualification-readback-v1",
+                 "complete_predecessor_regular_bytes_retained": True,
+                 "complete_predecessor_archives_retained": True,
                  **q.COUNTS, **{name: False for name in q.SCOPES},
                  "physical_trace": "PASS", "original_rust": "PASS",
-                 "original_controlled_CLOCK1_fault_comparison": "OPEN",
-                 "primitive_raw_guard_arenas_retained": False,
+                 "original_controlled_CLOCK1_fault_comparison": "PASS",
+                 "primitive_raw_guard_arenas_retained": True, "primitive_raw_readback": "PASS",
+                 "original_sqlite_build_fence": "sqlite-3.54.1-normal-native-linux-layout-v4",
+                 "primitive_raw_evidence": {**q.next_evidence.RAW_COUNTS,
+                     "guards_and_complete_bodies_retained": True, "manifest": tiny, "calls": tiny},
                  "source_inputs": sources, "original_sources": original,
                  "source_set_sha256": q.object_hash(sources),
                  "original_source_set_sha256": q.object_hash(original),
@@ -47,7 +56,10 @@ class EvidenceAdmission(unittest.TestCase):
         for name, field in (("native/report.json", "native_report"), ("original/report.json", "original_report"),
                             ("original/original-test-binary", "original_binary"),
                             ("original/source-before.json", "original_source_before"),
-                            ("original/source-after.json", "original_source_after")):
+                            ("original/source-after.json", "original_source_after"),
+                            ("original/controlled-clock/report.json", "original_clock_report"),
+                            ("original/controlled-clock/actual-reader-controls/report.json", "original_clock_raw_controls_report"),
+                            ("original/actual-sqlite-qualification.json", "original_sqlite_qualification")):
             value[field] = files[name]
         return value
 
@@ -101,8 +113,8 @@ class EvidenceAdmission(unittest.TestCase):
             wrong[key] = True
             with self.subTest(key=key), self.assertRaises(ValueError):
                 q.check_binding(wrong, value["lineage"])
-        for wrong in ({"original_controlled_CLOCK1_fault_comparison": "PASS"},
-                      {"primitive_raw_guard_arenas_retained": True},
+        for wrong in ({"original_controlled_CLOCK1_fault_comparison": "OPEN"},
+                      {"primitive_raw_guard_arenas_retained": False},
                       {"retained_original_tests": value["retained_original_tests"][:-1]},
                       {"retained_original_tests": value["retained_original_tests"][:-1] +
                           [value["retained_original_tests"][0]]}):
@@ -268,6 +280,101 @@ class EvidenceAdmission(unittest.TestCase):
                       {**good, "main_tid": 101}, {**good, "progress": [[64, 0, 0, 0, 1]]}):
             with self.subTest(wrong=wrong), self.assertRaises(ValueError):
                 q.original_shape(wrong)
+
+    def test_binding_cannot_omit_new_full_raw_or_clock_artifacts(self):
+        value = self.binding()
+        q.check_binding(value, value["lineage"])
+        for name in ("original/controlled-clock/report.json",
+                     "original/controlled-clock/actual-reader-controls/report.json",
+                     "original/actual-sqlite-qualification.json",
+                     "native/primitives/raw-buffers/manifest.json",
+                     "native/primitives/raw-buffers/calls.jsonl"):
+            wrong = copy.deepcopy(value)
+            wrong["evidence_files"].pop(name)
+            wrong["evidence_set_sha256"] = q.object_hash(wrong["evidence_files"])
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                q.check_binding(wrong, value["lineage"])
+        for field, bad in (("primitive_raw_readback", "NOT_RUN"),
+                           ("original_sqlite_build_fence", "unqualified")):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                q.check_binding({**value, field: bad}, value["lineage"])
+
+    def test_primitive_complete_raw_summary_has_exact_integer_types(self):
+        raw = {**q.next_evidence.RAW_COUNTS,
+               "schema": "trnm.hia.work-owner-primitive-bytes.v1",
+               "guards_and_complete_bodies_retained": True,
+               "native_cpu_ns": 0, "native_wall_ns": 0,
+               "manifest": q.bytes_id(b"manifest"), "calls": q.bytes_id(b"calls")}
+        report = {"primitives": {"raw_readback": "PASS", "raw_evidence": raw}}
+        self.assertTrue(q.next_evidence.primitive_summary(q, report)["primitive_raw_guard_arenas_retained"])
+        for key in (*q.next_evidence.RAW_COUNTS, "native_cpu_ns", "native_wall_ns"):
+            for value in (False, float(raw[key]), -1):
+                wrong = copy.deepcopy(report)
+                wrong["primitives"]["raw_evidence"][key] = value
+                with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                    q.next_evidence.primitive_summary(q, wrong)
+        for value in (1, "true", False):
+            wrong = copy.deepcopy(report)
+            wrong["primitives"]["raw_evidence"]["guards_and_complete_bodies_retained"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                q.next_evidence.primitive_summary(q, wrong)
+
+    def test_clock_patch_exact_stream_bytes_and_empty_patch(self):
+        path = self.directory / "patch.xz"
+        self.archive(path, [("events.jsonl", b'{"actual":1}\n', {})])
+        result = q.next_evidence.patch_bytes(q, path, {"events.jsonl": q.bytes_id(b'{"actual":1}\n')})
+        self.assertEqual(result, {"events.jsonl": b'{"actual":1}\n'})
+        empty = self.directory / "empty.xz"
+        self.archive(empty, [])
+        self.assertEqual(q.next_evidence.patch_bytes(q, empty, {}), {})
+        original = path.read_bytes()
+        for i, data in enumerate((original[:-1], original + b"x", original + original)):
+            bad = self.directory / ("patch-stream-" + str(i))
+            bad.write_bytes(data)
+            with self.subTest(i=i), self.assertRaises((ValueError, lzma.LZMAError, tarfile.TarError, EOFError)):
+                q.next_evidence.patch_bytes(q, bad, {"events.jsonl": q.bytes_id(b'{"actual":1}\n')})
+
+    def test_clock_patch_rejects_replacement_paths_types_and_duplicate_members(self):
+        variants = [
+            [("../events.jsonl", b"x", {})],
+            [("events.jsonl", b"x", {}), ("events.jsonl", b"x", {})],
+            [("events.jsonl", b"x", {"mode": 0o755})],
+            [("events.jsonl", b"x", {"uid": 1})],
+            [("events.jsonl", b"x", {"pax_headers": {"comment": "hidden"}})],
+            [("events.jsonl", b"", {"type": tarfile.SYMTYPE, "linkname": "/outside"})],
+            [("events.jsonl", b"X", {})],
+        ]
+        for i, members in enumerate(variants):
+            path = self.directory / ("patch-metadata-" + str(i) + ".xz")
+            self.archive(path, members)
+            with self.subTest(i=i), self.assertRaises((ValueError, tarfile.TarError)):
+                q.next_evidence.patch_bytes(q, path, {"events.jsonl": q.bytes_id(b"x")})
+        path = self.directory / "good-patch.xz"
+        self.archive(path, [("events.jsonl", b"x", {})])
+        with self.assertRaises(ValueError):
+            q.next_evidence.patch_bytes(q, path, {"arbitrary": q.bytes_id(b"x")})
+        with self.assertRaises(ValueError):
+            q.next_evidence.patch_bytes(q, path, {"events.jsonl": {"bytes": True, "sha256": hashlib.sha256(b"x").hexdigest()}})
+
+    def test_clock_raw_roster_and_types_reject_before_opening_files(self):
+        report = {"schema": "trnm.hia.work-owner-actual-clock-reader-controls.v1",
+                  "status": "PASS", "source_after": "MATCH", "baseline_after": "MATCH",
+                  "source_inputs": {}, "actual_native_or_Rust_processes_executed_by_controls": 0,
+                  "public_actual_reader_api": "hia.platform.work_owner.clock_evidence.audit",
+                  "full_source_qualification_claimed_by_these_controls": False,
+                  "count": 20, "positive": 2, "negative": 18,
+                  "rows": [{"name": name} for name, _, _ in q.next_evidence.CONTROL_SPECS]}
+        mutations = []
+        for key in ("count", "positive", "negative", "actual_native_or_Rust_processes_executed_by_controls"):
+            wrong = copy.deepcopy(report); wrong[key] = float(report[key]); mutations.append(wrong)
+            wrong = copy.deepcopy(report); wrong[key] = False; mutations.append(wrong)
+        wrong = copy.deepcopy(report); wrong["rows"] = wrong["rows"][:-1]; mutations.append(wrong)
+        wrong = copy.deepcopy(report); wrong["rows"][0] = wrong["rows"][1]; mutations.append(wrong)
+        wrong = copy.deepcopy(report); wrong["full_source_qualification_claimed_by_these_controls"] = 0; mutations.append(wrong)
+        with mock.patch.object(q, "regular", side_effect=AssertionError("Must refuse before raw I/O")):
+            for wrong in mutations:
+                with self.subTest(wrong=wrong), self.assertRaises(ValueError):
+                    q.next_evidence.clock_reader_controls(q, self.directory, wrong, {}, {}, {}, {}, [], {})
 
 
 if __name__ == "__main__":

@@ -83,7 +83,14 @@
     "Paid.history_checkpoint and the shared paid account in every callback",
     "native Node/batch integration and durable commit",
     "production fixed-parent positive for this combined owner",
-    "original fixed 4-second/16-attacker and 1800-second service gates",
-    "actual original Rust controlled CLOCK1 fault comparison"
-  ]
+    "original fixed 4-second/16-attacker and 1800-second service gates"
+  ],
+  "qualification_requirements": {
+    "primitive_complete_guard_before_after_raw": 175,
+    "actual_original_controlled_CLOCK1_faults": 18,
+    "original_normal_vdso_positive": 1,
+    "original_private_no_vdso_positive": 1,
+    "same_complete_source_required": true,
+    "requirement_is_not_a_pass_claim": true
+  }
 }

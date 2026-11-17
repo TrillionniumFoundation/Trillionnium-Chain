@@ -18,7 +18,9 @@ ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 OWNED = (
     "README.md", "abi.json", "build.py", "cases.py", "native_io.py",
-    "trace_audit.py", "trace_controls.py", "primitive_qualification.py", "faults.py",
+    "trace_audit.py", "trace_controls.py", "primitive_qualification.py", "primitive_evidence.py",
+    "test_primitive_evidence.py", "clock_trace.py", "clock_evidence.py", "clock_comparison.py",
+    "test_clock_evidence.py", "rust_clock_reference.rs", "faults.py",
     "qualify.py", "bundle.py", "rust_oracle.py", "test_integrity.py",
     "rust_reference.rs", "rust_bridge.rs", "owner_policy.hepta", "owner_fixture.hepta",
     "work_policy.hepta", "host_method.hepta", "host_fixture.hepta",
@@ -81,7 +83,9 @@ def unique(pairs):
     return result
 
 def read_json(path):
-    return json.loads(Path(path).read_bytes(), object_pairs_hook=unique)
+    def nonfinite(value):
+        raise ValueError("Non-finite JSON number: " + value)
+    return json.loads(Path(path).read_bytes(), object_pairs_hook=unique, parse_constant=nonfinite)
 
 def write_json(path, value):
     Path(path).write_text(json.dumps(value, sort_keys=True, indent=2) + "\n")

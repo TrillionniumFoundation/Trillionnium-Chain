@@ -5,12 +5,14 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import struct
 import sys
 import tempfile
 import unittest
 from .build import ROOT, HERE, OWNED, identity, read_json, source_manifest, write_json
 from .bundle import (artifacts, canonical_file, require_output_and_target, include_graph,
-                     validate_control_roster, TRACE_CONTROL_PROFILE, SIGNAL_CONTROL_PROFILE)
+                     validate_control_roster, TRACE_CONTROL_PROFILE, SIGNAL_CONTROL_PROFILE, physical_frame)
+from .native_io import decode
 from .cases import corpus, original_cases, PROTOCOL_ONLY
 from .rust_oracle import original_artifact
 from hia.platform.paid_cpu.dependency import FORBIDDEN, forbidden_override
@@ -35,7 +37,7 @@ class Admission(unittest.TestCase):
 
     def test_complete_declared_source_closure(self):
         rows = source_manifest()
-        self.assertEqual(len(OWNED), 23)
+        self.assertEqual(len(OWNED), 30)
         self.assertEqual(sum(name.endswith(".hepta") for name in OWNED), 8)
         actual = {p.name for p in HERE.iterdir() if p.suffix in {".py", ".rs", ".hepta", ".json", ".md"}}
         self.assertEqual(actual, set(OWNED))
@@ -85,6 +87,68 @@ class Admission(unittest.TestCase):
             root = Path(tmp); bundle = root / "bundle"; bundle.mkdir()
             (bundle / "report.json").write_text('{"status":"FAIL","status":"PASS"}\n')
             self.assertIn("Duplicate JSON field", self.cli(root, bundle=bundle))
+
+    def test_public_nonfinite_json_refused_before_copy(self):
+        for value in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(value=value), tempfile.TemporaryDirectory(prefix="hia-work-nonfinite-") as tmp:
+                root = Path(tmp); bundle = root / "bundle"; bundle.mkdir()
+                (bundle / "report.json").write_text('{"status":"PASS","unbound":' + value + '}\n')
+                self.assertIn("Non-finite JSON number", self.cli(root, bundle=bundle))
+
+    def test_public_source_identity_counts_keep_integer_type(self):
+        current = source_manifest()
+        key = "hia/platform/work_owner/bundle.py"
+        top = copy.deepcopy(current)
+        top[key]["bytes"] = float(top[key]["bytes"])
+        with tempfile.TemporaryDirectory(prefix="hia-work-source-type-") as tmp:
+            root = Path(tmp); bundle = root / "bundle"; bundle.mkdir()
+            write_json(bundle / "report.json", {"schema": "trnm.hia.work-owner-qualification.v1",
+                       "status": "PASS", "source_inputs": top, "build": {"source_inputs": top}})
+            self.assertIn("complete source maps differ", self.cli(root, bundle=bundle))
+
+    def test_raw_frame_reader_rejects_coherent_numeric_type_changes(self):
+        # A deliberately encoded reader fixture, not a new native execution.
+        # Actual ELF regressions and their complete raw bytes are separate.
+        words = [0] * 64
+        words[0] = int.from_bytes(b"HIAWO001", "little")
+        words[1:4] = [1, 2, 1]
+        words[5] = 1
+        words[10:14] = [11, 12, 1, 1]
+        raw = struct.pack("<64Q", *words) + bytes(768) + struct.pack("<5Q", 64, 0, 0, 0, 1)
+        with tempfile.TemporaryDirectory(prefix="hia-work-frame-type-") as tmp:
+            directory = Path(tmp)
+            (directory / "stdout.raw").write_bytes(raw)
+            (directory / "stderr.raw").write_bytes(b"")
+            physical = {
+                "image_sha256": "0" * 64, "decoded": decode(raw),
+                "stdout": identity(directory / "stdout.raw"), "stderr": identity(directory / "stderr.raw"),
+                "status": "PHYSICAL_FRAME_PASS_SEMANTIC_EXPECTATIONS_PENDING", "fixture": True,
+                "production_authority": False, "actual_original_rust": False,
+                "exit_code": 66, "stderr_hex": "",
+            }
+            write_json(directory / "physical.json", physical)
+            self.assertEqual(physical_frame(physical, directory, "0" * 64), decode(raw))
+            variants = [
+                (("decoded", "header", "domain"), 2.0),
+                (("decoded", "header", "code"), True),
+                (("decoded", "progress", 0, 4), True),
+                (("decoded", "host_after", 0), False),
+                (("decoded", "product_bytes"), False),
+                (("exit_code",), 66.0),
+                (("stdout", "bytes"), float(len(raw))),
+                (("fixture",), 1),
+                (("production_authority",), 0),
+                (("actual_original_rust",), 0),
+            ]
+            for path, value in variants:
+                changed = copy.deepcopy(physical); target = changed
+                for key in path[:-1]:
+                    target = target[key]
+                target[path[-1]] = value
+                write_json(directory / "physical.json", changed)
+                with self.subTest(path=path), self.assertRaises(ValueError):
+                    physical_frame(changed, directory, "0" * 64)
+                self.assertEqual((directory / "stdout.raw").read_bytes(), raw)
 
     def test_targets_cannot_overlap_isolated_or_source_trees(self):
         with tempfile.TemporaryDirectory(prefix="hia-work-target-gate-") as tmp:
@@ -157,6 +221,8 @@ class Admission(unittest.TestCase):
                                "actual_acceptance": accepted, "status": "PASS"} for name, accepted in profile]}
             validate_control_roster(valid, profile, schema)
             variants = []
+            for key in ("count", "positive", "negative"):
+                value = copy.deepcopy(valid); value[key] = float(value[key]); variants.append(value)
             value = copy.deepcopy(valid); value["rows"] = []; variants.append(value)
             value = copy.deepcopy(valid); value["rows"].pop(); variants.append(value)
             value = copy.deepcopy(valid); value["rows"][-1] = value["rows"][0]; variants.append(value)

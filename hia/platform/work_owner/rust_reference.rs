@@ -197,3 +197,6 @@ fn same_worker_evaluate() {
         println!("{WORK_MARKER}{}",run_original_work(&case));
     }
 }
+
+// New private observation only; original production methods above remain unchanged.
+include!("hia_work_owner_clock.rs");

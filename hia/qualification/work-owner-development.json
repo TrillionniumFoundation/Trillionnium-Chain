@@ -1,1180 +1,607 @@
 {
-  "CI_evidence": {
-    "archive": {
-      "bytes": 4748140,
-      "path": "hia/qualification/work-owner-ci-development.tar.xz",
-      "sha256": "b6f11bd920db880705e231bfbd2c210c4b6ebd92f7fb027284780a956ae26ac4"
-    },
-    "archive_members": 257,
-    "complete_member_readback": "PASS",
-    "content_objects": 256,
-    "controlled_original_CLOCK1_differential": "OPEN",
-    "development_V4_false_accepts": 3,
-    "development_V5_actual_refusals": 3,
-    "expanded_tar_bytes": 52766720,
-    "full_V4_CI_archive": {
-      "bytes": 240422316,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/actual-review-v4/artifact/complete-evidence.tar.xz",
-      "sha256": "087e2e2c8d0e61919dcaa8a21d8c1e907d3435f261af47399f1eda127675ef8c"
-    },
-    "full_V5_CI_archive": {
-      "bytes": 240423952,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/actual-review-v5/artifact/complete-evidence.tar.xz",
-      "sha256": "43c09d41942f5f429700aa31cd06481a8c41f84c4ba09622f3783eed063939e5"
-    },
-    "full_original_binary_external": {
-      "bytes": 611226784,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/original-final-v1/original-test-binary",
-      "sha256": "51134237d66716e00833e3d9e9b9e093a6a4d2cc2eeb0901a2208f0d2ad2c1ad"
-    },
-    "hosted_CI_pass_claimed": false,
-    "logical_files": 389,
-    "manifest": {
-      "bytes": 160350,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/handoff-final-v5/ci-development-manifest.json",
-      "sha256": "ab60c4ffc64142fd1b0a97290b0fc7ef95b3a3bbb15ae5de455c14dd03de99d0"
-    },
-    "primitive_guard_arena_replay": "UNAVAILABLE_RAW_NOT_RETAINED",
-    "public_archive_negative_controls": 4,
-    "schema": "trnm.hia.work-owner-ci-development-index.v1",
-    "single_XZ_stream": "PASS",
-    "source_after": "MATCH",
-    "source_control_groups": 25,
-    "suggested_repository_path": "hia/qualification/work-owner-ci-development.tar.xz",
-    "workflow_inline_controls": 14
-  },
-  "CI_sources": {
-    "hia/tests/test_work_owner_ci.py": {
-      "bytes": 15036,
-      "sha256": "b215ece318fa38d4242b3d0a3a7621f678a70b8122ef7bca3db589ae9a22bd5d"
-    },
-    "hia/tools/qualify_work_owner_ci.py": {
-      "bytes": 59952,
-      "sha256": "7db0bb88f1d79551cfb710262a5936c33ace2f498698f46bca5dc63cf7d3f107"
-    }
-  },
-  "HIA_sources": 8,
-  "actual_hosted_CI_for_new_integrated_source": "NOT_RUN",
-  "base_git_head": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
-  "detached_probe": {
-    "actual_audit_passed": true,
-    "actual_default_dev_refused": true,
-    "actual_eight_compilers_three_emitters": "PASS",
-    "full_native_or_Rust_rerun_claimed": false,
-    "git_head": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
-    "report": {
-      "bytes": 937820,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/detached-build-probe-v1/report.json",
-      "sha256": "784a92498b822012bd4b671a9f8b7d28c8018f1b914f100013659c3ebcf47b93"
-    }
-  },
-  "development_failures_preserved": [
-    "native V1 physical PASS; public reader KeyError stderr_bytes FAIL before Cargo",
-    "native V2 physical late-cancel SIGUSR1 valid; old trace parser FAIL",
-    "native V3/full public admission PASS; independent modified-flat unchanged-ELF accepted by old gate",
-    "V4 byte link/control roster repair actual positive+negative PASS; full new native and original PASS",
-    "precanonical original first retained ignored-probe admission FAIL; later independent48 observation PASS",
-    "V4 CI original raw numeric booleans and string TID were accepted under fully rehashed metadata; all three actual false-accepts preserved.",
-    "V5 strict original hook types reject all three previous actual mutants; unchanged actual57/44 inputs replayed from complete retained raw bytes.",
-    "Initial CI test syntax/private namespace admission failures and read-only timing inventory error preserved; none is relabeled a native failure."
-  ],
-  "development_originals_and_full_archives_preserved": true,
-  "generic_composition": {
-    "includes": {
-      "platform/work_owner/host_fixture.hepta": [
-        {
-          "functions": [
-            "work_host_entry",
-            "work_host_start",
-            "work_host_begin_method",
-            "work_host_intercept"
-          ],
-          "source": "platform/work_owner/host_method.hepta"
-        },
-        {
-          "functions": [
-            "resource_entry",
-            "resource_tick",
-            "resource_gate",
-            "resource_base",
-            "resource_bound",
-            "resource_open_counter",
-            "resource_read_counter",
-            "resource_parse",
-            "resource_duplicate",
-            "resource_number",
-            "resource_required_key",
-            "resource_finish"
-          ],
-          "source": "platform/host_resource/resource_policy.hepta"
-        },
-        {
-          "functions": [
-            "host_entry",
-            "host_tick",
-            "host_canonical_next",
-            "host_context_start",
-            "host_context_read",
-            "host_context_done",
-            "host_parent_open",
-            "host_metadata_matches",
-            "host_limits_start",
-            "host_limit_open",
-            "host_limit_read",
-            "host_gate",
-            "host_fail",
-            "host_cleanup",
-            "host_close_count",
-            "host_receipt",
-            "host_output_progress",
-            "host_timespec",
-            "host_issue",
-            "host_account",
-            "host_parse_limits",
-            "host_numeric",
-            "host_zero_text",
-            "host_ascii_space",
-            "host_whitespace",
-            "host_trim_start",
-            "host_trim_end",
-            "host_utf8",
-            "host_membership",
-            "host_code",
-            "host_path",
-            "host_parent_prefix",
-            "host_read",
-            "host_get",
-            "host_put"
-          ],
-          "source": "platform/host_checkpoint/owner_policy.hepta"
-        }
-      ],
-      "platform/work_owner/host_method.hepta": [
-        {
-          "functions": [
-            "resource_entry",
-            "resource_tick",
-            "resource_gate",
-            "resource_base",
-            "resource_bound",
-            "resource_open_counter",
-            "resource_read_counter",
-            "resource_parse",
-            "resource_duplicate",
-            "resource_number",
-            "resource_required_key",
-            "resource_finish"
-          ],
-          "source": "platform/host_resource/resource_policy.hepta"
-        },
-        {
-          "functions": [
-            "host_entry",
-            "host_tick",
-            "host_canonical_next",
-            "host_context_start",
-            "host_context_read",
-            "host_context_done",
-            "host_parent_open",
-            "host_metadata_matches",
-            "host_limits_start",
-            "host_limit_open",
-            "host_limit_read",
-            "host_gate",
-            "host_fail",
-            "host_cleanup",
-            "host_close_count",
-            "host_receipt",
-            "host_output_progress",
-            "host_timespec",
-            "host_issue",
-            "host_account",
-            "host_parse_limits",
-            "host_numeric",
-            "host_zero_text",
-            "host_ascii_space",
-            "host_whitespace",
-            "host_trim_start",
-            "host_trim_end",
-            "host_utf8",
-            "host_membership",
-            "host_code",
-            "host_path",
-            "host_parent_prefix",
-            "host_read",
-            "host_get",
-            "host_put"
-          ],
-          "source": "platform/host_checkpoint/owner_policy.hepta"
-        }
-      ],
-      "platform/work_owner/owner_fixture.hepta": [
-        {
-          "functions": [
-            "owner_entry",
-            "owner_dispatch",
-            "owner_main",
-            "owner_worker",
-            "owner_alive",
-            "owner_alive_done",
-            "owner_worker_finish",
-            "owner_worker_exit",
-            "owner_gate",
-            "owner_publish",
-            "owner_error",
-            "owner_issue",
-            "owner_copy",
-            "owner_put",
-            "owner_get",
-            "owner_read"
-          ],
-          "source": "platform/work_owner/owner_policy.hepta"
-        }
-      ],
-      "platform/work_owner/sha_fixture.hepta": [
-        {
-          "functions": [
-            "work_precheck",
-            "work_noise_header",
-            "work_noise_start",
-            "work_noise_resume",
-            "work_matrix_resume",
-            "work_transcript_resume",
-            "work_correction_resume",
-            "work_row",
-            "work_tile",
-            "work_progress",
-            "work_terminal",
-            "work_get",
-            "work_put",
-            "work_copy",
-            "work_code",
-            "work_reduce",
-            "work_task_header",
-            "work_ticket_header",
-            "work_noise_prefix",
-            "work_trace_header",
-            "work_sha256_arena",
-            "work_sha_byte",
-            "work_sha_rotr",
-            "work_sha_s0",
-            "work_sha_s1",
-            "work_sha_b0",
-            "work_sha_b1",
-            "work_sha_schedule",
-            "work_sha_compress",
-            "work_sha_constants"
-          ],
-          "source": "platform/work_owner/work_policy.hepta"
-        },
-        {
-          "functions": [
-            "f1",
-            "f2",
-            "f3",
-            "f4",
-            "f5",
-            "f9",
-            "f10",
-            "f11",
-            "f14",
-            "f16"
-          ],
-          "source": "src/work/verify.hepta"
-        }
-      ],
-      "platform/work_owner/work_policy.hepta": [
-        {
-          "functions": [
-            "f1",
-            "f2",
-            "f3",
-            "f4",
-            "f5",
-            "f9",
-            "f10",
-            "f11",
-            "f14",
-            "f16"
-          ],
-          "source": "src/work/verify.hepta"
-        }
-      ]
-    },
-    "native_compiler_reexecuted": false,
-    "new_owned_files": 0,
-    "programs": {
-      "closed-emitter": {
-        "bytes": 90458,
-        "captured_paths": [
-          "platform/work_owner/closed_fd_fixture_emitter.hepta",
-          "components.json"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 13,
-        "sha256": "f0485c52d89787ed742810bc58e4448f76fb7b554a60db1d052a295aa68e017a"
+  "CI_owned_count": 5,
+  "CI_proposal": {
+    "actual_CLI_help_entries": 9,
+    "actual_bash_scripts": 23,
+    "actual_optimized_refusals": 2,
+    "changed_shared_helper_requires_final_same_head_CI": true,
+    "complete_binary_in_all_CI_original_qualification_readback_stages": true,
+    "development_reader_source_set_sha256": "e42d2f4a5fa468f0ca98e1df5f09ae678043bd64a2e46f18f90946928444eb8e",
+    "development_reader_sources": {
+      "hia/tests/test_work_owner_ci.py": {
+        "bytes": 22429,
+        "sha256": "dd004ded017df7a41ce57151109e34d4d3f857750e7c51fb8318abd8665410f9"
       },
-      "emitter": {
-        "bytes": 89776,
-        "captured_paths": [
-          "platform/work_owner/linux_emitter.hepta",
-          "components.json"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 13,
-        "sha256": "ee084993acd0704ab9329448b73296281fecb9ff52b647564534c16fa675322b"
+      "hia/tests/test_work_owner_transfer_ci.py": {
+        "bytes": 18873,
+        "sha256": "2b70f1b8c8771f2f87b6ebf65e65a12297af7c263783c45705e5d60bba114690"
       },
-      "host": {
-        "bytes": 237473,
-        "captured_paths": [
-          "platform/work_owner/host_method.hepta",
-          "components.json",
-          "platform/host_resource/resource_policy.hepta",
-          "platform/host_checkpoint/owner_policy.hepta"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 52,
-        "sha256": "b01700bc090b5ab43dc5fbe1bc1df20b27be0b8f4495e13a615e5d933c05df9a"
+      "hia/tools/qualify_foundation_ci.py": {
+        "bytes": 25450,
+        "sha256": "6f899b841078d71a3e32549969e51b661de6d7b2131d497bf214e56e545e0174"
       },
-      "host-fixture": {
-        "bytes": 237488,
-        "captured_paths": [
-          "platform/work_owner/host_fixture.hepta",
-          "components.json",
-          "platform/work_owner/host_method.hepta",
-          "platform/host_resource/resource_policy.hepta",
-          "platform/host_checkpoint/owner_policy.hepta"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 52,
-        "sha256": "bdf5f2e45b186d5fd9784b4f054af4ea716d1b75a14729533b8c28e29de27532"
+      "hia/tools/qualify_work_owner_ci.py": {
+        "bytes": 62190,
+        "sha256": "72dfe72935df2898df587de3202c08df40559517fc38426d3fd467de761a3c93"
       },
-      "owner": {
-        "bytes": 48795,
-        "captured_paths": [
-          "platform/work_owner/owner_policy.hepta",
-          "components.json"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 17,
-        "sha256": "7ac8963c0297bee32fb4e322d1c76c2490a3d56a9bd2ad819e9b2899e5834420"
+      "hia/tools/work_owner_clock_ci.py": {
+        "bytes": 20542,
+        "sha256": "dd2c972c6c94d032b6049ef3f7ea3d8ee826a7ae13095a8de6800c9ab11dfe4b"
       },
-      "owner-fixture": {
-        "bytes": 48812,
-        "captured_paths": [
-          "platform/work_owner/owner_fixture.hepta",
-          "components.json",
-          "platform/work_owner/owner_policy.hepta"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 17,
-        "sha256": "488f15b6dec8eb69fc81b7fb0d19ab8947ef1d6bd6782f2bd1c1d00cbbcccdc9"
-      },
-      "sha": {
-        "bytes": 88654,
-        "captured_paths": [
-          "platform/work_owner/sha_fixture.hepta",
-          "components.json",
-          "platform/work_owner/work_policy.hepta",
-          "src/work/verify.hepta",
-          "src/crypto/sha256_arena.hepta"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 41,
-        "sha256": "ec1562bee5eaa33c4e34fda25c2583b1163f90e56c05f53295cb9b1e3b4ee9b7"
-      },
-      "work": {
-        "bytes": 90573,
-        "captured_paths": [
-          "platform/work_owner/work_policy.hepta",
-          "components.json",
-          "src/work/verify.hepta",
-          "src/crypto/sha256_arena.hepta"
-        ],
-        "exact_frozen_composition": true,
-        "functions": 41,
-        "sha256": "799e5e724a12d619d6c3f19c5471e110f87bc3cf488be7955c429b8961ca3f23"
+      "hia/tools/work_owner_transfer_ci.py": {
+        "bytes": 26595,
+        "sha256": "69c3d23acf35b85447c69fb98061bbcc591be89b0fbcc7c153ef566e8eb31b85"
       }
     },
-    "proposal_destination": "hia/components.json includes",
-    "root_repository_modified": false,
-    "schema": "trnm.hia.work-owner-generic-includes-review.v1",
-    "semantic_source_closure_contains_components": false,
-    "semantic_source_count": 126,
-    "semantic_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
-    "source_after": "MATCH",
+    "four_jobs": [
+      "native-work-owner",
+      "native-work-owner-original",
+      "native-work-owner-qualification",
+      "native-work-owner-readback"
+    ],
+    "full_review_scope": "NOT_BOUND_PRIVATE_DEVELOPMENT",
+    "live_four_stage_same_head_run_attempt_chain": "NOT_RUN",
+    "native_bootstrap_jobs": 1,
+    "per_job_seconds": 1200,
+    "source_and_transfer_tests": 65,
+    "workflow_json": {
+      "bytes": 19004,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/workflow-jobs.json",
+      "sha256": "516e90182395a5c7cf62eed2814d31298ea1254edfcb8e489536309b8a3c1036"
+    },
+    "workflow_validation": {
+      "bytes": 9456,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v7/workflow-validation-v1/report.json",
+      "sha256": "1320c0c20b089ad412f22ee58050896875bb649b45c113a7642593a591f23c54"
+    },
+    "workflow_yaml": {
+      "bytes": 18031,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/workflow-jobs.yml",
+      "sha256": "f55496684cda63ec69dce3df01a247c503295bb223f69dda6f503c6138e953f9"
+    }
+  },
+  "actual_original_clock": {
+    "controlled_faults": 18,
+    "normal_vdso_fault_behavior_claimed": false,
+    "normal_vdso_positive": 1,
+    "private_disabled_vdso_positive": 1,
+    "production_Rust_prefix_preserved": true,
+    "raw_negative_controls": 18,
+    "raw_positive_controls": 2,
+    "raw_reader_controls": 20,
     "status": "PASS"
   },
-  "history": {
-    "published_876_original_source_transition": {
-      "changed_original_inputs": [
+  "binary_before_after": "MATCH",
+  "canonical_integration": {
+    "frozen_record": {
+      "bytes": 18695,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/qualification-record.json",
+      "sha256": "9eee65596b3f4a09126f665ed76ca2ff22f6a9f136c56e762d2b3896bb63b0f4"
+    },
+    "node_integration_complete": false,
+    "parent_commit": "c3901ff19c26815205d9cdd6975fc24ecc51ae88",
+    "predecessor_history": {
+      "bytes": 2132,
+      "complete_predecessor_Git_bytes_compared": true,
+      "path": "hia/qualification/work-owner-development-history.json",
+      "sha256": "b0dd359e4a57a1ae417905424c71475824e75c33fb65454354eade016218c72c"
+    },
+    "record_preserves_frozen_paths_and_observations": true,
+    "repository_reader": {
+      "bytes": 11972,
+      "delta_from_frozen_reader": "Only three Git argv additions: --no-replace-objects for cat-file, rev-parse and ls-tree.",
+      "path": "hia/tools/read_work_owner_development.py",
+      "sha256": "74349cff75f7ddcd87ae0b2d2862fb46b3250d47c153c72e92bc7b8b32d69238"
+    },
+    "repository_view_manifest": {
+      "bytes": 4055793,
+      "path": "hia/qualification/work-owner-development.view.json",
+      "sha256": "a203a7d2af486894a5a6107b24801cd609e7f7d7718e147396694c6f4157039d"
+    },
+    "repository_volume_manifest": {
+      "bytes": 1714,
+      "path": "hia/qualification/work-owner-development.parts/manifest.json",
+      "sha256": "71010911c949a2f96260e400061e2d2bc88e58450d255e2e20c4d3f8bb048df4"
+    },
+    "retirement_accepted": false,
+    "root_actual_complete_view_readback": {
+      "actual_complete_result": {
+        "CAS_bytes": 571044074,
+        "CAS_objects": 20178,
+        "Git_referenced_logical_files": 4675,
+        "Git_referenced_objects": 4004,
+        "archive": {
+          "bytes": 50018340,
+          "sha256": "b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325"
+        },
+        "complete_evidence_bytes": 1270761813,
+        "complete_evidence_members": 25677,
+        "complete_original_binary_retained_externally": {
+          "bytes": 574468200,
+          "sha256": "d7c7757bdb6409067f5be594c54b230f9ed30bae2d15664e1d1dce526059a2c4"
+        },
+        "hosted_qualification_claimed": false,
+        "logical_files": 25871,
+        "new_native_or_original_execution": false,
+        "status": "COMPLETE_DEVELOPMENT_VIEW_READBACK_PASS",
+        "whole_complete_CI_archive_retained_externally": {
+          "bytes": 261160948,
+          "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v7/review-ded-v1/artifact/complete-evidence.tar.xz",
+          "sha256": "c651437b0b7666987a4cddedd038508ff3dfe8f84ce1cb72de1db7cff5e9375f"
+        }
+      },
+      "actual_public_readback": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo/hia/tools/read_work_owner_development.py",
+          "--archive",
+          "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/work-components-integration-v3/evidence-install-v1/reassembled-work-owner-development.tar.xz",
+          "--manifest",
+          "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo/hia/qualification/work-owner-development.view.json",
+          "--repository",
+          "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo",
+          "--original-binary",
+          "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/original-v1/original-test-binary"
+        ],
+        "elapsed_ns": 13882727765,
+        "exit_code": 0,
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 913,
+          "sha256": "74bce9464a6ca9de9e24fd438494c0c3e49284d4629a64f88b80e5a19f7097bf"
+        }
+      },
+      "committed": false,
+      "elapsed_ns": 18024927686,
+      "installed_archive": {
+        "bytes": 50018340,
+        "sha256": "b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325"
+      },
+      "installed_view_manifest": {
+        "bytes": 4055793,
+        "sha256": "a203a7d2af486894a5a6107b24801cd609e7f7d7718e147396694c6f4157039d"
+      },
+      "installed_volume_manifest": {
+        "bytes": 1714,
+        "sha256": "71010911c949a2f96260e400061e2d2bc88e58450d255e2e20c4d3f8bb048df4"
+      },
+      "mutated": [
+        "hia/qualification/work-owner-development.parts/part-000",
+        "hia/qualification/work-owner-development.parts/part-001",
+        "hia/qualification/work-owner-development.parts/part-002",
+        "hia/qualification/work-owner-development.parts/part-003",
+        "hia/qualification/work-owner-development.parts/part-004",
+        "hia/qualification/work-owner-development.parts/part-005",
+        "hia/qualification/work-owner-development.parts/part-006",
+        "hia/qualification/work-owner-development.parts/part-007",
+        "hia/qualification/work-owner-development.parts/manifest.json",
+        "hia/qualification/work-owner-development-history.json",
+        "hia/qualification/work-owner-development.view.json",
+        "hia/tools/read_work_owner_development.py",
+        "hia/qualification/work-host-integration-controls.tar.xz"
+      ],
+      "native_or_original_execution": false,
+      "old_complete_archive_bytes": 26328788,
+      "old_history_fully_recoverable": true,
+      "optimized_CLI_refusals": [
         {
-          "development": {
-            "bytes": 39375,
-            "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
-          },
-          "integration": {
-            "bytes": 43394,
-            "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
-          },
-          "path": "config/hia-migration-v1.json"
+          "argv": [
+            "/usr/bin/python3",
+            "-B",
+            "-I",
+            "-O",
+            "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo/hia/tools/read_work_owner_development.py",
+            "--archive",
+            "/absent",
+            "--manifest",
+            "/absent",
+            "--repository",
+            "/absent",
+            "--original-binary",
+            "/absent"
+          ],
+          "exit_code": 1
         },
         {
-          "development": {
-            "bytes": 525351,
-            "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
-          },
-          "integration": {
-            "bytes": 525351,
-            "sha256": "b66f39ed5585b172c18fa9fd7ca36f647a69f73916e1d71582e0cf4e50d74159"
-          },
-          "path": "config/pon/pq-cross-branch-corpus-v1.json"
+          "argv": [
+            "/usr/bin/python3",
+            "-B",
+            "-I",
+            "-OO",
+            "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo/hia/tools/read_work_owner_development.py",
+            "--archive",
+            "/absent",
+            "--manifest",
+            "/absent",
+            "--repository",
+            "/absent",
+            "--original-binary",
+            "/absent"
+          ],
+          "exit_code": 1
         }
       ],
-      "development_original_source_set_sha256": "2acc7fece14ee54a04a8e71219016b1b2878ca8b8d89529f123a270df38f4486",
-      "development_repository": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/repo",
-      "integration_original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
-      "native_126_source_inputs_unchanged": true,
-      "new_actual_original_execution_required": true,
-      "old_execution_relabelled": false,
-      "source_files": 4368
-    }
-  },
-  "integrated_source_fence": "Exact 126 native inputs match frozen e56d development source; new integrated original graph and hosted run require fresh execution.",
-  "integration_base_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
-  "integration_original_source_transition": {
-    "changed_native_inputs": [],
-    "changed_original_inputs": [
-      {
-        "current": {
-          "bytes": 45577,
-          "sha256": "00b38646be75ae19c2d8280b7531d80d90f30db5a9abd3d49f5220e50f89109a"
-        },
-        "executed": {
-          "bytes": 43394,
-          "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
-        },
-        "path": "config/hia-migration-v1.json"
+      "part_count": 8,
+      "prior_git_recovery": {
+        "bytes": 2132,
+        "sha256": "b0dd359e4a57a1ae417905424c71475824e75c33fb65454354eade016218c72c"
       },
-      {
-        "current": {
-          "bytes": 525351,
-          "sha256": "1704b908ec5aafa06fad7d58491e31fa7dd50cad3463fb26f0ef1536a351d94e"
+      "published": false,
+      "reader": {
+        "bytes": 11972,
+        "sha256": "74349cff75f7ddcd87ae0b2d2862fb46b3250d47c153c72e92bc7b8b32d69238"
+      },
+      "source_after": "MATCH",
+      "status": "PASS"
+    },
+    "root_integration_record": "hia/qualification/work-host-integration.json",
+    "scope": "DEVELOPMENT_NATIVE_GRAPH_MATCH; INTEGRATED_ORIGINAL_AND_CI_NOT_YET_EXECUTED",
+    "source_transition": {
+      "CI_reader": {
+        "count": 6,
+        "differences": {
+          "hia/tools/qualify_foundation_ci.py": {
+            "frozen": {
+              "bytes": 25450,
+              "sha256": "6f899b841078d71a3e32549969e51b661de6d7b2131d497bf214e56e545e0174"
+            },
+            "integrated": {
+              "bytes": 27411,
+              "sha256": "4ce280ecc52f5810b157e368b9969e0074fcf1763bc46d5053e5127281dce78f"
+            }
+          }
         },
-        "executed": {
-          "bytes": 525351,
-          "sha256": "b66f39ed5585b172c18fa9fd7ca36f647a69f73916e1d71582e0cf4e50d74159"
+        "frozen_sha256": "e42d2f4a5fa468f0ca98e1df5f09ae678043bd64a2e46f18f90946928444eb8e",
+        "integrated_sha256": "106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca"
+      },
+      "native": {
+        "count": 133,
+        "differences": {},
+        "frozen_sha256": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c",
+        "integrated_sha256": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c"
+      },
+      "new_hosted_exact_commit_execution": "NOT_RUN_AT_PUBLICATION",
+      "new_original_execution": "NOT_RUN_AT_PUBLICATION",
+      "old_development_execution_relabelled": false,
+      "original": {
+        "count": 4368,
+        "differences": {
+          "config/hia-migration-v1.json": {
+            "frozen": {
+              "bytes": 39375,
+              "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
+            },
+            "integrated": {
+              "bytes": 46284,
+              "sha256": "4e31cf4dc6f1b50a06e18652faeab56fe225c56208a46037d6a5834551a30266"
+            }
+          },
+          "config/pon/pq-cross-branch-corpus-v1.json": {
+            "frozen": {
+              "bytes": 525351,
+              "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
+            },
+            "integrated": {
+              "bytes": 525351,
+              "sha256": "a56988b8d31c7aa8323c050c4eb321eae855165301baf017f29b963de800d56f"
+            }
+          }
         },
-        "path": "config/pon/pq-cross-branch-corpus-v1.json"
+        "frozen_before_after": "MATCH",
+        "frozen_sha256": "2acc7fece14ee54a04a8e71219016b1b2878ca8b8d89529f123a270df38f4486",
+        "integrated_sha256": "5b0e74a9ded3e0c264f4ea7257c86f9aeda9897665d74ccae9d64df2cdc34cb4"
       }
+    },
+    "whole_chain_native": false
+  },
+  "canonical_public_type_controls": {
+    "all_baseline_raw_preserved": true,
+    "count": 15,
+    "negative": 14,
+    "new_native_or_Rust_execution": false,
+    "positive": 1,
+    "report": {
+      "bytes": 4716948,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/actual-public-type-controls-v1/report.json",
+      "sha256": "99b8b94812afaa3070657e43980e2dd22cc7a31824c7a09296d86b5fb6252d07"
+    },
+    "seconds": 577.0374921949988,
+    "status": "PASS"
+  },
+  "compact_in_repository_view": {
+    "CAS_objects": 20178,
+    "Git_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+    "Git_referenced_logical_files": 4675,
+    "Git_referenced_objects": 4004,
+    "all_referenced_Git_bytes_actually_checked": true,
+    "archive": {
+      "bytes": 50018340,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/complete-development-evidence-view.tar.xz",
+      "sha256": "b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325"
+    },
+    "complete_primary_members": 25677,
+    "contiguous_volumes": {
+      "bytes": 1782,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/volumes/manifest.json",
+      "sha256": "dcba1ae4d8b0ce4138022a9c03eff174bf80ed00d78716be6b39cc8d20e7d8cf"
+    },
+    "independent_view_readback": {
+      "bytes": 981,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/independent-readback.json",
+      "sha256": "570a13886e2430fc9b9c9c1b230492e36894e2f368f828f268049530290a65a1"
+    },
+    "logical_files": 25871,
+    "manifest": {
+      "bytes": 4055793,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/view-manifest.json",
+      "sha256": "a203a7d2af486894a5a6107b24801cd609e7f7d7718e147396694c6f4157039d"
+    },
+    "original_binary_external_and_full_CI_archive_retained": true,
+    "portable_reader": {
+      "bytes": 11903,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/read-development-view.py",
+      "sha256": "fffdbfe23799ce5832d84cf8963be1dc2c877fb53c59b25a2fd7e81cfdcafbb7"
+    },
+    "portable_reader_argv": [
+      "python3",
+      "-B",
+      "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/read-development-view.py",
+      "--archive",
+      "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/complete-development-evidence-view.tar.xz",
+      "--manifest",
+      "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/evidence-view-v1/view-manifest.json",
+      "--repository",
+      "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/repo",
+      "--original-binary",
+      "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/original-v1/original-test-binary"
     ],
-    "current_native_source_files": 126,
-    "current_native_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
-    "current_original_source_files": 4368,
-    "current_original_source_set_sha256": "097727a7b02abd9b776019ae45c4fc3b5aeb07fa768021459f693ae0db950663",
-    "fresh_exact_commit_hosted_execution": "NOT_RUN",
-    "native_source_inputs_unchanged": true,
-    "old_execution_relabelled": false,
-    "reference_execution": {
-      "head": "876eb577dac61854c535a91ab1480f312d1d6173",
-      "native_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
-      "original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
-      "record": "hia/qualification/work-owner-ci.json",
-      "run_id": 44000856130
+    "self_sufficient_without_Git_and_original_binary": false,
+    "supplementary_members": 194,
+    "volume_count": 8,
+    "volume_max_bytes": 6291456
+  },
+  "complete_development_raw": {
+    "capture_omits_binary_or_isolated_source": false,
+    "complete_members": 25677,
+    "expanded_bytes": 1270761813,
+    "full_CI_archive": {
+      "bytes": 261160948,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v7/review-ded-v1/artifact/complete-evidence.tar.xz",
+      "sha256": "c651437b0b7666987a4cddedd038508ff3dfe8f84ce1cb72de1db7cff5e9375f"
+    },
+    "full_CI_package_directory": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v7/review-ded-v1/artifact",
+    "full_package_manifest": {
+      "bytes": 5747996,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v7/review-ded-v1/artifact/package-manifest.json",
+      "sha256": "c85449cac224b75331ca1316e8ddcd819c88c8eaa21d0a77e4864f2286a87090"
+    },
+    "original_binary": {
+      "bytes": 574468200,
+      "links": 1,
+      "mode": "0o500",
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/original-v1/original-test-binary",
+      "sha256": "d7c7757bdb6409067f5be594c54b230f9ed30bae2d15664e1d1dce526059a2c4"
     }
   },
-  "native": {
-    "actual_native_CLOCK1_fault_controls": 18,
-    "actual_traces": 3,
-    "primitive_controls": 175,
-    "progress": 27843,
-    "report": {
-      "bytes": 7249045,
-      "sha256": "41f389a1515a8e1d6ff0b2b7711a075e4b0d031061f9b57ec8adf8dd8cb8da26"
+  "full_guard": {
+    "actual_calls": 9489,
+    "actual_complete_before_after_guard_bytes": true,
+    "buffers": 538,
+    "chunk_bytes": 73427021,
+    "controls": 175,
+    "independent_raw_readback": "PASS",
+    "logical_bytes": 6010134406,
+    "snapshots": 7800,
+    "unique_chunk_objects": 19413
+  },
+  "local_or_deployed_service_modified": false,
+  "native_HIA_count": 8,
+  "old_c248_counterexamples": {
+    "all_old_inputs_outputs_preserved": true,
+    "archive": {
+      "bytes": 1822476,
+      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/bundle-type-audit-v1/handoff-v1/complete-counterexamples.tar.xz",
+      "sha256": "aacff4378620c8a4dffa2ed3d4d96814c20606bee54e9ed15f09868f0a647669"
+    }
+  },
+  "old_e56d_or_c248_pass_relabelled": false,
+  "original_counts": {
+    "CLOCK_faults": 18,
+    "CLOCK_positive": 2,
+    "CLOCK_raw_reader_controls": 20,
+    "histories": 57,
+    "ordinary_process_stages": 48,
+    "progress_points": 27841,
+    "retained": 44,
+    "worker_histories": 56
+  },
+  "original_source_count": 4368,
+  "owned_semantic_count": 30,
+  "preserved_failures": [
+    {
+      "explanation": "Two actual public-reader false accepts. Full unchanged native bytes, changed metadata and CLI raw preserved in the counterexample archive; ded fixed the canonical reader.",
+      "failure": null,
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/bundle-type-audit-v1",
+      "name": "c248-coherent-type-false-accept",
+      "not_relabelled": true,
+      "recorded_status": "OBSERVED_FALSE_ACCEPT",
+      "report": {
+        "bytes": 4694006,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/bundle-type-audit-v1/report.json",
+        "sha256": "47e31581e53cc63051c160243f83d996f1816214914b7db000c17cc34b153739"
+      }
     },
+    {
+      "explanation": "Private capture_loader incorrectly required a directory mode; actual pre-Cargo FAIL, no production gate was weakened.",
+      "failure": "ValueError('Actual original complete comparison failed')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/original-clock-controller-v1",
+      "name": "loader-contract-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 968952,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/original-clock-controller-v1/report.json",
+        "sha256": "da055baba7f8d25c41467394acf50b1d93c61a7b0ffb78709c2ea4ac174f1f61"
+      }
+    },
+    {
+      "explanation": "Ordinary 57 histories and 44 retained passed but the first controlled-clock payload projection was wrong; CLOCK comparison had not run.",
+      "failure": "ValueError('Actual original complete comparison failed')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/original-clock-controller-v2",
+      "name": "private-original-projection-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 968951,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/original-clock-controller-v2/report.json",
+        "sha256": "f29e8a37c3da1068992e0cfb4eddd32c9f74db7ac10da5fb36761351302272c9"
+      }
+    },
+    {
+      "explanation": "Kernel clear_tid zero was incorrectly assumed to remain zero after libc join; actual libc writes -1. Raw original process evidence preserved.",
+      "failure": "ValueError('Actual child clear-tid is not zero after original join')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/existing-original-clock-input-probe-v3",
+      "name": "post-join-word-reader-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 933326,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/existing-original-clock-input-probe-v3/report.json",
+        "sha256": "2e6ed5a0b2d0d24a37fdcca465fc63d601b21031d0184596af88dd34f04e9bf9"
+      }
+    },
+    {
+      "explanation": "Observer chose a pre-role clock ordinal; genuine normal/no-vDSO positive observations are not relabelled as a full comparison.",
+      "failure": "ValueError('Actual original deadline-start clock differs')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/existing-original-clock-input-probe-v4",
+      "name": "clock-role-ordinal-reader-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 1119432,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/existing-original-clock-input-probe-v4/report.json",
+        "sha256": "e9e45fc5fadf87d5c26c0d6371d2be31ad22bddb2768bed7d8727241892cea87"
+      }
+    },
+    {
+      "explanation": "Externally paused old controller resumed and hit its real 180-second child timeout; remains FAIL, not semantic/native PASS.",
+      "failure": "TimeoutExpired(['/usr/bin/python3', '-B', '-m', 'hia.platform.work_owner.primitive_evidence', '--build', '/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-capture-native-v2/build', '--capture', '/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-raw-adversarial-v1/working/raw-buffers', '--primitive-report', '/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-raw-adversarial-v1/working/report.json', '--output', '/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-raw-adversarial-v1/report-progress-float-for-integer/public-readback'], 180)",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-raw-adversarial-v1",
+      "name": "paused-raw-controller-timeout",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 41733,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/primitive-raw-adversarial-v1/report.json",
+        "sha256": "85f513c1f018f2709251bba80a7d67b260550454b80c3c9f008be3a9513d5707"
+      }
+    },
+    {
+      "explanation": "First new candidate preparation rejected missing literal original include bytes before source patch/native execution.",
+      "failure": "FileNotFoundError(2, 'No such file or directory')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1",
+      "name": "strict-source-materialization-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 937500,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/reader-type-closure-v1/report.json",
+        "sha256": "507840e4eeedb7a728b3ceeda1f109da1234a6d72636e1f741358b8f0f574226"
+      }
+    },
+    {
+      "explanation": "Original development source-control entry failed to load its module. Later fully executed roster is separately recorded.",
+      "failure": "ValueError('New CI public source-controls CLI failed')",
+      "historical_raw_directory_preserved": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v6/controls-run-v1",
+      "name": "old-CI-namespace-refusal",
+      "not_relabelled": true,
+      "recorded_status": "FAIL",
+      "report": {
+        "bytes": 22640,
+        "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/ci-integration-proposal-v6/controls-run-v1/report.json",
+        "sha256": "950b8372aea4721008097927a11d77aa734377fb7fc63e41b1ec12f40ebe67f3"
+      }
+    }
+  ],
+  "prior_e56d_development_history": {
+    "published_commit": "c3901ff19c26815205d9cdd6975fc24ecc51ae88",
+    "scope": "Prior published qualification and raw evidence remain historical. Root verifies exact prior Git references before repository cleanup; this record does not claim new execution for that source."
+  },
+  "production_cost_design": {
+    "bytes": 2247,
+    "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/production-observation-cost-design.json",
+    "sha256": "9537bf37598c2cf4391b3aa8cafeaf1aa77d7e7271bff0f31fbfc2e1ebdf913b"
+  },
+  "publishable_owned_count": 35,
+  "runtime_counts": {
+    "clock_faults": 18,
+    "primitive_actual_calls": {
+      "buffer_count": 538,
+      "call_count": 9489,
+      "calls": {
+        "bytes": 5422019,
+        "sha256": "a89cc63dba5558e2cea0e98b1884d62cde12b79eca403d8c30bfe732a9255fbf"
+      },
+      "case_count": 175,
+      "chunk_count": 19413,
+      "guards_and_complete_bodies_retained": true,
+      "logical_capture_bytes": 6010134406,
+      "manifest": {
+        "bytes": 30467588,
+        "sha256": "f85f5d4e3b66f6c564a4a3d8fde7cafa60d10192b03af6fa32022f746fe8d7cd"
+      },
+      "native_cpu_ns": 1418696594,
+      "native_wall_ns": 1400786079,
+      "physical_chunk_bytes": 73427021,
+      "schema": "trnm.hia.work-owner-primitive-bytes.v1",
+      "snapshot_count": 7800
+    },
+    "primitives": 175,
+    "progress": 27843,
     "semantic": 61,
     "signal_controls": 14,
-    "source_after": "MATCH",
-    "trace_controls": 27
+    "trace_controls": 27,
+    "traces": 3
   },
-  "native_compiler": {
-    "bytes": 673903,
-    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/native-bootstrap/native-compiler",
-    "sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+  "schema": "trnm.hia.work-owner-development-complete-guard-clock-strict-reader.v1",
+  "source_archive": {
+    "bytes": 130696,
+    "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/complete-final-owned-source.tar.xz",
+    "sha256": "f285cf1d4ec17fc75f51eef7da1d7300f635beb8ac92f75d30f10b9ade6926d6"
   },
-  "native_images": {
-    "closed-fd": {
-      "bytes": 510494,
-      "entry": 4194536,
-      "format": "ELF64LE",
-      "instruction_semantics_proved_by_header": false,
-      "interpreter": null,
-      "machine": "x86_64",
-      "path": "closed-fd.elf",
-      "prefix_bytes": 4836,
-      "sha256": "3d72c791cb39dd01096d1ac61a03737bf7dd22965903cc2eab57cadc504dfca9",
-      "static": true
-    },
-    "fixture": {
-      "bytes": 510454,
-      "entry": 4194536,
-      "format": "ELF64LE",
-      "instruction_semantics_proved_by_header": false,
-      "interpreter": null,
-      "machine": "x86_64",
-      "path": "fixture.elf",
-      "prefix_bytes": 4796,
-      "sha256": "aeb8361c267b0905461596021b97d606bc0bb517bdaaaef93eb811af5926e524",
-      "static": true
-    },
-    "owner": {
-      "bytes": 510454,
-      "entry": 4194536,
-      "format": "ELF64LE",
-      "instruction_semantics_proved_by_header": false,
-      "interpreter": null,
-      "machine": "x86_64",
-      "path": "owner.elf",
-      "prefix_bytes": 4796,
-      "sha256": "4ed3ce4da5dfe42340adfc04f25c0e2b23584174bec1424ea7d3d86511cb8d98",
-      "static": true
-    }
+  "source_before_after": "MATCH",
+  "source_count": 133,
+  "source_handoff": {
+    "bytes": 41857,
+    "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/next-closure-v1/handoff-ded-ci-v7/source-manifest.json",
+    "sha256": "86cbe9d4a1240e6dd4fc14bf3341a816daf503a8039774f00acac034fa971c1a"
   },
-  "node_integration_complete": false,
-  "original": {
-    "actual_process_stages": 48,
-    "binary_after": "MATCH",
-    "histories": 57,
-    "independent_binary": {
-      "bytes": 611226784,
-      "full_CI_pack_must_include": true,
-      "in_small_archive": false,
-      "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/original-final-v1/original-test-binary",
-      "sha256": "51134237d66716e00833e3d9e9b9e093a6a4d2cc2eeb0901a2208f0d2ad2c1ad"
-    },
-    "joined_worker_histories": 56,
-    "progress": 27841,
-    "report": {
-      "bytes": 6144533,
-      "sha256": "f6587996e96c24e82e49af2093b325a1d40ab406f0dd8beee0c34e45422c49c4"
-    },
-    "retained_tests": 44,
-    "source_after": "MATCH"
+  "source_set_sha256": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c",
+  "status": "ACTUAL_DEVELOPMENT_NATIVE_ORIGINAL_AND_INDEPENDENT_READBACK_PASS",
+  "timing_seconds": {
+    "actual_compact_independent_readback": 13.13165273098275,
+    "actual_compact_view_and_independent_readback": 278.2093276589876,
+    "actual_development_full_readback": 240.63039467699127,
+    "actual_development_full_review_and_pack": 352.40706109200255,
+    "actual_native_CLI": 229.19536995701492,
+    "actual_native_with_second_public_admission": 380.5049705890124,
+    "actual_original_Cargo_build": 326.2578333,
+    "actual_original_clock_children_total": 75.53514814894879,
+    "actual_original_with_final_fences": 791.3532736359921,
+    "hosted_per_stage_times": "NOT_YET_OBSERVED",
+    "measured_native_plus_original_before_bootstrap_pack": 1171.8582442250045,
+    "timing_estimates_are_not_pass_claims": true
   },
-  "original_Rust_source_prefixes_modified": false,
-  "original_source_files": 4368,
-  "owned_semantic_sources": 23,
-  "planned_jobs": [
-    "native-work-owner",
-    "native-work-owner-readback"
-  ],
-  "primitive_raw_guard_arena_replay": "UNAVAILABLE_RAW_NOT_RETAINED",
-  "primitive_raw_guard_arenas_retained": false,
-  "retirement_accepted": false,
-  "schema": "trnm.hia.work-owner-development.v1",
-  "scope": {
-    "original_4s_16_service_gate_closed": false,
-    "original_controlled_CLOCK1_fault_comparison": "OPEN",
-    "original_namespace_transition_physical": "OPEN",
-    "production_fixed_parent_authority": false,
-    "whole_Node_or_paid_checkpoint_closed": false
-  },
-  "semantic_evidence": {
-    "bytes": 1317,
-    "complete_reassembly_verified": true,
-    "execution_status_changed_by_storage": false,
-    "format": "trnm.hia.contiguous-archive.v1",
-    "parts": 5,
-    "path": "hia/qualification/work-owner-development.parts/manifest.json",
-    "reconstructed_archive": {
-      "bytes": 26328788,
-      "name": "work-owner-development.tar.xz",
-      "sha256": "b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db"
-    },
-    "sha256": "18595c148a8a133c8ec2fbaf2ad7005b6fe6e52e420ab0f2f13a64466c784525"
-  },
-  "semantic_source_count": 126,
-  "semantic_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
-  "source_after": "MATCH",
-  "source_controls": {
-    "bytes": 4684,
-    "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/public-controls-v5/hia-work-owner-observations/source-controls/report.json",
-    "sha256": "58e85ac8ba38b5cea48d1f895ea355b9d7d44ada925b1aa5c961e4dfc75b81ee"
-  },
-  "source_inputs": {
-    "config/systemd/trnmponpublic.slice": {
-      "bytes": 325,
-      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
-    },
-    "hia/platform/README.md": {
-      "bytes": 11641,
-      "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
-    },
-    "hia/platform/abi.json": {
-      "bytes": 6864,
-      "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
-    },
-    "hia/platform/build.py": {
-      "bytes": 11808,
-      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
-    },
-    "hia/platform/host_checkpoint/README.md": {
-      "bytes": 7080,
-      "sha256": "e410cdc9086a627b2587effd1174a618adafd8dc63fd03d27f072bc71ae0f76b"
-    },
-    "hia/platform/host_checkpoint/abi.json": {
-      "bytes": 3281,
-      "sha256": "e7e8e9ee8c4e29148dd12f2aea9e556f67fa7362a412c404406a1d43a1a8428c"
-    },
-    "hia/platform/host_checkpoint/build.py": {
-      "bytes": 8552,
-      "sha256": "ac0294e4423047e1fdbd7028619bb999fcc4ced2624ec7c85a78bc028251bccb"
-    },
-    "hia/platform/host_checkpoint/fixture_entry.hepta": {
-      "bytes": 301,
-      "sha256": "af91a83bb8d41585d12caccfc75e778e3837eabbd674856294d559562f5daa0b"
-    },
-    "hia/platform/host_checkpoint/linux_emitter.hepta": {
-      "bytes": 61117,
-      "sha256": "1f8911ee0d044d0df2f19c4986c49baffd580864c4c91982b413aae32a59572d"
-    },
-    "hia/platform/host_checkpoint/original_cases.py": {
-      "bytes": 8075,
-      "sha256": "85077ff182be84986e145e532ec05cf50a796c9172bb4f9cab8f33fef18a106d"
-    },
-    "hia/platform/host_checkpoint/owner_policy.hepta": {
-      "bytes": 141388,
-      "sha256": "474aa5ce229c23723fe1f8bdcf7047c3e1bd3f2b95ed24f1a4c183702e86f3be"
-    },
-    "hia/platform/host_checkpoint/qualify.py": {
-      "bytes": 44749,
-      "sha256": "cf0c564c5a446db308310ce1eda54e5b9c8152a0347355947f564f44cac8117c"
-    },
-    "hia/platform/host_checkpoint/qualify_production.py": {
-      "bytes": 28458,
-      "sha256": "35056ef13b192599d1ccfbf732557c0b4c020da60bd44068eba9f5dd1ec9719d"
-    },
-    "hia/platform/host_checkpoint/rust_oracle.py": {
-      "bytes": 17783,
-      "sha256": "4673958192e86d39bf3099c9dc453924e7c6ba3b650bbed54d01e579b5190f89"
-    },
-    "hia/platform/host_checkpoint/rust_reference.rs": {
-      "bytes": 9992,
-      "sha256": "7fec427dbb3a294ccb65a17592cf04db8ab000b703dc3e93c2bb08a79c063373"
-    },
-    "hia/platform/host_resource/README.md": {
-      "bytes": 7585,
-      "sha256": "3613e607fa818c25d08728644c1276badc8d9f5a8d24c2bb57241114fe42750e"
-    },
-    "hia/platform/host_resource/abi.json": {
-      "bytes": 2150,
-      "sha256": "5bb6944df5e6c65b514f2b87b9504f858b7c94e7c1705420582f6f2e7525c256"
-    },
-    "hia/platform/host_resource/build.py": {
-      "bytes": 8820,
-      "sha256": "be09e2124a7660fb91ca067d93dd125fd4e7b559c71639668e9e6952fcec0a4b"
-    },
-    "hia/platform/host_resource/cases.py": {
-      "bytes": 9251,
-      "sha256": "c33d5e3c946908d6515cad79f31185e264e65aeb221085636888eac535508405"
-    },
-    "hia/platform/host_resource/fixture_entry.hepta": {
-      "bytes": 308,
-      "sha256": "e48a9bfc877ac5e8f971813408c6888bcef31b54f1a3c61b5668c6341aa7c124"
-    },
-    "hia/platform/host_resource/native_io.py": {
-      "bytes": 12406,
-      "sha256": "edb7c315815a7f8149c9f5d0c92de8c5ef9b058bc9a3c763675b97bcb946b04b"
-    },
-    "hia/platform/host_resource/qualify.py": {
-      "bytes": 11248,
-      "sha256": "80fd145301a1cb25483843e664da89c32d9e0f8e5699bea99e029882fe4923a4"
-    },
-    "hia/platform/host_resource/qualify_production.py": {
-      "bytes": 44486,
-      "sha256": "719d4c2909438c4a86648c2b7844dabe6f38f86adaa3fd520fdecbd0ad3bb9e4"
-    },
-    "hia/platform/host_resource/resource_policy.hepta": {
-      "bytes": 78839,
-      "sha256": "9fa7440f953d6e2e1c1fb0f93c5bc96a2a8348f0a9d1a446e156dabeeac6cac8"
-    },
-    "hia/platform/host_resource/rust_oracle.py": {
-      "bytes": 19892,
-      "sha256": "94921daf6ab1b0f8a3733833f0929ef4e6d31120f968dfb945592d7f78cbf9e6"
-    },
-    "hia/platform/host_resource/rust_reference.rs": {
-      "bytes": 12591,
-      "sha256": "3fe1ec14113652cfe4c2545a01ecb2dad191b61a7ce5c9ca9ee6036a09040296"
-    },
-    "hia/platform/host_resource/test_integrity.py": {
-      "bytes": 3619,
-      "sha256": "3dc726269137bc7604e134a0ac0c26b110d8cb434b6cbf5e97e590915ae5e5b3"
-    },
-    "hia/platform/host_resource/test_production.py": {
-      "bytes": 25240,
-      "sha256": "c38414436db64117b5a00db231c634fd111f0b90f0f21ff78fbd4a352ef1b54c"
-    },
-    "hia/platform/linux_adapter_emitter.hepta": {
-      "bytes": 45152,
-      "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
-    },
-    "hia/platform/paid_cpu/README.md": {
-      "bytes": 9380,
-      "sha256": "bfe796bf4b78d520c49d08337d13f19abcd2a1fe0d9c475a9be41c7ef4c0b18b"
-    },
-    "hia/platform/paid_cpu/__init__.py": {
-      "bytes": 76,
-      "sha256": "d125a47be745a79f83cfd23e87e3dcfb0ad810a675cda707a7286a1cfb758915"
-    },
-    "hia/platform/paid_cpu/abi.json": {
-      "bytes": 7733,
-      "sha256": "6a02836083278b3bd673f581ff5a85b60a68e29d62584fd5f422791af8519720"
-    },
-    "hia/platform/paid_cpu/arithmetic_fixture.hepta": {
-      "bytes": 64903,
-      "sha256": "d6c16744a30e10cb20dca396ca1b3b2e9608b0afb1110a8d93f5fa27bf1216ae"
-    },
-    "hia/platform/paid_cpu/build.py": {
-      "bytes": 7024,
-      "sha256": "9873a14432e074070310af3611ee8a191e9f22a7f2a09526c0d4ddbffa398c15"
-    },
-    "hia/platform/paid_cpu/cases.py": {
-      "bytes": 10270,
-      "sha256": "df8c69fefde83fafabb253f816b5e3dc9dc2137b10c52e49e0920a010caba189"
-    },
-    "hia/platform/paid_cpu/dependency.py": {
-      "bytes": 5209,
-      "sha256": "3ec8c2d7f45a742cc1bd36b8297b5992d901a4b3ac5ae7e87f1ed9916986bb7b"
-    },
-    "hia/platform/paid_cpu/fault_audit.py": {
-      "bytes": 17179,
-      "sha256": "af413f340c79e7196f7acb8e6430c273e395619d4fb1d4d7467aa463ac1fd0b0"
-    },
-    "hia/platform/paid_cpu/fault_oracle.py": {
-      "bytes": 12108,
-      "sha256": "90fd826f2409657a43b7d2041b717a98f3b0e42e98a5dd9df30e6f1bea8fb8d8"
-    },
-    "hia/platform/paid_cpu/linux_arithmetic_emitter.hepta": {
-      "bytes": 9856,
-      "sha256": "bd4fd9f10d6cbdc823a81d57828185bad0645af65e23448a3b5d116e50a393b9"
-    },
-    "hia/platform/paid_cpu/linux_owner_emitter.hepta": {
-      "bytes": 49215,
-      "sha256": "85df2c6f3c735d47893c4e02b03f339e2681bd8e2ff182e43a41f7ec42379db4"
-    },
-    "hia/platform/paid_cpu/native_io.py": {
-      "bytes": 6664,
-      "sha256": "51a72b4caf63f7cd192c449a36d0bcec4aa20555fceca795c58b26db56c21577"
-    },
-    "hia/platform/paid_cpu/owned_ptrace.py": {
-      "bytes": 15235,
-      "sha256": "38c5b98e18352fa3e780e5dc82ba1286acd8ce33033c9b9363dee967430ba980"
-    },
-    "hia/platform/paid_cpu/owner.hepta": {
-      "bytes": 189017,
-      "sha256": "0a7341eac40791b3350282d2e1fdc44cc4c83ce155d01657c72bbfbb9721ad72"
-    },
-    "hia/platform/paid_cpu/private_layout.json": {
-      "bytes": 6676,
-      "sha256": "f26a865e0ce706c5d4196386fc7f83d3b219e2b62589d9312bb9ab6a38db393e"
-    },
-    "hia/platform/paid_cpu/qualify.py": {
-      "bytes": 19388,
-      "sha256": "1448e916159b1ff231d93e75dd23a850ff50f22863f02b9ff76040b33517d96a"
-    },
-    "hia/platform/paid_cpu/rust_oracle.py": {
-      "bytes": 18536,
-      "sha256": "5948fcd8495b9de211f7e5aaa48fdf2e44c2d8eb36a0c4d5f6abe3223f95aa50"
-    },
-    "hia/platform/paid_cpu/rust_reference.rs": {
-      "bytes": 27109,
-      "sha256": "b1881745c88ccf66e9b33795b73280b14ad97e0cf107d76561f6812a49823773"
-    },
-    "hia/platform/paid_cpu/test_integrity.py": {
-      "bytes": 9653,
-      "sha256": "cf779e5156821cb133620a9e7af0dd07b9598b15aff7155b0022581088b3bc3f"
-    },
-    "hia/platform/paid_cpu/trace_audit.py": {
-      "bytes": 19943,
-      "sha256": "ebb6f6e94d291952f1f34ad703ec62e82c69868469bdc769c29840157139b5e4"
-    },
-    "hia/platform/probe_policy.hepta": {
-      "bytes": 38621,
-      "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
-    },
-    "hia/platform/thread_cpu/README.md": {
-      "bytes": 8128,
-      "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
-    },
-    "hia/platform/thread_cpu/abi.json": {
-      "bytes": 5172,
-      "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
-    },
-    "hia/platform/thread_cpu/build.py": {
-      "bytes": 8419,
-      "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
-    },
-    "hia/platform/thread_cpu/cases.py": {
-      "bytes": 7248,
-      "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
-    },
-    "hia/platform/thread_cpu/fixture_entry.hepta": {
-      "bytes": 288,
-      "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
-    },
-    "hia/platform/thread_cpu/linux_emitter.hepta": {
-      "bytes": 39791,
-      "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
-    },
-    "hia/platform/thread_cpu/native_io.py": {
-      "bytes": 9894,
-      "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
-    },
-    "hia/platform/thread_cpu/owner_policy.hepta": {
-      "bytes": 85504,
-      "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
-    },
-    "hia/platform/thread_cpu/qualify.py": {
-      "bytes": 27441,
-      "sha256": "d64de5eb7a9627e9c9cda0dc307efc48dcba7f0d1165a192813f0a72566e89d2"
-    },
-    "hia/platform/thread_cpu/rust_oracle.py": {
-      "bytes": 29369,
-      "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
-    },
-    "hia/platform/thread_cpu/rust_reference.rs": {
-      "bytes": 13897,
-      "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
-    },
-    "hia/platform/thread_cpu/test_integrity.py": {
-      "bytes": 51546,
-      "sha256": "206aebe04c4b9d18bb46d70dd7b188508a62389871b1df0920bea7ed5e34f268"
-    },
-    "hia/platform/thread_cpu/trace_audit.py": {
-      "bytes": 26502,
-      "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
-    },
-    "hia/platform/transport_request/rust_oracle.py": {
-      "bytes": 12311,
-      "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
-    },
-    "hia/platform/work_owner/README.md": {
-      "bytes": 5948,
-      "sha256": "a3f3b8bbddb35574224e99102f0879f7ba87be3fd13d2563d829af2942dbbb67"
-    },
-    "hia/platform/work_owner/abi.json": {
-      "bytes": 3015,
-      "sha256": "6e1b81f977e70797ea9533dd8fd76cf206c565866aff7dd817beac4dc3d8cc34"
-    },
-    "hia/platform/work_owner/build.py": {
-      "bytes": 12686,
-      "sha256": "67a3ae50d0481421579ea5929db7b3bd9ecfb9270626abf52eed3f5e8c5e4492"
-    },
-    "hia/platform/work_owner/bundle.py": {
-      "bytes": 24673,
-      "sha256": "ac191a38fd8b880b2f365fde7de0fd06ae7cb064441718636b1fef96b5d2b744"
-    },
-    "hia/platform/work_owner/cases.py": {
-      "bytes": 11915,
-      "sha256": "94317ec816c9165fbbb6b12a651ddd9ca40b5cfd541fedc17d0409b97b051310"
-    },
-    "hia/platform/work_owner/closed_fd_fixture_emitter.hepta": {
-      "bytes": 90458,
-      "sha256": "f0485c52d89787ed742810bc58e4448f76fb7b554a60db1d052a295aa68e017a"
-    },
-    "hia/platform/work_owner/faults.py": {
-      "bytes": 4325,
-      "sha256": "4d995538c2f709bfc1fca247a52d7fc66d620be0a4dcbc762c50135f20ad3847"
-    },
-    "hia/platform/work_owner/host_fixture.hepta": {
-      "bytes": 312,
-      "sha256": "63ec617c059a93b8e8e829bf44dcef77b089bb7b7df8db43a0a67a56400c2243"
-    },
-    "hia/platform/work_owner/host_method.hepta": {
-      "bytes": 17815,
-      "sha256": "38dda5ec03f8b325a7f810f66d5e94819b8c81bbc7039471ce6eebac81904840"
-    },
-    "hia/platform/work_owner/linux_emitter.hepta": {
-      "bytes": 89776,
-      "sha256": "ee084993acd0704ab9329448b73296281fecb9ff52b647564534c16fa675322b"
-    },
-    "hia/platform/work_owner/native_io.py": {
-      "bytes": 9226,
-      "sha256": "1e9b1118058f85f2f45e7340c2f6c498bfe515b0f426b672765fca655516ca92"
-    },
-    "hia/platform/work_owner/owner_fixture.hepta": {
-      "bytes": 308,
-      "sha256": "8cfb7caa9a249efdf37e8cd0475cc4e95ef3b483a96286f8f217b84641d48701"
-    },
-    "hia/platform/work_owner/owner_policy.hepta": {
-      "bytes": 48795,
-      "sha256": "7ac8963c0297bee32fb4e322d1c76c2490a3d56a9bd2ad819e9b2899e5834420"
-    },
-    "hia/platform/work_owner/primitive_qualification.py": {
-      "bytes": 9737,
-      "sha256": "9176bfe52a040f9ee607af5f884394cee4d647a38bb40fc6dff5787c45a2ff33"
-    },
-    "hia/platform/work_owner/qualify.py": {
-      "bytes": 7130,
-      "sha256": "c092a0d2a95c702adbde5856c5b2fd85adead37424df7350ffc700fe6f3c77b1"
-    },
-    "hia/platform/work_owner/rust_bridge.rs": {
-      "bytes": 621,
-      "sha256": "78e130474fc70ed37912b13fab3e45886ffea33ab26baaf0d8a3e5b98bbdacfa"
-    },
-    "hia/platform/work_owner/rust_oracle.py": {
-      "bytes": 15767,
-      "sha256": "ba0fc2719382555a98a8266e68a08c20ca7b30d594fc40f13be3e366acf78e43"
-    },
-    "hia/platform/work_owner/rust_reference.rs": {
-      "bytes": 9739,
-      "sha256": "3cfde0fff2ae8935b965ccb73f8250a3e9bff56a3d90910bd8500448e98dc502"
-    },
-    "hia/platform/work_owner/sha_fixture.hepta": {
-      "bytes": 3050,
-      "sha256": "c4caf30ba10d8d7a3d374e07499798cb03394cbbd9bc8511a500c113e96c1d3e"
-    },
-    "hia/platform/work_owner/test_integrity.py": {
-      "bytes": 12454,
-      "sha256": "7f89b6d743d925ac2a9821b2d78119f4864368c200ee5fea38e55016e62a63e4"
-    },
-    "hia/platform/work_owner/trace_audit.py": {
-      "bytes": 33710,
-      "sha256": "4645280ffc54afdf759e5480281b1c0ecab76193c13694f945f96a35a7e9a538"
-    },
-    "hia/platform/work_owner/trace_controls.py": {
-      "bytes": 12242,
-      "sha256": "944ca36bf4bf88b69792f22f172c5924b5d7b2790d752088e6b67060dca9b710"
-    },
-    "hia/platform/work_owner/work_policy.hepta": {
-      "bytes": 81537,
-      "sha256": "189251711007fc1e2c278180de57343d453a40c7a7d535a58e8faa978cb55295"
-    },
-    "hia/qualification/compiler-binding.json": {
-      "bytes": 878,
-      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
-    },
-    "hia/qualification/compiler-cold-full.json.xz": {
-      "bytes": 838544,
-      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
-    },
-    "hia/qualification/compiler-cold.json": {
-      "bytes": 108675,
-      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
-    },
-    "hia/qualification/host-production-trace-parser-development.json": {
-      "bytes": 140674,
-      "sha256": "500e14bcca0a597fc4fd2a50ed0ade341a561220300d6a5867173bc67ddbf002"
-    },
-    "hia/src/crypto/sha256_arena.hepta": {
-      "bytes": 28919,
-      "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
-    },
-    "hia/src/work/verify.hepta": {
-      "bytes": 37302,
-      "sha256": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1"
-    },
-    "hia/tests/test_host_checkpoint.py": {
-      "bytes": 7317,
-      "sha256": "fe682f53f2478cca67805e157cd5e44f7b1041c22731aaeb7e5f2aae0d088907"
-    },
-    "hia/tests/test_host_production.py": {
-      "bytes": 10825,
-      "sha256": "5a8744f2185ec5dce547357afef92ce4c5503714f6229ee27dfe99e4bc734a30"
-    },
-    "hia/tests/test_platform_cleanup.py": {
-      "bytes": 9301,
-      "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
-    },
-    "hia/toolchain.lock.json": {
-      "bytes": 221,
-      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
-    },
-    "hia/tools/qualify_platform.py": {
-      "bytes": 30419,
-      "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
-    },
-    "hia/tools/toolchain.py": {
-      "bytes": 14157,
-      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
-    },
-    "scripts/ci/check_required_native_test.py": {
-      "bytes": 2928,
-      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
-    },
-    "scripts/ci/public_fixture_host_lease.py": {
-      "bytes": 11251,
-      "sha256": "c6abe7ac89aa479917d0d39cac40c7550e37b2dc25f34d02e28f6d19fcfc76cf"
-    },
-    "scripts/ci/public_host_ci_observation.py": {
-      "bytes": 13543,
-      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
-    },
-    "scripts/ci/replay_pinned_native.py": {
-      "bytes": 18571,
-      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
-    },
-    "scripts/ci/run_from_zero_host.py": {
-      "bytes": 28366,
-      "sha256": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"
-    },
-    "scripts/ci/run_history_native.py": {
-      "bytes": 21380,
-      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
-    },
-    "scripts/ci/verify_ci_source.py": {
-      "bytes": 11231,
-      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
-    },
-    "trillionnium/Cargo.lock": {
-      "bytes": 42127,
-      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
-    },
-    "trillionnium/Cargo.toml": {
-      "bytes": 2204,
-      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
-    },
-    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
-      "bytes": 106066,
-      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
-    },
-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
-      "bytes": 161926,
-      "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
-    },
-    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
-      "bytes": 2357,
-      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
-    },
-    "trillionnium/crates/trnm-pon-node/src/error.rs": {
-      "bytes": 37309,
-      "sha256": "0f7952a02aca0dfc9d6da3f38e6a1883b7943ad5b9ab94cfef9b4036dd1395fc"
-    },
-    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": {
-      "bytes": 67363,
-      "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836"
-    },
-    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs": {
-      "bytes": 17500,
-      "sha256": "75bedbfc960b85d953525ee048c6fc6fa99b7f70ef56183dd363df6a378af698"
-    },
-    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs": {
-      "bytes": 12181,
-      "sha256": "676e22861f5df19b1fcc77a461a8d65c073bc8b734c046761d2add217ffd4db9"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": {
-      "bytes": 27612,
-      "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
-      "bytes": 446331,
-      "sha256": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
-      "bytes": 114097,
-      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
-      "bytes": 82351,
-      "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": {
-      "bytes": 30919,
-      "sha256": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs": {
-      "bytes": 10769,
-      "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": {
-      "bytes": 15568,
-      "sha256": "a9e4d1705335925d0f3c2a01cac7855155c61b4c54b3e42dd6caaaecf3720696"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
-      "bytes": 15351,
-      "sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f"
-    },
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs": {
-      "bytes": 10954,
-      "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
-    },
-    "trillionnium/crates/trnm-pon-node/src/lib.rs": {
-      "bytes": 37947,
-      "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
-    },
-    "trillionnium/crates/trnm-pon-node/src/main.rs": {
-      "bytes": 130563,
-      "sha256": "7d0d131c9487f2e4eb6fe6edf9b0afa8cf69c2faad9e922bdc739aa4c51e37d3"
-    }
-  },
-  "split_workflow_controls": {
-    "bytes": 6826,
-    "path": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/ci-integration-proposal-v1/split-workflow-admission-v1/report.json",
-    "sha256": "10ebb5a626d994b7608a5ece288539b0c5aee34a4c24560aa67cfa498fa211c2"
-  },
-  "status": "PRIVATE_DEVELOPMENT_PASS",
-  "timeout_minutes_each": 20,
-  "timing": {
-    "bind_exact_seconds": null,
-    "bind_note": "Actual public development review replays the same native/original admission but lacks hosted committed-source checks; no hosted bind has been claimed.",
-    "bootstrap_monotonic_seconds": 13.921777506009676,
-    "combined_observed_component_seconds_approximate": 985.3791614290097,
-    "consumer_observed_replay_seconds": 167.698163322,
-    "controls25_monotonic_seconds": 9.242776137,
-    "decision": "Two dependent jobs, each timeout-minutes20; producer still verifies every packed byte; consumer requires qualified exact lineage and independently reads all raw bytes.",
-    "excluded_from_estimates": [
-      "checkout",
-      "artifact upload/download",
-      "rustup network/install",
-      "cold Cargo cache difference",
-      "hosted committed-source extra checks",
-      "runner contention"
-    ],
-    "guaranteed_under1200": false,
-    "known_exceeds1200": false,
-    "native_complete": {
-      "created_unix_ms": 1794869780323,
-      "exit_file_mtime_ns": 1794869958756351174,
-      "exit_metadata": {
-        "bytes": 260,
-        "sha256": "306fb2339cc46e725b14118d6391b89ecd92cec6946203177d7e7989f88f26dc"
-      },
-      "method": "Approximate observed PTY creation timestamp to durable exit.json mtime; not a monotonic end-to-end timer",
-      "seconds": 178.433351174,
-      "session_id": "dpty-4c6c7e274bfd2bd33310eee208b4e117dc3256533a4b47a68a5f37674cfe4e0b"
-    },
-    "original57_hook_monotonic_seconds": 5.986176622,
-    "original_Cargo_monotonic_seconds": 213.437331036,
-    "original_complete": {
-      "created_unix_ms": 1794870183081,
-      "exit_file_mtime_ns": 1794870560821822175,
-      "exit_metadata": {
-        "bytes": 258,
-        "sha256": "d953d868c165b7a9ec1f31f04aa8311565c5a677bd696e75b5102a85114606e8"
-      },
-      "method": "Approximate observed PTY creation timestamp to durable exit.json mtime; not a monotonic end-to-end timer",
-      "seconds": 377.740822175,
-      "session_id": "dpty-927ad20a51d1c3a27454e4219ed032a42f8607d0062fdaf3fca57c856d7a1c4f"
-    },
-    "original_process_stages_monotonic_seconds": 220.267981255,
-    "pack_approximate_seconds": 110.009115694,
-    "pack_approximation_method": "assessment.json mtime to package-manifest.json mtime; not a separate monotonic timer",
-    "producer_observed_component_seconds_approximate": 817.6809981070097,
-    "readback_monotonic_seconds": 167.698163322,
-    "review_and_pack_monotonic_seconds": 238.342271115,
-    "runtime_budgets_changed": false,
-    "same_job_actions_omitted": false,
-    "schema": "trnm.hia.work-owner-observed-stage-timings.v1"
-  },
-  "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
-  "unresolved_jobs": [
-    {
-      "id": "1a1e5f8f486-392-3a2e",
-      "status": "UNKNOWN"
-    },
-    {
-      "id": "dpty-9b2a39f81185bff6c011ef0b87655c50315d89dc7f9a93e99adbb5a753ba22a9",
-      "status": "UNKNOWN"
-    }
+  "unchanged_open": [
+    "fixed-parent production positive",
+    "full Node/paid checkpoint embedding",
+    "original four-second sixteen-attacker service gate",
+    "original 1800-second history gate"
   ]
 }

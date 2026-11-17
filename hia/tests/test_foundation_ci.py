@@ -53,6 +53,62 @@ class FoundationTransfer(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 ci.check_parent(value, ci.lineage(self.environment))
 
+
+    def test_json_counts_and_lineage_reject_numeric_type_substitution(self):
+        expected = ci.lineage({**self.environment, "GITHUB_RUN_ATTEMPT": "1"})
+        parent = self.parent()
+        parent["lineage"] = copy.deepcopy(expected)
+        ci.check_parent(parent, expected)
+        for key, value in (("native_controls", 659.0), ("semantic_cases", 572.0)):
+            changed = copy.deepcopy(parent)
+            changed[key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                ci.check_parent(changed, expected)
+        for attempt in (True, 1.0, "1", None):
+            changed = copy.deepcopy(parent)
+            changed["lineage"]["attempt"] = attempt
+            with self.subTest(attempt=repr(attempt)), self.assertRaises(ValueError):
+                ci.check_parent(changed, expected)
+
+    def test_json_nonfinite_constants_and_numeric_overflow_are_refused(self):
+        target = self.root / "numbers.json"
+        for token in ("NaN", "Infinity", "-Infinity", "1e10000", "-1e10000"):
+            target.write_text('{"nested":[{"value":' + token + '}]}')
+            with self.subTest(token=token), self.assertRaises(ValueError):
+                ci.read(target)
+        target.write_text('{"elapsed_seconds":1.25,"integer":1,"flag":true,"empty":null}')
+        value = ci.read(target)
+        self.assertIs(type(value["elapsed_seconds"]), float)
+        self.assertEqual(value["elapsed_seconds"], 1.25)
+        self.assertIs(type(value["integer"]), int)
+        self.assertIs(value["flag"], True)
+        self.assertIsNone(value["empty"])
+
+    def test_nested_json_identity_keeps_boolean_integer_and_float_distinct(self):
+        self.assertTrue(ci.same({"a": [1, True, 1.0, None]}, {"a": [1, True, 1.0, None]}))
+        for left, right in ((True, 1), (1, 1.0), (False, 0), (None, 0),
+                            ({"a": [1]}, {"a": [True]}), ([1], [1, 2]),
+                            ({"a": 1}, {"a": 1, "b": 2}),
+                            (float("nan"), float("nan")),
+                            (float("inf"), float("inf"))):
+            with self.subTest(left=repr(left), right=repr(right)):
+                self.assertFalse(ci.same(left, right))
+
+    def test_archive_member_sizes_require_actual_integers_before_extraction(self):
+        for index, (raw, invalid) in enumerate(((b"x", True), (b"x", 1.0),
+                                               (b"", False), (b"", 0.0))):
+            archive = self.root / ("numeric-" + str(index) + ".tar.xz")
+            member = tarfile.TarInfo("native/result.raw")
+            member.size = len(raw)
+            with tarfile.open(archive, "x:xz") as stream:
+                stream.addfile(member, io.BytesIO(raw))
+            entry = {"type": "0", "linkname": "", "bytes": invalid,
+                     "sha256": hashlib.sha256(raw).hexdigest()}
+            output = self.root / ("numeric-out-" + str(index))
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                ci.extract_regular(archive, output, {"native/result.raw": entry})
+            self.assertFalse(output.exists())
+
     def archive(self, names):
         path = self.root / "input.tar.xz"
         entries = {}
@@ -144,6 +200,10 @@ class FoundationTransfer(unittest.TestCase):
                         "-c", "commit.gpgSign=false", "commit", "-qm", "fixture"],
                        cwd=repo, check=True, capture_output=True)
         self.assertEqual(ci.check_committed_sources({"runtime.hepta": ci.identity(source)}, repo), 1)
+        floating_identity = ci.identity(source)
+        floating_identity["bytes"] = float(floating_identity["bytes"])
+        with self.assertRaises(ValueError):
+            ci.check_committed_sources({"runtime.hepta": floating_identity}, repo)
         source.write_bytes(b"changed native fixture\n")
         with self.assertRaises(ValueError):
             ci.check_committed_sources({"runtime.hepta": ci.identity(source)}, repo)

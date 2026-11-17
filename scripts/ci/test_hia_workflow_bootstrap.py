@@ -1,4 +1,4 @@
-"""Fail-closed tests for all thirty-five exact-source HIA native compiler bootstrap gates."""
+"""Fail-closed tests for all thirty-six exact-source HIA native compiler bootstrap gates."""
 from __future__ import annotations
 
 import json
@@ -24,9 +24,9 @@ class BootstrapGuards(unittest.TestCase):
     def setUpClass(cls):
         text = WORKFLOW.read_text(encoding="utf-8")
         cls.bodies = [textwrap.dedent(m.group("body")) for m in BOOTSTRAP.finditer(text)]
-        if len(cls.bodies) != 35:
+        if len(cls.bodies) != 36:
             raise AssertionError(
-                f"expected thirty-five independent native bootstrap gates, found {len(cls.bodies)}"
+                f"expected thirty-six independent native bootstrap gates, found {len(cls.bodies)}"
             )
 
     def check_case(self, body, payload, *, python_args, succeed):

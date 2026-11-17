@@ -1,3 +1,35 @@
+## 2026-11-17 UTC — Work/Host 全原始观察、CLOCK 对照与 CI 分阶段
+
+父提交 `c3901ff19c26815205d9cdd6975fc24ecc51ae88`，tree `b51997025da0c61e6a9e516b1950efa3d709df3b`。当前仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。这轮只整合 Work/Host 最终 30 份语义源和 5 份 CI 源、完整测试分片、共享证据类型修复及必要原始观察；新 Node 联合 owner 仍在独立实现，不能冒称已合入。工作流变为 **46 jobs /36 bootstrap**，每个 job 仍为 20 分钟。
+
+### 已发布 c390 的实际结论
+
+[push 44019939486](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019939486) 真实 42/42 SUCCESS。[PR 44019959997](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019959997) 真实 41 SUCCESS /1 CANCELLED；components job `133826819393` 在 20 分钟取消，339 行 ok 不等于完整完成。完整日志与所有原 job 状态保留，push PASS 不替代 PR 取消。
+
+根对该提交的 9 份 Batch/Prefix、M05、Application 与 Work/Host 完整包逐原件及语义读回，包含全部原 ELF、原始流、source fence 和实际 producer/consumer 来源。Prefix 的 1,011 条计划方法中 936 实际执行、75 是未走到的夹具路径，不计 PASS、不伪称原 Rust skip。旧 Host 的 175 raw arena 缺失及 controlled original CLOCK OPEN 仍属于旧源，不能借新结果填补。
+
+### 证据门的实际反例与修复
+
+旧 foundation helper 的 11 个合成负控实际被接受：659.0/572.0 计数、bool/float attempt、NaN/Infinity/溢出浮点数、archive/source 浮点 bytes。新精确递归类型比较、有限数解析、成员元数据验证实际拒绝这些输入。Foundation/Execution/Genesis 33 组、2 次实际 `-O/-OO` 入口拒绝 PASS。首次 driver cwd 错误导致 Genesis 子进程找不到模块的 FAIL 保留；修正运行目录后跑同一完整清单，未删测试。这些反例只证明 helper 边界，不冒称真实 hosted exploit。
+
+components 完整发现 383 项后固定分 general376 /State root7；独立 consumer 要求同 head/run/attempt、两真实成功前继、完整 started/completed 清单、零 skip、原 Rust adapter 和全部 6 个原始产物文件。初私有 reader 未核 consumer 实际 tree 的合成反例保留，修后明确比对实际 HEAD/tree。20 分钟和全部测试不变。
+
+### 新 Work/Host 的实际开发资格
+
+133 源 `ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c` 真实重跑 native380.505s、original791.353s。native61 histories/27843progress、175 primitives/9489calls/538buffers/7800完整 snapshots/6010134406 logical bytes、3traces/27trace controls/14signals/18CLOCK；实际原57histories+44retained、2CLOCK positives+18controlled faults、20raw-reader controls 全 PASS。正常 vDSO fault 行为不由私有故障注入推导。
+
+旧 c248 两个 coherent public false accept 保留；修后完整 public bundle 1positive/14negative 实际 PASS。完整 private review+pack352.407s、独立 full readback240.630s PASS，仍是 PRIVATE/NOT_BOUND，不是 hosted 资格。30语义源/5CI源单一归属，133图逐字等实际 ded；共享 foundation helper 不在这133图，只改变独立6-reader图为 `106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca`。最终原4368图随当前 inventory/计划 pin 变化，必须新提交实际执行。
+
+native→original→完整 qualification/pack→独立 readback 四 job 各20分钟。实际 native+original 已1171.858s，还未计 bootstrap/pack，不能塞进同一20分钟并声称可过；四阶段都保留完整前继、原 ELF 和所有 raw。新 hosted 时长和结果未观测，不预填 PASS。
+
+### 单一证据视图和下一执行
+
+当前 Work/Host 开发视图50018340B/`b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325`、8连续卷；20178 CAS、4004真实Git对象对应4675逻辑引用，25677完整主成员+194补充。原574468200B/`d7c7757bdb6409067f5be594c54b230f9ed30bae2d15664e1d1dce526059a2c4` 为显式外部原件；完整261160948B/`c651437b0b7666987a4cddedd038508ff3dfe8f84ce1cb72de1db7cff5e9375f`包仍保全。根用不受 replace refs 影响的最终读器实际重读全部视图和外部 binary。旧5卷/record逐字等c390 Git原件后才被当前8卷替换；历史索引可完整恢复，不重写Git历史。
+
+根另逐全归档证明后清理30509个重复解包文件/2976163272B；原ZIP、完整archive、唯一report及所有FAIL不删。[整合记录](../../hia/qualification/work-host-integration.json)和1947276B完整控制归档保留这些观察。合并实际80组0skip PASS；383完整test IDs、46jobs/36bootstrap、357Bash/50Python语法全部通过；这些源码控制不代替新native执行。
+
+下一步执行本提交全部强制CI并逐完整结果读回；持续把C新版父状态、Prepared和双输出移交作为唯一 Node 基底，接M05 op8、真实Some/CheckedApply及持久化COMMIT，再推进全部26包。固定parent生产正向、Node/Paid嵌入、4秒16请求、跨平台/模型/研究及其他整链门仍OPEN。仅更新实际变化的计划 source pin，保留全部1177个原证据pin及任何HOLD/false资格。本文件仍是唯一开发计划。
+
 ## 2026-11-17 UTC — Batch/Prefix 最终实现整合、M05 类型修复及876完整CI
 
 当前候选 **41 kernels /20 native foundations /119 HIA sources；26原Rust包保留 /0退役 /9全项目门OPEN**。父提交 `876eb577dac61854c535a91ab1480f312d1d6173`，tree `f810a503f6283b0a8484f1b18ba1f823c57d1078`，其 [HIA run44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130) 已真实33/33 SUCCESS。本次只合入Batch的42份最终owned文件，其中16份HIA；工作流42jobs/35独立native bootstrap。新工作树仍须自己的提交级CI，不继承父源或开发源的执行。
