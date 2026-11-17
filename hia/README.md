@@ -13,13 +13,20 @@ accounts for every old package and new HIA source.
 
 ## Current source and qualification
 
-Published parent
-[`c3901ff19c26815205d9cdd6975fc24ecc51ae88`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c3901ff19c26815205d9cdd6975fc24ecc51ae88)
-completed **42/42 push HIA jobs** in
-[run 44019939486](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019939486).
-Its PR run ended with **41 successes and one component-job cancellation** at the
-20-minute limit. Full Batch/Prefix, M05, Application and Work/Host evidence was
-independently reread. The cancellation remains distinct from push success.
+Published predecessor
+[`bd6201646f92a37edc641b2ab0ae8032507b5784`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/bd6201646f92a37edc641b2ab0ae8032507b5784)
+completed the three component jobs in both
+[push run 44041831642](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041831642)
+and [PR run 44041858435](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041858435).
+Root independently reread all push component bytes and the complete 376+7 test
+coverage. Work failed at its mandatory source-control stage before native
+execution; its three dependent jobs were skipped.
+
+This successor installs and explicitly selects locked Rust 1.95.0 in the two
+live Work stages. The unchanged 65 controls passed locally after correct
+selection. All four stages still require fresh hosted execution.
+[The follow-up record](qualification/work-owner-toolchain-ci.json) retains the
+original failures, complete component artifacts and corrected-control evidence.
 
 The current Work/Host source has 133 inputs,
 `ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c`.

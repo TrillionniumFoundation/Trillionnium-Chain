@@ -1,3 +1,17 @@
+## 2026-11-17 UTC — bd620 实测结果与 Work 工具链前置修复
+
+父提交 `bd6201646f92a37edc641b2ab0ae8032507b5784`，tree `8a273894649be8393e2b1dc493d7482b2a07d6c0`。仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。本轮运行定义只修改 Work native 和 original 两个 job 的工具链安装与路径选择；46 jobs、36 bootstrap、全部测试与20分钟期限保持原值。
+
+[push 44041831642](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041831642) 和 [PR 44041858435](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041858435) 的 general、State root 和独立 components consumer 均已真实 SUCCESS。根完整读取 push 三份原ZIP及全部成员，用当前公开读取器独立复核 **376+7=383** 项的发现、实际开始/完成清单、零skip、来源和日志；重算报告与 hosted consumer 完整相同，producer/consumer 均绑定 bd620/tree8a273。该读证不重跑业务，也不重新验证原 Rust build event chain。
+
+Work native 的 push job133897989699 在65项强制控制中64通过、1错误：实际编译器/std来源不符合锁定1.95契约。其 native业务尚未执行；original、qualification和readback三个后继真实SKIPPED。PR的Work native也在强制来源控制入口失败，其完整日志单独保留。原运行继续记录FAILURE，不能由修复后的本地控制覆盖。
+
+修复在两个live阶段安装1.95.0及rust-src，并将 `rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc` 的实际bin目录写入GITHUB_PATH，同时显式设置RUSTUP_TOOLCHAIN。仅设置环境选择器不能覆盖PATH中直接命中的另一真实rustc。完整本地负控实际使用1.99.1，重现64通过/1错误；正确选择后同65项全部通过、零skip。hosted原默认编译器版本未被捕获，不能据本地负控推断。qualification/readback只读封存的依赖，无新增本地std要求。
+
+[完整跟进记录](../../hia/qualification/work-owner-toolchain-ci.json)及单一完整归档保留两次失败job观察、组件三个原ZIP、来源、全部控制原始流和精确补丁。133 native图仍为ded1230a，6 reader图仍为106c29ee；只有计划pin随本文变化，Rust代码、Cargo图和锁文件未变。新提交仍须重新运行四阶段，当前不预记hosted PASS。
+
+继续统一C新版父状态/Prepared/Node与M05 op8，接真实Some、CheckedApply、COMMIT及Host/Paid原请求deadline；固定parent正向、4秒16请求及所有整链门仍待真实验收。原失败、UNKNOWN和NOT_RUN都保持其来源，旧26包不能提前删除。本文件仍是唯一开发计划。
+
 ## 2026-11-17 UTC — Work/Host 全原始观察、CLOCK 对照与 CI 分阶段
 
 父提交 `c3901ff19c26815205d9cdd6975fc24ecc51ae88`，tree `b51997025da0c61e6a9e516b1950efa3d709df3b`。当前仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。这轮只整合 Work/Host 最终 30 份语义源和 5 份 CI 源、完整测试分片、共享证据类型修复及必要原始观察；新 Node 联合 owner 仍在独立实现，不能冒称已合入。工作流变为 **46 jobs /36 bootstrap**，每个 job 仍为 20 分钟。

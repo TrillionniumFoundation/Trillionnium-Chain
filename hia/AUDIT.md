@@ -1,5 +1,34 @@
 # Whole-tree inventory and HIA migration audit
 
+## Work toolchain prerequisite and actual bd620 component results — 2026-11-17 UTC
+
+Both push run 44041831642 and PR run 44041858435 actually completed the
+general, State-root and independent component-consumer jobs successfully.
+Root read all three push ZIPs and every member, then ran the public consumer
+against the exact bd620/tree8a273 source. Its complete 383-test result
+(376 general, seven State-root, zero skips) exactly matched the hosted report.
+This is evidence readback; it does not rerun the runtime or revalidate the
+original Rust compiler-event chain.
+
+Push Work job 133897989699 failed before native execution: 64 mandatory source
+controls passed and the actual compiler/std identity control errored. Original,
+qualification and readback were skipped. The PR Work source-control failure
+and full log remain separately preserved. These failures are not promoted.
+
+Only native and original job prerequisites change: install locked Rust 1.95.0
+plus rust-src, select its actual bin directory through GITHUB_PATH, and set
+RUSTUP_TOOLCHAIN. Both later evidence-only stages are unchanged. Local actual
+1.99.1 negative control reproduced the failure; the explicitly selected 1.95
+compiler passed all 65 controls with zero skips. The old hosted default version
+was not captured and is not inferred from that local negative control.
+
+The [complete follow-up record](qualification/work-owner-toolchain-ci.json)
+binds the full diagnosis, raw controls, component artifacts and exact patch.
+All 46 jobs retain 20-minute deadlines, all 36 HIA bootstrap gates remain, and
+the 133 native /six reader closures are unchanged. Fresh four-stage hosted
+qualification on the successor remains required. All nine whole-project
+gates remain OPEN, with zero of 26 Rust packages retired.
+
 ## Complete Work/Host evidence and bounded CI stages — 2026-11-17 UTC
 
 Parent is `c3901ff19c26815205d9cdd6975fc24ecc51ae88`. The inventory remains

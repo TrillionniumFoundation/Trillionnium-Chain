@@ -3791,6 +3791,14 @@ jobs:
               out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
               out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
+      - name: Install and select the exact original compiler and standard library source
+        run: |-
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rust-src
+          trnm_work_rustc="$(rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc)"
+          test -x "$trnm_work_rustc"
+          printf '%s\n' "$(dirname "$trnm_work_rustc")" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=1.95.0-x86_64-unknown-linux-gnu\n' >> "$GITHUB_ENV"
       - name: Execute every source and transport admission control
         run: |-
           set -euo pipefail
@@ -3871,10 +3879,14 @@ jobs:
         run: |-
           set -euo pipefail
           python3 -B -m hia.tools.qualify_work_owner_ci native-unpack 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-original-observations/native-transfer.log"
-      - name: Install the exact original compiler and standard library source
+      - name: Install and select the exact original compiler and standard library source
         run: |-
           set -euo pipefail
           rustup toolchain install 1.95.0 --profile minimal --component rust-src
+          trnm_work_rustc="$(rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc)"
+          test -x "$trnm_work_rustc"
+          printf '%s\n' "$(dirname "$trnm_work_rustc")" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=1.95.0-x86_64-unknown-linux-gnu\n' >> "$GITHUB_ENV"
       - name: Execute all original histories retained Host tests and controlled CLOCK faults
         run: |-
           set -euo pipefail

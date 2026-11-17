@@ -104,3 +104,14 @@ raw observations and verified duplicate-copy cleanup proofs.
 Embedded formats and complete content indexes remain unchanged. Reconstruction
 verifies preserved bytes. It does not execute a runtime again, qualify a new
 commit, close an open gate or authorize retirement.
+
+## Work toolchain CI follow-up
+
+The single `work-owner-toolchain-ci.tar.xz` archive and its
+[complete member index and observations](work-owner-toolchain-ci.json) retain
+the bd620 Work prerequisite failure, full local negative/corrected controls,
+both job observations, and all three successful push component ZIPs plus
+independent public readback. Tool-generated empty lock metadata is excluded
+from the canonical archive; all observed source, failure and raw bytes remain.
+This small archive is separate from the five volume sets above. Its current
+source correction requires fresh hosted execution and grants no retirement.
