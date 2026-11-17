@@ -127,7 +127,7 @@ class MempoolCIWitnessTests(unittest.TestCase):
         (complete/"report.json").write_text(json.dumps(baseline))
         public={"baseline_qualification_report":ci.identity(complete/"report.json"),
             "baseline_source_set_sha256":baseline["source_set_sha256"],"baseline_file_count":len(files),
-            "witness_control_count":8,"witness_controls":[]}
+            "witness_control_count":12,"witness_controls":[]}
         for name,(error,changed) in ci.WITNESS_SPECS.items():
             directory=public_directory/name;directory.mkdir()
             expected=copy.deepcopy(baseline)
@@ -143,10 +143,10 @@ class MempoolCIWitnessTests(unittest.TestCase):
             (directory/"receipt.json").write_text(json.dumps(row));public["witness_controls"].append(row)
         return complete,public_directory,public
 
-    def test_exact_eight_witness_transitions_bind_to_complete_baseline(self):
+    def test_exact_twelve_witness_transitions_bind_to_complete_baseline(self):
         with tempfile.TemporaryDirectory(prefix="trnm-mempool-witness-binding-") as directory:
             complete,public_directory,public=self.make_witnesses(Path(directory))
-            self.assertEqual(ci.witness_reports(public_directory,complete,public),8)
+            self.assertEqual(ci.witness_reports(public_directory,complete,public),12)
 
     def test_witness_binding_rejects_self_consistent_summary_or_overlay_drift(self):
         variants=("missing-witness","duplicate-witness","reordered-witness","wrong-count","bool-count",

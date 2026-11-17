@@ -1,5 +1,104 @@
 # Whole-tree inventory and HIA migration audit
 
+## Batch/Prefix integration and strict M05 evidence — 2026-11-17 UTC
+
+Current parent is `876eb577dac61854c535a91ab1480f312d1d6173`.
+Inventory: **41 kernels /20 native foundations /119 HIA files**.
+Workflow: **42 jobs /35 independent native bootstraps**.
+All 26 original packages remain, zero retirements are accepted, and nine
+whole-project gates are OPEN. Older sections below retain their recorded dates.
+
+### Reproduced findings and actual repairs
+
+M05's old exact-876 public reader accepted four coherent changes to actual
+original stdout: scalar integer to boolean, nested integer to boolean, callback
+integer to float and observation-index integer to boolean. Recursive exact-type
+admission now rejects all four. The frozen 26-input graph changed from
+`7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b`
+to `455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7`.
+Full 323 native processes /9,332 commands, actual original comparison /
+153 retained tests, physical/guarded checks and final 21 source /five byte /
+12 coherent-witness controls /22 actual public CLI calls reran and passed.
+Three float count substitutions were separately refused by the CI summary
+helper; those are not public CLI calls.
+
+The Batch CI proposal skipped three original-only groups and still reported
+PASS. Explicit transport/original scopes now require exactly six or nine
+started groups, complete passing rosters and zero skips. Actual transport
+passed 70 controls; each original profile passed 102. Four actual CLI scope
+refusals passed. Seven new native jobs require transport scope and both
+original jobs require actual original evidence.
+
+New YAML serialization was valid but hid seven gates from the existing
+bootstrap coverage reader. Literal multiline and normal indentation restored
+the reader's view without changing parsed job definitions. Four guard groups
+passed across 35 gates. The initial failure is retained; the guard was not weakened.
+
+A shared Cargo incremental-cache cleanup refused a multiply linked file before
+any deletion. That FAIL remains with zero deletions. Four duplicate M05 mutation
+trees were removed only after each byte matched the retained baseline and
+complete overlays.
+
+### Batch/Prefix and exact source transitions
+
+Only 42 final owner files, including 16 HIA sources, entered
+[execution_batch](platform/execution_batch/README.md). Frozen 146-input source
+`408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d`
+actually ran 102 Batch methods /2,133 progress records, 186 Prefix histories /
+936 executed methods /4,419 progress records, 30 physical controls and six scoped
+lifecycles /69 methods /26 complete base reads. Of the 1,011 planned Prefix
+fixture methods, 75 were not executed and are not passed tests. Actual original
+comparison passed Batch102 plus nine retained tests and Prefix186 plus six.
+
+Integrated native closure is 151 inputs,
+`63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f`.
+Only the common-component map and five Work/Host inputs differ; all 60 composed
+runtime inputs are byte-identical. Inventory and sole-plan pin change the original
+graph. Frozen runtime PASS is not relabelled as integrated-graph execution.
+
+The complete Batch archive is 107,152,632 bytes /
+`2446b6d527a21e935be2bda8e4907feeabef28386f1ad16243deb9f05392d4ef`.
+All 8,567 regular members /510,590,392 member bytes were independently reopened,
+with one XZ stream, exact tar padding and full rosters. Eighteen parts were
+physically reassembled. All 46,445 logical entries, 40,320 regular logical files
+and previous failure objects remain. Two original executables remain externally
+retained with full hashes; neither is falsely reported as embedded.
+
+### Exact published 876 CI
+
+[Run 44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130)
+completed all 33 HIA jobs. Application's 109-input source passed 328 native and
+original histories, 335 transactions, 8,784 State commands, 32 physical controls,
+186 integrity controls, 16 CLI refusals and eight original retained tests.
+Complete new ZIP36,267,396 bytes and all raw/original observations were
+independently reread. Its complete ZIP and prior c61 evidence remain in the
+70,656,656-byte final Application archive.
+
+Work/Host's producer ZIP is 247,580,107 bytes. Its inner archive contains 6,159
+regular members /992,297,375 bytes, including the complete 611,199,752-byte
+original executable. Full members, exact126/4368 source maps, three readers,
+package, binding, consumer lineage and final job API were independently checked.
+The separate hosted consumer actually performed semantic readback; local
+verification did not rerun it. The final243,515,800-byte archive preserves both
+producer/consumer ZIPs in39parts. Old175primitive controls still lack full raw
+guard arenas; actual original controlled CLOCK1 faults remain OPEN.
+
+[Archive manifests](qualification/ARCHIVES.md) and each component record bind
+these results. Initial expired-URL HTTP403 and portable-reader path refusals
+remain preserved. Refreshing a URL or separating recorded runner paths from
+local extraction paths did not change a job outcome.
+
+### Integration and continued closure
+
+Actual integration passed89 existing CI/evidence tests, six Batch transport
+groups,173Batch source controls/18CLI and four bootstrap groups. Final source
+pin/inventory/structure checks are separately recorded. Default Config,
+AccountPointAccess=None and workers1/2/4/8 delimit this Batch qualification.
+Custom configuration, PQ/growth, Paid/Host request lifetime, authenticated block
+acceptance, durable Node COMMIT, all targets and original service/research
+obligations remain open. New private Node, Host CLOCK and M05 production work
+is not part of this integrated source. No package or service is retired or activated.
+
 ## Work/Host integration and detached M05 repair — 2026-11-17 UTC
 
 ### Host owner, Application and typed mempool — current candidate

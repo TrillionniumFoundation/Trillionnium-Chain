@@ -405,40 +405,83 @@
     "source_after": "MATCH",
     "status": "PASS"
   },
+  "history": {
+    "published_876_original_source_transition": {
+      "changed_original_inputs": [
+        {
+          "development": {
+            "bytes": 39375,
+            "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
+          },
+          "integration": {
+            "bytes": 43394,
+            "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
+          },
+          "path": "config/hia-migration-v1.json"
+        },
+        {
+          "development": {
+            "bytes": 525351,
+            "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
+          },
+          "integration": {
+            "bytes": 525351,
+            "sha256": "b66f39ed5585b172c18fa9fd7ca36f647a69f73916e1d71582e0cf4e50d74159"
+          },
+          "path": "config/pon/pq-cross-branch-corpus-v1.json"
+        }
+      ],
+      "development_original_source_set_sha256": "2acc7fece14ee54a04a8e71219016b1b2878ca8b8d89529f123a270df38f4486",
+      "development_repository": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/repo",
+      "integration_original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
+      "native_126_source_inputs_unchanged": true,
+      "new_actual_original_execution_required": true,
+      "old_execution_relabelled": false,
+      "source_files": 4368
+    }
+  },
   "integrated_source_fence": "Exact 126 native inputs match frozen e56d development source; new integrated original graph and hosted run require fresh execution.",
   "integration_base_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
   "integration_original_source_transition": {
+    "changed_native_inputs": [],
     "changed_original_inputs": [
       {
-        "development": {
-          "bytes": 39375,
-          "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
+        "current": {
+          "bytes": 45577,
+          "sha256": "00b38646be75ae19c2d8280b7531d80d90f30db5a9abd3d49f5220e50f89109a"
         },
-        "integration": {
+        "executed": {
           "bytes": 43394,
           "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
         },
         "path": "config/hia-migration-v1.json"
       },
       {
-        "development": {
+        "current": {
           "bytes": 525351,
-          "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
+          "sha256": "1704b908ec5aafa06fad7d58491e31fa7dd50cad3463fb26f0ef1536a351d94e"
         },
-        "integration": {
+        "executed": {
           "bytes": 525351,
           "sha256": "b66f39ed5585b172c18fa9fd7ca36f647a69f73916e1d71582e0cf4e50d74159"
         },
         "path": "config/pon/pq-cross-branch-corpus-v1.json"
       }
     ],
-    "development_original_source_set_sha256": "2acc7fece14ee54a04a8e71219016b1b2878ca8b8d89529f123a270df38f4486",
-    "development_repository": "/tmp/trnm-work-owner-canonical-326-20261116-ut1ee1rf/repo",
-    "integration_original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
-    "native_126_source_inputs_unchanged": true,
-    "new_actual_original_execution_required": true,
+    "current_native_source_files": 126,
+    "current_native_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
+    "current_original_source_files": 4368,
+    "current_original_source_set_sha256": "097727a7b02abd9b776019ae45c4fc3b5aeb07fa768021459f693ae0db950663",
+    "fresh_exact_commit_hosted_execution": "NOT_RUN",
+    "native_source_inputs_unchanged": true,
     "old_execution_relabelled": false,
-    "source_files": 4368
+    "reference_execution": {
+      "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+      "native_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
+      "original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
+      "record": "hia/qualification/work-owner-ci.json",
+      "run_id": 44000856130
+    }
   },
   "native": {
     "actual_native_CLOCK1_fault_controls": 18,

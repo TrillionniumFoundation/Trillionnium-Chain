@@ -1,0 +1,2861 @@
+{
+  "dependency_images": {
+    "application_claim": "claim",
+    "application_core": "core",
+    "application_model": "model",
+    "application_quota": "quota",
+    "application_relation": "relation",
+    "application_release": "release",
+    "application_task": "task",
+    "ed": "ed",
+    "pnx": "pnx",
+    "root": "root",
+    "settings": "settings",
+    "sha": "sha",
+    "state": "state"
+  },
+  "fragments": {
+    "batch": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "go",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "failed",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "state_call",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "state_ok",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "master_callback",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_ack",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_init",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_import",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_prologue",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_group",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_apply",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "component_error",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_epilogue",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "copy_begin",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_copy",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "master_finish",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "input_less",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "master_inputs",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "config_limit",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "known",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "touch",
+          "source": "hia/platform/execution_batch/batch.hepta"
+        },
+        {
+          "function": "bg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mp",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mz",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mc",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mi",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mn",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "request",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "core_wipe",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "eq_input",
+          "source": "hia/platform/execution_batch/support.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch.hepta"
+    },
+    "batch_emitter": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_read",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "me_put",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "me_chunk_0",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_1",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_2",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_3",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_4",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_5",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_6",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_7",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_8",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_9",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_10",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_11",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_12",
+          "source": "hia/platform/execution_batch/batch_emitter.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_emitter.hepta"
+    },
+    "batch_mandatory_cleanup": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_mandatory_cleanup.hepta"
+        },
+        {
+          "function": "ac_clean",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_artifact_matches",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/batch_mandatory_cleanup.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/batch_mandatory_cleanup.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_row_key",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_string",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_decimal",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_div",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_index",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text_equal",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "value_integer_size",
+          "source": "hia/src/codec/json_primitives.hepta"
+        },
+        {
+          "function": "value_integer_write",
+          "source": "hia/src/codec/json_primitives.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_mandatory_cleanup.hepta"
+    },
+    "batch_mandatory_core": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_mandatory_core.hepta"
+        },
+        {
+          "function": "ac_account",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_account_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_account_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_credit",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_credit_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_credit_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_get",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_get_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_get_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/batch_mandatory_core.hepta"
+        },
+        {
+          "function": "mb_import",
+          "source": "hia/platform/execution_batch/batch_mandatory_core.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/batch_mandatory_core.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_concat",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_callback",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_wire",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_mandatory_core.hepta"
+    },
+    "batch_mandatory_epilogue": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_epilogue",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_5",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_sum_rows",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_sum_rows_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_sum_rows_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/batch_mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_import",
+          "source": "hia/platform/execution_batch/batch_mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/batch_mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_concat",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_div",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_begin",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_part",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hex",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_sha",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_mandatory_epilogue.hepta"
+    },
+    "batch_mandatory_expiry": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_mandatory_expiry.hepta"
+        },
+        {
+          "function": "ac_collect_due",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_less",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_sift",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_sort",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_swap",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_expiry_receipt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/batch_mandatory_expiry.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/batch_mandatory_expiry.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_row_key",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_string",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_mul",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "ev_string_size",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "ev_string_write",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "json_short_escape",
+          "source": "hia/src/state/json_string.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_mandatory_expiry.hepta"
+    },
+    "batch_worker": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "callback_result",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "callback",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "worker_begin",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "hash_frame",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "semantic",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "core_begin",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "core_step",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "worker_finish",
+          "source": "hia/platform/execution_batch/batch_worker.hepta"
+        },
+        {
+          "function": "bg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mp",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mz",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mc",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mi",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mn",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "request",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "core_wipe",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "eq_input",
+          "source": "hia/platform/execution_batch/support.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/batch_worker.hepta"
+    },
+    "mandatory_cleanup": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/mandatory_cleanup.hepta"
+        },
+        {
+          "function": "ac_clean",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_clean_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_contribution_cleanup_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_retire_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_artifact_matches",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/mandatory_cleanup.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/mandatory_cleanup.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_row_key",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_string",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_decimal",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_div",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_index",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text_equal",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "value_integer_size",
+          "source": "hia/src/codec/json_primitives.hepta"
+        },
+        {
+          "function": "value_integer_write",
+          "source": "hia/src/codec/json_primitives.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/mandatory_cleanup.hepta"
+    },
+    "mandatory_core": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/mandatory_core.hepta"
+        },
+        {
+          "function": "ac_account",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_account_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_account_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_credit",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_credit_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_credit_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_get",
+          "source": "hia/platform/execution_application/core.hepta"
+        },
+        {
+          "function": "ac_get_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_get_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mandatory_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_put_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_remove_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_scan_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/mandatory_core.hepta"
+        },
+        {
+          "function": "mb_import",
+          "source": "hia/platform/execution_batch/mandatory_core.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/mandatory_core.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_concat",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_callback",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_wire",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/mandatory_core.hepta"
+    },
+    "mandatory_epilogue": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_completed",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_completed_0",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_completed_1",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_epilogue",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_epilogue_5",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_funds_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_reward_updates",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_0",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_1",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_2",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_3",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_4",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_reward_updates_5",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "ac_sum_rows",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_sum_rows_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_sum_rows_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_import",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_concat",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_div",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_begin",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hash_part",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_hex",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_object",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_sha",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/mandatory_epilogue.hepta"
+    },
+    "mandatory_expiry": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/mandatory_expiry.hepta"
+        },
+        {
+          "function": "ac_collect_due",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_collect_due_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_expire_4",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ac_mature_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_less",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_sift",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_sort",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_due_swap",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_expiry_receipt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_finish",
+          "source": "hia/platform/execution_batch/mandatory_expiry.hepta"
+        },
+        {
+          "function": "mb_initialize",
+          "source": "hia/platform/execution_batch/mandatory_expiry.hepta"
+        },
+        {
+          "function": "mb_literals",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_0",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_1",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_2",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_literals_3",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_row_key",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mb_string",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "ap_add",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_alloc",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cfg_position",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_cleanup",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_error",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_field_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_import",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_limit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_mul",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_number",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_capacity",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_request_svp",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_first",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_next",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_rows_node",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_text",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_track",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_uint",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ap_untrack",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_compare",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_edit_size",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_emit_member",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_field",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_move",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_put",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_take",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ax_word",
+          "source": "hia/platform/execution_application/support.hepta"
+        },
+        {
+          "function": "ev_r",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "ev_string_size",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "ev_string_write",
+          "source": "hia/platform/execution_state/value.hepta"
+        },
+        {
+          "function": "json_short_escape",
+          "source": "hia/src/state/json_string.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/mandatory_expiry.hepta"
+    },
+    "prefix": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "bg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "capture_next",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "capture_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "config_limit",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "copy_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "failure",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "go",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "input_less",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mc",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mi",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mn",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mp",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mz",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_ack",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_apply",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_begin",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "px_callback",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_capture",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_cleanup",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "px_component",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_copy",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_finalize",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_new",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "px_output",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "px_parse_transactions",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_restore",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_write_rows",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "request",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "restore_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "row_admit",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "state_call",
+          "source": "hia/platform/execution_batch/prefix.hepta"
+        },
+        {
+          "function": "state_ok",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "work_compare",
+          "source": "hia/platform/execution_batch/support.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/prefix.hepta"
+    },
+    "prefix_emitter": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_read",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "me_put",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "me_chunk_0",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_1",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_2",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_3",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_4",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_5",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_6",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_7",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        },
+        {
+          "function": "me_chunk_8",
+          "source": "hia/platform/execution_batch/prefix_emitter.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/prefix_emitter.hepta"
+    },
+    "scoped_prefix": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "bg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "capture_next",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "capture_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "config_limit",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "copy_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "failure",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "go",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "input_less",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mc",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mi",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mn",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mp",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mz",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_ack",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_apply",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_begin",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "px_callback",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_capture",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_cleanup",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "px_component",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_copy",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_finalize",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_new",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "px_output",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "px_parse_transactions",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_restore",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "px_write_rows",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "request",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "restore_start",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "row_admit",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "state_call",
+          "source": "hia/platform/execution_batch/scoped_prefix.hepta"
+        },
+        {
+          "function": "state_ok",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "work_compare",
+          "source": "hia/platform/execution_batch/support.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/scoped_prefix.hepta"
+    },
+    "worker": {
+      "functions": [
+        {
+          "function": "f0",
+          "source": "hia/platform/execution_batch/worker.hepta"
+        },
+        {
+          "function": "semantic",
+          "source": "hia/platform/execution_batch/worker.hepta"
+        },
+        {
+          "function": "core_begin",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "core_step",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "core_wipe",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "hash_frame",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mc",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mg",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mi",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mn",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mp",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mt",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "mz",
+          "source": "hia/platform/execution_batch/support.hepta"
+        },
+        {
+          "function": "request",
+          "source": "hia/platform/execution_batch/support.hepta"
+        }
+      ],
+      "header_source": "hia/platform/execution_batch/worker.hepta"
+    }
+  },
+  "image_order": [
+    "master",
+    "worker",
+    "settings",
+    "pnx",
+    "sha",
+    "ed",
+    "state",
+    "root",
+    "mandatory_core",
+    "mandatory_cleanup",
+    "mandatory_expiry",
+    "mandatory_epilogue",
+    "application_core",
+    "application_task",
+    "application_model",
+    "application_release",
+    "application_quota",
+    "application_relation",
+    "application_claim"
+  ],
+  "profiles": {
+    "batch": {
+      "emitter": "batch_emitter",
+      "mandatory_cleanup": "batch_mandatory_cleanup",
+      "mandatory_core": "batch_mandatory_core",
+      "mandatory_epilogue": "batch_mandatory_epilogue",
+      "mandatory_expiry": "batch_mandatory_expiry",
+      "master": "batch",
+      "worker": "batch_worker"
+    },
+    "prefix": {
+      "emitter": "prefix_emitter",
+      "mandatory_cleanup": "mandatory_cleanup",
+      "mandatory_core": "mandatory_core",
+      "mandatory_epilogue": "mandatory_epilogue",
+      "mandatory_expiry": "mandatory_expiry",
+      "master": "prefix",
+      "worker": "worker"
+    },
+    "scoped": {
+      "emitter": "prefix_emitter",
+      "mandatory_cleanup": "mandatory_cleanup",
+      "mandatory_core": "mandatory_core",
+      "mandatory_epilogue": "mandatory_epilogue",
+      "mandatory_expiry": "mandatory_expiry",
+      "master": "scoped_prefix",
+      "worker": "worker"
+    }
+  },
+  "schema": "trnm.execution-batch-image-composition.v1"
+}

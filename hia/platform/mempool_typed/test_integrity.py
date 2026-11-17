@@ -61,6 +61,15 @@ def source_controls(output):
         except ValueError as exc:error=repr(exc)
         need(error is not None,"Semantic drift accepted")
         rows.append({"name":name,"status":"PASS","observed_error":error,"expected_rejection":True})
+    for name,left,right,operation in (
+        ("scalar-observation-type-refused",{"op":0,"outcome":0},{"op":0,"outcome":False},0),
+        ("nested-observation-type-refused",{"op":0,"counts":[0,1]},{"op":0,"counts":[False,1]},0),
+        ("destruction-callback-type-refused",{"op":20,"events":[[15,1]]},{"op":20,"events":[[15.0,1]]},20)):
+        error=None
+        try:compare_observations(left,right,operation)
+        except ValueError as exc:error=repr(exc)
+        need(error is not None,"Observation type substitution accepted")
+        rows.append({"name":name,"status":"PASS","observed_error":error,"expected_rejection":True})
     need(source_manifest(ROOT)==base,"Live source changed during tests")
     result={"schema":"trnm.hia.mempool-typed-source-controls.v1","status":"PASS",
         "controls":rows,"control_count":len(rows),"actual_native_runtime_executed":False}
@@ -191,11 +200,58 @@ WITNESS_MUTATORS = {
 }
 
 
+def _original_type_witness(root,kind):
+    root=Path(root);path=root/"original/actual-original-corpus/stdout.raw"
+    lines=file_bytes(path).splitlines(keepends=True);changed=False
+    for number,line in enumerate(lines):
+        marker=b"HIA_TYPED_OBS "
+        if marker not in line:continue
+        prefix,raw=line.split(marker,1);value=load_json(raw);returned=value["returned"]
+        if kind=="scalar":
+            need(type(returned["outcome"]) is int and returned["outcome"]==0,"Scalar control baseline differs")
+            returned["outcome"]=False
+        elif kind=="nested":
+            need(type(returned["counts"][0]) is int and returned["counts"][0]==0,"Nested control baseline differs")
+            returned["counts"][0]=False
+        elif kind=="index":
+            need(type(value["index"]) is int and value["index"]==0,"Index control baseline differs")
+            value["index"]=False
+        elif kind=="event":
+            if returned["op"] not in (20,21,22) or not returned["events"]:continue
+            need(type(returned["events"][0][0]) is int,"Event control baseline differs")
+            returned["events"][0][0]=float(returned["events"][0][0])
+        else:raise ValueError("Unknown original observation type control")
+        lines[number]=prefix+marker+json.dumps(value,separators=(",",":")).encode()+b"\n"
+        changed=True;break
+    need(changed,"Original observation type control found no row")
+    path.chmod(0o600);path.write_bytes(b"".join(lines))
+    report=load_json(file_bytes(root/"original/report.json"));stage=report["stages"][-1]
+    stage["stdout"]=identity(file_bytes(path))
+    _replace_json(root/"original/actual-original-corpus/receipt.json",stage)
+    _replace_json(root/"original/report.json",report)
+    return ["original/actual-original-corpus/receipt.json","original/actual-original-corpus/stdout.raw","original/report.json"]
+
+def witness_original_scalar_type(bundle):
+    return _original_type_witness(bundle,"scalar")
+
+def witness_original_nested_type(bundle):
+    return _original_type_witness(bundle,"nested")
+
+def witness_original_event_type(bundle):
+    return _original_type_witness(bundle,"event")
+
+def witness_original_index_type(bundle):
+    return _original_type_witness(bundle,"index")
+
 WITNESS_CONTROLS = (
     ("self-consistent-truncated-flat-retains-original-elf", _truncated_flat_witness, "Native executable differs"),
     ("guarded-count-fields-with-no-call-rows", _empty_guarded_calls_witness, "Guarded evidence refused"),
     *((name, function, "Guarded evidence refused" if name.startswith("guarded-") else "Physical evidence refused")
       for name, function in WITNESS_MUTATORS.items()),
+    ("original-scalar-integer-to-boolean", witness_original_scalar_type, "Actual native and original semantics differ"),
+    ("original-nested-integer-to-boolean", witness_original_nested_type, "Actual native and original semantics differ"),
+    ("original-drop-event-integer-to-float", witness_original_event_type, "Actual destruction callbacks differ"),
+    ("original-index-integer-to-boolean", witness_original_index_type, "Actual original order or history differs"),
 )
 
 def public_controls(bundle,output):
@@ -305,7 +361,7 @@ def public_controls(bundle,output):
         case("changed-original-output","original/actual-original-corpus/stdout.raw",lambda b:b.replace(b"HIA_TYPED_OBS ",b"HIA_TYPED_BAD ",1))
         case("changed-physical-trace","physical/actual-moving-mremap-with-owned-bodies/syscalls.raw",lambda b:b+b"unexecuted\n")
         for name,mutation,expected_error in WITNESS_CONTROLS:witness(name,mutation,expected_error)
-        need(len(rows)==5 and len(witness_rows)==8 and len(cli_rows)==18,"Incomplete public control execution")
+        need(len(rows)==5 and len(witness_rows)==12 and len(cli_rows)==22,"Incomplete public control execution")
         need(files_manifest(bundle)==baseline and file_bytes(bundle/"report.json")==baseline_report,
             "Actual baseline changed during public controls")
         result["status"]="PASS"

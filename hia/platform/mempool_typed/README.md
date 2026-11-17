@@ -59,7 +59,10 @@ before and after execution. No shared Cargo target is used.
 Only callback destruction order in operations 20, 21 and 22 is compared as a
 multiset because the original uses an unordered HashMap. Both raw orders remain in
 the evidence. Every other field, callback order, input, operation and history is
-compared exactly. The private handle-exhaustion control is a declared test-only
+compared exactly, including the recursive JSON value types and the integer history
+index. Integers, booleans and floating-point values are distinct in both ordered
+comparisons and unordered destruction callbacks. The private handle-exhaustion
+control is a declared test-only
 memory intervention, outside the public command protocol.
 
 The physical qualifier requires Linux strace and retains the complete actual
@@ -72,8 +75,10 @@ The independent reader reconstructs the complete emitted ELF from its native
 compiler outputs and requires every physical control, syscall trace and guarded
 call. It validates all 26 private call transitions, the sole eight-byte test
 intervention, nonwrapping handle exhaustion and complete close zeroization.
-The integrity suite retains 18 source controls, five byte-tamper controls and
-eight self-consistent witness mutations with 18 actual public CLI invocations.
+The integrity suite retains 21 source controls, five byte-tamper controls and
+12 self-consistent witness mutations with 22 actual public CLI invocations.
+Four witnesses change actual original observation scalar, nested count, callback
+or index types while rebinding every affected raw file and summary.
 The witness controls preserve each changed raw file and its rebound summary;
 changing hashes alone cannot make an invalid observation admissible.
 

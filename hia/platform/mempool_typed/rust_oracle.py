@@ -70,15 +70,27 @@ def read_original(raw):
             observations.append(load_json(line.split(marker,1)[1]))
     return observations
 
+def typed_value(value):
+    """Preserve JSON types in equality and unordered callback multiset keys."""
+    if type(value) is dict:
+        need(all(type(key) is str for key in value),"Observation keys must be strings")
+        return (dict,tuple((key,typed_value(item)) for key,item in sorted(value.items())))
+    if type(value) is list:
+        return (list,tuple(typed_value(item) for item in value))
+    need(type(value) in (str,int,float,bool,type(None)),"Unsupported observation value")
+    return (type(value),value)
+
 def compare_observations(native,original,operation):
     need(isinstance(native,dict) and isinstance(original,dict),"Malformed observation")
     if operation not in (20,21,22):
-        need(native==original,"Actual native and original semantics differ");return None
+        need(typed_value(native)==typed_value(original),"Actual native and original semantics differ");return None
     need(set(native)==set(original),"Observation field set differs")
     left={k:v for k,v in native.items() if k!="events"};right={k:v for k,v in original.items() if k!="events"}
-    need(left==right,"Destruction operation semantics differ")
-    need(collections.Counter(tuple(x) for x in native["events"])==
-         collections.Counter(tuple(x) for x in original["events"]),"Actual destruction callbacks differ")
+    need(typed_value(left)==typed_value(right),"Destruction operation semantics differ")
+    need(type(native["events"]) is list and type(original["events"]) is list,
+         "Actual destruction callbacks differ")
+    need(collections.Counter(typed_value(x) for x in native["events"])==
+         collections.Counter(typed_value(x) for x in original["events"]),"Actual destruction callbacks differ")
     if native["events"]!=original["events"]:
         return {"native_events":native["events"],"original_events":original["events"],
                 "only_original_hashmap_destruction_order_is_unordered":True}
@@ -121,7 +133,8 @@ def compare(runtime_root,executable_identity,original_raw):
     for name,observations in native:
         for index,actual in enumerate(observations):
             row=original[cursor];cursor+=1
-            need(set(row)=={"history","index","returned"} and row["history"]==name and row["index"]==index,
+            need(set(row)=={"history","index","returned"} and type(row["history"]) is str
+                 and row["history"]==name and type(row["index"]) is int and row["index"]==index,
                  "Actual original order or history differs")
             variance=compare_observations(actual,row["returned"],actual["op"])
             if variance is not None:variations.append({"history":name,"index":index,**variance})

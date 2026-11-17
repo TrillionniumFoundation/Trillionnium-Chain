@@ -1,0 +1,107 @@
+{
+  "complete_original_binary": {
+    "bytes": 611199752,
+    "sha256": "8c04c58e6178becfc531ede1c4cb16a50948d17ac29f36caefe2eb14feec499e"
+  },
+  "consumer_artifact": 14292951966,
+  "consumer_job": 133768696196,
+  "consumer_zip": {
+    "bytes": 3994,
+    "sha256": "242539c476c9c6a7189d40f67a255d17d48a19820c03be6206ad3b551647a4cc"
+  },
+  "current_candidate_qualified_by_old_run": false,
+  "evidence": {
+    "all_members_reopened": true,
+    "bytes": 7180,
+    "complete_isolated_original_source_included_in_producer_zip": true,
+    "complete_original_binary_included_in_producer_zip": true,
+    "complete_producer_and_consumer_zips_included": true,
+    "complete_reassembly_verified": true,
+    "format": "trnm.hia.contiguous-archive.v1",
+    "index": {
+      "bytes": 3614,
+      "sha256": "6fdb091d9b93093f5d16776b88e445c41957fea0b1a92436993c938f3ee09203"
+    },
+    "logical_files": 22,
+    "parts": 39,
+    "path": "hia/qualification/work-owner-ci.parts/manifest.json",
+    "reconstructed_archive": {
+      "bytes": 243515800,
+      "name": "work-owner-ci.tar.xz",
+      "sha256": "16c37259be4b1e0003d0569d2f96e28531bb4e2c1e77c152412f51576f1d2cd6"
+    },
+    "regular_members": 20,
+    "sha256": "c95466fe8f53a9673d2f40e6e1067d2ce0e1c31f4966921b8196fab95d49613c"
+  },
+  "full_archive_verification": {
+    "archive": {
+      "bytes": 242689024,
+      "sha256": "9e6267f2f0aab1b1d174088a37ce55417fb63d379e16bd419cc6e4dcf464bdc3"
+    },
+    "complete_XZ_stream_and_tar_padding": true,
+    "expanded_tar_bytes": 999731200,
+    "members": 6159,
+    "regular_bytes": 992297375,
+    "status": "PASS"
+  },
+  "independent_hosted_consumer": {
+    "actual_syscall_traces": 3,
+    "archive": {
+      "bytes": 242689024,
+      "sha256": "9e6267f2f0aab1b1d174088a37ce55417fb63d379e16bd419cc6e4dcf464bdc3"
+    },
+    "native_clock_fault_controls": 18,
+    "native_histories": 61,
+    "native_progress_points": 27843,
+    "original_binary": {
+      "bytes": 611199752,
+      "sha256": "8c04c58e6178becfc531ede1c4cb16a50948d17ac29f36caefe2eb14feec499e"
+    },
+    "original_controlled_CLOCK1_fault_comparison": "OPEN",
+    "original_histories": 57,
+    "original_process_stages": 48,
+    "original_progress_points": 27841,
+    "original_worker_histories": 56,
+    "primitive_controls": 175,
+    "qualification_status_not_changed_by_readback": true,
+    "retained_original_test_count": 44,
+    "signal_controls": 14,
+    "status": "QUALIFIED_COMPLETE_READBACK",
+    "trace_controls": 27
+  },
+  "lineage": {
+    "attempt": 1,
+    "git_head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "run_id": "44000856130"
+  },
+  "local_full_semantic_replay_claimed": false,
+  "local_runtime_reexecuted": false,
+  "native_source_files": 126,
+  "native_source_set_sha256": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91",
+  "old_packages_retired": 0,
+  "original_4s_16_service_gate_closed": false,
+  "original_controlled_CLOCK1_fault_comparison": "OPEN",
+  "original_source_files": 4368,
+  "original_source_set_sha256": "329094e942e295a01e230d64924b4b38a1dff40ebdc9447a4d07de359e31e4ae",
+  "physical_power_loss": false,
+  "primitive_raw_guard_arenas_retained": false,
+  "producer_artifact": 14291569629,
+  "producer_job": 133764250135,
+  "producer_zip": {
+    "bytes": 247580107,
+    "sha256": "705552d8c9bc158fcb7fc176856349795ff1f0d5a6c3746b08e4de6b68271a28"
+  },
+  "production_activation": false,
+  "production_fixed_parent_authority": false,
+  "qualification_scope": "Exact 876 hosted Work/Host producer plus independent hosted semantic consumer; complete local archive/member and committed-source verification",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130",
+  "schema": "trnm.hia.work-owner-ci.v1",
+  "status": "PASS",
+  "whole_Node_or_paid_checkpoint_closed": false,
+  "whole_hia_workflow": {
+    "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "jobs": 33,
+    "success": 33
+  },
+  "whole_migration_complete": false
+}

@@ -31,6 +31,18 @@ WITNESS_SPECS = {
         "guarded/handle-exhausted-pop/context-after.raw", "guarded/handle-exhausted-pop/receipt.json", "guarded/report.json")),
     "guarded-private-fixture-extra-write": ("Guarded evidence refused", (
         "guarded/private-write-after.raw", "guarded/report.json")),
+    "original-scalar-integer-to-boolean": ("Actual native and original semantics differ", (
+        "original/actual-original-corpus/receipt.json", "original/actual-original-corpus/stdout.raw",
+        "original/report.json")),
+    "original-nested-integer-to-boolean": ("Actual native and original semantics differ", (
+        "original/actual-original-corpus/receipt.json", "original/actual-original-corpus/stdout.raw",
+        "original/report.json")),
+    "original-drop-event-integer-to-float": ("Actual destruction callbacks differ", (
+        "original/actual-original-corpus/receipt.json", "original/actual-original-corpus/stdout.raw",
+        "original/report.json")),
+    "original-index-integer-to-boolean": ("Actual original order or history differs", (
+        "original/actual-original-corpus/receipt.json", "original/actual-original-corpus/stdout.raw",
+        "original/report.json")),
 }
 
 def witness_reports(public_directory,complete_directory,public):
@@ -41,7 +53,7 @@ def witness_reports(public_directory,complete_directory,public):
         and public["baseline_file_count"]==len(original["files"]),"Witness baseline binding differs")
     rows=public.get("witness_controls")
     require(type(rows) is list and [row.get("name") for row in rows]==list(WITNESS_SPECS)
-        and type(public.get("witness_control_count")) is int and public["witness_control_count"]==8,
+        and type(public.get("witness_control_count")) is int and public["witness_control_count"]==12,
         "Witness control inventory differs")
     for row in rows:
         name=row["name"];expected_error,paths=WITNESS_SPECS[name];directory=public_directory/name
@@ -67,20 +79,21 @@ def witness_reports(public_directory,complete_directory,public):
         require(identity(directory/"mutated-summary.json")==row.get("mutated_summary")
             and read(directory/"mutated-summary.json")==expected,
             "Witness summary changed anything other than declared file identities")
-    return 8
+    return 12
 
 
 def gate_reports(source_directory,public_directory,complete_directory):
     source=read(source_directory/"report.json");public=read(public_directory/"report.json")
     require(source.get("schema")=="trnm.hia.mempool-typed-source-controls.v1"
-        and source.get("status")=="PASS" and source.get("control_count")==18
+        and source.get("status")=="PASS" and type(source.get("control_count")) is int and source["control_count"]==21
         and source.get("actual_native_runtime_executed") is False,"Source controls incomplete")
     source_names=[
         "exact-full-source","missing-owner-source","unbound-owner-source","stale-python-cache",
         "nested-owned-source","changed-hia-source","changed-host-oracle","changed-shared-platform",
         "symbolic-owned-source","hardlinked-owned-source","ambiguous-pinned-input-list","duplicate-json-key",
         "truncated-native-prefix","zero-native-frame","unordered-original-drop-only",
-        "ordered-callbacks-must-match","lost-drop-callback-rejected","non-event-drift-rejected"]
+        "ordered-callbacks-must-match","lost-drop-callback-rejected","non-event-drift-rejected",
+        "scalar-observation-type-refused","nested-observation-type-refused","destruction-callback-type-refused"]
     require([row.get("name") for row in source["controls"]]==source_names
         and all(row.get("status")=="PASS" for row in source["controls"]),"Source control inventory differs")
     for row in source["controls"]:
@@ -91,7 +104,7 @@ def gate_reports(source_directory,public_directory,complete_directory):
     public_names=["changed-native-output","changed-native-input","changed-compiled-image",
                   "changed-original-output","changed-physical-trace"]
     require(public.get("schema")=="trnm.hia.mempool-typed-public-controls.v2"
-        and public.get("status")=="PASS" and public.get("control_count")==5
+        and public.get("status")=="PASS" and type(public.get("control_count")) is int and public["control_count"]==5
         and public.get("actual_native_runtime_executed") is False
         and [row.get("name") for row in public.get("controls",[])]==public_names,"Public byte controls incomplete")
     for row in public["controls"]:
@@ -103,7 +116,7 @@ def gate_reports(source_directory,public_directory,complete_directory):
     witness_reports(public_directory,complete_directory,public)
     cli_names=["valid-readback","no-compiler-during-readback","missing-original-compiler",
         "optimized-python-refused","symbolic-bundle-refused",*public_names,*WITNESS_SPECS]
-    require(public.get("actual_public_cli_processes")==18
+    require(type(public.get("actual_public_cli_processes")) is int and public["actual_public_cli_processes"]==22
         and [row.get("name") for row in public.get("public_cli",[])]==cli_names,"Public CLI inventory differs")
     for row in public["public_cli"]:
         directory=public_directory/("cli-"+row["name"]);success=row["name"]=="valid-readback"
@@ -125,7 +138,7 @@ def gate_reports(source_directory,public_directory,complete_directory):
             if row["name"] in WITNESS_SPECS:
                 require(WITNESS_SPECS[row["name"]][0].encode() in base.regular(directory/"stderr.raw").read_bytes(),
                     "Actual CLI refused a different witness invariant")
-    return {"source_controls":18,"public_byte_controls":5,"public_witness_controls":8,"actual_public_cli_processes":18,
+    return {"source_controls":21,"public_byte_controls":5,"public_witness_controls":12,"actual_public_cli_processes":22,
         "source_control_report":identity(source_directory/"report.json"),
         "public_control_report":identity(public_directory/"report.json")}
 
@@ -209,7 +222,7 @@ def check_binding(value,expected):
         "Binding is not a successful typed-mempool qualification")
     for name,count in (("native_histories",323),("native_commands",9332),("actual_original_histories",323),
         ("retained_original_library_tests",153),("actual_physical_processes",38),("actual_guarded_native_calls",26),
-        ("source_controls",18),("public_byte_controls",5),("public_witness_controls",8),("actual_public_cli_processes",18),("old_packages_retired",0)):
+        ("source_controls",21),("public_byte_controls",5),("public_witness_controls",12),("actual_public_cli_processes",22),("old_packages_retired",0)):
         require(type(value.get(name)) is int and value[name]==count,"Binding finite coverage differs: "+name)
     require(value.get("native_test_traits_only") is True and value.get("node_or_persistent_pool_authority") is False,
         "Binding broadened component authority")

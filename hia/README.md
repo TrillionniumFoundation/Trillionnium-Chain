@@ -1,15 +1,125 @@
 # HIA native implementation
 
-This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **41
-kernel units and nineteen native foundations**, accounting for all **103 HIA source
-files**. The 26 existing Rust packages remain until their complete replacement
-is qualified. The authoritative sequence remains the
-[repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
-[The migration inventory](../config/hia-migration-v1.json) accounts for every
-original package and every new HIA source file.
-The [audit report](AUDIT.md) records complete ownership, observed CI failures
-and the exact limits of the current replacement.
+This is the in-progress native HIA replacement of Trillionnium-Chain. The current
+inventory contains **41 kernel units, 20 native foundations and 119 HIA source
+files**. Each component has one implementation directory. All 26 original Rust
+packages remain, zero package retirements are accepted, and all nine whole-project
+gates remain OPEN.
+
+The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets the complete migration sequence. The [migration inventory](../config/hia-migration-v1.json)
+accounts for every old package and new HIA source.
+[The audit](AUDIT.md) retains source-specific findings, failures and remaining obligations.
+
+## Current source and qualification
+
+Published parent
+[`876eb577dac61854c535a91ab1480f312d1d6173`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/876eb577dac61854c535a91ab1480f312d1d6173)
+completed all **33 HIA jobs** in
+[run 44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130).
+Its complete Application and Work/Host artifacts were independently reopened.
+The current integration adds nine Batch/Prefix jobs and repairs M05 evidence
+admission. It requires fresh execution on its own committed source.
+
+| Owner | Actual source-specific results | Remaining boundary |
+| --- | --- | --- |
+| [Batch and TransactionPrefix](platform/execution_batch/README.md) | Frozen 146-input source: 102 Batch methods / 2,133 progress records; 186 Prefix histories / 936 executed methods / 4,419 progress records; 30 physical controls and six scoped lifecycles / 69 methods. Actual original: 102 Batch methods plus nine retained tests and 186 Prefix histories plus six retained tests. | Default Config, AccountPointAccess=None and workers 1/2/4/8 only. Custom Config, PQ/growth, Paid/Host lifetime, authenticated Node, durable COMMIT and original service acceptance remain open. |
+| [Typed M05](platform/mempool_typed/README.md) | Repaired 26-input source: 323 native processes / 9,332 commands and actual original comparison / 153 retained tests; 38 physical processes, 26 guarded calls, 21 source controls, five byte and 12 coherent-witness refusals / 22 actual public CLI calls. | Signature/replay/nonce traits are fixture adapters. Production PNX/signature/State adapters, persistent pool, Node lifetime and original service acceptance remain open. |
+| [Default M06 Application](platform/execution_application/README.md) | Exact 876: 328 native and original histories, 335 transactions, 8,784 State commands, nine native processes, 32 physical controls, 186 integrity controls, 16 CLI refusals and eight retained original tests. | The integrated original graph changed. All configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT remain open. |
+| [Same-worker Work/Host](platform/work_owner/README.md) | Exact 876: 61 native histories / 27,843 progress records; 175 primitive controls, three traces, 27 trace controls, 14 signal controls and 18 native CLOCK1 faults. Actual original: 57 histories / 27,841 progress records, 56 joined workers and 44 retained tests. | Those 175 historical controls lack full raw guard arenas. Original CLOCK1 faults, production fixed-parent authority, shared Paid account/request deadline and original service acceptance remain open. |
+
+The Prefix corpus declares 1,011 fixture methods; **936 actually ran** and
+75 were unexecuted paths after the observed fixture outcome. Those 75 are not
+passed methods or skipped original tests. The observed 256-transaction Batch
+case took 24.3928 seconds and the largest Prefix history took 140.676 seconds.
+These development results do not satisfy the original four-second service gate.
+
+### Exact source transitions
+
+| Source graph | Frozen execution identity | Integrated identity and obligation |
+| --- | --- | --- |
+| Batch native | 146 inputs, `408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d` | 151 inputs, `63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f`; all 60 composed runtime inputs are byte-identical, but the complete graph needs fresh CI. |
+| M05 native | Old 876: `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b` | Repaired and locally reexecuted: `455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7`; fresh hosted qualification remains required. |
+| Application native | 109 inputs, `b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70` | Native inputs unchanged; inventory and sole-plan pin change the original graph. |
+| Work/Host native | 126 inputs, `e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91` | Native inputs unchanged; the original graph requires fresh committed-source execution. |
+
+The M05 audit reproduced four false accepts against the actual old public CLI:
+integer zero replaced by boolean false in scalar and nested observations, an
+integer callback count replaced by a float, and an observation index replaced
+by a boolean. Altered original stdout, receipt and summary stayed mutually
+consistent. Recursive strict type checks now reject all four; full native,
+actual original and public-control qualification reran on the repaired source.
+Three additional float count substitutions were reproduced and refused at the
+CI summary helper. Those helper checks are not public CLI executions.
+
+The [M05 record](qualification/mempool-typed-development.json),
+[Batch record](qualification/execution-batch-development.json),
+[Application development record](qualification/execution-application-development.json),
+[exact 876 Application record](qualification/execution-application-ci.json),
+[Work/Host development record](qualification/work-owner-development.json) and
+[exact 876 Work/Host record](qualification/work-owner-ci.json) retain separate
+source maps and evidence scopes.
+
+## CI and retained evidence
+
+The integrated workflow has **42 jobs and 35 independent native bootstrap gates**.
+Seven new Batch native jobs require explicit transport-test scope; the two
+actual-original jobs require full original-test scope. Missing or conflicting
+scope arguments are refused. Actual local suites passed six transport groups /
+70 controls and, for each original profile, nine groups / 102 controls. Every
+scope recorded zero skipped tests. Original 20-minute job limits and
+240-second process / three-second cleanup bounds remain.
+
+Integration checks passed all 89 existing CI/evidence tests, six transport
+groups, 173 Batch source-integrity controls / 18 CLI calls and four bootstrap
+guard groups. The [CI development record](qualification/application-mempool-ci-development.json)
+keeps those checks separate from runtime execution and hosted qualification.
+
+The [archive manifests and restoration instructions](qualification/ARCHIVES.md)
+describe five final volume sets. Every member was reopened, every part hashed
+and every archive physically reconstructed. Application CI preserves complete
+c61 and 876 ZIPs. Work/Host CI preserves complete producer/consumer ZIPs,
+including the 611,199,752-byte original executable. Batch's two original
+executables remain separately preserved with explicit identities and locations;
+they are not embedded archive members.
+
+Failed executions, unknown outcomes and original source identities remain
+evidence. Archive verification does not execute a runtime again or qualify a
+later commit.
+
+## Foundations and whole-project gates
+
+Earlier owners have separate contracts and records:
+[OS](platform/README.md), [reactor](platform/reactor/README.md),
+[transactions](storage/README.md), [requests](platform/transport_request/README.md),
+[Delta](platform/node_delta/README.md), [private stacks](platform/private_stack/README.md),
+[responses](platform/transport_response/README.md),
+[Host checks](platform/host_checkpoint/README.md), [typed staging](platform/typed_store/README.md),
+[Host resources](platform/host_resource/README.md),
+[continuity](platform/continuity_store/README.md),
+[Thread CPU](platform/thread_cpu/README.md), [Genesis](platform/genesis_store/README.md),
+[Paid CPU](platform/paid_cpu/README.md), [State](platform/execution_state/README.md)
+and [private Prepare](platform/execution_prepare/README.md).
+The native syscall emitters and compiler are explicit trusted boundaries.
+Core admission alone does not prove every emitted system-call effect.
+
+| Whole-project gate | Outstanding acceptance |
+| --- | --- |
+| System I/O | Full filesystem, network, process and capability ownership in the actual Node. |
+| Persistent Node | One durable transaction owner, original SQLite semantics, crash cuts, rollback floor and reorganization. |
+| Cryptography | Complete PQ signatures, authenticated identity/TLS and every signature domain. |
+| Node integration | Full transaction/application/mempool lifecycle, cancellation and private authority. |
+| Service budget | Original 0.25 CPU, 2 GiB, zero swap, 256 PIDs, four-second and 16-attacker acceptance. |
+| Cross-target | Original architectures/operating systems and exact artifact qualification. |
+| Model loop | Actual train, independent evaluation, Adopt/NoUpdate, subsequent task and cold recovery. |
+| Consensus research | Original work cost, public consensus, STARK/QROM and economic obligations. |
+| Retirement | Complete equivalent replacement of all 26 packages and indispensable tools. |
+
+Original service and history failures remain in the
+[whole-project findings](qualification/whole-project-ci-findings.json),
+[326 diagnosis](qualification/ci-326-observed-failures.json) and
+[protocol supplement](qualification/ci-326-protocol-contract-failures.json).
+A successful HIA workflow does not close those gates.
 
 ## Fixed sources and audit
 
@@ -35,665 +145,6 @@ service, model-use, consensus-security and cross-architecture failures retain
 their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
 
-## Observed qualification and current scope
-
-### Host owner, Application and typed mempool — current candidate
-
-The current inventory is **41 kernels / 19 native foundations / 103 HIA source
-files**. The same-worker Work/Host owner adds 23 final owned files, including
-eight HIA sources, with two independent CI reader files. Every component has
-one implementation directory. The 26 original Rust packages remain, with zero
-accepted retirements and all nine whole-project gates OPEN.
-
-| Native owner | Exact-source actual execution | Remaining integration |
-| --- | --- | --- |
-| [Same-worker Work/Host](platform/work_owner/README.md) | 61 native histories / 27,843 progress records, 175 primitive controls, three actual traces, 27 trace and 14 signal controls, 18 native CLOCK1 faults; 57 actual-original histories / 27,841 progress records, 56 joined workers and 44 retained original tests | Earlier request deadline, shared Paid account/checkpoint, production fixed-parent positive, actual original CLOCK1 faults, Node/batch lifetime and original service acceptance |
-| [Default M06 Application](platform/execution_application/README.md) | At c61: 328 native and original histories, 335 real PNX1 transactions, 8,784 State commands and nine native processes; 32 physical controls, 181 integrity controls / 16 actual CLI refusals and eight retained original tests | Complete batch and workers, all configurations/PQ, authenticated block acceptance, expected-root checks and durable Node COMMIT |
-| [Typed M05 mempool](platform/mempool_typed/README.md) | Final detached-checkout source: 323 fresh native processes / 9,332 commands and complete original comparison / 153 retained tests; 38 physical processes / 50 commands, 26 guarded calls, 18 source controls, five byte and eight coherent-witness refusals / 18 actual public CLI calls | Production PNX/signature adapters, actual Node nonce leases, persistent pool/recovery and original service budget |
-
-Work/Host's 126-input source is
-`e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91`.
-The actual worker retains the original acquired boot/parent/limit identity and
-performs every original W1 progress checkpoint against that immutable snapshot.
-The verified parent FD remains live across CPU, memory and PID reads; all three
-reads finish before parsing, and the FD closes before the second fresh Host check.
-The main thread joins the real child before after-sampling or output. Ordinary
-Host, cancellation, deadline and CLOCK panic paths retain their different error
-orders. A new standalone entry cannot renew an earlier Node request budget.
-
-The Work/Host reader previously accepted three self-consistent changes to actual
-Rust stdout: domain integer to boolean, progress integer to boolean, and thread
-identity integer to string. The final reader checks the complete original row
-schemas and rejects all three. Its 25 development test groups, complete original
-binary pack/readback, four archive negatives and actual detached native build
-passed. The 175 earlier primitive guard arenas were not retained as complete
-raw snapshots; this missing evidence is explicit and cannot be reconstructed
-from success counts. Original controlled CLOCK faults also remain OPEN.
-
-Typed M05's final 26-input source is
-`7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b`.
-Its 179,254-byte ELF remains
-`c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c`.
-At c61, the component's default development preflight rejected GitHub's exact-SHA
-detached checkout before native qualification. The complete original failed CI
-ZIP and raw preflight error remain retained. The explicit `--audit` option now
-selects the existing read-only boundary for this checkout; default `--dev`,
-canonical origin, disabled activation and workspace checks remain enforced.
-Readback rejects the execution-only option. The new source genuinely reran every
-native, original, physical, guarded and public control in a real detached checkout.
-Earlier eight reader false accepts, compiler-path and linker failures remain
-historical failures. Signature/replay/nonce traits remain explicit test adapters.
-
-Application's executed c61 104-input source is
-`05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`.
-Its fourteen-image 4,246,848-byte ELF is
-`898952d546182defb65eb553966a7eebebe2b7799935b743c5fae17c24bd1a0a`.
-The [exact c61 CI record](qualification/execution-application-ci.json) binds
-[run 43983845998](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998),
-job 133706836939 and artifact 14283854229. The complete 36,198,231-byte original ZIP,
-every native/physical/control stream and actual original stdout were independently
-read back. Its 91,371,888-byte original binary is retained in full. Remote compiler
-paths remain original CI observations; no local path or execution was fabricated.
-
-This integration adds five Work/Host include mappings to `hia/components.json`.
-The gate also binds every inspected component key, growing Application's closure
-from 104 to 109 inputs. Its new source set is
-`b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70` and requires fresh exact-commit CI.
-The previous c61 native/original result remains bound to c61. The development
-original graph and every actual earlier execution also retain their own identity.
-The inventory and final plan pin changes require fresh original comparisons.
-
-The [Work/Host record](qualification/work-owner-development.json),
-[M05 record](qualification/mempool-typed-development.json),
-[Application development record](qualification/execution-application-development.json)
-and exact c61 CI record distinguish development, hosted execution and remaining
-work. The final Work/Host semantic archive is 26,328,788 bytes; its
-[CI repair archive](qualification/work-owner-ci-development.tar.xz) is 4,748,140 bytes.
-M05's final archive is 13,481,848 bytes, preserving 14,389 logical files and
-3,993 regular payload members, including the complete original binary.
-The c61 Application CI archive is 35,301,924 bytes and contains its original ZIP.
-[Archive manifests and reconstruction instructions](qualification/ARCHIVES.md)
-bind every volume and the complete original archive. Each volume set was actually
-reassembled and compared with the original bytes. Archive storage does not run a
-test again or change its qualification.
-
-The workflow now has **33 jobs / 28 independent native bootstrap gates**.
-Work/Host uses a producer followed by a separate complete-readback consumer;
-both retain the original 20-minute job limit. The consumer requires a successful
-binding from the exact head/run/attempt and refuses development NOT_BOUND or
-PRIVATE_DEVELOPMENT_READBACK_PASS. The producer still reopens its complete package.
-Fourteen actual inline admission controls passed, including the complete real
-development package's refusal. The final integration's 89 source/evidence tests
-passed. [CI development evidence](qualification/application-mempool-ci-development.json)
-keeps this validation separate from the next committed source's hosted result.
-
-All original resource profiles, four-second / 16-attacker acceptance conditions,
-1,800-second history limits, configuration coverage and security/model obligations
-remain in force. A finite owner, a storage archive or a successful HIA workflow
-does not authorize old-package retirement or establish durable Node COMMIT.
-
-### Audited predecessor 326837e
-
-At predecessor `326837e4c5a8a6b3b99390063c08a47dc4f9d6a0`, the HIA
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43938876560)
-and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229249)
-both completed all 29 jobs successfully. The ten new PaidCPU/State/Prepare
-artifact ZIPs were fully hashed and independently read back. Those results
-belong to that predecessor and do not qualify this candidate.
-
-The [exact-326 failure diagnosis](qualification/ci-326-observed-failures.json)
-and its [raw evidence](qualification/ci-326-observed-failures.tar.xz) retain
-nine complete original ZIP identities and 9,478 members. Three before-budget
-groups refused incompatible lock/dependency/test inputs before any native control.
-The requested historical pressure artifact remains unavailable. Four actual
-from-zero runs passed their five native tests and each confirmed one baseline
-request, but their 4-second / 16-attacker pressure phases confirmed zero, with
-one unconfirmed request and zero unknown outcomes. Both x64 history servers
-actually exited normally at their original 1,800-second limit before the client
-received RPC connection refusal. The 3,297 and 3,973 returned import calls are
-not counted as durable commits; total resource-cost causality remains unresolved.
-
-The [protocol-contract supplement](qualification/ci-326-protocol-contract-failures.json)
-and [complete small raw archive](qualification/ci-326-protocol-contract-failures.tar.xz)
-independently cover both lanes of run 43939229469. Each actually ran all five
-native tests successfully; each baseline confirmed one request, while its
-4-second / 16-worker pressure phase confirmed zero and left one unconfirmed,
-with no unknown result. Business started within the pressure window. The
-controller returned CONFIRMATION_TARGET failure. Preparation's
-native_tests_executed=false describes its no-run build stage, and does not
-describe the later execution. The head also recorded PUBLIC_REQUEST_DEADLINE;
-the merge lane had no verification error. These observations do not establish
-an infrastructure or Host-only cause and do not close original service gates.
-
-### Published predecessor 326837e — PaidCPU and execution foundations
-
-The predecessor inventory was **41 kernels / 16 native foundations / 83 HIA source
-files**. The 26 original Rust packages remain, with zero accepted retirements
-and all nine whole-project gates OPEN. This increment adds 47 final owned
-source files, including ten HIA files. Each component has one implementation
-directory; authoring trees and intermediate builds stay outside the repository.
-
-| Native owner | Actual final development execution | Boundaries still requiring integration |
-| --- | --- | --- |
-| [PaidCPU](platform/paid_cpu/README.md) | Six native owner histories, 83 observed budget operations, 67 arithmetic boundaries, 13 fault histories, 40 protocol controls and 10 trace refusals; actual original 83 budget calls, 67 boundaries, five scoped profiles, all 13 faults, 23 retained tests and the mandatory Linux clock positive | Complete paid request/account lifetime, general executor placement and original public-service budget |
-| [State/View/Patch](platform/execution_state/README.md) | 68 native and original histories, 1,075 observations on each side, nine physical groups with 97 native calls, five retained original tests; 13 source groups / 141 controls and eight actual-bundle CLI refusals | Application commands, M06 batch/replay, mandatory transitions, fees/rewards/funds, expected-root admission and durable COMMIT |
-| [Private preparation](platform/execution_prepare/README.md) | 723 native semantic cases, 52 physical controls and 52 processes, 723 actual private original comparisons and three retained tests; 13 integrity groups / 164 controls including 34 actual CLI refusals | Full batch workers and application, all configurations/PQ, block receipts and private Node admission |
-
-PaidCPU's 58-input source set is
-`9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f`.
-The observed count of 83 budget operations is bound to the complete native
-event streams and actual original calls; CI does not impose a scheduler-dependent
-constant. The original comparison binds Rust 1.95.0, its full version output,
-absolute compiler/Cargo bytes, 14 actual standard-library source files and two
-compiled standard-library files. Complete fault captures bind task births,
-terminal/reap state, actual executable arguments, auxiliary-vector changes,
-private role markers and every raw output stream.
-
-State's final 33-input source set is
-`5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8`.
-The 97 physical calls include complete private journals with 53, five and two
-direct calls, plus 37 process commands. The journal verifier rechecks full
-65,536-byte heap observations, input/output bytes, continuity, unchanged rejected
-calls, unused output tails and the two explicitly private counter injections.
-Real moving `mremap` and the native response to syscall-level `ENOMEM` injection
-are recorded separately from private ABI fixtures; host memory exhaustion is not claimed. Original comparison runs all 12 recorded stages with
-absolute rustc/Cargo/rustdoc identities and exact production-source prefixes.
-
-Preparation's final 47-input source set is
-`77df26a897da5437f0d0ba2191558e49c615dc17966a793c241ea15e731a147b`.
-The private owner performs complete legacy PNX1 validation, native SHA256 and
-strict Ed25519, default installed Settings construction, attempt counting,
-callback/cancellation order and Prepared lifetime handling. The actual original
-comparison binds all ten stages, the selected compiler, independently retained
-serde library objects and unchanged production functions with the sole test hook.
-These preparation results carry no block-commit or Node admission authority.
-
-The records and complete source-specific evidence are
-[PaidCPU](qualification/paid-cpu-development.json),
-[State](qualification/execution-state-development.json) and
-[preparation](qualification/execution-prepare-development.json).
-Their corresponding [Paid archive](qualification/paid-cpu-development.tar.xz),
-[State archive](qualification/execution-state-development.tar.xz) and
-[preparation archive](qualification/execution-prepare-development.tar.xz)
-preserve the actual raw observations and historical failures. Exact repeated
-bytes use content objects. State's 4,381 already-committed source files were
-independently read from Git at `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c`;
-matching archive members explicitly name that commit, path, Git blob, byte count
-and SHA256. The full 6,666-member source/raw archive can be reconstructed from
-those existing Git blobs and the retained objects. No source or raw observation
-is replaced by a summary. Original Rust test executables remain separately
-retained in full during development; new hosted artifacts include the complete
-independent executables.
-
-Actual failures keep their original status. The first final State original
-attempt exited 101 after stdout reported `ENOSPC`; its partial output and
-zero-byte final report remain. After the original processes were confirmed
-absent, the same frozen source passed all 68 histories and five retained tests
-in a fresh output directory. Preparation's interrupted physical attempt retains
-45 process receipts, a zero-byte report and an unavailable terminal outcome.
-A fresh same-source execution subsequently passed all 52 controls. The Paid
-component's earlier missing-import original failure and all earlier authoring
-and comparison failures remain in their own source-specific records.
-
-### Exact-source CI and the audited published predecessor
-
-The workflow now contains **29 jobs and 25 independent native bootstrap gates**.
-The added jobs cover PaidCPU, combined State native/physical/original execution,
-preparation semantics, preparation physical controls and preparation original
-comparison. Original preparation accepts only the complete native artifact from
-the same commit, run and attempt. All five jobs verify every committed source
-byte before and after execution, then bind raw outcomes. Failure packaging
-preserves available streams and binaries while retaining special-file metadata
-without opening those files. The original 20-minute job limits remain.
-
-The integrated evidence and ownership tests passed **46 groups**. The complete
-workflow passed 189 Bash fragment syntax checks, 37 Python heredoc parses, all
-four bootstrap-test groups across 25 gates and duplicate-key YAML/structure
-checks. The [CI development record](qualification/execution-ci-development.json)
-and [full review evidence](qualification/execution-ci-development.tar.xz) retain
-the 12 Paid and 11 execution-evidence boundary groups, actual recorded-fault
-replays, source-specific reader checks, earlier rejected proposals and uncertain
-launch observations. These development reviews do not count as new native or
-hosted execution. The new committed-source workflow remains required.
-
-Published predecessor `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c` actually
-completed all 24 HIA jobs in both the
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907395835)
-and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690872).
-Fourteen original GitHub ZIPs were fully hashed and independently checked:
-all five Genesis native suites, actual Genesis originals and Thread CPU evidence
-from both lineages. Each Genesis lineage passed 254 controls / 356 native
-processes and 30 original cases / three retained tests; the Thread lineages
-passed their complete 65-history native/original and physical evidence.
-The [Genesis CI record](qualification/genesis-ci.json) and
-[Thread CI record](qualification/thread-cpu-ci.json) bind that exact source.
-These predecessor results do not qualify a later commit.
-
-The [whole-project CI findings](qualification/whole-project-ci-findings.json)
-and [priority diagnosis](qualification/priority-ci-diagnostic.json) preserve
-other failures on the same published source. Both x64 history services reached
-their original 1,800-second lifetime and exited normally; the next RPC was
-refused before full synchronization completed. All three failed service lanes
-retained `CONFIRMATION_TARGET` failures despite five successful named test exits.
-The x64 no-attack baseline confirmed zero, while both ARM64 baselines confirmed
-one; all three 16-worker pressure runs confirmed zero. Full Host/W1 page
-observations identify a concrete implementation cost without manufacturing a
-causal CPU fraction across caller threads and scoped workers. The original
-0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and 16-worker conditions remain.
-
-Next work joins the actual application commands, scoped batch workers, complete
-joins and panic/cancellation order, one canonical replay, mandatory/reward/fund
-semantics and private durable Node admission. Host/resource/W1 checks must run
-inside the actual execution worker with fresh authority checks at every original
-boundary. PQ/TLS, all targets, the model product loop, research obligations and
-complete replacement of every retained package remain on the closure matrix.
-
-### Prior Genesis integration and Thread CPU repair
-
-The current inventory is **41 kernels / 13 native foundations / 73 HIA source
-files**. All **26 original Rust packages remain**, zero package retirements are
-accepted and all **nine whole-project gates remain OPEN**.
-
-The [Genesis owner](platform/genesis_store/README.md) constructs the complete
-default Settings, genesis catalog, active selector, slot zero and seven-row
-State inside the native HIA executable. It holds the private directory and
-exclusive lock, writes and synchronizes the actual files, rereads their complete
-contents, computes the native M06 State root and performs cold recovery before
-opening the owner. The directory model remains private with cooperative flock;
-continuous hostile same-UID mutation and physical power loss are not qualified.
-Successor execution/admission, expected-root acceptance, arbitrary COMMIT,
-reorg/replay/outbox/ACK, PQ/GSC2 and arbitrary Configs remain open.
-
-The executed 45-input Genesis source set before final formatting is
-`a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b`.
-It actually passed **30 native semantic controls / 62 processes** and
-**30 actual original comparisons / all three retained original tests**.
-Final staged formatting removed exactly one terminal LF from each of the two
-hosted Python verifier/test files. All other 43 inputs and both Python ASTs are
-identical. The integrated 45-input set is
-`032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305`.
-The actual native/original results above remain bound to the pre-format a0c3
-set; final-source execution is required in the new committed-source CI.
-
-The earlier `a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046`
-source actually passed all five native suites: 254 controls and 356 processes.
-Only the registry-source verifier and its tests changed afterward; all nine
-runtime artifacts remained byte-identical. The four earlier physical suites
-retain their earlier source identity and are required again in current-head CI.
-The [complete current record](qualification/genesis-development.json),
-[current raw evidence](qualification/genesis-development.tar.xz),
-[earlier native evidence](qualification/genesis-native-history.tar.xz) and
-[first original failure](qualification/genesis-original-failure.tar.xz)
-preserve the complete outcomes. The original source closure includes migration
-and plan-pin metadata: these differ during integration, while all remaining
-4,359 original inputs match. The earlier 4,361-input original execution keeps
-its own identity; complete committed-source CI must execute the integrated set.
-
-Published `535ce9865d6764de8184aab04204459f6f05001b` exposed a second real
-Thread CPU controller defect in the
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43895143250)
-and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43895921099).
-Both completed 65 semantic histories, 724 operations and 74 physical controls,
-then the negative-control builder failed before its 12 mutations because it
-still searched for exactly one space before `exit_group`. Original Rust did
-not run in those failed jobs. The complete artifacts and job logs remain FAIL.
-
-The repaired builder uses the already-parsed task, syscall and exact trace-line
-positions for both the terminal insertion and child-exit removal. Ten integrity
-groups include the full actual hosted trace, input and output; five padding
-forms each reject all 12 mutations. The final 38-input set
-`5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805`
-actually passed **65 native histories / 724 operations / 74 physical controls /
-12 trace refusals / four signal-pairing refusals**, then **65 actual original
-histories / 518 original-method calls / 36 retained tests and the mandatory
-positive Linux clock test**. Native HIA, the adapter and both executable images
-are unchanged. The [Thread record](qualification/thread-cpu-development.json)
-and [current evidence](qualification/thread-cpu-development.tar.xz) retain the
-new executions and both new hosted failures. The exact duplicate predecessor
-archive is retained in immutable Git commit `535ce986`, with its path, Git blob
-and SHA256 bound in the current record, rather than nested again in this archive.
-
-The workflow now contains **24 jobs and 21 independent native bootstrap gates**.
-Five independent Genesis native jobs cover semantic, crash, prefix, namespace
-and corruption controls; the sixth requires the same run's complete semantic
-artifact and actually executes original Rust. They retain the 20-minute job,
-240-second native child and three-second cleanup limits. Every new job verifies
-the complete current tracked source before and after execution; dependent
-artifacts bind the same commit, run and attempt. The six new jobs use depth-one
-checkouts because these checks require the full current tree and its Git blobs.
-The existing history-audit job retains full history. New committed-source CI
-results remain pending; these component observations do not close whole Node
-or permit retirement of the retained stack.
-
-### Earlier source-specific observations
-
-Exact published head `2e3e5dcaa6f899e4f42f2b390fb869255364824d` completed
-**14/14 HIA jobs successfully** in both the
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43863320729)
-and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43863349518),
-both on attempt 1. Each Host job actually executed the fixed-parent resource
-production owner after its own successful Host production. Independent review
-rehashed the complete downloaded artifact, all 514 extracted regular files and
-the complete raw syscall traces. The 52-source resource image performed three
-samples, four receipts and checks 1, 3, 5 and 7 with actual TID, executable and
-sealed-parent observations. The [resource production success record](qualification/host-resource-production-ci-success.json)
-preserves both exact run lineages. These results belong to that published head.
-
-Published `44b3` added finite native continuity and thread CPU owners plus
-four mandatory CI jobs. Earlier development observations below retain their
-own complete source maps and execution records. The current 24-job workflow must execute
-on the integrated head. The nine whole-project gates
-remain OPEN and all 26 original Rust packages remain required.
-
-Exact head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec` completed **14/14 HIA
-jobs successfully** in both the
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43848902425)
-and [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43849236024).
-Actual Host production, independent resource syscall tracing and original Rust,
-and the full typed-State produce → fresh-process cold restore → bounds chain
-passed. The [Host success record](qualification/host-production-ci-success.json)
-preserves the actual production bytes. These are exact-source component results;
-all nine whole-project gates and all 26 package retirements remain open.
-
-The `8690b8bbeb58` PR completed eight of nine HIA jobs. It ran 270 component
-tests with zero skips and 92,509 shared native calls; its Host production job
-failed in independent trace normalization after actual native checks completed.
-The actual failure and offline parser diagnosis are retained below. None of
-those prior observations is relabeled as qualification of the current source.
-
-The earlier `453326b335af` source completed all eight HIA jobs in both
-[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828760883)
-and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828945597)
-qualification. Both ran 257 component tests, zero skips and 92,509 shared native
-calls, including actual original-Rust consensus, mempool, AuditEvent and
-RawBindings comparison. Its 52 physical storage controls passed with actual
-syscall tracing; all 197 initialization recovery controls passed. These results
-belong to that source; the current increment requires its own exact-source run.
-
-The [original service campaign on the same head](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43828945620/job/133169304908)
-still failed in the original four-second/16-attacker window: original and fresh
-pressure phases both confirmed zero transactions. Their attack-free baselines
-confirmed one request in 2.374779837 and 2.308299376 seconds. Fresh pressure Host
-checks occupied 104,102,970 of 108,451,909 work-thread CPU nanoseconds; those are
-nested intervals, not additive costs. This is the retained original Rust Node,
-not a measurement of an integrated HIA Node. No service or identity guard was
-relaxed. Earlier historical budget comparisons also refused before native
-execution because their Cargo.lock differed; those failures remain recorded.
-
-## Native complete-State continuity
-
-The [continuity owner](platform/continuity_store/README.md) extends the frozen
-typed State materialization with actual native construction of four installed
-configurations, maintenance validation, complete liability relationships,
-recipient deduplication and capacity checks. Its four compiled HIA images run
-inside one Linux executable and read the actual staged State descriptor.
-No supplied account-membership result, imported reward count or continuity
-success bit is accepted. It preserves the original Delta → complete State →
-continuity → progress → optional classical-root order for its selected
-fast-activation prefix.
-
-All four installed configurations use the original Legacy backend. The growth
-reference task changes continuity/capacity rules; it does not implicitly select
-PermanentAccountGrowthV2. The component's configuration domain is explicitly
-finite: arbitrary configuration values, disabled profiles, PQ anchors and
-retained rewards, and GSC2 remain outside this entry. A growth request cannot
-silently substitute the classical root. Expected-root admission, persistent
-namespace, active records, COMMIT, replay, outbox and peer ACK still belong to
-the remaining Node owner.
-
-The captured 62-input development candidate, before final hook whitespace
-formatting, actually passed all **659 native
-controls**: 572 semantic cases, 13 direct context ABI controls and 74 physical
-owner controls, in 309.141244876 seconds. The before/after source maps matched;
-the report and full build identity are retained in the
-[continuity development record](qualification/continuity-development.json).
-The same captured source also passed **572/572 actual original-Rust semantic
-comparisons and all four retained original tests**. The isolated original
-wrapper completed in 348.060553935 seconds, retained the actual Rust binary,
-and recorded identical complete before/after source observations. The earlier
-retained-test-name refusal and GROWTH_PROFILE constructor panic remain failed
-observations. This development execution still requires the new committed
-source's mandatory CI run.
-
-Final formatting removes exactly one trailing LF from the original-test hook
-(11,758 to 11,757 bytes); all other 61 inputs are unchanged. The final 62-input
-source-set SHA256 is
-`a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`.
-Its source admission and actual 18.802374730-second build passed, and all four
-images, emitter, prefix and ELF are byte-identical to the executed predecessor.
-The full native/original results retain their pre-format source identity;
-complete post-format execution is required in the new committed-source CI.
-
-Seven earlier complete capacity executions are retained under their original
-source identities. They generated and reread all 1,065,536 rows, checked
-1,000,000-account and 65,536-working-key boundaries, refused final-byte
-corruption, and sorted 65,515 complete recipient identities. The full stream
-contains 36,837,812 bytes. These are maximum-row/index observations, not a claim
-that every row simultaneously has a maximum-size value, and not power-loss or
-GSC2 qualification. The final committed source must rerun all seven controls
-with the unchanged 240-second per-child limits.
-
-## Native thread CPU ownership
-
-The [thread CPU owner](platform/thread_cpu/README.md) measures actual
-CLOCK_THREAD_CPUTIME_ID on the executing main thread or one native worker.
-Private generation identity supplements the actual TID; unforgeable stamp
-capabilities, independent clones, consuming finish and explicit value drop are
-implemented in HIA. Native clone, guarded worker-stack reuse, private futex
-handoff and shared clear-child-TID join have actual syscall-trace controls.
-The profile has 64 live stamps and one worker at a time; it does not implement
-the complete Node executor or paid CPU account.
-
-Actual original-Rust comparison exposed nine differences in the initial 53
-histories. The exact locked rustix 1.1.6 Linux backend returns immediately on
-first success or EINVAL and otherwise performs exactly one syscall fallback.
-The corrected native owner now preserves that exact single-fallback behavior.
-All **65 histories, 724 protocol operations and 74 physical controls** passed
-in native execution. All **65/65 histories** also matched actual original Rust,
-with 518 original-method calls, 36 retained original tests and a mandatory
-successful Linux clock control. The original 53 inputs remain a byte-identical
-prefix, and 12 persistent-error histories were added. The final 38-input
-closure includes the project lockfile and both relevant Cargo manifests;
-all source and actual locked-backend before/after checks matched.
-The dependency and actual backend identity, complete source maps, original
-failed comparisons, raw traces and final observations are retained in the
-[thread CPU development record](qualification/thread-cpu-development.json).
-
-The native signal controls require a real interrupted read/futex, matching
-signal delivery and rt_sigreturn, subsequent work and successful join.
-SIGKILL is recorded as a killed process with no terminal receipt, not normal
-join. Same-numeric-TID fixture controls isolate generation ABA refusal; they
-do not claim that the kernel actually reused a TID. Paid i128 epochs,
-reservations, live debit/residual settlement, Unknown-on-drop, poisoning,
-scoped-worker panic behavior, Node worker embedding and the original
-four-second/16-attacker service gate remain open.
-
-## Exact-source foundation CI transfer
-
-Four additional jobs require the complete continuity native run, all original
-Rust continuity comparisons, the seven capacity stages, and the actual thread
-CPU/original-Rust differential. Dependencies bind to the same Git head, run and
-attempt. The helper checks every complete native and original source against
-the committed Git blob, verifies all archive entries and required handoff bytes,
-and only materializes verified regular files. FIFO and link metadata remains
-in the raw archive without opening or activating those entries.
-
-Independent review found that a sibling packaging log changed upload-artifact's
-common directory, breaking the expected handoff layout. The fixed workflow
-uploads one directory and copies the packaging log inside it. Failed transfer
-inputs, bindings and receipts are retained even when unpack refuses. Eight
-source/transfer test groups, all sixteen guarded bootstrap snippets and the
-eighteen-job YAML layout passed; the [CI development record](qualification/foundation-ci-development.json)
-separates these controller checks from actual native and original execution.
-
-## Complete classical State staging and root
-
-The [typed Store owner](platform/typed_store/README.md) performs actual Linux
-descriptor admission, streaming Delta merge, complete stored-State decoding and
-an optional complete classical sparse root in one HIA-generated executable. Its
-private arena is 4,587,520 bytes; immutable input captures also consume operating
-system storage. The runtime performs its own reads, writes, parsing and root
-arithmetic. The test controller supplies physical capabilities and observations.
-
-The [development evidence](platform/typed_store/qualification/development-observations.json)
-retains 603 native controls, 392 actual original-Rust semantic comparisons,
-three retained original State tests and ten controller controls. The original
-Rust comparison exposed an empty-key SQL projection mismatch. The correction
-also preserves empty-value projection refusal, dimension/callback/conversion
-order and the ability to delete or repair invalid pre-State rows. The original
-374 cases remain, with 18 additional cases. Earlier failures are retained.
-
-All three complete-capacity development stages passed with 65,536 rows, 160-byte
-keys and 4,096-byte values: 279,969,808 bytes in the typed stream format. Native
-generation and an independent full root calculation agreed. A fresh process
-restored and scanned every byte, producing the same root. The bounds stage
-refused final-byte corruption and a classical row-count overflow without
-publishing output; the growth dimension profile admitted the extra row without
-claiming a GSC2 root. These stages took 644.13996704, 621.776575668 and
-71.819485816 seconds under their separate 20-minute qualification limits.
-
-These records bind the earlier development overlay, not this new committed
-source. Four mandatory CI jobs rerun native/original comparison and the three
-capacity stages in order, checking the complete source before and after each
-job and binding each handoff to its exact head, run, attempt, executable and
-prior receipt. Bundle admission independently reconstructs the complete current
-source dependency closure and all source-defined corpus bytes. Missing inputs,
-self-consistent forged digests, recursive dependency changes and truncated or
-trailing compressed input are refused before Rust tool discovery or copying.
-The integrated controller passed nine groups, 81 controls and 11 public CLI
-invocations; these are admission tests, not additional native-runtime cases.
-Fresh-process recovery does not establish physical power-loss
-recovery or cache flushing. Namespace, continuity, expected-root admission,
-COMMIT, replay, peer ACK and complete Node authority remain open.
-
-## Fresh native Host checkpoint owner
-
-The [Host checkpoint owner](platform/host_checkpoint/README.md) performs actual
-Linux reads for fixed-parent acquisition and every subsequent complete check.
-Boot identity, the calling thread's membership, directory identity and all five
-limits are reread; no prior descriptor, file content or verdict is reused.
-Its HIA-emitted adapter confines data pointers and can grow only its own private
-state mapping. The final rebuilt source passed 151 physical controls and 26
-hostile-adapter controls, with four independent CLI/evidence tests.
-
-The [development record](qualification/host-checkpoint-development.json) retains
-the actual local tracing denial and failed mandatory-trace run. Separately,
-145 real native cases matched actual original private Rust primitives and
-fixture sequences; the original Host production file remained byte-identical.
-The retained original tests passed 44 cases, with their original child probe
-still default-ignored and explicitly called by its parent test. The initial
-adapter compilation failure is preserved.
-
-An independent 20-minute Host CI job now requires all physical controls with
-real syscall tracing, the actual original Rust comparison, and a production
-fixed-parent check inside the unchanged original resource limits. It binds the
-whole exact committed source and permits provisioning only a previously absent
-parent on an ephemeral hosted runner. Its production controller passed eleven
-refusal/evidence tests. A real early-exit race that lost 283 stderr bytes was
-reproduced and fixed; primary and cleanup failures are retained separately.
-The first two hosted production services failed, and a fixture-permission error
-also blocked artifact upload. The [retained logs](qualification/host-production-ci-failure.json)
-record both failures. After collection was repaired, the `8690b8b` push job
-returned an actual zero-exit native execution with 22 fresh checks and valid
-thread membership, then failed in trace normalization. Escaped read contents
-had caused quotes to be matched across lines. The corrected mapper touches only
-complete path arguments; [the unchanged actual trace](qualification/host-production-trace-parser-development.json)
-now passes offline reinspection. That job remains FAIL, and a new exact-source
-production execution is required. Resource sampling, same-worker embedding,
-the complete Node and original four-second/
-16-worker service acceptance remain open.
-
-## Native aggregate Host resource sampling
-
-The [resource owner](platform/host_resource/README.md) reads actual `cpu.stat`,
-`memory.current` and `pids.current` through the same parent FD returned by its
-first complete fresh Host check. All three bounded regular-file reads and
-UTF-8 checks finish before parsing. The owner preserves duplicate-key refusal,
-the original unsigned parsing rules and field/error order, closes that exact
-parent FD, then performs a second complete fresh check. A private baseline
-supports checked CPU deltas; failed samples publish no qualified numeric values.
-
-The [development evidence](qualification/host-resource-development.json) retains
-183 native controls, 172 actual original-Rust cases covering 180 operations,
-44 original Host tests and actual independent syscall tracing. Of the 172
-cases, 148 exercise the unchanged original `sample_counters` sequence; 23
-exercise explicit private reader/parser mutation phases and one tests the
-additional private baseline protocol. The original ignored helper remains
-ignored and is invoked by its original parent. Three integrity test groups and
-seven real malformed-bundle CLI invocations verify complete source admission.
-
-The development source retains its own 30-input binding. A separate mandatory
-20-minute CI job runs the native controls once, requires the real trace, and
-passes the same exact corpus to the actual original Rust implementation.
-Artifact collection reads explicit receipt paths without descending into
-intentionally unreadable fixture namespaces. Fixed-parent production resource
-sampling, same-worker embedding, paid per-thread CPU, child process ownership
-and original service acceptance remain open. Whole-parent resource values do
-not grant any individual worker's paid-CPU or consensus authority.
-
-The same-job [production controller](platform/host_resource/README.md#same-job-production-qualification)
-now binds all 52 resource/Host inputs, checks the previous complete lease before
-locking, and runs only after that job's actual Host production success. It
-requires three actual samples and seven complete checks in one sealed native
-process, with independent trace verification. Its 18 refusal groups run before
-parent provisioning. The [development record](qualification/host-resource-production-development.json)
-retains the real fixture failure and correction separately from actual production.
-This new source requires its own fresh native/original and production CI; the
-preceding 34ecf1b successes are not relabeled as this source.
-
-## Native AuditEvent values and exact RawBindings
-
-The [AuditEvent component](src/audit/README.md) implements the original public
-constructor, all six consuming builders, Clone and Eq. Its ten native tests
-passed 2,847 calls, including every optional mask, field-local Unicode bounds,
-all 128 amount bits, long middle-field replacement, and atomic refusal. The
-unchanged original crate passed its three original unit tests and the same
-1,849 semantic cases in an actual separate Rust execution. Its source-bound
-[qualification record](qualification/audit-event-development.json) retains the
-initial Rust adapter compilation failure, corrected run and native evidence.
-AuditEvent is descriptive data; it does not prove that an event occurred.
-
-The [RawBindings owner](src/mempool/RAW_BINDINGS.md) stores full digest/body
-bytes in its own native private context. Seven tests passed 16,597 native
-calls; 1,220 histories containing 16,471 operations match the complete actual
-original Rust methods. A known digest is consumed before rejecting a mismatched
-body, exactly as in the original. The [bound observations](qualification/raw-bindings-development.json)
-retain actual input and output hashes. Signature checking, signer nonce state,
-durable local-pool transactions and Node integration remain open.
-
-These two sources were rebuilt and re-executed after an interrupted development
-environment lost its temporary volume. Earlier native passes do not qualify
-the replacement bytes. Mandatory final-source CI compares native results with
-the actual original Rust implementations again; missing tools cannot skip it.
-
-## Complete M02 arithmetic and physical initialization recovery
-
-The [M02 Work and time-policy module](src/consensus/README.md) now implements the
-complete original pure `consensus.rs` closure: 512-bit checked arithmetic, work
-credit, target adjustment, parent-window selection and median-time checks.
-The native source passed 6,308 emitted-machine calls. A real independent Rust
-compiler executed the unchanged original module on the same 5,344 semantic
-inputs, with every result matching the mathematical oracle also checked by HIA.
-The mandatory hosted suite repeats a direct original/native comparison.
-
-The [native StoreOwner](storage/README.md) adds explicit context-bound genesis
-initialization recovery. It validates the exact genesis and any existing FORMAT
-prefix, completes durable initialization, and reads the physical records back
-before acknowledging success. The 197 physical controls include genuine process
-interruptions, partial writes, cold reopen and concurrent object insertion. The
-previously reproduced changed-prefix false acknowledgement is retained as a
-regression and now refuses with no opened receipt. This closes the stated
-initialization unit; full typed Node publication remains a separate integration.
-
-## M05 lane policy and queue ownership
-
-The [lane quota/fairness kernel](src/mempool/lane_quota.hepta) implements original
-capacity, critical reserve, borrowing, dequeue and QoS decisions. The separate
-[lane owner](src/mempool/OWNER.md) retains two actual private FIFO rings, exact
-ID membership and fairness across native calls. The [policy contract](MEMPOOL.md)
-and owner tests require the real original Rust crate. Signed admission, nonce
-ownership and the Node's durable local pool need their own complete integration.
-
 ## Implemented native components
 
 The [M05 native lane owner](src/mempool/OWNER.md) now retains both physical
@@ -704,8 +155,8 @@ complete unchanged original mempool crate and matched all 41,248 public
 operations across 1,862 histories. The exact hosted test additionally compares
 original Rust and native replies directly and cannot skip a missing oracle.
 The [bound development record](qualification/mempool-owner-development.json)
-retains both observations. Typed signed admission, nonce ownership, durable
-local-pool handoff and Node integration still require their own native owners.
+retains both observations. Typed signed fixture admission is covered above; production signature/State adapters,
+persistent local-pool handoff and Node integration remain open.
 
 | Source | Implemented behavior | Native tests |
 | --- | --- | --- |
@@ -927,32 +378,6 @@ disabled. Original progress callbacks, receiver cache/owner integration, resourc
 admission and the private `VerifiedWork` construction remain with the retained
 runtime. These interfaces need their own HIA implementations and service tests.
 
-## Sixth candidate integration evidence
-
-The current source increment has separate local evidence and requires its own
-exact committed CI. [Complete response observations](qualification/transport-response-observations.json)
-record 11,420 passing native controls. The full response producer uses the
-[private stack](platform/private_stack/README.md); a real seccomp-denied `munmap`
-after signing caused exit 70 and zero stdout. Its 11 standalone controls retain
-the actual bare signer erasure failure: scalar secret bytes remained in compiler
-stack spill slots even after the explicit work arena was cleared. Guarded normal
-returns wipe the complete 1 MiB private stack and unmap it. Neither this repair
-nor conservative SSA analysis establishes whole-key custody or machine-code
-constant-time behavior.
-
-[Settings observations](qualification/settings-development.json) retain the
-16 integrated tests and two rejected compiler attempts. The
-[typed Delta caller](platform/node_delta/README.md) passed 8,551 controls,
-including a 65,536-row State and a 131,072-key Delta union. Its typed tape
-constructor finishes validation before the first progress call; physical stored
-row materialization and cancellation remain separate owner obligations.
-
-The response, Settings and Delta jobs require actual original Rust execution
-(10,990 response comparisons plus six original tests, 30 Settings cases and
-423 Delta cases). These were NOT_RUN locally because Rust is unavailable; the
-workflow refuses to substitute a host-side reimplementation. Earlier CI below
-qualifies only its recorded source set.
-
 ## Retained compiler qualification
 
 [compiler-binding.json](qualification/compiler-binding.json) binds the original
@@ -963,171 +388,23 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
-The fifth repaired candidate `4cc0464ff9632f2a493cb76d5b8b51eaad332dac`
-passed all three HIA jobs in [run 43751782144](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144):
-189 tests, 56,884 shared-runner native calls, no failures, errors or skips.
-All five original Rust adapters actually executed. The [exact CI report](qualification/native-ci.json)
-binds source set `fe94efedc30dba67e3c89cf95b17a7135d29f7b6dc9bd29ffa290dd519ba337c`;
-its SHA-256 is `d665e6ac67d8613e89d62045dfcbaa497b2525df0114f3c22e8081eabb511400`.
-Native artifact `14176927252` has ZIP SHA-256
-`71191d0e6458d00c442b4effa29a4697f78deb7caf03f051228f8d17f2fe331a`.
-The run also passed 25 finite OS controls, 49 reactor controls with 13 native
-contracts, and 48 storage controls with 14 native entry contracts. Actual syscall
-traces were captured. These finite results do not close whole-Node integration.
+## Repository consolidation
 
-The [original executor report](qualification/executor-original-ci.json) records
-5,274 actual original-Rust/native comparisons, with status
-`PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT`. The unchanged original implementation
-produced 131 unsafe schedules; all 181 intentional differences and 27 expected
-version-skew panics remain explicit. The separate 122 differences in the earlier
-source-derived model corpus remain labeled as model observations. The HIA
-correction retains the maximum reader dependency and every native result must
-satisfy the independent conflict graph. This executor belongs to the full
-26-package repository scope and is outside the normal Node dependency closure.
+The historical cleanup index records 1,622 redundant payload copies and
+1,628,294,407 original bytes removed from the active tree. Original Git blobs,
+source-bound archive readers, failed observations and qualification limits remain.
+Current HIA components have one final implementation tree; authoring trees
+and intermediate builds remain external.
 
-The complete request job passed 178 native request controls, 14 incremental SHA
-controls, 170 actual original-Node differential cases and six original tests.
-Eight new owner-container cases are explicitly excluded from the Rust oracle.
-The source job passed historical readers and all 113 PQ negative tests in
-419.167 seconds. PQ remains `HOLD_NO_GO`. Neither source consistency nor a
-request fixture's 30-second outer budget qualifies original service acceptance.
-The earlier full 2 MiB submit and dense 69,878-query ConfirmMany observations
-remain 5.171449401 and 6.773873071 seconds; their original service gates are open.
-
-The fifth initial candidate passed its main 177-test suite but failed the later
-executor adapter link with E0463 before original executor execution. The
-[repair report](qualification/executor-original-linking-fix.json) retains the
-actual Cargo JSON and failure. Dependency directories now come from that
-successful invocation's library artifacts, and required externs must be unique.
-Twelve controls and the exact repaired-head real Rust comparison verify the fix.
-The prior storage CLI import failure and three missing retained stderr logs
-remain in [development observations](qualification/development-observations.json).
-None of these repairs changed original algorithm sources, corpus or service budgets.
-
-All sixth-batch sources have distinct local source bindings. The exact published
-fifth-head CI results above do not qualify these later edits. Their original Rust
-and owner-integration results remain separately reported until actually executed.
-
-## Tree cleanup and remaining integration
-
-607 obsolete checkout-repair files were removed from the active tree. Their
-128,438,729 original bytes remain addressable by the baseline Git objects and
-the [archive index](../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json).
-The original failure summaries and qualification are unchanged. The archive
-checker validates every original object and can return an indexed original
-without executing its historical helper scripts.
-
-A further 14 historical CI ZIPs (275,505,994 bytes) are indexed in the
-[sealed archive](../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json).
-Its reader preserves and validates all 810 original checksum entries, the
-original seal and all HOLD/FAIL counts. Both cleanup sets remove 621 current-tree
-copies totaling 403,944,723 original bytes; metadata and validation additions
-make the net reduction smaller.
-
-The [joint-resource index](../evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json)
-removes another 13 archive copies (125,934,468 bytes), while checking all 74
-original checksums and the complete original archive-member denominator.
-The [PQ triage index](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json)
-removes four large streams (189,121,668 bytes) from one historical capture and
-retains its other 29 records byte-for-byte. Its checker verifies every one of
-1,050 original stored hashes, 147 gzip bindings and 543 followup bindings.
-The [public-readiness index](../evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json)
-removes 885 pre-correction payloads (413,594,755 bytes). Its reader reconstructs
-the exact historical view and executes the original checker against its actual
-measured source, verifying all 1,334 manifest entries, 793 source SHA-256 values
-and 2,588 original source blobs. Current and historical tracking are checked;
-no network retrieval substitutes for missing objects. [The retained observation](qualification/public-readiness-cleanup.json)
-records the successful original semantic gate without promoting historical
-engineering results to current native or public readiness.
-The [hosted-cost archive](../evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json)
-removes 32 more containers/shards (180,351,232 bytes), preserving five small
-records byte-for-byte. Its private exact 210-file historical view executes the
-original verifier: all 208 top-level entries, 12 archives, 32 parts and 808 members
-(3,762,781,104 uncompressed bytes) are read and verified. Sixteen negative tests
-include the real missing-index and dangling-symlink CLI paths. A prepublication
-fallback bug that could overwrite a copied historical receipt was reproduced and
-fixed by unconditional read-only dispatch; the retained repository receipt was
-unchanged. [The observation](qualification/hosted-cost-cleanup.json) preserves
-that failure and the final complete PASS. Original ZIP bytes and current native
-work/service acceptance are not inferred from this historical byte verification.
-The [D26 SQLite archive](../evidence/pon-business-gates-readback-20261107/D26_SQLITE_ARCHIVE.json)
-removes eight compressed snapshots (176,597,049 bytes). Its reader checks the
-complete 617-file original package, all 614 prepared files, 232 gzip streams and
-their 1,992,917,425 decoded bytes, the exact preparation plan and original seal.
-All 609 other original files remain unchanged. This is byte preservation;
-neither SQLite nor the historical Node is started by the reader.
-The [W1 complete-work archive](../evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json)
-removes 59 containers (138,750,512 bytes) and retains 91 small records with their
-exact original blobs, including ten explicitly tracked logs. Its private
-172-file original view executes the unchanged verifier over all 170 FILE_INDEX
-entries, 171 SHA256SUMS entries and 60 archives containing 4,960 members
-(4,463,919,709 decoded bytes). The root validation archive remains. The original
-and archived views produce the same original observation; 15 negative controls
-include an actual original-verifier member failure and missing-index CLI cases.
-The [D26](qualification/d26-sqlite-cleanup.json) and
-[W1](qualification/w1-complete-cleanup.json) reports retain all failure/HOLD
-observations and the independent integration replays.
-All eight sets remove **1,622 payload copies / 1,628,294,407 original bytes**;
-new metadata, code and retained receipts make the net tree reduction smaller.
-No original startup UNKNOWN, failure, or qualification HOLD is rewritten.
+Run the source inventory and complete retirement gate separately:
 
 ```bash
-python3 scripts/ci/check_historical_archive.py --manifest \
-  evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
-python3 hia/tools/check_migration.py
+python3 -B hia/tools/check_migration.py
+python3 -B hia/tools/check_migration.py --require-retirement
 ```
 
-The pinned HIA Core has a closed opcode/effect set and internal calls. Its
-standard selfhost executable provides bounded stdin/stdout, mmap and exit.
-Hepta's artifact publisher and release installer have real openat/fsync/rename
-adapters, authored as fixed ISA and packed into native ELF; those specialized
-adapters do not expose a general node filesystem/network/transaction API.
-The locked [opcode catalog](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/hepta/hia_opcodes.py),
-[support declaration](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/docs/HIA_SELFHOST_CORE_SUPPORT.json),
-and [artifact publication boundary](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/docs/HIA_ARTIFACT_PUBLICATION_NATIVE.md)
-define that distinction. The compiler cold gate did not execute every specialized
-file application gate and gives no socket, SQLite or node-lifecycle guarantee.
-
-The ten native foundations have separate contracts and qualification:
-
-| Foundation | Native behavior | Remaining integration |
-| --- | --- | --- |
-| [Linux OS fixture](platform/README.md) | Real file publication, fsync, loopback TCP, epoll, clock and random operations through an HIA-emitted adapter | Finite fixture; its blocking-call deadline failure remains |
-| [Stream reactor](platform/reactor/README.md) | Connected FIFO/stream capabilities, generations, readiness, absolute deadline, partial-progress cursors and cancellation with explicit caller entrypoints | Node framing, admission, ownership and full transport integration; regular-file/fsync deadlines are outside its admitted descriptor class |
-| [Transaction owner](storage/README.md) | Fresh-v2 private directory FD, lock, immutable hash-linked transactions, atomic HEAD, fsync and streamed exact readback through the complete original State byte extent | Typed Node reducers, replay/outbox/reorg, original initialization recovery, external anti-rollback witness and service qualification |
-| [Request qualification caller](platform/transport_request/README.md) | Native framing and incremental-hash fixture around the complete classical request kernel | Private Settings/session owner, socket/reactor connection, replay/outbox, signing-key custody and PQ |
-| [Typed Delta](platform/node_delta/README.md) | Complete typed collection, exact Option/byte comparisons, ordered writes and original progress/error sequencing | Real stored-row decoding, transaction authority, durable Node commit and peer ACK |
-| [Private stack](platform/private_stack/README.md) | Two guard pages, dedicated native call stack, full ordinary-return wipe, unmap and explicit cleanup failure | Caller seed lifetime, asynchronous termination, complete key owner and machine-code timing proof |
-| [Response qualification caller](platform/transport_response/README.md) | Variable-length output, redzones, complete signed response and actual cleanup-error publication refusal | Private connection, replay commit and terminal response authority |
-| [Fresh Host checkpoint](platform/host_checkpoint/README.md) | Actual fixed-parent acquisition and fresh boot, calling-thread, identity and five-limit checks, with bounded read-only syscall profiles | Production positive, resource sampling, same-worker embedding and original service qualification |
-| [Typed Store staging](platform/typed_store/README.md) | Sealed-input streaming Delta merge, complete stored State scan and classical root, physical descriptor checks and synchronized output | Namespace/continuity authority, expected-root admission, durable Node transaction, GSC2 root and peer ACK |
-| [Aggregate Host resource](platform/host_resource/README.md) | Three bounded actual counter reads under two fresh checks, private baselines and checked CPU deltas | Production resource positive, Node worker placement, paid per-thread CPU, child ownership and service acceptance |
-
-The reactor and transaction owner are actual native implementations generated
-through the pinned HIA compiler. The literal ISA adapters remain separately
-trusted boundaries; Core verifies their HIA emitters rather than proving every
-emitted syscall effect. Hosted builders and independent test oracles are
-explicitly retained. The fresh-v2 storage format removes the former 16 MiB and
-4,096-commit limits. It checks the actual signed file-offset bound and refuses
-sequence exhaustion. The 52 physical controls include a 279,445,512-byte State
-extent with commit/close/reopen/full readback and 4,105 real retained commits;
-170 function controls and two fresh CLI starts also passed. The parent rebuild
-produced the exact same ELF as that physical run. These observations do not
-qualify typed State grammar, original service latency or physical power loss.
-The initial slow capacity run remains FAIL; shared native compression passed
-under the same 180-second test controller. Its current local syscall trace is
-UNKNOWN because ptrace was denied. A missing COMMIT ACK never proves rollback: the
-caller must reopen and compare HEAD, including after a durable commit whose
-ACK encountered EPIPE.
-
-```bash
-python3 -B hia/tools/qualify_platform.py --reactor --output /absolute/new/path/reactor-results
-python3 -B hia/tools/qualify_storage.py --output /absolute/new/path/storage-results
-```
-
-The next integration obligations are general system I/O and capabilities,
-durable storage/recovery, complete PQ identity and transport, whole node/model
-flows, the original service budget, cross-target coverage and the existing
-consensus research obligations. `check_migration.py --require-retirement`
-currently refuses retirement of all 26 legacy packages. That result records the
-actual migration state and prevents cleanup from hiding missing behavior.
+The retirement command currently refuses all 26 retained packages. The audit
+trail and historical source-specific observations remain in [AUDIT.md](AUDIT.md)
+and the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+The [published 876 overview](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/876eb577dac61854c535a91ab1480f312d1d6173/hia/README.md)
+preserves the previous complete narrative.

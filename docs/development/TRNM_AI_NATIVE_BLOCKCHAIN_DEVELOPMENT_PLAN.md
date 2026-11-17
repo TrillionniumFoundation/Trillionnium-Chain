@@ -1,3 +1,41 @@
+## 2026-11-17 UTC — Batch/Prefix 最终实现整合、M05 类型修复及876完整CI
+
+当前候选 **41 kernels /20 native foundations /119 HIA sources；26原Rust包保留 /0退役 /9全项目门OPEN**。父提交 `876eb577dac61854c535a91ab1480f312d1d6173`，tree `f810a503f6283b0a8484f1b18ba1f823c57d1078`，其 [HIA run44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130) 已真实33/33 SUCCESS。本次只合入Batch的42份最终owned文件，其中16份HIA；工作流42jobs/35独立native bootstrap。新工作树仍须自己的提交级CI，不继承父源或开发源的执行。
+
+### Batch/Prefix真实执行和转移
+
+[Batch owner](../../hia/platform/execution_batch/README.md)冻结native146源 `408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d`、original4363源 `b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e`。三profile/19images及emitter实际全编译。Batch102methods/2133progress；Prefix186histories/936实际methods/4419progress；计划1011中的75未执行，不计PASS，也不是原tests被skip。physical30实际syscall controls；scoped6processes/69methods/26full base reads/74progress。实际原Batch102+9retained、原Prefix186+6retained均PASS。baseline10组/173controls/18CLI，有效Prefix11/191/27CLI、Batch11/187/25CLI均保留完整实际raw。
+
+整合native151源 `63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f`：只多既有components图与五份Work/Host输入，60个完整组合运行输入逐字相同。完整source graph改变，仍须新CI。original的inventory与唯一计划pin按最终字节绑定。[开发记录](../../hia/qualification/execution-batch-development.json)保留executed/integrated图和fresh-hosted NOT_RUN，不把旧PASS换源。
+
+最终证据107152632B/`2446b6d527a21e935be2bda8e4907feeabef28386f1ad16243deb9f05392d4ef`；46445logical entries、40320regular logical files、8566objects。root独立全读8567members/510590392B、单XZ与tar全padding，全18卷实际拼回。两个原binary92641816B/`2261248bfb5def531489f788a30bf10700bc9cc7b2a32d7c4bd42f40a569a1f6`及92196768B/`f055dd9d5ee08aafc312178d817ee050cc7bb33561204339cc889df824ff065a`完整外部保全，不冒充嵌入档。旧101/102panic、observer、空原source map/stream-range false accept、TOCTOU、V1入口、serde/outerfilename和scope修复前失败均保留。作者树/中间build不入当前实现。
+
+### M05四个实际public CLI false accept及修复
+
+旧876完整实际包的scalar int→bool、nested int→bool、callback int→float、index int→bool在stdout/receipt/summary同时自洽改写后均被public CLI exit0接纳。完整原件及四份overlay保留。递归exact type和index exact int修后，26-input源从 `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b`变为 `455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7`。实际native323/9332、actual original323/9332+153retained、physical38/guarded26、21source/5byte/12witness/22actualCLI完整重跑PASS。179254B ELF不变不免对照。实际CI summary helper曾接受21.0/5.0/22.0计数，exact-int修后全拒绝；这三项不是public CLI。
+
+[M05记录](../../hia/qualification/mempool-typed-development.json)绑定24888160B/`d58b3cf105271e7d76f332a59a9b95969c23d8e1b7d2edfd99c9981172db7ee0`四分卷，旧对象/失败raw/876ZIP/新完整运行全部保留。四套冗余mutant仅逐文件核同基线+overlay后删除。共享Cargo incremental因nlink2前置拒绝，0删除，FAIL不改。
+
+### CI检查不可由skipped代替
+
+初Batch proposal无original时skip三组却报告PASS。最终强制transport/original scope；七native job精确六组，二original job必须原实际包且精确九组，完整started/通过roster与0skip。实际transport6/70、Prefix9/102、Batch9/102全PASS、skip0，四实际scope CLI拒绝、52argv parser与88新增Bash检查PASS。首次root YAML序列化漏计七bootstrap的FAIL保留；仅修多行literal/缩进，解析语义不变，四既有guard组实际覆盖35门。root实际89CI/evidence tests、六transport及Batch10/173/18CLI均PASS。原20分钟job、240秒process/3秒cleanup不改。无runtime执行的读证不计native/original资格。
+
+### 876完整Application与Work/Host
+
+[Application](../../hia/qualification/execution-application-ci.json) job133764250003/artifact14292661841；完整ZIP36267396B/`d7330ce1b5ef8127fcbfd9e50ae69f909b2c743c7542674ad58ec80e69c5bce1`。109native/b4f1121b、4363original/1e6fd3f4均实际对876Git blobs。328histories/335tx/8784State、32physical、186integrity/16CLI、原8retained全部raw严格再读，91371888B原binary完整。最终70656656B/`5720f3fd66aee750bf0b212c8ff6dd915e7dd6ad60a85c376e589506f7de3354`十二卷含c61与876完整ZIP，执行身份各保留。
+
+[Host CI](../../hia/qualification/work-owner-ci.json) producer133764250135/artifact14291569629、consumer133768696196/artifact14292951966。producerZIP247580107B/`705552d8c9bc158fcb7fc176856349795ff1f0d5a6c3746b08e4de6b68271a28`；inner242689024B/`9e6267f2f0aab1b1d174088a37ce55417fb63d379e16bd419cc6e4dcf464bdc3`共6159members/992297375B独立全读，包括611199752B原binary/`8c04c58e6178becfc531ede1c4cb16a50948d17ac29f36caefe2eb14feec499e`。126native/e56d、4368original/329094、三reader、package/binding/consumer/lineage均核。hosted独立consumer真实全语义读证，root只完整档/源核验，不假报再执行。最终243515800B/`16c37259be4b1e0003d0569d2f96e28531bb4e2c1e77c152412f51576f1d2cd6`39卷含完整两ZIP/log/API/HTTP403失败。旧175primitive仍缺fullraw，原CLOCK controlled faults仍OPEN，私有133新图不转记给876。
+
+[统一分卷恢复](../../hia/qualification/ARCHIVES.md)只列五套最终档。README收敛当前概览，历史“当前”保留在唯一计划/AUDIT历史段，原README由父Git与证据保全。
+
+### 继续生产闭合及旧栈退役条件
+
+Batch只覆盖DefaultConfig、AccountPointAccess=None及workers1/2/4/8；256tx24.3928s、最大Prefix140.676s不是原4s服务成功。私有Node OutputState/CanonicalDelta/Prepared/真实Node.db事务、Host原CLOCK与fullraw、M05实际PNX/signature/State nonce/Ready调用继续独立推进，尚未入此root。原Node本无生产pending-token authority，不用fixture或模拟lease虚报原语义。
+
+继续全Config/PQ/growth、共享Paid/Host与原request deadline、auth/expected-root/COMMIT、crash/reorg/rollback/replay/outbox/ACK、网络/TLS、跨平台、真实模型和研究验收。原0.25CPU/2GiB/0swap/256PID/4s/16attacker/1800s不放宽，FAIL/UNKNOWN/NOT_RUN不升格。Python构建读证与Rust oracle仍在，当前不是最终仅HIA整套。26包只有完整替代和原验收真实通过后才退役；whole_chain_native、old_stack_can_be_removed、production_activation仍false。
+
+以下为此前唯一计划的完整历史后缀；历史“当前”只指记录当时源。
+
 ## 2026-11-17 UTC — 同 worker Work/Host 整合、M05 detached 修复与真实 Application CI
 
 当前候选 **41 kernels /19 native foundations /103 HIA sources；26 原 Rust 包保留 /0 退役 /9 全项目门 OPEN**。已发布前驱为 `c61ce2cea44a1bc1ef0f7a716abb3113af86cd03`，tree `d36973260e841c8bae223ba0f30fd427abd66bfc`。本次新增 Work/Host 的23份最终owned源（8 HIA）及2份CI reader文件，修复M05内部预检模式；每个组件只有一个实现目录。工作流33 jobs /28独立native bootstrap；新提交必须取得自己的真实CI，不能继承c61或326的结果。

@@ -1,21 +1,19 @@
 {
-  "actual_public_cli_processes": 18,
+  "actual_public_cli_processes": 22,
   "ci_reader_development_validation": {
-    "actual_detached_checkout": true,
     "actual_github_ci_run": false,
     "actual_source_byte_witness_readback": "PASS",
     "actual_unit_tests": 11,
-    "additional_witness_binding_negative_variants": 23,
-    "complete_binary_pack_and_reopen": "PASS",
-    "default_development_mode_preserved": true,
-    "integrated_ci_unit_tests": 64,
+    "public_cli_counterexamples_claimed_for_summary_fields": false,
     "qualification_status": "NOT_BOUND",
-    "readback_rejects_audit_flag": true,
     "report": {
-      "bytes": 1959,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/ci-readback-pack/report.json",
-      "sha256": "61acdace0ebd911a55dcb309f9c13377b2345d8e3a551bf0966d8c55781c085c"
-    }
+      "archive_path": "ci-summary-types-v1/report.json",
+      "bytes": 5065,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/ci-summary-types-v1/report.json",
+      "sha256": "f5bf5271e9201021df9cd7e4f299e44317fe21c5be28b7f3711c9ae9a36ca8c1"
+    },
+    "summary_type_gate_after_refusals": 3,
+    "summary_type_gate_before_acceptances": 3
   },
   "cloud_pending_recovery": {
     "independent_desktop_original_retry_raw": "original-retry-v1",
@@ -49,29 +47,30 @@
     "retained_tests": 153
   },
   "evidence": {
+    "actual_876_original_zip_included": true,
     "all_archive_payload_members_reopened": true,
     "all_available_desktop_failures_retained": true,
-    "bytes": 975,
+    "bytes": 1148,
     "complete_original_binary_included": true,
     "complete_reassembly_verified": true,
     "execution_status_changed_by_storage": false,
     "format": "trnm.hia.contiguous-archive.v1",
     "index": {
-      "bytes": 2764783,
-      "sha256": "97a08f1a3142e98ced7ac716c11f81c3db3d9b14f61187e9c7406b7824bda784"
+      "bytes": 3824395,
+      "sha256": "6617efb7945ea9b742de2e1653ca3ed8af96cde00b8ee2d1e61ca4e56ddac039"
     },
     "logical_archive_format": "trnm.mempool-typed-development-evidence.v1",
-    "logical_bytes": 731050561,
-    "logical_files": 14389,
-    "parts": 3,
+    "logical_bytes": 1143950099,
+    "logical_files": 19352,
+    "parts": 4,
     "path": "hia/qualification/mempool-typed-development.parts/manifest.json",
     "reconstructed_archive": {
-      "bytes": 13481848,
+      "bytes": 24888160,
       "name": "mempool-typed-development.tar.xz",
-      "sha256": "b6e7094c222029bd7aab426af8528720d35b288f8960675ef021341cd800750c"
+      "sha256": "d58b3cf105271e7d76f332a59a9b95969c23d8e1b7d2edfd99c9981172db7ee0"
     },
-    "regular_members": 3993,
-    "sha256": "90539bb0c4ba5224b63ddc42195426c8812f3fa48fcd0480c2d00f665fc5b020"
+    "regular_members": 5040,
+    "sha256": "bb204d9b66217442dd3bd8dafb30f1702f588999405e44f8ad546381d193eaa9"
   },
   "evidence_admission_repairs": [
     {
@@ -121,6 +120,30 @@
       "expected_error": "Guarded evidence refused",
       "name": "guarded-private-fixture-extra-write",
       "observed_error": "ValueError('Guarded evidence refused: Private handle fixture changes more than the sole allowed word')"
+    },
+    {
+      "actual_public_cli_exit": 1,
+      "expected_error": "Actual native and original semantics differ",
+      "name": "original-scalar-integer-to-boolean",
+      "observed_error": "ValueError('Actual native and original semantics differ')"
+    },
+    {
+      "actual_public_cli_exit": 1,
+      "expected_error": "Actual native and original semantics differ",
+      "name": "original-nested-integer-to-boolean",
+      "observed_error": "ValueError('Actual native and original semantics differ')"
+    },
+    {
+      "actual_public_cli_exit": 1,
+      "expected_error": "Actual destruction callbacks differ",
+      "name": "original-drop-event-integer-to-float",
+      "observed_error": "ValueError('Actual destruction callbacks differ')"
+    },
+    {
+      "actual_public_cli_exit": 1,
+      "expected_error": "Actual original order or history differs",
+      "name": "original-index-integer-to-boolean",
+      "observed_error": "ValueError('Actual original order or history differs')"
     }
   ],
   "hia_source_files": 2,
@@ -140,24 +163,65 @@
     "canonical_complete_v4": "Frozen 0e0e4f63 source actually reran all323/9332 native and original histories,153 retained tests,38 physical/50commands and26 guarded calls. All18 source,5 byte and8 self-consistent witness controls passed, with18 actual public CLI processes.",
     "canonical_complete_v5": "Exactly one terminal LF removed from each of the owned integrity-test file and two CI Python files; their parsed ASTs are unchanged. The first launch used an incorrect compiler path and failed before compilation. With the exact unchanged pinned compiler at its verified path, final cfb0f4a9 source actually reran all native/original/physical/guarded suites and all18 source/5 byte/8 witness/18 CLI controls; full failed and successful bytes retained.",
     "canonical_complete_v6_detached_audit": "c61 hosted CI refused detached HEAD at the component's default development preflight before M05 native compilation. The final explicit --audit option calls the existing audit boundary; default development mode, canonical origin, activation and all workspace checks remain enforced. Current 7461a680 source actually reran every native/original/physical/guarded/source/byte/witness control on a real detached checkout; no old result was rebound.",
+    "canonical_complete_v7_typed_semantics": "Exact 876 CI passed on V6 source, then four actual public-CLI false acceptances were demonstrated on that complete bundle: scalar and nested integer-to-boolean, unordered drop-event integer-to-float, and original observation index integer-to-boolean. V7 preserves recursive JSON types and exact integer indices; the complete new source actually reran 323 native and original histories/9332 commands,153 retained tests,38 physical and26 guarded calls,21 source/5 byte/12 witness/22 CLI controls. All four invalid actual-original stdout witnesses now refuse.",
+    "hosted_ci_c61": {
+      "artifact": 14283633703,
+      "attempt": 1,
+      "component_native_compilation_reached": false,
+      "current_candidate_hosted_ci": "NOT_RUN",
+      "failure": "project boundary failed: not an allowed development branch",
+      "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+      "job": 133706836672,
+      "original_zip": {
+        "bytes": 2142981,
+        "sha256": "4254e5c4906d7a13caea973f0480228882d7930804724b5320c05bddc3de4680"
+      },
+      "raw_logical_root": "actual-c61-ci-failure",
+      "run": 43983845998,
+      "status": "FAIL"
+    },
     "independent_reader_failures": "Wrong preflight path before editing, first guarded empty-header assumption and later harness regex error are retained. The guarded reader was corrected from the actual native f0 header semantics; no native execution failure was relabeled.",
-    "static_review_v1": "Actual AST syntax failure before mutation; retained and corrected."
+    "static_review_v1": "Actual AST syntax failure before mutation; retained and corrected.",
+    "v6_ci_reader_development_validation": {
+      "actual_detached_checkout": true,
+      "actual_github_ci_run": false,
+      "actual_source_byte_witness_readback": "PASS",
+      "actual_unit_tests": 11,
+      "additional_witness_binding_negative_variants": 23,
+      "complete_binary_pack_and_reopen": "PASS",
+      "default_development_mode_preserved": true,
+      "integrated_ci_unit_tests": 64,
+      "qualification_status": "NOT_BOUND",
+      "readback_rejects_audit_flag": true,
+      "report": {
+        "bytes": 1959,
+        "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/ci-readback-pack/report.json",
+        "sha256": "61acdace0ebd911a55dcb309f9c13377b2345d8e3a551bf0966d8c55781c085c"
+      }
+    }
   },
   "hosted_ci_observation": {
-    "artifact": 14283633703,
+    "artifact": 14291812614,
     "attempt": 1,
-    "component_native_compilation_reached": false,
     "current_candidate_hosted_ci": "NOT_RUN",
-    "failure": "project boundary failed: not an allowed development branch",
-    "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
-    "job": 133706836672,
-    "original_zip": {
-      "bytes": 2142981,
-      "sha256": "4254e5c4906d7a13caea973f0480228882d7930804724b5320c05bddc3de4680"
+    "current_candidate_qualified": false,
+    "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "independent_complete_readback": "PASS",
+    "independent_readback_report": {
+      "bytes": 1884,
+      "sha256": "6282231a44932cf4b435d2467c07d484b9fa6e23232fbbc9094a08cb7513ec7c"
     },
-    "raw_logical_root": "actual-c61-ci-failure",
-    "run": 43983845998,
-    "status": "FAIL"
+    "job": 133764250294,
+    "job_conclusion": "success",
+    "original_zip": {
+      "bytes": 6628111,
+      "sha256": "b18b150c3535f2fc1affad4dee8328a093b97a119ad7f47eb0611d44912a9afd"
+    },
+    "raw_logical_root": "actual-876-ci",
+    "run": 44000856130,
+    "source_set_sha256": "7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b",
+    "status": "PASS",
+    "subsequently_demonstrated_public_cli_false_acceptances": 4
   },
   "independent_original_binary": {
     "bytes": 7630840,
@@ -190,60 +254,85 @@
   "production_activation": false,
   "production_signature_or_replay_authority": false,
   "public_byte_controls": 5,
-  "public_witness_controls": 8,
-  "qualification_scope": "Frozen development typed test-trait owner qualified on real detached checkout; fresh exact-commit hosted CI required",
+  "public_witness_controls": 12,
+  "qualification_scope": "Frozen development typed test-trait owner with actual recursive-type repairs; fresh exact-commit hosted CI required",
   "reports": {
-    "actual_detached_qualification": {
-      "bytes": 618,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/full-detached-qualification-v1/report.json",
-      "sha256": "25da7039e28bd033ef70041b619b870022341e8a3d78617fd2519dd3df5fe30c"
+    "actual_complete_qualification": {
+      "archive_path": "qualification-v1/report.json",
+      "bytes": 4579,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/qualification-v1/report.json",
+      "sha256": "fa0757984380ed55ea0a17034b775414f56972389405c4e05cf61cdd4f7a8530"
     },
     "complete": {
-      "bytes": 326155,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/report.json",
-      "sha256": "77d8f2a88024953f6d0a799453e49aaa32390898a937f484327ad4b54022bbb6"
+      "archive_path": "complete/report.json",
+      "bytes": 326153,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/complete/report.json",
+      "sha256": "b80b1a94f66429de1b89d16bd6598a134d980c043ebf1b22ca0d6c8077df13de"
     },
     "guarded": {
+      "archive_path": "complete/guarded/report.json",
       "bytes": 16872,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/guarded/report.json",
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/complete/guarded/report.json",
       "sha256": "61e31ee4c8923d475a50c67a822d1332a1e7a7aaa931488812bff5141eab9473"
     },
     "native": {
-      "bytes": 320698,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/native/report.json",
-      "sha256": "33ee3e117af6f58a503cda1ba56f93591df7afedf7bf2b66622470ff5ac30a05"
+      "archive_path": "complete/native/report.json",
+      "bytes": 329419,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/complete/native/report.json",
+      "sha256": "445a980288c568105482b63559fed53128125605416fa3d1ac0aa7f4976271fc"
     },
     "original": {
-      "bytes": 262052,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/original/report.json",
-      "sha256": "8784c70a050150fad21880c2b2715c7364cc6b7010011c6ffede98c111e61ad8"
+      "archive_path": "complete/original/report.json",
+      "bytes": 262574,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/complete/original/report.json",
+      "sha256": "5b1272b7e1c95d93390135255c139dfbc635c075a641d4af5cf53575cade49f1"
     },
     "physical": {
-      "bytes": 31465,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/complete/physical/report.json",
-      "sha256": "2b150d9f4f7d695c8619b0417f86e5133125b6b1ea76e5a20b654a3fa22e4cb5"
+      "archive_path": "complete/physical/report.json",
+      "bytes": 31503,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/complete/physical/report.json",
+      "sha256": "6865f95912f80c1c922991daf06af2c1c937f48a45d29e6dbc3caae7dd700e8d"
     },
     "public_controls": {
-      "bytes": 20690,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/public-controls/report.json",
-      "sha256": "521deaf836c0c6cd7a872c1ffdc58d75f95e45d80a3c9625378d6a3411e27a56"
+      "archive_path": "public-controls/report.json",
+      "bytes": 27341,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/public-controls/report.json",
+      "sha256": "6da54b5cd1da1b7616f986b9742285d961c307cc46123b058d7f97bdbbaa418a"
     },
     "source_controls": {
-      "bytes": 2726,
-      "path": "/tmp/trnm-m05-ci-preflight-20261117-rt10mamf/source-controls/report.json",
-      "sha256": "cfda877162c887fa2c6fa74df189da861d71c297799a8fec5090b67f5b96e8b4"
+      "archive_path": "source-controls/report.json",
+      "bytes": 3206,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/mempool-type-fix-v1/source-controls/report.json",
+      "sha256": "a051c72311883a76c4c01acc78be9327e0072723b454fc17ece2a997ceb84176"
     }
   },
   "runtime_executable": {
     "bytes": 179254,
-    "sha256": "c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c"
+    "dynamic_linker": false,
+    "entry": 4194480,
+    "format": "ELF64LE",
+    "instruction_semantics_verified_by_this_check": false,
+    "interpreter": null,
+    "load_flags": "RX",
+    "machine": "x86_64",
+    "sha256": "c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c",
+    "stack_flags": "RW",
+    "type": "ET_EXEC"
   },
   "schema": "trnm.hia.mempool-typed-development.v1",
   "source_after": "MATCH",
-  "source_controls": 18,
-  "source_origin_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
-  "source_set_sha256": "7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b",
+  "source_controls": 21,
+  "source_origin_git_head": "876eb577dac61854c535a91ab1480f312d1d6173",
+  "source_set_sha256": "455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7",
   "status": "PASS",
+  "typed_admission_repair": {
+    "actual_new_public_cli_refusals": 4,
+    "actual_old_public_cli_false_acceptances": 4,
+    "original_DROP_only_order_quotient_preserved": true,
+    "original_observation_index_exact_int": true,
+    "recursive_json_types_preserved": true,
+    "runtime_hia_bytes_changed": false
+  },
   "unordered_comparison_scope": {
     "both_raw_orders_retained": true,
     "events": "Original HashMap destruction callback events only",
@@ -252,7 +341,8 @@
       20,
       21,
       22
-    ]
+    ],
+    "recursive_json_value_types_compared_exactly": true
   },
   "whole_migration_complete": false
 }

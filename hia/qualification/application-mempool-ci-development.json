@@ -1,38 +1,120 @@
 {
   "actual_github_ci_run": false,
-  "application_ci": {
-    "all_actual_existing_evidence_readback": "PASS",
-    "complete_independent_original_binary_pack": "PASS",
-    "hosted_ci_claim": false,
-    "unit_controls": 150,
-    "unit_tests": 12,
-    "whole_elf_payload_reconstruction_negative": "PASS"
+  "actual_integrated_validation": {
+    "archive_path": "root-integration/integrated-validation-v1/report.json",
+    "bytes": 3392,
+    "ran_before_final_plan_pin_refresh": true,
+    "runtime_executed": false,
+    "sha256": "bdcaedc054fa0833de7e9a8691f628811b4dcd07f3631e84a74dcd92b79edd04",
+    "source_and_evidence_tests": 89
   },
-  "current_application_native_sources": {
-    "files": 109,
-    "fresh_exact_source_execution_required": true,
-    "source_set_sha256": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70"
+  "batch_ci": {
+    "actual_frozen_original_scope_profiles": {
+      "batch": {
+        "actual_cli_calls": 5,
+        "controls": 102,
+        "groups": 9,
+        "skipped": 0
+      },
+      "prefix": {
+        "actual_cli_calls": 5,
+        "controls": 102,
+        "groups": 9,
+        "skipped": 0
+      }
+    },
+    "actual_integrated_transport": {
+      "actual_cli_calls": 5,
+      "controls": 70,
+      "groups": 6,
+      "report": {
+        "bytes": 18198,
+        "sha256": "224412f9c5c831f39f8a55fcb59020243ec521858577875157eaa425ce4012b2"
+      },
+      "skipped": 0
+    },
+    "explicit_scopes": [
+      "transport",
+      "original"
+    ],
+    "fresh_integrated_head_hosted_execution": "NOT_RUN",
+    "integrated_source_integrity": {
+      "actual_cli_calls": 18,
+      "controls": 173,
+      "groups": 10
+    },
+    "new_native_jobs": 7,
+    "new_original_jobs": 2,
+    "runtime_record": "hia/qualification/execution-batch-development.json"
   },
   "current_ci_sources": {
     ".github/workflows/hia-native-migration.yml": {
-      "bytes": 216496,
-      "sha256": "14bcf90dc224a908d658dff97d62ebff424eb23851a8fbfb67134846e7c009c8"
+      "bytes": 278385,
+      "sha256": "d1104f158084351ab1ec7080a54ebdbace1cf99ac7f2099122826db6c826d565"
     },
     "config/hia-migration-v1.json": {
-      "bytes": 43394,
-      "sha256": "5b77990229ab088c5767031b15de4bfb5d58a5e3f7ae72dc9584383ad2619111"
+      "bytes": 45577,
+      "sha256": "00b38646be75ae19c2d8280b7531d80d90f30db5a9abd3d49f5220e50f89109a"
     },
     "hia/components.json": {
       "bytes": 30941,
       "sha256": "add302a78f9af55b757354fb7c408094d8c7dafc694fdb3ddfbe05372d0f58e8"
     },
+    "hia/platform/mempool_typed/rust_oracle.py": {
+      "bytes": 15466,
+      "sha256": "5de5fc82c309527bc607ea9020e7abb85a9ece45e24c357dff1a136d00a98c01"
+    },
+    "hia/platform/mempool_typed/test_integrity.py": {
+      "bytes": 22716,
+      "sha256": "07d98b6dcd4945920d7e31c85295909f315e3b4a7beceb3dd8f760536ae616b9"
+    },
+    "hia/platform/work_owner/test_integrity.py": {
+      "bytes": 12454,
+      "sha256": "7f89b6d743d925ac2a9821b2d78119f4864368c200ee5fea38e55016e62a63e4"
+    },
+    "hia/qualification/ARCHIVES.md": {
+      "bytes": 4129,
+      "sha256": "37e51064d1e201d0c53655d71c9d28315b93f5c0e1c0ad2fa7283d229a32ddb6"
+    },
+    "hia/qualification/execution-application-ci.json": {
+      "bytes": 4178,
+      "sha256": "b996fe6f69b397d417b15a8d38cb554d00697724ae83461fe5c76df096f70782"
+    },
+    "hia/qualification/execution-batch-development.json": {
+      "bytes": 14003,
+      "sha256": "8b15ff5f4ebc99958a1063e1bc90b588d97a3f9867f78dca4a5d22aba3e635d4"
+    },
+    "hia/qualification/mempool-typed-development.json": {
+      "bytes": 16428,
+      "sha256": "3bbb8c322b32525c5ddf0c81375a9cf6a42cbb750fb1d8bc9027c64b98ccabfc"
+    },
+    "hia/qualification/work-owner-ci.json": {
+      "bytes": 3983,
+      "sha256": "3222cfddca92bb532b722273f3bc6a26836ab12dc5df7ea53694e6b5223f7b08"
+    },
     "hia/tests/test_application_ci.py": {
       "bytes": 32022,
       "sha256": "3f46bcc35c67ff8f82485ca45d254f77c0ce5c701dd5c8406c0afd984044f6a2"
     },
+    "hia/tests/test_execution_ci.py": {
+      "bytes": 25985,
+      "sha256": "9e1549cc2e67535297bb3e112c709747d4df6a0eadae66dd5328ae4bb4cd98d8"
+    },
+    "hia/tests/test_foundation_ci.py": {
+      "bytes": 8400,
+      "sha256": "78decc2c4f414b6f5c17426d4b700ac69d2e4eed2ef31605c6d015d97607ddd9"
+    },
+    "hia/tests/test_genesis_ci.py": {
+      "bytes": 32055,
+      "sha256": "99098bd14bfdbd978913fb4f1bc22de82dbe8b9942bdfc4f2cfe6554f9d31893"
+    },
     "hia/tests/test_mempool_ci.py": {
-      "bytes": 17841,
-      "sha256": "0dd31d809c160c41b360146604e589e3c11e3e00fcb565b5a266f86b21df5b10"
+      "bytes": 17844,
+      "sha256": "dc22f3b0894d4c30a44393ba1103a0b5bef26c473b54a9c6a527db28899ca616"
+    },
+    "hia/tests/test_paid_cpu_ci.py": {
+      "bytes": 61998,
+      "sha256": "433811a8e9ad12cb80e33e7307467cd9699f4d5aa5c358ce885681e8a60d3b37"
     },
     "hia/tests/test_work_owner_ci.py": {
       "bytes": 15036,
@@ -42,149 +124,123 @@
       "bytes": 75353,
       "sha256": "650b1132f48ca6fa02c8d843a9c5a55f8c6eaedf8aa3b332d645bd4e687d55b3"
     },
+    "hia/tools/qualify_batch_ci.py": {
+      "bytes": 61389,
+      "sha256": "6a2a9e7a307d7f19e40d85565e06934f5ae4bb031c4d2945dab08d110cad4a21"
+    },
     "hia/tools/qualify_mempool_ci.py": {
-      "bytes": 24242,
-      "sha256": "59bcd5502096b3203ad6a4927d63bffb97da266b428bd83998099766821ec67c"
+      "bytes": 25398,
+      "sha256": "1708a37b923163fc19763d97677a7dae761fe253c589ba7e7a49bfc5c064565e"
     },
     "hia/tools/qualify_work_owner_ci.py": {
       "bytes": 59952,
       "sha256": "7db0bb88f1d79551cfb710262a5936c33ace2f498698f46bca5dc63cf7d3f107"
     },
+    "hia/tools/test_batch_ci.py": {
+      "bytes": 26148,
+      "sha256": "6bb65403cb182b5f819f90bded2fcbc568d69ee2844ab687f0273b5a9b69cb7d"
+    },
     "scripts/ci/test_hia_workflow_bootstrap.py": {
-      "bytes": 3901,
-      "sha256": "3088a8f8326557e66a76f444c29f254527a489970e5c93cb8719df8589cb5a6d"
+      "bytes": 3899,
+      "sha256": "86498950fa1190aef519a39598a62279c725117541921df1c165e9c958358b48"
     }
   },
+  "current_native_source_sets": {
+    "application": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70",
+    "batch": "63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f",
+    "mempool": "455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7",
+    "work_owner": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91"
+  },
+  "current_original_source_sets": {
+    "application_and_batch": "bd405a7aaac603c2f3f8153590cfb441bc486eb2340c435201515d7426b87a22",
+    "mempool": "3bc6870d32cc41252461888580556600da252d14d4b8f2ab10c71fa2935bd8e3",
+    "work_owner": "097727a7b02abd9b776019ae45c4fc3b5aeb07fa768021459f693ae0db950663"
+  },
   "evidence": {
-    "bytes": 3518652,
+    "bytes": 4650756,
     "every_member_reopened": true,
     "index": {
-      "bytes": 59759,
-      "sha256": "e2b9c9fde02be9f7c1757d369032a44fc927a56b355de7a065b5db3c658c2c06"
+      "bytes": 106056,
+      "sha256": "7e29f8ed0907007b8806e05915898add2e1f45161c1944068f2a95a29d487105"
     },
-    "logical_bytes": 14445009,
-    "logical_files": 310,
+    "logical_bytes": 15869310,
+    "logical_files": 233,
     "path": "hia/qualification/application-mempool-ci-development.tar.xz",
-    "regular_members": 192,
-    "sha256": "24cd4ff16830ca1de624e89e0f85f2cb7440f1311ff43bcac75b51d8dde643af"
-  },
-  "final_ci_test_report": {
-    "bytes": 3434,
-    "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/work-owner-integration-v1/final-validation-v1/report.json",
-    "scope": "All89 actual tests pass; final external syntax validator later failed on an incorrect bootstrap-name counter; corrected validation reuses the actual test raw without claiming a new test execution.",
-    "sha256": "9e71b1805cd193482d7acfa1857468210d2c72a938c2de6c290aa74fbbfaa2b6"
+    "previous_complete_archive_included": true,
+    "regular_members": 175,
+    "sha256": "253aba5346bb32fb11b3ed52274baf13cec906caa16bd176e3f409124d81a64a"
   },
   "final_integrated_ci_unit_tests": 89,
   "final_native_bootstrap_guard_groups": 4,
   "final_source_validation": {
-    "local_markdown_links": 806,
+    "archive_path": "root-integration/final-validation-v1/report.json",
+    "local_markdown_links": 758,
+    "old_test_execution_relabelled": false,
     "report": {
-      "bytes": 6446,
-      "sha256": "26f6a6991a85f3f2b31636c1bf419b06eb111a4f5fcd5659ce1622f5acf3c92a"
+      "bytes": 4728,
+      "sha256": "83fe3453930cb4e5b617ab025bba69a384164a6ea6b82dc82f8ca3babde6c724"
     },
     "status": "PASS"
   },
-  "historical_failures": [
-    "Initial M05 reader accepted8 self-consistent witnesses; repaired V4 full execution and refusals remain separate.",
-    "Initial integration whitespace error and210s PQ observer timeout are preserved.",
-    "Application old-source binding refusal remains a refusal; the actual development execution is not rebound to new source metadata.",
-    "Final staged check refused three redundant Python EOF newlines; removed with identical AST and actual final-source requalification.",
-    "Initial final-source launch used an incorrect compiler path and failed before compilation; all raw is retained. Correct verified path used the unchanged pinned compiler for full passing execution.",
-    "c61 M05 actual hosted CLI failed default development preflight on detached HEAD before native compile; fixed with explicit audit opt-in and actual detached full qualification.",
-    "Host V4 reader accepted three strict-type/domain corruptions; V5 actual schema controls refuse all three; retained evidence is in the separate final Host CI archive.",
-    "Documentation transition first asserted a one-file delta but discovered six legitimate Application dependencies; corrected to109 files. Plan pin first write completed before an authoring KeyError; preserved before bytes prove the single intended JSON leaf.",
-    "External final syntax validator initially counted a nonexistent bootstrap shell filename and reported zero; actual four guard groups and89 tests passed. Corrected counter reads28 exact workflow gates without relabelling test execution.",
-    "The immutable full13.48MB Git blob upload exceeded the connector16MiB request envelope. Final contiguous6MiB parts were fully reassembled and checked before publication."
-  ],
+  "historical_failures_preserved": true,
   "history": {
-    "c61_ci_development_archive": {
-      "bytes": 2666804,
-      "sha256": "fcea25214b5e7b53b5c086c017e458e8fcab26f4e879c5b6d24dff3089db8220"
+    "complete_876_evidence_archive_path": "history-876/complete-evidence.tar.xz",
+    "complete_876_record_archive_path": "history-876/qualification.json",
+    "previous_archive": {
+      "bytes": 3518652,
+      "sha256": "24cd4ff16830ca1de624e89e0f85f2cb7440f1311ff43bcac75b51d8dde643af"
     },
-    "c61_ci_development_record": {
-      "bytes": 5051,
-      "sha256": "a976233b07bc14ec3d5f3b6237859b866a8158a85a158c7fd48275185c37f4a6"
+    "previous_record": {
+      "bytes": 8310,
+      "sha256": "ee16f8853cc31aeecbd81298b5414effe0d15dbe138ccb0fcef0e39515441462"
     }
   },
-  "last_actual_application_ci": {
-    "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
-    "independent_complete_readback": "PASS",
-    "is_current_candidate_qualification": false,
-    "job_id": 133706836939,
-    "record": "hia/qualification/execution-application-ci.json",
-    "status": "PASS"
+  "last_actual_complete_hia_ci": {
+    "application_record": "hia/qualification/execution-application-ci.json",
+    "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "jobs": 33,
+    "qualifies_current_integration": false,
+    "run_id": 44000856130,
+    "successful_jobs": 33,
+    "work_owner_record": "hia/qualification/work-owner-ci.json"
   },
   "mempool_ci": {
-    "actual_detached_audit_qualification": "PASS",
-    "actual_public_cli_processes": 18,
-    "additional_witness_binding_negative_variants": 23,
-    "default_detached_dev_refusal": "PASS",
-    "full_actual_archive_package": {
-      "archive": {
-        "bytes": 3459224,
-        "sha256": "3ddeeb4b6027aa993144fb0514b8fe5eeb64191609822855ef87ec64d3d358c3"
-      },
-      "files": 2772,
-      "metadata_only_nodes": 0,
-      "packing_status": "PASS",
-      "qualification_status": "NOT_BOUND",
-      "qualification_status_not_changed_by_packaging": true,
-      "stage": "mempool-typed"
-    },
-    "hosted_ci_claim": false,
+    "actual_original_stdout_type_witnesses": 4,
+    "actual_public_cli_processes": 22,
+    "additional_summary_helper_type_witnesses": 3,
+    "fresh_integrated_head_hosted_execution": "NOT_RUN",
     "public_byte_controls": 5,
-    "public_control_report": {
-      "bytes": 20690,
-      "sha256": "521deaf836c0c6cd7a872c1ffdc58d75f95e45d80a3c9625378d6a3411e27a56"
-    },
-    "public_witness_controls": 8,
-    "source_control_report": {
-      "bytes": 2726,
-      "sha256": "cfda877162c887fa2c6fa74df189da861d71c297799a8fec5090b67f5b96e8b4"
-    },
-    "source_controls": 18,
-    "unit_tests": 11,
-    "verify_audit_option_refusal": "PASS"
+    "public_witness_controls": 12,
+    "runtime_record": "hia/qualification/mempool-typed-development.json",
+    "source_controls": 21,
+    "summary_helper_is_public_cli": false,
+    "unit_tests": 11
   },
   "native_or_original_execution_relabelled": false,
   "old_packages_retired": 0,
-  "pq_source_suite": {
-    "actual_test_methods": 99,
-    "current_pin_check_report": {
-      "bytes": 558,
-      "sha256": "dd4704f6aa7af122fc2f599c54886115adf47d6c271a72217b06474ff833675f"
-    },
-    "elapsed_ns": 995273877865,
-    "final_plan_pin_checker": "PASS",
-    "historical_first_observer": "TIMEOUT at210s; exception retained, partial raw not captured",
-    "ran_before_final_plan_pin_refresh": true,
-    "status": "PASS"
-  },
+  "preserved_current_failures": [
+    "Old876 M05 public reader accepted four self-consistent original stdout type substitutions; actual full repaired source execution is separate.",
+    "Old M05 CI summary helper accepted three float counts; exact type rejects them.",
+    "Initial Batch CI test entry skipped three original groups and still reported PASS; explicit scopes now require zero skips.",
+    "Initial integrated YAML formatting hid seven gates from the unchanged bootstrap counter; parsed semantics preserved in the formatting repair.",
+    "Shared Cargo incremental cleanup refused nlink2 before deleting anything; refusal retained.",
+    "Expired GitHub artifact URL returned HTTP403; a fresh URL for the same full artifact succeeded; no CI execution was replayed."
+  ],
   "production_activation": false,
   "qualification_status": "NOT_BOUND",
   "schema": "trnm.hia.application-mempool-ci-development.v1",
-  "source_origin_git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
+  "source_origin_git_head": "876eb577dac61854c535a91ab1480f312d1d6173",
   "status": "DEVELOPMENT_VALIDATED_HOSTED_CI_REQUIRED",
   "whole_migration_complete": false,
-  "work_owner_ci": {
-    "ci_reader_test_groups": 14,
-    "complete_primitive_arena_bytes_retained": false,
-    "full_independent_development_pack_and_readback": "PASS",
-    "new_exact_commit_hosted_execution_required": true,
-    "qualification_status": "NOT_BOUND",
-    "record": "hia/qualification/work-owner-development.json",
-    "semantic_source_test_groups": 11,
-    "split_workflow_inline_controls": 14,
-    "total_test_groups": 25
-  },
+  "whole_project_gates_open": 9,
   "workflow": {
-    "all_python_heredocs_checked": 42,
-    "bash_fragments_checked": 252,
-    "independent_native_bootstraps": 28,
-    "jobs": 33,
+    "all_python_heredocs_checked": 49,
+    "bash_fragments_checked": 340,
+    "independent_native_bootstraps": 35,
+    "jobs": 42,
     "source": {
-      "bytes": 216496,
-      "sha256": "14bcf90dc224a908d658dff97d62ebff424eb23851a8fbfb67134846e7c009c8"
+      "bytes": 278385,
+      "sha256": "d1104f158084351ab1ec7080a54ebdbace1cf99ac7f2099122826db6c826d565"
     }
   }
 }

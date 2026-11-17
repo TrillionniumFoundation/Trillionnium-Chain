@@ -1,6 +1,6 @@
 {
   "admission_persistence": false,
-  "artifact": 14283854229,
+  "artifact": 14292661841,
   "batch_execution_qualified": false,
   "complete_actual_serde_library": {
     "bytes": 4442132,
@@ -11,7 +11,7 @@
     "sha256": "dbbea2de963d09d1e94f5069066db28541359b6dc3f44e68c8df6b0f5078b0ba"
   },
   "coverage": {
-    "integrity_controls": 181,
+    "integrity_controls": 186,
     "integrity_groups": 9,
     "native_histories": 328,
     "native_processes": 9,
@@ -26,60 +26,67 @@
   },
   "evidence": {
     "all_members_reopened": true,
-    "bytes": 1491,
+    "bytes": 2523,
     "complete_original_binary_included_in_original_zip": true,
     "complete_original_zip_included": true,
     "complete_reassembly_verified": true,
-    "execution_status_changed_by_storage": false,
     "format": "trnm.hia.contiguous-archive.v1",
+    "historical_c61_all_objects_preserved": true,
     "index": {
-      "bytes": 2703,
-      "sha256": "0bdbe7fc982b4442ac8b6d70c6d3749c0a5886e8b1942bdf8db176b7ee5b1f91"
+      "bytes": 5646,
+      "sha256": "5a36b8b7bae27ca6881208fa0f6adfd1ef8c23f925d6edc16a839c72bb124abb"
     },
-    "logical_bytes": 37981398,
-    "logical_files": 13,
-    "parts": 6,
+    "logical_bytes": 75396465,
+    "logical_files": 32,
+    "parts": 12,
     "path": "hia/qualification/execution-application-ci.parts/manifest.json",
     "reconstructed_archive": {
-      "bytes": 35301924,
+      "bytes": 70656656,
       "name": "execution-application-ci.tar.xz",
-      "sha256": "3019de38c6f00a12de4e6276ffd70f1115d7345ea5082216972fbc07886b696b"
+      "sha256": "5720f3fd66aee750bf0b212c8ff6dd915e7dd6ad60a85c376e589506f7de3354"
     },
-    "regular_members": 14,
-    "sha256": "ee2fe39dd7ad77929441e1738096884ee2e6d16f44c168d7b7ecfb08dc443a8a"
+    "regular_members": 27,
+    "sha256": "b7f16cdcee011e5da5979979da3649c08f16f0e5bb651396eccf482e60b5d5d8"
   },
   "independent_readback": {
     "actual_runtime_reexecuted": false,
+    "archive_path": "actual-876/independent-readback/report.json",
     "original_runner_tool_paths_recreated": false,
     "report": {
-      "bytes": 827341,
-      "sha256": "d7832c719716a04a463a556109ea15cbcdaa27d4554c22751e35e3c7151b55d0"
+      "bytes": 827943,
+      "sha256": "d875f0d0c81cee9383829144de3e304e3530e319a168a7887acd7a6e82f4e29e"
     },
     "runner_tool_identity_scope": "Original CI bound fences preserved; not locally reexecuted or rebound",
     "status": "PASS"
   },
-  "job": 133706836939,
+  "job": 133764250003,
   "job_conclusion": "success",
   "latest_candidate_qualified_by_this_old_run": false,
   "lineage": {
     "attempt": 1,
-    "git_head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03",
-    "run_id": "43983845998"
+    "git_head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "run_id": "44000856130"
   },
   "native_source_and_evidence_after": "MATCH",
-  "native_source_files": 104,
-  "native_source_set_sha256": "05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1",
+  "native_source_files": 109,
+  "native_source_set_sha256": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70",
   "nondefault_configurations": false,
   "old_packages_retired": 0,
   "original_source_files": 4363,
-  "original_source_set_sha256": "a986c7058fe8bdbb2e2e177884c70c6039c35bc792470e6621e6e41a3ba5a5bd",
+  "original_source_set_sha256": "1e6fd3f4bd1e9ee23ce85f569ae7075685ecbccc0cd3c9a36c376a92a4498c39",
   "original_zip": {
-    "bytes": 36198231,
-    "sha256": "29e74d4133b99beb5690fb669fcbfda2fb3e2ab5cf788d82ea01d0352ead33bc"
+    "bytes": 36267396,
+    "sha256": "d7330ce1b5ef8127fcbfd9e50ae69f909b2c743c7542674ad58ec80e69c5bce1"
   },
   "physical_power_loss": false,
+  "previous_qualified_source": {
+    "all_original_objects_preserved": true,
+    "artifact": 14283854229,
+    "complete_record_archive_path": "history-c61/qualification-record.json",
+    "head": "c61ce2cea44a1bc1ef0f7a716abb3113af86cd03"
+  },
   "production_activation": false,
-  "qualification_scope": "Exact c61 hosted Application job only; independent archive/raw differential reread",
+  "qualification_scope": "Exact 876 hosted Application job and independent archive/raw differential reread; current source transitions require new CI",
   "retained_readback_failure": {
     "reason": "The unchanged CI reader compared recorded original argv with the relocated local extraction paths and refused; the portable reader separates those two roots, leaving raw argv and all remaining invariants unchanged.",
     "report": {
@@ -87,10 +94,17 @@
       "sha256": "affea857f2f421a55e5363c100efd04f7729615546fbc658c571431dbd198765"
     }
   },
-  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130",
   "schema": "trnm.hia.execution-application-ci.v1",
   "status": "PASS",
   "whole_migration_complete": false,
   "whole_node_or_commit_authority": false,
-  "whole_workflow_success_claim": false
+  "whole_workflow": {
+    "conclusion": "success",
+    "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "jobs": 33,
+    "run": 44000856130,
+    "successful_jobs": 33
+  },
+  "whole_workflow_success_claim": true
 }
