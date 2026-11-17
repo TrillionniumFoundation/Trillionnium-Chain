@@ -158,6 +158,13 @@ records claims and expenditure; registration does not prove the submitted
 conditional probabilities. Lifetime composition needs bounds covering every
 relevant start and failure event, without restoring risk allowance on restart.
 
+The [joint lifetime/service finite continuation](JOINT_LIFETIME_SERVICE_V1.md)
+combines declared target/time/credit, `A+E-J`, residual adaptive starts,
+participation/debt, complete service and non-refundable lifetime spending in one
+exact finite law. It supplies a conditional checker only: the actual law,
+all-legal-strategy coverage, native failure inclusion and physical resources
+remain unproved, so this qualification register is unchanged.
+
 ## 5. Cost calibration does not authorize a score replacement
 
 The [credit-envelope contract](../../../../formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md)
