@@ -406,6 +406,72 @@ class ExportTests(unittest.TestCase):
         self.assertTrue((out / "analyses/1.sarif").exists())
         self.assertTrue((out / "poll-002-after-export/selection.json").exists())
 
+    def test_shifted_pagination_restarts_complete_snapshots_without_deduplication(self):
+        rows = [analysis(i) for i in range(1, 102)]
+        server = Server(rows)
+        server.rows_at_poll = lambda poll: [*rows[:100], rows[99]] if poll == 1 else rows
+        code, result, out = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertEqual(server.polls, 4)  # failed, two stable, post-export
+        self.assertEqual([row["id"] for row in result["analyses"]], list(range(1, 102)))
+        first = json.loads((out / "poll-001/analyses-1.json").read_text())
+        second = json.loads((out / "poll-001/analyses-2.json").read_text())
+        self.assertEqual(first[-1], second[0])
+        self.assertFalse((out / "poll-001/selection.json").exists())
+        record = json.loads((out / result["unstable_pagination"][0]).read_text())
+        self.assertEqual(record["raw_pages_prefix"], "poll-001/analyses")
+        self.assertFalse(record["snapshot_accepted"])
+        self.assertTrue((out / "poll-003-after-export/selection.json").is_file())
+
+    def test_repeated_pagination_drift_exhausts_original_deadline_without_export(self):
+        rows = [analysis(i) for i in range(1, 101)]
+        server = Server([*rows, rows[-1]])
+        code, result, out = self.run_export(server)
+        self.assertEqual(code, 1)
+        self.assertEqual(server.polls, 5)
+        self.assertEqual(len(result["unstable_pagination"]), 5)
+        self.assertIn("deadline", result["error"])
+        self.assertEqual(result["analyses"], [])
+        self.assertFalse((out / "analyses").exists())
+        self.assertFalse(result["target_pr_gate_authenticated"])
+        self.assertIsNone(result["target_pr_gate_verdict"])
+
+    def test_post_export_pagination_drift_requires_two_fresh_snapshots(self):
+        rows = [analysis(i) for i in range(1, 102)]
+        server = Server(rows)
+        server.rows_at_poll = lambda poll: [*rows[:100], rows[99]] if poll == 3 else rows
+        code, result, out = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertEqual(server.polls, 6)
+        record = json.loads((out / result["unstable_pagination"][0]).read_text())
+        self.assertEqual(record["raw_pages_prefix"], "poll-002-after-export/analyses")
+        self.assertTrue((out / "poll-004-after-export/selection.json").is_file())
+        self.assertFalse((out / "poll-003-after-export").exists())
+
+    def test_source_or_permission_failure_after_pagination_drift_is_still_fatal(self):
+        rows = [analysis(i) for i in range(1, 102)]
+        for failure in ("source", "permission"):
+            with self.subTest(failure=failure):
+                server = Server(rows)
+                server.rows_at_poll = lambda poll: [*rows[:100], rows[99]] if poll == 1 else rows
+                original = server.open
+
+                def fail_after_drift(request, timeout):
+                    if server.polls == 1 and request.full_url.endswith("/pulls/323"):
+                        if failure == "source":
+                            server.pr = {**PR, "head": {**PR["head"], "sha": STALE}}
+                        else:
+                            raise urllib.error.HTTPError(request.full_url, 403, TOKEN, {}, None)
+                    return original(request, timeout)
+
+                server.open = fail_after_drift
+                code, result, _ = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertEqual(server.polls, 1)
+                self.assertIn("head/base moved" if failure == "source" else "HTTP 403",
+                              result["error"])
+                self.assertEqual(result["analyses"], [])
+
     def test_pr_source_drift_and_wrong_merge_parents_fail(self):
         moved = Server()
         moved.pr = {**PR, "head": {**PR["head"], "sha": STALE}}
