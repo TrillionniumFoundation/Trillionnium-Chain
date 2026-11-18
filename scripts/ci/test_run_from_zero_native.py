@@ -343,6 +343,7 @@ class BinarySelectionTests(unittest.TestCase):
             support = root / 'source/examples/support/w1_from_zero.rs'
             modules = {
                 'public_v3_from_zero/fresh_challenge.rs': b'pub fn fresh_trial() {}\n',
+                'public_v3_from_zero/phase_cost.rs': b'pub fn phase_cost_trial() {}\n',
                 'public_v3_from_zero/sp27_receiver_controls.rs': b'pub fn controls_trial() {}\n',
                 'public_v3_from_zero/sp27_receiver_strata.rs': b'pub fn strata_trial() {}\n',
                 'public_v3_from_zero/sp27_receiver_campaign.rs': b'pub fn campaign_trial() {}\n',
@@ -354,6 +355,8 @@ class BinarySelectionTests(unittest.TestCase):
                                b'mod w1_from_zero;\n'
                                b'#[path = "public_v3_from_zero/fresh_challenge.rs"]\n'
                                b'mod fresh_challenge;\n'
+                               b'#[path = "public_v3_from_zero/phase_cost.rs"]\n'
+                               b'mod phase_cost;\n'
                                b'#[path = "public_v3_from_zero/sp27_receiver_controls.rs"]\n'
                                b'mod sp27_receiver_controls;\n'
                                b'#[path = "public_v3_from_zero/sp27_receiver_strata.rs"]\n'
@@ -1521,6 +1524,28 @@ class ConfirmationObservationTests(unittest.TestCase):
 
 class CompleteConfirmationObservationTests(unittest.TestCase):
     """Synthetic accounting only; no request, runtime or performance is run."""
+
+    def test_native_phase_envelope_keeps_wider_scope_and_failed_business(self):
+        from test_from_zero_phase_cost import sample
+        def edit(doc):
+            doc['phases'][0]['phase_process_cost'] = sample()
+        result = self.summarize(edit)
+        resources = result['phases'][0]['resource_coverage']
+        self.assertEqual(resources['phase_process_cost']['whole_phase']['process_cpu_ns'], 350)
+        self.assertIsNone(resources['all_worker_cpu_ns'])
+        self.assertIsNone(resources['phase_process_cost']['exact_original_window_cpu_ns'])
+        # Adding a process clock is not evidence of another business transaction.
+        original = self.summarize()
+        self.assertEqual(result['phases'][0]['business'], original['phases'][0]['business'])
+
+    def test_corrupted_native_phase_envelope_is_not_silently_ignored(self):
+        from test_from_zero_phase_cost import sample
+        def edit(doc):
+            raw = sample()
+            raw['whole_phase']['process_cpu_ns'] = 0
+            doc['phases'][0]['phase_process_cost'] = raw
+        with self.assertRaisesRegex(ValueError, 'PHASE_COST_CPU_DELTA'):
+            self.summarize(edit)
 
     def summarize(self, edit=lambda doc: None, **options):
         document = simulated_confirmation_report()

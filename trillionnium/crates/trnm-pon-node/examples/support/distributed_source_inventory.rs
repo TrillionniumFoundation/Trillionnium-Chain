@@ -9010,6 +9010,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/phase_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/phase_cost.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

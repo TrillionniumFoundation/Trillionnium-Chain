@@ -1,0 +1,47 @@
+{
+  "schema": "chain-original-window-evidence-validation-v1",
+  "parent_commit": "7e4b96d4ac395a61a162940624769518cf2e03f3",
+  "scope": "inventory and evidence only; original business result remains FAILED at parent; no unselected prototype active",
+  "checks": [
+    {
+      "name": "inventory-check",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 45165398,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "name": "workspace-format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 8475133500,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "source-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 20685451,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

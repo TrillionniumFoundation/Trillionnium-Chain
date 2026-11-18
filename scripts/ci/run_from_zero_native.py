@@ -20,6 +20,7 @@ import subprocess
 import sys
 
 from check_required_native_test import validate
+from from_zero_phase_cost import read_phase_process_cost
 from replay_pinned_native import digest, json_load, require, run_child
 from verify_ci_source import verify as verify_source
 
@@ -38,7 +39,8 @@ FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zer
 FORMAT_TEST_MODULES = ('public_v3_from_zero/fresh_challenge.rs',
                        'public_v3_from_zero/sp27_receiver_controls.rs',
                        'public_v3_from_zero/sp27_receiver_strata.rs',
-                       'public_v3_from_zero/sp27_receiver_campaign.rs')
+                       'public_v3_from_zero/sp27_receiver_campaign.rs',
+                       'public_v3_from_zero/phase_cost.rs')
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
@@ -1397,6 +1399,14 @@ def complete_confirmation_observation(doc: dict, report: dict) -> dict:
             **samples([roster.get(index) for index in range(phase['workers'])]),
             'scheduled_workers': phase['workers'], 'observed_worker_records': len(roster),
             'worker_roster_observed': workers is not None}
+        if 'phase_process_cost' in phase:
+            resources['phase_process_cost'] = read_phase_process_cost(phase['phase_process_cost'])
+            resources['scope'] = resources['scope'].replace(
+                'RSS and disk growth are not captured by this source',
+                'per-request RSS and physical disk I/O are not captured by this source')
+            resources['scope'] += ('; separate phase_process_cost covers all native process threads across setup, '
+                                   'traffic, shutdown and readback, with retained regular-file lengths; '
+                                   'its boundaries are wider than the original 4s window')
         measured['resource_coverage'] = resources
         measured['attacker_attempts'] = attack_attempt_observation(
             workers, phase['workers'], measured['window_ns'])
