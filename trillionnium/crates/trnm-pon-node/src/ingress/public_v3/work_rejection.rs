@@ -108,16 +108,19 @@ impl From<RejectionObservation> for PublicRejectionFactObservation {
     }
 }
 
-pub(super) fn verify(
+pub(super) fn verify_with_scheduling_hint(
     packet: crate::Packet,
     cache: &RejectionCache,
     progress: &mut impl FnMut(VerificationProgress) -> Result<()>,
     observation: Option<&TaskObservation>,
+    known_math_rejection: Option<&Cell<bool>>,
 ) -> Result<WorkCheckedPacket> {
-    let Some(record) = observation else {
+    if observation.is_none() && known_math_rejection.is_none() {
         return WorkCheckedPacket::verify_with_rejection_cache(packet, cache, progress);
-    };
-    record.work_rejection(PublicRejectionWorkObservation::started(cache));
+    }
+    if let Some(record) = observation {
+        record.work_rejection(PublicRejectionWorkObservation::started(cache));
+    }
     let mut actual = RejectionObservation::default();
     let result = WorkCheckedPacket::verify_with_rejection_cache_observed(
         packet,
@@ -125,7 +128,20 @@ pub(super) fn verify(
         progress,
         &mut actual,
     );
-    record.work_rejection(PublicRejectionWorkObservation::finished(cache, actual));
+    // Native cancellation, malformed statements, context/Host errors and valid
+    // work cannot publish a negative scheduling hint. These two facts are set
+    // only after an actual Transcript/Product error or its strict exact reuse.
+    if result.is_err()
+        && (actual.cached_rejection_returned
+            || actual.publication == RejectionPublication::Retained)
+    {
+        if let Some(known) = known_math_rejection {
+            known.set(true);
+        }
+    }
+    if let Some(record) = observation {
+        record.work_rejection(PublicRejectionWorkObservation::finished(cache, actual));
+    }
     result
 }
 

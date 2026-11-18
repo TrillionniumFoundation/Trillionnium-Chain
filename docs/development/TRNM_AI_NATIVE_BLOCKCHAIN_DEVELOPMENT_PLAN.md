@@ -1,3 +1,11 @@
+## 2026-11-18 UTC — 原窗口活性修复候选：已验证无效正文的有界等待
+
+最新 r20 原头 `119cbdc8b7060df28b74230fa9265ada7bc75541` 已再次真实执行双架构原 hosted-CI 窗口：无压力均 1/1，压力均 0/1。原结果与完整 CPU 端点保留，成功 Submit 不代替独立 History 确认。既有 W1 严格负缓存已覆盖绝大多数重复数学拒绝；剩余重复协商、解码、上下文和客户端工作仍与逐 progress 的 fresh Host 回放共享父 CPU。
+
+本独立候选以原 WaitChallenge eligibility 实施 `r21-native-invalid-body-backpressure-v1`：只有完成原 native Transcript/Product 拒绝或严格负缓存返回后，才为已鉴权、已核正文摘要发布最多 1,000 ms 的等待提示。每 live server 固定 256 槽；Hello 仅查询，不能发布或刷新；不驱逐未过期项。未到时项不占 paid grant/worker、不成为 FIFO 头；Head、History 和新正文照常进入原流程。到时仍执行原挑战、签名、正文、context、Host 和 verifier，任何成功或权限均不缓存。签名资源域与精确向量诚实升级，旧 r20 cookies 明确拒绝。
+
+外部 4 秒 /0.25 CPU /16 workers、攻击输入与循环、业务目标、挑战强度/速率、CPU burst/refill 与全部 fresh Host 检查保持。真实 TCP 控制、失败原件、成本边界与新候选限制见 [候选及验证原件](evidence/chain-known-invalid-backpressure-20261118/README.md)。本源码冻结时新候选原业务窗口为 **NOT_RUN**，本地工程控制不授予业务、原生采用或生产资格；后续 exact-source CI 结果必须单独读取。
+
 ## 2026-11-18 UTC — 双架构原四秒窗口失败闭合与 Host 微优化未采用
 
 成本候选 `7e4b96d4ac395a61a162940624769518cf2e03f3` 的 [required-baseline 44283985539](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44283985539) 已真正执行原 hosted-CI 路径。x64 artifact `14418149185` 与 arm64 artifact `14418334374` 的五个命名 native 测试都完成、进程都有终态，但两者最终均为 **CONFIRMATION_TARGET / FAILED**。无压力确认分别为 1/1、3.196201784 秒和 1/1、1.884381588 秒；压力均为 0/1。x64 仅尝试两页独立回放，第二页 deadline；arm64 尝试六页，第六页 deadline。不能把测试退出零或其他 HIA 绿灯变成业务通过。
