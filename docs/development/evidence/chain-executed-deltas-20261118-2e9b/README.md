@@ -41,3 +41,39 @@ This is a separately frozen candidate stacked on #959. The original F0 workflow 
 Complete physical cost remains UNKNOWN: these archives do not measure system-wide energy, provider charges, all concurrent physical memory, physical network traffic or storage byte-seconds. Native/accounting/OS counters retain their original scopes and failures; nested CPU is not added. No independent-operator, WAN, production activation, consensus-hardness, FinalUse or reward-settlement qualification is claimed.
 
 Prior #959 F0 has now completed with 0/6 original-window and 0/6 four-second confirmations. Its full provider ZIP and source-pinned independent failure readback are retained in the adjacent Host evidence, with the exact prior source attribution. This negative does not qualify this new candidate.
+
+## Frozen-candidate original F0: still failed
+
+The original campaign ran exactly once on source `e6af21fd47347ba900ef87842447ed6fe227a6f0`, tree `af911ad472b7820f8c6c7d4c9a425097263d80ac`: [run 44335832525](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44335832525), job 134912190949, artifact 14444536755. The six scheduled four-second targets all failed. In the original thirty-second windows, baseline completed 2/3 rounds and ROOT completed 0/3: **2/6 original-window confirmations; 0/6 four-second confirmations**.
+
+Baseline round 0 completed 13.491849234 seconds after its scheduled start and round 1 completed 22.895946839 seconds after its scheduled start. The baseline third round and all ROOT rounds remained unconfirmed. The fixed 42 business exposures retain 28 timely ACKs (baseline 21, ROOT 7), 14 unattempted exposures and no further attempted exposure without a timely ACK. ACKs do not establish confirmation.
+
+The actual native selector exited 101. The original readers still refuse with `BASELINE_MUST_PASS` and `F0_ALL_SIX_SCHEDULED_FOUR_SECOND_TARGETS_REQUIRED`. The same workload, 24 ROOT actors, 0.25 CPU / 2 GiB public Host, one M06 worker, original schedules and deadlines remained. All seven original native preparation controls passed. The six controller-resource boundaries, actor identity/reaping and empty exact-owned services were checked. Successful cleanup does not change the business failure.
+
+### Actual cost and remaining work
+
+| Observed scope | Baseline | ROOT |
+|---|---:|---:|
+| Actual client History imports, including failed import | 15 | 6 |
+| History caller thread CPU | 5,081,848,029 ns | 1,653,096,815 ns |
+| Host checkpoint calls inside those imports | 152,248 | 43,587 |
+| Nested Host checkpoint CPU | 3,775,608,403 ns | 1,283,133,773 ns |
+| Whole original public phase process CPU | 8,303,816,826 ns | 8,660,550,413 ns |
+
+The baseline Host checkpoint accumulator partitions into commit 64,433 calls / 1,600,746,465 ns, submit_result 42,592 / 1,057,170,882 ns, admission_prepare 29,143 / 720,634,122 ns, work 15,441 / 378,821,187 ns, and the remaining explicitly retained buckets. No clock-unknown or unfinished checkpoint calls were observed. Account-graph stage observations on the client still contain 124 calls / 3,792,781,766 ns in baseline and 28 / 1,235,268,528 ns in ROOT. These graph/admission/publish costs nest and must not be added to one another or to Host CPU.
+
+`cost-profile.py` reads the three immutable original ZIPs, the actual History packet identities/phase costs, application byte counters, final CPU-credit flow and final SQL account roots/deltas. It also counts the concrete no-account-change publication opportunity from retained databases. Such counts are potential removable work, not observed saved work or acceptance. Every attempted, failed and missing business result remains in the original archive.
+
+The prior frozen runs remain failures: run 44315121617 was 1/6 in original windows and 0/6 at four seconds; #959 run 44328450170 was 0/6 and 0/6. These ran on different GitHub runner allocations and completed different amounts of work. Their raw CPU totals or observed confirmation counts do not isolate a causal speedup from either patch. This candidate does not close F0.
+
+### Retained originals and independent reader
+
+- `f0-original.zip`: 19,573,624 bytes; SHA256 `6ab6d65c68a2d0b36e49995507dbcc7f7728e16fec3fe6e20de53cb1fdff62fa`, equal to the GitHub artifact digest.
+- Actual raw report SHA256: `3f743d1327dc25f6cb9ece8908518fa7d02bd84feaf6ff831169e5b8f490c5cb`.
+- Retained native ELF: 13,138,696 bytes; SHA256 `9ab52eb79508e86cd7ab5965aaa4823a35869284e7c6ddb6eff97a01b30ea6f9`.
+- `f0-readback.py` pins all twelve original reader source blobs. It verifies every one of the 443 manifest members, exact source/tree before and after, preparation, actual ELF, original business refusals, all six rounds / 42 exposures, controller observations and cleanup. Its output is `f0-independent-readback.json`.
+- `cost-profile.json` is the reproducible measured-scope comparison, not a substitute gate.
+
+Full physical cost is still **UNKNOWN**: compiler/dependency CPU, concurrent whole-system RSS, physical network/storage I/O, storage byte-seconds, GPU activity, energy and provider charges are not manufactured from application bytes, nested clocks, snapshot RSS or software retention charges. No production activation, independent WAN, multi-receiver or Sybil qualification is claimed.
+
+The first auxiliary summary write encountered a null-key JSON sorting error after validating the unchanged original ZIP. That analysis-only attempt is retained as job 1a1ef67916c-ffbe-4c1; job 1a1ef68709b-ffbe-4c6 corrected the output label and reread the same archive. The native workload was not repeated.
