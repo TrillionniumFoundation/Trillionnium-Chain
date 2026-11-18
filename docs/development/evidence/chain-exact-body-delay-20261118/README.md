@@ -121,6 +121,31 @@ check failed without applying the patch; the exact original affected files
 were checked out before the successful byte-identical application. These
 environment failures were not suppressed or counted as passing executions.
 
+## First hosted source-gate failures and correction
+
+The first published candidate is `974049daa4b72825332b07b59084cb70f4b4c8b5`
+in [Draft PR #955](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/955).
+Its [original CI run 44309944062](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44309944062)
+retained a failed current PQ source-correspondence check for `public_v3.rs`.
+The prospective fuzz and external-evidence lanes also rejected an old literal
+whole-file pin for `public_v3_multiprocess.rs` in the existing manual workflow.
+The full failed-job logs remain in this directory as deterministic gzip files.
+
+The follow-up refreshes those exact current-source bindings and their existing
+corpus pins. It changes no native Rust byte, frozen experiment or source lock,
+qualification field, original four-second campaign, resource number, or guard.
+The 58 budget, 25 current-correspondence, 60 composition, and three inline-guard
+controls passed. All 26 literal workflow guards, 2,617 corpus blob pins, and the
+actual repository checker passed. [followup-source-checks.txt](followup-source-checks.txt)
+retains those outputs. Source integrity checks do not grant business acceptance.
+
+The initial commit also omitted the already-run supplemental policy log because
+its `.log` extension matched the repository ignore rule. The identical 513-byte
+output is now tracked as [multiprocess-policy-v2.txt.gz](multiprocess-policy-v2.txt.gz),
+inside deterministic gzip with its original uncompressed SHA-256 retained. The
+verbatim trailing blank line is preserved while the source whitespace gate
+remains enabled. No test was invented to fill that omission.
+
 ## Retained material and next gate
 
 - [native-evidence-v2.tar.xz](native-evidence-v2.tar.xz) contains both full native
