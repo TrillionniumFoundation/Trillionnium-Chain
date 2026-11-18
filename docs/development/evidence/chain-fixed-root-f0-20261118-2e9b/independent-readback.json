@@ -1,0 +1,700 @@
+{
+  "all_planned_business_packets": [
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 7,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 8,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 9,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 10,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 11,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 12,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 13,
+      "phase": "baseline",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 0,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 1,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 2,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 3,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 4,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 5,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 1,
+      "packet_index": 6,
+      "phase": "valid-work-root",
+      "timely_network_ack": true
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 7,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 8,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 9,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 10,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 11,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 12,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 13,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    }
+  ],
+  "all_planned_rounds": [
+    {
+      "actual_ended_ns": 20391138538,
+      "actual_started_ns": 1001799437,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 19391138538,
+      "end_lateness_from_four_second_deadline_ns": 15391138538,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 1799437
+    },
+    {
+      "actual_ended_ns": 30001188596,
+      "actual_started_ns": 20391154922,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 25001188596,
+      "end_lateness_from_four_second_deadline_ns": 21001188596,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 15391154922
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": 30080085342,
+      "actual_started_ns": 1000074756,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 29080085342,
+      "end_lateness_from_four_second_deadline_ns": 25080085342,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 74756
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    }
+  ],
+  "all_services_known_empty": true,
+  "archive_bytes": 18520306,
+  "archive_sha256": "5f91007e3ef15216caca24d898ca07438fd43a199ccfa94253023cf66b44095e",
+  "artifact_id": 14432723343,
+  "complete_success": false,
+  "confirmed_in_original_thirty_second_phases": 1,
+  "controller_resource_summary": {
+    "complete": true,
+    "observed_boundary_samples": 6,
+    "per_actor_rss_qualified": false,
+    "phases": [
+      {
+        "cpu_usage_delta_usec": 1670017,
+        "expected_phase_actors": 0,
+        "observations": [
+          {
+            "cpu_usage_usec": 4940034,
+            "ended_monotonic_ns": 322187571452,
+            "live_actors": 0,
+            "memory_current_bytes": 49942528,
+            "memory_peak_lifetime_bytes": 57630720,
+            "stage": "before_launch",
+            "started_monotonic_ns": 322187365082
+          },
+          {
+            "cpu_usage_usec": 5224350,
+            "ended_monotonic_ns": 325832203811,
+            "live_actors": 0,
+            "memory_current_bytes": 75149312,
+            "memory_peak_lifetime_bytes": 76210176,
+            "stage": "actors_ready",
+            "started_monotonic_ns": 325832025613
+          },
+          {
+            "cpu_usage_usec": 6610051,
+            "ended_monotonic_ns": 356319956264,
+            "live_actors": 0,
+            "memory_current_bytes": 58220544,
+            "memory_peak_lifetime_bytes": 80166912,
+            "stage": "after_reap",
+            "started_monotonic_ns": 356319710233
+          }
+        ],
+        "phase": "baseline"
+      },
+      {
+        "cpu_usage_delta_usec": 2846843,
+        "expected_phase_actors": 24,
+        "observations": [
+          {
+            "cpu_usage_usec": 6618211,
+            "ended_monotonic_ns": 356337090225,
+            "live_actors": 0,
+            "memory_current_bytes": 61546496,
+            "memory_peak_lifetime_bytes": 80166912,
+            "stage": "before_launch",
+            "started_monotonic_ns": 356336877465
+          },
+          {
+            "cpu_usage_usec": 6932183,
+            "ended_monotonic_ns": 359842409127,
+            "live_actors": 24,
+            "memory_current_bytes": 116793344,
+            "memory_peak_lifetime_bytes": 116862976,
+            "stage": "actors_ready",
+            "started_monotonic_ns": 359836685284
+          },
+          {
+            "cpu_usage_usec": 9465054,
+            "ended_monotonic_ns": 391371158718,
+            "live_actors": 0,
+            "memory_current_bytes": 108679168,
+            "memory_peak_lifetime_bytes": 128061440,
+            "stage": "after_reap",
+            "started_monotonic_ns": 391370900099
+          }
+        ],
+        "phase": "valid-work-root"
+      }
+    ],
+    "planned_boundary_samples": 6,
+    "planned_phases": 2,
+    "schema": "fixed-host-root-controller-resources-v1",
+    "scope": "whole original controller cgroup and all descendants; includes controller, broker, launcher and external producer processes; excludes separately systemd-owned public phase; not per-actor RSS"
+  },
+  "four_second_slo_successes": 0,
+  "full_physical_cost_closed": false,
+  "head": "7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8",
+  "history_cost": [
+    {
+      "attempts": [
+        {
+          "client_thread_cpu_ns": 448256840,
+          "history_index": 0,
+          "host_checkpoint_calls": 9280,
+          "host_checkpoint_cpu_ns": 395912485,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 2213797071,
+          "network_ended_ns": 2397484904
+        },
+        {
+          "client_thread_cpu_ns": 424278133,
+          "history_index": 1,
+          "host_checkpoint_calls": 8756,
+          "host_checkpoint_cpu_ns": 375073560,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1811147987,
+          "network_ended_ns": 4687891203
+        },
+        {
+          "client_thread_cpu_ns": 416946400,
+          "history_index": 2,
+          "host_checkpoint_calls": 8763,
+          "host_checkpoint_cpu_ns": 367845292,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1798735408,
+          "network_ended_ns": 6503630567
+        },
+        {
+          "client_thread_cpu_ns": 419110431,
+          "history_index": 3,
+          "host_checkpoint_calls": 8770,
+          "host_checkpoint_cpu_ns": 368161297,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1856395781,
+          "network_ended_ns": 8306888078
+        },
+        {
+          "client_thread_cpu_ns": 416868817,
+          "history_index": 4,
+          "host_checkpoint_calls": 8777,
+          "host_checkpoint_cpu_ns": 366366574,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1743427449,
+          "network_ended_ns": 10167205026
+        },
+        {
+          "client_thread_cpu_ns": 423817100,
+          "history_index": 5,
+          "host_checkpoint_calls": 8784,
+          "host_checkpoint_cpu_ns": 369244753,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1890995915,
+          "network_ended_ns": 11914332278
+        },
+        {
+          "client_thread_cpu_ns": 1486673526,
+          "history_index": 6,
+          "host_checkpoint_calls": 29955,
+          "host_checkpoint_cpu_ns": 1260514955,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 6395892142,
+          "network_ended_ns": 13808956599
+        },
+        {
+          "client_thread_cpu_ns": 447430676,
+          "history_index": 7,
+          "host_checkpoint_calls": 9162,
+          "host_checkpoint_cpu_ns": 394305911,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1904001804,
+          "network_ended_ns": 21893860494
+        },
+        {
+          "client_thread_cpu_ns": 427496931,
+          "history_index": 8,
+          "host_checkpoint_calls": 8832,
+          "host_checkpoint_cpu_ns": 377896141,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1809129220,
+          "network_ended_ns": 23802047002
+        },
+        {
+          "client_thread_cpu_ns": 426567067,
+          "history_index": 9,
+          "host_checkpoint_calls": 8839,
+          "host_checkpoint_cpu_ns": 377494774,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1811904315,
+          "network_ended_ns": 25688287987
+        },
+        {
+          "client_thread_cpu_ns": 425232927,
+          "history_index": 10,
+          "host_checkpoint_calls": 8846,
+          "host_checkpoint_cpu_ns": 373873274,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 1886380674,
+          "network_ended_ns": 27504314042
+        },
+        {
+          "client_thread_cpu_ns": 150149605,
+          "history_index": 11,
+          "host_checkpoint_calls": 3199,
+          "host_checkpoint_cpu_ns": 133057543,
+          "import_error": "PUBLIC_REQUEST_DEADLINE",
+          "import_observed": true,
+          "import_wall_ns": 605811988,
+          "network_ended_ns": 29395181575
+        }
+      ],
+      "client_thread_cpu_ns": 5912828453,
+      "history_calls": 12,
+      "host_checkpoint_calls": 121963,
+      "host_checkpoint_cpu_ns": 5159746559,
+      "observed_imports": 12,
+      "phase": "baseline",
+      "scope": "actual observed client imports; Host CPU is nested; do not add; not whole-process cost"
+    },
+    {
+      "attempts": [
+        {
+          "client_thread_cpu_ns": 485729627,
+          "history_index": 0,
+          "host_checkpoint_calls": 9157,
+          "host_checkpoint_cpu_ns": 422470167,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 4801551969,
+          "network_ended_ns": 12783859416
+        },
+        {
+          "client_thread_cpu_ns": 449431854,
+          "history_index": 1,
+          "host_checkpoint_calls": 8756,
+          "host_checkpoint_cpu_ns": 391502736,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 4209973829,
+          "network_ended_ns": 17678317798
+        },
+        {
+          "client_thread_cpu_ns": 460295486,
+          "history_index": 2,
+          "host_checkpoint_calls": 8763,
+          "host_checkpoint_cpu_ns": 403309595,
+          "import_error": null,
+          "import_observed": true,
+          "import_wall_ns": 4291795471,
+          "network_ended_ns": 21988797623
+        },
+        {
+          "client_thread_cpu_ns": 384093032,
+          "history_index": 3,
+          "host_checkpoint_calls": 7443,
+          "host_checkpoint_cpu_ns": 342703295,
+          "import_error": "PUBLIC_REQUEST_DEADLINE",
+          "import_observed": true,
+          "import_wall_ns": 3786729442,
+          "network_ended_ns": 26292118045
+        }
+      ],
+      "client_thread_cpu_ns": 1779549999,
+      "history_calls": 4,
+      "host_checkpoint_calls": 34119,
+      "host_checkpoint_cpu_ns": 1559985793,
+      "observed_imports": 4,
+      "phase": "valid-work-root",
+      "scope": "actual observed client imports; Host CPU is nested; do not add; not whole-process cost"
+    }
+  ],
+  "manifest_files_checked": 443,
+  "native_binary_sha256": "6796de51c006dffda01f6f9dabf868676abdc9c77dc9e78263a42097e3ad8e7f",
+  "native_exit_code": 101,
+  "original_business_failure": "BASELINE_MUST_PASS",
+  "original_reader_source_sha256": {
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "scripts/ci/fixed_root_f0_ownership.py": "a6376e43166cd782a90ac782c1619ef6ec6cd5cbb8d25093aedaf870c2d5dba1",
+    "scripts/ci/fixed_root_f0_resources.py": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a",
+    "scripts/ci/public_host_ci_observation.py": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3",
+    "scripts/ci/run_fixed_root_phase_host.py": "f572b12727d119f7d1c1490d2a8c70de69e596155e20a837ebf94d19e24911e7",
+    "scripts/pon_public_v3_phase_read.py": "f2dd54ec905117e26fc7128218acb74c36a3ae7c16229d56c7cc04dae1a5ef41",
+    "scripts/pon_public_v3_policy_read.py": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a",
+    "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+    "scripts/read_original_native_campaign.py": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417",
+    "scripts/run_fixed_host_root_f0.py": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca",
+    "scripts/run_pon_w1_native_campaign.py": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+  },
+  "original_slo_failure": "F0_ALL_SIX_SCHEDULED_FOUR_SECOND_TARGETS_REQUIRED",
+  "planned_confirmations": 6,
+  "planned_packet_exposures": 42,
+  "prepared_controls_checked": 7,
+  "production_activation": false,
+  "public_phase_process_cost": [
+    {
+      "phase": "baseline",
+      "scope": "original public phase process including receiver and independent client; not external controller",
+      "whole_parent_phase_cpu_ns": 7990045938,
+      "whole_parent_phase_wall_ns": 33182686040
+    },
+    {
+      "phase": "valid-work-root",
+      "scope": "original public phase process including receiver and independent client; not external controller",
+      "whole_parent_phase_cpu_ns": 8344800947,
+      "whole_parent_phase_wall_ns": 33497208233
+    }
+  ],
+  "readback_source_sha256": "953f7580ceb67c311c5a05c0df7442d4f9f8267e25422e64d80c674fbef76ad1",
+  "run_id": 44315121617,
+  "schema": "chain-fixed-root-f0-independent-readback-v1",
+  "tree": "d000e0007dc963a4c152b805b36b6e9d08fb8569",
+  "unknown_cost_dimensions": [
+    "concurrent whole-system RSS",
+    "storage byte-seconds",
+    "physical storage I/O",
+    "physical network bytes",
+    "GPU activity",
+    "energy",
+    "provider charges"
+  ]
+}
