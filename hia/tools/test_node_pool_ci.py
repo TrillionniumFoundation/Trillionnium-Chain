@@ -10,7 +10,8 @@ def reject(fn):
     global CONTROLS
     CONTROLS+=1
     try:fn()
-    except (ValueError,OSError,KeyError,TypeError,AssertionError):return
+    except (ValueError,OSError,KeyError,TypeError,AssertionError) as error:
+        return {"type":type(error).__name__,"message":str(error)}
     raise AssertionError("Malformed evidence was accepted")
 def ok(value):
     global CONTROLS
@@ -92,8 +93,40 @@ class ReaderControls(unittest.TestCase):
         (root/"directory").mkdir();(root/"directory"/"value").write_bytes(b"x")
         (root/"ancestor").symlink_to("directory",target_is_directory=True)
         reject(lambda:ci.file_identity(root,"ancestor/value"))
+        # The fixture is deliberately inadmissible only during this control.
+        # Preserve its bytes and exact link/refusal observations before ending
+        # that relationship; the complete controls directory is later archived.
+        raw=ci.read(root,"value")
+        def metadata(path):
+            st=path.lstat()
+            return {"device":st.st_dev,"inode":st.st_ino,"mode":st.st_mode,
+                    "links":st.st_nlink,"bytes":st.st_size}
+        receipt={"schema":"trnm.node-pool-hardlink-control.v1",
+                 "bytes":ci.identity(raw),"before":metadata(root/"value")}
         os.link(root/"value",root/"second")
-        reject(lambda:ci.file_identity(root,"value"))
+        try:
+            receipt["linked"]={name:metadata(root/name) for name in ("value","second")}
+            left,right=(receipt["linked"][name] for name in ("value","second"))
+            ok(left["links"]==right["links"]==2 and
+               (left["device"],left["inode"])==(right["device"],right["inode"]))
+            receipt["descriptor_refusal"]=reject(lambda:ci.file_identity(root,"value"))
+            receipt["archive_refusal"]=reject(lambda:ci.object_inventory(root))
+            ok(receipt["descriptor_refusal"]=={"type":"ValueError","message":"Regular single-link artifact required"} and
+               receipt["archive_refusal"]=={"type":"ValueError","message":"Hard-linked evidence is not admitted"})
+        finally:
+            try:
+                (root/"second").unlink()
+                with (root/"second").open("xb") as retained:retained.write(raw)
+                receipt["retired"]={name:metadata(root/name) for name in ("value","second")}
+            except BaseException as error:
+                receipt["cleanup_error"]=repr(error)
+                raise
+            finally:
+                save(root/"hardlink-observation.json",receipt)
+        left,right=(receipt["retired"][name] for name in ("value","second"))
+        ok(left["links"]==right["links"]==1 and
+           (left["device"],left["inode"])!=(right["device"],right["inode"]) and
+           ci.read(root,"value")==ci.read(root,"second")==raw)
         reject(lambda:ci.file_identity(root,"../value"))
     def test03_complete_transport_special_metadata(self):
         root=WORK/"pack-fixture";root.mkdir();(root/"nested").mkdir()
@@ -226,6 +259,15 @@ class ReaderControls(unittest.TestCase):
         invoke("missing-kind",["validate"],expected=1)
         invoke("unrelated-native-argument",["validate","--kind","smoke","--smoke",str(WORK),"--node",str(WORK)],expected=1)
         invoke("missing-original",["validate","--kind","original-node","--node",str(WORK)],expected=1)
+        # Cover every completed control fixture, including retained mutant
+        # overlays. The final source fence and report are written afterwards;
+        # the enclosing CI pack/readback covers those final regular files too.
+        inventory=ci.object_inventory(WORK)
+        ok(bool(inventory))
+        save(WORK/"control-output-inventory.json",
+             {"schema":"trnm.node-pool-control-output-inventory.v1",
+              "scope":"completed controls before final source fence and report",
+              "entries":len(inventory),"inventory_sha256":ci.digest(inventory)})
     @classmethod
     def tearDownClass(cls):
         now=ci.sources()

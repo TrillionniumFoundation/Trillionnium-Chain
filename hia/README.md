@@ -51,7 +51,23 @@ source and artifact identities.
 
 ## CI and evidence
 
-The [current development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons, seven public reader profiles and complete report dossier. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
+The [Node/Work CI correction record](qualification/node-work-ci-corrections.json)
+retains both complete 02f6 hosted outcomes: each has 45 successes, six failures
+and two dependency skips. Five Node jobs failed because a negative test left a
+hard link inside the complete controls output; the production packer correctly
+refused it. Work returned the correct derived ticket, but its production reader
+compared that ticket with the request target. Both reader/test defects are now
+corrected without changing runtime images or resource budgets.
+
+All seven Node reader profiles now pass, and the complete 12,020-entry /
+3,112,724,764-byte output has been packaged and independently reread. The
+409,242,432-byte transport archive is explicitly external and uses synthetic
+transport lineage. Work passes all 22 production controls and 65 public source
+controls; both historical real native outputs pass the complete corrected
+validator. A fresh build reproduces every prior native section and all three
+ELFs exactly. These observations require new commit-bound hosted execution.
+
+The [Node development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons and the original integrated reader profiles. The correction record above binds the successor readers and complete transport regression. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
 The workflow contains **53 jobs and 41 independent native compiler bootstrap
 gates**, each with its original 20-minute deadline. Four bootstrap control groups

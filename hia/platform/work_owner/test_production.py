@@ -5,6 +5,7 @@ stand for an actual fixed-parent, Node, Paid, or service qualification.
 """
 from __future__ import annotations
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -70,7 +71,12 @@ class ProductionControls(unittest.TestCase):
         words=self.header() if headers is None else headers
         raw=bytearray(struct.pack("<64Q",*words))
         request=bytes.fromhex(self.case["request_hex"])
-        raw[256:352]=request[:96]
+        raw[256:320]=request[:64]
+        # Independent fixed-domain framing; never copy the request target into
+        # the derived output ticket field.
+        wire=(b"TRNM-PON1"+bytes((0,))+struct.pack("<H",6)+b"ticket"+
+              struct.pack("<I",32)+request[:32]+struct.pack("<I",32)+request[-32:])
+        raw[320:352]=hashlib.sha256(wire).digest()
         for receipt in self.receipts() if receipts is None else receipts:
             raw.extend(struct.pack("<32Q",*receipt))
         for row in self.case["progress"]:raw.extend(struct.pack("<5Q",*row))
@@ -184,6 +190,8 @@ class ProductionControls(unittest.TestCase):
         got=self.admit()
         self.assertEqual(got["product_bytes"],16384)
         self.assertEqual(got["header"]["worker_tid"],self.worker)
+        self.assertEqual(got["ticket_hex"],"b5255a1f04d918e33da7e64e85f135f5166ee32b92505106ed8fef87d20e7840")
+        self.assertNotEqual(got["ticket_hex"],self.case["request_hex"][128:192])
 
     def test_08_actual_lifetime_and_fresh_boundaries_cannot_be_removed(self):
         for key,value in (("fixture",1),("host_fixture",1),("domain",3),("code",1),("work_code",1),
@@ -203,6 +211,18 @@ class ProductionControls(unittest.TestCase):
             with self.assertRaises(ValueError):self.admit(raw=other)
 
     def test_10_challenge_task_ticket_and_every_progress_point_are_bound(self):
+        request=bytes.fromhex(self.case["request_hex"])
+        raw=bytearray(self.raw());raw[320:352]=request[64:96]
+        with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_IDENTITY_CHANGED"):
+            self.admit(raw=bytes(raw))
+        ticket=bytes.fromhex("b5255a1f04d918e33da7e64e85f135f5166ee32b92505106ed8fef87d20e7840")
+        for target,accepted in ((ticket,True),((int.from_bytes(ticket,"big")-1).to_bytes(32,"big"),False)):
+            bounded=copy.deepcopy(self.case);wire=bytearray(request);wire[64:96]=target
+            bounded["request_hex"]=wire.hex()
+            with patch.object(self,"case",bounded):
+                if accepted:self.admit()
+                else:
+                    with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_TARGET_REFUSED"):self.admit()
         for at in (256,288,320,1280,1280+1098*40):
             raw=bytearray(self.raw());raw[at]^=1
             with self.subTest(offset=at),self.assertRaises(ValueError):self.admit(raw=bytes(raw))

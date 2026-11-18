@@ -1,5 +1,51 @@
 # Whole-tree inventory and HIA migration audit
 
+## Native Node transport and Work production-reader corrections
+
+Both 02f6 attempt-1 HIA runs completed all 53 jobs: 45 succeeded, six failed and
+two were dependency-skipped. Complete API responses, all failed-job logs,
+original small failure ZIPs and both complete decoded Work artifacts are retained
+in the [correction record](qualification/node-work-ci-corrections.json).
+
+The Node descriptor negative control left two hard-linked names in its output.
+The enclosing complete pack refused them. The corrected control preserves exact
+link metadata, actual descriptor and archive refusals, and both byte copies,
+then retires the link relationship. All completed control outputs are inventoried;
+the final complete pack/readback includes their final reports and source fences.
+The production reader and its single-link requirement are unchanged.
+
+Work's request carries challenge, task, target and PNW1 proof. Its output ticket
+is the domain-framed hash of challenge and transcript, and must not exceed the
+target. The old production reader compared the ticket to the target; its synthetic
+fixture copied that same erroneous field. The correction derives the ticket,
+checks the target relation and uses independent framing plus an actual fixed
+vector in the existing 22-method test roster. Both real hosted outputs pass
+the entire corrected native validator. The original hosted failures remain failures.
+
+Seven Node reader profiles pass with seven groups each and no skips. Their
+complete output archive contains 12,020 entries /3,112,724,764 regular bytes;
+packing and independent full readback pass. Five native profiles have 74/74/74/70/70
+controls (smoke/boundaries/capacity/node/cross), and the two original profiles
+have 80 controls each. Shared controls recur across profiles. The first two
+original readbacks correctly refused extra links in retained old shadow copies;
+complete byte comparisons and independent-copy restoration are recorded. The
+link-creation operation has not been established and is not attributed to the
+published copytree implementation.
+
+Work's 135-input graph changes from 528f273c7f51a157307cb8b8011356e8a55acbac87ab73e3a239e06ba0d2f47b
+to dd5048e7b0d3f2b214e4867619ffebe0d7d3dc5850a348bf1fe2079b9e31ef74,
+only in its production reader and tests. All 65 public source controls pass.
+A fresh actual build reproduces all native sections and all three ELF images.
+The Node 203-input and original 4,368-input maps remain unchanged.
+The first fixture-writer NUL-escaping failure remains separate from corrected results.
+
+The dossier is explicit about external original ZIP containers and the full
+409 MB transport archive. It does not claim fresh hosted qualification, Some/Paid
+integration, four-second/sixteen-worker service acceptance, retirement or activation.
+Actual independent pressure and W1 failures, and before-control source refusals,
+remain recorded. All 26 original packages and all nine whole-project gates remain.
+
+
 ## Held-disk Node/M05 successor audit
 
 The [source-bound development record](qualification/node-owner-development.json) indexes all five fresh native partitions, both actual original Rust comparisons and all seven current public reader profiles. Its report dossier is complete for its declared members; full raw directories and both original binaries remain explicitly external. Current candidate hosted qualification is separate. The additional Work owned-file assertion was corrected from 30 to 32 and all 65 public controls passed. All 58 repository negative tests completed with zero skips.

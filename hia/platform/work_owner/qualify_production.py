@@ -128,7 +128,13 @@ def validate_native(raw,case,process_pid,observations,parent,expected_service,*,
  require(same(decoded["progress"],case["progress"]),"COMPLETE_ORIGINAL_PROGRESS_ORDER_CHANGED")
  product=bytes.fromhex(case["product_hex"])
  require(len(product)==decoded["product_bytes"]==16384 and raw[-16384:]==product,"ACTUAL_COMPLETE_PRODUCT_DIFFERS")
- require(decoded["challenge_hex"]==case["request_hex"][:64] and decoded["task_hex"]==case["request_hex"][64:128] and decoded["ticket_hex"]==case["request_hex"][128:192],"NATIVE_PROOF_IDENTITY_CHANGED")
+ request=bytes.fromhex(case["request_hex"])
+ require(len(request)==49284 and request[96:100]==b"PNW1","NATIVE_PROOF_REQUEST_FORMAT_CHANGED")
+ # The third request word is the target; the output carries the independently
+ # derived ticket bound to the complete request's challenge and transcript.
+ ticket=cases.tagged(b"ticket",request[:32],request[-32:])
+ require(decoded["challenge_hex"]==request[:32].hex() and decoded["task_hex"]==request[32:64].hex() and decoded["ticket_hex"]==ticket.hex(),"NATIVE_PROOF_IDENTITY_CHANGED")
+ require(ticket<=request[64:96],"NATIVE_PROOF_TARGET_REFUSED")
  before,after,worker=(decoded[n] for n in ("host_before","host_after","host_worker_final"))
  require(before[2:8]==[0,1,3,1,1,1] and after[2:8]==[0,2,5,2,2,1] and worker[2:8]==[0,1102,1104,1,0,0],"NATIVE_RESOURCE_AND_WORKER_RECEIPT_ORDER_CHANGED")
  require(before[23]==after[23]==process_pid and worker[23]==h["worker_tid"],"HOST_RECEIPT_THREAD_DIFFERS")

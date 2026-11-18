@@ -125,3 +125,14 @@ This is a report archive, not another complete runtime evidence volume set.
 All raw streams, native images, original source captures and both independent
 original binaries remain explicitly retained at the external locations in the
 record. Its local PASS does not replace commit-bound hosted execution.
+
+## Node/Work CI correction dossier
+
+[node-work-ci-corrections.json](node-work-ci-corrections.json) indexes
+[node-work-ci-corrections-reports.tar.xz](node-work-ci-corrections-reports.tar.xz).
+Every declared regular member was independently reopened and hashed. It retains
+the complete old hosted job/API observations, both complete decoded Work
+artifacts, local reader/control failures and corrected source-bound observations.
+Large original ZIP containers and the separate complete 409,242,432-byte
+controls transport remain at explicit external paths. This dossier does not
+replace a new commit-bound hosted qualification or the full-chain retirement gates.
