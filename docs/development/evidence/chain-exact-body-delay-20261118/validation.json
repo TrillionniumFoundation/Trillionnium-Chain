@@ -117,13 +117,12 @@
     "model_tool_total_cost": null,
     "physical_wan_bytes": null
   },
-  "original_fixed_resource_window_qualified": false,
   "public_network_ready": false,
   "production_activation": false,
   "files": {
     "README.md": {
-      "bytes": 9834,
-      "sha256": "d414dbdb16ef234e7eb35d45bdd9eac519c4c0e60452f27602561fc099bbd1d1"
+      "bytes": 13821,
+      "sha256": "cfa66b83217f279e58bf30be5ffdecd75564f0e3fe1245a365ea8c2f428d3328"
     },
     "ci-prospective-external-974049d.txt.gz": {
       "bytes": 11003,
@@ -140,6 +139,14 @@
     "followup-source-checks.txt": {
       "bytes": 2708,
       "sha256": "a3d689923b398dc4b57860881a02480042d3e93490de37b5495242877da1d398"
+    },
+    "hosted-business-readback.json": {
+      "bytes": 56203,
+      "sha256": "2fa66e6f315a2252ddbcbf0e75223d1e8380bb26c0b1048f88605d72aaa24068"
+    },
+    "hosted-observations-119c-974.tar.xz": {
+      "bytes": 5388968,
+      "sha256": "758759f4e497eee4bb2a11d0e925c63b1611771844e6d7ad559c07c10ba5962e"
     },
     "multiprocess-policy-v2.txt.gz": {
       "bytes": 344,
@@ -221,5 +228,20 @@
     "native_business_acceptance_inferred": false,
     "correction": "Refresh current source-map and literal workflow hashes; preserve frozen experiment, prior observations, original resource and business gates."
   },
-  "supplemental_policy_log_uncompressed_sha256": "46a979a2f2ee8544131c61c59395e722f4bcf86c8b09d28355523145512e2a03"
+  "supplemental_policy_log_uncompressed_sha256": "46a979a2f2ee8544131c61c59395e722f4bcf86c8b09d28355523145512e2a03",
+  "initial_publication_original_fixed_resource_window_qualified": false,
+  "hosted_original_window": {
+    "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+    "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+    "run_id": 44309944062,
+    "x64_original_business_gate": true,
+    "arm64_original_business_gate": true,
+    "original_validator_recomputed": true,
+    "original_root_limits_verified": true,
+    "whole_workflow_passed": false,
+    "source_binding_followup_commit": "7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8",
+    "followup_full_execution_inferred": false,
+    "general_resource_fairness_qualified": false,
+    "readback": "hosted-business-readback.json"
+  }
 }

@@ -1,0 +1,1374 @@
+{
+  "schema": "chain-original-window-business-readback-v1",
+  "scope": "Four real hosted finite windows with complete original reports retained. A current documentation/source-binding successor is not silently treated as the tested commit.",
+  "tested_candidate": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+  "tested_baseline": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+  "source_binding_followup_commit": "7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8",
+  "original_confirmation_validator_unchanged": true,
+  "window_ns": 4000000000,
+  "attacker_workers": 16,
+  "limits": {
+    "cpu.max": "25000 100000",
+    "cpu.max.burst": "0",
+    "memory.max": "2147483648",
+    "memory.swap.max": "0",
+    "pids.max": "256"
+  },
+  "observations": [
+    {
+      "variant": "baseline119c",
+      "architecture": "x64",
+      "run_id": 44298913299,
+      "artifact_id": 14428310436,
+      "artifact_zip_sha256": "a431ee9d0c6b0f7fa1083bb5f4002ce69b0551cd73b3526781aa84838c873a5f",
+      "source": {
+        "commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+        "tree": "5ce7481e5835091f07b8d21f8abf42cb0d88208b",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+          "tested_tree": "5ce7481e5835091f07b8d21f8abf42cb0d88208b",
+          "candidate": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 40952,
+          "tracked_bytes": 2994639784,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+      },
+      "source_unchanged_after": true,
+      "report_path": "baseline119c/x64/from-zero-native/confirmation/report.json",
+      "report_sha256": "09b86544292d9d2e9e07ef1bf53e3dd07d57796a0249b0d2fd2f59506c75fa59",
+      "manifest_passed": false,
+      "manifest_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "finite_target_met": false,
+      "original_gate_validated": false,
+      "parent_before": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_after": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "root_parent_and_limits_verified": true,
+      "host_read_errors": [],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 2876945732,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 99266,
+          "confirmation_ended_ns": 2877044998,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 0,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 0,
+            "receiver_mutation_cpu_ns": 34401610,
+            "independent_replay_and_confirmation_cpu_ns": 491198209,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 726544581,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4031494523
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "finite_business_target_met": false,
+          "confirmed_transactions": 0,
+          "confirmation_latency_ns": null,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 7646361,
+          "confirmation_ended_ns": null,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 476,
+          "independent_replay_pages": 2,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": false,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": false,
+            "client_confirmed_before_original_window_end": false
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 349713559,
+            "receiver_mutation_cpu_ns": 256086126,
+            "independent_replay_and_confirmation_cpu_ns": 149252853,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 1105319569,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4440997838
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        }
+      ],
+      "original_process_observations": {
+        "from-zero-native/build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 406373184,
+          "cpu_ns": 99374000,
+          "user_cpu_ns": 60404000,
+          "system_cpu_ns": 38970000,
+          "max_rss_kib": 52244,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5521683,
+          "cpu_ns": 1567000,
+          "user_cpu_ns": 0,
+          "system_cpu_ns": 1567000,
+          "max_rss_kib": 52876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-check/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12103403498,
+          "cpu_ns": 12102252000,
+          "user_cpu_ns": 11926456000,
+          "system_cpu_ns": 175796000,
+          "max_rss_kib": 273960,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-copy/process.json": {
+          "command": [
+            "rustfmt",
+            "--edition",
+            "2021",
+            "/home/runner/work/_temp/ci-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 305014698,
+          "cpu_ns": 72771000,
+          "user_cpu_ns": 48514000,
+          "system_cpu_ns": 24257000,
+          "max_rss_kib": 104016,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 96501635,
+          "cpu_ns": 18539000,
+          "user_cpu_ns": 14636000,
+          "system_cpu_ns": 3903000,
+          "max_rss_kib": 52876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5340716,
+          "cpu_ns": 3000000,
+          "user_cpu_ns": 1500000,
+          "system_cpu_ns": 1500000,
+          "max_rss_kib": 52876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 10286331203,
+          "cpu_ns": 2304773000,
+          "user_cpu_ns": 1457520000,
+          "system_cpu_ns": 847253000,
+          "max_rss_kib": 190092,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 9309356648,
+          "cpu_ns": 1981317000,
+          "user_cpu_ns": 970093000,
+          "system_cpu_ns": 1011224000,
+          "max_rss_kib": 123456,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 187594537757,
+          "cpu_ns": 364362050000,
+          "user_cpu_ns": 352843590000,
+          "system_cpu_ns": 11518460000,
+          "max_rss_kib": 1953224,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-format/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12103403498,
+          "cpu_ns": 12102252000,
+          "user_cpu_ns": 11926456000,
+          "system_cpu_ns": 175796000,
+          "max_rss_kib": 273960,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        }
+      },
+      "producer_process_cpu_ns": 32149235,
+      "producer_acquisition_wall_ns": 84081168,
+      "attacker_construction_cpu_ns": 6262320,
+      "attacker_construction_wall_ns": 6259719
+    },
+    {
+      "variant": "baseline119c",
+      "architecture": "arm64",
+      "run_id": 44298913299,
+      "artifact_id": 14427299209,
+      "artifact_zip_sha256": "9639380928ac23c2735bf1be9faaadcb2212a90107f2f2daa9fac1bb29d87668",
+      "source": {
+        "commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+        "tree": "5ce7481e5835091f07b8d21f8abf42cb0d88208b",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+          "tested_tree": "5ce7481e5835091f07b8d21f8abf42cb0d88208b",
+          "candidate": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 40952,
+          "tracked_bytes": 2994639784,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+      },
+      "source_unchanged_after": true,
+      "report_path": "baseline119c/arm64/from-zero-native/confirmation/report.json",
+      "report_sha256": "c4de82efaefcdae5c139d4fbe9920757eb8098d7edb655d3702edda8ea324231",
+      "manifest_passed": false,
+      "manifest_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "finite_target_met": false,
+      "original_gate_validated": false,
+      "parent_before": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_after": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "root_parent_and_limits_verified": true,
+      "host_read_errors": [],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 1815331154,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 186765,
+          "confirmation_ended_ns": 1815517919,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 0,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 0,
+            "receiver_mutation_cpu_ns": 32016040,
+            "independent_replay_and_confirmation_cpu_ns": 290633968,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 502196984,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4096133681
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "finite_business_target_met": false,
+          "confirmed_transactions": 0,
+          "confirmation_latency_ns": null,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 69891918,
+          "confirmation_ended_ns": null,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 466,
+          "independent_replay_pages": 6,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": false,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": false,
+            "client_confirmed_before_original_window_end": false
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 300294008,
+            "receiver_mutation_cpu_ns": 205364040,
+            "independent_replay_and_confirmation_cpu_ns": 243569520,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 1062818872,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4293706277
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        }
+      ],
+      "original_process_observations": {
+        "from-zero-native/build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 328123047,
+          "cpu_ns": 98976000,
+          "user_cpu_ns": 64678000,
+          "system_cpu_ns": 34298000,
+          "max_rss_kib": 49300,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5556151,
+          "cpu_ns": 1702000,
+          "user_cpu_ns": 0,
+          "system_cpu_ns": 1702000,
+          "max_rss_kib": 51896,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-check/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12467173874,
+          "cpu_ns": 12458869000,
+          "user_cpu_ns": 12279864000,
+          "system_cpu_ns": 179005000,
+          "max_rss_kib": 221140,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-copy/process.json": {
+          "command": [
+            "rustfmt",
+            "--edition",
+            "2021",
+            "/home/runner/work/_temp/ci-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 304362462,
+          "cpu_ns": 74303000,
+          "user_cpu_ns": 55251000,
+          "system_cpu_ns": 19052000,
+          "max_rss_kib": 49300,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 93380358,
+          "cpu_ns": 19525000,
+          "user_cpu_ns": 13668000,
+          "system_cpu_ns": 5857000,
+          "max_rss_kib": 51896,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5490595,
+          "cpu_ns": 3295000,
+          "user_cpu_ns": 2197000,
+          "system_cpu_ns": 1098000,
+          "max_rss_kib": 51896,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 9804907961,
+          "cpu_ns": 2163230000,
+          "user_cpu_ns": 1339634000,
+          "system_cpu_ns": 823596000,
+          "max_rss_kib": 189096,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 8977146602,
+          "cpu_ns": 1698870000,
+          "user_cpu_ns": 848933000,
+          "system_cpu_ns": 849937000,
+          "max_rss_kib": 119028,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 236709427809,
+          "cpu_ns": 451786176000,
+          "user_cpu_ns": 437002422000,
+          "system_cpu_ns": 14783754000,
+          "max_rss_kib": 1964488,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-format/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12467173874,
+          "cpu_ns": 12458869000,
+          "user_cpu_ns": 12279864000,
+          "system_cpu_ns": 179005000,
+          "max_rss_kib": 221140,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        }
+      },
+      "producer_process_cpu_ns": 31445632,
+      "producer_acquisition_wall_ns": 108976642,
+      "attacker_construction_cpu_ns": 5318408,
+      "attacker_construction_wall_ns": 5316704
+    },
+    {
+      "variant": "candidate974",
+      "architecture": "x64",
+      "run_id": 44309944062,
+      "artifact_id": 14431202653,
+      "artifact_zip_sha256": "3bd5d0ca8a2374cf1c4d549b079530494791f4786a0e9cbfd936d4a08c9dd4c1",
+      "source": {
+        "commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+          "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+          "candidate": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 40957,
+          "tracked_bytes": 2995134675,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+      },
+      "source_unchanged_after": true,
+      "report_path": "candidate974/x64/from-zero-native/confirmation/report.json",
+      "report_sha256": "e79dc26c37c4add3065f6b67454397e52da3937dcdaaca80f7c4c1cb0832e041",
+      "manifest_passed": true,
+      "manifest_failures": [],
+      "finite_target_met": true,
+      "original_gate_validated": true,
+      "parent_before": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_after": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "root_parent_and_limits_verified": true,
+      "host_read_errors": [],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 2720172444,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 116892,
+          "confirmation_ended_ns": 2720289336,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 0,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 0,
+            "receiver_mutation_cpu_ns": 34530901,
+            "independent_replay_and_confirmation_cpu_ns": 493128379,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 714223927,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4085626079
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 3415648125,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 65029596,
+          "confirmation_ended_ns": 3480677721,
+          "overlapping_false_calls": 124,
+          "honest_submissions_accepted": 7,
+          "work_failed": 128,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 96372437,
+            "receiver_mutation_cpu_ns": 105742280,
+            "independent_replay_and_confirmation_cpu_ns": 501234745,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 963861505,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4192155236
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        }
+      ],
+      "original_process_observations": {
+        "from-zero-native/build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 404557644,
+          "cpu_ns": 101622000,
+          "user_cpu_ns": 65117000,
+          "system_cpu_ns": 36505000,
+          "max_rss_kib": 52428,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5531657,
+          "cpu_ns": 1558000,
+          "user_cpu_ns": 0,
+          "system_cpu_ns": 1558000,
+          "max_rss_kib": 52856,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-check/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 11951267003,
+          "cpu_ns": 11946305000,
+          "user_cpu_ns": 11765308000,
+          "system_cpu_ns": 180997000,
+          "max_rss_kib": 275416,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-copy/process.json": {
+          "command": [
+            "rustfmt",
+            "--edition",
+            "2021",
+            "/home/runner/work/_temp/ci-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 300024840,
+          "cpu_ns": 71841000,
+          "user_cpu_ns": 50483000,
+          "system_cpu_ns": 21358000,
+          "max_rss_kib": 103964,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 25677354,
+          "cpu_ns": 18476000,
+          "user_cpu_ns": 15397000,
+          "system_cpu_ns": 3079000,
+          "max_rss_kib": 52856,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 79803315,
+          "cpu_ns": 3272000,
+          "user_cpu_ns": 1636000,
+          "system_cpu_ns": 1636000,
+          "max_rss_kib": 52856,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 9790312510,
+          "cpu_ns": 1307354000,
+          "user_cpu_ns": 762892000,
+          "system_cpu_ns": 544462000,
+          "max_rss_kib": 105900,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 8703922466,
+          "cpu_ns": 1783331000,
+          "user_cpu_ns": 584230000,
+          "system_cpu_ns": 1199101000,
+          "max_rss_kib": 76608,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 188349066111,
+          "cpu_ns": 354869152000,
+          "user_cpu_ns": 343571082000,
+          "system_cpu_ns": 11298070000,
+          "max_rss_kib": 1962392,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-format/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 11951267003,
+          "cpu_ns": 11946305000,
+          "user_cpu_ns": 11765308000,
+          "system_cpu_ns": 180997000,
+          "max_rss_kib": 275416,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        }
+      },
+      "producer_process_cpu_ns": 32620640,
+      "producer_acquisition_wall_ns": 123013270,
+      "attacker_construction_cpu_ns": 6435462,
+      "attacker_construction_wall_ns": 6433995
+    },
+    {
+      "variant": "candidate974",
+      "architecture": "arm64",
+      "run_id": 44309944062,
+      "artifact_id": 14431971535,
+      "artifact_zip_sha256": "ed58ba96672fcd66040c81e804e95065998059df0dbee8f1d08bd8675e78db0b",
+      "source": {
+        "commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+          "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+          "candidate": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 40957,
+          "tracked_bytes": 2995134675,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+      },
+      "source_unchanged_after": true,
+      "report_path": "candidate974/arm64/from-zero-native/confirmation/report.json",
+      "report_sha256": "7f4d51a8ef99198a32c61a76a0dd8bf3aadcd7aa9ce2e9551d5385bfd1d4a215",
+      "manifest_passed": true,
+      "manifest_failures": [],
+      "finite_target_met": true,
+      "original_gate_validated": true,
+      "parent_before": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7281,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_after": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7281,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "root_parent_and_limits_verified": true,
+      "host_read_errors": [],
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 1899967625,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 189893,
+          "confirmation_ended_ns": 1900157518,
+          "overlapping_false_calls": 0,
+          "honest_submissions_accepted": 7,
+          "work_failed": 0,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 0,
+            "receiver_mutation_cpu_ns": 36566408,
+            "independent_replay_and_confirmation_cpu_ns": 302735904,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 540423384,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4104323071
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "finite_business_target_met": true,
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 2400575524,
+          "requested_window_ns": 4000000000,
+          "business_started_ns": 86000321,
+          "confirmation_ended_ns": 2486575845,
+          "overlapping_false_calls": 95,
+          "honest_submissions_accepted": 7,
+          "work_failed": 128,
+          "independent_replay_pages": 7,
+          "verification_errors": [],
+          "checks": {
+            "accounting_closed": true,
+            "full_native_state_equal": true,
+            "no_attack_accepted": true,
+            "invariant_target_met": true,
+            "overlap_demonstrated": true,
+            "client_confirmed_before_original_window_end": true
+          },
+          "cost": {
+            "attacker_workers_cpu_ns": 99476776,
+            "receiver_mutation_cpu_ns": 100843984,
+            "independent_replay_and_confirmation_cpu_ns": 303975344,
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 786206240,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4161963692
+            },
+            "whole_phase_scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "nested_intervals_additive": false
+          }
+        }
+      ],
+      "original_process_observations": {
+        "from-zero-native/build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 485788401,
+          "cpu_ns": 109678000,
+          "user_cpu_ns": 66001000,
+          "system_cpu_ns": 43677000,
+          "max_rss_kib": 49272,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5681711,
+          "cpu_ns": 1944000,
+          "user_cpu_ns": 972000,
+          "system_cpu_ns": 972000,
+          "max_rss_kib": 51876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-check/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12725500540,
+          "cpu_ns": 12725315000,
+          "user_cpu_ns": 12544027000,
+          "system_cpu_ns": 181288000,
+          "max_rss_kib": 223292,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/format-copy/process.json": {
+          "command": [
+            "rustfmt",
+            "--edition",
+            "2021",
+            "/home/runner/work/_temp/ci-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 309847650,
+          "cpu_ns": 81729000,
+          "user_cpu_ns": 54818000,
+          "system_cpu_ns": 26911000,
+          "max_rss_kib": 49272,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 102136486,
+          "cpu_ns": 22420000,
+          "user_cpu_ns": 15597000,
+          "system_cpu_ns": 6823000,
+          "max_rss_kib": 51876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 5602684,
+          "cpu_ns": 3751000,
+          "user_cpu_ns": 1500000,
+          "system_cpu_ns": 2251000,
+          "max_rss_kib": 51876,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 9611859686,
+          "cpu_ns": 1205980000,
+          "user_cpu_ns": 723588000,
+          "system_cpu_ns": 482392000,
+          "max_rss_kib": 105772,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": {
+          "command": [
+            "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 8698207829,
+          "cpu_ns": 1434289000,
+          "user_cpu_ns": 612032000,
+          "system_cpu_ns": 822257000,
+          "max_rss_kib": 77568,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-build/process.json": {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_from_zero",
+            "--no-run",
+            "--message-format=json"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 265781266831,
+          "cpu_ns": 498487824000,
+          "user_cpu_ns": 482098163000,
+          "system_cpu_ns": 16389661000,
+          "max_rss_kib": 1950180,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        },
+        "from-zero-native-host/prepare-format/process.json": {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_ns": 12725500540,
+          "cpu_ns": 12725315000,
+          "user_cpu_ns": 12544027000,
+          "system_cpu_ns": 181288000,
+          "max_rss_kib": 223292,
+          "cpu_scope": "entire child, not apportioned to nested wall intervals",
+          "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution"
+        }
+      },
+      "producer_process_cpu_ns": 33686144,
+      "producer_acquisition_wall_ns": 111747384,
+      "attacker_construction_cpu_ns": 5408376,
+      "attacker_construction_wall_ns": 5406045
+    }
+  ],
+  "qualification": {
+    "finite_original_window_observed_on_tested_candidate": true,
+    "general_sybil_fairness": false,
+    "independent_wan": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "whole_workflow_passed": false
+  },
+  "cost_scope": {
+    "nested_intervals_additive": false,
+    "retained_failed_runs": true,
+    "physical_wan_bytes": null,
+    "energy_joules": null,
+    "monetary_cost": null,
+    "research_wide_model_and_tool_cost": null,
+    "original_build_and_child_process_cpu_retained": true
+  },
+  "archive": {
+    "path": "hosted-observations-119c-974.tar.xz",
+    "bytes": 5388968,
+    "sha256": "758759f4e497eee4bb2a11d0e925c63b1611771844e6d7ad559c07c10ba5962e",
+    "included_file_count": 633,
+    "provider_artifact_file_count": 648,
+    "excluded": "24 original ELF executable images are listed with exact hashes in the archive manifest and remain in the SHA-bound provider ZIPs. All original JSON, logs, source copies and native database snapshots are retained."
+  }
+}

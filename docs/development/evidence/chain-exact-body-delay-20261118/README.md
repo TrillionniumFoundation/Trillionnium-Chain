@@ -5,6 +5,63 @@ from PR #954. The original four-second pressure campaign remains the business
 acceptance gate. No process exit code, test count, source pin, or this document
 grants public-network, work-profile, resource-fairness, or production qualification.
 
+## Observed original-window result at 974049d
+
+The original hosted campaign on exact commit
+`974049daa4b72825332b07b59084cb70f4b4c8b5` completed a genuine independent
+transaction confirmation under attack on both architectures. Both complete raw
+reports have `finite_target_met=true` and `invariant_target_met=true`; the
+unchanged original report validator independently accepted them on readback.
+The directly preceding base `119cbdc8b7060df28b74230fa9265ada7bc75541` still fails
+that same validator with `CONFIRMATION_TARGET` on both architectures.
+
+| Exact source and architecture | Attack-free confirmation | Pressure confirmation | Pressure independent History pages | Overlapping false calls |
+| --- | --- | --- | ---: | ---: |
+| Base 119cbdc8, x64 | 1/1; 2.876946 s | 0/1 | 2 | No completed confirmation |
+| Candidate 974049d, x64 | 1/1; 2.720172 s | 1/1; 3.415648 s | 7 | 124 |
+| Base 119cbdc8, arm64 | 1/1; 1.815331 s | 0/1 | 6 | No completed confirmation |
+| Candidate 974049d, arm64 | 1/1; 1.899968 s | 1/1; 2.400576 s | 7 | 95 |
+
+These observations use the original four-second window and 16 attack workers.
+For every base/candidate architecture, the original root-owned parent was the
+same directory before and after execution, with `cpu.max=25000 100000`, zero
+burst, `memory.max=2147483648`, zero swap, and `pids.max=256`. Source identity was
+verified before and after native execution. Both candidate pressure phases
+retain 7/7 honest admissions, full native state equality, zero accepted attack
+work, no verifier errors, completed accounting, and confirmation before the
+original deadline. No post-pressure drain received confirmation credit.
+
+The exact original runs are [baseline 44298913299](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44298913299)
+and [candidate 44309944062](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44309944062).
+[hosted-business-readback.json](hosted-business-readback.json) records the four
+provider artifact IDs and ZIP digests, exact sources, report digests, original
+validator results, resource observations, complete child-process cost records,
+and phase outcomes. [hosted-observations-119c-974.tar.xz](hosted-observations-119c-974.tar.xz)
+retains all original JSON, logs, source copies and native database snapshots:
+217,385,337 bytes of artifact observations before compression. Its manifest
+hash-lists all 648 provider artifact files. The 24 compiled ELF images remain
+in their original SHA-bound ZIP artifacts and are not duplicated in this archive.
+
+Pressure phase process CPU includes setup through final state/readback. It was
+1,105,319,569 ns for the x64 base versus 963,861,505 ns for the x64 candidate,
+and 1,062,818,872 ns versus 786,206,240 ns on arm64. Those values include nested
+attacker, receiver and verifier work, so those component measurements must not
+be added to the phase total. The separately retained actual preparation build
+costs for the candidate were 354,869,152,000 CPU ns / 188,349,066,111 wall ns on
+x64 and 498,487,824,000 CPU ns / 265,781,266,831 wall ns on arm64. Base builds,
+other native cost campaigns, every executed child, and failed observations are
+also retained; missing monetary, energy and whole-research model/tool costs
+remain unknown.
+
+The finite business result belongs to **974049d**. Its complete workflow did not
+pass: the source-gate failures documented below remain failures. The subsequent
+source-binding commit `7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8` changes no native
+Rust bytes, and its separate [CI run 44314025254](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44314025254)
+is a new observation, not a substitute for 974049d. Archiving this evidence does
+not grant a successor commit a full CI pass. General distinct-body/Sybil
+fairness, independent WAN service, public-network readiness and production
+activation remain unqualified.
+
 ## Problem and candidate
 
 The retained original x64 and arm64 campaigns admitted all seven honest blocks,
@@ -154,9 +211,10 @@ remains enabled. No test was invented to fill that omission.
 - [validation.json](validation.json) binds the exact source, observed checks,
   environment failures, cost unknowns, and the archive identity.
 
-Run the unchanged `trnm-required-baseline` workflow on the published candidate.
-Read its x64 and arm64 original confirmation reports and kernel-parent
-observations. Business acceptance requires the actual independent transaction
-confirmation in the same four-second window, with attack overlap, all original
-invariants, and complete retained failures. Continue diagnosis from that report
-if any original business target remains false.
+The tested 974049d candidate has now met the original finite x64 and arm64
+business gate. Read subsequent exact-head CI results separately before any
+broader acceptance. Preserve the failed release counterexample and the first
+hosted source-gate failures; neither is erased by the finite-window success.
+The next capability questions are robustness across fresh distinct bodies and
+independent network participants under matched budgets. No such qualification
+is asserted by this record.
