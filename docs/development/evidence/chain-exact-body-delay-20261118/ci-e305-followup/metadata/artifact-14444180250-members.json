@@ -1,0 +1,355 @@
+{
+  "run_id": 44335100770,
+  "artifact_id": 14444180250,
+  "artifact_name": "w1-fresh-service-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+  "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/provider/14444180250-w1-fresh-service-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1.zip",
+  "bytes": 6444421,
+  "sha256": "37a696b539777ab065a87ce7e567ed8fd240a66334f11052c349826a7c1bed43",
+  "provider_size": 6444421,
+  "provider_digest": "sha256:37a696b539777ab065a87ce7e567ed8fd240a66334f11052c349826a7c1bed43",
+  "provider_digest_matches": true,
+  "members": [
+    {
+      "name": "fresh-service/build.log",
+      "bytes": 114546,
+      "compressed_bytes": 8229,
+      "crc32": 2852447637
+    },
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33621,
+      "crc32": 2625689661
+    },
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 493312419
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4689,
+      "crc32": 1058394823
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 493312419
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/fresh/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 165670410
+    },
+    {
+      "name": "fresh-service/fresh/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/fresh/report.json",
+      "bytes": 8786555,
+      "compressed_bytes": 491802,
+      "crc32": 1946207543
+    },
+    {
+      "name": "fresh-service/fresh.log",
+      "bytes": 915,
+      "compressed_bytes": 477,
+      "crc32": 3078428232
+    },
+    {
+      "name": "fresh-service/manifest.json",
+      "bytes": 8909,
+      "compressed_bytes": 1988,
+      "crc32": 1627322992
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33621,
+      "crc32": 2625689661
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 493312419
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "bytes": 442368,
+      "compressed_bytes": 28047,
+      "crc32": 2309082720
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 493312419
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/original/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 165670410
+    },
+    {
+      "name": "fresh-service/original/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service/original/report.json",
+      "bytes": 9594838,
+      "compressed_bytes": 435413,
+      "crc32": 3057233620
+    },
+    {
+      "name": "fresh-service/original.log",
+      "bytes": 421,
+      "compressed_bytes": 277,
+      "crc32": 3297008900
+    },
+    {
+      "name": "fresh-service/public_v3_from_zero",
+      "bytes": 13073976,
+      "compressed_bytes": 5168860,
+      "crc32": 694835792
+    },
+    {
+      "name": "fresh-service-controls.log",
+      "bytes": 129,
+      "compressed_bytes": 37,
+      "crc32": 2126758085
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718
+    },
+    {
+      "name": "fresh-service-host/after-provision.json",
+      "bytes": 1634,
+      "compressed_bytes": 790,
+      "crc32": 3433902138
+    },
+    {
+      "name": "fresh-service-host/before-provision.json",
+      "bytes": 2801,
+      "compressed_bytes": 709,
+      "crc32": 3723856941
+    },
+    {
+      "name": "fresh-service-host/child-final-load-state.log",
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484
+    },
+    {
+      "name": "fresh-service-host/child-load-state.log",
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484
+    },
+    {
+      "name": "fresh-service-host/child-result.json",
+      "bytes": 353,
+      "compressed_bytes": 232,
+      "crc32": 3919727459
+    },
+    {
+      "name": "fresh-service-host/controller-result.json",
+      "bytes": 7701,
+      "compressed_bytes": 1996,
+      "crc32": 2061137551
+    },
+    {
+      "name": "fresh-service-host/inside-after.json",
+      "bytes": 1716,
+      "compressed_bytes": 820,
+      "crc32": 83823214
+    },
+    {
+      "name": "fresh-service-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service-host/inside-before.json",
+      "bytes": 1701,
+      "compressed_bytes": 809,
+      "crc32": 956427347
+    },
+    {
+      "name": "fresh-service-host/outside-after.json",
+      "bytes": 1672,
+      "compressed_bytes": 835,
+      "crc32": 66771190
+    },
+    {
+      "name": "fresh-service-host/parent-properties.log",
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "crc32": 4046598973
+    },
+    {
+      "name": "fresh-service-host/prepare-build/process.json",
+      "bytes": 921,
+      "compressed_bytes": 518,
+      "crc32": 133666118
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stderr",
+      "bytes": 7385,
+      "compressed_bytes": 1644,
+      "crc32": 2358765405
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stdout",
+      "bytes": 114611,
+      "compressed_bytes": 8154,
+      "crc32": 2225377595
+    },
+    {
+      "name": "fresh-service-host/prepare-build.json",
+      "bytes": 3406,
+      "compressed_bytes": 1231,
+      "crc32": 3339986445
+    },
+    {
+      "name": "fresh-service-host/seal-parent-directory.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service-host/start-fixed-parent.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service-host/systemd-reload.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "fresh-service-host/systemd-run.log",
+      "bytes": 537,
+      "compressed_bytes": 367,
+      "crc32": 3107144827
+    },
+    {
+      "name": "fresh-service-host/unprovisioned-parent.json",
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "crc32": 2035026314
+    },
+    {
+      "name": "original-host-controls.log",
+      "bytes": 188,
+      "compressed_bytes": 38,
+      "crc32": 3804662016
+    },
+    {
+      "name": "original-native-controls.log",
+      "bytes": 29982,
+      "compressed_bytes": 4831,
+      "crc32": 3962256413
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "crc32": 1692302564
+    },
+    {
+      "name": "public-fixture-parent.json",
+      "bytes": 3304,
+      "compressed_bytes": 1228,
+      "crc32": 2807913079
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 1814676836
+    },
+    {
+      "name": "source.json",
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 1814676836
+    }
+  ]
+}

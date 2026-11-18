@@ -1,0 +1,1022 @@
+{
+  "schema": "chain.e305.mixed_original_readout.v1",
+  "reports": [
+    {
+      "artifact_id": 14442717970,
+      "artifact_name": "recent-exact-ubuntu-24.04-arm-prospective-merge-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+      "source": {
+        "base": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+        "candidate": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "kind": "prospective-merge",
+        "prospective_merge": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3016837368,
+        "tracked_entries": 40988,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "originals": [
+        {
+          "member": "source.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442717970/source.json",
+          "bytes": 512,
+          "sha256": "6bf76a93c4470db610e48e0fd4d4915b699a9bd954fa8b80831480156cd61c52"
+        },
+        {
+          "member": "source-after.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442717970/source-after.json",
+          "bytes": 512,
+          "sha256": "6bf76a93c4470db610e48e0fd4d4915b699a9bd954fa8b80831480156cd61c52"
+        },
+        {
+          "member": "mixed-service/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442717970/mixed-service/report.json",
+          "bytes": 2537826,
+          "sha256": "1124b2c905572d966b7f2042ca454738d51c1118ab0bc25f70f44313d83611d8"
+        },
+        {
+          "member": "network-only-business/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442717970/network-only-business/report.json",
+          "bytes": 1993803,
+          "sha256": "6122a0731e97abedd68c5c7a79868c17c6315fa5d95608c20a470fd49c599909"
+        }
+      ],
+      "schema": "public-v3-local-mixed-service-v2",
+      "attempts": 130,
+      "finite_target_met": false,
+      "target_gap_ns": 2000000000,
+      "including_restart_max_gap_ns": 3342223579,
+      "call_deadline_ms": 500,
+      "phases": [
+        {
+          "phase": 0,
+          "started_ns": 2194627,
+          "ended_ns": 3533751712,
+          "duration_ns": 3531557085,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3327924201,
+          "last_honest_probe_completed_ns": 205827511,
+          "tail_after_last_probe_ns": 3327924201,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 3797257,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            4795724,
+            491614788,
+            491983646,
+            492547708,
+            492582802,
+            492495999,
+            492391941,
+            491768251
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 991328,
+            "mutation_cpu_charged_ns": 16924904,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999645961,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 13689856,
+            "mutation_full_work_cpu_ns": 3235048,
+            "mutation_response_cpu_ns": 990280,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3422152755,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 355258,
+            "response_bytes_written": 52879,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3235131,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_false_transcript": 8,
+            "paid_invalid": 16,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        },
+        {
+          "phase": 1,
+          "started_ns": 3545733991,
+          "ended_ns": 7078577640,
+          "duration_ns": 3532843649,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3332360125,
+          "last_honest_probe_completed_ns": 3746217515,
+          "tail_after_last_probe_ns": 3332360125,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 3667353,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            5493738,
+            492358511,
+            491956664,
+            491761946,
+            491866238,
+            492751568,
+            492520717,
+            492752200
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 987224,
+            "mutation_cpu_charged_ns": 20574432,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999489231,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 17316408,
+            "mutation_full_work_cpu_ns": 3258024,
+            "mutation_response_cpu_ns": 989248,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3421621930,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 339129,
+            "response_bytes_written": 52882,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3258266,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_false_transcript": 8,
+            "paid_invalid": 16,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        }
+      ],
+      "network_only": {
+        "passed": true,
+        "confirmed": 24,
+        "business_transactions": 24,
+        "window_ns": 6000000000,
+        "full_state_equal": true,
+        "reopen_equal": true
+      }
+    },
+    {
+      "artifact_id": 14442924445,
+      "artifact_name": "recent-exact-ubuntu-24.04-prospective-merge-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+      "source": {
+        "base": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+        "candidate": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "kind": "prospective-merge",
+        "prospective_merge": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3016837368,
+        "tracked_entries": 40988,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "originals": [
+        {
+          "member": "source.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442924445/source.json",
+          "bytes": 512,
+          "sha256": "6bf76a93c4470db610e48e0fd4d4915b699a9bd954fa8b80831480156cd61c52"
+        },
+        {
+          "member": "source-after.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442924445/source-after.json",
+          "bytes": 512,
+          "sha256": "6bf76a93c4470db610e48e0fd4d4915b699a9bd954fa8b80831480156cd61c52"
+        },
+        {
+          "member": "mixed-service/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442924445/mixed-service/report.json",
+          "bytes": 2537793,
+          "sha256": "343dc5b65f7290edfc6b4e23cbd1596d83d1d0ad11bbe6a79b18e27ffe955f0b"
+        },
+        {
+          "member": "network-only-business/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14442924445/network-only-business/report.json",
+          "bytes": 1993825,
+          "sha256": "e7c68f189913825f547a7b03bbf8d7268715a52a1e5acd51ef57f81585c78e8b"
+        }
+      ],
+      "schema": "public-v3-local-mixed-service-v2",
+      "attempts": 130,
+      "finite_target_met": false,
+      "target_gap_ns": 2000000000,
+      "including_restart_max_gap_ns": 3343361512,
+      "call_deadline_ms": 500,
+      "phases": [
+        {
+          "phase": 0,
+          "started_ns": 2001309,
+          "ended_ns": 3531177307,
+          "duration_ns": 3529175998,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3329537904,
+          "last_honest_probe_completed_ns": 201639403,
+          "tail_after_last_probe_ns": 3329537904,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 3405378,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            2992860,
+            491758889,
+            492220369,
+            492192859,
+            492220359,
+            492215224,
+            492141527,
+            492172863
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 960446,
+            "mutation_cpu_charged_ns": 17303274,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999622220,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 13090589,
+            "mutation_full_work_cpu_ns": 4212685,
+            "mutation_response_cpu_ns": 965559,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3422758915,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 429499,
+            "response_bytes_written": 52879,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 4331221,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_invalid": 16,
+            "paid_false_transcript": 8,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        },
+        {
+          "phase": 1,
+          "started_ns": 3541929786,
+          "ended_ns": 7074569491,
+          "duration_ns": 3532639705,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3312013539,
+          "last_honest_probe_completed_ns": 3762555952,
+          "tail_after_last_probe_ns": 3312013539,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 16318248,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            4569156,
+            492125604,
+            492453276,
+            492439877,
+            492500425,
+            492461388,
+            492416612,
+            492439476
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 931950,
+            "mutation_cpu_charged_ns": 21215684,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999474473,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 17040968,
+            "mutation_full_work_cpu_ns": 4174716,
+            "mutation_response_cpu_ns": 995664,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3421653070,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 560713,
+            "response_bytes_written": 52882,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 4174521,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_invalid": 16,
+            "paid_false_transcript": 8,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        }
+      ],
+      "network_only": {
+        "passed": true,
+        "confirmed": 24,
+        "business_transactions": 24,
+        "window_ns": 6000000000,
+        "full_state_equal": true,
+        "reopen_equal": true
+      }
+    },
+    {
+      "artifact_id": 14443473364,
+      "artifact_name": "recent-exact-ubuntu-24.04-arm-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+      "source": {
+        "base": null,
+        "candidate": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3016837368,
+        "tracked_entries": 40988,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "originals": [
+        {
+          "member": "source.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443473364/source.json",
+          "bytes": 423,
+          "sha256": "f0925ed95d0fda1513adb1bee414d2a8ae3b1b466f5c82d420e6fd5ddcfb5419"
+        },
+        {
+          "member": "source-after.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443473364/source-after.json",
+          "bytes": 423,
+          "sha256": "f0925ed95d0fda1513adb1bee414d2a8ae3b1b466f5c82d420e6fd5ddcfb5419"
+        },
+        {
+          "member": "mixed-service/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443473364/mixed-service/report.json",
+          "bytes": 2537814,
+          "sha256": "7f4f06b278d653e596d3c5e1d9db9238ca389bb17dd7e2c0f987cbf824a0807f"
+        },
+        {
+          "member": "network-only-business/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443473364/network-only-business/report.json",
+          "bytes": 1993719,
+          "sha256": "d463a19bd2bac60f529666c71b2da8394e6a71092966d48afbc76a4756b39f7a"
+        }
+      ],
+      "schema": "public-v3-local-mixed-service-v2",
+      "attempts": 130,
+      "finite_target_met": false,
+      "target_gap_ns": 2000000000,
+      "including_restart_max_gap_ns": 3346107756,
+      "call_deadline_ms": 500,
+      "phases": [
+        {
+          "phase": 0,
+          "started_ns": 3237060,
+          "ended_ns": 3536549034,
+          "duration_ns": 3533311974,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3332198810,
+          "last_honest_probe_completed_ns": 204350224,
+          "tail_after_last_probe_ns": 3332198810,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 3416378,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            5654900,
+            492233551,
+            492554457,
+            492569558,
+            492333102,
+            492120335,
+            492329110,
+            492237139
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 916880,
+            "mutation_cpu_charged_ns": 15361328,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999641753,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 12161624,
+            "mutation_full_work_cpu_ns": 3199704,
+            "mutation_response_cpu_ns": 886672,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3422704830,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 415793,
+            "response_bytes_written": 52879,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3198915,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "unpaid_invalid": 16,
+            "paid_false_transcript": 8,
+            "paid_invalid": 16,
+            "honest_probe": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        },
+        {
+          "phase": 1,
+          "started_ns": 3547357148,
+          "ended_ns": 7080819684,
+          "duration_ns": 3533462536,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3329922352,
+          "last_honest_probe_completed_ns": 3750897332,
+          "tail_after_last_probe_ns": 3329922352,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 3433587,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            6337597,
+            492099783,
+            492106055,
+            492479723,
+            492245827,
+            492422745,
+            492171105,
+            492372080
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 918240,
+            "mutation_cpu_charged_ns": 19325880,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999494766,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 16102688,
+            "mutation_full_work_cpu_ns": 3223192,
+            "mutation_response_cpu_ns": 904496,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3421283760,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 476736,
+            "response_bytes_written": 52882,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3224108,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "unpaid_invalid": 16,
+            "paid_invalid": 16,
+            "paid_false_transcript": 8,
+            "honest_probe": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        }
+      ],
+      "network_only": {
+        "passed": true,
+        "confirmed": 24,
+        "business_transactions": 24,
+        "window_ns": 6000000000,
+        "full_state_equal": true,
+        "reopen_equal": true
+      }
+    },
+    {
+      "artifact_id": 14443891294,
+      "artifact_name": "recent-exact-ubuntu-24.04-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+      "source": {
+        "base": null,
+        "candidate": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e305ec2fb3c98734936041af75f502cf6791f7f2",
+        "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3016837368,
+        "tracked_entries": 40988,
+        "tracked_worktree_verified": true
+      },
+      "source_before_after_equal": true,
+      "originals": [
+        {
+          "member": "source.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443891294/source.json",
+          "bytes": 423,
+          "sha256": "f0925ed95d0fda1513adb1bee414d2a8ae3b1b466f5c82d420e6fd5ddcfb5419"
+        },
+        {
+          "member": "source-after.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443891294/source-after.json",
+          "bytes": 423,
+          "sha256": "f0925ed95d0fda1513adb1bee414d2a8ae3b1b466f5c82d420e6fd5ddcfb5419"
+        },
+        {
+          "member": "mixed-service/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443891294/mixed-service/report.json",
+          "bytes": 2537777,
+          "sha256": "b2453c4ec2e19a85256e82bc2a39d5426827c3538bf4e7d844508feb269512ee"
+        },
+        {
+          "member": "network-only-business/report.json",
+          "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/original-members/14443891294/network-only-business/report.json",
+          "bytes": 1993462,
+          "sha256": "9e92c9e236361258b68bbcb944771a4e16866b74bb7ce93b814c750eddf6952c"
+        }
+      ],
+      "schema": "public-v3-local-mixed-service-v2",
+      "attempts": 130,
+      "finite_target_met": false,
+      "target_gap_ns": 2000000000,
+      "including_restart_max_gap_ns": 3351470497,
+      "call_deadline_ms": 500,
+      "phases": [
+        {
+          "phase": 0,
+          "started_ns": 1599601,
+          "ended_ns": 3532059705,
+          "duration_ns": 3530460104,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3339860576,
+          "last_honest_probe_completed_ns": 192199129,
+          "tail_after_last_probe_ns": 3339860576,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 7354248,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            4580594,
+            491730991,
+            492017887,
+            492553728,
+            492115594,
+            492537012,
+            491980800,
+            491781629
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 799182,
+            "mutation_cpu_charged_ns": 15222996,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999649333,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 11814495,
+            "mutation_full_work_cpu_ns": 3408501,
+            "mutation_response_cpu_ns": 818070,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3421326012,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 409309,
+            "response_bytes_written": 52879,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3407868,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_invalid": 16,
+            "paid_false_transcript": 8,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        },
+        {
+          "phase": 1,
+          "started_ns": 3541639158,
+          "ended_ns": 7073708657,
+          "duration_ns": 3532069499,
+          "finite_target_met": false,
+          "honest_probe_successes": 16,
+          "honest_probe_max_gap_ns": 3337149572,
+          "last_honest_probe_completed_ns": 3736559085,
+          "tail_after_last_probe_ns": 3337149572,
+          "probes_all_ok": true,
+          "honest_probe_call_duration_max_ns": 7694095,
+          "other_predicates": {
+            "byte_equal_producer_state": true,
+            "false_transcript_load_refused": true,
+            "full_work_observed": true,
+            "injected_fault_refused": true,
+            "invalid_paid_requests_refused": true,
+            "mutations_ok": true
+          },
+          "false_transcript_durations_ns": [
+            5252509,
+            492288026,
+            492061262,
+            492732497,
+            492584204,
+            491736401,
+            491783632,
+            492447988
+          ],
+          "false_transcript_values": [
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            },
+            {
+              "error": "WORK:Transcript"
+            }
+          ],
+          "server_costs": {
+            "abandoned_tasks": 0,
+            "accepted_connections": 64,
+            "body_bytes_received": 993026,
+            "capacity_refusals": 0,
+            "executor_refusals": 24,
+            "expired_connections": 0,
+            "mutation_body_decode_cpu_ns": 824221,
+            "mutation_cpu_charged_ns": 18385904,
+            "mutation_cpu_clock_failures": 0,
+            "mutation_cpu_credit_ns_after_shutdown": 1999509517,
+            "mutation_cpu_debt_ns_after_shutdown": 0,
+            "mutation_cpu_in_flight_after_shutdown": 0,
+            "mutation_cpu_refusals": 0,
+            "mutation_cpu_reservations": 28,
+            "mutation_cpu_unavailable_after_shutdown": false,
+            "mutation_dispatch_excluding_work_cpu_ns": 15055959,
+            "mutation_full_work_cpu_ns": 3329945,
+            "mutation_response_cpu_ns": 822105,
+            "peak_connections": 5,
+            "pending_grant_wait_ns": 3421952758,
+            "pq_authentication_thread_cpu_ns": 0,
+            "queue_refusals": 0,
+            "queue_wait_ns": 391291,
+            "response_bytes_written": 52882,
+            "tasks_dequeued": 48,
+            "tasks_skipped_before_dispatch": 0,
+            "work_failed": 8,
+            "work_finished": 10,
+            "work_ns": 3329198,
+            "work_started": 10
+          },
+          "attempt_group_counts": {
+            "honest_probe": 16,
+            "paid_invalid": 16,
+            "paid_false_transcript": 8,
+            "unpaid_invalid": 16,
+            "honest_mutation": 8,
+            "injected_eof": 1
+          }
+        }
+      ],
+      "network_only": {
+        "passed": true,
+        "confirmed": 24,
+        "business_transactions": 24,
+        "window_ns": 6000000000,
+        "full_state_equal": true,
+        "reopen_equal": true
+      }
+    }
+  ],
+  "business_tests_rerun": false
+}

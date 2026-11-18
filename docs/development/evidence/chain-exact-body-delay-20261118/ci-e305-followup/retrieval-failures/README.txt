@@ -1,0 +1,1 @@
+Archive retrieval failures only. The original zero-byte network-timeout response and90-second partial download are retained. Complete later provider ZIPs are in provider/. The original native stderr is retained privately because redirect URLs may be temporary credential-bearing URLs. No CI/business reruns occurred.
