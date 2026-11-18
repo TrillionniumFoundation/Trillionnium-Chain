@@ -1,3 +1,29 @@
+## 2026-11-18 UTC — 全树复核、原生 RS46 与 Node 写入期限闭合
+
+本轮基线为 `337fe8df54a5af59e10a1aea129022702b40b89d`，完整 Git 树40,920文件。当前增量为 **42 kernels /21 native foundations /130 HIA sources**，逐源单一归属；26原Rust包中11个部分迁移、15个未迁移，**0退役、9全项目门OPEN**。storage候选已完全包含在基线，无重复合并；根README保持既有零字节约束。旧运行栈只有在完整替代与原验收成功后才能退役。
+
+### 已实际执行的 RS(6,4) 全尺寸字节内核
+
+`hia/src/data_availability/rs46.hepta` 实现原GF(256)/0x11d、系统生成矩阵、CRS1编码、全部4/5/6片恢复。完整保持1..4,194,304B源范围与0..16383索引；独立选定pin、严格顺序、所有header、零padding、源SHA以及额外parity全部验证后才发布输出。复用canonical SHA init/compress，不扩大原transport stream helper的边界，不用Python/Rust算法替代native运行。
+
+15/15原生测试实际PASS37.407s，覆盖65,536乘法输入、255逆元、22可恢复子集、完整4MiB及MAX-1、逐字节损坏与边界。最大6,292,022B六片输入实际恢复4MiB；仅破坏第六片最后字节返回10，完整输出canary不变。完整原Rust crate独立编译后12/12保留测试PASS，929/929差分PASS（33编码、896恢复/拒绝；738接受、191拒绝）。原始完整4,414源与27显式pin、实际执行的原binary及native库均核验；首次漏root include_str fixture的失败保留，完整复制root tests后重新执行，不改原production源码。
+
+[唯一开发记录](../../hia/qualification/rs46-development.json)与紧凑归档保存完整对照输入/输出、原始日志及失败，原154,360,792B可执行文件明确为档外原件。新增独立CI job上传实际执行原binary和native库。该内核仍要求可信的selected chunk pins；TCM1解析/context绑定、provider/retention、持久化与Node采纳继续实现，不能把字节内核记作整包退役。
+
+### 写入期限修复与原失败保持
+
+实际复现boundaries/capacity两个阻塞writer跨过外部watchdog；两者改为复用smoke的非阻塞绝对期限实现。三driver共30项真实pipe/短写/EINTR/EAGAIN/期限/退出控制PASS。原240秒进程、3秒清理预算不变。source控制6组/361项/8真实CLI PASS有独立执行图；RS46注册后203源图为 `959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685`。
+
+完整boundaries新构建PASS，ELF7,795,933B；当前执行host在第一owner frame前拒绝strace PTRACE_TRACEME/PTRACE_SETOPTIONS，runtime FAIL、0控制计入。capacity已启动构建后中断，无完整runtime结果。没有去掉必需追踪或重新标注PASS；[deadline记录](../../hia/qualification/node-stdin-deadline.json)保留全部事实，由新提交的hosted分区与readers执行真实闭环。
+
+基线两套HIA run44262237229/44262261854均真实53/53成功；required run44262261731的protocol、prospective protocol和两架构cost仍确认目标失败。完整三ZIP的GitHub摘要核验通过。原4s/16worker压力下7次提交ACK成功，独立history replay只完成x64/protocol的3/4尝试、arm64的5/6尝试，未达所需7页；错误PUBLIC_REQUEST_DEADLINE。无压力成功、五native前提测试成功、Host无final error都不能替代业务确认。原0.25CPU/2GiB/zero swap/256PID/4s/16条件全部保留。
+
+### 后续执行与清理边界
+
+本候选54jobs/42独立native bootstrap，各20分钟；四既有bootstrap组168次实际调用PASS。组件398项完整发现分391 general与7 State-root，保持独立完整consumer。立即发布本增量并检查自己的全CI；并行继续TCM1完整校验、原context/manifest pin与selected chunk绑定，再接实际HIA RS46。其后推进唯一Node owner的Some/CheckedApply、COMMIT/reorg/recovery及同请求Paid/Host，继续所有未迁移包。
+
+只有证实为重复且不承担源码、证据或验收依赖的过程文件才可删除；失败证据与必需原oracle保留到退役条件满足。本文件仍是唯一开发计划，不建立竞争计划或把未执行项记作闭合。
+
 ## 单一磁盘 Node/M05 集成与实际资格修复
 
 父提交 `af044d854f6e0baa6d085822adbd692944c8a883`。本增量整合已存在的唯一 Node/M05 owner，而非另造竞争实现；当前 41 kernels /21 native foundations /129 HIA，26 Rust 包保留、0退役、9整项目门 OPEN。原 canonical 工作树保留；独立副本先后核对全部48份未提交源的SHA后续接。

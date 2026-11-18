@@ -1687,6 +1687,18 @@
         ],
         "source": "src/crypto/sha512_arena.hepta"
       }
+    ],
+    "src/data_availability/rs46.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ]
+      }
     ]
   }
 }

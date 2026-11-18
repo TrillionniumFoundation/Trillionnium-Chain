@@ -477,6 +477,16 @@
       "tests": [
         "hia/tests/test_raw_bindings_owner.py"
       ]
+    },
+    {
+      "id": "data-availability/rs46",
+      "node_integration_complete": false,
+      "scope": "RS(6,4) byte codec over owner-supplied chunk pins: canonical CRS1 shards, GF(256) encoding and recovery, padding, SHA-256 and all supplied shard consistency; full original 4 MiB chunk limit; manifest admission and network/provider authority remain with their owners",
+      "source": "hia/src/data_availability/rs46.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_rs46.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -573,12 +583,14 @@
       "state": "not-ported"
     },
     {
-      "components": [],
+      "components": [
+        "data-availability/rs46"
+      ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",
       "package": "trnm-data-availability",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [],
