@@ -1,0 +1,11 @@
+{
+  "stage": "evidence preparation, before commit creation",
+  "diff_check_exit": 2,
+  "reason": "original GitHub job consoles contain trailing whitespace; original exact bytes preserved",
+  "repair": "lossless gzip archive of original consoles; no whitespace removal and no gate change",
+  "initial_raw_pty_bytes": 332671,
+  "initial_raw_pty_sha256": "731ea2a5c5aff6fdd610cc6b6b400300dcfdc63157e0bf76daa381bfd4dd6b7a",
+  "old_payload_retained": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/publication/ci-e305-followup",
+  "business_tests_rerun": false,
+  "runtime_changed": false
+}

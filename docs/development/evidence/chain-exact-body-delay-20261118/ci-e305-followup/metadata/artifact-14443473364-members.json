@@ -1,0 +1,847 @@
+{
+  "run_id": 44335100372,
+  "artifact_id": 14443473364,
+  "artifact_name": "recent-exact-ubuntu-24.04-arm-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1",
+  "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/provider/14443473364-recent-exact-ubuntu-24.04-arm-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1.zip",
+  "bytes": 792306,
+  "sha256": "30a10c474a67de33d48273c6a35f45d3c220703929744c350b702a911549c343",
+  "provider_size": 792306,
+  "provider_digest": "sha256:30a10c474a67de33d48273c6a35f45d3c220703929744c350b702a911549c343",
+  "provider_digest_matches": true,
+  "members": [
+    {
+      "name": "SCOPE.txt",
+      "bytes": 545,
+      "compressed_bytes": 332,
+      "crc32": 2478856873
+    },
+    {
+      "name": "batched_confirmation_validates_late_context_before_claiming_any_success.log",
+      "bytes": 528,
+      "compressed_bytes": 287,
+      "crc32": 3183889514
+    },
+    {
+      "name": "altered_current_task_bytes_cannot_become_a_settlement_observation.log",
+      "bytes": 654,
+      "compressed_bytes": 314,
+      "crc32": 2717382229
+    },
+    {
+      "name": "batched_poll_every_rpc_failure_preserves_retry_ownership.log",
+      "bytes": 498,
+      "compressed_bytes": 279,
+      "crc32": 2733325759
+    },
+    {
+      "name": "batched_poll_matches_single_queries_without_reordering_deferred_work.log",
+      "bytes": 522,
+      "compressed_bytes": 285,
+      "crc32": 3105967688
+    },
+    {
+      "name": "batched_poll_rejects_dimensions_before_any_rpc.log",
+      "bytes": 478,
+      "compressed_bytes": 273,
+      "crc32": 1530380122
+    },
+    {
+      "name": "batched_poll_rejects_partial_or_extra_decisions_without_removal.log",
+      "bytes": 512,
+      "compressed_bytes": 283,
+      "crc32": 3105411460
+    },
+    {
+      "name": "batched_poll_uses_complete_blocks_with_exact_wire_limit.log",
+      "bytes": 496,
+      "compressed_bytes": 277,
+      "crc32": 1346112329
+    },
+    {
+      "name": "cache-receipt-tests.log",
+      "bytes": 5258,
+      "compressed_bytes": 929,
+      "crc32": 1740660116
+    },
+    {
+      "name": "cached_block_reads_do_not_hide_genesis_damage_or_rollback.log",
+      "bytes": 565,
+      "compressed_bytes": 305,
+      "crc32": 4100452761
+    },
+    {
+      "name": "cached_commitment_reads_preserve_limits_missing_and_rollback.log",
+      "bytes": 571,
+      "compressed_bytes": 306,
+      "crc32": 652169477
+    },
+    {
+      "name": "cached_delta_complete_call_observation_keeps_checks_and_results.log",
+      "bytes": 4778,
+      "compressed_bytes": 777,
+      "crc32": 1874779427
+    },
+    {
+      "name": "cached_delta_cursor_is_released_after_cancellation.log",
+      "bytes": 555,
+      "compressed_bytes": 296,
+      "crc32": 1311475549
+    },
+    {
+      "name": "cached_delta_eviction_or_disabled_cache_keeps_original_results.log",
+      "bytes": 579,
+      "compressed_bytes": 305,
+      "crc32": 1226270414
+    },
+    {
+      "name": "cached_delta_failure_then_rollback_does_not_reuse_a_verdict.log",
+      "bytes": 573,
+      "compressed_bytes": 301,
+      "crc32": 43260580
+    },
+    {
+      "name": "cached_delta_reads_rebind_and_observe_committed_mutations.log",
+      "bytes": 569,
+      "compressed_bytes": 304,
+      "crc32": 1922536988
+    },
+    {
+      "name": "cached_genesis_snapshot_is_reread_and_survives_cold_reopen.log",
+      "bytes": 567,
+      "compressed_bytes": 304,
+      "crc32": 2614490008
+    },
+    {
+      "name": "cached_parent_reads_observe_changed_work_then_exact_restore.log",
+      "bytes": 569,
+      "compressed_bytes": 300,
+      "crc32": 3543392412
+    },
+    {
+      "name": "configured_profiles_decode_transfers_acceptances_and_reject_foreign_or_malformed_bytes.log",
+      "bytes": 579,
+      "compressed_bytes": 309,
+      "crc32": 4254730902
+    },
+    {
+      "name": "continuous_owner_packet_reads_preserve_gates_errors_and_journal.log",
+      "bytes": 551,
+      "compressed_bytes": 296,
+      "crc32": 4213444714
+    },
+    {
+      "name": "error-boundary.log",
+      "bytes": 4413,
+      "compressed_bytes": 1116,
+      "crc32": 2899001183
+    },
+    {
+      "name": "every_native_profile_observes_real_settlement_with_its_exact_wire_id.log",
+      "bytes": 543,
+      "compressed_bytes": 294,
+      "crc32": 3734914215
+    },
+    {
+      "name": "every_failure_cut_preserves_exact_remaining_order.log",
+      "bytes": 484,
+      "compressed_bytes": 271,
+      "crc32": 1504198319
+    },
+    {
+      "name": "exact_acceptance_survives_restart_and_cli_readback_without_mutation.log",
+      "bytes": 786,
+      "compressed_bytes": 375,
+      "crc32": 1137443361
+    },
+    {
+      "name": "failed_poll_retains_deferred_failed_and_unread_obligations.log",
+      "bytes": 502,
+      "compressed_bytes": 277,
+      "crc32": 399063937
+    },
+    {
+      "name": "fixed-read-suite.log",
+      "bytes": 8206,
+      "compressed_bytes": 1869,
+      "crc32": 2353412375
+    },
+    {
+      "name": "fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types.log",
+      "bytes": 579,
+      "compressed_bytes": 301,
+      "crc32": 1683804170
+    },
+    {
+      "name": "fixed_block_fields_match_original_errors_after_warm_cache_and_rollback.log",
+      "bytes": 591,
+      "compressed_bytes": 312,
+      "crc32": 2243946952
+    },
+    {
+      "name": "fixed_fields_genesis_failure_order_and_cold_reopen_keep_state.log",
+      "bytes": 573,
+      "compressed_bytes": 304,
+      "crc32": 3244558535
+    },
+    {
+      "name": "fixed_parent_work_matches_original_and_rereads_after_restore.log",
+      "bytes": 571,
+      "compressed_bytes": 304,
+      "crc32": 619736884
+    },
+    {
+      "name": "format.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "history-read-suite.log",
+      "bytes": 2180,
+      "compressed_bytes": 571,
+      "crc32": 3518993944
+    },
+    {
+      "name": "initialization_marker_preserves_exact_context_errors.log",
+      "bytes": 499,
+      "compressed_bytes": 277,
+      "crc32": 1319480311
+    },
+    {
+      "name": "initialization_marker_read_is_bounded_and_propagates_io_errors.log",
+      "bytes": 519,
+      "compressed_bytes": 285,
+      "crc32": 812198801
+    },
+    {
+      "name": "initialization_marker_recovery_and_cold_reopen_preserve_state.log",
+      "bytes": 517,
+      "compressed_bytes": 288,
+      "crc32": 3658398894
+    },
+    {
+      "name": "initialization_marker_rejects_special_files_and_post_precheck_substitution.log",
+      "bytes": 543,
+      "compressed_bytes": 293,
+      "crc32": 1393404247
+    },
+    {
+      "name": "legacy_selection_and_ambiguity_keep_the_original_codec_order.log",
+      "bytes": 527,
+      "compressed_bytes": 296,
+      "crc32": 2222665248
+    },
+    {
+      "name": "live_owner_rechecks_genesis_block_after_committed_damage_and_restore.log",
+      "bytes": 542,
+      "compressed_bytes": 288,
+      "crc32": 819874877
+    },
+    {
+      "name": "live_owner_rechecks_parent_work_after_real_admission.log",
+      "bytes": 510,
+      "compressed_bytes": 277,
+      "crc32": 1560443409
+    },
+    {
+      "name": "live_owner_rechecks_record_limits_missing_rows_and_sql_types.log",
+      "bytes": 526,
+      "compressed_bytes": 284,
+      "crc32": 2263269055
+    },
+    {
+      "name": "live_owner_snapshot_damage_rolls_back_admission_and_rejects_cold_open.log",
+      "bytes": 544,
+      "compressed_bytes": 290,
+      "crc32": 823084125
+    },
+    {
+      "name": "log-inventory.json",
+      "bytes": 197,
+      "compressed_bytes": 145,
+      "crc32": 4110754258
+    },
+    {
+      "name": "log-paths.tsv",
+      "bytes": 1018,
+      "compressed_bytes": 264,
+      "crc32": 4108577135
+    },
+    {
+      "name": "logs.sha256",
+      "bytes": 14838,
+      "compressed_bytes": 5675,
+      "crc32": 3176330471
+    },
+    {
+      "name": "migration.log",
+      "bytes": 11690,
+      "compressed_bytes": 1592,
+      "crc32": 82627162
+    },
+    {
+      "name": "mining_owner_packet_reads_preserve_gates_errors_and_journal.log",
+      "bytes": 535,
+      "compressed_bytes": 291,
+      "crc32": 3933937768
+    },
+    {
+      "name": "mixed-service/producer/native.sqlite",
+      "bytes": 344064,
+      "compressed_bytes": 21568,
+      "crc32": 2513772352
+    },
+    {
+      "name": "mixed-service/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "mixed-service/receiver/native.sqlite",
+      "bytes": 344064,
+      "compressed_bytes": 22912,
+      "crc32": 2109755204
+    },
+    {
+      "name": "mixed-service/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "mixed-service/report.json",
+      "bytes": 2537814,
+      "compressed_bytes": 131765,
+      "crc32": 240192029
+    },
+    {
+      "name": "native-read-snapshot.log",
+      "bytes": 4987,
+      "compressed_bytes": 877,
+      "crc32": 2383904276
+    },
+    {
+      "name": "native-snapshots.log",
+      "bytes": 20070,
+      "compressed_bytes": 4668,
+      "crc32": 2936622600
+    },
+    {
+      "name": "native_account_query_cancel_after_write_keeps_original_error_and_rollback.log",
+      "bytes": 559,
+      "compressed_bytes": 296,
+      "crc32": 1952552094
+    },
+    {
+      "name": "native_account_query_final_callback_write_is_rejected_and_rolled_back.log",
+      "bytes": 551,
+      "compressed_bytes": 291,
+      "crc32": 1087837905
+    },
+    {
+      "name": "native_account_query_write_then_restore_still_has_no_commit_authority.log",
+      "bytes": 551,
+      "compressed_bytes": 290,
+      "crc32": 2206028822
+    },
+    {
+      "name": "native_dense_snapshot_cannot_hide_old_delta_damage_from_admission.log",
+      "bytes": 543,
+      "compressed_bytes": 295,
+      "crc32": 729693034
+    },
+    {
+      "name": "native_dense_snapshot_insert_corruption_and_delta_omission_roll_back.log",
+      "bytes": 549,
+      "compressed_bytes": 295,
+      "crc32": 1929307270
+    },
+    {
+      "name": "native_dense_snapshot_pruning_suppression_preserves_atomic_limit.log",
+      "bytes": 541,
+      "compressed_bytes": 297,
+      "crc32": 878072914
+    },
+    {
+      "name": "native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_reference.log",
+      "bytes": 9883,
+      "compressed_bytes": 2966,
+      "crc32": 2797930393
+    },
+    {
+      "name": "native_dense_snapshots_retain_64_and_reconstruct_pruned_history.log",
+      "bytes": 539,
+      "compressed_bytes": 295,
+      "crc32": 820092015
+    },
+    {
+      "name": "native_inactive_page_parents_use_checked_material_without_early_activation.log",
+      "bytes": 6129,
+      "compressed_bytes": 1346,
+      "crc32": 2281936396
+    },
+    {
+      "name": "native_inactive_parent_material_keeps_fresh_sql_state_and_cancellation_checks.log",
+      "bytes": 567,
+      "compressed_bytes": 303,
+      "crc32": 2212186716
+    },
+    {
+      "name": "native_nonce_batch_arithmetic_retains_absence_bad_nonce_and_overflow_rules.log",
+      "bytes": 561,
+      "compressed_bytes": 300,
+      "crc32": 1146221125
+    },
+    {
+      "name": "native_nonce_batch_complete_call_observation_preserves_reference_results.log",
+      "bytes": 2660,
+      "compressed_bytes": 541,
+      "crc32": 156886979
+    },
+    {
+      "name": "native_nonce_batch_dimensions_precede_database_and_preserve_single_reads.log",
+      "bytes": 557,
+      "compressed_bytes": 302,
+      "crc32": 1105627553
+    },
+    {
+      "name": "native_nonce_batch_rechecks_actual_state_and_reopens_without_a_verdict_cache.log",
+      "bytes": 565,
+      "compressed_bytes": 306,
+      "crc32": 781240550
+    },
+    {
+      "name": "native_nonce_batch_tracks_signed_execution_heavier_reorg_and_cold_reopen.log",
+      "bytes": 557,
+      "compressed_bytes": 303,
+      "crc32": 868585843
+    },
+    {
+      "name": "network-business.log",
+      "bytes": 1683,
+      "compressed_bytes": 722,
+      "crc32": 123372943
+    },
+    {
+      "name": "network-only-business/consumer/native.sqlite",
+      "bytes": 692224,
+      "compressed_bytes": 65326,
+      "crc32": 384256980
+    },
+    {
+      "name": "network-only-business/consumer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "network-only-business/producer/native.sqlite",
+      "bytes": 614400,
+      "compressed_bytes": 45368,
+      "crc32": 2881712695
+    },
+    {
+      "name": "network-only-business/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "network-only-business/receiver/native.sqlite",
+      "bytes": 692224,
+      "compressed_bytes": 65581,
+      "crc32": 2387079509
+    },
+    {
+      "name": "network-only-business/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "network-only-business/report.json",
+      "bytes": 1993719,
+      "compressed_bytes": 99373,
+      "crc32": 864576719
+    },
+    {
+      "name": "nullable_delta_empty_bytes_are_not_absence_after_warm_cache.log",
+      "bytes": 561,
+      "compressed_bytes": 304,
+      "crc32": 175564265
+    },
+    {
+      "name": "nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery.log",
+      "bytes": 575,
+      "compressed_bytes": 306,
+      "crc32": 1666028599
+    },
+    {
+      "name": "nullable_delta_projection_preserves_null_empty_types_and_bounds.log",
+      "bytes": 738,
+      "compressed_bytes": 337,
+      "crc32": 2771686695
+    },
+    {
+      "name": "nullable_genesis_packet_empty_rejects_and_rollback_restores.log",
+      "bytes": 561,
+      "compressed_bytes": 303,
+      "crc32": 1632565171
+    },
+    {
+      "name": "nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner.log",
+      "bytes": 575,
+      "compressed_bytes": 305,
+      "crc32": 3447296199
+    },
+    {
+      "name": "original_drain_loses_obligations_on_the_same_failure.log",
+      "bytes": 490,
+      "compressed_bytes": 274,
+      "crc32": 574180593
+    },
+    {
+      "name": "pipeline-build.log",
+      "bytes": 188,
+      "compressed_bytes": 132,
+      "crc32": 3342733735
+    },
+    {
+      "name": "pipeline-failure-controls.log",
+      "bytes": 2997,
+      "compressed_bytes": 876,
+      "crc32": 738852436
+    },
+    {
+      "name": "pipeline-legacy/block-0000.bin",
+      "bytes": 49910,
+      "compressed_bytes": 3866,
+      "crc32": 3537772078
+    },
+    {
+      "name": "pipeline-legacy/block-0001.bin",
+      "bytes": 49910,
+      "compressed_bytes": 3866,
+      "crc32": 707778954
+    },
+    {
+      "name": "pipeline-legacy/block-0002.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3533,
+      "crc32": 4203901031
+    },
+    {
+      "name": "pipeline-legacy/block-0003.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3534,
+      "crc32": 948975781
+    },
+    {
+      "name": "pipeline-legacy/block-0004.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3531,
+      "crc32": 3225091328
+    },
+    {
+      "name": "pipeline-legacy/block-0005.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3536,
+      "crc32": 1284797291
+    },
+    {
+      "name": "pipeline-legacy/block-0006.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3536,
+      "crc32": 3110242894
+    },
+    {
+      "name": "pipeline-legacy/block-0007.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3533,
+      "crc32": 1616794630
+    },
+    {
+      "name": "pipeline-legacy/producer/native.sqlite",
+      "bytes": 548864,
+      "compressed_bytes": 38334,
+      "crc32": 1035255433
+    },
+    {
+      "name": "pipeline-legacy/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "pipeline-legacy/progress.json",
+      "bytes": 13783,
+      "compressed_bytes": 2078,
+      "crc32": 3521466796
+    },
+    {
+      "name": "pipeline-legacy/summary.json",
+      "bytes": 23538,
+      "compressed_bytes": 3873,
+      "crc32": 653166305
+    },
+    {
+      "name": "pipeline-legacy/validator/native.sqlite",
+      "bytes": 548864,
+      "compressed_bytes": 38334,
+      "crc32": 1035255433
+    },
+    {
+      "name": "pipeline-legacy/validator/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "pipeline-legacy.log",
+      "bytes": 221,
+      "compressed_bytes": 158,
+      "crc32": 1362168938
+    },
+    {
+      "name": "pipeline-protected/block-0000.bin",
+      "bytes": 49910,
+      "compressed_bytes": 3863,
+      "crc32": 670722293
+    },
+    {
+      "name": "pipeline-protected/block-0001.bin",
+      "bytes": 49910,
+      "compressed_bytes": 3869,
+      "crc32": 2089614877
+    },
+    {
+      "name": "pipeline-protected/block-0002.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3533,
+      "crc32": 2808509693
+    },
+    {
+      "name": "pipeline-protected/block-0003.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3531,
+      "crc32": 4164144218
+    },
+    {
+      "name": "pipeline-protected/block-0004.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3531,
+      "crc32": 1738028438
+    },
+    {
+      "name": "pipeline-protected/block-0005.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3531,
+      "crc32": 1579063820
+    },
+    {
+      "name": "pipeline-protected/block-0006.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3533,
+      "crc32": 3108424079
+    },
+    {
+      "name": "pipeline-protected/block-0007.bin",
+      "bytes": 49508,
+      "compressed_bytes": 3535,
+      "crc32": 3708123083
+    },
+    {
+      "name": "pipeline-protected/producer/native.sqlite",
+      "bytes": 548864,
+      "compressed_bytes": 38311,
+      "crc32": 1110741832
+    },
+    {
+      "name": "pipeline-protected/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "pipeline-protected/progress.json",
+      "bytes": 13793,
+      "compressed_bytes": 2070,
+      "crc32": 2982256409
+    },
+    {
+      "name": "pipeline-protected/summary.json",
+      "bytes": 23554,
+      "compressed_bytes": 3858,
+      "crc32": 2166317952
+    },
+    {
+      "name": "pipeline-protected/validator/native.sqlite",
+      "bytes": 548864,
+      "compressed_bytes": 38311,
+      "crc32": 1110741832
+    },
+    {
+      "name": "pipeline-protected/validator/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0
+    },
+    {
+      "name": "pipeline-protected.log",
+      "bytes": 223,
+      "compressed_bytes": 158,
+      "crc32": 654588373
+    },
+    {
+      "name": "pq-provider/build-and-smoke.log",
+      "bytes": 1066626,
+      "compressed_bytes": 34419,
+      "crc32": 1091925484
+    },
+    {
+      "name": "pq-provider/provider.json",
+      "bytes": 2700,
+      "compressed_bytes": 1064,
+      "crc32": 2056332264
+    },
+    {
+      "name": "query-bound.log",
+      "bytes": 3080,
+      "compressed_bytes": 710,
+      "crc32": 1337685822
+    },
+    {
+      "name": "receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding.log",
+      "bytes": 672,
+      "compressed_bytes": 324,
+      "crc32": 2079761463
+    },
+    {
+      "name": "recent_batch_branch_reopen_and_callback_errors_preserve_context.log",
+      "bytes": 527,
+      "compressed_bytes": 291,
+      "crc32": 3026578585
+    },
+    {
+      "name": "recent_batch_exact_window_and_complete_call_observation.log",
+      "bytes": 1122,
+      "compressed_bytes": 543,
+      "crc32": 2610849238
+    },
+    {
+      "name": "recent_batch_retained_corruption_and_read_boundary_match_original.log",
+      "bytes": 531,
+      "compressed_bytes": 290,
+      "crc32": 885696010
+    },
+    {
+      "name": "recovery.log",
+      "bytes": 2651,
+      "compressed_bytes": 822,
+      "crc32": 2704122473
+    },
+    {
+      "name": "retained-delta-cost.jsonl",
+      "bytes": 6995,
+      "compressed_bytes": 933,
+      "crc32": 3882121945
+    },
+    {
+      "name": "settlement_in_another_packet_never_rescues_a_reorged_exact_packet.log",
+      "bytes": 654,
+      "compressed_bytes": 321,
+      "crc32": 3567637714
+    },
+    {
+      "name": "shutdown_joins_before_returning_server_failure.log",
+      "bytes": 478,
+      "compressed_bytes": 272,
+      "crc32": 907089401
+    },
+    {
+      "name": "shutdown_preserves_success_and_reports_panicked_server.log",
+      "bytes": 778,
+      "compressed_bytes": 412,
+      "crc32": 2285954976
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 1814676836
+    },
+    {
+      "name": "source.json",
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 1814676836
+    },
+    {
+      "name": "store____fixed_blob_read_tests____fixed_blob_copy_preserves_null_types_and_exact_boundaries.log",
+      "bytes": 517,
+      "compressed_bytes": 285,
+      "crc32": 2534346391
+    },
+    {
+      "name": "store____fixed_blob_read_tests____fixed_context_and_active_tip_reject_oversize_prefix_aliases.log",
+      "bytes": 521,
+      "compressed_bytes": 289,
+      "crc32": 1335837367
+    },
+    {
+      "name": "store____fixed_blob_read_tests____fixed_header_projection_bounds_all_six_fields_without_type_coercion.log",
+      "bytes": 537,
+      "compressed_bytes": 295,
+      "crc32": 1408686155
+    },
+    {
+      "name": "store____fixed_blob_read_tests____fixed_record_rereads_original_errors_and_restores_both_native_backends.log",
+      "bytes": 543,
+      "compressed_bytes": 294,
+      "crc32": 2955696566
+    },
+    {
+      "name": "store____history_page____bounded_record_tests____history_record_copy_bounds_keep_original_conversion_and_shape_order.log",
+      "bytes": 563,
+      "compressed_bytes": 300,
+      "crc32": 2900153432
+    },
+    {
+      "name": "store__native_ancestry_commit_tests__.log",
+      "bytes": 1006,
+      "compressed_bytes": 386,
+      "crc32": 2129872102
+    },
+    {
+      "name": "store__native_authenticated__.log",
+      "bytes": 38602,
+      "compressed_bytes": 5102,
+      "crc32": 4281002824
+    },
+    {
+      "name": "stored_packet_blob_copy_bound_preserves_sql_types_and_boundary.log",
+      "bytes": 575,
+      "compressed_bytes": 306,
+      "crc32": 3284723143
+    },
+    {
+      "name": "stored_packet_digest_borrows_full_blob_and_preserves_conversion_errors.log",
+      "bytes": 591,
+      "compressed_bytes": 311,
+      "crc32": 2225650696
+    },
+    {
+      "name": "stored_packet_reads_keep_legacy_errors_provenance_and_restoration.log",
+      "bytes": 581,
+      "compressed_bytes": 309,
+      "crc32": 572999052
+    },
+    {
+      "name": "stored_packet_reads_keep_pq_errors_provenance_and_restoration.log",
+      "bytes": 573,
+      "compressed_bytes": 306,
+      "crc32": 2411981678
+    }
+  ]
+}

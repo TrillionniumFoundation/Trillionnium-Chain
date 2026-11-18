@@ -1,0 +1,11 @@
+{
+  "artifact_id": 14444180250,
+  "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/provider/14444180250-w1-fresh-service-head-e305ec2fb3c98734936041af75f502cf6791f7f2-1.zip",
+  "bytes": 6444421,
+  "sha256": "37a696b539777ab065a87ce7e567ed8fd240a66334f11052c349826a7c1bed43",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 230.476527167,
+  "finished_at": "2026-11-18T16:48:49.259937+00:00",
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14444180250/zip"
+}

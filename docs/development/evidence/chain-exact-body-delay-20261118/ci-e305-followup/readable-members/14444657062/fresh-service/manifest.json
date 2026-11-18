@@ -1,0 +1,205 @@
+{
+  "schema": "trnm-w1-fresh-service-execution-v1",
+  "source_before": {
+    "commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+    "tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+      "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+      "candidate": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 40988,
+      "tracked_bytes": 3016837368,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+  },
+  "source_after": {
+    "commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+    "tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+      "tested_tree": "351b9e851a9650e6a38208326b2cd331f6ccb187",
+      "candidate": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 40988,
+      "tracked_bytes": 3016837368,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+  },
+  "source_expected": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+  "source_recompiled": true,
+  "all_named_tests_passed": false,
+  "runs": [
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_ns": 37616024730,
+        "log": "original.log",
+        "executed": true,
+        "process_exit_code": 0,
+        "expected_source": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": true,
+      "log_sha256": "cab6f8398757935faa8260868b2ccbe53f782c4d1a82442782241c00796f1747",
+      "report_path": "original/report.json",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      },
+      "report": {
+        "sha256": "0477575d63e65a8f265bccfed11e65e683df99a4497e7285bd1ec42230fef196",
+        "schema": "public-v3-signed-confirmation-pressure-v1",
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "latency_ns": 2866786354,
+            "attacks": 0,
+            "overlapping_false_calls": 0
+          },
+          {
+            "mode": "from-zero-pressure",
+            "latency_ns": 3502254746,
+            "attacks": 145,
+            "overlapping_false_calls": 126
+          }
+        ],
+        "finite_target_met": true,
+        "scope": "bounded native report consistency; no independent work/state oracle, WAN, fairness or scientific acceptance",
+        "honest_chain_process_cpu_ns": 32082930,
+        "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution"
+      }
+    },
+    {
+      "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--ignored"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 101,
+        "timed_out": false,
+        "elapsed_ns": 37898043426,
+        "log": "fresh.log",
+        "executed": true,
+        "process_exit_code": 101,
+        "expected_source": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": false,
+      "log_sha256": "bb936c9a1095f8c1531b8c8fe1bf4cdcedbc10ceab1080627cc0dd50866614f9",
+      "report_path": "fresh/report.json",
+      "failure": "FRESH_NATIVE_TEST_FAILED",
+      "failure_diagnostic": {
+        "schema": "trnm-w1-fresh-failure-diagnostic-v1",
+        "native_returncode": 101,
+        "finite_target_met": false,
+        "last_history_replay": {
+          "phase": "from-zero-pressure",
+          "history_call_index": 0,
+          "replay_accepted": true,
+          "replay_error": null
+        },
+        "acceptance_authority": false
+      }
+    }
+  ],
+  "failures": [
+    "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+  ],
+  "passed": false,
+  "execution_finished": true,
+  "requested_window_ns": 4000000000,
+  "attack_workers": 16,
+  "independent_wan_accepted": false,
+  "work_hardness_accepted": false,
+  "production_activation": false,
+  "build": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_ns": 29396514420,
+    "log": "build.log",
+    "executed": true,
+    "process_exit_code": 0,
+    "expected_source": "77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd",
+    "source_before_verified": true,
+    "source_after_verified": true,
+    "source_verified": true
+  },
+  "binary_sha256_before": "3aa131e2e692943efdecf0e59f50e26ab02013abe5c81efdf31867f0d2eec70b",
+  "binary_sha256_after": "3aa131e2e692943efdecf0e59f50e26ab02013abe5c81efdf31867f0d2eec70b",
+  "files": {
+    "build.log": "89c60a38d62eabeb9627e395f14582139a2f5b7d2219ea793a060752aa04f8cd",
+    "fresh/baseline/independent-client/native.sqlite": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654",
+    "fresh/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/baseline/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+    "fresh/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/independent-client/native.sqlite": "a846841d88f8bdacaada088fdd6be570f5da218a4ae8ae93822a4ddbb3ec42bb",
+    "fresh/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+    "fresh/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/producer/native.sqlite": "9a85c75d850bd8d8c400ddee48c8f9281c1ae14dd65c1ce7910b03f00800dcfa",
+    "fresh/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/report.json": "f16b7f81a437efca247c8e17504bb505d55fa0e5fffca69631532f5a905c60e1",
+    "fresh.log": "bb936c9a1095f8c1531b8c8fe1bf4cdcedbc10ceab1080627cc0dd50866614f9",
+    "original/baseline/independent-client/native.sqlite": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654",
+    "original/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/baseline/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+    "original/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/independent-client/native.sqlite": "d8c60f54e624924aa9eb3270efb01ce2496e261abca525a72b2e740c3ae0a654",
+    "original/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/receiver/native.sqlite": "f6ae647e2783452a48d62b26413a235b34c4eba2d08db0a317ce6614a6a8f659",
+    "original/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/producer/native.sqlite": "9a85c75d850bd8d8c400ddee48c8f9281c1ae14dd65c1ce7910b03f00800dcfa",
+    "original/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/report.json": "0477575d63e65a8f265bccfed11e65e683df99a4497e7285bd1ec42230fef196",
+    "original.log": "cab6f8398757935faa8260868b2ccbe53f782c4d1a82442782241c00796f1747",
+    "public_v3_from_zero": "3aa131e2e692943efdecf0e59f50e26ab02013abe5c81efdf31867f0d2eec70b"
+  }
+}

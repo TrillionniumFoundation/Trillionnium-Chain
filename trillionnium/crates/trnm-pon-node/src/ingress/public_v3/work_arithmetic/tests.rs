@@ -13,15 +13,15 @@ fn server() -> PublicServer {
 #[test]
 fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges() {
     let policy = policy();
-    // Independent SHA-256/length-framing vectors for the current r20 resource
+    // Independent SHA-256/length-framing vectors for the current r21 resource
     // profile (8 bits, 2000 ms) and its separately signed arithmetic profile.
     assert_eq!(
         hex::encode(policy.id()),
-        "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb"
+        "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "f155360e2dd1482e8d9e3e58e27588d013f17a00b5588c18621596e07170aab6"
+        "37a27527894ee8fae2149d33f2e7ad425d55ae3552d630675637620c6de683ae"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();

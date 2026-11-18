@@ -1,0 +1,247 @@
+{
+  "schema": "chain-exact-invalid-body-delay-candidate-v1",
+  "base_commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+  "native_tested_patch_sha256": "95637696bdc9bf2bcaec8924215a7cde616805264272e8d3eb5f0c067388f079",
+  "native_host": "ai395",
+  "native_cargo_version": "1.99.1 (5f94df478 2026-08-27)",
+  "checks": {
+    "native_debug_service_tests": {
+      "passed": 288,
+      "failed": 0,
+      "ignored": 2,
+      "seconds": 40.17
+    },
+    "clippy_warnings_denied": {
+      "passed": true,
+      "seconds": 21.42
+    },
+    "cargo_fmt_check": true,
+    "multiprocess_policy_control": {
+      "passed": 1,
+      "failed": 0,
+      "filtered": 24
+    },
+    "source_negative_controls": {
+      "passed": 114,
+      "failed": 0,
+      "seconds": 297.429
+    },
+    "public_policy_reader": {
+      "passed": 7,
+      "failed": 0
+    },
+    "actual_pinned_sources": 2617,
+    "project_preflight": true,
+    "staged_preflight": true,
+    "mac_exact_patch_readback": true,
+    "actual_applicability_source_selector_check": {
+      "passed": true,
+      "tests_executed": false,
+      "acceptance_granted": false
+    },
+    "source_binding_followup": {
+      "budget_tests_passed": 58,
+      "current_correspondence_tests_passed": 25,
+      "composition_tests_passed": 60,
+      "inline_guard_tests_passed": 3,
+      "inline_guards_checked": 26,
+      "actual_repository_check_passed": true,
+      "frozen_model_unchanged": true,
+      "all_qualification_fields_unchanged": true,
+      "native_rust_byte_identical_to_first_publication": true
+    }
+  },
+  "prototype_release_run": {
+    "passed": 282,
+    "failed": 6,
+    "ignored": 2,
+    "old_namespace_vector_failures": 5,
+    "unchanged_distinct_bad_budget_control": {
+      "attempted": 512,
+      "paid_cpu_ns": 299043264,
+      "passed": false
+    }
+  },
+  "local_business_runs": {
+    "baseline": "finite_target_met=false",
+    "candidate": "finite_target_met=false",
+    "reason": "PUBLIC_HOST_KERNEL_PARENT; original root controller absent",
+    "qualification": false
+  },
+  "environment_failures": [
+    {
+      "stage": "initial formatter",
+      "reason": "sparse checkout omitted original tests/fuzz source",
+      "resolved": "restored original files and passed full formatter"
+    },
+    {
+      "stage": "Mac initial preflight",
+      "reason": "default system Python has no tomllib",
+      "resolved": "existing Homebrew Python 3.14.3"
+    },
+    {
+      "stage": "Mac initial git apply --check",
+      "reason": "original publishing checkout was sparse",
+      "resolved": "checked out exact original affected paths, then byte-identical apply"
+    },
+    {
+      "stage": "applicability checkout",
+      "reason": "sparse checkout omitted original module and architecture documents",
+      "resolved": "restored original documents; updated the actual renamed selector in its original documentation table; checker passed"
+    },
+    {
+      "stage": "publication whitespace gate",
+      "reason": "verbatim prototype diff has whitespace-only context lines",
+      "resolved": "preserved exact original bytes in deterministic gzip, without editing historical evidence"
+    },
+    {
+      "stage": "supplemental log publication",
+      "reason": "first commit ignored multiprocess-policy-v2.log by repository log rule",
+      "resolved": "same 513 bytes now tracked as deterministic multiprocess-policy-v2.txt.gz"
+    },
+    {
+      "stage": "baseline CI artifact local download",
+      "reason": "Mac gh artifact ZIP download exceeded 180-second process timeout",
+      "resolved": "GitHub artifact connector download succeeded; both ZIP SHA-256s matched original artifact digests"
+    },
+    {
+      "stage": "supplemental raw log whitespace gate",
+      "reason": "verbatim native test output ends in a blank line",
+      "resolved": "deterministic gzip preserves every byte without disabling the whitespace gate"
+    }
+  ],
+  "cost_unknowns": {
+    "build_process_cpu_ns": null,
+    "energy_joules": null,
+    "monetary_cost": null,
+    "model_tool_total_cost": null,
+    "physical_wan_bytes": null
+  },
+  "public_network_ready": false,
+  "production_activation": false,
+  "files": {
+    "README.md": {
+      "bytes": 13821,
+      "sha256": "cfa66b83217f279e58bf30be5ffdecd75564f0e3fe1245a365ea8c2f428d3328"
+    },
+    "ci-prospective-external-974049d.txt.gz": {
+      "bytes": 11003,
+      "sha256": "177cb4eea196ff8bd254ec53aa068de9d354f3e4ca14b2a015f27e2ce0cf4e6e"
+    },
+    "ci-prospective-fuzz-974049d.txt.gz": {
+      "bytes": 12587,
+      "sha256": "c68e6f91538506530a90bcd16bd53f44a27b3ad67429dd0feaf4f0bbe5a81549"
+    },
+    "ci-repository-truth-974049d.txt.gz": {
+      "bytes": 19418,
+      "sha256": "ca7c4cc5b714a5b60109091ec8fa09e8ba11dc1b62ecc203aeb2562de63e7323"
+    },
+    "followup-source-checks.txt": {
+      "bytes": 2708,
+      "sha256": "a3d689923b398dc4b57860881a02480042d3e93490de37b5495242877da1d398"
+    },
+    "hosted-business-readback.json": {
+      "bytes": 56203,
+      "sha256": "2fa66e6f315a2252ddbcbf0e75223d1e8380bb26c0b1048f88605d72aaa24068"
+    },
+    "hosted-observations-119c-974.tar.xz": {
+      "bytes": 5388968,
+      "sha256": "758759f4e497eee4bb2a11d0e925c63b1611771844e6d7ad559c07c10ba5962e"
+    },
+    "multiprocess-policy-v2.txt.gz": {
+      "bytes": 344,
+      "sha256": "344f5be3fe840766263fe089f68fcdb778eac719bbd67ccd2b880e6d1a2bd099"
+    },
+    "native-evidence-v2.tar.xz": {
+      "bytes": 448020,
+      "sha256": "761c9a561d81fcd49c4f0f7c0f015a1b7fa376f590056c9efb55234e51157a1a"
+    },
+    "prototype-source.patch.gz": {
+      "bytes": 7585,
+      "sha256": "71a4aa4dabac492e9b3f702d73cb1718595e321725255232cc67a0d72d7ab1af"
+    }
+  },
+  "native_tested_source_files": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "4ad193e47ddaad3c472515bc18f07d87807d7549054c9c0f4ddae2d69e8d2856",
+    "config/pon/public-resource-profile-vectors-v1.json": "3fb6355b5475ebd141f06b389391358bca9180015c4cf50d2f71c0a39e99a4fc",
+    "scripts/ci/check_pq_research_integration.py": "d41f5f007946a558d1a6014923548f3830f84f1adfbb4690c8cddd1b2f8315ba",
+    "scripts/ci/test_pon_public_v3_policy_read.py": "813832b0f18aae839dd3ec18d9b60490f7033f3ba413bb312204184ed3ebe5c4",
+    "scripts/ci/test_pq_research_integration.py": "e626f359f3c82dd583328e411832373e67a9e008e25e333b16a766242f76e3d5",
+    "scripts/pon_public_v3_policy_read.py": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "45dd1d511660bb3d8502480007dc80d3000cadb474fd811f2dcd6e32d74d51a1",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "d96f94bda32316572c0299b9a83f6ec067a60d9c3ef69902ef440520d7fed729",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs": "d0dc75359f540240c12dffecaf95400f8d35cf4337ecf43166651a6a3715d39c",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs": "a310a03e3724c5fec36fc46887f9253a6ca1c6eb4d03133961845fcee5872653",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "9f2aac89a09507b3c92c45f7dec13b9630f50c4b9622fd106af968423dd0eba9",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection.rs": "cc3a1d36a90ee2fa3bbb342b0b0bdea37551d426fddeec573f9f63c849cf882b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection/tests.rs": "e23ea1f83964951d1c35482ef607b7f343d421a1c12623f46032563f6bcf01df",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs": "e302bb2ae425c8dad9afe9642dc4ed09245deaab7274299db7199795cf35cab6"
+  },
+  "publication_source_files": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "2d9afa5940a8243bc7f3dabee2d6b5f6f9c3b90597a218b9a842f766cd05bda1",
+    "config/pon/applicability-v1.json": "27b7706203a78b524a83aef2df7013aa142a9aa067cce3b178030c3009706ccc",
+    "config/pon/pq-cross-branch-corpus-v1.json": "3cfa649897c9713a4c014bd212db6c19f4124aae3588498f6224fd3a928a0e35",
+    "config/pon/pq128-lifetime-composition-current-v3.json": "1274d33d2f1d0f41fb7f5078301f5b514952c9e758fb45f78f34c40dc9c1fee6",
+    "config/pon/pq128-source-correspondence-current-v2.json": "f7ffe7a99de743bc79d4c5af3db9571c791f8a58b404786bec1880a024982c13",
+    "config/pon/public-resource-profile-vectors-v1.json": "3fb6355b5475ebd141f06b389391358bca9180015c4cf50d2f71c0a39e99a4fc",
+    "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md": "bdb2fa9361016e838bdd97652a6d2aee0324841185ebd3ec5dcaea33ee3f7a42",
+    "scripts/ci/check_pq_research_integration.py": "d41f5f007946a558d1a6014923548f3830f84f1adfbb4690c8cddd1b2f8315ba",
+    "scripts/ci/pq_lifetime_composition.py": "6eb53e151bc7d11b9315d0aa4c3d85c7c017b960abda60db9d258a78ff1a9876",
+    "scripts/ci/pq_lifetime_current_v2.py": "27a0b1b96a4ff0a6b68c89fc0c485a2d38d26d30cc5e0cfe8769fb94c4dd5d53",
+    "scripts/ci/test_pon_public_v3_policy_read.py": "813832b0f18aae839dd3ec18d9b60490f7033f3ba413bb312204184ed3ebe5c4",
+    "scripts/ci/test_pq_research_integration.py": "e626f359f3c82dd583328e411832373e67a9e008e25e333b16a766242f76e3d5",
+    "scripts/pon_public_v3_policy_read.py": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "45dd1d511660bb3d8502480007dc80d3000cadb474fd811f2dcd6e32d74d51a1",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "d96f94bda32316572c0299b9a83f6ec067a60d9c3ef69902ef440520d7fed729",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs": "d0dc75359f540240c12dffecaf95400f8d35cf4337ecf43166651a6a3715d39c",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs": "a310a03e3724c5fec36fc46887f9253a6ca1c6eb4d03133961845fcee5872653",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "9f2aac89a09507b3c92c45f7dec13b9630f50c4b9622fd106af968423dd0eba9",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection.rs": "cc3a1d36a90ee2fa3bbb342b0b0bdea37551d426fddeec573f9f63c849cf882b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection/tests.rs": "e23ea1f83964951d1c35482ef607b7f343d421a1c12623f46032563f6bcf01df",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs": "e302bb2ae425c8dad9afe9642dc4ed09245deaab7274299db7199795cf35cab6"
+  },
+  "publication_metadata_followup": "Update applicability and current source maps plus the original literal multiprocess workflow guard; all native Rust bytes remain identical to the tested patch and initial 974049d publication. Frozen models, qualifications, and prior observations remain unchanged.",
+  "prototype_patch_uncompressed_sha256": "1d3df457a2863362b8d86900142e9adc2abe5cb17bbd0a66563ff15159915e8e",
+  "initial_hosted_ci_source_failures": {
+    "head": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+    "run_id": 44309944062,
+    "jobs": [
+      {
+        "id": 134821167538,
+        "name": "repository-truth",
+        "failure": "current correspondence source hash mismatch: public_v3.rs",
+        "log": "ci-repository-truth-974049d.txt.gz"
+      },
+      {
+        "id": 134821168039,
+        "name": "prospective-merge (fuzz-smoke)",
+        "failure": "stale literal whole-file public_v3_multiprocess.rs source pin",
+        "log": "ci-prospective-fuzz-974049d.txt.gz"
+      },
+      {
+        "id": 134821168298,
+        "name": "prospective-merge (external-evidence-contract)",
+        "failure": "stale literal whole-file public_v3_multiprocess.rs source pin",
+        "log": "ci-prospective-external-974049d.txt.gz"
+      }
+    ],
+    "native_business_acceptance_inferred": false,
+    "correction": "Refresh current source-map and literal workflow hashes; preserve frozen experiment, prior observations, original resource and business gates."
+  },
+  "supplemental_policy_log_uncompressed_sha256": "46a979a2f2ee8544131c61c59395e722f4bcf86c8b09d28355523145512e2a03",
+  "initial_publication_original_fixed_resource_window_qualified": false,
+  "hosted_original_window": {
+    "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+    "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+    "run_id": 44309944062,
+    "x64_original_business_gate": true,
+    "arm64_original_business_gate": true,
+    "original_validator_recomputed": true,
+    "original_root_limits_verified": true,
+    "whole_workflow_passed": false,
+    "source_binding_followup_commit": "7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8",
+    "followup_full_execution_inferred": false,
+    "general_resource_fairness_qualified": false,
+    "readback": "hosted-business-readback.json"
+  }
+}

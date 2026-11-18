@@ -16,6 +16,7 @@ mod pq_identity;
 use intake::{CallerMutationPermit, ConnectionLease, ListenerIntake};
 pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
 use pq_identity::{Caller, ServerPin, SigningIdentity};
+mod body_refusal;
 mod canonical_packet;
 mod growth;
 mod history_response;
@@ -138,6 +139,7 @@ const IO_QUANTUM: usize = 64 * 1024;
 #[derive(Default)]
 struct MutationCpuMeasurement {
     full_work_ns: Cell<Option<u64>>,
+    immutable_body_refusal: Cell<bool>,
     body_decode_ns: Cell<Option<u64>>,
     response_ns: Cell<Option<u64>>,
     unavailable: Cell<bool>,
@@ -426,7 +428,7 @@ impl Drop for PaidMutationCpuPermit {
 
 // Only immutable wire framing and code constants are cached. Each call appends
 // all six original suffix parts to its own unfinalized SHA-256 state.
-const PUBLIC_RESOURCE_CONTRACT: &[u8] = b"resource-revision-r20-authenticated-caller-grants-v1/authenticated-caller-mutation-grants2-per-shared-intake-epoch/original-global8-read8-lane-body-reservations-unchanged/caller-rows-only-after-valid-solution-signature-and-spent-reservation/shared-arc-lane-lease-until-last-connection-or-task-owner-release/immediate-caller-capacity-refusal-no-pending-head-block/failed-global-or-body-reserve-no-caller-row/fixed-caller-map64-no-live-eviction-or-guest-persistence/no-new-deadline-worker-credit-or-identity-authority/no-anonymous-or-Sybil-fairness/output-refusal-reserved-original-pool-before-encoding/fallback-frame-classical2048-pq8192-factor4/refusal-headroom65536-within-original-control524288/control-floor458752/no-output-reserve-no-signature-no-bytes/local-capacity-no-native-dispatch/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-parent-task-M06-State-receipts-completion-priority-within-original-shared-bucket/held-detached-growth-History-original-owner-only-completion-token/precommit-only-no-added-W1-State-or-M06-replay/current-epoch-clock-BEGIN-IMMEDIATE-commit-fences-unchanged/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-native-work-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences";
+const PUBLIC_RESOURCE_CONTRACT: &[u8] = b"resource-revision-r21-exact-invalid-body-grant-delay-v1/fixed256-ways4-body-digests-only-after-completed-native-transcript-or-product-refusal/delay500ms-after-authenticated-solution-spent-reservation/original-expiry-stop-disconnect-no-lane-body-cpu-reservation/skip-delayed-grant-head-no-lookup-refresh-no-validity-verdict/unknown-contended-poison-miss-fresh-body-original-paid-verifier/resource-revision-r20-authenticated-caller-grants-v1/authenticated-caller-mutation-grants2-per-shared-intake-epoch/original-global8-read8-lane-body-reservations-unchanged/caller-rows-only-after-valid-solution-signature-and-spent-reservation/shared-arc-lane-lease-until-last-connection-or-task-owner-release/immediate-caller-capacity-refusal-no-pending-head-block/failed-global-or-body-reserve-no-caller-row/fixed-caller-map64-no-live-eviction-or-guest-persistence/no-new-deadline-worker-credit-or-identity-authority/no-anonymous-or-Sybil-fairness/output-refusal-reserved-original-pool-before-encoding/fallback-frame-classical2048-pq8192-factor4/refusal-headroom65536-within-original-control524288/control-floor458752/no-output-reserve-no-signature-no-bytes/local-capacity-no-native-dispatch/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-parent-task-M06-State-receipts-completion-priority-within-original-shared-bucket/held-detached-growth-History-original-owner-only-completion-token/precommit-only-no-added-W1-State-or-M06-replay/current-epoch-clock-BEGIN-IMMEDIATE-commit-fences-unchanged/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-native-work-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences";
 
 fn hash_public_policy(dynamic_parts: [&[u8]; 6]) -> Hash {
     static PREFIX: OnceLock<Sha256> = OnceLock::new();
@@ -865,6 +867,7 @@ pub struct PublicServer {
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
     w1_rejection_cache: Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
+    body_refusals: body_refusal::BodyRefusals,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -892,6 +895,7 @@ impl PublicServer {
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
             w1_rejection_cache: None,
+            body_refusals: body_refusal::BodyRefusals::default(),
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -1402,6 +1406,7 @@ enum Stage {
     WaitGrant {
         cookie: Cookie,
         pending: PendingOrder,
+        not_before: Option<Instant>,
     },
     Ready {
         cookie: Cookie,
@@ -1473,7 +1478,14 @@ impl PendingHeads {
                 Stage::WaitChallenge { hello, pending } => {
                     (&mut heads.challenge, hello.op, pending.sequence)
                 }
-                Stage::WaitGrant { cookie, pending } => {
+                Stage::WaitGrant {
+                    cookie,
+                    pending,
+                    not_before,
+                } => {
+                    if not_before.is_some_and(|until| now < until) {
+                        continue;
+                    }
                     (&mut heads.grant, cookie.op, pending.sequence)
                 }
                 _ => continue,
@@ -2081,9 +2093,13 @@ fn public_dispatch_submit(
             };
             let result = match arithmetic_facts {
                 None => match w1_rejection_cache {
-                    Some(cache) => {
-                        work_rejection::verify(packet, cache, &mut checkpoint, observation)
-                    }
+                    Some(cache) => work_rejection::verify(
+                        packet,
+                        cache,
+                        &mut checkpoint,
+                        observation,
+                        mutation_cpu.map(|cpu| &cpu.immutable_body_refusal),
+                    ),
                     None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
                 },
                 Some(facts) => {
@@ -2698,6 +2714,22 @@ fn serve_public_protected_v3_inner(
                                                 )
                                             })(
                                             );
+                                            // Only a completed typed Transcript/Product fact
+                                            // on these authenticated bytes can postpone a future
+                                            // grant. Cancellation, context errors and successful
+                                            // work never set this flag. The hint remains inside
+                                            // the original owner CPU interval; a later unknown
+                                            // settlement still latches mutation by the rules below.
+                                            if measurement.immutable_body_refusal.get()
+                                                && !measurement.unavailable.get()
+                                                && outcome.is_err()
+                                                && task.cookie.op == 1
+                                            {
+                                                server.body_refusals.remember(
+                                                    &task.cookie.body_digest,
+                                                    Instant::now(),
+                                                );
+                                            }
                                             // Releasing the bounded raw body also belongs
                                             // to the same actual owner CPU interval.
                                             drop(std::mem::take(&mut task.raw_body));
@@ -3176,12 +3208,36 @@ fn serve_public_protected_v3_inner(
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
                                     .pending_grant_entered += 1;
-                                Ok(Stage::WaitGrant { cookie, pending })
+                                let not_before = if cookie.op == 1
+                                    && !server.identity.is_pq()
+                                    && !server.native_growth
+                                {
+                                    server
+                                        .body_refusals
+                                        .retry_at(&cookie.body_digest, Instant::now())
+                                } else {
+                                    None
+                                };
+                                Ok(Stage::WaitGrant {
+                                    cookie,
+                                    pending,
+                                    not_before,
+                                })
                             }
-                            Stage::WaitGrant { cookie, pending } => {
+                            Stage::WaitGrant {
+                                cookie,
+                                pending,
+                                not_before,
+                            } => {
                                 pending_alive(conn, &stop, phase)?;
-                                if !heads.is_head(PendingKind::Grant, cookie.op, *id) {
-                                    return Ok(Stage::WaitGrant { cookie, pending });
+                                if not_before.is_some_and(|until| Instant::now() < until)
+                                    || !heads.is_head(PendingKind::Grant, cookie.op, *id)
+                                {
+                                    return Ok(Stage::WaitGrant {
+                                        cookie,
+                                        pending,
+                                        not_before,
+                                    });
                                 }
                                 // This private stage already validated the immutable cookie,
                                 // target, signature and spent id once. Only the original
@@ -3193,7 +3249,11 @@ fn serve_public_protected_v3_inner(
                                 let Some((lane, permit)) =
                                     try_authenticated_paid_permits(&cookie, &intake)?
                                 else {
-                                    return Ok(Stage::WaitGrant { cookie, pending });
+                                    return Ok(Stage::WaitGrant {
+                                        cookie,
+                                        pending,
+                                        not_before,
+                                    });
                                 };
                                 let frame = framed(
                                     serde_json::to_vec(
@@ -6453,7 +6513,7 @@ mod tests {
         });
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b"
+            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a"
         );
     }
 
@@ -6463,7 +6523,7 @@ mod tests {
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b"
+            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a"
         );
         assert_ne!(
             hex::encode(PublicPolicy::development().id()),
@@ -7790,7 +7850,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r20_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r21_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -7798,15 +7858,16 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10-r15, r18 and r19 signed predecessor inputs;
-        // combined r20 rejects them under the unchanged current signature checks.
+        // Preserve exact r10-r15, r18, r19 and r20 signed predecessor inputs;
+        // combined r21 rejects them under the unchanged current signature checks.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, historical_r19, predecessor_profiles) in [
             (
                 8,
-                "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
+                "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
                 "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
                 [
+                    "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
                     "17d393fcb34624a7dda51a5b8385c6e8deddd4177693379ce431d2a48ad9c332",
                     "85ec5559c48860c02834a89f84a6dc779482c8c8ae09045e8cd161348e91290d",
                     "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
@@ -7818,9 +7879,10 @@ mod tests {
             ),
             (
                 16,
-                "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
+                "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a",
                 "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
                 [
+                    "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
                     "def48acb27beeb6950013850e2306d8bc97f18571485c34226a6ae5563492e4d",
                     "272ea19faf73fd12ca83f43b1854fe6bfdf293848bf593a5f7f69797e88219c7",
                     "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
@@ -7832,9 +7894,10 @@ mod tests {
             ),
             (
                 12,
-                "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
+                "9eb8b90a2b797a4cce6c35eb3da0dfe3eec6f125b076c353301b2d82ed9d9377",
                 "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
                 [
+                    "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
                     "bcb405a632ccea135df5e2fb41b03a5ec3be74f262a77f77b9c082a446b1b255",
                     "986444aaad4ce993ecbf565af7e599bf32ddeac4b195eb2502da3d3135ba276b",
                     "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
@@ -8099,6 +8162,7 @@ mod tests {
                 _ => Stage::WaitGrant {
                     cookie: server.cookie(&settings, hello(op, 1), peer).unwrap(),
                     pending: order,
+                    not_before: None,
                 },
             };
             connections.insert(
@@ -8143,6 +8207,29 @@ mod tests {
             && c.total_deadline == epoch + Duration::from_secs(30)
             && c.permit.is_none()
             && c.lane_permit.is_none()));
+        // A known-invalid body's delay may not head-block a different body.
+        if let Stage::WaitGrant { not_before, .. } = &mut connections.get_mut(&6).unwrap().stage {
+            *not_before = Some(epoch + Duration::from_millis(500));
+        } else {
+            panic!("grant fixture");
+        }
+        let peer = connections[&4].peer;
+        connections.get_mut(&4).unwrap().stage = Stage::WaitGrant {
+            cookie: server.cookie(&settings, hello(1, 1), peer).unwrap(),
+            pending: PendingOrder {
+                sequence: 50,
+                entered_at: epoch,
+            },
+            not_before: None,
+        };
+        let delayed = PendingHeads::collect(&connections, epoch);
+        assert!(delayed.is_head(PendingKind::Grant, 1, 4));
+        assert!(!delayed.is_head(PendingKind::Grant, 1, 6));
+        let released = PendingHeads::collect(&connections, epoch + Duration::from_millis(500));
+        assert!(released.is_head(PendingKind::Grant, 1, 6));
+        assert!(connections
+            .values()
+            .all(|c| c.deadline == expiry && c.permit.is_none() && c.lane_permit.is_none()));
         let mut order = u64::MAX;
         assert_eq!(
             PendingOrder::next(&mut order).err().unwrap().to_string(),
@@ -8438,7 +8525,11 @@ mod tests {
                 }
                 Some(PendingKind::Grant) => {
                     metrics.pending_grant_entered = 1;
-                    Stage::WaitGrant { cookie, pending }
+                    Stage::WaitGrant {
+                        cookie,
+                        pending,
+                        not_before: None,
+                    }
                 }
                 None => Stage::Solution {
                     cookie,

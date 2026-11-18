@@ -1,0 +1,11 @@
+{
+  "artifact_id": 14444657062,
+  "path": "/Users/qianqi/work/chain-ci-e305-20261118-556e5fc/provider/14444657062-w1-fresh-service-prospective-merge-77ea3ef3bd0928bb9f07455bd0e7d8daeed754dd-1-retrieval-2.zip",
+  "bytes": 6499335,
+  "sha256": "e045921abae2c119b00a288e927bf7a057e70ec8bc34a96a3b19867d4cbd0625",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 228.272293084,
+  "finished_at": "2026-11-18T16:48:47.055697+00:00",
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14444657062/zip"
+}

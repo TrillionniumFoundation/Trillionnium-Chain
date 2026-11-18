@@ -1,0 +1,26 @@
+{
+  "schema": "chain-retention-validation-preparation-failures-v1",
+  "observations": [
+    {
+      "host": "mac",
+      "command": ["python3", "scripts/ci/test_ci_contract.py", "InlineSourcePinTests", "-v"],
+      "exit_code": 2,
+      "elapsed_wall_ns": 22567083,
+      "reason": "The existing publication checkout is sparse; scripts/ci/test_ci_contract.py is not materialized.",
+      "log": "source-validation-1.log",
+      "log_sha256": "655161eb2649c6a5b143dc52dc30905722fb6f0783566cf222196fe204120ccc",
+      "test_assertions_executed": false,
+      "resolution": "Use a separate complete local checkout at the same parent, with the exact same two-file patch; do not widen native sparse checkout."
+    },
+    {
+      "host": "cloud-validation-worktree",
+      "command": ["bash", "scripts/project-preflight.sh"],
+      "observed_stderr": "project boundary failed: not an allowed development branch",
+      "initial_state": "new isolated worktree was detached at 01a1db507b0ff39dee39f635855479be93dcd7bb",
+      "test_assertions_executed": false,
+      "resolution": "Create the task-owned fix/chain-report-retention-validation-20261118 branch at that same parent and rerun the unchanged preflight."
+    }
+  ],
+  "native_business_reruns": 0,
+  "check_predicates_modified": false
+}

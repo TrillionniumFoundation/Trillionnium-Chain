@@ -1,0 +1,16 @@
+{
+  "parent": "01a1db507b0ff39dee39f635855479be93dcd7bb",
+  "files": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "workflow_blob_before": "8ea263306c96daae7c0f3759b466218a5994d945",
+  "workflow_blob_after": "db1b80a15f846d308115fe8ba6ce50d326752694",
+  "corpus_sha256_before": "3cfa649897c9713a4c014bd212db6c19f4124aae3588498f6224fd3a928a0e35",
+  "corpus_sha256_after": "d65c934b23f0857527e6137b61358a7f338288a83edcc32b08a416ec07150e65",
+  "rust_changes": false,
+  "test_changes": false,
+  "deadline_or_budget_changes": false,
+  "current_and_composition_map_changes": false,
+  "patch_sha256": "b0d232ae82dc8cf4d971bd9d85d378cb002b1fc2d3713380856c9347d7cbbd84"
+}
