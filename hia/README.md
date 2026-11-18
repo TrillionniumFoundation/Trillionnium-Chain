@@ -1,15 +1,34 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **41 kernel units, 21 native foundations and 129 HIA source
+inventory contains **42 kernel units, 21 native foundations and 130 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain**, zero retirements are accepted, and all nine whole-project
+packages remain** (11 partially ported and 15 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
+
+## Current data-availability codec
+
+The [native RS(6,4) codec](src/data_availability/README.md) now implements the
+original CRS1 encode and recovery operations through the complete **4 MiB**
+source limit. It derives parity in GF(256), reconstructs every permitted four,
+five or six shard set, checks the separate selected chunk pins, zero padding,
+source SHA-256 and every extra shard before publishing output. It uses the
+canonical HIA SHA compression functions and the pinned native compiler.
+
+All **15 native tests** pass, including all 65,536 field products, 22 recoverable
+subsets and the maximum 6,292,022-byte input. A late corruption in the sixth
+shard leaves the entire 4 MiB output unchanged. The actual unchanged original
+Rust crate passes its **12 retained tests** and matches **929 complete native
+comparisons** (738 accepted, 191 rejected). The
+[development record](qualification/rs46-development.json) binds the exact
+artifacts, sources, raw observations and the initial failed original build.
+TCM1/context ownership, provider storage, retention and Node adoption remain
+required; this selected-chunk codec does not retire its original package.
 
 ## Current Node and transaction admission
 
@@ -32,10 +51,10 @@ report admission checks the exact schema, field sets, scope values and JSON
 types before consuming observations. Old blocked-writer and complete-reader
 false-accept observations are retained under their actual predecessor sources.
 
-The current 203-input Node graph is
+The previous five-partition Node execution uses the 203-input graph
 `5ca555529a0dbdd23ad1af776daab5e827b311cf4f1b5f5b09edb254afae0c32`.
 Its five native partitions (smoke, boundaries, capacity, four-Settings Node and
-cross-method ownership) have each been freshly compiled and executed. The
+cross-method ownership) were each compiled and executed. The
 256-record strict-signature capacity case completed in 181.55 seconds; every
 runtime child retains its 240-second deadline and three-second cleanup limit.
 This finite execution is distinct from the original four-second service gate.
@@ -45,7 +64,15 @@ The public reader accepts all five complete real baseline artifacts and rejects
 Source integrity executes six groups /361 controls /eight actual CLI calls;
 build integrity executes nine groups /379 controls /ten actual CLI calls.
 The first six groups overlap and their counts must not be added as disjoint
-coverage. Ten physical/fault stdin deadline controls also pass. Independent
+coverage. The subsequent repair extends the bounded stdin writer to the
+boundaries and capacity drivers; **30 physical/fault controls** pass across all
+three drivers. The new 203-input graph is
+`959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685`.
+Its complete boundaries build passes, but local mandatory tracing is refused by
+the host before the first native frame. Zero runtime controls are credited for
+that attempt. The [deadline record](qualification/node-stdin-deadline.json)
+retains the original blocked writers, repaired controls and trace failure;
+exact-commit hosted execution is still required. Independent
 original Rust execution and commit-bound hosted results retain their separate
 source and artifact identities.
 
@@ -69,26 +96,30 @@ ELFs exactly. These observations require new commit-bound hosted execution.
 
 The [Node development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons and the original integrated reader profiles. The correction record above binds the successor readers and complete transport regression. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
-The workflow contains **53 jobs and 41 independent native compiler bootstrap
+The workflow contains **54 jobs and 42 independent native compiler bootstrap
 gates**, each with its original 20-minute deadline. Four bootstrap control groups
-exercise all 164 actual positive/negative invocations. Node adds five native
+exercise all 168 actual positive/negative invocations. The separate RS46 job
+builds the full original crate and retains both actual executed binaries and
+every comparison. Node adds five native
 partitions, two original Rust comparisons and seven explicit evidence-reader
 profiles. Native child budgets remain 240 seconds plus three-second cleanup.
 
-Full component discovery assigns 383 tests to disjoint general (376) and
+Full component discovery assigns 398 tests to disjoint general (391) and
 State-root (seven) jobs, followed by an independent coverage consumer. Work/Host
 uses native, original, complete qualification/package and independent readback
 stages. Original executable bytes, complete raw streams, exact source trees and
 actual started/completed rosters remain mandatory.
 
 The published predecessor
-[`af044d854f6e0baa6d085822adbd692944c8a883`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/af044d854f6e0baa6d085822adbd692944c8a883)
-completed 46/46 HIA jobs in both
-[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048146851)
-and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048170791)
+[`337fe8df54a5af59e10a1aea129022702b40b89d`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/337fe8df54a5af59e10a1aea129022702b40b89d)
+completed 53/53 HIA jobs in both
+[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262237229)
+and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261854)
 workflows. Those results belong to that predecessor. Its
-[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048171025)
-failed the original confirmation target under 16-worker pressure. New source
+[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261731)
+failed the original confirmation target under 16-worker pressure on both
+x86-64 and arm64. All seven submission ACKs succeeded, but complete independent
+replay did not finish inside the original four-second window. New source
 controls, development executions and evidence readback cannot inherit hosted
 qualification or close that service gate.
 
@@ -147,11 +178,14 @@ A successful HIA workflow does not close those gates.
 | Executed target | Linux x86-64 |
 | Qualified native compiler SHA-256 | `87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54` |
 
-The baseline audit counted 41,834 tracked files and 3,999,565,648 bytes.
+The original consolidated baseline audit counted 41,834 tracked files and 3,999,565,648 bytes.
 `evidence/` accounted for 36,222 files and 3,804,721,963 bytes. The active Cargo
 workspace contains 26 packages, with 1,621 Rust files and 702,001 physical lines
 including tests. Repository history had already been consolidated into `main`;
 these counts do not describe 26 independent final implementations.
+The later `337fe8d` tree contains 40,920 tracked files. All 130 HIA sources in
+this candidate have exactly one inventory owner; no original package has met
+its retirement condition.
 
 The ownership audit covers the entire tracked tree, the Cargo graph and all
 18 long-lived modules. Semantic work in this increment concentrates on exact
@@ -177,6 +211,7 @@ remain open.
 
 | Source | Implemented behavior | Native tests |
 | --- | --- | --- |
+| [RS(6,4) / CRS1](src/data_availability/README.md) | Full 4 MiB selected-chunk encode/recovery, independent pins, zero padding, source hash and all supplied shards | 15 native tests, 929 actual original Rust comparisons and 12 retained original tests |
 | [AuditEvent](src/audit/README.md) | Complete public value constructor, six builders, Clone and Eq | 2,847 native calls; 1,849 actual original Rust cases and three original unit tests |
 | [RawBindings](src/mempool/RAW_BINDINGS.md) | Actual private digest/body ownership and consume-before-mismatch semantics | 16,597 native calls; 16,471 actual original Rust operations across 1,220 histories |
 | [ID](src/protocol/id.hepta), [hash text](src/protocol/hash.hepta) | Exact identifier alphabet/length and lowercase hash grammar | Complete byte alphabet and boundary controls |

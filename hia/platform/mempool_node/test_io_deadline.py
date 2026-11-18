@@ -22,16 +22,18 @@ import threading
 import time
 import unittest
 
-from . import suite_smoke as suite
+from . import suite_smoke, suite_boundaries, suite_capacity
 
 
 class WriteDeadline(unittest.TestCase):
+    suite = suite_smoke
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix="node-pool-io-deadline-")
         self.addCleanup(temporary.cleanup)
         self.directory = Path(temporary.name)
         self.cleanup_errors = []
-        patcher = mock.patch.object(suite, "cleanup_errors", self.cleanup_errors, create=True)
+        patcher = mock.patch.object(self.suite, "cleanup_errors", self.cleanup_errors, create=True)
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -47,7 +49,7 @@ while True:
     digest.update(block); count+=len(block); time.sleep(0.0005)
 os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
 """
-        session = suite.Session.__new__(suite.Session)
+        session = self.suite.Session.__new__(self.suite.Session)
         session.directory = self.directory / "process"
         session.directory.mkdir()
         session.owned = session.directory
@@ -114,7 +116,7 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
     def pipe_session(self):
         read_fd, write_fd = os.pipe()
         writer = os.fdopen(write_fd, "wb", buffering=0)
-        session = suite.Session.__new__(suite.Session)
+        session = self.suite.Session.__new__(self.suite.Session)
         session.p = SimpleNamespace(stdin=writer)
         session.input = bytearray()
         session.deadline = 1.0
@@ -147,6 +149,7 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
         self.assertEqual(receipt["exit_code"], -signal.SIGKILL)
         print(json.dumps({
             "control": "nonreading-child", "status": "PASS",
+            "driver": self.suite.__name__,
             "pipe_capacity_bytes": capacity, "input_bytes": len(raw),
             "fixture_deadline_seconds": 0.2,
             "observed_seconds": result["elapsed_seconds"],
@@ -174,7 +177,7 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
                 raise InterruptedError(errno.EINTR, "injected interrupted write")
             return original_write(fd, value[:1021])
 
-        with mock.patch.object(suite.os, "write", side_effect=short_write):
+        with mock.patch.object(self.suite.os, "write", side_effect=short_write):
             result = self.bounded_write(session, raw)
         self.assertNotIn("error", result)
         self.assertGreater(len(calls), 3)
@@ -183,8 +186,8 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
 
     def test_interrupted_select_retries_with_remaining_absolute_time(self):
         with self.pipe_session() as (session, read_fd, write_fd):
-            with mock.patch.object(suite.time, "monotonic", side_effect=[0.1, 0.2, 0.3]):
-                with mock.patch.object(suite.select, "select", side_effect=[
+            with mock.patch.object(self.suite.time, "monotonic", side_effect=[0.1, 0.2, 0.3]):
+                with mock.patch.object(self.suite.select, "select", side_effect=[
                     InterruptedError(errno.EINTR, "injected interrupted select"),
                     ([], [write_fd], []),
                 ]) as wait:
@@ -196,9 +199,9 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
 
     def test_expired_deadline_does_not_select_or_write(self):
         with self.pipe_session() as (session, _, __):
-            with mock.patch.object(suite.time, "monotonic", return_value=1.0):
-                with mock.patch.object(suite.select, "select") as wait:
-                    with mock.patch.object(suite.os, "write") as write:
+            with mock.patch.object(self.suite.time, "monotonic", return_value=1.0):
+                with mock.patch.object(self.suite.select, "select") as wait:
+                    with mock.patch.object(self.suite.os, "write") as write:
                         with self.assertRaisesRegex(AssertionError, "Native stdin deadline"):
                             session.write(b"expired")
             wait.assert_not_called()
@@ -207,18 +210,18 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
 
     def test_readiness_at_deadline_does_not_write(self):
         with self.pipe_session() as (session, _, write_fd):
-            with mock.patch.object(suite.time, "monotonic", side_effect=[0.9, 1.0]):
-                with mock.patch.object(suite.select, "select", return_value=([], [write_fd], [])):
-                    with mock.patch.object(suite.os, "write") as write:
+            with mock.patch.object(self.suite.time, "monotonic", side_effect=[0.9, 1.0]):
+                with mock.patch.object(self.suite.select, "select", return_value=([], [write_fd], [])):
+                    with mock.patch.object(self.suite.os, "write") as write:
                         with self.assertRaisesRegex(AssertionError, "Native stdin deadline"):
                             session.write(b"too-late")
             write.assert_not_called()
 
     def test_repeated_eagain_does_not_reset_deadline(self):
         with self.pipe_session() as (session, _, write_fd):
-            with mock.patch.object(suite.time, "monotonic", side_effect=[0.1, 0.2, 0.3, 0.4, 1.0]):
-                with mock.patch.object(suite.select, "select", return_value=([], [write_fd], [])) as wait:
-                    with mock.patch.object(suite.os, "write", side_effect=BlockingIOError(errno.EAGAIN, "full")) as write:
+            with mock.patch.object(self.suite.time, "monotonic", side_effect=[0.1, 0.2, 0.3, 0.4, 1.0]):
+                with mock.patch.object(self.suite.select, "select", return_value=([], [write_fd], [])) as wait:
+                    with mock.patch.object(self.suite.os, "write", side_effect=BlockingIOError(errno.EAGAIN, "full")) as write:
                         with self.assertRaisesRegex(AssertionError, "Native stdin deadline"):
                             session.write(b"unchanged")
             self.assertEqual(write.call_count, 2)
@@ -232,9 +235,9 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
             with self.subTest(result=repr(result)):
                 with self.pipe_session() as (session, _, write_fd):
                     behavior = {"side_effect": result} if isinstance(result, BaseException) else {"return_value": result}
-                    with mock.patch.object(suite.time, "monotonic", return_value=0.5):
-                        with mock.patch.object(suite.select, "select", return_value=([], [write_fd], [])):
-                            with mock.patch.object(suite.os, "write", **behavior) as write:
+                    with mock.patch.object(self.suite.time, "monotonic", return_value=0.5):
+                        with mock.patch.object(self.suite.select, "select", return_value=([], [write_fd], [])):
+                            with mock.patch.object(self.suite.os, "write", **behavior) as write:
                                 with self.assertRaises(expected):
                                     session.write(b"refused")
                     write.assert_called_once()
@@ -263,6 +266,14 @@ os.write(1,json.dumps({"bytes":count,"sha256":digest.hexdigest()}).encode())
         session.abort()
         self.assertTrue(session.finished)
         self.assertEqual(session.p.returncode, -signal.SIGKILL)
+
+
+class BoundariesWriteDeadline(WriteDeadline):
+    suite = suite_boundaries
+
+
+class CapacityWriteDeadline(WriteDeadline):
+    suite = suite_capacity
 
 
 if __name__ == "__main__":

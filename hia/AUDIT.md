@@ -1,5 +1,68 @@
 # Whole-tree inventory and HIA migration audit
 
+## RS46 native codec, whole-tree recheck and deadline repair — 2026-11-18 UTC
+
+The audited base is `337fe8df54a5af59e10a1aea129022702b40b89d`, with 40,920
+tracked files. The candidate now contains 42 kernel units, 21 native foundations
+and 130 HIA sources, each with one inventory owner. Eleven original packages
+are partially ported and fifteen are not ported. No whole package is retired;
+all nine whole-project gates remain open. The root README remains deliberately
+empty under its existing contract. The optimized-storage branch is an ancestor
+of this baseline; it has no independent changes to merge again.
+
+The [RS46 record](qualification/rs46-development.json) binds the actual
+4 MiB native implementation, 15/15 native tests (37.407 seconds), 929/929
+complete original Rust comparisons and 12/12 unchanged retained original tests.
+The original Cargo build took 79.554 seconds; the retained suite took 0.990
+seconds. Its complete map contains 4,414 original inputs and 27 explicit codec
+pins. The native library is 90,984 bytes, SHA256
+`4fa0531c05ccb2ae2c3c4fc5ec6e81914aa42465c4c51684d8ae567b74493841`.
+The 154,360,792-byte original test executable is explicitly external to this
+compact development archive; its full identity is recorded and the dedicated
+CI job uploads the actual executed original and native binaries.
+
+Native controls include every field product and inverse, all 22 permitted
+recovery subsets, exact CRS1 bytes, the original maximum and unaligned maximum,
+every-byte small-wire corruption, required and extra shard damage, strict order,
+independent pins and padding with consistent parity. The maximum six-shard
+input is 6,292,022 bytes. Corrupting only its last extra-shard byte returns 10
+and preserves the entire 4 MiB output. The compiler artifact remains the pinned
+HIA fixed-point compiler; no host algorithm is a native runtime fallback.
+The initial missing-root-fixture original build failure remains in the dossier.
+TCM1/context ownership and provider/retention/Node integration remain separate.
+
+The [Node deadline record](qualification/node-stdin-deadline.json) retains two
+actual predecessor blocked-writer failures. Boundaries and capacity now use the
+same nonblocking absolute-deadline writer as smoke/Node/cross. All 30 physical
+and fault controls pass across the three drivers; 240-second runtime and
+three-second cleanup budgets are unchanged. Source integrity passes six groups,
+361 controls and eight real CLI calls under its recorded earlier source map.
+The later 203-input graph is
+`959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685`.
+Its full boundaries build succeeds; the local host refuses mandatory ptrace
+before the first native frame. That runtime attempt is FAIL, with zero native
+controls completed. The already-started capacity attempt was interrupted and
+has no complete runtime result. No trace or service requirement was removed.
+
+Both exact-base HIA workflows actually completed 53/53 jobs:
+[push 44262237229](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262237229)
+and [PR 44262261854](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261854).
+The [required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261731)
+fails the original confirmation target in protocol and both architecture cost
+jobs. Three complete artifact ZIPs were downloaded and their GitHub digests
+verified. All seven submission ACKs succeed, but pressure replay completes
+only three of four attempted pages on x86-64/protocol, and five of six on
+arm64; seven are required. The failure is PUBLIC_REQUEST_DEADLINE. Attack-free
+controls complete; all five native prerequisites pass and the Host controller
+reports no final error. These observations do not permit deleting checkpoints,
+increasing the four-second window or crediting submission ACKs as confirmation.
+
+This candidate has 54 CI jobs, 42 independent native bootstraps and 398
+discovered component tests (391 general, seven State-root). Four unchanged
+bootstrap test groups pass all 168 real positive/negative invocations. Every
+job still has its 20-minute deadline. Fresh commit-bound execution is required;
+development results and the predecessor's green workflow do not transfer.
+
 ## Native Node transport and Work production-reader corrections
 
 Both 02f6 attempt-1 HIA runs completed all 53 jobs: 45 succeeded, six failed and

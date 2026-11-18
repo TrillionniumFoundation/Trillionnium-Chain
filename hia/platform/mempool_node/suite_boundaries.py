@@ -4,6 +4,7 @@ import argparse,os,sys,json,struct,hashlib,subprocess,signal,select,time,traceba
 from hia.platform.build import sealed_executable
 from .build import ROOT,validate_build
 from . import safe
+from .suite_smoke import Session as BoundedSession
 R=ROOT;HERE=Path(__file__).absolute().parent
 def identity(raw):return {"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()}
 
@@ -30,10 +31,8 @@ class Session:
   os.close(fd);os.close(directoryfd);self.started=time.monotonic();self.deadline=self.started+240
   sessions.append(self)
   self.write(b"NGBOOT01"+struct.pack("<7Q",directoryfd,mode,int(timestamp is not None),0 if timestamp is None else timestamp,workers,(1<<64)-1,(1<<64)-1))
- def write(self,raw):
-  self.input.extend(raw);offset=0
-  while offset<len(raw):
-   n=os.write(self.p.stdin.fileno(),raw[offset:]);need(n>0,"Native stdin made no progress");offset+=n
+ # All Node qualification partitions share the same absolute-deadline writer.
+ write=BoundedSession.write
  def command(self,op):self.write(struct.pack("<Q",16)+b"NBINPUT1"+struct.pack("<Q",op))
  def read_exact(self,n):
   out=bytearray()
