@@ -932,7 +932,21 @@ pub(super) fn publish_with_readback<'db>(
     original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
 ) -> Result<Option<PostWriteReadback<'db>>> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
-    verify_state_with_cache(db, settings, parent, before, progress, cache)?;
+    // Capture before the first parent graph read, never after its last callback.
+    // An unqualified owner keeps the original full parent/child verification.
+    let mut parent_graph = original_owner
+        .map(|(owner, expected)| PostWriteReadback::new(db, settings, parent, owner, expected))
+        .transpose()?
+        .flatten();
+    verify_state_with_readback(
+        db,
+        settings,
+        parent,
+        before,
+        progress,
+        cache,
+        parent_graph.as_mut(),
+    )?;
     let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
     let native = native_block_with_cache(db, settings, block, cache)?;
     local(ensure(
@@ -966,13 +980,18 @@ pub(super) fn publish_with_readback<'db>(
         delta_count: rows.len() as u64,
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
-    save(db, &mut record)?;
-    // Begin the readback epoch after the last account/record write, while the
-    // original pre-write transaction owner still proves the same writer.
-    let mut readback = original_owner
-        .map(|(owner, expected)| PostWriteReadback::new(db, settings, block, owner, expected))
-        .transpose()?
-        .flatten();
+    // Only this native helper owns the exact metadata write. When actual SQL
+    // deltas/apply leave the complete parent account Root untouched, it can
+    // prove that this one passive INSERT preserves the just-read account graph.
+    // Any extra write/schema/owner change keeps the original full child graph.
+    let mut readback = PostWriteReadback::save_publication_record(
+        db,
+        settings,
+        &mut record,
+        &rows,
+        parent_graph,
+        original_owner,
+    )?;
     let result = verify_state_with_readback(
         db,
         settings,

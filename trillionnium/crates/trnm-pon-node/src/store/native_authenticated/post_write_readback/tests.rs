@@ -728,3 +728,399 @@ fn warm_catalog_statement_never_hides_temp_objects_or_database_attachments() {
     db.execute_batch("DETACH DATABASE extra").unwrap();
     assert_eq!(readback_schema(&db).unwrap().unwrap(), first);
 }
+
+type MetadataInsertHook = Box<dyn FnMut(&Connection, MetadataInsertStage) -> Result<()>>;
+
+thread_local! {
+    static METADATA_INSERT_HOOK: std::cell::RefCell<Option<MetadataInsertHook>> =
+        std::cell::RefCell::new(None);
+}
+
+pub(super) fn metadata_insert_hook(db: &Connection, stage: MetadataInsertStage) -> Result<()> {
+    METADATA_INSERT_HOOK.with(|slot| match slot.borrow_mut().as_mut() {
+        Some(hook) => hook(db, stage),
+        None => Ok(()),
+    })
+}
+
+struct MetadataHookGuard;
+impl MetadataHookGuard {
+    fn install(hook: impl FnMut(&Connection, MetadataInsertStage) -> Result<()> + 'static) -> Self {
+        METADATA_INSERT_HOOK.with(|slot| {
+            assert!(slot.borrow().is_none());
+            *slot.borrow_mut() = Some(Box::new(hook));
+        });
+        Self
+    }
+}
+impl Drop for MetadataHookGuard {
+    fn drop(&mut self) {
+        METADATA_INSERT_HOOK.with(|slot| *slot.borrow_mut() = None);
+    }
+}
+
+struct PreparedMetadataInsert<'db> {
+    owner: TransactionScope<'db>,
+    graph: PostWriteReadback<'db>,
+    record: Record,
+    rows: Vec<super::super::Delta>,
+}
+impl<'db> PreparedMetadataInsert<'db> {
+    fn save(mut self, node: &'db Node) -> Result<PostWriteReadback<'db>> {
+        PostWriteReadback::save_publication_record(
+            &node.db,
+            &node.settings,
+            &mut self.record,
+            &self.rows,
+            Some(self.graph),
+            Some((&self.owner, node.post_write_schema.as_ref().unwrap())),
+        )?
+        .ok_or_else(|| "METADATA_TEST_SCOPE_MISSING".into())
+    }
+}
+
+fn prepare_metadata_insert<'db>(
+    node: &'db Node,
+    child: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> PreparedMetadataInsert<'db> {
+    let record = load_observed(&node.db, child, None).unwrap();
+    assert_eq!(record.parent, Some(node.settings.genesis()));
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let owner = TransactionScope::capture(&node.db).unwrap();
+    assert_eq!(
+        node.db
+            .execute(
+                "DELETE FROM native_state_commitments WHERE block=?",
+                [child.as_slice()]
+            )
+            .unwrap(),
+        1
+    );
+    let rows = super::super::deltas_with_progress(&node.db, child, &mut || Ok(())).unwrap();
+    assert!(rows.iter().all(|row| !row.0.starts_with("account:")));
+    let mut graph = PostWriteReadback::new(
+        &node.db,
+        &node.settings,
+        node.settings.genesis(),
+        &owner,
+        node.post_write_schema.as_ref().unwrap(),
+    )
+    .unwrap()
+    .unwrap();
+    verify(
+        node,
+        node.settings.genesis(),
+        &node.settings.initial,
+        &mut graph,
+        progress,
+    )
+    .unwrap();
+    PreparedMetadataInsert {
+        owner,
+        graph,
+        record,
+        rows,
+    }
+}
+
+#[test]
+fn native_metadata_insert_keeps_current_graph_and_original_independent_reader() {
+    let (f, child, state) = working_only_child();
+    let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+    let changed = f.node.db.total_changes();
+    let mut scope = prepared.save(&f.node).unwrap();
+    assert!(scope.metadata_insert_seeded);
+    assert_eq!(f.node.db.total_changes(), changed + 1);
+    let before = graphs(&f.node);
+    verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap();
+    assert_eq!(graphs(&f.node), before);
+    assert_eq!(scope.hits, 1);
+    assert!(scope.consumed);
+    super::super::verify_state_with_cache(
+        &f.node.db,
+        &f.node.settings,
+        child,
+        &state,
+        &mut || Ok(()),
+        Some(&f.node.authenticated_arithmetic),
+    )
+    .unwrap();
+    assert_eq!(graphs(&f.node) - before, 1);
+    assert_eq!(
+        load_observed(&f.node.db, child, None).unwrap().accounts,
+        load_observed(&f.node.db, f.node.settings.genesis(), None)
+            .unwrap()
+            .accounts
+    );
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(f.node.state_at(child).unwrap(), state);
+}
+
+#[test]
+fn native_metadata_insert_extra_sql_never_reenables_a_write_scope() {
+    for stage in [
+        MetadataInsertStage::BeforeSave,
+        MetadataInsertStage::AfterSave,
+        MetadataInsertStage::AfterCapture,
+        MetadataInsertStage::AfterSeed,
+    ] {
+        for sql in [
+            "UPDATE archive_nodes SET data=data WHERE 0",
+            "UPDATE archive_nodes SET data=data",
+            "CREATE TABLE metadata_probe(x); DROP TABLE metadata_probe",
+        ] {
+            let (f, child, state) = working_only_child();
+            let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+            let _hook = MetadataHookGuard::install(move |db, observed| {
+                if observed == stage {
+                    db.execute_batch(sql)?;
+                }
+                Ok(())
+            });
+            let mut scope = prepared.save(&f.node).unwrap();
+            if stage != MetadataInsertStage::AfterSeed {
+                assert!(!scope.metadata_insert_seeded, "{stage:?} {sql}");
+            }
+            let before = graphs(&f.node);
+            verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap();
+            assert_eq!(graphs(&f.node) - before, 1, "{stage:?} {sql}");
+            assert_eq!(scope.hits, 0);
+            assert!(!scope.consumed);
+            f.node.db.execute_batch("ROLLBACK").unwrap();
+        }
+    }
+}
+
+#[test]
+fn native_metadata_insert_graph_damage_on_both_sides_of_capture_is_rechecked() {
+    for stage in [
+        MetadataInsertStage::BeforeSave,
+        MetadataInsertStage::AfterSave,
+        MetadataInsertStage::AfterCapture,
+        MetadataInsertStage::AfterSeed,
+    ] {
+        let (f, child, state) = working_only_child();
+        let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+        let _hook = MetadataHookGuard::install(move |db, observed| {
+            if observed == stage {
+                db.execute("UPDATE archive_nodes SET data=zeroblob(length(data))", [])?;
+            }
+            Ok(())
+        });
+        let mut scope = prepared.save(&f.node).unwrap();
+        assert!(
+            verify(&f.node, child, &state, &mut scope, &mut || Ok(())).is_err(),
+            "{stage:?}"
+        );
+        assert_eq!(scope.hits, 0);
+        assert!(!scope.consumed);
+        f.node.db.execute_batch("ROLLBACK").unwrap();
+        assert_eq!(f.node.state_at(child).unwrap(), state);
+    }
+}
+
+#[test]
+fn native_metadata_insert_last_parent_callback_cannot_certify_damaged_graph() {
+    let (probe, child, _) = working_only_child();
+    let mut callbacks = 0;
+    let prepared = prepare_metadata_insert(&probe.node, child, &mut || {
+        callbacks += 1;
+        Ok(())
+    });
+    assert!(callbacks > 1);
+    drop(prepared);
+    probe.node.db.execute_batch("ROLLBACK").unwrap();
+
+    let (f, child, state) = working_only_child();
+    let mut current = 0;
+    let prepared = prepare_metadata_insert(&f.node, child, &mut || {
+        current += 1;
+        if current == callbacks {
+            f.node
+                .db
+                .execute("UPDATE archive_nodes SET data=zeroblob(length(data))", [])?;
+        }
+        Ok(())
+    });
+    assert_eq!(current, callbacks);
+    assert!(prepared.graph.graphs.iter().all(Option::is_none));
+    let mut scope = prepared.save(&f.node).unwrap();
+    assert!(!scope.metadata_insert_seeded);
+    assert!(verify(&f.node, child, &state, &mut scope, &mut || Ok(())).is_err());
+    assert_eq!(scope.hits, 0);
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn native_metadata_insert_rejects_triggers_even_with_a_matching_expected_catalog() {
+    for effect in [
+        "UPDATE archive_nodes SET data=data WHERE 0",
+        "DELETE FROM archive_nodes",
+    ] {
+        let (mut f, child, state) = working_only_child();
+        f.node.db.execute_batch(&format!(
+            "CREATE TRIGGER metadata_account_side_effect AFTER INSERT ON native_state_commitments BEGIN {effect}; END"
+        )).unwrap();
+        // Deliberately loosen this test-only expected map. The new operation
+        // must independently exclude trigger programs, not trust that map or
+        // infer absence of side effects from a row count / trace delta.
+        f.node.post_write_schema = Some(crate::store::schema(&f.node.db).unwrap());
+        let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+        let mut scope = prepared.save(&f.node).unwrap();
+        assert!(!scope.metadata_insert_seeded);
+        let before = graphs(&f.node);
+        let result = verify(&f.node, child, &state, &mut scope, &mut || Ok(()));
+        assert_eq!(result.is_ok(), effect.contains("WHERE 0"));
+        assert_eq!(graphs(&f.node) - before, 1);
+        assert_eq!(scope.hits, 0);
+        f.node.db.execute_batch("ROLLBACK").unwrap();
+    }
+}
+
+#[test]
+fn native_metadata_insert_keeps_original_connection_and_transaction_owners() {
+    let (f, child, _) = working_only_child();
+    let other = fixture();
+    let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+    other.node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let before = other.node.db.total_changes();
+    let error = prepared.save(&other.node).err().unwrap();
+    assert!(error.to_string().starts_with("NATIVE_POST_WRITE_SCOPE"));
+    assert_eq!(other.node.db.total_changes(), before);
+    other.node.db.execute_batch("ROLLBACK").unwrap();
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+
+    for sql in [
+        "COMMIT; BEGIN IMMEDIATE",
+        "SAVEPOINT metadata_probe; RELEASE metadata_probe",
+        "SAVEPOINT metadata_probe; ROLLBACK TO metadata_probe; RELEASE metadata_probe",
+    ] {
+        for stage in [
+            MetadataInsertStage::BeforeSave,
+            MetadataInsertStage::AfterCapture,
+        ] {
+            let (f, child, _) = working_only_child();
+            let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+            let _hook = MetadataHookGuard::install(move |db, observed| {
+                if observed == stage {
+                    db.execute_batch(sql)?;
+                }
+                Ok(())
+            });
+            let error = prepared.save(&f.node).err().unwrap();
+            assert!(
+                error.to_string().starts_with("NATIVE_POST_WRITE_SCOPE"),
+                "{stage:?}: {error}"
+            );
+            f.node.db.execute_batch("ROLLBACK").unwrap();
+        }
+    }
+}
+
+#[test]
+fn native_metadata_insert_current_state_final_callback_and_cancellation_remain_required() {
+    let (probe, child, state) = working_only_child();
+    let prepared = prepare_metadata_insert(&probe.node, child, &mut || Ok(()));
+    let mut scope = prepared.save(&probe.node).unwrap();
+    let mut callbacks = 0;
+    verify(&probe.node, child, &state, &mut scope, &mut || {
+        callbacks += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert!(callbacks > 1);
+    probe.node.db.execute_batch("ROLLBACK").unwrap();
+
+    for cancel_at in [1, callbacks] {
+        let (f, child, state) = working_only_child();
+        let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+        let mut scope = prepared.save(&f.node).unwrap();
+        let mut current = 0;
+        let error = verify(&f.node, child, &state, &mut scope, &mut || {
+            current += 1;
+            if current == cancel_at {
+                Err("METADATA_TEST_CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "METADATA_TEST_CANCELLED");
+        assert_eq!(scope.hits, 0);
+        assert!(!scope.consumed);
+        f.node.db.execute_batch("ROLLBACK").unwrap();
+    }
+
+    let (f, child, state) = working_only_child();
+    let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+    let mut scope = prepared.save(&f.node).unwrap();
+    let mut changed = state.clone();
+    changed.insert("meta:metadata-negative".into(), serde_json::json!(1));
+    let error = verify(&f.node, child, &changed, &mut scope, &mut || Ok(())).unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_STATE_ROOT");
+    assert_eq!(scope.hits, 0);
+    let mut current = 0;
+    assert!(verify(&f.node, child, &state, &mut scope, &mut || {
+        current += 1;
+        if current == callbacks {
+            f.node
+                .db
+                .execute("UPDATE archive_nodes SET data=zeroblob(length(data))", [])?;
+        }
+        Ok(())
+    })
+    .is_err());
+    assert_eq!(scope.hits, 0);
+    assert!(!scope.consumed);
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn native_metadata_insert_extra_indexes_with_matching_catalog_use_full_reader() {
+    for definition in [
+        "(block)",
+        "(length(data))",
+        "(data) WHERE length(data) > 0",
+        "(data COLLATE NOCASE)",
+    ] {
+        let (mut f, child, state) = working_only_child();
+        f.node
+            .db
+            .execute_batch(&format!(
+                "CREATE INDEX metadata_extra ON native_state_commitments{definition}"
+            ))
+            .unwrap();
+        // Include the real extra index in the expected catalog deliberately:
+        // eligibility must reject its INSERT program independently.
+        f.node.post_write_schema = Some(crate::store::schema(&f.node.db).unwrap());
+        let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+        let mut scope = prepared.save(&f.node).unwrap();
+        assert!(!scope.metadata_insert_seeded, "{definition}");
+        let before = graphs(&f.node);
+        verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap();
+        assert_eq!(graphs(&f.node) - before, 1, "{definition}");
+        assert_eq!(scope.hits, 0);
+        f.node.db.execute_batch("ROLLBACK").unwrap();
+        assert_eq!(f.node.state_at(child).unwrap(), state);
+    }
+}
+
+#[test]
+fn native_metadata_insert_unrelated_table_index_keeps_the_original_pk_path() {
+    let (mut f, child, state) = working_only_child();
+    f.node
+        .db
+        .execute_batch("CREATE INDEX unrelated_archive_expression ON archive_nodes(length(data))")
+        .unwrap();
+    f.node.post_write_schema = Some(crate::store::schema(&f.node.db).unwrap());
+    let prepared = prepare_metadata_insert(&f.node, child, &mut || Ok(()));
+    let mut scope = prepared.save(&f.node).unwrap();
+    assert!(scope.metadata_insert_seeded);
+    let before = graphs(&f.node);
+    verify(&f.node, child, &state, &mut scope, &mut || Ok(())).unwrap();
+    assert_eq!(graphs(&f.node), before);
+    assert_eq!(scope.hits, 1);
+    f.node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(f.node.state_at(child).unwrap(), state);
+}
