@@ -1,0 +1,11 @@
+{
+  "archive": "27d6-full-records.tar.xz",
+  "archive_bytes": 2020984,
+  "archive_sha256": "532b1302e7297c14da65f0c5b1c0f7361604087b905aa5a34868799b542f3dfc",
+  "included_members": 312,
+  "included_raw_bytes": 83333163,
+  "omitted_elf_members": 12,
+  "index_sha256": "b9e39efbb067c0958e26a3b60ecdf7ecba02fc2bddc0f2c8ed9e60a0045f0a09",
+  "readback_bytes": 26814,
+  "readback_sha256": "31417b1d634b2c0915e021871a02cd026a3fe1a7ebb292bad6459f3ce752f880"
+}

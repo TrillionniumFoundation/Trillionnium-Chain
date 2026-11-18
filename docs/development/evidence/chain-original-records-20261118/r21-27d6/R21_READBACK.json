@@ -1,0 +1,679 @@
+{
+  "architectures": [
+    {
+      "architecture": "x64",
+      "bindings": [
+        {
+          "bytes": 423,
+          "path": "x64/source.json",
+          "sha256": "7d715724f97fb9ca1002bc8e130e083f753598ef11113dbf9172a3cd660b62e4"
+        },
+        {
+          "bytes": 8644635,
+          "path": "x64/from-zero-native/confirmation/report.json",
+          "sha256": "4d35f81acdbca0b43527efda09b798543e81a6a49fbfc5b27c1f0391b52b2890"
+        },
+        {
+          "bytes": 949,
+          "path": "x64/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "sha256": "cc6b564cd368bebd568c0d1eddd80feccbc87e62e9d0a1144b5e58a0e1414318"
+        },
+        {
+          "bytes": 1684,
+          "path": "x64/from-zero-native-host/inside-before.json",
+          "sha256": "b34bab22deb8186e3ad838cfc916cee27d8e52ae6ded66bb1140704f61d347f8"
+        },
+        {
+          "bytes": 1695,
+          "path": "x64/from-zero-native-host/inside-after.json",
+          "sha256": "d04007459c7ddd6ad202330668dbf74100cdd1e8f99e2a87994b8471e9cb7635"
+        },
+        {
+          "bytes": 9508,
+          "path": "x64/from-zero-native-host/controller-result.json",
+          "sha256": "01ac21bf580ac0ff14769325eb326c19e25304258f2afbf99cc5c3182dd550b9"
+        },
+        {
+          "bytes": 81527,
+          "path": "x64/from-zero-native/manifest.json",
+          "sha256": "b67fbf74e17c30f655593ef1c0ce9d1f829740af401944c3eef8d6ad41094704"
+        }
+      ],
+      "build_process": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cpu_ns": 361784855000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 3381,
+        "major_faults": 362,
+        "max_rss_kib": 1939020,
+        "minor_faults": 4290457,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "8490ef15e3dba772a7f9fa98d36fa735cb314d5aa3ad2df775c699f9b437d1eb",
+        "stdout_sha256": "eddb2d7c0e671cd8fb49f48efebe301980542ce477c891dbc9c830c4d0ad214e",
+        "system_cpu_ns": 11205729000,
+        "timed_out": false,
+        "user_cpu_ns": 350579126000,
+        "voluntary_switches": 11861,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 192600534813
+      },
+      "host_limits_after": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_limits_before": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "phases": [
+        {
+          "accounting_closed": true,
+          "aggregate_parallel_pending_wait_ns": 4454228,
+          "attacker_client_thread_cpu_ns": 0,
+          "business_target_met": true,
+          "complete_native_state_equal": true,
+          "confirmation_latency_ns": 3050875408,
+          "confirmations": 1,
+          "confirmed_in_original_window": true,
+          "cooldown_publications": 0,
+          "cooldown_waits": 0,
+          "fresh_w1_host_checks": 7693,
+          "fresh_w1_host_cpu_ns": 377558162,
+          "honest_submissions_ok": 7,
+          "independent_history_pages_replayed": 7,
+          "independent_replay_cpu_ns": 501301236,
+          "invariants_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 0,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 78,
+          "pending_challenge_granted": 78,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8712933,
+                "to": "before_service_spawn",
+                "wall_ns": 79728879
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 712990299,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4001522190
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 16707303,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 16714058
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6614,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 48207446
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 79728879,
+                "process_cpu_counter_ns": 56920379
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4081251069,
+                "process_cpu_counter_ns": 769910678
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4097965127,
+                "process_cpu_counter_ns": 786617981
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 738410535,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4097965127
+            }
+          },
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "aggregate_parallel_pending_wait_ns": 61766376420,
+          "attacker_client_thread_cpu_ns": 55037636,
+          "business_target_met": true,
+          "complete_native_state_equal": true,
+          "confirmation_latency_ns": 3346073556,
+          "confirmations": 1,
+          "confirmed_in_original_window": true,
+          "cooldown_publications": 64,
+          "cooldown_waits": 64,
+          "fresh_w1_host_checks": 7693,
+          "fresh_w1_host_cpu_ns": 380763944,
+          "honest_submissions_ok": 7,
+          "independent_history_pages_replayed": 7,
+          "independent_replay_cpu_ns": 496526152,
+          "invariants_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 78,
+          "pending_challenge_closed": 12,
+          "pending_challenge_entered": 150,
+          "pending_challenge_granted": 138,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8040545,
+                "to": "before_service_spawn",
+                "wall_ns": 144819362
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 843454329,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4202637351
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 26122794,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 33030490
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6614,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 790126153
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 144819362,
+                "process_cpu_counter_ns": 798166698
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4347456713,
+                "process_cpu_counter_ns": 1641621027
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4380487203,
+                "process_cpu_counter_ns": 1667743821
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 877617668,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4380487203
+            }
+          },
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "source": {
+        "base": null,
+        "candidate": "27d6a4b19ff58de78f3f5804e44ccae41857c794",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "27d6a4b19ff58de78f3f5804e44ccae41857c794",
+        "tested_tree": "bba212bffc9debcdf4a3f82fef7e1516ba7c8593",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2994824023,
+        "tracked_entries": 40958,
+        "tracked_worktree_verified": true
+      },
+      "whole_confirmation_test_process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1715559000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 291,
+        "major_faults": 0,
+        "max_rss_kib": 67976,
+        "minor_faults": 16009,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "a44cc71646de5fe2a99718a3d61be5e05131359d000ebbc10d630771574b11bb",
+        "system_cpu_ns": 1179638000,
+        "timed_out": false,
+        "user_cpu_ns": 535921000,
+        "voluntary_switches": 23291,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 9216716711
+      }
+    },
+    {
+      "architecture": "arm64",
+      "bindings": [
+        {
+          "bytes": 423,
+          "path": "arm64/source.json",
+          "sha256": "7d715724f97fb9ca1002bc8e130e083f753598ef11113dbf9172a3cd660b62e4"
+        },
+        {
+          "bytes": 9109989,
+          "path": "arm64/from-zero-native/confirmation/report.json",
+          "sha256": "c0531c2147ea03e0249424116ce40e3fbd64373f8e0bebd50d06c72d4880b30d"
+        },
+        {
+          "bytes": 948,
+          "path": "arm64/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+          "sha256": "656dd65db1fa686b015f6f9236049b9143c4ff37e125a3fa5d79cae3aca91faf"
+        },
+        {
+          "bytes": 1685,
+          "path": "arm64/from-zero-native-host/inside-before.json",
+          "sha256": "2181f4948013e54f75ea0ef6a3cdda718efc698f2453d86fe3b3ac7eb80e1267"
+        },
+        {
+          "bytes": 1694,
+          "path": "arm64/from-zero-native-host/inside-after.json",
+          "sha256": "1d28ded0c4de04e7736bb0cee9ef21c4ab74a52039670c38b1567d93fdf848f3"
+        },
+        {
+          "bytes": 9508,
+          "path": "arm64/from-zero-native-host/controller-result.json",
+          "sha256": "38d07494dc0e8e29436caa0de045d4f4d050ae4d205bcac7787eb314cebaebb2"
+        },
+        {
+          "bytes": 81459,
+          "path": "arm64/from-zero-native/manifest.json",
+          "sha256": "1bd936ae980d2dc5242adbaef7d26493ba07c0f8fbd142066ac585f52adb0e7e"
+        }
+      ],
+      "build_process": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cpu_ns": 456367047000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 3713,
+        "major_faults": 179,
+        "max_rss_kib": 1945640,
+        "minor_faults": 5345875,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "9cab2816bf225b4e73687c3b0cec00b13ab55cccb39fc707800fc9b86e6ac867",
+        "stdout_sha256": "e53937ce5d5618f2c77cf370c41cac02a3d8e76896d9aef87886ae01a86164ea",
+        "system_cpu_ns": 15538250000,
+        "timed_out": false,
+        "user_cpu_ns": 440828797000,
+        "voluntary_switches": 6960,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 243039464351
+      },
+      "host_limits_after": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_limits_before": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "phases": [
+        {
+          "accounting_closed": true,
+          "aggregate_parallel_pending_wait_ns": 5084777,
+          "attacker_client_thread_cpu_ns": 0,
+          "business_target_met": true,
+          "complete_native_state_equal": true,
+          "confirmation_latency_ns": 1815154207,
+          "confirmations": 1,
+          "confirmed_in_original_window": true,
+          "cooldown_publications": 0,
+          "cooldown_waits": 0,
+          "fresh_w1_host_checks": 7693,
+          "fresh_w1_host_cpu_ns": 204572888,
+          "honest_submissions_ok": 7,
+          "independent_history_pages_replayed": 7,
+          "independent_replay_cpu_ns": 292763696,
+          "invariants_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 0,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 89,
+          "pending_challenge_granted": 89,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8738832,
+                "to": "before_service_spawn",
+                "wall_ns": 82465412
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 483831256,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4001620028
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 13664728,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 13693930
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6657,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 45511328
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 82465412,
+                "process_cpu_counter_ns": 54250160
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4084085440,
+                "process_cpu_counter_ns": 538081416
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4097779370,
+                "process_cpu_counter_ns": 551746144
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 506234816,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4097779370
+            }
+          },
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "aggregate_parallel_pending_wait_ns": 61464269340,
+          "attacker_client_thread_cpu_ns": 48561136,
+          "business_target_met": true,
+          "complete_native_state_equal": true,
+          "confirmation_latency_ns": 2106682700,
+          "confirmations": 1,
+          "confirmed_in_original_window": true,
+          "cooldown_publications": 64,
+          "cooldown_waits": 64,
+          "fresh_w1_host_checks": 7693,
+          "fresh_w1_host_cpu_ns": 203375512,
+          "honest_submissions_ok": 7,
+          "independent_history_pages_replayed": 7,
+          "independent_replay_cpu_ns": 291799008,
+          "invariants_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 61,
+          "pending_challenge_closed": 16,
+          "pending_challenge_entered": 164,
+          "pending_challenge_granted": 148,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 7848088,
+                "to": "before_service_spawn",
+                "wall_ns": 12016041
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 619376792,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4033820388
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 20550120,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 33004350
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6657,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 554915504
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 12016041,
+                "process_cpu_counter_ns": 562763592
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4045836429,
+                "process_cpu_counter_ns": 1182140384
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4078840779,
+                "process_cpu_counter_ns": 1202690504
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 647775000,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4078840779
+            }
+          },
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "source": {
+        "base": null,
+        "candidate": "27d6a4b19ff58de78f3f5804e44ccae41857c794",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "27d6a4b19ff58de78f3f5804e44ccae41857c794",
+        "tested_tree": "bba212bffc9debcdf4a3f82fef7e1516ba7c8593",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2994824023,
+        "tracked_entries": 40958,
+        "tracked_worktree_verified": true
+      },
+      "whole_confirmation_test_process": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1249400000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 228,
+        "major_faults": 0,
+        "max_rss_kib": 70748,
+        "minor_faults": 16757,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "17f7c3364eb95ed79d6171d8ed06eefe93a4dc0e148ff6701debbce57807ebe4",
+        "system_cpu_ns": 754957000,
+        "timed_out": false,
+        "user_cpu_ns": 494443000,
+        "voluntary_switches": 26934,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 8500901661
+      }
+    }
+  ],
+  "cost_scope": [
+    "wait4 cpu_ns and max_rss_kib describe the entire waited confirmation-test child (both phases and final serialization/write/exit); RSS includes the pre-exec image and is not Rust-only.",
+    "Phase process clocks, attacker/replay/dispatch/Host clocks are nested. Do not add them to wait4 CPU or double-add them to phase totals.",
+    "traffic+join and whole-phase intervals extend beyond the 4-second business window; they are not exact-window CPU estimates.",
+    "pending wait nanoseconds are summed across concurrent requests, not elapsed wall time or additional CPU.",
+    "Compiler/format/controller/other named-test receipts are retained separately in the raw archive. Physical I/O, energy and fees remain unknown."
+  ],
+  "currency_fees": null,
+  "energy_joules": null,
+  "jobs": {
+    "arm64": 134837923590,
+    "x64": 134837923622
+  },
+  "local_and_published_source_tree_equal": true,
+  "local_validated_commit": "cf54f385930258b601339777dc18da487a34d797",
+  "observed_at": "2026-11-18T14:01:21.571159+00:00",
+  "original_window_target": "PASSED_BOTH_ARCHITECTURES",
+  "physical_io_bytes": null,
+  "physical_network_bytes": null,
+  "production_activation": false,
+  "public_network_ready": false,
+  "pull_request": 956,
+  "qualification_scope": "One genuine run per architecture of the unchanged controlled same-operator loopback campaign; not an independent-operator, WAN, arbitrary novel-body/Sybil, production or complete-chain qualification.",
+  "schema": "chain-r21-original-window-readback-v1",
+  "source_commit": "27d6a4b19ff58de78f3f5804e44ccae41857c794",
+  "source_tree": "bba212bffc9debcdf4a3f82fef7e1516ba7c8593",
+  "workflow_run_id": 44314787729
+}
