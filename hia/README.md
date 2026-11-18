@@ -1,15 +1,43 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **42 kernel units, 21 native foundations and 130 HIA source
+inventory contains **45 kernel units, 21 native foundations and 133 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (11 partially ported and 15 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (13 partially ported and 13 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
+
+## Current control-plane and escrow owners
+
+The [control-plane implementation](src/control_plane/README.md) provides the
+original descriptor, action, plan and receipt digests, full signed 128-bit
+parameter bounds, measurement checks and private ObserverRegistry lifecycle.
+Native registration preserves generation ordering, exact capability ordering
+for same-generation equality and retained workload measurements. The complete
+unchanged original Rust crate supplies the independent comparison. The
+[development record](qualification/control-plane-development.json) retains the
+actual native artifacts, original executable, complete comparisons and allocation
+failure observations. The LocalPlanGuard signature-provider interface and live
+plan application remain the next control-plane integration work.
+
+The [private SettlementVault](src/escrow/README.md) implements every original
+public vault operation within a complete native session: full unsigned 128-bit
+balances, lock/release/slash/transfer, owner checks, pause state, both audit logs,
+independent clones and permanent request-ID replay protection. HIA owns all
+mutable state and releases the complete session before returning. The
+[development record](qualification/escrow-vault-development.json) binds the
+unchanged original crate and all of its retained tests, complete native/original
+operation histories, exact Unicode whitespace behavior and actual allocation
+refusals. Live caller authentication, streaming custody and durable settlement
+still require the Node owner.
+
+Both implementations use the pinned self-hosted HIA compiler. Their full
+runtime observations and original binaries have separate CI artifacts; the
+complete disjoint component-test consumer remains mandatory.
 
 ## Current data-availability codec
 
@@ -183,7 +211,7 @@ The original consolidated baseline audit counted 41,834 tracked files and 3,999,
 workspace contains 26 packages, with 1,621 Rust files and 702,001 physical lines
 including tests. Repository history had already been consolidated into `main`;
 these counts do not describe 26 independent final implementations.
-The later `337fe8d` tree contains 40,920 tracked files. All 130 HIA sources in
+The later `337fe8d` tree contains 40,920 tracked files. All 133 HIA sources in
 this candidate have exactly one inventory owner; no original package has met
 its retirement condition.
 

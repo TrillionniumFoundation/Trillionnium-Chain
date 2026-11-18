@@ -136,3 +136,28 @@ artifacts, local reader/control failures and corrected source-bound observations
 Large original ZIP containers and the separate complete 409,242,432-byte
 controls transport remain at explicit external paths. This dossier does not
 replace a new commit-bound hosted qualification or the full-chain retirement gates.
+
+## Control-plane and escrow final development archives
+
+These two single-volume archives retain the complete final native/original
+executions and all executed binaries. Each has a MANIFEST.json identifying every
+other regular member by size and SHA256. Both were independently decompressed
+and every member rehashed; their histories retain failures with their own source
+identities. Neither archive grants hosted qualification or old-stack retirement.
+
+| Evidence | Record | Bytes | SHA256 | Regular members |
+| --- | --- | ---: | --- | ---: |
+| [control-plane-development.tar.xz](control-plane-development.tar.xz) | [record](control-plane-development.json) | 2762380 | `f687e83b64104c847319a232b93eb0268e117ad8c4a1882c7435840ef705a0b2` | 3933 |
+| [escrow-development.tar.xz](escrow-development.tar.xz) | [record](escrow-vault-development.json) | 4366140 | `b3814f90f74e1f75991e3583cddf2617ef482e78a0ed4b7ef63b21a98e3b2356` | 1466 |
+
+Control-plane's final run6 includes the allocation observer that was missing
+from run5 retention. Escrow's partial one-of-seven negative execution remains
+INCOMPLETE. The current source snapshots, raw streams and root readbacks are
+inside these archives; v1/v2 or other parallel development trees are not active
+production implementations.
+
+The small [integration archive](native-owner-integration.tar.xz) and
+[record](native-owner-integration.json) retain the whole-tree inventory,
+migration/composition/partition and bootstrap raw logs, static source checks,
+both complete archive readbacks, original offline-build failure and parent CI
+observations. These controls do not substitute for fresh hosted runtime tests.

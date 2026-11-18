@@ -487,6 +487,36 @@
       "tests": [
         "hia/tests/test_rs46.py"
       ]
+    },
+    {
+      "id": "control-plane/core",
+      "node_integration_complete": false,
+      "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
+      "source": "hia/src/control_plane/core.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_plane.py"
+      ]
+    },
+    {
+      "id": "control-plane/registry",
+      "node_integration_complete": false,
+      "scope": "Private native ObserverRegistry lifecycle with complete register/observe/lookup semantics, generation/substitution refusal and owned allocation failure cleanup; live control-plane I/O and plan guard remain separate",
+      "source": "hia/src/control_plane/registry.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_plane.py"
+      ]
+    },
+    {
+      "id": "escrow/vault",
+      "node_integration_complete": false,
+      "scope": "Private native SettlementVault complete-session lifecycle: full u128 balances, permanent lock IDs, exact Unicode validation, all public methods, isolated clones and both audit logs; live caller authentication and durable Node settlement remain separate",
+      "source": "hia/src/escrow/vault.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_escrow.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -624,12 +654,15 @@
       "state": "not-ported"
     },
     {
-      "components": [],
+      "components": [
+        "control-plane/core",
+        "control-plane/registry"
+      ],
       "legacy_path": "trillionnium/crates/trnm-control-plane",
       "module": "M16",
       "package": "trnm-control-plane",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [],
@@ -724,12 +757,14 @@
       "state": "not-ported"
     },
     {
-      "components": [],
+      "components": [
+        "escrow/vault"
+      ],
       "legacy_path": "trillionnium/crates/trnm-escrow-vault",
       "module": "M12",
       "package": "trnm-escrow-vault",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [

@@ -1,0 +1,67 @@
+{
+  "archive": {
+    "bytes": 50292,
+    "member_index": "MANIFEST.json",
+    "members": 20,
+    "path": "native-owner-integration.tar.xz",
+    "readback": "PASS",
+    "sha256": "fa9dd67f7c6bb06b2f72b80f1297e8166dfb843d6e2c81b5739eb70b93d64d7c"
+  },
+  "base_commit": "5a71deab1f254fff3297b482a96d86fbc8965b89",
+  "components": [
+    "control-plane/core",
+    "control-plane/registry",
+    "escrow/vault"
+  ],
+  "current_source_hosted_execution": "NOT_RUN at preparation",
+  "integration_controls": {
+    "bootstrap": {
+      "gates": 42,
+      "groups": 4,
+      "invocations": 168,
+      "status": "PASS"
+    },
+    "discovery_only": {
+      "execution": "NOT_RUN",
+      "general": 413,
+      "state_root": 7,
+      "tests": 420
+    },
+    "local_offline_reference_build": {
+      "full_workspace_build_test_clippy_claimed": false,
+      "reason": "rand_core 0.10.1 absent from offline cache",
+      "status": "FAIL"
+    },
+    "migration_composition_partition": {
+      "status": "PASS",
+      "tests": 33
+    },
+    "original_cargo_metadata": "PASS",
+    "static": {
+      "all_timeout_minutes": 20,
+      "markdown_links_checked": 791,
+      "status": "PASS",
+      "workflow_jobs": 54
+    }
+  },
+  "inventory": {
+    "foundations": 21,
+    "hia_sources": 133,
+    "kernels": 45,
+    "not_ported_packages": 13,
+    "open_gates": 9,
+    "partially_ported_packages": 13,
+    "retained_packages": 26,
+    "retired_packages": 0
+  },
+  "old_stack_can_be_removed": false,
+  "parent_codeql_export": {
+    "conclusion": "success",
+    "head_sha": "5a71deab1f254fff3297b482a96d86fbc8965b89",
+    "run_id": 44300744975,
+    "status": "completed"
+  },
+  "production_activation": false,
+  "schema": "trnm.hia.native-owner-integration.v1",
+  "whole_chain_native": false
+}

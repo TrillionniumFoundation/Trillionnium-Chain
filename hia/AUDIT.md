@@ -1,5 +1,65 @@
 # Whole-tree inventory and HIA migration audit
 
+## Private control-plane and escrow owners — 2026-11-18
+
+The audited parent is `5a71deab1f254fff3297b482a96d86fbc8965b89`, whose
+tracked tree contains 40,931 entries. This increment has **45 kernels, 21 native
+foundations and 133 HIA sources**, each with one inventory owner. Thirteen of
+26 original packages are partially ported, thirteen are not ported, and zero
+whole packages are retired. All nine whole-project gates remain OPEN.
+
+The [control-plane record](qualification/control-plane-development.json) binds
+15/15 actual native tests, 2,577 native calls, 2,564 byte comparisons with the
+complete original Rust implementation and all five retained original tests.
+Its private registry executes 1,542 history commands. Seven real allocator
+observer processes cover all three owned allocations, capacity and framing
+refusals, without leaked allocations or partial publication. All 3,904 final
+run files and 33,554 content references were independently reread. The complete
+archive retains the actual native, original and allocator-observer binaries.
+The old teardown reporter defect and missing temporary observer artifact are
+recorded as predecessor limitations; run6 reran the complete roster after both
+were fixed. LocalPlanGuard and an actual signature provider remain separate.
+
+The [escrow record](qualification/escrow-vault-development.json) binds 7/7 tests,
+194 complete native/original sessions and 19,877 public operations, all byte
+equal. The unchanged original vault and audit suites pass 36/36 and 3/3 tests.
+All 13 actual allocation failures preserve external output, release every
+owned allocation and perform no invalid free. Fifty-six malformed, UTF-8 and
+capacity controls pass. A separate one-method run has a successful unittest
+exit but remains INCOMPLETE against the seven-method roster. Full u128 values,
+error precedence, private Clone isolation and complete audit fields are tested.
+This API owns a finite full session; live durable Node settlement remains open.
+
+The two final archives were completely decompressed and every regular member
+rehashed: 3,933 control-plane members and 1,466 escrow members. Only one final
+implementation directory exists for each owner. Historical failures and source
+snapshots are evidence, not alternate production implementations. The audited
+tracked tree has no target/node_modules/cache/object/temp debris and no duplicate
+nonempty active HIA source blobs. No required evidence or unreplaced original
+package is deleted merely to reduce repository size.
+
+[Integration controls](qualification/native-owner-integration.json) pass 33 migration/composition/partition tests and all four
+bootstrap groups, covering 168 invocations across the unchanged 42 native
+gates. Discovery identifies 420 component tests, partitioned into 413 general
+and seven State-root tests; discovery is not execution. The workflow remains
+54 jobs with its original 20-minute limits. New complete original/native
+artifacts are uploaded separately; the strict existing six-file consumer is
+unchanged. C qualification sources join the global before/after source map.
+The original Cargo metadata graph passes. A separate local offline reference
+build fails because rand_core 0.10.1 is absent from the cache; no full workspace
+build, test or Clippy PASS is claimed for that attempt.
+
+The CodeQL duplicate-page repair at the parent commit requires two fresh
+complete equal snapshots within the original deadline and retains unstable
+raw pages. Its [exact-source export run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44300744975)
+completed successfully. Both preceding 1fb6a0a HIA runs completed 54/54 jobs;
+new hosted qualification is still required for this increment. Original
+CONFIRMATION_TARGET and PUBLIC_REQUEST_DEADLINE business failures remain open.
+The 0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and sixteen-attacker service
+limits are unchanged. New work continues on governance, peer lease and local
+plan guard; persistent Node/Paid, PQ/TLS, cross-target, model and research gates
+still prevent old-stack retirement.
+
 ## RS46 native codec, whole-tree recheck and deadline repair — 2026-11-18 UTC
 
 The audited base is `337fe8df54a5af59e10a1aea129022702b40b89d`, with 40,920

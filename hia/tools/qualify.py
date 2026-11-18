@@ -31,7 +31,7 @@ def digest(raw):
 def sources():
     paths = sorted((ROOT / "hia").rglob("*.hepta"))
     paths += sorted((ROOT / "hia/tools").glob("*.py"))
-    for pattern in ("*.py", "*.rs", "*.json"):
+    for pattern in ("*.py", "*.rs", "*.json", "*.c"):
         paths += sorted((ROOT / "hia/tests").rglob(pattern))
     for name in ("platform", "storage"):
         directory = ROOT / "hia" / name
@@ -45,7 +45,8 @@ def sources():
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
     for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives",
-                 "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability"):
+                 "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
+                 "trnm-control-plane", "trnm-escrow-vault"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths.append(crate / "Cargo.toml")
@@ -85,7 +86,8 @@ def sources():
         "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
         "trillionnium/crates/trnm-pon-node/src/lib.rs",
         "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md",
-        "hia/src/data_availability/README.md")]
+        "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
+        "hia/src/escrow/README.md")]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
@@ -169,7 +171,7 @@ def main():
             "skipped": [(str(test), why) for test, why in result.skipped]},
         "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
                                                for (b, s), count in sorted(calls.items())],
-        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. RS46 executes the original 4 MiB chunk and 6292022-byte six-shard input through its separately bounded native runner; these byte calls are outside the shared-runner counts. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original, transport-original and RS46-original controls run in their own mandatory workflow steps.",
+        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. RS46 executes the original 4 MiB chunk and 6292022-byte six-shard input through its separately bounded native runner; these byte calls are outside the shared-runner counts. Escrow executes private balance/lock/event/clone sessions through its bounded native runner, including every allocation failure; those calls and their complete original Rust comparisons are retained in the dedicated escrow artifact and are outside shared-runner counts. Control-plane value and private-registry suites retain complete actual original Rust and native observations in their own artifact. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original, transport-original and RS46-original controls run in their own mandatory workflow steps.",
         "builds": builds, "wall_seconds": time.monotonic() - started,
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),

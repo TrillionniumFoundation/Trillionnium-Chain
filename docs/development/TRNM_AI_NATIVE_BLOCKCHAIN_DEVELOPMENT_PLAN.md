@@ -1,3 +1,19 @@
+## 2026-11-18 — 控制面与托管的私有 HIA owner、完整原始对照及证据闭合
+
+本轮父提交 `5a71deab1f254fff3297b482a96d86fbc8965b89`，基线跟踪树40,931项。当前 **45 kernels /21 native foundations /133 HIA sources**，逐源唯一归属；26原Rust包中13部分迁移、13未迁移，**0退役、9全项目门OPEN**。独立工作树保留其它会话的TCM1、Node与Work/Paid开发，不覆盖并发修改。
+
+[控制面记录](../../hia/qualification/control-plane-development.json)覆盖全部公开值操作、原始domain/part framing与私有ObserverRegistry。最终run6完整15/15 PASS、2577实际native calls、2564原Rust逐字对照、1542 registry commands、原5/5 retained tests。原capability顺序、代际替换、measurement保留、全i128与未校验digest域均保持。三处实际calloc拒绝及容量/格式控制不泄漏、不发布部分结果。发现tearDown错误取success的假PASS风险后改读最终TestResult，7种实际报告器结果负控通过；发现漏存临时allocator observer后二次完整执行并留存原binary，旧run3/run5限制按自身来源保留。根独立读回3904文件及33554引用，实际工具链、native/original/observer产物全部在最终档中。
+
+[托管记录](../../hia/qualification/escrow-vault-development.json)覆盖完整SettlementVault公开方法、多个私有owner及Clone/Drop。最终7/7 PASS、194会话、19877公开操作逐字等原实现；原vault36/36与audit3/3 retained tests通过。完整u128、原错误优先级、Unicode White_Space、零余额、终态request永久占用、完整raw/normalized审计与原子拒绝均保留。13处真实分配失败全部释放且无非法free，56格式/UTF-8/容量控制通过；单测1/7运行虽然unittest返回0，报告仍为INCOMPLETE，不冒充全套通过。真实rustup shim选择缺陷已修复并有回归控制。
+
+两份最终压缩档共5399普通成员，根已逐文件完整解压、核size/SHA及单一XZ/tar尾部；正式目录各只保留一个实现。报告与历史失败是可重放证据，不能当垃圾删除。活跃HIA未发现同blob重复，基线跟踪树无target/node_modules/pycache/对象或临时垃圾；尚需原实现和验收依赖的文件保留。
+
+整合33项migration/composition/partition与四组bootstrap共168次真实调用PASS，原42独立bootstrap门不改；组件完整发现420项（413general+7State-root），发现不等于已执行。CI仍54jobs、各20分钟；新完整二进制与raw证据单独上传，原六文件consumer保持严格。C资格源加入before/after。Cargo metadata原图通过；本地额外offline参考构建因缓存缺rand_core0.10.1失败，未伪报全workspace/test/Clippy通过。
+
+父提交CodeQL分页修复的[export44300744975](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44300744975)真实SUCCESS，仍需原期限内两份新的完整相等快照，不以去重代替稳定性。前驱1fb两套HIA真实54/54通过；当前新增源须自己的提交级CI。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE继续FAIL，0.25CPU/2GiB/0swap/256PID/4s/16attacker均不放宽。
+
+继续并行完成governance guard、peer lease与LocalPlanGuard实际provider边界；托管有限session不能冒充live Node持久owner，值校验不能冒充签名授权。持续接真实Some/CheckedApply/COMMIT/reorg/recovery及同请求Paid/Host，推进剩余包、PQ/TLS、跨平台、模型与研究门，原验收实际通过后才退役。本文仍是唯一开发计划，只更新实际变化的source pin，不把开发PASS提升为whole_chain_native、old_stack_can_be_removed或production_activation。
+
 ## 2026-11-18 UTC — 全树复核、原生 RS46 与 Node 写入期限闭合
 
 本轮基线为 `337fe8df54a5af59e10a1aea129022702b40b89d`，完整 Git 树40,920文件。当前增量为 **42 kernels /21 native foundations /130 HIA sources**，逐源单一归属；26原Rust包中11个部分迁移、15个未迁移，**0退役、9全项目门OPEN**。storage候选已完全包含在基线，无重复合并；根README保持既有零字节约束。旧运行栈只有在完整替代与原验收成功后才能退役。

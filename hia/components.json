@@ -1688,7 +1688,60 @@
         "source": "src/crypto/sha512_arena.hepta"
       }
     ],
+    "src/escrow/vault.hepta": [
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      }
+    ],
+    "src/control_plane/core.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ]
+      }
+    ],
     "src/data_availability/rs46.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ]
+      }
+    ],
+    "src/control_plane/registry.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_be",
+          "cp_copy",
+          "cp_wout",
+          "cp_zero",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_compare",
+          "cp_sort",
+          "cp_hash",
+          "cp_descriptor_frame",
+          "cp_descriptor",
+          "cp_measurement",
+          "cp_domain_descriptor"
+        ]
+      },
       {
         "source": "src/crypto/sha256_stream.hepta",
         "functions": [
