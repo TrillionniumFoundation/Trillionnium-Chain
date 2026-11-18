@@ -365,3 +365,54 @@ fn absent_or_unfinished_rejection_observation_never_claims_a_cache_hit() {
     assert!(!observed.completed);
     assert!(observed.cache.is_none());
 }
+
+#[test]
+fn scheduling_hint_requires_a_completed_math_refusal_not_success_or_cancellation() {
+    let directory = tempfile::tempdir().unwrap();
+    let clock = crate::ingress::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let source = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let valid = source
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            clock - 50,
+            4096,
+        )
+        .unwrap();
+    let mut bad = valid.clone();
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+    bad.proof[offset..offset + 4].copy_from_slice(&u32::from(word == 0).to_le_bytes());
+    let cache = RejectionCache::new(8, Duration::from_secs(2)).unwrap();
+    let hint = Cell::new(false);
+    assert!(verify(valid, &cache, &mut |_| Ok(()), None, Some(&hint)).is_ok());
+    assert!(!hint.get());
+    let cancelled = verify(
+        bad.clone(),
+        &cache,
+        &mut |_| Err("PUBLIC_REQUEST_CANCELLED".into()),
+        None,
+        Some(&hint),
+    );
+    assert!(matches!(cancelled, Err(error) if error.is(crate::ErrorCode::PublicRequestCancelled)));
+    assert!(!hint.get());
+    let refused = verify(bad.clone(), &cache, &mut |_| Ok(()), None, Some(&hint));
+    assert_eq!(refused.err().unwrap().to_string(), "WORK:Product");
+    assert!(hint.replace(false));
+    let cancelled_hit = verify(
+        bad,
+        &cache,
+        &mut |_| Err("PUBLIC_REQUEST_CANCELLED".into()),
+        None,
+        Some(&hint),
+    );
+    assert!(
+        matches!(cancelled_hit, Err(error) if error.is(crate::ErrorCode::PublicRequestCancelled))
+    );
+    assert!(
+        !hint.get(),
+        "a found mathematical fact is insufficient until it returns"
+    );
+}

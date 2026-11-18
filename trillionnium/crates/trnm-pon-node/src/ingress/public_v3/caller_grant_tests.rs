@@ -546,7 +546,7 @@ fn concurrent_caller_grants_linearize_across_the_shared_intake() {
 }
 
 #[test]
-fn resource_revision_r20_has_exact_caller_limit_and_fresh_signed_identifiers() {
+fn resource_revision_r21_has_exact_caller_limit_and_fresh_signed_identifiers() {
     assert_eq!(intake::MAX_CALLER_MUTATION_GRANTS, 2);
     assert_eq!(MAX_MUTATING_GRANTS, 8);
     assert_eq!(MAX_READ_GRANTS, 8);
@@ -554,18 +554,18 @@ fn resource_revision_r20_has_exact_caller_limit_and_fresh_signed_identifiers() {
     for (bits, expected, previous) in [
         (
             8,
+            "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
             "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
-            "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
         ),
         (
             12,
+            "9eb8b90a2b797a4cce6c35eb3da0dfe3eec6f125b076c353301b2d82ed9d9377",
             "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
-            "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
         ),
         (
             16,
+            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a",
             "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
-            "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
         ),
     ] {
         let policy = PublicPolicy::new(bits, Duration::from_secs(2)).unwrap();

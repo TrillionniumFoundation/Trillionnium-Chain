@@ -1716,6 +1716,13 @@ MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS
 
+# Exact native refusal scheduling stays in the source closure. These pins
+# cannot grant a successful business window or turn a hint into a verdict.
+PUBLIC_EXACT_BODY_DELAY_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs",
+))
+NATIVE_REQUIRED_PATHS |= PUBLIC_EXACT_BODY_DELAY_REQUIRED_PATHS
+
 
 class IntegrityError(ValueError):
     pass
