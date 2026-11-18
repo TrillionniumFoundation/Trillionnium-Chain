@@ -1,0 +1,163 @@
+{
+  "budget": {
+    "current_lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+    "failure": "IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED",
+    "first_mismatch": "trillionnium/Cargo.lock",
+    "fixed_mode_job_passed": 134752942864,
+    "historical_lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "native_campaign_executed": false,
+    "other_mismatches": [
+      "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "budget-before-v2 group history_import_detached_budget_tests.rs"
+    ],
+    "preflights_passed": true,
+    "repair_within_existing_comparison": "BLOCKED: preserve immutable historical subject and exact lock/test/profile equality; no target or guard weakened",
+    "run": 44290143107,
+    "source_attribution": "all compared control inputs including checker/workflow are byte-identical at base 1fb6a0a6, 7e4b96d4 and b060c97a; the historical before subjects differ"
+  },
+  "cleanup": {
+    "annotation": "The job was not acquired by Runner of type hosted even after multiple attempts",
+    "capacity_notice": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+    "caused_by_phase_cost_or_inventory": false,
+    "linux_and_aggregate_controls": "six jobs succeeded",
+    "mac_jobs": [
+      134752941440,
+      134752941510
+    ],
+    "result": "CANCELLED_WITHOUT_RUNNER_OR_STEPS",
+    "run": 44290142950
+  },
+  "head": "b060c97a6cebc1bfaa85fb5b54274ba01a1e689a",
+  "observed_at_utc": "2026-11-18 11:36:23 UTC",
+  "original_archives": [
+    {
+      "bytes": 7129,
+      "file": "b060-budget-before-v2.zip",
+      "sha256": "1b8ebdad2b4860c2d197d09e54479bad7cda694658b737c3bca34c07702f22df"
+    },
+    {
+      "bytes": 7051,
+      "file": "b060-budget-pool-before-v2.zip",
+      "sha256": "40e42a3b306fcd2662fb128c497da503e3335e30e1183e20f51f8b0bcdc5022e"
+    },
+    {
+      "bytes": 6916,
+      "file": "b060-budget-pool-scan-before.zip",
+      "sha256": "f0123130deee41162c803b2f16ef1aa457ae68aeeb6a3da55ef81bd1d4cb785b"
+    },
+    {
+      "bytes": 13712,
+      "file": "b060-pq-system-head.zip",
+      "sha256": "4814331730535d0e5d9732fabcd47665b7ca640c28b990d1ae47d195d31f7382"
+    }
+  ],
+  "originals_archive": {
+    "bytes": 74556,
+    "file": "b060-ci-followup-originals.tar.xz",
+    "sha256": "90ad49db262d41cd45d4f7d9f1ae30edf73edc1794d6c927274af893b43c57c7"
+  },
+  "pin_refresh": {
+    "all_non_inventory_contract_fields_unchanged": true,
+    "all_pins_match_original_committed_git_objects": true,
+    "candidate_corpus_sha256": "5edd8d9cb08c85cf9a4ca5965c6303833ee0861ad0793534de08afdf42cbce18",
+    "changes": [
+      {
+        "after": "efc7fbc5831f03960808596fc1e71799b889bfc0",
+        "before": "4d705f3eaa3e3f5163f7a4310d81e03dfba16b30",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "sha256": "2a8640e2e7c6fa6e1d09f737e76d71f3c064c3c9f4be2d7a2654f6b432b03ec7"
+      },
+      {
+        "after": "88f08060a6e36c29257cf9e9f79a03ee3afce1b9",
+        "before": null,
+        "path": "scripts/ci/from_zero_phase_cost.py",
+        "sha256": "3d9e7f7323a88a39853629e31b19faedd84d8b5d8762cc97074aaeb39ace7cfc"
+      },
+      {
+        "after": "13c83fd813e2d5864aa355c453d6a594606d7928",
+        "before": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+        "path": "scripts/ci/run_from_zero_native.py",
+        "sha256": "87cf7fbeb89186b2c1207b232805094e6343224c543c4d210f63609d42bb24ba"
+      },
+      {
+        "after": "a9c6e2758635a075ee088121160f6df9092687a1",
+        "before": null,
+        "path": "scripts/ci/test_from_zero_phase_cost.py",
+        "sha256": "2dcbb3caa549b1204d4eaa383932d3ec55ba7ccea4adead10164b34bcd21b366"
+      },
+      {
+        "after": "118ebd06db99a06197c4618be4e6881ab725b58e",
+        "before": "66733f08afcc667baedaafcdbc74660fa5c90891",
+        "path": "scripts/ci/test_run_from_zero_native.py",
+        "sha256": "800a0a35552a8f15934f33e25ea33e2ed691266840e9302bbc1b0ab018d81a14"
+      },
+      {
+        "after": "912645bedda7ba2910b72f6ab13e411ef6e9ba9a",
+        "before": "e9e69fe28cc8b9f2856f68b13546a1378e8b8a0c",
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "sha256": "3cf9f58d8d5688b398ab9a37c9b27b100a7cd6fddf85ade958da328b7890a220"
+      },
+      {
+        "after": "96f188af59dc1d3a4928451c2b2b7b8112aa1bbb",
+        "before": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "sha256": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641"
+      },
+      {
+        "after": "89c9b6fda6d2ab6c464b45862aaa9a7517deced4",
+        "before": null,
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/phase_cost.rs",
+        "sha256": "222a64ff20bbeaa96ba3647f3a418b461b43d37071c324dcab5f61fe147d0de6"
+      }
+    ],
+    "head": "b060c97a6cebc1bfaa85fb5b54274ba01a1e689a",
+    "original_corpus_sha256": "515cf8760720ab9a96d8699c9e8674172d4a24c7732f9af6b91202e971216654",
+    "pinned_blobs_after": 2616,
+    "pinned_blobs_before": 2613,
+    "schema": "chain-pq-source-pin-refresh-v1",
+    "source_byte_check_on_full_checkout_pending_CI": true,
+    "status": "research-only-hold-no-go"
+  },
+  "pin_refresh_full_checkout_gate": "Pending new exact-head CI; local sparse checkout byte gate cannot stand in for this.",
+  "pin_refresh_negative_controls": {
+    "argv": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_pq_research_integration.CorpusGateTests.test_changed_signature_or_source_refuses",
+      "test_pq_research_integration.CorpusGateTests.test_missing_source_refuses",
+      "test_pq_research_integration.CorpusGateTests.test_missing_source_pin_refuses",
+      "test_pq_research_integration.CorpusGateTests.test_new_unpinned_pq_implementations_fail_closed",
+      "test_pq_research_integration.CorpusGateTests.test_canonical_provider_manifest_change_is_refused_even_if_repinned",
+      "test_pq_research_integration.CorpusGateTests.test_all_global_acceptance_flags_stay_false"
+    ],
+    "elapsed_seconds": 1.2190672159922542,
+    "exit_code": 0,
+    "scope": "existing negative source pins and false qualification fixture controls; not whole checkout source acceptance"
+  },
+  "pq_source": {
+    "actual_source": "b060c97a6cebc1bfaa85fb5b54274ba01a1e689a",
+    "cause": "five stale pinned_blobs entries after this branch changed cost harness and readout sources; separate from git source mutation",
+    "failure": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "job": 134753017347,
+    "repair": "refresh exactly five changed source blobs and pin three new cost source files; preserve research-only-hold-no-go and every qualification flag",
+    "run": 44290143090,
+    "working_tree_before_and_after_verified": true
+  },
+  "qualification": {
+    "new_baseline_result_known": false,
+    "no_workflow_exit_can_substitute_business_success": true,
+    "original_7e4_business_pressure_confirmations": {
+      "arm64": "0/1",
+      "x64": "0/1"
+    }
+  },
+  "required_baseline": {
+    "business_result": null,
+    "run": 44290142943,
+    "status": "pending"
+  },
+  "schema": "chain-b060-ci-red-attribution-v1"
+}
