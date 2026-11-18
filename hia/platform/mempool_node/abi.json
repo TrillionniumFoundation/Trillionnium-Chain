@@ -1,0 +1,107 @@
+{
+  "authority": {
+    "external_parent": false,
+    "external_prepared": false,
+    "external_ready": false,
+    "external_root": false,
+    "external_state": false,
+    "external_verified": false,
+    "one_shared_state_heap": true,
+    "private_source": "held disk -> JSON/Value/State",
+    "ready_consumed": true
+  },
+  "budgets": {
+    "cleanup_seconds": 3,
+    "compiler_stage_seconds": 30,
+    "max_pending_records": 256,
+    "runtime_child_seconds": 240
+  },
+  "open": [
+    "Some/CheckedApply",
+    "live Paid/Host permit",
+    "durable local pool",
+    "successor admission",
+    "Node.db COMMIT",
+    "4-second / 16-request service"
+  ],
+  "ownership_order": {
+    "commitment": [
+      "BeforeCommitment",
+      "actual Prepared",
+      "AfterCommitment",
+      "BeforeOutput",
+      "private Output/Prepared pair"
+    ],
+    "drop": [
+      "Prefix drop",
+      "Parent drop",
+      "State stats",
+      "View drop",
+      "private buffers clear"
+    ],
+    "normal_m05": [
+      "Prepared drop",
+      "Output State drop",
+      "publish facts"
+    ]
+  },
+  "private_actions": {
+    "10": "M05 kernel",
+    "1008": "M05 State return discriminator",
+    "11": "M05 State continuation",
+    "8": "Parent/Prepared operation",
+    "9": "Parent/Prepared completion"
+  },
+  "private_slots": {
+    "active_height": 192,
+    "base": 16,
+    "bind_sequence": 648,
+    "context_bytes": 16384,
+    "context_length": 56,
+    "m05_begin": 768,
+    "m05_cleanup_reason": 864,
+    "m05_temp_output": 824,
+    "m05_temp_prepared": 832,
+    "output_state": 280,
+    "parent": 640,
+    "prefix_live": 216,
+    "prepared": 328,
+    "retirement_stats": 656,
+    "view": 160
+  },
+  "public_transport": {
+    "bootstrap": "NGBOOT01 / 64 bytes / held directory descriptor",
+    "methods": {
+      "1": "read actual base",
+      "10": "canonical Parent observation",
+      "2": "close",
+      "3": "actual parent record",
+      "4": "checked Prefix new",
+      "5": "raw execute",
+      "7": "Prefix drop",
+      "8": "pending preview open/validate/drop",
+      "9": "actual Prepared observation"
+    },
+    "request": "length-u64 + NBINPUT1 + method-u64 + payload"
+  },
+  "runtime_images": 24,
+  "schema": "trnm.one-node-production-m05-abi.v1",
+  "source_ownership": {
+    "crypto_joint": "hia/src/crypto/ed25519_verify_joint.hepta",
+    "mempool_node": [
+      "owner.hepta",
+      "node_methods.hepta"
+    ],
+    "node_commitment": [
+      "owner.hepta"
+    ],
+    "node_owner": [
+      "context.hepta",
+      "disk_bridge.hepta",
+      "json_value.hepta",
+      "linux_emitter.hepta",
+      "prefix_bridge.hepta",
+      "producer.hepta"
+    ]
+  }
+}

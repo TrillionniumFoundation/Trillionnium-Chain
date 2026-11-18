@@ -1,3 +1,15 @@
+## 单一磁盘 Node/M05 集成与实际资格修复
+
+父提交 `af044d854f6e0baa6d085822adbd692944c8a883`。本增量整合已存在的唯一 Node/M05 owner，而非另造竞争实现；当前 41 kernels /21 native foundations /129 HIA，26 Rust 包保留、0退役、9整项目门 OPEN。原 canonical 工作树保留；独立副本先后核对全部48份未提交源的SHA后续接。
+
+Node 从实际持有的磁盘目录及完整字节构造私有 State；真实 PNX1/SHA/Ed25519 和 nonce 检查进入 typed admission、Ready消费及相同 Parent/Prefix。仍是 None prior；Some/CheckedApply、successor admission、Node.db COMMIT、reorg/replay/outbox/local-pool 和同请求 Paid/Host 尚须继续接线。
+
+本次正面修复两项实测缺陷：原 Session.write 会在不读输入的进程上跨过绝对期限；原公开 reader 会接受重绑report SHA后的错误schema和越界scope。现在非阻塞写、可写等待与短写重试共用原deadline，原240s/3s不变；五分区报告必须满足精确字段、schema、scope和类型。10项I/O控制及361项source控制已实际通过。旧阻塞、四种完整reader错误接受和首次入口导入失败全部保留，纠正结果不改写旧运行身份。
+
+工作流53jobs/41bootstrap，原四组覆盖164个入口负/正控；新增Node smoke期限控制，实际Work inline 22组及新增10项均执行通过。五个native分区和两份原Rust对照使用新完整源图重新运行；源码控制、独立读回和真实runtime结果分别记录，不能继承旧图绿灯。
+
+父提交的push44048146851与PR44048170791已实际46/46成功；同head required protocol的16-worker压力仍CONFIRMATION_TARGET。无压力1/1、2.789328866s；压力0/1。未改变原0.25CPU/2GiB/zero swap/256PID/4s/16条件、保护分支或旧失败状态。全量HIA原生替代和退役条件仍由原九门约束。
+
 ## 2026-11-17 UTC — bd620 实测结果与 Work 工具链前置修复
 
 父提交 `bd6201646f92a37edc641b2ab0ae8032507b5784`，tree `8a273894649be8393e2b1dc493d7482b2a07d6c0`。仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。本轮运行定义只修改 Work native 和 original 两个 job 的工具链安装与路径选择；46 jobs、36 bootstrap、全部测试与20分钟期限保持原值。

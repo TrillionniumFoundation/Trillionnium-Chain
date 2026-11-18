@@ -1285,6 +1285,408 @@
         ],
         "source": "src/work/verify.hepta"
       }
+    ],
+    "platform/mempool_node/node_methods.hepta": [
+      {
+        "functions": [
+          "nb_capture",
+          "nb_complete",
+          "nb_copy",
+          "nb_fail",
+          "nb_issue",
+          "nb_need",
+          "nb_parent_accept",
+          "nb_parent_begin",
+          "nb_parent_call",
+          "nb_parent_retire_start",
+          "nb_prefix_emit",
+          "nb_prefix_finish",
+          "nb_prefix_initialize_to",
+          "nb_prepared_ok",
+          "nb_put",
+          "nb_read",
+          "nb_state",
+          "nb_state_ok",
+          "nb_word",
+          "nb_zero"
+        ],
+        "source": "platform/node_owner/producer.hepta"
+      }
+    ],
+    "platform/mempool_node/owner.hepta": [
+      {
+        "functions": [
+          "tg_allocate_slot",
+          "tg_allowed",
+          "tg_copy",
+          "tg_empty",
+          "tg_equal",
+          "tg_equal_input",
+          "tg_erase",
+          "tg_g",
+          "tg_has_slot",
+          "tg_move",
+          "tg_p",
+          "tg_take",
+          "tg_zero"
+        ],
+        "source": "platform/mempool_typed/typed_fixture.hepta"
+      }
+    ],
+    "platform/node_commitment/owner.hepta": [
+      {
+        "functions": [
+          "eh_alloc",
+          "eh_free",
+          "eh_link",
+          "eh_unlink",
+          "em_first",
+          "em_init",
+          "em_next"
+        ],
+        "source": "platform/execution_state/map.hepta"
+      },
+      {
+        "functions": [
+          "eo_find",
+          "eo_id",
+          "eo_new",
+          "eo_reply",
+          "eo_root_extent",
+          "eo_unlink"
+        ],
+        "source": "platform/execution_state/owner.hepta"
+      },
+      {
+        "functions": [
+          "ev_ascii",
+          "ev_g",
+          "ev_g32",
+          "ev_json_atom",
+          "ev_json_close",
+          "ev_json_size",
+          "ev_json_write",
+          "ev_move",
+          "ev_p",
+          "ev_p32",
+          "ev_r",
+          "ev_string_size",
+          "ev_string_write",
+          "ev_validate"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "csr_put32",
+          "csr_tag_10",
+          "csr_tag_6",
+          "csr_tag_7",
+          "csr_tag_9"
+        ],
+        "source": "src/protocol/state_root_compact.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "platform/node_owner/context.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_error",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "mb_literals",
+          "mb_literals_0",
+          "mb_literals_1",
+          "mb_literals_2",
+          "mb_literals_3"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/node_owner/disk_bridge.hepta": [
+      {
+        "functions": [
+          "ng_begin_scan",
+          "ng_boot",
+          "ng_boot_0",
+          "ng_boot_1",
+          "ng_boot_2",
+          "ng_boot_3",
+          "ng_boot_4",
+          "ng_boot_5",
+          "ng_boot_6",
+          "ng_cold",
+          "ng_cold_0",
+          "ng_cold_1",
+          "ng_cold_2",
+          "ng_control",
+          "ng_copy",
+          "ng_cut",
+          "ng_equal",
+          "ng_fail",
+          "ng_fd_identity",
+          "ng_file_stat",
+          "ng_g",
+          "ng_go",
+          "ng_initialize",
+          "ng_initialize_0",
+          "ng_initialize_1",
+          "ng_initialize_2",
+          "ng_initialize_3",
+          "ng_initialize_4",
+          "ng_initialize_5",
+          "ng_initialize_6",
+          "ng_initialize_7",
+          "ng_inside",
+          "ng_inventory",
+          "ng_io",
+          "ng_issue",
+          "ng_name",
+          "ng_p",
+          "ng_path",
+          "ng_r",
+          "ng_r32",
+          "ng_record",
+          "ng_requests",
+          "ng_requests_0",
+          "ng_requests_1",
+          "ng_requests_2",
+          "ng_requests_3",
+          "ng_scan",
+          "ng_scan_0",
+          "ng_scan_1",
+          "ng_scan_2",
+          "ng_stdio",
+          "ng_stdio_0",
+          "ng_stdio_1",
+          "ng_stdio_alias",
+          "ng_take",
+          "ng_zero"
+        ],
+        "source": "platform/genesis_store/owner_policy.hepta"
+      }
+    ],
+    "platform/node_owner/json_value.hepta": [
+      {
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "platform/node_owner/linux_emitter.hepta": [],
+    "platform/node_owner/prefix_bridge.hepta": [
+      {
+        "functions": [
+          "config_limit",
+          "go",
+          "state_call"
+        ],
+        "source": "platform/execution_batch/prefix.hepta"
+      },
+      {
+        "functions": [
+          "px_begin",
+          "px_cleanup",
+          "px_output"
+        ],
+        "source": "platform/execution_batch/scoped_prefix.hepta"
+      },
+      {
+        "functions": [
+          "bg",
+          "capture_next",
+          "capture_start",
+          "copy_start",
+          "failure",
+          "input_less",
+          "mc",
+          "mg",
+          "mi",
+          "mn",
+          "mp",
+          "mt",
+          "mz",
+          "px_ack",
+          "px_apply",
+          "px_callback",
+          "px_capture",
+          "px_component",
+          "px_copy",
+          "px_finalize",
+          "px_parse_transactions",
+          "px_restore",
+          "px_write_rows",
+          "request",
+          "restore_start",
+          "row_admit",
+          "state_ok",
+          "work_compare"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      }
+    ],
+    "platform/node_owner/producer.hepta": [
+      {
+        "functions": [
+          "np_begin",
+          "np_capture_prefix",
+          "np_cleared",
+          "np_command",
+          "np_disk",
+          "np_emit",
+          "np_finalize",
+          "np_mm_ok",
+          "np_mm_reply",
+          "np_opened",
+          "np_output_dropped",
+          "np_parent_created",
+          "np_policy",
+          "np_prefix_bound",
+          "np_prefix_call",
+          "np_prefix_done",
+          "np_prefix_dropped",
+          "np_prefix_new",
+          "np_prefix_ok",
+          "np_prepared_dropped",
+          "np_released",
+          "np_retired_finish",
+          "np_root",
+          "np_simple",
+          "np_taken"
+        ],
+        "source": "platform/mempool_node/node_methods.hepta"
+      }
+    ],
+    "src/crypto/ed25519_verify_joint.hepta": [
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
     ]
   }
 }

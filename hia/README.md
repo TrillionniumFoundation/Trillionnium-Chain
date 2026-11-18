@@ -1,87 +1,91 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **41 kernel units, 20 native foundations and 119 HIA source
-files**. Each component has one implementation directory. All 26 original Rust
-packages remain, zero package retirements are accepted, and all nine whole-project
+inventory contains **41 kernel units, 21 native foundations and 129 HIA source
+files**. Each component has one implementation directory. All **26 original Rust
+packages remain**, zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets the complete migration sequence. The [migration inventory](../config/hia-migration-v1.json)
-accounts for every old package and new HIA source.
-[The audit](AUDIT.md) retains source-specific findings, failures and remaining obligations.
+sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
+accounts for every original package and native source. The [audit](AUDIT.md)
+retains source-specific findings, failures and remaining obligations.
 
-## Current source and qualification
+## Current Node and transaction admission
 
-Published predecessor
-[`bd6201646f92a37edc641b2ab0ae8032507b5784`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/bd6201646f92a37edc641b2ab0ae8032507b5784)
-completed the three component jobs in both
-[push run 44041831642](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041831642)
-and [PR run 44041858435](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041858435).
-Root independently reread all push component bytes and the complete 376+7 test
-coverage. Work failed at its mandatory source-control stage before native
-execution; its three dependent jobs were skipped.
+The [held-disk Node/M05 owner](platform/mempool_node/README.md) opens or initializes
+an isolated Genesis-format directory, retains its descriptors and constructs
+private State from complete disk bytes. Actual PNX1/SHA/Ed25519 and State nonce
+checks enter typed admission. Consuming Ready enters the same private Parent and
+Prefix lifecycle as the public Node methods. Prepared is retired before Output
+State; Prefix and Parent are retired before releasing the View lease.
 
-This successor installs and explicitly selects locked Rust 1.95.0 in the two
-live Work stages. The unchanged 65 controls passed locally after correct
-selection. All four stages still require fresh hosted execution.
-[The follow-up record](qualification/work-owner-toolchain-ci.json) retains the
-original failures, complete component artifacts and corrected-control evidence.
+This owner covers a **None-predecessor** Parent. Some/CheckedApply, successor
+admission, persistent Node.db COMMIT, reorganization, local-pool recovery and the
+live same-request Paid/Host permit remain integration obligations. Caller State,
+Config, root, signature-result flags and lease tokens cannot grant those rights.
+The component ABI and public evidence readers enforce the finite scope.
 
-The current Work/Host source has 133 inputs,
-`ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c`.
-Actual development execution includes 61 native histories /27,843 progress
-records, 175 complete primitive controls /9,489 calls /7,800 full snapshots,
-three traces, 27 trace controls, 14 signal controls and 18 CLOCK faults.
-Actual original execution includes 57 histories, 44 retained tests, two CLOCK
-positives, 18 controlled faults and 20 raw-reader controls. This repairs the
-new source's evidence; the old c390 missing-arena/CLOCK scope stays historical.
+The qualification driver applies its existing absolute deadline to nonblocking
+stdin writes, including short writes, EAGAIN and interrupted readiness. Native
+report admission checks the exact schema, field sets, scope values and JSON
+types before consuming observations. Old blocked-writer and complete-reader
+false-accept observations are retained under their actual predecessor sources.
 
-The [current Work/Host record](qualification/work-owner-development.json) binds
-complete development execution and full private readback. Its native graph
-matches the integrated source. The six-file CI-reader graph changes to
-`106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca`,
-and the original graph changes with the reviewed inventory and sole-plan pin.
-Fresh exact-commit hosted qualification remains required.
+The current 203-input Node graph is
+`5ca555529a0dbdd23ad1af776daab5e827b311cf4f1b5f5b09edb254afae0c32`.
+Its five native partitions (smoke, boundaries, capacity, four-Settings Node and
+cross-method ownership) have each been freshly compiled and executed. The
+256-record strict-signature capacity case completed in 181.55 seconds; every
+runtime child retains its 240-second deadline and three-second cleanup limit.
+This finite execution is distinct from the original four-second service gate.
 
-[Batch/Prefix](platform/execution_batch/README.md) actually executed 102 Batch
-methods and 186 Prefix histories /936 methods, 30 physical controls and six
-scoped lifecycles. Its 75 unexecuted fixture paths are not passed methods.
-[Typed M05](platform/mempool_typed/README.md) executed 323 native/original
-histories /9,332 commands and 153 retained tests.
-[Application](platform/execution_application/README.md) executed 328 histories,
-335 transactions, 8,784 State commands and eight retained original tests.
-Their explicit Config/fixture, Node, persistence, PQ and service boundaries
-remain in the individual records. Private Node/M05 integration is ongoing.
+The public reader accepts all five complete real baseline artifacts and rejects
+21 coherently rebound schema/scope mutations at the intended contract check.
+Source integrity executes six groups /361 controls /eight actual CLI calls;
+build integrity executes nine groups /379 controls /ten actual CLI calls.
+The first six groups overlap and their counts must not be added as disjoint
+coverage. Ten physical/fault stdin deadline controls also pass. Independent
+original Rust execution and commit-bound hosted results retain their separate
+source and artifact identities.
 
-## CI and retained evidence
+## CI and evidence
 
-The integrated workflow has **46 jobs and 36 independent native bootstrap
-gates**, with the original 20-minute job limit. Full component discovery
-partitions all 383 tests into general (376) and State root (7). A third job
-requires the exact disjoint executed rosters, original adapters, complete raw
-artifacts and the consumer's own source tree and run/attempt. Work/Host uses
-four dependent stages: native, original, full qualification/package, and
-independent readback. All original executable bytes remain mandatory in CI.
+The [current development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons, seven public reader profiles and complete report dossier. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
-Merged validation passed 80 control groups with zero skips, all 357 Bash
-fragments and 50 Python heredocs. The
-[root integration record](qualification/work-host-integration.json) distinguishes
-these checks from native execution. The component timeout, old reader false
-accepts, initial driver failures and all corrected controls remain preserved.
+The workflow contains **53 jobs and 41 independent native compiler bootstrap
+gates**, each with its original 20-minute deadline. Four bootstrap control groups
+exercise all 164 actual positive/negative invocations. Node adds five native
+partitions, two original Rust comparisons and seven explicit evidence-reader
+profiles. Native child budgets remain 240 seconds plus three-second cleanup.
 
-The [archive guide](qualification/ARCHIVES.md) identifies the current volume
-sets. Work/Host's 50,018,340-byte development view contains 20,178 content objects
-and verified Git references, with an explicitly external original executable.
-The [portable reader](tools/read_work_owner_development.py) checks every logical
-member and the full external binary. It is not a self-sufficient hosted package;
-the complete original 261,160,948-byte package remains separately retained.
-The [history index](qualification/work-owner-development-history.json) restores
-the replaced predecessor view from exact c390 Git objects.
+Full component discovery assigns 383 tests to disjoint general (376) and
+State-root (seven) jobs, followed by an independent coverage consumer. Work/Host
+uses native, original, complete qualification/package and independent readback
+stages. Original executable bytes, complete raw streams, exact source trees and
+actual started/completed rosters remain mandatory.
 
-Source-specific failed outcomes, unknown observations and original source
-identities remain evidence. Storage verification does not execute a runtime,
-qualify a later commit, close the service gates or authorize package retirement.
+The published predecessor
+[`af044d854f6e0baa6d085822adbd692944c8a883`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/af044d854f6e0baa6d085822adbd692944c8a883)
+completed 46/46 HIA jobs in both
+[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048146851)
+and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048170791)
+workflows. Those results belong to that predecessor. Its
+[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44048171025)
+failed the original confirmation target under 16-worker pressure. New source
+controls, development executions and evidence readback cannot inherit hosted
+qualification or close that service gate.
+
+The [archive guide](qualification/ARCHIVES.md) identifies retained volume sets.
+The [Work/Host development record](qualification/work-owner-development.json),
+[toolchain follow-up](qualification/work-owner-toolchain-ci.json) and
+[integration record](qualification/work-host-integration.json) retain the earlier
+source graphs, complete raw observations and original failures. The
+[portable Work/Host reader](tools/read_work_owner_development.py) verifies its
+content-addressed development view and explicitly external original executable.
+A development view is not a self-sufficient hosted qualification package.
+Historical narratives remain in the audit, sole plan and Git history; this entry
+point describes the active implementation.
 
 ## Foundations and whole-project gates
 
@@ -151,8 +155,9 @@ complete unchanged original mempool crate and matched all 41,248 public
 operations across 1,862 histories. The exact hosted test additionally compares
 original Rust and native replies directly and cannot skip a missing oracle.
 The [bound development record](qualification/mempool-owner-development.json)
-retains both observations. Typed signed fixture admission is covered above; production signature/State adapters,
-persistent local-pool handoff and Node integration remain open.
+retains both observations. Its typed fixture contract is separate from the held-disk
+Node/M05 owner above. Persistent local-pool handoff and complete Node integration
+remain open.
 
 | Source | Implemented behavior | Native tests |
 | --- | --- | --- |
@@ -369,10 +374,11 @@ original wider-integer sum modulo Q. Denoising computes
 `C' - AF - E(B+F) mod Q`; the independent test oracle computes `AB` directly.
 The exact 32,768 transcript updates and their hash order are preserved.
 
-This entry implements the complete deterministic relation with cancellation
-disabled. Original progress callbacks, receiver cache/owner integration, resource
-admission and the private `VerifiedWork` construction remain with the retained
-runtime. These interfaces need their own HIA implementations and service tests.
+This low-level entry implements the complete deterministic relation with
+cancellation disabled. The separate [Work/Host owner](platform/work_owner/README.md)
+has its own cancellation, resource and private-ownership contract and source-bound
+qualification. Complete same-request Node/Paid integration and original service
+acceptance remain open.
 
 ## Retained compiler qualification
 

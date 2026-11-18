@@ -1091,7 +1091,9 @@
         "hia/tests/test_work_owner_transfer_ci.py",
         "hia/tools/qualify_work_owner_ci.py",
         "hia/tools/work_owner_clock_ci.py",
-        "hia/tools/work_owner_transfer_ci.py"
+        "hia/tools/work_owner_transfer_ci.py",
+        "hia/platform/work_owner/qualify_production.py",
+        "hia/platform/work_owner/test_production.py"
       ]
     },
     {
@@ -1126,6 +1128,32 @@
         "hia/platform/execution_batch/test_integrity.py",
         "hia/tools/qualify_batch_ci.py",
         "hia/tools/test_batch_ci.py"
+      ]
+    },
+    {
+      "id": "platform/mempool-node",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Production PNX1, SHA-256 and strict Ed25519 admission, actual held-disk Settings/State/View/None Parent, one private PendingPreview lifecycle with exact-wire signature facts, nonce and Ready consumption, full M06 Prefix/Prepared and same-Node cross-method observation. The trusted isolated genesis disk format is a finite source owner. Some/CheckedApply, continuous Host/Paid permits, durable local pool, successor admission, SQLite Node.db COMMIT, and 4s/16-request service qualification remain OPEN.",
+      "sources": [
+        "hia/platform/mempool_node/node_methods.hepta",
+        "hia/platform/mempool_node/owner.hepta",
+        "hia/platform/node_commitment/owner.hepta",
+        "hia/platform/node_owner/context.hepta",
+        "hia/platform/node_owner/disk_bridge.hepta",
+        "hia/platform/node_owner/json_value.hepta",
+        "hia/platform/node_owner/linux_emitter.hepta",
+        "hia/platform/node_owner/prefix_bridge.hepta",
+        "hia/platform/node_owner/producer.hepta",
+        "hia/src/crypto/ed25519_verify_joint.hepta"
+      ],
+      "tests": [
+        "hia/platform/mempool_node/qualify.py",
+        "hia/platform/mempool_node/rust_oracle.py",
+        "hia/platform/mempool_node/test_integrity.py",
+        "hia/platform/mempool_node/evidence.py",
+        "hia/tools/qualify_node_pool_ci.py",
+        "hia/tools/test_node_pool_ci.py"
       ]
     }
   ],

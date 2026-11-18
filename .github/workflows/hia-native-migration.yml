@@ -485,6 +485,41 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest hia.platform.host_resource.test_production -v 2>&1 | tee "$RUNNER_TEMP/hia-observations/resource-production-controller.log"
+      - name: Require all production Work controller rejection groups
+        run: |
+          set -euo pipefail
+          python3 -B - "$RUNNER_TEMP/hia-observations/work-production-controller.json" <<'PY' 2>&1 | tee "$RUNNER_TEMP/hia-observations/work-production-controller.log"
+          import json, sys, unittest
+          from pathlib import Path
+          from hia.platform.work_owner import test_production as module
+          if not __debug__:
+              raise SystemExit("Optimized Python is not admitted")
+          suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+          def names(value):
+              if isinstance(value, unittest.TestSuite):
+                  return [name for child in value for name in names(child)]
+              return [value.id()]
+          required = names(suite)
+          if len(required) != 22 or len(set(required)) != 22:
+              raise SystemExit("Complete production controller discovery is required")
+          started = []
+          class Result(unittest.TextTestResult):
+              def startTest(self, test):
+                  started.append(test.id())
+                  super().startTest(test)
+          actual = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
+          passed = (actual.wasSuccessful() and actual.testsRun == 22
+                    and not actual.skipped and started == required)
+          report = {"schema": "trnm.production-work-controller-ci.v1",
+                    "status": "PASS" if passed else "FAIL",
+                    "required": required, "started": started,
+                    "executed": actual.testsRun, "skipped": len(actual.skipped),
+                    "failures": len(actual.failures), "errors": len(actual.errors),
+                    "actual_production_positive": False}
+          Path(sys.argv[1]).write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
+          if not passed:
+              raise SystemExit("A production controller group failed or was omitted")
+          PY
       - name: Execute fresh native Host checkpoints with independent syscall tracing
         run: python3 -B -m hia.platform.host_checkpoint.qualify --require-trace --output "$RUNNER_TEMP/hia-native-host-checkpoint"
       - name: Compare native Host sequences with actual retained original Rust
@@ -499,6 +534,12 @@ jobs:
         env:
           TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/hia-native-host-production
         run: python3 -B -m hia.platform.host_resource.qualify_production --build "$RUNNER_TEMP/hia-native-resource-production/build" --lease-receipts "$RUNNER_TEMP/hia-native-host-production" --output "$RUNNER_TEMP/hia-native-host-production/resource"
+      - name: Build the exact production Work image from this source graph
+        run: python3 -B -m hia.platform.work_owner.build --output "$RUNNER_TEMP/hia-native-work-production"
+      - name: Execute Work through this job's freshly sealed fixed parent
+        env:
+          TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/hia-native-host-production
+        run: python3 -B -m hia.platform.work_owner.qualify_production --build "$RUNNER_TEMP/hia-native-work-production/build" --lease-receipts "$RUNNER_TEMP/hia-native-host-production" --resource-receipts "$RUNNER_TEMP/hia-native-host-production/resource" --output "$RUNNER_TEMP/hia-native-host-production/work"
       - name: Verify candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -543,6 +584,7 @@ jobs:
             ${{ runner.temp }}/hia-native-host-original/original/actual-original-private-corpus/
             ${{ runner.temp }}/hia-native-host-production/
             ${{ runner.temp }}/hia-native-resource-production/
+            ${{ runner.temp }}/hia-native-work-production/
           if-no-files-found: error
           retention-days: 30
   native-executor:
@@ -5033,3 +5075,837 @@ jobs:
       - native-prefix-1
       - native-prefix-2
       - native-prefix-3
+
+  native-node-pool-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-smoke-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete source and corpus admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope source --report "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-controls.log"
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/strace-version.log"
+      - name: Reject native pipe write deadline violations
+        run: |
+          set -euo pipefail
+          deadline_observations="$RUNNER_TEMP/hia-node-pool-smoke-observations/io-deadline-controls"
+          mkdir -p "$deadline_observations"
+          deadline_status=0
+          python3 -B -m unittest hia.platform.mempool_node.test_io_deadline -v > "$deadline_observations/stdout.raw" 2> "$deadline_observations/stderr.raw" || deadline_status=$?
+          printf '%s\n' "$deadline_status" > "$deadline_observations/exit-code.txt"
+          cat -- "$deadline_observations/stdout.raw"
+          cat -- "$deadline_observations/stderr.raw" >&2
+          exit "$deadline_status"
+      - name: Build and run the complete smoke native partition
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.qualify --group smoke --output "$RUNNER_TEMP/hia-node-pool-smoke-native" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/native.log"
+      - name: Reject source, flat-image, emitter and whole-ELF mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope build --build "$RUNNER_TEMP/hia-node-pool-smoke-native/build" --report "$RUNNER_TEMP/hia-node-pool-smoke-observations/build-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/build-controls.log"
+      - name: Require all seven transport reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope transport --kind smoke --smoke "$RUNNER_TEMP/hia-node-pool-smoke-native" --output "$RUNNER_TEMP/hia-node-pool-smoke-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-smoke-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind smoke --observations "$RUNNER_TEMP/hia-node-pool-smoke-observations" --smoke "$RUNNER_TEMP/hia-node-pool-smoke-native" --report "$RUNNER_TEMP/hia-node-pool-smoke-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-smoke-observations" "$RUNNER_TEMP/hia-node-pool-smoke-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-smoke-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-smoke-native"; then roots+=(--root "native=$RUNNER_TEMP/hia-node-pool-smoke-native"); fi
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then roots+=(--root "bootstrap=$RUNNER_TEMP/hia-bootstrap"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind smoke "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-smoke-observations" --output "$RUNNER_TEMP/hia-node-pool-smoke-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-smoke-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-smoke-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-smoke-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-smoke-package.log" "$RUNNER_TEMP/hia-node-pool-smoke-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-smoke-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-smoke-artifact/
+          if-no-files-found: error
+          retention-days: 30
+  native-node-pool-boundaries:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-boundaries-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete source and corpus admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope source --report "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-controls.log"
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/strace-version.log"
+      - name: Build and run the complete boundaries native partition
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.qualify --group boundaries --output "$RUNNER_TEMP/hia-node-pool-boundaries-native" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/native.log"
+      - name: Reject source, flat-image, emitter and whole-ELF mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope build --build "$RUNNER_TEMP/hia-node-pool-boundaries-native/build" --report "$RUNNER_TEMP/hia-node-pool-boundaries-observations/build-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/build-controls.log"
+      - name: Require all seven transport reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope transport --kind boundaries --boundaries "$RUNNER_TEMP/hia-node-pool-boundaries-native" --output "$RUNNER_TEMP/hia-node-pool-boundaries-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-boundaries-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind boundaries --observations "$RUNNER_TEMP/hia-node-pool-boundaries-observations" --boundaries "$RUNNER_TEMP/hia-node-pool-boundaries-native" --report "$RUNNER_TEMP/hia-node-pool-boundaries-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-boundaries-observations" "$RUNNER_TEMP/hia-node-pool-boundaries-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-boundaries-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-boundaries-native"; then roots+=(--root "native=$RUNNER_TEMP/hia-node-pool-boundaries-native"); fi
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then roots+=(--root "bootstrap=$RUNNER_TEMP/hia-bootstrap"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind boundaries "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-boundaries-observations" --output "$RUNNER_TEMP/hia-node-pool-boundaries-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-boundaries-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-boundaries-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-boundaries-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-boundaries-package.log" "$RUNNER_TEMP/hia-node-pool-boundaries-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-boundaries-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-boundaries-artifact/
+          if-no-files-found: error
+          retention-days: 30
+  native-node-pool-capacity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-capacity-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete source and corpus admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope source --report "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-controls.log"
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/strace-version.log"
+      - name: Build and run the complete capacity native partition
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.qualify --group capacity --output "$RUNNER_TEMP/hia-node-pool-capacity-native" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/native.log"
+      - name: Reject source, flat-image, emitter and whole-ELF mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope build --build "$RUNNER_TEMP/hia-node-pool-capacity-native/build" --report "$RUNNER_TEMP/hia-node-pool-capacity-observations/build-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/build-controls.log"
+      - name: Require all seven transport reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope transport --kind capacity --capacity "$RUNNER_TEMP/hia-node-pool-capacity-native" --output "$RUNNER_TEMP/hia-node-pool-capacity-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-capacity-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind capacity --observations "$RUNNER_TEMP/hia-node-pool-capacity-observations" --capacity "$RUNNER_TEMP/hia-node-pool-capacity-native" --report "$RUNNER_TEMP/hia-node-pool-capacity-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-capacity-observations" "$RUNNER_TEMP/hia-node-pool-capacity-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-capacity-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-capacity-native"; then roots+=(--root "native=$RUNNER_TEMP/hia-node-pool-capacity-native"); fi
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then roots+=(--root "bootstrap=$RUNNER_TEMP/hia-bootstrap"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind capacity "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-capacity-observations" --output "$RUNNER_TEMP/hia-node-pool-capacity-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-capacity-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-capacity-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-capacity-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-capacity-package.log" "$RUNNER_TEMP/hia-node-pool-capacity-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-capacity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-capacity-artifact/
+          if-no-files-found: error
+          retention-days: 30
+  native-node-pool-node:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-node-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-node-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete source and corpus admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope source --report "$RUNNER_TEMP/hia-node-pool-node-observations/source-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/source-controls.log"
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/strace-version.log"
+      - name: Build and run the complete node native partition
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.qualify --group node --output "$RUNNER_TEMP/hia-node-pool-node-native" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/native.log"
+      - name: Reject source, flat-image, emitter and whole-ELF mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope build --build "$RUNNER_TEMP/hia-node-pool-node-native/build" --report "$RUNNER_TEMP/hia-node-pool-node-observations/build-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/build-controls.log"
+      - name: Require all seven transport reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope transport --kind node --node "$RUNNER_TEMP/hia-node-pool-node-native" --output "$RUNNER_TEMP/hia-node-pool-node-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-node-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-node-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind node --observations "$RUNNER_TEMP/hia-node-pool-node-observations" --node "$RUNNER_TEMP/hia-node-pool-node-native" --report "$RUNNER_TEMP/hia-node-pool-node-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-node-observations" "$RUNNER_TEMP/hia-node-pool-node-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-node-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-node-native"; then roots+=(--root "native=$RUNNER_TEMP/hia-node-pool-node-native"); fi
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then roots+=(--root "bootstrap=$RUNNER_TEMP/hia-bootstrap"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind node "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-node-observations" --output "$RUNNER_TEMP/hia-node-pool-node-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-node-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-node-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-node-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-node-package.log" "$RUNNER_TEMP/hia-node-pool-node-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-node-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-node-artifact/
+          if-no-files-found: error
+          retention-days: 30
+  native-node-pool-cross:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-cross-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-cross-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Reject incomplete source and corpus admission
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope source --report "$RUNNER_TEMP/hia-node-pool-cross-observations/source-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/source-controls.log"
+          strace -V 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/strace-version.log"
+      - name: Build and run the complete cross native partition
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.qualify --group cross --output "$RUNNER_TEMP/hia-node-pool-cross-native" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/native.log"
+      - name: Reject source, flat-image, emitter and whole-ELF mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.test_integrity --scope build --build "$RUNNER_TEMP/hia-node-pool-cross-native/build" --report "$RUNNER_TEMP/hia-node-pool-cross-observations/build-controls.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/build-controls.log"
+      - name: Require all seven transport reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope transport --kind cross --cross "$RUNNER_TEMP/hia-node-pool-cross-native" --output "$RUNNER_TEMP/hia-node-pool-cross-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-cross-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-cross-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind cross --observations "$RUNNER_TEMP/hia-node-pool-cross-observations" --cross "$RUNNER_TEMP/hia-node-pool-cross-native" --report "$RUNNER_TEMP/hia-node-pool-cross-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-cross-observations" "$RUNNER_TEMP/hia-node-pool-cross-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-cross-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-cross-native"; then roots+=(--root "native=$RUNNER_TEMP/hia-node-pool-cross-native"); fi
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then roots+=(--root "bootstrap=$RUNNER_TEMP/hia-bootstrap"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind cross "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-cross-observations" --output "$RUNNER_TEMP/hia-node-pool-cross-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-cross-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-cross-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-cross-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-cross-package.log" "$RUNNER_TEMP/hia-node-pool-cross-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-cross-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-cross-artifact/
+          if-no-files-found: error
+          retention-days: 30
+  native-node-pool-original-m05:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-m05-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-original-m05-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+      - name: Download the exact smoke predecessor from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-smoke-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-m05-download-smoke
+      - name: Verify and transfer every predecessor smoke regular byte
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind smoke --artifact "$RUNNER_TEMP/hia-node-pool-original-m05-download-smoke/artifact" --output "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke" --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-smoke.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-smoke.log"
+      - name: Download the exact boundaries predecessor from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-boundaries-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-m05-download-boundaries
+      - name: Verify and transfer every predecessor boundaries regular byte
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind boundaries --artifact "$RUNNER_TEMP/hia-node-pool-original-m05-download-boundaries/artifact" --output "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries" --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-boundaries.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-boundaries.log"
+      - name: Download the exact capacity predecessor from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-capacity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-m05-download-capacity
+      - name: Verify and transfer every predecessor capacity regular byte
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind capacity --artifact "$RUNNER_TEMP/hia-node-pool-original-m05-download-capacity/artifact" --output "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity" --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-capacity.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-capacity.log"
+      - name: Download the exact cross predecessor from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-cross-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-m05-download-cross
+      - name: Verify and transfer every predecessor cross regular byte
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind cross --artifact "$RUNNER_TEMP/hia-node-pool-original-m05-download-cross/artifact" --output "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross" --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-cross.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/transfer-cross.log"
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          toolchain=1.95.0-x86_64-unknown-linux-gnu
+          rustup toolchain install "$toolchain" --profile minimal
+          rustc_bin="$(rustup which --toolchain "$toolchain" rustc)"
+          cargo_bin="$(rustup which --toolchain "$toolchain" cargo)"
+          test -x "$rustc_bin"
+          test -x "$cargo_bin"
+          rustc_dir="$(dirname "$rustc_bin")"
+          test "$rustc_dir" = "$(dirname "$cargo_bin")"
+          printf '%s\n' "$rustc_dir" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$toolchain" >> "$GITHUB_ENV"
+          export RUSTUP_TOOLCHAIN="$toolchain"
+          export PATH="$rustc_dir:$PATH"
+          test "$(command -v rustc)" = "$rustc_bin"
+          test "$(command -v cargo)" = "$cargo_bin"
+          rustc -Vv
+          cargo -Vv
+      - name: Execute every original method and retained test
+        env:
+          RUSTUP_TOOLCHAIN: 1.95.0-x86_64-unknown-linux-gnu
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.rust_oracle --group m05 --smoke "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke/native" --boundaries "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries/native" --capacity "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity/native" --cross "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross/native" --cargo-target "$RUNNER_TEMP/hia-node-pool-original-m05-cargo-target" --output "$RUNNER_TEMP/hia-node-pool-original-m05-original" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/original.log"
+      - name: Reparse all original raw output and capture exact production source
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci validate --kind original-m05 --smoke "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke/native" --boundaries "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries/native" --capacity "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity/native" --cross "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross/native" --original "$RUNNER_TEMP/hia-node-pool-original-m05-original" --capture --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/readback.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/readback.log"
+      - name: Require all seven original reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope original --kind original-m05 --smoke "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke/native" --boundaries "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries/native" --capacity "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity/native" --cross "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross/native" --original "$RUNNER_TEMP/hia-node-pool-original-m05-original" --output "$RUNNER_TEMP/hia-node-pool-original-m05-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-m05-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-original-m05-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind original-m05 --observations "$RUNNER_TEMP/hia-node-pool-original-m05-observations" --smoke "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke/native" --boundaries "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries/native" --capacity "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity/native" --cross "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross/native" --original "$RUNNER_TEMP/hia-node-pool-original-m05-original" --parent "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke/native-binding.json" --parent "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries/native-binding.json" --parent "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity/native-binding.json" --parent "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross/native-binding.json" --report "$RUNNER_TEMP/hia-node-pool-original-m05-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-m05-observations" "$RUNNER_TEMP/hia-node-pool-original-m05-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-original-m05-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-original"; then roots+=(--root "original=$RUNNER_TEMP/hia-node-pool-original-m05-original"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-download-smoke"; then roots+=(--root "download-smoke=$RUNNER_TEMP/hia-node-pool-original-m05-download-smoke"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke"; then roots+=(--root "prior-smoke=$RUNNER_TEMP/hia-node-pool-original-m05-prior-smoke"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-download-boundaries"; then roots+=(--root "download-boundaries=$RUNNER_TEMP/hia-node-pool-original-m05-download-boundaries"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries"; then roots+=(--root "prior-boundaries=$RUNNER_TEMP/hia-node-pool-original-m05-prior-boundaries"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-download-capacity"; then roots+=(--root "download-capacity=$RUNNER_TEMP/hia-node-pool-original-m05-download-capacity"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity"; then roots+=(--root "prior-capacity=$RUNNER_TEMP/hia-node-pool-original-m05-prior-capacity"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-download-cross"; then roots+=(--root "download-cross=$RUNNER_TEMP/hia-node-pool-original-m05-download-cross"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross"; then roots+=(--root "prior-cross=$RUNNER_TEMP/hia-node-pool-original-m05-prior-cross"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind original-m05 "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-original-m05-observations" --output "$RUNNER_TEMP/hia-node-pool-original-m05-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-m05-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-m05-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-original-m05-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-original-m05-package.log" "$RUNNER_TEMP/hia-node-pool-original-m05-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-original-m05-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-m05-artifact/
+          if-no-files-found: error
+          retention-days: 30
+    needs:
+      - native-node-pool-smoke
+      - native-node-pool-boundaries
+      - native-node-pool-capacity
+      - native-node-pool-cross
+  native-node-pool-original-node:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
+        github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-node-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-original-node-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+      - name: Download the exact node predecessor from this run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-node-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-node-download-node
+      - name: Verify and transfer every predecessor node regular byte
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind node --artifact "$RUNNER_TEMP/hia-node-pool-original-node-download-node/artifact" --output "$RUNNER_TEMP/hia-node-pool-original-node-prior-node" --report "$RUNNER_TEMP/hia-node-pool-original-node-observations/transfer-node.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/transfer-node.log"
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          toolchain=1.95.0-x86_64-unknown-linux-gnu
+          rustup toolchain install "$toolchain" --profile minimal
+          rustc_bin="$(rustup which --toolchain "$toolchain" rustc)"
+          cargo_bin="$(rustup which --toolchain "$toolchain" cargo)"
+          test -x "$rustc_bin"
+          test -x "$cargo_bin"
+          rustc_dir="$(dirname "$rustc_bin")"
+          test "$rustc_dir" = "$(dirname "$cargo_bin")"
+          printf '%s\n' "$rustc_dir" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$toolchain" >> "$GITHUB_ENV"
+          export RUSTUP_TOOLCHAIN="$toolchain"
+          export PATH="$rustc_dir:$PATH"
+          test "$(command -v rustc)" = "$rustc_bin"
+          test "$(command -v cargo)" = "$cargo_bin"
+          rustc -Vv
+          cargo -Vv
+      - name: Execute every original method and retained test
+        env:
+          RUSTUP_TOOLCHAIN: 1.95.0-x86_64-unknown-linux-gnu
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.mempool_node.rust_oracle --group node --node "$RUNNER_TEMP/hia-node-pool-original-node-prior-node/native" --cargo-target "$RUNNER_TEMP/hia-node-pool-original-node-cargo-target" --output "$RUNNER_TEMP/hia-node-pool-original-node-original" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/original.log"
+      - name: Reparse all original raw output and capture exact production source
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci validate --kind original-node --node "$RUNNER_TEMP/hia-node-pool-original-node-prior-node/native" --original "$RUNNER_TEMP/hia-node-pool-original-node-original" --capture --report "$RUNNER_TEMP/hia-node-pool-original-node-observations/readback.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/readback.log"
+      - name: Require all seven original reader groups with no skips
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.test_node_pool_ci --scope original --kind original-node --node "$RUNNER_TEMP/hia-node-pool-original-node-prior-node/native" --original "$RUNNER_TEMP/hia-node-pool-original-node-original" --output "$RUNNER_TEMP/hia-node-pool-original-node-observations/ci-controls" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/ci-controls.log"
+      - name: Verify all source bytes after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-node-observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-pool-original-node-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/source-after.log"
+      - name: Bind complete actual observations to this source and run
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci bind --kind original-node --observations "$RUNNER_TEMP/hia-node-pool-original-node-observations" --node "$RUNNER_TEMP/hia-node-pool-original-node-prior-node/native" --original "$RUNNER_TEMP/hia-node-pool-original-node-original" --parent "$RUNNER_TEMP/hia-node-pool-original-node-prior-node/native-binding.json" --report "$RUNNER_TEMP/hia-node-pool-original-node-observations/binding-receipt.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-observations/binding.log"
+      - name: Preserve full regular evidence and special-file metadata
+        if: always()
+        env:
+          STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-node-observations" "$RUNNER_TEMP/hia-node-pool-original-node-artifact"
+          roots=(--root "observations=$RUNNER_TEMP/hia-node-pool-original-node-observations")
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-node-original"; then roots+=(--root "original=$RUNNER_TEMP/hia-node-pool-original-node-original"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-node-download-node"; then roots+=(--root "download-node=$RUNNER_TEMP/hia-node-pool-original-node-download-node"); fi
+          if test -d "$RUNNER_TEMP/hia-node-pool-original-node-prior-node"; then roots+=(--root "prior-node=$RUNNER_TEMP/hia-node-pool-original-node-prior-node"); fi
+          python3 -B -m hia.tools.qualify_node_pool_ci pack --kind original-node "${roots[@]}" --observations "$RUNNER_TEMP/hia-node-pool-original-node-observations" --output "$RUNNER_TEMP/hia-node-pool-original-node-artifact/artifact" --stage-status "$STAGE_STATUS" 2>&1 | tee "$RUNNER_TEMP/hia-node-pool-original-node-package.log"
+      - name: Keep packaging diagnostics beside the sealed container
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-pool-original-node-artifact"
+          if test -f "$RUNNER_TEMP/hia-node-pool-original-node-package.log"; then cp -- "$RUNNER_TEMP/hia-node-pool-original-node-package.log" "$RUNNER_TEMP/hia-node-pool-original-node-artifact/package.log"; fi
+      - name: Upload complete success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-pool-original-node-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-pool-original-node-artifact/
+          if-no-files-found: error
+          retention-days: 30
+    needs:
+      - native-node-pool-node

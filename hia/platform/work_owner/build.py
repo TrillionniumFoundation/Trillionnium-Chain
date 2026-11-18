@@ -25,6 +25,7 @@ OWNED = (
     "rust_reference.rs", "rust_bridge.rs", "owner_policy.hepta", "owner_fixture.hepta",
     "work_policy.hepta", "host_method.hepta", "host_fixture.hepta",
     "linux_emitter.hepta", "sha_fixture.hepta", "closed_fd_fixture_emitter.hepta",
+    "qualify_production.py", "test_production.py",
 )
 SHARED = (
     "hia/src/work/verify.hepta", "hia/src/crypto/sha256_arena.hepta",

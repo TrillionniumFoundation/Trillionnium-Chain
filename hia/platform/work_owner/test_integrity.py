@@ -37,7 +37,7 @@ class Admission(unittest.TestCase):
 
     def test_complete_declared_source_closure(self):
         rows = source_manifest()
-        self.assertEqual(len(OWNED), 30)
+        self.assertEqual(len(OWNED), 32)
         self.assertEqual(sum(name.endswith(".hepta") for name in OWNED), 8)
         actual = {p.name for p in HERE.iterdir() if p.suffix in {".py", ".rs", ".hepta", ".json", ".md"}}
         self.assertEqual(actual, set(OWNED))

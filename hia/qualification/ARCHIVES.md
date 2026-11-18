@@ -115,3 +115,13 @@ independent public readback. Tool-generated empty lock metadata is excluded
 from the canonical archive; all observed source, failure and raw bytes remain.
 This small archive is separate from the five volume sets above. Its current
 source correction requires fresh hosted execution and grants no retirement.
+
+## Node/M05 successor report dossier
+
+[node-owner-development.json](node-owner-development.json) binds the complete
+[node-owner-development-reports.tar.xz](node-owner-development-reports.tar.xz)
+report/receipt/source-fence dossier for the current finite local qualification.
+This is a report archive, not another complete runtime evidence volume set.
+All raw streams, native images, original source captures and both independent
+original binaries remain explicitly retained at the external locations in the
+record. Its local PASS does not replace commit-bound hosted execution.

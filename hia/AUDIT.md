@@ -1,5 +1,33 @@
 # Whole-tree inventory and HIA migration audit
 
+## Held-disk Node/M05 successor audit
+
+The [source-bound development record](qualification/node-owner-development.json) indexes all five fresh native partitions, both actual original Rust comparisons and all seven current public reader profiles. Its report dossier is complete for its declared members; full raw directories and both original binaries remain explicitly external. Current candidate hosted qualification is separate. The additional Work owned-file assertion was corrected from 30 to 32 and all 65 public controls passed. All 58 repository negative tests completed with zero skips.
+
+Successor baseline: af044d854f6e0baa6d085822adbd692944c8a883. The integrated
+candidate contains 41 kernels, 21 native foundations and 129 HIA sources;
+26 original packages remain and all nine whole-project gates are open.
+
+The new private owner connects actual disk-derived State, PNX signature and
+nonce admission, Ready consumption, Parent and Prefix. Its finite None-parent
+contract is described in platform/mempool_node/README.md. Some/CheckedApply,
+successor COMMIT, reorganization, recovery and live Paid/Host integration need
+further implementation and qualification.
+
+The fresh audit found two executable qualification defects: a blocked stdin
+writer could exceed the native absolute deadline, and the public native-report
+reader accepted a changed schema or unsupported scope claims when the report
+identity was coherently rebound. The fixes add nonblocking deadline-controlled
+writes and exact schema/scope/type checks. Actual predecessor false accepts and
+blocked-writer controls remain available alongside the corrected observations.
+The full current source graph has changed even though the composed HIA runtime
+images are unchanged by those driver/reader fixes.
+
+Bootstrap coverage is 41 gates across four original control groups. The workflow
+adds five native Node partitions, two original comparisons and an explicit
+physical I/O deadline control step. Local source controls and historical readback
+are kept distinct from fresh native/original execution and hosted qualification.
+
 ## Work toolchain prerequisite and actual bd620 component results — 2026-11-17 UTC
 
 Both push run 44041831642 and PR run 44041858435 actually completed the
