@@ -1,3 +1,13 @@
+## 2026-11-18 UTC — 原确认压力的全线程成本端点，业务门仍保留
+
+本增量基于 #949 的 `337fe8df54a5af59e10a1aea129022702b40b89d`，在独立分支 `fix/chain-liveness-e1e6-20261118` 工作。原 [required-baseline 44262261731](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261731) 的完整 protocol artifact 14413798363 已保留；ZIP SHA-256 为 `5cc201b852629538fb2ba0be803fae16998a24860028200ccdc5b45bebf49d0e`。该实际运行无压力确认 1/1、延迟 2.603265861 秒；16-worker 压力确认 0/1。压力下七次合法提交全部收到成功，独立客户端四次 History 回放中仅三次完成，第四次为 `PUBLIC_REQUEST_DEADLINE`，所以 `CONFIRMATION_TARGET` 仍为真实失败。每页原 W1 回放实际包含 1,099 次 fresh Host 检查；不能删检查、降低验证语义或延长窗口来报通过。
+
+原 actor/dispatch/Host CPU 是嵌套局部钟；新增 `public-v3-confirmation-phase-process-cost-v1` 使用原测试进程的 `CLOCK_PROCESS_CPUTIME_ID`，保留 setup 前、服务线程启动前、所有调用线程及服务 join 后、状态/观测读回后的四个原始端点与三个连续区间。它包含同进程全部工作线程、失败/取消/重试、独立回放及停服成本；不能再把 actor、dispatch 或 Host 子钟相加。端点缺失和倒退保持 unknown，不能变为零。阶段目录另有有界 regular-file 长度前后快照，错误不输出部分总数，长度减少保留负增长。它不是物理磁盘 I/O、峰值空间、物理网络或能耗观测。
+
+新读取器仅在新字段存在时校核上述证据；历史 v2 观测保持原样。阶段进程区间宽于原四秒窗口，原 `all_worker_cpu_ns` 和 exact-window CPU 仍未知；成本记录自身序列化与最终报告写入仍由既有整次 invocation 的 wait4 收据覆盖，不能冒充逐请求归因。原 0.25 CPU /2 GiB /zero swap /256 PID /4 秒 /16 workers、原业务确认条件、所有 acceptance stage 与失败原件均不变。
+
+本地只运行无需固定父 cgroup 的真实 Linux 成本控制、读取器控制、精确目标编译/Clippy 和 workspace format 检查；完整原窗口必须由已有 hosted-CI 路径执行。ROG 没有固定父 cgroup，原 runner 的 `HOSTED_CI_ONLY_NO_LOCAL_PROVISION` 门禁保持原样，没有伪造 CI 环境或本地替代业务资格。本地实际通过 3 个 Linux release 成本控制、6 个 Python 成本负控、180 个既有读取器/接线控制、严格 Clippy 及 workspace fmt；[原件和初次 fixture 失败](evidence/chain-phase-process-cost-20261118/validation.json)保留。新候选的真实压力结果以其后续 CI 原件为准；这项成本补齐不宣告诚实服务活性已解决，也不改变 26 Rust 包保留、0 退役和 9 整项目门 OPEN。
+
 ## 单一磁盘 Node/M05 集成与实际资格修复
 
 父提交 `af044d854f6e0baa6d085822adbd692944c8a883`。本增量整合已存在的唯一 Node/M05 owner，而非另造竞争实现；当前 41 kernels /21 native foundations /129 HIA，26 Rust 包保留、0退役、9整项目门 OPEN。原 canonical 工作树保留；独立副本先后核对全部48份未提交源的SHA后续接。

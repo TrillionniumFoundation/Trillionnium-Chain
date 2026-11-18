@@ -1,0 +1,57 @@
+{
+  "schema": "trnm-confirmation-phase-cost-local-validation-v1",
+  "parent_commit": "337fe8df54a5af59e10a1aea129022702b40b89d",
+  "observed_at_utc": "2026-11-18T10:06:24.987088+00:00",
+  "host": "rog",
+  "source_sha256": {
+    "scripts/ci/from_zero_phase_cost.py": "3d9e7f7323a88a39853629e31b19faedd84d8b5d8762cc97074aaeb39ace7cfc",
+    "scripts/ci/test_from_zero_phase_cost.py": "2dcbb3caa549b1204d4eaa383932d3ec55ba7ccea4adead10164b34bcd21b366",
+    "scripts/ci/run_from_zero_native.py": "87cf7fbeb89186b2c1207b232805094e6343224c543c4d210f63609d42bb24ba",
+    "scripts/ci/test_run_from_zero_native.py": "800a0a35552a8f15934f33e25ea33e2ed691266840e9302bbc1b0ab018d81a14",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "9f5fca310f6b68880c9980c641ed34f0ff4709e014f1fc9d142291a78fc64641",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/phase_cost.rs": "222a64ff20bbeaa96ba3647f3a418b461b43d37071c324dcab5f61fe147d0de6"
+  },
+  "retained_sha256": {
+    "phase-cost-native.stdout": "1a840419a1477348b8a6f4be7caac2529fdc189fcd354289fbf0aedd345e34d8",
+    "phase-cost-native.stderr": "cbdb5a1c425c3266b4fee4555cf31e2fdc7b460ddbf21b92e9dda03acfc06853",
+    "phase-cost-python-3.stdout": "f1b5fa34bd4119c57b168aaa836b39c14240f0c9a1cd1853218dae94817d930d",
+    "native-reader-regression-3.stdout": "5adda955bddfff478eafecb160660da4dde24dd1df15f55a79d99cb6d7d865bd",
+    "phase-cost-clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "phase-cost-clippy.stderr": "b7116cc6dd9d56fdb5a6c96659b21c9be5ee6ec705098a37b4fe07ec25d559f3",
+    "native-reader-regression.stdout": "e81865bd0cd2f6f829e36135d25fe52dbed7126df2f277ecfa3ff672b0a7e6c6"
+  },
+  "checks": {
+    "native_linux_release_cost_controls": {
+      "passed": 3,
+      "failed": 0
+    },
+    "python_cost_reader_controls": {
+      "passed": 6,
+      "failed": 0,
+      "simulated_schema_inputs": true
+    },
+    "existing_native_reader_regression": {
+      "passed": 180,
+      "failed": 0,
+      "simulated_processes": true
+    },
+    "strict_clippy": {
+      "command": "cargo clippy --locked --offline --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero -- -D warnings",
+      "exit_code": 0
+    },
+    "format": {
+      "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+      "exit_code": 0
+    }
+  },
+  "retained_earlier_control_failure": {
+    "path": "native-reader-regression.stdout",
+    "cause": "format-copy fixture lacked new module; first required module ordering changed; both corrected without removing checks"
+  },
+  "original_business_pressure_executed_locally": false,
+  "original_business_target_passed": null,
+  "host_gate_preserved": "HOSTED_CI_ONLY_NO_LOCAL_PROVISION",
+  "physical_network_or_energy_measured": false,
+  "production_activation": false,
+  "scope": "local native cost instrumentation and reader controls only; no business, whole-source, WAN or complete physical-resource qualification"
+}

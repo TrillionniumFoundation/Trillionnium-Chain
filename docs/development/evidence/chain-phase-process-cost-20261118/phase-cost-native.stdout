@@ -1,0 +1,8 @@
+
+running 3 tests
+test phase_cost::process_envelope_keeps_joined_worker_cost_and_disk_growth ... ok
+test phase_cost::retained_file_snapshot_refuses_links_without_partial_total ... ok
+test phase_cost::unavailable_or_reversed_clock_never_becomes_zero ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+

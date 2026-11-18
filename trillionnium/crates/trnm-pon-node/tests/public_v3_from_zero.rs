@@ -1281,6 +1281,7 @@ fn signed_confirmation_phase_with_builder(
     prepare: ConfirmationAttackBuilder,
     pressured: bool,
 ) -> Value {
+    let mut phase_cost = phase_cost::PhaseCost::start(path);
     fs::create_dir(path).unwrap();
     let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
     let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
@@ -1307,6 +1308,7 @@ fn signed_confirmation_phase_with_builder(
     let initial_meter = domain.observe().unwrap();
     let (shared, signal, measurement, capture) =
         (owner.clone(), stop.clone(), metrics, observer.clone());
+    phase_cost.mark();
     let service = RunningService {
         stop,
         worker: Some(thread::spawn(move || {
@@ -1530,6 +1532,7 @@ fn signed_confirmation_phase_with_builder(
     // Shutdown follows the original window. No post-attack replay, retry or drain
     // can turn an unconfirmed business request into a successful observation.
     let service_outcome = service.finish();
+    phase_cost.mark();
     let captured = observer.snapshot();
     let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
     let actual = receiver.read_active().unwrap();
@@ -1659,8 +1662,12 @@ fn signed_confirmation_phase_with_builder(
         "request_binding_stage": "hello-claimed-body-digest",
         "has_control_authority": false,
     });
+    report["phase_process_cost"] = phase_cost.finish(path);
     report
 }
+
+#[path = "public_v3_from_zero/phase_cost.rs"]
+mod phase_cost;
 
 #[path = "public_v3_from_zero/fresh_challenge.rs"]
 mod fresh_challenge;
