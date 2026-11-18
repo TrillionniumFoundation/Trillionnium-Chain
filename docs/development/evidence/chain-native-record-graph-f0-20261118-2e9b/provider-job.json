@@ -1,0 +1,132 @@
+{
+  "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/134985105101",
+  "completed_at": "2026-11-18T17:47:10Z",
+  "conclusion": "failure",
+  "created_at": "2026-11-18T17:13:42Z",
+  "head_branch": "fix/chain-native-record-graph-20261118-2e9b",
+  "head_sha": "1380eaae3c902b3e17d5e5a7d73bf242b0366562",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44356270247/job/134985105101",
+  "id": 134985105101,
+  "labels": [
+    "ubuntu-24.04"
+  ],
+  "name": "F0 (x64, head, one baseline and one ROOT phase)",
+  "node_id": "CR_kwDOTty1_c8AAAAfbb0-zQ",
+  "run_attempt": 1,
+  "run_id": 44356270247,
+  "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44356270247",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions",
+  "runner_id": 1000189688,
+  "runner_name": "GitHub Actions 1000189688",
+  "started_at": "2026-11-18T17:36:43Z",
+  "status": "completed",
+  "steps": [
+    {
+      "completed_at": "2026-11-18T17:36:45Z",
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "started_at": "2026-11-18T17:36:44Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:36:45Z",
+      "conclusion": "success",
+      "name": "Freeze all denominators before checkout or preparation",
+      "number": 2,
+      "started_at": "2026-11-18T17:36:45Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:40:03Z",
+      "conclusion": "success",
+      "name": "Checkout exactly the event head without retained credentials",
+      "number": 3,
+      "started_at": "2026-11-18T17:36:45Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:40:08Z",
+      "conclusion": "success",
+      "name": "Verify the exact source and all independent parser controls",
+      "number": 4,
+      "started_at": "2026-11-18T17:40:03Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:40:18Z",
+      "conclusion": "success",
+      "name": "Install source-pinned compiler and fetch the locked graph",
+      "number": 5,
+      "started_at": "2026-11-18T17:40:08Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:45:33Z",
+      "conclusion": "success",
+      "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+      "number": 6,
+      "started_at": "2026-11-18T17:40:18Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:45:33Z",
+      "conclusion": "success",
+      "name": "Arm a previously absent exact controller service",
+      "number": 7,
+      "started_at": "2026-11-18T17:45:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:46:57Z",
+      "conclusion": "failure",
+      "name": "Run exactly one pair in the declared controller and public Host",
+      "number": 8,
+      "started_at": "2026-11-18T17:45:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:46:58Z",
+      "conclusion": "failure",
+      "name": "Always retain denominators and inspect only exact owned services",
+      "number": 9,
+      "started_at": "2026-11-18T17:46:57Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:47:02Z",
+      "conclusion": "success",
+      "name": "Retain final source, workflow outcomes and every regular partial artifact",
+      "number": 10,
+      "started_at": "2026-11-18T17:46:58Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:47:07Z",
+      "conclusion": "success",
+      "name": "Upload all available success, failure and unobserved evidence",
+      "number": 11,
+      "started_at": "2026-11-18T17:47:02Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:47:07Z",
+      "conclusion": "success",
+      "name": "Post Checkout exactly the event head without retained credentials",
+      "number": 22,
+      "started_at": "2026-11-18T17:47:07Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T17:47:07Z",
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 23,
+      "started_at": "2026-11-18T17:47:07Z",
+      "status": "completed"
+    }
+  ],
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/134985105101",
+  "workflow_name": "PoN fixed Host ROOT F0 diagnostic"
+}
