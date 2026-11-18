@@ -177,6 +177,11 @@ jobs:
           printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Compile both exact original Oracle dependency profiles
+        run: |
+          set -euo pipefail
+          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --target-dir "$RUNNER_TEMP/oracle-default-deps" --message-format=json > "$RUNNER_TEMP/oracle-default-build.jsonl" 2> "$RUNNER_TEMP/oracle-default-build.stderr"
+          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --features serde_json/arbitrary_precision --target-dir "$RUNNER_TEMP/oracle-workspace-deps" --message-format=json > "$RUNNER_TEMP/oracle-workspace-build.jsonl" 2> "$RUNNER_TEMP/oracle-workspace-build.stderr"
       - name: Execute every assigned native HIA and independent reference case
         env:
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
@@ -184,6 +189,9 @@ jobs:
           TRNM_HIA_GOVERNANCE_OUTPUT: ${{ runner.temp }}/hia-governance-original
           HIA_CONTROL_GUARD_OUTPUT: ${{ runner.temp }}/hia-control-guard-original
           HIA_PEER_LEASE_OUTPUT: ${{ runner.temp }}/hia-peer-lease-original
+          HIA_ORACLE_DEPS: ${{ runner.temp }}/oracle-default-deps/debug/deps
+          HIA_ORACLE_WORKSPACE_DEPS: ${{ runner.temp }}/oracle-workspace-deps/debug/deps
+          HIA_ORACLE_OUTPUT: ${{ runner.temp }}/hia-oracle-original
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard general --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -239,6 +247,19 @@ jobs:
         with:
           name: hia-peer-lease-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/hia-peer-lease-original/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete original and HIA Oracle observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-oracle-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-oracle-original/
+            ${{ runner.temp }}/oracle-default-build.jsonl
+            ${{ runner.temp }}/oracle-default-build.stderr
+            ${{ runner.temp }}/oracle-workspace-build.jsonl
+            ${{ runner.temp }}/oracle-workspace-build.stderr
           if-no-files-found: error
           retention-days: 30
   native-components-state-root:

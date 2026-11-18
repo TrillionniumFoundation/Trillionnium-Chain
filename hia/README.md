@@ -1,15 +1,39 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **48 kernel units, 22 native foundations and 137 HIA source
+inventory contains **50 kernel units, 22 native foundations and 139 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (15 partially ported and 11 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (16 partially ported and 10 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
+
+## Current Oracle values and JSON
+
+The [Oracle implementation](src/oracle/README.md) covers the unchanged original
+library's 22 explicit public functions and methods, plus the six data types'
+concrete JSON serialization and deserialization. Full i128/u128 values, original
+hash framing without an added namespace, Unicode normalization, validation
+precedence and both checked and wrapping arithmetic remain intact. Two separate
+Cargo dependency graphs preserve the default and workspace arbitrary-precision
+JSON configurations. These values do not grant network or settlement authority.
+
+The [final development record](qualification/oracle-development.json) binds
+19 actual tests, 10,259 native/original comparisons and 64 checked-overflow panic
+and trap pairs. The complete original library runs all 118 retained tests in
+each of four configurations, for 472 executions. Independent readback verifies
+all 672 actual processes, all 26 artifacts and every referenced byte. Native
+source sorting and cardinality use O(n log n) comparisons while retaining the
+first original-order validation error. The actual old and new artifacts and
+their full scaling observations remain in the canonical evidence archive.
+
+The CI general component job builds both original dependency profiles and
+uploads Oracle's complete separate process evidence. The final source still
+requires its own committed hosted execution. Generic Serde providers, persistent
+custody, authenticated source finality and live Node consumption remain open.
 
 ## Current private owners and Work concurrency fix
 
@@ -67,7 +91,7 @@ operation histories, exact Unicode whitespace behavior and actual allocation
 refusals. Live caller authentication, streaming custody and durable settlement
 still require the Node owner.
 
-Both implementations use the pinned self-hosted HIA compiler. Their full
+These implementations use the pinned self-hosted HIA compiler. Their full
 runtime observations and original binaries have separate CI artifacts; the
 complete disjoint component-test consumer remains mandatory.
 

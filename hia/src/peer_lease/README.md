@@ -78,7 +78,7 @@ never reused. All allocations are released before the foreign call returns.
 | 14 | Equality | Two object handles of the same type |
 | 15 | Scope order | Two scope handles |
 
-Directions are 1 Inbound and 2 Outbound. Kinds 1 through 8 identify scope,
+Directions are 1 Outbound and 2 Inbound. Kinds 1 through 8 identify scope,
 token, namespace, frame, recovery target, acknowledgement, recovery status,
 and status projection. New and Clone return their handle as one word. Getter
 responses begin with this type word, followed by all original public fields;

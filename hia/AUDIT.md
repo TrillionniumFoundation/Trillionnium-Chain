@@ -1,5 +1,64 @@
 # Whole-tree inventory and HIA migration audit
 
+## Oracle original values and concrete JSON — 2026-11-18
+
+The audited parent is `d49083115e977f9c1947f92b9c10d93870e1b752`.
+The inventory now has **50 kernels, 22 native foundations and 139 HIA sources**.
+Sixteen original packages are partially ported and ten are not ported; all
+26 remain. Zero retirements are accepted and all nine whole-project gates stay
+OPEN. The earlier sections retain their actual predecessor source identities.
+
+The [Oracle record](qualification/oracle-development.json) binds the complete
+19-method root execution: 10,272 actual native calls, 10,259 complete comparisons,
+64 actual checked-overflow panic/trap pairs and 50 large-source comparisons.
+The complete unchanged original inline library executes its 118 retained tests
+in all four release/checked and default/workspace JSON configurations, for 472
+test executions. Adjacent unreferenced Rust files are not falsely treated as
+part of that compiled module graph. Independent readback checks 24 source
+identities, 26 retained artifacts, 672 process journals, 94,267 content references
+and 19,016 distinct root content objects, with no orphan objects. All 19,726
+files and 1,659,551,284 bytes of the final execution remain in the complete archive.
+
+Both kernels preserve exact i128/u128/u32/u64 behavior, original hash framing,
+error order and concrete serde_json 1.0.149 behavior under both actual dependency
+feature sets. Checked addition traps in a real isolated native child. It is not
+translated into a successful return or an invented business error. Unknown JSON
+values follow the original IgnoredAny path, while known String fields still
+require valid Unicode. This does not claim generic Serde providers or identical
+serde_json diagnostic wording.
+
+Review found quadratic source sorting, duplicate detection and canonical
+cardinality in the preliminary HIA implementation. Heap sorting and binary
+searches now give O(n log n) String comparisons without imposing a new source
+count cap or changing the first original-order error. Twenty-four actual old/new
+executions preserve complete source, compiler streams, binaries and results.
+For the observed 4,096-source reversed constructor, CPU time changed from about
+6.31 seconds to 0.17 seconds; the all-repeated case changed from about 0.057 to
+0.261 seconds. These are development observations, not production latency gates.
+
+The first dependency-feature setup failure is retained. Early overwritten
+adapter/newtype failure bytes are explicitly identified as unavailable; no
+retrospective source reproduction is claimed. The insufficient old class-final
+reporter gate was corrected and is exercised by real setup and class-teardown
+artifact-failure controls. The final report only passes after the complete
+roster, unchanged sources and successful final artifact checks.
+
+CI builds the two dependency graphs separately and retains Oracle's entire
+raw evidence outside the strict six-file component-partition artifacts. The
+original 54 jobs, 42 bootstrap gates and 20-minute limits are unchanged.
+Current committed hosted execution, authenticated live Node use, finality,
+replay ownership and whole-package retirement remain outstanding. The original
+four-second/16-request business failures are not weakened or relabelled by this
+finite component result. Durable lease storage, settlement and task-kernel
+owners continue in isolated worktrees.
+
+The peer-value README had transposed its direction names. It now states the
+actual unchanged original mapping, 1 Outbound and 2 Inbound. This is a prose
+correction: the original enum, native implementation and numeric comparisons
+remain unchanged. The integration record preserves both README byte versions;
+the earlier peer execution keeps its original source snapshot. No new runtime
+result is inferred from this documentation correction.
+
 ## Governance, local plan signatures, peer values and Work race — 2026-11-18
 
 The audited parent is `88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4`.

@@ -1,3 +1,21 @@
+## 2026-11-18 — Oracle 全公开值与实际 JSON 配置的原生闭合
+
+本轮父提交 `d49083115e977f9c1947f92b9c10d93870e1b752`。当前 **50 kernels /22 native foundations /139 HIA sources**，逐源唯一归属；26原Rust包中16部分迁移、10未迁移，**0退役、9全项目门OPEN**。本轮只整合冻结的Oracle两内核、独立原库对照、CI接线及完整证据；真实持久Peer store、service settlement与task-kernel在独立工作树继续，并发Node/TCM1/Paid源不覆盖。
+
+[Oracle最终记录](../../hia/qualification/oracle-development.json)覆盖实际inline lib.rs全部22个显式公开方法/函数和6种公开类型的具体serde_json 1.0.149编解码。默认与workspace arbitrary_precision分别使用实际Cargo依赖图；每种各有release wrapping/checked arithmetic原库构建，完整原118保留测试执行四次共472次。未引用的相邻snapshot/validation/test文件不算进实际module图；不截取原函数改写算法当oracle。完整i128/u128、u32溢出、Unicode、原hash无namespace framing、原错误先后与JSON IgnoredAny/known String区别保持。实际checked panic对应真实native child trap，不转换成业务error或假成功。
+
+根在整合源上19/19实际PASS、154.159985047秒；10272 native calls、10259完整差分、64真实panic/trap对、50大source场景。独立reader核24源身份、26实际artifact、672进程、94267内容引用及19016不同root blob，0孤立；19726完整文件/1659551284B全部保留。最终报告同时要求完整method roster、源前后一致及class teardown产物核验成功，真实timeout、缺失executable、class setup及class teardown失败控制不会报PASS。
+
+审查修复初版source排序/重复检测/cardinality的O(n²)行为，以heap sort和二分查找形成O(n log n) String比较，同时保持原input顺序的第一错误且不加source-count上限。完整旧新source、实际compiler流、binary、输入输出及24次真实执行留档；观测4096逆序constructor CPU约6.31秒降至0.17秒，all-repeated约0.057秒变为0.261秒，退化同样公开保留。这些开发时序不是生产4秒业务验收。
+
+首轮依赖feature不符的setup FAIL完整保留；早期adapter/newtype失败有已覆盖字节的真实历史缺口，明确不冒称可复现；旧v2/v3报告器class-final不足的限制保留。正式目录只有最终两内核及单一完整证据，20,046普通成员/1,819,725,918逻辑字节压缩为15,485,716B，逐成员与完整XZ/tar尾核验后按≤6MiB三卷保存。重复成功开发目录不再进入正式仓库。
+
+整合migration/composition/partition33项及四组bootstrap共168次实际调用PASS。组件完整发现476项（469general+7State-root），发现不是运行。CI仍54jobs/42bootstrap，各20分钟；general先独立构建两套Oracle依赖，STEP env绑定其实际路径，完整native/original原始产物单独always上传，严格六文件consumer保持。新增源码须自身提交级hosted结果，不继承d490或更早的绿灯。
+
+另修正peer-values README中反写的方向名：原实现始终为1 Outbound、2 Inbound；本次仅文档改正，保留old/new字节与SHA，不回填旧peer资格source snapshot，也不据此新增runtime PASS。
+
+本地stateless数据可接受性不授予认证源、source-chain finality、bridge replay或settlement权限；generic Serde provider、外部诊断文本、live Node消费与持久owner仍有明确边界。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE与0.25CPU/2GiB/0swap/256PID/4s/16预算不变。继续真实租约store、双边签名守恒结算、task-kernel原SQLite/schema/事务所有权，并接唯一Node的Some/CheckedApply/COMMIT/reorg/recovery与同请求Paid/Host。仅全部替代与原验收成功后清除旧栈。本文件仍是唯一开发计划，仅更新实际改变的计划pin，三项全栈/退役/激活flag保持false。
+
 ## 2026-11-18 — 治理、签名计划守卫、租约值与 Work 并发修复
 
 本轮父提交 `88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4`。当前 **48 kernels /22 native foundations /137 HIA sources**，每份源码唯一归属；26原Rust包中15部分迁移、11未迁移，**0退役、9全项目门OPEN**。数量描述已经实现的范围，不换算整链完成率。本轮只合入冻结的治理、控制守卫、租约值及四份Work修复源；Oracle、真实持久租约store、service settlement在独立最小工作树继续，其他会话的Node/TCM1/Paid修改不覆盖。

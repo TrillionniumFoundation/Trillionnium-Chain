@@ -1,6 +1,6 @@
 # Complete evidence archives
 
-These are the nine current volume sets: eight complete archives and one compact
+These are the ten current volume sets: nine complete archives and one compact
 Work/Host development view with explicit Git and external-binary dependencies. Every part is a regular file of at most
 six MiB. Its manifest binds order, offset, length and SHA256, together with the
 complete reconstructed archive. Every original member was independently reopened
@@ -17,6 +17,7 @@ and every volume set physically reassembled before publication.
 | control-guard-development | [manifest](control-guard-development.parts/manifest.json) | 3 | 13259644 | `92ee4be881e23483373019bef0987433239967de5737b0467329edafea080623` |
 | peer-lease-development | [manifest](peer-lease-development.parts/manifest.json) | 15 | 92757028 | `dfbdf6ac0239898d94ee0494d818112485b6a20fdc050a0dd95d0a5ed3c0e23d` |
 | work-handshake-development | [manifest](work-handshake-development.parts/manifest.json) | 7 | 38955024 | `8dfb55c4f9f7ff8c1198aca30670f606f1faf0593276105d57683662c44d11dd` |
+| oracle-development | [manifest](oracle-development.parts/manifest.json) | 3 | 15485716 | `07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837` |
 
 Application includes complete c61 and 876 GitHub ZIPs. Work/Host CI includes
 complete producer/consumer ZIPs, the full original executable and isolated
@@ -41,7 +42,7 @@ names = (
     "mempool-typed-development", "execution-application-ci",
     "work-owner-development", "work-owner-ci", "execution-batch-development",
     "governance-development", "control-guard-development",
-    "peer-lease-development", "work-handshake-development",
+    "peer-lease-development", "work-handshake-development", "oracle-development",
 )
 destination = Path(tempfile.mkdtemp(prefix="trnm-hia-evidence-"))
 for name in names:
@@ -111,6 +112,25 @@ Embedded formats and complete content indexes remain unchanged. Reconstruction
 verifies preserved bytes. It does not execute a runtime again, qualify a new
 commit, close an open gate or authorize retirement.
 
+## Oracle final development archive
+
+The [Oracle record](oracle-development.json) binds the complete final 19-test
+execution, all 672 process journals, all executed artifacts and all 472
+retained original test executions. Its three volumes reconstruct a single
+15,485,716-byte XZ stream containing 20,046 regular members and
+1,819,725,918 logical bytes. Every member, complete decompressed stream and
+zero tar tail was independently read back. Available historical failures and
+the actual quadratic/final source-scaling contrast remain in the archive.
+The early overwritten adapter failure has an explicit incompleteness note.
+
+The [integration record](oracle-integration.json) and separate
+`oracle-integration.tar.xz` retain the exact workflow controls, source snapshots,
+original Cargo graph check, documentation correction and complete preservation
+receipts for the four superseded successful run directories. Their full
+checkpoint archives remain at the explicit intermediate locations in the
+Oracle record; they are not extra active implementations. The complete final
+runtime evidence is self-contained in the three canonical Oracle volumes.
+
 ## Work toolchain CI follow-up
 
 The single `work-owner-toolchain-ci.tar.xz` archive and its
@@ -119,7 +139,7 @@ the bd620 Work prerequisite failure, full local negative/corrected controls,
 both job observations, and all three successful push component ZIPs plus
 independent public readback. Tool-generated empty lock metadata is excluded
 from the canonical archive; all observed source, failure and raw bytes remain.
-This small archive is separate from the nine volume sets above. Its current
+This small archive is separate from the ten volume sets above. Its current
 source correction requires fresh hosted execution and grants no retirement.
 
 ## Node/M05 successor report dossier

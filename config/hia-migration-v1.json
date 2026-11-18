@@ -547,6 +547,26 @@
       "tests": [
         "hia/tests/test_peer_lease.py"
       ]
+    },
+    {
+      "id": "oracle/values",
+      "node_integration_complete": false,
+      "scope": "All 22 explicit public Oracle functions/methods from the unchanged actual inline lib.rs: full UTF-8 IDs, canonical snapshot/hash/policy, i128/u128 arithmetic, u32 release wrapping and checked native traps, complete observed reports and original first-error order. Source sorting, duplicate detection and canonical cardinality use O(n log n) String comparisons. Actual Node/network/replay/finality ownership remains separate.",
+      "source": "hia/src/oracle/values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_oracle.py"
+      ]
+    },
+    {
+      "id": "oracle/serde-json",
+      "node_integration_complete": false,
+      "scope": "Six public Oracle data types through the actual serde_json 1.0.149 from_slice/to_vec surface, both default and workspace arbitrary_precision profiles: full integer/String domains, map/sequence/default/duplicate/unknown/ignored-value behavior and original serialized field order. No claim to generic Serde providers or serde_json diagnostic wording.",
+      "source": "hia/src/oracle/serde_json.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_oracle.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -600,12 +620,15 @@
       "state": "not-ported"
     },
     {
-      "components": [],
+      "components": [
+        "oracle/values",
+        "oracle/serde-json"
+      ],
       "legacy_path": "trillionnium/crates/trnm-oracle",
       "module": "M11",
       "package": "trnm-oracle",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [],

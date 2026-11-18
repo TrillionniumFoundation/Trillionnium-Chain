@@ -47,7 +47,7 @@ def sources():
     for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives",
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
                  "trnm-control-plane", "trnm-escrow-vault", "trnm-governance-guard",
-                 "trnm-peer-lease"):
+                 "trnm-peer-lease", "trnm-oracle"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths += sorted((crate / "tests").rglob("*.rs"))
@@ -91,7 +91,8 @@ def sources():
         "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md",
         "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
         "hia/src/escrow/README.md", "hia/src/governance/README.md",
-        "hia/src/control_plane/LOCAL_GUARD.md", "hia/src/peer_lease/README.md")]
+        "hia/src/control_plane/LOCAL_GUARD.md", "hia/src/peer_lease/README.md",
+        "hia/src/oracle/README.md", "scripts/ci/ci_job.sh")]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
@@ -175,7 +176,7 @@ def main():
             "skipped": [(str(test), why) for test, why in result.skipped]},
         "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
                                                for (b, s), count in sorted(calls.items())],
-        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. RS46 executes the original 4 MiB chunk and 6292022-byte six-shard input through its separately bounded native runner; these byte calls are outside the shared-runner counts. Escrow and governance execute complete private mutable sessions through bounded native runners, including real allocation failures; their calls and complete original comparisons remain in dedicated raw artifacts outside shared-runner counts. Peer-lease values use another bounded native runner and retain both the complete actual original crate baseline and all private value comparisons in their own artifact. Control-plane value, private-registry and local signature-guard suites retain their actual original Rust and native observations in separate artifacts; the new local Ed25519 provider profile does not establish production identity. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original, transport-original and RS46-original controls run in their own mandatory workflow steps. Work's deterministic hardware-scheduled handshake regression and complete native runtime regression have dedicated actual process and raw evidence.",
+        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. RS46 executes the original 4 MiB chunk and 6292022-byte six-shard input through its separately bounded native runner; these byte calls are outside the shared-runner counts. Escrow and governance execute complete private mutable sessions through bounded native runners, including real allocation failures; their calls and complete original comparisons remain in dedicated raw artifacts outside shared-runner counts. Peer-lease values use another bounded native runner and retain both the complete actual original crate baseline and all private value comparisons in their own artifact. Oracle values and serde_json use separate sealed native children; their calls, four complete original crate configurations, checked-overflow traps and raw comparisons remain in a dedicated artifact outside shared-runner counts. Control-plane value, private-registry and local signature-guard suites retain their actual original Rust and native observations in separate artifacts; the new local Ed25519 provider profile does not establish production identity. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original, transport-original and RS46-original controls run in their own mandatory workflow steps. Work's deterministic hardware-scheduled handshake regression and complete native runtime regression have dedicated actual process and raw evidence.",
         "builds": builds, "wall_seconds": time.monotonic() - started,
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),

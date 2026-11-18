@@ -1,0 +1,693 @@
+{
+  "archive": {
+    "bytes": 15485716,
+    "complete_zero_tar_tail": true,
+    "every_regular_member_rehashed": true,
+    "logical_bytes": 1819725918,
+    "manifest": {
+      "bytes": 4743985,
+      "sha256": "17dd4acff5934ef5724177c4b7c5f424de6c57016c256618341e10546690eeca"
+    },
+    "original_observations_unchanged": true,
+    "path": "hia/qualification/oracle-development.tar.xz",
+    "regular_members": 20046,
+    "result": "PASS",
+    "runtime_reexecuted_by_packager": false,
+    "schema": "trnm.hia.owner-extension-archive-readback.v1",
+    "sha256": "07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837",
+    "single_xz_stream": true,
+    "tar_zero_tail_bytes": 1536,
+    "uncompressed_tar": {
+      "bytes": 1836195840,
+      "sha256": "890104b0ee47d0067f386ac41127016bb7ffde7e6b0b8a5ca789da97bf0e8c96"
+    }
+  },
+  "artifacts": {
+    "serde_json": {
+      "artifact_bytes": 312168,
+      "artifact_sha256": "3f91e7630c98ddbb776fc0852534babfa3f4e03c8cc6b30d705542060d6eca41",
+      "borrowed_entry_profile": "legacy-f0-private-buffers",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "9def26e9f060ac61a11970e2c853b8b3803ab14f97817e49deebfcad70f49d8c",
+        "core_sha256": "935ef946110b5fa770e6478332288dbb04d5e69f92a8ddefbd04cff95e9041e3",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/oracle/serde_json.hepta",
+            "sha256": "fdfb6f8d17f115524568d3a6e456feb2a8865d42e5217653f79d0b20c05a7d0d"
+          },
+          {
+            "path": "components.json",
+            "sha256": "b304493c8a92da1643a278289d3eddd1b3fe40dbaf5063d2ec5f5521c4f0c14b"
+          },
+          {
+            "path": "src/oracle/values.hepta",
+            "sha256": "4b7ccdbf345a94c1e2599406ba4717107c130d5a091797afbe5b7a3835b891ed"
+          },
+          {
+            "path": "src/control_plane/core.hepta",
+            "sha256": "4a40a35d8720da13763b3285dc42eea292b99ebe23e680b6ec411ff1ad6cd6d8"
+          },
+          {
+            "path": "src/crypto/sha256_stream.hepta",
+            "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+          },
+          {
+            "path": "src/codec/json_primitives.hepta",
+            "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+          },
+          {
+            "path": "src/codec/json_value_wire.hepta",
+            "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+          },
+          {
+            "path": "src/codec/json_number.hepta",
+            "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+          },
+          {
+            "path": "src/math/binary64.hepta",
+            "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+          }
+        ],
+        "source_sha256": "fdfb6f8d17f115524568d3a6e456feb2a8865d42e5217653f79d0b20c05a7d0d",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compiler_wire_sha256": "6270541bb2ae9da61a4b00ac6bef29a8996d9e2fd09e035076f6b3869d4c3fc2",
+      "exports": [
+        "f0"
+      ],
+      "kind": "shared",
+      "object_sha256": "e91d03b64f89b672acfba5c118611abef6f0fc088d518e713e162e67e28388d3",
+      "ok": true,
+      "output": "/workspace/scratch/a638c5cc4765/oracle-root-final/execution/serde_json.so",
+      "output_profile_selection": "selfhost_elf",
+      "schema": "trnm.hia.selfhost-build.v1",
+      "status": "native_emitted_not_executed"
+    },
+    "values": {
+      "artifact_bytes": 287592,
+      "artifact_sha256": "0232254dbbe5a07afd944e9ee4cfdcecc0f2619071cbd41ed1bf0293871b2081",
+      "borrowed_entry_profile": "legacy-f0-private-buffers",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "ce8d711a8ce6a65205e576f9b7cab3f056f34fa2b7fd44eaf182573a03447e60",
+        "core_sha256": "cc27896365cdddb9bf9a7c8fa2f11884996f15f2f4d939636f65073ce5bf709f",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/oracle/values.hepta",
+            "sha256": "4b7ccdbf345a94c1e2599406ba4717107c130d5a091797afbe5b7a3835b891ed"
+          },
+          {
+            "path": "components.json",
+            "sha256": "b304493c8a92da1643a278289d3eddd1b3fe40dbaf5063d2ec5f5521c4f0c14b"
+          },
+          {
+            "path": "src/control_plane/core.hepta",
+            "sha256": "4a40a35d8720da13763b3285dc42eea292b99ebe23e680b6ec411ff1ad6cd6d8"
+          },
+          {
+            "path": "src/crypto/sha256_stream.hepta",
+            "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+          },
+          {
+            "path": "src/codec/json_primitives.hepta",
+            "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+          }
+        ],
+        "source_sha256": "4b7ccdbf345a94c1e2599406ba4717107c130d5a091797afbe5b7a3835b891ed",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compiler_wire_sha256": "d22a3adfdc247f348e410978f547a885370cbc96ebf1d3927ac875c315d6101f",
+      "exports": [
+        "f0"
+      ],
+      "kind": "shared",
+      "object_sha256": "308174ed71108f30c541bbab110749e5703b1785825ccf40a9c3b127a0588db0",
+      "ok": true,
+      "output": "/workspace/scratch/a638c5cc4765/oracle-root-final/execution/values.so",
+      "output_profile_selection": "selfhost_elf",
+      "schema": "trnm.hia.selfhost-build.v1",
+      "status": "native_emitted_not_executed"
+    }
+  },
+  "audited_parent": "d49083115e977f9c1947f92b9c10d93870e1b752",
+  "ci": {
+    "bootstrap_gates": 42,
+    "job": "native-components",
+    "job_timeout_minutes": 20,
+    "original_dependency_builds": 2,
+    "partition": "general",
+    "raw_streams_and_actual_artifacts_uploaded": true,
+    "separate_artifact": "hia-oracle-${expected_source_sha}-${run_id}-${run_attempt}",
+    "strict_general_artifact_contract_unchanged": true,
+    "workflow_jobs": 54
+  },
+  "final_execution": {
+    "actual_checked_panic_pairs": 64,
+    "actual_differential_pairs": 10259,
+    "actual_native_calls": 10272,
+    "actual_processes": 672,
+    "class_finalization_checked": true,
+    "complete_original_configurations": [
+      "release-default",
+      "checked-default",
+      "release-workspace",
+      "checked-workspace"
+    ],
+    "execution_file_bytes": 1659551284,
+    "execution_file_count": 19726,
+    "full_test_roster": [
+      "test_01_original_source_graph_and_retained_roster",
+      "test_02_source_ids_full_unicode_trim_control_and_as_str",
+      "test_03_constructor_sorting_original_order_duplicate_and_error_precedence",
+      "test_04_original_hash_framing_options_order_and_error_values",
+      "test_05_policy_all_checks_temporal_u64_and_first_error_order",
+      "test_06_full_signed128_saturating_unsigned128_deviation",
+      "test_07_observed_labels_cardinality_and_all_report_methods",
+      "test_08_counter_wrapping_and_actual_checked_overflow_traps",
+      "test_09_report_consistency_short_circuit_and_classified_conservation",
+      "test_10_typed_transport_invalid_utf8_truncation_ranges_and_trailing",
+      "test_11_exact_capacities_and_atomic_output_refusal",
+      "test_12_serde_all_six_public_types_roundtrip_order_defaults_and_duplicates",
+      "test_13_serde_ignored_any_unknown_fields_unicode_and_unbounded_skip_stack",
+      "test_14_serde_full_numeric_domain_decimal_exponent_and_negative_zero",
+      "test_15_serde_seeded_mutations_and_typed_representation_refusals",
+      "test_16_real_timeout_missing_executable_and_setup_failure_records",
+      "test_17_changed_actual_artifact_rejected_before_native_call",
+      "test_18_real_class_teardown_artifact_failure_cannot_report_pass",
+      "test_19_large_source_sorting_duplicate_first_error_and_cardinality"
+    ],
+    "independent_readback": {
+      "actual_checked_panic_pairs": 64,
+      "actual_differential_pairs": 10259,
+      "actual_native_calls": 10272,
+      "actual_original_rows": 10263,
+      "artifacts": 26,
+      "blob_references": 94267,
+      "evidence_directory": "/workspace/scratch/a638c5cc4765/oracle-root-final/execution",
+      "file_bytes": 1659551284,
+      "file_count": 19726,
+      "json_type_direction_profiles": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          2
+        ],
+        [
+          1,
+          1,
+          3
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          2
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          2,
+          1,
+          2
+        ],
+        [
+          2,
+          1,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          2
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          3,
+          1,
+          1
+        ],
+        [
+          3,
+          1,
+          2
+        ],
+        [
+          3,
+          1,
+          3
+        ],
+        [
+          4,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          2
+        ],
+        [
+          4,
+          1,
+          0
+        ],
+        [
+          4,
+          1,
+          1
+        ],
+        [
+          4,
+          1,
+          2
+        ],
+        [
+          4,
+          1,
+          3
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          2
+        ],
+        [
+          5,
+          1,
+          0
+        ],
+        [
+          5,
+          1,
+          1
+        ],
+        [
+          5,
+          1,
+          2
+        ],
+        [
+          5,
+          1,
+          3
+        ]
+      ],
+      "large_source_pairs": 50,
+      "observed_business_codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "orphan_root_blobs": 0,
+      "processes": 672,
+      "report_sha256": "b8e34048107e98e8829adc143bff97bed2b1092fdc339a73cc2374ce1adfb429",
+      "repository": "/workspace/scratch/a638c5cc4765/Trillionnium-Chain",
+      "result": "PASS",
+      "retained_original_tests": 472,
+      "source_identities": 24,
+      "standalone_native_controls": 13,
+      "standalone_original_capacity_rows": 4,
+      "test_methods": 19,
+      "typed_operations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "unique_root_blobs": 19016,
+      "whole_chain_native": false,
+      "whole_package_retired": false
+    },
+    "large_source_pairs": 50,
+    "raw_artifacts": 26,
+    "report_sha256": "b8e34048107e98e8829adc143bff97bed2b1092fdc339a73cc2374ce1adfb429",
+    "retained_original_test_executions": 472,
+    "retained_tests_per_configuration": 118,
+    "source_inputs": {
+      "hia/components.json": {
+        "bytes": 47537,
+        "sha256": "b304493c8a92da1643a278289d3eddd1b3fe40dbaf5063d2ec5f5521c4f0c14b"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_number.hepta": {
+        "bytes": 66485,
+        "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/codec/json_value_wire.hepta": {
+        "bytes": 39174,
+        "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+      },
+      "hia/src/control_plane/core.hepta": {
+        "bytes": 109130,
+        "sha256": "4a40a35d8720da13763b3285dc42eea292b99ebe23e680b6ec411ff1ad6cd6d8"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 39017,
+        "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+      },
+      "hia/src/math/binary64.hepta": {
+        "bytes": 21416,
+        "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+      },
+      "hia/src/oracle/README.md": {
+        "bytes": 12506,
+        "sha256": "22e1c1be52a8771a4a2d6db155e17e7ecc8a825f44b5357777aa9c74c53f6a42"
+      },
+      "hia/src/oracle/serde_json.hepta": {
+        "bytes": 194949,
+        "sha256": "fdfb6f8d17f115524568d3a6e456feb2a8865d42e5217653f79d0b20c05a7d0d"
+      },
+      "hia/src/oracle/values.hepta": {
+        "bytes": 180671,
+        "sha256": "4b7ccdbf345a94c1e2599406ba4717107c130d5a091797afbe5b7a3835b891ed"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/oracle_cases.py": {
+        "bytes": 4598,
+        "sha256": "5885ade463911dd4577259055aa4cf6fd23fa89b27df0639297c65221de42dfd"
+      },
+      "hia/tests/oracle_native.py": {
+        "bytes": 11594,
+        "sha256": "063b1db1ed77940e01bb90e3eff827ddc5629485e8aaa6ce1a1ab32f70008928"
+      },
+      "hia/tests/oracle_original.rs": {
+        "bytes": 21785,
+        "sha256": "4b583e60b06064ccc232823c516ca75a554860ac551c43c73c15eaf56663c07b"
+      },
+      "hia/tests/test_oracle.py": {
+        "bytes": 36746,
+        "sha256": "94c45d2ca09a5539e6f5e338bac1fedc23488c6747c4a55fbf32404e938d9196"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "scripts/ci/ci_job.sh": {
+        "bytes": 46670,
+        "sha256": "174abda80ce99938549f9063dabcdca41f81f49b479076bf39b5cfc4cb77a27f"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 42127,
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      },
+      "trillionnium/Cargo.toml": {
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+        "bytes": 1261,
+        "sha256": "885c85345ad8cd5454c3f801945661f10a8e5ca861fa37a0280fdb1729bd6cf9"
+      },
+      "trillionnium/crates/trnm-oracle/Cargo.toml": {
+        "bytes": 251,
+        "sha256": "550c843e163be4790c8e237a80a8d09f70e846206874e42c81dc7d75f4ca8004"
+      },
+      "trillionnium/crates/trnm-oracle/src/lib.rs": {
+        "bytes": 137263,
+        "sha256": "44a3913d7cbf682912147ef41e7f8be53e6130c1219a65ff9e1440ac697621ad"
+      }
+    },
+    "source_stable": true,
+    "standalone_native_controls": 13,
+    "standalone_original_capacity_rows": 4,
+    "status": "PASS",
+    "test_methods": 19,
+    "wall_ns": 154159985047
+  },
+  "hosted_execution": "NOT_RUN_FOR_THIS_UNCOMMITTED_INCREMENT; the new exact committed source requires its own hosted result.",
+  "native_kernels": [
+    "src/oracle/values.hepta",
+    "src/oracle/serde_json.hepta"
+  ],
+  "old_stack_can_be_removed": false,
+  "prior_success_preservation": {
+    "canonical_final_execution_complete": true,
+    "compressed_archive_bytes": 77245684,
+    "expanded_file_bytes_preserved": 6237726006,
+    "full_archives_are_separate_intermediate_checkpoints": true,
+    "records": [
+      {
+        "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v2.tar.xz",
+        "archive_identity": {
+          "bytes": 19130336,
+          "sha256": "e7d2efc67c3cbd12bd663e1ccaec0b54c22c471f595f31b3463ff525d033264c"
+        },
+        "complete_zero_tar_tail": true,
+        "every_file_read_back": true,
+        "files": 18869,
+        "free_bytes_after": 6810992640,
+        "preserved_file_bytes": 1525244014,
+        "schema": "trnm.oracle.completed-run-cleanup.v1",
+        "single_xz_stream": true,
+        "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v2",
+        "source_unchanged_before_cleanup": true,
+        "status": "PRESERVED_AND_VERIFIED",
+        "uncompressed_copy_removed": true
+      },
+      {
+        "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v3.tar.xz",
+        "archive_identity": {
+          "bytes": 19220632,
+          "sha256": "3386454a2a6931737139009d5f5f818c78cdc256b83fdd64fff5854f96da0f63"
+        },
+        "complete_zero_tar_tail": true,
+        "every_file_read_back": true,
+        "files": 19543,
+        "free_bytes_after": 8297668608,
+        "preserved_file_bytes": 1526460756,
+        "schema": "trnm.oracle.completed-run-cleanup.v1",
+        "single_xz_stream": true,
+        "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v3",
+        "source_unchanged_before_cleanup": true,
+        "status": "PRESERVED_AND_VERIFIED",
+        "uncompressed_copy_removed": true
+      },
+      {
+        "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v4-final.tar.xz",
+        "archive_identity": {
+          "bytes": 19222864,
+          "sha256": "6fe9e1114b0ffa8d06ead77a88c7e4fcc7bc6e89259284cc21751a8808f3d106"
+        },
+        "complete_zero_tar_tail": true,
+        "every_file_read_back": true,
+        "files": 19543,
+        "free_bytes_after": 9632014336,
+        "preserved_file_bytes": 1526464761,
+        "schema": "trnm.oracle.completed-run-cleanup.v1",
+        "single_xz_stream": true,
+        "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v4-final",
+        "source_unchanged_before_cleanup": true,
+        "status": "PRESERVED_AND_VERIFIED",
+        "uncompressed_copy_removed": true
+      },
+      {
+        "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v5-final.tar.xz",
+        "archive_identity": {
+          "bytes": 19671852,
+          "sha256": "72f016eadc5a80b34285e6dfccbced41cef4413d533b414f4162d5fba5fc460c"
+        },
+        "complete_zero_tar_tail": true,
+        "every_file_read_back": true,
+        "files": 19725,
+        "free_bytes_after": 10941444096,
+        "preserved_file_bytes": 1659556475,
+        "schema": "trnm.oracle.completed-run-cleanup.v1",
+        "single_xz_stream": true,
+        "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v5-final",
+        "source_unchanged_before_cleanup": true,
+        "status": "PRESERVED_AND_VERIFIED",
+        "uncompressed_copy_removed": true
+      }
+    ]
+  },
+  "production_activation": false,
+  "remaining_obligations": [
+    "Authenticated live Node consumer and source finality",
+    "Bridge replay and settlement custody",
+    "Generic Serde-provider surface and external diagnostic wording are outside this concrete adapter",
+    "External linker/platform dependency and supported target closure",
+    "Whole-chain business, resource, model, research and retirement gates"
+  ],
+  "retained_history": [
+    "Complete available initial dependency-profile setup failure; zero tests credited.",
+    "Early development adapter/newtype mismatch has explicitly missing overwritten binary/raw bytes; the historical note cannot claim immutable reproduction.",
+    "Prior v2/v3 method success lacked a sufficient class-finalization gate; their console logs and limitation note are retained. Final qualification includes actual class setup and teardown artifact-failure controls.",
+    "The quadratic predecessor is retained as an actual source/artifact/compiler-stream/input/output contrast. Twenty-four native executions cover twelve scenarios, including the observed all-repeated-input regression.",
+    "Redundant successful v2/v3/v4/v5 full-suite directories are superseded by the complete final root execution; their console observations do not inherit the new source identity."
+  ],
+  "schema": "trnm.hia.oracle.development-qualification.v1",
+  "scope": "Original trnm-oracle inline lib.rs: all 22 explicit public functions/methods and the six types concrete serde_json 1.0.149 from_slice/to_vec behavior under default and workspace arbitrary_precision features.",
+  "source_scaling": {
+    "actual_native_executions": 24,
+    "algorithm": "Heap sort and binary searches over source indices; O(n log n) String comparisons and original-order first failure; no extra source-count cap.",
+    "readback": {
+      "actual_native_executions": 24,
+      "artifact_sha256": {
+        "final-heapsort": "0232254dbbe5a07afd944e9ee4cfdcecc0f2619071cbd41ed1bf0293871b2081",
+        "historical-quadratic": "cce7070ba8e2a23cb4db2b2e7ce533495b673db3c6be2447fd6d4aaee775ffeb"
+      },
+      "final_source_unchanged": true,
+      "result": "PASS",
+      "scenario_count": 12,
+      "scope": "Exact artifacts/source/compiler streams/input/output verified; observed process timing values are retained, not interpreted as a production latency guarantee."
+    },
+    "scenario_count": 12,
+    "timings_are_production_gates": false
+  },
+  "status": "PASS_FINITE_NATIVE_DEVELOPMENT",
+  "volumes": {
+    "complete_archive": {
+      "bytes": 15485716,
+      "sha256": "07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837"
+    },
+    "every_part_single_link_regular": true,
+    "manifest": "hia/qualification/oracle-development.parts/manifest.json",
+    "parts": 3,
+    "physically_concatenated_byte_identity": true,
+    "retained_full_archive": "/workspace/scratch/a638c5cc4765/owner-extension-full-archives/oracle-development.tar.xz",
+    "schema": "trnm.hia.evidence-volumes-readback.v1",
+    "status": "PASS"
+  },
+  "whole_chain_native": false,
+  "whole_package_retired": false
+}

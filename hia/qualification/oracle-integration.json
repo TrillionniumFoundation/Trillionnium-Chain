@@ -1,0 +1,287 @@
+{
+  "archive": {
+    "bytes": 649368,
+    "complete_zero_tar_tail": true,
+    "every_regular_member_rehashed": true,
+    "logical_bytes": 3420888,
+    "manifest": {
+      "bytes": 11992,
+      "sha256": "256b5f350f63945412b7919130fcb6005988ced0e93b34afaff95e24835c92c9"
+    },
+    "original_observations_unchanged": true,
+    "path": "hia/qualification/oracle-integration.tar.xz",
+    "regular_members": 62,
+    "result": "PASS",
+    "runtime_reexecuted_by_packager": false,
+    "schema": "trnm.hia.owner-extension-archive-readback.v1",
+    "sha256": "960b54442b245ebb33ddefb6ec18e4e5e7045fbe698aaf2222021571f4fa1da0",
+    "single_xz_stream": true
+  },
+  "audited_parent": "d49083115e977f9c1947f92b9c10d93870e1b752",
+  "bootstrap_actual_invocations": 168,
+  "bootstrap_test_groups": 4,
+  "cargo_graph": {
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--no-deps",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "local_rustfmt_and_clippy_components": "not present in the selected retained compiler installation",
+    "manifest_and_lock_changed": false,
+    "original_workspace_tests_and_clippy": "NOT_RUN_BY_THIS_METADATA_COMMAND; exact-commit hosted gates remain required",
+    "packages": 26,
+    "source_files": {
+      "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "status": "PASS"
+  },
+  "component_discovery_is_not_execution": true,
+  "documentation_correction": {
+    "actual_mapping": {
+      "1": "Outbound",
+      "2": "Inbound"
+    },
+    "actual_original_source": "trillionnium/crates/trnm-peer-lease/src/protocol.rs",
+    "actual_original_source_sha256": "28ec46069577b7f0261d0b587d530ae5ea277a653222cabc5eca143e196399a2",
+    "implementation_changed": false,
+    "new": {
+      "bytes": 9468,
+      "sha256": "e3d3a77b83a484cde2c7ef6a06050bca19a089fb1c74842b6bfa479425bee525"
+    },
+    "new_runtime_claimed_by_this_correction": false,
+    "old": {
+      "bytes": 9468,
+      "sha256": "1d94abfbbac7f750e3c4bc6b544f992dd79502103fc6cb9f5e57f3ee57d5b08e"
+    },
+    "path": "hia/src/peer_lease/README.md",
+    "prior_runtime_source_snapshots_modified": false,
+    "schema": "trnm.hia.documentation-correction.v1",
+    "validation": "Original enum and unchanged original adapter use Outbound=1, Inbound=2; the prior README prose transposed the names. Current-source hosted component suite remains required."
+  },
+  "finite_tests": 33,
+  "hosted_execution": "NOT_RUN_FOR_THIS_UNCOMMITTED_INCREMENT",
+  "integration_source_inputs": {
+    ".github/workflows/hia-native-migration.yml": {
+      "bytes": 367748,
+      "sha256": "c69c3a9e3462cc9750d3954bac8fd517873f8e132776f54c1bc7b3ec72ad371f"
+    },
+    "config/hia-migration-v1.json": {
+      "bytes": 53552,
+      "sha256": "774edea9540623e659eb872bff1a2cccbf4513045460c1999dada04f430c74ca"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 525351,
+      "sha256": "e0df1b45bdb2ce0639c4a9fa456f043d8325f928c14e665e82d8fc39feb9c7eb"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 1297497,
+      "sha256": "40de2d17415514397d9551d8f4def6436a4cd5a37721ebf60978621ddd597504"
+    },
+    "hia/AUDIT.md": {
+      "bytes": 120292,
+      "sha256": "e484d36c0170292788803138b73cf674bedbe35e012e91e91ed16e389b209552"
+    },
+    "hia/README.md": {
+      "bytes": 38512,
+      "sha256": "b660e8940a3d473255f3be5e213f8e2a112c7d0edb392194ba908638066a54fd"
+    },
+    "hia/components.json": {
+      "bytes": 47537,
+      "sha256": "b304493c8a92da1643a278289d3eddd1b3fe40dbaf5063d2ec5f5521c4f0c14b"
+    },
+    "hia/qualification/ARCHIVES.md": {
+      "bytes": 14505,
+      "sha256": "a555be320ecc8b8b4be0ba800dc5eea02cff80202e18ff74c128e04286e028ee"
+    },
+    "hia/qualification/oracle-development.json": {
+      "bytes": 23381,
+      "sha256": "4ea3a3028e7d1696ff9e6b32b39b37c288373ff8e28e440a6fa7af812af8b15c"
+    },
+    "hia/src/oracle/README.md": {
+      "bytes": 12506,
+      "sha256": "22e1c1be52a8771a4a2d6db155e17e7ecc8a825f44b5357777aa9c74c53f6a42"
+    },
+    "hia/src/oracle/serde_json.hepta": {
+      "bytes": 194949,
+      "sha256": "fdfb6f8d17f115524568d3a6e456feb2a8865d42e5217653f79d0b20c05a7d0d"
+    },
+    "hia/src/oracle/values.hepta": {
+      "bytes": 180671,
+      "sha256": "4b7ccdbf345a94c1e2599406ba4717107c130d5a091797afbe5b7a3835b891ed"
+    },
+    "hia/src/peer_lease/README.md": {
+      "bytes": 9468,
+      "sha256": "e3d3a77b83a484cde2c7ef6a06050bca19a089fb1c74842b6bfa479425bee525"
+    },
+    "hia/tests/oracle_cases.py": {
+      "bytes": 4598,
+      "sha256": "5885ade463911dd4577259055aa4cf6fd23fa89b27df0639297c65221de42dfd"
+    },
+    "hia/tests/oracle_native.py": {
+      "bytes": 11594,
+      "sha256": "063b1db1ed77940e01bb90e3eff827ddc5629485e8aaa6ce1a1ab32f70008928"
+    },
+    "hia/tests/oracle_original.rs": {
+      "bytes": 21785,
+      "sha256": "4b583e60b06064ccc232823c516ca75a554860ac551c43c73c15eaf56663c07b"
+    },
+    "hia/tests/test_oracle.py": {
+      "bytes": 36746,
+      "sha256": "94c45d2ca09a5539e6f5e338bac1fedc23488c6747c4a55fbf32404e938d9196"
+    },
+    "hia/tools/qualify.py": {
+      "bytes": 13327,
+      "sha256": "ee6c3800c6614a943e5b7e8147c0c7b4a44f9db774b1bef347b05a78280a64c6"
+    }
+  },
+  "old_stack_can_be_removed": false,
+  "original_four_second_service_budget_unchanged": true,
+  "prior_success_archives": [
+    {
+      "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v2.tar.xz",
+      "archive_identity": {
+        "bytes": 19130336,
+        "sha256": "e7d2efc67c3cbd12bd663e1ccaec0b54c22c471f595f31b3463ff525d033264c"
+      },
+      "complete_zero_tar_tail": true,
+      "every_file_read_back": true,
+      "files": 18869,
+      "free_bytes_after": 6810992640,
+      "preserved_file_bytes": 1525244014,
+      "schema": "trnm.oracle.completed-run-cleanup.v1",
+      "single_xz_stream": true,
+      "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v2",
+      "source_unchanged_before_cleanup": true,
+      "status": "PRESERVED_AND_VERIFIED",
+      "uncompressed_copy_removed": true
+    },
+    {
+      "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v3.tar.xz",
+      "archive_identity": {
+        "bytes": 19220632,
+        "sha256": "3386454a2a6931737139009d5f5f818c78cdc256b83fdd64fff5854f96da0f63"
+      },
+      "complete_zero_tar_tail": true,
+      "every_file_read_back": true,
+      "files": 19543,
+      "free_bytes_after": 8297668608,
+      "preserved_file_bytes": 1526460756,
+      "schema": "trnm.oracle.completed-run-cleanup.v1",
+      "single_xz_stream": true,
+      "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v3",
+      "source_unchanged_before_cleanup": true,
+      "status": "PRESERVED_AND_VERIFIED",
+      "uncompressed_copy_removed": true
+    },
+    {
+      "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v4-final.tar.xz",
+      "archive_identity": {
+        "bytes": 19222864,
+        "sha256": "6fe9e1114b0ffa8d06ead77a88c7e4fcc7bc6e89259284cc21751a8808f3d106"
+      },
+      "complete_zero_tar_tail": true,
+      "every_file_read_back": true,
+      "files": 19543,
+      "free_bytes_after": 9632014336,
+      "preserved_file_bytes": 1526464761,
+      "schema": "trnm.oracle.completed-run-cleanup.v1",
+      "single_xz_stream": true,
+      "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v4-final",
+      "source_unchanged_before_cleanup": true,
+      "status": "PRESERVED_AND_VERIFIED",
+      "uncompressed_copy_removed": true
+    },
+    {
+      "archive": "/workspace/scratch/a638c5cc4765/oracle-work/retained-prior-runs/qualification-v5-final.tar.xz",
+      "archive_identity": {
+        "bytes": 19671852,
+        "sha256": "72f016eadc5a80b34285e6dfccbced41cef4413d533b414f4162d5fba5fc460c"
+      },
+      "complete_zero_tar_tail": true,
+      "every_file_read_back": true,
+      "files": 19725,
+      "free_bytes_after": 10941444096,
+      "preserved_file_bytes": 1659556475,
+      "schema": "trnm.oracle.completed-run-cleanup.v1",
+      "single_xz_stream": true,
+      "source": "/workspace/scratch/a638c5cc4765/oracle-work/qualification-v5-final",
+      "source_unchanged_before_cleanup": true,
+      "status": "PRESERVED_AND_VERIFIED",
+      "uncompressed_copy_removed": true
+    }
+  ],
+  "production_activation": false,
+  "schema": "trnm.hia.oracle-integration.v1",
+  "static_controls": {
+    "all_timeout_minutes": 20,
+    "bash_steps_checked": 442,
+    "bootstrap_gates": 42,
+    "changed_python_files_parsed": 4,
+    "complete_archive": {
+      "bytes": 15485716,
+      "sha256": "07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837"
+    },
+    "corpus_pins_changed": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "existing_include_semantics_unchanged": true,
+    "final_oracle_source_fence": "PASS",
+    "foundations": 22,
+    "git_diff_whitespace": "PASS",
+    "jobs": 54,
+    "kernels": 50,
+    "new_include_keys": [
+      "src/oracle/serde_json.hepta",
+      "src/oracle/values.hepta"
+    ],
+    "not_ported_packages": 10,
+    "open_gates": 9,
+    "original_package_entries_unchanged_except_oracle": true,
+    "partially_ported_packages": 16,
+    "parts": 3,
+    "peer_direction_documentation_correction": {
+      "actual_mapping": {
+        "1": "Outbound",
+        "2": "Inbound"
+      },
+      "actual_original_source": "trillionnium/crates/trnm-peer-lease/src/protocol.rs",
+      "actual_original_source_sha256": "28ec46069577b7f0261d0b587d530ae5ea277a653222cabc5eca143e196399a2",
+      "implementation_changed": false,
+      "new": {
+        "bytes": 9468,
+        "sha256": "e3d3a77b83a484cde2c7ef6a06050bca19a089fb1c74842b6bfa479425bee525"
+      },
+      "new_runtime_claimed_by_this_correction": false,
+      "old": {
+        "bytes": 9468,
+        "sha256": "1d94abfbbac7f750e3c4bc6b544f992dd79502103fc6cb9f5e57f3ee57d5b08e"
+      },
+      "path": "hia/src/peer_lease/README.md",
+      "prior_runtime_source_snapshots_modified": false,
+      "schema": "trnm.hia.documentation-correction.v1",
+      "validation": "Original enum and unchanged original adapter use Outbound=1, Inbound=2; the prior README prose transposed the names. Current-source hosted component suite remains required."
+    },
+    "pinned_count": 2613,
+    "python_heredocs_checked": 57,
+    "required_paths_count": 2517,
+    "retained_packages": 26,
+    "retired_packages": 0,
+    "runtime_executed": false,
+    "schema": "trnm.hia.oracle-integration-static.v1",
+    "status": "PASS",
+    "unique_hia_sources": 139,
+    "workflow": {
+      "bytes": 367748,
+      "sha256": "c69c3a9e3462cc9750d3954bac8fd517873f8e132776f54c1bc7b3ec72ad371f"
+    }
+  },
+  "status": "PASS_FINITE_INTEGRATION_CONTROLS",
+  "whole_chain_native": false
+}
