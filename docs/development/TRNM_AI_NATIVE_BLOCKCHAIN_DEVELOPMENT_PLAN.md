@@ -1,3 +1,15 @@
+## 2026-11-18 UTC — 双架构原四秒窗口失败闭合与 Host 微优化未采用
+
+成本候选 `7e4b96d4ac395a61a162940624769518cf2e03f3` 的 [required-baseline 44283985539](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44283985539) 已真正执行原 hosted-CI 路径。x64 artifact `14418149185` 与 arm64 artifact `14418334374` 的五个命名 native 测试都完成、进程都有终态，但两者最终均为 **CONFIRMATION_TARGET / FAILED**。无压力确认分别为 1/1、3.196201784 秒和 1/1、1.884381588 秒；压力均为 0/1。x64 仅尝试两页独立回放，第二页 deadline；arm64 尝试六页，第六页 deadline。不能把测试退出零或其他 HIA 绿灯变成业务通过。
+
+新增 CLOCK_PROCESS_CPUTIME_ID 原端点在两架构均实际生成且通过读取器。压力的 traffic+join 区间分别为 **1.012169204 CPU 秒 /4.093338332 墙秒** 和 **1.012705760 CPU 秒 /4.097292810 墙秒**；包括 setup/readback 的 whole-phase 分别为 1.101453935 与 1.087824224 CPU 秒。该区间宽于原四秒，exact-window CPU 仍未知；数值不能与已包含的 attacker、dispatch、Host 子钟再次相加。两路的独立回放 CPU 分别只有 103.455926 ms 和 226.053280 ms；攻击客户端为 369.670632 ms 和 319.984632 ms。真实共享父预算已耗满，未确认结果保留。[完整读回、原报告/进程收据与 SHA 绑定](evidence/chain-original-window-cost-20261118/ci-readback.json)保留；完整原 ZIP 另留在此次独立执行证据目录。
+
+继续检查了不减少 fresh 检查的两个具体优化。12 轮 ABBA（每臂 24×256 checks）中，普通文件加真实 proc 上的 canonical-parser 原型中位只改善 1.08%，两臂波动重叠；原 parser 单独为 32.4 ns/call。直接 fstat 与 std metadata 在真实当前 cgroup 上的同 dev/inode/uid/mode 对照，只省约 24–25 ns/FD 调用。strace 对 12,288 次完整组件检查确认约 37 次系统调用/check。这些是组件诊断，不能把普通文件成本当作正式 cgroup 成本；两个原型均 **未选入生产**。其源码、原 stdout/stderr、首次路径缺失失败、系统调用计数与分析放在 [未采用原型档案](evidence/chain-original-window-cost-20261118/unselected-host-prototypes.tar.xz)，活动 Host 源恢复原样。
+
+入站审查确认普通 V3 已有 bounded native Transcript/Product 拒绝缓存，且已有 WaitChallenge 顺序/全局 token bucket、全局连接/队列及 paid/server-owed 保护。Hello 的 digest 仍未认证，不是可直接复核的完整 W1 key；缓存早退保持 current Node、caller authentication、paid body decode 和原 deadline/cancellation/CPU owner。更前面的负缓存/冷却/公平调度需要新的生命周期、身份/摘要绑定、无效新挑战与合法请求控制，属于下一冻结候选，不能伪装成这次解析微优化。原 4 秒 /16 workers /0.25 CPU 及全部 fresh Host 读、EOF、文件类型和末端 inode fence 均未降低。
+
+本次 CI 还诚实暴露新增 phase_cost.rs 未进入 distributed native source inventory，head 与 prospective repository-truth 均拒绝；原失败 job `134731753270` /artifact `14418258830` 保留。本增量使用原生成器刷新恰当清单并保持 --check 门；没有更改该门。新提交后续 CI 仍须独立读取，不能从前一 source 继承资格。
+
 ## 2026-11-18 UTC — 原确认压力的全线程成本端点，业务门仍保留
 
 本增量基于 #949 的 `337fe8df54a5af59e10a1aea129022702b40b89d`，在独立分支 `fix/chain-liveness-e1e6-20261118` 工作。原 [required-baseline 44262261731](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261731) 的完整 protocol artifact 14413798363 已保留；ZIP SHA-256 为 `5cc201b852629538fb2ba0be803fae16998a24860028200ccdc5b45bebf49d0e`。该实际运行无压力确认 1/1、延迟 2.603265861 秒；16-worker 压力确认 0/1。压力下七次合法提交全部收到成功，独立客户端四次 History 回放中仅三次完成，第四次为 `PUBLIC_REQUEST_DEADLINE`，所以 `CONFIRMATION_TARGET` 仍为真实失败。每页原 W1 回放实际包含 1,099 次 fresh Host 检查；不能删检查、降低验证语义或延长窗口来报通过。

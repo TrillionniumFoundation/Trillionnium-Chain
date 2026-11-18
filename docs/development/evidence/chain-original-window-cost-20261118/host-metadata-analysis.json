@@ -1,0 +1,43 @@
+{
+  "schema": "trnm-host-metadata-analysis-v1",
+  "source_sha256": "8c22089298b121cc1afcacf250edd83c991967f7b8f0fac050852093ae07aec7",
+  "observations": [
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-terminal-dpty-ca0e9884c970caf159cb19f872425fd73834768dd49175cb2543a8ebceac23d8.service",
+      "by_fd": true,
+      "median_ns_per_call": {
+        "std_metadata": 147.6474609375,
+        "rustix_basic_stat": 122.282470703125
+      },
+      "direct_change_pct": -17.17942866969595
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-terminal-dpty-ca0e9884c970caf159cb19f872425fd73834768dd49175cb2543a8ebceac23d8.service",
+      "by_fd": false,
+      "median_ns_per_call": {
+        "std_metadata": 885.8857421875,
+        "rustix_basic_stat": 860.545166015625
+      },
+      "direct_change_pct": -2.8604790623790843
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-terminal-dpty-ca0e9884c970caf159cb19f872425fd73834768dd49175cb2543a8ebceac23d8.service/cpu.max",
+      "by_fd": true,
+      "median_ns_per_call": {
+        "std_metadata": 142.4599609375,
+        "rustix_basic_stat": 118.669921875
+      },
+      "direct_change_pct": -16.699456398796265
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-terminal-dpty-ca0e9884c970caf159cb19f872425fd73834768dd49175cb2543a8ebceac23d8.service/cpu.max",
+      "by_fd": false,
+      "median_ns_per_call": {
+        "std_metadata": 977.6767578125,
+        "rustix_basic_stat": 960.98974609375
+      },
+      "direct_change_pct": -1.7068025383037977
+    }
+  ],
+  "scope": "read-only actual cgroup metadata calls; same dev/inode/uid/mode, no fixed-parent admission or service business claim"
+}
