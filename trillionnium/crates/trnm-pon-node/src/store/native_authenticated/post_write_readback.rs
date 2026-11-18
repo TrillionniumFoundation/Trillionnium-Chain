@@ -169,7 +169,7 @@ impl<'db> PostWriteReadback<'db> {
         #[cfg(test)]
         tests::metadata_insert_hook(db, MetadataInsertStage::AfterCapture)?;
         if eligible {
-            if let (Some(previous), Some(next)) = (parent_graph.as_ref(), next.as_mut()) {
+            if let (Some(previous), Some(next)) = (parent_graph.as_mut(), next.as_mut()) {
                 // Checking the old observer AFTER construction also covers the
                 // prepare/execute schema normalization inside new(). RESET has
                 // no potentially writing statement in the pinned SQLite VM.
@@ -183,12 +183,29 @@ impl<'db> PostWriteReadback<'db> {
                     && next.current(db)?
                 {
                     // The exact Root remains backed by the actual graph just
-                    // verified before our sole passive metadata INSERT. No
-                    // frontier or arbitrary record set crosses this boundary.
+                    // verified before our sole passive metadata INSERT.
                     // Current child State/record/deltas, final callback and the
                     // original no-write scope are still checked before any hit.
                     next.graphs[0] = Some(record.clone());
                     next.ids[2] = record.parent;
+                    // Move only the original bounded frontier sealed by that
+                    // SAME complete parent graph. Its original source Record.id
+                    // and full Root remain unchanged; never relabel it as the
+                    // child or accept another same-Root record's frontier.
+                    // All old-owner/schema/sole-passive-write checks above must
+                    // succeed first. No extra record, SQL operation or callback
+                    // is introduced, and an absent/mismatched frontier retains
+                    // the original full graph reader.
+                    if previous
+                        .frontier
+                        .as_ref()
+                        .zip(previous.graphs[0].as_ref())
+                        .is_some_and(|(frontier, parent)| {
+                            frontier.is_for(parent.id, &parent.accounts)
+                        })
+                    {
+                        next.frontier = previous.frontier.take();
+                    }
                     #[cfg(test)]
                     {
                         next.metadata_insert_seeded = true;

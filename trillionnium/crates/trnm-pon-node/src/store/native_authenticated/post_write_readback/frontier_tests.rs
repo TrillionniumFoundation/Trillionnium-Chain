@@ -510,3 +510,539 @@ fn final_callback_deletion_and_later_outer_write_cannot_use_partial_availability
     drop(scope);
     node.db.execute_batch("ROLLBACK").unwrap();
 }
+
+struct MetadataFrontierFixture {
+    roots: TwoRoots,
+    child: Hash,
+    state: State,
+}
+
+fn metadata_frontier_fixture() -> MetadataFrontierFixture {
+    let mut roots = two_roots();
+    roots.fixture.node.activate(roots.parent).unwrap();
+    let node = &mut roots.fixture.node;
+    let packet = node
+        .make_consensus_maintenance(
+            roots.child,
+            vec![],
+            crate::development_public(0).unwrap(),
+            31,
+            4096,
+        )
+        .unwrap();
+    let child = node.admit(&packet, 100_000).unwrap();
+    let state = node.state_at(child).unwrap();
+    let source = load_observed(&node.db, roots.child, None).unwrap();
+    let current = load_observed(&node.db, child, None).unwrap();
+    let active = load_observed(&node.db, roots.parent, None).unwrap();
+    assert_eq!(current.accounts, source.accounts);
+    assert_ne!(current.accounts, active.accounts);
+    assert_eq!(node.active().unwrap().0, roots.parent);
+    MetadataFrontierFixture {
+        roots,
+        child,
+        state,
+    }
+}
+
+fn prepare_frontier_metadata<'db>(f: &'db MetadataFrontierFixture) -> PreparedMetadataInsert<'db> {
+    let prepared = prepare_frontier_metadata_with_progress(f, &mut || Ok(()));
+    let frontier = prepared.graph.frontier.as_ref().unwrap();
+    assert!((2..=16).contains(&frontier.occupied_slots()));
+    assert!(frontier.is_for(
+        prepared.record.parent_commitment.unwrap(),
+        &prepared.record.accounts,
+    ));
+    assert!(!prepared.graph.consumed);
+    prepared
+}
+
+fn prepare_frontier_metadata_with_progress<'db>(
+    f: &'db MetadataFrontierFixture,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> PreparedMetadataInsert<'db> {
+    let node = &f.roots.fixture.node;
+    let record = load_observed(&node.db, f.child, None).unwrap();
+    assert_eq!(record.parent, Some(f.roots.child));
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let owner = TransactionScope::capture(&node.db).unwrap();
+    assert_eq!(
+        node.db
+            .execute(
+                "DELETE FROM native_state_commitments WHERE block=?",
+                [f.child.as_slice()],
+            )
+            .unwrap(),
+        1
+    );
+    let rows =
+        super::super::super::deltas_with_progress(&node.db, f.child, &mut || Ok(())).unwrap();
+    assert!(rows.iter().all(|row| !row.0.starts_with("account:")));
+    let mut graph = PostWriteReadback::new(
+        &node.db,
+        &node.settings,
+        f.roots.child,
+        &owner,
+        node.post_write_schema.as_ref().unwrap(),
+    )
+    .unwrap()
+    .unwrap();
+    verify(node, f.roots.child, &f.roots.after, &mut graph, progress).unwrap();
+    PreparedMetadataInsert {
+        owner,
+        graph,
+        record,
+        rows,
+    }
+}
+
+#[test]
+fn metadata_frontier_preserves_actual_active_reader_without_another_graph_walk() {
+    let f = metadata_frontier_fixture();
+    let node = &f.roots.fixture.node;
+    let prepared = prepare_frontier_metadata(&f);
+    let source = prepared.graph.frontier.as_ref().unwrap().source_record();
+    let mut scope = prepared.save(node).unwrap();
+    assert!(scope.metadata_insert_seeded);
+    verify(node, f.child, &f.state, &mut scope, &mut || Ok(())).unwrap();
+
+    // Both calls use the ORIGINAL Node active reader, current SQL KV and the
+    // same real signed blocks. The reference omits only optional graph facts.
+    let mut original = 0u64;
+    node.check_active_before_commit_with_readback(
+        &mut || {
+            original += 1;
+            Ok(())
+        },
+        None,
+    )
+    .unwrap();
+    let mut scoped = 0u64;
+    node.check_active_before_commit_with_readback(
+        &mut || {
+            scoped += 1;
+            Ok(())
+        },
+        Some(&mut scope),
+    )
+    .unwrap();
+    eprintln!("metadata_frontier_actual_active original={original} scoped={scoped}");
+    assert!(scoped < original);
+    assert!(scope.partial_uses > 0);
+    assert!(scope.subtree_hits > 0);
+    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+    assert_eq!(
+        scope.ids,
+        [
+            Some(f.child),
+            Some(node.settings.genesis()),
+            Some(f.roots.child),
+            Some(f.roots.parent),
+        ]
+    );
+    scope.require_unchanged_after_last_write(&node.db).unwrap();
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(node.state_at(f.child).unwrap(), f.state);
+    assert_eq!(node.read_active().unwrap().0, f.roots.parent);
+}
+
+fn another_metadata_child(f: &mut MetadataFrontierFixture) -> (Hash, State) {
+    let node = &mut f.roots.fixture.node;
+    let packet = node
+        .make_consensus_maintenance(
+            f.roots.child,
+            vec![],
+            crate::development_public(0).unwrap(),
+            41,
+            4096,
+        )
+        .unwrap();
+    let child = node.admit(&packet, 100_000).unwrap();
+    let state = node.state_at(child).unwrap();
+    assert_ne!(child, f.child);
+    assert_eq!(
+        load_observed(&node.db, child, None).unwrap().accounts,
+        load_observed(&node.db, f.child, None).unwrap().accounts
+    );
+    (child, state)
+}
+
+fn actual_active_calls(
+    node: &Node,
+    scope: Option<&mut PostWriteReadback<'_>>,
+) -> (Result<()>, u64) {
+    let mut calls = 0;
+    let result = node.check_active_before_commit_with_readback(
+        &mut || {
+            calls += 1;
+            Ok(())
+        },
+        scope,
+    );
+    (result, calls)
+}
+
+#[test]
+fn metadata_frontier_rejects_another_real_source_even_when_its_root_matches() {
+    for same_root in [false, true] {
+        let mut f = metadata_frontier_fixture();
+        let (foreign_id, foreign_state) = if same_root {
+            another_metadata_child(&mut f)
+        } else {
+            (f.roots.parent, f.roots.before.clone())
+        };
+        let node = &f.roots.fixture.node;
+        let mut prepared = prepare_frontier_metadata(&f);
+        let mut other = capture(node, foreign_id);
+        verify(node, foreign_id, &foreign_state, &mut other, &mut || Ok(())).unwrap();
+        let foreign = other.frontier.take().unwrap();
+        let original = prepared.graph.graphs[0].as_ref().unwrap();
+        assert_ne!(foreign.source_record(), original.id);
+        assert_eq!(
+            load_observed(&node.db, foreign_id, None).unwrap().accounts == original.accounts,
+            same_root
+        );
+        assert!(!foreign.is_for(original.id, &original.accounts));
+        // The substituted fact was really minted by another complete native
+        // reader. Neither a caller-provided fake proof nor a forged Root is used.
+        prepared.graph.frontier = Some(foreign);
+        drop(other);
+        let mut scope = prepared.save(node).unwrap();
+        assert!(scope.metadata_insert_seeded);
+        assert!(scope.frontier.is_none());
+        verify(node, f.child, &f.state, &mut scope, &mut || Ok(())).unwrap();
+        let (expected, full) = actual_active_calls(node, None);
+        let (actual, observed) = actual_active_calls(node, Some(&mut scope));
+        expected.unwrap();
+        actual.unwrap();
+        assert_eq!(observed, full);
+        assert_eq!(scope.partial_uses, 0);
+        scope.require_unchanged_after_last_write(&node.db).unwrap();
+        drop(scope);
+        node.db.execute_batch("ROLLBACK").unwrap();
+        assert_eq!(node.read_active().unwrap().0, f.roots.parent);
+    }
+}
+
+#[test]
+fn metadata_frontier_does_not_nominate_a_fifth_same_root_record() {
+    let mut f = metadata_frontier_fixture();
+    let (fifth, fifth_state) = another_metadata_child(&mut f);
+    let node = &f.roots.fixture.node;
+    let prepared = prepare_frontier_metadata(&f);
+    let source = prepared.graph.frontier.as_ref().unwrap().source_record();
+    let mut scope = prepared.save(node).unwrap();
+    actual_active_calls(node, Some(&mut scope)).0.unwrap();
+    assert!(scope.partial_uses > 0);
+    assert_eq!(
+        scope.ids,
+        [
+            Some(f.child),
+            Some(node.settings.genesis()),
+            Some(f.roots.child),
+            Some(f.roots.parent),
+        ]
+    );
+    assert!(!scope.ids.contains(&Some(fifth)));
+    let before = (scope.hits, scope.partial_uses, scope.subtree_hits);
+    let mut full = 0;
+    reference(node, fifth, &fifth_state, &mut || {
+        full += 1;
+        Ok(())
+    })
+    .unwrap();
+    let mut observed = 0;
+    verify(node, fifth, &fifth_state, &mut scope, &mut || {
+        observed += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert_eq!(observed, full);
+    assert_eq!(before, (scope.hits, scope.partial_uses, scope.subtree_hits));
+    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+    scope.require_unchanged_after_last_write(&node.db).unwrap();
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn metadata_frontier_extra_sql_and_graph_damage_keep_the_original_fallback() {
+    for stage in [
+        MetadataInsertStage::BeforeSave,
+        MetadataInsertStage::AfterSave,
+        MetadataInsertStage::AfterCapture,
+        MetadataInsertStage::AfterSeed,
+    ] {
+        for effect in ["no-row", "same-row", "ddl-aba", "missing-subtree"] {
+            let f = metadata_frontier_fixture();
+            let node = &f.roots.fixture.node;
+            let descendant = child_id(&raw(&node.db, shared_frontier_fork(&f.roots)), 35);
+            let prepared = prepare_frontier_metadata(&f);
+            let source = prepared.graph.frontier.as_ref().unwrap().source_record();
+            let _hook = MetadataHookGuard::install(move |db, observed| {
+                if observed == stage {
+                    match effect {
+                        "no-row" => {
+                            db.execute("UPDATE archive_nodes SET data=data WHERE 0", [])?;
+                        }
+                        "same-row" => {
+                            db.execute("UPDATE archive_nodes SET data=data", [])?;
+                        }
+                        "ddl-aba" => {
+                            db.execute_batch(
+                                "CREATE TABLE metadata_frontier_probe(x); DROP TABLE metadata_frontier_probe",
+                            )?;
+                        }
+                        "missing-subtree" => {
+                            assert_eq!(
+                                db.execute(
+                                    "DELETE FROM archive_nodes WHERE id=?",
+                                    [descendant.as_slice()],
+                                )?,
+                                1
+                            );
+                        }
+                        _ => unreachable!(),
+                    }
+                }
+                Ok(())
+            });
+            let mut scope = prepared.save(node).unwrap();
+            scope.current(&node.db).unwrap();
+            assert!(scope.frontier.is_none(), "{stage:?} {effect}");
+            if stage != MetadataInsertStage::AfterSeed {
+                assert!(!scope.metadata_insert_seeded, "{stage:?} {effect}");
+            }
+            let (expected, full) = actual_active_calls(node, None);
+            let before = graphs(node);
+            let (actual, observed) = actual_active_calls(node, Some(&mut scope));
+            assert_eq!(
+                actual.as_ref().err().map(ToString::to_string),
+                expected.as_ref().err().map(ToString::to_string),
+                "{stage:?} {effect}"
+            );
+            assert_eq!(actual.is_ok(), effect != "missing-subtree");
+            assert_eq!(observed, full, "{stage:?} {effect}");
+            assert!(graphs(node) > before);
+            assert_eq!(scope.partial_uses, 0);
+            assert_eq!(scope.subtree_hits, 0);
+            assert!(
+                scope
+                    .frontier
+                    .as_ref()
+                    .is_none_or(|frontier| { frontier.source_record() != source }),
+                "{stage:?} {effect}"
+            );
+            drop(scope);
+            node.db.execute_batch("ROLLBACK").unwrap();
+            assert_eq!(node.read_active().unwrap().0, f.roots.parent);
+        }
+    }
+}
+
+#[test]
+fn metadata_frontier_final_parent_callback_cannot_certify_a_missing_subtree() {
+    let f = metadata_frontier_fixture();
+    let node = &f.roots.fixture.node;
+    let descendant = child_id(&raw(&node.db, shared_frontier_fork(&f.roots)), 35);
+    let mut callbacks = 0;
+    let prepared = prepare_frontier_metadata_with_progress(&f, &mut || {
+        callbacks += 1;
+        Ok(())
+    });
+    assert!(callbacks > 100);
+    assert!(prepared.graph.frontier.is_some());
+    drop(prepared);
+    node.db.execute_batch("ROLLBACK").unwrap();
+
+    let mut current = 0;
+    let prepared = prepare_frontier_metadata_with_progress(&f, &mut || {
+        current += 1;
+        if current == callbacks {
+            assert_eq!(
+                node.db.execute(
+                    "DELETE FROM archive_nodes WHERE id=?",
+                    [descendant.as_slice()],
+                )?,
+                1
+            );
+        }
+        Ok(())
+    });
+    assert_eq!(current, callbacks);
+    assert!(prepared.graph.frontier.is_none());
+    assert!(prepared.graph.graphs.iter().all(Option::is_none));
+    let mut scope = prepared.save(node).unwrap();
+    assert!(!scope.metadata_insert_seeded);
+    assert!(scope.frontier.is_none());
+    assert!(actual_active_calls(node, Some(&mut scope)).0.is_err());
+    assert_eq!(scope.partial_uses, 0);
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(node.state_at(f.child).unwrap(), f.state);
+}
+
+#[test]
+fn metadata_frontier_keeps_partial_cancellation_and_final_callback_readback() {
+    let f = metadata_frontier_fixture();
+    let node = &f.roots.fixture.node;
+    let descendant = child_id(&raw(&node.db, shared_frontier_fork(&f.roots)), 35);
+    let prepared = prepare_frontier_metadata(&f);
+    let mut scope = prepared.save(node).unwrap();
+    scope
+        .nominate_active(&node.db, node.active().unwrap().0)
+        .unwrap();
+    let mut callbacks = 0;
+    verify(
+        node,
+        f.roots.parent,
+        &f.roots.before,
+        &mut scope,
+        &mut || {
+            callbacks += 1;
+            Ok(())
+        },
+    )
+    .unwrap();
+    assert!(scope.partial_uses > 0);
+    assert!(scope.subtree_hits > 0);
+    assert!(scope.graphs[3].is_none());
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+
+    for cancel_at in [1, callbacks - 1, callbacks] {
+        let prepared = prepare_frontier_metadata(&f);
+        let mut scope = prepared.save(node).unwrap();
+        scope
+            .nominate_active(&node.db, node.active().unwrap().0)
+            .unwrap();
+        let source = scope.frontier.as_ref().unwrap().source_record();
+        let mut current = 0;
+        let error = verify(
+            node,
+            f.roots.parent,
+            &f.roots.before,
+            &mut scope,
+            &mut || {
+                current += 1;
+                if current == cancel_at {
+                    Err("METADATA_FRONTIER_CANCELLED".into())
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "METADATA_FRONTIER_CANCELLED");
+        assert_eq!(scope.partial_uses, 0);
+        assert!(!scope.consumed);
+        assert!(scope.graphs[3].is_none());
+        assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+        drop(scope);
+        node.db.execute_batch("ROLLBACK").unwrap();
+    }
+
+    let prepared = prepare_frontier_metadata(&f);
+    let mut scope = prepared.save(node).unwrap();
+    scope
+        .nominate_active(&node.db, node.active().unwrap().0)
+        .unwrap();
+    let before = graphs(node);
+    let mut current = 0;
+    let error = verify(
+        node,
+        f.roots.parent,
+        &f.roots.before,
+        &mut scope,
+        &mut || {
+            current += 1;
+            if current == callbacks {
+                assert_eq!(
+                    node.db.execute(
+                        "DELETE FROM archive_nodes WHERE id=?",
+                        [descendant.as_slice()],
+                    )?,
+                    1
+                );
+            }
+            Ok(())
+        },
+    )
+    .unwrap_err();
+    assert!(error.to_string().starts_with("NATIVE_ACCOUNT_STORE"));
+    assert_eq!(graphs(node) - before, 2);
+    assert_eq!(scope.partial_uses, 0);
+    assert!(!scope.consumed);
+    assert!(scope.frontier.is_none());
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn metadata_frontier_original_active_reader_keeps_the_consumed_outer_write_fence() {
+    let f = metadata_frontier_fixture();
+    let node = &f.roots.fixture.node;
+    let prepared = prepare_frontier_metadata(&f);
+    let mut scope = prepared.save(node).unwrap();
+    actual_active_calls(node, Some(&mut scope)).0.unwrap();
+    assert!(scope.partial_uses > 0);
+    assert!(scope.consumed);
+    node.db
+        .execute("UPDATE archive_nodes SET data=data WHERE 0", [])
+        .unwrap();
+    let error = scope
+        .require_unchanged_after_last_write(&node.db)
+        .unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_POST_WRITE_CHANGED");
+    assert!(scope.frontier.is_none());
+    assert_eq!(
+        scope.validate_consumed(&node.db).unwrap_err().to_string(),
+        "NATIVE_POST_WRITE_CHANGED"
+    );
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+    assert_eq!(node.read_active().unwrap().0, f.roots.parent);
+}
+
+#[test]
+fn metadata_frontier_extra_index_programs_cannot_cross_the_native_insert() {
+    for definition in [
+        "CREATE INDEX metadata_extra ON native_state_commitments(block)",
+        "CREATE INDEX metadata_extra ON native_state_commitments(length(data))",
+        "CREATE INDEX metadata_extra ON native_state_commitments(data) WHERE length(data)>0",
+        "CREATE INDEX metadata_extra ON native_state_commitments(data COLLATE NOCASE)",
+        "CREATE INDEX unrelated_archive_expression ON archive_nodes(length(data))",
+    ] {
+        let mut f = metadata_frontier_fixture();
+        let node = &mut f.roots.fixture.node;
+        node.db.execute_batch(definition).unwrap();
+        // A deliberately matching expected catalog is not authority to admit
+        // an index program on the table actually written by the native helper.
+        node.post_write_schema = Some(crate::store::schema(&node.db).unwrap());
+        let node = &f.roots.fixture.node;
+        let prepared = prepare_frontier_metadata(&f);
+        let source = prepared.graph.frontier.as_ref().unwrap().source_record();
+        let mut scope = prepared.save(node).unwrap();
+        let passive = definition.contains("unrelated_archive");
+        assert_eq!(scope.metadata_insert_seeded, passive, "{definition}");
+        assert_eq!(scope.frontier.is_some(), passive, "{definition}");
+        if passive {
+            assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+        }
+        let (expected, full) = actual_active_calls(node, None);
+        let (actual, observed) = actual_active_calls(node, Some(&mut scope));
+        expected.unwrap();
+        actual.unwrap();
+        if passive {
+            assert!(observed < full);
+            assert!(scope.partial_uses > 0);
+        } else {
+            assert_eq!(observed, full);
+            assert_eq!(scope.partial_uses, 0);
+        }
+        scope.require_unchanged_after_last_write(&node.db).unwrap();
+        drop(scope);
+        node.db.execute_batch("ROLLBACK").unwrap();
+    }
+}
