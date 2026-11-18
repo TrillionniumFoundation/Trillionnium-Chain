@@ -1752,6 +1752,189 @@
           "tr_put"
         ]
       }
+    ],
+    "src/governance/boundary_fixture.hepta": [
+      {
+        "functions": [
+          "gv_literals",
+          "gv_field",
+          "gv_find",
+          "gv_append",
+          "gv_member",
+          "gv_version",
+          "gv_set",
+          "gv_event",
+          "gv_active_restore",
+          "gv_propose",
+          "gv_queue",
+          "gv_cancel",
+          "gv_pause",
+          "gv_finalize",
+          "gv_execute",
+          "gv_execute_param",
+          "gv_execute_restore",
+          "gv_mutate",
+          "gv_clear",
+          "gv_clone",
+          "gv_write",
+          "gv_decimal",
+          "gv_proposal_reply",
+          "gv_less",
+          "gv_sorted_next",
+          "gv_bridge",
+          "gv_raw_event",
+          "gv_nf",
+          "gv_normal_event",
+          "gv_logs",
+          "gv_query",
+          "gv_new",
+          "gv_step"
+        ],
+        "source": "src/governance/guard.hepta"
+      },
+      {
+        "functions": [
+          "sv_read",
+          "sv_get",
+          "sv_put",
+          "sv_copy",
+          "sv_move",
+          "sv_equal",
+          "sv_room"
+        ],
+        "source": "src/escrow/vault.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/governance/guard.hepta": [
+      {
+        "functions": [
+          "sv_read",
+          "sv_get",
+          "sv_put",
+          "sv_copy",
+          "sv_move",
+          "sv_equal",
+          "sv_room"
+        ],
+        "source": "src/escrow/vault.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/control_plane/guard.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_be",
+          "cp_copy",
+          "cp_wcopy",
+          "cp_wout",
+          "cp_reverse",
+          "cp_zero",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_compare",
+          "cp_hash",
+          "cp_action_frame",
+          "cp_action",
+          "cp_plan_frame",
+          "cp_plan_primary",
+          "cp_plan",
+          "cp_plan_actions",
+          "cp_signed_le",
+          "cp_bound",
+          "cp_domain_set",
+          "cp_domain_place",
+          "cp_domain_forbidden",
+          "cp_domain_plan",
+          "cp_domain_receipt"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_group.hepta",
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_verify_joint.hepta",
+        "functions": [
+          "ed_joint_verify"
+        ]
+      }
+    ],
+    "src/peer_lease/values.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
     ]
   }
 }

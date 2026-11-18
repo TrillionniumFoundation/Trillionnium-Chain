@@ -517,6 +517,36 @@
       "tests": [
         "hia/tests/test_escrow.py"
       ]
+    },
+    {
+      "id": "governance/guard",
+      "node_integration_complete": false,
+      "scope": "Complete private HIA GovernanceGuard session: role and guardian sets, all proposal and bridge transitions, u64 counters, exact raw and normalized audit, consume marker and independent Clone; authenticated incremental Node lifetime and durability remain separate",
+      "source": "hia/src/governance/guard.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_governance.py"
+      ]
+    },
+    {
+      "id": "control-plane/local-guard",
+      "node_integration_complete": false,
+      "scope": "Original LocalPlanGuard construction and complete evaluate policy with private immutable configuration, full i128 bounds, ordered receipts and an explicit new strict Ed25519 local provider; no original production provider existed; live authorized plan application and PQ identity remain separate",
+      "source": "hia/src/control_plane/guard.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_guard.py"
+      ]
+    },
+    {
+      "id": "peer-lease/values",
+      "node_integration_complete": false,
+      "scope": "Private native immutable peer-lease values: full constructors/getters/clone/drop/equality/scope ordering; original run/body hashes and recovery projection integrity decoder. Durable journals, Unix credential authority, daemon/client and Core authentication remain unimplemented; original package is retained.",
+      "source": "hia/src/peer_lease/values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_peer_lease.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -605,12 +635,14 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "peer-lease/values"
+      ],
       "legacy_path": "trillionnium/crates/trnm-peer-lease",
       "module": "M04",
       "package": "trnm-peer-lease",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -656,7 +688,8 @@
     {
       "components": [
         "control-plane/core",
-        "control-plane/registry"
+        "control-plane/registry",
+        "control-plane/local-guard"
       ],
       "legacy_path": "trillionnium/crates/trnm-control-plane",
       "module": "M16",
@@ -749,12 +782,14 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "governance/guard"
+      ],
       "legacy_path": "trillionnium/crates/trnm-governance-guard",
       "module": "M01",
       "package": "trnm-governance-guard",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -1113,7 +1148,7 @@
       "id": "platform/work-owner",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Complete same-worker W1 relation and immutable acquired Host/resource owner: 61 native histories, 175 complete primitive controls with 9489 calls and 7800 full snapshots, 3 actual traces, 27 trace/14 signal controls, 18 native CLOCK faults, 57 actual-original histories and 44 retained original tests. Actual original CLOCK comparison includes 2 positives, 18 controlled faults and 20 raw-reader controls; normal vDSO fault behavior is not inferred. Earlier Node request deadline, shared Paid checkpoint/account, production fixed-parent positive, durable Node/batch integration and original service acceptance remain OPEN. Current native graph matches frozen ded development execution; current original/CI graphs require exact-commit hosted execution.",
+      "scope": "Same-worker W1 relation and immutable acquired Host/resource owner, with single-observation ready/go handshake decisions, actual clock fault refusal, real join and original resource limits. Native histories, primitive controls, original comparisons and deterministic handshake regression are separately source-bound. Earlier Node request deadline, shared Paid checkpoint/account, production fixed-parent positive, durable Node/batch integration and original service acceptance remain OPEN.",
       "sources": [
         "hia/platform/work_owner/closed_fd_fixture_emitter.hepta",
         "hia/platform/work_owner/host_fixture.hepta",
@@ -1140,7 +1175,8 @@
         "hia/tools/work_owner_clock_ci.py",
         "hia/tools/work_owner_transfer_ci.py",
         "hia/platform/work_owner/qualify_production.py",
-        "hia/platform/work_owner/test_production.py"
+        "hia/platform/work_owner/test_production.py",
+        "hia/tools/qualify_work_handshake.py"
       ]
     },
     {
@@ -1201,6 +1237,18 @@
         "hia/platform/mempool_node/evidence.py",
         "hia/tools/qualify_node_pool_ci.py",
         "hia/tools/test_node_pool_ci.py"
+      ]
+    },
+    {
+      "id": "governance/fixed-boundaries",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Separate fixed no-input native qualification of original private nonce/version exhaustion, internal drift and pause-state boundaries; invokes the same production HIA helpers and is not a public state injection interface",
+      "sources": [
+        "hia/src/governance/boundary_fixture.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_governance.py"
       ]
     }
   ],

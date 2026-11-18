@@ -48,26 +48,26 @@
     "owner": {
       "executable": {
         "bytes": 510454,
-        "sha256": "4ed3ce4da5dfe42340adfc04f25c0e2b23584174bec1424ea7d3d86511cb8d98"
+        "sha256": "32e9e58834eafe14ceb91bfeab5cabde178e396ffc38f8b2b08b6729cb3ee4ed"
       },
       "prefix_bytes": 4796,
-      "adapter_sha256": "9d102e927716e5bed46bd410e521a2afa9056e8e68cbf5cc66556ca6639cd926"
+      "adapter_sha256": "aec578dc1b6a690a4bdef681a540a4c16574b451c528d48750d338892915e84a"
     },
     "fixture": {
       "executable": {
         "bytes": 510454,
-        "sha256": "aeb8361c267b0905461596021b97d606bc0bb517bdaaaef93eb811af5926e524"
+        "sha256": "e7957206063ae5e4301d6c51c919045c74f0a22f980abcde253a62354c141095"
       },
       "prefix_bytes": 4796,
-      "adapter_sha256": "9d102e927716e5bed46bd410e521a2afa9056e8e68cbf5cc66556ca6639cd926"
+      "adapter_sha256": "aec578dc1b6a690a4bdef681a540a4c16574b451c528d48750d338892915e84a"
     },
     "closed-fd": {
       "executable": {
         "bytes": 510494,
-        "sha256": "3d72c791cb39dd01096d1ac61a03737bf7dd22965903cc2eab57cadc504dfca9"
+        "sha256": "7447dfd8fe4fe545a29a29b310eeffa922d0e7b02cffda543b052ca1db9cc4b9"
       },
       "prefix_bytes": 4836,
-      "adapter_sha256": "4ecc3524def6f08160796e7e09beb4a8aca053de925fe246190db876d516be32"
+      "adapter_sha256": "d3df19890ef400c4a36389d1a2f08b4a7db53370c261073e8b068c010c50a914"
     }
   },
   "authority": {

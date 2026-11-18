@@ -1,3 +1,21 @@
+## 2026-11-18 — 治理、签名计划守卫、租约值与 Work 并发修复
+
+本轮父提交 `88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4`。当前 **48 kernels /22 native foundations /137 HIA sources**，每份源码唯一归属；26原Rust包中15部分迁移、11未迁移，**0退役、9全项目门OPEN**。数量描述已经实现的范围，不换算整链完成率。本轮只合入冻结的治理、控制守卫、租约值及四份Work修复源；Oracle、真实持久租约store、service settlement在独立最小工作树继续，其他会话的Node/TCM1/Paid修改不覆盖。
+
+[治理最终记录](../../hia/qualification/governance-development.json)：10/10实际PASS，94完整原Rust对照，6185公开操作及193固定private boundary fixture操作；原governance45和audit3保留测试全部PASS。角色、提案、暂停、参数、权限/错误先后、raw/normalized审计及Clone隔离均由HIA持有。固定fixture无外部状态输入。12个实际allocator进程覆盖11处真实OOM，零泄漏/非法free；最终harness实际执行timeout、spawn不存在、class setup失败与native child timeout。有限session仍不等于live Node持久治理owner。
+
+[LocalPlanGuard最终记录](../../hia/qualification/control-guard-development.json)：14/14实际PASS，1367 native calls、1361原实现逐字对照、462 evaluate，原5项保留测试PASS。原crate没有生产signature provider，因此真实HIA Ed25519接入使用明确的新local profile，signer/signature/plan message均有新domain；原plan/action/receipt摘要和原policy顺序保持。不能沿用既有signed schema假称同一授权身份，也不声称PQ。evaluate仍不可变，不凭空增加重放账本或代次变化。真实3处OOM正确释放，live认证plan application继续OPEN。
+
+[Peer Lease最终记录](../../hia/qualification/peer-lease-development.json)：13/13实际PASS，53完整对照、8095操作；私有scope/token/namespace/frame、完整recovery值、Clone/Drop、数值排序、projection解析、run hash及8MiB body保持原语义。projection自洽不等于Core认证。本地完整原suite曾因Unix socket权限失败，未过滤该测试或改报PASS；配置ROG真实执行未改crate全部121外层测试（97lib+7bin+17integration），两个原内部child test不重复计数。根逐原件读取16份实际binary/rlib共231382068B、完整1700份源。local adapter build与远端original test使用各自实际compiler身份。历史v1未留全旧test/README源码字节，明确source-byte incompleteness；最终源与partial/failure负控有完整匹配快照，旧FAIL不继承新PASS。
+
+[Work最终记录](../../hia/qualification/work-handshake-development.json)：5a hosted clock-EIO-2199实际exit88故障来自ready/go循环的两次共享字读取。另一线程在两次读取间正常0→1会被错判非法；两个HIA emitter改为每轮一个load，再用该snapshot判断，地址/段长不变。24个真实硬件断点调度用例复现4旧race、通过4新race及16明确非法状态拒绝；正常race不改指令、通用寄存器、syscall结果、clock或private state。新race真实经历futex EAGAIN、clear_tid及worker exit后join。完整新native回归175 primitives/9489calls、61 histories/27843progress、3trace、27trace+14signal负控、18CLOCK全部PASS。旧新clock-EIO-2199输入49348B逐字相同，新按原Host错误语义在1099progress后返回并join。此轮不是新original Rust execution，不代替fixed-parent生产authority、live Node/Paid或4s/16业务门。
+
+第一轮合并测试遭实际ENOSPC，原失败和未完成记录保留；纠正环境后在同一冻结manifest上重新完整执行三套，共37项PASS。清理仅针对逐字SHA匹配的自有重复checkout及未引用单链接Cargo incremental缓存，多链接共享文件、原源码、执行产物和失败证据不删。正式仓库只引入最终实现和单一完整证据传输；必要历史负控封装在最终档，所有分卷均≤6MiB并完整重组核验。
+
+最终migration/composition/partition33项及四组bootstrap共168次实际调用PASS；首次整合driver漏HIA_TOOLCHAIN_ROOT的setup错误按原观察保留，正确绑定工具链后重跑全清单。组件完整发现457项（450general+7State-root），发现不是运行。54jobs/42独立bootstrap、各20分钟及原六文件consumer保持；新三模块与Work握手完整raw各自上传。当前新增源须自己的提交级CI，不能继承88dd或5a通过身份。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE失败继续保留，0.25CPU/2GiB/0swap/256PID/4s/16条件不放宽。
+
+继续实现Oracle完整类型/Serde与实际feature/overflow profile，Peer Lease真实fd/flock/journal/fsync/recovery owner，以及双边签名/usage/rollup/challenge/守恒结算的私有原生owner。之后接唯一Node的Some/CheckedApply/COMMIT/reorg/recovery、同请求Paid/Host及剩余所有原包、PQ/TLS、跨平台、模型和研究门。只有实际全替代和原验收全部成功才删除旧栈。本文件仍是唯一开发计划；只更新实际改变的计划source pin，不把开发PASS写成whole_chain_native、old_stack_can_be_removed或production_activation。
+
 ## 2026-11-18 — 控制面与托管的私有 HIA owner、完整原始对照及证据闭合
 
 本轮父提交 `5a71deab1f254fff3297b482a96d86fbc8965b89`，基线跟踪树40,931项。当前 **45 kernels /21 native foundations /133 HIA sources**，逐源唯一归属；26原Rust包中13部分迁移、13未迁移，**0退役、9全项目门OPEN**。独立工作树保留其它会话的TCM1、Node与Work/Paid开发，不覆盖并发修改。

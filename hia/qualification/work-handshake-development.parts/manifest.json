@@ -1,0 +1,52 @@
+{
+  "schema": "trnm.hia.contiguous-archive.v1",
+  "logical_name": "work-handshake-development.tar.xz",
+  "archive": {
+    "bytes": 38955024,
+    "sha256": "8dfb55c4f9f7ff8c1198aca30670f606f1faf0593276105d57683662c44d11dd"
+  },
+  "parts": [
+    {
+      "path": "part-000",
+      "offset": 0,
+      "bytes": 6291456,
+      "sha256": "c760c1f1bba9ff2ad257e91913b7eb0eabe7296d70e688f8e7b3aaebc18bfbfa"
+    },
+    {
+      "path": "part-001",
+      "offset": 6291456,
+      "bytes": 6291456,
+      "sha256": "2dc8856ef6f13bbdf05fb6bc6615d9152a224b27e8ee8cd447548e4e722a3304"
+    },
+    {
+      "path": "part-002",
+      "offset": 12582912,
+      "bytes": 6291456,
+      "sha256": "1be3d83a8d7e2590bab5b50f569e910c1467c0d7da66308c9bbfda30660cac93"
+    },
+    {
+      "path": "part-003",
+      "offset": 18874368,
+      "bytes": 6291456,
+      "sha256": "1b8a9ee08ac7d293cfb5d31f94f37d1c4e0140a1356bbe16bf3b2856ec036205"
+    },
+    {
+      "path": "part-004",
+      "offset": 25165824,
+      "bytes": 6291456,
+      "sha256": "08e5215a0723265adca8450172fc3678ddae977432338b314948d0358e45d228"
+    },
+    {
+      "path": "part-005",
+      "offset": 31457280,
+      "bytes": 6291456,
+      "sha256": "c843d1350faa9ac484a539f9f9438f3aad909c72106dd9fbe206ab6770d62842"
+    },
+    {
+      "path": "part-006",
+      "offset": 37748736,
+      "bytes": 1206288,
+      "sha256": "f5bf147a571e17c30b032b7e7e2b2e213559100de2196306cba15822b14a1430"
+    }
+  ]
+}

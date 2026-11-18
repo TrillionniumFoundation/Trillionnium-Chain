@@ -1,9 +1,9 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **45 kernel units, 21 native foundations and 133 HIA source
+inventory contains **48 kernel units, 22 native foundations and 137 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (13 partially ported and 13 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (15 partially ported and 11 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
@@ -11,7 +11,34 @@ sets the migration sequence. The [migration inventory](../config/hia-migration-v
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
 
-## Current control-plane and escrow owners
+## Current private owners and Work concurrency fix
+
+The [governance owner](src/governance/README.md) retains the complete original
+GovernanceGuard public lifecycle, independent clones, roles, proposals, pause
+state and both audit representations in private native state. Its
+[final development record](qualification/governance-development.json) binds
+10 tests, 94 original comparisons and 6,185 public operations plus 193 operations
+through the fixed private boundary fixture. That fixture accepts no caller
+state injection. Durable Node custody and activation remain open.
+
+The [peer lease values](src/peer_lease/README.md) implement the original private
+scope/token/namespace/frame and recovery value operations, projection decoding,
+canonical hashes and the original 8 MiB body boundary. Thirteen tests cover
+53 complete original comparisons and 8,095 operations. The
+[complete record](qualification/peer-lease-development.json) includes an actual
+unfiltered 121-test run of the unchanged Rust crate on the configured Linux host,
+all 16 executed binaries/libraries and the exact original source archive.
+Projection consistency does not establish Core authorization. The durable
+journal, Unix authority and live recovery owner still require native integration.
+
+The [Work handshake record](qualification/work-handshake-development.json)
+records a real startup race: two reads of a shared word could observe a normal
+0-to-1 transition as corruption. Both HIA emitters now make one observation per
+loop. Hardware scheduling reproduces all four old races and verifies four fixed
+races plus 16 explicit corrupt-state refusals without patching instructions or
+general registers. The complete updated native regression passes 175 primitive
+controls, 61 histories, three syscall traces and 18 clock faults. The original
+four-second service budget and live Node/Paid obligations remain unchanged.
 
 The [control-plane implementation](src/control_plane/README.md) provides the
 original descriptor, action, plan and receipt digests, full signed 128-bit
@@ -21,8 +48,13 @@ for same-generation equality and retained workload measurements. The complete
 unchanged original Rust crate supplies the independent comparison. The
 [development record](qualification/control-plane-development.json) retains the
 actual native artifacts, original executable, complete comparisons and allocation
-failure observations. The LocalPlanGuard signature-provider interface and live
-plan application remain the next control-plane integration work.
+failure observations. The [LocalPlanGuard implementation](src/control_plane/LOCAL_GUARD.md)
+now evaluates the original policy with a real native Ed25519 verifier under an
+explicitly new local provider profile and fresh signing domains. The
+[guard record](qualification/control-guard-development.json) binds 14 tests,
+1,361 original comparisons and 462 evaluations. This local profile is separate
+from any production or post-quantum identity. Live authenticated plan application
+and persistent Node integration remain open.
 
 The [private SettlementVault](src/escrow/README.md) implements every original
 public vault operation within a complete native session: full unsigned 128-bit
@@ -132,7 +164,7 @@ every comparison. Node adds five native
 partitions, two original Rust comparisons and seven explicit evidence-reader
 profiles. Native child budgets remain 240 seconds plus three-second cleanup.
 
-Full component discovery assigns 398 tests to disjoint general (391) and
+Full component discovery assigns 457 tests to disjoint general (450) and
 State-root (seven) jobs, followed by an independent coverage consumer. Work/Host
 uses native, original, complete qualification/package and independent readback
 stages. Original executable bytes, complete raw streams, exact source trees and

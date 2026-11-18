@@ -1,6 +1,6 @@
 # Complete evidence archives
 
-These are the five current volume sets: four complete archives and one compact
+These are the nine current volume sets: eight complete archives and one compact
 Work/Host development view with explicit Git and external-binary dependencies. Every part is a regular file of at most
 six MiB. Its manifest binds order, offset, length and SHA256, together with the
 complete reconstructed archive. Every original member was independently reopened
@@ -13,6 +13,10 @@ and every volume set physically reassembled before publication.
 | work-owner-development | [manifest](work-owner-development.parts/manifest.json) | 8 | 50018340 | `b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325` |
 | work-owner-ci | [manifest](work-owner-ci.parts/manifest.json) | 39 | 243515800 | `16c37259be4b1e0003d0569d2f96e28531bb4e2c1e77c152412f51576f1d2cd6` |
 | execution-batch-development | [manifest](execution-batch-development.parts/manifest.json) | 18 | 107152632 | `2446b6d527a21e935be2bda8e4907feeabef28386f1ad16243deb9f05392d4ef` |
+| governance-development | [manifest](governance-development.parts/manifest.json) | 2 | 10476388 | `463424d8dbbf64745e409f797d15b8bec8562717758fc0c912ad01e4e5944e8e` |
+| control-guard-development | [manifest](control-guard-development.parts/manifest.json) | 3 | 13259644 | `92ee4be881e23483373019bef0987433239967de5737b0467329edafea080623` |
+| peer-lease-development | [manifest](peer-lease-development.parts/manifest.json) | 15 | 92757028 | `dfbdf6ac0239898d94ee0494d818112485b6a20fdc050a0dd95d0a5ed3c0e23d` |
+| work-handshake-development | [manifest](work-handshake-development.parts/manifest.json) | 7 | 38955024 | `8dfb55c4f9f7ff8c1198aca30670f606f1faf0593276105d57683662c44d11dd` |
 
 Application includes complete c61 and 876 GitHub ZIPs. Work/Host CI includes
 complete producer/consumer ZIPs, the full original executable and isolated
@@ -36,6 +40,8 @@ import hashlib, json, os, stat, tempfile
 names = (
     "mempool-typed-development", "execution-application-ci",
     "work-owner-development", "work-owner-ci", "execution-batch-development",
+    "governance-development", "control-guard-development",
+    "peer-lease-development", "work-handshake-development",
 )
 destination = Path(tempfile.mkdtemp(prefix="trnm-hia-evidence-"))
 for name in names:
@@ -113,7 +119,7 @@ the bd620 Work prerequisite failure, full local negative/corrected controls,
 both job observations, and all three successful push component ZIPs plus
 independent public readback. Tool-generated empty lock metadata is excluded
 from the canonical archive; all observed source, failure and raw bytes remain.
-This small archive is separate from the five volume sets above. Its current
+This small archive is separate from the nine volume sets above. Its current
 source correction requires fresh hosted execution and grants no retirement.
 
 ## Node/M05 successor report dossier
@@ -161,3 +167,43 @@ The small [integration archive](native-owner-integration.tar.xz) and
 migration/composition/partition and bootstrap raw logs, static source checks,
 both complete archive readbacks, original offline-build failure and parent CI
 observations. These controls do not substitute for fresh hosted runtime tests.
+
+## Governance, local signature guard, peer values and Work race
+
+These four volume sets retain one canonical final evidence package per current
+implementation increment. All regular payloads, including actual native and
+original binaries, are present in the archives. Their member indexes retain
+size, SHA256 and mode. Historical observations keep their own source identity;
+they are not additional active implementations.
+
+| Record | Regular members | Scope of complete retained evidence |
+| --- | ---: | --- |
+| [Governance](governance-development.json) | 2341 | Final 10 tests, 94 comparisons, 48 retained original tests, actual allocator and process failures, complete final source snapshot |
+| [Local plan guard](control-guard-development.json) | 2020 | Final 14 tests, original policy and real local Ed25519 profile, complete native/Rust/allocator observations and all 65 source inputs |
+| [Peer lease values](peer-lease-development.json) | 1188 | Final 13 tests, complete 121-test original remote execution with all 16 binaries/libraries, complete 1700-file original source archive, final and reporter-control source snapshots |
+| [Work handshake](work-handshake-development.json) | 821 | Complete 24-case scheduling archive, all 20842 full-regression artifacts, actual old/fixed builds, exact source snapshots and complete historical hosted failure ZIPs |
+
+Peer's historical v1 did not retain the old test and README source bytes. Their
+observed hashes and all available failed observations remain, but that historical
+run cannot claim a complete source reproduction. The final source snapshot is
+complete. Its small actual reporter-control driver is additionally retained at
+`peer-lease/qualification-report-negative.py` in
+[native-extension-integration.tar.xz](native-extension-integration.tar.xz).
+Lossless recompression reduced the peer transport from 186317232 to 92757028
+bytes; both complete decompressed tar streams were read and verified identical.
+No observation, binary, source or member was removed by recompression.
+
+The separate [original Work build](work-handshake-original-build.tar.xz) is a
+147792-byte fixed regression input, SHA256
+`137c4a0b3ea6b86ad67916ec0c35df512d63fb19405f9c6e4b83bccac0f33811`.
+Its 64 regular members retain the actual old HIA build, emitter inputs/outputs
+and native images. CI validates its exact identity and safely extracts it before
+executing the old/new regression. It is required negative-test evidence, not a
+second current production implementation.
+
+The [integration record](native-extension-integration.json) and its archive
+retain root's exact inventory, 33 integration tests, four bootstrap groups,
+complete 457-test discovery, static workflow checks, full archive/volume
+readbacks and precise duplicate/cache cleanup receipts. Initial local ENOSPC,
+missing-toolchain setup and reader mistakes remain explicitly recorded. These
+checks do not retire any package or replace new commit-bound hosted execution.

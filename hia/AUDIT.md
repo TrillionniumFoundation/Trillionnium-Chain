@@ -1,5 +1,84 @@
 # Whole-tree inventory and HIA migration audit
 
+## Governance, local plan signatures, peer values and Work race — 2026-11-18
+
+The audited parent is `88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4`.
+The current inventory has **48 kernels, 22 native foundations and 137 HIA
+sources**, with one owner per source. Fifteen of the 26 original packages are
+partially ported and eleven are not ported. Zero packages are retired; all nine
+whole-project gates remain OPEN. These counts describe scope, not a completion
+percentage. The following sections retain their own earlier source identities.
+
+The [governance record](qualification/governance-development.json) binds the
+final 10/10-test execution, 94 exact native/original comparisons, 6,185 public
+operations and 193 fixed private fixture operations. The unchanged original
+governance and audit suites pass 45 and three retained tests. Twelve real
+allocator runs cover all eleven allocation refusals with no leaks or invalid
+free. The harness also executes actual timeout, missing executable, class-setup
+failure and native-worker timeout controls. A finite private session and a
+fixed no-input boundary fixture do not establish durable Node custody.
+
+The [local plan guard record](qualification/control-guard-development.json)
+binds 14/14 tests, 1,367 actual native calls, 1,361 actual original comparisons
+and 462 evaluations. Original policy and digest domains are preserved. Because
+the original crate exposes a verifier interface but contains no production
+provider, the actual HIA Ed25519 integration uses an explicitly new local
+profile with fresh signer, signature and plan-message domains. It does not
+silently claim an existing signature identity or post-quantum authorization.
+Evaluation remains immutable; it does not invent a replay ledger or generation
+advance. All three real allocation failures release the private state.
+
+The [peer lease record](qualification/peer-lease-development.json) binds
+13/13 tests, 53 complete comparisons and 8,095 native operations, including
+private constructors, clone/drop, exact ordering, projection rejection and the
+full 8 MiB body. Local Unix socket denial prevented the original complete suite
+from passing on this host. The configured Linux host ran the complete unchanged
+crate with no outer filters: 97 library, seven binary and 17 integration tests
+passed. Two nested child tests are not added to the 121 outer-test count.
+Root independently read all 16 actual binaries/libraries (231,382,068 bytes)
+and all 1,700 captured source files. Original execution and local adapter builds
+retain their separate compiler identities. Historical v1 lacks complete old
+test/README source bytes and cannot claim full source reproduction; its failure,
+raw observations and observed source hashes remain intact. The final snapshot
+and partial/failure reporter controls have complete matching source bytes.
+
+The [Work record](qualification/work-handshake-development.json) retains a real
+two-read startup race observed in the 5a hosted clock-EIO-2199 run. HIA source
+now emits one shared-word load per ready/go loop, while preserving all addresses
+and lengths. Twenty-four hardware-scheduled actual executions reproduce four
+old exit-88 races, verify four fixed races and retain sixteen invalid-word
+refusals. Normal cases never patch instructions, registers, syscall results or
+private handshake state. Fixed races observe real futex EAGAIN, kernel
+clear_tid and worker exit before join completes. The full updated native suite
+also passes 175 primitive controls/9,489 calls, 61 histories/27,843 progress
+points, three actual traces, 27 trace and 14 signal reader controls, and all
+18 clock fault profiles. The old and new clock-EIO-2199 inputs are byte-identical;
+the new result is the expected host error after 1,099 progress points and one
+join. This is neither a new original Rust execution nor closure of live
+Node/Paid or the four-second/16-request business gate.
+
+All three merged component suites were rerun after an actual ENOSPC setup/run
+failure. The failed observations remain failures with their original source
+identities. Cleanup removed only individually byte-verified duplicate checkout
+copies and unreferenced single-link Cargo incremental cache files; shared
+multi-link files, original code, executed binaries and failure evidence remain.
+Only final implementation directories and canonical evidence transports enter
+the repository. New archives are split into regular parts of at most six MiB;
+complete member and reconstructed-byte verification is retained.
+
+Final integration controls pass all 33 migration/composition/partition tests
+and 168 actual invocations of the 42 compiler bootstrap gates. Component
+discovery finds 457 tests (450 general and seven State-root); discovery is not
+execution. The workflow retains 54 jobs, each with the original 20-minute
+limit, and separately uploads complete governance, guard, peer and Work race
+observations. This increment still needs its own committed hosted execution.
+Original confirmation/deadline failures and all nine whole-project requirements
+remain unchanged. Final staging removed one extra final newline from the
+governance test and reran all ten methods against that exact source. The Work
+record retains its actual earlier 20-file integration snapshot and explicitly
+records this unrelated delta; all 135 Work inputs remain byte-identical. Oracle, durable lease storage and service settlement continue
+in separate source trees pending complete integration and evidence.
+
 ## Private control-plane and escrow owners — 2026-11-18
 
 The audited parent is `5a71deab1f254fff3297b482a96d86fbc8965b89`, whose

@@ -181,6 +181,9 @@ jobs:
         env:
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
           TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original
+          TRNM_HIA_GOVERNANCE_OUTPUT: ${{ runner.temp }}/hia-governance-original
+          HIA_CONTROL_GUARD_OUTPUT: ${{ runner.temp }}/hia-control-guard-original
+          HIA_PEER_LEASE_OUTPUT: ${{ runner.temp }}/hia-peer-lease-original
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard general --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -212,6 +215,30 @@ jobs:
         with:
           name: hia-escrow-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/hia-escrow-original/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete original and HIA governance observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-governance-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-governance-original/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete original and HIA local guard observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-control-guard-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-control-guard-original/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete original and HIA peer lease observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-peer-lease-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-peer-lease-original/
           if-no-files-found: error
           retention-days: 30
   native-components-state-root:
@@ -3961,6 +3988,36 @@ jobs:
         run: |-
           set -euo pipefail
           python3 -B -m hia.platform.work_owner.qualify --output "$RUNNER_TEMP/hia-work-owner-native" --require-trace 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-native-observations/native.log"
+      - name: Force both actual Work handshake races and reject invalid states
+        run: |-
+          set -euo pipefail
+          python3 - "$RUNNER_TEMP/hia-work-handshake-original" <<'PY'
+          import hashlib, pathlib, sys, tarfile
+          source = pathlib.Path('hia/qualification/work-handshake-original-build.tar.xz')
+          if hashlib.sha256(source.read_bytes()).hexdigest() != '137c4a0b3ea6b86ad67916ec0c35df512d63fb19405f9c6e4b83bccac0f33811':
+              raise SystemExit('Retained original HIA build archive identity differs')
+          target = pathlib.Path(sys.argv[1])
+          target.mkdir(mode=0o700)
+          seen = set()
+          with tarfile.open(source, 'r:xz') as archive:
+              for member in archive:
+                  name = pathlib.PurePosixPath(member.name)
+                  if (not member.isfile() or name.is_absolute() or '..' in name.parts
+                          or str(name) != member.name or name.parts[0] != 'original-build'
+                          or member.name in seen):
+                      raise SystemExit('Retained build has an invalid member')
+                  seen.add(member.name)
+                  data = archive.extractfile(member).read()
+                  if len(data) != member.size:
+                      raise SystemExit('Retained build has a truncated member')
+                  path = target.joinpath(*name.parts)
+                  path.parent.mkdir(parents=True, exist_ok=True)
+                  with path.open('xb') as stream:
+                      stream.write(data)
+          if len(seen) != 64:
+              raise SystemExit('Retained original build member roster differs')
+          PY
+          python3 -B -m hia.tools.qualify_work_handshake --original-build "$RUNNER_TEMP/hia-work-handshake-original/original-build" --fixed-build "$RUNNER_TEMP/hia-work-owner-native/build" --output "$RUNNER_TEMP/hia-work-handshake" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-native-observations/handshake.log"
       - name: Verify all source bytes after native execution
         if: always()
         run: |-
@@ -3995,6 +4052,15 @@ jobs:
           path: |-
             ${{ runner.temp }}/hia-work-owner-native-observations/
             ${{ runner.temp }}/hia-work-owner-native-final-source.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Retain complete actual Work handshake observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-work-handshake-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-work-handshake/
           if-no-files-found: error
           compression-level: 0
           retention-days: 30
