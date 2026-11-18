@@ -254,11 +254,11 @@ mod kernel_parent {
         let mut file = fs::File::from(fd);
         // These cgroup-v2 children are regular files. A substituted FIFO
         // must neither block nor lend buffered text or writer-free EOF.
-        if !file
-            .metadata()
-            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?
-            .file_type()
-            .is_file()
+        if rustix::fs::FileType::from_raw_mode(
+            rustix::fs::fstat(&file)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?
+                .st_mode,
+        ) != rustix::fs::FileType::RegularFile
         {
             return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
         }
@@ -292,8 +292,7 @@ mod kernel_parent {
 
     impl ScopedParentDirectory {
         fn from_file(file: fs::File, identity: (u64, u64, u32)) -> Result<Self> {
-            let current = file
-                .metadata()
+            let current = rustix::fs::fstat(&file)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
             if !Self::matches(&current, identity) {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
@@ -309,15 +308,22 @@ mod kernel_parent {
             )
         }
 
-        fn matches(metadata: &fs::Metadata, identity: (u64, u64, u32)) -> bool {
-            metadata.file_type().is_dir()
-                && metadata.mode() & 0o022 == 0
-                && (metadata.dev(), metadata.ino(), metadata.uid()) == identity
+        fn matches(metadata: &rustix::fs::Stat, identity: (u64, u64, u32)) -> bool {
+            rustix::fs::FileType::from_raw_mode(metadata.st_mode) == rustix::fs::FileType::Directory
+                && metadata.st_mode & 0o022 == 0
+                && (metadata.st_dev, metadata.st_ino, metadata.st_uid) == identity
         }
 
         fn verify_path(&self, parent: &Path) -> Result<()> {
-            let current = fs::symlink_metadata(parent)
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            // Read the current named object again for the original
+            // type/mode/device/inode/uid fields.
+            // It retains the nofollow fence and grants no reusable verdict.
+            let current = rustix::fs::statat(
+                rustix::fs::CWD,
+                parent,
+                rustix::fs::AtFlags::SYMLINK_NOFOLLOW,
+            )
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
             if !Self::matches(&current, self.identity) {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
@@ -363,11 +369,11 @@ mod kernel_parent {
             }
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?;
             let mut file = fs::File::from(fd);
-            if !file
-                .metadata()
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?
-                .file_type()
-                .is_file()
+            if rustix::fs::FileType::from_raw_mode(
+                rustix::fs::fstat(&file)
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?
+                    .st_mode,
+            ) != rustix::fs::FileType::RegularFile
             {
                 return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
             }
