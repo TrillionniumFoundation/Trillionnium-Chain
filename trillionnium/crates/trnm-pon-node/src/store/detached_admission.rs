@@ -498,6 +498,11 @@ impl PreparedExecution {
             )
             .map_err(local_execution_error)?;
         drop(bound);
+        let execution_deltas = (prepared.pin.backend == StateBackend::AuthenticatedV1
+            && prepared.eligibility.manifest().is_none()
+            && !pq_accounts_v2::enabled(&prepared.app)
+            && !growth_profile_v2::enabled(&prepared.app))
+        .then(|| std::mem::take(&mut staged.commitment.changes));
         if prepared.eligibility.manifest().is_some() {
             let product: Vec<u8> = prepared
                 .checked
@@ -545,6 +550,7 @@ impl PreparedExecution {
                 prior: prepared.prior,
                 output: staged.output,
                 commitment: staged.commitment,
+                execution_deltas,
             },
             _measurement: prepared._admission_measurement,
         })
