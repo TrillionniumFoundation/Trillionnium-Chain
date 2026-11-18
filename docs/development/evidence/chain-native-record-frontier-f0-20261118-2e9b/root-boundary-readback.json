@@ -1,0 +1,1025 @@
+{
+  "actual_client_imports": 0,
+  "actual_history_calls": 0,
+  "actual_paid_credit_samples": {
+    "all_balance_identities_verified": true,
+    "depleted_samples": 0,
+    "first": [
+      {
+        "at_ns": 453327,
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "depleted": false,
+        "discarded_refill_ns": 0,
+        "live_owners": 0,
+        "observation_ended_ns": 453327,
+        "observation_started_ns": 444493,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000
+      }
+    ],
+    "last": [
+      {
+        "at_ns": 29932657132,
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 200000000,
+        "credited_refill_ns": 6400263723,
+        "depleted": false,
+        "discarded_refill_ns": 1147690263,
+        "live_owners": 2,
+        "observation_ended_ns": 29932657132,
+        "observation_started_ns": 29932648770,
+        "paid_cpu_debit_ns": 6401321894,
+        "remaining_paid_credit_ns": 1998941829
+      }
+    ],
+    "maximum_observed_remaining_paid_credit_ns": 2000000000,
+    "minimum_observed_remaining_paid_credit_ns": 1982201160,
+    "minimum_sample": {
+      "at_ns": 12831284047,
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 200000000,
+      "credited_refill_ns": 2723888471,
+      "depleted": false,
+      "discarded_refill_ns": 529451099,
+      "live_owners": 2,
+      "observation_ended_ns": 12831284047,
+      "observation_started_ns": 12831274132,
+      "paid_cpu_debit_ns": 2741687311,
+      "remaining_paid_credit_ns": 1982201160
+    },
+    "sample_count": 417,
+    "scope": "Actual discrete samples only; not a continuous-time minimum or proof of impossibility."
+  },
+  "actual_submission_attempts": 15,
+  "actual_submission_field_names": [
+    "calling_process_cpu_ns",
+    "elapsed_wall_ns",
+    "ended_ns",
+    "error",
+    "height",
+    "metrics",
+    "packet_index",
+    "public_request_body_digest",
+    "recorded_request_bytes",
+    "recorded_request_digest",
+    "response",
+    "returned_after_window",
+    "started_ns",
+    "status"
+  ],
+  "actual_submissions": [
+    {
+      "ended_ns": 3131350791,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 5,
+      "packet_index": 0,
+      "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+      "returned_after_window": false,
+      "started_ns": 1031721642,
+      "status": "error"
+    },
+    {
+      "ended_ns": 4941136132,
+      "error": null,
+      "height": 5,
+      "packet_index": 0,
+      "public_request_body_digest": "3575beaba6b44fd103cd18a20a14f3645859b3310608ca062fdd27130fca1ac1",
+      "response_error": null,
+      "response_ok": true,
+      "returned_after_window": false,
+      "started_ns": 3131968709,
+      "status": "ok"
+    },
+    {
+      "ended_ns": 7031334050,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 6,
+      "packet_index": 1,
+      "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+      "returned_after_window": false,
+      "started_ns": 4941808201,
+      "status": "error"
+    },
+    {
+      "ended_ns": 9043928300,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 6,
+      "packet_index": 1,
+      "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+      "returned_after_window": false,
+      "started_ns": 7031794661,
+      "status": "error"
+    },
+    {
+      "ended_ns": 10650787734,
+      "error": null,
+      "height": 6,
+      "packet_index": 1,
+      "public_request_body_digest": "83a76e1064668b636b3f2f1bf56a73e1bdb12b1cc06e58dd84176866a873ab39",
+      "response_error": null,
+      "response_ok": true,
+      "returned_after_window": false,
+      "started_ns": 9044436613,
+      "status": "ok"
+    },
+    {
+      "ended_ns": 12731374456,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 7,
+      "packet_index": 2,
+      "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+      "returned_after_window": false,
+      "started_ns": 10651280364,
+      "status": "error"
+    },
+    {
+      "ended_ns": 14739930829,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 7,
+      "packet_index": 2,
+      "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+      "returned_after_window": false,
+      "started_ns": 12731901697,
+      "status": "error"
+    },
+    {
+      "ended_ns": 16451363626,
+      "error": null,
+      "height": 7,
+      "packet_index": 2,
+      "public_request_body_digest": "d9a96911f9ad6c9dcb19fffba90eb6321a2049c6717d632810cbad05058b9a6a",
+      "response_error": null,
+      "response_ok": true,
+      "returned_after_window": false,
+      "started_ns": 14740585021,
+      "status": "ok"
+    },
+    {
+      "ended_ns": 18549347905,
+      "error": "FRAME_DEADLINE",
+      "height": 8,
+      "packet_index": 3,
+      "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+      "returned_after_window": false,
+      "started_ns": 16451967683,
+      "status": "error"
+    },
+    {
+      "ended_ns": 20348649020,
+      "error": null,
+      "height": 8,
+      "packet_index": 3,
+      "public_request_body_digest": "a476d40bc04a793c3d116ab3f90630fada9fe65a86c2cb111f1b4074564b91f3",
+      "response_error": null,
+      "response_ok": true,
+      "returned_after_window": false,
+      "started_ns": 18549888896,
+      "status": "ok"
+    },
+    {
+      "ended_ns": 22431432795,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 9,
+      "packet_index": 4,
+      "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+      "returned_after_window": false,
+      "started_ns": 20349131283,
+      "status": "error"
+    },
+    {
+      "ended_ns": 24468928592,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 9,
+      "packet_index": 4,
+      "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+      "returned_after_window": false,
+      "started_ns": 22431975129,
+      "status": "error"
+    },
+    {
+      "ended_ns": 26351461567,
+      "error": null,
+      "height": 9,
+      "packet_index": 4,
+      "public_request_body_digest": "5eaece200390ad38fe6e90fb6ff17a9388139415d85dd6c7ab59536a14cc7632",
+      "response_error": null,
+      "response_ok": true,
+      "returned_after_window": false,
+      "started_ns": 24469437196,
+      "status": "ok"
+    },
+    {
+      "ended_ns": 28431380752,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 10,
+      "packet_index": 5,
+      "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+      "returned_after_window": false,
+      "started_ns": 26351990902,
+      "status": "error"
+    },
+    {
+      "ended_ns": 30005257472,
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "height": 10,
+      "packet_index": 5,
+      "public_request_body_digest": "5c390a2190b40a33698920c7ec5fb819d3cc00a6f2ba945c81f538ee0d971117",
+      "returned_after_window": true,
+      "started_ns": 28431876647,
+      "status": "error"
+    }
+  ],
+  "archive_sha256": "b4457d8062f6f5068286c8b597668b09065a5eb2f12c85759517037cb386be93",
+  "business_gate_pass": false,
+  "complete_physical_cost_closed": false,
+  "final_actual_flow": {
+    "balance_identity_verified": true,
+    "booked_reservation_ns": 0,
+    "credited_refill_ns": 6422455118,
+    "discarded_refill_ns": 1152205763,
+    "initial_credit_ns": 2000000000,
+    "live_debited_cpu_ns": 6429375625,
+    "live_owners": 0,
+    "paid_cpu_debit_ns": 6429821181,
+    "remaining_paid_credit_ns": 1992633937,
+    "schema": "public-v3-local-actual-cpu-flow-v1",
+    "settled_full_cpu_ns": 6429821181,
+    "settlement_discard_ns": 0,
+    "settlement_residual_cpu_ns": 445556,
+    "stored_credit_ns": 1992633937,
+    "unsettled_known_live_cpu_ns": 0
+  },
+  "head": "d95239eda6a666458aa264ddeaf993d6d9fbf37d",
+  "hostile_original_body_records": {
+    "actual_dispatch_error_codes": {
+      "None": 349,
+      "PUBLIC_REQUEST_CANCELLED": 46
+    },
+    "actual_terminal_error_codes": {
+      "None": 336,
+      "PUBLIC_EOF": 59
+    },
+    "dispatch_accepted": 0,
+    "dispatch_started": 373,
+    "examples": [
+      {
+        "body_digest": [
+          183,
+          3,
+          120,
+          227,
+          99,
+          19,
+          184,
+          253,
+          206,
+          239,
+          168,
+          248,
+          119,
+          120,
+          134,
+          166,
+          255,
+          15,
+          19,
+          147,
+          95,
+          60,
+          109,
+          103,
+          30,
+          143,
+          120,
+          60,
+          188,
+          144,
+          94,
+          104
+        ],
+        "cancellation": {
+          "clock_is_observer_local": true,
+          "first_flag_transition": {
+            "after_ns": 597978533,
+            "before_ns": 597978473,
+            "phase": "cleanup",
+            "source": "connection_cleanup"
+          },
+          "has_control_authority": false,
+          "observation_failed": false,
+          "observed_signal_calls": 1,
+          "schema": "public-v3-request-cancellation-observation-v1",
+          "signals_are_request_flag_writes": true,
+          "worker_entered": true,
+          "worker_entered_ns": 502287368,
+          "worker_returned": true,
+          "worker_returned_ns": 597899819
+        },
+        "challenge_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 263715275,
+          "error_code": null,
+          "started_ns": 263633161,
+          "wall_ns": 82114
+        },
+        "connection_id": 1,
+        "dispatch_accepted": false,
+        "dispatch_error_code": null,
+        "dispatch_started": true,
+        "dispatch_thread_cpu_ns": 17114601,
+        "error_timing": {
+          "clock_is_observer_local": true,
+          "first_dispatch_error": {
+            "error_code": null,
+            "observed_ns": 597717866,
+            "phase": "dispatch"
+          },
+          "first_terminal_error": null,
+          "has_control_authority": false,
+          "observation_failed": false,
+          "schema": "public-v3-request-error-timing-v1"
+        },
+        "grant_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 267540081,
+          "error_code": null,
+          "started_ns": 267428363,
+          "wall_ns": 111718
+        },
+        "operation": 1,
+        "paid_task_queue_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 502287849,
+          "error_code": null,
+          "started_ns": 276487614,
+          "wall_ns": 225800235
+        },
+        "response_write": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 597956660,
+          "error_code": null,
+          "started_ns": 597909158,
+          "wall_ns": 47502
+        },
+        "submit_phases": {
+          "full_value_retained_in_original_report": true,
+          "original_value_bytes": 4052,
+          "original_value_sha256": "cd40dcc14467c2f8a56905f441f5860ac55c2d8053aa26593676b334516ae003"
+        },
+        "terminal_error_code": null,
+        "terminal_phase": "response"
+      },
+      {
+        "body_digest": [
+          160,
+          219,
+          229,
+          101,
+          152,
+          109,
+          102,
+          209,
+          63,
+          67,
+          162,
+          76,
+          102,
+          117,
+          25,
+          28,
+          128,
+          39,
+          154,
+          123,
+          25,
+          239,
+          57,
+          139,
+          107,
+          218,
+          244,
+          74,
+          163,
+          127,
+          104,
+          70
+        ],
+        "cancellation": {
+          "clock_is_observer_local": true,
+          "first_flag_transition": {
+            "after_ns": 308077546,
+            "before_ns": 308077486,
+            "phase": "cleanup",
+            "source": "connection_cleanup"
+          },
+          "has_control_authority": false,
+          "observation_failed": false,
+          "observed_signal_calls": 1,
+          "schema": "public-v3-request-cancellation-observation-v1",
+          "signals_are_request_flag_writes": true,
+          "worker_entered": true,
+          "worker_entered_ns": 269317902,
+          "worker_returned": true,
+          "worker_returned_ns": 308007100
+        },
+        "challenge_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 263803507,
+          "error_code": null,
+          "started_ns": 263638449,
+          "wall_ns": 165058
+        },
+        "connection_id": 2,
+        "dispatch_accepted": false,
+        "dispatch_error_code": null,
+        "dispatch_started": true,
+        "dispatch_thread_cpu_ns": 20113209,
+        "error_timing": {
+          "clock_is_observer_local": true,
+          "first_dispatch_error": {
+            "error_code": null,
+            "observed_ns": 307846418,
+            "phase": "dispatch"
+          },
+          "first_terminal_error": null,
+          "has_control_authority": false,
+          "observation_failed": false,
+          "schema": "public-v3-request-error-timing-v1"
+        },
+        "grant_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 267644498,
+          "error_code": null,
+          "started_ns": 267509736,
+          "wall_ns": 134762
+        },
+        "operation": 1,
+        "paid_task_queue_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 269318673,
+          "error_code": null,
+          "started_ns": 269143450,
+          "wall_ns": 175223
+        },
+        "response_write": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 308054421,
+          "error_code": null,
+          "started_ns": 308022694,
+          "wall_ns": 31727
+        },
+        "submit_phases": {
+          "full_value_retained_in_original_report": true,
+          "original_value_bytes": 4054,
+          "original_value_sha256": "a5a351b21730c8cb77380249083311960649a21cdc594feb26e3e0efa9642a56"
+        },
+        "terminal_error_code": null,
+        "terminal_phase": "response"
+      }
+    ],
+    "full_work_accepted": 370,
+    "full_work_started": 371,
+    "nested_submit_phase_cpu": {
+      "admission": {
+        "complete_observed_sum": null,
+        "known_sum": 5121892360,
+        "rows": 395,
+        "unknown_rows": 37
+      },
+      "admission_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 61561802,
+        "rows": 395,
+        "unknown_rows": 25
+      },
+      "admission_prepare": {
+        "complete_observed_sum": null,
+        "known_sum": 4594165218,
+        "rows": 395,
+        "unknown_rows": 38
+      },
+      "body_decode": {
+        "complete_observed_sum": null,
+        "known_sum": 31863500,
+        "rows": 395,
+        "unknown_rows": 22
+      },
+      "commit": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "commit_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "context": {
+        "complete_observed_sum": null,
+        "known_sum": 150696742,
+        "rows": 395,
+        "unknown_rows": 24
+      },
+      "context_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 4625728,
+        "rows": 395,
+        "unknown_rows": 24
+      },
+      "cpu_settle": {
+        "complete_observed_sum": null,
+        "known_sum": 1234887,
+        "rows": 395,
+        "unknown_rows": 22
+      },
+      "cpu_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 1579007,
+        "rows": 395,
+        "unknown_rows": 22
+      },
+      "decode": {
+        "complete_observed_sum": null,
+        "known_sum": 34112728,
+        "rows": 395,
+        "unknown_rows": 24
+      },
+      "execution": {
+        "complete_observed_sum": null,
+        "known_sum": 447177087,
+        "rows": 395,
+        "unknown_rows": 66
+      },
+      "history_epoch_close": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "history_epoch_open": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "history_import": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "response_encoding": {
+        "complete_observed_sum": null,
+        "known_sum": 42708046,
+        "rows": 395,
+        "unknown_rows": 69
+      },
+      "root_commitment": {
+        "complete_observed_sum": null,
+        "known_sum": 138697743,
+        "rows": 395,
+        "unknown_rows": 66
+      },
+      "submit_result": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 395,
+        "unknown_rows": 395
+      },
+      "work": {
+        "complete_observed_sum": null,
+        "known_sum": 554725107,
+        "rows": 395,
+        "unknown_rows": 24
+      }
+    },
+    "operation_counts": {
+      "1": 395
+    },
+    "original_dispatch_owner_cpu": {
+      "complete_observed_sum": 6029512501,
+      "known_sum": 6029512501,
+      "rows": 373,
+      "unknown_rows": 0
+    },
+    "records": 395,
+    "scope": "Actual records matched by exact original wire body digest. Phase CPU is nested; do not add it to owner CPU. Waiting observations may overlap."
+  },
+  "independent_readback_sha256": "694877da3535471c04a048a9e6bec4d4aa63557309d0c7698a909daa9c5607d0",
+  "initial_meter": {
+    "accounting_unavailable": false,
+    "burst_ns": 2000000000,
+    "in_flight": 0,
+    "refill_ns_per_second": 250000000,
+    "schema": "public-v3-local-stored-cpu-budget-v1",
+    "start_reserve_ns": 100000000,
+    "stored_credit_ns": 2000000000,
+    "worker_limit": 2
+  },
+  "next_packet_at_window_end": 5,
+  "original_checked_depletion_intervals": null,
+  "original_depletion_reader_refusal": "NUMERIC_DEPLETION_REQUIRED",
+  "original_dispatch_owner_cpu": {
+    "complete_observed_sum": 6429821181,
+    "known_sum": 6429821181,
+    "rows": 387,
+    "unknown_rows": 0
+  },
+  "original_genuine_budget_depletion_observed": false,
+  "original_hostile_bodies": 24,
+  "original_paid_cpu_identity_matches": true,
+  "other_observed_body_records": {
+    "actual_dispatch_error_codes": {
+      "None": 7,
+      "PUBLIC_REQUEST_CANCELLED": 8
+    },
+    "actual_terminal_error_codes": {
+      "None": 6,
+      "PUBLIC_EOF": 9
+    },
+    "dispatch_accepted": 6,
+    "dispatch_started": 14,
+    "examples": [
+      {
+        "body_digest": [
+          53,
+          117,
+          190,
+          171,
+          166,
+          180,
+          79,
+          209,
+          3,
+          205,
+          24,
+          162,
+          10,
+          20,
+          243,
+          100,
+          88,
+          89,
+          179,
+          49,
+          6,
+          8,
+          202,
+          6,
+          47,
+          221,
+          39,
+          19,
+          15,
+          202,
+          26,
+          193
+        ],
+        "cancellation": {
+          "clock_is_observer_local": true,
+          "first_flag_transition": {
+            "after_ns": 3392428572,
+            "before_ns": 3392428392,
+            "phase": "work",
+            "source": "peer_write_closed"
+          },
+          "has_control_authority": false,
+          "observation_failed": false,
+          "observed_signal_calls": 2,
+          "schema": "public-v3-request-cancellation-observation-v1",
+          "signals_are_request_flag_writes": true,
+          "worker_entered": true,
+          "worker_entered_ns": 3097130562,
+          "worker_returned": true,
+          "worker_returned_ns": 3393300943
+        },
+        "challenge_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 1293512890,
+          "error_code": null,
+          "started_ns": 1293442614,
+          "wall_ns": 70276
+        },
+        "connection_id": 37,
+        "dispatch_accepted": false,
+        "dispatch_error_code": "PUBLIC_REQUEST_CANCELLED",
+        "dispatch_started": true,
+        "dispatch_thread_cpu_ns": 59348191,
+        "error_timing": {
+          "clock_is_observer_local": true,
+          "first_dispatch_error": {
+            "error_code": "PUBLIC_REQUEST_CANCELLED",
+            "observed_ns": 3393291258,
+            "phase": "dispatch"
+          },
+          "first_terminal_error": {
+            "error_code": "PUBLIC_EOF",
+            "observed_ns": 3392428882,
+            "phase": "work"
+          },
+          "has_control_authority": false,
+          "observation_failed": false,
+          "schema": "public-v3-request-error-timing-v1"
+        },
+        "grant_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 2609372619,
+          "error_code": null,
+          "started_ns": 1294726724,
+          "wall_ns": 1314645895
+        },
+        "operation": 1,
+        "paid_task_queue_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 3097131273,
+          "error_code": null,
+          "started_ns": 2610592592,
+          "wall_ns": 486538681
+        },
+        "response_write": {
+          "accepted": null,
+          "completed": false,
+          "ended_ns": null,
+          "error_code": null,
+          "started_ns": null,
+          "wall_ns": null
+        },
+        "submit_phases": {
+          "full_value_retained_in_original_report": true,
+          "original_value_bytes": 4136,
+          "original_value_sha256": "29b0f1e7ded03df6fb5c19f09e2e4e26959cdda9278400a2f61e206f732f97e3"
+        },
+        "terminal_error_code": "PUBLIC_EOF",
+        "terminal_phase": "work"
+      },
+      {
+        "body_digest": [
+          53,
+          117,
+          190,
+          171,
+          166,
+          180,
+          79,
+          209,
+          3,
+          205,
+          24,
+          162,
+          10,
+          20,
+          243,
+          100,
+          88,
+          89,
+          179,
+          49,
+          6,
+          8,
+          202,
+          6,
+          47,
+          221,
+          39,
+          19,
+          15,
+          202,
+          26,
+          193
+        ],
+        "cancellation": {
+          "clock_is_observer_local": true,
+          "first_flag_transition": {
+            "after_ns": 5201920232,
+            "before_ns": 5201920182,
+            "phase": "cleanup",
+            "source": "connection_cleanup"
+          },
+          "has_control_authority": false,
+          "observation_failed": false,
+          "observed_signal_calls": 1,
+          "schema": "public-v3-request-cancellation-observation-v1",
+          "signals_are_request_flag_writes": true,
+          "worker_entered": true,
+          "worker_entered_ns": 5106988026,
+          "worker_returned": true,
+          "worker_returned_ns": 5201842566
+        },
+        "challenge_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 3393983659,
+          "error_code": null,
+          "started_ns": 3393876348,
+          "wall_ns": 107311
+        },
+        "connection_id": 63,
+        "dispatch_accepted": true,
+        "dispatch_error_code": null,
+        "dispatch_started": true,
+        "dispatch_thread_cpu_ns": 15903651,
+        "error_timing": {
+          "clock_is_observer_local": true,
+          "first_dispatch_error": null,
+          "first_terminal_error": null,
+          "has_control_authority": false,
+          "observation_failed": false,
+          "schema": "public-v3-request-error-timing-v1"
+        },
+        "grant_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 4697689101,
+          "error_code": null,
+          "started_ns": 3395385215,
+          "wall_ns": 1302303886
+        },
+        "operation": 1,
+        "paid_task_queue_wait": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 5106988707,
+          "error_code": null,
+          "started_ns": 4698914069,
+          "wall_ns": 408074638
+        },
+        "response_write": {
+          "accepted": true,
+          "completed": true,
+          "ended_ns": 5201898951,
+          "error_code": null,
+          "started_ns": 5201856387,
+          "wall_ns": 42564
+        },
+        "submit_phases": {
+          "full_value_retained_in_original_report": true,
+          "original_value_bytes": 4000,
+          "original_value_sha256": "fd796cee0c7de0adae8e88dcccb7c517550139bba59411fde6ad232714d26e90"
+        },
+        "terminal_error_code": null,
+        "terminal_phase": "response"
+      }
+    ],
+    "full_work_accepted": 9,
+    "full_work_started": 9,
+    "nested_submit_phase_cpu": {
+      "admission": {
+        "complete_observed_sum": null,
+        "known_sum": 247628546,
+        "rows": 15,
+        "unknown_rows": 6
+      },
+      "admission_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 2258730,
+        "rows": 15,
+        "unknown_rows": 6
+      },
+      "admission_prepare": {
+        "complete_observed_sum": null,
+        "known_sum": 101336060,
+        "rows": 15,
+        "unknown_rows": 6
+      },
+      "body_decode": {
+        "complete_observed_sum": null,
+        "known_sum": 1115085,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "commit": {
+        "complete_observed_sum": null,
+        "known_sum": 137660027,
+        "rows": 15,
+        "unknown_rows": 9
+      },
+      "commit_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 28181,
+        "rows": 15,
+        "unknown_rows": 9
+      },
+      "context": {
+        "complete_observed_sum": null,
+        "known_sum": 4933454,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "context_owner_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 89344,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "cpu_settle": {
+        "complete_observed_sum": null,
+        "known_sum": 50794,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "cpu_wait": {
+        "complete_observed_sum": null,
+        "known_sum": 54453,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "decode": {
+        "complete_observed_sum": null,
+        "known_sum": 1378751,
+        "rows": 15,
+        "unknown_rows": 1
+      },
+      "execution": {
+        "complete_observed_sum": null,
+        "known_sum": 6049833,
+        "rows": 15,
+        "unknown_rows": 9
+      },
+      "history_epoch_close": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 15,
+        "unknown_rows": 15
+      },
+      "history_epoch_open": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 15,
+        "unknown_rows": 15
+      },
+      "history_import": {
+        "complete_observed_sum": null,
+        "known_sum": 0,
+        "rows": 15,
+        "unknown_rows": 15
+      },
+      "response_encoding": {
+        "complete_observed_sum": null,
+        "known_sum": 345755,
+        "rows": 15,
+        "unknown_rows": 9
+      },
+      "root_commitment": {
+        "complete_observed_sum": null,
+        "known_sum": 2311246,
+        "rows": 15,
+        "unknown_rows": 9
+      },
+      "submit_result": {
+        "complete_observed_sum": null,
+        "known_sum": 127792818,
+        "rows": 15,
+        "unknown_rows": 5
+      },
+      "work": {
+        "complete_observed_sum": null,
+        "known_sum": 13183987,
+        "rows": 15,
+        "unknown_rows": 6
+      }
+    },
+    "operation_counts": {
+      "1": 15
+    },
+    "original_dispatch_owner_cpu": {
+      "complete_observed_sum": 400308680,
+      "known_sum": 400308680,
+      "rows": 14,
+      "unknown_rows": 0
+    },
+    "records": 15,
+    "scope": "Actual records matched by exact original wire body digest. Phase CPU is nested; do not add it to owner CPU. Waiting observations may overlap."
+  },
+  "planned_first_round_business_packets": 7,
+  "reader_source_sha256": "ecce3025a44fbb63f7d0d348ea388274cbc52edb81c38066bf29ccf005d4c3d1",
+  "receiver_measurement_failures": 0,
+  "receiver_observer_complete": true,
+  "receiver_records": 410,
+  "receiver_records_not_retained": 0,
+  "report_sha256": "2d7041b82c29226a56300f7e0a52c6262d76175226d7a77309ed20459508318b",
+  "run_id": 44376853052,
+  "schema": "chain-frontier-root-boundary-readback-v1",
+  "source_boundary": {
+    "conclusion": "The actual first seven-Submit frontier was not reached; this ROOT phase issued no History request.",
+    "condition": "next == final_index && monotonic() < end && history.len() < 64",
+    "file": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+    "history_loop_line": 644,
+    "source_commit": "d95239eda6a666458aa264ddeaf993d6d9fbf37d",
+    "submit_loop_line": 621
+  }
+}
