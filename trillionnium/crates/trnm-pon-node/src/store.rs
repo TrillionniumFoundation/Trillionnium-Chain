@@ -982,6 +982,11 @@ struct AdmissionPersistence {
     prior: State,
     output: trnm_mvcc_fee::pon_executor::Output,
     commitment: PreparedCommitment,
+    // Optional write material from this owner's actual native execution, never
+    // supplied by a public StagedOutput. Authenticated publication still reads
+    // every written delta and compares it against BOTH complete actual States.
+    // A task-output re-derivation or another backend keeps the original union.
+    execution_deltas: Option<Vec<trnm_protocol::pon_state::Change>>,
 }
 struct StoredHeaderLink {
     header: Header,
@@ -5103,6 +5108,11 @@ impl Node {
         )?;
         let mut output = executed.output;
         let mut commitment = executed.commitment;
+        let execution_deltas = (self.state_backend == StateBackend::AuthenticatedV1
+            && registered_task.manifest().is_none()
+            && !pq_accounts_v2::enabled(&self.settings.app)
+            && !growth_profile_v2::enabled(&self.settings.app))
+        .then(|| std::mem::take(&mut commitment.changes));
         if registered_task.manifest().is_some() {
             let product: Vec<u8> = verified_work
                 .product()
@@ -5142,6 +5152,7 @@ impl Node {
                 prior,
                 output,
                 commitment,
+                execution_deltas,
             },
             control,
             None,
@@ -5166,6 +5177,7 @@ impl Node {
             prior,
             output,
             commitment,
+            execution_deltas,
         } = admission;
         let h = &packet.header;
         let id = packet.id()?;
@@ -5245,31 +5257,58 @@ impl Node {
             let mut expected_deltas = Vec::new();
             {
                 let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
-                for (index, entry) in state_merge::entries(&prior, &output.state).enumerate() {
-                    progress(ExecutionProgress::PersistenceDelta { index })?;
-                    let state_merge::Entry {
-                        key,
-                        before: before_value,
-                        after: after_value,
-                    } = entry;
-                    // Both complete States have already passed the original
-                    // canonical root/execution checks. Equal JSON values have
-                    // identical canonical bytes, so unchanged cells need no
-                    // duplicate serialization merely to discover an empty delta.
-                    // Keep each row's control checkpoint and every original
-                    // transactional delta, packet and full-State readback below.
-                    if before_value == after_value {
-                        continue;
-                    }
-                    let before = before_value.map(canonical).transpose()?;
-                    let after = after_value.map(canonical).transpose()?;
-                    if before != after {
+                if let Some(changes) = execution_deltas {
+                    // The complete canonical difference already came from M06's
+                    // checked actual parent and actual successor. Visit its real
+                    // changed rows, preserving a Host/CPU/cancellation checkpoint
+                    // for every row we write. This is write material only: the
+                    // unchanged authenticated publish below independently scans
+                    // BOTH full States and the actual SQL delta rows, so omission,
+                    // extra rows or incorrect preimages cannot gain authority.
+                    ensure(
+                        self.state_backend == StateBackend::AuthenticatedV1,
+                        "STORAGE_WRITE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    for (index, change) in changes.into_iter().enumerate() {
+                        progress(ExecutionProgress::PersistenceDelta { index })?;
+                        let key = String::from_utf8(change.key)
+                            .map_err(|_| Error::from("STORAGE_WRITE").local_integrity())?;
                         ensure(
-                            insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                            insert.execute(params![
+                                id.as_slice(),
+                                &key,
+                                &change.before,
+                                &change.after
+                            ])? == 1,
                             "STORAGE_WRITE",
                         )
                         .map_err(Error::local_integrity)?;
-                        expected_deltas.push((key.clone(), before, after));
+                        expected_deltas.push((key, change.before, change.after));
+                    }
+                } else {
+                    for (index, entry) in state_merge::entries(&prior, &output.state).enumerate() {
+                        progress(ExecutionProgress::PersistenceDelta { index })?;
+                        let state_merge::Entry {
+                            key,
+                            before: before_value,
+                            after: after_value,
+                        } = entry;
+                        // Other backends and post-execution task output retain
+                        // the original full union and all of its checkpoints.
+                        if before_value == after_value {
+                            continue;
+                        }
+                        let before = before_value.map(canonical).transpose()?;
+                        let after = after_value.map(canonical).transpose()?;
+                        if before != after {
+                            ensure(
+                                insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                                "STORAGE_WRITE",
+                            )
+                            .map_err(Error::local_integrity)?;
+                            expected_deltas.push((key.clone(), before, after));
+                        }
                     }
                 }
             }

@@ -1326,3 +1326,278 @@ fn held_parent_continuation_checks_original_owner_epoch_and_current_clock() {
 #[cfg(target_os = "linux")]
 #[path = "prepared_held_native_completion_tests.rs"]
 mod native_completion_controls;
+
+mod executed_deltas {
+    use super::*;
+
+    fn facts(node: &Node) -> BTreeMap<String, Vec<Vec<String>>> {
+        let tables = node
+            .db
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            .unwrap()
+            .query_map([], |row| row.get::<_, String>(0))
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        tables
+            .into_iter()
+            .map(|table| {
+                assert!(table
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_'));
+                let mut statement = node.db.prepare(&format!("SELECT * FROM {table}")).unwrap();
+                let columns = statement.column_count();
+                let mut rows = statement
+                    .query_map([], |row| {
+                        (0..columns)
+                            .map(|column| {
+                                row.get::<_, rusqlite::types::Value>(column)
+                                    .map(|value| format!("{value:?}"))
+                            })
+                            .collect::<rusqlite::Result<Vec<_>>>()
+                    })
+                    .unwrap()
+                    .collect::<rusqlite::Result<Vec<_>>>()
+                    .unwrap();
+                rows.sort();
+                (table, rows)
+            })
+            .collect()
+    }
+
+    fn original_rows(before: &State, after: &State) -> Vec<Delta> {
+        // Literal complete canonical union is an independent write oracle.
+        let keys: std::collections::BTreeSet<_> = before.keys().chain(after.keys()).collect();
+        keys.into_iter()
+            .filter_map(|key| {
+                let a = before.get(key).map(canonical).transpose().unwrap();
+                let b = after.get(key).map(canonical).transpose().unwrap();
+                (a != b).then(|| (key.clone(), a, b))
+            })
+            .collect()
+    }
+
+    fn enlarged_settings() -> Settings {
+        let mut settings = Settings::development(Some(1)).unwrap();
+        // Explicit unchanged fixture cells, not a user-growth/service claim.
+        for index in 0..512 {
+            settings.initial.insert(
+                format!("execution-delta-fixture:{index:04}"),
+                serde_json::json!({"unchanged": index}),
+            );
+        }
+        let root = settings.state_root(&settings.initial).unwrap();
+        settings.genesis = hash(
+            b"genesis",
+            &[
+                &settings.network(),
+                &settings.parameters(),
+                &root,
+                &settings.genesis_time().to_le_bytes(),
+            ],
+        );
+        settings
+    }
+
+    #[test]
+    fn native_changed_rows_match_full_union_all_sql_held_owner_and_cold_reopen() {
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = enlarged_settings();
+            let fast_path = directory.path().join("fast");
+            let reference_path = directory.path().join("reference");
+            let held_path = directory.path().join("held");
+            let mut fast = open(&fast_path, &settings, authenticated);
+            let mut reference = open(&reference_path, &settings, authenticated);
+            let mut held = open(&held_path, &settings, authenticated);
+            let candidate = packet(&fast, settings.genesis(), 1, 1, 1001, 0);
+            let outcome = executed(&fast, &candidate);
+            let expected = original_rows(&outcome.admission.prior, &outcome.admission.output.state);
+            let union =
+                state_merge::entries(&outcome.admission.prior, &outcome.admission.output.state)
+                    .count();
+            assert!(union > 512 && expected.len() < 10);
+            assert_eq!(outcome.admission.execution_deltas.is_some(), authenticated);
+            if let Some(changes) = &outcome.admission.execution_deltas {
+                let actual: Vec<_> = changes
+                    .iter()
+                    .map(|change| {
+                        (
+                            String::from_utf8(change.key.clone()).unwrap(),
+                            change.before.clone(),
+                            change.after.clone(),
+                        )
+                    })
+                    .collect();
+                assert_eq!(actual, expected);
+            }
+            let mut original = executed(&reference, &candidate);
+            original.admission.execution_deltas = None;
+            let fast_steps = AtomicUsize::new(0);
+            let reference_steps = AtomicUsize::new(0);
+            let held_steps = AtomicUsize::new(0);
+            let count = |counter: &AtomicUsize, point| {
+                if matches!(point, ExecutionProgress::PersistenceDelta { .. }) {
+                    counter.fetch_add(1, Ordering::Relaxed);
+                }
+                Ok(())
+            };
+            let id = fast
+                .commit_shared_admission(
+                    outcome,
+                    1000,
+                    &ExecutionControl::new(&|point| count(&fast_steps, point), &()),
+                    None,
+                )
+                .unwrap();
+            assert_eq!(
+                reference
+                    .commit_shared_admission(
+                        original,
+                        1000,
+                        &ExecutionControl::new(&|point| count(&reference_steps, point), &()),
+                        None
+                    )
+                    .unwrap(),
+                id
+            );
+            assert_eq!(
+                held.admit_work_checked_with_progress(
+                    WorkCheckedPacket::verify(candidate).unwrap(),
+                    1000,
+                    &|point| count(&held_steps, point)
+                )
+                .unwrap(),
+                id
+            );
+            assert_eq!(reference_steps.load(Ordering::Relaxed), union);
+            let native_steps = if authenticated { expected.len() } else { union };
+            assert_eq!(fast_steps.load(Ordering::Relaxed), native_steps);
+            assert_eq!(held_steps.load(Ordering::Relaxed), native_steps);
+            assert_eq!(fast.delta_rows(id).unwrap(), expected);
+            assert_eq!(facts(&fast), facts(&reference));
+            assert_eq!(facts(&fast), facts(&held));
+            for node in [&mut fast, &mut reference, &mut held] {
+                node.activate_observed(id, 1000).unwrap();
+            }
+            let final_state = fast.read_active().unwrap();
+            let final_facts = facts(&fast);
+            assert_eq!(final_facts, facts(&reference));
+            assert_eq!(final_facts, facts(&held));
+            drop((fast, reference, held));
+            for path in [&fast_path, &reference_path, &held_path] {
+                let reopened = open(path, &settings, authenticated);
+                assert_eq!(reopened.read_active().unwrap(), final_state);
+                assert_eq!(facts(&reopened), final_facts);
+            }
+        }
+    }
+
+    #[test]
+    fn native_write_material_cannot_conceal_missing_extra_wrong_or_reordered_deltas() {
+        for fault in ["missing", "extra", "before", "after", "order", "non_utf8"] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let mut node = open(directory.path(), &settings, true);
+            let candidate = packet(&node, settings.genesis(), 1, 1, 1001, 0);
+            let before = facts(&node);
+            let active = node.read_active().unwrap();
+            let mut outcome = executed(&node, &candidate);
+            let changes = outcome.admission.execution_deltas.as_mut().unwrap();
+            assert!(changes.len() > 1);
+            match fault {
+                "missing" => {
+                    changes.remove(0);
+                }
+                "extra" => changes.push(trnm_protocol::pon_state::Change {
+                    key: b"unexpected-extra-cell".to_vec(),
+                    before: None,
+                    after: Some(b"null".to_vec()),
+                }),
+                "before" => changes[0].before = Some(b"null".to_vec()),
+                "after" => changes[0].after = Some(b"null".to_vec()),
+                "order" => changes.reverse(),
+                "non_utf8" => changes[0].key = vec![255],
+                _ => unreachable!(),
+            }
+            // This is an internal fault probe. Public callers have no constructor
+            // for the opaque execution artifact or its optional write material.
+            let error = node
+                .commit_shared_admission(
+                    outcome,
+                    1000,
+                    &ExecutionControl::new(&|_| Ok(()), &()),
+                    None,
+                )
+                .unwrap_err();
+            assert!(error.requires_owner_stop(), "{fault}: {error}");
+            assert!(
+                matches!(
+                    error.to_string().as_str(),
+                    "NATIVE_STATE_DELTA" | "STORAGE_WRITE"
+                ),
+                "{fault}: {error}"
+            );
+            assert_eq!(facts(&node), before, "{fault}");
+            assert_eq!(node.read_active().unwrap(), active);
+            drop(node);
+            let mut reopened = open(directory.path(), &settings, true);
+            assert_eq!(facts(&reopened), before);
+            assert_eq!(reopened.read_active().unwrap(), active);
+            // The negative did not become a durable block, nor poison recovery.
+            assert_eq!(
+                reopened.admit(&candidate, 1000).unwrap(),
+                candidate.id().unwrap()
+            );
+        }
+    }
+
+    #[test]
+    fn every_real_delta_boundary_keeps_cancellation_and_complete_rollback() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let template = tempfile::tempdir().unwrap();
+        let producer = open(template.path(), &settings, true);
+        let candidate = packet(&producer, settings.genesis(), 1, 1, 1001, 0);
+        let count = executed(&producer, &candidate)
+            .admission
+            .execution_deltas
+            .unwrap()
+            .len();
+        assert!(count > 0);
+        let stops = (0..count)
+            .map(|index| ExecutionProgress::PersistenceDelta { index })
+            .chain([ExecutionProgress::BeforeDurableCommit]);
+        for stop in stops {
+            let directory = tempfile::tempdir().unwrap();
+            let mut node = open(directory.path(), &settings, true);
+            let before = facts(&node);
+            let outcome = executed(&node, &candidate);
+            let reached = AtomicUsize::new(0);
+            let error = node
+                .commit_shared_admission(
+                    outcome,
+                    1000,
+                    &ExecutionControl::new(
+                        &|point| {
+                            if point == stop {
+                                reached.fetch_add(1, Ordering::Relaxed);
+                                Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+                            } else {
+                                Ok(())
+                            }
+                        },
+                        &(),
+                    ),
+                    None,
+                )
+                .unwrap_err();
+            assert!(error.is(crate::ErrorCode::PublicRequestCancelled));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(reached.load(Ordering::Relaxed), 1);
+            assert_eq!(facts(&node), before);
+            drop(node);
+            let reopened = open(directory.path(), &settings, true);
+            assert_eq!(facts(&reopened), before);
+        }
+    }
+}
