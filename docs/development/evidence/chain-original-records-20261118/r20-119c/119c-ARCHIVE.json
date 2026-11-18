@@ -1,0 +1,25 @@
+{
+  "schema": "chain-original-business-records-publication-v1",
+  "source_commit": "119cbdc8b7060df28b74230fa9265ada7bc75541",
+  "workflow_run_id": 44298913299,
+  "archived_at": "2026-11-18T13:39:54.899545+00:00",
+  "archive": {
+    "path": "119c-full-records.tar.xz",
+    "bytes": 3158036,
+    "sha256": "09b6df095c95d8cf86d149fcc0a8d898028ac9af109a0beb79c7239d761ff10e"
+  },
+  "index": {
+    "path": "119c-MEMBERS.json",
+    "bytes": 90582,
+    "sha256": "ecee94f4d491f3edd4b1dd09aa6a5e862bd7b2dff4751b1e61496c8ee710fbf8"
+  },
+  "included_members": 312,
+  "included_original_bytes": 126630405,
+  "omitted_elf_members": 12,
+  "both_architectures_original_pressure_confirmations": 0,
+  "target_confirmations": 1,
+  "native_campaign_executed": true,
+  "business_target_met": false,
+  "r21_result": null,
+  "full_json_and_log_fields_preserved": true
+}

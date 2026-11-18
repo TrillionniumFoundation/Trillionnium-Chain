@@ -1,0 +1,19 @@
+{
+  "schema": "chain-artifact-transfer-closure-v1",
+  "scope": "artifact transport only; original business campaigns were not cancelled",
+  "observed_status": {
+    "boot": "{ sec = 1794536756, usec = 722359 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 386,
+    "bytes_stored": 386,
+    "capture_error": null,
+    "closed": true,
+    "created_unix_ms": 1795008213106,
+    "exit_code": -15,
+    "output_complete": true,
+    "owner_pid": 94072,
+    "pid": 94073,
+    "state": "exited"
+  },
+  "stdout": "{\"arch\": \"x64\", \"artifact_id\": 14428310436, \"zip\": \"/Users/qianqi/work/chain-raw-evidence-20261118-392934/119c-cost-x64.zip\", \"bytes\": 10311863, \"sha256\": \"a431ee9d0c6b0f7fa1083bb5f4002ce69b0551cd73b3526781aa84838c873a5f\", \"github_digest_expected\": \"a431ee9d0c6b0f7fa1083bb5f4002ce69b0551cd73b3526781aa84838c873a5f\", \"exit_code\": 0, \"pid\": 94075, \"elapsed_seconds\": 445.0880651473999}\r\n",
+  "note": "x64 ZIP completed and matched original digest after 445.088 seconds. The owned sequence terminal was then closed; no arm64 completion was observed from this route. Both complete source ZIPs were already retained and verified in the controller workspace; the complete JSON/log archive was transferred by immutable chunks and independently rehashed."
+}
