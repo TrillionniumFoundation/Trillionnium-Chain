@@ -1,0 +1,14 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py",
+      "InlineSourcePinTests",
+      "-v"
+    ],
+    "exit_code": 2,
+    "elapsed_wall_ns": 22567083,
+    "log": "source-validation-1.log",
+    "log_sha256": "655161eb2649c6a5b143dc52dc30905722fb6f0783566cf222196fe204120ccc"
+  }
+]

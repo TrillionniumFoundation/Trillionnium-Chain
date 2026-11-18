@@ -360,6 +360,7 @@ jobs:
         shell: bash
         env:
           TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/recent-exact
+          TRNM_PUBLIC_V3_CAMPAIGN_DIR: ${{ runner.temp }}/recent-exact/mixed-service
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-business.log"

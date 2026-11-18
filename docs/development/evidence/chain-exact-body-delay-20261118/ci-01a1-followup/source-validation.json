@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py",
+        "InlineSourcePinTests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 267908028,
+      "log": "source-validation-complete-1.log",
+      "log_sha256": "01263031e11eb6f5b5b47d7a743ae88ca7b93d2a0c371696a719c9a46869488e"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_recent_batch_suite_count.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 124519668,
+      "log": "source-validation-complete-2.log",
+      "log_sha256": "faf17933fbc8d7cac7b37fb536d0e9292e3fbec27657dba64c0455d00003633e"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 324776451435,
+      "log": "source-validation-complete-3.log",
+      "log_sha256": "7692c9da38a69b548faaa3cda134be9b37ee76cc19f1ad469e42c2ec4c66676a"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 1337453200,
+      "log": "source-validation-complete-4.log",
+      "log_sha256": "fb8d65d847bcf76190dae4a7c2f223f54910283865d8018686623f3151ee556f"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 192286057,
+      "log": "source-validation-complete-5.log",
+      "log_sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+    }
+  ],
+  "validation_host": "complete cloud checkout; native publication host sparse checkout preparation failure retained separately",
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "native_tests_rerun": false,
+  "gate_predicates_modified": false,
+  "rust_changed": false,
+  "deadline_or_budget_changed": false,
+  "native_source_parent": "01a1db507b0ff39dee39f635855479be93dcd7bb",
+  "preparation_failures": "validation-preparation-failures.json",
+  "changed_source_sha256": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "57c1d3a90ee6eed30e3d84eeba637d494a94a33ba9f18ce683cc887067e593dc",
+    "config/pon/pq-cross-branch-corpus-v1.json": "d65c934b23f0857527e6137b61358a7f338288a83edcc32b08a416ec07150e65"
+  },
+  "complete_tracked_paths": 40964,
+  "publication_not_yet_committed": true
+}

@@ -218,3 +218,18 @@ hosted source-gate failures; neither is erased by the finite-window success.
 The next capability questions are robustness across fresh distinct bodies and
 independent network participants under matched budgets. No such qualification
 is asserted by this record.
+
+## Exact-head CI follow-up: mixed and fresh challenges
+
+The 01a1db5 successor retained two additional business failures: all four
+mixed-service cells reported 130 attempts with `finite_target_met=false`, and
+both fresh-challenge cells failed independent History replay at the original
+deadline. The same-packet 4-second case passed again on head and prospective
+merge. These outcomes are separate from the original 974049d x64/arm64 result.
+
+[The exact-head failure readout](ci-01a1-followup/README.md) retains all nine
+selected provider ZIPs, failed preparation/export/cancelled job classifications,
+source identity and complete failed-run costs. The mixed per-attempt report was
+not retained by the old workflow; the environment-only follow-up preserves that
+existing report in future artifacts without changing any assertion or deadline.
+The full candidate remains unqualified; future CI belongs to its own new head.

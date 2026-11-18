@@ -1,0 +1,8 @@
+test_actual_workflow_guards_bind_current_bytes (__main__.InlineSourcePinTests.test_actual_workflow_guards_bind_current_bytes) ... ok
+test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) ... ok
+test_stale_missing_and_bypassed_literal_guards_are_rejected (__main__.InlineSourcePinTests.test_stale_missing_and_bypassed_literal_guards_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.054s
+
+OK

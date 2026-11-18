@@ -1,0 +1,9 @@
+test_four_actual_ci_rosters_match_current_source (__main__.RecentBatchSuiteCount.test_four_actual_ci_rosters_match_current_source) ... ok
+test_guard_retains_exact_current_count_and_original_failure_limits (__main__.RecentBatchSuiteCount.test_guard_retains_exact_current_count_and_original_failure_limits) ... ok
+test_missing_extra_failed_ignored_and_incomplete_summaries_rejected (__main__.RecentBatchSuiteCount.test_missing_extra_failed_ignored_and_incomplete_summaries_rejected) ... ok
+test_original_native_call_and_three_exact_replays_retained (__main__.RecentBatchSuiteCount.test_original_native_call_and_three_exact_replays_retained) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.039s
+
+OK
