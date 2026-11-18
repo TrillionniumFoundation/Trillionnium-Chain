@@ -317,3 +317,39 @@ fn write_snapshot_rejects_savepoint_aba_and_sticky_observer_failures() {
     assert!(TransactionScope::capture(&db).is_err());
     db.execute_batch("ROLLBACK").unwrap();
 }
+
+#[test]
+fn actual_write_count_is_not_a_reset_or_a_row_change_count() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch(
+        "CREATE TABLE observed(x INTEGER UNIQUE); INSERT INTO observed VALUES(1); BEGIN IMMEDIATE",
+    )
+    .unwrap();
+    let scope = TransactionScope::capture(&db).unwrap();
+    db.execute_batch("SELECT 1; PRAGMA writable_schema=RESET")
+        .unwrap();
+    assert_eq!(scope.executed_writes_since_capture(&db).unwrap(), 0);
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    assert_eq!(
+        db.execute("UPDATE observed SET x=x WHERE 0", []).unwrap(),
+        0
+    );
+    assert_eq!(scope.executed_writes_since_capture(&db).unwrap(), 1);
+    assert!(!scope.same_write_snapshot(&db).unwrap());
+    assert!(db.execute("INSERT INTO observed VALUES(1)", []).is_err());
+    assert_eq!(scope.executed_writes_since_capture(&db).unwrap(), 2);
+    db.execute_batch("CREATE TABLE ephemeral(x); DROP TABLE ephemeral")
+        .unwrap();
+    assert_eq!(scope.executed_writes_since_capture(&db).unwrap(), 4);
+    let later = TransactionScope::capture(&db).unwrap();
+    assert_eq!(later.executed_writes_since_capture(&db).unwrap(), 0);
+    assert_eq!(scope.executed_writes_since_capture(&db).unwrap(), 4);
+    assert!(!scope.same_write_snapshot(&db).unwrap());
+    let other = Connection::open_in_memory().unwrap();
+    other.execute_batch("BEGIN IMMEDIATE").unwrap();
+    assert!(scope.executed_writes_since_capture(&other).is_err());
+    db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
+    assert!(scope.executed_writes_since_capture(&db).is_err());
+    assert!(later.executed_writes_since_capture(&db).is_err());
+    db.execute_batch("ROLLBACK").unwrap();
+}

@@ -112,9 +112,188 @@ pub(in crate::store) struct PostWriteReadback<'db> {
     pub(super) partial_uses: usize,
     #[cfg(test)]
     pub(super) subtree_hits: usize,
+    #[cfg(test)]
+    metadata_insert_seeded: bool,
 }
 
 impl<'db> PostWriteReadback<'db> {
+    /// This private native operation owns the ONLY allowed write itself. It
+    /// never accepts a caller's "unchanged" claim, allowed-write count, graph
+    /// receipt or replacement scope. The parent graph was fully checked in a
+    /// scope captured BEFORE its first read and remained unwritten through its
+    /// final callback, actual SQL deltas and native apply.
+    #[allow(clippy::too_many_arguments)]
+    pub(super) fn save_publication_record(
+        db: &'db Connection,
+        settings: &Settings,
+        record: &mut Record,
+        actual_deltas: &[super::Delta],
+        mut parent_graph: Option<Self>,
+        original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
+    ) -> Result<Option<Self>> {
+        let eligible = match parent_graph.as_mut() {
+            Some(scope) => {
+                scope.current(db)?
+                    && !scope.consumed
+                    && scope.ids[0] == record.parent
+                    && scope.context
+                        == [
+                            settings.network(),
+                            settings.parameters(),
+                            settings.genesis(),
+                        ]
+                    && scope.graphs[0].as_ref().is_some_and(|verified| {
+                        record.parent == Some(verified.block)
+                            && record.parent_commitment == Some(verified.id)
+                            && record.accounts == verified.accounts
+                    })
+                    && actual_deltas
+                        .iter()
+                        .all(|row| !row.0.starts_with("account:"))
+                    && scope.passive_record_insert_schema(db)?
+            }
+            None => false,
+        };
+        #[cfg(test)]
+        tests::metadata_insert_hook(db, MetadataInsertStage::BeforeSave)?;
+        // The same literal INSERT and exact current readback as before. There
+        // is no production callback between the last eligibility check, this
+        // write and the new original post-write owner.
+        super::save(db, record)?;
+        #[cfg(test)]
+        tests::metadata_insert_hook(db, MetadataInsertStage::AfterSave)?;
+        let mut next = original_owner
+            .map(|(owner, expected)| Self::new(db, settings, record.block, owner, expected))
+            .transpose()?
+            .flatten();
+        #[cfg(test)]
+        tests::metadata_insert_hook(db, MetadataInsertStage::AfterCapture)?;
+        if eligible {
+            if let (Some(previous), Some(next)) = (parent_graph.as_ref(), next.as_mut()) {
+                // Checking the old observer AFTER construction also covers the
+                // prepare/execute schema normalization inside new(). RESET has
+                // no potentially writing statement in the pinned SQLite VM.
+                // Extra no-row/failed writes and reversed DDL cannot disappear.
+                if previous
+                    .scope
+                    .executed_writes_since_capture(db)
+                    .map_err(readback_scope_error)?
+                    == 1
+                    && previous.schema == next.schema
+                    && next.current(db)?
+                {
+                    // The exact Root remains backed by the actual graph just
+                    // verified before our sole passive metadata INSERT. No
+                    // frontier or arbitrary record set crosses this boundary.
+                    // Current child State/record/deltas, final callback and the
+                    // original no-write scope are still checked before any hit.
+                    next.graphs[0] = Some(record.clone());
+                    next.ids[2] = record.parent;
+                    #[cfg(test)]
+                    {
+                        next.metadata_insert_seeded = true;
+                    }
+                }
+            }
+        }
+        #[cfg(test)]
+        tests::metadata_insert_hook(db, MetadataInsertStage::AfterSeed)?;
+        // The old scope is dropped, never re-stamped or re-enabled.
+        Ok(next)
+    }
+
+    fn passive_record_insert_schema(&self, db: &Connection) -> Result<bool> {
+        // A write-count delta of one alone does NOT exclude trigger/cascade
+        // side effects. Require the actual catalog already fenced by current:
+        // no trigger/view anywhere, no TEMP/ATTACH/writable schema, and exactly
+        // the original ordinary metadata table (no CHECK/UDF/conflict program).
+        const ORIGINAL_TABLE: &str =
+            "CREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL)";
+        if self
+            .schema
+            .iter()
+            .any(|row| row.1 != "table" && row.1 != "index")
+            || !self.schema.iter().any(|row| {
+                row.0 == "main"
+                    && row.1 == "table"
+                    && row.2 == "native_state_commitments"
+                    && row.3 == "native_state_commitments"
+                    && row.4 > 0
+                    && row.5.as_deref() == Some(ORIGINAL_TABLE)
+            })
+        {
+            return Ok(false);
+        }
+        // Additional indexes can execute expression/partial/collation programs
+        // during this INSERT even without triggers. Only the original PK
+        // autoindex is passive; indexes on unrelated tables are irrelevant.
+        let indexes: Vec<_> = self
+            .schema
+            .iter()
+            .filter(|row| {
+                row.0 == "main" && row.1 == "index" && row.3 == "native_state_commitments"
+            })
+            .collect();
+        if indexes.len() != 1
+            || indexes[0].2 != "sqlite_autoindex_native_state_commitments_1"
+            || indexes[0].4 <= 0
+            || indexes[0].5.is_some()
+        {
+            return Ok(false);
+        }
+        // Check the parsed SQLite index, not just its catalog spelling.
+        let mut statement = db.prepare("PRAGMA main.index_list(native_state_commitments)")?;
+        let indexes = statement
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, i64>(2)?,
+                    row.get::<_, String>(3)?,
+                    row.get::<_, i64>(4)?,
+                ))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        if indexes
+            != vec![(
+                0,
+                "sqlite_autoindex_native_state_commitments_1".into(),
+                1,
+                "pk".into(),
+                0,
+            )]
+        {
+            return Ok(false);
+        }
+        let mut statement =
+            db.prepare("PRAGMA main.index_xinfo(sqlite_autoindex_native_state_commitments_1)")?;
+        let columns = statement
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, i64>(1)?,
+                    row.get::<_, Option<String>>(2)?,
+                    row.get::<_, i64>(3)?,
+                    row.get::<_, Option<String>>(4)?,
+                    row.get::<_, i64>(5)?,
+                ))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        if columns
+            != vec![
+                (0, 0, Some("block".into()), 0, Some("BINARY".into()), 1),
+                (1, -1, None, 0, Some("BINARY".into()), 0),
+            ]
+        {
+            return Ok(false);
+        }
+        // Keep this actual parsed-schema check even though the exact source
+        // table contains no foreign keys. It is not inferred from row counts.
+        let mut statement = db.prepare("PRAGMA main.foreign_key_list(native_state_commitments)")?;
+        let absent = statement.query([])?.next()?.is_none();
+        Ok(absent)
+    }
+
     pub(in crate::store) fn new(
         db: &'db Connection,
         settings: &Settings,
@@ -178,6 +357,8 @@ impl<'db> PostWriteReadback<'db> {
             partial_uses: 0,
             #[cfg(test)]
             subtree_hits: 0,
+            #[cfg(test)]
+            metadata_insert_seeded: false,
         }))
     }
 
@@ -349,6 +530,15 @@ impl<'db> PostWriteReadback<'db> {
             }),
         }
     }
+}
+
+#[cfg(test)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum MetadataInsertStage {
+    BeforeSave,
+    AfterSave,
+    AfterCapture,
+    AfterSeed,
 }
 
 pub(in crate::store) fn readback_scope_error(
