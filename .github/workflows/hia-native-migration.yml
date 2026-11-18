@@ -85,9 +85,6 @@ jobs:
   native-components:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    env:
-      HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
-      TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original
     defaults:
       run:
         shell: bash
@@ -181,6 +178,9 @@ jobs:
           printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Execute every assigned native HIA and independent reference case
+        env:
+          HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
+          TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard general --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
