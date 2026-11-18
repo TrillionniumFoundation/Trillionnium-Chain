@@ -554,17 +554,17 @@ fn resource_revision_r20_has_exact_caller_limit_and_fresh_signed_identifiers() {
     for (bits, expected, previous) in [
         (
             8,
-            "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
+            "eac3a96f115592a98d5ebea84ef80b7752f8abbc4270ef7cc6d1e4050510505e",
             "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
         ),
         (
             12,
-            "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
+            "49613f580225a1696c484d45721c8e5c9a342557df434b9d33a020c86e3add0b",
             "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
         ),
         (
             16,
-            "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
+            "559547f1aa93a3d6aa24399f4e2d7c9fd62926778e459eada7c488f5387bceea",
             "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
         ),
     ] {

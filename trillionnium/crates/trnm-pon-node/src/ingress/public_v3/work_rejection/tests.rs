@@ -177,6 +177,8 @@ fn default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays()
     assert_eq!(actual.work_finished, 4);
     assert_eq!(actual.work_failed, 3);
     assert_eq!(actual.completed_submit, 1);
+    assert_eq!(actual.known_invalid_body_cooldown_publications, 3);
+    assert_eq!(actual.known_invalid_body_cooldown_waits, 1);
     assert_eq!(actual.mutation_cpu_reservations, 4);
     assert_eq!(actual.mutation_cpu_clock_failures, 0);
     assert_eq!(actual.mutation_cpu_in_flight_after_shutdown, 0);
@@ -364,4 +366,179 @@ fn absent_or_unfinished_rejection_observation_never_claims_a_cache_hit() {
     let observed = row.work_rejection.unwrap();
     assert!(!observed.completed);
     assert!(observed.cache.is_none());
+}
+
+#[test]
+fn scheduling_hint_requires_completed_native_math_rejection_without_observer_authority() {
+    let directory = tempfile::tempdir().unwrap();
+    let clock = crate::ingress::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let source = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let valid = source
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            clock - 50,
+            4096,
+        )
+        .unwrap();
+    let mut bad = valid.clone();
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+    bad.proof[offset..offset + 4].copy_from_slice(&u32::from(word == 0).to_le_bytes());
+    let mut malformed = bad.clone();
+    malformed.proof.pop();
+    let cache = RejectionCache::new(256, Duration::from_secs(30)).unwrap();
+    for (packet, cancel, expected_hint, expected_error) in [
+        (valid, false, false, false),
+        (malformed, false, false, true),
+        (bad.clone(), true, false, true),
+        (bad.clone(), false, true, true),
+        (bad.clone(), false, true, true),
+        (bad, true, false, true),
+    ] {
+        let known = Cell::new(false);
+        let result = verify_with_scheduling_hint(
+            packet,
+            &cache,
+            &mut |_| {
+                if cancel {
+                    Err("PUBLIC_REQUEST_CANCELLED".into())
+                } else {
+                    Ok(())
+                }
+            },
+            None,
+            Some(&known),
+        );
+        assert_eq!(result.is_err(), expected_error);
+        assert_eq!(known.get(), expected_hint);
+    }
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn repeated_invalid_body_waits_before_paid_work_while_new_body_and_reads_proceed() {
+    let directory = tempfile::tempdir().unwrap();
+    let clock = crate::ingress::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let source = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let valid = source
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            clock - 50,
+            4096,
+        )
+        .unwrap();
+    let mut bad = valid.clone();
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+    bad.proof[offset..offset + 4].copy_from_slice(&u32::from(word == 0).to_le_bytes());
+    // A different valid header avoids replacing the refused packet's exact identity.
+    let valid = source
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            clock - 49,
+            4096,
+        )
+        .unwrap();
+    let request = Request::Submit {
+        packet: hex::encode(bad.encode().unwrap()),
+    };
+    let owner = super::super::tests::shared(source);
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+    let (node, signal, counters) = (owner.clone(), stop.clone(), metrics.clone());
+    let service = thread::spawn(move || {
+        serve_public_protected_v3_with_metrics(
+            listener,
+            node,
+            Duration::from_secs(8),
+            signal,
+            server(),
+            counters,
+        )
+    });
+    let call = |request: &Request, caller| {
+        call_public_protected_v3_with_deadline(
+            address,
+            request,
+            &settings,
+            identity(71).public_key(),
+            &identity(caller),
+            policy(),
+            Some(Instant::now() + Duration::from_secs(2)),
+        )
+        .0
+    };
+    assert_eq!(call(&request, 80).unwrap().value["error"], "WORK:Product");
+    let (tx, rx) = mpsc::channel();
+    let retry_settings = settings.clone();
+    let retry = thread::spawn(move || {
+        let result = call_public_protected_v3_with_deadline(
+            address,
+            &request,
+            &retry_settings,
+            identity(71).public_key(),
+            &identity(81),
+            policy(),
+            Some(Instant::now() + Duration::from_secs(2)),
+        )
+        .0;
+        tx.send(result).unwrap();
+    });
+    let entered_by = Instant::now() + Duration::from_secs(1);
+    while metrics.lock().unwrap().known_invalid_body_cooldown_waits == 0 {
+        assert!(Instant::now() < entered_by);
+        thread::sleep(Duration::from_millis(1));
+    }
+    {
+        let actual = metrics.lock().unwrap();
+        assert_eq!(actual.work_started, 1);
+        assert_eq!(actual.mutation_cpu_reservations, 1);
+    }
+    assert!(call(&Request::Head, 82).unwrap().ok);
+    assert!(
+        call(
+            &Request::History {
+                tip: hex::encode(settings.genesis()),
+                after: hex::encode(settings.genesis()),
+            },
+            83
+        )
+        .unwrap()
+        .ok
+    );
+    assert!(
+        call(
+            &Request::Submit {
+                packet: hex::encode(valid.encode().unwrap())
+            },
+            84
+        )
+        .unwrap()
+        .ok
+    );
+    assert!(matches!(rx.try_recv(), Err(mpsc::TryRecvError::Empty)));
+    let refused = rx.recv_timeout(Duration::from_secs(3)).unwrap().unwrap();
+    assert!(!refused.ok);
+    assert_eq!(refused.value["error"], "WORK:Product");
+    retry.join().unwrap();
+    stop.store(true, Ordering::Release);
+    let actual = service.join().unwrap().unwrap();
+    assert_eq!(actual.known_invalid_body_cooldown_publications, 2);
+    assert_eq!(actual.known_invalid_body_cooldown_waits, 1);
+    assert_eq!(actual.completed_submit, 1);
+    assert_eq!(actual.completed_read, 2);
+    assert_eq!(actual.work_started, 3);
+    assert_eq!(actual.work_failed, 2);
+    assert_eq!(actual.mutation_cpu_reservations, 3);
+    assert_eq!(actual.mutation_cpu_in_flight_after_shutdown, 0);
 }

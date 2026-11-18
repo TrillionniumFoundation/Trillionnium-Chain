@@ -499,6 +499,7 @@ fn reactor_progress_ignores_waiting_metadata_until_bytes_cursor_or_stage_change(
         pending: PendingOrder {
             sequence,
             entered_at,
+            eligible_at: entered_at,
         },
     };
     // Fresh FIFO/clock observations alone cannot keep an idle reactor awake.
