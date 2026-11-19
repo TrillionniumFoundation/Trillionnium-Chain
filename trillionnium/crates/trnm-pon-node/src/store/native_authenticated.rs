@@ -28,8 +28,8 @@ pub(crate) use history_arithmetic::{
     StageObservation,
 };
 mod post_write_readback;
-pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
+pub(crate) use post_write_readback::{GraphAccess, GraphScope};
 
 #[cfg(test)]
 mod current_accounts_tests;
@@ -773,14 +773,22 @@ pub(super) fn verify_state_with_readback(
                 if !scope.frontier_current(db, settings, &record, source)? {
                     return verify_state_with_cache(db, settings, block, state, progress, cache);
                 }
+                #[cfg(test)]
+                let subtree_hits = scoped_graph.as_ref().unwrap().hits();
+                // Complete only this already nominated target after its last
+                // callback and fresh original-source fence. The typed result
+                // binds the exact Record.id and full Root; it never nominates
+                // another record or becomes a source frontier.
+                let completed = scoped_graph.take().ok_or("NATIVE_ACCOUNT_FRONTIER")?;
+                if !scope.remember_completed(db, settings, record, completed)? {
+                    return verify_state_with_cache(db, settings, block, state, progress, cache);
+                }
                 scope.consumed = true;
                 #[cfg(test)]
                 {
                     scope.partial_uses += 1;
-                    scope.subtree_hits += scoped_graph.as_ref().unwrap().hits();
+                    scope.subtree_hits += subtree_hits;
                 }
-                // Partial results never nominate a new parent, retain a new
-                // whole-Root receipt, replace the source or expand its frontier.
             } else {
                 scope.remember(
                     db,
@@ -932,7 +940,21 @@ pub(super) fn publish_with_readback<'db>(
     original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
 ) -> Result<Option<PostWriteReadback<'db>>> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
-    verify_state_with_cache(db, settings, parent, before, progress, cache)?;
+    // Capture before the first parent graph read, never after its last callback.
+    // An unqualified owner keeps the original full parent/child verification.
+    let mut parent_graph = original_owner
+        .map(|(owner, expected)| PostWriteReadback::new(db, settings, parent, owner, expected))
+        .transpose()?
+        .flatten();
+    verify_state_with_readback(
+        db,
+        settings,
+        parent,
+        before,
+        progress,
+        cache,
+        parent_graph.as_mut(),
+    )?;
     let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
     let native = native_block_with_cache(db, settings, block, cache)?;
     local(ensure(
@@ -942,7 +964,13 @@ pub(super) fn publish_with_readback<'db>(
     let rows = deltas_with_progress(db, block, progress)?;
     let matches = matches_difference(before, after, &rows, progress)?;
     local(ensure(matches, "NATIVE_STATE_DELTA"))?;
-    let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
+    let (accounts, parent_graph) = PostWriteReadback::apply_publication_accounts(
+        db,
+        &parent_record,
+        &rows,
+        progress,
+        parent_graph,
+    )?;
     let state = match cache {
         Some(cache) => cache.complete(settings, after)?,
         None => complete(settings, after)?,
@@ -966,13 +994,18 @@ pub(super) fn publish_with_readback<'db>(
         delta_count: rows.len() as u64,
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
-    save(db, &mut record)?;
-    // Begin the readback epoch after the last account/record write, while the
-    // original pre-write transaction owner still proves the same writer.
-    let mut readback = original_owner
-        .map(|(owner, expected)| PostWriteReadback::new(db, settings, block, owner, expected))
-        .transpose()?
-        .flatten();
+    // Only this native helper owns the exact metadata write. Its consumed
+    // parent owner may carry the sealed facts of the actual passive account
+    // INSERTs. It never receives a caller-supplied count or graph verdict.
+    // Any extra write/schema/owner change keeps the original full child graph.
+    let mut readback = PostWriteReadback::save_publication_record(
+        db,
+        settings,
+        &mut record,
+        &rows,
+        parent_graph,
+        original_owner,
+    )?;
     let result = verify_state_with_readback(
         db,
         settings,

@@ -1,0 +1,26 @@
+..........................................................
+----------------------------------------------------------------------
+Ran 58 tests in 0.181s
+
+OK
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 0.131s
+
+OK
+............................................................
+----------------------------------------------------------------------
+Ran 60 tests in 0.907s
+
+OK
+test_actual_workflow_guards_bind_current_bytes (__main__.InlineSourcePinTests.test_actual_workflow_guards_bind_current_bytes) ... ok
+test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) ... ok
+test_stale_missing_and_bypassed_literal_guards_are_rejected (__main__.InlineSourcePinTests.test_stale_missing_and_bypassed_literal_guards_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.049s
+
+OK
+{"artifact_comparison_jobs": 1, "head_jobs": 5, "inline_source_pins": 26, "merge_lanes": 5, "native_cost_architectures": 2, "pq_release_authority_controls": {"complete_release": 55, "groups": {"cch1_content_binding": 3, "initial_root_material": 6, "original_release": 37, "quorum_preflight": 9}, "platform_scope": "unix", "python_test_doubles": 18, "tests_executed": false}, "pq_system_controls": {"retained_meaningful_controls": 52, "selected_meaningful_controls": 63, "supplemental_meaningful_controls": 11, "tests_executed": false}, "tests_executed": false, "typed_pending_worker_controls": {"original_controls": {"test_llm_runtime_exit_binding_pending": 10, "test_llm_runtime_exit_initial_pending": 14, "test_llm_runtime_exit_post_binding_retirement": 12}, "selected_original_controls": 36, "tests_executed": false}, "w1_actual_reuse_v3_cells": 4}
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 2617, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"activation": false, "head": "119cbdc8b7060df28b74230fa9265ada7bc75541", "local_links": 8947, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1623, "source_state": "dirty-candidate", "tree": "5ce7481e5835091f07b8d21f8abf42cb0d88208b", "workspace_packages": 26}

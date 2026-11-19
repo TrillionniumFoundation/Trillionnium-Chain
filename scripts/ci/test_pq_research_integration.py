@@ -87,6 +87,34 @@ def blob(data):
 
 
 class CorpusGateTests(unittest.TestCase):
+    def test_exact_body_delay_source_is_required_and_bound_without_qualification(self):
+        path = "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs"
+        original = copy.deepcopy(self.manifest)
+        for omission in ("required", "pin", "required-and-pin"):
+            with self.subTest(omission=omission):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(path)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][path]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        source = self.root / path
+        before = source.read_bytes()
+        try:
+            source.write_bytes(before + b"changed scheduling source")
+            with self.assertRaisesRegex(IntegrityError, "changed source"):
+                check(self.root)
+        finally:
+            source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -2534,6 +2562,46 @@ class CorpusGateTests(unittest.TestCase):
                     check(self.root)
             finally:
                 source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
+    def test_owned_append_and_snapshot_sources_cannot_omit_or_mutate(self):
+        # Independent literal dependencies. Source pins grant no F0 qualification.
+        dependencies = (
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs",
+            "evidence/chain-native-owned-append-20261119-2e9b/controls/native-authenticated.log.gz",
+            "evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz",
+            "evidence/chain-native-owned-append-20261119-2e9b/controls/PROVENANCE.json",
+            "evidence/chain-native-owned-append-20261119-2e9b/controls/README.md",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b"changed original operation source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
         result = check(self.root)
         self.assertEqual(result["status"], "HOLD_NO_GO")
         self.assertIs(result["cryptographic_acceptance"], False)

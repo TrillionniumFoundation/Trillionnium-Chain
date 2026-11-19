@@ -1,0 +1,109 @@
+{
+  "schema": "chain-owned-append-validation-summary-v1",
+  "complete_candidate_is_green": false,
+  "authenticated": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 0,
+    "raw": "authenticated-original-include-ignored-8/native-authenticated.log",
+    "sha256": "83ca708525ff68f8bfa67db329b769507f109f78ca5db832e8580e9c692dc371"
+  },
+  "post_write": {
+    "passed": 55,
+    "failed": 0,
+    "ignored": 0
+  },
+  "observer": {
+    "passed": 39,
+    "failed": 0,
+    "ignored": 0
+  },
+  "native_store": {
+    "passed": 37,
+    "failed": 0,
+    "ignored": 5
+  },
+  "detached": {
+    "passed": 25,
+    "failed": 0,
+    "ignored": 1
+  },
+  "history": {
+    "passed": 56,
+    "failed": 0,
+    "ignored": 1
+  },
+  "public_v3": {
+    "passed": 294,
+    "failed": 1,
+    "ignored": 2,
+    "failed_test": "ingress::public_v3::scalar_cpu::metered_fact_tests::continuously_distinct_bad_products_exhaust_one_original_prepaid_domain",
+    "initial_credit_ns": 400000000,
+    "actual_paid_cpu_ns": 298399949,
+    "remaining_credit_ns": 101600051,
+    "minimum_start_reserve_ns": 100000000,
+    "fixed_attempts": 512,
+    "native_exit_code": 101,
+    "raw_stderr_sha256": "66e81978e52bb80618511a5f965ac41daae2b20b6d443066d61e0719496390e8"
+  },
+  "current_roster_reader": {
+    "passed": 20,
+    "failed": 0
+  },
+  "cross_branch_controls": {
+    "passed": 115,
+    "failed": 0
+  },
+  "authority_controls": {
+    "passed": 18,
+    "failed": 0
+  },
+  "hash_use_controls": {
+    "passed": 34,
+    "failed": 0
+  },
+  "strict_all_target_release_clippy_exit": 0,
+  "format_exit": 0,
+  "actual_node_linux_locked_graph_exit": 0,
+  "complete_workspace_locked_linux_metadata_exit": 0,
+  "complete_workspace_native_execution_qualified": false,
+  "repository_truth_last": {
+    "schema": "chain-original-repository-truth-local-v1",
+    "head": "f0a8364118df01113c14d6a81fbb6fdb6210e4ff",
+    "source_diff_sha256": "a1acc31c504c42827707fe3d8c049e2ede8aefcc1ad8ab35e720ab867907a106",
+    "command": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "cwd": "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/source",
+    "complete": true,
+    "preflight": {
+      "exit_code": 0,
+      "wall_seconds": 0.0315744539257139,
+      "child_user_cpu_seconds": 0.018588999999999998,
+      "child_system_cpu_seconds": 0.005805999999999999
+    },
+    "exit_code": 1,
+    "wall_seconds": 36.772140783956274,
+    "child_user_cpu_seconds": 25.745086,
+    "child_system_cpu_seconds": 4.851376
+  },
+  "repository_truth_remaining_input": "evidence/pon-work-native-certificates-20261107/mandatory_units/run-02-final/dense-repeat-u2.pmh1 missing from local sparse checkout; restore exact parent Git bytes, never repin or fabricate input",
+  "prior_f0": {
+    "run_id": 44451798839,
+    "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+    "phase_30s_goals": 1,
+    "four_second_goals": 0,
+    "denominator": 6,
+    "timely_ack": 17,
+    "packet_denominator": 42,
+    "qualification": false,
+    "root_observation_393_complete": false
+  },
+  "new_f0": {
+    "planned_invocations": 1,
+    "run_id": null,
+    "qualification": false
+  }
+}

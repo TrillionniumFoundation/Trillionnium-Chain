@@ -1,0 +1,300 @@
+{
+  "schema": "trnm.hia.storage-owner-abi.v2",
+  "target": "x86_64-linux-gnu",
+  "runtime": "HIA policy plus HIA-emitted static Linux adapter; no libc, SQLite, Rust, or Python runtime",
+  "policy": {
+    "entry": "f0(readbuf:event64, mutbuf:command65536, mutbuf:state196608) -> u32",
+    "results": {
+      "0": "issue syscall",
+      "1": "close successfully",
+      "64..77": "terminal refusal"
+    }
+  },
+  "arena": {
+    "bytes": 270336,
+    "event_offset": 0,
+    "event_bytes": 64,
+    "command_offset": 4096,
+    "command_bytes": 65536,
+    "state_offset": 69632,
+    "state_bytes": 196608,
+    "signal_scratch_offset": 266240
+  },
+  "encoding": "All integer fields are unsigned little-endian u64 unless explicitly stated otherwise. Digests are exact 32 bytes.",
+  "bootstrap": {
+    "bytes": 80,
+    "fields": [
+      "magic HIAST002 (8)",
+      "inherited directory FD (8)",
+      "mode: 1 fresh, 2 existing, 3 explicit interrupted-genesis recovery (8)",
+      "expected context (32)",
+      "explicit observer write FD or UINT64_MAX (8)",
+      "explicit gate read FD or UINT64_MAX (8)",
+      "reserved zero (8)"
+    ],
+    "capability_transfer": "The input directory FD must be >=3. Native openat(dirfd, dot, O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC) creates its private directory description, then closes its inherited input descriptor. The launcher retains no runtime service role.",
+    "optional_gate": "Both gate FDs must be explicitly supplied, distinct, >=3, and distinct from the directory FD. Both UINT64_MAX disables the gate. Ambient FD numbers never activate it."
+  },
+  "request": {
+    "bytes": 64,
+    "fields": [
+      "magic HIACMD02 (8)",
+      "operation (8)",
+      "payload byte count (8)",
+      "expected sequence (8)",
+      "expected commit digest (32)"
+    ],
+    "operations": {
+      "1": "commit: followed by exactly payload byte count bytes",
+      "2": "get: payload count zero; validate current immutable transaction then stream exact payload",
+      "3": "close: payload count zero; release owned descriptors and exit"
+    }
+  },
+  "response": {
+    "bytes": 64,
+    "fields": [
+      "magic HIARSP02 (8)",
+      "kind (8)",
+      "sequence (8)",
+      "payload length (8)",
+      "commit digest (32)"
+    ],
+    "kinds": {
+      "0": "owner opened and complete retained chain verified",
+      "1": "new HEAD and its directory successfully synchronized",
+      "2": "GET header followed by exact payload bytes"
+    },
+    "close": "Successful close produces process exit 0, without another response."
+  },
+  "limits": {
+    "payload_max_bytes": 9223372036854775679,
+    "commits_max": 18446744073709551615,
+    "chunk_bytes": 32768,
+    "full_node_state_limit_covered": false,
+    "compaction_implemented": false,
+    "bounds_basis": "Checked Linux signed off_t for header+payload and monotonic u64 sequence, not a finite 16 MiB/4096 profile.",
+    "actual_full_classical_state_payload_bytes": 279445512,
+    "actual_commits_beyond_old_ceiling": 4105,
+    "full_address_space_or_u64_history_physically_qualified": false,
+    "native_address_space_limit_in_capacity_test_bytes": 2147483648,
+    "test_controller_io_wait_seconds": 180,
+    "original_service_budget_qualified": false,
+    "full_classical_state_byte_extent_covered": true
+  },
+  "namespace": {
+    "directory_mode": "0700",
+    "files_mode": "0600",
+    "uid": "actual effective UID",
+    "lock": "owner.lock, flock LOCK_EX|LOCK_NB, held until close/exit",
+    "files": [
+      "FORMAT",
+      "HEAD",
+      "HEAD.tmp",
+      "txn.<16 lowercase hex sequence>",
+      "txn.<16 lowercase hex sequence>.tmp",
+      "owner.lock"
+    ],
+    "fresh": "Only dot, dotdot, and the owner-created lock may exist. No SQLite compatibility or implicit import.",
+    "existing": "FORMAT and HEAD must exist and validate. Referenced transactions must be regular files with one hardlink, exact UID/mode/length and a valid complete hash chain. Unreferenced own temporary/next-transaction files are never promoted to committed state.",
+    "scope": "Exclusive directory capability and cooperating owner lock; hostile same-UID mutation, filesystem rollback, network filesystem semantics, and privileged mount replacement are not qualified.",
+    "required_data_file_open": "FORMAT, HEAD, and referenced transaction files use O_RDONLY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC (657408). fstat type/UID/mode/link checks precede any data read; transaction length bounds precede header reading, and exact header-derived size is rechecked afterward.",
+    "unreferenced_remnants": "Allowed-name objects not referenced by HEAD are not type-qualified or read during recovery and never establish committed state. A subsequent commit may remove only its exact unreferenced successor/temp names.",
+    "explicit_genesis_recovery": "Mode 3 admits owner.lock, exactly one of HEAD or HEAD.tmp, and optional FORMAT only. No txn objects. Complete selected genesis must equal independent expected context-bound genesis. FORMAT must be absent or an exact 0..64 byte prefix of the expected record, with correct regular-file UID/mode/link ownership. Recovery completes only the missing suffix and publishes HEAD with no replacement. Lock-only, ambiguous, malformed and transaction namespaces refuse."
+  },
+  "format_record": {
+    "bytes": 64,
+    "fields": [
+      "HIAFMT02 (8)",
+      "context (32)",
+      "payload max=9223372036854775679 (8)",
+      "sequence max=18446744073709551615 (8)",
+      "chunk bytes=32768 (8)"
+    ]
+  },
+  "head_and_transaction_header": {
+    "bytes": 128,
+    "fields": [
+      "HIAHD002 (8)",
+      "sequence (8)",
+      "payload length (8)",
+      "context (32)",
+      "commit digest (32)",
+      "previous commit digest (32)",
+      "reserved zero (8)"
+    ],
+    "transaction_file": "exact header then exact payload; filename sequence must match; no trailing bytes",
+    "genesis": "sequence=0, payload length=0, previous digest all zero; no transaction file"
+  },
+  "hashes": {
+    "algorithm": "SHA-256 with exact storage framing and explicit reuse of the canonical state_root SHA compression functions; no duplicated compression algorithm.",
+    "genesis": "SHA256(ASCII HIASV2G0 || context32)",
+    "start": "SHA256(ASCII HIASV2H0 || context32 || sequence_u64le || payload_length_u64le || previous_digest32)",
+    "chunk": "Starting from start, for each fixed 32768-byte chunk (last may be smaller), SHA256(ASCII HIASV2H1 || prior_hash32 || chunk_length_u64le || exact_chunk). Empty payload retains start.",
+    "qualification": "Storage-domain chunk chain; not a claim that the commit digest is plain SHA256(payload) or a protocol state root.",
+    "arena_contract": {
+      "source": "storage/sha256_framing.hepta",
+      "function": "storage_sha256(mutbuf,u64)->u32",
+      "message_offset": 65536,
+      "message_bytes_max": 32816,
+      "digest_offset": 131136,
+      "digest_bytes": 32,
+      "scratch_bytes_min": 132256,
+      "private_compression_bytes": "[128,192) and [256,512)",
+      "success": 32,
+      "capacity_refusal": 100,
+      "preflight_before_writes": true
+    }
+  },
+  "commit": [
+    "remove only next unreferenced transaction/temp names",
+    "create exclusive temporary transaction",
+    "write header and payload with partial-result cursor",
+    "pwrite complete final header",
+    "fsync transaction",
+    "close transaction",
+    "renameat2 no-replace transaction",
+    "fsync directory",
+    "create exclusive HEAD.tmp",
+    "write complete HEAD",
+    "fsync HEAD.tmp",
+    "close HEAD.tmp",
+    "attempt atomic HEAD replacement (uncertainty begins)",
+    "fsync directory",
+    "publish private state and durable response"
+  ],
+  "recovery": "Read exact HEAD, verify current transaction and every predecessor payload/digest/sequence/context back to independently computed genesis. Repeated recovery does not advance HEAD. Missing/corrupt referenced objects reject.",
+  "failure": {
+    "stderr_bytes": 40,
+    "fields": [
+      "code",
+      "phase",
+      "last actual syscall result bits",
+      "commit uncertain flag",
+      "private committed sequence (not proof of delivered acknowledgement)"
+    ],
+    "exit_codes": {
+      "64": "input or phase contract",
+      "65": "namespace/context/ownership",
+      "66": "retained data corrupt or incomplete",
+      "67": "writer busy",
+      "68": "declared capacity",
+      "69": "expected head mismatch",
+      "70": "I/O outside the HEAD publication uncertainty interval; does not imply rollback",
+      "71": "commit outcome uncertain; reopen required",
+      "78": "adapter command profile rejected",
+      "79": "mapping failed"
+    },
+    "retry": "EINTR for read/write/pread/pwrite/fsync/fstat/getdents preserves the exact command. Positive partial IO advances the pointer, remaining count and positioned offset. close EINTR is not retried. EAGAIN is a terminal refusal for this blocking-file owner.",
+    "commit_uncertainty": "Any failure from the HEAD rename attempt until successful directory fsync is UNKNOWN_COMMIT. No live continuation or fabricated rollback receipt.",
+    "missing_commit_receipt": "A missing or incomplete COMMIT response requires reopen and HEAD comparison regardless of exit code. The HEAD may already be durably committed when the response write fails. Never retry unconditionally based on exit 70."
+  },
+  "observer": {
+    "record_bytes": 32,
+    "fields": [
+      "phase tag (u64le)",
+      "private committed sequence (u64le; not proof of delivered acknowledgement)",
+      "actual positive partial-result count (u64le)",
+      "actual EINTR-result count (u64le)"
+    ],
+    "resume": "one exact byte 0x01 on the explicitly supplied gate input",
+    "tags": {
+      "1": "lock acquired",
+      "2": "genesis HEAD temporary synced",
+      "3": "genesis HEAD directory synced",
+      "4": "FORMAT file synced",
+      "10": "complete transaction header/payload written",
+      "11": "transaction fsync returned success",
+      "12": "transaction rename returned success",
+      "13": "transaction directory fsync returned success",
+      "14": "new HEAD file fsync returned success",
+      "15": "HEAD rename returned success; directory not yet synced",
+      "16": "HEAD directory fsync returned success",
+      "20": "owner initialization/recovery complete",
+      "30": "selected exact context-bound genesis fsync succeeded; no format mutation yet",
+      "31": "complete FORMAT suffix written",
+      "32": "FORMAT fsync succeeded",
+      "33": "genesis HEAD rename succeeded; directory not yet synced",
+      "34": "before exclusive FORMAT create attempt; uncertainty set",
+      "35": "before FORMAT suffix pwrite; uncertainty set",
+      "36": "new FORMAT file created; before metadata validation",
+      "37": "publication directory fsync succeeded; before native complete HEAD/FORMAT readback and opened receipt"
+    },
+    "authority": "An explicit diagnostic pause capability, not a request deadline, peer permission, or physical power-loss simulator."
+  },
+  "syscalls": [
+    "read",
+    "write",
+    "close",
+    "fstat",
+    "lseek",
+    "mmap",
+    "rt_sigaction",
+    "rt_sigreturn",
+    "pread64",
+    "pwrite64",
+    "fcntl",
+    "flock",
+    "fsync",
+    "umask",
+    "geteuid",
+    "getdents64",
+    "openat",
+    "unlinkat",
+    "renameat2",
+    "exit"
+  ],
+  "remaining": [
+    "typed Node reducers and runtime integration",
+    "external anti-rollback authority",
+    "physical power-loss qualification",
+    "regular-file/fsync hard deadline",
+    "cross-target qualification",
+    "complete filesystem fault model",
+    "private identity signing and secret ownership",
+    "typed complete State integration and validation order",
+    "reference-aware history compaction",
+    "physical off_t maximum and UINT64_MAX transaction count"
+  ],
+  "qualification_entry": "The complete process/filesystem qualification is the mandatory independent hia.tools.qualify_storage CLI; native unit tests cover buffer shapes and emitted open-command contracts without repeating that complete gate.",
+  "version_transition": {
+    "version": 2,
+    "old_version_1": "refused without import or rewrite",
+    "old_sqlite": "refused",
+    "fresh_namespace_required": true
+  },
+  "initialization_recovery": {
+    "mode": 3,
+    "disk_schema_change": false,
+    "runtime_host_proxy": false,
+    "private_fields": {
+      "140232": "initial namespace bit mask: HEAD=1, HEAD.tmp=2, FORMAT=4",
+      "140240": "validated FORMAT prefix byte count"
+    },
+    "validation_before_mutation": [
+      "exclusive original owner lock and directory ownership",
+      "strict initialization-only name inventory",
+      "unique complete 128-byte context-bound genesis identity",
+      "existing FORMAT regular-file ownership and exact record prefix"
+    ],
+    "publication": [
+      "synchronize selected genesis file",
+      "exclusively create FORMAT if absent, or preserve existing inode and prefix",
+      "pwrite only absent FORMAT suffix with exact positive-partial cursor",
+      "synchronize FORMAT",
+      "rename selected HEAD.tmp to HEAD with RENAME_NOREPLACE when needed",
+      "synchronize directory",
+      "reopen and validate full published HEAD and FORMAT metadata and exact bytes",
+      "publish opened receipt and enter the unchanged ordinary request loop"
+    ],
+    "uncertainty": "From first possible FORMAT create/write or HEAD publication until successful directory fsync plus final published-record readback, failure is code 71; repeat mode 3 and compare actual opened identity. Missing opened receipt always requires reopening.",
+    "not_admitted": [
+      "lock-only namespace",
+      "both HEAD and HEAD.tmp",
+      "any transaction object",
+      "arbitrary corrupt FORMAT repair",
+      "SQLite import",
+      "wrong context or non-genesis HEAD"
+    ],
+    "qualification_entry": "python -B -m hia.tools.qualify_storage_recovery --output /absolute/fresh/output"
+  }
+}

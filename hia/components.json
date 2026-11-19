@@ -1,0 +1,1704 @@
+{
+  "schema": "trnm.hia.component-includes.v1",
+  "includes": {
+    "src/audit/event.hepta": [
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      }
+    ],
+    "src/mempool/lane_owner.hepta": [
+      {
+        "source": "src/mempool/lane_quota.hepta",
+        "functions": [
+          "lane_policy",
+          "f1",
+          "f2"
+        ]
+      }
+    ],
+    "src/crypto/pon_hash.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "src/work/verify.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "src/checkpoint/value_v2.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "src/protocol/pnx1.hepta": [
+      {
+        "source": "src/protocol/ilf2.hepta",
+        "functions": [
+          "validate_ilf2",
+          "ilf2_coefficients"
+        ]
+      },
+      {
+        "source": "src/protocol/ilf3.hepta",
+        "functions": [
+          "validate_ilf3",
+          "ilf3_coefficients"
+        ]
+      }
+    ],
+    "src/crypto/ed25519_verify.hepta": [
+      {
+        "source": "src/crypto/ed25519_group.hepta",
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_encode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ]
+      }
+    ],
+    "src/protocol/state_root.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "storage/owner_policy.hepta": [
+      {
+        "source": "storage/sha256_framing.hepta",
+        "functions": [
+          "storage_sha256",
+          "storage_word"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root.hepta",
+        "functions": [
+          "state_copy",
+          "state_load32",
+          "state_store32",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sha_compress"
+        ]
+      }
+    ],
+    "src/executor/schedule.hepta": [
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_valid",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_add",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div",
+          "fp64_ratio"
+        ]
+      }
+    ],
+    "src/transport/authenticated_request.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/state/json_value.hepta": [
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_measure",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_word",
+          "value_integer_write"
+        ]
+      }
+    ],
+    "platform/node_delta/delta_fixture.hepta": [
+      {
+        "functions": [
+          "dr",
+          "dg",
+          "dp",
+          "dcopy_in",
+          "dcopy",
+          "delta_compare",
+          "delta_validate",
+          "delta_start",
+          "delta_fail",
+          "delta_command",
+          "delta_progress",
+          "delta_row",
+          "delta_collect",
+          "delta_next",
+          "delta_ack"
+        ],
+        "source": "platform/node_delta/delta_owner.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/node_delta/delta_owner.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/codec/json_number.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/codec/json_value_encode.hepta": [
+      {
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_product_high"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "src/codec/json_value_wire.hepta": [
+      {
+        "functions": [
+          "jn_peek",
+          "jn_pow10",
+          "jn_parts",
+          "jn_parse",
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/crypto/ed25519_sign.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/transport/authenticated_response.hepta": [
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar",
+          "jv_string",
+          "jv_key_order",
+          "jv_skip",
+          "jv_literal",
+          "jv_parse"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "jn_peek",
+          "jn_pow10",
+          "jn_parts",
+          "jn_parse",
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_begin",
+          "tr_ws",
+          "tr_peek",
+          "tr_take",
+          "tr_append",
+          "tr_string",
+          "tr_utf8",
+          "tr_escape",
+          "tr_hex4",
+          "tr_hex_digit",
+          "tr_codepoint",
+          "tr_uint",
+          "tr_signature_hex",
+          "tr_hex_character",
+          "tr_hex_input",
+          "tr_copy_input",
+          "tr_copy_work",
+          "tr_ed_digest",
+          "tr_code"
+        ],
+        "source": "src/transport/authenticated_request.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_encode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/transport/signed_response.hepta": [
+      {
+        "functions": [
+          "je_u32",
+          "je_string_size",
+          "je_key_order",
+          "je_walk"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "es_sign_loaded",
+          "es_expand_public",
+          "es_hash",
+          "es_wipe",
+          "es_normalize",
+          "es_fe_add",
+          "es_fe_sub",
+          "es_fe_mul",
+          "es_point_add",
+          "es_point_mul",
+          "es_inverse",
+          "es_point_encode",
+          "es_scalar_reduce",
+          "es_scalar_muladd"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "rs_hash_start",
+          "rs_hash_u32",
+          "rs_length",
+          "rs_byte"
+        ],
+        "source": "src/transport/authenticated_response.hepta"
+      },
+      {
+        "functions": [
+          "tr_hex_character"
+        ],
+        "source": "src/transport/authenticated_request.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_product_high"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "src/node/settings_development.hepta": [
+      {
+        "source": "src/codec/json_value_encode.hepta",
+        "functions": [
+          "je_walk",
+          "je_u32",
+          "je_string_size",
+          "je_key_order"
+        ]
+      },
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_product_high"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/state/json_string.hepta",
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_sign.hepta",
+        "functions": [
+          "es_expand_public",
+          "es_hash",
+          "es_normalize",
+          "es_fe_add",
+          "es_fe_sub",
+          "es_fe_mul",
+          "es_point_add",
+          "es_point_mul",
+          "es_inverse",
+          "es_point_encode",
+          "es_wipe"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_group.hepta",
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root_compact.hepta",
+        "functions": [
+          "csr_arena_root",
+          "csr_bottom_up",
+          "csr_copy",
+          "csr_digest",
+          "csr_get32",
+          "csr_key_less",
+          "csr_node",
+          "csr_parent_key",
+          "csr_part",
+          "csr_put32",
+          "csr_read32",
+          "csr_same_parent",
+          "csr_sift",
+          "csr_sort_keys",
+          "csr_swap",
+          "csr_tag_10",
+          "csr_tag_6",
+          "csr_tag_7",
+          "csr_tag_9"
+        ]
+      }
+    ],
+    "src/protocol/state_root_compact.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "storage/sha256_framing.hepta": [
+      {
+        "source": "src/protocol/state_root.hepta",
+        "functions": [
+          "state_copy",
+          "state_load32",
+          "state_store32",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sha_compress"
+        ]
+      }
+    ],
+    "platform/typed_store/stage_policy.hepta": [
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ]
+      }
+    ],
+    "platform/typed_store/root_finalize.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root.hepta",
+        "functions": [
+          "state_compare",
+          "state_copy",
+          "state_empty",
+          "state_load32",
+          "state_load64",
+          "state_node",
+          "state_output_copy",
+          "state_sha_compress",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sift",
+          "state_sort",
+          "state_store32",
+          "state_store64",
+          "state_swap",
+          "state_tree"
+        ]
+      }
+    ],
+    "platform/host_resource/resource_policy.hepta": [
+      {
+        "source": "platform/host_checkpoint/owner_policy.hepta",
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ]
+      }
+    ],
+    "platform/host_resource/fixture_entry.hepta": [
+      {
+        "source": "platform/host_resource/resource_policy.hepta",
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ]
+      },
+      {
+        "source": "platform/host_checkpoint/owner_policy.hepta",
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ]
+      }
+    ],
+    "platform/work_owner/host_fixture.hepta": [
+      {
+        "functions": [
+          "work_host_entry",
+          "work_host_start",
+          "work_host_begin_method",
+          "work_host_intercept"
+        ],
+        "source": "platform/work_owner/host_method.hepta"
+      },
+      {
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ],
+        "source": "platform/host_resource/resource_policy.hepta"
+      },
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/host_method.hepta": [
+      {
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ],
+        "source": "platform/host_resource/resource_policy.hepta"
+      },
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/owner_fixture.hepta": [
+      {
+        "functions": [
+          "owner_entry",
+          "owner_dispatch",
+          "owner_main",
+          "owner_worker",
+          "owner_alive",
+          "owner_alive_done",
+          "owner_worker_finish",
+          "owner_worker_exit",
+          "owner_gate",
+          "owner_publish",
+          "owner_error",
+          "owner_issue",
+          "owner_copy",
+          "owner_put",
+          "owner_get",
+          "owner_read"
+        ],
+        "source": "platform/work_owner/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/sha_fixture.hepta": [
+      {
+        "functions": [
+          "work_precheck",
+          "work_noise_header",
+          "work_noise_start",
+          "work_noise_resume",
+          "work_matrix_resume",
+          "work_transcript_resume",
+          "work_correction_resume",
+          "work_row",
+          "work_tile",
+          "work_progress",
+          "work_terminal",
+          "work_get",
+          "work_put",
+          "work_copy",
+          "work_code",
+          "work_reduce",
+          "work_task_header",
+          "work_ticket_header",
+          "work_noise_prefix",
+          "work_trace_header",
+          "work_sha256_arena",
+          "work_sha_byte",
+          "work_sha_rotr",
+          "work_sha_s0",
+          "work_sha_s1",
+          "work_sha_b0",
+          "work_sha_b1",
+          "work_sha_schedule",
+          "work_sha_compress",
+          "work_sha_constants"
+        ],
+        "source": "platform/work_owner/work_policy.hepta"
+      },
+      {
+        "functions": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f9",
+          "f10",
+          "f11",
+          "f14",
+          "f16"
+        ],
+        "source": "src/work/verify.hepta"
+      }
+    ],
+    "platform/work_owner/work_policy.hepta": [
+      {
+        "functions": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f9",
+          "f10",
+          "f11",
+          "f14",
+          "f16"
+        ],
+        "source": "src/work/verify.hepta"
+      }
+    ],
+    "platform/mempool_node/node_methods.hepta": [
+      {
+        "functions": [
+          "nb_capture",
+          "nb_complete",
+          "nb_copy",
+          "nb_fail",
+          "nb_issue",
+          "nb_need",
+          "nb_parent_accept",
+          "nb_parent_begin",
+          "nb_parent_call",
+          "nb_parent_retire_start",
+          "nb_prefix_emit",
+          "nb_prefix_finish",
+          "nb_prefix_initialize_to",
+          "nb_prepared_ok",
+          "nb_put",
+          "nb_read",
+          "nb_state",
+          "nb_state_ok",
+          "nb_word",
+          "nb_zero"
+        ],
+        "source": "platform/node_owner/producer.hepta"
+      }
+    ],
+    "platform/mempool_node/owner.hepta": [
+      {
+        "functions": [
+          "tg_allocate_slot",
+          "tg_allowed",
+          "tg_copy",
+          "tg_empty",
+          "tg_equal",
+          "tg_equal_input",
+          "tg_erase",
+          "tg_g",
+          "tg_has_slot",
+          "tg_move",
+          "tg_p",
+          "tg_take",
+          "tg_zero"
+        ],
+        "source": "platform/mempool_typed/typed_fixture.hepta"
+      }
+    ],
+    "platform/node_commitment/owner.hepta": [
+      {
+        "functions": [
+          "eh_alloc",
+          "eh_free",
+          "eh_link",
+          "eh_unlink",
+          "em_first",
+          "em_init",
+          "em_next"
+        ],
+        "source": "platform/execution_state/map.hepta"
+      },
+      {
+        "functions": [
+          "eo_find",
+          "eo_id",
+          "eo_new",
+          "eo_reply",
+          "eo_root_extent",
+          "eo_unlink"
+        ],
+        "source": "platform/execution_state/owner.hepta"
+      },
+      {
+        "functions": [
+          "ev_ascii",
+          "ev_g",
+          "ev_g32",
+          "ev_json_atom",
+          "ev_json_close",
+          "ev_json_size",
+          "ev_json_write",
+          "ev_move",
+          "ev_p",
+          "ev_p32",
+          "ev_r",
+          "ev_string_size",
+          "ev_string_write",
+          "ev_validate"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "csr_put32",
+          "csr_tag_10",
+          "csr_tag_6",
+          "csr_tag_7",
+          "csr_tag_9"
+        ],
+        "source": "src/protocol/state_root_compact.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "platform/node_owner/context.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_error",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "mb_literals",
+          "mb_literals_0",
+          "mb_literals_1",
+          "mb_literals_2",
+          "mb_literals_3"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/node_owner/disk_bridge.hepta": [
+      {
+        "functions": [
+          "ng_begin_scan",
+          "ng_boot",
+          "ng_boot_0",
+          "ng_boot_1",
+          "ng_boot_2",
+          "ng_boot_3",
+          "ng_boot_4",
+          "ng_boot_5",
+          "ng_boot_6",
+          "ng_cold",
+          "ng_cold_0",
+          "ng_cold_1",
+          "ng_cold_2",
+          "ng_control",
+          "ng_copy",
+          "ng_cut",
+          "ng_equal",
+          "ng_fail",
+          "ng_fd_identity",
+          "ng_file_stat",
+          "ng_g",
+          "ng_go",
+          "ng_initialize",
+          "ng_initialize_0",
+          "ng_initialize_1",
+          "ng_initialize_2",
+          "ng_initialize_3",
+          "ng_initialize_4",
+          "ng_initialize_5",
+          "ng_initialize_6",
+          "ng_initialize_7",
+          "ng_inside",
+          "ng_inventory",
+          "ng_io",
+          "ng_issue",
+          "ng_name",
+          "ng_p",
+          "ng_path",
+          "ng_r",
+          "ng_r32",
+          "ng_record",
+          "ng_requests",
+          "ng_requests_0",
+          "ng_requests_1",
+          "ng_requests_2",
+          "ng_requests_3",
+          "ng_scan",
+          "ng_scan_0",
+          "ng_scan_1",
+          "ng_scan_2",
+          "ng_stdio",
+          "ng_stdio_0",
+          "ng_stdio_1",
+          "ng_stdio_alias",
+          "ng_take",
+          "ng_zero"
+        ],
+        "source": "platform/genesis_store/owner_policy.hepta"
+      }
+    ],
+    "platform/node_owner/json_value.hepta": [
+      {
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "platform/node_owner/linux_emitter.hepta": [],
+    "platform/node_owner/prefix_bridge.hepta": [
+      {
+        "functions": [
+          "config_limit",
+          "go",
+          "state_call"
+        ],
+        "source": "platform/execution_batch/prefix.hepta"
+      },
+      {
+        "functions": [
+          "px_begin",
+          "px_cleanup",
+          "px_output"
+        ],
+        "source": "platform/execution_batch/scoped_prefix.hepta"
+      },
+      {
+        "functions": [
+          "bg",
+          "capture_next",
+          "capture_start",
+          "copy_start",
+          "failure",
+          "input_less",
+          "mc",
+          "mg",
+          "mi",
+          "mn",
+          "mp",
+          "mt",
+          "mz",
+          "px_ack",
+          "px_apply",
+          "px_callback",
+          "px_capture",
+          "px_component",
+          "px_copy",
+          "px_finalize",
+          "px_parse_transactions",
+          "px_restore",
+          "px_write_rows",
+          "request",
+          "restore_start",
+          "row_admit",
+          "state_ok",
+          "work_compare"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      }
+    ],
+    "platform/node_owner/producer.hepta": [
+      {
+        "functions": [
+          "np_begin",
+          "np_capture_prefix",
+          "np_cleared",
+          "np_command",
+          "np_disk",
+          "np_emit",
+          "np_finalize",
+          "np_mm_ok",
+          "np_mm_reply",
+          "np_opened",
+          "np_output_dropped",
+          "np_parent_created",
+          "np_policy",
+          "np_prefix_bound",
+          "np_prefix_call",
+          "np_prefix_done",
+          "np_prefix_dropped",
+          "np_prefix_new",
+          "np_prefix_ok",
+          "np_prepared_dropped",
+          "np_released",
+          "np_retired_finish",
+          "np_root",
+          "np_simple",
+          "np_taken"
+        ],
+        "source": "platform/mempool_node/node_methods.hepta"
+      }
+    ],
+    "src/crypto/ed25519_verify_joint.hepta": [
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/data_availability/rs46.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "base_repository_head": "96a0846e383745f88e033c7db2abc0611f1dae63",
+  "builds": [
+    {
+      "artifact_bytes": 37736,
+      "artifact_sha256": "6ef36f5ffcfebeacf576c18c7bb40de96c4ca3de5d1e807461b37076112311f3",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd",
+        "core_sha256": "9e0305a0b578ba624538fec6a09dc8c125e807aee809f91420f5c93757fffd95",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/state/json_string.hepta",
+            "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+          },
+          {
+            "path": "components.json",
+            "sha256": "3fc0b655556ac742e2e79244fd82464e80075ac95d46adc2342e7b76d8e62af6"
+          }
+        ],
+        "source_sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compiler_wire_sha256": "6ba4f3f8e5865b541c20d0e92b1bc5b81b20d4e128ddab9a0c2a651c8f960900",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "0fff48690a50e45f8e9695012460d7d23dd9ac8ad82a5c6933a5545282ae21b9",
+      "source": "hia/src/state/json_string.hepta"
+    },
+    {
+      "artifact_bytes": 111464,
+      "artifact_sha256": "f208ae47ce1f5e0f85b36572225c1709e67beef5d1a0a8cac9712a913d8fa4df",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "d7399b5a0d69204eb93637dcaf10bcf3a6901c19900c59c15316980f7e1057c1",
+        "core_sha256": "b7eb280e26d2c48c1d3e97dbfc15e951eadb8ef173ec7f2b9b1cb3afae479a70",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/state/json_value.hepta",
+            "sha256": "4e073091bfa609292a78c01ac11dee4ede2b5384fc49895d6e658d397f2bac25"
+          },
+          {
+            "path": "components.json",
+            "sha256": "3fc0b655556ac742e2e79244fd82464e80075ac95d46adc2342e7b76d8e62af6"
+          },
+          {
+            "path": "src/state/json_string.hepta",
+            "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+          }
+        ],
+        "source_sha256": "4e073091bfa609292a78c01ac11dee4ede2b5384fc49895d6e658d397f2bac25",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compiler_wire_sha256": "b0733d539cab8f78d8d64e00b03a18d97d60c2bde4b690d2055437337c24375a",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "1a1e82463fad1940b4970ad4f041340068e5b42691ce3f0c0280b7d3cce2baff",
+      "source": "hia/src/state/json_value.hepta"
+    }
+  ],
+  "claims": {
+    "generic_typed_value_within_finite_profile": true,
+    "json_text_parser": false,
+    "node_sql_replay_outbox_replaced": false,
+    "old_runtime_retirement_allowed": false,
+    "original_workspace_budget_equivalence": false,
+    "production_activation": false,
+    "state_root_composed": false,
+    "string_type_codec_within_profile": true,
+    "typed_store_owner_complete": false,
+    "whole_node_native": false,
+    "whole_state_complete": false
+  },
+  "cold_compiler_gate_repeated": false,
+  "independent_static_review": {
+    "scope": "Original M06 State/root return signatures, Value/Map constructor API, last-wins insertion, original grammar before canonical serialization, error mapping; test-only recursive calls use explicit 64 MiB stack.",
+    "status": "REVIEWED_NOT_COMPILED"
+  },
+  "native_calls": [
+    {
+      "backend": "selfhost",
+      "count": 1047,
+      "outcome": "returned",
+      "source": "json_string"
+    },
+    {
+      "backend": "selfhost",
+      "count": 471,
+      "outcome": "returned",
+      "source": "json_value"
+    }
+  ],
+  "native_compiler": {
+    "fallback_used": false,
+    "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+    "sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+  },
+  "native_controls_passed": 1518,
+  "new_capacity_is_not_original_m06_limit": true,
+  "observed_at": "2026-11-15T18:50:35.166118+00:00",
+  "official_loader_unmodified": true,
+  "original_node_state_order": {
+    "required": "Validate all winning Values in complete State order before count/key/value wire limits; typed extent/streaming must cover oversized and deep rejected inputs. This finite Value ABI does not perform that whole-State pass.",
+    "status": "OPEN"
+  },
+  "original_rust_oracle": {
+    "reason": "No local rustc/cargo or TRNM_HIA_RUST_STATE_REFERENCE; skipped methods explicitly recorded",
+    "status": "NOT_RUN"
+  },
+  "profile": {
+    "maximum_constructible_nested_array_depth_tested": 7280,
+    "string_input_bytes": 1048576,
+    "value_input_bytes": 65536,
+    "value_nodes": 8192,
+    "value_scratch_bytes": 721152
+  },
+  "qualification_scope": "Final candidate files copied into an isolated standard hia tree; only the explicit Value -> String function include was added to that copied component manifest. The unmodified formal NativeModule compiled and executed the two final source files.",
+  "raw_local_report": {
+    "bytes": 21532,
+    "sha256": "d8321f73069e989ce8b23e9882cf7ee5b8058ea2d85f625ce688e7e042695bd9"
+  },
+  "schema": "trnm.hia.state-value-development.v1",
+  "source_guard_exceptions": false,
+  "source_inputs": {
+    "hia/STATE_VALUE.md": {
+      "bytes": 15542,
+      "sha256": "8b514d25497bf4a29c717f98e843f571780b5e84664acbc64430e8def49fef02"
+    },
+    "hia/src/state/json_string.hepta": {
+      "bytes": 22061,
+      "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+    },
+    "hia/src/state/json_value.hepta": {
+      "bytes": 57148,
+      "sha256": "4e073091bfa609292a78c01ac11dee4ede2b5384fc49895d6e658d397f2bac25"
+    },
+    "hia/state-value-abi.json": {
+      "bytes": 6118,
+      "sha256": "77e6dc0f8cb0d75e8302c3ebae429d54e9fbba53da204806120924a4596712b2"
+    },
+    "hia/tests/rust_state_reference.rs": {
+      "bytes": 9155,
+      "sha256": "1dbcdd5c634f4dfc345c10689a9275bf9532d2bae7f5a2164ba4b11e70bc7ba6"
+    },
+    "hia/tests/state_value_cases.py": {
+      "bytes": 10811,
+      "sha256": "6d4805dab557ef106a6e13d38c5a4fa7018175fca3b77162d96fd398eb5c07e6"
+    },
+    "hia/tests/test_state_string.py": {
+      "bytes": 3636,
+      "sha256": "b08cbeec280cb2bc8a71b61aced696af956ed41b00d15e43587193167fe2cc0c"
+    },
+    "hia/tests/test_state_value.py": {
+      "bytes": 4347,
+      "sha256": "5885433b314e67c4d8bf05d0e2332bb8afbd1e069af8f1846278751794b99bd0"
+    },
+    "original/trillionnium/Cargo.lock": {
+      "bytes": 42127,
+      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+    },
+    "original/trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/Cargo.toml": {
+      "bytes": 998,
+      "sha256": "7ff196fc05c1b008998108d4504b359b9ef7e5a43e537e8004eb7053adc8f27b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs": {
+      "bytes": 37020,
+      "sha256": "6643eb9536eacbc2a29a463ca76ded72d8c06669f889cbd750499be473db1720"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs": {
+      "bytes": 9958,
+      "sha256": "9172d2bd0407e66fc19f0a72fe259762ead06ae3e03bb237f615442283d7f95b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/codec.rs": {
+      "bytes": 1987,
+      "sha256": "dfc2854c4d3fdd4423644d7c6cbc31703ae3a7f59877a79af92404ff62989738"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs": {
+      "bytes": 12483,
+      "sha256": "5b9ae336a06503aae61dbb3c814e941a52feb0e106f81ae615ac06a0bde37042"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs": {
+      "bytes": 10548,
+      "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2/tests.rs": {
+      "bytes": 15721,
+      "sha256": "a2624bf5dbd996b86f2d47db26a83f88d8c2c246d40214c7f7db585c158af0a9"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/tests.rs": {
+      "bytes": 12769,
+      "sha256": "45be41d6614503cd0a6f7332f5a6fe2a75e7b2548c2ed4c1bcadeede67c9120e"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs": {
+      "bytes": 20517,
+      "sha256": "ed9a95e23801494ee1ebcce45c941e3b7fa1353a7ec2a6445549210ee423cdc5"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs": {
+      "bytes": 13164,
+      "sha256": "5605f644d81c3125633cba4fe291c29fca8b3170cd9e4813ac0b5985bde91034"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/deployment_actors.rs": {
+      "bytes": 11627,
+      "sha256": "d64804fbf5672c11a723fd36deea43e2d57bb0bfe91a30b18e82c3c3d2482b4b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs": {
+      "bytes": 5583,
+      "sha256": "7680680a580445c5e2f52bec28710abf4e7e682f4c0265ed4c6d38b2d21eb42f"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/deterministic_parallel_v1.rs": {
+      "bytes": 28164,
+      "sha256": "17c1d7112b3cbabb808950bed86dc8a8499ca5349222af68efd01c15d1511538"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/engine.rs": {
+      "bytes": 39437,
+      "sha256": "d906668f82d5e47c2ffd813b051a6a0bcf21d36dbbad57fd4fedb5f9f592a09e"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/error.rs": {
+      "bytes": 1542,
+      "sha256": "1c9326d52b029220f50123304816d3535ed6986762bd957b7e5fafbbfce7e0cc"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs": {
+      "bytes": 14880,
+      "sha256": "509b553965f7e236747e93df6a65d3da34dcd086a27864779fd1da572ee70baf"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs": {
+      "bytes": 21172,
+      "sha256": "11c771e02e4ae446dfdbb5026b2317f4fc75ea0f98f66505b1619494d794b676"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/lib.rs": {
+      "bytes": 2543,
+      "sha256": "4a679f79eaa3ac10a1e6731e3cd2a4709422cc10db9d6572e389d01feef61ec0"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs": {
+      "bytes": 17870,
+      "sha256": "a62f9e0b96bc68bae20800514116d9447b1a123f134210c60cc21ad7ea135279"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs": {
+      "bytes": 8216,
+      "sha256": "15fa729a62ec7e4e1235896dd9d3dc33d28e65c58e65ee2aeb5ee3c65e46c421"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_composition_v6.rs": {
+      "bytes": 33243,
+      "sha256": "104666e08adbe0ee30f99526b6a24cd98e147a0b20435cca7b7cf09bf48b2fa7"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs": {
+      "bytes": 28569,
+      "sha256": "672ef22b4671623908f966f5a0864691ca340c0c032bd77e7a370664d3fbce25"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs": {
+      "bytes": 11529,
+      "sha256": "d49801ca533604279c7666ce13173cd839f59e3df6f460962cf17ad12c942549"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs": {
+      "bytes": 35276,
+      "sha256": "def56632cf8c61a84c64a05aa9c8554ed7ab2a9e9d7eabce54ee8991919f1264"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs": {
+      "bytes": 15518,
+      "sha256": "9503b0282adb69b74ed0155763f887da63fb777efd79cbd74ed5575a6b895252"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/parallel_execution_tests.rs": {
+      "bytes": 9178,
+      "sha256": "dea69678003e969352cee3a2b8b6758a9b7f8a5b9cfce35e16947e24243658e3"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": {
+      "bytes": 111392,
+      "sha256": "624b2fb4bb9bd511999ff94883dc4e76891565d2c9beaf43a735b8ae1fea0fe6"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs": {
+      "bytes": 19708,
+      "sha256": "323d2a530b0a14d3e2bdb81ff9458d7d825c6f46c2c03f93b1d3adb057c8d5db"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": {
+      "bytes": 16596,
+      "sha256": "109ee5f1194df9b78d7fd39f667ab8965a35247b761502be72bac0c2295b0be8"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_commitment_binding_tests.rs": {
+      "bytes": 8405,
+      "sha256": "bedcd5776ca15c25d338e5e69108c63be718dc0b4a5ce53b717bb196e35d224f"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 161926,
+      "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/account_conflict_tests.rs": {
+      "bytes": 8211,
+      "sha256": "1ce7211f8b3f7f595ff0e21e8925337bce8e5cd804bb87c4cfe3fd1a67bc6607"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs": {
+      "bytes": 18742,
+      "sha256": "83bdee5bf7980ab8aa2447dee593d6e89858e2e95b59a5fcbd263d5e3391b52b"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1/tests.rs": {
+      "bytes": 14045,
+      "sha256": "4528a8a50882eaa32a065367e30ab99b025dd181ac02903534581061dcfeb8e9"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs": {
+      "bytes": 17240,
+      "sha256": "c2e2059fa93fbfa8f5acd3edf856812137a928d3975c50b6d6860e9dc3b8925f"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/legacy_preparation_tests.rs": {
+      "bytes": 12732,
+      "sha256": "9bb3febd54a426b639c16e26edbf7b3ee01a32915ec1b02f7281a42f1872eaa6"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": {
+      "bytes": 19004,
+      "sha256": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": {
+      "bytes": 42956,
+      "sha256": "782e4b4d3d442d192d7ae960cd64ba0727d49502464877f65f09f4a355ee2413"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6.rs": {
+      "bytes": 13090,
+      "sha256": "3cbd2da8aeeeb2e25749dafd29ce912d71287c2c9123dbf59022d439cdacbcfb"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_scope_tests.rs": {
+      "bytes": 11592,
+      "sha256": "dd12e1bbe30c844785aee32b469a5fa3d0cb348c5792ee46ecdabb6f830281bb"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs": {
+      "bytes": 18102,
+      "sha256": "362b32b97cf780d83ab5a52de2048bac7542f677f0a63bfa9aedbaeb103643c3"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": {
+      "bytes": 22190,
+      "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_tests.rs": {
+      "bytes": 6554,
+      "sha256": "bb64ae654130c2f3b70756391c2a0e2788d02850f2a52d52601e04328e51d679"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs": {
+      "bytes": 7148,
+      "sha256": "6f6df98a497091adef6dde2560d2ba61896f0398dfff2fb5c0a3a40e205e4fdc"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs": {
+      "bytes": 18162,
+      "sha256": "ad8b6160b61a031e1cc79c7145172d2f3a2ac50637da85e25a6dfc150d7c426d"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/task_migration_v1.rs": {
+      "bytes": 845,
+      "sha256": "fb9fe7309af4069a6e00ab9d63cbd0b03e2e8651d4f787d81db1510a2d5d2788"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v4.rs": {
+      "bytes": 23200,
+      "sha256": "c8bd6ab12091c0f16a0a2e21f8e6faa45aa63aa1f7733b8a8f7f722c9ccf0028"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v4_tests.rs": {
+      "bytes": 3801,
+      "sha256": "98ae10b00149033e05dba5b2426dad375e59d926a466e662b9bef949a36dfb83"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": {
+      "bytes": 32264,
+      "sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5_tests.rs": {
+      "bytes": 5126,
+      "sha256": "62b167095246ca9c5c49be081592d786ec53e0207a86225a0e48dfc339a613e0"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": {
+      "bytes": 40619,
+      "sha256": "15fd960618017d9aa1932ebc7ad5da15ba6423bff4497f334b47bea5b5298930"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs": {
+      "bytes": 31710,
+      "sha256": "53de01aad75df883804493616e5dfe98b3e33b2649084f79ab5646797a45c4d5"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs": {
+      "bytes": 18967,
+      "sha256": "e55a049a30c1f2b979247132a27ded6386ec9052535328f7363710dc67ed00b8"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": {
+      "bytes": 33869,
+      "sha256": "cb2d527090ad4a2cf119a778b9854bde35fc12ee8e82f7f7d3218fc91fd5eca1"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/pq_storage.rs": {
+      "bytes": 5736,
+      "sha256": "971a89aca3d61be6688df4ffff88a48f5c0f340e25bd9ab1c50369961e3f372c"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs": {
+      "bytes": 14565,
+      "sha256": "2a5bad8cd045ffd65a18a811c813cd948feef130d975eb6b34acb334f43d4757"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/qualified_task_lifecycle.rs": {
+      "bytes": 25420,
+      "sha256": "70396ef2445d3ea29069923deec0cb3cd84d9e158dba21cd384d41127c8c4430"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/repeated_sender_tests.rs": {
+      "bytes": 16392,
+      "sha256": "603fa776762b406e81217350ea30cf4e5c4ab0706cb38fbc42a137b270dea584"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/store.rs": {
+      "bytes": 44835,
+      "sha256": "6ba53c703147c51ea81a925fd8c751060108473178c3123ae84de730af7515b7"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/tests.rs": {
+      "bytes": 28066,
+      "sha256": "a68a4718875cb883f105f2aca6b538ebf878da8ddcc1d763ab1dcd450ba83543"
+    },
+    "original/trillionnium/crates/trnm-mvcc-fee/src/types.rs": {
+      "bytes": 6171,
+      "sha256": "5de5e46bc23d20bb616b58e6c36acb2d1c38af73fbde5e467eaf26e859415b0b"
+    },
+    "original/trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 394623,
+      "sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+    },
+    "original/trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "bytes": 32654,
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    },
+    "qualification-driver": {
+      "bytes": 5907,
+      "sha256": "806f473ba6865d6be2cf87901fbd9898c8c62ea0fc0dace12e9e8f2ad4ce9ba2"
+    },
+    "qualification-view/hia/components.json": {
+      "bytes": 3060,
+      "sha256": "3fc0b655556ac742e2e79244fd82464e80075ac95d46adc2342e7b76d8e62af6"
+    },
+    "support/hia/qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "support/hia/tests/native_support.py": {
+      "bytes": 9793,
+      "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+    },
+    "support/hia/toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "support/hia/tools/toolchain.py": {
+      "bytes": 12896,
+      "sha256": "f7a6271cb0c339519f84706d0499ac0d35c080ee93a2da34b0ea393f0e02cbe8"
+    }
+  },
+  "source_inputs_stable": true,
+  "source_set_sha256": "e58b9be19b331793a40900b03803bde388d4520c24283c84724077c5cd432ec0",
+  "status": "NATIVE_PASS_RUST_NOT_RUN",
+  "tests": {
+    "errors": [],
+    "failures": [],
+    "run": 4,
+    "skipped": [
+      [
+        "test_original_serde_and_m06_differential (hia.tests.test_state_string.StateStringTests.test_original_serde_and_m06_differential)",
+        "NOT_RUN: TRNM_HIA_RUST_STATE_REFERENCE is not configured; original Rust has not executed"
+      ],
+      [
+        "test_original_value_and_m06_differential (hia.tests.test_state_value.StateValueTests.test_original_value_and_m06_differential)",
+        "NOT_RUN: TRNM_HIA_RUST_STATE_REFERENCE is not configured; original Rust has not executed"
+      ]
+    ]
+  },
+  "unrelated_suites_repeated": false,
+  "wall_seconds": 16.14272024499951
+}

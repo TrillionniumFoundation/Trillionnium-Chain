@@ -1,0 +1,1024 @@
+{
+  "all_final": false,
+  "automatic_run_count": 27,
+  "business_rerun": false,
+  "every_failure_log_verified_after_one_read_only_recovery": true,
+  "failed_job_count": 43,
+  "failure_logs": [
+    {
+      "complete_log": {
+        "bytes": 58412,
+        "file": "automatic-ci-at-f0-1/job-135360700762-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "e5588994491f940807d504bdeafe75a86b978a212f2bec829482a4e72ab961de"
+      },
+      "conclusion": "failure",
+      "job_id": 135360700762,
+      "name": "Original budget controls (budget-before-v2)",
+      "original_request": {
+        "bytes": 58412,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360700762-log.stdout",
+        "job_id": 135360700762,
+        "name": "Original budget controls (budget-before-v2)",
+        "sha256": "e5588994491f940807d504bdeafe75a86b978a212f2bec829482a4e72ab961de"
+      },
+      "run_id": 44465052139,
+      "run_name": "PoN original budget component controls"
+    },
+    {
+      "complete_log": {
+        "bytes": 58468,
+        "file": "automatic-ci-at-f0-1/job-135360700960-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "aa06644a0a0d0fb9e5c1c9cb4fcccdae48ddd62e5cff86fca87c531fe3865801"
+      },
+      "conclusion": "failure",
+      "job_id": 135360700960,
+      "name": "Original budget controls (pool-scan-before)",
+      "original_request": {
+        "bytes": 58468,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360700960-log.stdout",
+        "job_id": 135360700960,
+        "name": "Original budget controls (pool-scan-before)",
+        "sha256": "aa06644a0a0d0fb9e5c1c9cb4fcccdae48ddd62e5cff86fca87c531fe3865801"
+      },
+      "run_id": 44465052139,
+      "run_name": "PoN original budget component controls"
+    },
+    {
+      "complete_log": {
+        "bytes": 58560,
+        "file": "automatic-ci-at-f0-1/job-135360700997-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "1cc72480c816e1712de5555ba4e9478b43eb54ae23129936b4287ddf9a6f0ebf"
+      },
+      "conclusion": "failure",
+      "job_id": 135360700997,
+      "name": "Original budget controls (pool-before-v2)",
+      "original_request": {
+        "bytes": 58560,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360700997-log.stdout",
+        "job_id": 135360700997,
+        "name": "Original budget controls (pool-before-v2)",
+        "sha256": "1cc72480c816e1712de5555ba4e9478b43eb54ae23129936b4287ddf9a6f0ebf"
+      },
+      "run_id": 44465052139,
+      "run_name": "PoN original budget component controls"
+    },
+    {
+      "complete_log": {
+        "bytes": 4110,
+        "file": "automatic-ci-at-f0-1/job-135360701332-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "f2a9fdf8cddd13709820a3e97c86b25ebdbf60f58de96d96c129e6c9830d204c"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701332,
+      "name": "retained-pressure-failure",
+      "original_request": {
+        "bytes": 4110,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701332-log.stdout",
+        "job_id": 135360701332,
+        "name": "retained-pressure-failure",
+        "sha256": "f2a9fdf8cddd13709820a3e97c86b25ebdbf60f58de96d96c129e6c9830d204c"
+      },
+      "run_id": 44465052237,
+      "run_name": "PoN priority acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 83503,
+        "file": "automatic-ci-at-f0-1/job-135360702517-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "8ca3b6c3bfcca4b4cbce08a962f768ae2d931c2f29dc4435c878bd89633a7e34"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702517,
+      "name": "W1 fresh challenge service (x64, head)",
+      "original_request": {
+        "bytes": 83503,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702517-log.stdout",
+        "job_id": 135360702517,
+        "name": "W1 fresh challenge service (x64, head)",
+        "sha256": "8ca3b6c3bfcca4b4cbce08a962f768ae2d931c2f29dc4435c878bd89633a7e34"
+      },
+      "run_id": 44465052293,
+      "run_name": "PoN W1 work security observations"
+    },
+    {
+      "complete_log": {
+        "bytes": 84215,
+        "file": "automatic-ci-at-f0-1/job-135360702746-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "0c7b5227c56b7db52c19559af75c01db855ed9e1c7ad7ba109293a9c74ffd364"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702746,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "original_request": {
+        "bytes": 84215,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702746-log.stdout",
+        "job_id": 135360702746,
+        "name": "W1 fresh challenge service (x64, prospective-merge)",
+        "sha256": "0c7b5227c56b7db52c19559af75c01db855ed9e1c7ad7ba109293a9c74ffd364"
+      },
+      "run_id": 44465052293,
+      "run_name": "PoN W1 work security observations"
+    },
+    {
+      "complete_log": {
+        "bytes": 40354,
+        "file": "automatic-ci-at-f0-1/job-135360701243-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "73fa9f32d6f1c0277bd8c6b84bc24b246623990a156f50a4e0699a4eb2b1b007"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701243,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "original_request": {
+        "bytes": 40354,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701243-log.stdout",
+        "job_id": 135360701243,
+        "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+        "sha256": "73fa9f32d6f1c0277bd8c6b84bc24b246623990a156f50a4e0699a4eb2b1b007"
+      },
+      "run_id": 44465052332,
+      "run_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "complete_log": {
+        "bytes": 41111,
+        "file": "automatic-ci-at-f0-1/job-135360701509-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "14588d56eefc4f1f4a04eb45386e4e71743e3769ec2ecad43fd4e9075d43aff0"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701509,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "original_request": {
+        "bytes": 41111,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701509-log.stdout",
+        "job_id": 135360701509,
+        "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+        "sha256": "14588d56eefc4f1f4a04eb45386e4e71743e3769ec2ecad43fd4e9075d43aff0"
+      },
+      "run_id": 44465052332,
+      "run_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "complete_log": {
+        "bytes": 40634,
+        "file": "automatic-ci-at-f0-1/job-135360701685-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "339089025cde1722724d3f8e9c7b814f123f6e3b106a19b3daf623c8fd4682e8"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701685,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "original_request": {
+        "bytes": 40634,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701685-log.stdout",
+        "job_id": 135360701685,
+        "name": "PQ network and witness (ubuntu-24.04, head)",
+        "sha256": "339089025cde1722724d3f8e9c7b814f123f6e3b106a19b3daf623c8fd4682e8"
+      },
+      "run_id": 44465052332,
+      "run_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "complete_log": {
+        "bytes": 41324,
+        "file": "automatic-ci-at-f0-1/job-135360701720-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "4031f645555df87819da5bcf9619e27f368443ab26fab40cfb344bddfa05a044"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701720,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "original_request": {
+        "bytes": 41324,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701720-log.stdout",
+        "job_id": 135360701720,
+        "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+        "sha256": "4031f645555df87819da5bcf9619e27f368443ab26fab40cfb344bddfa05a044"
+      },
+      "run_id": 44465052332,
+      "run_name": "PoN PQ network and rollback witness"
+    },
+    {
+      "complete_log": {
+        "bytes": 371694,
+        "file": "automatic-ci-at-f0-1/job-135360701581-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "114d8c6326b09ba75d91d92b4c49f83eab362e8e51441befe3d2b3c6d23aa3b1"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701581,
+      "name": "recent batch (ubuntu-24.04, head)",
+      "original_request": {
+        "bytes": 371694,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701581-log.stdout",
+        "job_id": 135360701581,
+        "name": "recent batch (ubuntu-24.04, head)",
+        "sha256": "114d8c6326b09ba75d91d92b4c49f83eab362e8e51441befe3d2b3c6d23aa3b1"
+      },
+      "run_id": 44465052362,
+      "run_name": "PoN recent batch exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 372752,
+        "file": "automatic-ci-at-f0-1/job-135360701885-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "0a48b88abf9c39eb655d2beaae2cb353580c8dad44c5e6c645efd31cc866d24f"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701885,
+      "name": "recent batch (ubuntu-24.04, prospective-merge)",
+      "original_request": {
+        "bytes": 372752,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701885-log.stdout",
+        "job_id": 135360701885,
+        "name": "recent batch (ubuntu-24.04, prospective-merge)",
+        "sha256": "0a48b88abf9c39eb655d2beaae2cb353580c8dad44c5e6c645efd31cc866d24f"
+      },
+      "run_id": 44465052362,
+      "run_name": "PoN recent batch exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 371475,
+        "file": "automatic-ci-at-f0-1/job-135360701907-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "ee0ab048c0fa0e281528b807fe737c60b31e6fd29250ead535675e911fcfe689"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701907,
+      "name": "recent batch (ubuntu-24.04-arm, head)",
+      "original_request": {
+        "bytes": 371475,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701907-log.stdout",
+        "job_id": 135360701907,
+        "name": "recent batch (ubuntu-24.04-arm, head)",
+        "sha256": "ee0ab048c0fa0e281528b807fe737c60b31e6fd29250ead535675e911fcfe689"
+      },
+      "run_id": 44465052362,
+      "run_name": "PoN recent batch exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 372596,
+        "file": "automatic-ci-at-f0-1/job-135360702008-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "a7758b1c7007fa7d148c2952f433daf8014d27f198f94fa0a3c04caeb213678b"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702008,
+      "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+      "original_request": {
+        "bytes": 372596,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702008-log.stdout",
+        "job_id": 135360702008,
+        "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+        "sha256": "a7758b1c7007fa7d148c2952f433daf8014d27f198f94fa0a3c04caeb213678b"
+      },
+      "run_id": 44465052362,
+      "run_name": "PoN recent batch exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 126683,
+        "file": "automatic-ci-at-f0-1/job-135360703027-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "abf72fbf500b43e0c1c989ffc3523a693b3a0421ab6a2d8ab1a8618e8c8a2914"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703027,
+      "name": "source-and-archive",
+      "original_request": {
+        "bytes": 126683,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703027-log.stdout",
+        "job_id": 135360703027,
+        "name": "source-and-archive",
+        "sha256": "abf72fbf500b43e0c1c989ffc3523a693b3a0421ab6a2d8ab1a8618e8c8a2914"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50845,
+        "file": "automatic-ci-at-f0-1/job-135360703253-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "0783dfdce46f88a8903c12a86627a3d893321806c44295c7bf5bb30c2de65489"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703253,
+      "name": "native-prefix-2",
+      "original_request": {
+        "bytes": 50845,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703253-log.stdout",
+        "job_id": 135360703253,
+        "name": "native-prefix-2",
+        "sha256": "0783dfdce46f88a8903c12a86627a3d893321806c44295c7bf5bb30c2de65489"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50905,
+        "file": "automatic-ci-at-f0-1/job-135360703312-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "b309baf5fe0d8ab2cb1fc85c153e70f2554bf8f0f813126a1f8a0231069b9f36"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703312,
+      "name": "native-prefix-3",
+      "original_request": {
+        "bytes": 50905,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703312-log.stdout",
+        "job_id": 135360703312,
+        "name": "native-prefix-3",
+        "sha256": "b309baf5fe0d8ab2cb1fc85c153e70f2554bf8f0f813126a1f8a0231069b9f36"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 60396,
+        "file": "automatic-ci-at-f0-1/job-135360703400-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "6dd54752d07abb6c28e91685e520ec1ce20e35b1be93656aa9822205a1849eb7"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703400,
+      "name": "native-thread-cpu",
+      "original_request": {
+        "bytes": 60396,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703400-log.stdout",
+        "job_id": 135360703400,
+        "name": "native-thread-cpu",
+        "sha256": "6dd54752d07abb6c28e91685e520ec1ce20e35b1be93656aa9822205a1849eb7"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50846,
+        "file": "automatic-ci-at-f0-1/job-135360703402-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "8354a713fe8f751f2c2506141f0769b8df8a57859d8523c38bfb7e1572e028c0"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703402,
+      "name": "native-prefix-0",
+      "original_request": {
+        "bytes": 50846,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703402-log.stdout",
+        "job_id": 135360703402,
+        "name": "native-prefix-0",
+        "sha256": "8354a713fe8f751f2c2506141f0769b8df8a57859d8523c38bfb7e1572e028c0"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50971,
+        "file": "automatic-ci-at-f0-1/job-135360703441-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "8e72340da61e7a506d9bb17d49face625ca1c49f1b61b9d89572f8375e9abaf8"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703441,
+      "name": "native-prefix-1",
+      "original_request": {
+        "bytes": 50971,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703441-log.stdout",
+        "job_id": 135360703441,
+        "name": "native-prefix-1",
+        "sha256": "8e72340da61e7a506d9bb17d49face625ca1c49f1b61b9d89572f8375e9abaf8"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 58951,
+        "file": "automatic-ci-at-f0-1/job-135360703453-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "c297ea8b1575a3f882a4620d294f03202f3465e082c151319a969a5ffa09a215"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703453,
+      "name": "native-paid-cpu",
+      "original_request": {
+        "bytes": 58951,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703453-log.stdout",
+        "job_id": 135360703453,
+        "name": "native-paid-cpu",
+        "sha256": "c297ea8b1575a3f882a4620d294f03202f3465e082c151319a969a5ffa09a215"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 54023,
+        "file": "automatic-ci-at-f0-1/job-135360703469-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "87b31e20fa2140a11bb88b40ec53b4b292c488af6a1f72d48372ec2d9ec3ff64"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703469,
+      "name": "native-node-settings",
+      "original_request": {
+        "bytes": 54023,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703469-log.stdout",
+        "job_id": 135360703469,
+        "name": "native-node-settings",
+        "sha256": "87b31e20fa2140a11bb88b40ec53b4b292c488af6a1f72d48372ec2d9ec3ff64"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50994,
+        "file": "automatic-ci-at-f0-1/job-135360703480-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "43b7155acc67aa9b411f187c6b8737fe88f22a9820d9d6392fe663bdec315c69"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703480,
+      "name": "native-batch-semantic",
+      "original_request": {
+        "bytes": 50994,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703480-log.stdout",
+        "job_id": 135360703480,
+        "name": "native-batch-semantic",
+        "sha256": "43b7155acc67aa9b411f187c6b8737fe88f22a9820d9d6392fe663bdec315c69"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 51064,
+        "file": "automatic-ci-at-f0-1/job-135360703487-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "ebd8f6a72d54c450e3a18f25674aaa98bc3cfaef3807e47c1e6b8c0bf051a181"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703487,
+      "name": "native-batch-physical",
+      "original_request": {
+        "bytes": 51064,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703487-log.stdout",
+        "job_id": 135360703487,
+        "name": "native-batch-physical",
+        "sha256": "ebd8f6a72d54c450e3a18f25674aaa98bc3cfaef3807e47c1e6b8c0bf051a181"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 50905,
+        "file": "automatic-ci-at-f0-1/job-135360703687-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "bc7e28cd009ff3e4b55fa2eea0eaebf4096be35223acdf2e2e785732b80cc1f9"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703687,
+      "name": "native-prefix-scoped",
+      "original_request": {
+        "bytes": 50905,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703687-log.stdout",
+        "job_id": 135360703687,
+        "name": "native-prefix-scoped",
+        "sha256": "bc7e28cd009ff3e4b55fa2eea0eaebf4096be35223acdf2e2e785732b80cc1f9"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 58188,
+        "file": "automatic-ci-at-f0-1/job-135360703729-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "d4d02d0b84d62c2dd1d53a77e4765fb4202434af4291bfb14dfd3db3820848c6"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703729,
+      "name": "native-work-owner",
+      "original_request": {
+        "bytes": 58188,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703729-log.stdout",
+        "job_id": 135360703729,
+        "name": "native-work-owner",
+        "sha256": "d4d02d0b84d62c2dd1d53a77e4765fb4202434af4291bfb14dfd3db3820848c6"
+      },
+      "run_id": 44465052366,
+      "run_name": "hia-native-migration"
+    },
+    {
+      "complete_log": {
+        "bytes": 42336,
+        "file": "automatic-ci-at-f0-1/job-135360701535-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "858a96e390434ead61a0fc3c1afb1087bda1fe09e667b7f06d7d02450a3ab43b"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701535,
+      "name": "native-components (ubuntu-24.04)",
+      "original_request": {
+        "bytes": 42336,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701535-log.stdout",
+        "job_id": 135360701535,
+        "name": "native-components (ubuntu-24.04)",
+        "sha256": "858a96e390434ead61a0fc3c1afb1087bda1fe09e667b7f06d7d02450a3ab43b"
+      },
+      "run_id": 44465052377,
+      "run_name": "CPQ1 complete content bindings"
+    },
+    {
+      "complete_log": {
+        "bytes": 42066,
+        "file": "automatic-ci-timepoint-recovery-2/job-135360701667-log.stdout",
+        "read_only_recovery_used": true,
+        "sha256": "6d2ddddb7458ee0c6c0c02eceb5811cce6037c10d74bcfa2698a29cb03520384"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701667,
+      "name": "native-components (ubuntu-24.04-arm)",
+      "original_request": {
+        "bytes": 15383,
+        "conclusion": "failure",
+        "exit_code": 1,
+        "file": "job-135360701667-log.stdout",
+        "job_id": 135360701667,
+        "name": "native-components (ubuntu-24.04-arm)",
+        "sha256": "48a372f810a4cfdf1e363dbceeca5ee1db1f28340a0c3b847bb7a5dbffcd58d3"
+      },
+      "run_id": 44465052377,
+      "run_name": "CPQ1 complete content bindings"
+    },
+    {
+      "complete_log": {
+        "bytes": 667040,
+        "file": "automatic-ci-at-f0-1/job-135360702094-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "7fdda6f310a086a1aa135816a8f58ea89499c3daa1d191982c4e47b5cb67225d"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702094,
+      "name": "repository-truth",
+      "original_request": {
+        "bytes": 667040,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702094-log.stdout",
+        "job_id": 135360702094,
+        "name": "repository-truth",
+        "sha256": "7fdda6f310a086a1aa135816a8f58ea89499c3daa1d191982c4e47b5cb67225d"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 58162,
+        "file": "automatic-ci-at-f0-1/job-135360702409-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "063eec419cdceaf249cbcbe23d24f1b89f2972a541a8fba3229aff732e2ad220"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702409,
+      "name": "prospective-merge (fuzz-smoke)",
+      "original_request": {
+        "bytes": 58162,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702409-log.stdout",
+        "job_id": 135360702409,
+        "name": "prospective-merge (fuzz-smoke)",
+        "sha256": "063eec419cdceaf249cbcbe23d24f1b89f2972a541a8fba3229aff732e2ad220"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 47544,
+        "file": "automatic-ci-at-f0-1/job-135360702456-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "ec7eeec107cda2e242eb0189ca8db0219d7aff62f304a5396c273a5001f861fd"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702456,
+      "name": "external-evidence-contract",
+      "original_request": {
+        "bytes": 47544,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702456-log.stdout",
+        "job_id": 135360702456,
+        "name": "external-evidence-contract",
+        "sha256": "ec7eeec107cda2e242eb0189ca8db0219d7aff62f304a5396c273a5001f861fd"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 52521,
+        "file": "automatic-ci-at-f0-1/job-135360702487-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "223990d3cd5749f83ac0f0cff7e153e0789589147472fe0032680255ab79c6e9"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702487,
+      "name": "cross-arch-cost (x64)",
+      "original_request": {
+        "bytes": 52521,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702487-log.stdout",
+        "job_id": 135360702487,
+        "name": "cross-arch-cost (x64)",
+        "sha256": "223990d3cd5749f83ac0f0cff7e153e0789589147472fe0032680255ab79c6e9"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 55531,
+        "file": "automatic-ci-at-f0-1/job-135360702550-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "35080986e8a95a68dcb00356e1eb77a9e03b22a743851735dec5e63e0b491fb5"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702550,
+      "name": "fuzz-smoke",
+      "original_request": {
+        "bytes": 55531,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702550-log.stdout",
+        "job_id": 135360702550,
+        "name": "fuzz-smoke",
+        "sha256": "35080986e8a95a68dcb00356e1eb77a9e03b22a743851735dec5e63e0b491fb5"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 668219,
+        "file": "automatic-ci-at-f0-1/job-135360702739-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "4d11da393b5df29f7d57135a0ab9853d32c1182b06be92bcca7ae9ef66b94cdc"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702739,
+      "name": "prospective-merge (repository-truth)",
+      "original_request": {
+        "bytes": 668219,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702739-log.stdout",
+        "job_id": 135360702739,
+        "name": "prospective-merge (repository-truth)",
+        "sha256": "4d11da393b5df29f7d57135a0ab9853d32c1182b06be92bcca7ae9ef66b94cdc"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 49752,
+        "file": "automatic-ci-at-f0-1/job-135360702855-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "fd4698abefcecf7ec007a35b5fd215c3dd3392b143a1cb9b1e36950fbea8c82b"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702855,
+      "name": "prospective-merge (external-evidence-contract)",
+      "original_request": {
+        "bytes": 49752,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702855-log.stdout",
+        "job_id": 135360702855,
+        "name": "prospective-merge (external-evidence-contract)",
+        "sha256": "fd4698abefcecf7ec007a35b5fd215c3dd3392b143a1cb9b1e36950fbea8c82b"
+      },
+      "run_id": 44465052409,
+      "run_name": "trnm-required-baseline"
+    },
+    {
+      "complete_log": {
+        "bytes": 106849,
+        "file": "automatic-ci-at-f0-1/job-135360703050-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "a768525dd59973213bf20f08d02b4f97bec63344a640d425f1b69c69e0a965ce"
+      },
+      "conclusion": "failure",
+      "job_id": 135360703050,
+      "name": "evidence-controls",
+      "original_request": {
+        "bytes": 106849,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360703050-log.stdout",
+        "job_id": 135360703050,
+        "name": "evidence-controls",
+        "sha256": "a768525dd59973213bf20f08d02b4f97bec63344a640d425f1b69c69e0a965ce"
+      },
+      "run_id": 44465052414,
+      "run_name": "PoN four-axis throughput evidence controls"
+    },
+    {
+      "complete_log": {
+        "bytes": 128349,
+        "file": "automatic-ci-at-f0-1/job-135360702113-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "6c9c2b868adca69a6d6c537f74df6c78cf7048dd7ab8a7e797c6005d214a5bdb"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702113,
+      "name": "Finite credit contract (prospective-merge)",
+      "original_request": {
+        "bytes": 128349,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702113-log.stdout",
+        "job_id": 135360702113,
+        "name": "Finite credit contract (prospective-merge)",
+        "sha256": "6c9c2b868adca69a6d6c537f74df6c78cf7048dd7ab8a7e797c6005d214a5bdb"
+      },
+      "run_id": 44465052455,
+      "run_name": "PoN classical and quantum credit contract"
+    },
+    {
+      "complete_log": {
+        "bytes": 127633,
+        "file": "automatic-ci-at-f0-1/job-135360702624-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "f56f32fc9849d3a6b7313616907ce8632149ab8580f7f9aada7a901ebdcb54d7"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702624,
+      "name": "Finite credit contract (head)",
+      "original_request": {
+        "bytes": 127633,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702624-log.stdout",
+        "job_id": 135360702624,
+        "name": "Finite credit contract (head)",
+        "sha256": "f56f32fc9849d3a6b7313616907ce8632149ab8580f7f9aada7a901ebdcb54d7"
+      },
+      "run_id": 44465052455,
+      "run_name": "PoN classical and quantum credit contract"
+    },
+    {
+      "complete_log": {
+        "bytes": 34319,
+        "file": "automatic-ci-at-f0-1/job-135360701938-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "f45e448ec677350da69b9f91166715d345f421580af993357a4bb010cfec316e"
+      },
+      "conclusion": "failure",
+      "job_id": 135360701938,
+      "name": "branch encoding (ubuntu-24.04, head)",
+      "original_request": {
+        "bytes": 34319,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360701938-log.stdout",
+        "job_id": 135360701938,
+        "name": "branch encoding (ubuntu-24.04, head)",
+        "sha256": "f45e448ec677350da69b9f91166715d345f421580af993357a4bb010cfec316e"
+      },
+      "run_id": 44465052503,
+      "run_name": "PoN branch encoding exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 34874,
+        "file": "automatic-ci-at-f0-1/job-135360702275-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "f3e668bef2f69df47f9ab3e8fcfdda770bbdc1d2fb97d8924927a7d3536cd5d4"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702275,
+      "name": "branch encoding (ubuntu-24.04-arm, prospective-merge)",
+      "original_request": {
+        "bytes": 34874,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702275-log.stdout",
+        "job_id": 135360702275,
+        "name": "branch encoding (ubuntu-24.04-arm, prospective-merge)",
+        "sha256": "f3e668bef2f69df47f9ab3e8fcfdda770bbdc1d2fb97d8924927a7d3536cd5d4"
+      },
+      "run_id": 44465052503,
+      "run_name": "PoN branch encoding exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 34350,
+        "file": "automatic-ci-at-f0-1/job-135360702294-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "371ef5a3db7c23f4005ed907f74710bd46e724a086fc3494bfa1f32906661997"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702294,
+      "name": "branch encoding (ubuntu-24.04-arm, head)",
+      "original_request": {
+        "bytes": 34350,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702294-log.stdout",
+        "job_id": 135360702294,
+        "name": "branch encoding (ubuntu-24.04-arm, head)",
+        "sha256": "371ef5a3db7c23f4005ed907f74710bd46e724a086fc3494bfa1f32906661997"
+      },
+      "run_id": 44465052503,
+      "run_name": "PoN branch encoding exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 34959,
+        "file": "automatic-ci-at-f0-1/job-135360702763-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "bc3f1aa9c24007fc5247559f224ed58bc35f87eac63657e472c72b9d0b7006be"
+      },
+      "conclusion": "failure",
+      "job_id": 135360702763,
+      "name": "branch encoding (ubuntu-24.04, prospective-merge)",
+      "original_request": {
+        "bytes": 34959,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135360702763-log.stdout",
+        "job_id": 135360702763,
+        "name": "branch encoding (ubuntu-24.04, prospective-merge)",
+        "sha256": "bc3f1aa9c24007fc5247559f224ed58bc35f87eac63657e472c72b9d0b7006be"
+      },
+      "run_id": 44465052503,
+      "run_name": "PoN branch encoding exact-source acceptance"
+    },
+    {
+      "complete_log": {
+        "bytes": 134206,
+        "file": "automatic-ci-at-f0-1/job-135361036286-log.stdout",
+        "read_only_recovery_used": false,
+        "sha256": "9daebdef8e2bd486f6104e25bc90677f9af27aa325d64320d3be37feba323fb5"
+      },
+      "conclusion": "failure",
+      "job_id": 135361036286,
+      "name": "F0 (x64, head, one baseline and one ROOT phase)",
+      "original_request": {
+        "bytes": 134206,
+        "conclusion": "failure",
+        "exit_code": 0,
+        "file": "job-135361036286-log.stdout",
+        "job_id": 135361036286,
+        "name": "F0 (x64, head, one baseline and one ROOT phase)",
+        "sha256": "9daebdef8e2bd486f6104e25bc90677f9af27aa325d64320d3be37feba323fb5"
+      },
+      "run_id": 44465153982,
+      "run_name": "PoN fixed Host ROOT F0 diagnostic"
+    }
+  ],
+  "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "job_count": 204,
+  "job_states": {
+    "failure": 43,
+    "in_progress": 53,
+    "skipped": 8,
+    "success": 100
+  },
+  "original_api_failure_count": 1,
+  "original_snapshot_bytes": 2514033,
+  "original_snapshot_sha256": "ad93d34c5cb33ceb59c1b03a161acad22c5f7dd0ac6802eceb0521a98914c374",
+  "recovery": {
+    "business_or_ci_reexecuted": false,
+    "child_system_cpu_seconds": 0.039951,
+    "child_user_cpu_seconds": 0.153498,
+    "complete": true,
+    "exit_code": 0,
+    "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+    "job_id": 135360701667,
+    "original_failed_read": {
+      "cpu_note": "parallel read requests; aggregate child CPU recorded at end only",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/135360701667/logs",
+      "exit_code": 1,
+      "name": "job-135360701667-log",
+      "per_request_child_cpu_seconds": null,
+      "started_utc": "2026-11-19T05:43:37.305492+00:00",
+      "stderr_bytes": 74,
+      "stderr_sha256": "24d2585c91878003401583e638533def1694981a81d839ddd6210699e9d0317e",
+      "stdout_bytes": 15383,
+      "stdout_sha256": "48a372f810a4cfdf1e363dbceeca5ee1db1f28340a0c3b847bb7a5dbffcd58d3",
+      "wall_seconds": 312.574029182957
+    },
+    "original_partial_read_retained": true,
+    "retry_count": 1,
+    "schema": "chain-original-ci-failed-log-read-recovery-v1",
+    "started_utc": "2026-11-19T05:50:41.115930+00:00",
+    "stderr": {
+      "bytes": 0,
+      "file": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/automatic-ci-timepoint-recovery-2/job-135360701667-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 42066,
+      "file": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/automatic-ci-timepoint-recovery-2/job-135360701667-log.stdout",
+      "sha256": "6d2ddddb7458ee0c6c0c02eceb5811cce6037c10d74bcfa2698a29cb03520384"
+    },
+    "wall_seconds": 17.812287754029967
+  },
+  "run_count": 28,
+  "run_states": {
+    "failure": 6,
+    "in_progress": 11,
+    "success": 11
+  },
+  "snapshot_pending_run_ids": [
+    44465052335,
+    44465052139,
+    44465052436,
+    44465052237,
+    44465052346,
+    44465052168,
+    44465052414,
+    44465052293,
+    44465052409,
+    44465052366,
+    44465044607
+  ],
+  "snapshot_requests_are_sequential_intervals_not_one_atomic_state": true,
+  "timepoint_not_terminal": true
+}

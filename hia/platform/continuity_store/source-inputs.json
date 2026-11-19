@@ -1,0 +1,13 @@
+{
+  "schema": "trnm.hia.continuity-installed-inputs.v1",
+  "files": [
+    "config/pon/devnet-v1.json",
+    "config/pon/ledger-v1.json",
+    "config/pon/work-profile-v1.json",
+    "config/pon/model-family-v1.json",
+    "config/pon/continuity-v1.json",
+    "config/pon/qualified-task-lifecycle-v4.json",
+    "config/pon/growth-reference-v2.json",
+    "config/pon/public-evaluation-native-v1.json"
+  ]
+}

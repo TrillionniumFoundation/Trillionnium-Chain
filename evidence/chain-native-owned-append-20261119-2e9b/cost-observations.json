@@ -1,0 +1,1876 @@
+{
+  "schema": "chain-owned-append-recorded-local-command-cost-v1",
+  "scope": "Actual retained local child process observations only; a sum of recorded non-overlapping command intervals, not full task time, full Chain cost or monetary bill. Build CPU is included in native command CPU. Unknown observations are never converted to zero.",
+  "source_parent": "f0a8364118df01113c14d6a81fbb6fdb6210e4ff",
+  "command_rows": [
+    {
+      "id": "authenticated-original-include-ignored-7/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.028660160955041647,
+      "child_user_cpu_seconds": 0.018380999999999998,
+      "child_system_cpu_seconds": 0.00624
+    },
+    {
+      "id": "authenticated-original-include-ignored-7/RESULT.json#stages[1]",
+      "name": "native-authenticated",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::",
+        "--",
+        "--include-ignored",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 9.764058840926737,
+      "child_user_cpu_seconds": 9.328614,
+      "child_system_cpu_seconds": 0.336149
+    },
+    {
+      "id": "authenticated-original-include-ignored-8/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03480400191619992,
+      "child_user_cpu_seconds": 0.021523,
+      "child_system_cpu_seconds": 0.008031
+    },
+    {
+      "id": "authenticated-original-include-ignored-8/RESULT.json#stages[1]",
+      "name": "native-authenticated",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::",
+        "--",
+        "--include-ignored",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 12.270866465056315,
+      "child_user_cpu_seconds": 11.583511,
+      "child_system_cpu_seconds": 0.43267999999999995
+    },
+    {
+      "id": "authority-source-audit-1/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 0.05953682097606361,
+      "child_user_cpu_seconds": null,
+      "child_system_cpu_seconds": null
+    },
+    {
+      "id": "authority-source-lock-edit-1/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.06462394306436181,
+      "child_user_cpu_seconds": 0.051342,
+      "child_system_cpu_seconds": 0.011372999999999994
+    },
+    {
+      "id": "authority-source-lock-edit-1/RESULT.json#stages[1]",
+      "name": "original-reader",
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "exit_code": 2,
+      "wall_seconds": 0.10119878500699997,
+      "child_user_cpu_seconds": 0.08047800000000005,
+      "child_system_cpu_seconds": 0.017883999999999997
+    },
+    {
+      "id": "authority-source-lock-edit-2/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.07719777384772897,
+      "child_user_cpu_seconds": 0.056480999999999996,
+      "child_system_cpu_seconds": 0.014835999999999998
+    },
+    {
+      "id": "authority-source-lock-edit-2/RESULT.json#stages[1]",
+      "name": "reader",
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0931047280319035,
+      "child_user_cpu_seconds": 0.078154,
+      "child_system_cpu_seconds": 0.014027999999999999
+    },
+    {
+      "id": "authority-source-lock-edit-2/RESULT.json#stages[2]",
+      "name": "adversarial-controls",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_authority_effect_register.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.5757592699956149,
+      "child_user_cpu_seconds": 0.445066,
+      "child_system_cpu_seconds": 0.12606699999999998
+    },
+    {
+      "id": "authority-source-lock-edit-2/RESULT.json#stages[3]",
+      "name": "whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.025809468002989888,
+      "child_user_cpu_seconds": 0.010943999999999954,
+      "child_system_cpu_seconds": 0.01591899999999999
+    },
+    {
+      "id": "candidate-freeze-13/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03222124185413122,
+      "child_user_cpu_seconds": 0.021679999999999998,
+      "child_system_cpu_seconds": 0.004279
+    },
+    {
+      "id": "candidate-freeze-13/RESULT.json#stages[1]",
+      "name": "stage-reviewed-candidate",
+      "command": [
+        "git",
+        "add",
+        "--sparse",
+        "--",
+        ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+        ".github/workflows/pon-recent-batch-acceptance.yml",
+        "config/pon/authenticated-current-roster-v1.json",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/PROVENANCE.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/README.md",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/native-authenticated.log.gz",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/hash_use_contract.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/ci/test_authenticated_suite_count.py",
+        "scripts/ci/test_hash_use_contract.py",
+        "scripts/ci/test_pq_authority_effect_register.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03236894612200558,
+      "child_user_cpu_seconds": 0.025831000000000007,
+      "child_system_cpu_seconds": 0.005961000000000001
+    },
+    {
+      "id": "candidate-freeze-13/RESULT.json#stages[2]",
+      "name": "stage-complete-evidence",
+      "command": [
+        "git",
+        "add",
+        "--sparse",
+        "--",
+        "evidence/chain-native-owned-append-20261119-2e9b/READOUT.md",
+        "evidence/chain-native-owned-append-20261119-2e9b/assembly-owner.py",
+        "evidence/chain-native-owned-append-20261119-2e9b/assembly-preparation-errors.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/candidate-source.patch",
+        "evidence/chain-native-owned-append-20261119-2e9b/cost-observations.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/raw-files.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/raw-observations.tar.gz",
+        "evidence/chain-native-owned-append-20261119-2e9b/source-audit.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/validation-summary.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.08933684905059636,
+      "child_user_cpu_seconds": 0.07426999999999999,
+      "child_system_cpu_seconds": 0.007923
+    },
+    {
+      "id": "candidate-freeze-13/RESULT.json#stages[3]",
+      "name": "staged-diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 2,
+      "wall_seconds": 0.036316724959760904,
+      "child_user_cpu_seconds": 0.022641999999999995,
+      "child_system_cpu_seconds": 0.013378999999999995
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.027347251074388623,
+      "child_user_cpu_seconds": 0.017862,
+      "child_system_cpu_seconds": 0.0039180000000000005
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[1]",
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.022417898988351226,
+      "child_user_cpu_seconds": 0.016631999999999994,
+      "child_system_cpu_seconds": 0.014414999999999997
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[2]",
+      "name": "authenticated-current-reader",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_authenticated_suite_count.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 5.286680745892227,
+      "child_user_cpu_seconds": 4.271621,
+      "child_system_cpu_seconds": 1.0320019999999999
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[3]",
+      "name": "cross-branch-integration-reader",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.1722198040224612,
+      "child_user_cpu_seconds": 0.2368079999999999,
+      "child_system_cpu_seconds": 0.12735000000000007
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[4]",
+      "name": "cross-branch-integration-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 121.35033585317433,
+      "child_user_cpu_seconds": 88.710734,
+      "child_system_cpu_seconds": 32.525403999999995
+    },
+    {
+      "id": "current-registration-9/RESULT.json#stages[5]",
+      "name": "authority-current-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_authority_effect_register.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.22769774217158556,
+      "child_user_cpu_seconds": 0.15321199999999635,
+      "child_system_cpu_seconds": 0.04907000000000039
+    },
+    {
+      "id": "hash-source-audit-10/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 0.13364803697913885,
+      "child_user_cpu_seconds": 0.047583,
+      "child_system_cpu_seconds": 0.039508
+    },
+    {
+      "id": "hash-source-lock-edit-11/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.042484350968152285,
+      "child_user_cpu_seconds": 0.017887,
+      "child_system_cpu_seconds": 0.008827999999999999
+    },
+    {
+      "id": "hash-source-lock-edit-11/RESULT.json#stages[1]",
+      "name": "current-reader",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/hash_use_contract.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.04222945007495582,
+      "child_user_cpu_seconds": 0.027117999999999996,
+      "child_system_cpu_seconds": 0.007232000000000002
+    },
+    {
+      "id": "hash-source-lock-edit-11/RESULT.json#stages[2]",
+      "name": "all-original-and-stale-map-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_hash_use_contract.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.09039990603923798,
+      "child_user_cpu_seconds": 0.07423,
+      "child_system_cpu_seconds": 0.012202000000000001
+    },
+    {
+      "id": "hash-source-lock-edit-11/RESULT.json#stages[3]",
+      "name": "exact-current-cross-branch",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.2210847151000053,
+      "child_user_cpu_seconds": 0.23854399999999998,
+      "child_system_cpu_seconds": 0.143331
+    },
+    {
+      "id": "hash-source-lock-edit-11/RESULT.json#stages[4]",
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.028770134085789323,
+      "child_user_cpu_seconds": 0.018006999999999995,
+      "child_system_cpu_seconds": 0.014829000000000009
+    },
+    {
+      "id": "native-append-controls-4/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.025480566080659628,
+      "child_user_cpu_seconds": 0.020852,
+      "child_system_cpu_seconds": 0.004575
+    },
+    {
+      "id": "native-append-controls-4/RESULT.json#stages[1]",
+      "name": "format",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.402709313901141,
+      "child_user_cpu_seconds": 7.329957,
+      "child_system_cpu_seconds": 0.073532
+    },
+    {
+      "id": "native-append-controls-4/RESULT.json#stages[2]",
+      "name": "original-post-write-and-append-controls",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "store::native_authenticated::post_write_readback::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 90.81130026397295,
+      "child_user_cpu_seconds": 411.991935,
+      "child_system_cpu_seconds": 6.158914
+    },
+    {
+      "id": "native-append-edit-1/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03152964706532657,
+      "child_user_cpu_seconds": 0.019646999999999998,
+      "child_system_cpu_seconds": 0.005934999999999999
+    },
+    {
+      "id": "native-append-edit-2/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.02537159901112318,
+      "child_user_cpu_seconds": 0.016465,
+      "child_system_cpu_seconds": 0.008881
+    },
+    {
+      "id": "native-append-edit-2/RESULT.json#stages[1]",
+      "name": "format",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.571813000133261,
+      "child_user_cpu_seconds": 7.252513,
+      "child_system_cpu_seconds": 0.11377999999999999
+    },
+    {
+      "id": "native-append-edit-2/RESULT.json#stages[2]",
+      "name": "native-check",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "check",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 13.637005830882117,
+      "child_user_cpu_seconds": 16.644999,
+      "child_system_cpu_seconds": 0.961123
+    },
+    {
+      "id": "native-append-edit-2/RESULT.json#stages[3]",
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.028036972973495722,
+      "child_user_cpu_seconds": 0.013732999999998441,
+      "child_system_cpu_seconds": 0.016901999999999973
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.023710195906460285,
+      "child_user_cpu_seconds": 0.016891999999999997,
+      "child_system_cpu_seconds": 0.006676
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[1]",
+      "name": "authenticated-original-complete",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "store::native_authenticated::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 9.894377352902666,
+      "child_user_cpu_seconds": 9.54871,
+      "child_system_cpu_seconds": 0.34140299999999996
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[2]",
+      "name": "native-apply-and-reader-original-complete",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "account_archive_prototype::native_store::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.3652237951755524,
+      "child_user_cpu_seconds": 3.1193419999999996,
+      "child_system_cpu_seconds": 0.16567300000000001
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[3]",
+      "name": "detached-original-complete",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "store::detached_admission::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.536327396985143,
+      "child_user_cpu_seconds": 6.8428689999999985,
+      "child_system_cpu_seconds": 0.6999380000000001
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[4]",
+      "name": "history-original-complete",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::history_import::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 33.69006026908755,
+      "child_user_cpu_seconds": 1.3799100000000024,
+      "child_system_cpu_seconds": 0.14801399999999987
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[5]",
+      "name": "public-v3-original-complete",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 37.88005315000191,
+      "child_user_cpu_seconds": 3.3846469999999975,
+      "child_system_cpu_seconds": 0.478958
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[6]",
+      "name": "strict-all-target-clippy",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 24.334547847975045,
+      "child_user_cpu_seconds": 56.74902300000001,
+      "child_system_cpu_seconds": 6.0306750000000005
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[7]",
+      "name": "format-check",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.2895364090800285,
+      "child_user_cpu_seconds": 7.209595999999991,
+      "child_system_cpu_seconds": 0.07952099999999973
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[8]",
+      "name": "actual-node-linux-graph",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "tree",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--locked",
+        "--offline",
+        "--target",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.07648943806998432,
+      "child_user_cpu_seconds": 0.04354200000000219,
+      "child_system_cpu_seconds": 0.02739099999999972
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[9]",
+      "name": "workspace-linux-metadata-fetch",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.5749455930199474,
+      "child_user_cpu_seconds": 0.04798900000000117,
+      "child_system_cpu_seconds": 0.026080999999999577
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[10]",
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.023233699146658182,
+      "child_user_cpu_seconds": 0.017297999999996705,
+      "child_system_cpu_seconds": 0.01424500000000073
+    },
+    {
+      "id": "native-registry-5/RESULT.json",
+      "name": null,
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--",
+        "--list"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.07204680982977152,
+      "child_user_cpu_seconds": 0.043578,
+      "child_system_cpu_seconds": 0.027627
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[0]",
+      "name": "original-preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03166341781616211,
+      "child_user_cpu_seconds": 0.021632,
+      "child_system_cpu_seconds": 0.004957999999999997
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[1]",
+      "name": "clone-isolated",
+      "command": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/source"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.021298828069120646,
+      "child_user_cpu_seconds": 0.0,
+      "child_system_cpu_seconds": 0.005519000000000003
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[2]",
+      "name": "remote",
+      "command": [
+        "git",
+        "remote",
+        "set-url",
+        "origin",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0010029049590229988,
+      "child_user_cpu_seconds": 0.0,
+      "child_system_cpu_seconds": 0.0008480000000000015
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[3]",
+      "name": "sparse-config",
+      "command": [
+        "git",
+        "config",
+        "core.sparseCheckout",
+        "true"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0008947690948843956,
+      "child_user_cpu_seconds": 0.0008149999999999963,
+      "child_system_cpu_seconds": 0.0
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[4]",
+      "name": "fetch-evidence-parent",
+      "command": [
+        "git",
+        "fetch",
+        "--no-write-fetch-head",
+        "origin",
+        "f0a8364118df01113c14d6a81fbb6fdb6210e4ff"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.4985131120774895,
+      "child_user_cpu_seconds": 0.43091399999999996,
+      "child_system_cpu_seconds": 0.061291
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[5]",
+      "name": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "-b",
+        "fix/chain-native-first-graph-host-20261119-2e9b",
+        "f0a8364118df01113c14d6a81fbb6fdb6210e4ff"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.890050975838676,
+      "child_user_cpu_seconds": 0.482338,
+      "child_system_cpu_seconds": 0.348522
+    },
+    {
+      "id": "preparation-1/RESULT.json#stages[6]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.02952314098365605,
+      "child_user_cpu_seconds": 0.019252999999999965,
+      "child_system_cpu_seconds": 0.00656000000000001
+    },
+    {
+      "id": "repository-truth-1/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 13.016842260956764,
+      "child_user_cpu_seconds": 5.340797,
+      "child_system_cpu_seconds": 1.8996899999999999
+    },
+    {
+      "id": "repository-truth-2/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 17.55329266586341,
+      "child_user_cpu_seconds": 9.012879,
+      "child_system_cpu_seconds": 2.9090380000000002
+    },
+    {
+      "id": "repository-truth-3/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 20.106395642040297,
+      "child_user_cpu_seconds": 11.23569,
+      "child_system_cpu_seconds": 2.937078
+    },
+    {
+      "id": "repository-truth-4/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 28.97699507488869,
+      "child_user_cpu_seconds": 18.600945,
+      "child_system_cpu_seconds": 4.559543
+    },
+    {
+      "id": "repository-truth-4/RESULT.json#preflight",
+      "name": null,
+      "command": null,
+      "exit_code": 0,
+      "wall_seconds": 0.030997721944004297,
+      "child_user_cpu_seconds": 0.01589,
+      "child_system_cpu_seconds": 0.008967999999999997
+    },
+    {
+      "id": "repository-truth-5/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 33.72346266498789,
+      "child_user_cpu_seconds": 23.010845,
+      "child_system_cpu_seconds": 4.614704
+    },
+    {
+      "id": "repository-truth-5/RESULT.json#preflight",
+      "name": null,
+      "command": null,
+      "exit_code": 0,
+      "wall_seconds": 0.03678547381423414,
+      "child_user_cpu_seconds": 0.019698000000000007,
+      "child_system_cpu_seconds": 0.009076
+    },
+    {
+      "id": "repository-truth-6/RESULT.json",
+      "name": null,
+      "command": [
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "repository-truth"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 36.772140783956274,
+      "child_user_cpu_seconds": 25.745086,
+      "child_system_cpu_seconds": 4.851376
+    },
+    {
+      "id": "repository-truth-6/RESULT.json#preflight",
+      "name": null,
+      "command": null,
+      "exit_code": 0,
+      "wall_seconds": 0.0315744539257139,
+      "child_user_cpu_seconds": 0.018588999999999998,
+      "child_system_cpu_seconds": 0.005805999999999999
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.026875486131757498,
+      "child_user_cpu_seconds": 0.018979,
+      "child_system_cpu_seconds": 0.005807
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[1]",
+      "name": "format",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.967138221021742,
+      "child_user_cpu_seconds": 7.740794,
+      "child_system_cpu_seconds": 0.09767100000000001
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[2]",
+      "name": "release-only-controls",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::request_observation::snapshot_lock_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 83.92475539119914,
+      "child_user_cpu_seconds": 397.997881,
+      "child_system_cpu_seconds": 6.091359
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[3]",
+      "name": "final-format",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.40495117707178,
+      "child_user_cpu_seconds": 7.146717000000024,
+      "child_system_cpu_seconds": 0.11076599999999992
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[4]",
+      "name": "final-copy-boundary-controls",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::request_observation::snapshot_lock_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 84.10129697201774,
+      "child_user_cpu_seconds": 393.6681889999999,
+      "child_system_cpu_seconds": 6.179717
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[5]",
+      "name": "original-observer-suite",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::request_observation::snapshot_lock_tests",
+        "ingress::public_v3::request_observation::",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 0.04304717690683901,
+      "child_user_cpu_seconds": 0.007300000000100226,
+      "child_system_cpu_seconds": 0.010037000000000518
+    },
+    {
+      "id": "snapshot-lock-linux-graph-3/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0311644091270864,
+      "child_user_cpu_seconds": 0.019627,
+      "child_system_cpu_seconds": 0.006457
+    },
+    {
+      "id": "snapshot-lock-linux-graph-3/RESULT.json#stages[1]",
+      "name": "actual-node-linux-graph",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "tree",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--locked",
+        "--offline",
+        "--target",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.12043458712287247,
+      "child_user_cpu_seconds": 0.033868999999999996,
+      "child_system_cpu_seconds": 0.019500999999999998
+    },
+    {
+      "id": "snapshot-lock-linux-graph-3/RESULT.json#stages[2]",
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.046636792132630944,
+      "child_user_cpu_seconds": 0.027705,
+      "child_system_cpu_seconds": 0.027703999999999996
+    },
+    {
+      "id": "snapshot-lock-original-control-1/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.029846842167899013,
+      "child_user_cpu_seconds": 0.01782,
+      "child_system_cpu_seconds": 0.008596999999999999
+    },
+    {
+      "id": "snapshot-lock-original-control-1/RESULT.json#stages[1]",
+      "name": "format",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 8.375294772908092,
+      "child_user_cpu_seconds": 7.926403,
+      "child_system_cpu_seconds": 0.13743299999999997
+    },
+    {
+      "id": "snapshot-lock-original-control-1/RESULT.json#stages[2]",
+      "name": "original-lock-controls",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::request_observation::snapshot_lock_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 125.71965268300846,
+      "child_user_cpu_seconds": 573.515574,
+      "child_system_cpu_seconds": 13.797075999999999
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.029248295817524195,
+      "child_user_cpu_seconds": 0.019767999999999997,
+      "child_system_cpu_seconds": 0.004484999999999999
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[1]",
+      "name": "original-observer-suite",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--lib",
+        "ingress::public_v3::request_observation::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.17615565308369696,
+      "child_user_cpu_seconds": 0.046904,
+      "child_system_cpu_seconds": 0.046957
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[2]",
+      "name": "strict-clippy",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 30.53135017887689,
+      "child_user_cpu_seconds": 76.394036,
+      "child_system_cpu_seconds": 7.84145
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[3]",
+      "name": "format-check",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.318111236905679,
+      "child_user_cpu_seconds": 7.225684999999999,
+      "child_system_cpu_seconds": 0.08681699999999992
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[4]",
+      "name": "locked-linux-graph",
+      "command": [
+        "/home/qq/.cargo/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--filter-platform",
+        "x86_64-unknown-linux-gnu",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 101,
+      "wall_seconds": 0.06946941907517612,
+      "child_user_cpu_seconds": 0.03993599999999731,
+      "child_system_cpu_seconds": 0.027419999999999334
+    },
+    {
+      "id": "source-contract-restore-1/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 2.52475083200261,
+      "child_user_cpu_seconds": null,
+      "child_system_cpu_seconds": null
+    },
+    {
+      "id": "source-contract-restore-2/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 0.33862561685964465,
+      "child_user_cpu_seconds": null,
+      "child_system_cpu_seconds": null
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.026098937029018998,
+      "child_user_cpu_seconds": 0.022838999999999998,
+      "child_system_cpu_seconds": 0.003052
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[1]",
+      "name": "configure-original-promisor",
+      "command": [
+        "git",
+        "config",
+        "remote.origin.promisor",
+        "true"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0013614189811050892,
+      "child_user_cpu_seconds": 0.0,
+      "child_system_cpu_seconds": 0.0008359999999999999
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[2]",
+      "name": "configure-original-filter",
+      "command": [
+        "git",
+        "config",
+        "remote.origin.partialclonefilter",
+        "blob:none"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.000707173952832818,
+      "child_user_cpu_seconds": 0.0005570000000000019,
+      "child_system_cpu_seconds": 0.0
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[3]",
+      "name": "blob-0",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0011645960621535778,
+      "child_user_cpu_seconds": 0.0,
+      "child_system_cpu_seconds": 0.0009329999999999998
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[4]",
+      "name": "blob-1",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "6529249998aba001dcd0080322e3b454c312428c"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 4.729101805016398,
+      "child_user_cpu_seconds": 0.028815,
+      "child_system_cpu_seconds": 0.017591
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[5]",
+      "name": "blob-6",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.8459380858112127,
+      "child_user_cpu_seconds": 0.018117999999999995,
+      "child_system_cpu_seconds": 0.020466
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[6]",
+      "name": "blob-8",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "bf398d326cce1069beaa1b053ca39ef3e157e386"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.218799834139645,
+      "child_user_cpu_seconds": 0.020964999999999998,
+      "child_system_cpu_seconds": 0.016784999999999994
+    },
+    {
+      "id": "source-contract-restore-3/RESULT.json#stages[7]",
+      "name": "blob-9",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "90f4a1ce7115d75c17e48b220f4f8da5c80ca566"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 4.852858063066378,
+      "child_user_cpu_seconds": 0.030821000000000015,
+      "child_system_cpu_seconds": 0.014267000000000009
+    },
+    {
+      "id": "source-contract-restore-4/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.03503988706506789,
+      "child_user_cpu_seconds": 0.027127,
+      "child_system_cpu_seconds": 0.0069759999999999996
+    },
+    {
+      "id": "source-contract-restore-4/RESULT.json#stages[1]",
+      "name": "blob-1",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "9e30f34492b53724d94a5dffde9d2dbd377c4313"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.0106874310877174,
+      "child_user_cpu_seconds": 0.025690000000000004,
+      "child_system_cpu_seconds": 0.02327
+    },
+    {
+      "id": "source-contract-restore-4/RESULT.json#stages[2]",
+      "name": "blob-2",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "70efcd9da8fff3619aa8a659943a197a3453a427"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.8113080440089107,
+      "child_user_cpu_seconds": 0.02353999999999999,
+      "child_system_cpu_seconds": 0.019039
+    },
+    {
+      "id": "source-contract-restore-5/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 50.64924767892808,
+      "child_user_cpu_seconds": 0.393814,
+      "child_system_cpu_seconds": 0.349298
+    },
+    {
+      "id": "source-freeze-audit-12/RESULT.json",
+      "name": null,
+      "command": null,
+      "exit_code": null,
+      "wall_seconds": 0.15190329402685165,
+      "child_user_cpu_seconds": 0.034621,
+      "child_system_cpu_seconds": 0.033866
+    },
+    {
+      "id": "candidate-freeze-14/RESULT.json#stages[0]",
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.026710669975727797,
+      "child_user_cpu_seconds": 0.021453,
+      "child_system_cpu_seconds": 0.005176
+    },
+    {
+      "id": "candidate-freeze-14/RESULT.json#stages[1]",
+      "name": "retain-lossless-patch-container",
+      "command": [
+        "git",
+        "rm",
+        "--cached",
+        "--sparse",
+        "--",
+        "evidence/chain-native-owned-append-20261119-2e9b/candidate-source.patch"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.035578551003709435,
+      "child_user_cpu_seconds": 0.016637,
+      "child_system_cpu_seconds": 0.0062390000000000015
+    },
+    {
+      "id": "candidate-freeze-14/RESULT.json#stages[2]",
+      "name": "stage-reviewed-candidate",
+      "command": [
+        "git",
+        "add",
+        "--sparse",
+        "--",
+        ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+        ".github/workflows/pon-recent-batch-acceptance.yml",
+        "config/pon/authenticated-current-roster-v1.json",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/pq-authority-effects-v1.json",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/PROVENANCE.json",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/README.md",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/native-authenticated.log.gz",
+        "evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/hash_use_contract.py",
+        "scripts/ci/pq_authority_effect_register.py",
+        "scripts/ci/test_authenticated_suite_count.py",
+        "scripts/ci/test_hash_use_contract.py",
+        "scripts/ci/test_pq_authority_effect_register.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.01312032900750637,
+      "child_user_cpu_seconds": 0.010377999999999998,
+      "child_system_cpu_seconds": 0.004150999999999995
+    }
+  ],
+  "result_records": [
+    {
+      "path": "authenticated-original-include-ignored-7/RESULT.json",
+      "bytes": 1424,
+      "sha256": "f3ade7133cdde521075e0d5248f22f38f78221f5feb81d366ebbe750b5f0180a",
+      "reported_complete": true,
+      "reported_exit_code": 101,
+      "error": null
+    },
+    {
+      "path": "authenticated-original-include-ignored-8/RESULT.json",
+      "bytes": 1576,
+      "sha256": "c58344e87d6db817353675e85095ca6cd58386e82234446c995d9a189cde38ea",
+      "reported_complete": true,
+      "reported_exit_code": 0,
+      "error": null
+    },
+    {
+      "path": "authority-source-audit-1/RESULT.json",
+      "bytes": 15109,
+      "sha256": "fcce3c1d05b025be386a7e9f07fa5a0f4119e79e3f77cb4e9d222ad902f8ec15",
+      "reported_complete": null,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "authority-source-lock-edit-1/RESULT.json",
+      "bytes": 891,
+      "sha256": "c4a11022c715c47d30359a0e40eb5a63df66e9934a7f5dcc5f8ad3e64b64798e",
+      "reported_complete": false,
+      "reported_exit_code": null,
+      "error": "AssertionError()"
+    },
+    {
+      "path": "authority-source-lock-edit-2/RESULT.json",
+      "bytes": 19121,
+      "sha256": "6ad6480b2469de42853c8346c3aa7aeaad9a717628559d70fac9ac70775a3af3",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "candidate-freeze-13/RESULT.json",
+      "bytes": 4291,
+      "sha256": "1796e647779dc7b0cca68404d8323a505ee47c32cebff985b987b98e7f760b8b",
+      "reported_complete": false,
+      "reported_exit_code": null,
+      "error": "AssertionError()"
+    },
+    {
+      "path": "current-registration-9/RESULT.json",
+      "bytes": 14808,
+      "sha256": "7bdc273fe0f0d42a04aecab83c469bff7313378e76b1816bd7f8444730668fe0",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "hash-source-audit-10/RESULT.json",
+      "bytes": 18585,
+      "sha256": "34242e10e581c823824812c5be5c9c6462a6a2ffac83a2ea8bca0596c919887c",
+      "reported_complete": null,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "hash-source-lock-edit-11/RESULT.json",
+      "bytes": 3549,
+      "sha256": "0036fa1649fa032d4fbd50e155bc5e5cc77949560fbc9dcab4166063caa5166c",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "native-append-controls-4/RESULT.json",
+      "bytes": 2076,
+      "sha256": "1ad1995c16c7f89bbf870a792b5e148092e1b47fec34a191c02b39437257fbd0",
+      "reported_complete": true,
+      "reported_exit_code": 0,
+      "error": null
+    },
+    {
+      "path": "native-append-edit-1/RESULT.json",
+      "bytes": 515,
+      "sha256": "1f1b6ee0788437f33715c9ae83f4f1d4be1f240d64b51903f39da82f64cb6d2c",
+      "reported_complete": false,
+      "reported_exit_code": null,
+      "error": "AssertionError(('        trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS,\\n    )', 2))"
+    },
+    {
+      "path": "native-append-edit-2/RESULT.json",
+      "bytes": 2475,
+      "sha256": "3dfbc03397fe18b3db89b9e0f1af63a2f6f9af76aed5408eb596c690ea3c2d56",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "native-final-controls-6/RESULT.json",
+      "bytes": 6827,
+      "sha256": "1f8f8fe1fd85ec4baff6a2b50c8d52dc99027ff9f742bec707f7d2ef8ffc8ea1",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "native-registry-5/RESULT.json",
+      "bytes": 61266,
+      "sha256": "938bb70f9407827df9d766c8fa1621d3d682be8409c02d690660daeae9e3da85",
+      "reported_complete": true,
+      "reported_exit_code": 0,
+      "error": null
+    },
+    {
+      "path": "preparation-1/RESULT.json",
+      "bytes": 3372,
+      "sha256": "e4f039bc3f1b3def2579a9fdec19403daf13a577a6548efce06eaa3779057ff5",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "repository-truth-1/RESULT.json",
+      "bytes": 529,
+      "sha256": "784ec3a8373b440fb02324fff5c1e7b8b94042a29ce7fa0133d4bf710ba8d382",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "repository-truth-2/RESULT.json",
+      "bytes": 528,
+      "sha256": "6f7d353f1ec46caeea20e651ceebf88a4ddf06a486583a32092d3ce0049551f0",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "repository-truth-3/RESULT.json",
+      "bytes": 519,
+      "sha256": "7c26321bdfa25511b55789d1aa5abbd7f493225ff79606b58fdbe8115a0526d9",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "repository-truth-4/RESULT.json",
+      "bytes": 695,
+      "sha256": "73847bba712cade9888b3756e94f4565c025dc2f55c864fb2e3dfafb4d4b9046",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "repository-truth-5/RESULT.json",
+      "bytes": 695,
+      "sha256": "b37542647880bc035bfd8b795045500a735d2c2b00a3c9503fdd009774b1e70a",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "repository-truth-6/RESULT.json",
+      "bytes": 707,
+      "sha256": "de27494af57267e025a5a903cc65e1a4450107a55229663ee731ab3c27a5a26c",
+      "reported_complete": true,
+      "reported_exit_code": 1,
+      "error": null
+    },
+    {
+      "path": "snapshot-lock-fix-1/RESULT.json",
+      "bytes": 3003,
+      "sha256": "036a1f57bbf507f67f37bff7fd6cc5ccef0625a82e696ecaf058dfa3402502fd",
+      "reported_complete": false,
+      "reported_exit_code": null,
+      "error": "AssertionError()"
+    },
+    {
+      "path": "snapshot-lock-linux-graph-3/RESULT.json",
+      "bytes": 1520,
+      "sha256": "e94da87702ec7940293ce1075eaac6543f815e34192cfd1a5c1c2b0adf46ba6d",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "snapshot-lock-original-control-1/RESULT.json",
+      "bytes": 1790,
+      "sha256": "0c76db5c8fd4717e8bd71c3d4d16350202e649a86f644d789c4fa7a1b45dc1e8",
+      "reported_complete": true,
+      "reported_exit_code": 101,
+      "error": null
+    },
+    {
+      "path": "snapshot-lock-validation-2/RESULT.json",
+      "bytes": 3054,
+      "sha256": "f3f799d0cd0942730e3ba5a925ae7f3bbe1380a20f9a958966ed661e55f56e07",
+      "reported_complete": false,
+      "reported_exit_code": null,
+      "error": "AssertionError()"
+    },
+    {
+      "path": "source-contract-restore-1/RESULT.json",
+      "bytes": 329346,
+      "sha256": "289e0dbcaa7e766badfc0bb83bb21a9b8af7329e5cc6c771deafb7423bcbc39a",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "source-contract-restore-2/RESULT.json",
+      "bytes": 7636,
+      "sha256": "11af1b199843dadf141ef3b9cf01769f3220dc63f2e776b455d1f5b58b96c03e",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "source-contract-restore-3/RESULT.json",
+      "bytes": 3998,
+      "sha256": "62242d8a53ce356d6602f3f5cf88f1c60522e9b600486bc8ab229f997fe4c7b3",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "source-contract-restore-4/RESULT.json",
+      "bytes": 1575,
+      "sha256": "cb9dc0ee0014cf1838f492af391f181f673a11a12f96a04e8c3a8a2af5241ea7",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "source-contract-restore-5/RESULT.json",
+      "bytes": 3992,
+      "sha256": "4397892be97d65d0fcd2ecf7bb096f13181253e63cba0fd31d6671cceff580df",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    },
+    {
+      "path": "source-freeze-audit-12/RESULT.json",
+      "bytes": 12278,
+      "sha256": "0dca9f9d4af2882194880b70af60030b2e31870f3e4bf1d201252c8c7ec494f8",
+      "reported_complete": true,
+      "reported_exit_code": null,
+      "error": null
+    }
+  ],
+  "recorded_command_count": 98,
+  "known_wall_seconds_sum": 989.1348444933537,
+  "known_child_user_cpu_seconds_sum": 2213.820585,
+  "known_child_system_cpu_seconds_sum": 107.626858,
+  "missing_cpu_command_ids": [
+    "authority-source-audit-1/RESULT.json",
+    "source-contract-restore-1/RESULT.json",
+    "source-contract-restore-2/RESULT.json"
+  ],
+  "known_nonzero_command_exits": [
+    {
+      "id": "authenticated-original-include-ignored-7/RESULT.json#stages[1]",
+      "exit_code": 101
+    },
+    {
+      "id": "authority-source-lock-edit-1/RESULT.json#stages[1]",
+      "exit_code": 2
+    },
+    {
+      "id": "candidate-freeze-13/RESULT.json#stages[3]",
+      "exit_code": 2
+    },
+    {
+      "id": "native-final-controls-6/RESULT.json#stages[5]",
+      "exit_code": 101
+    },
+    {
+      "id": "repository-truth-1/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "repository-truth-2/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "repository-truth-3/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "repository-truth-4/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "repository-truth-5/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "repository-truth-6/RESULT.json",
+      "exit_code": 1
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[2]",
+      "exit_code": 101
+    },
+    {
+      "id": "snapshot-lock-fix-1/RESULT.json#stages[5]",
+      "exit_code": 1
+    },
+    {
+      "id": "snapshot-lock-original-control-1/RESULT.json#stages[1]",
+      "exit_code": 1
+    },
+    {
+      "id": "snapshot-lock-original-control-1/RESULT.json#stages[2]",
+      "exit_code": 101
+    },
+    {
+      "id": "snapshot-lock-validation-2/RESULT.json#stages[4]",
+      "exit_code": 101
+    }
+  ],
+  "unmetered_or_unclosed": [
+    "controller and assistant orchestration outside recorded subprocess intervals",
+    "earlier read-only probes with no process CPU/wall measurement",
+    "remote automatic CI and future F0 are separate observations",
+    "monetary price, GitHub charge and provider invoice are unknown",
+    "historical ROOT connection 393 in F0 44451798839 remains incompletely observed"
+  ],
+  "money": null,
+  "full_physical_cost_closed": false
+}

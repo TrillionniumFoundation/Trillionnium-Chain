@@ -1,0 +1,471 @@
+{
+  "actual_runtime_executed_by_independent_review": false,
+  "all_repository_workflows_passed": false,
+  "ci_runs": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "id": 43907395835,
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 133439797288,
+          "name": "native-response",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797571,
+          "name": "native-platform",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797591,
+          "name": "source-and-archive",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797600,
+          "name": "native-thread-cpu",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797647,
+          "name": "native-executor",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797648,
+          "name": "native-components",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797697,
+          "name": "native-node-delta",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797717,
+          "name": "native-host",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797906,
+          "name": "native-genesis-prefix",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797986,
+          "name": "native-typed-store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798081,
+          "name": "native-genesis-namespace",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798090,
+          "name": "native-genesis-crash",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798171,
+          "name": "native-host-resource",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798172,
+          "name": "native-node-settings",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798193,
+          "name": "native-genesis-semantic",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798236,
+          "name": "native-continuity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798262,
+          "name": "native-genesis-corruption",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798311,
+          "name": "native-transport",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133443374700,
+          "name": "native-genesis-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444963245,
+          "name": "native-typed-store-produce",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445137944,
+          "name": "native-continuity-capacity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445138064,
+          "name": "native-continuity-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133455124945,
+          "name": "native-typed-store-cold",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133459581563,
+          "name": "native-typed-store-bounds",
+          "status": "completed"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907395835"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "pull_request",
+      "id": 43907690872,
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 133440843772,
+          "name": "native-transport",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844207,
+          "name": "native-host",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844330,
+          "name": "native-genesis-prefix",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844360,
+          "name": "source-and-archive",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844366,
+          "name": "native-components",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844632,
+          "name": "native-platform",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844637,
+          "name": "native-genesis-namespace",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844656,
+          "name": "native-thread-cpu",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844666,
+          "name": "native-executor",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844667,
+          "name": "native-node-delta",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844669,
+          "name": "native-host-resource",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844731,
+          "name": "native-genesis-corruption",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844811,
+          "name": "native-genesis-crash",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844822,
+          "name": "native-response",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844981,
+          "name": "native-genesis-semantic",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844985,
+          "name": "native-node-settings",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844997,
+          "name": "native-typed-store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440845001,
+          "name": "native-continuity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444211499,
+          "name": "native-genesis-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444325440,
+          "name": "native-continuity-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444325488,
+          "name": "native-continuity-capacity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445971016,
+          "name": "native-typed-store-produce",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133453042868,
+          "name": "native-typed-store-cold",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133463626614,
+          "name": "native-typed-store-bounds",
+          "status": "completed"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690872"
+    }
+  ],
+  "component": "thread-cpu",
+  "evidence": {
+    "bytes": 1945412,
+    "external_or_deduplicated_members": [
+      {
+        "archive_member": "original/original/original-test-binary",
+        "bytes": 605303536,
+        "full_archive_member_verified": true,
+        "github_artifact": 14246324648,
+        "member": "push/thread-cpu/raw/original/original/original-test-binary",
+        "reason": "Complete original Rust comparison executable was downloaded, fully hashed and independently verified; the source evidence package keeps its exact identity instead of duplicating the 0.6 GB test tool.",
+        "sha256": "0f81f0fbf51d32f7ed6b8c8cf421db0edb52f775b52c24ba43463e8518bda266",
+        "type": "external-complete-artifact-member"
+      },
+      {
+        "archive_member": "original/original/original-test-binary",
+        "bytes": 605303536,
+        "full_archive_member_verified": true,
+        "github_artifact": 14246961664,
+        "member": "pr/thread-cpu/raw/original/original/original-test-binary",
+        "reason": "Complete original Rust comparison executable was downloaded, fully hashed and independently verified; the source evidence package keeps its exact identity instead of duplicating the 0.6 GB test tool.",
+        "sha256": "0f81f0fbf51d32f7ed6b8c8cf421db0edb52f775b52c24ba43463e8518bda266",
+        "type": "external-complete-artifact-member"
+      }
+    ],
+    "format": "content-addressed regular raw observations with complete member maps",
+    "member_index_sha256": "f10dc209f35bcdd012ab323a3218be01bebdfa01c42fba7a6107fb7adcfcbbed",
+    "path": "hia/qualification/thread-cpu-ci.tar.xz",
+    "sha256": "eee930341732514efa10ce5d89cff9403c80f802adafbea91fdcb30cf3792332",
+    "verification": {
+      "regular_objects": 1494,
+      "status": "PASS",
+      "verified_object_bytes": 31308197
+    }
+  },
+  "independent_reviews": [
+    {
+      "actual_signal_refusals": 4,
+      "all_captured_inputs_verified_against_actual_git_blobs": 4387,
+      "api_zip": {
+        "bytes": 94670869,
+        "sha256": "a15b593be94df797e0b471e8f2358c20c185fa04a5a436d1cdcdacd2d4e8f809"
+      },
+      "archive": {
+        "bytes": 94590252,
+        "sha256": "049da3b7a786785e944b8d906ebc5491e5af4a164c8e3822b687df7917f7b633"
+      },
+      "archive_verification": {
+        "bytes": 602,
+        "sha256": "faa7a9d012ea44f34406eeb64aaba00f71411d152c4c91ca03fa8f73e5ff32bc"
+      },
+      "artifact": 14246324648,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 59277,
+        "sha256": "30388c24da713a20a0375b699ceb611ba772d44735f7d3c2d2fd62de177fb2fb"
+      },
+      "complete_rustix_archive_members": 332,
+      "fixture_executable": {
+        "bytes": 125683,
+        "sha256": "312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7"
+      },
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "job": 133439797600,
+      "native_executable": {
+        "bytes": 125683,
+        "sha256": "6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd"
+      },
+      "native_histories": 65,
+      "native_inputs": 38,
+      "new_native_or_original_execution_by_review": false,
+      "operations": 724,
+      "original_actual_processes": 50,
+      "original_controlled_syscall_histories": 44,
+      "original_executable": {
+        "bytes": 605303536,
+        "sha256": "0f81f0fbf51d32f7ed6b8c8cf421db0edb52f775b52c24ba43463e8518bda266"
+      },
+      "original_inputs": 4361,
+      "original_mandatory_linux_clock": true,
+      "original_primitive_calls": 518,
+      "original_retained_tests": 36,
+      "original_source_set_sha256": "6bc48356f6b4427921266671a3e63ac569601b7c76e3d4fa99b84b6a52d9c00d",
+      "physical_controls": 74,
+      "retirement": false,
+      "run": 43907395835,
+      "source_set_sha256": "5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805",
+      "stage": "thread-cpu",
+      "status": "PASS",
+      "trace_refusal_controls": 12,
+      "whole_node_or_paid_account": false
+    },
+    {
+      "actual_signal_refusals": 4,
+      "all_captured_inputs_verified_against_actual_git_blobs": 4387,
+      "api_zip": {
+        "bytes": 94673622,
+        "sha256": "d7f873e03df530c83650bd4e85d4150dc25a4a0033f7a3304d61c548a08ae77d"
+      },
+      "archive": {
+        "bytes": 94593016,
+        "sha256": "f5745a24d14d2ee0fe158f5a52db6c3973007ce7f2c64b8e0f9f90fbb3649221"
+      },
+      "archive_verification": {
+        "bytes": 602,
+        "sha256": "459bd2150508b432ecb109e39e2a147c4863671816ca8d1795729e430cff2125"
+      },
+      "artifact": 14246961664,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 52888,
+        "sha256": "357371d595ada017fc5af649b0dd06da36c80d0b0ba6cd8e121726037b491cad"
+      },
+      "complete_rustix_archive_members": 332,
+      "fixture_executable": {
+        "bytes": 125683,
+        "sha256": "312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7"
+      },
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "job": 133440844656,
+      "native_executable": {
+        "bytes": 125683,
+        "sha256": "6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd"
+      },
+      "native_histories": 65,
+      "native_inputs": 38,
+      "new_native_or_original_execution_by_review": false,
+      "operations": 724,
+      "original_actual_processes": 50,
+      "original_controlled_syscall_histories": 44,
+      "original_executable": {
+        "bytes": 605303536,
+        "sha256": "0f81f0fbf51d32f7ed6b8c8cf421db0edb52f775b52c24ba43463e8518bda266"
+      },
+      "original_inputs": 4361,
+      "original_mandatory_linux_clock": true,
+      "original_primitive_calls": 518,
+      "original_retained_tests": 36,
+      "original_source_set_sha256": "6bc48356f6b4427921266671a3e63ac569601b7c76e3d4fa99b84b6a52d9c00d",
+      "physical_controls": 74,
+      "retirement": false,
+      "run": 43907690872,
+      "source_set_sha256": "5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805",
+      "stage": "thread-cpu",
+      "status": "PASS",
+      "trace_refusal_controls": 12,
+      "whole_node_or_paid_account": false
+    }
+  ],
+  "original_service_budget_qualified": false,
+  "package_retirement_accepted": false,
+  "previous_failed_executions_remain_failures": true,
+  "schema": "trnm.hia.committed-source-ci-qualification.v1",
+  "status": "PASS_WITHIN_DECLARED_FINITE_SCOPE",
+  "tested_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+  "tested_tree": "5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33",
+  "whole_node_qualified": false
+}

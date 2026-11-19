@@ -1,0 +1,385 @@
+{
+  "schema": "trnm-original-window-process-cost-readback-v1",
+  "commit": "7e4b96d4ac395a61a162940624769518cf2e03f3",
+  "run_id": 44283985539,
+  "source_scope": "original hosted CI; exact-source native invocations; no local service substitute",
+  "architectures": {
+    "x64": {
+      "artifact_id": 14418149185,
+      "artifact_sha256": "4d15c3bb3134a0b5113f6fc5ac7ddf47d997a5abe89083abc2ac673db2e18709",
+      "all_named_tests_passed": true,
+      "native_execution_completed": true,
+      "acceptance_passed": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "report_sha256": "044b81de4bb53385a11be0fd207b8dc31fdcc40bb39108a2604ee74d8927c8ab",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 3196201784,
+          "verification_errors": [],
+          "history_replay_attempts": 7,
+          "history_replay_accepted": 7,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 10153972,
+                "to": "before_service_spawn",
+                "wall_ns": 14700413
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 806233701,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4007286002
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 18110026,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 18133362
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6871,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 56761801
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 14700413,
+                "process_cpu_counter_ns": 66915773
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4021986415,
+                "process_cpu_counter_ns": 873149474
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4040119777,
+                "process_cpu_counter_ns": 891259500
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 834497699,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4040119777
+            }
+          },
+          "actor_cpu_observations_not_to_add_to_process_total": {
+            "attacker_workers_cpu_ns": 0,
+            "independent_replay_cpu_ns": 561939848,
+            "receiver_dispatch_cpu_ns": 42285396
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "confirmed_transactions": 0,
+          "confirmation_latency_ns": null,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "history_replay_attempts": 2,
+          "history_replay_accepted": 1,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 10886692,
+                "to": "before_service_spawn",
+                "wall_ns": 55894501
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 1012169204,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4093338332
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 78398039,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 312226290
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6871,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1206792,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 894911340
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 55894501,
+                "process_cpu_counter_ns": 905798032
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4149232833,
+                "process_cpu_counter_ns": 1917967236
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4461459123,
+                "process_cpu_counter_ns": 1996365275
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 1101453935,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4461459123
+            }
+          },
+          "actor_cpu_observations_not_to_add_to_process_total": {
+            "attacker_workers_cpu_ns": 369670632,
+            "independent_replay_cpu_ns": 103455926,
+            "receiver_dispatch_cpu_ns": 267941515
+          }
+        }
+      ]
+    },
+    "arm64": {
+      "artifact_id": 14418334374,
+      "artifact_sha256": "809a05b571a454ff9fdb093ebac8c27731573bc14feff312f2dd991af195a0ec",
+      "all_named_tests_passed": true,
+      "native_execution_completed": true,
+      "acceptance_passed": false,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "report_sha256": "27dc37dbedbf8075d44d67c8b67d35583cc4016cd8a11aed118c50440b650d56",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "confirmed_transactions": 1,
+          "confirmation_latency_ns": 1884381588,
+          "verification_errors": [],
+          "history_replay_attempts": 7,
+          "history_replay_accepted": 7,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8687144,
+                "to": "before_service_spawn",
+                "wall_ns": 13558015
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 499519384,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4001619493
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 14890016,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 14890565
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6601,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 46675272
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 13558015,
+                "process_cpu_counter_ns": 55362416
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4015177508,
+                "process_cpu_counter_ns": 554881800
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4030068073,
+                "process_cpu_counter_ns": 569771816
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 523096544,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4030068073
+            }
+          },
+          "actor_cpu_observations_not_to_add_to_process_total": {
+            "attacker_workers_cpu_ns": 0,
+            "independent_replay_cpu_ns": 295391984,
+            "receiver_dispatch_cpu_ns": 36250872
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "confirmed_transactions": 0,
+          "confirmation_latency_ns": null,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "history_replay_attempts": 6,
+          "history_replay_accepted": 5,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8958072,
+                "to": "before_service_spawn",
+                "wall_ns": 60147088
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 1012705760,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4097292810
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 66160392,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 220563371
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6601,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1585832,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 573159640
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 60147088,
+                "process_cpu_counter_ns": 582117712
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4157439898,
+                "process_cpu_counter_ns": 1594823472
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4378003269,
+                "process_cpu_counter_ns": 1660983864
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 1087824224,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4378003269
+            }
+          },
+          "actor_cpu_observations_not_to_add_to_process_total": {
+            "attacker_workers_cpu_ns": 319984632,
+            "independent_replay_cpu_ns": 226053280,
+            "receiver_dispatch_cpu_ns": 219802552
+          }
+        }
+      ]
+    }
+  },
+  "business_target_passed": false,
+  "physical_network_or_energy_qualified": false,
+  "production_activation": false
+}

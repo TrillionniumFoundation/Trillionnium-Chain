@@ -1,0 +1,159 @@
+{
+  "schema": "trnm.hia.thread-cpu-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "entry": {
+    "function": "f0",
+    "arguments": [
+      "event:readbuf[64]",
+      "command:mutbuf[4096]",
+      "private_state:mutbuf[65536]"
+    ],
+    "returns": "u32: 0 issue; 128..255 terminal status plus 128"
+  },
+  "adapter": {
+    "instruction_bytes": 1900,
+    "sha256": "c7dcfa89e31f0570f032f6683b3eb6c13de02e67cc5718c0572273bb34800878",
+    "profile": "main plus one actual clone worker, serialized HIA execution; fixed guarded 1 MiB reusable worker stack"
+  },
+  "event": {
+    "0": "raw preceding syscall result bits",
+    "8": "preceding phase",
+    "16": "actual native lane, never stdin data",
+    "40": "fixed private state capacity65536",
+    "48": "adapter's actual live-worker flag"
+  },
+  "command": {
+    "0": "limited opcode",
+    "8": "command-relative I/O offset",
+    "16": "I/O count",
+    "24": "0 input/random;1 stdout;2 stderr",
+    "64": "phase",
+    "32..56": "zero",
+    "72..127": "zero",
+    "128..4095": "bounded payload"
+  },
+  "opcodes": {
+    "0": "read stdin, main lane only",
+    "1": "write stdout/stderr",
+    "186": "actual gettid",
+    "228": "clock_gettime fixed CLOCK_THREAD_CPUTIME_ID to command128",
+    "318": "getrandom flags0, at most16bytes",
+    "4096": "native clone + real child gettid/ready",
+    "4097": "transfer execution to live child",
+    "4098": "transfer execution to main",
+    "4099": "retire child + actual clear-tid join"
+  },
+  "input": {
+    "bytes": 64,
+    "magic": "TCREQ001",
+    "fields": [
+      "magic",
+      "op",
+      "target0or1",
+      "stamp_serial",
+      "capability0",
+      "capability1",
+      "work_rounds_or_private_fixture_baseline",
+      "zero"
+    ],
+    "operations": {
+      "1": "start",
+      "2": "clone",
+      "3": "checkpoint",
+      "4": "consuming finish",
+      "5": "bounded native work1..1000000 rounds",
+      "6": "spawn actual worker",
+      "7": "retire and join worker",
+      "8": "value drop on either live lane; no clock or original-owner identity requirement",
+      "129": "fixture-only baseline edit, production rejects",
+      "130": "fixture-only next lifetime exhaustion, no live worker",
+      "131": "fixture-only next stamp serial exhaustion",
+      "132": "fixture-only copy actual current gettid into an old stamp without changing its generation"
+    }
+  },
+  "receipt": {
+    "bytes": 224,
+    "magic": "TCSTAMP1",
+    "fields": [
+      "magic",
+      "fixture",
+      "sequence",
+      "op",
+      "status",
+      "some",
+      "lane",
+      "tid",
+      "life",
+      "handle",
+      "cap0",
+      "cap1",
+      "baseline_before",
+      "delta",
+      "baseline_after",
+      "births",
+      "joins",
+      "clocks",
+      "active",
+      "clock_result",
+      "checksum",
+      "worker_tid",
+      "worker_life",
+      "next_stamp",
+      "next_life",
+      "capacity",
+      "native_scope",
+      "reserved"
+    ]
+  },
+  "statuses": {
+    "0": "successful primitive/control; some disambiguates optional CPU",
+    "1": "clock result/conversion unavailable",
+    "2": "different actual owning thread",
+    "3": "checked CPU subtraction underflow",
+    "4": "finite stamp table/serial capacity refusal",
+    "5": "unknown/consumed/forged handle",
+    "6": "request/profile rejection",
+    "7": "no live worker",
+    "8": "worker already live",
+    "9": "nonwrapping lifecycle/diagnostic capacity refusal",
+    "10": "real native clone failure",
+    "11": "capability entropy failure"
+  },
+  "implicit_effects": [
+    "three fixed anonymous private mmaps",
+    "mprotect only interior worker stack RW",
+    "ignore SIGPIPE",
+    "non-SA_RESTART SIGUSR1 handler/restorer",
+    "actual clone flag mask0x350f00 without caller pointers/TLS",
+    "private ready/turn futexes",
+    "shared clear_child_tid wait",
+    "child SYS_exit",
+    "main exit_group"
+  ],
+  "fixture_authority": false,
+  "production_caller_supplied_clock_tid_or_generation": false,
+  "open_boundaries": [
+    "Node actual worker embedding",
+    "general concurrent Mutex/scoped executor semantics",
+    "shared paid CPU epoch/reservation/live/residual/Unknown",
+    "wait4 child accounting",
+    "original4second16attacker gate",
+    "Rust retirement"
+  ],
+  "clock_backend_compatibility": {
+    "original_package": "rustix",
+    "version": "1.1.6",
+    "registry": "crates.io",
+    "locked_crate_sha256": "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa",
+    "target_backend": "linux_raw",
+    "target_width_bits": 64,
+    "required_feature": "time",
+    "original_wrapper_path": "src/backend/linux_raw/vdso_wrappers.rs",
+    "original_wrapper_sha256": "cf31e9520c46293e05f1cba001269d9b56db6e3114326ea132e095903a310e9a",
+    "first_return_zero": "convert the actual timespec; conversion failure does not retry",
+    "first_return_einval": "return unavailable without fallback",
+    "other_nonzero_first_return": "execute exactly one further fixed CLOCK_THREAD_CPUTIME_ID syscall on the same actual thread",
+    "fallback_return": "success converts its actual timespec; any error returns unavailable without another attempt",
+    "stamp_level_global_unknown_latch": false
+  }
+}

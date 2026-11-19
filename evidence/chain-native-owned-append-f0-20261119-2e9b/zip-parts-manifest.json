@@ -1,0 +1,40 @@
+{
+  "schema": "chain-exact-original-provider-zip-parts-v1",
+  "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "run_id": 44465153982,
+  "bytes": 18781500,
+  "sha256": "6f0550eff271a1f6b2328595cf75b2099b5b34963460df16bd7220412f84d46b",
+  "provider_digest_verified": true,
+  "manifest_original_files": 443,
+  "full_zip_members": 444,
+  "parts": [
+    {
+      "path": "f0-original.zip.part-01",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-01",
+      "offset": 0,
+      "bytes": 8000000,
+      "sha256": "facb0e15da943c6a3593c13a55528038a96e9a1c51ab02e3d166b602faddcc74",
+      "git_blob": "454d528269b2dc39fbd6ed9bec721051249f74c5"
+    },
+    {
+      "path": "f0-original.zip.part-02",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-02",
+      "offset": 8000000,
+      "bytes": 8000000,
+      "sha256": "62f3085a2ef2ac801e61df1630e741b735449989804e327cb7a001946258f818",
+      "git_blob": "3beb7f7de5285b6a5984ab242c5fe309d83587df"
+    },
+    {
+      "path": "f0-original.zip.part-03",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-03",
+      "offset": 16000000,
+      "bytes": 2781500,
+      "sha256": "3f37ea00d397148d16864127ddf4e05874d2765d173e702e1bfee949463bc8fc",
+      "git_blob": "d359a9794a7f92322c353cdf5a9fcb234c5ed033"
+    }
+  ],
+  "all_part_bytes_reassembled_to_original": true,
+  "wall_seconds": 0.29210278094979003,
+  "self_user_cpu_seconds": 0.17063899999999999,
+  "self_system_cpu_seconds": 0.067976
+}

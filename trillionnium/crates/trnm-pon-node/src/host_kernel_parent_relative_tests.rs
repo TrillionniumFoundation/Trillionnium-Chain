@@ -456,3 +456,130 @@ fn held_parent_final_fence_does_not_replace_an_earlier_limit_parse_error() {
         );
     }
 }
+
+type MetadataIdentity = (u64, u64, u32, u32);
+
+fn original_metadata_identity(metadata: &fs::Metadata) -> MetadataIdentity {
+    (
+        metadata.dev(),
+        metadata.ino(),
+        metadata.uid(),
+        metadata.mode(),
+    )
+}
+
+fn current_stat_identity(metadata: &rustix::fs::Stat) -> MetadataIdentity {
+    (
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_uid,
+        metadata.st_mode,
+    )
+}
+
+#[test]
+fn current_stat_keeps_original_fields_and_named_nofollow_identity() {
+    let (temporary, parent, directory, _) = fixture();
+    let compare = |path: &Path, file: &fs::File| {
+        assert_eq!(
+            current_stat_identity(&rustix::fs::fstat(file).unwrap()),
+            original_metadata_identity(&file.metadata().unwrap())
+        );
+        assert_eq!(
+            current_stat_identity(
+                &rustix::fs::statat(rustix::fs::CWD, path, rustix::fs::AtFlags::SYMLINK_NOFOLLOW)
+                    .unwrap()
+            ),
+            original_metadata_identity(&fs::symlink_metadata(path).unwrap())
+        );
+    };
+    compare(&parent, &directory.file);
+    for (name, _) in LIMIT_FIXTURE {
+        let path = parent.join(name);
+        compare(&path, &fs::File::open(&path).unwrap());
+    }
+    let link = temporary.path().join("parent-link");
+    symlink(&parent, &link).unwrap();
+    let named = rustix::fs::statat(
+        rustix::fs::CWD,
+        &link,
+        rustix::fs::AtFlags::SYMLINK_NOFOLLOW,
+    )
+    .unwrap();
+    assert_eq!(
+        current_stat_identity(&named),
+        original_metadata_identity(&fs::symlink_metadata(&link).unwrap())
+    );
+    assert!(!ScopedParentDirectory::matches(&named, directory.identity));
+    for mode in [0o500, 0o711, 0o722, 0o777, 0o700] {
+        fs::set_permissions(&parent, fs::Permissions::from_mode(mode)).unwrap();
+        compare(&parent, &directory.file);
+        assert_eq!(directory.verify_path(&parent).is_ok(), mode & 0o022 == 0);
+    }
+}
+
+#[test]
+#[ignore = "optional metadata cost observation; no Host authority or timing acceptance"]
+fn paired_current_metadata_cost_observation() {
+    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+    let (_temporary, parent, directory, _) = fixture();
+    let files: Vec<_> = LIMIT_FIXTURE
+        .iter()
+        .map(|(name, _)| fs::File::open(parent.join(name)).unwrap())
+        .chain(std::iter::once(directory.file.try_clone().unwrap()))
+        .collect();
+    let expected: Vec<_> = files
+        .iter()
+        .map(|file| original_metadata_identity(&file.metadata().unwrap()))
+        .collect();
+    let expected_named = original_metadata_identity(&fs::symlink_metadata(&parent).unwrap());
+    let cpu = || {
+        let stamp = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).unwrap();
+        assert!(stamp.tv_sec >= 0 && stamp.tv_nsec >= 0);
+        stamp.tv_sec as u128 * 1_000_000_000 + stamp.tv_nsec as u128
+    };
+    let mut samples = Vec::new();
+    for round in 0..3 {
+        for raw in [false, true, true, false] {
+            let wall_before = std::time::Instant::now();
+            let cpu_before = cpu();
+            for _ in 0..5_000 {
+                for (file, identity) in files.iter().zip(&expected) {
+                    let current = if raw {
+                        current_stat_identity(&rustix::fs::fstat(file).unwrap())
+                    } else {
+                        original_metadata_identity(&file.metadata().unwrap())
+                    };
+                    assert_eq!(std::hint::black_box(current), *identity);
+                }
+                let named = if raw {
+                    current_stat_identity(
+                        &rustix::fs::statat(
+                            rustix::fs::CWD,
+                            &parent,
+                            rustix::fs::AtFlags::SYMLINK_NOFOLLOW,
+                        )
+                        .unwrap(),
+                    )
+                } else {
+                    original_metadata_identity(&fs::symlink_metadata(&parent).unwrap())
+                };
+                assert_eq!(std::hint::black_box(named), expected_named);
+            }
+            samples.push(serde_json::json!({
+                "round": round, "raw_stat": raw, "iterations": 5_000,
+                "metadata_reads_per_iteration": 7,
+                "thread_cpu_ns": cpu().checked_sub(cpu_before).unwrap(),
+                "wall_ns": wall_before.elapsed().as_nanos(),
+            }));
+        }
+    }
+    println!(
+        "{}",
+        serde_json::json!({
+            "schema": "trnm-current-host-metadata-cost-v1",
+            "scope": "six current descriptor metadata reads and one current named nofollow read; temporary files only",
+            "host_qualification": false, "timing_acceptance": false, "samples": samples,
+        })
+    );
+}

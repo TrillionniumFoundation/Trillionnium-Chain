@@ -546,30 +546,70 @@ fn concurrent_caller_grants_linearize_across_the_shared_intake() {
 }
 
 #[test]
-fn resource_revision_r20_has_exact_caller_limit_and_fresh_signed_identifiers() {
+fn resource_revision_r22_has_exact_caller_limit_and_fresh_signed_identifiers() {
     assert_eq!(intake::MAX_CALLER_MUTATION_GRANTS, 2);
     assert_eq!(MAX_MUTATING_GRANTS, 8);
     assert_eq!(MAX_READ_GRANTS, 8);
     assert_eq!(MUTATION_CPU_WORKERS, 2);
-    for (bits, expected, previous) in [
+    let settings = Settings::development(Some(1)).unwrap();
+    // Independent pon_wire framing derivation retains both previous revisions
+    // as negative controls; current values bind the complete r22 code contract.
+    for (bits, expected, previous, older) in [
         (
             8,
+            "f42c4a65fe07c39b2ec4349231742f20714f4d9b0c12842ff6cb30cdb2e04748",
+            "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
             "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
-            "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
         ),
         (
             12,
+            "2b6312e818992d9d323e457eb350824bcaa0f32162f565f336cf0a90fd983fc6",
+            "9eb8b90a2b797a4cce6c35eb3da0dfe3eec6f125b076c353301b2d82ed9d9377",
             "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
-            "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
         ),
         (
             16,
+            "1f45524fae91b3d13fc9bed2c27a48fc0e0c4e943db6f8dc3724bdd6a0dd30be",
+            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a",
             "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
-            "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
         ),
     ] {
         let policy = PublicPolicy::new(bits, Duration::from_secs(2)).unwrap();
         assert_eq!(hex::encode(policy.id()), expected);
         assert_ne!(hex::encode(policy.id()), previous);
+        assert_ne!(hex::encode(policy.id()), older);
+        let server = PublicServer::new(identity(71), policy).unwrap();
+        let current = server
+            .cookie(
+                &settings,
+                hello(&identity(72), 1),
+                "127.0.0.1:10000".parse().unwrap(),
+            )
+            .unwrap();
+        assert_eq!(current.profile, expected);
+        server.validate(&current, &settings, true).unwrap();
+        for previous_profile in [previous, older] {
+            let mut stale = current.clone();
+            stale.profile = previous_profile.to_owned();
+            // Even a real current-server MAC and signature cannot turn an old
+            // resource domain into this candidate's authenticated context.
+            stale.mac = hex::encode(hmac(&server.secret, &stale.unsigned().unwrap()));
+            stale.signature = server
+                .sign_authentication(&stale.server_message().unwrap())
+                .unwrap();
+            verify_hex_strict(
+                identity(71).public_key(),
+                &stale.server_message().unwrap(),
+                &stale.signature,
+            )
+            .unwrap();
+            assert_eq!(
+                server
+                    .validate(&stale, &settings, true)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_COOKIE_CONTEXT",
+            );
+        }
     }
 }

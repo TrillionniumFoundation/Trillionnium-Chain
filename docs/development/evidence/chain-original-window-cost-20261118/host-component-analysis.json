@@ -1,0 +1,24 @@
+{
+  "schema": "trnm-host-component-analysis-v1",
+  "native_profile_scope": "component diagnosis only; no privileged parent, no hosted service, no physical-resource or success claim; all five file reads, EOF/type checks and final inode fence retained in both arms",
+  "groups_ns_per_check": {
+    "fresh_files_original_parser": {
+      "median": 8993.806640625,
+      "min": 8338.53515625,
+      "max": 10718.4296875,
+      "n": 24
+    },
+    "fresh_files_canonical_parse_prototype": {
+      "median": 8896.5546875,
+      "min": 8398.6484375,
+      "max": 11720.265625,
+      "n": 24
+    }
+  },
+  "parse_only_ns_per_call": 32.41731,
+  "candidate_median_change_pct": -1.0813213693711576,
+  "original_parse_share_pct": 0.36044037074992363,
+  "at_1099_checkpoints_original_median_cpu_ns": 9884193.498046875,
+  "at_1099_checkpoints_parser_only_cpu_ns": 35626.62369,
+  "production_candidate_selected": false
+}

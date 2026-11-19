@@ -193,3 +193,34 @@ terminal CRLF under Git whitespace checks. Its original failure output is
 retained in `commit-preparation/`. Evidence-local Git attributes preserve the
 original stdout, stderr and log bytes; each staged blob is checked against its
 original file. Source-code whitespace checks remain unchanged.
+
+
+## Preparation records in Git history
+
+The two completed checkout-repair directories `checkout-visibility/` and
+`checkout-visibility-final/` are archived at commit
+`59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. The
+[archive index](CHECKOUT_VISIBILITY_ARCHIVE.json) binds all 607 original paths,
+Git blob identities, modes, byte lengths and SHA-256 digests (128,438,729 bytes).
+The original package inventory and checksum list are also pinned there. These
+process records are no longer copied into every current checkout.
+
+The exact [first repair summary](checkout-visibility-summary.json) and
+[final repair summary](checkout-visibility-final-summary.json) remain here.
+Their `PASS` means checkout preparation completed; both report zero native tests.
+The failed native attempts, original failure bytes, component qualification and
+`HOLD_NO_GO` status above are unchanged. The current package inventory uses v2
+and lists its separately archived payloads explicitly.
+
+Verify every archived object and the unchanged failure summaries using local
+Git history:
+
+```sh
+python3 -B scripts/ci/check_historical_archive.py --manifest evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
+```
+
+Add `--cat` followed by an exact `files[].path` or
+`historical_manifests[].path` from the index to retrieve those original bytes on
+standard output. The verifier does not fetch, write restored files or execute
+historical helpers. A shallow checkout without the pinned commit must obtain
+that history before verification; missing history is a failure.

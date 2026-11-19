@@ -1,0 +1,195 @@
+{
+  "schema": "chain-owned-append-original-f0-complete-evidence-build-v1",
+  "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "run_id": 44465153982,
+  "complete": true,
+  "files": [
+    {
+      "path": "COLLECTION.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/COLLECTION.json",
+      "bytes": 23451,
+      "sha256": "c824defe2b3258d93ef8b0e4d6fcf775f3c57459977b724f6638fe277c6f7465",
+      "git_blob": "073249064122adfb6956cc0a4c0c8f3cc8dd47c0"
+    },
+    {
+      "path": "READERS_CONFIGS.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/READERS_CONFIGS.json",
+      "bytes": 1205,
+      "sha256": "a5080c25f8a0edc137e1bf5390458feef58fb205f4ff9d0d980b891b9651d40f",
+      "git_blob": "1f1d175fe493d784506aa4f9170d52defb1050ee"
+    },
+    {
+      "path": "README.md",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/README.md",
+      "bytes": 6144,
+      "sha256": "2a21873396a45443c77541d6c0499358ab185dbc062447f11388aa333a5edf4e",
+      "git_blob": "4bea5b675e4b2d74fd4387ccdecbc2b215e9d755"
+    },
+    {
+      "path": "archive-index.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/archive-index.json",
+      "bytes": 74488,
+      "sha256": "a4bbb4aa7e285db92a586c0dd8328fef69761adadd93f58375c3136b020d3c57",
+      "git_blob": "73719c22df0b365f25547a4ebf69adac6ed3a0c1"
+    },
+    {
+      "path": "automatic-ci-original-timepoint.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/automatic-ci-original-timepoint.json",
+      "bytes": 2514033,
+      "sha256": "ad93d34c5cb33ceb59c1b03a161acad22c5f7dd0ac6802eceb0521a98914c374",
+      "git_blob": "2685e6340de75ce91b06f0f6507a7fe7eee48ede"
+    },
+    {
+      "path": "automatic-ci-timepoint-readback.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/automatic-ci-timepoint-readback.json",
+      "bytes": 36687,
+      "sha256": "443d8a51a678a5056ef0ffcb64c302059817b25c90c76e6470084d8664815fea",
+      "git_blob": "24c24b35a36d68b00ab016a48665a2301a268b9a"
+    },
+    {
+      "path": "complete-f0-readback-originals.tar.xz",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/complete-f0-readback-originals.tar.xz",
+      "bytes": 758112,
+      "sha256": "322448114330a4907faac689580d65a730c2562476b21735d6b60fbb4f1813f2",
+      "git_blob": "bb05abf49ea6358526a80247eefbebc6fd453eca"
+    },
+    {
+      "path": "cost-summary.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/cost-summary.json",
+      "bytes": 34362,
+      "sha256": "85fede08534052d5a8c60c015e735db06a5fbbe170957ec3b00c2b3f625bf7ae",
+      "git_blob": "624848a8b652facaa4092a9d7a9f89616381283b"
+    },
+    {
+      "path": "current-cost-profile.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/current-cost-profile.json",
+      "bytes": 346786,
+      "sha256": "3acbe5bc9d9165b71ce864fe7923ed472b3ed563ce1e37e5751a1000d06fac1f",
+      "git_blob": "92e4599d4bdcf0b1a67c9d02bf31c77b36866ce1"
+    },
+    {
+      "path": "f0-independent-readback.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/f0-independent-readback.json",
+      "bytes": 17067,
+      "sha256": "f1ef86cd439b3456d1d33f30a126b5938c43accc7b454c75b32c8d22bd25b29d",
+      "git_blob": "f84016c21fdcf919843d8730d320fb926f36b1f2"
+    },
+    {
+      "path": "f0-readback.py",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/f0-readback.py",
+      "bytes": 8759,
+      "sha256": "ba0ea6366f038f380609f0ea34902620b0fa5b1b3cc111ef25b4c56e537f4483",
+      "git_blob": "b16d6334369a121da3724d590b70909e3f46b5c0"
+    },
+    {
+      "path": "measured-bottleneck-comparison.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/measured-bottleneck-comparison.json",
+      "bytes": 135653,
+      "sha256": "7c9a86ab446e2c9e9b69b66c7d9364e3907052aad37c74cab7d4c3e84643e29f",
+      "git_blob": "ae149be9ea125348d1a5f4b5f24a0282de964b88"
+    },
+    {
+      "path": "predecessor-complete-ci-archive-cost.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/predecessor-complete-ci-archive-cost.json",
+      "bytes": 424,
+      "sha256": "22086b7fb1f9a7bdbc1a3ca7d54edae272dbe890a9573168bef2b7f9df20e4bb",
+      "git_blob": "a3aa7586283f8f3a7df2f234ec6150b59db65719"
+    },
+    {
+      "path": "predecessor-complete-ci-index.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/predecessor-complete-ci-index.json",
+      "bytes": 109087,
+      "sha256": "649db8c81784b69bb4a32b5a02f3b1209300935fffdbc76673059851be118baa",
+      "git_blob": "f0d7817ca7fc2d01b4023cc0c998c3350647ad4e"
+    },
+    {
+      "path": "predecessor-complete-ci-originals.tar.xz",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/predecessor-complete-ci-originals.tar.xz",
+      "bytes": 724836,
+      "sha256": "e48a44484cffe9ed01b5b9a055ecc9a0b98819cde976397d2ab51daa505f2c6e",
+      "git_blob": "e2f96422f7d26dde557133caac7bb511a5cda351"
+    },
+    {
+      "path": "predecessor-complete-ci-summary.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/predecessor-complete-ci-summary.json",
+      "bytes": 51370,
+      "sha256": "3df84447086721e13573d58baaa2a75fc77285aead58ee40b3a82116705b9aab",
+      "git_blob": "bf731856848208d331fa0f2890e7fef043ec4cef"
+    },
+    {
+      "path": "prior-cost-profile.py",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/prior-cost-profile.py",
+      "bytes": 14556,
+      "sha256": "68a5fc3877527c66491fb20fb5dd35a8b61d93ee090e9dc9a6076fca8d8a66d3",
+      "git_blob": "7fd610d5e1fe633f3c119a00cccbc532aa55158d"
+    },
+    {
+      "path": "prior-f0-readback.py",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/prior-f0-readback.py",
+      "bytes": 13274,
+      "sha256": "e7c17ba2ffe48107dde6e7905f2de6ac6e9718571c2b497113383efff04c3f99",
+      "git_blob": "8e198a4b5eceee45b1566389f632333eb02397a0"
+    },
+    {
+      "path": "readback-execution.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/readback-execution.json",
+      "bytes": 1699,
+      "sha256": "856827295f7bc79e88b59a465df41632e31f5573c083aae510d65f5303ea7c6c",
+      "git_blob": "186735427f21cd28636a2aabab3fcaef21508eec"
+    },
+    {
+      "path": "readers-preparation.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/readers-preparation.json",
+      "bytes": 11930,
+      "sha256": "27a4dd1a619684c372189d834226379f6c7f1cf8d1f9398e183d2942bcd9cccc",
+      "git_blob": "8539ca5ffe4fd3e088f642d234a876133537c2e2"
+    },
+    {
+      "path": "single-dispatch.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/single-dispatch.json",
+      "bytes": 4078,
+      "sha256": "76fd6203f3fe94bcef44fb1f1d5a4ce43634adac2fa87630f39a6324315f0436",
+      "git_blob": "aff78ba21bb3b2a6bca714d51846e71587159c78"
+    },
+    {
+      "path": "zip-parts-manifest.json",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/publication-1/zip-parts-manifest.json",
+      "bytes": 1642,
+      "sha256": "e24761d066aa7fd54b2e546573aa6fa97fb7666ba3ff12cf73c2b7c05a115602",
+      "git_blob": "326fb45ed63e5082b0432fa30804787c65e300ef"
+    },
+    {
+      "path": "f0-original.zip.part-01",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-01",
+      "offset": 0,
+      "bytes": 8000000,
+      "sha256": "facb0e15da943c6a3593c13a55528038a96e9a1c51ab02e3d166b602faddcc74",
+      "git_blob": "454d528269b2dc39fbd6ed9bec721051249f74c5"
+    },
+    {
+      "path": "f0-original.zip.part-02",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-02",
+      "offset": 8000000,
+      "bytes": 8000000,
+      "sha256": "62f3085a2ef2ac801e61df1630e741b735449989804e327cb7a001946258f818",
+      "git_blob": "3beb7f7de5285b6a5984ab242c5fe309d83587df"
+    },
+    {
+      "path": "f0-original.zip.part-03",
+      "absolute_path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/zip-parts-1/f0-original.zip.part-03",
+      "offset": 16000000,
+      "bytes": 2781500,
+      "sha256": "3f37ea00d397148d16864127ddf4e05874d2765d173e702e1bfee949463bc8fc",
+      "git_blob": "d359a9794a7f92322c353cdf5a9fcb234c5ed033"
+    }
+  ],
+  "archive_members": 402,
+  "archive_sha256": "322448114330a4907faac689580d65a730c2562476b21735d6b60fbb4f1813f2",
+  "wall_seconds": 4.1567861450021155,
+  "self_user_cpu_seconds": 3.64504,
+  "self_system_cpu_seconds": 0.16005599999999998,
+  "current_run_count": 28,
+  "current_job_count": 204,
+  "failed_job_count": 43,
+  "current_ci_all_final": false
+}

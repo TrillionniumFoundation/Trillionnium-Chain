@@ -1,0 +1,68 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_protocol_pgh2
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  v0:usize = buffer.len(input)
+  v1:usize = const() {"value":354}
+  v2:bool = compare.eq(v0,v1)
+  branch v2 version(input) length()
+block version(version_input:readbuf)
+  v3:usize = const() {"value":0}
+  v4:u8 = buffer.load(version_input,v3)
+  v5:u8 = const() {"value":80}
+  v6:bool = compare.eq(v4,v5)
+  v7:usize = const() {"value":1}
+  v8:u8 = buffer.load(version_input,v7)
+  v9:u8 = const() {"value":71}
+  v10:bool = compare.eq(v8,v9)
+  v11:usize = const() {"value":2}
+  v12:u8 = buffer.load(version_input,v11)
+  v13:u8 = const() {"value":72}
+  v14:bool = compare.eq(v12,v13)
+  v15:usize = const() {"value":3}
+  v16:u8 = buffer.load(version_input,v15)
+  v17:u8 = const() {"value":50}
+  v18:bool = compare.eq(v16,v17)
+  v19:usize = const() {"value":4}
+  v20:u8 = buffer.load(version_input,v19)
+  v21:u8 = const() {"value":80}
+  v22:bool = compare.eq(v20,v21)
+  v23:usize = const() {"value":5}
+  v24:u8 = buffer.load(version_input,v23)
+  v25:u8 = const() {"value":78}
+  v26:bool = compare.eq(v24,v25)
+  v27:usize = const() {"value":6}
+  v28:u8 = buffer.load(version_input,v27)
+  v29:u8 = const() {"value":72}
+  v30:bool = compare.eq(v28,v29)
+  v31:usize = const() {"value":7}
+  v32:u8 = buffer.load(version_input,v31)
+  v33:u8 = const() {"value":49}
+  v34:bool = compare.eq(v32,v33)
+  v35:usize = const() {"value":8}
+  v36:u8 = buffer.load(version_input,v35)
+  v37:u8 = const() {"value":1}
+  v38:bool = compare.eq(v36,v37)
+  v39:usize = const() {"value":9}
+  v40:u8 = buffer.load(version_input,v39)
+  v41:u8 = const() {"value":0}
+  v42:bool = compare.eq(v40,v41)
+  v43:bool = bool.and(v6,v10)
+  v44:bool = bool.and(v43,v14)
+  v45:bool = bool.and(v44,v18)
+  v46:bool = bool.and(v45,v22)
+  v47:bool = bool.and(v46,v26)
+  v48:bool = bool.and(v47,v30)
+  v49:bool = bool.and(v48,v34)
+  v50:bool = bool.and(v49,v38)
+  v51:bool = bool.and(v50,v42)
+  branch v51 ok() bad_version()
+block ok()
+  v52:u32 = const() {"value":0}
+  ret(v52)
+block length()
+  v53:u32 = const() {"value":1}
+  ret(v53)
+block bad_version()
+  v54:u32 = const() {"value":2}
+  ret(v54)
+end

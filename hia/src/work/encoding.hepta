@@ -1,0 +1,67 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_w1_encoding
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v8:usize = buffer.len(v0)
+  v9:usize = const() {"value":49188}
+  v10:bool = compare.ne(v8,v9)
+  branch v10 b1() b2(v0)
+block b1()
+  v11:u32 = const() {"value":1}
+  ret(v11)
+block b2(v3:readbuf)
+  v12:usize = const() {"value":0}
+  v13:u64 = call(v3,v12) {"function":"f1"}
+  v14:u64 = const() {"value":827805264}
+  v15:bool = compare.ne(v13,v14)
+  v16:usize = const() {"value":4}
+  branch v15 b3() b4(v3,v16)
+block b3()
+  v17:u32 = const() {"value":2}
+  ret(v17)
+block b4(v4:readbuf,v5:usize)
+  v18:usize = const() {"value":49156}
+  v19:bool = compare.eq(v5,v18)
+  branch v19 b7() b5(v4,v5)
+block b5(v6:readbuf,v7:usize)
+  v20:u64 = call(v6,v7) {"function":"f1"}
+  v21:u64 = const() {"value":4294967291}
+  v22:bool = compare.ge(v20,v21)
+  v23:usize = const() {"value":4}
+  v24:usize = int.add.checked(v7,v23)
+  branch v22 b6() b4(v6,v24)
+block b6()
+  v25:u32 = const() {"value":3}
+  ret(v25)
+block b7()
+  v26:u32 = const() {"value":0}
+  ret(v26)
+end
+fn f1(v0:readbuf,v1:usize) -> (u64) effects(read,trap) entry(b0)
+block b0(v0:readbuf,v1:usize)
+  v2:u64 = const() {"value":0}
+  v3:u8 = buffer.load(v0,v1)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = bit.or(v2,v4)
+  v6:usize = const() {"value":1}
+  v7:usize = int.add.checked(v1,v6)
+  v8:u8 = buffer.load(v0,v7)
+  v9:u64 = int.cast(v8) {"mode":"wrap"}
+  v10:u64 = const() {"value":8}
+  v11:u64 = int.shl.checked(v9,v10)
+  v12:u64 = bit.or(v5,v11)
+  v13:usize = const() {"value":2}
+  v14:usize = int.add.checked(v1,v13)
+  v15:u8 = buffer.load(v0,v14)
+  v16:u64 = int.cast(v15) {"mode":"wrap"}
+  v17:u64 = const() {"value":16}
+  v18:u64 = int.shl.checked(v16,v17)
+  v19:u64 = bit.or(v12,v18)
+  v20:usize = const() {"value":3}
+  v21:usize = int.add.checked(v1,v20)
+  v22:u8 = buffer.load(v0,v21)
+  v23:u64 = int.cast(v22) {"mode":"wrap"}
+  v24:u64 = const() {"value":24}
+  v25:u64 = int.shl.checked(v23,v24)
+  v26:u64 = bit.or(v19,v25)
+  ret(v26)
+end

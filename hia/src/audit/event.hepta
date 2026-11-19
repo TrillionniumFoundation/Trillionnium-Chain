@@ -1,0 +1,682 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_audit_event_value_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  v0:usize = buffer.len(input)
+  v1:usize = const() {"value":32}
+  v2:bool = compare.ge(v0,v1)
+  branch v2 admit_3(input,output,v0) error_1()
+block admit_3(admit_3_input:readbuf,admit_3_output:mutbuf,admit_3_size:usize)
+  v3:usize = const() {"value":0}
+  v4:u64 = call(admit_3_input,v3) {"function":"ae_load64"}
+  v5:u64 = const() {"value":3544385890568978766}
+  v6:bool = compare.eq(v4,v5)
+  branch v6 admit_7(admit_3_input,admit_3_output,admit_3_size) error_1()
+block admit_7(admit_7_input:readbuf,admit_7_output:mutbuf,admit_7_size:usize)
+  v7:usize = const() {"value":8}
+  v8:u64 = call(admit_7_input,v7) {"function":"ae_load64"}
+  v9:u64 = const() {"value":8}
+  v10:bool = compare.le(v8,v9)
+  branch v10 admit_11(admit_7_input,admit_7_output,admit_7_size,v8) error_1()
+block admit_11(admit_11_input:readbuf,admit_11_output:mutbuf,admit_11_size:usize,admit_11_op:u64)
+  v11:usize = const() {"value":16}
+  v12:u64 = call(admit_11_input,v11) {"function":"ae_load64"}
+  v13:usize = const() {"value":24}
+  v14:u64 = call(admit_11_input,v13) {"function":"ae_load64"}
+  v15:usize = const() {"value":32}
+  v16:usize = int.sub.checked(admit_11_size,v15)
+  v17:u64 = int.cast(v16) {"mode":"wrap"}
+  v18:bool = compare.le(v12,v17)
+  branch v18 admit_19(admit_11_input,admit_11_output,admit_11_size,admit_11_op,v12,v14) error_1()
+block admit_19(admit_19_input:readbuf,admit_19_output:mutbuf,admit_19_size:usize,admit_19_op:u64,admit_19_left:u64,admit_19_right:u64)
+  v19:usize = const() {"value":32}
+  v20:usize = int.sub.checked(admit_19_size,v19)
+  v21:usize = int.cast(admit_19_left) {"mode":"wrap"}
+  v22:usize = int.sub.checked(v20,v21)
+  v23:u64 = int.cast(v22) {"mode":"wrap"}
+  v24:bool = compare.eq(admit_19_right,v23)
+  branch v24 admit_25(admit_19_input,admit_19_output,admit_19_size,admit_19_op,admit_19_left,admit_19_right) error_1()
+block admit_25(admit_25_input:readbuf,admit_25_output:mutbuf,admit_25_size:usize,admit_25_op:u64,admit_25_left:u64,admit_25_right:u64)
+  v25:usize = int.cast(admit_25_left) {"mode":"wrap"}
+  v26:usize = int.cast(admit_25_right) {"mode":"wrap"}
+  v27:usize = const() {"value":32}
+  v28:usize = int.add.checked(v27,v25)
+  v29:u64 = const() {"value":0}
+  v30:bool = compare.eq(admit_25_op,v29)
+  branch v30 new(admit_25_input,admit_25_output,admit_25_op,v25,v26,v28) existing(admit_25_input,admit_25_output,admit_25_op,v25,v26,v28)
+block new(new_input:readbuf,new_output:mutbuf,new_op:u64,new_left:usize,new_right:usize,new_right_at:usize)
+  v31:usize = const() {"value":32}
+  v32:u64 = int.cast(v31) {"mode":"wrap"}
+  v33:u64 = int.cast(new_left) {"mode":"wrap"}
+  v34:u64 = call(new_input,v32,v33) {"function":"value_utf8"}
+  v35:u64 = const() {"value":1}
+  v36:bool = compare.eq(v34,v35)
+  branch v36 admit_37(new_input,new_output,new_op,new_left,new_right,new_right_at) error_3()
+block admit_37(admit_37_input:readbuf,admit_37_output:mutbuf,admit_37_op:u64,admit_37_left:usize,admit_37_right:usize,admit_37_right_at:usize)
+  v37:u64 = int.cast(admit_37_right_at) {"mode":"wrap"}
+  v38:u64 = int.cast(admit_37_right) {"mode":"wrap"}
+  v39:u64 = call(admit_37_input,v37,v38) {"function":"value_utf8"}
+  v40:u64 = const() {"value":1}
+  v41:bool = compare.eq(v39,v40)
+  branch v41 admit_42(admit_37_input,admit_37_output,admit_37_op,admit_37_left,admit_37_right,admit_37_right_at) error_3()
+block admit_42(admit_42_input:readbuf,admit_42_output:mutbuf,admit_42_op:u64,admit_42_left:usize,admit_42_right:usize,admit_42_right_at:usize)
+  v42:usize = buffer.len(admit_42_output)
+  v43:usize = const() {"value":96}
+  v44:bool = compare.ge(v42,v43)
+  branch v44 admit_45(admit_42_input,admit_42_output,admit_42_op,admit_42_left,admit_42_right,admit_42_right_at,v42) error_4()
+block admit_45(admit_45_input:readbuf,admit_45_output:mutbuf,admit_45_op:u64,admit_45_left:usize,admit_45_right:usize,admit_45_right_at:usize,admit_45_capacity:usize)
+  v45:usize = const() {"value":96}
+  v46:usize = int.sub.checked(admit_45_capacity,v45)
+  v47:bool = compare.le(admit_45_left,v46)
+  branch v47 admit_48(admit_45_input,admit_45_output,admit_45_op,admit_45_left,admit_45_right,admit_45_right_at,admit_45_capacity) error_4()
+block admit_48(admit_48_input:readbuf,admit_48_output:mutbuf,admit_48_op:u64,admit_48_left:usize,admit_48_right:usize,admit_48_right_at:usize,admit_48_capacity:usize)
+  v48:usize = const() {"value":96}
+  v49:usize = int.sub.checked(admit_48_capacity,v48)
+  v50:usize = int.sub.checked(v49,admit_48_left)
+  v51:bool = compare.le(admit_48_right,v50)
+  branch v51 admit_52(admit_48_input,admit_48_output,admit_48_op,admit_48_left,admit_48_right,admit_48_right_at,admit_48_capacity) error_4()
+block admit_52(admit_52_input:readbuf,admit_52_output:mutbuf,admit_52_op:u64,admit_52_left:usize,admit_52_right:usize,admit_52_right_at:usize,admit_52_capacity:usize)
+  v52:usize = int.add.checked(admit_52_left,admit_52_right)
+  v53:usize = const() {"value":96}
+  v54:usize = int.add.checked(v53,v52)
+  v55:usize = const() {"value":96}
+  v56:u32 = call(admit_52_output,v55) {"function":"ae_zero"}
+  v57:usize = const() {"value":0}
+  v58:u64 = const() {"value":3544385890837414222}
+  v59:u32 = call(admit_52_output,v57,v58) {"function":"ae_store64"}
+  v60:usize = const() {"value":8}
+  v61:u64 = int.cast(v54) {"mode":"wrap"}
+  v62:u32 = call(admit_52_output,v60,v61) {"function":"ae_store64"}
+  v63:usize = const() {"value":40}
+  v64:u64 = int.cast(admit_52_left) {"mode":"wrap"}
+  v65:u32 = call(admit_52_output,v63,v64) {"function":"ae_store64"}
+  v66:usize = const() {"value":48}
+  v67:u64 = int.cast(admit_52_right) {"mode":"wrap"}
+  v68:u32 = call(admit_52_output,v66,v67) {"function":"ae_store64"}
+  v69:usize = const() {"value":32}
+  v70:usize = const() {"value":96}
+  v71:u32 = call(admit_52_input,admit_52_output,v69,v70,v52) {"function":"ae_copy"}
+  v72:u32 = const() {"value":0}
+  ret(v72)
+block existing(existing_input:readbuf,existing_output:mutbuf,existing_op:u64,existing_left:usize,existing_right:usize,existing_right_at:usize)
+  v73:usize = const() {"value":32}
+  v74:u32 = call(existing_input,v73,existing_left) {"function":"ae_record"}
+  v75:u32 = const() {"value":0}
+  v76:bool = compare.eq(v74,v75)
+  branch v76 select_existing(existing_input,existing_output,existing_op,existing_left,existing_right,existing_right_at) record_error(v74)
+block select_existing(select_existing_input:readbuf,select_existing_output:mutbuf,select_existing_op:u64,select_existing_left:usize,select_existing_right:usize,select_existing_right_at:usize)
+  v77:u64 = const() {"value":8}
+  v78:bool = compare.eq(select_existing_op,v77)
+  branch v78 equal(select_existing_input,select_existing_output,select_existing_op,select_existing_left,select_existing_right,select_existing_right_at) not_equal(select_existing_input,select_existing_output,select_existing_op,select_existing_left,select_existing_right,select_existing_right_at)
+block equal(equal_input:readbuf,equal_output:mutbuf,equal_op:u64,equal_left:usize,equal_right:usize,equal_right_at:usize)
+  v79:u32 = call(equal_input,equal_right_at,equal_right) {"function":"ae_record"}
+  v80:u32 = const() {"value":0}
+  v81:bool = compare.eq(v79,v80)
+  branch v81 equal_capacity(equal_input,equal_output,equal_op,equal_left,equal_right,equal_right_at) record_error(v79)
+block equal_capacity(equal_capacity_input:readbuf,equal_capacity_output:mutbuf,equal_capacity_op:u64,equal_capacity_left:usize,equal_capacity_right:usize,equal_capacity_right_at:usize)
+  v82:usize = buffer.len(equal_capacity_output)
+  v83:usize = const() {"value":1}
+  v84:bool = compare.ge(v82,v83)
+  branch v84 admit_85(equal_capacity_input,equal_capacity_output,equal_capacity_op,equal_capacity_left,equal_capacity_right,equal_capacity_right_at) error_4()
+block admit_85(admit_85_input:readbuf,admit_85_output:mutbuf,admit_85_op:u64,admit_85_left:usize,admit_85_right:usize,admit_85_right_at:usize)
+  v85:bool = compare.eq(admit_85_left,admit_85_right)
+  branch v85 equal_bytes(admit_85_input,admit_85_output,admit_85_op,admit_85_left,admit_85_right,admit_85_right_at) unequal_size(admit_85_output)
+block equal_bytes(equal_bytes_input:readbuf,equal_bytes_output:mutbuf,equal_bytes_op:u64,equal_bytes_left:usize,equal_bytes_right:usize,equal_bytes_right_at:usize)
+  v86:usize = const() {"value":32}
+  v87:u32 = call(equal_bytes_input,v86,equal_bytes_right_at,equal_bytes_left) {"function":"ae_equal"}
+  v88:usize = const() {"value":0}
+  v89:u8 = int.cast(v87) {"mode":"wrap"}
+  _ = buffer.store(equal_bytes_output,v88,v89)
+  v90:u32 = const() {"value":0}
+  ret(v90)
+block unequal_size(unequal_size_output:mutbuf)
+  v91:usize = const() {"value":0}
+  v92:u8 = const() {"value":0}
+  _ = buffer.store(unequal_size_output,v91,v92)
+  v93:u32 = const() {"value":0}
+  ret(v93)
+block not_equal(not_equal_input:readbuf,not_equal_output:mutbuf,not_equal_op:u64,not_equal_left:usize,not_equal_right:usize,not_equal_right_at:usize)
+  v94:u64 = const() {"value":7}
+  v95:bool = compare.eq(not_equal_op,v94)
+  branch v95 clone(not_equal_input,not_equal_output,not_equal_op,not_equal_left,not_equal_right,not_equal_right_at) builder(not_equal_input,not_equal_output,not_equal_op,not_equal_left,not_equal_right,not_equal_right_at)
+block clone(clone_input:readbuf,clone_output:mutbuf,clone_op:u64,clone_left:usize,clone_right:usize,clone_right_at:usize)
+  v96:usize = const() {"value":0}
+  v97:bool = compare.eq(clone_right,v96)
+  branch v97 admit_98(clone_input,clone_output,clone_op,clone_left,clone_right,clone_right_at) error_1()
+block admit_98(admit_98_input:readbuf,admit_98_output:mutbuf,admit_98_op:u64,admit_98_left:usize,admit_98_right:usize,admit_98_right_at:usize)
+  v98:usize = buffer.len(admit_98_output)
+  v99:bool = compare.ge(v98,admit_98_left)
+  branch v99 admit_100(admit_98_input,admit_98_output,admit_98_op,admit_98_left,admit_98_right,admit_98_right_at) error_4()
+block admit_100(admit_100_input:readbuf,admit_100_output:mutbuf,admit_100_op:u64,admit_100_left:usize,admit_100_right:usize,admit_100_right_at:usize)
+  v100:usize = const() {"value":32}
+  v101:usize = const() {"value":0}
+  v102:u32 = call(admit_100_input,admit_100_output,v100,v101,admit_100_left) {"function":"ae_copy"}
+  v103:u32 = const() {"value":0}
+  ret(v103)
+block builder(builder_input:readbuf,builder_output:mutbuf,builder_op:u64,builder_left:usize,builder_right:usize,builder_right_at:usize)
+  v104:u64 = const() {"value":4}
+  v105:bool = compare.eq(builder_op,v104)
+  branch v105 amount(builder_input,builder_output,builder_op,builder_left,builder_right,builder_right_at) string_1(builder_input,builder_output,builder_op,builder_left,builder_right,builder_right_at)
+block amount(amount_input:readbuf,amount_output:mutbuf,amount_op:u64,amount_left:usize,amount_right:usize,amount_right_at:usize)
+  v106:usize = const() {"value":16}
+  v107:bool = compare.eq(amount_right,v106)
+  branch v107 admit_108(amount_input,amount_output,amount_op,amount_left,amount_right,amount_right_at) error_1()
+block admit_108(admit_108_input:readbuf,admit_108_output:mutbuf,admit_108_op:u64,admit_108_left:usize,admit_108_right:usize,admit_108_right_at:usize)
+  v108:usize = buffer.len(admit_108_output)
+  v109:bool = compare.ge(v108,admit_108_left)
+  branch v109 admit_110(admit_108_input,admit_108_output,admit_108_op,admit_108_left,admit_108_right,admit_108_right_at) error_4()
+block admit_110(admit_110_input:readbuf,admit_110_output:mutbuf,admit_110_op:u64,admit_110_left:usize,admit_110_right:usize,admit_110_right_at:usize)
+  v110:usize = const() {"value":32}
+  v111:usize = const() {"value":0}
+  v112:u32 = call(admit_110_input,admit_110_output,v110,v111,admit_110_left) {"function":"ae_copy"}
+  v113:usize = const() {"value":24}
+  v114:usize = const() {"value":16}
+  v115:u32 = call(admit_110_input,admit_110_output,admit_110_right_at,v113,v114) {"function":"ae_copy"}
+  v116:usize = const() {"value":48}
+  v117:u64 = call(admit_110_input,v116) {"function":"ae_load64"}
+  v118:u64 = const() {"value":8}
+  v119:u64 = bit.or(v117,v118)
+  v120:usize = const() {"value":16}
+  v121:u32 = call(admit_110_output,v120,v119) {"function":"ae_store64"}
+  v122:u32 = const() {"value":0}
+  ret(v122)
+block string_1(string_1_input:readbuf,string_1_output:mutbuf,string_1_op:u64,string_1_left:usize,string_1_right:usize,string_1_right_at:usize)
+  v123:u64 = const() {"value":1}
+  v124:bool = compare.eq(string_1_op,v123)
+  v125:usize = const() {"value":2}
+  v126:u64 = const() {"value":1}
+  branch v124 string_value(string_1_input,string_1_output,string_1_op,string_1_left,string_1_right,string_1_right_at,v125,v126) string_2(string_1_input,string_1_output,string_1_op,string_1_left,string_1_right,string_1_right_at)
+block string_2(string_2_input:readbuf,string_2_output:mutbuf,string_2_op:u64,string_2_left:usize,string_2_right:usize,string_2_right_at:usize)
+  v127:u64 = const() {"value":2}
+  v128:bool = compare.eq(string_2_op,v127)
+  v129:usize = const() {"value":3}
+  v130:u64 = const() {"value":2}
+  branch v128 string_value(string_2_input,string_2_output,string_2_op,string_2_left,string_2_right,string_2_right_at,v129,v130) string_3(string_2_input,string_2_output,string_2_op,string_2_left,string_2_right,string_2_right_at)
+block string_3(string_3_input:readbuf,string_3_output:mutbuf,string_3_op:u64,string_3_left:usize,string_3_right:usize,string_3_right_at:usize)
+  v131:u64 = const() {"value":3}
+  v132:bool = compare.eq(string_3_op,v131)
+  v133:usize = const() {"value":4}
+  v134:u64 = const() {"value":4}
+  branch v132 string_value(string_3_input,string_3_output,string_3_op,string_3_left,string_3_right,string_3_right_at,v133,v134) string_5(string_3_input,string_3_output,string_3_op,string_3_left,string_3_right,string_3_right_at)
+block string_5(string_5_input:readbuf,string_5_output:mutbuf,string_5_op:u64,string_5_left:usize,string_5_right:usize,string_5_right_at:usize)
+  v135:u64 = const() {"value":5}
+  v136:bool = compare.eq(string_5_op,v135)
+  v137:usize = const() {"value":5}
+  v138:u64 = const() {"value":16}
+  branch v136 string_value(string_5_input,string_5_output,string_5_op,string_5_left,string_5_right,string_5_right_at,v137,v138) string_6(string_5_input,string_5_output,string_5_op,string_5_left,string_5_right,string_5_right_at)
+block string_6(string_6_input:readbuf,string_6_output:mutbuf,string_6_op:u64,string_6_left:usize,string_6_right:usize,string_6_right_at:usize)
+  v139:usize = const() {"value":6}
+  v140:u64 = const() {"value":32}
+  jump string_value(string_6_input,string_6_output,string_6_op,string_6_left,string_6_right,string_6_right_at,v139,v140)
+block string_value(string_value_input:readbuf,string_value_output:mutbuf,string_value_op:u64,string_value_left:usize,string_value_right:usize,string_value_right_at:usize,string_value_field:usize,string_value_presence:u64)
+  v141:u64 = int.cast(string_value_right_at) {"mode":"wrap"}
+  v142:u64 = int.cast(string_value_right) {"mode":"wrap"}
+  v143:u64 = call(string_value_input,v141,v142) {"function":"value_utf8"}
+  v144:u64 = const() {"value":1}
+  v145:bool = compare.eq(v143,v144)
+  branch v145 admit_146(string_value_input,string_value_output,string_value_op,string_value_left,string_value_right,string_value_right_at,string_value_field,string_value_presence) error_3()
+block admit_146(admit_146_input:readbuf,admit_146_output:mutbuf,admit_146_op:u64,admit_146_left:usize,admit_146_right:usize,admit_146_right_at:usize,admit_146_field:usize,admit_146_presence:u64)
+  v146:usize = const() {"value":72}
+  v147:usize = const() {"value":8}
+  v148:usize = int.mul.checked(admit_146_field,v147)
+  v149:usize = int.add.checked(v146,v148)
+  v150:u64 = call(admit_146_input,v149) {"function":"ae_load64"}
+  v151:usize = int.cast(v150) {"mode":"wrap"}
+  v152:usize = int.sub.checked(admit_146_left,v151)
+  v153:usize = buffer.len(admit_146_output)
+  v154:bool = compare.le(v152,v153)
+  branch v154 admit_155(admit_146_input,admit_146_output,admit_146_op,admit_146_left,admit_146_right,admit_146_right_at,admit_146_field,admit_146_presence,v151,v152,v153) error_4()
+block admit_155(admit_155_input:readbuf,admit_155_output:mutbuf,admit_155_op:u64,admit_155_left:usize,admit_155_right:usize,admit_155_right_at:usize,admit_155_field:usize,admit_155_presence:u64,admit_155_old:usize,admit_155_base:usize,admit_155_capacity:usize)
+  v155:usize = int.sub.checked(admit_155_capacity,admit_155_base)
+  v156:bool = compare.le(admit_155_right,v155)
+  branch v156 admit_157(admit_155_input,admit_155_output,admit_155_op,admit_155_left,admit_155_right,admit_155_right_at,admit_155_field,admit_155_presence,admit_155_old,admit_155_base,admit_155_capacity) error_4()
+block admit_157(admit_157_input:readbuf,admit_157_output:mutbuf,admit_157_op:u64,admit_157_left:usize,admit_157_right:usize,admit_157_right_at:usize,admit_157_field:usize,admit_157_presence:u64,admit_157_old:usize,admit_157_base:usize,admit_157_capacity:usize)
+  v157:usize = const() {"value":0}
+  v158:usize = const() {"value":96}
+  jump prefix(admit_157_input,admit_157_output,admit_157_op,admit_157_left,admit_157_right,admit_157_right_at,admit_157_field,admit_157_presence,admit_157_old,admit_157_base,v157,v158)
+block prefix(prefix_input:readbuf,prefix_output:mutbuf,prefix_op:u64,prefix_left:usize,prefix_right:usize,prefix_right_at:usize,prefix_field:usize,prefix_presence:u64,prefix_old:usize,prefix_base:usize,prefix_index:usize,prefix_prefix:usize)
+  v159:bool = compare.lt(prefix_index,prefix_field)
+  branch v159 prefix_field(prefix_input,prefix_output,prefix_op,prefix_left,prefix_right,prefix_right_at,prefix_field,prefix_presence,prefix_old,prefix_base,prefix_index,prefix_prefix) publish_string(prefix_input,prefix_output,prefix_op,prefix_left,prefix_right,prefix_right_at,prefix_field,prefix_presence,prefix_old,prefix_base,prefix_index,prefix_prefix)
+block prefix_field(prefix_field_input:readbuf,prefix_field_output:mutbuf,prefix_field_op:u64,prefix_field_left:usize,prefix_field_right:usize,prefix_field_right_at:usize,prefix_field_field:usize,prefix_field_presence:u64,prefix_field_old:usize,prefix_field_base:usize,prefix_field_index:usize,prefix_field_prefix:usize)
+  v160:usize = const() {"value":72}
+  v161:usize = const() {"value":8}
+  v162:usize = int.mul.checked(prefix_field_index,v161)
+  v163:usize = int.add.checked(v160,v162)
+  v164:u64 = call(prefix_field_input,v163) {"function":"ae_load64"}
+  v165:usize = int.cast(v164) {"mode":"wrap"}
+  v166:usize = int.add.checked(prefix_field_prefix,v165)
+  v167:usize = const() {"value":1}
+  v168:usize = int.add.checked(prefix_field_index,v167)
+  jump prefix(prefix_field_input,prefix_field_output,prefix_field_op,prefix_field_left,prefix_field_right,prefix_field_right_at,prefix_field_field,prefix_field_presence,prefix_field_old,prefix_field_base,v168,v166)
+block publish_string(publish_string_input:readbuf,publish_string_output:mutbuf,publish_string_op:u64,publish_string_left:usize,publish_string_right:usize,publish_string_right_at:usize,publish_string_field:usize,publish_string_presence:u64,publish_string_old:usize,publish_string_base:usize,publish_string_index:usize,publish_string_prefix:usize)
+  v169:usize = const() {"value":32}
+  v170:usize = const() {"value":0}
+  v171:u32 = call(publish_string_input,publish_string_output,v169,v170,publish_string_prefix) {"function":"ae_copy"}
+  v172:u32 = call(publish_string_input,publish_string_output,publish_string_right_at,publish_string_prefix,publish_string_right) {"function":"ae_copy"}
+  v173:usize = int.add.checked(publish_string_prefix,publish_string_old)
+  v174:usize = const() {"value":32}
+  v175:usize = int.add.checked(v174,v173)
+  v176:usize = int.add.checked(publish_string_prefix,publish_string_right)
+  v177:usize = int.sub.checked(publish_string_left,v173)
+  v178:u32 = call(publish_string_input,publish_string_output,v175,v176,v177) {"function":"ae_copy"}
+  v179:usize = const() {"value":8}
+  v180:usize = int.add.checked(publish_string_base,publish_string_right)
+  v181:u64 = int.cast(v180) {"mode":"wrap"}
+  v182:u32 = call(publish_string_output,v179,v181) {"function":"ae_store64"}
+  v183:usize = const() {"value":16}
+  v184:usize = const() {"value":48}
+  v185:u64 = call(publish_string_input,v184) {"function":"ae_load64"}
+  v186:u64 = bit.or(v185,publish_string_presence)
+  v187:u32 = call(publish_string_output,v183,v186) {"function":"ae_store64"}
+  v188:usize = const() {"value":40}
+  v189:usize = const() {"value":8}
+  v190:usize = int.mul.checked(publish_string_field,v189)
+  v191:usize = int.add.checked(v188,v190)
+  v192:u64 = int.cast(publish_string_right) {"mode":"wrap"}
+  v193:u32 = call(publish_string_output,v191,v192) {"function":"ae_store64"}
+  v194:u32 = const() {"value":0}
+  ret(v194)
+block record_error(record_error_code:u32)
+  ret(record_error_code)
+block error_1()
+  v195:u32 = const() {"value":1}
+  ret(v195)
+block error_3()
+  v196:u32 = const() {"value":3}
+  ret(v196)
+block error_4()
+  v197:u32 = const() {"value":4}
+  ret(v197)
+end
+fn ae_load64(a:readbuf,offset:usize) -> (u64) effects(read,write,trap) entry(entry)
+block entry(a:readbuf,offset:usize)
+  v0:u64 = const() {"value":0}
+  v1:usize = const() {"value":0}
+  v2:usize = int.add.checked(offset,v1)
+  v3:u8 = buffer.load(a,v2)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":0}
+  v6:u64 = int.shl.checked(v4,v5)
+  v7:u64 = bit.or(v0,v6)
+  v8:usize = const() {"value":1}
+  v9:usize = int.add.checked(offset,v8)
+  v10:u8 = buffer.load(a,v9)
+  v11:u64 = int.cast(v10) {"mode":"wrap"}
+  v12:u64 = const() {"value":8}
+  v13:u64 = int.shl.checked(v11,v12)
+  v14:u64 = bit.or(v7,v13)
+  v15:usize = const() {"value":2}
+  v16:usize = int.add.checked(offset,v15)
+  v17:u8 = buffer.load(a,v16)
+  v18:u64 = int.cast(v17) {"mode":"wrap"}
+  v19:u64 = const() {"value":16}
+  v20:u64 = int.shl.checked(v18,v19)
+  v21:u64 = bit.or(v14,v20)
+  v22:usize = const() {"value":3}
+  v23:usize = int.add.checked(offset,v22)
+  v24:u8 = buffer.load(a,v23)
+  v25:u64 = int.cast(v24) {"mode":"wrap"}
+  v26:u64 = const() {"value":24}
+  v27:u64 = int.shl.checked(v25,v26)
+  v28:u64 = bit.or(v21,v27)
+  v29:usize = const() {"value":4}
+  v30:usize = int.add.checked(offset,v29)
+  v31:u8 = buffer.load(a,v30)
+  v32:u64 = int.cast(v31) {"mode":"wrap"}
+  v33:u64 = const() {"value":32}
+  v34:u64 = int.shl.checked(v32,v33)
+  v35:u64 = bit.or(v28,v34)
+  v36:usize = const() {"value":5}
+  v37:usize = int.add.checked(offset,v36)
+  v38:u8 = buffer.load(a,v37)
+  v39:u64 = int.cast(v38) {"mode":"wrap"}
+  v40:u64 = const() {"value":40}
+  v41:u64 = int.shl.checked(v39,v40)
+  v42:u64 = bit.or(v35,v41)
+  v43:usize = const() {"value":6}
+  v44:usize = int.add.checked(offset,v43)
+  v45:u8 = buffer.load(a,v44)
+  v46:u64 = int.cast(v45) {"mode":"wrap"}
+  v47:u64 = const() {"value":48}
+  v48:u64 = int.shl.checked(v46,v47)
+  v49:u64 = bit.or(v42,v48)
+  v50:usize = const() {"value":7}
+  v51:usize = int.add.checked(offset,v50)
+  v52:u8 = buffer.load(a,v51)
+  v53:u64 = int.cast(v52) {"mode":"wrap"}
+  v54:u64 = const() {"value":56}
+  v55:u64 = int.shl.checked(v53,v54)
+  v56:u64 = bit.or(v49,v55)
+  ret(v56)
+end
+fn ae_store64(a:mutbuf,offset:usize,value:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a:mutbuf,offset:usize,value:u64)
+  v0:usize = const() {"value":0}
+  v1:usize = int.add.checked(offset,v0)
+  v2:u64 = const() {"value":0}
+  v3:u64 = int.shr.checked(value,v2)
+  v4:u8 = int.cast(v3) {"mode":"wrap"}
+  _ = buffer.store(a,v1,v4)
+  v5:usize = const() {"value":1}
+  v6:usize = int.add.checked(offset,v5)
+  v7:u64 = const() {"value":8}
+  v8:u64 = int.shr.checked(value,v7)
+  v9:u8 = int.cast(v8) {"mode":"wrap"}
+  _ = buffer.store(a,v6,v9)
+  v10:usize = const() {"value":2}
+  v11:usize = int.add.checked(offset,v10)
+  v12:u64 = const() {"value":16}
+  v13:u64 = int.shr.checked(value,v12)
+  v14:u8 = int.cast(v13) {"mode":"wrap"}
+  _ = buffer.store(a,v11,v14)
+  v15:usize = const() {"value":3}
+  v16:usize = int.add.checked(offset,v15)
+  v17:u64 = const() {"value":24}
+  v18:u64 = int.shr.checked(value,v17)
+  v19:u8 = int.cast(v18) {"mode":"wrap"}
+  _ = buffer.store(a,v16,v19)
+  v20:usize = const() {"value":4}
+  v21:usize = int.add.checked(offset,v20)
+  v22:u64 = const() {"value":32}
+  v23:u64 = int.shr.checked(value,v22)
+  v24:u8 = int.cast(v23) {"mode":"wrap"}
+  _ = buffer.store(a,v21,v24)
+  v25:usize = const() {"value":5}
+  v26:usize = int.add.checked(offset,v25)
+  v27:u64 = const() {"value":40}
+  v28:u64 = int.shr.checked(value,v27)
+  v29:u8 = int.cast(v28) {"mode":"wrap"}
+  _ = buffer.store(a,v26,v29)
+  v30:usize = const() {"value":6}
+  v31:usize = int.add.checked(offset,v30)
+  v32:u64 = const() {"value":48}
+  v33:u64 = int.shr.checked(value,v32)
+  v34:u8 = int.cast(v33) {"mode":"wrap"}
+  _ = buffer.store(a,v31,v34)
+  v35:usize = const() {"value":7}
+  v36:usize = int.add.checked(offset,v35)
+  v37:u64 = const() {"value":56}
+  v38:u64 = int.shr.checked(value,v37)
+  v39:u8 = int.cast(v38) {"mode":"wrap"}
+  _ = buffer.store(a,v36,v39)
+  v40:u32 = const() {"value":0}
+  ret(v40)
+end
+fn ae_copy(a:readbuf,out:mutbuf,source:usize,destination:usize,length:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a:readbuf,out:mutbuf,source:usize,destination:usize,length:usize)
+  v0:usize = const() {"value":0}
+  jump loop(a,out,source,destination,length,v0)
+block loop(loop_a:readbuf,loop_out:mutbuf,loop_source:usize,loop_destination:usize,loop_length:usize,loop_index:usize)
+  v1:bool = compare.lt(loop_index,loop_length)
+  branch v1 byte(loop_a,loop_out,loop_source,loop_destination,loop_length,loop_index) done()
+block byte(byte_a:readbuf,byte_out:mutbuf,byte_source:usize,byte_destination:usize,byte_length:usize,byte_index:usize)
+  v2:usize = int.add.checked(byte_destination,byte_index)
+  v3:usize = int.add.checked(byte_source,byte_index)
+  v4:u8 = buffer.load(byte_a,v3)
+  _ = buffer.store(byte_out,v2,v4)
+  v5:usize = const() {"value":1}
+  v6:usize = int.add.checked(byte_index,v5)
+  jump loop(byte_a,byte_out,byte_source,byte_destination,byte_length,v6)
+block done()
+  v7:u32 = const() {"value":0}
+  ret(v7)
+end
+fn ae_zero(out:mutbuf,length:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf,length:usize)
+  v0:usize = const() {"value":0}
+  jump loop(out,length,v0)
+block loop(loop_out:mutbuf,loop_length:usize,loop_index:usize)
+  v1:bool = compare.lt(loop_index,loop_length)
+  branch v1 byte(loop_out,loop_length,loop_index) done()
+block byte(byte_out:mutbuf,byte_length:usize,byte_index:usize)
+  v2:u8 = const() {"value":0}
+  _ = buffer.store(byte_out,byte_index,v2)
+  v3:usize = const() {"value":1}
+  v4:usize = int.add.checked(byte_index,v3)
+  jump loop(byte_out,byte_length,v4)
+block done()
+  v5:u32 = const() {"value":0}
+  ret(v5)
+end
+fn ae_equal(a:readbuf,left:usize,right:usize,length:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a:readbuf,left:usize,right:usize,length:usize)
+  v0:usize = const() {"value":0}
+  jump loop(a,left,right,length,v0)
+block loop(loop_a:readbuf,loop_left:usize,loop_right:usize,loop_length:usize,loop_index:usize)
+  v1:bool = compare.lt(loop_index,loop_length)
+  branch v1 byte(loop_a,loop_left,loop_right,loop_length,loop_index) same()
+block byte(byte_a:readbuf,byte_left:usize,byte_right:usize,byte_length:usize,byte_index:usize)
+  v2:usize = int.add.checked(byte_left,byte_index)
+  v3:u8 = buffer.load(byte_a,v2)
+  v4:usize = int.add.checked(byte_right,byte_index)
+  v5:u8 = buffer.load(byte_a,v4)
+  v6:bool = compare.eq(v3,v5)
+  branch v6 next(byte_a,byte_left,byte_right,byte_length,byte_index) different()
+block next(next_a:readbuf,next_left:usize,next_right:usize,next_length:usize,next_index:usize)
+  v7:usize = const() {"value":1}
+  v8:usize = int.add.checked(next_index,v7)
+  jump loop(next_a,next_left,next_right,next_length,v8)
+block same()
+  v9:u32 = const() {"value":1}
+  ret(v9)
+block different()
+  v10:u32 = const() {"value":0}
+  ret(v10)
+end
+fn ae_record(a:readbuf,offset:usize,length:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a:readbuf,offset:usize,length:usize)
+  v0:usize = const() {"value":96}
+  v1:bool = compare.ge(length,v0)
+  branch v1 admit_2(a,offset,length) error_2()
+block admit_2(admit_2_a:readbuf,admit_2_offset:usize,admit_2_length:usize)
+  v2:u64 = call(admit_2_a,admit_2_offset) {"function":"ae_load64"}
+  v3:u64 = const() {"value":3544385890837414222}
+  v4:bool = compare.eq(v2,v3)
+  branch v4 admit_5(admit_2_a,admit_2_offset,admit_2_length) error_2()
+block admit_5(admit_5_a:readbuf,admit_5_offset:usize,admit_5_length:usize)
+  v5:usize = const() {"value":8}
+  v6:usize = int.add.checked(admit_5_offset,v5)
+  v7:u64 = call(admit_5_a,v6) {"function":"ae_load64"}
+  v8:u64 = int.cast(admit_5_length) {"mode":"wrap"}
+  v9:bool = compare.eq(v7,v8)
+  branch v9 admit_10(admit_5_a,admit_5_offset,admit_5_length) error_2()
+block admit_10(admit_10_a:readbuf,admit_10_offset:usize,admit_10_length:usize)
+  v10:usize = const() {"value":16}
+  v11:usize = int.add.checked(admit_10_offset,v10)
+  v12:u64 = call(admit_10_a,v11) {"function":"ae_load64"}
+  v13:u64 = const() {"value":63}
+  v14:bool = compare.le(v12,v13)
+  branch v14 admit_15(admit_10_a,admit_10_offset,admit_10_length,v12) error_2()
+block admit_15(admit_15_a:readbuf,admit_15_offset:usize,admit_15_length:usize,admit_15_mask:u64)
+  v15:usize = const() {"value":24}
+  v16:usize = int.add.checked(admit_15_offset,v15)
+  v17:u64 = call(admit_15_a,v16) {"function":"ae_load64"}
+  v18:usize = const() {"value":32}
+  v19:usize = int.add.checked(admit_15_offset,v18)
+  v20:u64 = call(admit_15_a,v19) {"function":"ae_load64"}
+  v21:u64 = bit.or(v17,v20)
+  v22:u64 = const() {"value":8}
+  v23:u64 = bit.and(admit_15_mask,v22)
+  v24:u64 = const() {"value":0}
+  v25:bool = compare.ne(v23,v24)
+  v26:u64 = const() {"value":0}
+  v27:bool = compare.eq(v21,v26)
+  v28:bool = bool.or(v25,v27)
+  branch v28 admit_29(admit_15_a,admit_15_offset,admit_15_length,admit_15_mask) error_2()
+block admit_29(admit_29_a:readbuf,admit_29_offset:usize,admit_29_length:usize,admit_29_mask:u64)
+  v29:usize = const() {"value":96}
+  v30:usize = const() {"value":40}
+  v31:usize = int.add.checked(admit_29_offset,v30)
+  v32:u64 = call(admit_29_a,v31) {"function":"ae_load64"}
+  v33:usize = int.sub.checked(admit_29_length,v29)
+  v34:u64 = int.cast(v33) {"mode":"wrap"}
+  v35:bool = compare.le(v32,v34)
+  branch v35 admit_36(admit_29_a,admit_29_offset,admit_29_length,admit_29_mask,v29,v32) error_2()
+block admit_36(admit_36_a:readbuf,admit_36_offset:usize,admit_36_length:usize,admit_36_mask:u64,admit_36_cursor:usize,admit_36_field_length:u64)
+  v36:usize = int.add.checked(admit_36_offset,admit_36_cursor)
+  v37:u64 = int.cast(v36) {"mode":"wrap"}
+  v38:u64 = call(admit_36_a,v37,admit_36_field_length) {"function":"value_utf8"}
+  v39:u64 = const() {"value":1}
+  v40:bool = compare.eq(v38,v39)
+  branch v40 admit_41(admit_36_a,admit_36_offset,admit_36_length,admit_36_mask,admit_36_cursor,admit_36_field_length) error_3()
+block admit_41(admit_41_a:readbuf,admit_41_offset:usize,admit_41_length:usize,admit_41_mask:u64,admit_41_cursor:usize,admit_41_field_length:u64)
+  v41:usize = int.cast(admit_41_field_length) {"mode":"wrap"}
+  v42:usize = int.add.checked(admit_41_cursor,v41)
+  v43:usize = const() {"value":48}
+  v44:usize = int.add.checked(admit_41_offset,v43)
+  v45:u64 = call(admit_41_a,v44) {"function":"ae_load64"}
+  v46:usize = int.sub.checked(admit_41_length,v42)
+  v47:u64 = int.cast(v46) {"mode":"wrap"}
+  v48:bool = compare.le(v45,v47)
+  branch v48 admit_49(admit_41_a,admit_41_offset,admit_41_length,admit_41_mask,v42,v45) error_2()
+block admit_49(admit_49_a:readbuf,admit_49_offset:usize,admit_49_length:usize,admit_49_mask:u64,admit_49_cursor:usize,admit_49_field_length:u64)
+  v49:usize = int.add.checked(admit_49_offset,admit_49_cursor)
+  v50:u64 = int.cast(v49) {"mode":"wrap"}
+  v51:u64 = call(admit_49_a,v50,admit_49_field_length) {"function":"value_utf8"}
+  v52:u64 = const() {"value":1}
+  v53:bool = compare.eq(v51,v52)
+  branch v53 admit_54(admit_49_a,admit_49_offset,admit_49_length,admit_49_mask,admit_49_cursor,admit_49_field_length) error_3()
+block admit_54(admit_54_a:readbuf,admit_54_offset:usize,admit_54_length:usize,admit_54_mask:u64,admit_54_cursor:usize,admit_54_field_length:u64)
+  v54:usize = int.cast(admit_54_field_length) {"mode":"wrap"}
+  v55:usize = int.add.checked(admit_54_cursor,v54)
+  v56:usize = const() {"value":56}
+  v57:usize = int.add.checked(admit_54_offset,v56)
+  v58:u64 = call(admit_54_a,v57) {"function":"ae_load64"}
+  v59:usize = int.sub.checked(admit_54_length,v55)
+  v60:u64 = int.cast(v59) {"mode":"wrap"}
+  v61:bool = compare.le(v58,v60)
+  branch v61 admit_62(admit_54_a,admit_54_offset,admit_54_length,admit_54_mask,v55,v58) error_2()
+block admit_62(admit_62_a:readbuf,admit_62_offset:usize,admit_62_length:usize,admit_62_mask:u64,admit_62_cursor:usize,admit_62_field_length:u64)
+  v62:u64 = const() {"value":1}
+  v63:u64 = bit.and(admit_62_mask,v62)
+  v64:u64 = const() {"value":0}
+  v65:bool = compare.ne(v63,v64)
+  v66:u64 = const() {"value":0}
+  v67:bool = compare.eq(admit_62_field_length,v66)
+  v68:bool = bool.or(v65,v67)
+  branch v68 admit_69(admit_62_a,admit_62_offset,admit_62_length,admit_62_mask,admit_62_cursor,admit_62_field_length) error_2()
+block admit_69(admit_69_a:readbuf,admit_69_offset:usize,admit_69_length:usize,admit_69_mask:u64,admit_69_cursor:usize,admit_69_field_length:u64)
+  v69:usize = int.add.checked(admit_69_offset,admit_69_cursor)
+  v70:u64 = int.cast(v69) {"mode":"wrap"}
+  v71:u64 = call(admit_69_a,v70,admit_69_field_length) {"function":"value_utf8"}
+  v72:u64 = const() {"value":1}
+  v73:bool = compare.eq(v71,v72)
+  branch v73 admit_74(admit_69_a,admit_69_offset,admit_69_length,admit_69_mask,admit_69_cursor,admit_69_field_length) error_3()
+block admit_74(admit_74_a:readbuf,admit_74_offset:usize,admit_74_length:usize,admit_74_mask:u64,admit_74_cursor:usize,admit_74_field_length:u64)
+  v74:usize = int.cast(admit_74_field_length) {"mode":"wrap"}
+  v75:usize = int.add.checked(admit_74_cursor,v74)
+  v76:usize = const() {"value":64}
+  v77:usize = int.add.checked(admit_74_offset,v76)
+  v78:u64 = call(admit_74_a,v77) {"function":"ae_load64"}
+  v79:usize = int.sub.checked(admit_74_length,v75)
+  v80:u64 = int.cast(v79) {"mode":"wrap"}
+  v81:bool = compare.le(v78,v80)
+  branch v81 admit_82(admit_74_a,admit_74_offset,admit_74_length,admit_74_mask,v75,v78) error_2()
+block admit_82(admit_82_a:readbuf,admit_82_offset:usize,admit_82_length:usize,admit_82_mask:u64,admit_82_cursor:usize,admit_82_field_length:u64)
+  v82:u64 = const() {"value":2}
+  v83:u64 = bit.and(admit_82_mask,v82)
+  v84:u64 = const() {"value":0}
+  v85:bool = compare.ne(v83,v84)
+  v86:u64 = const() {"value":0}
+  v87:bool = compare.eq(admit_82_field_length,v86)
+  v88:bool = bool.or(v85,v87)
+  branch v88 admit_89(admit_82_a,admit_82_offset,admit_82_length,admit_82_mask,admit_82_cursor,admit_82_field_length) error_2()
+block admit_89(admit_89_a:readbuf,admit_89_offset:usize,admit_89_length:usize,admit_89_mask:u64,admit_89_cursor:usize,admit_89_field_length:u64)
+  v89:usize = int.add.checked(admit_89_offset,admit_89_cursor)
+  v90:u64 = int.cast(v89) {"mode":"wrap"}
+  v91:u64 = call(admit_89_a,v90,admit_89_field_length) {"function":"value_utf8"}
+  v92:u64 = const() {"value":1}
+  v93:bool = compare.eq(v91,v92)
+  branch v93 admit_94(admit_89_a,admit_89_offset,admit_89_length,admit_89_mask,admit_89_cursor,admit_89_field_length) error_3()
+block admit_94(admit_94_a:readbuf,admit_94_offset:usize,admit_94_length:usize,admit_94_mask:u64,admit_94_cursor:usize,admit_94_field_length:u64)
+  v94:usize = int.cast(admit_94_field_length) {"mode":"wrap"}
+  v95:usize = int.add.checked(admit_94_cursor,v94)
+  v96:usize = const() {"value":72}
+  v97:usize = int.add.checked(admit_94_offset,v96)
+  v98:u64 = call(admit_94_a,v97) {"function":"ae_load64"}
+  v99:usize = int.sub.checked(admit_94_length,v95)
+  v100:u64 = int.cast(v99) {"mode":"wrap"}
+  v101:bool = compare.le(v98,v100)
+  branch v101 admit_102(admit_94_a,admit_94_offset,admit_94_length,admit_94_mask,v95,v98) error_2()
+block admit_102(admit_102_a:readbuf,admit_102_offset:usize,admit_102_length:usize,admit_102_mask:u64,admit_102_cursor:usize,admit_102_field_length:u64)
+  v102:u64 = const() {"value":4}
+  v103:u64 = bit.and(admit_102_mask,v102)
+  v104:u64 = const() {"value":0}
+  v105:bool = compare.ne(v103,v104)
+  v106:u64 = const() {"value":0}
+  v107:bool = compare.eq(admit_102_field_length,v106)
+  v108:bool = bool.or(v105,v107)
+  branch v108 admit_109(admit_102_a,admit_102_offset,admit_102_length,admit_102_mask,admit_102_cursor,admit_102_field_length) error_2()
+block admit_109(admit_109_a:readbuf,admit_109_offset:usize,admit_109_length:usize,admit_109_mask:u64,admit_109_cursor:usize,admit_109_field_length:u64)
+  v109:usize = int.add.checked(admit_109_offset,admit_109_cursor)
+  v110:u64 = int.cast(v109) {"mode":"wrap"}
+  v111:u64 = call(admit_109_a,v110,admit_109_field_length) {"function":"value_utf8"}
+  v112:u64 = const() {"value":1}
+  v113:bool = compare.eq(v111,v112)
+  branch v113 admit_114(admit_109_a,admit_109_offset,admit_109_length,admit_109_mask,admit_109_cursor,admit_109_field_length) error_3()
+block admit_114(admit_114_a:readbuf,admit_114_offset:usize,admit_114_length:usize,admit_114_mask:u64,admit_114_cursor:usize,admit_114_field_length:u64)
+  v114:usize = int.cast(admit_114_field_length) {"mode":"wrap"}
+  v115:usize = int.add.checked(admit_114_cursor,v114)
+  v116:usize = const() {"value":80}
+  v117:usize = int.add.checked(admit_114_offset,v116)
+  v118:u64 = call(admit_114_a,v117) {"function":"ae_load64"}
+  v119:usize = int.sub.checked(admit_114_length,v115)
+  v120:u64 = int.cast(v119) {"mode":"wrap"}
+  v121:bool = compare.le(v118,v120)
+  branch v121 admit_122(admit_114_a,admit_114_offset,admit_114_length,admit_114_mask,v115,v118) error_2()
+block admit_122(admit_122_a:readbuf,admit_122_offset:usize,admit_122_length:usize,admit_122_mask:u64,admit_122_cursor:usize,admit_122_field_length:u64)
+  v122:u64 = const() {"value":16}
+  v123:u64 = bit.and(admit_122_mask,v122)
+  v124:u64 = const() {"value":0}
+  v125:bool = compare.ne(v123,v124)
+  v126:u64 = const() {"value":0}
+  v127:bool = compare.eq(admit_122_field_length,v126)
+  v128:bool = bool.or(v125,v127)
+  branch v128 admit_129(admit_122_a,admit_122_offset,admit_122_length,admit_122_mask,admit_122_cursor,admit_122_field_length) error_2()
+block admit_129(admit_129_a:readbuf,admit_129_offset:usize,admit_129_length:usize,admit_129_mask:u64,admit_129_cursor:usize,admit_129_field_length:u64)
+  v129:usize = int.add.checked(admit_129_offset,admit_129_cursor)
+  v130:u64 = int.cast(v129) {"mode":"wrap"}
+  v131:u64 = call(admit_129_a,v130,admit_129_field_length) {"function":"value_utf8"}
+  v132:u64 = const() {"value":1}
+  v133:bool = compare.eq(v131,v132)
+  branch v133 admit_134(admit_129_a,admit_129_offset,admit_129_length,admit_129_mask,admit_129_cursor,admit_129_field_length) error_3()
+block admit_134(admit_134_a:readbuf,admit_134_offset:usize,admit_134_length:usize,admit_134_mask:u64,admit_134_cursor:usize,admit_134_field_length:u64)
+  v134:usize = int.cast(admit_134_field_length) {"mode":"wrap"}
+  v135:usize = int.add.checked(admit_134_cursor,v134)
+  v136:usize = const() {"value":88}
+  v137:usize = int.add.checked(admit_134_offset,v136)
+  v138:u64 = call(admit_134_a,v137) {"function":"ae_load64"}
+  v139:usize = int.sub.checked(admit_134_length,v135)
+  v140:u64 = int.cast(v139) {"mode":"wrap"}
+  v141:bool = compare.le(v138,v140)
+  branch v141 admit_142(admit_134_a,admit_134_offset,admit_134_length,admit_134_mask,v135,v138) error_2()
+block admit_142(admit_142_a:readbuf,admit_142_offset:usize,admit_142_length:usize,admit_142_mask:u64,admit_142_cursor:usize,admit_142_field_length:u64)
+  v142:u64 = const() {"value":32}
+  v143:u64 = bit.and(admit_142_mask,v142)
+  v144:u64 = const() {"value":0}
+  v145:bool = compare.ne(v143,v144)
+  v146:u64 = const() {"value":0}
+  v147:bool = compare.eq(admit_142_field_length,v146)
+  v148:bool = bool.or(v145,v147)
+  branch v148 admit_149(admit_142_a,admit_142_offset,admit_142_length,admit_142_mask,admit_142_cursor,admit_142_field_length) error_2()
+block admit_149(admit_149_a:readbuf,admit_149_offset:usize,admit_149_length:usize,admit_149_mask:u64,admit_149_cursor:usize,admit_149_field_length:u64)
+  v149:usize = int.add.checked(admit_149_offset,admit_149_cursor)
+  v150:u64 = int.cast(v149) {"mode":"wrap"}
+  v151:u64 = call(admit_149_a,v150,admit_149_field_length) {"function":"value_utf8"}
+  v152:u64 = const() {"value":1}
+  v153:bool = compare.eq(v151,v152)
+  branch v153 admit_154(admit_149_a,admit_149_offset,admit_149_length,admit_149_mask,admit_149_cursor,admit_149_field_length) error_3()
+block admit_154(admit_154_a:readbuf,admit_154_offset:usize,admit_154_length:usize,admit_154_mask:u64,admit_154_cursor:usize,admit_154_field_length:u64)
+  v154:usize = int.cast(admit_154_field_length) {"mode":"wrap"}
+  v155:usize = int.add.checked(admit_154_cursor,v154)
+  v156:bool = compare.eq(v155,admit_154_length)
+  branch v156 admit_157(admit_154_a,admit_154_offset,admit_154_length,admit_154_mask,v155) error_2()
+block admit_157(admit_157_a:readbuf,admit_157_offset:usize,admit_157_length:usize,admit_157_mask:u64,admit_157_cursor:usize)
+  v157:u32 = const() {"value":0}
+  ret(v157)
+block error_2()
+  v158:u32 = const() {"value":2}
+  ret(v158)
+block error_3()
+  v159:u32 = const() {"value":3}
+  ret(v159)
+end

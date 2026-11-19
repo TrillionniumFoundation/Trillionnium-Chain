@@ -1,0 +1,1410 @@
+{
+  "build": {
+    "compiler_qualification_binding": {
+      "cleanup_limit_seconds": 3,
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compressed_sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9",
+      "nested_report": "compiler-cold-full.json.xz",
+      "observed_seconds": 154.807339324,
+      "outer_report": "compiler-cold.json",
+      "outer_sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab",
+      "schema": "trnm.hia.compiler-qualification-binding.v1",
+      "scope": "Original pinned Linux x86-64 fixed-core compiler profile; does not qualify the complete Chain runtime",
+      "source_inputs": 916,
+      "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+      "uncompressed_bytes": 53163943,
+      "uncompressed_sha256": "7d01bc56b6dc8c211549e9c4ba16f7c580933812a6952654403f399c0cc3fa13",
+      "wall_limit_seconds": 180,
+      "whole_chain_native": false
+    },
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "composition": {
+      "composed_source_sha256": "9111f9351c9b4872e2ddf81fcc9f53de19f7f24d8f6f68a134bf348a3728b27b",
+      "declarations": {
+        "src/protocol/state_root.hepta": [
+          {
+            "functions": [
+              "sha256_arena",
+              "sha256_padding_byte",
+              "sha256_rotr32",
+              "sha256_work_load64",
+              "sha256_work_store64"
+            ],
+            "source": "src/crypto/sha256_arena.hepta"
+          }
+        ],
+        "storage/owner_policy.hepta": [
+          {
+            "functions": [
+              "storage_sha256",
+              "storage_word"
+            ],
+            "source": "storage/sha256_framing.hepta"
+          },
+          {
+            "functions": [
+              "state_copy",
+              "state_load32",
+              "state_store32",
+              "state_sha_expand",
+              "state_sha_round_0",
+              "state_sha_round_1",
+              "state_sha_round_2",
+              "state_sha_round_3",
+              "state_sha_round_4",
+              "state_sha_round_5",
+              "state_sha_round_6",
+              "state_sha_round_7",
+              "state_sha_compress"
+            ],
+            "source": "src/protocol/state_root.hepta"
+          }
+        ],
+        "storage/sha256_framing.hepta": [
+          {
+            "functions": [
+              "state_copy",
+              "state_load32",
+              "state_store32",
+              "state_sha_expand",
+              "state_sha_round_0",
+              "state_sha_round_1",
+              "state_sha_round_2",
+              "state_sha_round_3",
+              "state_sha_round_4",
+              "state_sha_round_5",
+              "state_sha_round_6",
+              "state_sha_round_7",
+              "state_sha_compress"
+            ],
+            "source": "src/protocol/state_root.hepta"
+          }
+        ]
+      },
+      "functions": 48,
+      "mode": "explicit independently Core-verified named HIA function includes"
+    },
+    "executable": {
+      "bytes": 367382,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "hosted_build_and_test_driver": true,
+    "literal_isa_adapter_is_a_separate_trusted_boundary": true,
+    "runtime_host_language_or_sqlite": false,
+    "schema": "trnm.hia.storage-build.v2",
+    "source_inputs": {
+      "components.json": {
+        "bytes": 1578,
+        "sha256": "0eb7c2cb821841854542d6eb92a2f55c109e8d1381c67f61a3e97b6a60b9c413"
+      },
+      "platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "qualification/compiler-cold-full.json.xz": {
+        "bytes": 838544,
+        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+      },
+      "qualification/compiler-cold.json": {
+        "bytes": 108675,
+        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+      },
+      "src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "src/protocol/state_root.hepta": {
+        "bytes": 221073,
+        "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+      },
+      "storage/README.md": {
+        "bytes": 10011,
+        "sha256": "2cf92d7466d4fe6efedce76c2e2ed1fdc4490a206f0a6d1c6d841c158ab6e62f"
+      },
+      "storage/abi.json": {
+        "bytes": 11100,
+        "sha256": "7ee5f9365afaaafbd8d2b46d2ad633f6aefc47765272a5c4f4f654b536443cf0"
+      },
+      "storage/build.py": {
+        "bytes": 6410,
+        "sha256": "bad8bc9ceccddf595b172908689a4fd8f1f61b7e76fefbba95cb2c4bd4534dcc"
+      },
+      "storage/linux_adapter_emitter.hepta": {
+        "bytes": 37259,
+        "sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c"
+      },
+      "storage/owner_policy.hepta": {
+        "bytes": 152829,
+        "sha256": "7e8ab0a4d1d8c27c6ba6e32ebeb22a2fc7d9312755dc3771bdb1cc04c6cfe0de"
+      },
+      "storage/sha256_framing.hepta": {
+        "bytes": 10424,
+        "sha256": "81296bb7b0cda34a374dbbb1d269a7d56cd196aba3eca7585e610f79c9d15eb4"
+      },
+      "tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "tests/test_storage_native.py": {
+        "bytes": 7547,
+        "sha256": "d981b7a6328e44a0f68a90fb5cf1ca9634037bfecae093146dde98876c3365fa"
+      },
+      "toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "tools/qualify_storage.py": {
+        "bytes": 46325,
+        "sha256": "bac4ab79afd22ab363210dc7fee9851bb1dae9b94e9abc45bdfb93e0a448846b"
+      },
+      "tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "source_inputs_stable": true,
+    "stages": [
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/qualification-v2-final/build/compile-policy",
+        "end_monotonic_ns": 22934487009835,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 321038,
+        "input_sha256": "9111f9351c9b4872e2ddf81fcc9f53de19f7f24d8f6f68a134bf348a3728b27b",
+        "output_bytes": 366185,
+        "output_sha256": "7c3c8a0c67830c00fd389d994a8979ac89b2a2c7f431c8f60530b3b24b16a2a0",
+        "stage": "compile-policy",
+        "start_monotonic_ns": 22934069286300,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/qualification-v2-final/build/compile-emitter",
+        "end_monotonic_ns": 22934564418802,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 673903,
+        "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "exit_code": 0,
+        "input_bytes": 37259,
+        "input_sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c",
+        "output_bytes": 46303,
+        "output_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
+        "stage": "compile-emitter",
+        "start_monotonic_ns": 22934489950839,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/proc/self/fd/3"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/qualification-v2-final/build/emit-storage-elf",
+        "end_monotonic_ns": 22934569168100,
+        "environment": {
+          "PATH": ""
+        },
+        "executable_bytes": 46303,
+        "executable_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
+        "exit_code": 0,
+        "input_bytes": 366185,
+        "input_sha256": "7c3c8a0c67830c00fd389d994a8979ac89b2a2c7f431c8f60530b3b24b16a2a0",
+        "output_bytes": 367382,
+        "output_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+        "stage": "emit-storage-elf",
+        "start_monotonic_ns": 22934567176975,
+        "stderr_hex": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      }
+    ],
+    "status": "PASS",
+    "toolchain": {
+      "assembly_schema": "hia-asm.v1",
+      "language_schema": "hepta.hia.program.v8",
+      "repository": "TrillionniumFoundation/Hepta",
+      "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+      "target": "x86_64-linux-gnu"
+    },
+    "whole_node_replaced": false
+  },
+  "complete_receipts": {
+    "location": "external scratch; complete native build and process receipts retained",
+    "native_entry_report": {
+      "bytes": 1960,
+      "path": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/storage-v2-units.json",
+      "sha256": "af30c1375c0d8f8ae6e14b52d24eb8055844db5e86f5cfca2e242a49b41b78f1"
+    },
+    "previous_development_report_sha256": "f6955eeba6aa18dd0d0dd4acf622101e3ef18e9d73a2583345d9cabd3313413f",
+    "prior_slow_capacity_failure_report": {
+      "path": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/capacity-observations/report.json",
+      "sha256": "6d269b03faa6312bbe1fdc34336ab3bdc9223cc0d5e722e88874d21b5613d7c4"
+    },
+    "storage_qualification_report": {
+      "bytes": 26828,
+      "path": "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/qualification-v2-final/report.json",
+      "sha256": "281a50d83595dfdc218d6e61c97fabb6f682a05117a0a3b5c3962265e5ca5870"
+    }
+  },
+  "controls": [
+    {
+      "case": "roundtrip-0",
+      "payload_bytes": 0,
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-1",
+      "payload_bytes": 1,
+      "payload_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-32767",
+      "payload_bytes": 32767,
+      "payload_sha256": "4c54428c15a7211d7542745daea2b61407c301dc1655e67de34480a42ca8a162",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-32768",
+      "payload_bytes": 32768,
+      "payload_sha256": "e11360251d1173650cdcd20f111d8f1ca2e412f572e8b36a4dc067121c1799b8",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-32769",
+      "payload_bytes": 32769,
+      "payload_sha256": "b93c16c99895f1593347ab57af0c0a82f9672ecb3debb59d124e1b38f3871f01",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-2097152",
+      "payload_bytes": 2097152,
+      "payload_sha256": "91d3beb88a9b2f778a6c44a1c53b63d3c79931845a9aef84b3fb414610bd1938",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "roundtrip-16777216",
+      "payload_bytes": 16777216,
+      "payload_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-10",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22953918869016,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 10
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-11",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22953980737313,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 11
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-12",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954035476798,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 12
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-13",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954087784002,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 13
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-14",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954144658391,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 14
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-15",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954201078906,
+        "positive_partial_results": 0,
+        "sequence": 1,
+        "tag": 15
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 2,
+      "status": "PASS"
+    },
+    {
+      "case": "sigkill-stage-16",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954251845237,
+        "positive_partial_results": 0,
+        "sequence": 2,
+        "tag": 16
+      },
+      "physical_power_loss": false,
+      "pre_crash_ack_digest": "e32ca891cf571837e3b7f2f439f4733f4bd979224d82d036afaead98f253fd9b",
+      "process_crash": true,
+      "recovered_sequence": 2,
+      "status": "PASS"
+    },
+    {
+      "case": "initialization-sigkill-1",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954281910882,
+        "positive_partial_results": 0,
+        "sequence": 0,
+        "tag": 1
+      },
+      "outcome": "lock-only fresh retry",
+      "physical_power_loss": false,
+      "status": "PASS"
+    },
+    {
+      "case": "initialization-sigkill-2",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954288913187,
+        "positive_partial_results": 0,
+        "sequence": 0,
+        "tag": 2
+      },
+      "outcome": "unacknowledged partial initialization refused without overwrite",
+      "physical_power_loss": false,
+      "status": "PASS"
+    },
+    {
+      "case": "initialization-sigkill-3",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954297769746,
+        "positive_partial_results": 0,
+        "sequence": 0,
+        "tag": 3
+      },
+      "outcome": "unacknowledged partial initialization refused without overwrite",
+      "physical_power_loss": false,
+      "status": "PASS"
+    },
+    {
+      "case": "initialization-sigkill-4",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954307000234,
+        "positive_partial_results": 0,
+        "sequence": 0,
+        "tag": 4
+      },
+      "outcome": "complete visible genesis reopened",
+      "physical_power_loss": false,
+      "status": "PASS"
+    },
+    {
+      "case": "initialization-sigkill-20",
+      "observed_gate": {
+        "eintr_results": 0,
+        "observed_monotonic_ns": 22954311131537,
+        "positive_partial_results": 0,
+        "sequence": 0,
+        "tag": 20
+      },
+      "outcome": "complete visible genesis reopened",
+      "physical_power_loss": false,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-format",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-payload",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-historical-payload",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-head",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-transaction-header",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-truncated",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-extended",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-missing-history",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-file-mode",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-hardlink",
+      "exit_code": 66,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-symlink-head",
+      "status": "PASS"
+    },
+    {
+      "actual_type": "FIFO",
+      "case": "reject-required-fifo-FORMAT",
+      "exit_code": 66,
+      "namespace_unchanged": true,
+      "no_writer_refused_without_controller_kill": true,
+      "ordinary_file_hard_deadline_claimed": false,
+      "queued_fifo_bytes_untouched": 291,
+      "required_file": "FORMAT",
+      "status": "PASS"
+    },
+    {
+      "actual_type": "FIFO",
+      "case": "reject-required-fifo-HEAD",
+      "exit_code": 66,
+      "namespace_unchanged": true,
+      "no_writer_refused_without_controller_kill": true,
+      "ordinary_file_hard_deadline_claimed": false,
+      "queued_fifo_bytes_untouched": 291,
+      "required_file": "HEAD",
+      "status": "PASS"
+    },
+    {
+      "actual_type": "FIFO",
+      "case": "reject-required-fifo-txn.0000000000000002",
+      "exit_code": 66,
+      "namespace_unchanged": true,
+      "no_writer_refused_without_controller_kill": true,
+      "ordinary_file_hard_deadline_claimed": false,
+      "queued_fifo_bytes_untouched": 291,
+      "required_file": "txn.0000000000000002",
+      "status": "PASS"
+    },
+    {
+      "actual_type": "FIFO",
+      "case": "reject-required-fifo-txn.0000000000000001",
+      "exit_code": 66,
+      "namespace_unchanged": true,
+      "no_writer_refused_without_controller_kill": true,
+      "ordinary_file_hard_deadline_claimed": false,
+      "queued_fifo_bytes_untouched": 291,
+      "required_file": "txn.0000000000000001",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-namespace-mode",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-namespace-native.sqlite",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-namespace-unrelated",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-context",
+      "status": "PASS"
+    },
+    {
+      "case": "actual-two-process-lock",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-sequence",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-digest",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-capacity",
+      "status": "PASS"
+    },
+    {
+      "actual_failure": "explicit gate input EOF",
+      "case": "gate-io-error-14",
+      "commit_unknown": false,
+      "filesystem_eio_injected": false,
+      "status": "PASS"
+    },
+    {
+      "actual_failure": "explicit gate input EOF",
+      "case": "gate-io-error-15",
+      "commit_unknown": true,
+      "filesystem_eio_injected": false,
+      "status": "PASS"
+    },
+    {
+      "actual_errno": "EPIPE",
+      "case": "actual-lost-durable-receipt",
+      "code_70_implies_rollback": false,
+      "commit_receipt_delivered": false,
+      "recovered_sequence": 2,
+      "status": "PASS"
+    },
+    {
+      "actual_errno": "EFBIG",
+      "case": "actual-file-size-limit",
+      "enospc_claimed": false,
+      "real_rlimit_fsize": 65536,
+      "status": "PASS"
+    },
+    {
+      "actual_pending_read_lengths": [
+        80,
+        79,
+        77
+      ],
+      "case": "actual-short-stdin-reads",
+      "native_pointer_progress": [
+        0,
+        1,
+        3
+      ],
+      "status": "PASS"
+    },
+    {
+      "actual_handler_observed": true,
+      "actual_signal": "SIGUSR1",
+      "case": "actual-eintr",
+      "continued_native_read": true,
+      "status": "PASS"
+    },
+    {
+      "case": "reject-old-v1-namespace",
+      "existing_bytes_unchanged": true,
+      "implicit_upgrade": false,
+      "old_namespace": "exact v1 genesis format",
+      "status": "PASS"
+    },
+    {
+      "case": "reject-old-v1-bootstrap",
+      "old_bootstrap_refused_before_namespace_mutation": true,
+      "status": "PASS"
+    },
+    {
+      "canonical_value_bytes": 4096,
+      "case": "complete-original-State-wire-extent",
+      "commit": {
+        "bytes": 279445512,
+        "plain_sha256": "d971de3feb63dea2fa48861d8f6aec256b652eb53e422d485583f2f0d063699e",
+        "sequence": 1,
+        "storage_digest": "e9c921f26501dad2c1c2e3d457afc7560b62a0d9df145857dc1a293df3ec4d3c"
+      },
+      "input_output_buffered_whole": false,
+      "key_bytes": 160,
+      "maximum_test_controller_wait_seconds": 180,
+      "original_service_budget_qualified": false,
+      "processes": [
+        {
+          "address_space_limit_bytes": 2147483648,
+          "cleanup": null,
+          "elapsed_ns": 58647657126,
+          "exit_code": 0,
+          "image_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+          "observed_maximum_rss_kib": 500,
+          "production_service_budget_qualified": false,
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdin_bytes": 279445720,
+          "stdin_sha256": "26230597cbae99e7887dc21fe9c668c1b7c4c40366e311a42fd0e8130c832d8c",
+          "stdout_bytes": 128,
+          "stdout_sha256": "94f214500e909f82fb3e099efd471a0836393de8cb46c277f220fb572bfc908f",
+          "test_io_controller_seconds": 180
+        },
+        {
+          "address_space_limit_bytes": 2147483648,
+          "cleanup": null,
+          "elapsed_ns": 114156936393,
+          "exit_code": 0,
+          "image_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+          "observed_maximum_rss_kib": 492,
+          "production_service_budget_qualified": false,
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdin_bytes": 208,
+          "stdin_sha256": "a1f590f2516f10c75fc0b5a2baac6a2a50210617ed7cc79a0e109d7886b86fb0",
+          "stdout_bytes": 279445640,
+          "stdout_sha256": "1bfcc36037eaf1d247efa2084da0606fc24666be04397fcf3d0161b6108dcd6a",
+          "test_io_controller_seconds": 180
+        }
+      ],
+      "readback": {
+        "bytes": 279445512,
+        "plain_sha256": "d971de3feb63dea2fa48861d8f6aec256b652eb53e422d485583f2f0d063699e"
+      },
+      "rows": 65536,
+      "scope": "actual exact payload bytes, not complete State grammar/root qualification",
+      "status": "PASS"
+    },
+    {
+      "actual_committed_transactions": 4105,
+      "actual_retained_transaction_files": 4105,
+      "case": "past-artificial-4096-history-cap",
+      "history_materialized_in_native_memory": false,
+      "physical_UINT64_MAX_history_qualified": false,
+      "processes": [
+        {
+          "address_space_limit_bytes": 2147483648,
+          "cleanup": null,
+          "elapsed_ns": 6517400621,
+          "exit_code": 0,
+          "image_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+          "observed_maximum_rss_kib": 440,
+          "production_service_budget_qualified": false,
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdin_bytes": 262864,
+          "stdin_sha256": "fe6a64b8f2c4882638efb7a48abf1e78baf16464b448fb2f338d69138b6c3391",
+          "stdout_bytes": 262784,
+          "stdout_sha256": "83258b094365c68aea7305a6f29830c9e9daf62b1f9355329523e6688ec938c0",
+          "test_io_controller_seconds": 180
+        },
+        {
+          "address_space_limit_bytes": 2147483648,
+          "cleanup": null,
+          "elapsed_ns": 209408800,
+          "exit_code": 0,
+          "image_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+          "observed_maximum_rss_kib": 460,
+          "production_service_budget_qualified": false,
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdin_bytes": 208,
+          "stdin_sha256": "f720d1f43f1a5837c20cc4315d01e6bce994946a824856de203d7bc407bf07c2",
+          "stdout_bytes": 128,
+          "stdout_sha256": "99c5739356f6a086758d08373cd6bccc82a49f3065c3b1425e2ad2d40da0d9aa",
+          "test_io_controller_seconds": 180
+        }
+      ],
+      "reopened_sequence": 4105,
+      "status": "PASS",
+      "storage_digest": "bb1f4afd22ef87db5a81ccd7dd24dc03b3a75ca33a61a03005e6ce01e882abe0"
+    }
+  ],
+  "development_observation_only": true,
+  "exact_head_ci": {
+    "scope": "current version-2 source requires a fresh CI run",
+    "status": "NOT_RUN"
+  },
+  "native_entry_contract_scope": "170 actual native function calls: retained 9 shapes+5 open commands, 6 addressing/sequence cases, 147 SHA/canary cases and 3 preflight refusals; 2 independent clean-environment CLI starts",
+  "native_entry_contracts": {
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "execution": "env -u PYTHONPATH -u PYTHONHOME python3 -B -m unittest -v hia.tests.test_storage_native",
+    "exit_code": 0,
+    "isolated_cwd_clean_import_cli_invocations": 2,
+    "native_cases": {
+      "addressing_sequence_bounds": 6,
+      "original_bad_shapes": 9,
+      "original_required_open_flags": 5,
+      "sha256_hashlib_and_canaries": 147,
+      "sha256_preflight_refusal": 3
+    },
+    "native_cases_total": 170,
+    "native_module_artifacts_individually_retained": false,
+    "observed_unittest_elapsed_seconds": 8.432,
+    "physical_maximum_off_t_history_claimed": false,
+    "schema": "trnm.hia.storage-unit-observation.v2",
+    "skipped": 0,
+    "source_inputs": {
+      "components.json": {
+        "bytes": 1578,
+        "sha256": "0eb7c2cb821841854542d6eb92a2f55c109e8d1381c67f61a3e97b6a60b9c413"
+      },
+      "src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "src/protocol/state_root.hepta": {
+        "bytes": 221073,
+        "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+      },
+      "storage/owner_policy.hepta": {
+        "bytes": 152829,
+        "sha256": "7e8ab0a4d1d8c27c6ba6e32ebeb22a2fc7d9312755dc3771bdb1cc04c6cfe0de"
+      },
+      "storage/sha256_framing.hepta": {
+        "bytes": 10424,
+        "sha256": "81296bb7b0cda34a374dbbb1d269a7d56cd196aba3eca7585e610f79c9d15eb4"
+      },
+      "tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "tests/test_storage_native.py": {
+        "bytes": 7547,
+        "sha256": "d981b7a6328e44a0f68a90fb5cf1ca9634037bfecae093146dde98876c3365fa"
+      },
+      "tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "status": "PASS",
+    "test_methods": 5
+  },
+  "not_qualified": [
+    "physical power loss",
+    "regular-file/fsync hard deadline",
+    "ENOSPC",
+    "filesystem EIO",
+    "network filesystems",
+    "hostile same-UID mutation",
+    "whole-directory rollback",
+    "physical UINT64_MAX history",
+    "automatic incomplete initialization repair",
+    "compaction",
+    "typed whole State",
+    "whole Node",
+    "cross-target",
+    "original service budget"
+  ],
+  "old_stack_retirement_authorized": false,
+  "parent_integrated_qualification": {
+    "build": {
+      "compiler_qualification_binding": {
+        "cleanup_limit_seconds": 3,
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compressed_sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9",
+        "nested_report": "compiler-cold-full.json.xz",
+        "observed_seconds": 154.807339324,
+        "outer_report": "compiler-cold.json",
+        "outer_sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab",
+        "schema": "trnm.hia.compiler-qualification-binding.v1",
+        "scope": "Original pinned Linux x86-64 fixed-core compiler profile; does not qualify the complete Chain runtime",
+        "source_inputs": 916,
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "uncompressed_bytes": 53163943,
+        "uncompressed_sha256": "7d01bc56b6dc8c211549e9c4ba16f7c580933812a6952654403f399c0cc3fa13",
+        "wall_limit_seconds": 180,
+        "whole_chain_native": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "composition": {
+        "composed_source_sha256": "9111f9351c9b4872e2ddf81fcc9f53de19f7f24d8f6f68a134bf348a3728b27b",
+        "declarations": {
+          "src/protocol/state_root.hepta": [
+            {
+              "functions": [
+                "sha256_arena",
+                "sha256_padding_byte",
+                "sha256_rotr32",
+                "sha256_work_load64",
+                "sha256_work_store64"
+              ],
+              "source": "src/crypto/sha256_arena.hepta"
+            }
+          ],
+          "storage/owner_policy.hepta": [
+            {
+              "functions": [
+                "storage_sha256",
+                "storage_word"
+              ],
+              "source": "storage/sha256_framing.hepta"
+            },
+            {
+              "functions": [
+                "state_copy",
+                "state_load32",
+                "state_store32",
+                "state_sha_expand",
+                "state_sha_round_0",
+                "state_sha_round_1",
+                "state_sha_round_2",
+                "state_sha_round_3",
+                "state_sha_round_4",
+                "state_sha_round_5",
+                "state_sha_round_6",
+                "state_sha_round_7",
+                "state_sha_compress"
+              ],
+              "source": "src/protocol/state_root.hepta"
+            }
+          ],
+          "storage/sha256_framing.hepta": [
+            {
+              "functions": [
+                "state_copy",
+                "state_load32",
+                "state_store32",
+                "state_sha_expand",
+                "state_sha_round_0",
+                "state_sha_round_1",
+                "state_sha_round_2",
+                "state_sha_round_3",
+                "state_sha_round_4",
+                "state_sha_round_5",
+                "state_sha_round_6",
+                "state_sha_round_7",
+                "state_sha_compress"
+              ],
+              "source": "src/protocol/state_root.hepta"
+            }
+          ]
+        },
+        "functions": 48,
+        "mode": "explicit independently Core-verified named HIA function includes"
+      },
+      "executable": {
+        "bytes": 367382,
+        "dynamic_linker": false,
+        "entry": 4194480,
+        "format": "ELF64LE",
+        "instruction_semantics_verified_by_this_check": false,
+        "interpreter": null,
+        "load_flags": "RX",
+        "machine": "x86_64",
+        "sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+        "stack_flags": "RW",
+        "type": "ET_EXEC"
+      },
+      "hosted_build_and_test_driver": true,
+      "literal_isa_adapter_is_a_separate_trusted_boundary": true,
+      "runtime_host_language_or_sqlite": false,
+      "schema": "trnm.hia.storage-build.v2",
+      "source_inputs": {
+        "components.json": {
+          "bytes": 19591,
+          "sha256": "d6aadc322b6ba2b78d2e859d3984b4127bd64a0af3bf5e4ca2f992d3177db654"
+        },
+        "platform/build.py": {
+          "bytes": 11808,
+          "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+        },
+        "qualification/compiler-binding.json": {
+          "bytes": 878,
+          "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+        },
+        "qualification/compiler-cold-full.json.xz": {
+          "bytes": 838544,
+          "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+        },
+        "qualification/compiler-cold.json": {
+          "bytes": 108675,
+          "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+        },
+        "src/crypto/sha256_arena.hepta": {
+          "bytes": 28919,
+          "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+        },
+        "src/protocol/state_root.hepta": {
+          "bytes": 221073,
+          "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+        },
+        "storage/README.md": {
+          "bytes": 10011,
+          "sha256": "2cf92d7466d4fe6efedce76c2e2ed1fdc4490a206f0a6d1c6d841c158ab6e62f"
+        },
+        "storage/abi.json": {
+          "bytes": 11100,
+          "sha256": "7ee5f9365afaaafbd8d2b46d2ad633f6aefc47765272a5c4f4f654b536443cf0"
+        },
+        "storage/build.py": {
+          "bytes": 6410,
+          "sha256": "bad8bc9ceccddf595b172908689a4fd8f1f61b7e76fefbba95cb2c4bd4534dcc"
+        },
+        "storage/linux_adapter_emitter.hepta": {
+          "bytes": 37259,
+          "sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c"
+        },
+        "storage/owner_policy.hepta": {
+          "bytes": 152829,
+          "sha256": "7e8ab0a4d1d8c27c6ba6e32ebeb22a2fc7d9312755dc3771bdb1cc04c6cfe0de"
+        },
+        "storage/sha256_framing.hepta": {
+          "bytes": 10424,
+          "sha256": "81296bb7b0cda34a374dbbb1d269a7d56cd196aba3eca7585e610f79c9d15eb4"
+        },
+        "tests/native_support.py": {
+          "bytes": 9793,
+          "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+        },
+        "tests/test_storage_native.py": {
+          "bytes": 7547,
+          "sha256": "d981b7a6328e44a0f68a90fb5cf1ca9634037bfecae093146dde98876c3365fa"
+        },
+        "toolchain.lock.json": {
+          "bytes": 221,
+          "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+        },
+        "tools/qualify_storage.py": {
+          "bytes": 46325,
+          "sha256": "bac4ab79afd22ab363210dc7fee9851bb1dae9b94e9abc45bdfb93e0a448846b"
+        },
+        "tools/toolchain.py": {
+          "bytes": 14157,
+          "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+        }
+      },
+      "source_inputs_stable": true,
+      "stages": [
+        {
+          "argv": [
+            "/proc/self/fd/3"
+          ],
+          "cleanup": null,
+          "cleanup_limit_seconds": 3,
+          "cwd": "/workspace/scratch/dfc64d0acfc2/storage-v2-root-build/build/compile-policy",
+          "end_monotonic_ns": 23592433758169,
+          "environment": {
+            "PATH": ""
+          },
+          "executable_bytes": 673903,
+          "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "exit_code": 0,
+          "input_bytes": 321038,
+          "input_sha256": "9111f9351c9b4872e2ddf81fcc9f53de19f7f24d8f6f68a134bf348a3728b27b",
+          "output_bytes": 366185,
+          "output_sha256": "7c3c8a0c67830c00fd389d994a8979ac89b2a2c7f431c8f60530b3b24b16a2a0",
+          "stage": "compile-policy",
+          "start_monotonic_ns": 23591996054848,
+          "stderr_hex": "",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false,
+          "wall_limit_seconds": 30
+        },
+        {
+          "argv": [
+            "/proc/self/fd/3"
+          ],
+          "cleanup": null,
+          "cleanup_limit_seconds": 3,
+          "cwd": "/workspace/scratch/dfc64d0acfc2/storage-v2-root-build/build/compile-emitter",
+          "end_monotonic_ns": 23592491289018,
+          "environment": {
+            "PATH": ""
+          },
+          "executable_bytes": 673903,
+          "executable_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "exit_code": 0,
+          "input_bytes": 37259,
+          "input_sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c",
+          "output_bytes": 46303,
+          "output_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
+          "stage": "compile-emitter",
+          "start_monotonic_ns": 23592436711166,
+          "stderr_hex": "",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false,
+          "wall_limit_seconds": 30
+        },
+        {
+          "argv": [
+            "/proc/self/fd/3"
+          ],
+          "cleanup": null,
+          "cleanup_limit_seconds": 3,
+          "cwd": "/workspace/scratch/dfc64d0acfc2/storage-v2-root-build/build/emit-storage-elf",
+          "end_monotonic_ns": 23592494798474,
+          "environment": {
+            "PATH": ""
+          },
+          "executable_bytes": 46303,
+          "executable_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
+          "exit_code": 0,
+          "input_bytes": 366185,
+          "input_sha256": "7c3c8a0c67830c00fd389d994a8979ac89b2a2c7f431c8f60530b3b24b16a2a0",
+          "output_bytes": 367382,
+          "output_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+          "stage": "emit-storage-elf",
+          "start_monotonic_ns": 23592493533180,
+          "stderr_hex": "",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false,
+          "wall_limit_seconds": 30
+        }
+      ],
+      "status": "PASS",
+      "toolchain": {
+        "assembly_schema": "hia-asm.v1",
+        "language_schema": "hepta.hia.program.v8",
+        "repository": "TrillionniumFoundation/Hepta",
+        "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "target": "x86_64-linux-gnu"
+      },
+      "whole_node_replaced": false
+    },
+    "build_report_sha256": "5e74e5d35b1d9c0cc6cb0bb8ca0f4d056747cc3d11c598b4231ebbb8a3e69ecf",
+    "contract_report_sha256": "419979ded4a34e320db04a7208f51f8094a35d9cc31e15af869d3ddea654ae96",
+    "contracts": {
+      "elapsed_seconds": 7.951228583002376,
+      "errors": 0,
+      "failures": 0,
+      "fresh_cli_starts": 2,
+      "log_sha256": "4af499155634ac01f0c4c3378ae01e607341699b6102300a26550a28f760387e",
+      "native_function_controls": 170,
+      "skipped": 0,
+      "status": "PASS",
+      "tests": 5
+    },
+    "exact_committed_ci": "NOT_RUN",
+    "full_physical_run_repeated_by_parent": false,
+    "physical_image_exactly_matches_retained_52_case_run": true,
+    "status": "PASS",
+    "successful_large_payload_excluded_from_ci_artifacts": false
+  },
+  "passed": 52,
+  "previous_v1_qualification": {
+    "current_v2_sources_qualified_by_prior_run": false,
+    "exact_head_ci": {
+      "artifact_bytes": 2265439,
+      "artifact_id": 14175470420,
+      "artifact_zip_sha256": "8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03",
+      "job_id": 132912920213,
+      "later_fifth_batch_sources_qualified_by_this_run": false,
+      "native_entry_contracts": 14,
+      "native_os_controls": 48,
+      "report_sha256": "5e451f76d8839546e8605065fe16b6b7584d369fba10c08c009be2ddef044606",
+      "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+      "source_tree": "b58fd5b8cf1e8d49b4901cf1806ca11096063d05",
+      "standalone_help_controls": 2,
+      "status": "PASS",
+      "workflow_run": 43746877132
+    },
+    "report_sha256": "f6955eeba6aa18dd0d0dd4acf622101e3ef18e9d73a2583345d9cabd3313413f"
+  },
+  "prior_fifo_regression": {
+    "controls": [
+      {
+        "actual_error": null,
+        "case": "FORMAT",
+        "cleanup_exit": -9,
+        "expected_error": 66,
+        "finding": "referenced FIFO blocks in openat before regular-file validation",
+        "observed_syscall": "257 0x5 0x7fcaa4a28210 0xa0000 0x0 0x0 0x0 0x7fffc7161498 0x4004a2",
+        "open_flags": 655360,
+        "physical_power_loss": false,
+        "status": "FAIL"
+      },
+      {
+        "actual_error": null,
+        "case": "HEAD",
+        "cleanup_exit": -9,
+        "expected_error": 66,
+        "finding": "referenced FIFO blocks in openat before regular-file validation",
+        "observed_syscall": "257 0x5 0x7f35d44c8220 0xa0000 0x0 0x0 0x0 0x7ffc6c0a32b8 0x4004a2",
+        "open_flags": 655360,
+        "physical_power_loss": false,
+        "status": "FAIL"
+      },
+      {
+        "actual_error": null,
+        "case": "txn.0000000000000002",
+        "cleanup_exit": -9,
+        "expected_error": 66,
+        "finding": "referenced FIFO blocks in openat before regular-file validation",
+        "observed_syscall": "257 0x5 0x7f4d8aacc240 0xa0000 0x0 0x0 0x0 0x7ffe73e3ec18 0x4004a2",
+        "open_flags": 655360,
+        "physical_power_loss": false,
+        "status": "FAIL"
+      },
+      {
+        "actual_error": null,
+        "case": "txn.0000000000000001",
+        "cleanup_exit": -9,
+        "expected_error": 66,
+        "finding": "referenced FIFO blocks in openat before regular-file validation",
+        "observed_syscall": "257 0x5 0x7f56d2a90240 0xa0000 0x0 0x0 0x0 0x7ffcbb78a028 0x4004a2",
+        "open_flags": 655360,
+        "physical_power_loss": false,
+        "status": "FAIL"
+      }
+    ],
+    "failed_report_sha256": "021d34797dd45c2eeab977f29253d04ee43b61f40ebcb5ee2f7110a0b51a9242",
+    "fixed_read_open_flags": 657408,
+    "fixed_transaction_type_check_precedes_header_read": true,
+    "old_executable": {
+      "bytes": 254157,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "ca09cd273e08f283edbdd3c422c63c60cb4b31ed17ed171aca59c0be0de974e8",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "old_source_inputs": {
+      "components.json": {
+        "bytes": 2826,
+        "sha256": "b91d0eb8bd6c22d2302682127014db58a98ee72c3b6979b73fc358abfc419dd0"
+      },
+      "platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "qualification/compiler-cold-full.json.xz": {
+        "bytes": 838544,
+        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+      },
+      "qualification/compiler-cold.json": {
+        "bytes": 108675,
+        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+      },
+      "src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "storage/README.md": {
+        "bytes": 7513,
+        "sha256": "008568b8f37ca1e25109a7aac5e06117f74f53b0ed613c001101eebb4f3edc04"
+      },
+      "storage/abi.json": {
+        "bytes": 8912,
+        "sha256": "374e19cc7e5d62ebd733eec7281c905840e418035e8c0303cddcc4fda735d8c2"
+      },
+      "storage/build.py": {
+        "bytes": 8738,
+        "sha256": "206342c71898e772c02f6f2571c6c4ff62dd55b32e80348deae40863a68e9dd8"
+      },
+      "storage/linux_adapter_emitter.hepta": {
+        "bytes": 37259,
+        "sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c"
+      },
+      "storage/owner_policy.hepta": {
+        "bytes": 150806,
+        "sha256": "f5b094560c741cd27a18105608424353322e8538f087528ea89a57822cc096c1"
+      },
+      "tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "tests/test_storage_native.py": {
+        "bytes": 2325,
+        "sha256": "c09cf1db667a9a4b71f41113b22351606496a072ddf16e0a21adddf11dbc7605"
+      },
+      "toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "tools/qualify_storage.py": {
+        "bytes": 31724,
+        "sha256": "79020fd426e8f5643b81ff7aa3eb1de6e29def72d0e4a3004298b0e663ecb4a2"
+      },
+      "tools/toolchain.py": {
+        "bytes": 12896,
+        "sha256": "f7a6271cb0c339519f84706d0499ac0d35c080ee93a2da34b0ea393f0e02cbe8"
+      }
+    },
+    "prior_44_controls_did_not_qualify_fifo_rejection": true,
+    "prior_44_report_sha256": "dfac067799741833b041d5855f9fe747759f3ee66e2e0a25ba6bac02a2f61d74",
+    "status": "CONFIRMED_FAILURE_BEFORE_FIX"
+  },
+  "prior_slow_capacity_observation": {
+    "complete_state_commit_before_reopen_failure": {
+      "address_space_limit_bytes": 2147483648,
+      "cleanup": null,
+      "elapsed_ns": 225957723548,
+      "exit_code": 0,
+      "image_sha256": "d5fae1dfcc9e217ebb57d144c3d0690a1f0118b3eb057061bec405738959adbb",
+      "observed_maximum_rss_kib": 376,
+      "production_service_budget_qualified": false,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_bytes": 279445720,
+      "stdin_sha256": "433270dc5935272be6e598a1f71157a5959cd930efabff684c7fdf65f4607f95",
+      "stdout_bytes": 128,
+      "stdout_sha256": "c0f32b85b3f54b9c82b2e0559bb2dd87313c3202e9c6af487f6b64bc5952dbd8",
+      "test_io_controller_seconds": 180
+    },
+    "constructor_failure_receipt_gap_observed": true,
+    "current_constructor_cleanup": "explicit abort/receipt on any bootstrap or READY exception; separate injected-timeout branch not qualified by current successful capacity case",
+    "error": "TimeoutError('capacity-test output controller deadline')",
+    "original_service_budget_changed": false,
+    "report_sha256": "6d269b03faa6312bbe1fdc34336ab3bdc9223cc0d5e722e88874d21b5613d7c4",
+    "same_180_second_test_controller_budget": true,
+    "source_inputs": {
+      "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/capacity-candidate/hia/storage/linux_adapter_emitter.hepta": {
+        "bytes": 37259,
+        "sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c"
+      },
+      "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/capacity-candidate/hia/storage/owner_policy.hepta": {
+        "bytes": 152750,
+        "sha256": "34231a7eb1c8ad779f39663af888fc333f02befd9b4aedd5483008022a0bb99b"
+      },
+      "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/capacity-native-build/build/storage.elf": {
+        "bytes": 257360,
+        "sha256": "d5fae1dfcc9e217ebb57d144c3d0690a1f0118b3eb057061bec405738959adbb"
+      },
+      "/workspace/scratch/dfc64d0acfc2/node-state-owner-next/test_stream_capacity.py": {
+        "bytes": 10958,
+        "sha256": "da80da6bccd21ae25705c3a5ce96bc08778e7ebd52c6b2ee5a3d480d0f0a42a2"
+      }
+    },
+    "status": "FAIL"
+  },
+  "runtime_proxy": false,
+  "schema": "trnm.hia.storage-qualification.v2",
+  "scope": "streaming generic transaction payload StoreOwner, including full classical State byte extent; not typed Node integration",
+  "source_inputs_stable": true,
+  "standalone_cli_import_regression": {
+    "command": "python3 -B hia/tools/qualify_storage.py",
+    "earlier_platform_or_reactor_pass_is_not_storage_qualification": true,
+    "error": "ModuleNotFoundError: No module named 'hia'",
+    "failure_class": "CLI_IMPORT",
+    "job_id": 132909793199,
+    "log_path": "/workspace/scratch/dfc64d0acfc2/publication4-failed-native-job.log",
+    "log_sha256": "537c4ca45ae07887b1e94dca43ee6ba292e8e556ad0e64354570ce6f3dc0b12f",
+    "prior_development_report_sha256": "14e212af80f4fe8c68423609e34b44f973f495e96b5e1a44558fa69920566f8a",
+    "run_id": 43746152828,
+    "schema": "trnm.hia.storage-ci-startup-failure.v1",
+    "source_commit": "739aef3966f8896c161a0cd870fe404726b87c55",
+    "source_tree": "ecfa2a709a435044e038986eaf7fb1b18b5689f7",
+    "status": "FAIL",
+    "storage_native_status": "NOT_RUN"
+  },
+  "status": "PASS",
+  "successful_reconstructible_payload": {
+    "bytes": 279445640,
+    "deterministic_payload_generator": "hia/tools/qualify_storage.py::full_state_chunks",
+    "failure_namespace_payloads_must_be_retained": true,
+    "header_bytes": 128,
+    "only_excludable_when_case_passes": true,
+    "path": "cases/complete-original-State-wire-extent/namespace/txn.0000000000000001",
+    "payload_bytes": 279445512,
+    "required_retained_evidence": [
+      "report.json",
+      "build/build.json",
+      "cases/complete-original-State-wire-extent/case.json",
+      "cases/complete-original-State-wire-extent/create/process.json",
+      "cases/complete-original-State-wire-extent/reopen/process.json",
+      "cases/complete-original-State-wire-extent/namespace/HEAD",
+      "cases/complete-original-State-wire-extent/namespace/FORMAT"
+    ],
+    "sha256": "cacbd8f5bf5df5eb540933b8cd2a678c5529457e11a5643b2b01793d600a64a5"
+  },
+  "syscall_trace": {
+    "cleanup": null,
+    "executable_sha256": "b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445",
+    "exit_code": 1,
+    "reason": "PTRACE_EPERM",
+    "status": "UNKNOWN",
+    "stderr": "/usr/bin/strace: test_ptrace_get_syscall_info: PTRACE_TRACEME: Operation not permitted\n/usr/bin/strace: ptrace(PTRACE_TRACEME, ...): Operation not permitted\n/usr/bin/strace: PTRACE_SETOPTIONS: Operation not permitted\n/usr/bin/strace: cleanup: waitpid(-1, __WALL): No child processes\n",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "total": 52,
+  "whole_node_integration_gate": {
+    "authenticated_request_replay_finish_connected": false,
+    "original_service_budgets_qualified": false,
+    "status": "OPEN",
+    "typed_reducers_connected": false
+  }
+}

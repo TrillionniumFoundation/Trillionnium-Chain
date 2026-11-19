@@ -1,0 +1,318 @@
+{
+  "ci_preconditions": [
+    "Fixed original 893210a45b44742edfe2510fea1d92e9974b5f95 commit/tree and all original indexed blobs must be available locally. No silent fetch or alternative revision is permitted.",
+    "The exact current archive index, README, dispatch checker, all 91 copied small records and 20 preserved originals must be staged or committed with exact mode/blob. Force-add the ten retained .log paths that the repository ignore rules would omit.",
+    "The current CLI always calls the archive checker, including missing/dangling-index cases. Only the temporary exact original view executes the frozen original main.",
+    "The original FILE_INDEX and SHA256SUMS describe the complete original layout and remain byte-identical. Do not refresh their hashes to match the smaller current layout."
+  ],
+  "current_sources": {
+    "evidence/pon-w1-complete-work-20261101/README.md": {
+      "bytes": 31043,
+      "sha256": "5ee8d881aa12d11da26b0bb312809aa85c1b05ce988fb1b9bfde52a7554b25ad"
+    },
+    "evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json": {
+      "bytes": 74287,
+      "sha256": "b8c0a855694cc4547d37dfc04392106f99d55177922e2d23dd1c883a29a4ed4d"
+    },
+    "evidence/pon-w1-complete-work-20261101/verify_archives.py": {
+      "bytes": 6314,
+      "sha256": "5032b2b4a95c5648766360d62145242568840a369897feb7b243a045386bba70"
+    },
+    "scripts/ci/check_historical_archive.py": {
+      "bytes": 9693,
+      "sha256": "f44b88fa83a26fddad017cf21656efdd6a22780db3e5f58a3c443bf3ddaa7ddc"
+    },
+    "scripts/ci/check_w1_complete_archive.py": {
+      "bytes": 16803,
+      "sha256": "16801d6141b606f34a35872498e7f8a7760227f6ab51ba957c8bd59cc5f00a21"
+    },
+    "scripts/ci/test_w1_complete_archive.py": {
+      "bytes": 20299,
+      "sha256": "3b32af6ec13df23a9635fbbe307fa75796e9ced468b8bd6cf56cf110907bafe9"
+    }
+  },
+  "denominators": {
+    "archive_member_bytes_each_full_run": 4463919709,
+    "archive_members": 4960,
+    "archived_original_paths": 150,
+    "archived_original_scope_bytes": 144798166,
+    "archived_scopes": 7,
+    "complete_archive_count": 60,
+    "current_package_files": 114,
+    "original_file_index_rows": 170,
+    "original_package_bytes": 145800078,
+    "original_package_files": 172,
+    "original_sha256sums_entries": 171,
+    "removed_payload_bytes": 138750512,
+    "removed_payload_files": 59,
+    "retained_copy_bytes": 6047654,
+    "retained_copy_empty_files": 0,
+    "retained_copy_files": 91,
+    "retained_copy_log_files": 10,
+    "root_validation_archive_bytes": 16712,
+    "unchanged_original_paths": 20
+  },
+  "development_failures_and_corrections": [
+    {
+      "actual_observation": {
+        "cause": "Scratch wrapper used nonexistent /usr/local/bin/python3; FileNotFoundError was raised before creating the original checker process.",
+        "correction": "Use the running Python interpreter sys.executable, without changing any original verifier or evidence bytes.",
+        "observed_exception": "FileNotFoundError: [Errno 2] No such file or directory: '/usr/local/bin/python3'",
+        "original_checker_exit": null,
+        "original_checker_started": false,
+        "result": "NOT_RUN",
+        "schema": "trnm-w1-original-cli-preflight-v1",
+        "wrapper_exit": 1
+      },
+      "classification": "SCRATCH_WRAPPER_NOT_RUN",
+      "fixed_by": "Use sys.executable; the original verifier was not changed."
+    },
+    {
+      "actual_observation": {
+        "correction": "Replace the malformed starred list expression with ordinary list concatenation in the scratch preparation script.",
+        "files_modified_by_attempt": false,
+        "observed_exception": "SyntaxError: invalid syntax at for name in [*copies and [...]",
+        "result": "NOT_RUN",
+        "schema": "trnm-w1-isolated-archive-preparation-v1",
+        "source_parsed": false,
+        "wrapper_exit": 1
+      },
+      "classification": "SCRATCH_PREPARATION_PARSE_NOT_RUN",
+      "fixed_by": "Correct the scratch-only list concatenation before executing preparation; no package bytes had changed in that failed attempt."
+    },
+    {
+      "actual_observation": {
+        "exit": 1,
+        "schema": "trnm-w1-negative-tests-v1",
+        "source_sha256": {
+          "check_w1_complete_archive.py": "552e67ebbabbb6be51facdb0ec0d942777f791be5bb69fb512759c8e48be079f",
+          "test_w1_complete_archive.py": "ffac8f2a692ab563a5d5dcf6623f9b4d6217c98ae20e8a6f5badef59c510ee90"
+        },
+        "stderr": "test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes (test_w1_complete_archive.OriginalTarVerifierControls.test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes) ... ok\ntest_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes (test_w1_complete_archive.OriginalViewFixture.test_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes) ... ok\ntest_all_small_copies_and_preserved_root_validation_are_mandatory (test_w1_complete_archive.OriginalViewFixture.test_all_small_copies_and_preserved_root_validation_are_mandatory) ... ok\ntest_complete_fixture_executes_the_actual_original_verifier_and_all_members (test_w1_complete_archive.OriginalViewFixture.test_complete_fixture_executes_the_actual_original_verifier_and_all_members) ... ok\ntest_extra_file_and_restored_original_path_are_refused (test_w1_complete_archive.OriginalViewFixture.test_extra_file_and_restored_original_path_are_refused) ... ok\ntest_failure_cannot_be_promoted_by_resigning_retained_metadata (test_w1_complete_archive.OriginalViewFixture.test_failure_cannot_be_promoted_by_resigning_retained_metadata) ... ok\ntest_intent_to_add_archive_index_is_refused (test_w1_complete_archive.OriginalViewFixture.test_intent_to_add_archive_index_is_refused) ... ok\ntest_metadata_success_does_not_hide_a_real_original_member_failure (test_w1_complete_archive.OriginalViewFixture.test_metadata_success_does_not_hide_a_real_original_member_failure) ... ok\ntest_missing_changed_symlinked_or_special_copies_are_refused_before_read (test_w1_complete_archive.OriginalViewFixture.test_missing_changed_symlinked_or_special_copies_are_refused_before_read) ... ok\ntest_missing_original_blob_is_an_error_without_network_or_fallback (test_w1_complete_archive.OriginalViewFixture.test_missing_original_blob_is_an_error_without_network_or_fallback) ... ERROR\ntest_omitted_duplicate_reordered_archive_rows_are_refused (test_w1_complete_archive.OriginalViewFixture.test_omitted_duplicate_reordered_archive_rows_are_refused) ... ok\ntest_original_functions_and_unconditional_dispatch_cannot_change (test_w1_complete_archive.OriginalViewFixture.test_original_functions_and_unconditional_dispatch_cannot_change) ... ok\ntest_qualification_flags_duplicate_and_nonfinite_json_are_refused (test_w1_complete_archive.OriginalViewFixture.test_qualification_flags_duplicate_and_nonfinite_json_are_refused) ... ok\ntest_tracking_requires_empty_logs_and_exact_current_bytes_modes (test_w1_complete_archive.OriginalViewFixture.test_tracking_requires_empty_logs_and_exact_current_bytes_modes) ... ok\ntest_wrong_snapshot_scope_denominator_or_manifest_location_is_refused (test_w1_complete_archive.OriginalViewFixture.test_wrong_snapshot_scope_denominator_or_manifest_location_is_refused) ... ok\n\n======================================================================\nERROR: test_missing_original_blob_is_an_error_without_network_or_fallback (test_w1_complete_archive.OriginalViewFixture.test_missing_original_blob_is_an_error_without_network_or_fallback)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/workspace/scratch/dfc64d0acfc2/w1-next/view/scripts/ci/test_w1_complete_archive.py\", line 297, in test_missing_original_blob_is_an_error_without_network_or_fallback\n    self.check()\n  File \"/workspace/scratch/dfc64d0acfc2/w1-next/view/scripts/ci/test_w1_complete_archive.py\", line 170, in check\n    return archive.fixed_inputs(self.root, self.index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scratch/dfc64d0acfc2/w1-next/view/scripts/ci/check_w1_complete_archive.py\", line 140, in fixed_inputs\n    original = history.tree_rows(root, COMMIT, [PACKAGE])\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scratch/dfc64d0acfc2/w1-next/view/scripts/ci/check_historical_archive.py\", line 79, in tree_rows\n    result[path] = {\"path\": path, \"mode\": mode, \"blob\": oid, \"bytes\": int(size)}\n                                                                      ^^^^^^^^^\nValueError: invalid literal for int() with base 10: 'BAD'\n\n----------------------------------------------------------------------\nRan 15 tests in 2.539s\n\nFAILED (errors=1)\n",
+        "stdout": "",
+        "wall_seconds": 2.692494038001314
+      },
+      "classification": "NEGATIVE_TEST_EXCEPTION_BOUNDARY_MISMATCH",
+      "fixed_by": "Missing Git blob produced ls-tree BAD size and generic ValueError. The CLI already refused that error. The dedicated checker now reports the unavailable original snapshot as history.Invalid; the unchanged generic helper and all original validation predicates are retained."
+    }
+  ],
+  "documentation_correction": {
+    "correction": "Remove that unsupported statement. Actual zero-byte publication coverage is tested using an explicit tiny fixture. Re-run the complete current CLI after staging the final README.",
+    "issue": "An initial draft described empty retained records, but all 91 real small records have nonzero size."
+  },
+  "final_exact_candidate_cli_run": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/dfc64d0acfc2/w1-next/view/evidence/pon-w1-complete-work-20261101/verify_archives.py",
+      "/workspace/scratch/dfc64d0acfc2/w1-next/view/evidence/pon-w1-complete-work-20261101"
+    ],
+    "current_files": 114,
+    "current_index_sha256": "b8c0a855694cc4547d37dfc04392106f99d55177922e2d23dd1c883a29a4ed4d",
+    "current_package_unchanged": true,
+    "current_readme_sha256": "5ee8d881aa12d11da26b0bb312809aa85c1b05ce988fb1b9bfde52a7554b25ad",
+    "entrypoint_sha256": "5032b2b4a95c5648766360d62145242568840a369897feb7b243a045386bba70",
+    "exit": 0,
+    "schema": "trnm-w1-current-cli-original-view-v1",
+    "source_sha256": {
+      "check_historical_archive.py": "f44b88fa83a26fddad017cf21656efdd6a22780db3e5f58a3c443bf3ddaa7ddc",
+      "check_w1_complete_archive.py": "16801d6141b606f34a35872498e7f8a7760227f6ab51ba957c8bd59cc5f00a21"
+    },
+    "stderr": "",
+    "stdout": "{\"archive_bytes\": 144798166, \"archive_files\": 150, \"archive_members_extracted\": false, \"current_and_original_tracking_verified\": true, \"current_native_tests_executed\": 0, \"current_runtime_tests_executed\": 0, \"current_work_or_service_qualification\": false, \"historical_observations_only\": true, \"network_fetches\": 0, \"original_archive_members_rehashed\": 4960, \"original_archives_verified\": 60, \"original_checker_executed\": true, \"original_checker_exit\": 0, \"original_checker_sha256\": \"0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef\", \"original_manifest_entries\": 170, \"original_member_bytes_rehashed\": 4463919709, \"original_observation\": {\"archives_reopened\": 60, \"member_bytes_verified\": 4463919709, \"members_verified\": 4960, \"new_native_execution\": false, \"original_zip_containers_included\": false, \"result\": \"PASS_RETAINED_BYTES\", \"runs\": [41297071118, 41297714882, 41298626837, 41299973417], \"work_hardness_or_service_qualification\": false}, \"original_package_bytes\": 145800078, \"original_package_files\": 172, \"original_sha256sums_entries\": 171, \"original_stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"original_stdout_sha256\": \"7f8e79bedc86c2c2b5b58a5ac87131871b2fa03f84a5a1279d4a4230017f5507\", \"original_zip_bytes_reverified\": false, \"preserved_files\": 20, \"production_activation\": false, \"removed_payload_bytes\": 138750512, \"removed_payload_files\": 59, \"result\": \"PASS\", \"retained_files_and_index_bytes_unchanged\": true, \"retained_summaries\": 91, \"source_commit\": \"893210a45b44742edfe2510fea1d92e9974b5f95\", \"whole_chain_native\": false}\n",
+    "wall_seconds": 20.317410719999316
+  },
+  "final_readback": {
+    "copied_log_records": 10,
+    "copied_record_bytes": 6047654,
+    "copied_zero_byte_records": 0,
+    "current_readme_local_links_verified": 42,
+    "external_historical_reference": {
+      "explicit_retained_mapping": "evidence/pon-w1-complete-work-20261101/retained-run-41299973417/service-report.json",
+      "json_path": "/historical_comparison/evidence_path",
+      "kept_byte_identical": true,
+      "path": "evidence/pon-work-security-eight-samples-20261101/hosted-service/analysis-service.json",
+      "sha256": "6b2acc433c135c6c583a2ac3bb35aef04fd6901e76636de59fbaf7d4765894f1",
+      "value": "evidence/pon-w1-complete-work-20261101/run-41299973417/service-report.json"
+    },
+    "live_executable_consumers_found": 0,
+    "network_fetches": 0,
+    "original_local_git_objects_present_and_sized": 172,
+    "overlay_copied_records_byte_identical": 91,
+    "overlay_preserved_original_paths_byte_identical": 20,
+    "pq_corpus_exact_path_intersection": 0,
+    "schema": "trnm-w1-final-readback-v1",
+    "shared_head_at_readback": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "shared_index_modified_by_task": false,
+    "shared_original_bytes_read": 145800078,
+    "shared_original_files_present_and_sha256_equal": 172,
+    "shared_worktree_modified_by_task": false
+  },
+  "first_archived_cli_run": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/dfc64d0acfc2/w1-next/view/evidence/pon-w1-complete-work-20261101/verify_archives.py",
+      "/workspace/scratch/dfc64d0acfc2/w1-next/view/evidence/pon-w1-complete-work-20261101"
+    ],
+    "current_files": 114,
+    "current_package_unchanged": true,
+    "entrypoint_sha256": "5032b2b4a95c5648766360d62145242568840a369897feb7b243a045386bba70",
+    "exit": 0,
+    "schema": "trnm-w1-current-cli-original-view-v1",
+    "source_sha256": {
+      "check_historical_archive.py": "f44b88fa83a26fddad017cf21656efdd6a22780db3e5f58a3c443bf3ddaa7ddc",
+      "check_w1_complete_archive.py": "16801d6141b606f34a35872498e7f8a7760227f6ab51ba957c8bd59cc5f00a21"
+    },
+    "stderr": "",
+    "stdout": "{\"archive_bytes\": 144798166, \"archive_files\": 150, \"archive_members_extracted\": false, \"current_and_original_tracking_verified\": true, \"current_native_tests_executed\": 0, \"current_runtime_tests_executed\": 0, \"current_work_or_service_qualification\": false, \"historical_observations_only\": true, \"network_fetches\": 0, \"original_archive_members_rehashed\": 4960, \"original_archives_verified\": 60, \"original_checker_executed\": true, \"original_checker_exit\": 0, \"original_checker_sha256\": \"0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef\", \"original_manifest_entries\": 170, \"original_member_bytes_rehashed\": 4463919709, \"original_observation\": {\"archives_reopened\": 60, \"member_bytes_verified\": 4463919709, \"members_verified\": 4960, \"new_native_execution\": false, \"original_zip_containers_included\": false, \"result\": \"PASS_RETAINED_BYTES\", \"runs\": [41297071118, 41297714882, 41298626837, 41299973417], \"work_hardness_or_service_qualification\": false}, \"original_package_bytes\": 145800078, \"original_package_files\": 172, \"original_sha256sums_entries\": 171, \"original_stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"original_stdout_sha256\": \"7f8e79bedc86c2c2b5b58a5ac87131871b2fa03f84a5a1279d4a4230017f5507\", \"original_zip_bytes_reverified\": false, \"preserved_files\": 20, \"production_activation\": false, \"removed_payload_bytes\": 138750512, \"removed_payload_files\": 59, \"result\": \"PASS\", \"retained_files_and_index_bytes_unchanged\": true, \"retained_summaries\": 91, \"source_commit\": \"893210a45b44742edfe2510fea1d92e9974b5f95\", \"whole_chain_native\": false}\n",
+    "wall_seconds": 21.30525216100068
+  },
+  "fixed_original_checker": {
+    "all_functions_before_main_unchanged": true,
+    "blob": "0cfb6b0d24438d92c6ad2992d57c18074237ec37",
+    "bytes": 5952,
+    "current_main_unconditionally_dispatches": true,
+    "historical_private_view_runs_original_main": true,
+    "path": "evidence/pon-w1-complete-work-20261101/verify_archives.py",
+    "sha256": "0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef"
+  },
+  "limits": {
+    "archive_members_extracted": false,
+    "committed_source_ci_qualification_performed": false,
+    "database_opens": 0,
+    "native_W1_runs": 0,
+    "network_fetches": 0,
+    "original_package_view_files_materialized": 172,
+    "original_zip_containers_revalidated": false,
+    "shared_index_or_head_changed_by_task": false,
+    "shared_worktree_modified_by_task": false
+  },
+  "negative_tests": {
+    "actual_observation": {
+      "exit": 0,
+      "schema": "trnm-w1-negative-tests-v1",
+      "source_sha256": {
+        "check_w1_complete_archive.py": "16801d6141b606f34a35872498e7f8a7760227f6ab51ba957c8bd59cc5f00a21",
+        "test_w1_complete_archive.py": "3b32af6ec13df23a9635fbbe307fa75796e9ced468b8bd6cf56cf110907bafe9"
+      },
+      "stderr": "test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes (test_w1_complete_archive.OriginalTarVerifierControls.test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes) ... ok\ntest_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes (test_w1_complete_archive.OriginalViewFixture.test_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes) ... ok\ntest_all_small_copies_and_preserved_root_validation_are_mandatory (test_w1_complete_archive.OriginalViewFixture.test_all_small_copies_and_preserved_root_validation_are_mandatory) ... ok\ntest_complete_fixture_executes_the_actual_original_verifier_and_all_members (test_w1_complete_archive.OriginalViewFixture.test_complete_fixture_executes_the_actual_original_verifier_and_all_members) ... ok\ntest_extra_file_and_restored_original_path_are_refused (test_w1_complete_archive.OriginalViewFixture.test_extra_file_and_restored_original_path_are_refused) ... ok\ntest_failure_cannot_be_promoted_by_resigning_retained_metadata (test_w1_complete_archive.OriginalViewFixture.test_failure_cannot_be_promoted_by_resigning_retained_metadata) ... ok\ntest_intent_to_add_archive_index_is_refused (test_w1_complete_archive.OriginalViewFixture.test_intent_to_add_archive_index_is_refused) ... ok\ntest_metadata_success_does_not_hide_a_real_original_member_failure (test_w1_complete_archive.OriginalViewFixture.test_metadata_success_does_not_hide_a_real_original_member_failure) ... ok\ntest_missing_changed_symlinked_or_special_copies_are_refused_before_read (test_w1_complete_archive.OriginalViewFixture.test_missing_changed_symlinked_or_special_copies_are_refused_before_read) ... ok\ntest_missing_original_blob_is_an_error_without_network_or_fallback (test_w1_complete_archive.OriginalViewFixture.test_missing_original_blob_is_an_error_without_network_or_fallback) ... ok\ntest_omitted_duplicate_reordered_archive_rows_are_refused (test_w1_complete_archive.OriginalViewFixture.test_omitted_duplicate_reordered_archive_rows_are_refused) ... ok\ntest_original_functions_and_unconditional_dispatch_cannot_change (test_w1_complete_archive.OriginalViewFixture.test_original_functions_and_unconditional_dispatch_cannot_change) ... ok\ntest_qualification_flags_duplicate_and_nonfinite_json_are_refused (test_w1_complete_archive.OriginalViewFixture.test_qualification_flags_duplicate_and_nonfinite_json_are_refused) ... ok\ntest_tracking_requires_empty_logs_and_exact_current_bytes_modes (test_w1_complete_archive.OriginalViewFixture.test_tracking_requires_empty_logs_and_exact_current_bytes_modes) ... ok\ntest_wrong_snapshot_scope_denominator_or_manifest_location_is_refused (test_w1_complete_archive.OriginalViewFixture.test_wrong_snapshot_scope_denominator_or_manifest_location_is_refused) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 2.447s\n\nOK\n",
+      "stdout": "",
+      "wall_seconds": 2.5707237380011065
+    },
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_w1_complete_archive.py",
+      "-v"
+    ],
+    "complete_original_fixture_pass_executed": true,
+    "empty_ignored_log_missing_from_index_control_executed": true,
+    "real_current_cli_missing_dangling_and_foreign_package_refusals_executed": true,
+    "real_original_member_failure_propagated": true,
+    "test_count": 15,
+    "uses_actual_original_archive_verifier": true
+  },
+  "original_and_archived_observations_identical": true,
+  "original_claims_preserved": {
+    "all_eight_service_jobs_failed": true,
+    "codeql_complete": false,
+    "codeql_completion_gate_failed": true,
+    "four_w1_workflows_conclude_failure": true,
+    "new_native_execution": false,
+    "original_zip_containers_included": false,
+    "production_activation": false,
+    "qualification_changed": false,
+    "successful_cost_captures_do_not_establish_service_success": true,
+    "whole_chain_native": false
+  },
+  "original_controls": [
+    {
+      "blob": "45098a349d5613e9685a727ffea061b1e501f71a",
+      "bytes": 42703,
+      "mode": "100644",
+      "path": "evidence/pon-w1-complete-work-20261101/FILE_INDEX.json",
+      "sha256": "536f9a527624db0b41b5237d3095596dd07e8849e40a87600890991937d0b805"
+    },
+    {
+      "blob": "2d34ece4079fadb46872786b5e77e43c024d54bf",
+      "bytes": 28206,
+      "mode": "100644",
+      "path": "evidence/pon-w1-complete-work-20261101/README.md",
+      "sha256": "f5a1ebd23e3065f9814aa9c0b63bd54d037151559ed4c99d9df59bc381964b89"
+    },
+    {
+      "blob": "7ccc62f47e79eb55d715f33057781e692afb64c7",
+      "bytes": 19181,
+      "mode": "100644",
+      "path": "evidence/pon-w1-complete-work-20261101/SHA256SUMS",
+      "sha256": "e840182c453d71cdd604802764765acfee70c04fadcdec4b6dcc20a1eb4f34ad"
+    },
+    {
+      "blob": "0cfb6b0d24438d92c6ad2992d57c18074237ec37",
+      "bytes": 5952,
+      "mode": "100644",
+      "path": "evidence/pon-w1-complete-work-20261101/verify_archives.py",
+      "sha256": "0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef"
+    }
+  ],
+  "original_physical_cli_preflight": {
+    "checker_sha256": "0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef",
+    "complete_original_package_unchanged": true,
+    "exit": 0,
+    "native_execution": false,
+    "network_fetches": 0,
+    "original_files": 172,
+    "schema": "trnm-w1-original-cli-preflight-v1",
+    "stderr": "",
+    "stdout": "{\"archives_reopened\": 60, \"member_bytes_verified\": 4463919709, \"members_verified\": 4960, \"new_native_execution\": false, \"original_zip_containers_included\": false, \"result\": \"PASS_RETAINED_BYTES\", \"runs\": [41297071118, 41297714882, 41298626837, 41299973417], \"work_hardness_or_service_qualification\": false}\n",
+    "wall_seconds": 17.14885928899821
+  },
+  "original_stdout_sha256": "7f8e79bedc86c2c2b5b58a5ac87131871b2fa03f84a5a1279d4a4230017f5507",
+  "parent_integration_verification": {
+    "all_150_removed_path_hashes_verified": true,
+    "all_promotion_file_hashes_verified": true,
+    "force_added_exact_original_logs": 10,
+    "old_stack_can_be_removed": false,
+    "original_observation_equal": true,
+    "root_archived_cli": {
+      "exit_code": 0,
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"archive_bytes\": 144798166, \"archive_files\": 150, \"archive_members_extracted\": false, \"current_and_original_tracking_verified\": true, \"current_native_tests_executed\": 0, \"current_runtime_tests_executed\": 0, \"current_work_or_service_qualification\": false, \"historical_observations_only\": true, \"network_fetches\": 0, \"original_archive_members_rehashed\": 4960, \"original_archives_verified\": 60, \"original_checker_executed\": true, \"original_checker_exit\": 0, \"original_checker_sha256\": \"0c996bbb2b5b8ea11c29036cc163460a936149344dbe2e6b0d34834230cd39ef\", \"original_manifest_entries\": 170, \"original_member_bytes_rehashed\": 4463919709, \"original_observation\": {\"archives_reopened\": 60, \"member_bytes_verified\": 4463919709, \"members_verified\": 4960, \"new_native_execution\": false, \"original_zip_containers_included\": false, \"result\": \"PASS_RETAINED_BYTES\", \"runs\": [41297071118, 41297714882, 41298626837, 41299973417], \"work_hardness_or_service_qualification\": false}, \"original_package_bytes\": 145800078, \"original_package_files\": 172, \"original_sha256sums_entries\": 171, \"original_stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"original_stdout_sha256\": \"7f8e79bedc86c2c2b5b58a5ac87131871b2fa03f84a5a1279d4a4230017f5507\", \"original_zip_bytes_reverified\": false, \"preserved_files\": 20, \"production_activation\": false, \"removed_payload_bytes\": 138750512, \"removed_payload_files\": 59, \"result\": \"PASS\", \"retained_files_and_index_bytes_unchanged\": true, \"retained_summaries\": 91, \"source_commit\": \"893210a45b44742edfe2510fea1d92e9974b5f95\", \"whole_chain_native\": false}\n",
+      "stdout_sha256": "b094321579ab6cd407b679149c841cc08d69565c8c5584bc3880f57799951842",
+      "wall_seconds": 21.394725155998458
+    },
+    "root_negative_controls": {
+      "exit_code": 0,
+      "stderr": "test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes (test_w1_complete_archive.OriginalTarVerifierControls.test_actual_original_member_verifier_rejects_member_set_type_size_and_hash_changes) ... ok\ntest_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes (test_w1_complete_archive.OriginalViewFixture.test_actual_current_cli_missing_dangling_or_foreign_package_refuses_without_writes) ... ok\ntest_all_small_copies_and_preserved_root_validation_are_mandatory (test_w1_complete_archive.OriginalViewFixture.test_all_small_copies_and_preserved_root_validation_are_mandatory) ... ok\ntest_complete_fixture_executes_the_actual_original_verifier_and_all_members (test_w1_complete_archive.OriginalViewFixture.test_complete_fixture_executes_the_actual_original_verifier_and_all_members) ... ok\ntest_extra_file_and_restored_original_path_are_refused (test_w1_complete_archive.OriginalViewFixture.test_extra_file_and_restored_original_path_are_refused) ... ok\ntest_failure_cannot_be_promoted_by_resigning_retained_metadata (test_w1_complete_archive.OriginalViewFixture.test_failure_cannot_be_promoted_by_resigning_retained_metadata) ... ok\ntest_intent_to_add_archive_index_is_refused (test_w1_complete_archive.OriginalViewFixture.test_intent_to_add_archive_index_is_refused) ... ok\ntest_metadata_success_does_not_hide_a_real_original_member_failure (test_w1_complete_archive.OriginalViewFixture.test_metadata_success_does_not_hide_a_real_original_member_failure) ... ok\ntest_missing_changed_symlinked_or_special_copies_are_refused_before_read (test_w1_complete_archive.OriginalViewFixture.test_missing_changed_symlinked_or_special_copies_are_refused_before_read) ... ok\ntest_missing_original_blob_is_an_error_without_network_or_fallback (test_w1_complete_archive.OriginalViewFixture.test_missing_original_blob_is_an_error_without_network_or_fallback) ... ok\ntest_omitted_duplicate_reordered_archive_rows_are_refused (test_w1_complete_archive.OriginalViewFixture.test_omitted_duplicate_reordered_archive_rows_are_refused) ... ok\ntest_original_functions_and_unconditional_dispatch_cannot_change (test_w1_complete_archive.OriginalViewFixture.test_original_functions_and_unconditional_dispatch_cannot_change) ... ok\ntest_qualification_flags_duplicate_and_nonfinite_json_are_refused (test_w1_complete_archive.OriginalViewFixture.test_qualification_flags_duplicate_and_nonfinite_json_are_refused) ... ok\ntest_tracking_requires_empty_logs_and_exact_current_bytes_modes (test_w1_complete_archive.OriginalViewFixture.test_tracking_requires_empty_logs_and_exact_current_bytes_modes) ... ok\ntest_wrong_snapshot_scope_denominator_or_manifest_location_is_refused (test_w1_complete_archive.OriginalViewFixture.test_wrong_snapshot_scope_denominator_or_manifest_location_is_refused) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 2.379s\n\nOK\n",
+      "stderr_sha256": "e04f4da00c5c96ea4fe99a2dd603a3b7ce8d81e6f86b7afd7179104659fd025d",
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 2.5072575620033604
+    },
+    "root_original_cli": {
+      "exit_code": 0,
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"archives_reopened\": 60, \"member_bytes_verified\": 4463919709, \"members_verified\": 4960, \"new_native_execution\": false, \"original_zip_containers_included\": false, \"result\": \"PASS_RETAINED_BYTES\", \"runs\": [41297071118, 41297714882, 41298626837, 41299973417], \"work_hardness_or_service_qualification\": false}\n",
+      "stdout_sha256": "7f8e79bedc86c2c2b5b58a5ac87131871b2fa03f84a5a1279d4a4230017f5507",
+      "wall_seconds": 17.58362311000019
+    },
+    "source_head_after_independent_link_fix": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_head_before_integration": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "whole_chain_native": false,
+    "working_tree_dirty": true
+  },
+  "result": "PASS_ORIGINAL_W1_BYTES_PRESERVED",
+  "schema": "trnm-w1-complete-archive-cleanup-observation-v1",
+  "scope": "Isolated scratch cleanup. Original byte verification only; no current W1 native, service, work-hardness, security-analysis, workspace, or production qualification.",
+  "source_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+  "source_tree": "a2d04b29621bb78504244471aacac3be3bc78d1d"
+}

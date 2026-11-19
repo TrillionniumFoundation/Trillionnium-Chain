@@ -1,0 +1,1377 @@
+{
+  "architectures": [
+    {
+      "architecture": "x64",
+      "archive_bytes": 9463028,
+      "archive_members": 162,
+      "archive_sha256": "3bd5d0ca8a2374cf1c4d549b079530494791f4786a0e9cbfd936d4a08c9dd4c1",
+      "artifact_id": 14431202653,
+      "build_execution_binding": {
+        "binary_sha256": "b745bd0f848814fbcc3a9ecdc16e2234c2f59a896fcb8531f1eb97a1c64ee8a1",
+        "manifest_sha256": "1626a76f2b420e14422e9d76e3ebd0bab28b76f43dfd8257f10c898fd5c03176",
+        "original_runner_repeated_source_build": true,
+        "runtime_limits_or_deadlines_changed": false,
+        "schema": "trnm-ci-original-native-build-execution-binding-v1",
+        "source_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5"
+      },
+      "full_cost_closed": false,
+      "manifest_members_checked": 55,
+      "native_binary_sha256": "b745bd0f848814fbcc3a9ecdc16e2234c2f59a896fcb8531f1eb97a1c64ee8a1",
+      "original_business_validators_checked": 3,
+      "original_confirmation_gate": true,
+      "original_named_tests_checked": 5,
+      "phases": [
+        {
+          "accounting_closed": true,
+          "attacker_attempt_coverage": {
+            "all_scheduled_worker_call_lists_observed": true,
+            "calling_thread_cpu": {
+              "known_count": 0,
+              "known_sum_ns": null,
+              "missing_count": 0
+            },
+            "calls_with_complete_timing": 0,
+            "calls_with_unknown_timing": 0,
+            "calls_without_packet_index": 0,
+            "diagnostic_text_is_typed_error": false,
+            "exhausted_without_submission": 0,
+            "missing_worker_records": 0,
+            "observed_worker_records": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "recorded_attempts": 0,
+            "recorded_request_body_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "missing_count": 0
+            },
+            "repeated_recorded_packet_index_calls": 0,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 0,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 0,
+                "missing_count": 0
+              }
+            },
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "scheduled_workers": 0,
+            "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation",
+            "submitted_client_calls_recorded": 0,
+            "submitted_status_counts": {
+              "error": 0,
+              "ok": 0,
+              "refused": 0
+            },
+            "unique_recorded_packet_indices": 0,
+            "unknown_status_observations": {
+              "calling_thread_cpu": {
+                "known_count": 0,
+                "known_sum_ns": null,
+                "missing_count": 0
+              },
+              "raw_client_error_counts": {},
+              "raw_refusal_error_counts": {},
+              "record_count": 0,
+              "recorded_request_body_bytes": {
+                "known_count": 0,
+                "known_sum": null,
+                "missing_count": 0
+              },
+              "records_with_complete_timing": 0,
+              "records_with_unknown_timing": 0,
+              "records_without_packet_index": 0,
+              "repeated_recorded_packet_index_records": 0,
+              "return_flag_coverage": {
+                "returned_after_call_deadline": {
+                  "known_count": 0,
+                  "missing_count": 0
+                },
+                "returned_after_original_window": {
+                  "known_count": 0,
+                  "missing_count": 0
+                }
+              },
+              "returned_after_call_deadline": 0,
+              "returned_after_original_window": 0,
+              "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals",
+              "unique_recorded_packet_indices": 0
+            },
+            "unknown_status_records": 0,
+            "unobserved_attempts": null,
+            "worker_attempt_cap_status_unknown": 0,
+            "worker_call_lists_observed": 0,
+            "worker_call_lists_unavailable": 0,
+            "workers_reporting_attempt_cap_reached": 0
+          },
+          "attacker_workers_cpu_ns": 0,
+          "confirmation_ended_ns": 2720289336,
+          "confirmation_latency_ns": 2720172444,
+          "confirmed": 1,
+          "independent_pages": 7,
+          "independent_replay_cpu_ns": 493128379,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 0,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 8285824,
+                "to": "before_service_spawn",
+                "wall_ns": 67948977
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 689494622,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4001228014
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 16443481,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 16449088
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6643,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 47379966
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 67948977,
+                "process_cpu_counter_ns": 55665790
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4069176991,
+                "process_cpu_counter_ns": 745160412
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4085626079,
+                "process_cpu_counter_ns": 761603893
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 714223927,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4085626079
+            }
+          },
+          "requested_window_ns": 4000000000,
+          "resource_coverage": {
+            "all_worker_cpu_ns": null,
+            "application_bytes_read": {
+              "known_count": 79,
+              "known_sum": 712760,
+              "max_known": 99661,
+              "missing_count": 0
+            },
+            "application_bytes_written": {
+              "known_count": 79,
+              "known_sum": 909036,
+              "max_known": 102042,
+              "missing_count": 0
+            },
+            "attacker_workers_calling_thread_cpu_ns": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 0,
+              "observed_worker_records": 0,
+              "scheduled_workers": 0,
+              "worker_roster_observed": true
+            },
+            "disk_growth_bytes": null,
+            "phase_process_cost": {
+              "business_acceptance_authority": false,
+              "energy_joules": null,
+              "exact_original_window_cpu_ns": null,
+              "intervals": [
+                {
+                  "cpu_state": "observed",
+                  "from": "before_setup",
+                  "process_cpu_ns": 8285824,
+                  "to": "before_service_spawn",
+                  "wall_ns": 67948977
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "before_service_spawn",
+                  "process_cpu_ns": 689494622,
+                  "to": "after_workers_and_service_join",
+                  "wall_ns": 4001228014
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "after_workers_and_service_join",
+                  "process_cpu_ns": 16443481,
+                  "to": "after_state_and_observation_readback",
+                  "wall_ns": 16449088
+                }
+              ],
+              "physical_disk_io_bytes": null,
+              "physical_network_bytes": null,
+              "process_id": 6643,
+              "retained_files_after": {
+                "error": null,
+                "logical_file_bytes": 1907192,
+                "regular_files": 8,
+                "state": "observed"
+              },
+              "retained_files_before": {
+                "error": null,
+                "logical_file_bytes": 0,
+                "regular_files": 0,
+                "state": "absent"
+              },
+              "retained_logical_file_growth_bytes": 1907192,
+              "samples": [
+                {
+                  "boundary": "before_setup",
+                  "elapsed_ns": 0,
+                  "process_cpu_counter_ns": 47379966
+                },
+                {
+                  "boundary": "before_service_spawn",
+                  "elapsed_ns": 67948977,
+                  "process_cpu_counter_ns": 55665790
+                },
+                {
+                  "boundary": "after_workers_and_service_join",
+                  "elapsed_ns": 4069176991,
+                  "process_cpu_counter_ns": 745160412
+                },
+                {
+                  "boundary": "after_state_and_observation_readback",
+                  "elapsed_ns": 4085626079,
+                  "process_cpu_counter_ns": 761603893
+                }
+              ],
+              "schema": "public-v3-confirmation-phase-process-cost-read-v1",
+              "scope": "all native test-process threads across setup, traffic, failures, retries, joined shutdown and readback; nested actor/dispatch/Host CPU must not be added; no allocation to a successful transaction or exact 4s window; excludes child processes, cost-record serialization and final report write; retained regular-file lengths are signed before/after growth, not physical disk I/O or peak storage; missing and reversed clocks remain unknown",
+              "whole_phase": {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 714223927,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 4085626079
+              }
+            },
+            "physical_network_bytes": null,
+            "receiver_dispatch_thread_cpu_ns": {
+              "known_count": 79,
+              "known_sum": 49270413,
+              "max_known": 5347669,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 0
+            },
+            "receiver_full_work_thread_cpu_ns": {
+              "known_count": 7,
+              "known_sum": 9243905,
+              "max_known": 1333006,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 72
+            },
+            "request_peak_rss_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 79
+            },
+            "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; per-request RSS and physical disk I/O are not captured by this source; missing values are not zero; separate phase_process_cost covers all native process threads across setup, traffic, shutdown and readback, with retained regular-file lengths; its boundaries are wider than the original 4s window",
+            "unretained_receiver_records": 0
+          },
+          "signed_submissions": 7,
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "attacker_attempt_coverage": {
+            "all_scheduled_worker_call_lists_observed": true,
+            "calling_thread_cpu": {
+              "known_count": 144,
+              "known_sum_ns": 73274797,
+              "missing_count": 0
+            },
+            "calls_with_complete_timing": 144,
+            "calls_with_unknown_timing": 0,
+            "calls_without_packet_index": 0,
+            "diagnostic_text_is_typed_error": false,
+            "exhausted_without_submission": 0,
+            "missing_worker_records": 0,
+            "observed_worker_records": 16,
+            "raw_client_error_counts": {
+              "IO: Resource temporarily unavailable (os error 11)": 16
+            },
+            "raw_refusal_error_counts": {
+              "WORK:Transcript": 128
+            },
+            "recorded_attempts": 144,
+            "recorded_request_body_bytes": {
+              "known_count": 144,
+              "known_sum": 14262192,
+              "missing_count": 0
+            },
+            "repeated_recorded_packet_index_calls": 128,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 144,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 144,
+                "missing_count": 0
+              }
+            },
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 16,
+            "scheduled_workers": 16,
+            "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation",
+            "submitted_client_calls_recorded": 144,
+            "submitted_status_counts": {
+              "error": 16,
+              "ok": 0,
+              "refused": 128
+            },
+            "unique_recorded_packet_indices": 16,
+            "unknown_status_observations": {
+              "calling_thread_cpu": {
+                "known_count": 0,
+                "known_sum_ns": null,
+                "missing_count": 0
+              },
+              "raw_client_error_counts": {},
+              "raw_refusal_error_counts": {},
+              "record_count": 0,
+              "recorded_request_body_bytes": {
+                "known_count": 0,
+                "known_sum": null,
+                "missing_count": 0
+              },
+              "records_with_complete_timing": 0,
+              "records_with_unknown_timing": 0,
+              "records_without_packet_index": 0,
+              "repeated_recorded_packet_index_records": 0,
+              "return_flag_coverage": {
+                "returned_after_call_deadline": {
+                  "known_count": 0,
+                  "missing_count": 0
+                },
+                "returned_after_original_window": {
+                  "known_count": 0,
+                  "missing_count": 0
+                }
+              },
+              "returned_after_call_deadline": 0,
+              "returned_after_original_window": 0,
+              "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals",
+              "unique_recorded_packet_indices": 0
+            },
+            "unknown_status_records": 0,
+            "unobserved_attempts": null,
+            "worker_attempt_cap_status_unknown": 0,
+            "worker_call_lists_observed": 16,
+            "worker_call_lists_unavailable": 0,
+            "workers_reporting_attempt_cap_reached": 0
+          },
+          "attacker_workers_cpu_ns": 96372437,
+          "confirmation_ended_ns": 3480677721,
+          "confirmation_latency_ns": 3415648125,
+          "confirmed": 1,
+          "independent_pages": 7,
+          "independent_replay_cpu_ns": 501234745,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 124,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 7896619,
+                "to": "before_service_spawn",
+                "wall_ns": 110207287
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 921751168,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4005223475
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 34213718,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 76724474
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6643,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 764519983
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 110207287,
+                "process_cpu_counter_ns": 772416602
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4115430762,
+                "process_cpu_counter_ns": 1694167770
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4192155236,
+                "process_cpu_counter_ns": 1728381488
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 963861505,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4192155236
+            }
+          },
+          "requested_window_ns": 4000000000,
+          "resource_coverage": {
+            "all_worker_cpu_ns": null,
+            "application_bytes_read": {
+              "known_count": 213,
+              "known_sum": 13419078,
+              "max_known": 99661,
+              "missing_count": 0
+            },
+            "application_bytes_written": {
+              "known_count": 213,
+              "known_sum": 1173700,
+              "max_known": 102042,
+              "missing_count": 0
+            },
+            "attacker_workers_calling_thread_cpu_ns": {
+              "known_count": 16,
+              "known_sum": 96372437,
+              "max_known": 6264883,
+              "missing_count": 0,
+              "observed_worker_records": 16,
+              "scheduled_workers": 16,
+              "worker_roster_observed": true
+            },
+            "disk_growth_bytes": null,
+            "phase_process_cost": {
+              "business_acceptance_authority": false,
+              "energy_joules": null,
+              "exact_original_window_cpu_ns": null,
+              "intervals": [
+                {
+                  "cpu_state": "observed",
+                  "from": "before_setup",
+                  "process_cpu_ns": 7896619,
+                  "to": "before_service_spawn",
+                  "wall_ns": 110207287
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "before_service_spawn",
+                  "process_cpu_ns": 921751168,
+                  "to": "after_workers_and_service_join",
+                  "wall_ns": 4005223475
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "after_workers_and_service_join",
+                  "process_cpu_ns": 34213718,
+                  "to": "after_state_and_observation_readback",
+                  "wall_ns": 76724474
+                }
+              ],
+              "physical_disk_io_bytes": null,
+              "physical_network_bytes": null,
+              "process_id": 6643,
+              "retained_files_after": {
+                "error": null,
+                "logical_file_bytes": 1907192,
+                "regular_files": 8,
+                "state": "observed"
+              },
+              "retained_files_before": {
+                "error": null,
+                "logical_file_bytes": 0,
+                "regular_files": 0,
+                "state": "absent"
+              },
+              "retained_logical_file_growth_bytes": 1907192,
+              "samples": [
+                {
+                  "boundary": "before_setup",
+                  "elapsed_ns": 0,
+                  "process_cpu_counter_ns": 764519983
+                },
+                {
+                  "boundary": "before_service_spawn",
+                  "elapsed_ns": 110207287,
+                  "process_cpu_counter_ns": 772416602
+                },
+                {
+                  "boundary": "after_workers_and_service_join",
+                  "elapsed_ns": 4115430762,
+                  "process_cpu_counter_ns": 1694167770
+                },
+                {
+                  "boundary": "after_state_and_observation_readback",
+                  "elapsed_ns": 4192155236,
+                  "process_cpu_counter_ns": 1728381488
+                }
+              ],
+              "schema": "public-v3-confirmation-phase-process-cost-read-v1",
+              "scope": "all native test-process threads across setup, traffic, failures, retries, joined shutdown and readback; nested actor/dispatch/Host CPU must not be added; no allocation to a successful transaction or exact 4s window; excludes child processes, cost-record serialization and final report write; retained regular-file lengths are signed before/after growth, not physical disk I/O or peak storage; missing and reversed clocks remain unknown",
+              "whole_phase": {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 963861505,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 4192155236
+              }
+            },
+            "physical_network_bytes": null,
+            "receiver_dispatch_thread_cpu_ns": {
+              "known_count": 197,
+              "known_sum": 118266142,
+              "max_known": 5470380,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 16
+            },
+            "receiver_full_work_thread_cpu_ns": {
+              "known_count": 135,
+              "known_sum": 34300668,
+              "max_known": 1456510,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 78
+            },
+            "request_peak_rss_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 213
+            },
+            "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; per-request RSS and physical disk I/O are not captured by this source; missing values are not zero; separate phase_process_cost covers all native process threads across setup, traffic, shutdown and readback, with retained regular-file lengths; its boundaries are wider than the original 4s window",
+            "unretained_receiver_records": 0
+          },
+          "signed_submissions": 7,
+          "workers": 16
+        }
+      ],
+      "production_activation": false,
+      "public_network_qualified": false,
+      "source": {
+        "base": null,
+        "candidate": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2995134675,
+        "tracked_entries": 40957,
+        "tracked_worktree_verified": true
+      },
+      "sybil_fairness_qualified": false,
+      "unchanged_host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "unknown_costs": [
+        "exact four-second whole-tree CPU",
+        "physical network bytes",
+        "physical storage I/O",
+        "whole-tree peak memory",
+        "energy joules"
+      ],
+      "whole_confirmation_invocation": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1783331000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 371,
+        "major_faults": 0,
+        "max_rss_kib": 76608,
+        "minor_faults": 18127,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "a342a80f1377189fc7151c988af34006078f3eae22ed0c8cf46f352f6e11c2a3",
+        "system_cpu_ns": 1199101000,
+        "timed_out": false,
+        "user_cpu_ns": 584230000,
+        "voluntary_switches": 21281,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 8703922466
+      },
+      "whole_invocation_scope": "both phases, construction, records and exit; not pressure-only cost"
+    },
+    {
+      "architecture": "arm64",
+      "archive_bytes": 9071416,
+      "archive_members": 162,
+      "archive_sha256": "ed58ba96672fcd66040c81e804e95065998059df0dbee8f1d08bd8675e78db0b",
+      "artifact_id": 14431971535,
+      "build_execution_binding": {
+        "binary_sha256": "2a999cac54f1b90307cdcb4d144ba688ae58f2f67e06b725be9dbeb676527409",
+        "manifest_sha256": "a2464cf38afed2f80f2453de6c2ae4e71dda3707c38d3b82a5f360b9b9139e7f",
+        "original_runner_repeated_source_build": true,
+        "runtime_limits_or_deadlines_changed": false,
+        "schema": "trnm-ci-original-native-build-execution-binding-v1",
+        "source_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5"
+      },
+      "full_cost_closed": false,
+      "manifest_members_checked": 55,
+      "native_binary_sha256": "2a999cac54f1b90307cdcb4d144ba688ae58f2f67e06b725be9dbeb676527409",
+      "original_business_validators_checked": 3,
+      "original_confirmation_gate": true,
+      "original_named_tests_checked": 5,
+      "phases": [
+        {
+          "accounting_closed": true,
+          "attacker_attempt_coverage": {
+            "all_scheduled_worker_call_lists_observed": true,
+            "calling_thread_cpu": {
+              "known_count": 0,
+              "known_sum_ns": null,
+              "missing_count": 0
+            },
+            "calls_with_complete_timing": 0,
+            "calls_with_unknown_timing": 0,
+            "calls_without_packet_index": 0,
+            "diagnostic_text_is_typed_error": false,
+            "exhausted_without_submission": 0,
+            "missing_worker_records": 0,
+            "observed_worker_records": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "recorded_attempts": 0,
+            "recorded_request_body_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "missing_count": 0
+            },
+            "repeated_recorded_packet_index_calls": 0,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 0,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 0,
+                "missing_count": 0
+              }
+            },
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "scheduled_workers": 0,
+            "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation",
+            "submitted_client_calls_recorded": 0,
+            "submitted_status_counts": {
+              "error": 0,
+              "ok": 0,
+              "refused": 0
+            },
+            "unique_recorded_packet_indices": 0,
+            "unknown_status_observations": {
+              "calling_thread_cpu": {
+                "known_count": 0,
+                "known_sum_ns": null,
+                "missing_count": 0
+              },
+              "raw_client_error_counts": {},
+              "raw_refusal_error_counts": {},
+              "record_count": 0,
+              "recorded_request_body_bytes": {
+                "known_count": 0,
+                "known_sum": null,
+                "missing_count": 0
+              },
+              "records_with_complete_timing": 0,
+              "records_with_unknown_timing": 0,
+              "records_without_packet_index": 0,
+              "repeated_recorded_packet_index_records": 0,
+              "return_flag_coverage": {
+                "returned_after_call_deadline": {
+                  "known_count": 0,
+                  "missing_count": 0
+                },
+                "returned_after_original_window": {
+                  "known_count": 0,
+                  "missing_count": 0
+                }
+              },
+              "returned_after_call_deadline": 0,
+              "returned_after_original_window": 0,
+              "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals",
+              "unique_recorded_packet_indices": 0
+            },
+            "unknown_status_records": 0,
+            "unobserved_attempts": null,
+            "worker_attempt_cap_status_unknown": 0,
+            "worker_call_lists_observed": 0,
+            "worker_call_lists_unavailable": 0,
+            "workers_reporting_attempt_cap_reached": 0
+          },
+          "attacker_workers_cpu_ns": 0,
+          "confirmation_ended_ns": 1900157518,
+          "confirmation_latency_ns": 1899967625,
+          "confirmed": 1,
+          "independent_pages": 7,
+          "independent_replay_cpu_ns": 302735904,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 0,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 10405848,
+                "to": "before_service_spawn",
+                "wall_ns": 85541948
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 513860560,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4002625396
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 16156976,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 16155727
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6634,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 47977848
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 85541948,
+                "process_cpu_counter_ns": 58383696
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4088167344,
+                "process_cpu_counter_ns": 572244256
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4104323071,
+                "process_cpu_counter_ns": 588401232
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 540423384,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4104323071
+            }
+          },
+          "requested_window_ns": 4000000000,
+          "resource_coverage": {
+            "all_worker_cpu_ns": null,
+            "application_bytes_read": {
+              "known_count": 89,
+              "known_sum": 715050,
+              "max_known": 99661,
+              "missing_count": 0
+            },
+            "application_bytes_written": {
+              "known_count": 89,
+              "known_sum": 936895,
+              "max_known": 102042,
+              "missing_count": 0
+            },
+            "attacker_workers_calling_thread_cpu_ns": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 0,
+              "observed_worker_records": 0,
+              "scheduled_workers": 0,
+              "worker_roster_observed": true
+            },
+            "disk_growth_bytes": null,
+            "phase_process_cost": {
+              "business_acceptance_authority": false,
+              "energy_joules": null,
+              "exact_original_window_cpu_ns": null,
+              "intervals": [
+                {
+                  "cpu_state": "observed",
+                  "from": "before_setup",
+                  "process_cpu_ns": 10405848,
+                  "to": "before_service_spawn",
+                  "wall_ns": 85541948
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "before_service_spawn",
+                  "process_cpu_ns": 513860560,
+                  "to": "after_workers_and_service_join",
+                  "wall_ns": 4002625396
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "after_workers_and_service_join",
+                  "process_cpu_ns": 16156976,
+                  "to": "after_state_and_observation_readback",
+                  "wall_ns": 16155727
+                }
+              ],
+              "physical_disk_io_bytes": null,
+              "physical_network_bytes": null,
+              "process_id": 6634,
+              "retained_files_after": {
+                "error": null,
+                "logical_file_bytes": 1907192,
+                "regular_files": 8,
+                "state": "observed"
+              },
+              "retained_files_before": {
+                "error": null,
+                "logical_file_bytes": 0,
+                "regular_files": 0,
+                "state": "absent"
+              },
+              "retained_logical_file_growth_bytes": 1907192,
+              "samples": [
+                {
+                  "boundary": "before_setup",
+                  "elapsed_ns": 0,
+                  "process_cpu_counter_ns": 47977848
+                },
+                {
+                  "boundary": "before_service_spawn",
+                  "elapsed_ns": 85541948,
+                  "process_cpu_counter_ns": 58383696
+                },
+                {
+                  "boundary": "after_workers_and_service_join",
+                  "elapsed_ns": 4088167344,
+                  "process_cpu_counter_ns": 572244256
+                },
+                {
+                  "boundary": "after_state_and_observation_readback",
+                  "elapsed_ns": 4104323071,
+                  "process_cpu_counter_ns": 588401232
+                }
+              ],
+              "schema": "public-v3-confirmation-phase-process-cost-read-v1",
+              "scope": "all native test-process threads across setup, traffic, failures, retries, joined shutdown and readback; nested actor/dispatch/Host CPU must not be added; no allocation to a successful transaction or exact 4s window; excludes child processes, cost-record serialization and final report write; retained regular-file lengths are signed before/after growth, not physical disk I/O or peak storage; missing and reversed clocks remain unknown",
+              "whole_phase": {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 540423384,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 4104323071
+              }
+            },
+            "physical_network_bytes": null,
+            "receiver_dispatch_thread_cpu_ns": {
+              "known_count": 89,
+              "known_sum": 55411448,
+              "max_known": 5664320,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 0
+            },
+            "receiver_full_work_thread_cpu_ns": {
+              "known_count": 7,
+              "known_sum": 7407192,
+              "max_known": 1085304,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 82
+            },
+            "request_peak_rss_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 89
+            },
+            "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; per-request RSS and physical disk I/O are not captured by this source; missing values are not zero; separate phase_process_cost covers all native process threads across setup, traffic, shutdown and readback, with retained regular-file lengths; its boundaries are wider than the original 4s window",
+            "unretained_receiver_records": 0
+          },
+          "signed_submissions": 7,
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "attacker_attempt_coverage": {
+            "all_scheduled_worker_call_lists_observed": true,
+            "calling_thread_cpu": {
+              "known_count": 144,
+              "known_sum_ns": 79679776,
+              "missing_count": 0
+            },
+            "calls_with_complete_timing": 144,
+            "calls_with_unknown_timing": 0,
+            "calls_without_packet_index": 0,
+            "diagnostic_text_is_typed_error": false,
+            "exhausted_without_submission": 0,
+            "missing_worker_records": 0,
+            "observed_worker_records": 16,
+            "raw_client_error_counts": {
+              "IO: Resource temporarily unavailable (os error 11)": 16
+            },
+            "raw_refusal_error_counts": {
+              "WORK:Transcript": 128
+            },
+            "recorded_attempts": 144,
+            "recorded_request_body_bytes": {
+              "known_count": 144,
+              "known_sum": 14262192,
+              "missing_count": 0
+            },
+            "repeated_recorded_packet_index_calls": 128,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 144,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 144,
+                "missing_count": 0
+              }
+            },
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 16,
+            "scheduled_workers": 16,
+            "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation",
+            "submitted_client_calls_recorded": 144,
+            "submitted_status_counts": {
+              "error": 16,
+              "ok": 0,
+              "refused": 128
+            },
+            "unique_recorded_packet_indices": 16,
+            "unknown_status_observations": {
+              "calling_thread_cpu": {
+                "known_count": 0,
+                "known_sum_ns": null,
+                "missing_count": 0
+              },
+              "raw_client_error_counts": {},
+              "raw_refusal_error_counts": {},
+              "record_count": 0,
+              "recorded_request_body_bytes": {
+                "known_count": 0,
+                "known_sum": null,
+                "missing_count": 0
+              },
+              "records_with_complete_timing": 0,
+              "records_with_unknown_timing": 0,
+              "records_without_packet_index": 0,
+              "repeated_recorded_packet_index_records": 0,
+              "return_flag_coverage": {
+                "returned_after_call_deadline": {
+                  "known_count": 0,
+                  "missing_count": 0
+                },
+                "returned_after_original_window": {
+                  "known_count": 0,
+                  "missing_count": 0
+                }
+              },
+              "returned_after_call_deadline": 0,
+              "returned_after_original_window": 0,
+              "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals",
+              "unique_recorded_packet_indices": 0
+            },
+            "unknown_status_records": 0,
+            "unobserved_attempts": null,
+            "worker_attempt_cap_status_unknown": 0,
+            "worker_call_lists_observed": 16,
+            "worker_call_lists_unavailable": 0,
+            "workers_reporting_attempt_cap_reached": 0
+          },
+          "attacker_workers_cpu_ns": 99476776,
+          "confirmation_ended_ns": 2486575845,
+          "confirmation_latency_ns": 2400575524,
+          "confirmed": 1,
+          "independent_pages": 7,
+          "independent_replay_cpu_ns": 303975344,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlapping_false_calls": 95,
+          "phase_process_cost": {
+            "business_acceptance_authority": false,
+            "cpu_clock": "CLOCK_PROCESS_CPUTIME_ID",
+            "energy_joules": null,
+            "intervals": [
+              {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 10176784,
+                "to": "before_service_spawn",
+                "wall_ns": 67783486
+              },
+              {
+                "cpu_state": "observed",
+                "from": "before_service_spawn",
+                "process_cpu_ns": 746345920,
+                "to": "after_workers_and_service_join",
+                "wall_ns": 4009011930
+              },
+              {
+                "cpu_state": "observed",
+                "from": "after_workers_and_service_join",
+                "process_cpu_ns": 29683536,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 85168276
+              }
+            ],
+            "physical_network_bytes": null,
+            "process_id": 6634,
+            "retained_files_after": {
+              "error": null,
+              "logical_file_bytes": 1907192,
+              "regular_files": 8,
+              "state": "observed"
+            },
+            "retained_files_before": {
+              "error": null,
+              "logical_file_bytes": 0,
+              "regular_files": 0,
+              "state": "absent"
+            },
+            "samples": [
+              {
+                "boundary": "before_setup",
+                "elapsed_ns": 0,
+                "process_cpu_counter_ns": 592073160
+              },
+              {
+                "boundary": "before_service_spawn",
+                "elapsed_ns": 67783486,
+                "process_cpu_counter_ns": 602249944
+              },
+              {
+                "boundary": "after_workers_and_service_join",
+                "elapsed_ns": 4076795416,
+                "process_cpu_counter_ns": 1348595864
+              },
+              {
+                "boundary": "after_state_and_observation_readback",
+                "elapsed_ns": 4161963692,
+                "process_cpu_counter_ns": 1378279400
+              }
+            ],
+            "schema": "public-v3-confirmation-phase-process-cost-v1",
+            "scope": "all threads of this test process, including setup, failed/cancelled/retried calls, independent replay, joined workers, service shutdown and state/observation readback; includes nested actor/dispatch/Host clocks, never add them again; excludes child processes, this cost record's serialization and the final report write",
+            "whole_phase": {
+              "cpu_state": "observed",
+              "from": "before_setup",
+              "process_cpu_ns": 786206240,
+              "to": "after_state_and_observation_readback",
+              "wall_ns": 4161963692
+            }
+          },
+          "requested_window_ns": 4000000000,
+          "resource_coverage": {
+            "all_worker_cpu_ns": null,
+            "application_bytes_read": {
+              "known_count": 223,
+              "known_sum": 13421368,
+              "max_known": 99661,
+              "missing_count": 0
+            },
+            "application_bytes_written": {
+              "known_count": 223,
+              "known_sum": 1201565,
+              "max_known": 102042,
+              "missing_count": 0
+            },
+            "attacker_workers_calling_thread_cpu_ns": {
+              "known_count": 16,
+              "known_sum": 99476776,
+              "max_known": 6498824,
+              "missing_count": 0,
+              "observed_worker_records": 16,
+              "scheduled_workers": 16,
+              "worker_roster_observed": true
+            },
+            "disk_growth_bytes": null,
+            "phase_process_cost": {
+              "business_acceptance_authority": false,
+              "energy_joules": null,
+              "exact_original_window_cpu_ns": null,
+              "intervals": [
+                {
+                  "cpu_state": "observed",
+                  "from": "before_setup",
+                  "process_cpu_ns": 10176784,
+                  "to": "before_service_spawn",
+                  "wall_ns": 67783486
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "before_service_spawn",
+                  "process_cpu_ns": 746345920,
+                  "to": "after_workers_and_service_join",
+                  "wall_ns": 4009011930
+                },
+                {
+                  "cpu_state": "observed",
+                  "from": "after_workers_and_service_join",
+                  "process_cpu_ns": 29683536,
+                  "to": "after_state_and_observation_readback",
+                  "wall_ns": 85168276
+                }
+              ],
+              "physical_disk_io_bytes": null,
+              "physical_network_bytes": null,
+              "process_id": 6634,
+              "retained_files_after": {
+                "error": null,
+                "logical_file_bytes": 1907192,
+                "regular_files": 8,
+                "state": "observed"
+              },
+              "retained_files_before": {
+                "error": null,
+                "logical_file_bytes": 0,
+                "regular_files": 0,
+                "state": "absent"
+              },
+              "retained_logical_file_growth_bytes": 1907192,
+              "samples": [
+                {
+                  "boundary": "before_setup",
+                  "elapsed_ns": 0,
+                  "process_cpu_counter_ns": 592073160
+                },
+                {
+                  "boundary": "before_service_spawn",
+                  "elapsed_ns": 67783486,
+                  "process_cpu_counter_ns": 602249944
+                },
+                {
+                  "boundary": "after_workers_and_service_join",
+                  "elapsed_ns": 4076795416,
+                  "process_cpu_counter_ns": 1348595864
+                },
+                {
+                  "boundary": "after_state_and_observation_readback",
+                  "elapsed_ns": 4161963692,
+                  "process_cpu_counter_ns": 1378279400
+                }
+              ],
+              "schema": "public-v3-confirmation-phase-process-cost-read-v1",
+              "scope": "all native test-process threads across setup, traffic, failures, retries, joined shutdown and readback; nested actor/dispatch/Host CPU must not be added; no allocation to a successful transaction or exact 4s window; excludes child processes, cost-record serialization and final report write; retained regular-file lengths are signed before/after growth, not physical disk I/O or peak storage; missing and reversed clocks remain unknown",
+              "whole_phase": {
+                "cpu_state": "observed",
+                "from": "before_setup",
+                "process_cpu_ns": 786206240,
+                "to": "after_state_and_observation_readback",
+                "wall_ns": 4161963692
+              }
+            },
+            "physical_network_bytes": null,
+            "receiver_dispatch_thread_cpu_ns": {
+              "known_count": 207,
+              "known_sum": 117510080,
+              "max_known": 5868984,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 16
+            },
+            "receiver_full_work_thread_cpu_ns": {
+              "known_count": 135,
+              "known_sum": 27216432,
+              "max_known": 1074112,
+              "missing_count": 0,
+              "unentered_or_start_unknown_records": 88
+            },
+            "request_peak_rss_bytes": {
+              "known_count": 0,
+              "known_sum": null,
+              "max_known": null,
+              "missing_count": 223
+            },
+            "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; per-request RSS and physical disk I/O are not captured by this source; missing values are not zero; separate phase_process_cost covers all native process threads across setup, traffic, shutdown and readback, with retained regular-file lengths; its boundaries are wider than the original 4s window",
+            "unretained_receiver_records": 0
+          },
+          "signed_submissions": 7,
+          "workers": 16
+        }
+      ],
+      "production_activation": false,
+      "public_network_qualified": false,
+      "source": {
+        "base": null,
+        "candidate": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+        "tested_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2995134675,
+        "tracked_entries": 40957,
+        "tracked_worktree_verified": true
+      },
+      "sybil_fairness_qualified": false,
+      "unchanged_host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "unknown_costs": [
+        "exact four-second whole-tree CPU",
+        "physical network bytes",
+        "physical storage I/O",
+        "whole-tree peak memory",
+        "energy joules"
+      ],
+      "whole_confirmation_invocation": {
+        "command": [
+          "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cpu_ns": 1434289000,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "exit_code": 0,
+        "involuntary_switches": 240,
+        "major_faults": 0,
+        "max_rss_kib": 77568,
+        "minor_faults": 18778,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ac7d82756f23ad6c4bdff4a89d9c5d95e16c230ac1a2a11b8322962b884f99ac",
+        "system_cpu_ns": 822257000,
+        "timed_out": false,
+        "user_cpu_ns": 612032000,
+        "voluntary_switches": 26270,
+        "wait4_cpu_resolution_ns": 1000,
+        "wall_ns": 8698207829
+      },
+      "whole_invocation_scope": "both phases, construction, records and exit; not pressure-only cost"
+    }
+  ],
+  "observed_head": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+  "observed_run_id": 44309944062,
+  "observed_tree": "21c3ba7c2239103f1f18dfcf8e9099020bee9f74",
+  "original_reader_source_graph_verified": true,
+  "reader_original_commit": "974049daa4b72825332b07b59084cb70f4b4c8b5",
+  "reader_source_sha256": {
+    "docs/development/evidence/chain-original-window-pass-20261118-2e9b/readback.py": "5dda0161e3c389873a95ad3093daee21355b6a9d376607bd62415e7aceb1edac",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/experiments/architecture_compare.py": "fa438f829e305020fce190250d46e9b6272c2ec7b9aeb82745dfc311cc2e0fb4",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "scripts/ci/from_zero_phase_cost.py": "3d9e7f7323a88a39853629e31b19faedd84d8b5d8762cc97074aaeb39ace7cfc",
+    "scripts/ci/public_fixture_host_lease.py": "c6abe7ac89aa479917d0d39cac40c7550e37b2dc25f34d02e28f6d19fcfc76cf",
+    "scripts/ci/public_host_ci_observation.py": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3",
+    "scripts/ci/replay_pinned_native.py": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a",
+    "scripts/ci/run_from_zero_host.py": "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb",
+    "scripts/ci/run_from_zero_native.py": "87cf7fbeb89186b2c1207b232805094e6343224c543c4d210f63609d42bb24ba",
+    "scripts/ci/run_history_diagnostic.py": "2ec0a8c0a6a574bdf4c5d41f69933c44a9ca83679b19ad705615c110b5af592c",
+    "scripts/ci/run_history_native.py": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+    "scripts/ci/run_public_fixture_native.py": "47def7fc617e4be335ec58bf693ea1f152347dc65c1fbcc326ab339e83375f58",
+    "scripts/ci/run_sp27_receiver_controls.py": "d16701eb61c7949912d45694520b24e395436d1e1492680d6ce6228085a85476",
+    "scripts/ci/run_sp27_strata_controls.py": "459dafde601c9fdad23cb36f9f8931fd0a7a7967439a6b7cc933464eb9f7a907",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "scripts/pon_public_v3_phase_read.py": "f2dd54ec905117e26fc7128218acb74c36a3ae7c16229d56c7cc04dae1a5ef41",
+    "scripts/pon_public_v3_policy_read.py": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a"
+  },
+  "schema": "chain-original-window-independent-readback-v1",
+  "scope": "read-only exact hosted originals; no workload rerun, new-source adoption or production qualification"
+}

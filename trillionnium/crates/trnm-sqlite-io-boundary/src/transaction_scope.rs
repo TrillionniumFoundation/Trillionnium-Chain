@@ -96,6 +96,22 @@ impl<'db> TransactionScope<'db> {
         // SAFETY: unchanged checked the original connection-owned observer.
         Ok(unsafe { &*self.observer }.writes.load(Ordering::SeqCst) == self.writes)
     }
+    /// Count actually attempted potentially writing statements in this original
+    /// main WRITE transaction. This is an observation, not permission to carry
+    /// a read verdict across writes: one statement can have trigger/cascade or
+    /// UDF side effects. A caller needs its own closed, typed SQL operation and
+    /// fresh schema proof. The original no-write scope remains invalid after
+    /// ANY write; this method never advances or resets its captured counter.
+    pub fn executed_writes_since_capture(&self, expected: &Connection) -> Result<u64> {
+        self.same_write_snapshot(expected)?;
+        // SAFETY: same_write_snapshot checked the original live handle, process,
+        // observer, transaction and sticky failure before this counter read.
+        unsafe { &*self.observer }
+            .writes
+            .load(Ordering::SeqCst)
+            .checked_sub(self.writes)
+            .ok_or_else(|| error("executed write counter rewound"))
+    }
 }
 
 fn error(message: &str) -> BoundaryError {

@@ -1,0 +1,7 @@
+{
+  "repository": "TrillionniumFoundation/Hepta",
+  "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+  "language_schema": "hepta.hia.program.v8",
+  "assembly_schema": "hia-asm.v1",
+  "target": "x86_64-linux-gnu"
+}

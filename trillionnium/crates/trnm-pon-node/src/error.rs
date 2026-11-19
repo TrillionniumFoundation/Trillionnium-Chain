@@ -227,6 +227,8 @@ pub struct Error {
     /// Only the controlled public-history operation can select this origin.
     /// Parsing a string or an authenticated remote reply never selects it.
     request_history_budget: bool,
+    // A private completed native comparison, never reconstructed from text.
+    native_root_refusal: Option<Box<crate::store::NativeRootRefusal>>,
 }
 impl Error {
     pub fn new(code: ErrorCode) -> Self {
@@ -236,7 +238,27 @@ impl Error {
             message: code.as_str().into(),
             source: None,
             request_history_budget: false,
+            native_root_refusal: None,
         }
+    }
+    /// Only the native held/detached final-output comparison can construct
+    /// this provenance. It is not a cached verdict or admission capability.
+    pub(crate) fn native_output_root_refusal(proof: crate::store::NativeRootRefusal) -> Self {
+        let mut error = Self::from("ROOT");
+        error.native_root_refusal = Some(Box::new(proof));
+        error
+    }
+    pub(crate) fn completed_native_root_body(
+        &self,
+        settings: &crate::Settings,
+        body_digest: &str,
+    ) -> Option<trnm_protocol::pon_wire::Hash> {
+        if self.kind != ErrorKind::Unclassified || self.code.is_some() {
+            return None;
+        }
+        self.native_root_refusal
+            .as_ref()?
+            .matches(settings, body_digest)
     }
     pub fn code(&self) -> Option<ErrorCode> {
         self.code
@@ -297,6 +319,7 @@ impl Error {
     /// complete request: those can carry cancellation and peer-controlled input.
     pub(crate) fn local_integrity(mut self) -> Self {
         self.kind = ErrorKind::LocalStructure;
+        self.native_root_refusal = None;
         self
     }
     /// A failed reconstruction/recovery of the local replay journal. Preserve
@@ -357,6 +380,7 @@ impl Error {
             message: format!("{prefix}:{source}"),
             source: Some(Box::new(source)),
             request_history_budget: false,
+            native_root_refusal: None,
         }
     }
     /// Parse only after the caller has established its required reply authentication.
@@ -371,6 +395,7 @@ impl Error {
             message: message.into(),
             source: None,
             request_history_budget: false,
+            native_root_refusal: None,
         }
     }
     pub(crate) fn authenticated_remote(terminal: bool, message: &str) -> Self {
@@ -394,6 +419,7 @@ impl Error {
             message: format!("{prefix}: {source}"),
             source: Some(Box::new(source)),
             request_history_budget: false,
+            native_root_refusal: None,
         }
     }
 }
@@ -423,6 +449,7 @@ impl From<String> for Error {
             message,
             source: None,
             request_history_budget: false,
+            native_root_refusal: None,
         }
     }
 }

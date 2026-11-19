@@ -1,0 +1,94 @@
+{
+  "schema": "chain-exact-original-f0-zip-parts-v1",
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "run_id": 44451798839,
+  "archive_name": "f0-original.zip",
+  "bytes": 17640478,
+  "sha256": "744a0d353fb5055fd111cb5acae33259c0e526a8e4240a8f33752d01bfac5ccd",
+  "full_content_git_blob": "92eddc7cbd4d6b489c98a5e8a2414b6d107a32bc",
+  "full_blob_uploaded": false,
+  "lossless_concatenation_verified": true,
+  "parts": [
+    {
+      "path": "f0-original.zip.part-000",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-000",
+      "offset": 0,
+      "bytes": 9000000,
+      "sha256": "8f8a101cc0a90e3f7e0c546e7076e43b19932430c6ef815ae9ae36b2490563d5",
+      "git_blob": "f101c8f8d9919dcf25e25dd307bcb2f00d52e9f9",
+      "already_published": true
+    },
+    {
+      "path": "f0-original.zip.part-001",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-001",
+      "offset": 9000000,
+      "bytes": 8640478,
+      "sha256": "adb6bd58decd24af43395ad2bf9d593d48ec6859a714a2def759c63ef7e4f48f",
+      "git_blob": "dcb76559e987c53a2af1b2ba5c38e698237bb0fd",
+      "already_published": true
+    }
+  ],
+  "wall_seconds": null,
+  "self_user_cpu_seconds": 0.17146799999999998,
+  "self_system_cpu_seconds": 0.055869,
+  "reason": "Complete native gh upload returned401; connector whole body was rejected by16MiB transport limit; same bytes split into two ordinary supported blobs. No credentials changed and no workload repeated.",
+  "complete": true,
+  "expected_git_blob": "92eddc7cbd4d6b489c98a5e8a2414b6d107a32bc",
+  "post_count": 3,
+  "connector_transport_rejected_calls": 1,
+  "child_user_cpu_seconds": null,
+  "child_system_cpu_seconds": null,
+  "cost_note": "Native failed upload has measured CPU/wall below. Connector execution CPU/wall not independently observed; not zero.",
+  "native_full_upload": {
+    "schema": "chain-original-f0-zip-git-blob-publication-v1",
+    "parent_candidate": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+    "post_count": 1,
+    "complete": false,
+    "bytes": 17640478,
+    "sha256": "744a0d353fb5055fd111cb5acae33259c0e526a8e4240a8f33752d01bfac5ccd",
+    "expected_git_blob": "92eddc7cbd4d6b489c98a5e8a2414b6d107a32bc",
+    "command": [
+      "/usr/bin/gh",
+      "api",
+      "--method",
+      "POST",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+      "--input",
+      "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-blob-1/blob-request.json"
+    ],
+    "started_utc": "2026-11-19T03:44:54.136714+00:00",
+    "pid": 414048,
+    "exit_code": 1,
+    "wall_seconds": 214.1625269309734,
+    "child_user_cpu_seconds": 0.21673299999999998,
+    "child_system_cpu_seconds": 0.109646,
+    "error": "AssertionError()"
+  },
+  "connector_full_transport_rejection": "tool call error: tool call failed for `codex_apps/github.create_blob`\n\nCaused by:\n    Transport send error: Transport [codex_rmcp_client::tool_list_changes::ToolListChanges<codex_rmcp_client::event_notification_transport::EventNotificationTransport<rmcp::transport::worker::WorkerTransport<rmcp::transport::streamable_http_client::StreamableHttpClientWorker<codex_rmcp_client::http_client_adapter::StreamableHttpClientAdapter>>>>] error: unexpected server response: HTTP 400: {\"detail\":\"MCP request body is invalid or exceeds the 16 MiB limit\"}",
+  "published_parts": [
+    {
+      "path": "f0-original.zip.part-000",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-000",
+      "offset": 0,
+      "bytes": 9000000,
+      "sha256": "8f8a101cc0a90e3f7e0c546e7076e43b19932430c6ef815ae9ae36b2490563d5",
+      "git_blob": "f101c8f8d9919dcf25e25dd307bcb2f00d52e9f9",
+      "result": {
+        "sha": "f101c8f8d9919dcf25e25dd307bcb2f00d52e9f9"
+      }
+    },
+    {
+      "path": "f0-original.zip.part-001",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-001",
+      "offset": 9000000,
+      "bytes": 8640478,
+      "sha256": "adb6bd58decd24af43395ad2bf9d593d48ec6859a714a2def759c63ef7e4f48f",
+      "git_blob": "dcb76559e987c53a2af1b2ba5c38e698237bb0fd",
+      "result": {
+        "sha": "dcb76559e987c53a2af1b2ba5c38e698237bb0fd"
+      }
+    }
+  ],
+  "workload_repeated": false,
+  "credentials_changed": false
+}

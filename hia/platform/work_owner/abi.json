@@ -1,0 +1,96 @@
+{
+  "schema": "trnm.hia.work-owner-abi.v1",
+  "entry": "actual Linux x86_64 static ELF; one immutable acquired Host snapshot and one owned worker",
+  "runtime_hia_sources": 8,
+  "request": {
+    "bytes": 49284,
+    "layout": "challenge32 task32 target32 proof49188",
+    "sealed": true,
+    "caller_tid_clock_generation_success": false
+  },
+  "fixture": {
+    "prefix": "WOFIX001",
+    "prefix_bytes": 64,
+    "private_callback_write_fd": 3,
+    "private_callback_ack_fd": 4,
+    "authority": false
+  },
+  "reply": {
+    "magic": "HIAWO001",
+    "header_bytes": 512,
+    "host_receipts": 3,
+    "host_receipt_bytes": 256,
+    "progress_record_bytes": 40,
+    "success_product_bytes": 16384
+  },
+  "budgets": {
+    "cpu_quota": 25000,
+    "cpu_period": 100000,
+    "memory_bytes": 2147483648,
+    "memory_swap_bytes": 0,
+    "pids": 256,
+    "finite_entry_seconds": 4,
+    "original_attackers": 16,
+    "original_service_seconds": 1800
+  },
+  "profiles": {
+    "semantic_histories": 61,
+    "original_histories": 57,
+    "protocol_only": 4,
+    "success_progress": 1099,
+    "success_worker_host_checks": 1101,
+    "successful_main_fresh_checks": 5,
+    "successful_aggregate_samples": 2,
+    "clock_faults": 18,
+    "retained_original_tests": 44
+  },
+  "images": {
+    "owner": {
+      "executable": {
+        "bytes": 510454,
+        "sha256": "4ed3ce4da5dfe42340adfc04f25c0e2b23584174bec1424ea7d3d86511cb8d98"
+      },
+      "prefix_bytes": 4796,
+      "adapter_sha256": "9d102e927716e5bed46bd410e521a2afa9056e8e68cbf5cc66556ca6639cd926"
+    },
+    "fixture": {
+      "executable": {
+        "bytes": 510454,
+        "sha256": "aeb8361c267b0905461596021b97d606bc0bb517bdaaaef93eb811af5926e524"
+      },
+      "prefix_bytes": 4796,
+      "adapter_sha256": "9d102e927716e5bed46bd410e521a2afa9056e8e68cbf5cc66556ca6639cd926"
+    },
+    "closed-fd": {
+      "executable": {
+        "bytes": 510494,
+        "sha256": "3d72c791cb39dd01096d1ac61a03737bf7dd22965903cc2eab57cadc504dfca9"
+      },
+      "prefix_bytes": 4836,
+      "adapter_sha256": "4ecc3524def6f08160796e7e09beb4a8aca053de925fe246190db876d516be32"
+    }
+  },
+  "authority": {
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "initial_snapshot": "immutable boot bytes, parent dev/inode/UID and five limits",
+    "worker_context": "fresh actual gettid and per-thread membership with retained original snapshot",
+    "resource": "checked parent FD remains live through CPU, memory and PID reads, closes before second fresh check",
+    "partial_or_failed_product_authority": false,
+    "node_commit_authority": false
+  },
+  "remaining_open": [
+    "original request intake and earlier deadline retention",
+    "Paid.history_checkpoint and the shared paid account in every callback",
+    "native Node/batch integration and durable commit",
+    "production fixed-parent positive for this combined owner",
+    "original fixed 4-second/16-attacker and 1800-second service gates"
+  ],
+  "qualification_requirements": {
+    "primitive_complete_guard_before_after_raw": 175,
+    "actual_original_controlled_CLOCK1_faults": 18,
+    "original_normal_vdso_positive": 1,
+    "original_private_no_vdso_positive": 1,
+    "same_complete_source_required": true,
+    "requirement_is_not_a_pass_claim": true
+  }
+}

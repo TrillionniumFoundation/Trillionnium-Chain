@@ -37,7 +37,10 @@ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa6
 # This literal binds the current 31-path map; inspect never regenerates it.
 # New exported APIs remain outside these declared uses and do not acquire
 # whole-callgraph coverage. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "5e0801d22adab09c2104b568a8427dafdc0b43b2124951fc1e67a968e49fc3c0"
+# The owned-append candidate retains all 31 source paths and 19 uses. Only the
+# previously stale store.rs identity changes; the historical anchors and exact
+# semantic digest remain fixed. A fresh literal rejects the prior source map.
+REVIEWED_SOURCE_MAP_SHA256 = "39224fce7b4411ae387e252c3440b4ae5e871921a33e8efe9e3f70ff56a6a73f"
 
 USES = {
     "model-legacy-root": "model",

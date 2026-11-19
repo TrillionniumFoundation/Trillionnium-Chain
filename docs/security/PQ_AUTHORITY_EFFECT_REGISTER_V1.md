@@ -18,6 +18,28 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
+## Current candidate correspondence, 2026-11-19 — HOLD
+
+The immutable candidate `f0a8364118df01113c14d6a81fbb6fdb6210e4ff`
+retains the 44-path register's original scope and review-lineage label
+`5c04c60e463462d9df8884786e0d5bb32af08a64`. All 44 regular Git blobs were
+read independently and matched to this isolated checkout before updating the
+current map. Exactly one selected path differs: Node `src/store.rs`, 397,703
+bytes, SHA-256 `cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9`.
+Its preceding current-map pin
+`9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820`
+remains an explicit refusal control.
+
+The resulting canonical review-label-plus-current-file lock is
+`ae5afdae579060eeaafb17783ee5a536f68717fa2ba0b46c5fe1826affed8f49`. The strict reader, manifest and
+independent positive assertion select that same lock. The old unchanged reader
+actually returned exit 2 on these bytes. The retained #968 original F0 still
+fails its six-target business and numeric-depletion requirements; source
+consistency repairs neither result. Earlier dated mappings below retain their
+historical identities. Seven routes, 44 paths and every HOLD/false qualification
+boundary remain unchanged. This check is not Git provenance authentication,
+complete authority coverage, native execution or production activation.
+
 ## Selected source correspondence after ordering review, 2026-11-14
 
 The active 44-path correspondence selects
