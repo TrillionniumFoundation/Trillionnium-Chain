@@ -1,0 +1,33 @@
+{
+  "schema": "chain-exact-original-f0-zip-parts-v1",
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "run_id": 44451798839,
+  "archive_name": "f0-original.zip",
+  "bytes": 17640478,
+  "sha256": "744a0d353fb5055fd111cb5acae33259c0e526a8e4240a8f33752d01bfac5ccd",
+  "full_content_git_blob": "92eddc7cbd4d6b489c98a5e8a2414b6d107a32bc",
+  "full_blob_uploaded": false,
+  "lossless_concatenation_verified": true,
+  "parts": [
+    {
+      "path": "f0-original.zip.part-000",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-000",
+      "offset": 0,
+      "bytes": 9000000,
+      "sha256": "8f8a101cc0a90e3f7e0c546e7076e43b19932430c6ef815ae9ae36b2490563d5",
+      "git_blob": "f101c8f8d9919dcf25e25dd307bcb2f00d52e9f9"
+    },
+    {
+      "path": "f0-original.zip.part-001",
+      "absolute_path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/zip-git-parts-1/f0-original.zip.part-001",
+      "offset": 9000000,
+      "bytes": 8640478,
+      "sha256": "adb6bd58decd24af43395ad2bf9d593d48ec6859a714a2def759c63ef7e4f48f",
+      "git_blob": "dcb76559e987c53a2af1b2ba5c38e698237bb0fd"
+    }
+  ],
+  "wall_seconds": 0.3242965509998612,
+  "self_user_cpu_seconds": 0.17146799999999998,
+  "self_system_cpu_seconds": 0.055869,
+  "reason": "Complete native gh upload returned401; connector whole body was rejected by16MiB transport limit; same bytes split into two ordinary supported blobs. No credentials changed and no workload repeated."
+}

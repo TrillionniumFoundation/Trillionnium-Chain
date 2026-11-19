@@ -1,0 +1,28 @@
+{
+  "schema": "chain-original-f0-readback-execution-v1",
+  "business_reexecuted": false,
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "run_id": 44451798839,
+  "invocation_count": 1,
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/f0-readback.py"
+  ],
+  "pid": 405754,
+  "exit_code": 0,
+  "wall_seconds": 2.0238580859731883,
+  "child_user_cpu_seconds": 1.751386,
+  "child_system_cpu_seconds": 0.244053,
+  "outputs": [
+    {
+      "path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/f0-independent-readback.json",
+      "bytes": 17072,
+      "sha256": "2bd7a12e08e6fb62df66406872c901c63438a285ab428d04229daec0337fa6c9"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/current-cost-profile.json",
+      "bytes": 195338,
+      "sha256": "0f12a9e90c8a209f97bb211aeb0265ee1ae2cd562de79be91dd46c1f2e30d6b9"
+    }
+  ]
+}
