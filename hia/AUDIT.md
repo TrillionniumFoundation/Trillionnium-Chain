@@ -3,7 +3,7 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**60 kernel components, 27 native foundations and 260 HIA source files**. All
+**60 kernel components, 28 native foundations and 262 HIA source files**. All
 26 original Rust packages remain: 19 are partially ported and 7 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
@@ -18,7 +18,7 @@ of every historical experiment. The original baseline is
 was `56c6e560dd3192f89cca40542286166b8284cb4b`. The detached-Oracle correction
 was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The private-owner/PQ continuation was published as
 `41948f98b7b9fcb24a6ba7d638d5391a88e26de6`. Later checkpoint, Task and Peer additions
-were published through `ae23b0a745186262eb8c987f714b5e9b7231e737`; this continuation
+were published through `10b2f5981c3aa742b16b32090260372f31091733`; this continuation
 extends that exact parent with the frozen source increments below. Every observation
 retains its actual working-source hash and does not inherit another commit's CI result.
 
@@ -32,7 +32,63 @@ failures and source identities, remains in
 
 ## Findings addressed in this continuation
 
-### Current shared SHA, native PQ owner and observed CI failures
+### Current Candidate ownership and runtime CI corrections
+
+The [current record](qualification/candidate-runtime-ci-development.json) extends
+the exact published 10b2 base. Candidate adds two HIA sources and one native
+foundation. Its current-base 311-input development graph completed all 343
+retained original tests and two doctests, 894 original/native pairs, 14,680 ABI
+calls, 186 allocator controls with 109 real failures, 992 lifetime calls across
+eight threads, 132 post-owner values, 59 reader refusals and eight real process
+controls. The full qualification and independent reader ran continuously for
+381.196 seconds. The complete 646,955,824-byte archive passed all-member
+readback on both retained hosts. The integrated native library has the exact
+qualified 301,872-byte image; a rebuild does not establish committed CI.
+
+The SHA boundary observer preserves all 440 cases and its original 1-second
+CPU, 2-second child and 30-second outer limits. Disabling child core dumping
+removes the observed host crash-reporter delay without changing production SHA.
+Actual child and observer stalls still fail and are fully reaped under the
+single 3-second cleanup window; the real 30-second demonstration and old
+failure remain retained.
+
+Peer Unix's fresh complete current-base gate passed 121 outer original tests,
+two original child re-executions, strict Clippy/formatting, seven runtime
+groups and all 18 controls in 293.035 seconds including independent readback.
+The full 18-history daemon roster remains; eight additional histories bind
+seeded capacity and actual delayed fsync behavior. All original fresh-append
+capacity cases passed with unchanged deadlines. Full Core composition still
+occurs at initial admission and independent readback. Each intermediate fence
+rereads every input byte, membership, link policy and original Git blob.
+The complete 296,653,049-byte archive includes old failures and was reread on
+both hosts. The shared CI summary now rejects the previous 14-control report.
+
+Checkpoint regenerated its exact native-image manifest and repeated all 77
+original tests, strict Clippy/formatting, 792 runtime observations, 31 integrity
+controls and independent readback on its current-base source graph. The full
+235,209,127-byte archive preserves original executables and failed preparations.
+Only independently archived duplicate/cache bytes were reclaimed; all 32
+retained ELFs and declared live inputs survived, and post-cleanup independent
+verification passed.
+
+The current inventory is 60 kernels, 28 foundations and 262 HIA sources.
+Discovery is 627 methods over disjoint 466/95/7/22/37 groups, and the public
+qualification closure contains 1,495 inputs. Candidate joins the mandatory
+owner matrix: 65 expanded jobs, 49 compiler admission blocks and 20 minutes
+per job. Its CI requires fresh originals, native execution and a separate
+reader on the exact clean current commit; a dirty development PASS is refused.
+None of the old source graphs is renamed as the new committed result.
+
+The current private Task successor still times out at 180.121 seconds under
+its original 180-second record controller, after 1,275 matching pairs.
+Settlement's private successor still times out under 240 seconds after 319
+of 320 matching fixtures. Those failures are retained and neither incomplete
+success is imported as a complete owner. Payload metadata's new private
+runtime is undergoing its own complete current-source qualification.
+Archive/StateImport, full payload/body/recovery, persistent Node integration,
+service, cross-target, model/research/economics and retirement remain open.
+
+### Prior shared SHA, native PQ owner and observed CI failures
 
 The [current continuation record](qualification/shared-sha-pq-peer-development.json)
 extends published `ae23b0a745186262eb8c987f714b5e9b7231e737`. Five additional

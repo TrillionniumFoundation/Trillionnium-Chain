@@ -1,0 +1,29 @@
+{
+  global:
+    trnm_candidate_seed_copy;
+    trnm_candidate_signing_from_owned_seed;
+    trnm_candidate_verifier_from_pinned_raw;
+    trnm_candidate_sign;
+    trnm_candidate_verify;
+    trnm_candidate_algorithm_all;
+    trnm_candidate_algorithm_name;
+    trnm_candidate_candidate_error_display;
+    trnm_candidate_algorithm_public_key_bytes;
+    trnm_candidate_algorithm_signature_bytes;
+    trnm_candidate_algorithm_nist_category;
+    trnm_candidate_signing_algorithm;
+    trnm_candidate_signing_public_key;
+    trnm_candidate_verifier_algorithm;
+    trnm_candidate_verifier_public_key;
+    trnm_candidate_drop;
+    trnm_candidate_kind;
+    trnm_candidate_value_code;
+    trnm_candidate_value_expected;
+    trnm_candidate_value_actual;
+    trnm_candidate_value_bytes;
+    trnm_candidate_signature_bytes;
+    trnm_candidate_algorithm_name_bytes;
+    trnm_candidate_algorithm_all_bytes;
+    trnm_candidate_error_display;
+  local: *;
+};

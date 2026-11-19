@@ -1566,7 +1566,7 @@
       "id": "platform/pq-public-authentication",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Native HIA public owned-seed PQ signing, pinned-SPKI/raw verification, TPQ1 authentication, profile views and cumulative verification budgets with 55 exports, independent result lifetimes and actual allocation-failure controls. Six real native child families retain the 240-second execution limit and one 3-second cleanup limit; 49 independent reader controls reject incomplete evidence. Frozen development evidence is separate from the integrated current-source qualification. OpenSSL owned-key construction, standalone Candidate owners, TUF, constant-time qualification, live Node integration and whole-crypto retirement remain OPEN.",
+      "scope": "Native HIA public owned-seed PQ signing, pinned-SPKI/raw verification, TPQ1 authentication, profile views and cumulative verification budgets with 55 exports, independent result lifetimes and actual allocation-failure controls. Six real native child families retain the 240-second execution limit and one 3-second cleanup limit; 49 independent reader controls reject incomplete evidence. Frozen development evidence is separate from the integrated current-source qualification. OpenSSL owned-key construction, TUF, constant-time qualification, live Node integration and whole-crypto retirement remain OPEN.",
       "sources": [
         "hia/platform/pq_auth/owned_emitter.hepta",
         "hia/src/crypto/pq_auth_owner.hepta",
@@ -1581,6 +1581,24 @@
         "hia/tests/rust_pq_auth_reference.rs",
         "hia/tests/rust_pq_profile_reference.rs",
         "hia/platform/pq_auth/qualification/supervision_controls.py"
+      ]
+    },
+    {
+      "id": "platform/pq-candidate-owner",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA owned Candidate ML-DSA seed, public key, signing, verification, independent values and heap-secret lifecycle through 25 public exports. Current 10b2 development graph passed the complete original 343 tests and two doctests, 894 original/native pairs, 14680 ABI calls, 186 allocation controls, eight parallel readers, 59 independent reader refusals and eight real process controls. Exact current-commit CI remains mandatory. Nonce exhaustion uses the explicit native SigningFailed edge; foreign arbitrary pointers, constant time, register/stack erasure, OpenSSL owned provider, TUF, live Node integration and whole crypto retirement remain OPEN.",
+      "sources": [
+        "hia/platform/pq_candidate/owned_emitter.hepta",
+        "hia/src/crypto/pq_candidate_gate.hepta"
+      ],
+      "tests": [
+        "hia/platform/pq_candidate/qualify.py",
+        "hia/platform/pq_candidate/readback.py",
+        "hia/platform/pq_candidate/qualification/integrity.py",
+        "hia/platform/pq_candidate/qualification/abi_client.c",
+        "hia/platform/pq_candidate/qualification/allocations.py",
+        "hia/platform/pq_candidate/qualification/lifetimes.py"
       ]
     }
   ],

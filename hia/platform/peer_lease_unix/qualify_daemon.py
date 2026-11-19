@@ -1,5 +1,5 @@
 """Observe both actual daemon implementations, including finite hostile peers."""
-import argparse,hashlib,json,os,pathlib,signal,socket,stat,struct,subprocess,time,traceback
+import argparse,hashlib,json,os,pathlib,re,signal,socket,stat,struct,subprocess,time,traceback
 from traced_process import finish_traced
 p=argparse.ArgumentParser()
 p.add_argument('--native',type=pathlib.Path,required=True)
@@ -47,14 +47,14 @@ def check_store(root):
  for path in [root/'j',root/'.j.head-v1',root/'j.lease-lock']:assert stat.S_IMODE(path.stat().st_mode)==0o600
  return result
 class Daemon:
- def __init__(self,exe,root,ns=500_000_000,*,socket_path=None,journal_path=None,name='daemon'):
+ def __init__(self,exe,root,ns=500_000_000,*,socket_path=None,journal_path=None,name='daemon',inject=None):
   self.root=root;self.directory=root/name;self.directory.mkdir(mode=0o700)
   self.fs=root/'fs';self.fs.mkdir(mode=0o700,exist_ok=True)
   self.path=self.fs/'s' if socket_path is None else socket_path
   self.journal=self.fs/'j' if journal_path is None else journal_path
   self.payload=config(self.path,self.journal,ns);(self.directory/'stdin.raw').write_bytes(self.payload)
   self.stdout=(self.directory/'stdout.raw').open('wb');self.stderr=(self.directory/'stderr.raw').open('wb')
-  self.argv=['strace','-f','-qq','-yy','-s','4096','-o',str(self.directory/'syscalls.raw'),str(exe)]
+  self.argv=['strace','-f','-qq','-yy','-s','4096','-o',str(self.directory/'syscalls.raw')]+(['--inject='+inject] if inject else [])+[str(exe)]
   self.started=time.monotonic_ns()
   self.child=subprocess.Popen(self.argv,stdin=subprocess.PIPE,stdout=self.stdout,stderr=self.stderr,start_new_session=True)
   self.child.stdin.write(self.payload);self.child.stdin.close();self.operations=[];self.owner_exe=exe
@@ -171,13 +171,13 @@ def capacity(exe,root,count):
   for _ in range(count):
    c=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);c.settimeout(4);c.connect(str(daemon.path));c.sendall(b'T');held.append(c)
   start=time.monotonic_ns();response=daemon.exchange('honest-at-capacity',request());elapsed=time.monotonic_ns()-start
+  (root/'timing.json').write_text(json.dumps({'stalled_clients':count,'honest_elapsed_ns':elapsed})+'\n')
   assert len(response)==195 and elapsed<2_000_000_000
   closed=0
   for c in held:
    if read_all(c)==b'':closed+=1
   assert closed==count
   assert len(check_store(daemon.fs))==1
-  (root/'timing.json').write_text(json.dumps({'stalled_clients':count,'honest_elapsed_ns':elapsed})+'\n')
   return {'clients':count,'closed':closed,'honest_response':normalized(response).hex(),'alive':daemon.child.poll() is None}
  finally:
   for c in held:c.close()
@@ -215,6 +215,80 @@ def restart(exe,root):
   if daemon.child.poll() is None:daemon.finish()
   if second:second.finish()
 pair('durable-restart-and-idempotence',restart)
+
+# These are additional observations. The six original fresh-append capacity
+# histories above retain their exact 250 ms connection and 2 s caller bounds.
+def capacity_idempotent(exe,root,count):
+ seed=Daemon(exe,root,1_000_000_000,name='seed');daemon=None;held=[]
+ try:
+  seed.ready();first=seed.exchange('seed-actual-acquire',request());assert len(first)==195
+  assert len(check_store(seed.fs))==1
+  journal=(seed.fs/'j').read_bytes();head=(seed.fs/'.j.head-v1').read_bytes()
+  (root/'seed-journal.raw').write_bytes(journal);(root/'seed-head.raw').write_bytes(head)
+  seed.finish();seed.path.unlink()
+  daemon=Daemon(exe,root,250_000_000);daemon.ready()
+  for _ in range(count):
+   c=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);c.settimeout(4);c.connect(str(daemon.path));c.sendall(b'T');held.append(c)
+  start=time.monotonic_ns();response=daemon.exchange('idempotent-at-capacity',request());elapsed=time.monotonic_ns()-start
+  (root/'timing.json').write_text(json.dumps({'stalled_clients':count,'honest_elapsed_ns':elapsed})+'\n')
+  assert response==first and len(response)==195 and elapsed<2_000_000_000
+  closed=sum(read_all(c)==b'' for c in held);assert closed==count
+  assert len(check_store(daemon.fs))==1 and (daemon.fs/'j').read_bytes()==journal and (daemon.fs/'.j.head-v1').read_bytes()==head
+  return {'clients':count,'closed':closed,'honest_response':normalized(response).hex(),'alive':daemon.child.poll() is None,
+    'seeded_by_actual_API':True,'exact_seed_token_returned':True,'journal_and_head_unchanged':True}
+ finally:
+  for c in held:c.close()
+  if seed.child.poll() is None:seed.finish()
+  if daemon:daemon.finish()
+for count in [1,16,63,64,65,80]:pair('capacity-idempotent-'+str(count),lambda exe,root,count=count:capacity_idempotent(exe,root,count))
+
+DEADLINE_SELECTORS={}
+def fsync_target(path,journal):
+ lines=path.read_text().splitlines();auth=[i for i,line in enumerate(lines) if 'getsockopt(' in line and 'SO_PEERCRED' in line]
+ assert auth
+ calls=[(i,line) for i,line in enumerate(lines) if re.match(r'^(?:\d+\s+)?fsync\(',line)]
+ matches=[(ordinal,i,line) for ordinal,(i,line) in enumerate(calls,1) if i>auth[0] and str(journal)+'>' in line]
+ assert len(matches)==1,matches
+ ordinal,index,line=matches[0];assert '= 0' in line
+ return {'phase':'journal-fsync','syscall':'fsync','ordinal':ordinal,'line_index':index,'line':line}
+def deadline_probe(exe,root):
+ daemon=Daemon(exe,root,1_000_000_000);receipt=None
+ try:
+  daemon.ready();reply=daemon.exchange('probe-actual-acquire',request());assert len(reply)==195
+  assert len(check_store(daemon.fs))==1;receipt=daemon.finish()
+  target=fsync_target(daemon.directory/'syscalls.raw',daemon.fs/'j')
+  assert '(DELAYED)' not in target['line'] and '(INJECTED)' not in target['line']
+  (root/'selector.json').write_text(json.dumps(target,sort_keys=True)+'\n');DEADLINE_SELECTORS[str(exe)]=target
+  return {'actual_successful_journal_fsync_identified':True,'response':normalized(reply).hex(),'records':1}
+ finally:
+  if receipt is None:daemon.finish()
+pair('deadline-journal-target-probe',deadline_probe)
+def delayed_commit(exe,root):
+ target=DEADLINE_SELECTORS[str(exe)];injection='fsync:delay_exit=350ms:when='+str(target['ordinal'])
+ (root/'injection-selector.json').write_text(json.dumps({'probe':target,'injection':injection,
+   'connection_deadline_ns':250_000_000,'injected_delay_exit_ns':350_000_000},sort_keys=True)+'\n')
+ daemon=Daemon(exe,root,250_000_000,inject=injection);receipt=None
+ try:
+  daemon.ready();start=time.monotonic_ns();reply=daemon.exchange('commit-crosses-deadline',request());elapsed=time.monotonic_ns()-start
+  (root/'timing.json').write_text(json.dumps({'commit_exchange_elapsed_ns':elapsed})+'\n')
+  assert reply==b'' and 350_000_000<=elapsed<2_000_000_000
+  assert len(check_store(daemon.fs))==1
+  journal=(daemon.fs/'j').read_bytes();head=(daemon.fs/'.j.head-v1').read_bytes()
+  (root/'committed-journal.raw').write_bytes(journal);(root/'committed-head.raw').write_bytes(head)
+  later=daemon.exchange('idempotent-after-late-commit',request())
+  assert later==frame(b'\1\0'+journal[43:196]+journal[204:236])
+  assert (daemon.fs/'j').read_bytes()==journal and (daemon.fs/'.j.head-v1').read_bytes()==head
+  assert daemon.child.poll() is None;receipt=daemon.finish()
+  actual=fsync_target(daemon.directory/'syscalls.raw',daemon.fs/'j')
+  delayed=[line for line in (daemon.directory/'syscalls.raw').read_text().splitlines() if '(DELAYED)' in line]
+  assert actual['ordinal']==target['ordinal'] and delayed==[actual['line']] and '(INJECTED)' not in actual['line']
+  (root/'actual-delay.json').write_text(json.dumps(actual,sort_keys=True)+'\n')
+  return {'connection_deadline_ns':250_000_000,'injected_delay_exit_ns':350_000_000,
+    'empty_reply_after_durable_commit':True,'committed_records':1,'exact_actual_target_verified':True,
+    'idempotent_retry':normalized(later).hex(),'journal_and_head_unchanged_on_retry':True,'alive_after_commit':True}
+ finally:
+  if receipt is None:daemon.finish()
+pair('durable-commit-crosses-absolute-deadline',delayed_commit)
 report={'status':'PASS' if all(r['status']=='PASS' for r in rows) else 'FAIL','passed':sum(r['status']=='PASS' for r in rows),
  'total':len(rows),'cases':rows,'actual_original_public_API':True,'actual_native_static_ELF':True,
  'normalization':'Only successful token expiry and record hash differ across independent real-time histories; each full journal digest chain and head is verified, and idempotent/restart tokens compare exactly within each implementation.'}

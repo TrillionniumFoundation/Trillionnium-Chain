@@ -29,8 +29,8 @@ GROUPS = {
             "directory": "l", "count": 37,
             "roster": "224c2fb8d7ae836fdaa67843cfe47df9905ed77c2fed6753d8aa06630bb33d7b"},
     "daemon": {"script": "qualify_daemon.py", "native": "peer-unix-api", "original": "daemon",
-               "directory": "d", "count": 18,
-               "roster": "19a41dc260bf105adef131ae1c021c787aab02e344b7a39b747859e1545c583d"},
+               "directory": "d", "count": 26,
+               "roster": "f4ffff9addbee538acf7e38813ad20ce7e249fa268e257e66da38f5161351769"},
     "storage-faults": {"script": "qualify_daemon_storage_faults.py", "native": "peer-unix-api",
                        "original": "daemon", "directory": "f", "count": 9,
                        "roster": "0090ca39786d89eb459dc4ec6d899f7ee54693a057fcfb08614c53df2ae6eb59"},
@@ -303,10 +303,10 @@ def integrity_readback(output, row):
     from . import test_qualification
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(test_qualification.QualificationControls)
     names = [test.id() for test in suite]
-    need(len(names) == len(set(names)) == 14, "Integrity control source roster changed")
+    need(len(names) == len(set(names)) == 18, "Integrity control source roster changed")
     raw = (output / "observations/integrity-controls/stderr.raw").read_text()
     actual = re.findall(r"^test_[a-z0-9_]+ \(([^()]+)\) \.\.\. ok$", raw, re.M)
-    need(actual == names and len(re.findall(r"^Ran 14 tests in [0-9.]+s$", raw, re.M)) == 1
+    need(actual == names and len(re.findall(r"^Ran 18 tests in [0-9.]+s$", raw, re.M)) == 1
          and raw.endswith("\nOK\n") and row["argv"] == [sys.executable, "-B", "-m", "unittest", "-v",
              "hia.platform.peer_lease_unix.test_qualification"]
          and row["wall_limit_seconds"] == 30, "Complete actual integrity controls did not execute")
@@ -542,6 +542,136 @@ def named_group(root, group, value, native, original):
             for row in rows[1:]:
                 need(row["original"].get("exact_actual_target_verified") is True,
                      "Syscall fault never reached its exact actual target")
+        if group == "daemon":
+            daemon_capacity_observations(root, rows)
+            daemon_deadline_observations(root, rows)
+
+
+def daemon_configuration(directory, expected_ns):
+    raw = (directory / "stdin.raw").read_bytes()
+    need(len(raw) >= 56 and raw[:8] == b"PLUN0001" and struct.unpack_from("<Q", raw, 8)[0] == 1,
+         "Actual daemon configuration is missing")
+    sec, nano = struct.unpack_from("<QQ", raw, 40)
+    need(nano < 1_000_000_000 and sec * 1_000_000_000 + nano == expected_ns,
+         "Actual daemon connection deadline changed")
+
+
+def single_committed_response(directory, stem):
+    journal = (directory / (stem + "-journal.raw")).read_bytes()
+    head = (directory / (stem + "-head.raw")).read_bytes()
+    need(len(journal) == 236 and journal[:10] == b"TPLR\1\1\xa2\0\0\0"
+         and journal[10:42] == bytes(32) and journal[42] == 1
+         and hashlib.sha256(journal[:204]).digest() == journal[204:],
+         "Retained actual committed journal is invalid")
+    need(len(head) == 80 and head[:8] == b"TPLH\1\0\0\0"
+         and struct.unpack_from("<Q", head, 8)[0] == 1 and head[16:48] == journal[204:]
+         and head[48:] == hashlib.sha256(b"TPLH" + struct.pack("<Q", 48) + head[:48]).digest(),
+         "Retained actual committed head is invalid")
+    need((directory / "fs/j").read_bytes() == journal
+         and (directory / "fs/.j.head-v1").read_bytes() == head,
+         "Idempotent retry changed the committed journal or head")
+    return b"TPLS" + struct.pack("<I", 187) + b"\1\0" + journal[43:196] + journal[204:236]
+
+
+def daemon_capacity_observations(root, rows):
+    by_name = {row["name"]: row for row in rows}
+    for prefix in ("capacity-", "capacity-idempotent-"):
+        for count in (1, 16, 63, 64, 65, 80):
+            name = prefix + str(count)
+            need(name in by_name, "An original or added capacity history is missing")
+            row = by_name[name]
+            for role in ("original", "native"):
+                directory = root / name / role
+                daemon = directory / "daemon"
+                daemon_configuration(daemon, 250_000_000)
+                timing = document(directory / "timing.json")
+                elapsed = timing.get("honest_elapsed_ns")
+                need(timing.get("stalled_clients") == count and type(elapsed) is int
+                     and 0 <= elapsed < 2_000_000_000,
+                     "Original 2-second capacity observation bound changed or failed")
+                receipt = document(daemon / "receipt.json")
+                operations = receipt.get("operations")
+                need(type(operations) is list and len(operations) == 1
+                     and type(operations[0].get("elapsed_ns")) is int
+                     and 0 <= operations[0]["elapsed_ns"] <= elapsed,
+                     "Capacity elapsed time does not cover its actual exchange")
+                reply = (daemon / "request-0000/response.raw").read_bytes()
+                need(len(reply) == 195 and reply[:10] == b"TPLS\xbb\0\0\0\1\0"
+                     and operations[0]["output"] == identity(reply)
+                     and row[role].get("clients") == row[role].get("closed") == count
+                     and row[role].get("alive") is True
+                     and row[role].get("honest_response") == (reply[:155] + bytes(40)).hex(),
+                     "Actual capacity response was missing, changed or unbound")
+                if prefix == "capacity-idempotent-":
+                    seed = directory / "seed/request-0000/response.raw"
+                    need(seed.read_bytes() == reply == single_committed_response(directory, "seed")
+                         and all(row[role].get(field) is True for field in
+                                 ("seeded_by_actual_API", "exact_seed_token_returned", "journal_and_head_unchanged")),
+                         "Added capacity observation was not a real unchanged idempotent lease")
+
+
+def observed_journal_fsync(directory):
+    lines = (directory / "daemon/syscalls.raw").read_text().splitlines()
+    auth = [index for index, line in enumerate(lines) if "getsockopt(" in line and "SO_PEERCRED" in line]
+    need(auth, "Actual connection authentication is missing from the trace")
+    calls = [(index, line) for index, line in enumerate(lines)
+             if re.match(r"^(?:\d+\s+)?fsync\(", line)]
+    matches = [(ordinal, index, line) for ordinal, (index, line) in enumerate(calls, 1)
+               if index > auth[0] and str(directory / "fs/j") + ">" in line]
+    need(len(matches) == 1, "Actual journal fsync target is missing or ambiguous")
+    ordinal, index, line = matches[0]
+    need("= 0" in line, "The delayed actual journal fsync did not succeed")
+    return {"phase": "journal-fsync", "syscall": "fsync", "ordinal": ordinal,
+            "line_index": index, "line": line}, lines
+
+
+def daemon_deadline_observations(root, rows):
+    by_name = {row["name"]: row for row in rows}
+    probe_name = "deadline-journal-target-probe"
+    delayed_name = "durable-commit-crosses-absolute-deadline"
+    need(probe_name in by_name and delayed_name in by_name, "Actual deadline controls are missing")
+    for role in ("original", "native"):
+        probe_directory = root / probe_name / role
+        probe, probe_lines = observed_journal_fsync(probe_directory)
+        need(document(probe_directory / "selector.json") == probe
+             and not any("(DELAYED)" in line or "(INJECTED)" in line for line in probe_lines),
+             "Actual unmodified target probe was changed or injected")
+        directory = root / delayed_name / role
+        daemon = directory / "daemon"
+        daemon_configuration(daemon, 250_000_000)
+        injection = "fsync:delay_exit=350ms:when=" + str(probe["ordinal"])
+        need(document(directory / "injection-selector.json") == {
+            "probe": probe, "injection": injection, "connection_deadline_ns": 250_000_000,
+            "injected_delay_exit_ns": 350_000_000}, "Delay selector is not bound to the actual prior probe")
+        receipt = document(daemon / "receipt.json")
+        need([arg for arg in receipt["argv"] if arg.startswith("--inject=")] == ["--inject=" + injection],
+             "Actual delay invocation changed or disappeared")
+        actual, lines = observed_journal_fsync(directory)
+        need(document(directory / "actual-delay.json") == actual and actual["ordinal"] == probe["ordinal"]
+             and [line for line in lines if "(DELAYED)" in line] == [actual["line"]]
+             and not any("(INJECTED)" in line for line in lines),
+             "Delay did not affect exactly the successful actual journal fsync")
+        elapsed = document(directory / "timing.json").get("commit_exchange_elapsed_ns")
+        operations = receipt.get("operations")
+        need(type(elapsed) is int and 350_000_000 <= elapsed < 2_000_000_000
+             and type(operations) is list and len(operations) == 2
+             and type(operations[0].get("elapsed_ns")) is int
+             and 350_000_000 <= operations[0]["elapsed_ns"] <= elapsed,
+             "Actual delayed exchange did not span the unchanged connection deadline")
+        initial = daemon / "request-0000"
+        retry = daemon / "request-0001"
+        reply = (retry / "response.raw").read_bytes()
+        need((initial / "response.raw").read_bytes() == b""
+             and (initial / "request.raw").read_bytes() == (retry / "request.raw").read_bytes()
+             and reply == single_committed_response(directory, "committed")
+             and operations[0]["output"] == identity(b"") and operations[1]["output"] == identity(reply),
+             "Late commit returned success or its real idempotent retry was changed")
+        value = by_name[delayed_name][role]
+        need(value == {"connection_deadline_ns": 250_000_000, "injected_delay_exit_ns": 350_000_000,
+             "empty_reply_after_durable_commit": True, "committed_records": 1,
+             "exact_actual_target_verified": True, "idempotent_retry": (reply[:155] + bytes(40)).hex(),
+             "journal_and_head_unchanged_on_retry": True, "alive_after_commit": True},
+             "Reported deadline behavior differs from actual retained bytes")
 
 
 def readback(output):

@@ -1,4 +1,4 @@
-"""Bind actual Peer Unix, Task and public PQ execution to one exact CI source."""
+"""Bind actual Peer Unix, Task, PQ and Candidate execution to one exact CI source."""
 from __future__ import annotations
 
 import argparse
@@ -13,7 +13,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPONENTS = ("peer-unix", "task-store", "task-boundary", "pq-auth")
+COMPONENTS = ("peer-unix", "task-store", "task-boundary", "pq-auth", "pq-candidate")
 FALSE_SCOPES = ("whole_chain_native", "whole_package_retired", "node_integration_complete",
                 "original_service_budget_qualified", "cross_target_qualified", "production_activation")
 PQ_COUNTS = {"original_retained": 343, "original_doctests": 2, "native_original_pairs": 1609,
@@ -24,6 +24,20 @@ PQ_COUNTS = {"original_retained": 343, "original_doctests": 2, "native_original_
 PQ_FALSE_SCOPES = ("whole_chain_native", "whole_crypto_crate_ported", "openssl_owned_provider_ported",
                    "tuf_ported", "constant_time_qualified", "foreign_arbitrary_pointer_gate_qualified",
                    "register_stack_secret_erasure_qualified", "production_activation")
+CANDIDATE_COUNTS = {"original_retained": 343, "original_doctests": 2, "explicit_original_methods": 12,
+                    "exports": 25, "native_cases": 892, "native_abi_calls": 14680,
+                    "alias_original_pairs": 2, "native_original_pairs": 894,
+                    "allocation_controls": 186, "actual_allocation_failures": 109,
+                    "lifetime_abi_calls": 992, "readonly_owner_shared_threads": 8,
+                    "independent_post_owner_values": 132, "native_partitions": 3,
+                    "reader_integrity_controls": 59, "real_process_controls": 8,
+                    "native_execution_limit_seconds": 240, "single_cleanup_limit_seconds": 3}
+CANDIDATE_METHODS = ("CandidateAlgorithm.name", "CandidateAlgorithm.public_key_bytes",
+                     "CandidateAlgorithm.signature_bytes", "CandidateAlgorithm.nist_category",
+                     "CandidateSigningKey.from_owned_seed", "CandidateSigningKey.algorithm",
+                     "CandidateSigningKey.public_key", "CandidateSigningKey.sign",
+                     "CandidateVerifier.from_pinned_raw", "CandidateVerifier.algorithm",
+                     "CandidateVerifier.public_key", "CandidateVerifier.verify")
 
 
 def need(value, message):
@@ -70,7 +84,7 @@ def peer_summary(report, independent):
     need(report.get("schema") == "trnm.hia.peer-unix-qualification.v1"
          and report.get("status") == "PASS" and report.get("source_inputs_stable") is True
          and report.get("retained_original_tests", {}).get("outer_tests") == 121
-         and report.get("integrity_controls", {}).get("count") == 14
+         and report.get("integrity_controls", {}).get("count") == 18
          and set(report.get("groups", {})) == {"codec", "client", "client-owner", "cli", "daemon",
                                                "storage-faults", "syscall-faults"}
          and independent.get("status") == "PASS", "Incomplete actual Peer Unix gate")
@@ -104,6 +118,51 @@ def pq_summary(report, independent, head, tree):
          "PQ reader and execution belong to different source graphs")
 
 
+def candidate_summary(report, independent, head, tree):
+    need(report.get("schema") == "trnm.hia.candidate-public-qualification.v1"
+         and report.get("status") == "PASS" and report.get("source_unchanged_during_tests") is True
+         and report.get("provider_inputs_unchanged_after_original") is True
+         and report.get("provider_inputs_unchanged_after_all_execution") is True
+         and report.get("full_host_dependency_closure_claimed") is False
+         and independent.get("status") == "PASS", "Incomplete supervised Candidate gate")
+    need(all(type(independent.get(name)) is int and independent[name] == count
+             for name, count in CANDIDATE_COUNTS.items()), "Incomplete Candidate original/native/control roster")
+    need(all(type(report.get(name)) is int and report[name] == CANDIDATE_COUNTS[name]
+             for name in ("native_cases", "native_abi_calls", "alias_original_pairs", "native_original_pairs"))
+         and type(report.get("case_count")) is int and report["case_count"] == CANDIDATE_COUNTS["native_cases"]
+         and type(report.get("original_mode_signatures_accepted_under_their_own_modes")) is int
+         and report["original_mode_signatures_accepted_under_their_own_modes"] == 12
+         and report.get("original_method_roster") == list(CANDIDATE_METHODS),
+         "Candidate execution omitted actual methods, modes or comparisons")
+    for value in (report, independent):
+        need(value.get("source_commit_observed") == head and value.get("source_tree_observed") == tree
+             and value.get("source_dirty_observed") == "", "Candidate evidence is not from this clean committed head")
+        limits = value.get("limits", {})
+        need(set(limits) == set(PQ_FALSE_SCOPES) | {"live_pointer_const_contract_required"}
+             and all(limits.get(name) is False for name in PQ_FALSE_SCOPES)
+             and limits.get("live_pointer_const_contract_required") is True,
+             "Candidate evidence was promoted beyond its qualified scope")
+    sources = report.get("source_inputs")
+    need(type(sources) is dict and sources and all(type(name) is str and name and name != "."
+             and not Path(name).is_absolute() and ".." not in Path(name).parts
+             and Path(name).as_posix() == name and "\\" not in name and "\0" not in name
+             and type(digest) is str and re.fullmatch(r"[0-9a-f]{64}", digest)
+             for name, digest in sources.items()), "Missing or malformed Candidate source closure")
+    digest = hashlib.sha256(json.dumps(sources, sort_keys=True, separators=(",", ":"),
+                                      ensure_ascii=True).encode()).hexdigest()
+    need(type(independent.get("source_files")) is int and independent["source_files"] == len(sources)
+         and independent.get("source_set_sha256") == report.get("source_set_sha256") == digest,
+         "Candidate reader and execution belong to different source graphs")
+    image = report.get("production_image")
+    need(type(image) is dict and image == independent.get("production_image")
+         and set(image) == {"path", "retained", "bytes", "sha256"}
+         and type(image["path"]) is str and Path(image["path"]).is_absolute()
+         and image["retained"] == "native/candidate-owned.so"
+         and type(image["bytes"]) is int and image["bytes"] > 0
+         and type(image["sha256"]) is str and re.fullmatch(r"[0-9a-f]{64}", image["sha256"]),
+         "Candidate reader and execution used different production images")
+
+
 def run(component, root, rust_bin):
     root = directory(root)
     observation = root / "observations"
@@ -115,16 +174,17 @@ def run(component, root, rust_bin):
                      "hia.platform.peer_lease_unix.qualify", "run", "--output", str(qualified)]),
                     ("readback", [sys.executable, "-B", "-m", "hia.platform.peer_lease_unix.qualify",
                      "readback", "--input", str(qualified)])]
-    elif component == "pq-auth":
+    elif component in ("pq-auth", "pq-candidate"):
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
              "Canonical original Rust toolchain directory required")
+        platform = {"pq-auth": "pq_auth", "pq-candidate": "pq_candidate"}[component]
         commands = [("qualification", [sys.executable, "-I", "-S", "-B",
-                     str(ROOT / "hia/platform/pq_auth/qualify.py"), "--output", str(qualified),
+                     str(ROOT / "hia/platform" / platform / "qualify.py"), "--output", str(qualified),
                      "--rust-bin", str(rust_bin), "--provider-receipt",
                      str(root / "provider-receipts/pq-provider/provider.json"),
                      "--provider-environment", str(root / "provider.env")]),
                     ("readback", [sys.executable, "-I", "-S", "-B",
-                     str(ROOT / "hia/platform/pq_auth/readback.py"), "--report", str(qualified)])]
+                     str(ROOT / "hia/platform" / platform / "readback.py"), "--report", str(qualified)])]
     else:
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
              "Canonical original Rust toolchain directory required")
@@ -197,7 +257,7 @@ def bind(component, root, rust_bin):
          and before["tested_tree"] == tree and before["tracked_worktree_verified"] is True,
          "Whole committed source before/after qualification differs")
     process = read(observation / "process.json")
-    stages = ["qualification", "readback"] if component in ("peer-unix", "pq-auth") else ["qualification"]
+    stages = ["qualification", "readback"] if component in ("peer-unix", "pq-auth", "pq-candidate") else ["qualification"]
     need(process["schema"] == "trnm.hia.additional-owner-process.v1"
          and process["component"] == component and process["status"] == "PASS"
          and [row["name"] for row in process["stages"]] == stages
@@ -210,17 +270,18 @@ def bind(component, root, rust_bin):
             "readback": [sys.executable, "-B", "-m", "hia.platform.peer_lease_unix.qualify",
                          "readback", "--input", str(qualified_path)],
         }
-    elif component == "pq-auth":
+    elif component in ("pq-auth", "pq-candidate"):
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
              "The actual original Rust directory must remain explicit")
+        platform = {"pq-auth": "pq_auth", "pq-candidate": "pq_candidate"}[component]
         expected_commands = {
             "qualification": [sys.executable, "-I", "-S", "-B",
-                              str(ROOT / "hia/platform/pq_auth/qualify.py"), "--output", str(qualified_path),
+                              str(ROOT / "hia/platform" / platform / "qualify.py"), "--output", str(qualified_path),
                               "--rust-bin", str(rust_bin), "--provider-receipt",
                               str(root / "provider-receipts/pq-provider/provider.json"),
                               "--provider-environment", str(root / "provider.env")],
             "readback": [sys.executable, "-I", "-S", "-B",
-                         str(ROOT / "hia/platform/pq_auth/readback.py"), "--report", str(qualified_path)],
+                         str(ROOT / "hia/platform" / platform / "readback.py"), "--report", str(qualified_path)],
         }
     else:
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
@@ -252,11 +313,11 @@ def bind(component, root, rust_bin):
         independent = read(observation / "readback.stdout.raw")
         peer_summary(report, independent)
         inputs = {str(ROOT / name): row for name, row in report["source_inputs"].items()}
-    elif component == "pq-auth":
+    elif component in ("pq-auth", "pq-candidate"):
         independent = read(observation / "readback.stdout.raw")
-        pq_summary(report, independent, head, tree)
+        (pq_summary if component == "pq-auth" else candidate_summary)(report, independent, head, tree)
         need(independent.get("qualification_report_sha256") == identity(qualification / "report.json")["sha256"],
-             "Independent PQ reader belongs to a different qualification report")
+             "Independent crypto reader belongs to a different qualification report")
         inputs = {str(ROOT / name): {"bytes": identity(ROOT / name)["bytes"], "sha256": digest}
                   for name, digest in report["source_inputs"].items()}
     else:
@@ -288,6 +349,15 @@ def bind(component, root, rust_bin):
                          "hia/platform/pq_auth/qualification/supervision.py",
                          "hia/platform/pq_auth/qualification/supervision_controls.py",
                          "scripts/ci/prepare_pq_provider.sh"))
+    elif component == "pq-candidate":
+        required.extend(("hia/platform/pq_candidate/qualify.py", "hia/platform/pq_candidate/readback.py",
+                         "hia/platform/pq_candidate/qualification/contract.py",
+                         "hia/platform/pq_candidate/qualification/integrity.py",
+                         "hia/platform/pq_auth/qualification/contract.py",
+                         "hia/platform/pq_auth/qualification/supervision.py",
+                         "hia/platform/pq_auth/qualification/supervision_controls.py",
+                         "hia/tools/ml_dsa_original.py", "hia/tools/qualify_ml_dsa.py",
+                         "scripts/ci/prepare_pq_provider.sh"))
     readers = {}
     for name in required:
         raw = git("cat-file", "blob", "HEAD:" + name)
@@ -297,7 +367,7 @@ def bind(component, root, rust_bin):
     tools = [row["interpreter"] for row in process["stages"]]
     if component == "peer-unix":
         tools.extend(read(qualification / "original/build.json")["tools"].values())
-    elif component == "pq-auth":
+    elif component in ("pq-auth", "pq-candidate"):
         tools.extend(report["tools"].values())
     captured = root / "ci-inputs"
     captured.mkdir(mode=0o700)

@@ -61,7 +61,15 @@ def cargo_configuration(environment):
     return checked
 
 
-def source_capture():
+def source_capture(*, admitted_hia_paths=None):
+    """Read the complete declared namespace and unchanged original Git blobs.
+
+    The initial capture and independent readback perform full Core admission.
+    A Build may re-read the exact dependency paths minted by its initial
+    successful capture: unchanged bytes and the complete current member set
+    make repeating that same semantic compilation unnecessary at every child.
+    No captured byte, directory enumeration, Git blob or pin check is cached.
+    """
     pinned_toolchain()
     cargo_configuration(os.environ)
     values = {}
@@ -91,10 +99,18 @@ def source_capture():
     component_manifest = json.loads(values["hia/components.json"])
     for name in sorted(component_manifest["includes"]):
         add(_source_path(name))
-    for name in (*IMAGES, "codec"):
-        _, dependencies = compose_source(HERE / (name + ".hepta"))
-        for path, raw in dependencies:
-            need(add(path) == raw, "Composed source changed")
+    if admitted_hia_paths is None:
+        for name in (*IMAGES, "codec"):
+            _, dependencies = compose_source(HERE / (name + ".hepta"))
+            for path, raw in dependencies:
+                need(add(path) == raw, "Composed source changed")
+    else:
+        need(type(admitted_hia_paths) is tuple
+             and all(type(name) is str for name in admitted_hia_paths)
+             and admitted_hia_paths == tuple(sorted(set(admitted_hia_paths))),
+             "Previously admitted dependency paths must be unique and ordered")
+        for name in admitted_hia_paths:
+            add(_source_path(name))
     entries = subprocess.check_output(
         ["git", "ls-tree", "-rz", "HEAD", "--", *ORIGINAL_ROOTS], cwd=ROOT
     ).split(b"\0")
@@ -119,6 +135,8 @@ class Build:
         self.output.mkdir(parents=True, mode=0o700)
         self.pinned = PinnedBuild(self.output / "pinned-native")
         self.inputs = source_capture()
+        self.admitted_hia_paths = tuple(sorted(name[4:] for name in self.inputs
+                                               if name.startswith("hia/") and name.endswith(".hepta")))
         self.manifest = {name: identity(raw) for name, raw in sorted(self.inputs.items())}
         for name, raw in self.inputs.items():
             path = self.output / "source-snapshot" / name
@@ -132,7 +150,8 @@ class Build:
 
     def check(self):
         self.pinned.check_pin()
-        need(source_capture() == self.inputs, "Complete peer Unix source graph changed")
+        need(source_capture(admitted_hia_paths=self.admitted_hia_paths) == self.inputs,
+             "Complete peer Unix source graph changed")
 
     def build(self):
         try:

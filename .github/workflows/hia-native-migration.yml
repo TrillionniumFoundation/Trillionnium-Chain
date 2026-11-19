@@ -7081,7 +7081,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        component: [peer-unix, task-store, task-boundary, pq-auth]
+        component: [peer-unix, task-store, task-boundary, pq-auth, pq-candidate]
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONOPTIMIZE: ''
@@ -7157,7 +7157,7 @@ jobs:
           set -euo pipefail
           cargo fetch --locked --manifest-path trillionnium/Cargo.toml >"$OWNER_ROOT/observations/cargo-fetch.stdout.raw" 2>"$OWNER_ROOT/observations/cargo-fetch.stderr.raw"
       - name: Prepare the exact original public PQ provider
-        if: matrix.component == 'pq-auth'
+        if: matrix.component == 'pq-auth' || matrix.component == 'pq-candidate'
         run: |
           set -euo pipefail
           touch "$OWNER_ROOT/provider.env"

@@ -31,17 +31,18 @@ class AdditionalOwnerBinding(unittest.TestCase):
                        "source_files": len(sources), "source_set_sha256": digest,
                        "limits": copy.deepcopy(self.report["limits"]), **binding.PQ_COUNTS}
 
-    def test_peer_requires_new_inode_control_and_every_named_group(self):
+    def test_peer_requires_all_runtime_controls_and_every_named_group(self):
         report = {"schema": "trnm.hia.peer-unix-qualification.v1", "status": "PASS",
                   "source_inputs_stable": True, "retained_original_tests": {"outer_tests": 121},
-                  "integrity_controls": {"count": 14},
+                  "integrity_controls": {"count": 18},
                   "groups": dict.fromkeys(("codec", "client", "client-owner", "cli", "daemon",
                                             "storage-faults", "syscall-faults"), {})}
         binding.peer_summary(report, {"status": "PASS"})
-        changed = copy.deepcopy(report)
-        changed["integrity_controls"]["count"] = 13
-        with self.assertRaises(ValueError):
-            binding.peer_summary(changed, {"status": "PASS"})
+        for obsolete_count in (13, 14, 17, 19):
+            changed = copy.deepcopy(report)
+            changed["integrity_controls"]["count"] = obsolete_count
+            with self.subTest(count=obsolete_count), self.assertRaises(ValueError):
+                binding.peer_summary(changed, {"status": "PASS"})
         for name in report["groups"]:
             changed = copy.deepcopy(report)
             del changed["groups"][name]
@@ -131,6 +132,204 @@ print(json.dumps({'status':'PASS'}))
             self.assertIn("changed during independent readback", value["stages"][-1]["failure"])
             self.assertNotEqual(value["stages"][-1]["qualification_report_before"],
                                 value["stages"][-1]["qualification_report_after"])
+
+
+class CandidateOwnerBinding(unittest.TestCase):
+    def setUp(self):
+        self.head, self.tree = "5" * 40, "6" * 40
+        sources = {"hia/platform/pq_candidate/qualify.py": "7" * 64}
+        digest = hashlib.sha256(json.dumps(sources, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        limits = {name: False for name in binding.PQ_FALSE_SCOPES}
+        limits["live_pointer_const_contract_required"] = True
+        image = {"path": "/qualification/native/candidate-owned.so", "retained": "native/candidate-owned.so",
+                 "bytes": 301872, "sha256": "8" * 64}
+        self.report = {"schema": "trnm.hia.candidate-public-qualification.v1", "status": "PASS",
+                       "source_unchanged_during_tests": True, "source_commit_observed": self.head,
+                       "source_tree_observed": self.tree, "source_dirty_observed": "",
+                       "provider_inputs_unchanged_after_original": True,
+                       "provider_inputs_unchanged_after_all_execution": True,
+                       "full_host_dependency_closure_claimed": False,
+                       "source_inputs": sources, "source_set_sha256": digest, "limits": limits,
+                       "case_count": 892, "native_cases": 892, "native_abi_calls": 14680,
+                       "alias_original_pairs": 2, "native_original_pairs": 894,
+                       "original_mode_signatures_accepted_under_their_own_modes": 12,
+                       "original_method_roster": list(binding.CANDIDATE_METHODS), "production_image": image}
+        self.reader = {"status": "PASS", "source_commit_observed": self.head,
+                       "source_tree_observed": self.tree, "source_dirty_observed": "",
+                       "source_files": len(sources), "source_set_sha256": digest,
+                       "limits": copy.deepcopy(limits), "production_image": copy.deepcopy(image),
+                       **binding.CANDIDATE_COUNTS}
+
+    def check(self, report=None, reader=None):
+        binding.candidate_summary(self.report if report is None else report,
+                                  self.reader if reader is None else reader, self.head, self.tree)
+
+    def test_complete_candidate_gate_keeps_source_count_dynamic(self):
+        self.check()
+        self.report["source_inputs"]["hia/platform/pq_candidate/readback.py"] = "9" * 64
+        digest = hashlib.sha256(json.dumps(self.report["source_inputs"], sort_keys=True,
+                                          separators=(",", ":")).encode()).hexdigest()
+        self.report["source_set_sha256"] = self.reader["source_set_sha256"] = digest
+        self.reader["source_files"] = 2
+        self.check()
+
+    def test_candidate_refuses_each_missing_count_type_and_changed_deadline(self):
+        for name, count in binding.CANDIDATE_COUNTS.items():
+            for replacement in (None, count - 1, count + 1, str(count), True):
+                changed = copy.deepcopy(self.reader)
+                changed[name] = replacement
+                with self.subTest(field=name, replacement=replacement), self.assertRaises(ValueError):
+                    self.check(reader=changed)
+            changed = copy.deepcopy(self.reader)
+            del changed[name]
+            with self.subTest(missing=name), self.assertRaises(ValueError):
+                self.check(reader=changed)
+
+    def test_candidate_refuses_incomplete_execution_methods_and_mode_controls(self):
+        for name in ("case_count", "native_cases", "native_abi_calls", "alias_original_pairs",
+                     "native_original_pairs", "original_mode_signatures_accepted_under_their_own_modes"):
+            for replacement in (None, self.report[name] - 1, self.report[name] + 1, str(self.report[name]), True):
+                changed = copy.deepcopy(self.report)
+                changed[name] = replacement
+                with self.subTest(field=name, replacement=replacement), self.assertRaises(ValueError):
+                    self.check(report=changed)
+        for roster in ([], list(reversed(binding.CANDIDATE_METHODS)), list(binding.CANDIDATE_METHODS)[:-1],
+                       [*binding.CANDIDATE_METHODS[:-1], binding.CANDIDATE_METHODS[0]]):
+            changed = copy.deepcopy(self.report)
+            changed["original_method_roster"] = roster
+            with self.subTest(roster=roster), self.assertRaises(ValueError):
+                self.check(report=changed)
+
+    def test_candidate_refuses_old_419_dirty_partial_and_unchecked_provider_results(self):
+        for target in ("report", "reader"):
+            for name, replacement in (("source_commit_observed", "41948f98b7b9fcb24a6ba7d638d5391a88e26de6"),
+                                      ("source_tree_observed", "a1ac8e48f7afd7af67b29909292ac14d4e9d7161"),
+                                      ("source_dirty_observed", " M hia/components.json\n"),
+                                      ("status", "EXECUTED"), ("status", "FAIL")):
+                report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+                (report if target == "report" else reader)[name] = replacement
+                with self.subTest(target=target, field=name), self.assertRaises(ValueError):
+                    self.check(report, reader)
+        for name in ("source_unchanged_during_tests", "provider_inputs_unchanged_after_original",
+                     "provider_inputs_unchanged_after_all_execution"):
+            changed = copy.deepcopy(self.report)
+            changed[name] = False
+            with self.subTest(field=name), self.assertRaises(ValueError):
+                self.check(report=changed)
+        changed = copy.deepcopy(self.report)
+        changed["schema"] = "trnm.hia.pq-public-qualification.v2"
+        with self.assertRaises(ValueError):
+            self.check(report=changed)
+
+    def test_candidate_refuses_scope_promotion_or_substituted_borrow_contract(self):
+        for target in ("report", "reader"):
+            for name in self.report["limits"]:
+                report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+                limits = (report if target == "report" else reader)["limits"]
+                limits[name] = not limits[name]
+                with self.subTest(target=target, field=name), self.assertRaises(ValueError):
+                    self.check(report, reader)
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            limits = (report if target == "report" else reader)["limits"]
+            del limits["live_pointer_const_contract_required"]
+            limits["live_pointer_const_and_exclusive_budget_contract_required"] = True
+            with self.subTest(target=target, contract="foreign"), self.assertRaises(ValueError):
+                self.check(report, reader)
+        changed = copy.deepcopy(self.report)
+        changed["full_host_dependency_closure_claimed"] = True
+        with self.assertRaises(ValueError):
+            self.check(report=changed)
+
+    def test_candidate_refuses_source_substitution_missing_entries_and_escaping_paths(self):
+        for target in ("report", "reader"):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            (report if target == "report" else reader)["source_set_sha256"] = "0" * 64
+            with self.subTest(target=target), self.assertRaises(ValueError):
+                self.check(report, reader)
+        for name in ("../private", "/private", "hia//program", "hia/../private", "hia\\program", "", ".", "hia/\0program"):
+            changed = copy.deepcopy(self.report)
+            changed["source_inputs"] = {name: "7" * 64}
+            with self.subTest(path=name), self.assertRaises(ValueError):
+                self.check(report=changed)
+        for replacement in ({}, [], None, {"hia/program": "INVALID"}):
+            changed = copy.deepcopy(self.report)
+            changed["source_inputs"] = replacement
+            with self.subTest(sources=replacement), self.assertRaises(ValueError):
+                self.check(report=changed)
+        for count in (0, 2, True, "1", None):
+            changed = copy.deepcopy(self.reader)
+            changed["source_files"] = count
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                self.check(reader=changed)
+
+    def test_candidate_refuses_different_or_malformed_production_image(self):
+        for target in ("report", "reader"):
+            for name, replacement in (("bytes", 1), ("sha256", "0" * 64), ("path", "/elsewhere.so"),
+                                      ("retained", "native/other.so")):
+                report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+                (report if target == "report" else reader)["production_image"][name] = replacement
+                with self.subTest(target=target, field=name), self.assertRaises(ValueError):
+                    self.check(report, reader)
+        for name, replacement in (("bytes", True), ("bytes", 0), ("sha256", "A" * 64),
+                                  ("path", "relative.so"), ("retained", "native/other.so")):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report["production_image"][name] = reader["production_image"][name] = replacement
+            with self.subTest(field=name, replacement=replacement), self.assertRaises(ValueError):
+                self.check(report, reader)
+
+    def fixture_run(self, mutate):
+        with tempfile.TemporaryDirectory(prefix="hia-candidate-ci-command-control-") as temporary:
+            base = Path(temporary)
+            repository, output, rust = base / "repository", base / "output", base / "rust/bin"
+            folder = repository / "hia/platform/pq_candidate"
+            folder.mkdir(parents=True)
+            (output / "observations").mkdir(parents=True)
+            rust.mkdir(parents=True)
+            # These real subprocesses only test wrapper command capture. Their
+            # report deliberately lacks PASS, native cases and all qualifications.
+            (folder / "qualify.py").write_text('''import argparse,json,pathlib
+p=argparse.ArgumentParser()
+for name in ('output','rust-bin','provider-receipt','provider-environment'):p.add_argument('--'+name,required=True)
+a=p.parse_args();root=pathlib.Path(a.output);root.mkdir()
+(root/'report.json').write_text('{"status":"WRAPPER_TEST_FIXTURE","version":1}\\n')
+print(json.dumps({'qualification':False}))
+''')
+            (folder / "readback.py").write_text('''import argparse,json,pathlib
+p=argparse.ArgumentParser();p.add_argument('--report',required=True);a=p.parse_args()
+root=pathlib.Path(a.report)
+''' + ('''(root/'report.json').write_text('{"status":"WRAPPER_TEST_FIXTURE","version":2}\\n')
+''' if mutate else "") + "print(json.dumps({'qualification':False}))\n")
+            with patch.object(binding, "ROOT", repository):
+                if mutate:
+                    with self.assertRaisesRegex(ValueError, "changed during independent readback"):
+                        binding.run("pq-candidate", output, rust)
+                else:
+                    binding.run("pq-candidate", output, rust)
+            value = binding.read(output / "observations/process.json")
+            self.assertEqual([row["name"] for row in value["stages"]], ["qualification", "readback"])
+            expected = [[sys.executable, "-I", "-S", "-B", str(folder / "qualify.py"),
+                         "--output", str(output / "qualification"), "--rust-bin", str(rust),
+                         "--provider-receipt", str(output / "provider-receipts/pq-provider/provider.json"),
+                         "--provider-environment", str(output / "provider.env")],
+                        [sys.executable, "-I", "-S", "-B", str(folder / "readback.py"),
+                         "--report", str(output / "qualification")]]
+            self.assertEqual([row["argv"] for row in value["stages"]], expected)
+            self.assertTrue(all(row["cwd"] == str(repository) and row["started"] is True
+                                and row["exit_code"] == 0 for row in value["stages"]))
+            for row in value["stages"]:
+                self.assertEqual(binding.read(output / "observations" / (row["name"] + ".receipt.json")), row)
+                for stream in ("stdout", "stderr"):
+                    self.assertEqual(binding.identity(output / "observations" / (row["name"] + "." + stream + ".raw")), row[stream])
+            self.assertEqual(value["status"], "FAIL" if mutate else "PASS")
+            self.assertEqual(value["stages"][-1]["qualification_report_before"] ==
+                             value["stages"][-1]["qualification_report_after"], not mutate)
+            self.assertEqual(binding.read(output / "qualification/report.json")["status"], "WRAPPER_TEST_FIXTURE")
+
+    def test_actual_candidate_wrapper_records_provider_and_independent_reader(self):
+        self.fixture_run(False)
+
+    def test_zero_exit_candidate_reader_cannot_replace_the_executed_report(self):
+        self.fixture_run(True)
 
 
 if __name__ == "__main__":

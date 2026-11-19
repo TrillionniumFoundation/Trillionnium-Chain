@@ -1,3 +1,19 @@
+## 2026-11-19 UTC — 当前 Candidate owner、Checkpoint 镜像及运行验收修复
+
+从已发布 `10b2f5981c3aa742b16b32090260372f31091733` 继续。当前 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README仍0字节。[本轮精确记录](../../hia/qualification/candidate-runtime-ci-development.json)绑定实际当前开发图、独立读回及双端完整档案；发现、重新编译或相同ELF不替代新提交自己的CI。
+
+Candidate 18份最终文件（2份HIA）提供原12显式方法和25导出。真实10b2+精确overlay的311输入图完整通过343原测试+2 doctest、894原/native配对、14680 ABI、186分配控制含109真实失败、992生命周期调用/8线程/132个owner销毁后独立值、59 reader拒绝及8真实进程控制。全门与独立读回连续381.196秒。646955824B档两端逐6131成员读回；旧419档及身份另存，不重标。合入后301872B native库逐字节复现。常数时间、foreign任意指针、栈/寄存器擦除、完整crypto/TLS/TUF和Node仍开放；nonce极限的原panic与native显式错误差异保留。
+
+SHA只修观察器：真实trap child关闭core dump，避免host piped crash reporter占用原2秒门。生产SHA代码、1秒CPU、30秒外层和单3秒清理不变；440边界、真实child/observer超时及完整30秒独立控制均实测，原失败保留。Peer完整121原外层+2原child重执行、fmt/strictClippy、7组运行、18控制及独立读回连续293.035秒PASS。原18组daemon场景全部保留，新增6组预置幂等容量与实际fsync探测/延迟共26组；原6个fresh-append容量场景在250ms连接和2秒caller期限内自然通过，不改产品fsync或期限。初始和独立reader仍做完整Core准入，中间每阶段重新核全部源字节、成员、链接及原Git blob。296653049B完整档两端逐23735成员读回。
+
+Checkpoint重建准确manifest和两份4252304B executable，在当前106输入图重新通过77原测试、fmt/strictClippy、792观察与31拒绝控制；全门90.748秒、独立reader15.093秒。235209127B档两端逐8373成员全读，原失败准备过程均保留。只回收已封存的可重建重复件，32原ELF和全部声明live输入不动，清理后独立回读再次PASS。
+
+mandatory owner matrix加入Candidate，展开65作业、49编译器准入块，每作业20分钟不变；Candidate要求新提交完整原始/native/独立reader、clean head/tree、所有计数和同一生产报告，明确拒绝旧dirty开发图。Peer summary要求18控制并拒绝旧14。完整发现627方法，互斥466/95/7/22/37；公共来源1495输入。待本提交实际CI执行，不能继承父提交或开发轮PASS。
+
+Task私有续接在原180秒records门实际180.121秒超时，已有1275配对相等；原41测试完成，后续public/allocator/reader没有执行，19文件尚未按全门PASS合入。Settlement私有完整门在240.096秒超时，319/320场景相等但最后宽状态场景未完成；新单场景及分配控制不能补作完整门。继续按实际CPU与核级时钟优化唯一规范哈希及消费层，原180/240/3门不提高。
+
+继续完整Payload metadata当前源码资格、body/recovery/ACK、Archive/StateImport及项目C provider、结算Engine/Store、剩余crypto与TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK和同请求Paid/Host。原0.25CPU/2GiB/零swap/256PID/4秒/16worker，跨目标、独立模型学习、共识与经济门均保持。全部替代、原验收和依赖处置闭合之后再退役旧包及最终清理。本文件是唯一计划。
+
 ## 2026-11-19 UTC — PQ 公开原生 owner、共享 SHA 与提交级 CI 修复续接
 
 从已发布 `ae23b0a745186262eb8c987f714b5e9b7231e737` 继续。当前 **60 kernels /27 native foundations /260 HIA sources**；26 原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。新增实现各保留唯一正式目录；全量替代和原验收通过前不删除原栈。

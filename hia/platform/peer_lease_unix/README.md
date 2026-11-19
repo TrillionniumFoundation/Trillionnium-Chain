@@ -71,10 +71,10 @@ The independent reader requires these complete finite observation rosters:
 | Single-call client | 299 named comparisons |
 | Persistent client owner | 1,782 commands per implementation |
 | Daemon CLI | 37 named comparisons |
-| Daemon API | 18 paired histories |
+| Daemon API | All 18 original histories plus 6 idempotent capacity histories and 2 actual-target deadline observations |
 | Filesystem faults | 9 paired histories |
 | Syscall faults | 1 actual-target probe and 29 fault injections |
-| Qualification integrity | 14 controls, including actual escaped-session cleanup and live rebinding identity |
+| Qualification integrity | 18 controls, including actual escaped-session cleanup, live rebinding identity, complete source rechecks and deadline evidence refusals |
 
 The rebound-path fixture holds the previous socket inode with an actual
 `O_PATH | O_NOFOLLOW | O_CLOEXEC` descriptor until the replacement is bound.
@@ -92,6 +92,35 @@ missing, repeated, replaced or failed case names. A matching count alone cannot
 qualify a group. `contents.json` covers all retained regular files, directories,
 symlink identities and socket entries without following links.
 
+The first source capture and independent reader still admit every executable's
+complete HIA composition through Core. Before and after each child stage, the
+builder re-enumerates the complete declared source namespace and original Git
+roster, reads every actual bound file, checks original Git blob identities,
+and compares all bytes and members with that admitted snapshot. It also
+rechecks the pinned toolchain and absence of external Cargo configuration.
+Only the repeated semantic compilation of already identical source bytes is
+omitted. A non-key transitive dependency remains in the admitted path set;
+removing it, changing any bytes, adding a bound namespace member, replacing a
+file with a symlink or changing the original Git member set still refuses.
+
+The six original fresh-append capacity histories remain mandatory at 1, 16,
+63, 64, 65 and 80 held peers, with their original 250 ms connection deadline,
+195-byte successful response and 2-second caller bound. An additional six
+histories seed a lease through the actual API, restart the daemon, and exercise
+the same capacity limits with an exact idempotent token and unchanged durable
+journal/head. They do not substitute for a failed fresh append.
+
+The added deadline probe identifies each implementation's actual journal
+`fsync` ordinal. A separate case uses `strace` to delay that successful syscall's
+exit by 350 ms while retaining the 250 ms connection deadline. It requires an
+empty late reply, a fully committed journal/head, and an exact successful
+idempotent retry without a second mutation. The reader binds the configured
+injection to the unmodified probe, the sole actual `(DELAYED)` trace line,
+exchange duration, reply bytes and committed files. This is an explicit
+scheduling injection, not a fabricated successful syscall or a production
+timeout change. A spontaneous slow durable append in an original capacity
+history still fails that history and retains its actual timing and trace.
+
 Child stages retain their original 240-second maximum and one 3-second cleanup
 deadline. Compiler stages retain 30 seconds plus 3 seconds; individual transport
 observations retain their 4-second bound. The existing owned-process collector
@@ -106,13 +135,17 @@ until that tracer reaps its child. The independent reader checks this terminal
 receipt and its one absolute deadline. Killing the tracer and daemon together
 is not accepted merely because the outer observer exits successfully.
 
-The qualification collector can retain 4,096 process identities across one
+The qualification collector can retain 4,096 process observation rows across one
 complete command; the same bound also limits its traversal and reap loops.
 The single-call client group serially starts more than 1,000 children. This
 qualifier does not separately enforce or qualify the original W1 limit of 256
 simultaneous PIDs, and that original resource gate remains unchanged. An
 actual 273-child serial control retains the previous 256-record refusal and
-checks the complete larger history with only one unwaited child at a time.
+checks every child's actual PID/start-tick birth identity against the complete
+collector history, with only one unwaited child at a time. Rediscovering a
+completed zombie before its parent waits it can add an observation of the same
+birth; it does not add a new child. The control requires exactly the 273 child
+births plus their command root and retains both row and distinct-birth counts.
 History exhaustion or truncated evidence still fails qualification; grouping
 the tests does not renew their original absolute deadline.
 

@@ -3800,6 +3800,20 @@
         "source": "src/crypto/keccak_stream.hepta"
       }
     ],
+    "src/crypto/pq_candidate_gate.hepta": [
+      {
+        "functions": [
+          "md_read64"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_store64"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      }
+    ],
     "src/crypto/pq_frame.hepta": [
       {
         "functions": [

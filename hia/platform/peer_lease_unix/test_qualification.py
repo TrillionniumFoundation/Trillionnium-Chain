@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import copy
+from contextlib import contextmanager
 import hashlib
 import json
 import os
 from pathlib import Path
 import stat
 import struct
+import subprocess
 import sys
 import tempfile
 import time
@@ -43,6 +45,120 @@ class QualificationControls(unittest.TestCase):
     def runner(self):
         return process.Processes(self.root / "processes", build.ROOT,
                                  {"PATH": os.environ["PATH"]}, lambda: None)
+
+    @contextmanager
+    def source_fixture(self):
+        """Actual file/Git checks; semantic admission is a counted test double."""
+        from hia.tools import toolchain
+
+        root = self.root / "source-fixture"
+        here = root / "hia/platform/peer_lease_unix"
+        here.mkdir(parents=True)
+        fixed = (
+            "hia/tools/toolchain.py", "hia/toolchain.lock.json", "AGENTS.md", "PROJECT_ID",
+            "PROJECT_BOUNDARY.json", "rust-toolchain.toml", "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py", "scripts/w1_owned_process_collector_v1.py",
+            "config/portability-inventory-v1.json", "config/pon/work-profile-v1.json",
+            "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+            "hia/platform/peer_lease_unix/image.hepta", "hia/platform/peer_lease_unix/codec.hepta",
+            "hia/src/fixture/declared.hepta", "hia/src/fixture/nonkey-dependency.hepta",
+            "original/lib.rs",
+        )
+        for name in fixed:
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(("source-capture control only: " + name + "\n").encode())
+        manifest = {"schema": "trnm.hia.component-includes.v1",
+                    "includes": {"src/fixture/declared.hepta": []}}
+        (root / "hia/components.json").write_text(json.dumps(manifest))
+        commands = (
+            ["git", "init", "--quiet", str(root)],
+            ["git", "-C", str(root), "add", "original/lib.rs"],
+            ["git", "-C", str(root), "-c", "user.name=Source capture control",
+             "-c", "user.email=source-control@example.invalid", "commit", "--quiet", "-m", "fixture"],
+        )
+        for argv in commands:
+            subprocess.run(argv, check=True, capture_output=True, timeout=10)
+
+        def compose(path):
+            dependency = root / "hia/src/fixture/nonkey-dependency.hepta"
+            return b"semantic admission test double", [(path, path.read_bytes()),
+                                                       (dependency, dependency.read_bytes())]
+
+        with patch.multiple(build, ROOT=root, HERE=here, INPUTS=(), IMAGES=("image",),
+                            ORIGINAL_ROOTS=("original",)), \
+                patch.object(toolchain, "HIA_ROOT", root / "hia"), \
+                patch.object(build, "pinned_toolchain"), \
+                patch.dict(os.environ, {"CARGO_HOME": str(self.root / "cargo-home")}), \
+                patch.object(build, "compose_source", side_effect=compose) as admission:
+            initial = build.source_capture()
+            self.assertEqual(admission.call_count, 2)
+            checker = build.Build.__new__(build.Build)
+            checker.inputs = initial
+            checker.admitted_hia_paths = tuple(sorted(name[4:] for name in initial
+                                                       if name.startswith("hia/") and name.endswith(".hepta")))
+            checker.pinned = type("PinnedControl", (), {"check_pin": lambda self: None})()
+            yield root, here, checker, admission
+
+    def test_source_recheck_reads_every_admitted_byte_without_recompiling(self):
+        with self.source_fixture() as (root, _, checker, admission):
+            with patch.object(build, "compose_source", side_effect=AssertionError("unexpected repeated admission")):
+                checker.check()
+                # This includes the non-manifest-key transitive dependency,
+                # platform source, pin, manifest, boundary and real Git blob.
+                for name, raw in checker.inputs.items():
+                    with self.subTest(path=name):
+                        path = root / name
+                        path.write_bytes(raw + b"changed")
+                        try:
+                            with self.assertRaises(ValueError):
+                                checker.check()
+                        finally:
+                            path.write_bytes(raw)
+                checker.check()
+            self.assertEqual(admission.call_count, 2)
+            self.assertEqual(build.source_capture(), checker.inputs)
+            self.assertEqual(admission.call_count, 4)
+
+    def test_source_recheck_rejects_member_changes_links_and_omitted_dependency(self):
+        with self.source_fixture() as (root, here, checker, _):
+            with patch.object(build, "compose_source", side_effect=AssertionError("unexpected repeated admission")):
+                extra = here / "new-unbound.py"
+                extra.write_bytes(b"new actual namespace member\n")
+                with self.assertRaises(ValueError):
+                    checker.check()
+                extra.unlink()
+                dependency = root / "hia/src/fixture/nonkey-dependency.hepta"
+                raw = dependency.read_bytes()
+                dependency.unlink()
+                try:
+                    with self.assertRaises(ValueError):
+                        checker.check()
+                    target = self.root / "linked-target"
+                    target.write_bytes(raw)
+                    dependency.symlink_to(target)
+                    with self.assertRaises(ValueError):
+                        checker.check()
+                    dependency.unlink()
+                finally:
+                    dependency.write_bytes(raw)
+                original_paths = checker.admitted_hia_paths
+                checker.admitted_hia_paths = tuple(name for name in original_paths
+                    if name != "src/fixture/nonkey-dependency.hepta")
+                with self.assertRaises(ValueError):
+                    checker.check()
+                checker.admitted_hia_paths = original_paths
+                checker.check()
+                extra = root / "original/new.rs"
+                extra.write_bytes(b"new tracked original member\n")
+                subprocess.run(["git", "-C", str(root), "add", "original/new.rs"],
+                               check=True, capture_output=True, timeout=10)
+                subprocess.run(["git", "-C", str(root), "-c", "user.name=Source capture control",
+                                "-c", "user.email=source-control@example.invalid", "commit",
+                                "--quiet", "-m", "add original member"],
+                               check=True, capture_output=True, timeout=10)
+                with self.assertRaises(ValueError):
+                    checker.check()
 
     def test_actual_normal_command_has_independent_owned_terminal_readback(self):
         runner = self.runner()
@@ -99,10 +215,12 @@ class QualificationControls(unittest.TestCase):
         # it cannot manufacture records. Each next fork follows actual waitpid.
         code = ("import json,os,pathlib,sys,time\n"
                 "events=pathlib.Path(sys.argv[1])\n"
+                "def birth(pid):\n"
+                " return int(pathlib.Path('/proc/'+str(pid)+'/stat').read_text().rpartition(') ')[2].split()[19])\n"
                 "for index in range(273):\n"
                 " pid=os.fork()\n"
                 " if pid==0:\n"
-                "  who=os.getpid();print('start',index,who,flush=True)\n"
+                "  who=os.getpid();ticks=birth(who);print('start',index,who,ticks,flush=True)\n"
                 "  end=time.monotonic()+2\n"
                 "  while time.monotonic()<end:\n"
                 "   lines=events.read_bytes().splitlines()\n"
@@ -110,13 +228,14 @@ class QualificationControls(unittest.TestCase):
                 "   for line in lines:\n"
                 "    try: row=json.loads(line)\n"
                 "    except json.JSONDecodeError: continue\n"
-                "    if row['kind']=='process-observed': observed.append(row['value']['identity']['pid'])\n"
-                "   if who in observed: os._exit(0)\n"
+                "    if row['kind']=='process-observed':\n"
+                "     ident=row['value']['identity'];observed.append((ident['pid'],ident['start_ticks']))\n"
+                "   if (who,ticks) in observed: os._exit(0)\n"
                 "   time.sleep(0.002)\n"
                 "  os._exit(4)\n"
-                " actual,status=os.waitpid(pid,0)\n"
+                " ticks=birth(pid);actual,status=os.waitpid(pid,0)\n"
                 " assert actual==pid and status==0\n"
-                " print('end',index,pid,flush=True)\n")
+                " print('end',index,pid,ticks,flush=True)\n")
         old = process.Processes(self.root / "prior-capacity", build.ROOT,
                                 {"PATH": os.environ["PATH"]}, lambda: None)
         with patch.object(process, "MAX_PROCESS_OBSERVATIONS", 256):
@@ -133,21 +252,30 @@ class QualificationControls(unittest.TestCase):
             runner.output / "serial/owned/events.jsonl"], timeout=15)
         lines = raw.decode().splitlines()
         self.assertEqual(len(lines), 273 * 2)
+        births = set()
         for index in range(273):
             first, second = lines[2 * index].split(), lines[2 * index + 1].split()
+            self.assertEqual(len(first), 4)
             self.assertEqual(first[:2], ["start", str(index)])
-            self.assertEqual(second, ["end", str(index), first[2]])
+            self.assertEqual(second, ["end", str(index), *first[2:]])
+            births.add((int(first[2]), int(first[3])))
+        self.assertEqual(len(births), 273)
         result = runner.rows[-1]["collector_readback"]["result"]
         records = result["process_observations"]
         self.assertGreater(len(records), 256)
-        self.assertEqual(len(records), len({(row["identity"]["pid"], row["identity"]["start_ticks"])
-                                           for row in records}))
+        identities = {(row["identity"]["pid"], row["identity"]["start_ticks"]) for row in records}
+        root = result["root_identity"]
+        # A ready pidfd is released before a grandchild's parent necessarily
+        # waits it. Rediscovery of that same zombie is an observation, not a
+        # new process birth. Require the exact complete actual birth roster.
+        self.assertEqual(identities, births | {(root["pid"], root["start_ticks"])})
         self.assertFalse(result["records_truncated"])
         self.assertTrue(result["collector_wait_domain_reaped"])
         readback.processes(runner.output, runner.rows)
         (self.root / "serial-history-summary.json").write_text(json.dumps({
             "sequential_children": 273, "peak_unwaited_children": 1,
-            "peak_command_family_processes": 2, "actual_observed_identities": len(records),
+            "peak_command_family_processes": 2, "actual_observed_identities": len(identities),
+            "actual_observation_rows": len(records), "repeated_birth_observations": len(records) - len(identities),
             "original_w1_pid_budget": 256, "original_service_budget_qualified": False,
             "prior_256_record_refusal_observed": True}) + "\n")
 
@@ -218,6 +346,150 @@ class QualificationControls(unittest.TestCase):
                         {**value, "cases": [value["cases"][0]] * 299}):
             with self.assertRaises(ValueError):
                 readback.named_group(self.root, "client", changed, {}, {})
+        # Reader-only fixture: require all 18 current control names, and keep
+        # the prior 14-method transcript as a refusal rather than a PASS.
+        names = [test.id() for test in unittest.defaultTestLoader.loadTestsFromTestCase(type(self))]
+        self.assertEqual(len(names), 18)
+        stderr = self.root / "observations/integrity-controls/stderr.raw"
+        stderr.parent.mkdir(parents=True)
+        lines = [name.rsplit(".", 1)[1] + " (" + name + ") ... ok" for name in names]
+        raw = "\n".join(lines) + "\n\nRan 18 tests in 0.01s\n\nOK\n"
+        row = {"argv": [sys.executable, "-B", "-m", "unittest", "-v",
+                        "hia.platform.peer_lease_unix.test_qualification"], "wall_limit_seconds": 30}
+        stderr.write_text(raw)
+        self.assertEqual(readback.integrity_readback(self.root, row)["count"], 18)
+        for changed in (raw.replace("Ran 18 tests", "Ran 14 tests"),
+                        "\n".join(lines[:14]) + "\n\nRan 14 tests in 0.01s\n\nOK\n"):
+            stderr.write_text(changed)
+            with self.assertRaises(ValueError):
+                readback.integrity_readback(self.root, row)
+
+    def committed_reader_fixture(self, directory, stem):
+        # Manufactured retained bytes for reader negatives, not an execution.
+        journal = bytearray(236)
+        journal[:10] = b"TPLR\1\1\xa2\0\0\0"
+        journal[42] = 1
+        journal[43:75] = b"\1" * 32
+        journal[75:107] = b"\2" * 32
+        journal[107] = 1
+        struct.pack_into("<Q", journal, 108, 9)
+        journal[116:148] = b"\3" * 32
+        journal[148:180] = b"\4" * 32
+        struct.pack_into("<QQQ", journal, 180, 1, 40000, 10000)
+        journal[204:] = hashlib.sha256(journal[:204]).digest()
+        head = b"TPLH\1\0\0\0" + struct.pack("<Q", 1) + journal[204:]
+        head += hashlib.sha256(b"TPLH" + struct.pack("<Q", 48) + head).digest()
+        (directory / "fs").mkdir(parents=True)
+        for name, raw in ((stem + "-journal.raw", journal), (stem + "-head.raw", head),
+                          ("fs/j", journal), ("fs/.j.head-v1", head)):
+            (directory / name).write_bytes(raw)
+        return b"TPLS" + struct.pack("<I", 187) + b"\1\0" + journal[43:196] + journal[204:236]
+
+    def test_capacity_reader_keeps_original_histories_and_unchanged_deadlines(self):
+        rows = []
+        for prefix in ("capacity-", "capacity-idempotent-"):
+            for count in (1, 16, 63, 64, 65, 80):
+                name = prefix + str(count)
+                row = {"name": name}
+                for role in ("original", "native"):
+                    directory = self.root / name / role
+                    reply = self.committed_reader_fixture(directory, "seed")
+                    daemon = directory / "daemon"
+                    request = daemon / "request-0000"
+                    request.mkdir(parents=True)
+                    (request / "response.raw").write_bytes(reply)
+                    (daemon / "stdin.raw").write_bytes(b"PLUN0001" + struct.pack("<QQQQQQ", 1, 0, 0, 0, 0, 250_000_000))
+                    (daemon / "receipt.json").write_text(json.dumps({"operations": [
+                        {"elapsed_ns": 100_000_000, "output": build.identity(reply)}]}))
+                    (directory / "timing.json").write_text(json.dumps(
+                        {"stalled_clients": count, "honest_elapsed_ns": 110_000_000}))
+                    row[role] = {"clients": count, "closed": count, "honest_response": (reply[:155] + bytes(40)).hex(), "alive": True}
+                    if prefix == "capacity-idempotent-":
+                        seed = directory / "seed/request-0000"
+                        seed.mkdir(parents=True)
+                        (seed / "response.raw").write_bytes(reply)
+                        row[role].update(seeded_by_actual_API=True, exact_seed_token_returned=True,
+                                         journal_and_head_unchanged=True)
+                rows.append(row)
+        readback.daemon_capacity_observations(self.root, rows)
+        with self.assertRaises(ValueError):
+            readback.daemon_capacity_observations(self.root, [row for row in rows if row["name"] != "capacity-64"])
+        directory = self.root / "capacity-64/native"
+        targets = [
+            (directory / "timing.json", json.dumps({"stalled_clients": 64, "honest_elapsed_ns": 2_000_000_000}).encode()),
+            (directory / "daemon/stdin.raw", b"PLUN0001" + struct.pack("<QQQQQQ", 1, 0, 0, 0, 0, 251_000_000)),
+            (directory / "daemon/request-0000/response.raw", b""),
+            (self.root / "capacity-idempotent-64/native/seed/request-0000/response.raw", b"substituted token"),
+        ]
+        for path, bad in targets:
+            raw = path.read_bytes()
+            try:
+                path.write_bytes(bad)
+                with self.subTest(path=str(path)), self.assertRaises(ValueError):
+                    readback.daemon_capacity_observations(self.root, rows)
+            finally:
+                path.write_bytes(raw)
+
+    def test_deadline_reader_rejects_unbound_delay_late_success_and_changed_commit(self):
+        probe_name = "deadline-journal-target-probe"
+        delayed_name = "durable-commit-crosses-absolute-deadline"
+        rows = [{"name": probe_name}, {"name": delayed_name}]
+        for role in ("original", "native"):
+            probe_directory = self.root / probe_name / role
+            probe_daemon = probe_directory / "daemon"
+            probe_daemon.mkdir(parents=True)
+            probe_line = "123 fsync(5<" + str(probe_directory / "fs/j") + ">) = 0"
+            probe = {"phase": "journal-fsync", "syscall": "fsync", "ordinal": 1, "line_index": 1, "line": probe_line}
+            (probe_daemon / "syscalls.raw").write_text("123 getsockopt(8, SOL_SOCKET, SO_PEERCRED, ...) = 0\n" + probe_line + "\n")
+            (probe_directory / "selector.json").write_text(json.dumps(probe))
+            directory = self.root / delayed_name / role
+            reply = self.committed_reader_fixture(directory, "committed")
+            daemon = directory / "daemon"
+            for index, response in enumerate((b"", reply)):
+                request = daemon / ("request-" + str(index).zfill(4))
+                request.mkdir(parents=True)
+                (request / "request.raw").write_bytes(b"reader fixture only")
+                (request / "response.raw").write_bytes(response)
+            (daemon / "stdin.raw").write_bytes(b"PLUN0001" + struct.pack("<QQQQQQ", 1, 0, 0, 0, 0, 250_000_000))
+            injection = "fsync:delay_exit=350ms:when=1"
+            (daemon / "receipt.json").write_text(json.dumps({
+                "argv": ["strace", "--inject=" + injection, "reader-fixture-only"],
+                "operations": [{"elapsed_ns": 400_000_000, "output": build.identity(b"")},
+                               {"elapsed_ns": 100_000, "output": build.identity(reply)}]}))
+            (directory / "injection-selector.json").write_text(json.dumps({"probe": probe, "injection": injection,
+                "connection_deadline_ns": 250_000_000, "injected_delay_exit_ns": 350_000_000}))
+            line = "123 fsync(5<" + str(directory / "fs/j") + ">) = 0 (DELAYED)"
+            (daemon / "syscalls.raw").write_text("123 getsockopt(8, SOL_SOCKET, SO_PEERCRED, ...) = 0\n" + line + "\n")
+            (directory / "actual-delay.json").write_text(json.dumps({**probe, "line": line}))
+            (directory / "timing.json").write_text(json.dumps({"commit_exchange_elapsed_ns": 401_000_000}))
+            rows[1][role] = {"connection_deadline_ns": 250_000_000, "injected_delay_exit_ns": 350_000_000,
+                "empty_reply_after_durable_commit": True, "committed_records": 1,
+                "exact_actual_target_verified": True, "idempotent_retry": (reply[:155] + bytes(40)).hex(),
+                "journal_and_head_unchanged_on_retry": True, "alive_after_commit": True}
+        readback.daemon_deadline_observations(self.root, rows)
+        directory = self.root / delayed_name / "native"
+        receipt = json.loads((directory / "daemon/receipt.json").read_bytes())
+        targets = [
+            (directory / "daemon/receipt.json", json.dumps({**receipt, "argv": ["strace", "reader-fixture-only"]}).encode()),
+            (directory / "daemon/stdin.raw", b"PLUN0001" + struct.pack("<QQQQQQ", 1, 0, 0, 0, 0, 350_000_000)),
+            (directory / "timing.json", b'{"commit_exchange_elapsed_ns":349999999}'),
+            (directory / "daemon/request-0000/response.raw", (directory / "daemon/request-0001/response.raw").read_bytes()),
+            (directory / "fs/j", b"changed committed bytes"),
+            (directory / "daemon/syscalls.raw", (directory / "daemon/syscalls.raw").read_bytes().replace(b"(DELAYED)", b"(INJECTED)")),
+            (self.root / probe_name / "native/selector.json", b'{"phase":"journal-fsync","ordinal":2}'),
+        ]
+        for path, bad in targets:
+            raw = path.read_bytes()
+            try:
+                path.write_bytes(bad)
+                with self.subTest(path=str(path)), self.assertRaises(ValueError):
+                    readback.daemon_deadline_observations(self.root, rows)
+            finally:
+                path.write_bytes(raw)
+        changed = copy.deepcopy(rows)
+        changed[1]["native"]["empty_reply_after_durable_commit"] = False
+        with self.assertRaises(ValueError):
+            readback.daemon_deadline_observations(self.root, changed)
 
     def test_socket_replacement_reader_requires_pinned_distinct_inodes_and_actual_replies(self):
         # Reader fixtures only: these values do not claim real socket execution.
