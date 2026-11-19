@@ -2,7 +2,7 @@
 //! The ordinary no-scope verifier remains independent and unchanged.
 use super::{child_with_lifts, empty_hashes, storage, Kind, LiftCache, Node, NodeReader, Root};
 use crate::account_archive_execution::state_witness::CurrentAccounts;
-use crate::store::native_authenticated::GraphAccess;
+use crate::store::native_authenticated::{GraphAccess, GraphScope};
 use crate::{ensure, Error, Result};
 use std::collections::{BTreeMap, BTreeSet};
 use trnm_protocol::pon_wire::Hash;
@@ -158,6 +158,9 @@ impl PendingFrontier {
 }
 
 pub(crate) struct VerifiedGraph {
+    scope: GraphScope,
+    record: Hash,
+    root: Root,
     pending: Option<Frontier>,
     source_used: Option<Hash>,
     #[cfg(test)]
@@ -165,6 +168,13 @@ pub(crate) struct VerifiedGraph {
 }
 
 impl VerifiedGraph {
+    /// Bind this completed traversal to its exact original owner and actual
+    /// immutable input. An owned result cannot be reinstalled in a later scope,
+    /// even when that scope sees the same Record, Root and frontier source.
+    pub(crate) fn is_for(&self, scope: &GraphScope, record: Hash, root: &Root) -> bool {
+        self.scope.same_scope(scope) && self.record == record && self.root == *root
+    }
+
     pub(crate) fn source_used(&self) -> Option<Hash> {
         self.source_used
     }
@@ -315,12 +325,18 @@ pub(crate) fn verify(
         "NATIVE_ACCOUNT_STATE",
     )
     .map_err(Error::local_integrity)?;
+    // Release the actual SQL cursor before moving the original owner marker.
+    // The same reader was always dropped before the caller's final callback.
+    drop(reader);
     Ok(VerifiedGraph {
+        record: access.record_id(),
+        root: root.clone(),
         pending: pending
             .map(|pending| pending.finish(seen.len()))
             .transpose()?,
         source_used,
         #[cfg(test)]
         hits,
+        scope: access.into_scope(),
     })
 }

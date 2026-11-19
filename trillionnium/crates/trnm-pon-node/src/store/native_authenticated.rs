@@ -28,8 +28,8 @@ pub(crate) use history_arithmetic::{
     StageObservation,
 };
 mod post_write_readback;
-pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
+pub(crate) use post_write_readback::{GraphAccess, GraphScope};
 
 #[cfg(test)]
 mod current_accounts_tests;
@@ -773,14 +773,22 @@ pub(super) fn verify_state_with_readback(
                 if !scope.frontier_current(db, settings, &record, source)? {
                     return verify_state_with_cache(db, settings, block, state, progress, cache);
                 }
+                #[cfg(test)]
+                let subtree_hits = scoped_graph.as_ref().unwrap().hits();
+                // Complete only this already nominated target after its last
+                // callback and fresh original-source fence. The typed result
+                // binds the exact Record.id and full Root; it never nominates
+                // another record or becomes a source frontier.
+                let completed = scoped_graph.take().ok_or("NATIVE_ACCOUNT_FRONTIER")?;
+                if !scope.remember_completed(db, settings, record, completed)? {
+                    return verify_state_with_cache(db, settings, block, state, progress, cache);
+                }
                 scope.consumed = true;
                 #[cfg(test)]
                 {
                     scope.partial_uses += 1;
-                    scope.subtree_hits += scoped_graph.as_ref().unwrap().hits();
+                    scope.subtree_hits += subtree_hits;
                 }
-                // Partial results never nominate a new parent, retain a new
-                // whole-Root receipt, replace the source or expand its frontier.
             } else {
                 scope.remember(
                     db,
