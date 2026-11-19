@@ -1,0 +1,6 @@
+{
+  "exit_code": 0,
+  "wall_seconds": 0.03645031922496855,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-host-stat-20261118-2e9b\", \"remote_policy_mutated\": false}\n",
+  "stderr": ""
+}
