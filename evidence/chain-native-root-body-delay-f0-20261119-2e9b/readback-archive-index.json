@@ -1,0 +1,3218 @@
+{
+  "schema": "chain-native-root-delay-f0-complete-local-evidence-index-v1",
+  "run_id": 44441548029,
+  "frozen_head": "333fe8cd89f0ec855e7b856e99e40f48f56c2137",
+  "original_zip": {
+    "file": "f0-original.zip",
+    "bytes": 17579578,
+    "sha256": "77cc90508efd6fa36829ce4f89b5d740f25a8bd76f3059ce54ed49743d377c7e",
+    "original_inventory_members": 443
+  },
+  "files": [
+    {
+      "path": ".hepta-lock-08a9d26cbaf493b006fed486",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-37c15efa47a62f5bd96783a2",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-5329672ee1e21643c7de8e17",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-7787cd544a478a39ba53d434",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-909abe3cd38b17c485d3e529",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".hepta-lock-b996ef54b5457e644a21f777",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "DISPATCH.json",
+      "bytes": 1504,
+      "sha256": "7e6817ba7d1e9bf611458bbce025a3a0f52aa86c2ecb2976a58611d282924e06"
+    },
+    {
+      "path": "OWNED_CONTROLLER_RECEIPTS.json",
+      "bytes": 46619,
+      "sha256": "73d0268b2e7162d75e864a31eb2fc8b89b4d7c1ea6c0219b0007e765cc5d2a8f"
+    },
+    {
+      "path": "READERS_CONFIGS.json",
+      "bytes": 1205,
+      "sha256": "62fd3f8735bc1e471126048787cae0b68663cdf31a3ff72fa2a39e8867a7d29c"
+    },
+    {
+      "path": "READERS_SOURCE.json",
+      "bytes": 3450,
+      "sha256": "f0f34a253e842005d5569f6098c8c7453919a6a081e69fcc515d13d8b6164e6b"
+    },
+    {
+      "path": "additional-provider-readback.json",
+      "bytes": 4663,
+      "sha256": "0d33591d9cfd798b60a9189b9672c7f1115e30d2c0cfdd4dd86f75ef8e792976"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149186-job-log.json",
+      "bytes": 59882,
+      "sha256": "1d4ede10629a3ecc35ddf7e818f4000e21fddbdf40fdfd4a8c865eff4add6873"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149186-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149208-job-log.json",
+      "bytes": 162264,
+      "sha256": "da85e59b72b722003e44a1e5475b2db27e43c5cd3ba3abab6b149cde16213758"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149208-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149366-job-log.json",
+      "bytes": 161385,
+      "sha256": "75521155dd2518327f7fc85c2a5e81a169a9fd6373320cd76f3a4f3a4db20905"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149366-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149466-job-log.json",
+      "bytes": 161529,
+      "sha256": "a83f2936e24b28d4cc5a09cc9b8db89d434dd453a7eadb1d941651fca8f2e76e"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149466-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149565-job-log.json",
+      "bytes": 76231,
+      "sha256": "02a9a4e6b5ba62b5c10294e576059811339569e6192a29bb965fc2e548115e47"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149565-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149576-job-log.json",
+      "bytes": 60697,
+      "sha256": "2ed57e7cff488ea5f0085957553d3586079d6453e5f419558d8d10694b4d1ac9"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149576-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149581-job-log.json",
+      "bytes": 77234,
+      "sha256": "90f04ca66757c3e835921e0c23cf2b59f81c9ae9ea090430faf65af461f786ae"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149581-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149656-job-log.json",
+      "bytes": 4115,
+      "sha256": "c7435abbd44ff424bbcaa91947b4666e8b0391f12bab7fb284a9bec9e2751f31"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149656-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149668-job-log.json",
+      "bytes": 57216,
+      "sha256": "98e5f0d9afcdbfcf2ad0ab3fa10c475054b6328713ab59cca87bc923f7437249"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149668-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149709-job-log.json",
+      "bytes": 162246,
+      "sha256": "fa1106a25c5fa97496a7730ce8542dc56f66cb914ee6fe28ff02eb8fb6e74d5c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149709-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149733-job-log.json",
+      "bytes": 35971,
+      "sha256": "41a74f3be50733188274df04c8eae9214a29f79f3d65475527ea34ac7bafc571"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149733-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149794-job-log.json",
+      "bytes": 59908,
+      "sha256": "fb8bc1ed6c89bc04fb05971f36a59d7765b2d328b748807a00d00f8f66d0f96b"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149794-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149807-job-log.json",
+      "bytes": 60608,
+      "sha256": "e94752a4db5d788a1960f72c94af1cc0bb1e900ae5596a37ccb81df1cb234a62"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283149807-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150055-job-log.json",
+      "bytes": 57257,
+      "sha256": "a1a74a5742df557f6461c9fa01e4d76fc0c58b245f5d7c549433d808db1f2645"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150055-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150148-job-log.json",
+      "bytes": 36425,
+      "sha256": "5b02265140e8f86adc25ffb6e70e336cc5289867f22d06857843b83328d39d4a"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150148-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150168-job-log.json",
+      "bytes": 36525,
+      "sha256": "674265c4e8a6c1c05a86f1554085d8e3e9957b3275519c00b7da2ef444ea6393"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150168-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150200-job-log.json",
+      "bytes": 82757,
+      "sha256": "fdfdb830791dba53b53ff04d46543862a04c1cceb765dba683d2c017ee52e08c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150200-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150207-job-log.json",
+      "bytes": 40670,
+      "sha256": "47b6e9ba06b68906fe48a83584b740c785374d08c5a21129ae99f8b89ab0e821"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150207-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150217-job-log.json",
+      "bytes": 57271,
+      "sha256": "06999bed9a8ffcf03ecb5308769c3d1c0b68857a8655a91643c5c5b4b5a62dec"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150217-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150247-job-log.json",
+      "bytes": 35998,
+      "sha256": "92acd47a5d7116a0a06037171c21feaf7ca97119c3d61e9dbfc0ed646c55073e"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150247-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150272-job-log.json",
+      "bytes": 83759,
+      "sha256": "62a4349d227b8b71adb2977099774cc8d599e9df8639ae661782ea9e06a24fb9"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150272-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150487-job-log.json",
+      "bytes": 94365,
+      "sha256": "397993b44df2658a76741b44a0e4377faefddd0b28613b546a849e5d2cb04857"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150487-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150518-job-log.json",
+      "bytes": 54911,
+      "sha256": "3102a59727bcbad481850d09c78b68d5b5dd6280d69b35600d1eb6fdac388276"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150518-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150544-job-log.json",
+      "bytes": 106233,
+      "sha256": "8cba3c6d8c19c4fb70a0fd0e22edb0febaa8e6807229a4ca193583a2e19000e7"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150544-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150609-job-log.json",
+      "bytes": 95571,
+      "sha256": "631960f2a2d2defcd649fa73570fc593a36b576c0bd8419283ba81ec82bbdc62"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150609-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150636-job-log.json",
+      "bytes": 57559,
+      "sha256": "b8c8f126ce5fd3aef3a9f1e6fdc77edd239013cae9e5e05091727e6c05e13f72"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150636-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150639-job-log.json",
+      "bytes": 46686,
+      "sha256": "32d14ab8c0f0519615498d13a27eff698a17559c5f5c15e283c62c45592ca710"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150639-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150803-job-log.json",
+      "bytes": 48926,
+      "sha256": "43abe932a6ee62c76f3047179e7ec44bdf7b1134686d707441f9594d7d688c31"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150803-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150902-job-log.json",
+      "bytes": 40635,
+      "sha256": "2ca3da609126fb4f07f82e060fc4741dbe44dda922cd3c0b1d3b0e9886b6d669"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283150902-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151688-job-log.json",
+      "bytes": 50970,
+      "sha256": "5b940ad77fccfeff117e8297c0c0d011b1dfb727d23811eff532e1cbe03406a4"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151688-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151838-job-log.json",
+      "bytes": 53224,
+      "sha256": "c660bab6b2d19362c471d6d403695a653721b6edc43e1e15ca5964e6910a7578"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151838-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151935-job-log.json",
+      "bytes": 50751,
+      "sha256": "b8b735aaf7f754643bdae8010c099762c6e0d691cd49bd1486461e8adf077d22"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151935-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151947-job-log.json",
+      "bytes": 50901,
+      "sha256": "4b6351f68669488e04db55be5eb2c1852c74e82ac830d749fc369e2807266230"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151947-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151967-job-log.json",
+      "bytes": 50754,
+      "sha256": "ce2acae3fc82eed5342e99f858fdc093dac36e5fdf170a00e6b0e765cdc1237e"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283151967-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152010-job-log.json",
+      "bytes": 50563,
+      "sha256": "b2c78ec96a97417ca3dbe081b3e787aa3ae246f95fd5d5592e99a3d166bb3a1a"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152010-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152133-job-log.json",
+      "bytes": 50943,
+      "sha256": "0420db803f710c1149c75e27f0daa0cce5753b1856d96ce8331a20b00eb8d995"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152133-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152173-job-log.json",
+      "bytes": 50877,
+      "sha256": "2ebe8dd8fd648ac7da53ecd408e923f1ce41aaa69b5c7139102e8c810f637340"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283152173-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283346299-job-log.json",
+      "bytes": 133522,
+      "sha256": "8d903fc213df7d0d6c41edcb4e6b8a8684f6438fb6ffe85c03df40e9e586336f"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/135283346299-job-log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-artifacts.json",
+      "bytes": 842,
+      "sha256": "bbfee65df97b8b0744f1a2fe2374e1268ae9fc708a8825034a9a9cd44c713c16"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-jobs.json",
+      "bytes": 3537,
+      "sha256": "768bc576f2dac97c8409bbafd4538ab7a6e364bc7ca200c934670dce2ef3b25d"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-timing.json",
+      "bytes": 125,
+      "sha256": "a7e3c0a26cfa8cde312230fd59ce3ed369c4c45e51818cdf5813bb4d4b28f543"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491546-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-artifacts.json",
+      "bytes": 1684,
+      "sha256": "a9862b1da3796265f402773f82d098ce41f7fbd079b8cb996c8b637176358c10"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-jobs.json",
+      "bytes": 5675,
+      "sha256": "48f0e676f20a380473e95e6ba26d3b35ca2c44836ffc84e6c1ea09b696bfe8db"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-timing.json",
+      "bytes": 165,
+      "sha256": "4081cf6a59952daae611bda21e228af1c20499ddece7f3468f60bf1c78f18bd8"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491585-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-artifacts.json",
+      "bytes": 35519,
+      "sha256": "0b9f4deed9aab9ec28ea08bd60e4952dedd9222d6aedaf766132958d6c7971f4"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-jobs.json",
+      "bytes": 187284,
+      "sha256": "f19ddd558d4dc572e1752aaa5bda081c0a702ac4a3f197d7b6facb40fd55b4ea"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-timing.json",
+      "bytes": 2061,
+      "sha256": "323169776016f7c92ea31fa3133166093d7c33c44113f86706bc8047dfbd0e5d"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491611-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-artifacts.json",
+      "bytes": 14981,
+      "sha256": "1970c6fccc3ed507b96a4e80c7b7a2a0eedb79bd6d124ccd2103dcbece03e6b9"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-jobs.json",
+      "bytes": 77706,
+      "sha256": "3f75033b47ef7e027d4973fb8a68b3c512b6c112acdefb7e695277eece5a7b4e"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-timing.json",
+      "bytes": 981,
+      "sha256": "df6bc263f0cb3414e043773e19414181af34b6c1ae4dba55a3b056dd68bda0c5"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491688-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-artifacts.json",
+      "bytes": 2529,
+      "sha256": "d3e5979e4df4b4a1d3cfdda071b9e8cd77d8016c46ff8e886f94c2dfcbaf9cb2"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-jobs.json",
+      "bytes": 10163,
+      "sha256": "c666272870c16e98efeaa6611e5e37a525efa633f42dd0626a3fddcdc90c82c1"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-timing.json",
+      "bytes": 205,
+      "sha256": "be4fc5943d7a7bf2dc63ca63ec3b9aad21fc5eb431c23acfe7eb8cb4e27fb83c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491715-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-artifacts.json",
+      "bytes": 2519,
+      "sha256": "d1d0baf837b8d2475e4174dceea7e260887eca74b113a2635ad5b2ac7c27cbbb"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-jobs.json",
+      "bytes": 11832,
+      "sha256": "5332b2eacd800b7c4255bc77771c1fddfb76a0e5496c76fd653a0534e3180768"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-timing.json",
+      "bytes": 220,
+      "sha256": "dd8261f518b9b6fe4afac0adde0262f2c19a1e3e2c7f64571d23bac4d77209b5"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491725-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-artifacts.json",
+      "bytes": 3365,
+      "sha256": "f387d7ec9399b704760f9194ce3ea23517100518d6540f32b9afc9c8c1c348ad"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-jobs.json",
+      "bytes": 30388,
+      "sha256": "13d323c79e9a6bafeda25664e80c737b156559f0e48271113f2db982ed2bb4c9"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-timing.json",
+      "bytes": 245,
+      "sha256": "d272cae2c18b6c5ac23ebc9bef402fbc5e8a3c717c84e8362485c1c161c42c2d"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491744-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-artifacts.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-jobs.json",
+      "bytes": 13781,
+      "sha256": "35820e59d4633ca4d87af975cbb3d5a6e341e2eaa3e810417edf7db26f273ef5"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-timing.json",
+      "bytes": 325,
+      "sha256": "a25193e54ab517dead781abaa7013a3054487f2349cc099f8684dcfadc884674"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491745-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-artifacts.json",
+      "bytes": 13380,
+      "sha256": "5d3fa11186e45abc969ccefe07e1b3f877762e87d397cf929f08b92b31ade852"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-jobs.json",
+      "bytes": 56123,
+      "sha256": "93cc99e027a4bb331fea7e65b30cc92ec24068999cbdd777ebf906e1098b9bf8"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-timing.json",
+      "bytes": 726,
+      "sha256": "e8efef3e3da05f8e649d7e0a3ee68dc3ab720f71489974ce1924a0d713a9841f"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491764-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-artifacts.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-jobs.json",
+      "bytes": 69214,
+      "sha256": "86d3a868e43e8bdcada31e6921bb8faa230d85693c46cfd300755516bd107fe7"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-timing.json",
+      "bytes": 621,
+      "sha256": "0de3bb07a48631d0809dea0168bb48165d0ce76df1660b456e10935526aefe9d"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491778-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-artifacts.json",
+      "bytes": 3381,
+      "sha256": "b463c41ba0d0f4b64897a02d911933d9eb0f652c285684ecc76ce31eacbae369"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-jobs.json",
+      "bytes": 15280,
+      "sha256": "c8929cb7953cb6fbd9a04f8a650649a01c36d9d6cdec8e0a502c882250d1c709"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-timing.json",
+      "bytes": 245,
+      "sha256": "3bb3ed9df937367005ccfd860005ba441fde070e6564dae9cda7e42c41b55252"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491779-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-artifacts.json",
+      "bytes": 2508,
+      "sha256": "4e5efe689082e3dde1833e25397229d9aa00930af193fef95167548bbea725f0"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-jobs.json",
+      "bytes": 13304,
+      "sha256": "d59a44c89746d690189f75822429a1cdb2d1064ec75c1f552ef3ae157e42c2a9"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-timing.json",
+      "bytes": 204,
+      "sha256": "da3475172657f777dd44bfdc8b1e51349bdc6a3a008c673c9902c65d9710d74f"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491782-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-artifacts.json",
+      "bytes": 3417,
+      "sha256": "4b6cce8fbe496b1d9fe9153044b98c5674779618bda91654676d6699c95e6a77"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-jobs.json",
+      "bytes": 15856,
+      "sha256": "88d3e311ff68a50e8d5bcd34c42131753c27dfcbee41efd072e265ca1a66a1f2"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-timing.json",
+      "bytes": 245,
+      "sha256": "c3595a6af3b6f51240aeb213e0fd339ef24a1a6917cdfe0c3287937a3b9eac73"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491796-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-artifacts.json",
+      "bytes": 4205,
+      "sha256": "1cbf13d100a2364013aecc5c5e2eee472603c2e520e91cb89a2dfa8387da24c5"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-jobs.json",
+      "bytes": 16006,
+      "sha256": "9918b735bc445cab5fed7fde9657bbd1ae57a098e5665a2e0e02224c1590fd96"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-timing.json",
+      "bytes": 325,
+      "sha256": "7323f60f2b8ff08ceb9b0e7d049f449573d6bb819de4e092741b637c3c026f82"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491803-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-artifacts.json",
+      "bytes": 6815,
+      "sha256": "4e537b3d91373de129b43ba323a8d5e9464d4cb2c32b5dfc61b9468bd0e5d899"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-jobs.json",
+      "bytes": 23362,
+      "sha256": "3ec46730530f20ee5f753b8996c44a26d74c2755b1f1f2f19b6828246e464d8a"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-timing.json",
+      "bytes": 405,
+      "sha256": "fc276ec23cd662fea3dc4aaf3e574336d88e612e84803f445ba1677599e365e5"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491827-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-artifacts.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-jobs.json",
+      "bytes": 2492,
+      "sha256": "20097bcd55cc268d6f9aca138f6901d84c9cc74a028a5996867f9ba26c9a7b28"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-timing.json",
+      "bytes": 100,
+      "sha256": "eaa41f3dae3a8f01bb1661e461cd57c48c5130c8e5bc5ac51f0b2247344fed22"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491836-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-artifacts.json",
+      "bytes": 10650,
+      "sha256": "a9dda0e3776e5b3afdcc4512afba580c5cd8c844c61592c873caa4ed91744cfd"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-jobs.json",
+      "bytes": 63882,
+      "sha256": "24e4121013dca7838fc31c09302b444443bcbf85cd7c27608f11c0ff5e24f727"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-timing.json",
+      "bytes": 821,
+      "sha256": "7cec7af6fade3aaf9525d9be2b63a7e3d5ea7548af7b4417b32f65c9cf162abb"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491857-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-artifacts.json",
+      "bytes": 1702,
+      "sha256": "5615bf0d8b978ca2f57dfc0cebe12d1905be6f45604cd0b34475904c4ce158c4"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-jobs.json",
+      "bytes": 11807,
+      "sha256": "8b471123ad5542693dc9f8046104bde8f98997a29ade8a39397fec51caa39752"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-timing.json",
+      "bytes": 165,
+      "sha256": "ffb1b110763ebd5d7d869439ee67f671da3162d02772fad63fad623bc1a03faf"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491865-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-artifacts.json",
+      "bytes": 846,
+      "sha256": "90c73cffbae9f0a99db3983cfe1dcc23ba958682b4f488e0010263d652d7fcb8"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-jobs.json",
+      "bytes": 5770,
+      "sha256": "c3b8bb452016a5c289243b20234d470a0800029116474174c682a7977f00940d"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-timing.json",
+      "bytes": 140,
+      "sha256": "cc50edad6a3234ed1d61b7aa93ead5eacbb403f2539e93d151ea267c07139d94"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491902-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-artifacts.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-jobs.json",
+      "bytes": 21679,
+      "sha256": "8140d424c2f0dc5fe2b09ceb603e525709f5b6de74e3c39f60ff18c1129215b4"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-timing.json",
+      "bytes": 220,
+      "sha256": "44bc5c6dd97a9163131b877485136c3579d309fa4263d21d835465df2ae3b42c"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491904-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-artifacts.json",
+      "bytes": 1687,
+      "sha256": "7d2501f2ab5032fc6e2735b293f1959768c1aee24e896720dfb9a70508c1db21"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-jobs.json",
+      "bytes": 5094,
+      "sha256": "badcd310a63f3534fac3fb76bc32b13e2623b15a8a534e190a70234098269a90"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-timing.json",
+      "bytes": 165,
+      "sha256": "fe0ac51a3e29157fcd74b45c8f9094c52aad094722b3a7b2b09f10969f373405"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491974-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-artifacts.json",
+      "bytes": 4158,
+      "sha256": "ee11a289961228237b95ae3809c4073be54b25c8a8b841fe3a367a4135058539"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-jobs.json",
+      "bytes": 23156,
+      "sha256": "0c515f8b1bbaef465147fc7e1b64f18028cf2e5876ce306ac5b27d4f17969eb1"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-timing.json",
+      "bytes": 300,
+      "sha256": "43b2aa6094fe873eba3a0625edaae57c061b9761a2c4a7eff1ec94d587e44d99"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441491975-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-artifacts.json",
+      "bytes": 860,
+      "sha256": "64d676ec070cd7db75bdff7ce2a5ad9900247cbc452615692f22f651dfc56d63"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-jobs.json",
+      "bytes": 3645,
+      "sha256": "5e7d7559db1a65b234c6a2a4fcc9ac9805e19fb69a519f0d53ae26c72fe45ad8"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-timing.json",
+      "bytes": 125,
+      "sha256": "2b3df359a6cdd8e280cb84098359afdbc643bed9673cdd0c43edeb6a06d43cff"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/44441548029-timing.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-snapshot-1/SNAPSHOT.json",
+      "bytes": 83137,
+      "sha256": "b025b8b557a391b1889c12552200ab7cdfc1e9f82ace8ee5f1b96119dd06b57f"
+    },
+    {
+      "path": "collection/COLLECTION.json",
+      "bytes": 97989,
+      "sha256": "c01890b9377da91ce7c45a3b402037da78fecd4a876f46b32b2981c03192c0ee"
+    },
+    {
+      "path": "collection/artifact-14491339657.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/artifacts.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/artifacts.stdout",
+      "bytes": 860,
+      "sha256": "64d676ec070cd7db75bdff7ce2a5ad9900247cbc452615692f22f651dfc56d63"
+    },
+    {
+      "path": "collection/job-135283346299-logs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/job-135283346299-logs.stdout",
+      "bytes": 133522,
+      "sha256": "8d903fc213df7d0d6c41edcb4e6b8a8684f6438fb6ffe85c03df40e9e586336f"
+    },
+    {
+      "path": "collection/jobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/jobs.stdout",
+      "bytes": 3645,
+      "sha256": "5e7d7559db1a65b234c6a2a4fcc9ac9805e19fb69a519f0d53ae26c72fe45ad8"
+    },
+    {
+      "path": "collection/run.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/run.stdout",
+      "bytes": 15536,
+      "sha256": "3f64b372d4e8fb3687f8a492f2ae4368bba9ffcd0366ce52694d2fb687491a63"
+    },
+    {
+      "path": "collection/watch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "collection/watch.stdout",
+      "bytes": 17505,
+      "sha256": "986edfcbfd352cf0b29b714a9199ea4fae3f3e52f8e7e9f19fd882dd18736bb3"
+    },
+    {
+      "path": "collection-owner.py",
+      "bytes": 3175,
+      "sha256": "143c536be8903ab0f4130b27e370fdd83374c015177221c667ee8fdcf93efc2c"
+    },
+    {
+      "path": "current-cost-profile.json",
+      "bytes": 194920,
+      "sha256": "3f9e100d0821604777afdf03aaf691b4b1839c39ff312d852c89bc28d8261035"
+    },
+    {
+      "path": "current-cost-summary.json",
+      "bytes": 3741,
+      "sha256": "2fad55a27cfb7a30977eb6e2bf555cd5c9b202bcdb9a6f3e314e6d7fafc7ae34"
+    },
+    {
+      "path": "dispatch-owner.py",
+      "bytes": 2087,
+      "sha256": "fe4f818f39cd065744ddb8a9688ad00ddea3ae41b0b07560e1d380a14fdb8da8"
+    },
+    {
+      "path": "dispatch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "dispatch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "f0-independent-readback.json",
+      "bytes": 17072,
+      "sha256": "acfba470e21bb89cac91ab42b369c4fcdac498a5a169ad6c1596aa05bb4f2cc5"
+    },
+    {
+      "path": "independent-owner/RESULT.json",
+      "bytes": 577,
+      "sha256": "c19e74a1702a22a01f867523f5493919beec7267e531ccd3c7398ce8bca56bdc"
+    },
+    {
+      "path": "independent-owner/stderr",
+      "bytes": 1670,
+      "sha256": "48c7fd8987e06ead6a59f7a89dbddd3b8b76d319e6eaca1afcd9cf80a7d581f6"
+    },
+    {
+      "path": "independent-owner/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "independent-owner-2/RESULT.json",
+      "bytes": 578,
+      "sha256": "412f6d16356d61f2cb801d17a00fae245d4e41d36a42b9ec96232442a4a0f088"
+    },
+    {
+      "path": "independent-owner-2/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "independent-owner-2/stdout",
+      "bytes": 566,
+      "sha256": "5ef582a3a988bf6f7c770629a268a31eb15271dabe5e3c49f70ababf4fc0ea2b"
+    },
+    {
+      "path": "pinned-readback-v2.py",
+      "bytes": 8759,
+      "sha256": "b5b45ca60d15696a183455fe56d0bd15b852078fb532ab086d53a5b70bf10e64"
+    },
+    {
+      "path": "pinned-readback.py",
+      "bytes": 8360,
+      "sha256": "dc1a47171236042e9026c774397916369627e40cfb9c975cd3645b3403634b5a"
+    },
+    {
+      "path": "prior-baseline-read/FETCH.json",
+      "bytes": 365,
+      "sha256": "82ea381ab6d5f214b7511d231be30a6721d9118ac29843afc0ed5748455d17b4"
+    },
+    {
+      "path": "prior-baseline-read/SUMMARY.json",
+      "bytes": 17512,
+      "sha256": "baf0f764c54f8f093c19ee654564e45e825ecd618b276f765c8d34cb4f98631a"
+    },
+    {
+      "path": "prior-baseline-read/cost-profile.json",
+      "bytes": 1298472,
+      "sha256": "d473ee446b4398aa3bb76b2951060f053b3ab14b0e077c5823635865677630c3"
+    },
+    {
+      "path": "prior-baseline-read/fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "prior-cost-profile.py",
+      "bytes": 14556,
+      "sha256": "68a5fc3877527c66491fb20fb5dd35a8b61d93ee090e9dc9a6076fca8d8a66d3"
+    },
+    {
+      "path": "prior-f0-readback.py",
+      "bytes": 13274,
+      "sha256": "e7c17ba2ffe48107dde6e7905f2de6ac6e9718571c2b497113383efff04c3f99"
+    },
+    {
+      "path": "provider-all-head-runs-first.json",
+      "bytes": 416366,
+      "sha256": "d85dfdb7848b6cc546f30c096f7fd3dc8d63ade68d8fd3036a53ae6dd94646e1"
+    },
+    {
+      "path": "provider-all-head-runs-post-f0.json",
+      "bytes": 416425,
+      "sha256": "be68abafe3c52dc1815a326d3c971ca60a6c5f65593587be22e1cfa1ea100272"
+    },
+    {
+      "path": "reader-payload.json",
+      "bytes": 789848,
+      "sha256": "edea1c88dcc0628538787ef4882a14e1188fe320cfd65115634cc84ff109440d"
+    },
+    {
+      "path": "readers-source/config/pon/devnet-v1.json",
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    {
+      "path": "readers-source/config/pon/evaluation-round-v1.json",
+      "bytes": 890,
+      "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33"
+    },
+    {
+      "path": "readers-source/config/pon/ledger-v1.json",
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    {
+      "path": "readers-source/config/pon/model-family-v1.json",
+      "bytes": 1383,
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    {
+      "path": "readers-source/config/pon/work-profile-v1.json",
+      "bytes": 1596,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    {
+      "path": "readers-source/formal/pon-nakamoto-v1/bounded_process.py",
+      "bytes": 8627,
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    {
+      "path": "readers-source/formal/pon-nakamoto-v1/contract_wire.py",
+      "bytes": 8924,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    {
+      "path": "readers-source/scripts/ci/finalize_fixed_root_f0.py",
+      "bytes": 17304,
+      "sha256": "608ba877822f706b82427398c5f90d5811be47ab02f37f7ae09a59b8c1771866"
+    },
+    {
+      "path": "readers-source/scripts/ci/fixed_root_f0_ownership.py",
+      "bytes": 9980,
+      "sha256": "a6376e43166cd782a90ac782c1619ef6ec6cd5cbb8d25093aedaf870c2d5dba1"
+    },
+    {
+      "path": "readers-source/scripts/ci/fixed_root_f0_resources.py",
+      "bytes": 10381,
+      "sha256": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a"
+    },
+    {
+      "path": "readers-source/scripts/ci/public_host_ci_observation.py",
+      "bytes": 13543,
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3"
+    },
+    {
+      "path": "readers-source/scripts/ci/run_fixed_root_phase_host.py",
+      "bytes": 27285,
+      "sha256": "f572b12727d119f7d1c1490d2a8c70de69e596155e20a837ebf94d19e24911e7"
+    },
+    {
+      "path": "readers-source/scripts/pon_public_v3_phase_read.py",
+      "bytes": 101430,
+      "sha256": "f2dd54ec905117e26fc7128218acb74c36a3ae7c16229d56c7cc04dae1a5ef41"
+    },
+    {
+      "path": "readers-source/scripts/pon_public_v3_policy_read.py",
+      "bytes": 8311,
+      "sha256": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a"
+    },
+    {
+      "path": "readers-source/scripts/pon_w1_budget_reader.py",
+      "bytes": 29217,
+      "sha256": "1ea6f7d73004a97138b1557bfe09b39e5ad6d334a91b06d731fb84cd0d80a868"
+    },
+    {
+      "path": "readers-source/scripts/pon_w1_cost_matrix_reader.py",
+      "bytes": 35800,
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+    },
+    {
+      "path": "readers-source/scripts/read_original_native_campaign.py",
+      "bytes": 53880,
+      "sha256": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417"
+    },
+    {
+      "path": "readers-source/scripts/run_fixed_host_root_f0.py",
+      "bytes": 37318,
+      "sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca"
+    },
+    {
+      "path": "readers-source/scripts/run_pon_w1_native_campaign.py",
+      "bytes": 17265,
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "path": "reproduction/archive-f0-owner.py",
+      "bytes": 3929,
+      "sha256": "de11cfd26eba9c0c354540a6f2bc9636abf127652469a2539b064bbb8aa16c09"
+    },
+    {
+      "path": "source-ref.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-ref.stdout",
+      "bytes": 41,
+      "sha256": "c066b599a73e7dedbbbb5fa0653af05ba48708de2f8122443ffdbdcd3594b3e9"
+    }
+  ],
+  "duplicate_zip_materialization_represented_by_original_zip": [
+    {
+      "path": "collection/artifact-14491339657/SCOPE.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/artifact-files.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/cargo-version.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm/prior-manager.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm/prior-manager.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm/prior-manager.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm/prior-manager.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-arm.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/controller-intent.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/dependency-fetch.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/controller-live.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/predeclared.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline/independent-client/native.sqlite",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline/independent-client/owner.lock",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline/receiver/native.sqlite",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline/receiver/owner.lock",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline/start.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/controller-resource-after-reap.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/controller-resource-before-launch.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/child-load-state.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/child-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/install-reviewed-unit.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/native.stderr.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/native.stdout.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/owned-service-live.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/owned-service-manager.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/owned-service.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/reload.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/start-fixed-parent.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/systemd-run.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/unprovisioned-parent.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/unprovisioned-parent.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/phase-launcher.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/phase-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline-fixed-root-host-control/root-phase-job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/baseline.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/honest-miner/native.sqlite",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/honest-miner/owner.lock",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/predeclared-denominators.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/preparation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-00/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-00/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-00/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-00/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-00/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-01/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-01/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-01/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-01/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-01/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-02/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-02/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-02/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-02/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-02/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-03/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-03/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-03/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-03/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-03/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-04/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-04/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-04/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-04/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-04/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-05/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-05/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-05/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-05/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-05/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-06/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-06/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-06/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-06/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-06/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-07/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-07/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-07/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-07/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-07/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-08/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-08/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-08/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-08/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-08/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-09/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-09/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-09/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-09/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-09/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-10/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-10/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-10/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-10/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-10/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-11/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-11/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-11/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-11/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-11/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-12/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-12/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-12/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-12/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-12/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-13/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-13/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-13/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-13/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-13/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-14/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-14/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-14/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-14/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-14/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-15/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-15/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-15/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-15/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-15/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-16/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-16/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-16/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-16/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-16/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-17/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-17/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-17/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-17/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-17/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-18/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-18/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-18/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-18/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-18/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-19/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-19/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-19/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-19/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-19/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-20/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-20/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-20/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-20/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-20/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-21/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-21/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-21/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-21/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-21/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-22/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-22/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-22/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-22/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-22/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-23/acquisition.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-23/actor.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-23/job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-23/ready.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/attacker-23/report.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/independent-client/native.sqlite",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/independent-client/owner.lock",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/receiver/native.sqlite",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/receiver/owner.lock",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root/start.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/controller-resource-after-reap.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/controller-resource-before-launch.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-00-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-00.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-01-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-01.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-02-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-02.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-03-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-03.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-04-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-04.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-05-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-05.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-06-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-06.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-07-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-07.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-08-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-08.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-09-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-09.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-10-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-10.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-11-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-11.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-12-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-12.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-13-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-13.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-14-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-14.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-15-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-15.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-16-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-16.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-17-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-17.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-18-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-18.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-19-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-19.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-20-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-20.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-21-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-21.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-22-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-22.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-23-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/finish-23.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/child-load-state.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/native.stderr.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/native.stdout.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/owned-service-live.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/owned-service-manager.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/owned-service.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/systemd-run.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/phase-launcher.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-00-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-00-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-00.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-01-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-01-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-01.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-02-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-02-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-02.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-03-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-03-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-03.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-04-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-04-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-04.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-05-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-05-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-05.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-06-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-06-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-06.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-07-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-07-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-07.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-08-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-08-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-08.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-09-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-09-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-09.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-10-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-10-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-10.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-11-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-11-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-11.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-12-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-12-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-12.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-13-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-13-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-13.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-14-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-14-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-14.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-15-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-15-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-15.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-16-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-16-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-16.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-17-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-17-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-17.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-18-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-18-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-18.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-19-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-19-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-19.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-20-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-20-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-20.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-21-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-21-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-21.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-22-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-22-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-22.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-23-ack.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-23-observation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root-fixed-root-host-control/spawn-23.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/raw/valid-work-root.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/resource-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/resource-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/results.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-identity.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-identity.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-identity.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-runtime.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-runtime.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/service-runtime.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/source-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/supplement.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/supplement.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/execution/supplement.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/f0-source-controls.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/manager-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/validated-live-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/baseline/validated-owned-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/manager-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/validated-live-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/controller/validated-owned-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/manager-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/result.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/validated-live-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization/valid-work-root/validated-owned-receipt.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/finalization.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/original-launcher-controls.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/preflight.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/preparation.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/preparation.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/build.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/build.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/build.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/cargo-version.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/cargo-version.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/cargo-version.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/clippy.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/clippy.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/clippy.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/execute-claimed.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/format.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/format.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/format.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/hardware.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/predeclared.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/preflight.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/preflight.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/preflight.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/prepared.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/public_v3_multiprocess.bin",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/resource-at-preparation.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/rustc-version.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/rustc-version.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/rustc-version.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-after.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-after.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-after.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-before.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-before.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-before.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-0.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-0.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-0.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-1.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-1.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-1.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-2.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-2.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-2.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-3.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-3.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-3.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-4.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-4.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-4.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-5.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-5.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-5.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-6.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-6.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/prepared/source-control-6.step.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/rustc-version.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/source-after.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/source-after.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/source-before.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/source-before.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/systemd-run.stderr.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/systemd-run.stdout.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/systemd-version.txt",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/toolchain-install.log",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/workflow-outcomes.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657/workflow-predeclared.json",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    },
+    {
+      "path": "collection/artifact-14491339657.zip",
+      "reason": "exact original ZIP published separately; extracted member bytes independently verified against original inventory"
+    }
+  ],
+  "all_regular_unique_original_bytes_retained": true,
+  "full_physical_cost_closed": false,
+  "business_pass": false
+}
