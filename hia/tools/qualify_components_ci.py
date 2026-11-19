@@ -16,18 +16,22 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from hia.tools import qualify
+from hia.tools import qualify, sha256_word_evidence
 from hia.tools.component_partition import (
     GROUPS, canonical, descriptor, flatten, lineage, need, object_hash, same,
     validate_completion, validate_lineage,
 )
 
-SCHEMA = "trnm.hia.component-ci-readback.v4"
+SCHEMA = "trnm.hia.component-ci-readback.v5"
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
     "hia-bootstrap/bootstrap.json", "original-rust-build.jsonl",
 }
+
+
+def artifact_files(group):
+    return FILES | (sha256_word_evidence.artifact_files() if group == "general" else set())
 
 
 def identity(path):
@@ -173,13 +177,18 @@ def verify_log(raw, value):
 def read_bundle(directory, group, expected, sources, identifiers, compiler_binding):
     directory = Path(directory)
     need(directory.is_dir() and not directory.is_symlink(), "Missing downloaded component bundle")
-    actual = set()
+    actual, actual_directories = set(), set()
     for parent, dirs, names in os.walk(directory, followlinks=False):
         for name in dirs:
             need(not (Path(parent) / name).is_symlink(), "Linked component artifact directory")
+            actual_directories.add((Path(parent) / name).relative_to(directory).as_posix())
         actual.update((Path(parent) / name).relative_to(directory).as_posix() for name in names)
-    need(actual == FILES, "Downloaded component artifact has missing or extra files")
-    before = {name: identity(directory / name) for name in sorted(FILES)}
+    expected_files = artifact_files(group)
+    need(actual == expected_files, "Downloaded component artifact has missing or extra files")
+    expected_directories = {parent.as_posix() for name in expected_files
+                            for parent in Path(name).parents if parent != Path(".")}
+    need(actual_directories == expected_directories, "Downloaded component artifact has extra directories")
+    before = {name: identity(directory / name) for name in sorted(expected_files)}
     value = read(directory / "hia-observations/qualification.json")
     selected = validate_report(value, group, expected, sources, identifiers, compiler_binding)
     source = read(directory / "hia-observations/source.json")
@@ -193,12 +202,19 @@ def read_bundle(directory, group, expected, sources, identifiers, compiler_bindi
          and type(bootstrap.get("compiler")) is str and bootstrap["compiler"],
          "Actual component compiler bootstrap did not pass")
     verify_log((directory / "hia-observations/qualification.log").read_bytes(), value)
-    need(before == {name: identity(directory / name) for name in sorted(FILES)},
+    word_evidence = None
+    if group == "general":
+        captured = {name: (directory / name).read_bytes()
+                    for name in sha256_word_evidence.artifact_files() | {"hia-observations/qualification.log"}}
+        need(all(sha256_word_evidence.identity(raw) == before[name] for name, raw in captured.items()),
+             "SHA component bytes changed during capture")
+        word_evidence = sha256_word_evidence.validate(captured, value, sources, compiler_binding, ROOT)
+    need(before == {name: identity(directory / name) for name in sorted(expected_files)},
          "Component artifact changed during readback")
     return {"group": group, "status": "PASS", "tests": len(selected),
             "selected_tests": selected, "source_tree": tree, "files": before,
             "source_set_sha256": value["source_set_sha256"],
-            "original_oracles": value["rust_oracles"]}
+            "original_oracles": value["rust_oracles"], "sha256_word_evidence": word_evidence}
 
 
 def verify_all(bundles, expected, sources, identifiers, compiler_binding, expected_tree):

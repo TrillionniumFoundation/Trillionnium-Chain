@@ -1,3 +1,17 @@
+## 2026-11-19 UTC — 当前组件证据汇总修复与真实预算失败续接
+
+从已发布 `376267d54ba5f0d740c1e190b773d9f86c1e90c0` 继续。当前仍为 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。[本轮精确记录](../../hia/qualification/component-evidence-reader-development.json)保留实际源、原CI失败、独立读取及完整归档身份，不把读取旧产物当作新提交运行。
+
+376的[push运行](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44630932140)最终65作业中64成功、1失败；[PR运行](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44630957654)最终65作业中63成功、2失败。两路组件汇总器都仍按旧六文件名单拒绝general已真实归档的54份SHA边界证据。五个组件producer成功不能代替汇总读回；原失败和原ZIP完整保留。
+
+本次general固定为六份通用文件加三个实名标签各18份，共60份；其它四分区仍精确六份。新独立reader核当前源、原生编译器与机械重构的编译输入、三次实际build回执、完整ELF身份、440个实际返回/trap/部分写入、两次真实超时与唯一3秒回收，并从raw重新解析所有状态后交叉核对qualification.log。未知文件、空目录、缺件、链接、重新计算manifest后的来源/ELF/raw/监督篡改仍拒绝。读取不需要Hepta checkout，也不重新执行或代理业务。
+
+真实376官方833440B ZIP被旧reader准确拒绝，修复reader完整读取成功；127个真实产物变异全部拒绝。25个unit控制与四种bootstrap的196次实际入口调用通过；根整合重新执行25控制和196次准入也通过。1850476B完整档两端逐215成员、嵌套原ZIP60成员和164个精确变异对象读回，保留原拒绝及两次诊断脚本失败。原627方法一个未删，新增10个general reader方法，完整发现637（476/95/7/22/37）；原1495公共输入一个未删，新增两份Python为1497。此处尚无新637方法整套运行，必须由新提交自己的CI完成。
+
+PR Task Store实际在原180秒记录门于180.115685432秒超时，1290个已完成配对全部相等；累计native约158.953秒，大上下文创建约50.338秒。同head的push Task通过不能抵消该失败。原41测试、完整原执行产物和失败raw保留。私有compact观察输出轮仍在180秒失败，1318个已完成配对相等；继续按实际HIA哈希热点优化，原1390完整接受组、180/240秒和单3秒清理均不放宽。Settlement最后宽状态场景同样仍在240秒失败，不借局部PASS关闭整门。
+
+Body私有新版codec重新完成4377组原实现比较，新增日志重放完成2806组比较、13个容量/报文控制及三种1024键插入顺序的完整位置索引比较。它们仅属各自冻结开发图；最大256MiB、持久化owner、recovery、ACK及完整Payload原包仍开放。继续完整Node事务/COMMIT/reorg/replay/outbox/ACK、Archive/StateImport、C provider、结算和剩余crypto/TLS/TUF，以及跨目标、模型和研究经济门。原0.25CPU/2GiB/零swap/256PID/4秒/16worker、20分钟CI、编译器30+3秒及128函数/8192操作/1536块/每函数256块保持。全部等价替代及原验收闭合后才退役旧栈和最终清理；本文件仍为唯一计划。
+
 ## 2026-11-19 UTC — 当前 Candidate owner、Checkpoint 镜像及运行验收修复
 
 从已发布 `10b2f5981c3aa742b16b32090260372f31091733` 继续。当前 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README仍0字节。[本轮精确记录](../../hia/qualification/candidate-runtime-ci-development.json)绑定实际当前开发图、独立读回及双端完整档案；发现、重新编译或相同ELF不替代新提交自己的CI。

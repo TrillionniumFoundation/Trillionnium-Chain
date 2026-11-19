@@ -11,6 +11,7 @@ import unittest
 
 from hia.tools import component_partition as part
 from hia.tools import qualify_components_ci as ci
+from hia.tests import test_sha256_word_evidence as word_fixture
 
 IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_example.Example.test_two",
@@ -20,7 +21,8 @@ IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_oracle.Example.test_original"]
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
-COMPILER = {"binding_sha256": "b" * 64, "compiler_sha256": "c" * 64}
+SOURCES.update(word_fixture.fixture()[2])
+COMPILER = word_fixture.COMPILER
 
 
 def fixture_case(identifier):
@@ -50,7 +52,8 @@ def complete_report(group):
                         "chain_migration": {"backend": "selfhost", "source_sha256": "d" * 64,
                                             "inputs": [{"path": "src/fixture.hepta", "sha256": "d" * 64},
                                                        {"path": "components.json", "sha256": "f" * 64}]},
-                        "compiler_sha256": COMPILER["compiler_sha256"]}],
+                        "compiler_sha256": COMPILER["compiler_sha256"]}]
+                       + (word_fixture.fixture()[1]["builds"] if group == "general" else []),
             "rust_oracles": {key: {"executable_sha256": "e" * 64}
                              for key in ci.qualify.rust_oracle_names(group)},
             "pinned_rust_oracles": {ci.qualify.ML_DSA_ORACLE: "e" * 64} if group == "ml-dsa" else {},
@@ -277,6 +280,11 @@ class ComponentReadback(unittest.TestCase):
                 "compiler": "/tmp/fixture-compiler"}).encode(),
             "original-rust-build.jsonl": b'{"fixture":true}\n',
         }
+        if group == "general":
+            captures = word_fixture.fixture()[0]
+            files["hia-observations/qualification.log"] = (
+                captures.pop("hia-observations/qualification.log") + log_for(value))
+            files.update(captures)
         for name, raw in files.items():
             path = directory / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -325,6 +333,10 @@ class ComponentReadback(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify()
             extra.unlink()
+            extra.mkdir()
+            with self.assertRaisesRegex(ValueError, "extra directories"):
+                verify()
+            extra.rmdir()
             path = directory / "hia-observations/source-after.json"
             original = path.read_bytes()
             value = json.loads(original)

@@ -851,6 +851,11 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/component-readback/source.json"
           bash scripts/project-preflight.sh --audit
           python3 hia/tools/check_migration.py
+      - name: Refuse incomplete component and SHA word evidence
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest hia.tests.test_component_partition hia.tests.test_sha256_word_evidence -v \
+            2>&1 | tee "$RUNNER_TEMP/component-readback/reader-controls.log"
       - name: Download complete general partition from this run and attempt
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
