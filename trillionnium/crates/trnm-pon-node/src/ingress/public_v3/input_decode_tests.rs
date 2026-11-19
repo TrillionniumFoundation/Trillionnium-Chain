@@ -524,6 +524,7 @@ fn reactor_progress_ignores_waiting_metadata_until_bytes_cursor_or_stage_change(
         bytes: vec![1, 2],
         cursor,
         _permit: None,
+        root_delay: None,
     };
     assert_eq!(output(0).progress_key(), output(0).progress_key());
     assert_ne!(output(0).progress_key(), output(1).progress_key());

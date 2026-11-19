@@ -1,4 +1,4 @@
-//! Short scheduling delay for an exact body with a completed W1 math refusal.
+//! Short scheduling delay after a completed typed native refusal of an exact body.
 //! This never returns a validity verdict. After the delay the original paid
 //! body, current owner and full/cached W1 verifier still decide the request.
 use super::{digest, Hash};
@@ -39,6 +39,10 @@ impl BodyRefusals {
     /// A failed optional lock never delays the completed work or changes it.
     pub(super) fn remember(&self, body_digest: &str, now: Instant) {
         let Ok(key) = digest(body_digest) else { return };
+        self.remember_digest(key, now);
+    }
+
+    pub(super) fn remember_digest(&self, key: Hash, now: Instant) {
         let Some(until) = now.checked_add(DELAY) else {
             return;
         };

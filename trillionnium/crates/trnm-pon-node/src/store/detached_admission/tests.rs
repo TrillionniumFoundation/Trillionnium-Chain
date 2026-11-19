@@ -1601,3 +1601,144 @@ mod executed_deltas {
         }
     }
 }
+
+#[cfg(test)]
+mod native_root_scheduling_provenance {
+    use super::*;
+
+    fn body(packet: &Packet) -> String {
+        let wire = serde_json::to_vec(&crate::ingress::public_v3::Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        })
+        .unwrap();
+        hex::encode(trnm_protocol::pon_wire::hash(
+            b"public-request-body-v3",
+            &[&wire],
+        ))
+    }
+    fn receipts_mismatch(mut candidate: Packet) -> Packet {
+        candidate.header.receipts[0] ^= 1;
+        let (a, b) = maintenance();
+        let prover = pon_work::PreparedTask::new(&a, &b).unwrap();
+        for nonce in 0..4096 {
+            candidate.header.nonce = nonce;
+            candidate.proof = prover.prove(candidate.header.challenge()).unwrap();
+            if WorkCheckedPacket::verify(candidate.clone()).is_ok() {
+                return candidate;
+            }
+        }
+        panic!("bounded original real W1 search exhausted");
+    }
+
+    #[test]
+    fn actual_held_and_detached_native_output_mismatches_bind_exact_domain_and_body() {
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let mut node = open(directory.path(), &settings, authenticated);
+            let valid = packet(&node, settings.genesis(), 1, 4, 1001, 0);
+            let before = node.read_active().unwrap();
+            for invalid in [wrong_root(valid.clone()), receipts_mismatch(valid.clone())] {
+                let digest = body(&invalid);
+                let expected: Hash = hex::decode(&digest).unwrap().try_into().unwrap();
+                let held = node
+                    .admit_work_checked(WorkCheckedPacket::verify(invalid.clone()).unwrap(), 1000)
+                    .err()
+                    .unwrap();
+                assert_eq!(held.to_string(), "ROOT");
+                assert_eq!(
+                    held.completed_native_root_body(&settings, &digest),
+                    Some(expected)
+                );
+                assert_eq!(
+                    held.completed_native_root_body(&settings, &body(&valid)),
+                    None
+                );
+                let foreign = Settings::development(Some(2)).unwrap();
+                assert_eq!(held.completed_native_root_body(&foreign, &digest), None);
+                for quoted in [
+                    Error::from(held.to_string()),
+                    Error::remote(held.to_string()),
+                    Error::authenticated_remote(false, &held.to_string()),
+                    Error::from(std::io::Error::other(held.to_string())),
+                ] {
+                    assert_eq!(quoted.completed_native_root_body(&settings, &digest), None);
+                }
+                assert_eq!(
+                    held.local_integrity()
+                        .completed_native_root_body(&settings, &digest),
+                    None
+                );
+                let detached = prepared(&node, &invalid)
+                    .execute(&ExecutionControl::new(&|_| Ok(()), &()))
+                    .err()
+                    .unwrap();
+                assert_eq!(detached.to_string(), "ROOT");
+                assert_eq!(
+                    detached.completed_native_root_body(&settings, &digest),
+                    Some(expected)
+                );
+                assert_eq!(node.read_active().unwrap(), before);
+                assert!(node.packet(invalid.id().unwrap()).is_err());
+            }
+            let admitted = node
+                .admit_work_checked(WorkCheckedPacket::verify(valid.clone()).unwrap(), 1000)
+                .unwrap();
+            assert_eq!(admitted, valid.id().unwrap());
+        }
+    }
+
+    #[test]
+    fn partial_cancel_deadline_and_corrupt_parent_never_mint_native_output_provenance() {
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let node = open(directory.path(), &settings, authenticated);
+            let valid = packet(&node, settings.genesis(), 1, 4, 1001, 0);
+            let invalid = wrong_root(valid.clone());
+            let digest = body(&invalid);
+            for code in [
+                crate::ErrorCode::PublicRequestCancelled,
+                crate::ErrorCode::PublicRequestDeadline,
+            ] {
+                for final_boundary in [false, true] {
+                    let calls = AtomicUsize::new(0);
+                    let error = prepared(&node, &invalid)
+                        .execute(&ExecutionControl::new(
+                            &|point| {
+                                let refuse = if final_boundary {
+                                    matches!(point, ExecutionProgress::BeforeOutput)
+                                } else {
+                                    matches!(point, ExecutionProgress::BeforeApply { .. })
+                                };
+                                if refuse {
+                                    calls.fetch_add(1, Ordering::Relaxed);
+                                    Err(Error::new(code))
+                                } else {
+                                    Ok(())
+                                }
+                            },
+                            &(),
+                        ))
+                        .err()
+                        .unwrap();
+                    assert!(calls.load(Ordering::Relaxed) > 0 && error.is(code));
+                    assert_eq!(error.completed_native_root_body(&settings, &digest), None);
+                }
+            }
+            let mut artifact = prepared(&node, &invalid);
+            artifact.prior.insert(
+                "native-root-refusal-corruption".into(),
+                serde_json::json!(true),
+            );
+            let error = artifact
+                .execute(&ExecutionControl::new(&|_| Ok(()), &()))
+                .err()
+                .unwrap();
+            assert!(error.requires_owner_stop());
+            assert_eq!(error.completed_native_root_body(&settings, &digest), None);
+            assert!(node.packet(invalid.id().unwrap()).is_err());
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
+}

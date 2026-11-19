@@ -16721,3 +16721,46 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+## 2026-11-19 continuation: delay only completed native ROOT refusals
+
+Continue the fixed-host F0 business gate from `d95239eda6a666458aa264ddeaf993d6d9fbf37d`
+and its complete failed-run evidence at `8d8e50e4256c1f4a5e0bcaa6dfb4d0e19eb5510f`.
+The preceding F0 run 44376853052 achieved one of six confirmations in the original
+30-second phases and zero of six within the original scheduled four-second windows.
+Its ROOT phase produced no confirmed business round. Those denominators and failures
+remain the acceptance boundary.
+
+The new candidate extends the existing bounded exact-body delay table to typed,
+locally completed native parent/M06 task-output refusals. The hint becomes usable
+only after CPU settlement, continued task liveness and completion of the original
+socket output. Partial output, write failure, encoding failure, cancellation,
+expiry, successful responses and untyped errors cannot publish the hint. The
+original full-body wire digest, 256 slots, four ways and 500 ms delay remain.
+Workers, queues, prepaid CPU, deadlines, verifier rules and workload are unchanged.
+Signed resource revision r22 is derived independently; correctly signed r21 and
+earlier cookies remain rejected.
+
+The final local public suite reports 291 passed, one failed and two original
+ignored tests. The remaining finite-512-attempt CPU-exhaustion assertion also fails
+on an isolated exact d952 checkout in the same full-suite context: 298,042,065 ns
+paid, versus 299,010,261 ns in the candidate. An original standalone execution
+passed at attempt 501 and 300,024,025 ns. The fixture's original 400,000,000 ns
+credit and 100,000,000 ns next-start reserve explain the boundary; a fixed count
+does not ensure a fixed amount of actual CPU. Keep the assertion, 512 limit, global
+2-second burst and all these outcomes. This is an existing control limitation,
+not an all-green suite or a claim that the F0 business target has passed.
+
+Focused real TCP controls, strict Clippy, formatting, the locked Linux dependency
+graph, 114 source-binding negatives and 43 raw-source negatives passed. The original
+CI contract and all 2,619 source pins pass after refreshing only two stale literal
+workflow blob guards and the corresponding corpus pin. All qualification fields
+remain unchanged. The broader offline metadata query's unavailable socket2 0.6.1
+dependency and earlier failed implementations remain in the complete archive.
+
+Freeze this candidate as a draft on the complete prior evidence tree and execute
+the unchanged original F0 once at that exact source. Retain every phase, exposure,
+failure, partial artifact and cost; assess business confirmations, not driver exit
+status. Complete physical cost and overall Chain qualification remain open.
+See [the native refusal continuation evidence](../../evidence/chain-native-root-body-delay-20261119-2e9b/README.md).
+This file remains the sole development plan.

@@ -13,15 +13,15 @@ fn server() -> PublicServer {
 #[test]
 fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges() {
     let policy = policy();
-    // Independent SHA-256/length-framing vectors for the current r21 resource
+    // Independent SHA-256/length-framing vectors for the current r22 resource
     // profile (8 bits, 2000 ms) and its separately signed arithmetic profile.
     assert_eq!(
         hex::encode(policy.id()),
-        "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94"
+        "f42c4a65fe07c39b2ec4349231742f20714f4d9b0c12842ff6cb30cdb2e04748"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "37a27527894ee8fae2149d33f2e7ad425d55ae3552d630675637620c6de683ae"
+        "82f9ad5d5398fce56e8cb3a4e3dbb98293b1a4d3d4a998caa0578997267cdba6"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();
@@ -45,6 +45,16 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     // Correctly signed predecessor cookies remain old namespaces. A new
     // resource revision cannot silently accept historical execution profiles, including r19.
     for (owner, cookie, predecessor) in [
+        (
+            &raw,
+            &raw_cookie,
+            "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
+        ),
+        (
+            &arithmetic,
+            &arithmetic_cookie,
+            "37a27527894ee8fae2149d33f2e7ad425d55ae3552d630675637620c6de683ae",
+        ),
         (
             &raw,
             &raw_cookie,

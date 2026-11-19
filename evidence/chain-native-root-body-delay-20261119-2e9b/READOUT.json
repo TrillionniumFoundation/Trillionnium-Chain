@@ -1,0 +1,64 @@
+{
+  "schema": "chain-native-root-delay-pre-f0-readout-v1",
+  "parent_commit": "8d8e50e4256c1f4a5e0bcaa6dfb4d0e19eb5510f",
+  "original_candidate": "d95239eda6a666458aa264ddeaf993d6d9fbf37d",
+  "f0_qualified": false,
+  "native_all_green": false,
+  "full_physical_cost_closed": false,
+  "original_workload_changed": false,
+  "prepaid_test_changed": false,
+  "qualification_flags_changed": false,
+  "candidate_public_suite": {
+    "passed": 291,
+    "failed": 1,
+    "ignored": 2,
+    "native_exit": 101,
+    "paid_cpu_ns": 299010261,
+    "attempted": 512
+  },
+  "original_full_public_suite": {
+    "passed": 287,
+    "failed": 1,
+    "ignored": 2,
+    "native_exit": 101,
+    "paid_cpu_ns": 298042065,
+    "attempted": 512
+  },
+  "original_standalone": {
+    "passed": 1,
+    "failed": 0,
+    "native_exit": 0,
+    "paid_cpu_ns": 300024025,
+    "attempted": 501
+  },
+  "shared_prepaid_test_sha256": "ce7f13d373b9b240c6611a6cbdf375aab0ed01fa1b777e1b31c75fa7ac53ac20",
+  "controls": {
+    "source_binding_negative_tests": 114,
+    "raw_source_negative_tests": 43,
+    "source_pins": 2619,
+    "inline_source_guards": 26
+  },
+  "f0": {
+    "workflow": ".github/workflows/pon-fixed-host-root-f0.yml",
+    "planned_runs": 1,
+    "planned_confirmations": 6,
+    "planned_business_packet_exposures": 42,
+    "phase_window_seconds": 30,
+    "scheduled_acceptance_window_seconds": 4,
+    "status": "NOT_RUN_AT_FREEZE"
+  },
+  "archive": {
+    "file": "complete-pre-f0-validation.tar.xz",
+    "bytes": 1031008,
+    "sha256": "d75eeaed7ae593244690820264e97a0747cc1d6542cee5c58acbe42e3eef4610"
+  },
+  "archive_members": 354,
+  "original_validation_files": 295,
+  "prior_f0_runs": [
+    44315121617,
+    44328450170,
+    44335832525,
+    44356270247,
+    44376853052
+  ]
+}

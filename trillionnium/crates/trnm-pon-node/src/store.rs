@@ -37,6 +37,7 @@ pub mod migration_history_v2;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
 pub mod native_owner_observation;
+mod native_root_refusal;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod packet_observation;
@@ -55,6 +56,7 @@ mod reorg_cancellation;
 mod reorg_readback_tests;
 mod reverse_path;
 mod root_rejection_cache;
+pub(crate) use native_root_refusal::NativeRootRefusal;
 #[cfg(test)]
 mod root_rejection_cache_tests;
 mod state_merge;
@@ -5126,6 +5128,22 @@ impl Node {
         }
         let receipts_root = sequence_root("receipts", &output.receipts);
         if h.state != output.root || h.receipts != receipts_root {
+            let refusal = if !pq_accounts_v2::enabled(&self.settings.app)
+                && !growth_profile_v2::enabled(&self.settings.app)
+            {
+                NativeRootRefusal::after_complete_output_comparison(
+                    [
+                        self.settings.network(),
+                        self.settings.parameters(),
+                        self.settings.genesis(),
+                    ],
+                    &bytes,
+                    (h.state, h.receipts),
+                    (output.root, receipts_root),
+                )
+            } else {
+                None
+            };
             // This private fact is constructed only after successful full M06
             // and task-output derivation. No arbitrary Err(ROOT) is retained.
             if let Some(scope) = rejection_scope {
@@ -5142,7 +5160,9 @@ impl Node {
                     );
                 }
             }
-            return Err("ROOT".into());
+            return Err(refusal
+                .map(Error::native_output_root_refusal)
+                .unwrap_or_else(|| "ROOT".into()));
         }
         self.persist_admission_execution(
             AdmissionPersistence {
