@@ -207,10 +207,21 @@ jobs:
         with:
           name: hia-components-general-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/hia-observations/
+            ${{ runner.temp }}/hia-observations/source.json
+            ${{ runner.temp }}/hia-observations/source-after.json
+            ${{ runner.temp }}/hia-observations/qualification.json
+            ${{ runner.temp }}/hia-observations/qualification.log
             ${{ runner.temp }}/hia-bootstrap/bootstrap.json
             ${{ runner.temp }}/original-rust-build.jsonl
           if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete SHA-256 word-boundary observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-sha256-word-boundaries-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-observations/sha256-word-boundaries/
+          if-no-files-found: warn
           retention-days: 30
       - name: Retain complete original and HIA control-plane observations
         if: always()
