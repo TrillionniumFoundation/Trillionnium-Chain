@@ -964,7 +964,13 @@ pub(super) fn publish_with_readback<'db>(
     let rows = deltas_with_progress(db, block, progress)?;
     let matches = matches_difference(before, after, &rows, progress)?;
     local(ensure(matches, "NATIVE_STATE_DELTA"))?;
-    let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
+    let (accounts, parent_graph) = PostWriteReadback::apply_publication_accounts(
+        db,
+        &parent_record,
+        &rows,
+        progress,
+        parent_graph,
+    )?;
     let state = match cache {
         Some(cache) => cache.complete(settings, after)?,
         None => complete(settings, after)?,
@@ -988,9 +994,9 @@ pub(super) fn publish_with_readback<'db>(
         delta_count: rows.len() as u64,
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
-    // Only this native helper owns the exact metadata write. When actual SQL
-    // deltas/apply leave the complete parent account Root untouched, it can
-    // prove that this one passive INSERT preserves the just-read account graph.
+    // Only this native helper owns the exact metadata write. Its consumed
+    // parent owner may carry the sealed facts of the actual passive account
+    // INSERTs. It never receives a caller-supplied count or graph verdict.
     // Any extra write/schema/owner change keeps the original full child graph.
     let mut readback = PostWriteReadback::save_publication_record(
         db,

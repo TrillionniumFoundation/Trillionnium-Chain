@@ -1410,3 +1410,6 @@ fn completed_graph_cannot_reinstall_into_another_scope_in_the_same_transaction()
 fn completed_graph_cannot_reinstall_after_commit_into_a_new_transaction() {
     completed_graph_rejects_another_original_owner(true);
 }
+
+#[path = "append_tests.rs"]
+mod append_controls;

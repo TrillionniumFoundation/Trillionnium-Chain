@@ -175,6 +175,17 @@ class HashUseContractTests(unittest.TestCase):
         data["uses"]["proof-risc0-selected"]["attack_games"] = ["merkle-binding"]
         self.refused(data)
 
+    def test_previous_store_source_pin_cannot_qualify_the_current_map(self):
+        data = self.data()
+        self.assertEqual(len(data["source_files"]), 31)
+        self.assertEqual(len(data["uses"]), 19)
+        data["source_files"]["trillionnium/crates/trnm-pon-node/src/store.rs"] = {
+            "bytes": 394623,
+            "sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+        }
+        with self.assertRaisesRegex(contract.ContractError, "source map differs"):
+            contract.validate_manifest(data)
+
     def test_source_map_cannot_self_repin_changed_source(self):
         data = self.data()
         first = next(iter(data["source_files"]))

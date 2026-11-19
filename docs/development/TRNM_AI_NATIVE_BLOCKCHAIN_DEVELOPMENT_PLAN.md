@@ -16812,3 +16812,36 @@ pins. Frozen historical source pins, path scopes, HOLD/false/null qualification
 and historical evidence keep their prior meaning. Freeze this candidate and run
 the unchanged original F0 once. Business progress and complete physical cost
 remain open until independently observed. This is still the sole development plan.
+
+
+## 2026-11-19 continuation: retain F0 failure and repair the current authority map
+
+The exact 3db79eb original F0 44451798839 remains a failed observation:
+30-second targets 1/6, original four-second targets 0/6 and timely ACKs 17/42.
+Its #969 evidence retains the complete original artifact, source identity,
+cost observations and the full 26-run provider denominator at the recorded
+timepoint. No native liveness, complete physical-cost or depletion qualification
+follows from source checks or the preceding 127 local controls.
+
+The current authority/effect register actually refuses the candidate's store.rs
+bytes. Independently compare all 44 immutable regular Git blobs with the isolated
+checkout, repair only its single stale current-map store pin, and update the
+canonical fixed lock and positive assertion together. Add the preceding store
+digest as a refusal without removing old negatives. Keep the retained review
+label, seven routes, 44 paths, original historical mappings and all HOLD/false
+qualification boundaries. Refresh only the corresponding current corpus blob
+pins. Continue first-full-graph/Host performance work under the original true
+physical checks, SQL transaction scope, six business goals, windows and credits;
+do not reuse a graph's authority across a reorganization transaction.
+
+### 2026-11-19 owned native append and observer lock candidate
+
+The original first-graph profile identified repeated account-graph walks. The candidate carries only a fully verified original parent in the same actual GraphScope, Record and complete Root, after the unchanged native save_node writes and exact passive archive schema checks. Actual private write counts bind the operation; additional writes, another scope, transaction ABA, callbacks and cancellation keep the original complete reader/refusal. The child still receives its complete State and exposed-edge traversal; the original four slots, sixteen frontier entries, Host physical checks, locks and budgets remain unchanged. Six real signed native append controls bring the post-write subgroup to 55 and authenticated module to 133.
+
+The observer snapshot copies the request row then releases that guard before task/phase inspection. It captures both closed flags before copying, so a later write/close does not make a stale copy complete. All 39 original/new observer controls pass; the original instrumented path fails all three new controls, and the intermediate release-only implementation fails the late-close control. This does not reconstruct the old ROOT connection 393 or assert full historical cost completeness.
+
+Current native validation: authenticated 133/133 with original include-ignored and retained-delta output; post-write 55/55; native-store 37 passed/5 ignored; detached 25 passed/1 ignored; History 56 passed/1 ignored; strict all-target release Clippy and format pass. Exact locked Linux node dependency tree and complete workspace metadata now pass with unchanged Cargo.lock. The public-v3 group remains 294 passed/1 failed/2 ignored: the original fixed 512-attempt depletion assertion has paid CPU 298399949 ns from 400000000 ns credit, leaving 101600051 ns, above the unchanged 100000000 ns start reserve. That current failure is retained without synthetic work, reduced credit, added attempts or rerun-to-green.
+
+Historical F0 44451798839 remains failed (30-second goals 1/6 and four-second goals 0/6); the new original F0 is pending. Current exact 133/55 registration uses actual logs in evidence/chain-native-owned-append-20261119-2e9b/controls. Historical 97 and previous 127 fixtures remain byte-identical and cannot qualify this candidate. Full workspace, public service liveness, complete cost, owner adoption and cryptographic qualification are not inferred from these local controls.
+
+The original repository-truth gate also exposed a stale hash-use source map: only store.rs differed across its 31 actual parent/current sources. The old 394623-byte 9d79fd3c identity is retained as a rejection control; the current 397703-byte cb063dff identity matches the unchanged parent source. The new literal map lock is 39224fce7b4411ae387e252c3440b4ae5e871921a33e8efe9e3f70ff56a6a73f. All 19 uses, 31 paths, exact semantic digest 29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b, historical e4abb172 review anchor and HOLD_NO_GO/unknown security qualifications remain unchanged. Original repository-truth failures and the original reader refusal remain retained.

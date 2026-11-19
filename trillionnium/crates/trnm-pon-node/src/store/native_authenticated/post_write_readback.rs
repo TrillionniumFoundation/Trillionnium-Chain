@@ -2,6 +2,7 @@
 //! No receipt survives its original writer, connection, SQL epoch or schema.
 use super::{CurrentAccountGraph, Record};
 use crate::account_archive_prototype::native_store::{
+    append::AppliedNodes,
     scoped_readback::{Frontier, VerifiedGraph},
     Root,
 };
@@ -160,27 +161,138 @@ pub(in crate::store) struct PostWriteReadback<'db> {
     pub(super) subtree_hits: usize,
     #[cfg(test)]
     metadata_insert_seeded: bool,
+    #[cfg(test)]
+    append_insert_seeded: bool,
+}
+
+/// Only the original publication helper can attach actual apply facts to its
+/// consumed parent owner. Callers cannot supply a count or mix a receipt into a
+/// different owner; the final metadata helper consumes this value once.
+pub(super) struct PublicationParent<'db> {
+    graph: Option<PostWriteReadback<'db>>,
+    appends: Option<AppliedNodes>,
+}
+
+impl<'db> From<Option<PostWriteReadback<'db>>> for PublicationParent<'db> {
+    fn from(graph: Option<PostWriteReadback<'db>>) -> Self {
+        Self {
+            graph,
+            appends: None,
+        }
+    }
 }
 
 impl<'db> PostWriteReadback<'db> {
-    /// This private native operation owns the ONLY allowed write itself. It
-    /// never accepts a caller's "unchanged" claim, allowed-write count, graph
-    /// receipt or replacement scope. The parent graph was fully checked in a
-    /// scope captured BEFORE its first read and remained unwritten through its
-    /// final callback, actual SQL deltas and native apply.
+    /// Consume the original parent owner around the actual account apply. Only
+    /// a complete parent graph and the ordinary passive archive INSERT program
+    /// can retain its original frontier across these owned append-only writes.
+    pub(super) fn apply_publication_accounts(
+        db: &'db Connection,
+        parent: &Record,
+        deltas: &[super::Delta],
+        progress: &mut dyn FnMut() -> Result<()>,
+        mut parent_graph: Option<Self>,
+    ) -> Result<(Root, PublicationParent<'db>)> {
+        let token = if let Some(scope) = parent_graph.as_mut() {
+            if deltas.iter().any(|row| row.0.starts_with("account:"))
+                && scope.current(db)?
+                && !scope.consumed
+                && scope.ids[0] == Some(parent.block)
+                && scope.graphs[0]
+                    .as_ref()
+                    .is_some_and(|graph| graph.source.is_none() && graph.record == *parent)
+                && scope.passive_account_insert_schema(db)?
+            {
+                Some(GraphScope(Rc::clone(&scope.graph_scope.0)))
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+        let (accounts, appends) = match token {
+            Some(token) => {
+                let (accounts, receipt) =
+                    crate::account_archive_prototype::native_store::append::apply(
+                        db,
+                        parent.id,
+                        &parent.accounts,
+                        deltas,
+                        progress,
+                        token,
+                    )?;
+                (accounts, Some(receipt))
+            }
+            None => (
+                crate::account_archive_prototype::native_store::apply(
+                    db,
+                    &parent.accounts,
+                    deltas,
+                    progress,
+                )?,
+                None,
+            ),
+        };
+        Ok((
+            accounts,
+            PublicationParent {
+                graph: parent_graph,
+                appends,
+            },
+        ))
+    }
+
+    fn current_after_appends(
+        &self,
+        db: &Connection,
+        record: &Record,
+        appends: &AppliedNodes,
+    ) -> Result<bool> {
+        // Observe the ORIGINAL monotone writer. Do not advance, re-stamp or
+        // re-enable it after a write. Extra failed/no-row statements and DDL,
+        // including effects in callbacks, cannot cancel out of this count.
+        let writes = self
+            .scope
+            .executed_writes_since_capture(db)
+            .map_err(readback_scope_error)?;
+        Ok(self.enabled
+            && !self.consumed
+            && writes == appends.inserts()
+            && readback_schema(db)?.as_ref() == Some(&self.schema)
+            && self.graphs[0].as_ref().is_some_and(|parent| {
+                parent.source.is_none()
+                    && appends.is_for(
+                        &self.graph_scope,
+                        parent.record.id,
+                        &parent.record.accounts,
+                        &record.accounts,
+                    )
+            }))
+    }
+
+    /// This private native operation owns the metadata INSERT itself. The
+    /// consumed parent owner can additionally hold only the facts sealed by
+    /// its actual native apply, never a supplied allowed-write count or graph
+    /// verdict. The original complete parent read precedes the native appends;
+    /// their passive schema and exact total effects are independently fenced.
     #[allow(clippy::too_many_arguments)]
     pub(super) fn save_publication_record(
         db: &'db Connection,
         settings: &Settings,
         record: &mut Record,
         actual_deltas: &[super::Delta],
-        mut parent_graph: Option<Self>,
+        parent_graph: impl Into<PublicationParent<'db>>,
         original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
     ) -> Result<Option<Self>> {
+        let publication = parent_graph.into();
+        let mut parent_graph = publication.graph;
+        let appends = publication.appends;
         let eligible = match parent_graph.as_mut() {
             Some(scope) => {
-                scope.current(db)?
-                    && !scope.consumed
+                (match appends.as_ref() {
+                    Some(appends) => scope.current_after_appends(db, record, appends)?,
+                    None => scope.current(db)?,
+                }) && !scope.consumed
                     && scope.ids[0] == record.parent
                     && scope.context
                         == [
@@ -192,11 +304,18 @@ impl<'db> PostWriteReadback<'db> {
                         verified.source.is_none()
                             && record.parent == Some(verified.record.block)
                             && record.parent_commitment == Some(verified.record.id)
-                            && record.accounts == verified.record.accounts
+                            && (appends.as_ref().is_some_and(|appends| {
+                                appends.is_for(
+                                    &scope.graph_scope,
+                                    verified.record.id,
+                                    &verified.record.accounts,
+                                    &record.accounts,
+                                )
+                            }) || record.accounts == verified.record.accounts
+                                && actual_deltas
+                                    .iter()
+                                    .all(|row| !row.0.starts_with("account:")))
                     })
-                    && actual_deltas
-                        .iter()
-                        .all(|row| !row.0.starts_with("account:"))
                     && scope.passive_record_insert_schema(db)?
             }
             None => false,
@@ -225,22 +344,36 @@ impl<'db> PostWriteReadback<'db> {
                     .scope
                     .executed_writes_since_capture(db)
                     .map_err(readback_scope_error)?
-                    == 1
+                    == appends
+                        .as_ref()
+                        .map_or(Some(1), |fact| fact.inserts().checked_add(1))
+                        .ok_or("NATIVE_APPEND_COUNT")?
                     && previous.schema == next.schema
                     && next.current(db)?
                 {
-                    // The exact Root remains backed by the actual graph just
-                    // verified before our sole passive metadata INSERT.
+                    // The original complete parent Root remains backed by its
+                    // actual graph before our proven passive writes.
                     // Current child State/record/deltas, final callback and the
                     // original no-write scope are still checked before any hit.
-                    next.graphs[0] = Some(CompletedGraph::complete(record.clone()));
                     next.ids[2] = record.parent;
+                    if appends.is_some() {
+                        // Only the ORIGINAL complete parent graph survived the
+                        // actual passive appends. The child receives no full
+                        // graph verdict; its current State and exposed graph
+                        // must still pass the original verifier below.
+                        let parent = previous.graphs[0]
+                            .as_ref()
+                            .ok_or("NATIVE_ACCOUNT_FRONTIER")?;
+                        next.graphs[2] = Some(CompletedGraph::complete(parent.record.clone()));
+                    } else {
+                        next.graphs[0] = Some(CompletedGraph::complete(record.clone()));
+                    }
                     // Move only the original bounded frontier sealed by that
                     // SAME complete parent graph. Its original source Record.id
                     // and full Root remain unchanged; never relabel it as the
                     // child or accept another same-Root record's frontier.
-                    // All old-owner/schema/sole-passive-write checks above must
-                    // succeed first. No extra record, SQL operation or callback
+                    // All original-owner/schema/exact-passive-write checks
+                    // above must succeed first. No new graph source or callback
                     // is introduced, and an absent/mismatched frontier retains
                     // the original full graph reader.
                     if previous
@@ -256,7 +389,8 @@ impl<'db> PostWriteReadback<'db> {
                     }
                     #[cfg(test)]
                     {
-                        next.metadata_insert_seeded = true;
+                        next.metadata_insert_seeded = appends.is_none();
+                        next.append_insert_seeded = appends.is_some();
                     }
                 }
             }
@@ -359,6 +493,96 @@ impl<'db> PostWriteReadback<'db> {
         Ok(absent)
     }
 
+    fn passive_account_insert_schema(&self, db: &Connection) -> Result<bool> {
+        // A write-count delta of one alone does NOT exclude trigger/cascade
+        // side effects. Require the actual catalog already fenced by current:
+        // no trigger/view anywhere, no TEMP/ATTACH/writable schema, and exactly
+        // the original ordinary account-node table (no CHECK/UDF/conflict program).
+        const ORIGINAL_TABLE: &str =
+            "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL)";
+        if self
+            .schema
+            .iter()
+            .any(|row| row.1 != "table" && row.1 != "index")
+            || !self.schema.iter().any(|row| {
+                row.0 == "main"
+                    && row.1 == "table"
+                    && row.2 == "archive_nodes"
+                    && row.3 == "archive_nodes"
+                    && row.4 > 0
+                    && row.5.as_deref() == Some(ORIGINAL_TABLE)
+            })
+        {
+            return Ok(false);
+        }
+        // Additional indexes can execute expression/partial/collation programs
+        // during this INSERT even without triggers. Only the original PK
+        // autoindex is passive; indexes on unrelated tables are irrelevant.
+        let indexes: Vec<_> = self
+            .schema
+            .iter()
+            .filter(|row| row.0 == "main" && row.1 == "index" && row.3 == "archive_nodes")
+            .collect();
+        if indexes.len() != 1
+            || indexes[0].2 != "sqlite_autoindex_archive_nodes_1"
+            || indexes[0].4 <= 0
+            || indexes[0].5.is_some()
+        {
+            return Ok(false);
+        }
+        // Check the parsed SQLite index, not just its catalog spelling.
+        let mut statement = db.prepare("PRAGMA main.index_list(archive_nodes)")?;
+        let indexes = statement
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, i64>(2)?,
+                    row.get::<_, String>(3)?,
+                    row.get::<_, i64>(4)?,
+                ))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        if indexes
+            != vec![(
+                0,
+                "sqlite_autoindex_archive_nodes_1".into(),
+                1,
+                "pk".into(),
+                0,
+            )]
+        {
+            return Ok(false);
+        }
+        let mut statement =
+            db.prepare("PRAGMA main.index_xinfo(sqlite_autoindex_archive_nodes_1)")?;
+        let columns = statement
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, i64>(1)?,
+                    row.get::<_, Option<String>>(2)?,
+                    row.get::<_, i64>(3)?,
+                    row.get::<_, Option<String>>(4)?,
+                    row.get::<_, i64>(5)?,
+                ))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        if columns
+            != vec![
+                (0, 0, Some("id".into()), 0, Some("BINARY".into()), 1),
+                (1, -1, None, 0, Some("BINARY".into()), 0),
+            ]
+        {
+            return Ok(false);
+        }
+        // Keep this actual parsed-schema check even though the exact source
+        // table contains no foreign keys. It is not inferred from row counts.
+        let mut statement = db.prepare("PRAGMA main.foreign_key_list(archive_nodes)")?;
+        let absent = statement.query([])?.next()?.is_none();
+        Ok(absent)
+    }
+
     pub(in crate::store) fn new(
         db: &'db Connection,
         settings: &Settings,
@@ -425,6 +649,8 @@ impl<'db> PostWriteReadback<'db> {
             subtree_hits: 0,
             #[cfg(test)]
             metadata_insert_seeded: false,
+            #[cfg(test)]
+            append_insert_seeded: false,
         }))
     }
 

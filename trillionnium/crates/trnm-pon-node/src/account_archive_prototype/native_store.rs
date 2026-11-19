@@ -18,6 +18,8 @@ mod node_decode;
 #[path = "native_node_reader.rs"]
 mod node_reader;
 use node_reader::NodeReader;
+#[path = "native_append.rs"]
+pub(crate) mod append;
 #[path = "native_scoped_readback.rs"]
 pub(crate) mod scoped_readback;
 
@@ -301,6 +303,7 @@ fn apply_batch(
     updates: &[Node],
     empty: &[Hash; 257],
     progress: &mut dyn FnMut() -> Result<()>,
+    inserts: &mut Option<&mut append::InsertCount>,
 ) -> Result<Option<Node>> {
     progress()?;
     let Some(first) = updates.first() else {
@@ -325,7 +328,7 @@ fn apply_batch(
             )
             .map_err(Error::local_integrity)?;
         }
-        super::save_node(db, first).map_err(storage)?;
+        save_applied_node(db, first, inserts)?;
         return Ok(Some(first.clone()));
     }
     let split = updates.partition_point(|node| !super::bit(&node.path, depth));
@@ -351,13 +354,27 @@ fn apply_batch(
             )
         }
     };
-    let left = apply_batch(db, left, left_updates, empty, progress)?
+    let left = apply_batch(db, left, left_updates, empty, progress, inserts)?
         .ok_or_else(|| Error::from("NATIVE_ACCOUNT_GRAPH").local_integrity())?;
-    let right = apply_batch(db, right, right_updates, empty, progress)?
+    let right = apply_batch(db, right, right_updates, empty, progress, inserts)?
         .ok_or_else(|| Error::from("NATIVE_ACCOUNT_GRAPH").local_integrity())?;
     let next = Node::fork(depth, &left, &right, empty).map_err(storage)?;
-    super::save_node(db, &next).map_err(storage)?;
+    save_applied_node(db, &next, inserts)?;
     Ok(Some(next))
+}
+
+fn save_applied_node(
+    db: &Connection,
+    node: &Node,
+    inserts: &mut Option<&mut append::InsertCount>,
+) -> Result<()> {
+    // The original SQL and exact conflict readback complete before this private
+    // fact is counted. No callback can supply or modify the fact.
+    super::save_node(db, node).map_err(storage)?;
+    if let Some(inserts) = inserts.as_deref_mut() {
+        inserts.record()?;
+    }
+    Ok(())
 }
 
 /// Apply actual ordered native deltas. Accounts retain both nonce and existence;
@@ -368,7 +385,7 @@ pub(crate) fn apply(
     deltas: &[crate::store::Delta],
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<Root> {
-    apply_bounded(db, parent, deltas, progress, 65_536)
+    apply_bounded(db, parent, deltas, progress, 65_536, None)
 }
 
 /// Only the explicitly selected growth owner calls this versioned bound.
@@ -384,6 +401,7 @@ pub(crate) fn apply_growth(
         deltas,
         progress,
         trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS,
+        None,
     )
 }
 fn apply_bounded(
@@ -392,6 +410,7 @@ fn apply_bounded(
     deltas: &[crate::store::Delta],
     progress: &mut dyn FnMut() -> Result<()>,
     maximum: u64,
+    mut inserts: Option<&mut append::InsertCount>,
 ) -> Result<Root> {
     let empty = empty_hashes();
     let original = load_root_bounded(db, parent, &empty, maximum)?;
@@ -438,7 +457,7 @@ fn apply_bounded(
         "NATIVE_ACCOUNT_DELTA",
     )
     .map_err(Error::local_integrity)?;
-    let root = apply_batch(db, original, &updates, &empty, progress)?;
+    let root = apply_batch(db, original, &updates, &empty, progress, &mut inserts)?;
     Ok(Root {
         node: root.as_ref().map(|node| node.id),
         digest: root.as_ref().map_or(empty[0], |node| node.lift(0, &empty)),

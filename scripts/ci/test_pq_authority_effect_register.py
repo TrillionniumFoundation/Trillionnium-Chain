@@ -69,7 +69,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual(result['curated_routes_checked'], 7)
         self.assertEqual(len(result['source_files_sha256']), 44)
         self.assertEqual(result['reviewed_source_lock_sha256'],
-                         '67583ec38887eabe00536dc4cd5ec7cc7fd48acc4397a52165bf4f591c9fa4a7')
+                         'ae5afdae579060eeaafb17783ee5a536f68717fa2ba0b46c5fe1826affed8f49')
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
@@ -233,6 +233,13 @@ class AuthorityEffectTests(unittest.TestCase):
                     'trillionnium/crates/trnm-crypto-primitives/src/lib.rs'
                 ] = old_digest
                 self.refused('fixed reviewed lock')
+
+        # The preceding current-map store pin cannot authorize successor bytes.
+        self.data = deepcopy(self.original)
+        self.data['source_files_sha256'][
+            'trillionnium/crates/trnm-pon-node/src/store.rs'
+        ] = '9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820'
+        self.refused('fixed reviewed lock')
 
         # The preceding discovery fixture cannot be relabelled as this checkpoint.
         self.data = deepcopy(self.original)

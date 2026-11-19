@@ -1658,8 +1658,8 @@
       "sha256": "7ff08fc23a7086a1a74671f85afd2f3919b982c11c0f0c3e69054fcc5ddbdc5b"
     },
     "trillionnium/crates/trnm-pon-node/src/store.rs": {
-      "bytes": 394623,
-      "sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+      "bytes": 397703,
+      "sha256": "cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9"
     },
     "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs": {
       "bytes": 13942,

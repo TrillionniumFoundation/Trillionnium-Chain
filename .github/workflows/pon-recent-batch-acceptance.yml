@@ -29,6 +29,13 @@ on:
       - evidence/authenticated-suite-count-20261106/**
       - evidence/workspace-semantic-registry-20261106/**
       - evidence/recent-batch-suite-count-20261106/**
+      - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs
+      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs
+      - evidence/chain-native-owned-append-20261119-2e9b/controls/native-authenticated.log.gz
+      - evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz
+      - evidence/chain-native-owned-append-20261119-2e9b/controls/PROVENANCE.json
+      - evidence/chain-native-owned-append-20261119-2e9b/controls/README.md
       - .github/workflows/pon-recent-batch-acceptance.yml
       - .github/workflows/pon-original-workspace-large-state-cpu.yml
 permissions:
@@ -81,7 +88,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = feb66e96059121ee71b4e4951547ec58f9707a56
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e67c78df5baffe4a10491c5c47fc223eb8f44bea
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = cea574a9ddcb9f5aadb475a4be68b7bc50be6639
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)" = 9f830268d71fcea84ceca7dc2469b9861f654d86
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = 5e3769d3186026a7bac012be534f0d6cad5e362a
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
@@ -179,19 +186,19 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 127 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 133 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import hashlib, json, re, sys
           from pathlib import Path
           roster_raw = Path("config/pon/authenticated-current-roster-v1.json").read_bytes()
-          if hashlib.sha256(roster_raw).hexdigest() != "186d9594bc6af2fc4eeffdb895547c16bc0ac3bf443c410c92e2c18614dd5425":
+          if hashlib.sha256(roster_raw).hexdigest() != "1e98393ca0a366d99714bd3e4c813b078afa4be6f450888ca47a4882234950fa":
               raise SystemExit("current authenticated roster differs from reviewed source")
           roster = json.loads(roster_raw)
           expected = roster["tests"]
           if (roster["schema"] != "trnm-authenticated-current-roster-v1"
-                  or len(expected) != 127 or len(set(expected)) != 127):
-              raise SystemExit("current authenticated roster requires 127 unique exact names")
+                  or len(expected) != 133 or len(set(expected)) != 133):
+              raise SystemExit("current authenticated roster requires 133 unique exact names")
           lines = Path(sys.argv[1]).read_text().splitlines()
           names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
           summaries = [line for line in lines if line.startswith('test result:')]
@@ -213,11 +220,11 @@ jobs:
               'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::unavailable_accounting_does_not_replace_native_results',
           }
           observed_tail = {name for name in names if name.startswith('store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::')}
-          if (sorted(names) != expected or len(names) != 127 or len(set(names)) != 127 or len(post_write) != 49
+          if (sorted(names) != expected or len(names) != 133 or len(set(names)) != 133 or len(post_write) != 55
                   or observed_current != current_accounts
                   or observed_tail != legacy_tail
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 127 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires all 127 exact executions (the original 97 and all 30 later controls), including 49 post-write, six legacy-tail and five current-account controls, in one log')
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 133 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires all 133 exact executions (the original 97 and all 36 later controls), including 55 post-write, six legacy-tail and five current-account controls, in one log')
           PYLOG
             fi
           done
