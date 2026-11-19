@@ -36,6 +36,8 @@ jobs:
           python3 hia/tools/check_migration.py
       - name: Refuse optimized-Python bootstrap false-positive evidence
         run: python3 -m unittest discover -s scripts/ci -p 'test_hia_workflow_bootstrap.py' -v
+      - name: Refuse incomplete or stale additional-owner CI evidence
+        run: python3 -m unittest discover -s scripts/ci -p 'test_additional_owner_binding.py' -v
       - name: Prepare the original scientific conformance environment
         run: |
           set -euo pipefail
@@ -192,6 +194,7 @@ jobs:
           TRNM_HIA_GOVERNANCE_OUTPUT: ${{ runner.temp }}/hia-governance-original
           HIA_CONTROL_GUARD_OUTPUT: ${{ runner.temp }}/hia-control-guard-original
           HIA_PEER_LEASE_OUTPUT: ${{ runner.temp }}/hia-peer-lease-original
+          TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR: ${{ runner.temp }}/hia-observations/sha256-word-boundaries
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard general --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -7078,7 +7081,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        component: [peer-unix, task-store, task-boundary]
+        component: [peer-unix, task-store, task-boundary, pq-auth]
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONOPTIMIZE: ''
@@ -7153,6 +7156,14 @@ jobs:
         run: |
           set -euo pipefail
           cargo fetch --locked --manifest-path trillionnium/Cargo.toml >"$OWNER_ROOT/observations/cargo-fetch.stdout.raw" 2>"$OWNER_ROOT/observations/cargo-fetch.stderr.raw"
+      - name: Prepare the exact original public PQ provider
+        if: matrix.component == 'pq-auth'
+        run: |
+          set -euo pipefail
+          touch "$OWNER_ROOT/provider.env"
+          GITHUB_ENV="$OWNER_ROOT/provider.env" \
+          TRNM_CI_RECEIPT_DIR="$OWNER_ROOT/provider-receipts" \
+          bash scripts/ci/prepare_pq_provider.sh >"$OWNER_ROOT/observations/provider.stdout.raw" 2>"$OWNER_ROOT/observations/provider.stderr.raw"
       - name: Bootstrap and self-reproduce the pinned native HIA compiler
         run: |
           set -euo pipefail

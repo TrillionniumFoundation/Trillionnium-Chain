@@ -3,11 +3,11 @@
   "batch_parent": "408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d",
   "expected_emitted_prefix": {
     "bytes": 13224,
-    "sha256": "1522d37d03956f8214220584355621be8bbfe38dc34205d5a57e66b1079fdace"
+    "sha256": "de8c4d5514774443310c07d349805ac6b92546b5d8bf6b0ba596f6edba305d87"
   },
   "expected_executable": {
-    "bytes": 9400416,
-    "sha256": "7a38ebb80bcc11729ec16c2c46457016c25f56e14f34f2792aad83bc902cc4f2"
+    "bytes": 9405367,
+    "sha256": "26d3abd4d81a050f2251ae3bf44afa201a9ea0ea4f34a475e720b0449d7a8e58"
   },
   "expected_images": {
     "application_claim": {
@@ -39,8 +39,8 @@
       "sha256": "89e5609adbd8767dea6729c778259800277db34b9b4ddb31072211094c4c5b68"
     },
     "checked": {
-      "bytes": 476224,
-      "sha256": "cf82778229c1055c4f2893bb9004851306c35304f58574495e240bdd193bd8d5"
+      "bytes": 476747,
+      "sha256": "0430dff4dc0e5f1f6aba401a3118d5194f886f9d013be16438a37230b80638a8"
     },
     "ed": {
       "bytes": 100762,
@@ -51,8 +51,8 @@
       "sha256": "492927ac124fc792ca1d19ca30211f1396c0b4ca1e2a48261819be0932e2317d"
     },
     "json": {
-      "bytes": 199497,
-      "sha256": "bb4fe8720e386144a854f45ac2638f49b8d208d929bfa9c9607f8616253dd6f4"
+      "bytes": 200665,
+      "sha256": "f89eca7991acbf4fd8540103ff281ad80cf8569d070df2f3c0ca57481ae5a45a"
     },
     "linux_emitter": {
       "bytes": 237745,
@@ -87,36 +87,36 @@
       "sha256": "1a58a2fcf01992c3bcd81e13fede2c1a7b829b2622c2ca5eb0fbe671901144d1"
     },
     "prepared": {
-      "bytes": 408187,
-      "sha256": "8f0c591bcae16f5b3250eb41fade637357d50a498d5a84d36386644d67b48834"
+      "bytes": 408710,
+      "sha256": "569c5ff98ace64bcad97ce114c4753a8b4e1159df79a1dc07f745066a1f87212"
     },
     "producer": {
       "bytes": 584690,
       "sha256": "33447e8e2e57d3693b0ef9ceeeb1822b57fe905078be5b8f26b966ae15818dd5"
     },
     "root": {
-      "bytes": 206736,
-      "sha256": "86b6025d53dfdadc17c442a1ddf832817ed8e6c4899c19efec26347e62908e70"
+      "bytes": 207259,
+      "sha256": "066302b74e09ba0bc327597737955cd6089280b1c78cb08c995b7a68b3965786"
     },
     "settings": {
-      "bytes": 422791,
-      "sha256": "ea105914200094baf17dedae0b63763da65b83613b99d6efc0421088d376385e"
+      "bytes": 423959,
+      "sha256": "8ea255d32cd40f3fe8ca4b95a0d9441eb25335509d40a8c77953caadc997975d"
     },
     "sha": {
       "bytes": 28938,
       "sha256": "86d78e246d331f5a0729bebd9d62376bb219171ec05ce5f3c7c2f3f27cdbf7c5"
     },
     "snapshot": {
-      "bytes": 581874,
-      "sha256": "704a6449e7249128376b229fccb00f98573aaca942db8fd68b6f331f7f0176d0"
+      "bytes": 582397,
+      "sha256": "3f4a62185eaa9e4a4853a7ec2515b007bc2eeabbaf06c243e03dbd26c700ee75"
     },
     "state": {
       "bytes": 358327,
       "sha256": "0a22227a714d8b19374f4371a7d9bbd31c3fcbe68d7b73861bbe6e003689c45a"
     },
     "tree": {
-      "bytes": 313273,
-      "sha256": "5d50fff5e2f18f8dabb1643ce0fa85d4e2906096fc9c8e94925e1c7eb951e981"
+      "bytes": 313796,
+      "sha256": "0d3ecdc3c3f01372739b22f3ebe5b9f04023c598355b2e6797f3b79532d379eb"
     },
     "worker": {
       "bytes": 33436,
@@ -5496,8 +5496,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -5575,8 +5575,8 @@
         }
       ],
       "source": {
-        "bytes": 357278,
-        "sha256": "986e1b242dc2b59443231324b897968d737184115369c17ffa393b99d3225eb4"
+        "bytes": 358988,
+        "sha256": "91ba0c3a7c17ccc9b953f08fb3dd35545d8795957d3c747e9bba1ce44f5a42f6"
       },
       "suffix_hex": ""
     },
@@ -6720,8 +6720,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_get",
           "identity": {
-            "bytes": 755,
-            "sha256": "e77ea5b86013bf7b3133b514e0f2a8aa822cc1c1be612d9d7e7080173df6d150"
+            "bytes": 2862,
+            "sha256": "1ca763c09d9c415db2547bc92754376e4f87ed2481c289d3ba42e37f6e39eb27"
           },
           "prefix_hex": ""
         },
@@ -6729,8 +6729,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -6763,8 +6763,8 @@
         }
       ],
       "source": {
-        "bytes": 152670,
-        "sha256": "2772b6b5a02c51f0b86c623b93a742dfcb948e5664791fdca28ee318c026e337"
+        "bytes": 156487,
+        "sha256": "3824b64d052a3c2a711c6ad98c4ac81af6d1b5f4cc794b232df52e4a13471ce1"
       },
       "suffix_hex": ""
     },
@@ -11121,8 +11121,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -11155,8 +11155,8 @@
         }
       ],
       "source": {
-        "bytes": 294685,
-        "sha256": "6fee3883c667127dec458a7048106957cf3c768da8ef04145fb544a9d5c7744b"
+        "bytes": 296395,
+        "sha256": "9c469266fe675cb6c0e823dbc8453490ff7f879b24f5ab840a052f9caa02edd1"
       },
       "suffix_hex": ""
     },
@@ -12363,8 +12363,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -12424,8 +12424,8 @@
         }
       ],
       "source": {
-        "bytes": 270509,
-        "sha256": "774ae7dc99534b5329b0627948e19b4e4ef90a3775152b967419f6c51d0fa8e7"
+        "bytes": 272219,
+        "sha256": "7fd7d5b17e9fc60178dbe9fa62ccb3aff80ada4d1e764b9dc3abffca53f68103"
       },
       "suffix_hex": ""
     },
@@ -12975,8 +12975,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_get",
           "identity": {
-            "bytes": 755,
-            "sha256": "e77ea5b86013bf7b3133b514e0f2a8aa822cc1c1be612d9d7e7080173df6d150"
+            "bytes": 2862,
+            "sha256": "1ca763c09d9c415db2547bc92754376e4f87ed2481c289d3ba42e37f6e39eb27"
           },
           "prefix_hex": ""
         },
@@ -12984,8 +12984,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -13459,8 +13459,8 @@
         }
       ],
       "source": {
-        "bytes": 401617,
-        "sha256": "d90ec356a8fa708aabd98baa07bb0f841463c28109feb6c3a98cc306a47b8f3d"
+        "bytes": 405434,
+        "sha256": "a0ab798d46c9bf67add12c81c5482d838975703717db2d715aac99b31301fd34"
       },
       "suffix_hex": ""
     },
@@ -14433,8 +14433,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -14512,8 +14512,8 @@
         }
       ],
       "source": {
-        "bytes": 441662,
-        "sha256": "050e769a8d487e96d7f21735b41fe382e48c5bcc3aa3c98c7c683011ead924a5"
+        "bytes": 443372,
+        "sha256": "646b3d8c0f19d37b334f66619e67cd5ce65fc7f9446068cd423b52522019eda6"
       },
       "suffix_hex": ""
     },
@@ -15873,8 +15873,8 @@
           "file": "hia/src/crypto/sha256_stream.hepta",
           "function": "tr_put",
           "identity": {
-            "bytes": 764,
-            "sha256": "1b177d28e821113646835a8363f0abd48271c817a8fc66bc79b43114d1c5c30b"
+            "bytes": 2474,
+            "sha256": "d762d8fff17466222b2b421a21fb90d867268b447d430eae2e881069471d2007"
           },
           "prefix_hex": ""
         },
@@ -15934,8 +15934,8 @@
         }
       ],
       "source": {
-        "bytes": 333154,
-        "sha256": "897f07611c9d26d1bcbff1ce2309b25388173604c0c248dc9963d99687581b29"
+        "bytes": 334864,
+        "sha256": "f1f3173f3735b39406b0a7022ba14003cf683eb609977f5b882f3919abcefb88"
       },
       "suffix_hex": ""
     },

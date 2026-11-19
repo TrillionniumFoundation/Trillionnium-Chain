@@ -1,3 +1,19 @@
+## 2026-11-19 UTC — PQ 公开原生 owner、共享 SHA 与提交级 CI 修复续接
+
+从已发布 `ae23b0a745186262eb8c987f714b5e9b7231e737` 继续。当前 **60 kernels /27 native foundations /260 HIA sources**；26 原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。新增实现各保留唯一正式目录；全量替代和原验收通过前不删除原栈。
+
+[本轮精确记录](../../hia/qualification/shared-sha-pq-peer-development.json)区分冻结开发图、重新构建、真实原验收和待运行的提交级CI。PQ公开owner的26份文件包含5份HIA，提供55个原生接口；冻结212输入图完整通过原343测试+2 doctest、1609原生/原实现配对、24671 ABI、190 allocator控制（125真实NULL）、1329生命周期调用/8并发reader、49 reader反例和8项真实进程控制。6个native分区保持240秒+单一3秒清理；完整资格及独立读回连续687.442秒。185690816B档两端逐884成员读回，34原测试ELF及direct rlib完整保留；仅可重建target目录省略。合入后原生库重新构建仍966824B/`c5a3926113fb1d902b1b322c250d94290709aa80532f917b19a5b9bfb01e1b35`。常数时间、任意foreign指针、全部crypto/provider/TLS/TUF与Node资格未闭合。
+
+共享SHA仅将tr_get/tr_put原8次顺序访问展开，其余16函数不变，保留wrap、checked shift、越界trap及trap前部分写入；25组实际新旧/hashlib比较和440原生边界案例通过。新图Task完整资格通过1390私有调用、445公开案例/2290 ABI、112分配控制、41原测试/fmt/strictClippy和37 reader拒绝；原180秒测试控制器不变，records配对65.505秒、large-context14.564秒。447178037B Task完整档与21839628B本地编译/440边界档均两端全读。
+
+Node固定composition依据真实27内核+emitter重建：223输入图`c5fa82b43509ddb6d24561b90691259dc36504cb0fd4774fdcb1439e526723f1`，9405367B原生ELF`26d3abd4d81a050f2251ae3bf44afa201a9ea0ea4f34a475e720b0449d7a8e58`，最大114函数/7832操作。379完整性与10CLI控制、五native分组、Hash78、Some82、Checked94及65536/65537两实际容量门通过。fresh原Node4 histories/96methods+3原测试，M05 11histories/122methods/58validation+Node24methods+6原测试，Commitment82/94/2配对+36原测试均通过；6个原ignored未新增，logical owners终值0。初始缺失include、错误CLI和真实/tmp配额失败留存，成功重跑使用/var/tmp、相同源码和原门限。
+
+前驱ae23的push44562193934和PR44562227818中，8个Work作业成功，Task Store两边在原180秒测试控制器失败，Peer Unix两边在原HIA/Rust响应相等后因inode复用断言失败。Peer fixture现以O_PATH|O_NOFOLLOW|O_CLOEXEC保留旧pathname inode直到重新bind，reader从真实path/dev/ino/mode重算绑定并检查6份raw响应；没有修改Peer业务HIA或原Rust。fresh完整121原测试、7分组、14控制及独立读回通过；264851620B完整更正档两端逐19556成员核验，原两份hosted失败也完整保留。payload metadata/body/recovery/ACK整套owner仍OPEN。
+
+mandatory owner matrix新增pq-auth，展开64作业、49编译器准入块，每作业仍20分钟。reader前后绑定同一生产报告，拒绝零退出替换证据；PQ强制完整原测试、全部计数、当前实际源码图和240+3回收，Peer强制14控制和7组实名。根66项整合与49×4=196准入检查实际通过。完整发现625项互斥分组464/95/7/22/37、公共图1481输入；发现、打包或相同ELF均不替代当前提交的fresh CI。SHA边界完整编译输入/ELF/raw随CI归档。
+
+继续Archive/StateImport与项目C provider、完整Peer持久化owner、Candidate及剩余crypto、结算Engine/Store和唯一Node COMMIT/reorg/replay/outbox/ACK及同请求Paid/Host。原服务/W1与跨目标、模型研究经济门保持原资格；0.25CPU/2GiB/零swap/256PID/4秒/16worker，以及编译器30+3秒、128函数/8192操作/1536块/每函数256块均不提高。完成全部替代、原验收与依赖最终处置后再退役旧包和最终清理；本文件仍为唯一计划。
+
 ## 2026-11-19 UTC — Task 主 Store 与 Peer Unix 整合、完整读回及当前 CI 续接
 
 从已发布 `83c8c076550ee620f63a889d5f6f14f9a3192a07` 继续。当前 **60 kernels /26 native foundations /255 HIA sources**；26 原包19部分迁移、7未迁移、**0退役、9全项目门OPEN**。根README仍为0字节。新增实现各只有一个正式目录，开发过程副本不进入仓库；完整替代和原验收均成功之前保留原栈。

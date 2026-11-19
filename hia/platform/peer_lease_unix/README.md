@@ -74,7 +74,15 @@ The independent reader requires these complete finite observation rosters:
 | Daemon API | 18 paired histories |
 | Filesystem faults | 9 paired histories |
 | Syscall faults | 1 actual-target probe and 29 fault injections |
-| Qualification integrity | 13 controls, including actual escaped-session cleanup |
+| Qualification integrity | 14 controls, including actual escaped-session cleanup and live rebinding identity |
+
+The rebound-path fixture holds the previous socket inode with an actual
+`O_PATH | O_NOFOLLOW | O_CLOEXEC` descriptor until the replacement is bound.
+The old and replacement identities are checked while both remain live, avoiding
+an incorrect assumption that an unreferenced inode cannot be reused. The reader
+recomputes binding bytes from the observed pathname, device, inode and mode and
+checks all six original/native old, zero and replacement responses. The added
+control rejects seven altered identity/timestamp variants and tampered raw data.
 
 Each observation group retains its native and original executables, complete
 inputs and outputs, syscall traces, progress and process receipts. The reader

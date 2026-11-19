@@ -303,10 +303,10 @@ def integrity_readback(output, row):
     from . import test_qualification
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(test_qualification.QualificationControls)
     names = [test.id() for test in suite]
-    need(len(names) == len(set(names)) == 13, "Integrity control source roster changed")
+    need(len(names) == len(set(names)) == 14, "Integrity control source roster changed")
     raw = (output / "observations/integrity-controls/stderr.raw").read_text()
     actual = re.findall(r"^test_[a-z0-9_]+ \(([^()]+)\) \.\.\. ok$", raw, re.M)
-    need(actual == names and len(re.findall(r"^Ran 13 tests in [0-9.]+s$", raw, re.M)) == 1
+    need(actual == names and len(re.findall(r"^Ran 14 tests in [0-9.]+s$", raw, re.M)) == 1
          and raw.endswith("\nOK\n") and row["argv"] == [sys.executable, "-B", "-m", "unittest", "-v",
              "hia.platform.peer_lease_unix.test_qualification"]
          and row["wall_limit_seconds"] == 30, "Complete actual integrity controls did not execute")
@@ -356,6 +356,72 @@ def codec_readback(root, value):
     need(all(positions[name] == len(raw) for name, raw in streams.items()), "Extra codec execution stream")
     need(all(row.get("status") == 102 and row.get("all_output_guard_bytes_preserved") is True
              for row in capacity), "Codec capacity refusal changed output")
+
+
+def socket_replacement(root, value, rows):
+    """Bind the replacement precondition to the actual unchanged public replies."""
+    path = root / "socket-replacement.json"
+    check_identity(path, value.get("socket_replacement"))
+    fixture = document(path)
+    need(fixture.get("schema") == "trnm.hia.peer-unix.socket-replacement.v1"
+         and fixture.get("status") == "PASS" and fixture.get("pin_closed") is True
+         and fixture.get("pin_open_flags") == os.O_PATH | os.O_NOFOLLOW | os.O_CLOEXEC,
+         "Socket replacement did not retain and close the pathname inode")
+    socket_path = os.fsencode(root / "fs/lease.sock")
+    parent_path = os.fsencode(root / "fs")
+    need(fixture.get("path_hex") == socket_path.hex()
+         and fixture.get("parent_path_hex") == parent_path.hex(),
+         "Socket replacement path differs from the actual owner fixture")
+    fields = ("original_socket", "pinned_before_unlink", "pinned_after_capture",
+              "replacement_before_capture", "replacement_after_capture", "parent_before", "parent_after")
+    for name in fields:
+        row = fixture.get(name)
+        need(type(row) is dict and set(row) == {"device", "inode", "mode"}
+             and all(type(number) is int and 0 <= number < (1 << 64) for number in row.values())
+             and row["mode"] < (1 << 32), "Malformed actual pathname inode observation")
+        if name.startswith("parent_"):
+            need(stat.S_ISDIR(row["mode"]) and stat.S_IMODE(row["mode"]) == 0o700,
+                 "Replacement parent is not the private directory")
+        else:
+            need(stat.S_ISSOCK(row["mode"]) and stat.S_IMODE(row["mode"]) == 0o600,
+                 "Replacement observation is not a private socket inode")
+    previous = fixture["original_socket"]
+    replacement = fixture["replacement_before_capture"]
+    parent = fixture["parent_before"]
+    need(previous == fixture["pinned_before_unlink"] == fixture["pinned_after_capture"]
+         and replacement == fixture["replacement_after_capture"]
+         and parent == fixture["parent_after"]
+         and (previous["device"], previous["inode"]) != (replacement["device"], replacement["inode"]),
+         "Replacement fixture did not hold two distinct live pathname inodes")
+    times = [fixture.get(name) for name in ("opened_ns", "rebound_before_ns", "rebound_after_ns", "closed_ns")]
+    need(all(type(number) is int and number > 0 for number in times)
+         and times[0] < times[1] <= times[2] < times[3],
+         "Pathname pin did not span the actual replacement binding observation")
+
+    def digest(endpoint):
+        raw = bytearray(b"trnm.peer-lease.unix-authority-binding.v1\0")
+        for encoded, observed in ((parent_path, parent), (socket_path, endpoint)):
+            raw.extend(struct.pack(">I", len(encoded)))
+            raw.extend(encoded)
+            raw.extend(struct.pack(">QQI", observed["device"], observed["inode"], observed["mode"]))
+        return hashlib.sha256(raw).digest()
+
+    old_digest, new_digest = digest(previous), digest(replacement)
+    need(old_digest != new_digest, "Distinct replacement binding was not exercised")
+    selected = {"socket-binding": old_digest, "zero-timeout-binding": old_digest,
+                "same-object-observes-replaced-socket": new_digest}
+    found = set()
+    for index, row in enumerate(rows, 1):
+        name = row.get("name")
+        if name not in selected:
+            continue
+        need(name not in found and row.get("op") == 7, "Repeated or substituted binding call")
+        found.add(name)
+        expected = b"PLUR0001" + struct.pack("<QQQ", 0, 0, 32) + selected[name]
+        for role in ("original", "native"):
+            actual = (root / role / (str(index).zfill(5) + ".stdout.raw")).read_bytes()
+            need(actual == expected, "Actual public binding differs from the pinned pathname observation")
+    need(found == set(selected), "Missing original or replacement binding observation")
 
 
 def named_group(root, group, value, native, original):
@@ -427,6 +493,7 @@ def named_group(root, group, value, native, original):
                 need(first == second, "Persistent original/native result bytes differ")
         need(all(row["before"] == row["after_network_calls"] == 3 for row in value["fd_observations"])
              and len(value["fd_observations"]) == 2, "Persistent owner leaked descriptors")
+        socket_replacement(root, value, rows)
         need(value["limits"]["whole_peer_owner_qualified"] is False
              and value["limits"]["original_service_budget_qualified"] is False,
              "Persistent finite arena was promoted to whole owner or service qualification")

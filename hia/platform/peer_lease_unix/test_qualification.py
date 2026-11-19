@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
+import stat
+import struct
 import sys
 import tempfile
 import time
@@ -215,6 +218,58 @@ class QualificationControls(unittest.TestCase):
                         {**value, "cases": [value["cases"][0]] * 299}):
             with self.assertRaises(ValueError):
                 readback.named_group(self.root, "client", changed, {}, {})
+
+    def test_socket_replacement_reader_requires_pinned_distinct_inodes_and_actual_replies(self):
+        # Reader fixtures only: these values do not claim real socket execution.
+        socket_path = os.fsencode(self.root / "fs/lease.sock")
+        parent_path = os.fsencode(self.root / "fs")
+        old = {"device": 7, "inode": 101, "mode": stat.S_IFSOCK | 0o600}
+        new = {**old, "inode": 102}
+        parent = {"device": 7, "inode": 100, "mode": stat.S_IFDIR | 0o700}
+        fixture = {"schema": "trnm.hia.peer-unix.socket-replacement.v1", "status": "PASS",
+                   "path_hex": socket_path.hex(), "parent_path_hex": parent_path.hex(),
+                   "original_socket": old, "pinned_before_unlink": old, "pinned_after_capture": old,
+                   "replacement_before_capture": new, "replacement_after_capture": new,
+                   "parent_before": parent, "parent_after": parent,
+                   "pin_open_flags": os.O_PATH | os.O_NOFOLLOW | os.O_CLOEXEC, "pin_closed": True,
+                   "opened_ns": 1, "rebound_before_ns": 2, "rebound_after_ns": 3, "closed_ns": 4}
+        rows = [{"name": name, "op": 7} for name in
+                ("socket-binding", "zero-timeout-binding", "same-object-observes-replaced-socket")]
+        for role in ("original", "native"):
+            (self.root / role).mkdir()
+            for index, endpoint in enumerate((old, old, new), 1):
+                data = b"trnm.peer-lease.unix-authority-binding.v1\0"
+                for encoded, observed in ((parent_path, parent), (socket_path, endpoint)):
+                    data += struct.pack(">I", len(encoded)) + encoded
+                    data += struct.pack(">QQI", observed["device"], observed["inode"], observed["mode"])
+                raw = b"PLUR0001" + struct.pack("<QQQ", 0, 0, 32) + hashlib.sha256(data).digest()
+                (self.root / role / f"{index:05d}.stdout.raw").write_bytes(raw)
+
+        def write(value):
+            raw = (json.dumps(value, sort_keys=True) + "\n").encode()
+            (self.root / "socket-replacement.json").write_bytes(raw)
+            return {"socket_replacement": build.identity(raw)}
+
+        readback.socket_replacement(self.root, write(fixture), rows)
+        alternatives = []
+        for fields, replacement in ((["replacement_before_capture", "replacement_after_capture"], old),
+                                    (["pinned_after_capture"], new),
+                                    (["pin_closed"], False), (["pin_open_flags"], os.O_CLOEXEC),
+                                    (["closed_ns"], 2), (["path_hex"], b"/substituted".hex()),
+                                    (["pinned_before_unlink"], {**old, "mode": stat.S_IFLNK | 0o600})):
+            changed = copy.deepcopy(fixture)
+            for field in fields:
+                changed[field] = replacement
+            alternatives.append(changed)
+        for changed in alternatives:
+            with self.subTest(value=changed), self.assertRaises(ValueError):
+                readback.socket_replacement(self.root, write(changed), rows)
+        report = write(fixture)
+        path = self.root / "native/00003.stdout.raw"
+        raw = path.read_bytes()
+        path.write_bytes(raw[:-1] + bytes([raw[-1] ^ 1]))
+        with self.assertRaises(ValueError):
+            readback.socket_replacement(self.root, report, rows)
 
     def test_finite_qualification_cannot_promote_whole_chain_or_service_claims(self):
         original = {"schema": "trnm.hia.peer-unix-qualification.v1", "status": "PASS",

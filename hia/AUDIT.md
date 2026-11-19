@@ -3,7 +3,7 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**60 kernel components, 26 native foundations and 255 HIA source files**. All
+**60 kernel components, 27 native foundations and 260 HIA source files**. All
 26 original Rust packages remain: 19 are partially ported and 7 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
@@ -17,8 +17,9 @@ of every historical experiment. The original baseline is
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; the branch inspected for this continuation
 was `56c6e560dd3192f89cca40542286166b8284cb4b`. The detached-Oracle correction
 was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The private-owner/PQ continuation was published as
-`41948f98b7b9fcb24a6ba7d638d5391a88e26de6`. The current checkpoint and CI
-corrections extend that exact base with the frozen source increments below. Every observation
+`41948f98b7b9fcb24a6ba7d638d5391a88e26de6`. Later checkpoint, Task and Peer additions
+were published through `ae23b0a745186262eb8c987f714b5e9b7231e737`; this continuation
+extends that exact parent with the frozen source increments below. Every observation
 retains its actual working-source hash and does not inherit another commit's CI result.
 
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
@@ -31,7 +32,40 @@ failures and source identities, remains in
 
 ## Findings addressed in this continuation
 
-### Task Store, Peer Unix and current-source CI binding
+### Current shared SHA, native PQ owner and observed CI failures
+
+The [current continuation record](qualification/shared-sha-pq-peer-development.json)
+extends published `ae23b0a745186262eb8c987f714b5e9b7231e737`. Five additional
+native HIA files bring the inventory to 260 sources and 27 foundations. The
+public PQ owner passed all 343 original tests and two doc tests, 1,609 paired
+cases, 24,671 ABI calls, 190 allocation controls, 1,329 lifetime calls, 49 reader
+refusals and eight actual process controls on its frozen graph. All 34 original
+test executables and required direct rlibs remain in its complete archive.
+The integrated 966,824-byte native library reproduces the frozen image exactly.
+This build is distinct from complete current-commit original/native CI.
+
+The shared SHA change preserves all 440 observed word-boundary, wrapped-offset
+and partial-write/trap outcomes. Its Task gate, regenerated Node composition,
+all native Node groups and fresh Node/M05/Commitment originals passed. Actual
+quota failures remain failed records; the successful repeats used another
+temporary filesystem with unchanged source, compiler and limits.
+
+The preceding push and PR each failed Task's unchanged 180-second test
+controller and Peer Unix's inode-reuse fixture assertion. Peer product Rust and
+HIA replies agreed before the assertion. The corrected fixture keeps both old
+and rebound pathname inodes live and independently rechecks all raw bindings.
+The complete corrected run passed 121 original tests, seven runtime groups and
+14 integrity controls. Both predecessor CI archives and all corrective runs
+were fully rehashed on two retained hosts. No original failure is relabelled.
+
+Current discovery is 625 methods over disjoint 464/95/7/22/37 groups; the public
+qualification graph contains 1,481 inputs. The workflow expands to 64 jobs,
+including mandatory PQ qualification. All 66 root integration controls and
+196 bootstrap cases passed; committed native execution remains required.
+The reader cannot replace the producer's report, even with a zero exit code.
+All previous source-specific records below remain historical observations.
+
+### Prior Task Store, Peer Unix and source-specific CI binding
 
 The [current owner record](qualification/additional-owners-development.json)
 adds one final 48-source Task implementation and one final 14-source Peer Unix
@@ -55,7 +89,7 @@ The previous exact-head push passed 60 jobs. Its PR Work original job exceeded
 the unchanged total 20-minute budget after actual runtime completion. The new
 capture step preserves live-only observations and leaves full semantic review
 to its mandatory successor; 92 controls passed, but the new hosted wall time is
-unmeasured. Current discovery is 624 methods and 1,460 source inputs. Three new
+unmeasured in that record. Its discovery was 624 methods and 1,460 source inputs. Three new
 mandatory jobs expand the workflow to 63 jobs, all still limited to 20 minutes.
 The four original compiler-admission cases passed for all 49 blocks. These
 source/control checks do not certify the new commit's native execution.

@@ -321,7 +321,8 @@
       "source": "hia/src/crypto/sha256_stream.hepta",
       "state": "native-kernel-implemented",
       "tests": [
-        "hia/tools/qualify_transport.py"
+        "hia/tools/qualify_transport.py",
+        "hia/tests/test_sha256_words.py"
       ]
     },
     {
@@ -1559,6 +1560,27 @@
         "hia/platform/peer_lease_unix/qualify.py",
         "hia/platform/peer_lease_unix/readback.py",
         "hia/platform/peer_lease_unix/test_qualification.py"
+      ]
+    },
+    {
+      "id": "platform/pq-public-authentication",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA public owned-seed PQ signing, pinned-SPKI/raw verification, TPQ1 authentication, profile views and cumulative verification budgets with 55 exports, independent result lifetimes and actual allocation-failure controls. Six real native child families retain the 240-second execution limit and one 3-second cleanup limit; 49 independent reader controls reject incomplete evidence. Frozen development evidence is separate from the integrated current-source qualification. OpenSSL owned-key construction, standalone Candidate owners, TUF, constant-time qualification, live Node integration and whole-crypto retirement remain OPEN.",
+      "sources": [
+        "hia/platform/pq_auth/owned_emitter.hepta",
+        "hia/src/crypto/pq_auth_owner.hepta",
+        "hia/src/crypto/pq_auth_verify.hepta",
+        "hia/src/crypto/pq_frame.hepta",
+        "hia/src/crypto/pq_profile_auth.hepta"
+      ],
+      "tests": [
+        "hia/platform/pq_auth/qualify.py",
+        "hia/platform/pq_auth/readback.py",
+        "hia/platform/pq_auth/qualification/integrity.py",
+        "hia/tests/rust_pq_auth_reference.rs",
+        "hia/tests/rust_pq_profile_reference.rs",
+        "hia/platform/pq_auth/qualification/supervision_controls.py"
       ]
     }
   ],

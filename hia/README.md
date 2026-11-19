@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **60 kernel units, 26 native foundations and 255 HIA source
+inventory contains **60 kernel units, 27 native foundations and 260 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (19 partially ported and 7 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -13,23 +13,47 @@ retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
 
-The [additional-owner record](qualification/additional-owners-development.json)
-binds the integrated [Peer Unix owner](platform/peer_lease_unix/README.md) and
-[Task main Store](platform/task_kernel/README.md). Peer contains 14 native HIA
-sources and passed its complete 121-test original suite, seven runtime groups,
-13 integrity controls and independent readback on its frozen development graph.
-Task adds 48 HIA sources, complete private/public Store methods, 41 retained
-original tests, actual allocation failures and 37 reader refusals. Its project
-C provider, ArchiveStore, StateImport and Node integration remain open.
+The [shared SHA, PQ and Peer continuation record](qualification/shared-sha-pq-peer-development.json)
+binds the current native PQ public owner, shared SHA word helpers, rebuilt Node
+composition and corrected Peer Unix fixture. The original 26 packages remain
+until complete replacement and original acceptance pass.
 
-Three mandatory current-head CI jobs now repeat Peer Unix, Task Store and Task
-mechanical-boundary qualification. They preserve the original 20-minute limits,
-actual original/native execution, independent readers, source fences and full
-regular observations. The Work original packing step now records live-only
-capture separately; its successor still must perform the complete semantic
-assessment. The 92 actual controls passed; a faster hosted wall time has not
-yet been demonstrated. Original service confirmation under the unchanged
-four-second, 16-worker pressure remains open.
+The [PQ owner](platform/pq_auth/README.md) exposes 55 native owned interfaces.
+Its frozen development run passed all 343 original tests and two doc tests,
+1,609 original/native comparisons, 24,671 ABI calls, 190 allocation controls
+including 125 actual failures, 1,329 lifetime calls with eight parallel readers,
+49 integrity refusals and eight actual process controls. Six native families
+retain 240 seconds plus one three-second cleanup deadline. Qualification plus
+independent readback took 687.442 seconds on the observed development host.
+The integrated native library was rebuilt to the identical bytes. Fresh
+committed qualification remains required; timing, foreign arbitrary pointers,
+the complete crypto crate, TLS and TUF remain open.
+
+The shared SHA change unrolls only two eight-byte access helpers, preserving
+every checked access and partial write before a trap. All 440 actual native
+boundary cases passed after integration. Task's complete original/native gate
+passed on the new source, including 1,390 private calls, 445 public cases,
+2,290 public ABI calls, 112 allocator controls, 41 original tests and 37 reader
+refusals. The rebuilt Node composition passed its actual native groups and
+fresh Node/M05/Commitment originals. These are finite source-specific results;
+the complete Node and Task Archive/StateImport obligations remain open.
+
+The [Peer Unix owner](platform/peer_lease_unix/README.md) passed its complete
+121-test original suite, seven runtime groups, 14 integrity controls and an
+independent reader. The fixture holds the old pathname inode open during
+rebinding; the reader checks actual identities and raw original/native replies.
+The unchanged product implementations had agreed before the prior fixture
+assertion failed. Both hosted failures and all corrected development attempts
+remain in complete independently read archives.
+
+Four mandatory current-head CI jobs repeat Peer Unix, Task Store, Task
+mechanical boundaries and PQ public ownership. The workflow now expands to
+64 jobs, with the same 20-minute limits and 49 native compiler admission blocks.
+The wrapper binds the qualification report before invoking the independent
+reader and refuses replacement even if the reader returns zero. All 66 root
+integration controls and 196 bootstrap admission cases passed. The previous
+commit's eight Work jobs succeeded, but its Peer Unix and Task Store gates
+failed; those results are not renamed as current-source success.
 
 The [Work/Paid correction](qualification/host-standalone-development.json)
 selects the original trusted-local standalone constructor at the production
@@ -40,9 +64,9 @@ and 24 actual handshake schedules. The transfer reader now requires the actual
 and original artifacts' identities. Fixed-parent production qualification and
 the original four-second service acceptance remain open.
 
-The complete component discovery is now 624 methods split disjointly into
-463 general, 95 crypto/types, seven State-root, 22 Oracle and 37 ML-DSA methods.
-The source manifest binds all 1,460 current qualification inputs, including the
+The complete component discovery is now 625 methods split disjointly into
+464 general, 95 crypto/types, seven State-root, 22 Oracle and 37 ML-DSA methods.
+The source manifest binds all 1,481 current qualification inputs, including the
 project boundary implementation, configuration and every workspace manifest.
 All five jobs keep their 20-minute limit. The consumer requires every same-head,
 same-run and same-attempt job to succeed and every discovered method to have

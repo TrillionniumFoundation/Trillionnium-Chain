@@ -7,6 +7,7 @@ from pathlib import Path
 import select
 import signal
 import socket
+import stat
 import struct
 import subprocess
 import threading
@@ -19,9 +20,10 @@ p.add_argument('--original',type=Path,required=True)
 p.add_argument('--output',type=Path,required=True)
 a=p.parse_args()
 out=a.output;out.mkdir(mode=0o700);fs=out/'fs';fs.mkdir(mode=0o700)
-rows=[];sessions=[];listener=None
+rows=[];sessions=[];listener=None;socket_pin=None;socket_replacement=None
 
 def identity(raw):return {'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+def socket_identity(value):return {'device':value.st_dev,'inode':value.st_ino,'mode':value.st_mode}
 def command(op,ident=0,arg0=0,arg1=0,payload=b''):
     return b'PLUO0001'+struct.pack('<9Q',op,ident,arg0,arg1,len(payload),0,0,0,0)+payload
 def word(raw,at=0):return struct.unpack_from('<Q',raw,at)[0]
@@ -194,6 +196,8 @@ try:
     case('reuse-release-small',9,small,expected=(0,0));case('reuse-release-kept',9,keep,expected=(0,0));assert stats('reuse-empty')==(0,0,0,0,0)
 
     path=fs/'lease.sock';listener=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);listener.bind(str(path));listener.listen(16);path.chmod(0o600)
+    initial_socket=socket_identity(path.lstat());initial_parent=socket_identity(fs.lstat())
+    assert stat.S_ISSOCK(initial_socket['mode']) and stat.S_IMODE(initial_socket['mode'])==0o600
     base=new(os.fsencode(path),'socket-create');case('socket-preflight',6,base,expected=(0,0));binding=case('socket-binding',7,base,expected=(0,0));assert len(binding)==32
     for method in (1,2,3,4):call('retained-method-'+str(method),base,method)
     for code in (1,6,12):call('rejection-'+str(code),base,reply=frame(bytes([1,1,code])),expected=(4,code))
@@ -223,9 +227,32 @@ try:
     call('invalid-path-priority-before-expired-connect',invalid,reply=None,expected=(1,1002));case('invalid-path-drop',9,invalid,expected=(0,0))
     for s in sessions:
         observed=s.fd_count();fd_observations.append({'kind':s.kind,'before':s.initial_fds,'after_network_calls':observed});assert observed==s.initial_fds
+    # Pin the pathname inode, not the unrelated sockfs inode of listener.fileno().
+    # Without this live O_PATH reference, close/unlink/bind may reuse the same
+    # inode and the unchanged public binding digest correctly remains equal.
+    pin_flags=os.O_PATH|os.O_NOFOLLOW|os.O_CLOEXEC
+    socket_pin=os.open(path,pin_flags)
+    pinned_before=socket_identity(os.fstat(socket_pin));pin_opened=time.monotonic_ns()
+    assert pinned_before==initial_socket==socket_identity(path.lstat())
+    assert stat.S_ISSOCK(pinned_before['mode'])
     listener.close();listener=None;path.unlink()
     listener=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);listener.bind(str(path));listener.listen(16);path.chmod(0o600)
+    replacement_before=socket_identity(path.lstat());rebound_before=time.monotonic_ns()
+    assert stat.S_ISSOCK(replacement_before['mode']) and stat.S_IMODE(replacement_before['mode'])==0o600
+    assert (replacement_before['device'],replacement_before['inode'])!=(initial_socket['device'],initial_socket['inode'])
     rebound=case('same-object-observes-replaced-socket',7,shared,expected=(0,0));assert rebound!=binding
+    pinned_after=socket_identity(os.fstat(socket_pin));replacement_after=socket_identity(path.lstat())
+    parent_after=socket_identity(fs.lstat());rebound_after=time.monotonic_ns()
+    assert pinned_after==pinned_before and replacement_after==replacement_before and parent_after==initial_parent
+    os.close(socket_pin);socket_pin=None;pin_closed=time.monotonic_ns()
+    socket_replacement={'schema':'trnm.hia.peer-unix.socket-replacement.v1','status':'PASS',
+        'path_hex':os.fsencode(path).hex(),'parent_path_hex':os.fsencode(fs).hex(),
+        'original_socket':initial_socket,'pinned_before_unlink':pinned_before,'pinned_after_capture':pinned_after,
+        'replacement_before_capture':replacement_before,'replacement_after_capture':replacement_after,
+        'parent_before':initial_parent,'parent_after':parent_after,'pin_open_flags':pin_flags,'pin_closed':True,
+        'opened_ns':pin_opened,'rebound_before_ns':rebound_before,'rebound_after_ns':rebound_after,'closed_ns':pin_closed}
+    replacement_raw=(json.dumps(socket_replacement,sort_keys=True)+'\n').encode()
+    (out/'socket-replacement.json').write_bytes(replacement_raw)
     case('replacement-reset-timeout',3,shared,1,0,expected=(0,0));call('same-object-connects-fresh-socket',shared)
     for ident,name in ((base,'base'),(expired,'expired'),(independent,'independent'),(shared,'shared')):case('final-drop-'+name,9,ident,expected=(0,0))
     assert stats('final-zero-owned-objects')==(0,0,0,0,0)
@@ -233,12 +260,14 @@ try:
 except BaseException as error:
     failure={'error':repr(error),'traceback':traceback.format_exc()}
 finally:
+    if socket_pin is not None:os.close(socket_pin)
     if listener is not None:listener.close()
     for session in sessions:processes.append(session.finish(kill=failure is not None))
 report={'status':'PASS' if failure is None and all(x['status']=='PASS' for x in rows) and all(x['exit_code']==0 for x in processes) else 'FAIL',
         'total':len(rows),'passed':sum(x['status']=='PASS' for x in rows),'actual_native_calls':sessions[1].sequence if len(sessions)>1 else 0,
         'actual_original_calls':sessions[0].sequence if sessions else 0,'cases':rows,'failure':failure,'processes':processes,
         'native_private_arena_observations':accounting,'fd_observations':fd_observations,
+        'socket_replacement':identity(replacement_raw) if socket_replacement is not None else None,
         'original_methods_are_unchanged':True,'runtime_fallback':False,
         'limits':{'borrowed_foreign_pointer_ABI_qualified':False,'concurrent_invocation_on_one_arena_qualified':False,
                   'whole_peer_owner_qualified':False,'original_service_budget_qualified':False,

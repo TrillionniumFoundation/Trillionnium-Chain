@@ -3600,6 +3600,362 @@
         "source": "src/crypto/sha256_arena.hepta"
       }
     ],
+    "src/crypto/pq_auth_owner.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_secret",
+          "mk_sample_a",
+          "mk_matrix_row",
+          "mk_encode_secret",
+          "mk_keygen_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "mo_header",
+          "mo_valid",
+          "mo_reply",
+          "mo_mu",
+          "mo_verify_parts",
+          "mo_external_verify",
+          "mo_self_verify"
+        ],
+        "source": "src/crypto/ml_dsa_owner.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "ms_bits",
+          "ms_decode_secret",
+          "ms_mu",
+          "ms_sample_mask",
+          "ms_sample_challenge",
+          "ms_product",
+          "ms_norm",
+          "ms_attempt",
+          "ms_encode",
+          "ms_sign_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_sign.hepta"
+      },
+      {
+        "functions": [
+          "pf_key_id",
+          "pf_be64",
+          "pf_header",
+          "pf_sha384_init",
+          "pf_spki_byte",
+          "pf_literal"
+        ],
+        "source": "src/crypto/pq_frame.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_auth_verify.hepta": [
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_mu",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_verify",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_frame.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_profile_auth.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "mo_reply",
+          "mo_mu",
+          "mo_verify_parts",
+          "mo_decimal",
+          "mo_error_text",
+          "mo_literal"
+        ],
+        "source": "src/crypto/ml_dsa_owner.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
     "src/crypto/sha512_stream.hepta": [
       {
         "functions": [
