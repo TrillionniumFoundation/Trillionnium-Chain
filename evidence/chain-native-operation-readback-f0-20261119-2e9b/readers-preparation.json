@@ -1,0 +1,322 @@
+{
+  "schema": "chain-f0-exact-pinned-reader-preparation-v1",
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "requests": [
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/formal/pon-nakamoto-v1/bounded_process.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.592558956006542,
+      "child_user_cpu_seconds": 0.138596,
+      "child_system_cpu_seconds": 0.035894999999999996
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/formal/pon-nakamoto-v1/contract_wire.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.1852846310357563,
+      "child_user_cpu_seconds": 0.12977,
+      "child_system_cpu_seconds": 0.025117
+    },
+    {
+      "path": "scripts/ci/fixed_root_f0_ownership.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/ci/fixed_root_f0_ownership.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 9.429154182958882,
+      "child_user_cpu_seconds": 0.11499700000000002,
+      "child_system_cpu_seconds": 0.031363
+    },
+    {
+      "path": "scripts/ci/fixed_root_f0_resources.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/ci/fixed_root_f0_resources.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.054378832981456,
+      "child_user_cpu_seconds": 0.13942699999999997,
+      "child_system_cpu_seconds": 0.03225499999999999
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/ci/public_host_ci_observation.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.4959679470048286,
+      "child_user_cpu_seconds": 0.13776599999999994,
+      "child_system_cpu_seconds": 0.025434000000000012
+    },
+    {
+      "path": "scripts/ci/run_fixed_root_phase_host.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/ci/run_fixed_root_phase_host.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.747587930993177,
+      "child_user_cpu_seconds": 0.13940300000000005,
+      "child_system_cpu_seconds": 0.028468999999999994
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/pon_public_v3_phase_read.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 4.135777963034343,
+      "child_user_cpu_seconds": 0.12537699999999996,
+      "child_system_cpu_seconds": 0.031859
+    },
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/pon_public_v3_policy_read.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.4396726810373366,
+      "child_user_cpu_seconds": 0.12131000000000003,
+      "child_system_cpu_seconds": 0.029536000000000007
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/pon_w1_cost_matrix_reader.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.4306958710076287,
+      "child_user_cpu_seconds": 0.12340499999999999,
+      "child_system_cpu_seconds": 0.02570900000000001
+    },
+    {
+      "path": "scripts/read_original_native_campaign.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/read_original_native_campaign.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.1382041570032015,
+      "child_user_cpu_seconds": 0.14987700000000004,
+      "child_system_cpu_seconds": 0.03520599999999996
+    },
+    {
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/run_fixed_host_root_f0.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.1546873499755748,
+      "child_user_cpu_seconds": 0.10941599999999996,
+      "child_system_cpu_seconds": 0.03814500000000004
+    },
+    {
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/scripts/run_pon_w1_native_campaign.py?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.7054919020156376,
+      "child_user_cpu_seconds": 0.12178399999999989,
+      "child_system_cpu_seconds": 0.03539099999999995
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/config/pon/ledger-v1.json?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.49232577503426,
+      "child_user_cpu_seconds": 0.12678900000000004,
+      "child_system_cpu_seconds": 0.026195999999999997
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/config/pon/work-profile-v1.json?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.5185710469959304,
+      "child_user_cpu_seconds": 0.12464000000000008,
+      "child_system_cpu_seconds": 0.03952
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/config/pon/model-family-v1.json?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.294570772035513,
+      "child_user_cpu_seconds": 0.14804600000000012,
+      "child_system_cpu_seconds": 0.03750500000000001
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/config/pon/devnet-v1.json?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.5167102640261874,
+      "child_user_cpu_seconds": 0.1245989999999999,
+      "child_system_cpu_seconds": 0.030891999999999975
+    },
+    {
+      "path": "config/pon/evaluation-round-v1.json",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/contents/config/pon/evaluation-round-v1.json?ref=3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.340580351999961,
+      "child_user_cpu_seconds": 0.12191699999999983,
+      "child_system_cpu_seconds": 0.031432000000000015
+    }
+  ],
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "bytes": 8627,
+      "git_blob": "b8579d1ea76e8c84214570f3f08d84595bfc77b6"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "bytes": 8924,
+      "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+    },
+    {
+      "path": "scripts/ci/fixed_root_f0_ownership.py",
+      "sha256": "a6376e43166cd782a90ac782c1619ef6ec6cd5cbb8d25093aedaf870c2d5dba1",
+      "bytes": 9980,
+      "git_blob": "df9028398dc978ea05482481de46e1998b1d7099"
+    },
+    {
+      "path": "scripts/ci/fixed_root_f0_resources.py",
+      "sha256": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a",
+      "bytes": 10381,
+      "git_blob": "3a67816123a423ca39beccdcc5d1adee637288fb"
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "cc0facf46d14bc113d6a83d6b1215afe91c7b5cf22d65892f34921c8f1b983e3",
+      "bytes": 13543,
+      "git_blob": "160c489693f3ec600e2e015c30773d66cff3bcdf"
+    },
+    {
+      "path": "scripts/ci/run_fixed_root_phase_host.py",
+      "sha256": "f572b12727d119f7d1c1490d2a8c70de69e596155e20a837ebf94d19e24911e7",
+      "bytes": 27285,
+      "git_blob": "db687834cc17023dda2f793779ea29b511c6bbbf"
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "sha256": "f2dd54ec905117e26fc7128218acb74c36a3ae7c16229d56c7cc04dae1a5ef41",
+      "bytes": 101430,
+      "git_blob": "4bb2f24c599f4a4fc64248f24fc2066753ddb966"
+    },
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "sha256": "89c45bebc01691bf42fcd65bc19625797b32d4112907f3d24ada094c6b9d698a",
+      "bytes": 8311,
+      "git_blob": "b10afc5ae42ca00979f5e55129a5316805f87b93"
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "bytes": 35800,
+      "git_blob": "fe710e05048916145180cf1cf8870bc31a94dec8"
+    },
+    {
+      "path": "scripts/read_original_native_campaign.py",
+      "sha256": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417",
+      "bytes": 53880,
+      "git_blob": "cea0aea8243cd28c7c40036aca8d558dd0d68c40"
+    },
+    {
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca",
+      "bytes": 37318,
+      "git_blob": "2b2454cf6ffee6959e0402c52a77e7722e181f3a"
+    },
+    {
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "bytes": 17265,
+      "git_blob": "ebbbfb38c1392669776530a3b90475beda75b50b"
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "bytes": 7793,
+      "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "bytes": 1596,
+      "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "bytes": 1383,
+      "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "bytes": 1964,
+      "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790"
+    },
+    {
+      "path": "config/pon/evaluation-round-v1.json",
+      "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+      "bytes": 890,
+      "git_blob": "23b0861700b07067cdc54e02081e6d4487450f6b"
+    }
+  ],
+  "reader_semantics_changed": false,
+  "finished": true,
+  "wrapper_sha256": "82e51b28636e14328b4fec29acf65c7bd6dda8451c9d98531021670b946df7c3",
+  "only_wrapper_identity_fields_changed": [
+    "HEAD",
+    "TREE",
+    "RUN"
+  ]
+}
