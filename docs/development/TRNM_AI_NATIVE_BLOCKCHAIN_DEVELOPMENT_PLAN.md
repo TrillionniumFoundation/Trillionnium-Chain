@@ -16764,3 +16764,51 @@ failure, partial artifact and cost; assess business confirmations, not driver ex
 status. Complete physical cost and overall Chain qualification remain open.
 See [the native refusal continuation evidence](../../evidence/chain-native-root-body-delay-20261119-2e9b/README.md).
 This file remains the sole development plan.
+
+## 2026-11-19 continuation: complete graph results remain inside their original writer
+
+The exact source 333fe8cd89f0ec855e7b856e99e40f48f56c2137 failed original F0
+44441548029: one of six confirmations in the original 30-second phases, zero
+of six scheduled four-second targets, and no strict numeric depletion witness.
+Complete negative evidence, all 22 automatic-CI workflow identities plus F0,
+38 failed-job logs at the recorded snapshot and overlapping/unknown costs are
+retained at f088f1d4f8a50aff0c5ecd465480b2aeee6e5e94. The seven preparation
+controls do not qualify that business result.
+
+The measured repeated original-operation path now remembers a completely
+verified different Root only in one of the same four nominated record slots.
+The result carries its actual Record.id, full Root, original frontier source
+and an opaque identity minted by that exact PostWriteReadback owner. Retained
+identity allocations prevent reuse after owner destruction, including identical
+visible SQL/Record/Root/source tuples after transaction ABA. No derived result
+becomes a frontier or crosses the sole passive metadata INSERT. Current State,
+Record, Delta, schema and transaction fences remain, including no-row writes,
+cancel/deadline callbacks and the final original callback. Every actual visited
+physical node retains its original Host checkpoint.
+
+A real signed-transfer fixture exposed the original repeated path: full graph
+140 callbacks, first frontier use 44, repeat 44. The same deterministic fixture
+with this change observes 140/44/5. Two real old-result replay controls reject
+both another scope in the same transaction and a new transaction after COMMIT.
+The original 512-attempt CPU assertion and all F0 credits/windows/bounds remain
+unchanged. This operation-local observation does not establish F0 success.
+
+The final local default-feature release library executed all 127 authenticated
+controls, including 49 post-write controls and the original explicit retained
+delta cost observation. Detached admission, History import, strict all-target
+Clippy and the locked Linux graph were checked at the unchanged production
+patch. The broader offline workspace metadata query still refuses the unavailable
+socket2 0.6.1 cache entry; the original targeted Linux dependency-graph check
+remains a separate result. The preceding E0505 compiler failure and a full 126-pass/one-fail run
+whose explicit create-new cost-output environment was missing remain retained
+with their actual costs. Current 127/49 source and native registry guards are
+separate from four unchanged historical 97/25 logs; those logs continue to
+refuse current qualification.
+
+Refresh only current source correspondence where its bytes have changed:
+the signed r22 callable, fixed 21-path PQ map, fixed 20-path W1 map's exact
+store.rs byte identity, current authenticated roster and derived literal blob
+pins. Frozen historical source pins, path scopes, HOLD/false/null qualification
+and historical evidence keep their prior meaning. Freeze this candidate and run
+the unchanged original F0 once. Business progress and complete physical cost
+remain open until independently observed. This is still the sole development plan.

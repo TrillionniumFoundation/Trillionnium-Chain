@@ -155,7 +155,7 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
         .graphs
         .iter()
         .flatten()
-        .all(|record| record.accounts != current.accounts));
+        .all(|graph| graph.record.accounts != current.accounts));
     let ids = scope.ids;
     let source = scope.frontier.as_ref().unwrap().source_record();
     let mut original = 0u64;
@@ -179,12 +179,12 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
     assert!(scope.subtree_hits >= 2);
     assert!(scope.consumed);
     assert_eq!(scope.ids, ids);
-    assert!(scope.graphs[2].is_none());
+    assert_eq!(scope.graphs[2].as_ref().unwrap().source, Some(source));
     assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
     verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
-    assert_eq!(scope.partial_uses, 2); // Partial is not a new whole-Root receipt.
-    assert_eq!(scope.hits, 0);
-    assert!(scope.graphs[2].is_none());
+    assert_eq!(scope.partial_uses, 1); // The original frontier was used only once.
+    assert_eq!(scope.hits, 1); // The same four-slot completed result was borrowed.
+    assert_eq!(scope.graphs[2].as_ref().unwrap().source, Some(source));
 
     let before = (graphs(node), scope.partial_uses, scope.subtree_hits);
     for _ in 0..2 {
@@ -237,7 +237,7 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
         let expected = reference(node, f.parent, &changed, &mut || Ok(())).unwrap_err();
         let error = verify(node, f.parent, &changed, &mut scope, &mut || Ok(())).unwrap_err();
         assert_eq!(error.to_string(), expected.to_string(), "{change}");
-        assert_eq!(scope.partial_uses, 2);
+        assert_eq!(scope.partial_uses, 1);
     }
     node.db.execute_batch("ROLLBACK").unwrap();
 }
@@ -697,7 +697,7 @@ fn metadata_frontier_rejects_another_real_source_even_when_its_root_matches() {
         let mut other = capture(node, foreign_id);
         verify(node, foreign_id, &foreign_state, &mut other, &mut || Ok(())).unwrap();
         let foreign = other.frontier.take().unwrap();
-        let original = prepared.graph.graphs[0].as_ref().unwrap();
+        let original = &prepared.graph.graphs[0].as_ref().unwrap().record;
         assert_ne!(foreign.source_record(), original.id);
         assert_eq!(
             load_observed(&node.db, foreign_id, None).unwrap().accounts == original.accounts,
@@ -907,7 +907,7 @@ fn metadata_frontier_keeps_partial_cancellation_and_final_callback_readback() {
     .unwrap();
     assert!(scope.partial_uses > 0);
     assert!(scope.subtree_hits > 0);
-    assert!(scope.graphs[3].is_none());
+    assert!(scope.graphs[3].as_ref().unwrap().source.is_some());
     drop(scope);
     node.db.execute_batch("ROLLBACK").unwrap();
 
@@ -1045,4 +1045,368 @@ fn metadata_frontier_extra_index_programs_cannot_cross_the_native_insert() {
         drop(scope);
         node.db.execute_batch("ROLLBACK").unwrap();
     }
+}
+
+#[test]
+fn completed_different_root_reuses_original_scope_without_new_frontier() {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = source_scope(&f);
+    let original_ids = scope.ids;
+    let frontier = scope.frontier.as_ref().unwrap();
+    let source = frontier.source_record();
+    let slots = frontier.occupied_slots();
+    let before_graphs = graphs(node);
+    let mut full = 0;
+    reference(node, f.parent, &f.before, &mut || {
+        full += 1;
+        Ok(())
+    })
+    .unwrap();
+    let mut first = 0;
+    verify(node, f.parent, &f.before, &mut scope, &mut || {
+        first += 1;
+        Ok(())
+    })
+    .unwrap();
+    let mut repeated = 0;
+    verify(node, f.parent, &f.before, &mut scope, &mut || {
+        repeated += 1;
+        Ok(())
+    })
+    .unwrap();
+    eprintln!(
+        "completed_graph_actual_callbacks full={full} first={first} repeated={repeated} actual_graphs={}",
+        graphs(node) - before_graphs
+    );
+    assert!(first > 5 && first < full);
+    assert!(repeated > 0 && repeated < first);
+    assert_eq!(scope.ids, original_ids);
+    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+    assert_eq!(scope.frontier.as_ref().unwrap().occupied_slots(), slots);
+    assert_eq!(scope.graphs.len(), 4);
+    scope.require_unchanged_after_last_write(&node.db).unwrap();
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn completed_graph_keeps_current_state_record_delta_and_schema_fences() {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    for effect in [
+        "same-row",
+        "no-row",
+        "record-aba",
+        "delta-no-row",
+        "schema-aba",
+        "transaction-aba",
+    ] {
+        node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+        let mut scope = source_scope(&f);
+        verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
+        assert!(scope.graphs[2].as_ref().unwrap().source.is_some());
+        let source = scope.frontier.as_ref().unwrap().source_record();
+        let actual = load_observed(&node.db, f.parent, None).unwrap();
+        let before = graphs(node);
+        match effect {
+            "same-row" => {
+                node.db
+                    .execute("UPDATE archive_nodes SET data=data", [])
+                    .unwrap();
+            }
+            "no-row" => {
+                node.db
+                    .execute("UPDATE archive_nodes SET data=data WHERE 0", [])
+                    .unwrap();
+            }
+            "record-aba" => {
+                let bytes: Vec<u8> = node
+                    .db
+                    .query_row(
+                        "SELECT data FROM native_state_commitments WHERE block=?",
+                        [f.parent.as_slice()],
+                        |row| row.get(0),
+                    )
+                    .unwrap();
+                node.db
+                    .execute(
+                        "UPDATE native_state_commitments SET data=? WHERE block=?",
+                        rusqlite::params![b"changed".as_slice(), f.parent.as_slice()],
+                    )
+                    .unwrap();
+                node.db
+                    .execute(
+                        "UPDATE native_state_commitments SET data=? WHERE block=?",
+                        rusqlite::params![bytes, f.parent.as_slice()],
+                    )
+                    .unwrap();
+            }
+            "delta-no-row" => {
+                node.db.execute("DELETE FROM deltas WHERE 0", []).unwrap();
+            }
+            "schema-aba" => {
+                node.db.execute_batch(
+                    "CREATE TEMP VIEW completed_transient AS SELECT 1; DROP VIEW completed_transient"
+                ).unwrap();
+            }
+            "transaction-aba" => {
+                node.db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
+            }
+            _ => unreachable!(),
+        }
+        let error = verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap_err();
+        eprintln!("completed_graph_actual_fence effect={effect} error={error}");
+        assert!(
+            error.to_string().starts_with("NATIVE_POST_WRITE_"),
+            "{effect}: {error}"
+        );
+        assert_eq!(graphs(node), before, "{effect}");
+        // The same visible record/root after ABA never restores the old scope.
+        assert_eq!(load_observed(&node.db, f.parent, None).unwrap(), actual);
+        assert!(scope
+            .frontier
+            .as_ref()
+            .is_none_or(|frontier| { frontier.source_record() == source }));
+        drop(scope);
+        node.db.execute_batch("ROLLBACK").unwrap();
+    }
+}
+
+#[test]
+fn completed_graph_hit_keeps_original_entry_final_and_outer_callback_refusals() {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = source_scope(&f);
+    verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
+    let mut callbacks = 0;
+    verify(node, f.parent, &f.before, &mut scope, &mut || {
+        callbacks += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert!(callbacks >= 2);
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+
+    for refusal in ["cancel", "deadline", "no-row-write", "remove-current-root"] {
+        for at in [1, callbacks] {
+            node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+            let mut scope = source_scope(&f);
+            verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
+            let root = load_observed(&node.db, f.parent, None)
+                .unwrap()
+                .accounts
+                .node
+                .unwrap();
+            let before_hits = scope.hits;
+            let mut current = 0;
+            let error = verify(node, f.parent, &f.before, &mut scope, &mut || {
+                current += 1;
+                if current == at {
+                    match refusal {
+                        "cancel" => return Err("COMPLETED_GRAPH_CANCELLED".into()),
+                        "deadline" => return Err("PUBLIC_REQUEST_DEADLINE".into()),
+                        "no-row-write" => {
+                            node.db
+                                .execute("UPDATE archive_nodes SET data=data WHERE 0", [])?;
+                        }
+                        "remove-current-root" => {
+                            assert_eq!(
+                                node.db.execute(
+                                    "DELETE FROM archive_nodes WHERE id=?",
+                                    [root.as_slice()],
+                                )?,
+                                1
+                            );
+                        }
+                        _ => unreachable!(),
+                    }
+                }
+                Ok(())
+            })
+            .unwrap_err();
+            assert_eq!(scope.hits, before_hits, "{refusal} at {at}");
+            let expected = match refusal {
+                "cancel" => "COMPLETED_GRAPH_CANCELLED",
+                "deadline" => "PUBLIC_REQUEST_DEADLINE",
+                _ => "NATIVE_POST_WRITE_CHANGED",
+            };
+            assert_eq!(error.to_string(), expected, "{refusal} at {at}");
+            drop(scope);
+            node.db.execute_batch("ROLLBACK").unwrap();
+        }
+    }
+}
+
+#[test]
+fn completed_graph_target_and_original_source_are_not_replaceable() {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut scope = source_scope(&f);
+    let record = load_observed(&node.db, f.parent, None).unwrap();
+    let ids = scope.ids;
+    let source = scope.frontier.as_ref().unwrap().source_record();
+    let access = scope
+        .graph_access(
+            &node.db,
+            &node.settings,
+            CurrentAccountGraph {
+                record: &record,
+                state: &f.before,
+            },
+        )
+        .unwrap()
+        .unwrap();
+    let completed = crate::account_archive_prototype::native_store::scoped_readback::verify(
+        access,
+        &mut || Ok(()),
+        Some(&node.authenticated_arithmetic.lifts),
+        None,
+    )
+    .unwrap();
+    let mut wrong = record.clone();
+    wrong.id[0] ^= 1;
+    let error = scope
+        .remember_completed(&node.db, &node.settings, wrong, completed)
+        .unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_FRONTIER");
+    assert!(scope.graphs[2].is_none());
+    assert_eq!(scope.ids, ids);
+    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+
+    verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
+    assert!(scope.matches(&node.db, &node.settings, &record).unwrap());
+    let original = scope.frontier.take().unwrap();
+    // There is no production setter for this test-only corruption. Even an
+    // exact same target Root cannot borrow a missing source certificate.
+    assert!(!scope.matches(&node.db, &node.settings, &record).unwrap());
+    scope.frontier = Some(original);
+    assert!(scope.matches(&node.db, &node.settings, &record).unwrap());
+    assert_eq!(scope.ids, ids);
+    drop(scope);
+    node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn completed_graph_never_survives_the_original_transaction() {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    let mut observed = Vec::new();
+    for _ in 0..2 {
+        node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+        let mut scope = source_scope(&f);
+        let mut first = 0;
+        verify(node, f.parent, &f.before, &mut scope, &mut || {
+            first += 1;
+            Ok(())
+        })
+        .unwrap();
+        let mut repeated = 0;
+        verify(node, f.parent, &f.before, &mut scope, &mut || {
+            repeated += 1;
+            Ok(())
+        })
+        .unwrap();
+        assert!(repeated < first);
+        observed.push((first, repeated));
+        drop(scope);
+        node.db.execute_batch("COMMIT").unwrap();
+    }
+    assert_eq!(observed[0], observed[1]);
+    // An ordinary independent fresh reader has no loan from either scope.
+    let mut full = 0;
+    reference(node, f.parent, &f.before, &mut || {
+        full += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert!(full > observed[0].0);
+}
+
+fn completed_graph_rejects_another_original_owner(transaction_aba: bool) {
+    let f = two_roots();
+    let node = &f.fixture.node;
+    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let mut original = source_scope(&f);
+    let record = load_observed(&node.db, f.parent, None).unwrap();
+    let original_source = original.frontier.as_ref().unwrap().source_record();
+    let original_ids = original.ids;
+    let access = original
+        .graph_access(
+            &node.db,
+            &node.settings,
+            CurrentAccountGraph {
+                record: &record,
+                state: &f.before,
+            },
+        )
+        .unwrap()
+        .unwrap();
+    let completed = crate::account_archive_prototype::native_store::scoped_readback::verify(
+        access,
+        &mut || Ok(()),
+        Some(&node.authenticated_arithmetic.lifts),
+        None,
+    )
+    .unwrap();
+    assert_eq!(completed.source_used(), Some(original_source));
+    // The actual fully traversed result outlives this owner. Its retained opaque
+    // identity must not be replaced by a new equal SQL/Record/Root/source tuple.
+    drop(original);
+    if transaction_aba {
+        node.db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
+    }
+    let mut next = source_scope(&f);
+    assert_eq!(next.ids, original_ids);
+    assert_eq!(
+        next.frontier.as_ref().unwrap().source_record(),
+        original_source
+    );
+    assert_eq!(load_observed(&node.db, f.parent, None).unwrap(), record);
+    assert!(next.graphs[2].is_none());
+    let error = next
+        .remember_completed(&node.db, &node.settings, record.clone(), completed)
+        .unwrap_err();
+    eprintln!(
+        "completed_graph_actual_owner_replay transaction_aba={transaction_aba} error={error}"
+    );
+    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_FRONTIER");
+    assert!(next.graphs[2].is_none());
+    assert_eq!(next.ids, original_ids);
+    assert_eq!(
+        next.frontier.as_ref().unwrap().source_record(),
+        original_source
+    );
+    // A fresh traversal issued by this exact new owner can still complete;
+    // rejection of the old result did not create or consume a graph proof.
+    let mut first = 0;
+    verify(node, f.parent, &f.before, &mut next, &mut || {
+        first += 1;
+        Ok(())
+    })
+    .unwrap();
+    let mut repeated = 0;
+    verify(node, f.parent, &f.before, &mut next, &mut || {
+        repeated += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert!(first > repeated && repeated > 0);
+    next.require_unchanged_after_last_write(&node.db).unwrap();
+    drop(next);
+    node.db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn completed_graph_cannot_reinstall_into_another_scope_in_the_same_transaction() {
+    completed_graph_rejects_another_original_owner(false);
+}
+
+#[test]
+fn completed_graph_cannot_reinstall_after_commit_into_a_new_transaction() {
+    completed_graph_rejects_another_original_owner(true);
 }

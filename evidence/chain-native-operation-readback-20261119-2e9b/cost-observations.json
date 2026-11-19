@@ -1,0 +1,1128 @@
+{
+  "schema": "chain-operation-local-cost-observations-v1",
+  "reported_child_process_invocations": [
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "original-preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/chain-host-stat-20261118-2e9b-source",
+        "pid": 1090748,
+        "exit_code": 0,
+        "wall_seconds": 0.08872061292640865,
+        "child_user_cpu_seconds": 0.061291,
+        "child_system_cpu_seconds": 0.013177
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "fetch-frozen-negative-base",
+        "command": [
+          "git",
+          "fetch",
+          "--no-tags",
+          "origin",
+          "f088f1d4f8a50aff0c5ecd465480b2aeee6e5e94"
+        ],
+        "cwd": "/home/qq/chain-host-stat-20261118-2e9b-source",
+        "pid": 1090754,
+        "exit_code": 0,
+        "wall_seconds": 3.7096347650513053,
+        "child_user_cpu_seconds": 0.044503,
+        "child_system_cpu_seconds": 0.05267299999999999
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "isolated-worktree",
+        "command": [
+          "git",
+          "worktree",
+          "add",
+          "--no-checkout",
+          "-b",
+          "fix/chain-native-operation-readback-20261119-2e9b",
+          "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+          "f088f1d4f8a50aff0c5ecd465480b2aeee6e5e94"
+        ],
+        "cwd": "/home/qq/chain-host-stat-20261118-2e9b-source",
+        "pid": 1090826,
+        "exit_code": 0,
+        "wall_seconds": 0.0082075169775635,
+        "child_user_cpu_seconds": 0.0015209999999999946,
+        "child_system_cpu_seconds": 0.0016470000000000096
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "sparse-source",
+        "command": [
+          "git",
+          "sparse-checkout",
+          "set",
+          "--no-cone",
+          "/*",
+          "!/evidence/",
+          "!/docs/evidence/",
+          "!/docs/development/evidence/"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1090828,
+        "exit_code": 0,
+        "wall_seconds": 0.0009963149204850197,
+        "child_user_cpu_seconds": 0.0008790000000000048,
+        "child_system_cpu_seconds": 0.0
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "checkout",
+        "command": [
+          "git",
+          "checkout",
+          "fix/chain-native-operation-readback-20261119-2e9b"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1090829,
+        "exit_code": 0,
+        "wall_seconds": 6.1354156490415335,
+        "child_user_cpu_seconds": 0.558618,
+        "child_system_cpu_seconds": 0.385069
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "candidate-preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1091043,
+        "exit_code": 0,
+        "wall_seconds": 0.042071867967024446,
+        "child_user_cpu_seconds": 0.02133700000000005,
+        "child_system_cpu_seconds": 0.007337000000000038
+      }
+    },
+    {
+      "report": "preparation-1",
+      "invocation": {
+        "name": "copy-owned-terminated-cache",
+        "command": [
+          "cp",
+          "-a",
+          "--reflink=auto",
+          "/home/qq/chain-host-stat-20261118-2e9b-target",
+          "/home/qq/work/chain-native-operation-readback-20261119-2e9b/target"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b",
+        "pid": 1091048,
+        "exit_code": 0,
+        "wall_seconds": 0.9449897659942508,
+        "child_user_cpu_seconds": 0.0030890000000000084,
+        "child_system_cpu_seconds": 0.22340199999999993
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1127769,
+        "exit_code": 0,
+        "wall_seconds": 0.026171348057687283,
+        "child_user_cpu_seconds": 0.018834999999999998,
+        "child_system_cpu_seconds": 0.007234
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "fmt-check",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1127796,
+        "exit_code": 0,
+        "wall_seconds": 7.67286724713631,
+        "child_user_cpu_seconds": 7.579133,
+        "child_system_cpu_seconds": 0.091492
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "native-authenticated",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::native_authenticated::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1128001,
+        "exit_code": 0,
+        "wall_seconds": 206.97405200800858,
+        "child_user_cpu_seconds": 364.575069,
+        "child_system_cpu_seconds": 4.24406
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "detached-admission",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::detached_admission::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1135508,
+        "exit_code": 0,
+        "wall_seconds": 8.200518361991271,
+        "child_user_cpu_seconds": 7.320446000000004,
+        "child_system_cpu_seconds": 0.8758619999999997
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "history-import",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::history_import::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1135717,
+        "exit_code": 0,
+        "wall_seconds": 33.7879886708688,
+        "child_user_cpu_seconds": 1.5688840000000255,
+        "child_system_cpu_seconds": 0.25329599999999974
+      }
+    },
+    {
+      "report": "native-validation-1",
+      "invocation": {
+        "name": "strict-clippy",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1136275,
+        "exit_code": 0,
+        "wall_seconds": 39.761172412894666,
+        "child_user_cpu_seconds": 70.43087600000001,
+        "child_system_cpu_seconds": 6.391706
+      }
+    },
+    {
+      "report": "native-validation-2",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1159339,
+        "exit_code": 0,
+        "wall_seconds": 0.03170037199743092,
+        "child_user_cpu_seconds": 0.021346999999999998,
+        "child_system_cpu_seconds": 0.006698
+      }
+    },
+    {
+      "report": "native-validation-2",
+      "invocation": {
+        "name": "fmt-check",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1159377,
+        "exit_code": 0,
+        "wall_seconds": 8.322439900133759,
+        "child_user_cpu_seconds": 8.180083,
+        "child_system_cpu_seconds": 0.10391199999999999
+      }
+    },
+    {
+      "report": "native-validation-2",
+      "invocation": {
+        "name": "native-authenticated",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::native_authenticated::",
+          "--",
+          "--include-ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1159671,
+        "exit_code": 101,
+        "wall_seconds": 21.210958788869902,
+        "child_user_cpu_seconds": 19.897319000000003,
+        "child_system_cpu_seconds": 0.745541
+      }
+    },
+    {
+      "report": "native-validation-3",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1172812,
+        "exit_code": 0,
+        "wall_seconds": 0.03195261117070913,
+        "child_user_cpu_seconds": 0.025710999999999998,
+        "child_system_cpu_seconds": 0.001495
+      }
+    },
+    {
+      "report": "native-validation-3",
+      "invocation": {
+        "name": "fmt-check",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1172839,
+        "exit_code": 0,
+        "wall_seconds": 8.596623670076951,
+        "child_user_cpu_seconds": 8.115834,
+        "child_system_cpu_seconds": 0.077366
+      }
+    },
+    {
+      "report": "native-validation-3",
+      "invocation": {
+        "name": "native-authenticated",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::native_authenticated::",
+          "--",
+          "--include-ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1173197,
+        "exit_code": 101,
+        "wall_seconds": 230.5456407580059,
+        "child_user_cpu_seconds": 403.09866900000003,
+        "child_system_cpu_seconds": 5.061135
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1182450,
+        "exit_code": 0,
+        "wall_seconds": 0.03298443183302879,
+        "child_user_cpu_seconds": 0.019969,
+        "child_system_cpu_seconds": 0.008319
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "fmt-check",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1182476,
+        "exit_code": 0,
+        "wall_seconds": 7.8895214691292495,
+        "child_user_cpu_seconds": 7.717117,
+        "child_system_cpu_seconds": 0.088865
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "native-authenticated",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::native_authenticated::",
+          "--",
+          "--include-ignored",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1182754,
+        "exit_code": 0,
+        "wall_seconds": 11.555688217049465,
+        "child_user_cpu_seconds": 11.007976999999999,
+        "child_system_cpu_seconds": 0.46100399999999997
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "detached-admission",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "store::detached_admission::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1183433,
+        "exit_code": 0,
+        "wall_seconds": 8.331053865142167,
+        "child_user_cpu_seconds": 7.483871000000001,
+        "child_system_cpu_seconds": 0.8549590000000001
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "history-import",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::history_import::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1183837,
+        "exit_code": 0,
+        "wall_seconds": 33.79256820003502,
+        "child_user_cpu_seconds": 1.5019670000000005,
+        "child_system_cpu_seconds": 0.24630399999999986
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "strict-clippy",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1185564,
+        "exit_code": 0,
+        "wall_seconds": 35.10860662907362,
+        "child_user_cpu_seconds": 63.557804,
+        "child_system_cpu_seconds": 6.010059999999999
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "locked-linux-graph",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1188358,
+        "exit_code": 101,
+        "wall_seconds": 0.09971653902903199,
+        "child_user_cpu_seconds": 0.056972999999999274,
+        "child_system_cpu_seconds": 0.039826999999999835
+      }
+    },
+    {
+      "report": "native-validation-4",
+      "invocation": {
+        "name": "native-registry",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--",
+          "--list"
+        ],
+        "cwd": "/home/qq/work/chain-native-operation-readback-20261119-2e9b/source",
+        "pid": 1188377,
+        "exit_code": 0,
+        "wall_seconds": 0.0982141811400652,
+        "child_user_cpu_seconds": 0.060929000000001565,
+        "child_system_cpu_seconds": 0.035503000000000284
+      }
+    },
+    {
+      "report": "current-source-registration-1",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.029263873118907213,
+        "child_user_cpu_seconds": 0.023781999999999998,
+        "child_system_cpu_seconds": 0.00421
+      }
+    },
+    {
+      "report": "current-source-registration-1",
+      "invocation": {
+        "name": "original-locked-linux-graph",
+        "command": [
+          "/home/qq/.cargo/bin/cargo",
+          "+1.95.0",
+          "tree",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--target",
+          "x86_64-unknown-linux-gnu",
+          "-p",
+          "trnm-pon-node",
+          "--edges",
+          "normal,build,dev",
+          "--prefix",
+          "depth"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.0729823971632868,
+        "child_user_cpu_seconds": 0.035842,
+        "child_system_cpu_seconds": 0.025858
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.05680341389961541,
+        "child_user_cpu_seconds": 0.037698999999999996,
+        "child_system_cpu_seconds": 0.018132000000000002
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "current-and-historical-native-rosters",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_authenticated_suite_count.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 8.190402291947976,
+        "child_user_cpu_seconds": 6.271274,
+        "child_system_cpu_seconds": 1.972126
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "applicability",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_applicability.py"
+        ],
+        "exit_code": 1,
+        "wall_seconds": 0.08043355401605368,
+        "child_user_cpu_seconds": 0.061203000000000785,
+        "child_system_cpu_seconds": 0.018059000000000047
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "applicability-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_applicability.py"
+        ],
+        "exit_code": 1,
+        "wall_seconds": 2.584535833913833,
+        "child_user_cpu_seconds": 0.2071499999999995,
+        "child_system_cpu_seconds": 0.590989
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "pq-current-map",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/pq_lifetime_current_v2.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.04321843106299639,
+        "child_user_cpu_seconds": 0.029922000000000004,
+        "child_system_cpu_seconds": 0.012965999999999589
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "pq-current-map-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_pq_lifetime_current_v2.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.1547603530343622,
+        "child_user_cpu_seconds": 0.11415500000000023,
+        "child_system_cpu_seconds": 0.039053000000000004
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "w1-current-map",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/w1_lifetime_current_observation.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.04261946305632591,
+        "child_user_cpu_seconds": 0.029005999999999865,
+        "child_system_cpu_seconds": 0.01300300000000032
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "w1-current-map-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_w1_lifetime_current_observation.py",
+          "-v"
+        ],
+        "exit_code": 1,
+        "wall_seconds": 0.3670598838943988,
+        "child_user_cpu_seconds": 0.295242,
+        "child_system_cpu_seconds": 0.07159799999999983
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "pq-exact-source",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.41849858593195677,
+        "child_user_cpu_seconds": 0.27502899999999997,
+        "child_system_cpu_seconds": 0.14257000000000009
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "pq-source-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_pq_research_integration.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 126.98726774309762,
+        "child_user_cpu_seconds": 92.986706,
+        "child_system_cpu_seconds": 33.912857
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "raw-source-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_ci_source_integrity.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 1.9079197640530765,
+        "child_user_cpu_seconds": 0.5602679999999935,
+        "child_system_cpu_seconds": 0.3628360000000015
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "ci-contract",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.08621718897484243,
+        "child_user_cpu_seconds": 0.07823700000000144,
+        "child_system_cpu_seconds": 0.006017999999997414
+      }
+    },
+    {
+      "report": "source-gates-1",
+      "invocation": {
+        "name": "whitespace",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.02741314610466361,
+        "child_user_cpu_seconds": 0.013999999999995794,
+        "child_system_cpu_seconds": 0.024267000000001815
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.06352818594314158,
+        "child_user_cpu_seconds": 0.044085,
+        "child_system_cpu_seconds": 0.015349999999999996
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "applicability",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_applicability.py"
+        ],
+        "exit_code": 1,
+        "wall_seconds": 1.4615778590086848,
+        "child_user_cpu_seconds": 1.3866180000000001,
+        "child_system_cpu_seconds": 0.05719
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "applicability-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_applicability.py"
+        ],
+        "exit_code": 1,
+        "wall_seconds": 21.035620268899947,
+        "child_user_cpu_seconds": 19.393239,
+        "child_system_cpu_seconds": 0.861322
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "w1-current-map-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_w1_lifetime_current_observation.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.2567352030891925,
+        "child_user_cpu_seconds": 0.20778500000000122,
+        "child_system_cpu_seconds": 0.04697999999999991
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "pq-exact-source",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.43369031092152,
+        "child_user_cpu_seconds": 0.28193299999999866,
+        "child_system_cpu_seconds": 0.09962300000000002
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "ci-contract",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.08403918496333063,
+        "child_user_cpu_seconds": 0.07459499999999863,
+        "child_system_cpu_seconds": 0.009071999999999969
+      }
+    },
+    {
+      "report": "source-gates-2",
+      "invocation": {
+        "name": "whitespace",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.032651662128046155,
+        "child_user_cpu_seconds": 0.017801000000002176,
+        "child_system_cpu_seconds": 0.0237360000000002
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.03043868998065591,
+        "child_user_cpu_seconds": 0.022300999999999998,
+        "child_system_cpu_seconds": 0.008025999999999998
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "applicability",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_applicability.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 1.2459531240165234,
+        "child_user_cpu_seconds": 1.173417,
+        "child_system_cpu_seconds": 0.08866700000000001
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "applicability-negatives",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_applicability.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 19.52579677500762,
+        "child_user_cpu_seconds": 18.210243,
+        "child_system_cpu_seconds": 0.9928309999999999
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "pq-exact-source",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.46456698211841285,
+        "child_user_cpu_seconds": 0.29506999999999906,
+        "child_system_cpu_seconds": 0.16904000000000008
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "ci-contract",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.1132478469517082,
+        "child_user_cpu_seconds": 0.0936230000000009,
+        "child_system_cpu_seconds": 0.019127000000000116
+      }
+    },
+    {
+      "report": "source-gates-3",
+      "invocation": {
+        "name": "whitespace",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "wall_seconds": 0.03726530005224049,
+        "child_user_cpu_seconds": 0.01889900000000111,
+        "child_system_cpu_seconds": 0.046751999999999905
+      }
+    }
+  ],
+  "scope": "per-process rusage and wall observations; native nested clocks overlap; do not add nested observations to these invocations",
+  "full_physical_cost_closed": false,
+  "unknown": [
+    "some controller/edit/transfer CPU",
+    "whole-host CPU and contention",
+    "RSS including compiler and descendants",
+    "disk IO/storage byte-seconds",
+    "network bytes and retransmissions",
+    "energy",
+    "provider price and all research cost"
+  ],
+  "currency_total": null
+}

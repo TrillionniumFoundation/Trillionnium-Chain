@@ -1,15 +1,31 @@
 //! Same-transaction graph readback, ported from the existing c165 owner.
 //! No receipt survives its original writer, connection, SQL epoch or schema.
 use super::{CurrentAccountGraph, Record};
-use crate::account_archive_prototype::native_store::{scoped_readback::Frontier, Root};
+use crate::account_archive_prototype::native_store::{
+    scoped_readback::{Frontier, VerifiedGraph},
+    Root,
+};
 use crate::{Error, Result, Settings};
 use rusqlite::Connection;
 use std::collections::BTreeMap;
+use std::rc::Rc;
 use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
 use trnm_sqlite_io_boundary::TransactionScope;
 
 type ReadbackSchema = Vec<(String, String, String, String, i64, Option<String>)>;
+
+/// An opaque identity for this exact original owner, not a database/root key.
+/// No public constructor, Clone or serialization can mint/re-stamp this value.
+/// A retained result keeps the old allocation alive, so a later owner's token
+/// cannot compare equal even after the old owner was dropped or SQL did ABA.
+pub(crate) struct GraphScope(Rc<()>);
+
+impl GraphScope {
+    pub(crate) fn same_scope(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
+    }
+}
 
 /// Only this original writer issues access, and only for one of its original
 /// four nominated records after the private complete-State comparison. Pending
@@ -18,6 +34,7 @@ pub(crate) struct GraphAccess<'input, 'scope> {
     db: &'scope Connection,
     binding: CurrentAccountGraph<'input>,
     frontier: Option<&'scope Frontier>,
+    scope: GraphScope,
 }
 
 impl GraphAccess<'_, '_> {
@@ -39,6 +56,10 @@ impl GraphAccess<'_, '_> {
 
     pub(crate) fn frontier(&self) -> Option<&Frontier> {
         self.frontier
+    }
+
+    pub(crate) fn into_scope(self) -> GraphScope {
+        self.scope
     }
 }
 
@@ -83,6 +104,30 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
     Ok(Some(rows.collect::<rusqlite::Result<_>>()?))
 }
 
+/// A completed result bound to one of the four original named records. A
+/// frontier-derived result can only borrow its ORIGINAL source; it never
+/// becomes a source frontier or crosses even a proven metadata write.
+#[derive(Debug, PartialEq, Eq)]
+struct CompletedGraph {
+    record: Record,
+    source: Option<Hash>,
+}
+
+impl CompletedGraph {
+    fn complete(record: Record) -> Self {
+        Self {
+            record,
+            source: None,
+        }
+    }
+
+    fn source_current(&self, frontier: Option<&Frontier>) -> bool {
+        self.source.is_none_or(|source| {
+            frontier.is_some_and(|frontier| frontier.source_record() == source)
+        })
+    }
+}
+
 /// At most four named graph results inside one ordinary authenticated admission
 /// or reorganization WRITE transaction: child, genesis, that verified child's
 /// parent and the actual active tip nominated by the existing Node reader.
@@ -99,10 +144,11 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 pub(in crate::store) struct PostWriteReadback<'db> {
     db: &'db Connection,
     scope: TransactionScope<'db>,
+    graph_scope: GraphScope,
     context: [Hash; 3],
     schema: ReadbackSchema,
     ids: [Option<Hash>; 4],
-    graphs: [Option<Record>; 4],
+    graphs: [Option<CompletedGraph>; 4],
     frontier: Option<Frontier>,
     enabled: bool,
     pub(super) consumed: bool,
@@ -143,9 +189,10 @@ impl<'db> PostWriteReadback<'db> {
                             settings.genesis(),
                         ]
                     && scope.graphs[0].as_ref().is_some_and(|verified| {
-                        record.parent == Some(verified.block)
-                            && record.parent_commitment == Some(verified.id)
-                            && record.accounts == verified.accounts
+                        verified.source.is_none()
+                            && record.parent == Some(verified.record.block)
+                            && record.parent_commitment == Some(verified.record.id)
+                            && record.accounts == verified.record.accounts
                     })
                     && actual_deltas
                         .iter()
@@ -186,7 +233,7 @@ impl<'db> PostWriteReadback<'db> {
                     // verified before our sole passive metadata INSERT.
                     // Current child State/record/deltas, final callback and the
                     // original no-write scope are still checked before any hit.
-                    next.graphs[0] = Some(record.clone());
+                    next.graphs[0] = Some(CompletedGraph::complete(record.clone()));
                     next.ids[2] = record.parent;
                     // Move only the original bounded frontier sealed by that
                     // SAME complete parent graph. Its original source Record.id
@@ -201,7 +248,8 @@ impl<'db> PostWriteReadback<'db> {
                         .as_ref()
                         .zip(previous.graphs[0].as_ref())
                         .is_some_and(|(frontier, parent)| {
-                            frontier.is_for(parent.id, &parent.accounts)
+                            parent.source.is_none()
+                                && frontier.is_for(parent.record.id, &parent.record.accounts)
                         })
                     {
                         next.frontier = previous.frontier.take();
@@ -357,6 +405,7 @@ impl<'db> PostWriteReadback<'db> {
         Ok(Some(Self {
             db,
             scope,
+            graph_scope: GraphScope(Rc::new(())),
             context: [
                 settings.network(),
                 settings.parameters(),
@@ -449,11 +498,10 @@ impl<'db> PostWriteReadback<'db> {
         // content-addressed account Root in the same no-write SQL epoch: empty
         // confirmation blocks can have different working state but share it.
         Ok(self.ids.contains(&Some(record.block))
-            && self
-                .graphs
-                .iter()
-                .flatten()
-                .any(|verified| verified.accounts == record.accounts))
+            && self.graphs.iter().flatten().any(|verified| {
+                verified.source_current(self.frontier.as_ref())
+                    && verified.record.accounts == record.accounts
+            }))
     }
 
     pub(super) fn graph_access<'input>(
@@ -477,6 +525,7 @@ impl<'db> PostWriteReadback<'db> {
             db: self.db,
             binding,
             frontier: self.frontier.as_ref(),
+            scope: GraphScope(Rc::clone(&self.graph_scope.0)),
         }))
     }
 
@@ -530,11 +579,44 @@ impl<'db> PostWriteReadback<'db> {
             }
             for (id, graph) in self.ids.iter().zip(&mut self.graphs) {
                 if *id == Some(record.block) {
-                    *graph = Some(record.clone());
+                    *graph = Some(CompletedGraph::complete(record.clone()));
                 }
             }
         }
         Ok(())
+    }
+
+    /// The graph verifier has completed every exposed edge and account check.
+    /// Seal only after its original final callback and a fresh original-source
+    /// fence. These four slots are the existing named record slots: this path
+    /// never nominates a parent, adds a source, replaces a frontier, or persists
+    /// data. A later use still rereads full State/Record/Delta and checks the same
+    /// original writer and actual schema before and after its final callback.
+    pub(super) fn remember_completed(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        record: Record,
+        completed: VerifiedGraph,
+    ) -> Result<bool> {
+        let source = completed.source_used().ok_or("NATIVE_ACCOUNT_FRONTIER")?;
+        crate::ensure(
+            completed.is_for(&self.graph_scope, record.id, &record.accounts),
+            "NATIVE_ACCOUNT_FRONTIER",
+        )
+        .map_err(Error::local_integrity)?;
+        if !self.frontier_current(db, settings, &record, source)? {
+            return Ok(false);
+        }
+        for (id, slot) in self.ids.iter().zip(&mut self.graphs) {
+            if *id == Some(record.block) && slot.is_none() {
+                *slot = Some(CompletedGraph {
+                    record: record.clone(),
+                    source: Some(source),
+                });
+            }
+        }
+        Ok(true)
     }
 
     pub(super) fn finish<T>(&self, result: Result<T>) -> Result<T> {

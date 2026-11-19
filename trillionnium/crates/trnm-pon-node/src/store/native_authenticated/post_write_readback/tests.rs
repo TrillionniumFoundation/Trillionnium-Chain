@@ -119,7 +119,10 @@ fn different_current_records_share_only_the_exact_account_graph_in_one_writer() 
     assert!(scope.graphs[1].is_none());
     assert!(scope.graphs[2].is_none());
     let parent_record = load_observed(&f.node.db, genesis, None).unwrap();
-    assert_ne!(scope.graphs[0].as_ref(), Some(&parent_record));
+    assert_ne!(
+        scope.graphs[0].as_ref().map(|graph| &graph.record),
+        Some(&parent_record)
+    );
     assert_eq!(
         crate::account_archive_prototype::accounts(&state).unwrap(),
         crate::account_archive_prototype::accounts(&f.node.settings.initial).unwrap()

@@ -23,8 +23,8 @@ DEFAULT_MAP = "config/pon/pq128-source-correspondence-current-v2.json"
 FROZEN_REVISION = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
 MANIFEST_SHA256 = "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
 SOURCE_LOCK_SHA256 = "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
-EXPECTED_MAP_SHA256 = "f7ffe7a99de743bc79d4c5af3db9571c791f8a58b404786bec1880a024982c13"
-EXPECTED_CURRENT_FILES_SHA256 = "3c4a887761692936780bd81869e91f65cee782aabf83e14907de4e076d4fed03"
+EXPECTED_MAP_SHA256 = "03e7cd3c8d8c72c8ad2a85ea354826b588af6b9e0b84949a5eb35e0dafb6ce63"
+EXPECTED_CURRENT_FILES_SHA256 = "235ae94e8e191fb3f5084575be6a940c4db26e8c22ace46c557f43c71e6e0433"
 EXPECTED_PATHS = frozenset((
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",

@@ -1,0 +1,1362 @@
+diff --git a/.github/workflows/pon-original-workspace-large-state-cpu.yml b/.github/workflows/pon-original-workspace-large-state-cpu.yml
+index 5092acc..b926568 100644
+--- a/.github/workflows/pon-original-workspace-large-state-cpu.yml
++++ b/.github/workflows/pon-original-workspace-large-state-cpu.yml
+@@ -370,7 +370,7 @@ jobs:
+             "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+             "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
+         ])
+-        prefix("node", "postwrite-readback", "store::native_authenticated::post_write_readback::tests::", 25)
++        prefix("node", "postwrite-readback", "store::native_authenticated::post_write_readback::tests::", 49)
+         assert len({(crate, test) for crate, group, test in selected}) == len(selected)
+         (root / "selected-tests.tsv").write_text("".join(f"{crate}\t{group}\t{test}\n" for crate, group, test in selected))
+         print(json.dumps({"result": "PASS", "scope": "exact libtest registry selection only; no execution verdict and not the complete runtime suite",
+diff --git a/.github/workflows/pon-recent-batch-acceptance.yml b/.github/workflows/pon-recent-batch-acceptance.yml
+index f263b73..dcfe3cf 100644
+--- a/.github/workflows/pon-recent-batch-acceptance.yml
++++ b/.github/workflows/pon-recent-batch-acceptance.yml
+@@ -81,7 +81,7 @@ jobs:
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = feb66e96059121ee71b4e4951547ec58f9707a56
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 4a17366fee9591e3229b44617064e2d13af2df33
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e67c78df5baffe4a10491c5c47fc223eb8f44bea
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)" = 9f830268d71fcea84ceca7dc2469b9861f654d86
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = 5e3769d3186026a7bac012be534f0d6cad5e362a
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
+@@ -179,11 +179,19 @@ jobs:
+             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
+             if test "$suite" = store::native_authenticated::; then
+-              grep -E '^test result: ok\. 103 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
++              grep -E '^test result: ok\. 127 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+               # Inspect this invocation once; retain all existing executions.
+               python3 - "$OUT/$name.log" <<'PYLOG'
+-          import re, sys
++          import hashlib, json, re, sys
+           from pathlib import Path
++          roster_raw = Path("config/pon/authenticated-current-roster-v1.json").read_bytes()
++          if hashlib.sha256(roster_raw).hexdigest() != "186d9594bc6af2fc4eeffdb895547c16bc0ac3bf443c410c92e2c18614dd5425":
++              raise SystemExit("current authenticated roster differs from reviewed source")
++          roster = json.loads(roster_raw)
++          expected = roster["tests"]
++          if (roster["schema"] != "trnm-authenticated-current-roster-v1"
++                  or len(expected) != 127 or len(set(expected)) != 127):
++              raise SystemExit("current authenticated roster requires 127 unique exact names")
+           lines = Path(sys.argv[1]).read_text().splitlines()
+           names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
+           summaries = [line for line in lines if line.startswith('test result:')]
+@@ -205,11 +213,11 @@ jobs:
+               'store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::unavailable_accounting_does_not_replace_native_results',
+           }
+           observed_tail = {name for name in names if name.startswith('store::native_authenticated::history_arithmetic::legacy_activation_tail::tests::')}
+-          if (len(names) != 103 or len(set(names)) != 103 or len(post_write) != 25
++          if (sorted(names) != expected or len(names) != 127 or len(set(names)) != 127 or len(post_write) != 49
+                   or observed_current != current_accounts
+                   or observed_tail != legacy_tail
+-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 103 passed; 0 failed; 0 ignored;')):
+-              raise SystemExit('current authenticated module requires all 103 executions (the original 97 plus six exact legacy-tail controls), including 25 post-write and all five current-account controls, in one log')
++                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 127 passed; 0 failed; 0 ignored;')):
++              raise SystemExit('current authenticated module requires all 127 exact executions (the original 97 and all 30 later controls), including 49 post-write, six legacy-tail and five current-account controls, in one log')
+           PYLOG
+             fi
+           done
+diff --git a/config/pon/applicability-v1.json b/config/pon/applicability-v1.json
+index c0e46cd..98e09c0 100644
+--- a/config/pon/applicability-v1.json
++++ b/config/pon/applicability-v1.json
+@@ -216,7 +216,7 @@
+       },
+       "tests": [
+         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
+-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r21_rejects_signed_old_cookies_and_preserves_control_output_reserve",
++        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r22_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
+         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
+         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 208a8cb..e6456ba 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -149,16 +149,17 @@
+     ".github/workflows/pon-native-campaign-qualification.yml": "a11dbcd8476d149fa89aeac7979c5ddefad9108c",
+     ".github/workflows/pon-next-architecture-security.yml": "a2c1d0fc734b10b50fd3a71b0644e24898f35c06",
+     ".github/workflows/pon-original-large-state-cpu.yml": "b304444ad20e6341fae8f977fac8536da78c7eca",
+-    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "5092acc212fd3429d607276a53f0b7d7097e774e",
++    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "b926568104f64dc602bc1b987ee04ddc55469b75",
+     ".github/workflows/pon-pq-system-continuation.yml": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
+-    ".github/workflows/pon-recent-batch-acceptance.yml": "f263b7368b9aa2315fbbe6bca4976c75d8e1f52d",
++    ".github/workflows/pon-recent-batch-acceptance.yml": "dcfe3cf5174f34a434e093deeb774f1513bf4c21",
+     ".github/workflows/pon-w1-qrom-closure.yml": "fe0a830ee9b120bdc1928f044bfe8384243b2f38",
+     ".github/workflows/pon-w1-qrom-implementation.yml": "eca8b1d4733f452a685894e8e942461f64f74a1e",
+     ".github/workflows/pon-w1-transparent-profile.yml": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+     ".github/workflows/pon-w1-work-security.yml": "ce94e0a5423d91840849d91579ec541081117274",
+     ".github/workflows/trnm-required-baseline.yml": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
+-    "config/pon/applicability-v1.json": "c0e46cd0d5bb49c64a35ef293a472c8d96a5f24a",
++    "config/pon/applicability-v1.json": "98e09c05ff0c1af1ef9ab930d6a1b6e81cdfffbc",
++    "config/pon/authenticated-current-roster-v1.json": "c7a9dec1d38bc698262a0a6b410524f36f532d40",
+     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",
+     "config/pon/cpq1-content-commitments-v1.json": "d4a13b2a15338b3e7ab47bfa2565479c1a3bb969",
+     "config/pon/decentralization-audit-v1.json": "692337053ed95f933128cfc0f384293f7d20155c",
+@@ -192,12 +193,12 @@
+     "config/pon/pq128-lifetime-composition-current-v3.json": "095b76bbbe22624c4fbe4ffaba8e6f7acb85884f",
+     "config/pon/pq128-lifetime-composition-v2.json": "ea59e63ae7f0734f03429411d4fb9ff265fd83da",
+     "config/pon/pq128-lifetime-example-v1.json": "19aba0a047f92e4f8fd99f84590519c4831d4418",
+-    "config/pon/pq128-source-correspondence-current-v2.json": "3ad2c0ec5190360506aae5c7682680805f061900",
++    "config/pon/pq128-source-correspondence-current-v2.json": "a46557427a49e988307626d00845a07fa981c489",
+     "config/pon/pq128-source-lock-v1.json": "3b83e4ea0e6caf93c9dde488fab6dda24d36749c",
+     "config/pon/public-evaluation-model-source-composition-v6.json": "843ef13f9eec42a042925b8f32610ab3f892cfbf",
+     "config/pon/public-evaluation-source-composition-v6.json": "eba2244a91f47d8db9d8ec93ac878de41d7df38b",
+     "config/pon/public-resource-profile-vectors-v1.json": "b83946d059f9bdcbcc3e913c1f0d5117a5beba3e",
+-    "config/pon/w1-lifetime-current-source-v2.json": "a99ff2b27da05f4abfcfa84998e6bd22cfd3bf14",
++    "config/pon/w1-lifetime-current-source-v2.json": "232f1ccec5e18c911b6ddd073ad7b3ccf714cd59",
+     "config/pon/w1-qrom-closure-current-required-tests-v2.json": "859bc8a918dc7b9676ce4e00f69f936af3d89021",
+     "config/pon/w1-qrom-closure-required-tests-v1.json": "866d3eed2cbe3ee6b47ef6a06f11dd7dcfed89b7",
+     "config/pon/w1-qrom-current-required-tests-v1.json": "04c4439af4dce19d87746beb6bb0a5f45e9d57bd",
+@@ -214,7 +215,7 @@
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "cb1ef928b18a1592bd7c33999a4b069ab236ea27",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "14943bcc821cdce6c6a3d71089a484ab02848b37",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -413,6 +414,8 @@
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/observations.json": "bcc05993d9664535e5f4faa03cea3ab1c8c9d3e0",
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/retained-node-public-and-v4.stderr.txt": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/retained-node-public-and-v4.stdout.txt": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
++    "evidence/chain-native-operation-readback-20261119-2e9b/controls/native-authenticated.log.gz": "053e435438cd372f5228472f282323853eab78cf",
++    "evidence/chain-native-operation-readback-20261119-2e9b/controls/node-registry.log.gz": "bf3de7ad008adff93c9d5c2e158dbe6a71947ff5",
+     "evidence/chain-source-composition-v6-20261112-6478/C-CI-contract-observation.tar.gz": "3db94bf2b2909cee7885762a11fa7f0e00a90dcd",
+     "evidence/chain-source-composition-v6-20261112-6478/C-M12-full-observation.manifest.json": "f86da850d0d2e7f6b6662528541b7af8bb1c8413",
+     "evidence/chain-source-composition-v6-20261112-6478/C-M12-full-observation.tar.xz": "b5d12333da4ade3a6f75e358cab5326e30774024",
+@@ -1748,7 +1751,7 @@
+     "scripts/ci/pq_external_rollback_oracle.py": "68c103353c05bd2e7664bde612221adebcf863b7",
+     "scripts/ci/pq_lifetime_budget.py": "1de78fbee6948d23b39df9628ead1e2a913a250e",
+     "scripts/ci/pq_lifetime_composition.py": "66c2cf64902a9672ba615b447c113b6a634014af",
+-    "scripts/ci/pq_lifetime_current_v2.py": "5c9e6adc7bdd9b366aa086163e66b5e7e45dac6d",
++    "scripts/ci/pq_lifetime_current_v2.py": "1455bf1e0821f13bffdd66328c1270f9360ec3ef",
+     "scripts/ci/pq_proof_profile_binding.py": "57fa045428e269a23cae95bd1784345851e9d3ef",
+     "scripts/ci/pq_root_campaign_readback.py": "4cf4f13d05580a49f065cc0407706e0b153d916c",
+     "scripts/ci/pq_root_custody_review_v1.py": "aceabcdcf2dfa9eba2fb284fc6c7b3a0ce33eea3",
+@@ -1780,7 +1783,7 @@
+     "scripts/ci/runtime-release-requirements.txt": "9f706153570ab1b72c949b3fa17ff7f04417ff85",
+     "scripts/ci/rust_source_tokens.py": "0e2b54d80c041b323241521fc4120f98734a8f24",
+     "scripts/ci/test_audit_native_campaign_outcomes.py": "26624a960164dc0ffbe439f918ebba919587c08e",
+-    "scripts/ci/test_authenticated_suite_count.py": "2240c6c58447b92c35fea38da13964c16e8d80ad",
++    "scripts/ci/test_authenticated_suite_count.py": "213ea7dc5c696e3229b3f89ca4d4012b2842e991",
+     "scripts/ci/test_capture_chain_hepta_identity.py": "495fd5bd284eeba28b216332c966e229cff4aea8",
+     "scripts/ci/test_cell_discovery_v3_ci.py": "46c57b2961333e6000fdde3061d5b9ba3dfdb045",
+     "scripts/ci/test_cell_storage_convergence_ci.py": "5bdd3f67bb30a146a95da189b6762dce93a8d368",
+@@ -1870,7 +1873,7 @@
+     "scripts/ci/test_w1_kaggle_source_builder.py": "874690dd216142e3fd396c83d5575f9ef866ff14",
+     "scripts/ci/test_w1_kaggle_worker_contract.py": "994473ad61c88891788273d9245eb7aa3830c464",
+     "scripts/ci/test_w1_lifecycle_cost_v4.py": "424f99c2aaa52b589b41ea9f97df241b7c8ed757",
+-    "scripts/ci/test_w1_lifetime_current_observation.py": "3f465c161e90cf5793c5df4f5a7655e709fbc69c",
++    "scripts/ci/test_w1_lifetime_current_observation.py": "818c5f0bd9998da6639362164a70c26cbf060cdd",
+     "scripts/ci/test_w1_lifetime_ledger.py": "0ee624e18c8e5e698b2f6bb10507e805e509a2da",
+     "scripts/ci/test_w1_native_roster.py": "7cb510177ad2628a2cdb096334e14158777e79c4",
+     "scripts/ci/test_w1_p3_sampling_audit.py": "64b7759aa2b0af96f15e347d8811c9af2588e357",
+@@ -1994,7 +1997,7 @@
+     "scripts/w1_fri_query_replay.py": "1a3eafeb4ffaa23907da5eda0ee4baabe943307d",
+     "scripts/w1_generation_target_v2.py": "f58c8ede6d6b4db073c7e71111c27cde70275f6f",
+     "scripts/w1_kaggle_worker_template.py": "c2a8d4ba5a26b209386de8300684d65ad0dd21fc",
+-    "scripts/w1_lifetime_current_observation.py": "b7f0125d9736b30d3c4d420780435845dc85ad11",
++    "scripts/w1_lifetime_current_observation.py": "3c87a7cbda88bf6ab161e0773767c4f826dc1e80",
+     "scripts/w1_lifetime_ledger.py": "2945322e1c69d5edc528f1e610a66a998b9412f7",
+     "scripts/w1_owned_generation_runtime_v2.py": "db6b3690f68700a7b66f45ece57844bec0996dff",
+     "scripts/w1_owned_process_collector_v1.py": "7049001ace23192d6d32e4f438ca85e4b0ac16cc",
+@@ -2332,7 +2335,7 @@
+     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs": "3d6c676cc3336c66094e21ba74bee247a6e2a601",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
+-    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
++    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs": "616b493ecd910c198b19af529c4e871c06622284",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs": "128aec63af1d2d803d01c2022a0033e78f4d0933",
+     "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": "ab18a5b18b534dbeb18955ae29555ef1ea42383e",
+@@ -2561,7 +2564,7 @@
+     "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": "f22aeb08d99c75aad3043c3db5e23fdc8b15c4a1",
+     "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs": "0464ba286dde87d859bbe70234d803cc5d9f1e96",
+     "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/tests.rs": "8e18f4c7030841123556e57a0dfe59a5d75008c0",
+-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "4a17366fee9591e3229b44617064e2d13af2df33",
++    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "e67c78df5baffe4a10491c5c47fc223eb8f44bea",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs": "9c1b5573ae7a4f43745fd29e6e6d1a28abf64da8",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs": "3fcbc873fcc89de208922e6ffd74361442797bed",
+@@ -2570,9 +2573,9 @@
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs": "7c84174e62b4611fe20e9d2622cf585b1b2ce087",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs": "cefb2d325a22ec214ddead2bd0c6226dde0bb1a9",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs": "8b4e390d6d285897e7dd2a50eacaf1a1ee32ea21",
+-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": "4b35768e4c939bdf782effc96f547e0af623be92",
+-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs": "542a192a1a6835ad5882e0b091943838c213a39d",
+-    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "de7025a5dde1031c5145c6bc146c94542943be7f",
++    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": "8440e83fca87ca66a453a7ca8a6d30ef5f5613d2",
++    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs": "12f0959a03172066bbfc703983c23aacf2743902",
++    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs": "ded596afffcdef623e49a1603fbeb59ae6874d19",
+     "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+     "trillionnium/crates/trnm-pon-node/src/store/native_root_refusal.rs": "1c05426c3cd3300ffece40c6d86d4c0c1bc90605",
+     "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs": "d94f27a764a2788e90352881b52fc9017a32ab67",
+@@ -2792,6 +2795,7 @@
+     ".github/workflows/trnm-required-baseline.yml",
+     "config/consensus-mainline.json",
+     "config/pon/applicability-v1.json",
++    "config/pon/authenticated-current-roster-v1.json",
+     "config/pon/binary-diverse60-training-v3.json",
+     "config/pon/cpq1-content-commitments-v1.json",
+     "config/pon/decentralization-audit-v1.json",
+@@ -3019,6 +3023,8 @@
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/observations.json",
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/retained-node-public-and-v4.stderr.txt",
+     "evidence/chain-incentive-counterexamples-20261112/unfinished/retained-node-public-and-v4.stdout.txt",
++    "evidence/chain-native-operation-readback-20261119-2e9b/controls/native-authenticated.log.gz",
++    "evidence/chain-native-operation-readback-20261119-2e9b/controls/node-registry.log.gz",
+     "evidence/chain-source-composition-v6-20261112-6478/C-CI-contract-observation.tar.gz",
+     "evidence/chain-source-composition-v6-20261112-6478/C-M12-full-observation.manifest.json",
+     "evidence/chain-source-composition-v6-20261112-6478/C-M12-full-observation.tar.xz",
+diff --git a/config/pon/pq128-source-correspondence-current-v2.json b/config/pon/pq128-source-correspondence-current-v2.json
+index 3ad2c0e..a465574 100644
+--- a/config/pon/pq128-source-correspondence-current-v2.json
++++ b/config/pon/pq128-source-correspondence-current-v2.json
+@@ -23,15 +23,15 @@
+     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d",
+     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b",
+-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "d96f94bda32316572c0299b9a83f6ec067a60d9c3ef69902ef440520d7fed729",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "7d2ef2212d9be34ff0615b75d2f4f568c000e1aa7ce1b6ddea233fe79dc8e4e9",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "18684092d5a701e4a11587361b0181d2ce80e8ec194e3092b7e6276b9a81a561",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9",
+     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
+     "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
+     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
+     "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
+   },
+-  "current_source_snapshot_sha256": "3c4a887761692936780bd81869e91f65cee782aabf83e14907de4e076d4fed03",
++  "current_source_snapshot_sha256": "235ae94e8e191fb3f5084575be6a940c4db26e8c22ace46c557f43c71e6e0433",
+   "qualification": {
+     "actual_lifetime_failure_bound": null,
+     "whole_chain_pq_qualified": false,
+diff --git a/config/pon/w1-lifetime-current-source-v2.json b/config/pon/w1-lifetime-current-source-v2.json
+index a99ff2b..232f1cc 100644
+--- a/config/pon/w1-lifetime-current-source-v2.json
++++ b/config/pon/w1-lifetime-current-source-v2.json
+@@ -69,8 +69,8 @@
+       "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+     },
+     {
+-      "bytes": 394623,
+-      "current_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
++      "bytes": 397703,
++      "current_sha256": "cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9",
+       "historical_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+       "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+     },
+diff --git a/docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md b/docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md
+index 4fd9255..946fdb9 100644
+--- a/docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md
++++ b/docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md
+@@ -49,7 +49,7 @@ applicability against the actual checkout; no declaration here promotes old meas
+ | local-pool-reconciliation / M05, M06, M07, M08, M15 | Local/research boundary; no consensus revision | [LOCAL_MEMPOOL_LIFECYCLE](../../docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) | [Node::pool_reconcile](../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs) | trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic<br>trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation<br>trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix |
+ | protected-hello-handoff / M04, M15 | Local/research boundary; no consensus revision | [ADMISSION_SECURITY](../../docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) | [try_handoff_hello](../../trillionnium/crates/trnm-pon-node/src/ingress.rs) | trillionnium/crates/trnm-pon-node/src/ingress.rs::protected_hello_additional_opportunities_never_refresh_expired_original_deadlines |
+ | integer-factor-v2 / M00, M06, M10, M11, M15 | [integer-factor-candidate-v2.json](../../config/pon/integer-factor-candidate-v2.json), revision11 | [NATIVE_INTEGER_FACTOR_CANDIDATE_V2](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) | trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::exact_variants_refuse_and_real_fork_restores_duplicate_window<br>trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::missing_score_abort_keeps_same_round_marker_and_new_round_allows_update<br>trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::loaded_release_parent_full_range_and_new_round_are_native<br>trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::cli_selects_fresh_profile_and_genesis_before_any_candidate |
+-| public-intake-v3-r10 / M04, M05, M06, M15 | Local/research boundary; no consensus revision | [PUBLIC_POOL_INTAKE_V3](../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | [serve_public_protected_v3_with_metrics](../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs) | trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r21_rejects_signed_old_cookies_and_preserves_control_output_reserve<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification<br>trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::product_row_and_final_cancellation_never_yield_verified_work<br>trillionnium/crates/trnm-pon-node/src/ingress.rs::cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet<br>trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::controlled_cancellation_joins_every_started_scoped_worker_before_return<br>trillionnium/crates/trnm-pon-node/src/store.rs::local_state_cancellation_rolls_back_all_packet_rows_and_reopens_original_state<br>trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::cancelled_panicked_and_partially_started_workers_all_finish_and_join<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure<br>trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs::public_v3_mixed_calls_reopen_with_complete_failure_denominators |
++| public-intake-v3-r10 / M04, M05, M06, M15 | Local/research boundary; no consensus revision | [PUBLIC_POOL_INTAKE_V3](../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | [serve_public_protected_v3_with_metrics](../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs) | trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r22_rejects_signed_old_cookies_and_preserves_control_output_reserve<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification<br>trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::product_row_and_final_cancellation_never_yield_verified_work<br>trillionnium/crates/trnm-pon-node/src/ingress.rs::cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet<br>trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::controlled_cancellation_joins_every_started_scoped_worker_before_return<br>trillionnium/crates/trnm-pon-node/src/store.rs::local_state_cancellation_rolls_back_all_packet_rows_and_reopens_original_state<br>trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::cancelled_panicked_and_partially_started_workers_all_finish_and_join<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts<br>trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure<br>trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs::public_v3_mixed_calls_reopen_with_complete_failure_denominators |
+ | continuity-v1 / M03, M06, M07, M15 | [continuity-v1.json](../../config/pon/continuity-v1.json), revision12 | [CONTINUITY_V1](../../docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) | trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens<br>trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::explicit_maintenance_survives_all_optional_task_revocation_and_reopen<br>trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup<br>trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes<br>formal/pon-nakamoto-v1/test_continuity_transitions.py::NativeTransitions.test_real_native_context_state_root_receipt_capacity_and_rejection<br>trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry<br>trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::capacity_observation_distinguishes_reserved_and_retained_accounts<br>trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::capacity_observation_rechecks_actual_bytes_cancellation_and_generation<br>trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs::local_capacity_command_binds_the_checked_state_and_rejects_old_profiles_before_open<br>trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs::signed_one_zero_rank_one_work_uses_actual_parent_authority_in_both_directions<br>trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs::paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen<br>trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover<br>trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_execute_signed_expiry_future_capacity_and_reward_maturity_against_native_node<br>trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission |
+ | model-evidence-v3 / M06, M10, M11, M15 | [model-evidence-v3.json](../../config/pon/model-evidence-v3.json), revision13 | [NATIVE_MODEL_EVIDENCE_V3](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) | trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::objective_release_shared_source_reward_reopen_and_review_fork_are_native<br>trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::zero_gain_and_noop_cannot_become_positive_by_consistent_signatures<br>trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup |
+ | model-composition-v4 / M06, M10, M11, M15 | [model-composition-v4.json](../../config/pon/model-composition-v4.json), revision14 | [NATIVE_MODEL_COMPOSITION_V4](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) | trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_sum_and_ablation_count_a_nonzero_parent_once<br>trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::wide_sum_preserves_cancellation_but_checks_every_ablation_range<br>trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape<br>trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero<br>trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::native_composition_rewards_reorg_reopen_and_continuity_cleanup<br>trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once<br>trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights<br>trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs::native_arithmetic_observations_for_independent_python<br>formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_full_signed_native_release_results_match_independent_computation<br>formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_actual_native_codec_composition_inference_and_subset_boundaries<br>formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_nonzero_parent_and_floored_source_limit_are_observed<br>formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_stale_incomplete_or_noninteger_observations_are_rejected |
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index cb1ef92..14943bc 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -16764,3 +16764,51 @@ failure, partial artifact and cost; assess business confirmations, not driver ex
+ status. Complete physical cost and overall Chain qualification remain open.
+ See [the native refusal continuation evidence](../../evidence/chain-native-root-body-delay-20261119-2e9b/README.md).
+ This file remains the sole development plan.
++
++## 2026-11-19 continuation: complete graph results remain inside their original writer
++
++The exact source 333fe8cd89f0ec855e7b856e99e40f48f56c2137 failed original F0
++44441548029: one of six confirmations in the original 30-second phases, zero
++of six scheduled four-second targets, and no strict numeric depletion witness.
++Complete negative evidence, all 22 automatic-CI workflow identities plus F0,
++38 failed-job logs at the recorded snapshot and overlapping/unknown costs are
++retained at f088f1d4f8a50aff0c5ecd465480b2aeee6e5e94. The seven preparation
++controls do not qualify that business result.
++
++The measured repeated original-operation path now remembers a completely
++verified different Root only in one of the same four nominated record slots.
++The result carries its actual Record.id, full Root, original frontier source
++and an opaque identity minted by that exact PostWriteReadback owner. Retained
++identity allocations prevent reuse after owner destruction, including identical
++visible SQL/Record/Root/source tuples after transaction ABA. No derived result
++becomes a frontier or crosses the sole passive metadata INSERT. Current State,
++Record, Delta, schema and transaction fences remain, including no-row writes,
++cancel/deadline callbacks and the final original callback. Every actual visited
++physical node retains its original Host checkpoint.
++
++A real signed-transfer fixture exposed the original repeated path: full graph
++140 callbacks, first frontier use 44, repeat 44. The same deterministic fixture
++with this change observes 140/44/5. Two real old-result replay controls reject
++both another scope in the same transaction and a new transaction after COMMIT.
++The original 512-attempt CPU assertion and all F0 credits/windows/bounds remain
++unchanged. This operation-local observation does not establish F0 success.
++
++The final local default-feature release library executed all 127 authenticated
++controls, including 49 post-write controls and the original explicit retained
++delta cost observation. Detached admission, History import, strict all-target
++Clippy and the locked Linux graph were checked at the unchanged production
++patch. The broader offline workspace metadata query still refuses the unavailable
++socket2 0.6.1 cache entry; the original targeted Linux dependency-graph check
++remains a separate result. The preceding E0505 compiler failure and a full 126-pass/one-fail run
++whose explicit create-new cost-output environment was missing remain retained
++with their actual costs. Current 127/49 source and native registry guards are
++separate from four unchanged historical 97/25 logs; those logs continue to
++refuse current qualification.
++
++Refresh only current source correspondence where its bytes have changed:
++the signed r22 callable, fixed 21-path PQ map, fixed 20-path W1 map's exact
++store.rs byte identity, current authenticated roster and derived literal blob
++pins. Frozen historical source pins, path scopes, HOLD/false/null qualification
++and historical evidence keep their prior meaning. Freeze this candidate and run
++the unchanged original F0 once. Business progress and complete physical cost
++remain open until independently observed. This is still the sole development plan.
+diff --git a/scripts/ci/pq_lifetime_current_v2.py b/scripts/ci/pq_lifetime_current_v2.py
+index 5c9e6ad..1455bf1 100644
+--- a/scripts/ci/pq_lifetime_current_v2.py
++++ b/scripts/ci/pq_lifetime_current_v2.py
+@@ -23,8 +23,8 @@ DEFAULT_MAP = "config/pon/pq128-source-correspondence-current-v2.json"
+ FROZEN_REVISION = "0f9b30549328e5be20f4d3e6e27bd132b42d90de"
+ MANIFEST_SHA256 = "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+ SOURCE_LOCK_SHA256 = "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
+-EXPECTED_MAP_SHA256 = "f7ffe7a99de743bc79d4c5af3db9571c791f8a58b404786bec1880a024982c13"
+-EXPECTED_CURRENT_FILES_SHA256 = "3c4a887761692936780bd81869e91f65cee782aabf83e14907de4e076d4fed03"
++EXPECTED_MAP_SHA256 = "03e7cd3c8d8c72c8ad2a85ea354826b588af6b9e0b84949a5eb35e0dafb6ce63"
++EXPECTED_CURRENT_FILES_SHA256 = "235ae94e8e191fb3f5084575be6a940c4db26e8c22ace46c557f43c71e6e0433"
+ EXPECTED_PATHS = frozenset((
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+diff --git a/scripts/ci/test_authenticated_suite_count.py b/scripts/ci/test_authenticated_suite_count.py
+index 2240c6c..213ea7d 100644
+--- a/scripts/ci/test_authenticated_suite_count.py
++++ b/scripts/ci/test_authenticated_suite_count.py
+@@ -25,6 +25,31 @@ REGISTRY_SHA256 = {
+     'node': '357025f7f34769299392d01f26e33047f4b81d8e25594ef5158a474f47175865',
+ }
+ POSTWRITE_PREFIX = PREFIX + 'post_write_readback::tests::'
++CURRENT_EVIDENCE = ROOT / 'evidence/chain-native-operation-readback-20261119-2e9b/controls'
++CURRENT_ROSTER = ROOT / 'config/pon/authenticated-current-roster-v1.json'
++CURRENT_ROSTER_SHA256 = '186d9594bc6af2fc4eeffdb895547c16bc0ac3bf443c410c92e2c18614dd5425'
++CURRENT_NATIVE_SHA256 = '38ef82773e04943365b8a16fbe420fdb345fc493ed1a4e5ae20c2b2055cd77e9'
++CURRENT_REGISTRY_SHA256 = '2e3c2c5a355fe61d1358e4c9b591d1b0cf868a63a8d45ea857fac4225540f4e4'
++HISTORICAL_REGISTRY_GUARD_SHA256 = '2e6f389f8c25f8b3298979a58ce3eda54980439a2dda4342427f7a6b51f8859e'
++
++
++def current_roster():
++    raw = CURRENT_ROSTER.read_bytes()
++    assert hashlib.sha256(raw).hexdigest() == CURRENT_ROSTER_SHA256
++    value = json.loads(raw)
++    assert set(value) == {'schema', 'tests'}
++    assert value['schema'] == 'trnm-authenticated-current-roster-v1'
++    names = value['tests']
++    assert names == sorted(set(names)) and len(names) == 127
++    assert sum(name.startswith(POSTWRITE_PREFIX) for name in names) == 49
++    return names
++
++
++def current_native_fixture():
++    raw = gzip.decompress((CURRENT_EVIDENCE / 'native-authenticated.log.gz').read_bytes())
++    assert hashlib.sha256(raw).hexdigest() == CURRENT_NATIVE_SHA256
++    return raw.decode()
++
+ LEGACY_TAIL_PREFIX = PREFIX + 'history_arithmetic::legacy_activation_tail::tests::'
+ LEGACY_TAIL_CONTROLS = {
+     LEGACY_TAIL_PREFIX + 'disabled_paths_do_not_read_diagnostic_clocks',
+@@ -36,7 +61,7 @@ LEGACY_TAIL_CONTROLS = {
+ }
+ 
+ # Frozen verbatim from the c3e53d2 workflow. These four observations established
+-# the historical 97-control roster; they cannot establish the current 103.
++# the historical 97-control roster; they cannot establish the current 127.
+ HISTORICAL_LOG_SHA256 = {
+     127701926958: '244f253489f52e62e8985323ca2041de293039981b1c2bd86f1ddab6a5f0e692',
+     127701927002: 'e51a5d58671626c3d6e48b4e908a18724da393de0bcedd7c1d1ffeece2a4dc62',
+@@ -87,7 +112,7 @@ def check(log, old=False, historical=False):
+     with tempfile.TemporaryDirectory(prefix='auth-suite-guard-') as directory:
+         path = Path(directory) / 'native.log'
+         path.write_text(log)
+-        inline = subprocess.run([sys.executable, '-B', '-c', code, str(path)], capture_output=True)
++        inline = subprocess.run([sys.executable, '-B', '-c', code, str(path)], cwd=ROOT, capture_output=True)
+     return grep.returncode == 0, inline.returncode == 0
+ 
+ 
+@@ -100,31 +125,42 @@ def fixture(job):
+ 
+ def synthetic_current_parser_control():
+     """Parser input only: it is not a native observation or execution receipt."""
+-    names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
+-                       fixture(JOBS[0]), re.M)
+-    names += sorted(LEGACY_TAIL_CONTROLS)
+     return ('SYNTHETIC READER CONTROL ONLY; no native execution\n'
+-            + ''.join(f'test {name} ... ok\n' for name in names)
+-            + 'test result: ok. 103 passed; 0 failed; 0 ignored; 0 measured; '
++            + ''.join(f'test {name} ... ok\n' for name in current_roster())
++            + 'test result: ok. 127 passed; 0 failed; 0 ignored; 0 measured; '
+               '0 filtered out; finished in 0.00s\n')
+ 
+ 
+-def registry_fixtures():
++def registry_fixtures(historical=False):
+     result = {}
+     for crate, expected in REGISTRY_SHA256.items():
+         raw = gzip.decompress((REGISTRY_EVIDENCE / f'{crate}-registry.log.gz').read_bytes())
+         assert hashlib.sha256(raw).hexdigest() == expected, crate + ' native registry fixture changed'
+         result[crate] = raw.decode()
++    if not historical:
++        # Current node registry is an actual default-feature release libtest
++        # observation; the unchanged m06 fixture remains explicitly historical.
++        # Neither is a complete current workspace execution qualification.
++        raw = gzip.decompress((CURRENT_EVIDENCE / 'node-registry.log.gz').read_bytes())
++        assert hashlib.sha256(raw).hexdigest() == CURRENT_REGISTRY_SHA256
++        result['node'] = raw.decode()
+     return result
+ 
+ 
+-def workspace_registry_check(registries, old=False):
++def workspace_registry_check(registries, old=False, historical=False):
+     workflow = WORKSPACE_WORKFLOW.read_text()
+     code = textwrap.dedent(workflow.split("<<'PYREGISTRY'\n", 1)[1].split('        PYREGISTRY\n', 1)[0])
++    current = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", 49)'
++    assert current in code
++    if historical:
++        code = code.replace(current, current.replace(', 49)', ', 25)'))
++        assert hashlib.sha256(code.encode()).hexdigest() == HISTORICAL_REGISTRY_GUARD_SHA256
+     if old:
+-        corrected = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", 25)'
++        count = 25 if historical else 49
++        wanted = 23 if historical else 25
++        corrected = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", {count})'
+         assert corrected in code
+-        code = code.replace(corrected, corrected.replace(', 25)', ', 23)'))
++        code = code.replace(corrected, corrected.replace(f', {count})', f', {wanted})'))
+     with tempfile.TemporaryDirectory(prefix='workspace-registry-guard-') as directory:
+         controls = Path(directory) / 'semantic-controls'
+         controls.mkdir()
+@@ -151,21 +187,22 @@ class AuthenticatedSuiteCount(unittest.TestCase):
+         owned = {path: re.findall(r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(',
+                                  path.read_text()) for path in files}
+         source = [name for names in owned.values() for name in names]
++        current = current_roster()
++        self.assertEqual(len(source), 127)
++        self.assertCountEqual(source, [name.rsplit('::', 1)[1] for name in current])
+         tail = store / 'native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs'
+-        added = owned[tail]
+-        self.assertEqual(len(source), 103)
+-        self.assertEqual(len(added), 6)
+-        self.assertCountEqual([LEGACY_TAIL_PREFIX + name for name in added],
++        self.assertCountEqual([LEGACY_TAIL_PREFIX + name for name in owned[tail]],
+                               LEGACY_TAIL_CONTROLS)
+-        retained = [name for path, names in owned.items() if path != tail for name in names]
+-        self.assertEqual(len(retained), 97)
++        executed = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
++                              current_native_fixture(), re.M)
++        self.assertCountEqual(current, executed)
++        self.assertEqual(check(current_native_fixture()), (True, True))
+         for job in JOBS:
+             names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', fixture(job), re.M)
+             self.assertEqual(len(names), 97)
+             self.assertEqual(len(set(names)), 97)
+-            historical_names = [name.rsplit('::', 1)[1] for name in names]
+-            self.assertCountEqual(retained, historical_names)
+-            self.assertCountEqual(source, historical_names + added)
++            self.assertTrue(set(names) < set(current))
++            self.assertEqual(len(set(current) - set(names)), 30)
+             self.assertEqual(sum('::post_write_readback::tests::' in name for name in names), 25)
+             self.assertEqual(sum('::current_accounts_tests::' in name for name in names), 5)
+ 
+@@ -184,7 +221,7 @@ class AuthenticatedSuiteCount(unittest.TestCase):
+ 
+     def test_reduced_extra_failed_ignored_partial_and_repeated_summary_rejected(self):
+         for log, historical, count in ((fixture(JOBS[0]), True, 97),
+-                                       (synthetic_current_parser_control(), False, 103)):
++                                       (synthetic_current_parser_control(), False, 127)):
+             changes = [(f'{count} passed', f'{value} passed')
+                        for value in (count - 6, count - 1, count + 1)]
+             changes += [('0 failed', '1 failed'), ('0 ignored', '1 ignored'),
+@@ -215,15 +252,19 @@ class AuthenticatedSuiteCount(unittest.TestCase):
+     def test_each_new_control_must_be_unique_named_and_successful(self):
+         log = synthetic_current_parser_control()
+         self.assertEqual(check(log), (True, True))
+-        for name in LEGACY_TAIL_CONTROLS:
++        historical = set(re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
++                                    fixture(JOBS[0]), re.M))
++        added = set(current_roster()) - historical
++        self.assertEqual(len(added), 30)
++        for name in added:
+             line = f'test {name} ... ok\n'
+-            duplicate = next(other for other in LEGACY_TAIL_CONTROLS if other != name)
++            duplicate = next(other for other in added if other != name)
+             changes = {
+                 'missing': log.replace(line, '', 1),
+                 'extra-duplicate': log + line,
+                 'same-count-duplicate': log.replace(line, f'test {duplicate} ... ok\n', 1),
+                 'substitute': log.replace(line, f'test {LEGACY_TAIL_PREFIX}unexpected_control ... ok\n', 1),
+-                'wrong-group': log.replace(line, line.replace(LEGACY_TAIL_PREFIX, PREFIX + 'other::'), 1),
++                'wrong-group': log.replace(line, line.replace(PREFIX, PREFIX + 'other::'), 1),
+                 'failed': log.replace(line, line.replace(' ... ok', ' ... FAILED'), 1),
+                 'ignored': log.replace(line, line.replace(' ... ok', ' ... ignored'), 1),
+             }
+@@ -243,26 +284,46 @@ class AuthenticatedSuiteCount(unittest.TestCase):
+ 
+ 
+ class WorkspaceSemanticRegistry(unittest.TestCase):
+-    def test_actual_native_registry_passes_current_guard_and_rejects_stale_count(self):
++    def test_actual_current_node_registry_selects_all_current_controls(self):
+         registries = registry_fixtures()
+         result, selected = workspace_registry_check(registries)
+         self.assertEqual(result.returncode, 0, result.stderr)
+         report = json.loads(result.stdout)
+-        self.assertEqual(report['selected_count'], 60)
+-        self.assertEqual(len(selected.splitlines()), 60)
+-        self.assertEqual(len(set(selected.splitlines())), 60)
++        self.assertEqual(report['selected_count'], 84)
++        self.assertEqual(len(selected.splitlines()), 84)
++        self.assertEqual(len(set(selected.splitlines())), 84)
+         self.assertEqual({group['group']: group['expected_count'] for group in report['groups']}, {
+             'full-root-arithmetic': 5, 'unchanged-canonical-map': 6, 'account-root-digest': 3,
+             'growth-return-observations': 2, 'canonical-ascii': 7, 'reorg-tail': 6,
+             'direct-append-readback': 2, 'current-sql-root': 1,
+-            'prepared-current-history': 3, 'postwrite-readback': 25,
++            'prepared-current-history': 3, 'postwrite-readback': 49,
+         })
+         old, omitted = workspace_registry_check(registries, old=True)
+         self.assertNotEqual(old.returncode, 0)
++        self.assertIn('postwrite-readback: expected 25 actual registered controls, got 49', old.stderr)
++        self.assertIsNone(omitted)
++
++    def test_historical_registry_and_four_logs_keep_their_original_25_controls(self):
++        registries = registry_fixtures(historical=True)
++        result, selected = workspace_registry_check(registries, historical=True)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(json.loads(result.stdout)['selected_count'], 60)
++        observed = [line.split('\t')[2] for line in selected.splitlines()
++                    if line.split('\t')[1] == 'postwrite-readback']
++        self.assertEqual(len(observed), 25)
++        for job in JOBS:
++            executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$', fixture(job), re.M)
++            self.assertCountEqual(observed, executed)
++        old, omitted = workspace_registry_check(registries, old=True, historical=True)
++        self.assertNotEqual(old.returncode, 0)
+         self.assertIn('postwrite-readback: expected 23 actual registered controls, got 25', old.stderr)
+         self.assertIsNone(omitted)
++        current, omitted = workspace_registry_check(registries)
++        self.assertNotEqual(current.returncode, 0)
++        self.assertIn('postwrite-readback: expected 49 actual registered controls, got 25', current.stderr)
++        self.assertIsNone(omitted)
+ 
+-    def test_selected_postwrite_roster_matches_source_and_four_executed_native_logs(self):
++    def test_current_postwrite_roster_matches_source_and_current_native_log(self):
+         result, selected = workspace_registry_check(registry_fixtures())
+         self.assertEqual(result.returncode, 0, result.stderr)
+         observed = [line.split('\t')[2] for line in selected.splitlines()
+@@ -272,11 +333,13 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
+         for path, module in re.findall(r'#\[path = "([^"]+)"\]\s*mod (\w+);', source.read_text()):
+             expected += [POSTWRITE_PREFIX + module + '::' + name for name in
+                          re.findall(r'#\[test\]\s*fn (\w+)\(', (source.parent / path).read_text())]
+-        self.assertEqual(len(expected), 25)
++        self.assertEqual(len(expected), 49)
+         self.assertCountEqual(observed, expected)
+-        for job in JOBS:
+-            executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$', fixture(job), re.M)
+-            self.assertCountEqual(observed, executed)
++        self.assertCountEqual(expected, [name for name in current_roster()
++                                        if name.startswith(POSTWRITE_PREFIX)])
++        executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$',
++                              current_native_fixture(), re.M)
++        self.assertCountEqual(observed, executed)
+ 
+     def test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected(self):
+         registries = registry_fixtures()
+diff --git a/scripts/ci/test_w1_lifetime_current_observation.py b/scripts/ci/test_w1_lifetime_current_observation.py
+index 3f465c1..818c5f0 100644
+--- a/scripts/ci/test_w1_lifetime_current_observation.py
++++ b/scripts/ci/test_w1_lifetime_current_observation.py
+@@ -86,8 +86,11 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
+         self.assertEqual(lock['bytes'], 42127)
+         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
+         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
++        self.assertEqual(self.contract['sources'][7]['path'],
++                         'trillionnium/crates/trnm-pon-node/src/store.rs')
++        self.assertEqual(self.contract['sources'][7]['bytes'], 397703)
+         self.assertEqual(self.contract['sources'][7]['current_sha256'],
+-                         '9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820')
++                         'cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9')
+         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
+                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
+ 
+diff --git a/scripts/w1_lifetime_current_observation.py b/scripts/w1_lifetime_current_observation.py
+index b7f0125..3c87a7c 100644
+--- a/scripts/w1_lifetime_current_observation.py
++++ b/scripts/w1_lifetime_current_observation.py
+@@ -19,7 +19,7 @@ from types import FunctionType, ModuleType
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
+-CONTRACT_SHA256 = "ea0f8e2a0c82a01c0601e627cf64d8df34682457904fb00a65639138a0be46fa"
++CONTRACT_SHA256 = "85a2f56206ba46d79a2d75ab821da1a4dfffbc76e88e200decbdf4594eaac6d4"
+ # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
+ # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
+ LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
+diff --git a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs
+index 2a15589..616b493 100644
+--- a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs
++++ b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs
+@@ -2,7 +2,7 @@
+ //! The ordinary no-scope verifier remains independent and unchanged.
+ use super::{child_with_lifts, empty_hashes, storage, Kind, LiftCache, Node, NodeReader, Root};
+ use crate::account_archive_execution::state_witness::CurrentAccounts;
+-use crate::store::native_authenticated::GraphAccess;
++use crate::store::native_authenticated::{GraphAccess, GraphScope};
+ use crate::{ensure, Error, Result};
+ use std::collections::{BTreeMap, BTreeSet};
+ use trnm_protocol::pon_wire::Hash;
+@@ -158,6 +158,9 @@ impl PendingFrontier {
+ }
+ 
+ pub(crate) struct VerifiedGraph {
++    scope: GraphScope,
++    record: Hash,
++    root: Root,
+     pending: Option<Frontier>,
+     source_used: Option<Hash>,
+     #[cfg(test)]
+@@ -165,6 +168,13 @@ pub(crate) struct VerifiedGraph {
+ }
+ 
+ impl VerifiedGraph {
++    /// Bind this completed traversal to its exact original owner and actual
++    /// immutable input. An owned result cannot be reinstalled in a later scope,
++    /// even when that scope sees the same Record, Root and frontier source.
++    pub(crate) fn is_for(&self, scope: &GraphScope, record: Hash, root: &Root) -> bool {
++        self.scope.same_scope(scope) && self.record == record && self.root == *root
++    }
++
+     pub(crate) fn source_used(&self) -> Option<Hash> {
+         self.source_used
+     }
+@@ -315,12 +325,18 @@ pub(crate) fn verify(
+         "NATIVE_ACCOUNT_STATE",
+     )
+     .map_err(Error::local_integrity)?;
++    // Release the actual SQL cursor before moving the original owner marker.
++    // The same reader was always dropped before the caller's final callback.
++    drop(reader);
+     Ok(VerifiedGraph {
++        record: access.record_id(),
++        root: root.clone(),
+         pending: pending
+             .map(|pending| pending.finish(seen.len()))
+             .transpose()?,
+         source_used,
+         #[cfg(test)]
+         hits,
++        scope: access.into_scope(),
+     })
+ }
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+index 4a17366..e67c78d 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+@@ -28,8 +28,8 @@ pub(crate) use history_arithmetic::{
+     StageObservation,
+ };
+ mod post_write_readback;
+-pub(crate) use post_write_readback::GraphAccess;
+ pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
++pub(crate) use post_write_readback::{GraphAccess, GraphScope};
+ 
+ #[cfg(test)]
+ mod current_accounts_tests;
+@@ -773,14 +773,22 @@ pub(super) fn verify_state_with_readback(
+                 if !scope.frontier_current(db, settings, &record, source)? {
+                     return verify_state_with_cache(db, settings, block, state, progress, cache);
+                 }
++                #[cfg(test)]
++                let subtree_hits = scoped_graph.as_ref().unwrap().hits();
++                // Complete only this already nominated target after its last
++                // callback and fresh original-source fence. The typed result
++                // binds the exact Record.id and full Root; it never nominates
++                // another record or becomes a source frontier.
++                let completed = scoped_graph.take().ok_or("NATIVE_ACCOUNT_FRONTIER")?;
++                if !scope.remember_completed(db, settings, record, completed)? {
++                    return verify_state_with_cache(db, settings, block, state, progress, cache);
++                }
+                 scope.consumed = true;
+                 #[cfg(test)]
+                 {
+                     scope.partial_uses += 1;
+-                    scope.subtree_hits += scoped_graph.as_ref().unwrap().hits();
++                    scope.subtree_hits += subtree_hits;
+                 }
+-                // Partial results never nominate a new parent, retain a new
+-                // whole-Root receipt, replace the source or expand its frontier.
+             } else {
+                 scope.remember(
+                     db,
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs
+index 4b35768..8440e83 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs
+@@ -1,16 +1,32 @@
+ //! Same-transaction graph readback, ported from the existing c165 owner.
+ //! No receipt survives its original writer, connection, SQL epoch or schema.
+ use super::{CurrentAccountGraph, Record};
+-use crate::account_archive_prototype::native_store::{scoped_readback::Frontier, Root};
++use crate::account_archive_prototype::native_store::{
++    scoped_readback::{Frontier, VerifiedGraph},
++    Root,
++};
+ use crate::{Error, Result, Settings};
+ use rusqlite::Connection;
+ use std::collections::BTreeMap;
++use std::rc::Rc;
+ use trnm_mvcc_fee::pon_executor::State;
+ use trnm_protocol::pon_wire::Hash;
+ use trnm_sqlite_io_boundary::TransactionScope;
+ 
+ type ReadbackSchema = Vec<(String, String, String, String, i64, Option<String>)>;
+ 
++/// An opaque identity for this exact original owner, not a database/root key.
++/// No public constructor, Clone or serialization can mint/re-stamp this value.
++/// A retained result keeps the old allocation alive, so a later owner's token
++/// cannot compare equal even after the old owner was dropped or SQL did ABA.
++pub(crate) struct GraphScope(Rc<()>);
++
++impl GraphScope {
++    pub(crate) fn same_scope(&self, other: &Self) -> bool {
++        Rc::ptr_eq(&self.0, &other.0)
++    }
++}
++
+ /// Only this original writer issues access, and only for one of its original
+ /// four nominated records after the private complete-State comparison. Pending
+ /// frontiers have no constructor for this loan and cannot consume themselves.
+@@ -18,6 +34,7 @@ pub(crate) struct GraphAccess<'input, 'scope> {
+     db: &'scope Connection,
+     binding: CurrentAccountGraph<'input>,
+     frontier: Option<&'scope Frontier>,
++    scope: GraphScope,
+ }
+ 
+ impl GraphAccess<'_, '_> {
+@@ -40,6 +57,10 @@ impl GraphAccess<'_, '_> {
+     pub(crate) fn frontier(&self) -> Option<&Frontier> {
+         self.frontier
+     }
++
++    pub(crate) fn into_scope(self) -> GraphScope {
++        self.scope
++    }
+ }
+ 
+ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
+@@ -83,6 +104,30 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
+     Ok(Some(rows.collect::<rusqlite::Result<_>>()?))
+ }
+ 
++/// A completed result bound to one of the four original named records. A
++/// frontier-derived result can only borrow its ORIGINAL source; it never
++/// becomes a source frontier or crosses even a proven metadata write.
++#[derive(Debug, PartialEq, Eq)]
++struct CompletedGraph {
++    record: Record,
++    source: Option<Hash>,
++}
++
++impl CompletedGraph {
++    fn complete(record: Record) -> Self {
++        Self {
++            record,
++            source: None,
++        }
++    }
++
++    fn source_current(&self, frontier: Option<&Frontier>) -> bool {
++        self.source.is_none_or(|source| {
++            frontier.is_some_and(|frontier| frontier.source_record() == source)
++        })
++    }
++}
++
+ /// At most four named graph results inside one ordinary authenticated admission
+ /// or reorganization WRITE transaction: child, genesis, that verified child's
+ /// parent and the actual active tip nominated by the existing Node reader.
+@@ -99,10 +144,11 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
+ pub(in crate::store) struct PostWriteReadback<'db> {
+     db: &'db Connection,
+     scope: TransactionScope<'db>,
++    graph_scope: GraphScope,
+     context: [Hash; 3],
+     schema: ReadbackSchema,
+     ids: [Option<Hash>; 4],
+-    graphs: [Option<Record>; 4],
++    graphs: [Option<CompletedGraph>; 4],
+     frontier: Option<Frontier>,
+     enabled: bool,
+     pub(super) consumed: bool,
+@@ -143,9 +189,10 @@ impl<'db> PostWriteReadback<'db> {
+                             settings.genesis(),
+                         ]
+                     && scope.graphs[0].as_ref().is_some_and(|verified| {
+-                        record.parent == Some(verified.block)
+-                            && record.parent_commitment == Some(verified.id)
+-                            && record.accounts == verified.accounts
++                        verified.source.is_none()
++                            && record.parent == Some(verified.record.block)
++                            && record.parent_commitment == Some(verified.record.id)
++                            && record.accounts == verified.record.accounts
+                     })
+                     && actual_deltas
+                         .iter()
+@@ -186,7 +233,7 @@ impl<'db> PostWriteReadback<'db> {
+                     // verified before our sole passive metadata INSERT.
+                     // Current child State/record/deltas, final callback and the
+                     // original no-write scope are still checked before any hit.
+-                    next.graphs[0] = Some(record.clone());
++                    next.graphs[0] = Some(CompletedGraph::complete(record.clone()));
+                     next.ids[2] = record.parent;
+                     // Move only the original bounded frontier sealed by that
+                     // SAME complete parent graph. Its original source Record.id
+@@ -201,7 +248,8 @@ impl<'db> PostWriteReadback<'db> {
+                         .as_ref()
+                         .zip(previous.graphs[0].as_ref())
+                         .is_some_and(|(frontier, parent)| {
+-                            frontier.is_for(parent.id, &parent.accounts)
++                            parent.source.is_none()
++                                && frontier.is_for(parent.record.id, &parent.record.accounts)
+                         })
+                     {
+                         next.frontier = previous.frontier.take();
+@@ -357,6 +405,7 @@ impl<'db> PostWriteReadback<'db> {
+         Ok(Some(Self {
+             db,
+             scope,
++            graph_scope: GraphScope(Rc::new(())),
+             context: [
+                 settings.network(),
+                 settings.parameters(),
+@@ -449,11 +498,10 @@ impl<'db> PostWriteReadback<'db> {
+         // content-addressed account Root in the same no-write SQL epoch: empty
+         // confirmation blocks can have different working state but share it.
+         Ok(self.ids.contains(&Some(record.block))
+-            && self
+-                .graphs
+-                .iter()
+-                .flatten()
+-                .any(|verified| verified.accounts == record.accounts))
++            && self.graphs.iter().flatten().any(|verified| {
++                verified.source_current(self.frontier.as_ref())
++                    && verified.record.accounts == record.accounts
++            }))
+     }
+ 
+     pub(super) fn graph_access<'input>(
+@@ -477,6 +525,7 @@ impl<'db> PostWriteReadback<'db> {
+             db: self.db,
+             binding,
+             frontier: self.frontier.as_ref(),
++            scope: GraphScope(Rc::clone(&self.graph_scope.0)),
+         }))
+     }
+ 
+@@ -530,13 +579,46 @@ impl<'db> PostWriteReadback<'db> {
+             }
+             for (id, graph) in self.ids.iter().zip(&mut self.graphs) {
+                 if *id == Some(record.block) {
+-                    *graph = Some(record.clone());
++                    *graph = Some(CompletedGraph::complete(record.clone()));
+                 }
+             }
+         }
+         Ok(())
+     }
+ 
++    /// The graph verifier has completed every exposed edge and account check.
++    /// Seal only after its original final callback and a fresh original-source
++    /// fence. These four slots are the existing named record slots: this path
++    /// never nominates a parent, adds a source, replaces a frontier, or persists
++    /// data. A later use still rereads full State/Record/Delta and checks the same
++    /// original writer and actual schema before and after its final callback.
++    pub(super) fn remember_completed(
++        &mut self,
++        db: &Connection,
++        settings: &Settings,
++        record: Record,
++        completed: VerifiedGraph,
++    ) -> Result<bool> {
++        let source = completed.source_used().ok_or("NATIVE_ACCOUNT_FRONTIER")?;
++        crate::ensure(
++            completed.is_for(&self.graph_scope, record.id, &record.accounts),
++            "NATIVE_ACCOUNT_FRONTIER",
++        )
++        .map_err(Error::local_integrity)?;
++        if !self.frontier_current(db, settings, &record, source)? {
++            return Ok(false);
++        }
++        for (id, slot) in self.ids.iter().zip(&mut self.graphs) {
++            if *id == Some(record.block) && slot.is_none() {
++                *slot = Some(CompletedGraph {
++                    record: record.clone(),
++                    source: Some(source),
++                });
++            }
++        }
++        Ok(true)
++    }
++
+     pub(super) fn finish<T>(&self, result: Result<T>) -> Result<T> {
+         // Even a native cancellation/error cannot hide a replaced transaction.
+         match self.scope.same_write_snapshot(self.db) {
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs
+index 542a192..12f0959 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs
+@@ -155,7 +155,7 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
+         .graphs
+         .iter()
+         .flatten()
+-        .all(|record| record.accounts != current.accounts));
++        .all(|graph| graph.record.accounts != current.accounts));
+     let ids = scope.ids;
+     let source = scope.frontier.as_ref().unwrap().source_record();
+     let mut original = 0u64;
+@@ -179,12 +179,12 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
+     assert!(scope.subtree_hits >= 2);
+     assert!(scope.consumed);
+     assert_eq!(scope.ids, ids);
+-    assert!(scope.graphs[2].is_none());
++    assert_eq!(scope.graphs[2].as_ref().unwrap().source, Some(source));
+     assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
+     verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
+-    assert_eq!(scope.partial_uses, 2); // Partial is not a new whole-Root receipt.
+-    assert_eq!(scope.hits, 0);
+-    assert!(scope.graphs[2].is_none());
++    assert_eq!(scope.partial_uses, 1); // The original frontier was used only once.
++    assert_eq!(scope.hits, 1); // The same four-slot completed result was borrowed.
++    assert_eq!(scope.graphs[2].as_ref().unwrap().source, Some(source));
+ 
+     let before = (graphs(node), scope.partial_uses, scope.subtree_hits);
+     for _ in 0..2 {
+@@ -237,7 +237,7 @@ fn real_different_roots_use_bounded_subtrees_without_promoting_partial_results()
+         let expected = reference(node, f.parent, &changed, &mut || Ok(())).unwrap_err();
+         let error = verify(node, f.parent, &changed, &mut scope, &mut || Ok(())).unwrap_err();
+         assert_eq!(error.to_string(), expected.to_string(), "{change}");
+-        assert_eq!(scope.partial_uses, 2);
++        assert_eq!(scope.partial_uses, 1);
+     }
+     node.db.execute_batch("ROLLBACK").unwrap();
+ }
+@@ -697,7 +697,7 @@ fn metadata_frontier_rejects_another_real_source_even_when_its_root_matches() {
+         let mut other = capture(node, foreign_id);
+         verify(node, foreign_id, &foreign_state, &mut other, &mut || Ok(())).unwrap();
+         let foreign = other.frontier.take().unwrap();
+-        let original = prepared.graph.graphs[0].as_ref().unwrap();
++        let original = &prepared.graph.graphs[0].as_ref().unwrap().record;
+         assert_ne!(foreign.source_record(), original.id);
+         assert_eq!(
+             load_observed(&node.db, foreign_id, None).unwrap().accounts == original.accounts,
+@@ -907,7 +907,7 @@ fn metadata_frontier_keeps_partial_cancellation_and_final_callback_readback() {
+     .unwrap();
+     assert!(scope.partial_uses > 0);
+     assert!(scope.subtree_hits > 0);
+-    assert!(scope.graphs[3].is_none());
++    assert!(scope.graphs[3].as_ref().unwrap().source.is_some());
+     drop(scope);
+     node.db.execute_batch("ROLLBACK").unwrap();
+ 
+@@ -1046,3 +1046,367 @@ fn metadata_frontier_extra_index_programs_cannot_cross_the_native_insert() {
+         node.db.execute_batch("ROLLBACK").unwrap();
+     }
+ }
++
++#[test]
++fn completed_different_root_reuses_original_scope_without_new_frontier() {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++    let mut scope = source_scope(&f);
++    let original_ids = scope.ids;
++    let frontier = scope.frontier.as_ref().unwrap();
++    let source = frontier.source_record();
++    let slots = frontier.occupied_slots();
++    let before_graphs = graphs(node);
++    let mut full = 0;
++    reference(node, f.parent, &f.before, &mut || {
++        full += 1;
++        Ok(())
++    })
++    .unwrap();
++    let mut first = 0;
++    verify(node, f.parent, &f.before, &mut scope, &mut || {
++        first += 1;
++        Ok(())
++    })
++    .unwrap();
++    let mut repeated = 0;
++    verify(node, f.parent, &f.before, &mut scope, &mut || {
++        repeated += 1;
++        Ok(())
++    })
++    .unwrap();
++    eprintln!(
++        "completed_graph_actual_callbacks full={full} first={first} repeated={repeated} actual_graphs={}",
++        graphs(node) - before_graphs
++    );
++    assert!(first > 5 && first < full);
++    assert!(repeated > 0 && repeated < first);
++    assert_eq!(scope.ids, original_ids);
++    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
++    assert_eq!(scope.frontier.as_ref().unwrap().occupied_slots(), slots);
++    assert_eq!(scope.graphs.len(), 4);
++    scope.require_unchanged_after_last_write(&node.db).unwrap();
++    drop(scope);
++    node.db.execute_batch("ROLLBACK").unwrap();
++}
++
++#[test]
++fn completed_graph_keeps_current_state_record_delta_and_schema_fences() {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    for effect in [
++        "same-row",
++        "no-row",
++        "record-aba",
++        "delta-no-row",
++        "schema-aba",
++        "transaction-aba",
++    ] {
++        node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++        let mut scope = source_scope(&f);
++        verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
++        assert!(scope.graphs[2].as_ref().unwrap().source.is_some());
++        let source = scope.frontier.as_ref().unwrap().source_record();
++        let actual = load_observed(&node.db, f.parent, None).unwrap();
++        let before = graphs(node);
++        match effect {
++            "same-row" => {
++                node.db
++                    .execute("UPDATE archive_nodes SET data=data", [])
++                    .unwrap();
++            }
++            "no-row" => {
++                node.db
++                    .execute("UPDATE archive_nodes SET data=data WHERE 0", [])
++                    .unwrap();
++            }
++            "record-aba" => {
++                let bytes: Vec<u8> = node
++                    .db
++                    .query_row(
++                        "SELECT data FROM native_state_commitments WHERE block=?",
++                        [f.parent.as_slice()],
++                        |row| row.get(0),
++                    )
++                    .unwrap();
++                node.db
++                    .execute(
++                        "UPDATE native_state_commitments SET data=? WHERE block=?",
++                        rusqlite::params![b"changed".as_slice(), f.parent.as_slice()],
++                    )
++                    .unwrap();
++                node.db
++                    .execute(
++                        "UPDATE native_state_commitments SET data=? WHERE block=?",
++                        rusqlite::params![bytes, f.parent.as_slice()],
++                    )
++                    .unwrap();
++            }
++            "delta-no-row" => {
++                node.db.execute("DELETE FROM deltas WHERE 0", []).unwrap();
++            }
++            "schema-aba" => {
++                node.db.execute_batch(
++                    "CREATE TEMP VIEW completed_transient AS SELECT 1; DROP VIEW completed_transient"
++                ).unwrap();
++            }
++            "transaction-aba" => {
++                node.db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
++            }
++            _ => unreachable!(),
++        }
++        let error = verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap_err();
++        eprintln!("completed_graph_actual_fence effect={effect} error={error}");
++        assert!(
++            error.to_string().starts_with("NATIVE_POST_WRITE_"),
++            "{effect}: {error}"
++        );
++        assert_eq!(graphs(node), before, "{effect}");
++        // The same visible record/root after ABA never restores the old scope.
++        assert_eq!(load_observed(&node.db, f.parent, None).unwrap(), actual);
++        assert!(scope
++            .frontier
++            .as_ref()
++            .is_none_or(|frontier| { frontier.source_record() == source }));
++        drop(scope);
++        node.db.execute_batch("ROLLBACK").unwrap();
++    }
++}
++
++#[test]
++fn completed_graph_hit_keeps_original_entry_final_and_outer_callback_refusals() {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++    let mut scope = source_scope(&f);
++    verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
++    let mut callbacks = 0;
++    verify(node, f.parent, &f.before, &mut scope, &mut || {
++        callbacks += 1;
++        Ok(())
++    })
++    .unwrap();
++    assert!(callbacks >= 2);
++    drop(scope);
++    node.db.execute_batch("ROLLBACK").unwrap();
++
++    for refusal in ["cancel", "deadline", "no-row-write", "remove-current-root"] {
++        for at in [1, callbacks] {
++            node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++            let mut scope = source_scope(&f);
++            verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
++            let root = load_observed(&node.db, f.parent, None)
++                .unwrap()
++                .accounts
++                .node
++                .unwrap();
++            let before_hits = scope.hits;
++            let mut current = 0;
++            let error = verify(node, f.parent, &f.before, &mut scope, &mut || {
++                current += 1;
++                if current == at {
++                    match refusal {
++                        "cancel" => return Err("COMPLETED_GRAPH_CANCELLED".into()),
++                        "deadline" => return Err("PUBLIC_REQUEST_DEADLINE".into()),
++                        "no-row-write" => {
++                            node.db
++                                .execute("UPDATE archive_nodes SET data=data WHERE 0", [])?;
++                        }
++                        "remove-current-root" => {
++                            assert_eq!(
++                                node.db.execute(
++                                    "DELETE FROM archive_nodes WHERE id=?",
++                                    [root.as_slice()],
++                                )?,
++                                1
++                            );
++                        }
++                        _ => unreachable!(),
++                    }
++                }
++                Ok(())
++            })
++            .unwrap_err();
++            assert_eq!(scope.hits, before_hits, "{refusal} at {at}");
++            let expected = match refusal {
++                "cancel" => "COMPLETED_GRAPH_CANCELLED",
++                "deadline" => "PUBLIC_REQUEST_DEADLINE",
++                _ => "NATIVE_POST_WRITE_CHANGED",
++            };
++            assert_eq!(error.to_string(), expected, "{refusal} at {at}");
++            drop(scope);
++            node.db.execute_batch("ROLLBACK").unwrap();
++        }
++    }
++}
++
++#[test]
++fn completed_graph_target_and_original_source_are_not_replaceable() {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++    let mut scope = source_scope(&f);
++    let record = load_observed(&node.db, f.parent, None).unwrap();
++    let ids = scope.ids;
++    let source = scope.frontier.as_ref().unwrap().source_record();
++    let access = scope
++        .graph_access(
++            &node.db,
++            &node.settings,
++            CurrentAccountGraph {
++                record: &record,
++                state: &f.before,
++            },
++        )
++        .unwrap()
++        .unwrap();
++    let completed = crate::account_archive_prototype::native_store::scoped_readback::verify(
++        access,
++        &mut || Ok(()),
++        Some(&node.authenticated_arithmetic.lifts),
++        None,
++    )
++    .unwrap();
++    let mut wrong = record.clone();
++    wrong.id[0] ^= 1;
++    let error = scope
++        .remember_completed(&node.db, &node.settings, wrong, completed)
++        .unwrap_err();
++    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_FRONTIER");
++    assert!(scope.graphs[2].is_none());
++    assert_eq!(scope.ids, ids);
++    assert_eq!(scope.frontier.as_ref().unwrap().source_record(), source);
++
++    verify(node, f.parent, &f.before, &mut scope, &mut || Ok(())).unwrap();
++    assert!(scope.matches(&node.db, &node.settings, &record).unwrap());
++    let original = scope.frontier.take().unwrap();
++    // There is no production setter for this test-only corruption. Even an
++    // exact same target Root cannot borrow a missing source certificate.
++    assert!(!scope.matches(&node.db, &node.settings, &record).unwrap());
++    scope.frontier = Some(original);
++    assert!(scope.matches(&node.db, &node.settings, &record).unwrap());
++    assert_eq!(scope.ids, ids);
++    drop(scope);
++    node.db.execute_batch("ROLLBACK").unwrap();
++}
++
++#[test]
++fn completed_graph_never_survives_the_original_transaction() {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    let mut observed = Vec::new();
++    for _ in 0..2 {
++        node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++        let mut scope = source_scope(&f);
++        let mut first = 0;
++        verify(node, f.parent, &f.before, &mut scope, &mut || {
++            first += 1;
++            Ok(())
++        })
++        .unwrap();
++        let mut repeated = 0;
++        verify(node, f.parent, &f.before, &mut scope, &mut || {
++            repeated += 1;
++            Ok(())
++        })
++        .unwrap();
++        assert!(repeated < first);
++        observed.push((first, repeated));
++        drop(scope);
++        node.db.execute_batch("COMMIT").unwrap();
++    }
++    assert_eq!(observed[0], observed[1]);
++    // An ordinary independent fresh reader has no loan from either scope.
++    let mut full = 0;
++    reference(node, f.parent, &f.before, &mut || {
++        full += 1;
++        Ok(())
++    })
++    .unwrap();
++    assert!(full > observed[0].0);
++}
++
++fn completed_graph_rejects_another_original_owner(transaction_aba: bool) {
++    let f = two_roots();
++    let node = &f.fixture.node;
++    node.db.execute_batch("BEGIN IMMEDIATE").unwrap();
++    let mut original = source_scope(&f);
++    let record = load_observed(&node.db, f.parent, None).unwrap();
++    let original_source = original.frontier.as_ref().unwrap().source_record();
++    let original_ids = original.ids;
++    let access = original
++        .graph_access(
++            &node.db,
++            &node.settings,
++            CurrentAccountGraph {
++                record: &record,
++                state: &f.before,
++            },
++        )
++        .unwrap()
++        .unwrap();
++    let completed = crate::account_archive_prototype::native_store::scoped_readback::verify(
++        access,
++        &mut || Ok(()),
++        Some(&node.authenticated_arithmetic.lifts),
++        None,
++    )
++    .unwrap();
++    assert_eq!(completed.source_used(), Some(original_source));
++    // The actual fully traversed result outlives this owner. Its retained opaque
++    // identity must not be replaced by a new equal SQL/Record/Root/source tuple.
++    drop(original);
++    if transaction_aba {
++        node.db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
++    }
++    let mut next = source_scope(&f);
++    assert_eq!(next.ids, original_ids);
++    assert_eq!(
++        next.frontier.as_ref().unwrap().source_record(),
++        original_source
++    );
++    assert_eq!(load_observed(&node.db, f.parent, None).unwrap(), record);
++    assert!(next.graphs[2].is_none());
++    let error = next
++        .remember_completed(&node.db, &node.settings, record.clone(), completed)
++        .unwrap_err();
++    eprintln!(
++        "completed_graph_actual_owner_replay transaction_aba={transaction_aba} error={error}"
++    );
++    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_FRONTIER");
++    assert!(next.graphs[2].is_none());
++    assert_eq!(next.ids, original_ids);
++    assert_eq!(
++        next.frontier.as_ref().unwrap().source_record(),
++        original_source
++    );
++    // A fresh traversal issued by this exact new owner can still complete;
++    // rejection of the old result did not create or consume a graph proof.
++    let mut first = 0;
++    verify(node, f.parent, &f.before, &mut next, &mut || {
++        first += 1;
++        Ok(())
++    })
++    .unwrap();
++    let mut repeated = 0;
++    verify(node, f.parent, &f.before, &mut next, &mut || {
++        repeated += 1;
++        Ok(())
++    })
++    .unwrap();
++    assert!(first > repeated && repeated > 0);
++    next.require_unchanged_after_last_write(&node.db).unwrap();
++    drop(next);
++    node.db.execute_batch("ROLLBACK").unwrap();
++}
++
++#[test]
++fn completed_graph_cannot_reinstall_into_another_scope_in_the_same_transaction() {
++    completed_graph_rejects_another_original_owner(false);
++}
++
++#[test]
++fn completed_graph_cannot_reinstall_after_commit_into_a_new_transaction() {
++    completed_graph_rejects_another_original_owner(true);
++}
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs
+index de7025a..ded596a 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs
+@@ -119,7 +119,10 @@ fn different_current_records_share_only_the_exact_account_graph_in_one_writer()
+     assert!(scope.graphs[1].is_none());
+     assert!(scope.graphs[2].is_none());
+     let parent_record = load_observed(&f.node.db, genesis, None).unwrap();
+-    assert_ne!(scope.graphs[0].as_ref(), Some(&parent_record));
++    assert_ne!(
++        scope.graphs[0].as_ref().map(|graph| &graph.record),
++        Some(&parent_record)
++    );
+     assert_eq!(
+         crate::account_archive_prototype::accounts(&state).unwrap(),
+         crate::account_archive_prototype::accounts(&f.node.settings.initial).unwrap()
