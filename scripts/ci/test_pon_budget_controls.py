@@ -33,7 +33,7 @@ def transcript(name, failed=False, observation=None):
 def panic(name):
     if name in runner.HISTORY:
         source = 'ingress/history_import_detached_budget_tests.rs'
-        reason = 'detached execution refused actual debt before its original refill control: Err(PUBLIC_MUTATION_CPU_BUDGET)'
+        reason = 'complete native continuation missed its original refill control: Err(PUBLIC_MUTATION_CPU_UNAVAILABLE)'
     else:
         source = 'mining_prepare_control_tests.rs'
         reason = ('assertion failed: error.is(code)' if name == runner.MINING_FAILURES[0]
@@ -44,7 +44,7 @@ def panic(name):
 
 
 def history(name, mode):
-    before = mode == 'budget-before-v2'
+    before = mode == 'budget-before-v3'
     control = runner.HISTORY[name]
     code = ('PUBLIC_MUTATION_CPU_BUDGET' if before else
             'PUBLIC_REQUEST_CANCELLED' if control == 'Cancel' else
@@ -90,33 +90,32 @@ def history(name, mode):
                  accepted=True if continued else None),
             dict(phase='cpu_settle', started=True, completed=True, accepted=True),
         ])]))
-    if not before:
-        # These are explicitly synthetic reader fixtures. Current native v3
-        # commits the first packet before waiting and observes a second packet.
-        record['schema'] = 'history-detached-native-completion-control-v3'
-        record['qualification'] = 'NativeCommitted'
-        record['first_refill_credited_ns'] = 50_000_000
-        observed = record['history']
-        observed.update(schema='pon-local-history-import-observation-v1',
-                        observation_has_consensus_authority=False, supplied_packets=2,
-                        tip=[34] * 32)
-        first = observed['packets'][0]
-        first['packet_index'] = 0
-        for index in (1, 2):
-            first['phases'][index].update(started=True, completed=True, accepted=True,
-                                          error_code=None)
-        first['phases'][3].update(started=True, completed=True, accepted=continued,
-                                  error_code=code)
-        first['phases'].append(dict(phase='history_import', started=True, completed=True,
-                                    accepted=continued, error_code=code))
-        second = copy.deepcopy(first)
-        second.update(packet_id=[34] * 32, packet_index=1)
-        if not continued:
-            for phase in second['phases']:
-                phase.update(started=False, completed=False, accepted=None, error_code=None)
-        observed['packets'].append(second)
-        if continued:
-            record['outcome'] = {'Ok': '22' * 32}
+    # These are explicitly synthetic reader fixtures. Current native v3
+    # commits the first packet; the controlled source refuses its refill.
+    record['schema'] = 'history-detached-native-completion-control-v3'
+    record['qualification'] = 'NativeCommitted'
+    record['first_refill_credited_ns'] = None if before else 50_000_000
+    observed = record['history']
+    observed.update(schema='pon-local-history-import-observation-v1',
+                    observation_has_consensus_authority=False, supplied_packets=2,
+                    tip=[34] * 32)
+    first = observed['packets'][0]
+    first['packet_index'] = 0
+    for index in (1, 2):
+        first['phases'][index].update(started=True, completed=True, accepted=True,
+                                      error_code=None)
+    first['phases'][3].update(started=True, completed=True, accepted=continued,
+                              error_code=code)
+    first['phases'].append(dict(phase='history_import', started=True, completed=True,
+                                accepted=continued, error_code=code))
+    second = copy.deepcopy(first)
+    second.update(packet_id=[34] * 32, packet_index=1)
+    if not continued:
+        for phase in second['phases']:
+            phase.update(started=False, completed=False, accepted=None, error_code=None)
+    observed['packets'].append(second)
+    if continued:
+        record['outcome'] = {'Ok': '22' * 32}
     return record
 
 
@@ -171,20 +170,40 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_exact_before_and_current_head_pair(self):
         current = 'a' * 40
-        runner.validate_source_pair('budget-before-v2', current, runner.BUDGET_BEFORE_SHA)
+        runner.validate_source_pair('budget-before-v3', current, runner.BUDGET_BEFORE_SHA)
         runner.validate_source_pair('fixed', current, current)
         for mode, driver, source in (
-            ('budget-before-v2', current, 'b' * 40), ('budget-before-v2', runner.BUDGET_BEFORE_SHA, runner.BUDGET_BEFORE_SHA),
+            ('budget-before-v3', current, 'b' * 40), ('budget-before-v3', runner.BUDGET_BEFORE_SHA, runner.BUDGET_BEFORE_SHA),
             ('pool-before', current, runner.POOL_BEFORE_SHA),
-            ('pool-before-v2', current, 'db93026b9314bfd8bc4350945036998f1b7d34aa'),
+            ('pool-before-v3', current, 'db93026b9314bfd8bc4350945036998f1b7d34aa'),
             ('fixed', current, runner.BUDGET_BEFORE_SHA), ('fixed', current, 'b' * 40),
             ('fixed', 'main', 'main'), ('unknown', current, current),
         ):
             with self.subTest(mode=mode, driver=driver, source=source), self.assertRaises(ValueError):
                 runner.validate_source_pair(mode, driver, source)
 
+    def test_current_graph_subjects_cannot_borrow_retired_versions_or_commits(self):
+        current = 'a' * 40
+        subjects = (
+            ('budget-before-v3', 'budget-before-v2', runner.BUDGET_BEFORE_SHA,
+             '89fb2269b0dd306fbd32c36f464842c3d7daee2b'),
+            ('pool-before-v3', 'pool-before-v2', runner.POOL_BEFORE_SHA,
+             '84e68b4f7a9b2f48f9c47ed05c9a44229d186e30'),
+            ('pool-scan-before-v2', 'pool-scan-before', runner.POOL_SCAN_BEFORE_SHA,
+             'ae657e262278ae4a058220f66a6a0495721eb9ad'),
+        )
+        for mode, retired_mode, source, retired_source in subjects:
+            runner.validate_source_pair(mode, current, source)
+            for candidate_mode, candidate_source in (
+                (mode, retired_source), (retired_mode, source),
+                (retired_mode, retired_source),
+            ):
+                with self.subTest(mode=candidate_mode, source=candidate_source):
+                    with self.assertRaises(ValueError):
+                        runner.validate_source_pair(candidate_mode, current, candidate_source)
+
     def test_build_uses_original_pin_lock_release_and_lib_once(self):
-        self.assertEqual(runner.build_command('budget-before-v2'), [
+        self.assertEqual(runner.build_command('budget-before-v3'), [
             'cargo', '+1.95.0', 'test', '--locked', '--release', '--manifest-path',
             'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib',
             '--no-run', '--message-format=json'])
@@ -193,7 +212,7 @@ class BudgetControlsTests(unittest.TestCase):
         source, target, binary, row = self.artifact()
         finish = dict(reason='build-finished', success=True)
         encode = lambda rows: '\n'.join(json.dumps(item) for item in rows)
-        self.assertEqual(runner.select_binaries(encode([row, finish]), source, target, 'budget-before-v2'), {'libtest': (binary, row)})
+        self.assertEqual(runner.select_binaries(encode([row, finish]), source, target, 'budget-before-v3'), {'libtest': (binary, row)})
         changed = copy.deepcopy(row)
         changed['target']['src_path'] = '/wrong/src/lib.rs'
         external = copy.deepcopy(row)
@@ -203,7 +222,7 @@ class BudgetControlsTests(unittest.TestCase):
                  [row, dict(reason='build-finished', success=False)], [row, finish, row])
         for rows in cases:
             with self.subTest(rows=rows), self.assertRaises(ValueError):
-                runner.select_binaries(encode(rows), source, target, 'budget-before-v2')
+                runner.select_binaries(encode(rows), source, target, 'budget-before-v3')
 
     def test_release_profile_cannot_be_relabeled(self):
         source, target, _, row = self.artifact()
@@ -213,7 +232,7 @@ class BudgetControlsTests(unittest.TestCase):
             changed['profile'][key] = value
             raw = json.dumps(changed) + '\n' + json.dumps(dict(reason='build-finished', success=True))
             with self.subTest(key=key), self.assertRaisesRegex(ValueError, 'RELEASE_PROFILE'):
-                runner.select_binaries(raw, source, target, 'budget-before-v2')
+                runner.select_binaries(raw, source, target, 'budget-before-v3')
 
     def test_actual_list_requires_all_seven_and_consistent_unique_totals(self):
         names = [*runner.BUDGET_CONTROLS, 'existing::retained_test']
@@ -231,15 +250,15 @@ class BudgetControlsTests(unittest.TestCase):
         for name in (*runner.MINING_FAILURES, runner.EQUIVALENCE):
             self.assertTrue(runner.validate_case(name, 'fixed', process(), transcript(name), '')
                             ['expected_outcome_observed'])
-        self.assertEqual(runner.validate_case(runner.EQUIVALENCE, 'budget-before-v2', process(),
+        self.assertEqual(runner.validate_case(runner.EQUIVALENCE, 'budget-before-v3', process(),
                          transcript(runner.EQUIVALENCE), '')['expected'], 'pass')
         with self.assertRaises(ValueError):
-            runner.validate_case(runner.EQUIVALENCE, 'budget-before-v2', process(True),
+            runner.validate_case(runner.EQUIVALENCE, 'budget-before-v3', process(True),
                                  transcript(runner.EQUIVALENCE, True), panic(runner.EQUIVALENCE))
 
     def test_before_mining_requires_specific_control_assertion(self):
         for name in runner.MINING_FAILURES:
-            self.assertEqual(runner.validate_case(name, 'budget-before-v2', process(True),
+            self.assertEqual(runner.validate_case(name, 'budget-before-v3', process(True),
                              transcript(name, True), panic(name))['expected'], 'fail')
             for stderr in ('', 'setup failed', panic(name).replace('mining_prepare_control_tests.rs', 'store.rs'),
                            panic(name).replace(':' + str(runner.PANIC_LINES[name]) + ':', ':1:'),
@@ -250,11 +269,11 @@ class BudgetControlsTests(unittest.TestCase):
                            if name != runner.MINING_FAILURES[0] else
                            panic(name).replace('error.is(code)', 'unrelated.is(code)')):
                 with self.subTest(name=name, stderr=stderr), self.assertRaises(ValueError):
-                    runner.validate_case(name, 'budget-before-v2', process(True), transcript(name, True), stderr)
+                    runner.validate_case(name, 'budget-before-v3', process(True), transcript(name, True), stderr)
 
     def test_before_budget_panic_requires_exact_name_and_no_second_worker_panic(self):
         for name in (*runner.HISTORY, *runner.MINING_FAILURES):
-            observation = history(name, 'budget-before-v2') if name in runner.HISTORY else None
+            observation = history(name, 'budget-before-v3') if name in runner.HISTORY else None
             raw = transcript(name, True, observation)
             stderr = panic(name)
             renamed = stderr.replace("thread '" + name + "'", "thread 'unrelated::test'")
@@ -262,8 +281,8 @@ class BudgetControlsTests(unittest.TestCase):
             for bad in (renamed, extra):
                 with self.subTest(name=name, stderr=bad), self.assertRaisesRegex(
                         ValueError, 'EXPECTED_CONTROL_PANIC_SOURCE'):
-                    runner.validate_case(name, 'budget-before-v2', process(True), raw, bad)
-            self.assertTrue(runner.validate_case(name, 'budget-before-v2', process(True),
+                    runner.validate_case(name, 'budget-before-v3', process(True), raw, bad)
+            self.assertTrue(runner.validate_case(name, 'budget-before-v3', process(True),
                             raw, stderr)['expected_outcome_observed'])
 
     def test_nonzero_signal_missing_summary_and_ignored_never_count_as_controls(self):
@@ -271,22 +290,22 @@ class BudgetControlsTests(unittest.TestCase):
         for code in (1, -9, 130, 0, None, False):
             changed = dict(process(True), exit_code=code)
             with self.subTest(code=code), self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', changed, transcript(name, True), panic(name))
+                runner.validate_case(name, 'budget-before-v3', changed, transcript(name, True), panic(name))
         for raw in ('', transcript(name, True).replace('1 failed', '0 failed'),
                     transcript(name, True).replace('0 ignored', '1 ignored'),
                     transcript(name, True).replace(name, 'other::test'),
                     transcript(name, True) + transcript(name, True),
                     transcript(name, True).replace('running 1 test', 'running 2 tests')):
             with self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', process(True), raw, panic(name))
+                runner.validate_case(name, 'budget-before-v3', process(True), raw, panic(name))
         with self.assertRaises(ValueError):
             runner.validate_case(name, 'fixed', process(),
                                  transcript(name).replace('0 ignored', '1 ignored'), '')
 
     def test_history_before_requires_actual_replay_and_paid_deficit(self):
         for name in runner.HISTORY:
-            record = history(name, 'budget-before-v2')
-            self.assertEqual(runner.validate_case(name, 'budget-before-v2', process(True),
+            record = history(name, 'budget-before-v3')
+            self.assertEqual(runner.validate_case(name, 'budget-before-v3', process(True),
                 transcript(name, True, record), panic(name))['history'], record)
             mutations = [
                 dict(record, replay=None),
@@ -302,31 +321,72 @@ class BudgetControlsTests(unittest.TestCase):
                 mutations.append(changed)
             for changed in mutations:
                 with self.subTest(name=name, changed=changed), self.assertRaises(ValueError):
-                    runner.validate_case(name, 'budget-before-v2', process(True),
+                    runner.validate_case(name, 'budget-before-v3', process(True),
                                          transcript(name, True, changed), panic(name))
 
     def test_history_early_fixture_failure_and_wrong_native_phase_are_rejected(self):
         name = next(iter(runner.HISTORY))
-        record = history(name, 'budget-before-v2')
+        record = history(name, 'budget-before-v3')
         with self.assertRaises(ValueError):
-            runner.validate_case(name, 'budget-before-v2', process(True), transcript(name, True), panic(name))
+            runner.validate_case(name, 'budget-before-v3', process(True), transcript(name, True), panic(name))
         for index, key, value in ((0, 'accepted', False), (1, 'started', False),
                                    (1, 'error_code', 'PUBLIC_REQUEST_DEADLINE'),
-                                   (2, 'started', True)):
+                                   (2, 'started', False)):
             changed = copy.deepcopy(record)
             changed['history']['packets'][0]['phases'][index][key] = value
             with self.subTest(index=index, key=key), self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', process(True),
+                runner.validate_case(name, 'budget-before-v3', process(True),
                                      transcript(name, True, changed), panic(name))
         for changed in (dict(record, refill_resource_checks=1),
                         dict(record, native_campaign_executed=True),
                         dict(record, mode='Expire')):
             with self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', process(True),
+                runner.validate_case(name, 'budget-before-v3', process(True),
                                      transcript(name, True, changed), panic(name))
         raw = transcript(name, True, record) + json.dumps(record, separators=(',', ':')) + '\n'
         with self.assertRaises(ValueError):
-            runner.validate_case(name, 'budget-before-v2', process(True), raw, panic(name))
+            runner.validate_case(name, 'budget-before-v3', process(True), raw, panic(name))
+
+    def test_controlled_history_requires_post_commit_refusal_and_unstarted_successor(self):
+        name = next(iter(runner.HISTORY))
+        original = history(name, 'budget-before-v3')
+        changes = [
+            (('schema',), 'history-detached-original-refill-control-v2'),
+            (('qualification',), 'BeforeNativeCompletion'),
+            (('qualification',), None),
+            (('first_refill_credited_ns',), 0),
+            (('first_refill_credited_ns',), False),
+            (('refill_resource_checks',), False),
+            (('history', 'packets'), original['history']['packets'][:1]),
+            (('history', 'packets', 0, 'phases', 1, 'accepted'), False),
+            (('history', 'packets', 0, 'phases', 2, 'completed'), False),
+            (('history', 'packets', 0, 'phases', 3, 'error_code'), 'PUBLIC_REQUEST_CANCELLED'),
+            (('history', 'packets', 0, 'phases', 5, 'error_code'), 'PUBLIC_REQUEST_DEADLINE'),
+            (('history', 'packets', 1, 'phases'), []),
+        ]
+        for index in range(len(original['history']['packets'][1]['phases'])):
+            changes.append((('history', 'packets', 1, 'phases', index, 'started'), True))
+        for path, value in changes:
+            record = copy.deepcopy(original)
+            node = record
+            for key in path[:-1]:
+                node = node[key]
+            node[path[-1]] = value
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                runner.validate_case(name, 'budget-before-v3', process(True),
+                                     transcript(name, True, record), panic(name))
+
+    def test_controlled_history_rejects_retired_panic_site_and_reason(self):
+        name = next(iter(runner.HISTORY))
+        record = history(name, 'budget-before-v3')
+        raw = transcript(name, True, record)
+        for stderr in (
+            panic(name).replace(':259:', ':221:'),
+            panic(name).replace('complete native continuation missed its original refill control:',
+                                'detached execution refused actual debt before its original refill control:'),
+        ):
+            with self.subTest(stderr=stderr), self.assertRaises(ValueError):
+                runner.validate_case(name, 'budget-before-v3', process(True), raw, stderr)
 
     def test_history_fixed_requires_original_refill_and_exact_cancellation(self):
         for name in runner.HISTORY:
@@ -344,7 +404,7 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_history_requires_exact_settlement_before_original_crash_fence(self):
         name = next(iter(runner.HISTORY))
-        record = history(name, 'budget-before-v2')
+        record = history(name, 'budget-before-v3')
         changes = [
             (('before_epoch_close',), None),
             (('before_epoch_close', 'flow'), None),
@@ -377,7 +437,7 @@ class BudgetControlsTests(unittest.TestCase):
                 target = target[key]
             target[path[-1]] = value
             with self.subTest(path=path), self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', process(True),
+                runner.validate_case(name, 'budget-before-v3', process(True),
                                      transcript(name, True, changed), panic(name))
 
     def test_history_continue_still_requires_complete_import_and_clean_close(self):
@@ -407,15 +467,15 @@ class BudgetControlsTests(unittest.TestCase):
     def test_history_versions_and_qualification_cannot_transfer_outcomes(self):
         for name in runner.HISTORY:
             current = history(name, 'fixed')
-            old = history(name, 'budget-before-v2')
-            for changed in (old, dict(current, schema=old['schema']),
+            old = history(name, 'budget-before-v3')
+            for changed in (old, dict(current, schema='history-detached-original-refill-control-v2'),
                             dict(current, qualification='BeforeNativeCompletion'),
                             dict(current, qualification=None), dict(current, qualification=True)):
                 with self.subTest(name=name, changed=changed), self.assertRaises(ValueError):
                     runner.validate_case(name, 'fixed', process(),
                                          transcript(name, observation=changed), '')
             with self.assertRaises(ValueError):
-                runner.validate_case(name, 'budget-before-v2', process(True),
+                runner.validate_case(name, 'budget-before-v3', process(True),
                                      transcript(name, True, current), panic(name))
             combined = transcript(name, observation=current) + json.dumps(old, separators=(',', ':'))
             with self.assertRaisesRegex(ValueError, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED'):
@@ -498,10 +558,10 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_history_old_g2_null_flow_is_not_reclassified_as_v2_evidence(self):
         for name in runner.HISTORY:
-            record = history(name, 'budget-before-v2')
+            record = history(name, 'budget-before-v3')
             record['schema'] = 'history-detached-original-refill-control-v1'
             with self.assertRaisesRegex(ValueError, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED'):
-                runner.validate_case(name, 'budget-before-v2', process(True),
+                runner.validate_case(name, 'budget-before-v3', process(True),
                                      transcript(name, True, record), panic(name))
 
 
@@ -515,15 +575,15 @@ class BudgetControlsTests(unittest.TestCase):
         for sha, _ in runner.BEFORE_SOURCES.values():
             with self.assertRaises(ValueError):
                 runner.validate_source_pair('fixed', sha, sha)
-        self.assertEqual(runner.controls_for_mode('budget-before-v2'), runner.BUDGET_CONTROLS)
-        self.assertEqual(runner.controls_for_mode('pool-before-v2'), runner.POOL_CONTROLS)
-        self.assertEqual(runner.controls_for_mode('pool-scan-before'), runner.POOL_SCAN_CONTROLS)
+        self.assertEqual(runner.controls_for_mode('budget-before-v3'), runner.BUDGET_CONTROLS)
+        self.assertEqual(runner.controls_for_mode('pool-before-v3'), runner.POOL_CONTROLS)
+        self.assertEqual(runner.controls_for_mode('pool-scan-before-v2'), runner.POOL_SCAN_CONTROLS)
         fixed = runner.controls_for_mode('fixed')
         self.assertEqual(len(fixed), 21)
         self.assertEqual(len(set(fixed)), 21)
-        self.assertEqual(set(runner.same_input_groups('pool-before-v2')), {'common', 'pool'})
-        self.assertEqual(set(runner.same_input_groups('budget-before-v2')), {'common', 'budget'})
-        self.assertEqual(set(runner.same_input_groups('pool-scan-before')), {'common', 'pool-scan'})
+        self.assertEqual(set(runner.same_input_groups('pool-before-v3')), {'common', 'pool'})
+        self.assertEqual(set(runner.same_input_groups('budget-before-v3')), {'common', 'budget'})
+        self.assertEqual(set(runner.same_input_groups('pool-scan-before-v2')), {'common', 'pool-scan'})
         self.assertEqual(runner.GROUP_INPUTS['pool-scan'], (
             'trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs',))
         self.assertEqual(set(runner.same_input_groups('fixed')), {'common', 'budget', 'pool', 'pool-scan'})
@@ -537,8 +597,8 @@ class BudgetControlsTests(unittest.TestCase):
             'cargo', '+1.95.0', 'test', '--locked', '--release', '--manifest-path',
             'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib', '--test', 'pool_mining',
             '--no-run', '--message-format=json'])
-        self.assertEqual(runner.build_command('pool-before-v2'), runner.build_command('budget-before-v2'))
-        self.assertEqual(runner.build_command('pool-scan-before'), runner.build_command('budget-before-v2'))
+        self.assertEqual(runner.build_command('pool-before-v3'), runner.build_command('budget-before-v3'))
+        self.assertEqual(runner.build_command('pool-scan-before-v2'), runner.build_command('budget-before-v3'))
         source, target, binary, row = self.artifact()
         _, _, integration, integration_row = self.artifact('pool-integration')
         _, _, cli, cli_row = self.artifact('cli')
@@ -553,7 +613,7 @@ class BudgetControlsTests(unittest.TestCase):
                 runner.select_binaries(encode(rows), source, target, 'fixed')
         with self.assertRaises(ValueError):
             runner.select_binaries(encode([row, integration_row, cli_row, finish]),
-                                   source, target, 'pool-before-v2')
+                                   source, target, 'pool-before-v3')
 
     def test_cli_target_source_profile_and_embedded_path_cannot_be_substituted(self):
         source, target, _, row = self.artifact()
@@ -605,7 +665,7 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_pool_old_requires_exact_panic_and_work_after_the_original_signal(self):
         for name in runner.POOL_FAILURES:
-            self.assertEqual(runner.validate_control(name, 'pool-before-v2', process(True),
+            self.assertEqual(runner.validate_control(name, 'pool-before-v3', process(True),
                              transcript(name, True), pool_panic(name))['expected'], 'fail')
             _, line, right = runner.POOL_FAILURES[name]
             wrong_left = '1' if right == 0 else '256'
@@ -618,21 +678,21 @@ class BudgetControlsTests(unittest.TestCase):
                         pool_panic(name).replace('IGNORED_STOP', 'OTHER_FAILURE'),
                         pool_panic(name).replace('right: ' + str(right), 'right: 999')):
                 with self.subTest(name=name, stderr=bad), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-before-v2', process(True), transcript(name, True), bad)
+                    runner.validate_control(name, 'pool-before-v3', process(True), transcript(name, True), bad)
             for code in (0, 1, -9, 130, None, False):
                 with self.subTest(name=name, code=code), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-before-v2', dict(process(True), exit_code=code),
+                    runner.validate_control(name, 'pool-before-v3', dict(process(True), exit_code=code),
                                             transcript(name, True), pool_panic(name))
 
     def test_pool_scan_before_requires_exact_named_assertion_and_six_to_two_rows(self):
         for name in runner.POOL_SCAN_CONTROLS:
-            expected = runner.validate_control(name, 'pool-scan-before', process(True),
+            expected = runner.validate_control(name, 'pool-scan-before-v2', process(True),
                                                transcript(name, True), pool_scan_panic(name))
             self.assertEqual(expected['expected'], 'fail')
             self.assertEqual(expected['group'], 'pool-scan')
             self.assertTrue(expected['expected_outcome_observed'])
             stderr = pool_scan_panic(name).replace("' panicked", "' (1234) panicked")
-            self.assertTrue(runner.validate_control(name, 'pool-scan-before', process(True),
+            self.assertTrue(runner.validate_control(name, 'pool-scan-before-v2', process(True),
                             transcript(name, True), stderr)['expected_outcome_observed'])
 
     def test_pool_scan_wrong_panic_line_source_name_or_multiple_panics_are_refused(self):
@@ -646,7 +706,7 @@ class BudgetControlsTests(unittest.TestCase):
                 stderr.replace(runner.POOL_SCAN_MARKER, 'fixture failed'),
             ):
                 with self.subTest(name=name, stderr=bad), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-scan-before', process(True),
+                    runner.validate_control(name, 'pool-scan-before-v2', process(True),
                                             transcript(name, True), bad)
 
     def test_pool_scan_wrong_values_and_duplicate_row_observations_are_refused(self):
@@ -659,7 +719,7 @@ class BudgetControlsTests(unittest.TestCase):
             stderr + '  left: 6\n', stderr + ' right: 2\n',
         ):
             with self.subTest(stderr=bad), self.assertRaises(ValueError):
-                runner.validate_control(name, 'pool-scan-before', process(True),
+                runner.validate_control(name, 'pool-scan-before-v2', process(True),
                                         transcript(name, True), bad)
 
     def test_pool_scan_signals_early_failure_and_incomplete_test_result_are_refused(self):
@@ -670,20 +730,20 @@ class BudgetControlsTests(unittest.TestCase):
                 dict(process(True), cleanup_errors=['unreaped']),
             ):
                 with self.subTest(name=name, status=status), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-scan-before', status,
+                    runner.validate_control(name, 'pool-scan-before-v2', status,
                                             transcript(name, True), pool_scan_panic(name))
             for raw in ('', transcript(name, True).split('test result:')[0],
                         transcript(name, True).replace('0 ignored', '1 ignored'),
                         transcript(name, True).replace(name, 'unrelated::test'),
                         transcript(name, True) + transcript(name, True)):
                 with self.subTest(name=name, stdout=raw), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-scan-before', process(True),
+                    runner.validate_control(name, 'pool-scan-before-v2', process(True),
                                             raw, pool_scan_panic(name))
             early = pool_scan_panic(name).replace(
                 'assertion ' + chr(96) + 'left == right' + chr(96) + ' failed: ' + runner.POOL_SCAN_MARKER,
                 'POOL_RUN_RETAINED_FIXTURE_EXPIRED_BEFORE_SIGNAL')
             with self.assertRaisesRegex(ValueError, 'EXPECTED_POOL_SCAN_SIGNAL_ASSERTION'):
-                runner.validate_control(name, 'pool-scan-before', process(True),
+                runner.validate_control(name, 'pool-scan-before-v2', process(True),
                                         transcript(name, True), early)
 
     def test_pool_scan_fixed_requires_named_pass_and_cannot_borrow_other_old_sources(self):
@@ -696,7 +756,7 @@ class BudgetControlsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 runner.validate_control(name, 'fixed', process(),
                                         transcript(name).replace('0 ignored', '1 ignored'), '')
-            for mode in ('budget-before-v2', 'pool-before-v2'):
+            for mode in ('budget-before-v3', 'pool-before-v3'):
                 with self.subTest(name=name, mode=mode), self.assertRaises(ValueError):
                     runner.validate_control(name, mode, process(True),
                                             transcript(name, True), pool_scan_panic(name))
@@ -717,7 +777,7 @@ class BudgetControlsTests(unittest.TestCase):
                       source[start + 2])
 
     def test_pool_fixed_and_two_old_positive_controls_require_real_named_success(self):
-        for mode, names in (('fixed', runner.POOL_CONTROLS), ('pool-before-v2', runner.POOL_POSITIVES)):
+        for mode, names in (('fixed', runner.POOL_CONTROLS), ('pool-before-v3', runner.POOL_POSITIVES)):
             for name in names:
                 self.assertEqual(runner.validate_control(name, mode, process(), transcript(name), '')['expected'], 'pass')
                 for bad_process in (process(True), dict(process(), started=False),
@@ -728,7 +788,7 @@ class BudgetControlsTests(unittest.TestCase):
                     runner.validate_control(name, mode, process(), transcript(name).replace('0 ignored', '1 ignored'), '')
         for name in runner.POOL_CONTROLS:
             with self.assertRaises(ValueError):
-                runner.validate_control(name, 'budget-before-v2', process(), transcript(name), '')
+                runner.validate_control(name, 'budget-before-v3', process(), transcript(name), '')
 
     def test_scalar_handoff_invariants_are_fixed_only_and_cannot_be_ignored(self):
         for name in runner.HANDOFF_CONTROLS:
@@ -775,7 +835,7 @@ class BudgetControlsTests(unittest.TestCase):
                     path = root / relative
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text('fixed-only reader fixture\n')
-        if mode in ('pool-before-v2', 'pool-scan-before'):
+        if mode in ('pool-before-v3', 'pool-scan-before-v2'):
             # Independent source groups do not compare unrelated test inputs.
             for group, relatives in runner.GROUP_INPUTS.items():
                 if group not in runner.MODE_GROUPS[mode]:
@@ -807,9 +867,9 @@ class BudgetControlsTests(unittest.TestCase):
                 raw = '\n'.join(name + ': test' for name in listed) + f'\n\n{len(listed)} tests, 0 benchmarks\n'
             elif label.startswith('test-'):
                 name = command[2]
-                failed = (mode == 'budget-before-v2' and name != runner.EQUIVALENCE
-                          or mode == 'pool-before-v2' and name in runner.POOL_FAILURES
-                          or mode == 'pool-scan-before' and name in runner.POOL_SCAN_CONTROLS)
+                failed = (mode == 'budget-before-v3' and name != runner.EQUIVALENCE
+                          or mode == 'pool-before-v3' and name in runner.POOL_FAILURES
+                          or mode == 'pool-scan-before-v2' and name in runner.POOL_SCAN_CONTROLS)
                 status = process(failed)
                 observation_record = history(name, mode) if name in runner.HISTORY else None
                 raw = transcript(name, failed, observation_record)
@@ -880,7 +940,7 @@ class BudgetControlsTests(unittest.TestCase):
         self.assertTrue(any('EXECUTED_BINARY_CHANGED:cli' in error for error in report['errors']))
 
     def test_mock_pool_scan_signal_failure_preserves_later_case_and_final_identities(self):
-        report, captured = self.mock_component_run('pool-scan-before', fail_first=True)
+        report, captured = self.mock_component_run('pool-scan-before-v2', fail_first=True)
         self.assertEqual(report['result'], 'FAIL')
         self.assertEqual(report['expected_failures'], 2)
         self.assertEqual(report['native_control_processes_started'], 2)
@@ -894,7 +954,7 @@ class BudgetControlsTests(unittest.TestCase):
         self.assertFalse(any(label == 'pool-integration' for label, _ in captured))
 
     def test_mock_pool_scan_input_change_is_refused_before_compilation(self):
-        for mode in ('pool-scan-before', 'fixed'):
+        for mode in ('pool-scan-before-v2', 'fixed'):
             report, captured = self.mock_component_run(mode, change_group=True)
             self.assertEqual(report['result'], 'FAIL')
             self.assertEqual(report['native_control_processes_started'], 0)
@@ -950,7 +1010,7 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_workflow_keeps_four_sources_separate_and_all_failures(self):
         text = (runner.ROOT / '.github/workflows/pon-budget-controls.yml').read_text()
-        for expected in ('source: [budget-before-v2, pool-before-v2, pool-scan-before, fixed]', runner.BUDGET_BEFORE_SHA,
+        for expected in ('source: [budget-before-v3, pool-before-v3, pool-scan-before-v2, fixed]', runner.BUDGET_BEFORE_SHA,
                          runner.POOL_BEFORE_SHA, runner.POOL_SCAN_BEFORE_SHA, 'CARGO_BUILD_JOBS: "1"', 'path: driver',
                          'path: subject', 'fail-fast: false', 'cancel-in-progress: false',
                          'if: always()', 'rustup toolchain install 1.95.0',

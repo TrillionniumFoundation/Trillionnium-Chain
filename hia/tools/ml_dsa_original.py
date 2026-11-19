@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import time
+import tomllib
 import traceback
 
 
@@ -26,6 +27,20 @@ FORBIDDEN_ENVIRONMENT = {
 }
 ENVIRONMENT_GUARD = {"policy": "reject-unbound-rust-cargo-loader-v1", "overrides": [], "cargo_configuration": []}
 TEST_PROFILE = {"debug_assertions": True, "debuginfo": 2, "opt_level": "3", "overflow_checks": True, "test": True}
+PREFLIGHT_COMMAND = ("bash", "scripts/project-preflight.sh", "--audit")
+
+
+def boundary_inputs(repository):
+    """Bind the actual read-only boundary implementation and manifest inputs."""
+    manifest = Path(repository) / "trillionnium/Cargo.toml"
+    members = tomllib.loads(manifest.read_text())["workspace"]["members"]
+    if (not isinstance(members, list) or not members or len(set(members)) != len(members)
+            or any(not isinstance(member, str) or re.fullmatch(r"crates/[A-Za-z0-9_-]+", member) is None
+                   for member in members)):
+        raise ValueError("Noncanonical original workspace member roster")
+    return ("scripts/ci/project_boundary.py", "PROJECT_BOUNDARY.json", "PROJECT_ID",
+            "config/portability-inventory-v1.json",
+            *("trillionnium/" + member + "/Cargo.toml" for member in sorted(members)))
 
 
 def check_environment(repository, environment):
@@ -118,7 +133,7 @@ def run(repository, output, rust_bin, provider_environment_path):
                  'scripts/project-preflight.sh', 'scripts/ci/prepare_pq_provider.sh', 'AGENTS.md',
                  'config/pon/work-profile-v1.json',
                  'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs',
-                 'tests/fixtures/cpq1-content-v1/vectors.json']
+                 'tests/fixtures/cpq1-content-v1/vectors.json', *boundary_inputs(REPO)]
         entries = subprocess.check_output(['git', 'ls-tree', '-rz', 'HEAD', '--', *roots], cwd=REPO).split(b'\0')
         rows = []
         for entry in entries:
@@ -143,7 +158,9 @@ def run(repository, output, rust_bin, provider_environment_path):
         head = run('git-head', ['git', 'rev-parse', 'HEAD', 'HEAD^{tree}'], cwd=REPO).decode().splitlines()
         assert len(head) == 2 and all(re.fullmatch(r'[0-9a-f]{40}', item) for item in head)
         report.update(head=head[0], tree=head[1], source=source_map())
-        run('preflight', ['bash', 'scripts/project-preflight.sh'], cwd=REPO)
+        # Qualification reads candidate sources and may run on an exact detached
+        # CI commit. Development, staged and push checks retain their own guards.
+        run('preflight', PREFLIGHT_COMMAND, cwd=REPO)
         version = run('rustc-version', [RUST / 'rustc', '-Vv']).decode()
         assert 'release: 1.95.0\n' in version and 'host: x86_64-unknown-linux-gnu\n' in version
         run('cargo-fetch', [RUST / 'cargo', 'fetch', '--locked', '--target', 'x86_64-unknown-linux-gnu'], limit=180)

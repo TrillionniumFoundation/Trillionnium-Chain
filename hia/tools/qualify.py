@@ -71,6 +71,11 @@ def sources():
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / "hia/src/crypto/ML_DSA.md",
               ROOT / "hia/tests/vectors/ml_dsa_acvp_975de31.json.xz"]
+    # The real detached-checkout control executes the original boundary script.
+    # Bind every manifest and policy file that its read-only preflight reads.
+    from hia.tools.ml_dsa_original import boundary_inputs
+    paths += [ROOT / "scripts/project-preflight.sh"]
+    paths += [ROOT / name for name in boundary_inputs(ROOT)]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
     for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-checkpoint-store",

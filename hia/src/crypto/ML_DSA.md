@@ -267,7 +267,12 @@ The entry performs a fresh locked original build, preserves every complete test
 listing and test executable, runs all 343 retained Rust tests and both doc tests,
 checks workspace/adapter formatting and strict Clippy, and links the adapter to
 the exact captured Cargo artifact graph. It then runs all 16 native method
-tests and all 20 integrity controls. The source roster includes the external
+tests and all 21 integrity controls. Qualification uses the read-only `--audit`
+preflight on exact detached CI commits; development and push branch restrictions
+remain enforced by their existing modes. A real temporary Git repository tests
+detached execution and rejects foreign origins and production activation. The
+reader requires the exact audit command and binds its Python implementation,
+boundary configuration, inventory and every workspace manifest. The source roster includes the external
 work-profile JSON, the cross-crate `w1_from_zero.rs` example support, and the
 protocol's content-framing fixture. Inherited compiler, Cargo profile and
 loader overrides or unbound Cargo configuration are rejected before the original

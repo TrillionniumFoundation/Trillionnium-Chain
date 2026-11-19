@@ -93,7 +93,8 @@ def document(raw):
 
 
 def original_paths():
-    raw = subprocess.check_output(["git", "ls-tree", "-rz", "HEAD", "--", *ORIGINAL_ROOTS], cwd=ROOT)
+    raw = subprocess.check_output(["git", "ls-tree", "-rz", "HEAD", "--", *ORIGINAL_ROOTS,
+                                   *ml_dsa_original.boundary_inputs(ROOT)], cwd=ROOT)
     return [entry.split(b"\t", 1)[1].decode() for entry in raw.split(b"\0") if entry]
 
 
@@ -116,8 +117,13 @@ def roster():
 
 def control_roster():
     result = identifiers(unittest.defaultTestLoader.loadTestsFromName("hia.tests.test_ml_dsa_qualification"))
-    need(len(result) == 20 and len(set(result)) == 20, "Changed ML-DSA integrity control roster")
+    need(len(result) == 21 and len(set(result)) == 21, "Changed ML-DSA integrity control roster")
     return result
+
+
+def require_complete_controls(result):
+    need(result.wasSuccessful() and not result.skipped and result.testsRun == len(control_roster()),
+         "Integrity controls failed")
 
 
 def validate_provider(value, retained=None):
@@ -171,7 +177,7 @@ def validate_original(value, root, source_inputs):
     crate = repository / "trillionnium"
     expected = [
         ("git-head", ["git", "rev-parse", "HEAD", "HEAD^{tree}"], repository, 180),
-        ("preflight", ["bash", "scripts/project-preflight.sh"], repository, 180),
+        ("preflight", ["bash", "scripts/project-preflight.sh", "--audit"], repository, 180),
         ("rustc-version", [rust / "rustc", "-Vv"], crate, 180),
         ("cargo-fetch", [rust / "cargo", "fetch", "--locked", "--target", "x86_64-unknown-linux-gnu"], crate, 180),
         ("cargo-metadata", [rust / "cargo", "metadata", "--locked", "--offline", "--all-features", "--format-version=1"], crate, 180),
@@ -251,7 +257,8 @@ def validate_original(value, root, source_inputs):
         if row["name"] == "ml_dsa":
             need(row["features"] == ["alloc", "zeroize"] and row["package_id"].endswith("ml-dsa@0.1.1"),
                  "Different original ML-DSA dependency or features")
-    expected_sources = {name for name in source_inputs if any(name == prefix or name.startswith(prefix + "/") for prefix in ORIGINAL_ROOTS)}
+    original_roots = (*ORIGINAL_ROOTS, *ml_dsa_original.boundary_inputs(ROOT))
+    expected_sources = {name for name in source_inputs if any(name == prefix or name.startswith(prefix + "/") for prefix in original_roots)}
     need(type(value["source"]) is list and len(value["source"]) == len(expected_sources)
          and {row["path"] for row in value["source"]} == expected_sources,
          "Original source roster was omitted or duplicated")
@@ -285,7 +292,7 @@ def validate(root, source_inputs=None):
          "ML-DSA methods were filtered, duplicated, skipped or failed")
     controls = value["controls"]
     control_ids = control_roster()
-    need(controls["run"] == 20 and controls["failures"] == [] and controls["errors"] == [] and controls["skipped"] == []
+    need(controls["run"] == len(control_ids) and controls["failures"] == [] and controls["errors"] == [] and controls["skipped"] == []
          and sorted(controls["started"]) == control_ids and sorted(controls["finished"]) == control_ids,
          "Integrity controls were filtered, duplicated, skipped or failed")
     original_raw = read(root, "original/report.json")
@@ -433,7 +440,7 @@ def run(args):
                               "failures": [(str(t), error) for t, error in controls.failures],
                               "errors": [(str(t), error) for t, error in controls.errors],
                               "skipped": [(str(t), reason) for t, reason in controls.skipped]}
-        need(controls.wasSuccessful() and not controls.skipped and controls.testsRun == 20, "Integrity controls failed")
+        require_complete_controls(controls)
         need(before == sources() and head == subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
              "Source changed during qualification")
         report["source_unchanged_during_tests"] = True

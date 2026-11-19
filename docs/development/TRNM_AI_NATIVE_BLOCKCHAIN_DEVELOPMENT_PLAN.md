@@ -1,3 +1,15 @@
+## 2026-11-19 UTC — detached 提交预检与当前 Cargo 图反例修正
+
+从候选 `cab5d8c30ce97983938dd6b575a391f2baf566b4` 继续。当前仍为 **60 kernels /24 native foundations /193 HIA sources**；26 原包18部分迁移、8未迁移、0退役，9全项目门OPEN，根README保持0字节。旧栈只有在完整替代和原验收均成功后才可删除。
+
+本提交修正 ML-DSA 资格在固定SHA的detached HEAD上错误调用开发预检的问题。[push原失败](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44512019556/job/135518389516)和[PR原失败](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44512046673/job/135518484618)均在preflight exit2终止，未运行其后的原Rust/native门；两份完整artifact及raw日志保留。下游五分片reader因ML-DSA未成功而拒绝，属于正确拒绝。现在资格调用原有只读`--audit`，开发/推送限制、foreign origin和activation拒绝不变。21项完整性控制包括真实临时Git提交、detached checkout以及删除audit/来源的拒绝；执行门与reader使用同一固定roster。修复开发轮漏改旧20数量判断的实际失败同样保留，不重标为通过。
+
+修复后的完整私有门与独立读回已在187源图`9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8`实际通过：原343测试+2doctest、79阶段、34原ELF、16 native方法和21完整性控制；运行358.529242秒、独立读回7.921353秒。该观察只属于其冻结开发源图，不转移为新提交通过。完整发现为601项：440 general、95 crypto/types、7 State-root、22 Oracle、37 ML-DSA。公共来源图补齐预检真正读取的16项既存输入，共1331项；发现和来源绑定不是业务执行。所有五分片仍各20分钟，提交级CI必须执行本提交自己的完整原始/native门、真实完成名单与独立读回，不能继承父提交或其它源图的通过身份。
+
+预算反例继续保持当前Cargo、lock、toolchain及原测试。`pool-before-v3`为`e6c530ccd3edd035892870315877ae9adfff7e23`，`pool-scan-before-v2`为`d84b9e0af0943c1f779b432589e31ca58db3364f`。新的`budget-before-v3`为`270eb51919d9b02e3962ffab5140ccffbbbb1470`，明确是保留当前completion API和测试、恢复两种历史错误机制的受控反例，并非旧89历史源码。其独立开发观察在未改的7项原测试中有6项真实失败及1项等价性通过，完整原ELF和raw保留；正式完整source guard仍须自己的执行。三个subject仅创建不可变Git对象，没有额外refs或产品分支改动，不能合入生产运行路径。
+
+父提交两项macOS cleanup均未取得托管runner，steps为空、runner_id为0，状态仍为cancelled/NOT_RUN；不能将容量排队当作源码通过。W1两个真实运行的source、release build和固定Host lease均通过，但retained-pressure观察的`finite_target_met=false`被reader正确拒绝；fresh challenge真实exit101，断言未达到原四秒、六层确认业务目标，不能给窗口外成功记分。两份完整artifact逐成员读回并保留，业务门仍OPEN。原0.25CPU、2GiB、零swap、256PID、4秒和16worker条件一律保持。Peer Unix、Task持久owner与PQ授权的隔离原生开发继续推进；这些工作尚未改变上述正式清单或退役结论。
+
 ## 2026-11-19 UTC — 完整有限 ML-DSA、Host 实际修复与不放宽期限的 CI 分片
 
 从已发布 `88f610df3717b26f3c20e6455992da9004c144db` 继续。当前 **60 kernels /24 native foundations /193 HIA sources**；26 原包仍为18部分迁移、8未迁移、0退役，9全项目门OPEN。根 README 保持0字节；全链、旧栈退役和激活标记仍为false。以下开发运行各自保留实际 source graph，当前集成须其自己的资格及提交级CI。

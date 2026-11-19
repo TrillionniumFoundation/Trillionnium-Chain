@@ -22,8 +22,10 @@ and 24 actual handshake schedules. The transfer reader now requires the actual
 and original artifacts' identities. Fixed-parent production qualification and
 the original four-second service acceptance remain open.
 
-The complete component discovery is now 600 methods split disjointly into
-440 general, 95 crypto/types, seven State-root, 22 Oracle and 36 ML-DSA methods.
+The complete component discovery is now 601 methods split disjointly into
+440 general, 95 crypto/types, seven State-root, 22 Oracle and 37 ML-DSA methods.
+The source manifest binds all 1,331 current qualification inputs, including the
+project boundary implementation, configuration and every workspace manifest.
 All five jobs keep their 20-minute limit. The consumer requires every same-head,
 same-run and same-attempt job to succeed and every discovered method to have
 actually completed; discovery and successful packaging do not imply execution.
@@ -67,7 +69,7 @@ integrity controls, all 343 retained original tests and both doc tests. The
 private entry requires disjoint live caller allocations; automatic ownership,
 foreign ABI guards, timing qualification, PQ authorization and TLS remain open.
 The new independent ML-DSA CI job repeats the complete original/native gate and
-all 36 assigned component methods against each event's own exact source. The crypto-types shard now has
+all 37 assigned component methods against each event's own exact source. The crypto-types shard now has
 95 methods, all required by the same independent complete-roster consumer. The
 fresh exact-source run passed all 95 with zero failures, errors or skips, 17
 native builds and 21,210 shared-runner calls in 515.760 seconds. The complete
@@ -105,10 +107,12 @@ archive members, volumes and decompressed executable bytes were rehashed.
 Two explicitly documented historical source gaps remain; this evidence does not
 grant whole-project qualification or old-package retirement.
 
-Oracle qualification now explicitly uses the read-only project audit mode in
-an exact-SHA detached checkout. Its regression controls still reject foreign
-repositories and incorrect project identity; development and push branch rules
-remain intact.
+Oracle and ML-DSA qualification use the read-only project audit mode in an
+exact-SHA detached checkout. ML-DSA now requires 21 integrity controls, including
+a real detached Git checkout and refusals for foreign origins, production
+activation and omission of the audit command or its source dependencies.
+Development and push branch rules remain intact. The earlier CI preflight
+failures and the complete dependent-reader refusals remain recorded.
 
 ## Current Oracle values and JSON
 

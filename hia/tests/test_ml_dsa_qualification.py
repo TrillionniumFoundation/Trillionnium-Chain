@@ -7,7 +7,10 @@ The actual positive qualification separately uses all original/native artifacts.
 from copy import deepcopy
 import hashlib
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -43,8 +46,14 @@ def original_fixture(source, output):
              "config/pon/work-profile-v1.json",
              "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs",
              "tests/fixtures/cpq1-content-v1/vectors.json"]
+    workspace = b'[workspace]\nmembers = ["crates/trnm-crypto-primitives", "crates/trnm-protocol"]\n'
+    (source / "trillionnium").mkdir(parents=True, exist_ok=True)
+    (source / "trillionnium/Cargo.toml").write_bytes(workspace)
+    names += list(q.ml_dsa_original.boundary_inputs(source))
     for name in names + ["hia/tests/rust_ml_dsa_reference.rs"]:
         raw = ("synthetic parser control: " + name).encode()
+        if name == "trillionnium/Cargo.toml":
+            raw = workspace
         path = source / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(raw)
@@ -93,7 +102,7 @@ def original_fixture(source, output):
                           "profile": deepcopy(q.ml_dsa_original.TEST_PROFILE), "executable": path})
     stage("git-head", ["git", "rev-parse", "HEAD", "HEAD^{tree}"], repository,
           stdout=(report["head"] + "\n" + report["tree"] + "\n").encode())
-    stage("preflight", ["bash", "scripts/project-preflight.sh"], repository)
+    stage("preflight", ["bash", "scripts/project-preflight.sh", "--audit"], repository)
     stage("rustc-version", [rust / "rustc", "-Vv"], stdout=b"rustc 1.95.0\nrelease: 1.95.0\nhost: x86_64-unknown-linux-gnu\n")
     stage("cargo-fetch", [rust / "cargo", "fetch", "--locked", "--target", "x86_64-unknown-linux-gnu"])
     stage("cargo-metadata", [rust / "cargo", "metadata", "--locked", "--offline", "--all-features", "--format-version=1"], stdout=b"{}")
@@ -156,6 +165,81 @@ class MlDsaQualificationIntegrity(unittest.TestCase):
 
     def test_complete_serialization_fixture_is_accepted_without_execution_claim(self):
         self.validate()
+
+    def test_readonly_preflight_accepts_detached_head_and_preserves_boundary_guards(self):
+        observed = unittest.TestResult()
+        observed.testsRun = len(q.control_roster())
+        q.require_complete_controls(observed)
+        observed.testsRun -= 1
+        with self.assertRaisesRegex(ValueError, "Integrity controls failed"):
+            q.require_complete_controls(observed)
+        observed.testsRun += 1
+        observed.skipped.append((self, "missing actual control"))
+        with self.assertRaisesRegex(ValueError, "Integrity controls failed"):
+            q.require_complete_controls(observed)
+        actual = Path(__file__).resolve().parents[2]
+        candidate = self.root / "boundary-candidate"
+        candidate.mkdir()
+        names = ("scripts/project-preflight.sh", "trillionnium/Cargo.toml",
+                 *q.ml_dsa_original.boundary_inputs(actual))
+        for name in names:
+            destination = candidate / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(actual / name, destination)
+        environment = dict(os.environ, GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+
+        def command(arguments):
+            return subprocess.run(arguments, cwd=candidate, env=environment, capture_output=True)
+
+        for arguments in (("git", "init", "-q"),
+                          ("git", "remote", "add", "origin", "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"),
+                          ("git", "add", "--all"),
+                          ("git", "-c", "core.hooksPath=/dev/null", "-c", "user.name=Boundary fixture",
+                           "-c", "user.email=boundary-fixture@example.invalid", "commit", "-qm", "Synthetic boundary fixture"),
+                          ("git", "checkout", "--detach", "--quiet", "HEAD")):
+            result = command(arguments)
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+        self.assertNotEqual(command(("git", "symbolic-ref", "-q", "HEAD")).returncode, 0)
+        before = command(("git", "status", "--porcelain")).stdout
+        result = command(q.ml_dsa_original.PREFLIGHT_COMMAND)
+        self.assertEqual(result.returncode, 0, result.stderr.decode())
+        observed = json.loads(result.stdout)
+        self.assertEqual((observed["mode"], observed["branch"], observed["remote_policy_mutated"]),
+                         ("--audit", "", False))
+        self.assertEqual(command(("git", "status", "--porcelain")).stdout, before)
+        result = command(("bash", "scripts/project-preflight.sh", "--dev"))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn(b"not an allowed development branch", result.stderr)
+        command(("git", "remote", "set-url", "origin", "https://github.com/unrelated/project.git")).check_returncode()
+        result = command(q.ml_dsa_original.PREFLIGHT_COMMAND)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn(b"origin mismatch", result.stderr)
+        command(("git", "remote", "set-url", "origin", "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git")).check_returncode()
+        boundary = candidate / "PROJECT_BOUNDARY.json"
+        value = json.loads(boundary.read_bytes())
+        value["consensus"]["production_consensus_activation"] = True
+        write_json(boundary, value)
+        result = command(q.ml_dsa_original.PREFLIGHT_COMMAND)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn(b"activation changed", result.stderr)
+
+        before = deepcopy(self.stage("preflight"))
+        for suffix in ([], ["--dev"]):
+            with self.subTest(preflight_suffix=suffix):
+                self.stage("preflight")["argv"] = ["bash", "scripts/project-preflight.sh", *suffix]
+                self.receipt("preflight")
+                with self.assertRaisesRegex(ValueError, "original stage"):
+                    self.validate()
+        self.stage("preflight").update(before)
+        self.receipt("preflight")
+        self.validate()
+        for name in q.ml_dsa_original.boundary_inputs(self.source):
+            with self.subTest(boundary_input=name):
+                row = next(item for item in self.report["source"] if item["path"] == name)
+                self.report["source"].remove(row)
+                with self.assertRaisesRegex(ValueError, "source roster"):
+                    self.validate()
+                self.report["source"].append(row)
 
     def test_failure_and_missing_original_stages_are_rejected(self):
         self.report["status"] = "FAIL"

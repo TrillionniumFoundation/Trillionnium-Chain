@@ -404,6 +404,564 @@
     }
   },
   "base_commit": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+  "current_ci_repair": {
+    "budget_handoff": {
+      "bytes": 4486,
+      "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/final-handoff.json",
+      "sha256": "c6aa8b45c6acd18e97892614339899eea7f88de69a8d6d155fe9bed4d5064e57"
+    },
+    "budget_observation": {
+      "base_commit": "cab5d8c30ce97983938dd6b575a391f2baf566b4",
+      "budgets_changed": false,
+      "controlled_third_actual_raw_readback": {
+        "bytes": 3813,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/report.json",
+        "sha256": "2361a44028b5bbdf2527aeda5ee24f4cd089dd46d90d10975fc172b6eb300b7d"
+      },
+      "controlled_third_subject": {
+        "actual_cases": 7,
+        "commit": "270eb51919d9b02e3962ffab5140ccffbbbb1470",
+        "expected_failures": 6,
+        "expected_passes": 1,
+        "full_raw_archive": {
+          "archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/budget-controlled-v3-development-v1-tma3o4kv/complete-observations.tar.xz",
+          "bytes": 20453192,
+          "directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/budget-controlled-v3-development-v1-tma3o4kv",
+          "formal_qualification": false,
+          "member_bytes": 119988349,
+          "members": 52,
+          "sha256": "53dee5ceb19b01b5aec097407257c4e9498162841048623ae802565dd9f498b9",
+          "status": "MAC_COMPLETE_RAW_ARCHIVE_READBACK_PASS"
+        },
+        "historical_source_equivalence": false,
+        "prior_subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+        "tree": "4745c959808fb2610e7c8b03180b40129027d078"
+      },
+      "fixed_actual_artifact": {
+        "bytes": 47045623,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-fixed-budget-reader-v2-vjr4fyzq/14524636462.zip",
+        "sha256": "9a15917165bc0d37c34631a656d12147836c20291ba7896be81695716b74f58a"
+      },
+      "fixed_actual_controls": 21,
+      "fixed_actual_pool_integration": 10,
+      "fixed_actual_readback": {
+        "bytes": 17509,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/cab-fixed-readback.json",
+        "sha256": "ae6e68b86af4141b67fcec1b9ef1c25a76a730d01db9d9f003d065b89549f8e5"
+      },
+      "fixed_archive_members": 105,
+      "fixed_native_rerun": false,
+      "fixed_original_hosted_source_guard": true,
+      "new_full_source_guard_run": "NOT_RUN locally; strict existing CI path retained",
+      "original_tests_changed": false,
+      "owned": [
+        {
+          "base_sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad",
+          "bytes": 3902,
+          "path": ".github/workflows/pon-budget-controls.yml",
+          "sha256": "a1de1e923ab3cf5742ec25025be929c339400c421c7c9583c2922dfe546a25c6"
+        },
+        {
+          "base_sha256": "cdf44d64590f0dcacf1eee1198f7b81a0dbc80ef0b1716ccacc62520ef59c629",
+          "bytes": 47782,
+          "path": "scripts/ci/run_pon_budget_controls.py",
+          "sha256": "73c94e18183ee77a5322a6ed104be03b1dfb9207cb40bef694868427b781b596"
+        },
+        {
+          "base_sha256": "c42796bf774546e31ec7475829cc5f4bb214e5e611a1a368e83337d575c25c9d",
+          "bytes": 63066,
+          "path": "scripts/ci/test_pon_budget_controls.py",
+          "sha256": "8f0d65d352e51ef156c5404da98aec39cd026e1c19db2a53756ae527eff7f19d"
+        }
+      ],
+      "patch": {
+        "bytes": 52844,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/owned3.patch",
+        "sha256": "b233fd7cc09c28e5503ec188d77776c7061890346c0f364a3dacd64a6f871ec4"
+      },
+      "pool_current_graph_actual_native": "NOT_RUN; require hosted exact subject runs",
+      "schema": "trnm.current-graph-budget-driver-final-handoff.v3",
+      "source_checks_changed": false,
+      "source_files_unchanged_since_v2": true,
+      "source_pack": {
+        "bytes": 23220,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/owned3-source.tar.xz",
+        "sha256": "b9f00eeb4634c3a6a565c77ba4bbfa55dc399f8a9fe4fa2e7d0ce6ddd4f7ab44"
+      },
+      "unit_refusal_controls": {
+        "methods": 46,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 7935,
+          "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/unit.stderr.raw",
+          "sha256": "8d3601a020ec4e3825cee38086183d6948dc34dce7b3ede3e7268a3771f3b812"
+        },
+        "stdout": {
+          "bytes": 0,
+          "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/current-graph-inputs/driver-validation-v2/unit.stdout.raw",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "w1_separate_handoff": {
+        "bytes": 67847,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/handoff.json",
+        "sha256": "f7c432d51012ffda84aac0a333dd102550b6742716de5b64bc139e7c5be951c4"
+      }
+    },
+    "committed_ci_required": true,
+    "root_budget_controls": {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_budget_controls.py"
+      ],
+      "elapsed_ns": 850191223,
+      "returncode": 0,
+      "stderr": {
+        "bytes": 7935,
+        "sha256": "795418db00dc055c633f1a0b1db526b6afd6a28535bb4fa7a542a09c818b673d"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "w1_handoff": {
+      "bytes": 67847,
+      "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/handoff.json",
+      "sha256": "f7c432d51012ffda84aac0a333dd102550b6742716de5b64bc139e7c5be951c4"
+    },
+    "w1_observation": {
+      "actual_implementation_under_test": "original Rust-only public_v3_from_zero ELF",
+      "artifacts": [
+        {
+          "actual_failures": [
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+            "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+          ],
+          "bytes": 6915281,
+          "complete_zip_crc_and_member_sha256": "PASS",
+          "desktop_zip": "/tmp/trnm-cab-w1-artifacts-20261119-0nxo2jqd/14523582967/14523582967.zip",
+          "mac_zip": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v2-0nxo2jqd/complete-artifacts/14523582967.zip",
+          "member_bytes": 46438723,
+          "members": 57,
+          "native_elf": {
+            "bytes": 13033944,
+            "crc32": 3102308109,
+            "extracted": false,
+            "path": "fresh-service/public_v3_from_zero",
+            "sha256": "2ee6da16163322ba4aec890ab32802665eb439ef2f88035d043d17f6b1babcb1"
+          },
+          "report_members": [
+            {
+              "archive_member": "fresh-service/original/report.json",
+              "bytes": 16483078,
+              "finite_target_met": false,
+              "kind": "original",
+              "mac_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v2-0nxo2jqd/complete-artifacts/14523582967-extracted/fresh-service/original/report.json",
+              "sha256": "24366dbcea6031b0d37a8433b3f0917c6b8a48879eadfa2cf2433b5aae505eba"
+            },
+            {
+              "archive_member": "fresh-service/fresh/report.json",
+              "bytes": 11980783,
+              "finite_target_met": false,
+              "kind": "fresh",
+              "mac_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v2-0nxo2jqd/complete-artifacts/14523582967-extracted/fresh-service/fresh/report.json",
+              "sha256": "c1f2588ee9214e39e49dafba0cd51828cd8240a131485d522cfcef25b363ae2f"
+            }
+          ],
+          "sha256": "dc4a131c55581da5e1b086859c25461544deece987e5ab1d397bde094bfa6a14",
+          "source_kind": "head"
+        },
+        {
+          "actual_failures": [
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+            "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+          ],
+          "bytes": 6690783,
+          "complete_zip_crc_and_member_sha256": "PASS",
+          "desktop_zip": "/tmp/trnm-cab-w1-artifacts-20261119-6qqtdygp/14525035187/14525035187.zip",
+          "mac_zip": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v1-6qqtdygp/complete-artifacts/14525035187.zip",
+          "member_bytes": 42126090,
+          "members": 57,
+          "native_elf": {
+            "bytes": 13033944,
+            "crc32": 3102308109,
+            "extracted": false,
+            "path": "fresh-service/public_v3_from_zero",
+            "sha256": "2ee6da16163322ba4aec890ab32802665eb439ef2f88035d043d17f6b1babcb1"
+          },
+          "report_members": [
+            {
+              "archive_member": "fresh-service/original/report.json",
+              "bytes": 14456099,
+              "finite_target_met": false,
+              "kind": "original",
+              "mac_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v1-6qqtdygp/complete-artifacts/14525035187-extracted/fresh-service/original/report.json",
+              "sha256": "3046e0eead77f77b26f2c503296528ace6e5b2b8c01c2b622f5c06b64b75707e"
+            },
+            {
+              "archive_member": "fresh-service/fresh/report.json",
+              "bytes": 9891355,
+              "finite_target_met": false,
+              "kind": "fresh",
+              "mac_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-artifacts-fast-v1-6qqtdygp/complete-artifacts/14525035187-extracted/fresh-service/fresh/report.json",
+              "sha256": "4a1eef0c2fa7cc838fa53a7d1f980b14ce787be08fd42a2368821402bb77380c"
+            }
+          ],
+          "sha256": "022f41ce68f0f79bd718549fae8e6aa010dc811712bb7bc6e4878b21b5a325ee",
+          "source_kind": "prospective-merge"
+        }
+      ],
+      "business_summary": {
+        "bytes": 44666,
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/business-summary.json",
+        "sha256": "01d2297b29956d344b1694d5c17bf29791f3c3826b7cc7e38a3969b18a74fcc8"
+      },
+      "cleanup_cancellations": [
+        {
+          "annotations": [
+            {
+              "annotation_level": "failure",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "The job was not acquired by Runner of type hosted even after multiple attempts",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            }
+          ],
+          "classification": "HOSTED_RUNNER_NOT_ACQUIRED",
+          "conclusion": "cancelled",
+          "job_id": 135518477554,
+          "logs": "HTTP404 BlobNotFound preserved; no native run existed",
+          "metadata": {
+            "bytes": 985,
+            "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/cleanup-raw/job-135518477554.stdout.raw",
+            "sha256": "ac8878ee00ecd712f51abbb716c2e4e30d9036bc477abcb883d3088e8a9e7fc0"
+          },
+          "name": "cleanup (macos-15, prospective-merge)",
+          "raw_annotations": {
+            "bytes": 1506,
+            "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/cleanup-raw/annotations-135518477554.stdout.raw",
+            "sha256": "4580ffc60d22349ba0c7f046693a39441ba85c4ef3f927f0869272709109d64f"
+          },
+          "run_id": 44512046493,
+          "runner_id": 0,
+          "runtime_steps_executed": 0
+        },
+        {
+          "annotations": [
+            {
+              "annotation_level": "failure",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "The job was not acquired by Runner of type hosted even after multiple attempts",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            },
+            {
+              "annotation_level": "notice",
+              "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cab5d8c30ce97983938dd6b575a391f2baf566b4/.github",
+              "end_column": null,
+              "end_line": 1,
+              "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.",
+              "path": ".github",
+              "raw_details": "",
+              "start_column": null,
+              "start_line": 1,
+              "title": ""
+            }
+          ],
+          "classification": "HOSTED_RUNNER_NOT_ACQUIRED",
+          "conclusion": "cancelled",
+          "job_id": 135518477727,
+          "logs": "HTTP404 BlobNotFound preserved; no native run existed",
+          "metadata": {
+            "bytes": 972,
+            "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/cleanup-raw/job-135518477727-attempt-1.stdout.raw",
+            "sha256": "a80960d4f5afe234ba2e70bdea10df6186fa9b90a98280b65f690fc1ec1bd5a0"
+          },
+          "name": "cleanup (macos-15, head)",
+          "raw_annotations": {
+            "bytes": 1506,
+            "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/ci-cab-w1-cleanup/cleanup-raw/check-135518477727-annotations-attempt-1.stdout.raw",
+            "sha256": "4580ffc60d22349ba0c7f046693a39441ba85c4ef3f927f0869272709109d64f"
+          },
+          "run_id": 44512046493,
+          "runner_id": 0,
+          "runtime_steps_executed": 0
+        }
+      ],
+      "full_performance_report": {
+        "bytes": 83852,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-business-observation-v1-bc6z5818/performance-report.json",
+        "sha256": "569f4d9984aeb5e9d1d0a7b86097c34b8e4e6490ef8ef4aa86e1803e83319f75"
+      },
+      "head": "cab5d8c30ce97983938dd6b575a391f2baf566b4",
+      "not_inferred": [
+        "No final confirmation from seven ACKs",
+        "No production throughput or WAN fairness",
+        "No isolated CPU causality from nested wall intervals",
+        "No cancelled job PASS",
+        "No HIA Work/Host regression inferred from original Rust-only ELF observations"
+      ],
+      "performance_summary": {
+        "bytes": 83852,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cab-w1-business-observation-v1-bc6z5818/performance-report.json",
+        "rows": [
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 415567393,
+            "history_replay_wall_ns": 2176493559,
+            "history_request_wall_ns": 27039053,
+            "last_submission_end_ns": 180613045,
+            "mode": "attack-free-baseline",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 2204932198,
+            "phase_wall_ns": {
+              "commit": 27168799,
+              "cpu_wait": 316170,
+              "execution": 2815546,
+              "history_import": 1759208351,
+              "submit_result": 118111002,
+              "work": 1520048098
+            },
+            "source_kind": "head",
+            "source_report_sha256": "24366dbcea6031b0d37a8433b3f0917c6b8a48879eadfa2cf2433b5aae505eba",
+            "test_kind": "original"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 325799863,
+            "history_replay_wall_ns": 2975429349,
+            "history_request_wall_ns": 15448635,
+            "last_submission_end_ns": 922608689,
+            "mode": "from-zero-pressure",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 3078764541,
+            "phase_wall_ns": {
+              "commit": 109014435,
+              "cpu_wait": 2408607,
+              "execution": 90501912,
+              "history_import": 2390258351,
+              "submit_result": 285644,
+              "work": 2176889836
+            },
+            "source_kind": "head",
+            "source_report_sha256": "24366dbcea6031b0d37a8433b3f0917c6b8a48879eadfa2cf2433b5aae505eba",
+            "test_kind": "original"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 410790788,
+            "history_replay_wall_ns": 2087339869,
+            "history_request_wall_ns": 103492280,
+            "last_submission_end_ns": 111445380,
+            "mode": "attack-free-baseline",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 2192290265,
+            "phase_wall_ns": {
+              "commit": 104659877,
+              "cpu_wait": 314045,
+              "execution": 2824761,
+              "history_import": 1640162550,
+              "submit_result": 170335454,
+              "work": 1345315703
+            },
+            "source_kind": "head",
+            "source_report_sha256": "c1f2588ee9214e39e49dafba0cd51828cd8240a131485d522cfcef25b363ae2f",
+            "test_kind": "fresh"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 138685779,
+            "history_replay_wall_ns": 2301929991,
+            "history_request_wall_ns": 296847039,
+            "last_submission_end_ns": 1402907241,
+            "mode": "from-zero-pressure",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 2599137566,
+            "phase_wall_ns": {
+              "commit": 7472408,
+              "cpu_wait": 156737,
+              "execution": 94136785,
+              "history_import": 1709952494,
+              "submit_result": 116427,
+              "work": 1603299086
+            },
+            "source_kind": "head",
+            "source_report_sha256": "c1f2588ee9214e39e49dafba0cd51828cd8240a131485d522cfcef25b363ae2f",
+            "test_kind": "fresh"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 287295892,
+            "history_replay_wall_ns": 1586639415,
+            "history_request_wall_ns": 110084351,
+            "last_submission_end_ns": 213543339,
+            "mode": "attack-free-baseline",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 1698928075,
+            "phase_wall_ns": {
+              "commit": 109193397,
+              "cpu_wait": 220009,
+              "execution": 2362440,
+              "history_import": 1095775745,
+              "submit_result": 148328341,
+              "work": 821573725
+            },
+            "source_kind": "prospective-merge",
+            "source_report_sha256": "3046e0eead77f77b26f2c503296528ace6e5b2b8c01c2b622f5c06b64b75707e",
+            "test_kind": "original"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 134372660,
+            "history_replay_wall_ns": 2496852326,
+            "history_request_wall_ns": 298769070,
+            "last_submission_end_ns": 1290543157,
+            "mode": "from-zero-pressure",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 2796194188,
+            "phase_wall_ns": {
+              "commit": 200745159,
+              "cpu_wait": 133841,
+              "execution": 189757760,
+              "history_import": 1892544714,
+              "submit_result": 210140,
+              "work": 1496039528
+            },
+            "source_kind": "prospective-merge",
+            "source_report_sha256": "3046e0eead77f77b26f2c503296528ace6e5b2b8c01c2b622f5c06b64b75707e",
+            "test_kind": "original"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 282486172,
+            "history_replay_wall_ns": 1582917056,
+            "history_request_wall_ns": 108135029,
+            "last_submission_end_ns": 209705455,
+            "mode": "attack-free-baseline",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 1693231532,
+            "phase_wall_ns": {
+              "commit": 110656795,
+              "cpu_wait": 202238,
+              "execution": 2423685,
+              "history_import": 1167382183,
+              "submit_result": 144149833,
+              "work": 895840471
+            },
+            "source_kind": "prospective-merge",
+            "source_report_sha256": "4a1eef0c2fa7cc838fa53a7d1f980b14ce787be08fd42a2368821402bb77380c",
+            "test_kind": "fresh"
+          },
+          {
+            "calling_thread_cpu_excludes_other_workers": true,
+            "history_replay_caller_cpu_ns": 58147878,
+            "history_replay_wall_ns": 1799937741,
+            "history_request_wall_ns": 191267990,
+            "last_submission_end_ns": 2088272304,
+            "mode": "from-zero-pressure",
+            "nested_phase_totals_are_not_additive": true,
+            "original_replay_loop_wall_ns": 1991601287,
+            "phase_wall_ns": {
+              "commit": 6181604,
+              "cpu_wait": 96932400,
+              "execution": 91331469,
+              "history_import": 1300692279,
+              "submit_result": 73529,
+              "work": 1104007997
+            },
+            "source_kind": "prospective-merge",
+            "source_report_sha256": "4a1eef0c2fa7cc838fa53a7d1f980b14ce787be08fd42a2368821402bb77380c",
+            "test_kind": "fresh"
+          }
+        ],
+        "sha256": "569f4d9984aeb5e9d1d0a7b86097c34b8e4e6490ef8ef4aa86e1803e83319f75"
+      },
+      "production_activation": false,
+      "run_id": 44512046061,
+      "scope": "read-only actual CI failure audit; no budgets, source guards or original assertions changed",
+      "status": "FAIL_OPEN_ACTUAL_CONFIRMATION_TARGET_NOT_MET",
+      "transport_failures_retained": [
+        "Initial job metadata GET TCP timeout in cab-w1-cleanup-raw-v1-ftakn7az",
+        "Mac direct GET artifact timeout and cancelled bounded continuation in cab-w1-cleanup-completion-v2-op063_wm",
+        "Mac fast-v1 second redirect RemoteDisconnected after first full artifact PASS",
+        "Mac fast-v2 fixed-artifact SSH timeout at180s; the original Desktop downloader continued and independently completed at445.2082600379945s; first transport failure remains FAIL"
+      ],
+      "w1_budget_seconds": 4,
+      "w1_workers": 16,
+      "whole_chain_native": false
+    }
+  },
   "current_integrated_head_runtime_inferred": false,
   "failed_attempts_support_archive": {
     "bytes": 203619915,

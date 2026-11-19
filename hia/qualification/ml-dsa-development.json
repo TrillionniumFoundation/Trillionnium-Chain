@@ -7,6 +7,594 @@
     "sha256": "6d05d1f4353927848104f1654a1c0fb9a6004bd49a4e39dabe7a1365e32d090d"
   },
   "base_commit": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+  "current_ci_repair": {
+    "committed_ci_required": true,
+    "handoff": {
+      "bytes": 25295,
+      "path": "/workspace/scratch/5cee04bf67f6/ml-dsa-ci-dev/ci-repair-final-handoff.json",
+      "sha256": "cbcffdc57de1da2f7b00aa878f65a72e7d1269696a6e60bec4adc3129dd85feb"
+    },
+    "observation": {
+      "actual_github_ci_success_claimed": false,
+      "archive": {
+        "cargo_targets_excluded_but_all_test_elf_adapter_reference_and_raw_retained": true,
+        "desktop_readback": {
+          "actual_github_ci_success_claimed": false,
+          "archive": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/ml-dsa-ci-repair-complete.tar.xz",
+          "bytes": 498515672,
+          "component_source_set_sha256": "01e543c81b361d2d5576895a00454c197e8399cf9d0278cb1ca23b4085d3088d",
+          "manifest_sha256": "1d8087faf5b9a129a0bceb9b984d3e0058df6f40c35384e498d2588eee033616",
+          "members_checked": 3064,
+          "mode": 384,
+          "private_source_set_sha256": "9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8",
+          "seconds": 407.2511815439793,
+          "sha256": "6025e43774819ec775d84ff3f43a811d314be7659f3e7d5e3d539af45666bcb8",
+          "status": "PASS"
+        },
+        "desktop_readback_file": {
+          "bytes": 627,
+          "sha256": "081f49558608463a93fb8309f8e3a3efcd4510b3d6d69df1f53123d76577ed37"
+        },
+        "mac_readback": {
+          "actual_github_ci_success_claimed": false,
+          "actual_tests_reexecuted_on_mac": false,
+          "archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-repair-final-20261119-cg7y3j0k/ml-dsa-ci-repair-complete.tar.xz",
+          "bytes": 498515672,
+          "component_source_set_sha256": "01e543c81b361d2d5576895a00454c197e8399cf9d0278cb1ca23b4085d3088d",
+          "desktop_archive": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/ml-dsa-ci-repair-complete.tar.xz",
+          "desktop_readback": {
+            "actual_github_ci_success_claimed": false,
+            "archive": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/ml-dsa-ci-repair-complete.tar.xz",
+            "bytes": 498515672,
+            "component_source_set_sha256": "01e543c81b361d2d5576895a00454c197e8399cf9d0278cb1ca23b4085d3088d",
+            "manifest_sha256": "1d8087faf5b9a129a0bceb9b984d3e0058df6f40c35384e498d2588eee033616",
+            "members_checked": 3064,
+            "mode": 384,
+            "private_source_set_sha256": "9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8",
+            "seconds": 407.2511815439793,
+            "sha256": "6025e43774819ec775d84ff3f43a811d314be7659f3e7d5e3d539af45666bcb8",
+            "status": "PASS"
+          },
+          "desktop_readback_file": {
+            "bytes": 627,
+            "sha256": "081f49558608463a93fb8309f8e3a3efcd4510b3d6d69df1f53123d76577ed37"
+          },
+          "manifest": {
+            "bytes": 652203,
+            "sha256": "1d8087faf5b9a129a0bceb9b984d3e0058df6f40c35384e498d2588eee033616"
+          },
+          "member_bytes_checked": 2391292781,
+          "members_checked": 3064,
+          "private_source_set_sha256": "9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8",
+          "seconds": 20.791431875,
+          "sha256": "6025e43774819ec775d84ff3f43a811d314be7659f3e7d5e3d539af45666bcb8",
+          "stages": [
+            {
+              "argv": [
+                "/usr/bin/scp",
+                "-B",
+                "-o",
+                "BatchMode=yes",
+                "desktop-ts:/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/complete-repair-result.json",
+                "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-repair-final-20261119-cg7y3j0k/complete-repair-result.json"
+              ],
+              "exit_code": 0,
+              "seconds": 0.335439125
+            },
+            {
+              "argv": [
+                "/usr/bin/scp",
+                "-B",
+                "-o",
+                "BatchMode=yes",
+                "desktop-ts:/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/complete-repair-manifest.json",
+                "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-repair-final-20261119-cg7y3j0k/complete-repair-manifest.json"
+              ],
+              "exit_code": 0,
+              "seconds": 0.50653175
+            },
+            {
+              "argv": [
+                "/usr/bin/scp",
+                "-B",
+                "-o",
+                "BatchMode=yes",
+                "desktop-ts:/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/ml-dsa-ci-repair-complete.tar.xz",
+                "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-repair-final-20261119-cg7y3j0k/ml-dsa-ci-repair-complete.tar.xz"
+              ],
+              "exit_code": 0,
+              "seconds": 4.8103695
+            }
+          ],
+          "status": "PASS",
+          "task": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-repair-final-20261119-cg7y3j0k",
+          "whole_chain_native": false
+        },
+        "mac_readback_file": {
+          "bytes": 3221,
+          "sha256": "1d89920ff24b50047ade14c037e4f22ae26f57d2fb8f5a224c268a2a92fb22d6"
+        },
+        "process_jobs": [
+          {
+            "exit_code": 0,
+            "host": "desktop",
+            "job_id": "1a1f3cc66c8-ffbe-e37",
+            "output_complete": true,
+            "output_durable": true,
+            "state": "succeeded"
+          },
+          {
+            "exit_code": 0,
+            "host": "mac",
+            "job_id": "1a1f3d3c23c-ffbe-e47",
+            "output_complete": true,
+            "output_durable": true,
+            "state": "succeeded"
+          }
+        ]
+      },
+      "changes": [
+        "Use exact read-only --audit project preflight in the original gate; development and activation guards remain enforced.",
+        "Bind actual boundary program, project identity/boundary, portability inventory and all workspace manifests in the private source graph.",
+        "Add actual detached Git repository, foreign origin, activation and source/argv mutation controls.",
+        "Use exact discovered control_roster length in execution and readback; regression accepts 21 and refuses 20 or skipped controls."
+      ],
+      "final_component": {
+        "build_record_sha256": [
+          "612ab3a61121c2f1d38312e693c5c51f604d76d73c7d0a4625890f0e25ff80ca",
+          "b93ec9c6f59f76e16c09a3134462cc2e1edb2ad3a929a7f7939713abf2e6bfc1",
+          "d2ebf7d9e2a2f9b32743fe0ffe6adcef3110ca84186dac644f461ed014fa872f",
+          "8931c3309f8c2346d842e7a0749a398255f5ec772ca101ee3881e167fc3d36da",
+          "9d7fc908aaa63b54b3057f4afe0e92ac22548fe34c335b37ebbebd863a4253a7"
+        ],
+        "capacity_refusals": 12,
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "component_ci_admission": "NOT_CLAIMED_DIRTY_OVERLAY",
+        "discovered_methods": 601,
+        "driver_report": {
+          "bytes": 7027,
+          "sha256": "535fd7504b8b01dc0c91f0ffb5acc7f3f7c23eaa86263d7c95fe1847c885b578"
+        },
+        "driver_seconds": 145.03811324201524,
+        "errors": 0,
+        "failures": 0,
+        "generic_seconds": 139.54472273599822,
+        "independent_readback": {
+          "bytes": 7318,
+          "sha256": "741cb5391b7b84842b1edbe346ed5cb98c0474c12c42517c2d44dd333e05d2d9"
+        },
+        "independent_readback_seconds": 2.2234357289853506,
+        "job_id": "1a1f3c29e8d-ffbe-e1e",
+        "lineage": null,
+        "native_shared_calls": 1213,
+        "official_execution_cases": 500,
+        "original_batches": 10,
+        "original_calls": 669,
+        "partition_counts": {
+          "crypto-types": 95,
+          "general": 440,
+          "ml-dsa": 37,
+          "oracle": 22,
+          "state-root": 7
+        },
+        "raw_log": {
+          "bytes": 7091,
+          "sha256": "2137a85473b45598727b127b6f5a27ee5750bc25b1d2e1235b0b5fe59482fd45"
+        },
+        "raw_owned_calls": 96,
+        "report": {
+          "bytes": 520948,
+          "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic37-final/qualification.json",
+          "sha256": "6909019a2f9366cdb7f55471d7c4fc780818fc1d09b9206b2503c23af6b142cb"
+        },
+        "selected_count": 37,
+        "selected_methods": [
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_01_complete_selected_official_verification_and_original",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_02_complete_selected_official_key_generation_and_original",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_03_complete_selected_official_signatures_and_original_public_surface",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_04_candidate_complete_lifecycle_matches_original",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_05_candidate_mixed_error_priority_and_content_mutations",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_06_signature_z_norm_exact_boundaries",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_07_hint_canonical_encoding_and_error_precedence",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_08_candidate_algorithm_and_every_error_display",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_09_owned_key_error_priority_and_reinitialization_refusal",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_10_selfverification_and_secret_failure_cleanup",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_11_all_public_envelopes_refuse_before_caller_writes",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_12_diagnostic_secret_encoding_failure_clears_work",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_13_pure_internal_mu_and_context_separation",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_14_minimum_capacity_and_full_borrow_tail_preservation",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_15_actual_last_nonce_and_explicit_overflow_refusal",
+          "hia.tests.test_ml_dsa.MlDsaNativeTests.test_16_real_private_allocations_unaligned_lifetimes_and_capacity_refusals",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_actual_provider_input_mutation_is_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_clippy_warning_gate_is_mandatory",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_complete_serialization_fixture_is_accepted_without_execution_claim",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cross_crate_includes_and_example_support_cannot_be_omitted",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cwd_and_timeout_are_part_of_the_original_stage_identity",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_duplicate_json_keys_and_worker_literal_damage_are_visible",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failed_and_partial_native_reports_never_read_back_as_complete",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failure_and_missing_original_stages_are_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_ignored_filtered_or_missing_tests_are_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_inherited_build_runtime_overrides_and_cargo_config_are_rejected_before_output",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_locked_offline_all_features_cannot_be_removed_from_both_receipts",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_missing_original_source_and_changed_canonical_dependency_are_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_adapter_source_and_library_are_bound",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_no_run_event_must_bind_each_test_executable",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_profile_cannot_change_in_both_cargo_events_and_report",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_readback_does_not_promote_foreign_alias_or_constant_time_scope",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_readonly_preflight_accepts_detached_head_and_preserves_boundary_guards",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_receipt_mismatch_and_raw_mutation_are_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_test_filter_and_alternate_binary_are_rejected_even_with_matching_receipt",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_traversal_and_symlink_inputs_are_rejected",
+          "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_wrong_rust_host_is_rejected_after_self_consistent_raw_update"
+        ],
+        "six_original_references": {
+          "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+            "bytes": 4737096,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-checkpoint",
+            "sha256": "3feaf9ee51d3f1a17a2137772466a8e9a487b71a625dea681c4d5b7b825ffbb7"
+          },
+          "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+            "bytes": 20856360,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-crypto",
+            "sha256": "8d3efcba1ee19d0748264629dde448959599b7958e6e09719ab97eae6e44e693"
+          },
+          "TRNM_HIA_RUST_ML_DSA_REFERENCE": {
+            "bytes": 29033264,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-after-repair-v2/original/original-reference",
+            "sha256": "7412af8abca216c9e1ab68aaea0777de9231b2b5d1955cd8056a8831eae1cf84"
+          },
+          "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+            "bytes": 8258832,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-protocol",
+            "sha256": "de9673ba6ea314565de3c6fd99842bc8500a916b3320e8b86d80e60866501bb7"
+          },
+          "TRNM_HIA_RUST_REFERENCE": {
+            "bytes": 4402808,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-hia-rust-reference",
+            "sha256": "563f2c921462624329dc24ed581ee22765fddb76887effeaf2cc72b1f466a9b9"
+          },
+          "TRNM_HIA_RUST_STATE_REFERENCE": {
+            "bytes": 47517256,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-state",
+            "sha256": "3af8f8203ef5d9e1d8ed0f5649b28abce46e541eb2d53205f2193bead5c3d7fc"
+          }
+        },
+        "skips": 0,
+        "source_count": 1331,
+        "source_set_sha256": "01e543c81b361d2d5576895a00454c197e8399cf9d0278cb1ca23b4085d3088d",
+        "source_unchanged": true,
+        "status": "PASS",
+        "working_tree_dirty": true
+      },
+      "final_private_identity": {
+        "complete_private_gate_executed_on_this_final_identity": false,
+        "difference_from_executed_private": {
+          "hia/tools/qualify.py": {
+            "final": "cfb550662feb7ddfaae3a483479a31de31c3933a9fa32c191db889c8f1e3b3ae",
+            "private": "250d41055f7615954533f98d59fc47ae0445328bb5d4db6f75aa0d3652bb0500"
+          }
+        },
+        "older_private_report_relabelled_or_read_back_against_final_identity": false,
+        "required_next_gate": "New committed GitHub CI must rerun the complete original/native ML-DSA gate and all 37 generic methods on that commit.",
+        "source_count": 187,
+        "source_set_sha256": "821e9c2c3de9979efa719e8accfdc57aeaccc1ab70a21732c6c28ba397736ce6"
+      },
+      "fresh_generic_references": {
+        "fresh_target": true,
+        "job_id": "1a1f3b24492-ffbe-e01",
+        "references": {
+          "HIA_CONTROL_PLANE_SHA2": {
+            "bytes": 930996,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/target/debug/deps/libsha2-8444ffe34d14b801.rlib",
+            "sha256": "3ce917e02d21155171f0c850c78661d25108c8bf7b594d1cfe7d47eed16284ea"
+          },
+          "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+            "bytes": 4737096,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-checkpoint",
+            "sha256": "3feaf9ee51d3f1a17a2137772466a8e9a487b71a625dea681c4d5b7b825ffbb7"
+          },
+          "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+            "bytes": 20856360,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-crypto",
+            "sha256": "8d3efcba1ee19d0748264629dde448959599b7958e6e09719ab97eae6e44e693"
+          },
+          "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+            "bytes": 8258832,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-protocol",
+            "sha256": "de9673ba6ea314565de3c6fd99842bc8500a916b3320e8b86d80e60866501bb7"
+          },
+          "TRNM_HIA_RUST_REFERENCE": {
+            "bytes": 4402808,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-hia-rust-reference",
+            "sha256": "563f2c921462624329dc24ed581ee22765fddb76887effeaf2cc72b1f466a9b9"
+          },
+          "TRNM_HIA_RUST_STATE_REFERENCE": {
+            "bytes": 47517256,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/trnm-rust-state",
+            "sha256": "3af8f8203ef5d9e1d8ed0f5649b28abce46e541eb2d53205f2193bead5c3d7fc"
+          },
+          "TRNM_HIA_RUST_TYPES_RLIB": {
+            "bytes": 6048596,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/target/debug/libtrnm_types.rlib",
+            "sha256": "bccee92f3fbe471649cdca30ed4cee2f6cd76e4db420a11e1be57e61de7879e4"
+          }
+        },
+        "report": {
+          "bytes": 172363,
+          "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/generic-references/report.json",
+          "sha256": "435021eb148b9b2d0873b1c1187c8bc433852f8e62e6b8f3d8005ac7fb53eee2"
+        },
+        "retained_generic_libraries": 82,
+        "seconds": 30.434913037985098,
+        "source_count": 326,
+        "status": "PASS"
+      },
+      "limits": {
+        "automatic_owner_lifetime_qualified": false,
+        "constant_time_qualified": false,
+        "crypto_crate_retired": false,
+        "foreign_pointer_gate_qualified": false,
+        "production_activation": false,
+        "whole_chain_native": false
+      },
+      "lineage": null,
+      "next_authorized_work": "Resume independent PQ SPKI/TPQ1/pq_auth owner and pq_profile_auth port without modifying the frozen main tree.",
+      "original_ci_failures": {
+        "artifacts": [
+          {
+            "bytes": 7183529,
+            "id": 14523717233,
+            "members": 21,
+            "sha256": "670aa4cdc3efc24f9b52a4ab35c8a117d9002d26b2a531fbf5742c69ea6de331"
+          },
+          {
+            "bytes": 7183517,
+            "id": 14524860114,
+            "members": 21,
+            "sha256": "3fe3feeead36b38e4306a4f57461b97ebec4ba6e1c0a2c6776fb2420f313ebd2"
+          },
+          {
+            "bytes": 16545,
+            "id": 14523647275,
+            "members": 4,
+            "sha256": "a96bf2b4ebdf103bf5e5906af41738235c8fc8e1d0d003a1877ec1138ec94f02"
+          },
+          {
+            "bytes": 16536,
+            "id": 14522764560,
+            "members": 4,
+            "sha256": "489bbff8057546e0e89f0ba8666a9ffeea30508a055f08dd5f68bd138633d6e1"
+          }
+        ],
+        "full_archive": {
+          "both_host_readback": "PASS",
+          "bytes": 35382100,
+          "desktop": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/ci-failure-full.tar.xz",
+          "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-ci-cab5d8c-failures.tar.xz",
+          "manifest_sha256": "1ae77233344ae4d4328fefdd52803018992191114fb15aff0670a1e46a366aab",
+          "members_checked": 112,
+          "observed_ci_status": "FAIL",
+          "sha256": "66a34342f561e570a32349a36d8a17486c3ce876076fc79602bdce4da6e9d047"
+        },
+        "jobs": [
+          {
+            "aggregate_job_id": 135527428840,
+            "aggregate_log_sha256": "f3ed1f97e70f9b82e6c74d97d0f0d29705d084bacf439dddbf67ad3b3b1985fd",
+            "event": "push",
+            "ml_dsa_job_id": 135518389516,
+            "ml_log_sha256": "38860aa43989a34298eadf5a3e91eb4c651e895bee804b2823dc05cf5791cb1c",
+            "run_id": 44512019556
+          },
+          {
+            "aggregate_job_id": 135528405620,
+            "aggregate_log_sha256": "8a7684040aca02b35b8ea6eff74697482dfd176be99d375875f0a7251eb4d397",
+            "event": "pull_request",
+            "ml_dsa_job_id": 135518484618,
+            "ml_log_sha256": "f336ffedff6e7e111d7a5694e73502203dd8a386d647c9eb704523f520f54b23",
+            "run_id": 44512046673
+          }
+        ],
+        "root_cause": "Original ML-DSA gate ran the developer preflight on detached HEAD; exit 2 before original/native tests. Both aggregate jobs correctly refused the failed ML-DSA prerequisite."
+      },
+      "owned_files": [
+        {
+          "bytes": 15584,
+          "mode": 420,
+          "path": "hia/tools/ml_dsa_original.py",
+          "sha256": "ff09e14da1a314769dbcf9dc8c6eaa3e4a2642d3d76fba48fb4bfaff87bae0bb"
+        },
+        {
+          "bytes": 30400,
+          "mode": 420,
+          "path": "hia/tools/qualify_ml_dsa.py",
+          "sha256": "4ef82ff5bcabe4cffdf19d09b61e89f6a4e362a86e0d096aaa765de067cb1851"
+        },
+        {
+          "bytes": 25528,
+          "mode": 420,
+          "path": "hia/tests/test_ml_dsa_qualification.py",
+          "sha256": "9ebdba4220a606bfc851cfc45e54f301d4d6da117a2a1e903a77e0a35b947d09"
+        },
+        {
+          "bytes": 18054,
+          "mode": 420,
+          "path": "hia/src/crypto/ML_DSA.md",
+          "sha256": "0f9230e705732279f8d6a4f52072e80e61f1ffa17e64e564b16d2a2a256d6542"
+        }
+      ],
+      "preserved_intermediate_failures": {
+        "exact_cab_detached_reproduction": {
+          "report": {
+            "bytes": 23779,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-before-repair/report.json",
+            "sha256": "65ec70fa5d9711ebce904b64db774abde08fa79d97fb6947fd48edd59b4db173"
+          },
+          "status": "FAIL"
+        },
+        "historical_sparse_object_warnings": {
+          "full_repository_object_completeness_claimed": false,
+          "not_qualified_inputs": true,
+          "repaired_manifest_git_oid": "4786972faebd5c9da0ec96cf3cb90a42828bead4",
+          "retained": true,
+          "still_absent_historical_archive_part_oid": "118a1974e0441ab9bcb62313a0361e7fdfe60a54"
+        },
+        "repair_v1": {
+          "actual_integrity_controls": 21,
+          "actual_native_methods": 16,
+          "error": "ValueError('Integrity controls failed')",
+          "reason": "Stale controller count of 20 rejected the actual complete 21-control run; corrected before v2.",
+          "report": {
+            "bytes": 297196,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-after-repair/report.json",
+            "sha256": "d6c6840320a6ed87f565b88e35a420a8ceb0a922e858afd5ad2e5eefaf4e535d"
+          },
+          "status": "FAIL"
+        },
+        "transport_timeouts_and_partial_zips_preserved": true
+      },
+      "private_v2": {
+        "complete_gate_seconds": 358.52924239402637,
+        "counts": {
+          "native_keygen": 112,
+          "native_nonce": 7,
+          "native_owner": 315,
+          "native_sign": 265,
+          "native_verify": 514,
+          "original_batches": 10,
+          "original_calls": 669,
+          "raw_capacity_refusals": 12,
+          "raw_owned_calls": 96
+        },
+        "driver_seconds": 367.8181540860096,
+        "errors": 0,
+        "failures": 0,
+        "fresh_target": true,
+        "independent_readback_seconds": 7.921353172045201,
+        "integrity_controls": 21,
+        "job_id": "1a1f3abcead-ffbe-def",
+        "native_artifacts": {
+          "keygen": "7519008b088014170afc861dcd611eae323683661b97d5773390c3fe3b3fdf2e",
+          "nonce": "f9de63060493f0d55bf845eb44c08154bf54c2bbfa918466f0ecd985ee254a60",
+          "owner": "b92edf08e4f1d65cf8f643155dc40d57cb9fc11c6c57b97489d2e60aaa85e864",
+          "sign": "c7ef9cf21c19fb5a0595fd9442e8928f4c81199917a14fce9b5688d0e44aabce",
+          "verify": "01b603db82bbdafa479dc0ed8514ab2fbe852f0fbd6e6d18210fef58a5cb2a80"
+        },
+        "native_methods": 16,
+        "native_shared_calls": 1213,
+        "official_cases_are_bounded_selected_coverage": true,
+        "official_execution_cases": 500,
+        "original": {
+          "doctests": 2,
+          "reference": {
+            "bytes": 29033264,
+            "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-after-repair-v2/original/original-reference",
+            "retained": "original-reference",
+            "sha256": "7412af8abca216c9e1ab68aaea0777de9231b2b5d1955cd8056a8831eae1cf84",
+            "source": "hia/tests/rust_ml_dsa_reference.rs",
+            "source_sha256": "2d57ad244560c0c5a298315b252068149b66bb6bedd8f6dbe6eba468462578e9"
+          },
+          "seconds": 215.43400301097427,
+          "stages": 79,
+          "status": "PASS",
+          "test_binaries": 34,
+          "tests": 343
+        },
+        "original_fmt_and_strict_clippy": "PASS",
+        "original_report": {
+          "bytes": 182111,
+          "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-after-repair-v2/original/report.json",
+          "sha256": "4be65d53aeabf7a402a12a3b25f6438d7d938dc286056d1d2ea37822267ec383"
+        },
+        "original_stages": 79,
+        "pinned_openssl": "3.5.9",
+        "pinned_rust": "1.95.0-x86_64-unknown-linux-gnu",
+        "provider_preparation_reused": true,
+        "report": {
+          "bytes": 348945,
+          "path": "/tmp/trnm-mldsa-ci-cab5d8c-20261119-k2kguide/qualification-after-repair-v2/report.json",
+          "sha256": "5973e8e64084438969c789cae22566f6405426e5b5315799893c8d606255e61c"
+        },
+        "skips": 0,
+        "source_count": 187,
+        "source_set_sha256": "9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8",
+        "status": "PASS"
+      },
+      "public_delta": {
+        "bytes": 596816,
+        "files": 11,
+        "local_path": "/workspace/scratch/5cee04bf67f6/integration-ci-repair-v1/public-final-v1.tar.xz",
+        "sha256": "a7b828868888cf766792685ebc19e81953e5a8db63ef38749c7ca00ecb454039"
+      },
+      "schema": "trnm.hia.ml-dsa-ci-repair.final-handoff.v1",
+      "source_commit": "cab5d8c30ce97983938dd6b575a391f2baf566b4",
+      "source_overlay": {
+        "bytes": 31812,
+        "local_path": "/workspace/scratch/5cee04bf67f6/ml-dsa-ci-dev/repair-source-v2.tar.xz",
+        "sha256": "2d42b737a60e503ec3ae041adfbebb8e7942036cbeefca81483e6c96d02a5098"
+      },
+      "source_tree": "99b5ed16b9ab5c1d198e8ee093e46fa181de845c",
+      "status": "PASS_DEVELOPMENT_REPAIR_AND_ARCHIVE",
+      "timing_note": "All reported durations are actual separate executed phases. Provider preparation was reused. Tool waiting, source-delta waiting and archive time are not claimed as test execution; the phases are not represented as a single continuous committed CI job.",
+      "working_tree_dirty": true
+    },
+    "root_controls": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "elapsed_ns": 112693112,
+        "returncode": 0,
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 155,
+          "sha256": "952d2b102c6d72c0bd57f58bbaf7c6a6134995b13aae4fb69dcd7088820c4b3c"
+        }
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "hia.tests.test_component_partition",
+          "hia.tests.test_composition",
+          "hia.tests.test_ml_dsa_qualification",
+          "hia.tests.test_migration_inventory"
+        ],
+        "elapsed_ns": 3196472005,
+        "returncode": 0,
+        "stderr": {
+          "bytes": 158,
+          "sha256": "564f5c7fc268008bcb35901e97d88a057ed3347b266ca02aa04a067196c47f90"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "root_preparation_failure": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "hia.tests.test_component_partition",
+        "hia.tests.test_composition",
+        "hia.tests.test_ml_dsa_qualification",
+        "hia.tests.test_migration_inventory"
+      ],
+      "errors": 1,
+      "failure": "CompositionTests.setUpClass: RuntimeError: Set HIA_TOOLCHAIN_ROOT to the checkout in hia/toolchain.lock.json",
+      "native_compilation_or_whole_chain_qualification_claimed": false,
+      "reported_seconds": 2.432,
+      "reported_tests_run": 41,
+      "scope": "unconfigured local preparation; actual observed console summary, not a complete runtime archive",
+      "status": "FAIL"
+    }
+  },
   "current_integration": {
     "actual_handoff": {
       "actual_native_artifacts": {
