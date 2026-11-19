@@ -6,6 +6,7 @@ no runtime authority and cannot replace the final complete reader.
 """
 from __future__ import annotations
 import hashlib
+import json
 import os
 from pathlib import Path
 import stat
@@ -13,6 +14,8 @@ import tarfile
 import traceback
 
 BINDING = "trnm.hia.work-owner-stage-binding.v1"
+ORIGINAL_BINDING = "trnm.hia.work-owner-original-byte-capture.v1"
+ORIGINAL_LIVE = "trnm.hia.work-owner-original-live-inputs.v1"
 PACKAGE = "trnm.hia.work-owner-stage-evidence.v1"
 PHASES = ("native", "original")
 NATIVE_COUNTS = {
@@ -49,8 +52,10 @@ def current_context(q):
 
 
 def check_binding(q, value, phase, expected, sources, originals, readers):
-    q.need(phase in PHASES and type(value) is dict and value.get("schema") == BINDING
-           and value.get("phase") == phase and value.get("status") == "PASS"
+    schema = ORIGINAL_BINDING if phase == "original" else BINDING
+    status = "CAPTURED" if phase == "original" else "PASS"
+    q.need(phase in PHASES and type(value) is dict and value.get("schema") == schema
+           and value.get("phase") == phase and value.get("status") == status
            and value.get("final_qualification_claimed") is False
            and q.same(value.get("lineage"), expected), "Failed, wrong-phase or foreign Work predecessor")
     q.need(q.same(value.get("source_inputs"), sources)
@@ -60,9 +65,14 @@ def check_binding(q, value, phase, expected, sources, originals, readers):
            and value.get("original_source_set_sha256") == q.object_hash(originals),
            "Complete predecessor source or reader closure differs")
     q.need(all(value.get(name) is False for name in q.SCOPES), "Predecessor expanded runtime authority")
-    counts = NATIVE_COUNTS if phase == "native" else ORIGINAL_COUNTS
-    q.need(all(type(value.get(name)) is int and value[name] == count for name, count in counts.items()),
-           "Predecessor omitted, skipped or changed an actual stage count")
+    if phase == "native":
+        q.need(all(type(value.get(name)) is int and value[name] == count
+                   for name, count in NATIVE_COUNTS.items()),
+               "Predecessor omitted, skipped or changed an actual stage count")
+    else:
+        q.need(q.same(value.get("required_original_counts"), ORIGINAL_COUNTS)
+               and not any(name in value for name in ORIGINAL_COUNTS),
+               "Pending original capture changed the required actual stage count or claimed a completed replay")
     files = value.get("evidence_files")
     q.need(type(files) is dict and files and value.get("evidence_set_sha256") == q.object_hash(files),
            "Missing complete predecessor byte roster")
@@ -85,15 +95,75 @@ def check_binding(q, value, phase, expected, sources, originals, readers):
                      "original/controlled-clock/report.json",
                      "original/controlled-clock/actual-reader-controls/report.json",
                      "original/actual-sqlite-qualification.json"}
-        q.need(value.get("original_rust") == "PASS"
-               and value.get("original_controlled_CLOCK1_fault_comparison") == "PASS"
+        q.need(value.get("original_execution_report_status") == "PASS"
+               and all(value.get(name) == "PENDING" for name in
+                       ("full_original_readback", "original_rust",
+                        "original_controlled_CLOCK1_fault_comparison", "original_paid_CLOCK_fault_comparison"))
                and value.get("native_replayed_in_this_capture") is False
                and type(value.get("native_predecessor")) is dict,
                "Original predecessor lacks actual execution or expands its replay scope")
         q.need(q.file_id(value.get("original_binary")) and value["original_binary"]["bytes"] > 0
                and q.same(files.get("original/original-test-binary"), value["original_binary"]),
                "Complete independent original executable absent")
+        check_original_capture(q, value, files)
     q.need(required <= set(files), "Required predecessor raw member absent")
+
+
+def check_original_capture(q, value, files):
+    """A complete byte transfer is still pending the mandatory full assessor."""
+    live = value.get("original_live_capture")
+    keys = {"schema", "status", "observed_directory", "executable", "standard_library_sha256",
+            "interpreter", "derived_normal_compiler_loader", "actual_rustdoc", "dependencies"}
+    q.need(type(live) is dict and set(live) == keys and live.get("schema") == ORIGINAL_LIVE
+           and live.get("status") == "CAPTURED_LIVE_INPUTS", "Complete live-only original capture required")
+    standard = value.get("original_dependency")
+    q.need(type(standard) is dict and all(name in standard for name in
+           ("sysroot", "sources", "binaries", "compiler_executable", "cargo_executable",
+            "actual_host_dynamic_libraries"))
+           and type(standard["sysroot"]) is str and Path(standard["sysroot"]).is_absolute()
+           and all(type(standard[name]) is dict and standard[name] for name in
+                   ("sources", "binaries", "actual_host_dynamic_libraries"))
+           and all(type(standard[name]) is dict and set(standard[name]) == {"path", "bytes", "sha256"}
+                   and type(standard[name]["path"]) is str and Path(standard[name]["path"]).is_absolute()
+                   and q.file_id({k: standard[name][k] for k in ("bytes", "sha256")})
+                   for name in ("compiler_executable", "cargo_executable"))
+           and live["standard_library_sha256"] == q.object_hash(standard),
+           "Original live standard dependency identity differs")
+    observed = live["observed_directory"]
+    q.need(type(observed) is str and Path(observed).is_absolute()
+           and q.same(live["executable"], {"path": str(Path(observed) / "original-test-binary"),
+                                          **value["original_binary"]}),
+           "Original live observed directory or executable identity differs")
+    interpreter = live["interpreter"]
+    q.need(type(interpreter) is dict and set(interpreter) == {"path", "bytes", "sha256"}
+           and type(interpreter["path"]) is str
+           and q.file_id({k: interpreter[k] for k in ("bytes", "sha256")})
+           and q.same(standard["actual_host_dynamic_libraries"].get(interpreter["path"]),
+                      {k: interpreter[k] for k in ("bytes", "sha256")}),
+           "Original live ELF interpreter is not a complete captured dependency")
+    loader = live["derived_normal_compiler_loader"]
+    q.need(type(loader) is dict and set(loader) == {"path", "device", "inode", "mode", "uid", "gid"}
+           and loader["path"] == str(Path(standard["sysroot"]) / "lib")
+           and all(type(loader[k]) is int and loader[k] >= 0 for k in ("device", "inode", "mode", "uid", "gid"))
+           and stat.S_ISDIR(loader["mode"]), "Original live compiler loader directory identity absent")
+    rustdoc = live["actual_rustdoc"]
+    q.need(type(rustdoc) is dict and set(rustdoc) == {"path", "bytes", "sha256"}
+           and rustdoc["path"] == str(Path(standard["compiler_executable"]["path"]).parent / "rustdoc")
+           and q.file_id({k: rustdoc[k] for k in ("bytes", "sha256")}),
+           "Original live rustdoc identity absent")
+    expected = {name: wanted for name, (_, wanted) in q.dependencies(standard).items()}
+    expected["derived-rustdoc"] = {k: rustdoc[k] for k in ("bytes", "sha256")}
+    q.need(q.same(live["dependencies"], expected) and all(q.file_id(row) for row in expected.values())
+           and all(q.same(files.get("capture/original-dependencies/" + name), row)
+                   for name, row in expected.items()),
+           "Original byte transfer omitted or changed a complete external dependency")
+    raw = (json.dumps(live, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
+    q.need(q.same(files.get("capture/original-live-capture.json"), q.bytes_id(raw)),
+           "Original live capture record is not bound to its actual retained bytes")
+    q.need(q.same(value.get("original_artifacts"),
+                  {name.removeprefix("original/"): row for name, row in files.items()
+                   if name.startswith("original/")}),
+           "Original byte transfer lost its complete before/after file inventory")
 
 
 def copy_tree(q, source, destination):
@@ -159,7 +229,7 @@ def make_package(q, roots, output, binding, phase, precondition_error=None):
                "Actual predecessor binding bytes absent")
         q.capture_file(source, output / "binding.json", q.identity(source))
         record.update(binding=q.identity(output / "binding.json"), lineage=expected,
-                      predecessor_status="PASS", packing_status="PASS")
+                      predecessor_status=binding["status"], packing_status="PASS")
     except BaseException as error:
         record["capture_errors"].append({"error": repr(error), "traceback": traceback.format_exc()})
         if archive.is_file() and not archive.is_symlink():
@@ -207,7 +277,8 @@ def validate_package(q, record, binding, phase, expected, directory):
     q.need(set(q.file_tree(directory)) == {"complete-evidence.tar.xz", "package-manifest.json", "binding.json"},
            "Unexpected transferred package file roster")
     q.need(type(record) is dict and record.get("schema") == PACKAGE and record.get("phase") == phase
-           and record.get("packing_status") == record.get("predecessor_status") == "PASS"
+           and record.get("packing_status") == "PASS"
+           and record.get("predecessor_status") == ("CAPTURED" if phase == "original" else "PASS")
            and record.get("final_qualification_claimed") is False
            and q.same(record.get("lineage"), expected)
            and record.get("capture_errors") == [] and record.get("special_entries") == {},
@@ -282,8 +353,8 @@ def pack_original(q, root):
         inherited, predecessor, receipt = prior(q, root, "native")
         native = inherited / "native"
         # The original CLI already executes the full public native admission.
-        # This capture checks byte continuity and raw frames without claiming a
-        # second primitive/trace replay. Final qualification repeats that replay.
+        # This capture checks byte continuity and live-only dependencies. The
+        # mandatory successor performs the complete original/native replay.
         q.need(q.same(q.bundle.snapshot(native), predecessor["native_snapshot"]),
                "Native predecessor bytes changed after actual original execution")
         report = q.read(native / "report.json")
@@ -300,14 +371,15 @@ def pack_original(q, root):
         admitted = {"report": report, "native": frames, "source_inputs": sources,
                     "original_sources": originals, "snapshot": predecessor["native_snapshot"]}
         result = q.original(roots["original"], q.ROOT, admitted, capture=capture,
-                            expected_target=root / (q.PREFIX + "-cargo-target"))
+                            expected_target=root / (q.PREFIX + "-cargo-target"), capture_only=True)
         for name, wanted in sources.items():
             q.capture_file(q.ROOT / name, capture / "source-inputs" / q.member_name(name), wanted)
         for name, wanted in readers.items():
             q.capture_file(q.ROOT / name, capture / "ci-readers" / q.member_name(name), wanted)
         files, special = q.evidence_inventory(roots)
         q.need(not special, "Successful original predecessor contains special artifacts")
-        binding = dict(result, schema=BINDING, phase="original", status="PASS", lineage=expected,
+        binding = dict(result, schema=ORIGINAL_BINDING, phase="original", status="CAPTURED", lineage=expected,
+                       required_original_counts=dict(ORIGINAL_COUNTS),
                        final_qualification_claimed=False, native_replayed_in_this_capture=False,
                        native_predecessor=receipt, source_inputs=sources, original_sources=originals,
                        source_set_sha256=q.object_hash(sources), original_source_set_sha256=q.object_hash(originals),

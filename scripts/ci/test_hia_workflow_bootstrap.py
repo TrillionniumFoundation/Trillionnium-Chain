@@ -1,4 +1,4 @@
-"""Fail-closed tests for all forty-eight exact-source HIA native compiler bootstrap gates."""
+"""Fail-closed tests for all forty-nine native compiler bootstrap admission blocks."""
 from __future__ import annotations
 
 import json
@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github/workflows/hia-native-migration.yml"
 COMPILER_SHA256 = "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
 BOOTSTRAP = re.compile(
-    r"(?ms)^ {10}python3 - \"\$RUNNER_TEMP/hia-bootstrap/bootstrap\.json\" \"\$GITHUB_ENV\" <<'PY'\n(?P<body>.*?)^ {10}PY$"
+    r"(?ms)^ {10}python3(?: -B)? - \"\$RUNNER_TEMP/hia-bootstrap/bootstrap\.json\" \"\$GITHUB_ENV\" <<'PY'\n(?P<body>.*?)^ {10}PY$"
 )
 
 
@@ -24,9 +24,9 @@ class BootstrapGuards(unittest.TestCase):
     def setUpClass(cls):
         text = WORKFLOW.read_text(encoding="utf-8")
         cls.bodies = [textwrap.dedent(m.group("body")) for m in BOOTSTRAP.finditer(text)]
-        if len(cls.bodies) != 48:
+        if len(cls.bodies) != 49:
             raise AssertionError(
-                f"expected forty-eight independent native bootstrap gates, found {len(cls.bodies)}"
+                f"expected forty-nine native bootstrap admission blocks, found {len(cls.bodies)}"
             )
 
     def check_case(self, body, payload, *, python_args, succeed):

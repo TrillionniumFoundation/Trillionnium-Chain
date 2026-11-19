@@ -1,0 +1,28 @@
+{
+  "functions": {
+    "cp_get": "hia/src/control_plane/core.hepta",
+    "cp_put": "hia/src/control_plane/core.hepta",
+    "cp_read": "hia/src/control_plane/core.hepta",
+    "cp_wcopy": "hia/src/control_plane/core.hepta",
+    "sf_call": "hia/src/task_kernel/store_files.hepta",
+    "so_call": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_continue": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_fcall": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_frame": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_qcall": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_return": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_sql_error": "hia/src/task_kernel/store_owner_common.hepta",
+    "sp_contains_nul": "hia/src/task_kernel/store_path.hepta",
+    "sp_decode": "hia/src/task_kernel/store_path.hepta",
+    "sp_lossy": "hia/src/task_kernel/store_path.hepta",
+    "st_allocate": "hia/src/task_kernel/store_common.hepta",
+    "st_error": "hia/src/task_kernel/store_common.hepta",
+    "st_need": "hia/src/task_kernel/store_common.hepta",
+    "st_qcall": "hia/src/task_kernel/store_common.hepta",
+    "st_req": "hia/src/task_kernel/store_common.hepta",
+    "st_sql_error": "hia/src/task_kernel/store_common.hepta",
+    "st_switch": "hia/src/task_kernel/store_common.hepta"
+  },
+  "schema": "trnm.hia.task-store-open-includes.v1",
+  "source": "hia/src/task_kernel/store_open.hepta"
+}

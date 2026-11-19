@@ -390,7 +390,61 @@ def original_shape(row):
              "Actual original failed statement shape differs")
 
 
-def original(directory, repository, admitted, *, capture=None, live=True, expected_target=None):
+def original_live_capture(directory, before, report, capture, *, live=True):
+    """Seal live-only dependency identities without qualifying runtime observations."""
+    from hia.platform.paid_cpu.dependency import captured_std, executable_interpreter
+    standard = before["standard_library"]
+    binary = directory / "original-test-binary"
+    executed = Path(report["executable"]["path"])
+    observed = executed.parent
+    binary_id = identity(binary)
+    need(type(live) is bool and directory.resolve(strict=True) == directory
+         and executed.is_absolute() and executed.name == "original-test-binary"
+         and (not live or executed == binary)
+         and stat.S_IMODE(binary.stat().st_mode) == 0o500 and binary.stat().st_nlink == 1
+         and same({k: report["executable"][k] for k in ("bytes", "sha256")}, binary_id)
+         and same({k: report["compiled_executable"][k] for k in ("bytes", "sha256")}, binary_id),
+         "Live capture is not the original observed executable directory")
+    interpreter = report["interpreter"]
+    loader = before["derived_normal_compiler_loader"]
+    if live:
+        need(same(captured_std(), standard), "Live compiler/std/runtime dependencies changed during capture")
+        need(same(executable_interpreter(binary, standard), interpreter),
+             "Live original ELF interpreter changed during capture")
+        need(same(oracle.capture_loader(standard), loader),
+             "Live normal compiler loader identity changed during capture")
+    rustdoc = before["actual_rustdoc"]
+    need(type(rustdoc) is dict and set(rustdoc) == {"path", "bytes", "sha256"}
+         and rustdoc["path"] == str(Path(standard["compiler_executable"]["path"]).parent / "rustdoc")
+         and file_id({k: rustdoc[k] for k in ("bytes", "sha256")}),
+         "Live rustdoc identity or derived path is missing")
+    expected = dependencies(standard)
+    expected["derived-rustdoc"] = (Path(rustdoc["path"]), {k: rustdoc[k] for k in ("bytes", "sha256")})
+    captured = {name: wanted for name, (_, wanted) in expected.items()}
+    need(same(file_tree(capture / "original-dependencies"), captured),
+         "Live original capture omitted, added or changed an external dependency")
+    for name, (source, wanted) in expected.items():
+        need((not live or same(identity(source), wanted))
+             and same(identity(capture / "original-dependencies" / member_name(name)), wanted),
+             "Live dependency changed after its complete capture: " + name)
+    result = {"schema": transfer.ORIGINAL_LIVE, "status": "CAPTURED_LIVE_INPUTS",
+              "observed_directory": str(observed), "executable": {"path": str(executed), **binary_id},
+              "standard_library_sha256": object_hash(standard), "interpreter": interpreter,
+              "derived_normal_compiler_loader": loader, "actual_rustdoc": rustdoc,
+              "dependencies": captured}
+    if live:
+        write_new(capture / "original-live-capture.json", result)
+    else:
+        need(same(read(capture / "original-live-capture.json"), result),
+             "Retained live-only identities differ from the actual original report/source fence")
+    return result
+
+
+def original(directory, repository, admitted, *, capture=None, live=True, expected_target=None,
+             capture_only=False):
+    need(type(capture_only) is bool and (not capture_only or
+         (live is True and capture is not None and expected_target is not None)),
+         "Transport capture requires the live original runner, complete capture and exact Cargo target")
     artifact_before = file_tree(directory)
     report = read(directory / "report.json")
     before = read(directory / "source-before.json")
@@ -496,6 +550,20 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
     need(same(artifact, report["artifact"]) and artifact["executable"] == report["compiled_executable"]["path"]
          and target in Path(artifact["executable"]).parents,
          "Original full binary was not the unique actual Cargo test artifact")
+    if capture is not None:
+        live_inputs = original_live_capture(directory, before, report, capture, live=live)
+    if capture_only:
+        need(identity(binary) == binary_id and same(read(directory / "source-after.json"), before)
+             and file_tree(directory) == artifact_before,
+             "Complete original raw/source/binary bytes changed during transport capture")
+        return {"original_report": identity(directory / "report.json"), "original_binary": binary_id,
+                "original_artifacts": artifact_before, "original_execution_report_status": "PASS",
+                "original_source_before": identity(directory / "source-before.json"),
+                "original_source_after": identity(directory / "source-after.json"),
+                "original_dependency": standard, "original_live_capture": live_inputs,
+                "full_original_readback": "PENDING", "original_rust": "PENDING",
+                "original_controlled_CLOCK1_fault_comparison": "PENDING",
+                "original_paid_CLOCK_fault_comparison": "PENDING"}
     for label, argv in (("list-original-tests", [str(executed_path), "--list"]),
                         ("list-original-ignored-tests", [str(executed_path), "--ignored", "--list"])):
         need(rows[label][0]["argv"] == argv, "Actual original listing invocation differs")
@@ -563,7 +631,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
 def assess(repository, native_directory, original_directory, capture=None, *, live=True, expected_target=None):
     admitted, result = native(native_directory, repository)
     result.update(original(original_directory, repository, admitted, capture=capture,
-                           live=live, expected_target=expected_target))
+                           live=live, expected_target=expected_target, capture_only=False))
     need(all(admitted["source_inputs"][name] == admitted["original_sources"][name]
              for name in set(admitted["source_inputs"]) & set(admitted["original_sources"])),
          "Overlapping original/HIA source identities disagree")

@@ -463,7 +463,8 @@ def run(args):
         (out / "report.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
         raise
     print(json.dumps({"status": "PASS", "report_sha256": sha(read(out, "report.json")), "seconds": report["seconds"],
-                      "original_tests": 343, "doctests": 2, "native_methods": 16, "integrity_controls": 20,
+                      "original_tests": 343, "doctests": 2, "native_methods": 16,
+                      "integrity_controls": report["controls"]["run"],
                       "observations": COUNTS}, sort_keys=True))
 
 

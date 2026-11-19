@@ -3,8 +3,8 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**60 kernel components, 24 native foundations and 193 HIA source files**. All
-26 original Rust packages remain: 18 are partially ported and 8 are not ported.
+**60 kernel components, 26 native foundations and 255 HIA source files**. All
+26 original Rust packages remain: 19 are partially ported and 7 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
@@ -30,6 +30,42 @@ failures and source identities, remains in
 [immutable Git history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2601aa95250d888cafe9bb4fdfe04a8aad0b7626/hia/AUDIT.md).
 
 ## Findings addressed in this continuation
+
+### Task Store, Peer Unix and current-source CI binding
+
+The [current owner record](qualification/additional-owners-development.json)
+adds one final 48-source Task implementation and one final 14-source Peer Unix
+implementation. Each development PASS retains its exact source identity,
+complete original tests, native outputs, failed observations and independent
+readback. The integrated audit-preflight and documentation changes require
+fresh committed CI. Task's 29-operation project C provider, ArchiveStore,
+StateImport, Peer payload/recovery ownership and live Node integration remain
+open. No original package is eligible for retirement.
+
+The frozen Peer Unix gate passed 121 outer original tests, seven runtime groups
+and 13 integrity controls. The corrected fault observer stops only the pinned
+tracee and lets strace reap it; earlier whole-group termination failures remain
+in the complete 444,098,788-byte archive. Task source44 passed all 41 original
+tests, full private/public Store observations, 112 allocator controls and 37
+reader refusals. Four previously accepted evidence mutations now fail. Two
+unavailable historical rlibs remain explicitly unavailable; all current final
+archive references were resolved and checked.
+
+The previous exact-head push passed 60 jobs. Its PR Work original job exceeded
+the unchanged total 20-minute budget after actual runtime completion. The new
+capture step preserves live-only observations and leaves full semantic review
+to its mandatory successor; 92 controls passed, but the new hosted wall time is
+unmeasured. Current discovery is 624 methods and 1,460 source inputs. Three new
+mandatory jobs expand the workflow to 63 jobs, all still limited to 20 minutes.
+The four original compiler-admission cases passed for all 49 blocks. These
+source/control checks do not certify the new commit's native execution.
+
+Exact-head ML-DSA private and generic results were independently read back on
+both push and PR. All four budget-control archives were also reread from
+actual ELF identities and raw process observations. Original service and W1
+confirmation under 0.25 CPU, 2 GiB, no swap, 256 live PIDs, four seconds and
+16 workers remains unsuccessful. Cancelled macOS jobs without a runner remain
+NOT_RUN. Whole-chain, cross-target, model/research and retirement gates stay open.
 
 ### Complete bounded ML-DSA and actual Host/CI corrections
 

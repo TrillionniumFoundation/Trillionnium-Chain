@@ -1,0 +1,48 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_peer_unix_errno
+fn f0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":1360}
+  v1:u64 = call(s,v0) {"function":"pl_get"}
+  v2:u64 = const() {"value":5000}
+  v3:bool = compare.ne(v1,v2)
+  branch v3 bad1() good1(e,c,s)
+block bad1()
+  v4:u32 = const() {"value":206}
+  ret(v4)
+block good1(good1_e:readbuf,good1_c:mutbuf,good1_s:mutbuf)
+  v5:u64 = const() {"value":0}
+  v6:u64 = const() {"value":302060584}
+  v7:u64 = call(good1_s,v6) {"function":"pl_get"}
+  v8:u64 = const() {"value":302060576}
+  v9:u64 = call(good1_s,v8) {"function":"pl_get"}
+  v10:u64 = call(good1_s,v7,v9) {"function":"errno_text_chunk_0"}
+  v11:u64 = int.add.checked(v5,v10)
+  v12:u64 = const() {"value":302060584}
+  v13:u64 = call(good1_s,v12) {"function":"pl_get"}
+  v14:u64 = const() {"value":302060576}
+  v15:u64 = call(good1_s,v14) {"function":"pl_get"}
+  v16:u64 = call(good1_s,v13,v15) {"function":"errno_text_chunk_36"}
+  v17:u64 = int.add.checked(v11,v16)
+  v18:u64 = const() {"value":302060584}
+  v19:u64 = call(good1_s,v18) {"function":"pl_get"}
+  v20:u64 = const() {"value":302060576}
+  v21:u64 = call(good1_s,v20) {"function":"pl_get"}
+  v22:u64 = call(good1_s,v19,v21) {"function":"errno_text_chunk_72"}
+  v23:u64 = int.add.checked(v17,v22)
+  v24:u64 = const() {"value":302060584}
+  v25:u64 = call(good1_s,v24) {"function":"pl_get"}
+  v26:u64 = const() {"value":302060576}
+  v27:u64 = call(good1_s,v26) {"function":"pl_get"}
+  v28:u64 = call(good1_s,v25,v27) {"function":"errno_text_chunk_108"}
+  v29:u64 = int.add.checked(v23,v28)
+  v30:u64 = const() {"value":302060592}
+  v31:u64 = call(good1_s,v30,v29) {"function":"pl_put"}
+  v32:u64 = const() {"value":1360}
+  v33:u64 = const() {"value":4001}
+  v34:u64 = call(good1_s,v32,v33) {"function":"pl_put"}
+  v35:u64 = const() {"value":144}
+  v36:u64 = const() {"value":4}
+  v37:u64 = call(good1_c,v35,v36) {"function":"pl_put"}
+  v38:u32 = const() {"value":2}
+  ret(v38)
+end

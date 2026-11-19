@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -38,6 +39,28 @@ class CompleteTransfers(unittest.TestCase):
         return mock.patch.multiple(
             q, reader_manifest=mock.Mock(return_value=READERS))
 
+    def dependency_fixture(self, home, capture):
+        """Small real files for transport controls, never a Rust toolchain claim."""
+        sysroot = home / "sysroot"
+        source = self.file(sysroot / "lib/rustlib/src/rust/library/std/src/lib.rs", b"std source fixture")
+        library = self.file(sysroot / "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-fixture.so",
+                            b"std binary fixture")
+        compiler = self.file(sysroot / "bin/rustc", b"compiler fixture")
+        cargo = self.file(sysroot / "bin/cargo", b"cargo fixture")
+        rustdoc = self.file(sysroot / "bin/rustdoc", b"rustdoc fixture")
+        loader = self.file(home / "host/ld-linux-x86-64.so.2", b"loader fixture")
+        libc = self.file(home / "host/libc.so.6", b"libc fixture")
+        named = lambda path: {"path": str(path), **q.identity(path)}
+        standard = {"sysroot": str(sysroot), "sources": {"library/std/src/lib.rs": q.identity(source)},
+                    "binaries": {library.name: named(library)},
+                    "compiler_executable": named(compiler), "cargo_executable": named(cargo),
+                    "actual_host_dynamic_libraries": {str(path): q.identity(path) for path in (loader, libc)}}
+        expected = q.dependencies(standard)
+        expected["derived-rustdoc"] = (rustdoc, q.identity(rustdoc))
+        for name, (path, wanted) in expected.items():
+            q.capture_file(path, capture / "original-dependencies" / name, wanted)
+        return standard, named(rustdoc), named(loader), {name: row for name, (_, row) in expected.items()}
+
     def phase(self, phase, name, predecessor=None):
         parent = self.root / name
         roots = {"observations": parent / "observations", "capture": parent / "capture",
@@ -63,6 +86,15 @@ class CompleteTransfers(unittest.TestCase):
             self.file(parent / member, ("transport fixture only:" + member).encode())
         if phase == "original":
             (parent / "original/original-test-binary").chmod(0o500)
+            standard, rustdoc, interpreter, deps = self.dependency_fixture(parent / "external", roots["capture"])
+            live = {"schema": t.ORIGINAL_LIVE, "status": "CAPTURED_LIVE_INPUTS",
+                    "observed_directory": str(roots["original"]),
+                    "executable": {"path": str(roots["original"] / "original-test-binary"),
+                                   **q.identity(roots["original"] / "original-test-binary")},
+                    "standard_library_sha256": q.object_hash(standard), "interpreter": interpreter,
+                    "derived_normal_compiler_loader": q.oracle.capture_loader(standard),
+                    "actual_rustdoc": rustdoc, "dependencies": deps}
+            q.write_new(roots["capture"] / "original-live-capture.json", live)
         files, special = q.evidence_inventory(roots)
         self.assertFalse(special)
         binding = {"schema": t.BINDING, "phase": phase, "status": "PASS",
@@ -72,14 +104,18 @@ class CompleteTransfers(unittest.TestCase):
                    "original_source_set_sha256": q.object_hash(ORIGINALS),
                    "evidence_files": files, "evidence_set_sha256": q.object_hash(files),
                    **{key: False for key in q.SCOPES},
-                   **(t.NATIVE_COUNTS if phase == "native" else t.ORIGINAL_COUNTS)}
+                   **(t.NATIVE_COUNTS if phase == "native" else {})}
         if phase == "native":
             binding.update(primitive_raw_readback="PASS", physical_trace="PASS",
                            primitive_raw_guard_arenas_retained=True, native_snapshot={})
         else:
-            binding.update(original_rust="PASS", original_controlled_CLOCK1_fault_comparison="PASS",
+            binding.update(schema=t.ORIGINAL_BINDING, status="CAPTURED", required_original_counts=dict(t.ORIGINAL_COUNTS),
+                           original_execution_report_status="PASS", full_original_readback="PENDING",
+                           original_rust="PENDING", original_controlled_CLOCK1_fault_comparison="PENDING",
+                           original_paid_CLOCK_fault_comparison="PENDING",
                            native_replayed_in_this_capture=False, native_predecessor=predecessor or {},
-                           original_binary=files["original/original-test-binary"])
+                           original_binary=files["original/original-test-binary"], original_dependency=standard,
+                           original_live_capture=live, original_artifacts=q.file_tree(roots["original"]))
         q.write_new(parent / "observations/binding.json", binding)
         return roots, binding
 
@@ -95,6 +131,7 @@ class CompleteTransfers(unittest.TestCase):
              mock.patch.object(q, "reader_manifest", return_value=READERS):
             record = t.make_package(q, roots, output, binding, phase)
         self.assertEqual(record["packing_status"], "PASS")
+        self.assertEqual(record["predecessor_status"], "CAPTURED" if phase == "original" else "PASS")
         self.assertIs(record["final_qualification_claimed"], False)
         return output, binding
 
@@ -109,9 +146,11 @@ class CompleteTransfers(unittest.TestCase):
             _, binding = self.phase(phase, phase + "-shape")
             self.check(binding, phase)
             for key in t.NATIVE_COUNTS if phase == "native" else t.ORIGINAL_COUNTS:
-                for value in (True, float(binding[key]), binding[key] - 1):
+                counts = binding if phase == "native" else binding["required_original_counts"]
+                for value in (True, float(counts[key]), counts[key] - 1):
                     changed = copy.deepcopy(binding)
-                    changed[key] = value
+                    target = changed if phase == "native" else changed["required_original_counts"]
+                    target[key] = value
                     with self.subTest(phase=phase, key=key, value=value), self.assertRaises(ValueError):
                         self.check(changed, phase)
             for fields in ({"status": "FAIL"}, {"phase": "other"},
@@ -127,16 +166,204 @@ class CompleteTransfers(unittest.TestCase):
         for phase, counts in (("native", t.NATIVE_COUNTS), ("original", t.ORIGINAL_COUNTS)):
             self.assertEqual(counts, {name: q.COUNTS[name] for name in counts})
             _, binding = self.phase(phase, phase + "-full-qualifier-counts")
-            binding.update({name: q.COUNTS[name] for name in counts})
+            target = binding if phase == "native" else binding["required_original_counts"]
+            target.update({name: q.COUNTS[name] for name in counts})
             self.check(binding, phase)
         self.assertEqual(len(clock.CONTROL_SPECS), 32)
         self.assertEqual(sum(wanted is True for _, _, wanted in clock.CONTROL_SPECS), 2)
         self.assertEqual(sum(wanted is False for _, _, wanted in clock.CONTROL_SPECS), 30)
         _, binding = self.phase("original", "stale-original-raw-counts")
-        binding.update(original_clock_raw_controls=20, original_clock_raw_positive_controls=2,
-                       original_clock_raw_negative_controls=18)
+        binding["required_original_counts"].update(original_clock_raw_controls=20,
+            original_clock_raw_positive_controls=2, original_clock_raw_negative_controls=18)
         with self.assertRaisesRegex(ValueError, "actual stage count"):
             self.check(binding, "original")
+
+    def test_pending_capture_cannot_claim_completed_original_or_final_qualification(self):
+        _, binding = self.phase("original", "pending-status")
+        self.check(binding, "original")
+        for field in ("full_original_readback", "original_rust",
+                      "original_controlled_CLOCK1_fault_comparison", "original_paid_CLOCK_fault_comparison"):
+            for value in ("PASS", "FAIL", None):
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    self.check({**binding, field: value}, "original")
+        for fields in ({"schema": t.BINDING}, {"status": "PASS"}, {"original_execution_report_status": "FAIL"},
+                       {"final_qualification_claimed": True}, {"native_replayed_in_this_capture": True},
+                       {"original_histories": 57}, {"original_process_stages": 48}):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                self.check({**binding, **fields}, "original")
+        with self.assertRaises(ValueError):
+            q.check_binding(binding, LINEAGE)
+        from hia.tests.test_work_owner_ci import EvidenceAdmission
+        final = EvidenceAdmission().binding()
+        for field in ("original_rust", "original_controlled_CLOCK1_fault_comparison",
+                      "original_paid_CLOCK_fault_comparison"):
+            with self.subTest(final_field=field), self.assertRaises(ValueError):
+                q.check_binding({**final, field: "PENDING"}, LINEAGE)
+
+    def reindex_capture(self, binding):
+        raw = (json.dumps(binding["original_live_capture"], sort_keys=True, indent=2) + "\n").encode()
+        binding["evidence_files"]["capture/original-live-capture.json"] = q.bytes_id(raw)
+        binding["evidence_set_sha256"] = q.object_hash(binding["evidence_files"])
+
+    def test_each_external_dependency_is_required_even_after_coherent_reindex(self):
+        _, binding = self.phase("original", "dependency-omissions")
+        deps = binding["original_live_capture"]["dependencies"]
+        self.assertEqual(len(deps), 7)
+        for name in deps:
+            for alter_certificate in (False, True):
+                changed = copy.deepcopy(binding)
+                del changed["evidence_files"]["capture/original-dependencies/" + name]
+                if alter_certificate:
+                    del changed["original_live_capture"]["dependencies"][name]
+                self.reindex_capture(changed)
+                with self.subTest(name=name, altered=alter_certificate), self.assertRaises(ValueError):
+                    self.check(changed, "original")
+        changed = copy.deepcopy(binding)
+        changed["evidence_files"]["capture/original-live-capture.json"] = q.bytes_id(b"another certificate")
+        changed["evidence_set_sha256"] = q.object_hash(changed["evidence_files"])
+        with self.assertRaises(ValueError):
+            self.check(changed, "original")
+
+    def test_five_live_identity_records_and_full_original_tree_cannot_be_omitted(self):
+        _, binding = self.phase("original", "live-omissions")
+        fields = ("observed_directory", "executable", "standard_library_sha256", "interpreter",
+                  "derived_normal_compiler_loader", "actual_rustdoc", "dependencies")
+        for field in fields:
+            changed = copy.deepcopy(binding)
+            del changed["original_live_capture"][field]
+            self.reindex_capture(changed)
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check(changed, "original")
+        for field in ("device", "inode", "mode", "uid", "gid"):
+            changed = copy.deepcopy(binding)
+            changed["original_live_capture"]["derived_normal_compiler_loader"][field] = True
+            self.reindex_capture(changed)
+            with self.subTest(loader=field), self.assertRaises(ValueError):
+                self.check(changed, "original")
+        for field in ("original_artifacts", "original_dependency"):
+            changed = copy.deepcopy(binding)
+            del changed[field]
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check(changed, "original")
+        changed = copy.deepcopy(binding)
+        del changed["original_artifacts"]["source-after.json"]
+        with self.assertRaises(ValueError):
+            self.check(changed, "original")
+
+    def live_fixture(self, name):
+        parent = self.root / name
+        directory, capture = parent / "original", parent / "capture"
+        standard, rustdoc, interpreter, _ = self.dependency_fixture(parent / "external", capture)
+        raw_path = interpreter["path"].encode() + b"\0"
+        # Real ELF64/PT_INTERP parsing is exercised; this data is never executable.
+        header = struct.pack("<16sHHIQQQIHHHHHH", b"\x7fELF\x02\x01\x01" + b"\0" * 9,
+                             2, 62, 1, 0, 64, 0, 0, 64, 56, 1, 0, 0, 0)
+        program = struct.pack("<IIQQQQQQ", 3, 4, 120, 0, 0, len(raw_path), len(raw_path), 1)
+        binary = self.file(directory / "original-test-binary", header + program + raw_path)
+        binary.chmod(0o500)
+        report = {"executable": {"path": str(binary), **q.identity(binary)},
+                  "compiled_executable": {"path": str(parent / "target/original"), **q.identity(binary)},
+                  "interpreter": interpreter}
+        before = {"standard_library": standard, "actual_rustdoc": rustdoc,
+                  "derived_normal_compiler_loader": q.oracle.capture_loader(standard)}
+        return directory, capture, before, report
+
+    def test_live_capture_retains_actual_files_elf_loader_and_relocates_without_live_probes(self):
+        directory, capture, before, report = self.live_fixture("actual-live-capture")
+        from hia.platform.paid_cpu import dependency
+        with mock.patch.object(dependency, "captured_std", return_value=before["standard_library"]):
+            record = q.original_live_capture(directory, before, report, capture)
+        self.assertEqual(q.read(capture / "original-live-capture.json"), record)
+        destination = self.root / "relocated"
+        shutil.copytree(directory, destination / "original")
+        shutil.copytree(capture, destination / "capture")
+        shutil.rmtree(directory.parent)
+        with mock.patch.object(dependency, "captured_std", side_effect=AssertionError("unexpected live toolchain")), \
+             mock.patch.object(dependency, "executable_interpreter", side_effect=AssertionError("unexpected live loader")), \
+             mock.patch.object(q.oracle, "capture_loader", side_effect=AssertionError("unexpected live inode")):
+            actual = q.original_live_capture(destination / "original", before, report,
+                                             destination / "capture", live=False)
+        self.assertEqual(actual, record)
+        self.assertEqual(actual["status"], "CAPTURED_LIVE_INPUTS")
+
+    def test_live_capture_rejects_actual_missing_or_changed_dependencies(self):
+        from hia.platform.paid_cpu import dependency
+        for fault in ("captured-file-missing", "captured-file-changed", "actual-file-changed",
+                      "actual-rustdoc-missing", "loader-inode-changed", "observed-path-changed",
+                      "interpreter-changed", "selected-toolchain-changed"):
+            directory, capture, before, report = self.live_fixture(fault)
+            selected = copy.deepcopy(before["standard_library"])
+            if fault == "captured-file-missing":
+                (capture / "original-dependencies/derived-rustdoc").unlink()
+            elif fault == "captured-file-changed":
+                (capture / "original-dependencies/tools/cargo_executable").write_bytes(b"changed")
+            elif fault == "actual-file-changed":
+                Path(before["standard_library"]["cargo_executable"]["path"]).write_bytes(b"changed")
+            elif fault == "actual-rustdoc-missing":
+                Path(before["actual_rustdoc"]["path"]).unlink()
+            elif fault == "loader-inode-changed":
+                before["derived_normal_compiler_loader"]["inode"] += 1
+            elif fault == "observed-path-changed":
+                report["executable"]["path"] = str(self.root / "another/original-test-binary")
+            elif fault == "interpreter-changed":
+                report["interpreter"]["sha256"] = "0" * 64
+            else:
+                selected["compiler_executable"]["sha256"] = "0" * 64
+            with mock.patch.object(dependency, "captured_std", return_value=selected):
+                with self.subTest(fault=fault), self.assertRaises((ValueError, FileNotFoundError)):
+                    q.original_live_capture(directory, before, report, capture)
+            self.assertFalse((capture / "original-live-capture.json").exists())
+
+    def test_transferred_live_capture_is_bound_to_actual_original_source_and_report(self):
+        directory, capture, before, report = self.live_fixture("offline-capture-binding")
+        from hia.platform.paid_cpu import dependency
+        with mock.patch.object(dependency, "captured_std", return_value=before["standard_library"]):
+            record = q.original_live_capture(directory, before, report, capture)
+        target = capture / "original-live-capture.json"
+        for field in ("observed_directory", "executable", "interpreter", "derived_normal_compiler_loader",
+                      "standard_library_sha256", "actual_rustdoc", "dependencies"):
+            changed = copy.deepcopy(record)
+            changed[field] = {} if isinstance(changed[field], dict) else "another"
+            target.write_text(json.dumps(changed))
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "actual original report/source fence"):
+                q.original_live_capture(directory, before, report, capture, live=False)
+        target.write_text(json.dumps(record))
+        changed = copy.deepcopy(before)
+        changed["derived_normal_compiler_loader"]["inode"] += 1
+        with self.assertRaisesRegex(ValueError, "actual original report/source fence"):
+            q.original_live_capture(directory, changed, report, capture, live=False)
+
+    def test_capture_mode_requires_live_runner_capture_and_exact_target_before_reading(self):
+        absent = self.root / "not-read"
+        for args in ({"capture_only": 1}, {"capture_only": True, "live": False},
+                     {"capture_only": True, "capture": absent},
+                     {"capture_only": True, "expected_target": absent},
+                     {"capture_only": True, "capture": absent, "expected_target": absent, "live": 1}):
+            with self.subTest(args=args), self.assertRaisesRegex(ValueError, "Transport capture requires"):
+                q.original(absent, absent, {}, **args)
+
+    def test_mandatory_assessor_selects_full_original_validation_and_propagates_failure(self):
+        admitted = {"source_inputs": {}, "original_sources": {}, "snapshot": {}}
+        with mock.patch.object(q, "native", return_value=(admitted, {})), \
+             mock.patch.object(q, "original", side_effect=ValueError("full original replay refused")) as full:
+            with self.assertRaisesRegex(ValueError, "full original replay refused"):
+                q.assess(self.root, self.root / "native", self.root / "original",
+                         capture=self.root / "capture", live=False)
+        self.assertEqual(full.call_args.kwargs["capture_only"], False)
+        self.assertIs(full.call_args.kwargs["live"], False)
+        native, original = self.root / "prior-native", self.root / "prior-original"
+        receipt = {"lineage": LINEAGE}
+        with mock.patch.object(t, "current_context", return_value=(LINEAGE, SOURCES, ORIGINALS, READERS)), \
+             mock.patch.object(t, "prior", side_effect=[(native, {}, receipt),
+                               (original, {"native_predecessor": receipt}, receipt)]), \
+             mock.patch.object(q, "source_pair", return_value={}), \
+             mock.patch.object(q, "assess", side_effect=ValueError("full original replay refused")) as assess, \
+             mock.patch.object(q, "pack_roots") as pack:
+            with self.assertRaisesRegex(ValueError, "full original replay refused"):
+                t.qualify_pack(q, self.root)
+        assess.assert_called_once_with(q.ROOT, native / "native", original / "original",
+                                       capture=original / "capture", live=False)
+        pack.assert_not_called()
 
     def test_complete_source_and_reader_maps_are_not_digest_only(self):
         _, binding = self.phase("native", "source-shape")

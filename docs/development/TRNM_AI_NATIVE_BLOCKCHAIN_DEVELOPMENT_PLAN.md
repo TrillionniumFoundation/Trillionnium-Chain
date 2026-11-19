@@ -1,3 +1,19 @@
+## 2026-11-19 UTC — Task 主 Store 与 Peer Unix 整合、完整读回及当前 CI 续接
+
+从已发布 `83c8c076550ee620f63a889d5f6f14f9a3192a07` 继续。当前 **60 kernels /26 native foundations /255 HIA sources**；26 原包19部分迁移、7未迁移、**0退役、9全项目门OPEN**。根README仍为0字节。新增实现各只有一个正式目录，开发过程副本不进入仓库；完整替代和原验收均成功之前保留原栈。
+
+[本轮精确记录](../../hia/qualification/additional-owners-development.json)分别绑定实际执行、原始失败和双端档案。Peer Unix 的34份owned files包含14份HIA，最终冻结1898源图上fresh native/original和独立读回全部通过：原121外层测试及2次原内部重执行、fmt/strictClippy、4755 codec案例及40 ABI控制、299 client案例、每实现1782 owner调用、37 CLI案例、18组daemon/476次交换、9文件系统及30 syscall案例，13项完整性控制全部拒绝篡改。真实修复只改变故障观察器的终止方式：通过绑定身份的pidfd停止tracee，让strace实际回收，再由既有owned collector核验完整进程族；原3秒绝对清理期限不续期。旧umask与整组SIGKILL失败全部保留。444098788B完整档已两端逐28224成员读回，不能据此声称完整主机依赖或payload/Core/Node已闭合。
+
+Task主Store整合131份owned files、48份HIA。source44完整fresh执行通过1390私有调用/143夹具、445公开案例、413方法/Drop/相等调用和1877 getter调用；112 allocator控制含96次真实calloc失败，9369次分配=9273次free+96次拒绝，最终live及非法free均为0。原35 unit、2 wire、2 archive及2 doctest共41项，以及格式、严格Clippy通过。独立reader现拒绝37种篡改，包含实际发现的4类源/reader遗漏或foreign owner错误接受；旧失败留存。三个完整档案的现行引用全部闭合，两份历史缺失rlib仍如实列明，未用后来产物替代。当前12个只读资格入口改用原`--audit`，须新提交重跑；29操作的项目自有C provider、ArchiveStore、StateImport和Node接线继续开放。
+
+新增Peer Unix、Task Store和Task机械边界三个mandatory CI入口，使展开作业数为63、编译器准入块49；每作业仍20分钟，编译器30+3秒、原生子进程240+3秒及编译器128函数/8192操作限制均不提高。入口执行原始/native/独立reader、全Git来源前后检查、实际工具与输入捕获；成功和失败均归档普通字节及特殊inode元数据。外层意图与阶段回执提前留存，但不保证runner硬终止后的完整归档。49块共196次准入正反检查实际通过。完整发现624项：general463、crypto/types95、State-root7、Oracle22、ML-DSA37；公共图1460输入，发现和打包都不替代执行。
+
+83提交的push HIA运行44528099321已60/60成功；PR运行44528128761因Work original整作业达到20分钟取消，原运行和完整产物保留。Work现只在original打包阶段捕获必须live读取的5类身份，明确标为CAPTURED；后继独立资格仍必须完整执行原全部语义审查、5份SQLite见证和48阶段检查，68条旧原审查语句保留原顺序。92项控制零skip实际通过，但新打包耗时和新提交的hosted通过尚待实测。ML-DSA两边私有及37项公共结果已独立读回，实际控制数始终21；此处仅把stdout过期的20改为报告真实计数。
+
+83预算运行44528128471四入口成功，完整四ZIP经两端逐成员核验后再读actual raw：fixed21控制+10整合通过；pool-before为2通过/5预期失败，budget-before为1通过/6预期失败，pool-scan两项预期失败。reader没有重跑native，不把控制组件通过转成服务门通过。原服务/W1压力下仍CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE，原0.25CPU/2GiB/零swap/256PID/4秒/16worker保持；无runner的macOS作业仍为cancelled/NOT_RUN。
+
+继续原生payload metadata/body/recovery ACK owner、Archive/StateImport、PQ公开owner和完整结算，再接唯一Node的COMMIT/reorg/replay/outbox/ACK与同请求Paid/Host；跨目标、独立模型学习及研究经济门也须原验收。只有全部替代、完整验收和依赖最终处置结束后，才退役旧包并完成仓库最终清理。本文件仍是唯一开发计划，历史运行不重命名为当前通过。
+
 ## 2026-11-19 UTC — detached 提交预检与当前 Cargo 图反例修正
 
 从候选 `cab5d8c30ce97983938dd6b575a391f2baf566b4` 继续。当前仍为 **60 kernels /24 native foundations /193 HIA sources**；26 原包18部分迁移、8未迁移、0退役，9全项目门OPEN，根README保持0字节。旧栈只有在完整替代和原验收均成功后才可删除。

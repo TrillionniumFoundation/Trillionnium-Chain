@@ -7070,3 +7070,138 @@ jobs:
             ${{ runner.temp }}/checkpoint-store-observations/
           if-no-files-found: error
           retention-days: 30
+
+  native-additional-owners:
+    name: native-${{ matrix.component }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [peer-unix, task-store, task-boundary]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONOPTIMIZE: ''
+      LC_ALL: C
+      CARGO_BUILD_JOBS: '4'
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Initialize independent current-source observation paths
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          import os, tempfile
+          # Peer case sockets must stay within the original sockaddr_un extent.
+          root = tempfile.mkdtemp(prefix='hio-', dir='/tmp')
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write('OWNER_ROOT=' + root + '\n')
+          PY
+          printf 'OWNER_ARTIFACT=%s/hia-owner-${{ matrix.component }}-artifact\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/hia-owner-${{ matrix.component }}-cargo-home\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the exact HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind the whole committed source before any component build
+        run: |
+          set -euo pipefail
+          mkdir -p "$OWNER_ROOT/observations" "$CARGO_HOME"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OWNER_ROOT/observations/source-before.json" >"$OWNER_ROOT/observations/source-before.stdout.raw" 2>"$OWNER_ROOT/observations/source-before.stderr.raw"
+          bash scripts/project-preflight.sh --audit >"$OWNER_ROOT/observations/preflight.stdout.raw" 2>"$OWNER_ROOT/observations/preflight.stderr.raw"
+          python3 -B hia/tools/check_migration.py >"$OWNER_ROOT/observations/migration.stdout.raw" 2>"$OWNER_ROOT/observations/migration.stderr.raw"
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Install the exact original Rust tools and actual syscall observer
+        run: |
+          set -euo pipefail
+          sudo apt-get update >"$OWNER_ROOT/observations/apt-update.stdout.raw" 2>"$OWNER_ROOT/observations/apt-update.stderr.raw"
+          sudo apt-get install -y strace gcc binutils >"$OWNER_ROOT/observations/apt-install.stdout.raw" 2>"$OWNER_ROOT/observations/apt-install.stderr.raw"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy >"$OWNER_ROOT/observations/rust-install.stdout.raw" 2>"$OWNER_ROOT/observations/rust-install.stderr.raw"
+          rustup which --toolchain 1.95.0 rustc >"$OWNER_ROOT/observations/rustc-path.txt"
+          python3 -B - <<'PY'
+          import os
+          from pathlib import Path
+          tools = Path((Path(os.environ['OWNER_ROOT']) / 'observations/rustc-path.txt').read_text().strip()).resolve(strict=True).parent
+          with open(os.environ['GITHUB_PATH'], 'a') as stream:
+              stream.write(str(tools) + '\n')
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write('OWNER_RUST_BIN=' + str(tools) + '\n')
+          PY
+      - name: Fetch only the unchanged locked Cargo dependency graph
+        run: |
+          set -euo pipefail
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml >"$OWNER_ROOT/observations/cargo-fetch.stdout.raw" 2>"$OWNER_ROOT/observations/cargo-fetch.stderr.raw"
+      - name: Bootstrap and self-reproduce the pinned native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap" >"$OWNER_ROOT/observations/bootstrap.stdout.raw" 2>"$OWNER_ROOT/observations/bootstrap.stderr.raw"
+          python3 -B - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS' or value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54' or not value.get('compiler'):
+              raise SystemExit('Pinned native HIA compiler did not self-reproduce')
+          with open(sys.argv[2], 'a') as stream:
+              stream.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              stream.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Execute the complete component and its independent reader
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify_additional_owner_ci.py run --component '${{ matrix.component }}' --root "$OWNER_ROOT" --rust-bin "$OWNER_RUST_BIN" >"$OWNER_ROOT/observations/driver.stdout.raw" 2>"$OWNER_ROOT/observations/driver.stderr.raw"
+      - name: Recheck every committed source byte after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$OWNER_ROOT/observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OWNER_ROOT/observations/source-after.json" >"$OWNER_ROOT/observations/source-after.stdout.raw" 2>"$OWNER_ROOT/observations/source-after.stderr.raw"
+      - name: Bind actual execution and source closure to this head and run
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify_additional_owner_ci.py bind --component '${{ matrix.component }}' --root "$OWNER_ROOT" --rust-bin "$OWNER_RUST_BIN" >"$OWNER_ROOT/observations/binding.stdout.raw" 2>"$OWNER_ROOT/observations/binding.stderr.raw"
+      - name: Retain and reread complete regular observations even on failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$OWNER_ROOT/observations" "$OWNER_ARTIFACT"
+          python3 -B - <<'PY'
+          import json, os
+          from pathlib import Path
+          value = {'component': '${{ matrix.component }}', 'head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                   'run_id': os.environ['GITHUB_RUN_ID'], 'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                   'whole_chain_native': False, 'retirement_accepted': False, 'production_activation': False,
+                   'runtime_qualification_inferred_from_packaging': False}
+          (Path(os.environ['OWNER_ARTIFACT']) / 'metadata.json').write_text(json.dumps(value, indent=2, sort_keys=True) + '\n')
+          PY
+          python3 -B hia/tools/archive_runtime_observations.py --root "component=$OWNER_ROOT" --optional-root "bootstrap=$RUNNER_TEMP/hia-bootstrap" --metadata "$OWNER_ARTIFACT/metadata.json" --output "$OWNER_ARTIFACT" >"$OWNER_ARTIFACT/package.stdout.raw" 2>"$OWNER_ARTIFACT/package.stderr.raw"
+      - name: Upload complete current-source observations and diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-${{ matrix.component }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.OWNER_ARTIFACT }}/
+            ${{ env.OWNER_ROOT }}/observations/
+          if-no-files-found: error
+          retention-days: 30

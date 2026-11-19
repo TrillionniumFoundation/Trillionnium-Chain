@@ -1,0 +1,69 @@
+{
+  "schema": "trnm.hia.peer-unix-observer-abi.v1",
+  "platform": "linux-x86_64",
+  "integer_encoding": "little-endian u64 unless a byte field is explicitly named",
+  "qualification_transport_only": true,
+  "public_foreign_owned_abi": false,
+  "whole_peer_package_retired": false,
+  "whole_chain_native": false,
+  "production_activation": false,
+  "daemon_api": {
+    "executable": "peer-unix-api",
+    "magic": "PLUN0001",
+    "header_bytes": 56,
+    "words": ["operation=1", "socket_path_bytes", "journal_path_bytes", "ready_path_bytes=0", "timeout_seconds", "timeout_nanoseconds"],
+    "payload": ["socket_path", "journal_path"],
+    "terminal_response": {"magic": "PLUR0001", "bytes": 24, "words": ["category", "code"]}
+  },
+  "single_client": {
+    "executable": "peer-unix-client",
+    "magic": "PLUC0001",
+    "header_bytes": 80,
+    "words": ["operation", "path_bytes", "timeout_seconds", "timeout_nanoseconds", "has_deadline", "deadline_seconds", "deadline_nanoseconds", "request_bytes", "reserved=0"],
+    "operations": {"1": "preflight", "2": "binding_digest_v1", "3": "lease_request"},
+    "payload": ["socket_path", "request when operation=3"],
+    "lease_request_bytes": 201
+  },
+  "persistent_client": {
+    "executable": "peer-unix-client-owner",
+    "magic": "PLUO0001",
+    "header_bytes": 80,
+    "words": ["operation", "object_id", "argument_0", "argument_1", "payload_bytes", "reserved=0", "reserved=0", "reserved=0", "reserved=0"],
+    "operations": {
+      "1": "connect path and return a new object identity",
+      "2": "clone into a new object identity",
+      "3": "set timeout seconds and nanoseconds",
+      "4": "set absolute monotonic deadline seconds and nanoseconds",
+      "5": "socket_path",
+      "6": "preflight",
+      "7": "binding_digest_v1",
+      "8": "execute a 201-byte lease request",
+      "9": "drop object and clear live native bytes",
+      "10": "private arena observation; first word is live object count",
+      "11": "drop all objects and exit"
+    },
+    "object_identity": "monotonic nonzero u64; dropped identities are invalid",
+    "arena_observation_is_public_api": false,
+    "concurrent_arena_access_qualified": false,
+    "foreign_pointer_ownership_qualified": false
+  },
+  "client_response": {
+    "magic": "PLUR0001",
+    "header_bytes": 32,
+    "words": ["category", "code", "payload_bytes"],
+    "categories": {"0": "success", "1": "InvalidRequest", "2": "Io", "3": "Protocol", "4": "Rejected", "100": "malformed observer input"}
+  },
+  "lease_request": {
+    "bytes": 201,
+    "methods": {"1": "acquire", "2": "renew", "3": "revalidate", "4": "release"},
+    "fields": ["method:u64", "local_id:32 bytes", "remote_id:32 bytes", "direction:u8", "epoch:u64", "peer_scope_id:32 bytes", "session_id:32 bytes", "generation:u64", "expires_at_ms:u64", "ttl_ms:u64", "record_hash:32 bytes"]
+  },
+  "native_images": {
+    "prefix_bytes": 5120,
+    "maximum_image_bytes": 524288,
+    "maximum_connections": 64,
+    "maximum_progress_steps_per_connection_turn": 16,
+    "runtime_host_proxy": false,
+    "rust_or_interpreter_fallback": false
+  }
+}

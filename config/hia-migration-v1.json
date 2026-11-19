@@ -799,7 +799,7 @@
       "module": "M10",
       "package": "trnm-task-kernel",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -1467,6 +1467,98 @@
         "hia/platform/checkpoint_store/qualify.py",
         "hia/platform/checkpoint_store/test_integrity.py",
         "hia/tests/rust_checkpoint_api_reference.rs"
+      ]
+    },
+    {
+      "id": "platform/task-kernel-main-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA Task Store six main transitions, durable database audits, preview/commit and public opaque owner methods with unchanged original comparisons, allocation failures and independent source-bound readback. Archive, StateImport, removal of the project-owned C provider, live Node integration and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/task_kernel/audit_dispatch.hepta",
+        "hia/platform/task_kernel/native_dispatch.hepta",
+        "hia/platform/task_kernel/native_driver.hepta",
+        "hia/platform/task_kernel/qualification/fd_fixture.hepta",
+        "hia/platform/task_kernel/qualification/filesystem_fixture.hepta",
+        "hia/platform/task_kernel/qualification/path_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_audit_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_io_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_records_fixture.hepta",
+        "hia/platform/task_kernel/records_dispatch.hepta",
+        "hia/platform/task_kernel/store_dispatch.hepta",
+        "hia/platform/task_kernel/store_owned.hepta",
+        "hia/src/task_kernel/agent_transaction_wire.hepta",
+        "hia/src/task_kernel/codec.hepta",
+        "hia/src/task_kernel/kernel_policy.hepta",
+        "hia/src/task_kernel/store_authorize.hepta",
+        "hia/src/task_kernel/store_bid.hepta",
+        "hia/src/task_kernel/store_blocks.hepta",
+        "hia/src/task_kernel/store_bootstrap.hepta",
+        "hia/src/task_kernel/store_budget.hepta",
+        "hia/src/task_kernel/store_command_values.hepta",
+        "hia/src/task_kernel/store_common.hepta",
+        "hia/src/task_kernel/store_consume.hepta",
+        "hia/src/task_kernel/store_empty.hepta",
+        "hia/src/task_kernel/store_execution.hepta",
+        "hia/src/task_kernel/store_execution_common.hepta",
+        "hia/src/task_kernel/store_files.hepta",
+        "hia/src/task_kernel/store_grants.hepta",
+        "hia/src/task_kernel/store_lease.hepta",
+        "hia/src/task_kernel/store_markers.hepta",
+        "hia/src/task_kernel/store_objects.hepta",
+        "hia/src/task_kernel/store_open.hepta",
+        "hia/src/task_kernel/store_operations.hepta",
+        "hia/src/task_kernel/store_owner_common.hepta",
+        "hia/src/task_kernel/store_path.hepta",
+        "hia/src/task_kernel/store_policy.hepta",
+        "hia/src/task_kernel/store_preview.hepta",
+        "hia/src/task_kernel/store_progress.hepta",
+        "hia/src/task_kernel/store_provider_accept.hepta",
+        "hia/src/task_kernel/store_public.hepta",
+        "hia/src/task_kernel/store_query.hepta",
+        "hia/src/task_kernel/store_records.hepta",
+        "hia/src/task_kernel/store_roots.hepta",
+        "hia/src/task_kernel/store_schema.hepta",
+        "hia/src/task_kernel/store_scope.hepta",
+        "hia/src/task_kernel/store_task_create.hepta",
+        "hia/src/task_kernel/store_verified.hepta",
+        "hia/src/task_kernel/typed_values.hepta"
+      ],
+      "tests": [
+        "hia/platform/task_kernel/build_provider.py",
+        "hia/platform/task_kernel/qualify_boundary.py",
+        "hia/platform/task_kernel/qualify_task_store.py",
+        "hia/platform/task_kernel/readback_task_store.py",
+        "hia/platform/task_kernel/qualification/readback_negative_controls.py"
+      ]
+    },
+    {
+      "id": "platform/peer-lease-unix",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux peer lease Unix daemon, client, private client owner, exact wire codec and original CLI; complete finite original comparison, real storage/syscall faults and independently read back process lifecycles. Payload storage/recovery, Core authentication, cross-target support, live Node integration and original service-budget qualification remain OPEN.",
+      "sources": [
+        "hia/platform/peer_lease_unix/cleanup.hepta",
+        "hia/platform/peer_lease_unix/client.hepta",
+        "hia/platform/peer_lease_unix/client_finish.hepta",
+        "hia/platform/peer_lease_unix/client_io.hepta",
+        "hia/platform/peer_lease_unix/client_owner.hepta",
+        "hia/platform/peer_lease_unix/codec.hepta",
+        "hia/platform/peer_lease_unix/common.hepta",
+        "hia/platform/peer_lease_unix/daemon_setup.hepta",
+        "hia/platform/peer_lease_unix/errno.hepta",
+        "hia/platform/peer_lease_unix/errors.hepta",
+        "hia/platform/peer_lease_unix/linux_emitter.hepta",
+        "hia/platform/peer_lease_unix/paths.hepta",
+        "hia/platform/peer_lease_unix/service.hepta",
+        "hia/platform/peer_lease_unix/store_bridge.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_lease_unix/build.py",
+        "hia/platform/peer_lease_unix/original_build.py",
+        "hia/platform/peer_lease_unix/qualify.py",
+        "hia/platform/peer_lease_unix/readback.py",
+        "hia/platform/peer_lease_unix/test_qualification.py"
       ]
     }
   ],
