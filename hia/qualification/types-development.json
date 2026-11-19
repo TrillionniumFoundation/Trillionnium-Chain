@@ -1,18 +1,65 @@
 {
   "archive": {
+    "bytes": 182921280,
+    "content_view_manifest_sha256": "d13b0b4d4e0bac88211f03bcca33a614ad03d19b064432d3d33cc77028811801",
+    "custom_consumer_delivery_manifest_sha256": "7f7ba338db3c717b15687d2930fc407362b0389fb6feb582e839f57e102bada4",
+    "historical_evidence_gaps_remain": true,
     "initial_failure_raw_root": "/workspace/scratch/edbb5aa3681f/native-final-20261119",
+    "initial_full_suite_owner_raw_stores_included": false,
     "intended_logical_name": "types-development.tar.xz",
+    "logical_name": "types-development.tar.xz",
+    "logical_view_bytes": 989453291,
+    "logical_views": 27110,
     "observed_runtime_raw_root": "/workspace/scratch/edbb5aa3681f/native-crypto-types-final-20261119",
     "original_transport_binary": {
       "bytes": 610853352,
       "sha256": "163b351f21beda03f0682794cb81975d28a3769d366b0dd8e134d8b739517049"
     },
+    "original_transport_binary_stream_readback": {
+      "compressed_bytes": 86524208,
+      "compressed_path": "/workspace/scratch/edbb5aa3681f/crypto-consumer-delivery-20261119/desktop/original-rust-bin/trnm-pon-node-lib-test.elf.xz",
+      "compressed_sha256": "5c92c9d35bd9fc0c02688df7ab72ecf7b6a94f59c80293a088bcd940ca86d0e8",
+      "every_decompressed_byte_rehashed": true,
+      "schema": "trnm.original-executable-exact-stream-readback.v1",
+      "scope": "Original executed Rust transport lib-test ELF; original source snapshot is 2601 plus frozen 22-file overlay, not c98 exact source map.",
+      "seconds": 6.288252925000052,
+      "single_complete_xz_stream": true,
+      "status": "PASS",
+      "uncompressed_bytes": 610853352,
+      "uncompressed_file_written": false,
+      "uncompressed_sha256": "163b351f21beda03f0682794cb81975d28a3769d366b0dd8e134d8b739517049"
+    },
     "original_transport_binary_xz": {
-      "availability": "IN_PROGRESS",
+      "availability": "INCLUDED_EXACT_OBJECT",
       "bytes": 86524208,
       "sha256": "5c92c9d35bd9fc0c02688df7ab72ecf7b6a94f59c80293a088bcd940ca86d0e8"
     },
-    "status": "PENDING_ORIGINAL_BINARY_TRANSFER"
+    "parts_manifest": "types-development.parts/manifest.json",
+    "sha256": "ab6b5b07b7abcd69c527df780e5f9ef22c0402dbbe9cd1d0148d947d1289844d",
+    "status": "PASS_COMPLETE_CONTENT_VIEW",
+    "unique_objects": 15539,
+    "volume_readback": {
+      "all_part_bytes_rehashed": true,
+      "archive_bytes": 182921280,
+      "archive_independent_readback": {
+        "archive_bytes": 182921280,
+        "archive_sha256": "ab6b5b07b7abcd69c527df780e5f9ef22c0402dbbe9cd1d0148d947d1289844d",
+        "complete_zero_tar_tail": true,
+        "every_regular_member_rehashed": true,
+        "logical_member_bytes": 598577185,
+        "logical_view_bytes": 989453291,
+        "logical_views": 27110,
+        "manifest_sha256": "d13b0b4d4e0bac88211f03bcca33a614ad03d19b064432d3d33cc77028811801",
+        "regular_members": 15540,
+        "single_complete_xz_stream": true,
+        "status": "PASS",
+        "unique_objects": 15539
+      },
+      "archive_sha256": "ab6b5b07b7abcd69c527df780e5f9ef22c0402dbbe9cd1d0148d947d1289844d",
+      "physically_reassembled": true,
+      "regular_parts": 30,
+      "status": "PASS"
+    }
   },
   "audited_parent": "2601aa95250d888cafe9bb4fdfe04a8aad0b7626",
   "compiler": {
@@ -1407,7 +1454,14 @@
       "superseded_source_preserved": false
     }
   ],
-  "hosted_execution": "NOT_RUN_FOR_THIS_UNCOMMITTED_INCREMENT; own exact-head CI remains required.",
+  "hosted_execution": {
+    "future_commits_require_their_own_hosted_results": true,
+    "implementation_commit": "c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4",
+    "passing_exact_head_qualification_claimed": false,
+    "pull_request_run": 44455036414,
+    "push_run": 44455017015,
+    "status": "IN_PROGRESS_AT_ARCHIVE_PUBLICATION_PREPARATION"
+  },
   "initial_full_suite_failure": {
     "actual_tests": {
       "errors": [

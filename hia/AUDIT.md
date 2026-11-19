@@ -150,6 +150,21 @@ updated to document historical evidence gaps; that exact non-runtime delta is
 retained separately. This development execution is not a whole-project or
 future committed-head CI pass.
 
+The implementation was published as
+[`c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4).
+The [development record](qualification/types-development.json) and
+[30-volume archive](qualification/types-development.parts/manifest.json) now
+retain 27,110 logical files as 15,539 unique objects. The 182,921,280-byte archive
+was fully decompressed, every regular member rehashed, then physically
+reassembled from its published volumes. The exact original transport executable
+is retained as an 86,524,208-byte XZ object; every one of its 610,853,352 decoded
+bytes was independently checked against the executed binary's identity. The
+consumer evidence remains bound to its actual 2601-plus-overlay source snapshot.
+The initial failed full-run owner-specific raw stores remain at the explicit
+external path in the record; their inclusion is not claimed. The two historical
+source gaps above remain explicit. These archive operations do not change any
+runtime qualification result.
+
 ## Original package coverage
 
 “Partial” means named method/kernel or finite owner coverage, including native

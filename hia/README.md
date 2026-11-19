@@ -33,6 +33,16 @@ prefix/message hashing, checked 128-bit byte counts and finalization without the
 old message-window ceiling. Real native controls include unaligned messages
 through 4 MiB + 257 bytes and the complete earlier SHA-512/Ed25519 regressions.
 
+The [types development record](qualification/types-development.json) binds the
+complete 74-test native partition, exact original comparisons, generated-fixture
+provenance, fixed-consumer checks and the separately identified failed 511-test
+run. Its [canonical archive](qualification/types-development.parts/manifest.json)
+retains 27,110 logical files through 15,539 unique content objects, including the
+complete executed original transport binary in lossless compressed form. All
+archive members, volumes and decompressed executable bytes were rehashed.
+Two explicitly documented historical source gaps remain; this evidence does not
+grant whole-project qualification or old-package retirement.
+
 Oracle qualification now explicitly uses the read-only project audit mode in
 an exact-SHA detached checkout. Its regression controls still reject foreign
 repositories and incorrect project identity; development and push branch rules

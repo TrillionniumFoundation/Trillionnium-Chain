@@ -1,6 +1,6 @@
 # Complete evidence archives
 
-These are the ten current volume sets: nine complete archives and one compact
+These are the eleven current volume sets: ten complete archives and one compact
 Work/Host development view with explicit Git and external-binary dependencies. Every part is a regular file of at most
 six MiB. Its manifest binds order, offset, length and SHA256, together with the
 complete reconstructed archive. Every original member was independently reopened
@@ -18,6 +18,7 @@ and every volume set physically reassembled before publication.
 | peer-lease-development | [manifest](peer-lease-development.parts/manifest.json) | 15 | 92757028 | `dfbdf6ac0239898d94ee0494d818112485b6a20fdc050a0dd95d0a5ed3c0e23d` |
 | work-handshake-development | [manifest](work-handshake-development.parts/manifest.json) | 7 | 38955024 | `8dfb55c4f9f7ff8c1198aca30670f606f1faf0593276105d57683662c44d11dd` |
 | oracle-development | [manifest](oracle-development.parts/manifest.json) | 3 | 15485716 | `07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837` |
+| types-development | [manifest](types-development.parts/manifest.json) | 30 | 182921280 | `ab6b5b07b7abcd69c527df780e5f9ef22c0402dbbe9cd1d0148d947d1289844d` |
 
 Application includes complete c61 and 876 GitHub ZIPs. Work/Host CI includes
 complete producer/consumer ZIPs, the full original executable and isolated
@@ -43,6 +44,7 @@ names = (
     "work-owner-development", "work-owner-ci", "execution-batch-development",
     "governance-development", "control-guard-development",
     "peer-lease-development", "work-handshake-development", "oracle-development",
+    "types-development",
 )
 destination = Path(tempfile.mkdtemp(prefix="trnm-hia-evidence-"))
 for name in names:
@@ -139,7 +141,7 @@ the bd620 Work prerequisite failure, full local negative/corrected controls,
 both job observations, and all three successful push component ZIPs plus
 independent public readback. Tool-generated empty lock metadata is excluded
 from the canonical archive; all observed source, failure and raw bytes remain.
-This small archive is separate from the ten volume sets above. Its current
+This small archive is separate from the eleven volume sets above. Its current
 source correction requires fresh hosted execution and grants no retirement.
 
 ## Node/M05 successor report dossier
@@ -227,3 +229,26 @@ complete 457-test discovery, static workflow checks, full archive/volume
 readbacks and precise duplicate/cache cleanup receipts. Initial local ENOSPC,
 missing-toolchain setup and reader mistakes remain explicitly recorded. These
 checks do not retire any package or replace new commit-bound hosted execution.
+
+## Types and shared cryptography development
+
+The [types record](types-development.json) binds the 74-test native
+crypto/types partition, original RequestStatus/TransferTx/Transcript comparisons,
+shared streaming hashes and fixed-graph consumers. Its 30 contiguous volumes
+reconstruct a single complete XZ stream containing `VIEW.json` and 15,539 regular
+content objects. The view maps 27,110 logical paths (989,453,291 bytes) to those
+objects, so repeated source and executable bytes are stored once.
+
+Independent readback verified every member, the complete tar zero tail, every
+volume and the physically reconstructed archive. The included original transport
+lib-test executable is the exact 610,853,352-byte executed object, retained as
+lossless XZ; a separate streaming readback checked all decompressed bytes without
+stripping or rebuilding it. That consumer run belongs to its recorded 2601 plus
+22-file overlay and is not promoted to the later c98 source snapshot.
+
+The failed initial 511-test report, stdout/stderr and complete source/build
+capture remain included. Its earlier owner-specific raw stores remain external
+at the explicit location in the record. The earliest Transfer scratch failure
+and superseded Transcript borrow-refusal source have explicit historical byte
+gaps. A complete archive of the declared available objects does not repair those
+gaps, erase failed runs or qualify the entire chain.
