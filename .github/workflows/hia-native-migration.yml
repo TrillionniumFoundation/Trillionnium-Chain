@@ -6558,34 +6558,20 @@ jobs:
           python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-peer-lease-store/observations/source-after.json"
       - name: Archive every actual regular byte and special-object metadata
         if: always()
+        env:
+          PEER_STAGE_STATUS: ${{ job.status }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/hia-peer-lease-store" "$RUNNER_TEMP/hia-peer-lease-store-upload"
-          if test -d "$RUNNER_TEMP/hia-bootstrap"; then cp -a -- "$RUNNER_TEMP/hia-bootstrap" "$RUNNER_TEMP/hia-peer-lease-store/bootstrap"; fi
-          python3 - "$RUNNER_TEMP/hia-peer-lease-store" "$RUNNER_TEMP/hia-peer-lease-store-upload" <<'PY'
+          python3 -B - <<'PYMETA'
+          import json, os
           from pathlib import Path
-          import hashlib,json,sys,tarfile
-          from hia.tools.qualify_node_pool_ci import object_inventory
-          root,out=map(Path,sys.argv[1:])
-          rows=object_inventory(root)
-          archive=out/'complete-evidence.tar.gz'
-          with tarfile.open(archive,'w:gz',compresslevel=1) as stream:
-              for name,row in rows.items():
-                  if row['type']=='file':stream.add(root/name,arcname=name,recursive=False)
-          if object_inventory(root)!=rows:raise SystemExit('Actual evidence changed during packing')
-          seen=set()
-          with tarfile.open(archive,'r:gz') as stream:
-              for member in stream:
-                  if not member.isfile() or member.name not in rows or member.name in seen:raise SystemExit('Unexpected archive member')
-                  seen.add(member.name)
-                  raw=stream.extractfile(member).read()
-                  if rows[member.name]['bytes']!=len(raw) or rows[member.name]['sha256']!=hashlib.sha256(raw).hexdigest():raise SystemExit('Actual archive bytes differ')
-          if seen!={name for name,row in rows.items() if row['type']=='file'}:raise SystemExit('Missing actual raw evidence')
-          h=hashlib.sha256()
-          with archive.open('rb') as stream:
-              for block in iter(lambda:stream.read(1048576),b''):h.update(block)
-          (out/'manifest.json').write_text(json.dumps({'schema':'trnm.hia.peer-store-raw-archive.v1','entries':rows,'archive':{'bytes':archive.stat().st_size,'sha256':h.hexdigest()},'special_objects_are_metadata_only':True,'runtime_status_is_not_inferred_from_packaging':True},indent=2,sort_keys=True)+'\n')
-          PY
+          metadata = {'component': 'peer-lease-store', 'head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                      'stage_status': os.environ['PEER_STAGE_STATUS']}
+          (Path(os.environ['RUNNER_TEMP']) / 'hia-peer-lease-store-upload/metadata.json').write_text(json.dumps(metadata, sort_keys=True) + '\n')
+          PYMETA
+          python3 -B hia/tools/archive_runtime_observations.py --root "observations=$RUNNER_TEMP/hia-peer-lease-store" --optional-root "bootstrap=$RUNNER_TEMP/hia-bootstrap" --metadata "$RUNNER_TEMP/hia-peer-lease-store-upload/metadata.json" --output "$RUNNER_TEMP/hia-peer-lease-store-upload" >"$RUNNER_TEMP/hia-peer-lease-store-upload/package.stdout.raw" 2>"$RUNNER_TEMP/hia-peer-lease-store-upload/package.stderr.raw"
       - name: Upload complete peer-store success or failure evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -6595,4 +6581,181 @@ jobs:
           path: ${{ runner.temp }}/hia-peer-lease-store-upload/
           if-no-files-found: error
           compression-level: 0
+          retention-days: 30
+
+  native-checkpoint-store:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONOPTIMIZE: ''
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      CS_OBSERVATIONS: ${{ runner.temp }}/checkpoint-store-observations
+      CS_QUALIFICATION: ${{ runner.temp }}/checkpoint-store-qualification
+      CS_ARTIFACT: ${{ runner.temp }}/checkpoint-store-artifact
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind the current source and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$CS_OBSERVATIONS"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$CS_OBSERVATIONS/source-before.json" >"$CS_OBSERVATIONS/source-before.stdout.raw" 2>"$CS_OBSERVATIONS/source-before.stderr.raw"
+          bash scripts/project-preflight.sh --audit >"$CS_OBSERVATIONS/preflight.stdout.raw" 2>"$CS_OBSERVATIONS/preflight.stderr.raw"
+          python3 -B hia/tools/check_migration.py >"$CS_OBSERVATIONS/migration.stdout.raw" 2>"$CS_OBSERVATIONS/migration.stderr.raw"
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Install the original Rust compiler, formatter and Clippy
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy >"$CS_OBSERVATIONS/rust-install.stdout.raw" 2>"$CS_OBSERVATIONS/rust-install.stderr.raw"
+          rustup which --toolchain 1.95.0 rustc >"$CS_OBSERVATIONS/rustc-path.txt"
+          python3 -B - <<'PY'
+          import os
+          from pathlib import Path
+          tools = Path((Path(os.environ['CS_OBSERVATIONS']) / 'rustc-path.txt').read_text().strip()).resolve().parent
+          with open(os.environ['GITHUB_PATH'], 'a') as output:
+              output.write(str(tools) + '\n')
+          PY
+      - name: Fetch the exact locked Cargo inputs before the offline original build
+        run: |
+          set -euo pipefail
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml >"$CS_OBSERVATIONS/cargo-fetch.stdout.raw" 2>"$CS_OBSERVATIONS/cargo-fetch.stderr.raw"
+          # Original() independently forces offline mode, clears wrappers/flags/
+          # inherited target directories, checks the actual 1.95.0 x86_64 host,
+          # and builds a fresh private target. No cached .rlib is an oracle input.
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap" >"$CS_OBSERVATIONS/bootstrap.stdout.raw" 2>"$CS_OBSERVATIONS/bootstrap.stderr.raw"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Execute all original tests, native methods, Unix recovery and crash boundaries
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          import hashlib, json, os, subprocess, sys, time
+          from pathlib import Path
+          out = Path(os.environ['CS_OBSERVATIONS'])
+          argv = [sys.executable, '-B', '-m', 'hia.platform.checkpoint_store.qualify',
+                  '--output', os.environ['CS_QUALIFICATION']]
+          start = time.monotonic_ns()
+          with (out / 'qualification.stdout.raw').open('xb') as stdout, (out / 'qualification.stderr.raw').open('xb') as stderr:
+              process = subprocess.run(argv, stdout=stdout, stderr=stderr)
+          def identity(path):
+              raw = path.read_bytes()
+              return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+          receipt = {'argv': argv, 'cwd': str(Path.cwd()), 'exit_code': process.returncode,
+                     'elapsed_ns': time.monotonic_ns() - start,
+                     'stdout': identity(out / 'qualification.stdout.raw'),
+                     'stderr': identity(out / 'qualification.stderr.raw')}
+          (out / 'qualification-process.json').write_text(json.dumps(receipt, sort_keys=True, indent=2) + '\n')
+          raise SystemExit(process.returncode)
+          PY
+          # This one entry runs 29 compiler/emit stages; 77 original tests with
+          # zero filtered/ignored; adapter rustfmt --edition 2021; cargo fmt;
+          # --locked --offline --all-features --all-targets Clippy -D warnings;
+          # 792 observations and all 31 negative controls. It never skips a denied
+          # Unix socket, ptrace, fsync, test binary, compiler or original oracle.
+      - name: Verify every current source byte after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$CS_OBSERVATIONS"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$CS_OBSERVATIONS/source-after.json" >"$CS_OBSERVATIONS/source-after.stdout.raw" 2>"$CS_OBSERVATIONS/source-after.stderr.raw"
+      - name: Independently read back the complete qualification and bind this CI head
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.platform.checkpoint_store.qualify --verify "$CS_QUALIFICATION" >"$CS_OBSERVATIONS/readback.stdout.raw" 2>"$CS_OBSERVATIONS/readback.stderr.raw"
+          python3 -B - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          from hia.platform.checkpoint_store.build import decode, exact, identity, need
+          out, qualified = Path(os.environ['CS_OBSERVATIONS']), Path(os.environ['CS_QUALIFICATION'])
+          head = subprocess.check_output(['git', '--no-replace-objects', 'rev-parse', 'HEAD']).decode().strip()
+          tree = subprocess.check_output(['git', '--no-replace-objects', 'rev-parse', 'HEAD^{tree}']).decode().strip()
+          need(head == os.environ['TRNM_EXPECTED_SOURCE_SHA'], 'Current head differs')
+          for name in ('source-before.json', 'source-after.json'):
+              row = decode((out / name).read_bytes())
+              need(row['kind'] == 'head' and row['tested_commit'] == row['candidate'] == head
+                   and row['tested_tree'] == tree and row['tracked_worktree_verified'] is True,
+                   'Exact before/after source binding is incomplete')
+          native = decode((qualified / 'native/build.json').read_bytes())
+          for name, expected in native['source_inputs'].items():
+              committed = subprocess.check_output(['git', '--no-replace-objects', 'cat-file', 'blob', 'HEAD:' + name])
+              need(exact(identity(committed), expected), 'Qualified source is not this committed input: ' + name)
+          outer = decode((out / 'qualification-process.json').read_bytes())
+          need(type(outer['exit_code']) is int and outer['exit_code'] == 0, 'Actual qualification process failed')
+          for stream in ('stdout', 'stderr'):
+              need(exact(outer[stream], identity((out / ('qualification.' + stream + '.raw')).read_bytes())), 'Outer raw stream changed')
+          report = decode((qualified / 'qualification.json').read_bytes())
+          binding = {'schema': 'trnm.hia.checkpoint-store-ci-binding.v1', 'status': 'PASS',
+                     'head': head, 'tree': tree, 'run_id': os.environ['GITHUB_RUN_ID'],
+                     'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                     'qualification': identity((qualified / 'qualification.json').read_bytes()),
+                     'source_set_sha256': native['source_set_sha256'],
+                     'scope': {'whole_node_replacement': False, 'production_activation': False, 'power_failure_claimed': False}}
+          need(report['source_set_sha256'] == native['source_set_sha256'] and report['status'] == 'PASS', 'Qualification source binding differs')
+          (out / 'binding.json').write_text(json.dumps(binding, sort_keys=True, indent=2) + '\n')
+          PY
+      - name: Preserve all regular bytes and lstat metadata on success or failure
+        if: always()
+        env:
+          CS_STAGE_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$CS_OBSERVATIONS" "$CS_ARTIFACT"
+          python3 -B - <<'PYMETA'
+          import json, os
+          from pathlib import Path
+          metadata = {'component': 'checkpoint-store', 'head': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+                      'run_id': os.environ['GITHUB_RUN_ID'], 'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                      'stage_status': os.environ['CS_STAGE_STATUS']}
+          (Path(os.environ['CS_ARTIFACT']) / 'metadata.json').write_text(json.dumps(metadata, sort_keys=True) + '\n')
+          PYMETA
+          python3 -B hia/tools/archive_runtime_observations.py --root "observations=$CS_OBSERVATIONS" --optional-root "qualification=$CS_QUALIFICATION" --optional-root "bootstrap=$RUNNER_TEMP/hia-bootstrap" --metadata "$CS_ARTIFACT/metadata.json" --output "$CS_ARTIFACT" >"$CS_ARTIFACT/package.stdout.raw" 2>"$CS_ARTIFACT/package.stderr.raw"
+      - name: Upload complete observations and packaging diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-checkpoint-store-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/checkpoint-store-artifact/
+            ${{ runner.temp }}/checkpoint-store-observations/
+          if-no-files-found: error
           retention-days: 30

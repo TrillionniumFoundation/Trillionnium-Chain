@@ -810,7 +810,7 @@
       "module": "M03",
       "package": "trnm-checkpoint-store",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -1373,6 +1373,48 @@
       ],
       "tests": [
         "hia/platform/peer_lease_store/qualify.py"
+      ]
+    },
+    {
+      "id": "platform/checkpoint-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux checkpoint authority, Unix service/client, original six CLI commands and separate commit ledger with exact retained methods, journal replay, endpoint ownership, deadline handling and crash/fault recovery. Complete finite original comparison and independent readback; live Node.db integration, cross-target support and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/checkpoint_store/api_driver.hepta",
+        "hia/platform/checkpoint_store/api_methods.hepta",
+        "hia/platform/checkpoint_store/api_objects.hepta",
+        "hia/platform/checkpoint_store/authority_fence.hepta",
+        "hia/platform/checkpoint_store/authority_head.hepta",
+        "hia/platform/checkpoint_store/authority_open.hepta",
+        "hia/platform/checkpoint_store/authority_operations.hepta",
+        "hia/platform/checkpoint_store/checkpoint_files.hepta",
+        "hia/platform/checkpoint_store/errno_text.hepta",
+        "hia/platform/checkpoint_store/error_formatter.hepta",
+        "hia/platform/checkpoint_store/error_text_a.hepta",
+        "hia/platform/checkpoint_store/error_text_b.hepta",
+        "hia/platform/checkpoint_store/filesystem.hepta",
+        "hia/platform/checkpoint_store/io.hepta",
+        "hia/platform/checkpoint_store/ledger_files.hepta",
+        "hia/platform/checkpoint_store/ledger_inventory.hepta",
+        "hia/platform/checkpoint_store/ledger_open.hepta",
+        "hia/platform/checkpoint_store/ledger_operations.hepta",
+        "hia/platform/checkpoint_store/ledger_recovery.hepta",
+        "hia/platform/checkpoint_store/linux_emitter.hepta",
+        "hia/platform/checkpoint_store/main.hepta",
+        "hia/platform/checkpoint_store/runtime.hepta",
+        "hia/platform/checkpoint_store/socket_owner.hepta",
+        "hia/platform/checkpoint_store/socket_path.hepta",
+        "hia/platform/checkpoint_store/transport_frame.hepta",
+        "hia/platform/checkpoint_store/unix_client.hepta",
+        "hia/platform/checkpoint_store/unix_daemon.hepta",
+        "hia/platform/checkpoint_store/value_bridge.hepta",
+        "hia/platform/checkpoint_store/values.hepta"
+      ],
+      "tests": [
+        "hia/platform/checkpoint_store/qualify.py",
+        "hia/platform/checkpoint_store/test_integrity.py",
+        "hia/tests/rust_checkpoint_api_reference.rs"
       ]
     }
   ],

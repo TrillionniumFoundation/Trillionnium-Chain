@@ -1,5 +1,1640 @@
 {
   "includes": {
+    "platform/checkpoint_store/api_driver.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/api_methods.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/api_objects.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_fence.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_head.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_open.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_operations.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/checkpoint_files.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/errno_text.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_formatter.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_text_a.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_text_b.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/filesystem.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/io.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_files.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_inventory.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_open.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_operations.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_recovery.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/main.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/runtime.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/socket_owner.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/socket_path.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/transport_frame.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/unix_client.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/unix_daemon.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/value_bridge.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_equal",
+          "cs_be_put",
+          "cs_log_hash",
+          "cs_pin_encode",
+          "cs_pin_decode",
+          "cs_anchor_encode",
+          "cs_anchor_decode",
+          "cs_log_encode",
+          "cs_log_decode",
+          "cs_request_encode",
+          "cs_request_decode",
+          "cs_response_encode",
+          "cs_response_decode",
+          "cs_pin_response_encode",
+          "cs_pin_response_decode",
+          "cs_ledger_anchor_encode",
+          "cs_ledger_anchor_decode",
+          "cs_ledger_record_encode",
+          "cs_ledger_record_decode",
+          "cs_ledger_head_encode",
+          "cs_ledger_head_decode"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "cp_nonzero",
+          "cp_equal",
+          "cp_be64",
+          "cp_copy",
+          "cp_copy_mut",
+          "cp_watermark",
+          "cp_fields",
+          "cp_domain",
+          "cp_record_header",
+          "cp_checksum",
+          "cp_decode",
+          "cp_successor"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/checkpoint_store/values.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_nonzero",
+          "cp_equal",
+          "cp_be64",
+          "cp_copy",
+          "cp_watermark",
+          "cp_fields",
+          "cp_domain",
+          "cp_checksum",
+          "cp_decode",
+          "cp_successor"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
     "platform/host_resource/fixture_entry.hepta": [
       {
         "functions": [

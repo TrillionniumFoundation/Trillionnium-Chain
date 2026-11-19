@@ -1,9 +1,9 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **56 kernel units, 23 native foundations and 160 HIA source
+inventory contains **56 kernel units, 24 native foundations and 189 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (17 partially ported and 9 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (18 partially ported and 8 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
@@ -13,7 +13,27 @@ retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
 
-The [current execution and availability record](qualification/continuation-development.json)
+The [checkpoint authority and commit ledger](platform/checkpoint_store/README.md)
+now implements all six original CLI commands, private API methods, Unix client
+and daemon, journal recovery and the separate commit ledger in native HIA.
+Its [development record](qualification/checkpoint-store-development.json) binds
+77 retained original tests, strict Clippy/formatting, 792 runtime observations,
+31 refusal controls and independent complete readback. Those observations belong
+to their frozen development source. Both final executables were then rebuilt
+from the current integrated source and independently read back, with identical
+binary bytes. The new mandatory CI job must qualify each event's own commit.
+Live Node.db integration, cross-target qualification and package retirement
+remain open.
+
+The [Darwin cleanup correction](qualification/cleanup-exit-race-development.json)
+handles the observed interval between kernel exit and WNOWAIT visibility.
+A maximum 50 ms read-only cleanup observation still requires actual exit and a
+complete singleton process-group census. Real live permission failures remain
+failures. The current archive helper also preserves legitimate hard-linked
+runtime observations as separate regular byte copies with original inode
+metadata; the stricter source/binary admission rules are unchanged.
+
+The [prior private-owner and PQ execution record](qualification/continuation-development.json)
 binds private Some/CheckedApply snapshots, the persistent PeerLeaseStore owner,
 the combined Work/Paid owner and the restored PQ arithmetic foundations.
 All original package ownership and whole-project acceptance obligations remain

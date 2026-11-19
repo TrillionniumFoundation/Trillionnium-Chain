@@ -1,3 +1,19 @@
+## 2026-11-19 UTC — Checkpoint 原生权威、完整方法与真实 CI 故障修复
+
+从已发布 `41948f98b7b9fcb24a6ba7d638d5391a88e26de6` 继续。当前 **56 kernels /24 native foundations /189 HIA sources**；26 原包中18部分迁移、8未迁移，**0退役、9全项目门OPEN**。此处是实际源码覆盖，不是完成率。根 README 仍为0字节；唯一正式实现及资格入口仍在 `hia/`，不加入作者脚本或平行过程版本。
+
+Checkpoint 的48份最终owned files与28条依赖声明已整合，其中29份HIA负责原六CLI命令、完整公开API、Unix client/daemon、journal权威及独立commit ledger。原Rust1.95完整77项保留测试、零filtered/ignored、严格Clippy、Cargo fmt与adapter rustfmt均真实通过；最终运行792组，675次API和31次CLI对照，10个真实daemon，23个durability切点分别施于两实现，31个篡改控制均拒绝。完整16,102,424B档在Desktop和Mac逐1453成员读回。SIGKILL/EIO只证明实际已观察的进程和I/O边界，不能改称断电实验。开发运行保留自己的180+overlay源图c1d65794，不冒称419运行。
+
+当前106输入图940c84f6已重新实际编译29阶段并独立读回；两份最终4,221,936B executable与已资格版本完全一致。相同字节不转移旧792组运行身份。新增mandatory checkpoint CI每次对自身event head重新做fresh original+native+792+31+readback，并核before/after完整Git来源和全部source blobs。工作流现58jobs/46独立bootstrap，每个原20分钟不变；完整components发现557项（455general、95crypto-types、7State-root），发现不等于执行。49项整合控制及四组bootstrap共184次实际入口调用通过。
+
+419 PeerStore job在全方法及预期拒绝完成后，因为证据归档器把测试/Cargo合法硬链接当作非法bundle而失败。新的runtime归档器对每个普通路径独立复制实字节，保留原device/inode/nlink等元数据，并只记录socket/FIFO/symlink的lstat。六项真实硬链接、源变动、归档损坏和不覆盖控制通过；原source/executable `object_inventory`严格规则不改。成功打包不推导runtime PASS。
+
+419 macOS prospective清理作业的EPERM已保留原55126B完整日志；十次真实重现证明killpg拒绝时waitid还没公布退出，稍后退出和完整singleton census均可证实。修复仅在Darwin EPERM后最多观察50ms，保持原exchange期限、仅signal本owner创建的组和reap前PID保护；live/foreign/extra/empty/error一律不放行。Linux55、Mac55及2000次真实EPERM分别通过；完整87项扩大检查最初因本scratch缺/usr/bin/time产生13个error，保留失败后在有真实GNU time的ROG按相同10源重新执行，87/87、零skip通过。新head/prospective托管结果仍须自己的CI，不能继承本地结果。
+
+Work宿主419的exit70也已定位：production Paid入口误选cold构造，与原trusted-local standalone的初始credit语义不同。继续在相同原预算下修复、比较两个实际native constructor，更新严格primitive reader并从最终源重编必须保留的handshake negative fixture；不得通过等待充值、放宽reserve或删除拒绝控制取得通过。原4秒/16worker/0.25CPU/2GiB/0swap/256PID确认目标失败仍开放。
+
+继续完整Peer Unix服务（SO_PEERCRED、64连接公平调度和共享deadline），完成ML-DSA 65/87全verify/keygen/sign与秘密owner，Task/StateImport真实SQLite持有者和service-settlement完整原生方法。随后接唯一Node owner的COMMIT/reorg/recovery/outbox/ACK、同请求Paid/Host、跨目标、独立模型学习与共识经济资格。仅当全部替代及原验收闭合后才退役旧包和最终清理；当前三个whole-chain/retirement/activation标记继续false。详细边界及原始事实见[当前审计](../../hia/AUDIT.md)、[Checkpoint记录](../../hia/qualification/checkpoint-store-development.json)与[退出竞态记录](../../hia/qualification/cleanup-exit-race-development.json)。
+
 ## 2026-11-18 — 私有快照、持久租约、Work/Paid 与 PQ 基础的原生续接
 
 本轮从已发布 `180c642b4ad723118038b31639afc0d922f474b7` 恢复并继续。当前 **56 kernels /23 native foundations /160 HIA sources**；26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。唯一正式实现仍在 `hia/`，根 README 保持0字节。本文件仍是唯一开发计划；当前覆盖和缺口见 [完整审计](../../hia/AUDIT.md)，不同运行只认各自实际源图与原始记录。

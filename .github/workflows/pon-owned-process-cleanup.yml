@@ -186,7 +186,7 @@ jobs:
           sys.path[:0] = ['formal/pon-nakamoto-v1', 'scripts']
           failed = False
           rows = []
-          for name, expected in [('test_bounded_process', 26), ('test_bounded_process_cleanup', 12), ('test_bounded_process_darwin', 14), ('test_qualification_runtime', 32)]:
+          for name, expected in [('test_bounded_process', 26), ('test_bounded_process_cleanup', 12), ('test_bounded_process_darwin', 17), ('test_qualification_runtime', 32)]:
               module = importlib.import_module(name)
               suite = unittest.defaultTestLoader.loadTestsFromModule(module)
               count = suite.countTestCases()

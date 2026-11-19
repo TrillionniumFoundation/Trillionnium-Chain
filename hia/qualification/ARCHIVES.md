@@ -305,3 +305,24 @@ source inputs, actual bootstrap and integration-control logs. The manifest is
 Both resulting ELFs equal their earlier frozen builds byte-for-byte. These are
 new compilation and source-admission results; they do not create a new runtime
 qualification for the changed source graph.
+
+## Checkpoint and Darwin exit-race observations
+
+The [checkpoint record](checkpoint-store-development.json) preserves its exact
+development execution and subsequent current-source build separately. The
+[cleanup record](cleanup-exit-race-development.json) retains the failed hosted
+job, original race reproductions, fixed native process controls and all captured
+source/raw bytes. These archives are retained in verified operator copies; the
+records identify their complete locations and manifests.
+
+| Observation | Complete bytes | Complete SHA256 | Regular members including manifest |
+| --- | ---: | --- | ---: |
+| Checkpoint original/native 792 final development groups | 16102424 | `2d48b04f702e7ca5b264e89ff149df6cfb8e27726f351356464df47ac73fb047` | 1453 |
+| Checkpoint current 106-source build and executables | 7295250 | `a266a7ee00eadf891d20641cd651f1cc273b73d547056d74944009e2c86a4e46` | 203 |
+| Darwin failed and corrected exit-race observations | 162825 | `5d1a3df03e281c4a11fc448370a515dba1b3f86de7dcc53aa8fd92df04efb4b3` | 48 |
+| Complete 87-method Linux cleanup and exact GNU time observer | 137162 | `5d1c8aa6b63bd82d104dde97f025b8e0902cae58f62ea3e9b778b64e35a0b059` | 65 |
+
+Current runtime archives preserve hard-linked regular pathnames as independent
+regular byte copies and retain each original inode identity. Special filesystem
+objects are lstat metadata only. Successful packaging never supplies a runtime,
+whole-package retirement or production qualification.

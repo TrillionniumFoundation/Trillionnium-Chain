@@ -3,8 +3,8 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**56 kernel components, 23 native foundations and 160 HIA source files**. All
-26 original Rust packages remain: 17 are partially ported and 9 are not ported.
+**56 kernel components, 24 native foundations and 189 HIA source files**. All
+26 original Rust packages remain: 18 are partially ported and 8 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
@@ -16,9 +16,9 @@ line-by-line review of all 702,001 original Rust lines, or successful execution
 of every historical experiment. The original baseline is
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; the branch inspected for this continuation
 was `56c6e560dd3192f89cca40542286166b8284cb4b`. The detached-Oracle correction
-was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The current
-continuation restores the published `180c642b4ad723118038b31639afc0d922f474b7`
-base and the independently frozen source increments below. Every observation
+was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The private-owner/PQ continuation was published as
+`41948f98b7b9fcb24a6ba7d638d5391a88e26de6`. The current checkpoint and CI
+corrections extend that exact base with the frozen source increments below. Every observation
 retains its actual working-source hash and does not inherit another commit's CI result.
 
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
@@ -30,6 +30,47 @@ failures and source identities, remains in
 [immutable Git history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2601aa95250d888cafe9bb4fdfe04a8aad0b7626/hia/AUDIT.md).
 
 ## Findings addressed in this continuation
+
+### Native checkpoint authority and actual CI failures
+
+The [checkpoint record](qualification/checkpoint-store-development.json) covers
+29 HIA sources and all 48 owned implementation/qualification files. A fresh
+original Rust 1.95 build passed all 77 retained tests with zero filtered or
+ignored, strict Clippy and both format gates. Native execution completed 792
+observation groups, 675 API and 31 CLI comparisons, ten actual daemon processes
+and 23 durability cuts applied to both implementations. All 31 integrity
+controls refused the altered evidence. This measures process termination and
+injected I/O faults; it does not certify power-loss behavior.
+
+The complete frozen development run belongs to 180 plus its exact owned overlay
+(`c1d65794…`), not the current integration commit. The current integrated
+106-input source set (`940c84f6…`) was actually rebuilt and independently read
+back. Both 4,221,936-byte executables are identical to the qualified development
+artifacts. No current runtime result is inferred from binary equality. The new
+58th HIA CI job repeats the full original/native/readback sequence on its own
+head. There are now 46 independent native bootstrap gates and 557 discovered
+component methods: 455 general, 95 crypto-types and seven State-root.
+
+The 419 PeerLeaseStore CI finished its complete tests and deliberate refusal
+controls, then its archive step rejected a legitimate hard link. Runtime
+observation packaging now copies each regular pathname's actual bytes into an
+independent regular member and retains device/inode/link metadata. Six controls
+cover real hard links, symlinks, FIFOs, source mutation, archive corruption and
+refusal to overwrite an archive. The generic executable/source-bundle
+`object_inventory` remains strict.
+
+The [Darwin exit-race record](qualification/cleanup-exit-race-development.json)
+preserves the failed prospective CI job and ten real reproductions: killpg
+returned EPERM while immediate WNOWAIT had no exit result, followed by actual
+exit and complete singleton census evidence. The correction allows at most
+50 ms of read-only cleanup observation, then still requires both positive
+checks. Linux and macOS each passed the 55 cleanup methods; 2,000 actual Darwin
+EPERM cases retained the original output-cap failures after cleanup. Empty,
+foreign, extra, unavailable or live process observations cannot authorize success.
+The complete four-suite Linux attempt initially failed with 13 actual missing
+GNU time errors. A fresh run of the same ten source inputs on ROG with the real
+GNU time observer then passed all 87 methods with zero skips. Both observations
+remain separate, and neither supplies a new hosted result.
 
 ### Current private owners and PQ foundations
 
@@ -46,9 +87,9 @@ CI artifacts are still required after success or failure.
 | [Work/Paid](platform/work_owner/README.md) | 61 native and 57 original histories, 175 primitives, 44 retained original tests, complete clock/Paid faults and independent private readback | Fixed-parent production positive, shared public admission, durable Node use and original service acceptance |
 | [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) and [ML-DSA polynomials](src/crypto/ML_DSA_POLY.md) | Fresh complete 95-test crypto/types PASS, 17 native builds, 21,210 shared calls and 3,442 selected official byte vectors | Full ML-DSA signer/verifier, secret ownership, timing qualification, authenticated identity and TLS |
 
-The current 1,244-file component source map is
+The published 419 private-owner/PQ 1,244-file component source map is
 `36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5`.
-The complete discovery is 551 tests: 449 general, 95 crypto-types and seven
+Its complete discovery was 551 tests: 449 general, 95 crypto-types and seven
 State-root. Discovery alone is not execution. The fresh crypto-types run passed
 95/95, with zero failures, errors or skips in 515.760 seconds, and the complete
 1,244-input graph was unchanged before and after execution. Its 38,816,692-byte
@@ -277,7 +318,7 @@ The exact component-to-source mapping is machine checked in the migration invent
 | [trnm-control-plane](../trillionnium/crates/trnm-control-plane) | M16 | Partial: `control-plane/core`, `control-plane/registry`, `control-plane/local-guard` | Observer/planner/guard only; does not grant consensus authority. |
 | [trnm-state-import](../trillionnium/crates/trnm-state-import) | M13 | Not ported: — | Bounded independently admitted export/import and root checks; no old proof decoder. |
 | [trnm-release-bundle](../trillionnium/crates/trnm-release-bundle) | M15 | Not ported: — | Build/SBOM/provenance contracts independent of consensus. |
-| [trnm-checkpoint-store](../trillionnium/crates/trnm-checkpoint-store) | M03 | Not ported: — | Independent exact CAS and durable Unix service; generalized owner frontier only. |
+| [trnm-checkpoint-store](../trillionnium/crates/trnm-checkpoint-store) | M03 | Partial: native `platform/checkpoint-store` authority, CLI, Unix client/daemon and separate ledger | Full original methods and finite recovery qualified; Node.db integration, cross-target acceptance and dependency retirement remain open. |
 | [trnm-checkpoint-types](../trillionnium/crates/trnm-checkpoint-types) | M03 | Partial: `checkpoint/value_v2` | Extract canonical checkpoint/CAS record; remove safety-vote and validator types. |
 | [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream`, `crypto/ed25519-sign`, `crypto/sha512-stream`, `crypto/keccak-stream`, `crypto/ml-dsa-poly` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
 | [trnm-verification-profiles](../trillionnium/crates/trnm-verification-profiles) | M11 | Partial: `verification/closed_round` | Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority. |

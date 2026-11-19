@@ -45,7 +45,8 @@ def sources():
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
-    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives",
+    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-checkpoint-store",
+                 "trnm-crypto-primitives",
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
                  "trnm-control-plane", "trnm-escrow-vault", "trnm-governance-guard",
                  "trnm-peer-lease", "trnm-oracle"):
