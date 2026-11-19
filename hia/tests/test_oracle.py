@@ -95,7 +95,9 @@ class OracleNativeTests(unittest.TestCase):
             if os.environ.get('HIA_ORACLE_SETUP_PROBE')=='missing-executable':
                 cls.e.run([str(cls.e.directory/'missing-rustc')],stage='setup-before-source-missing',
                           capture_output=True,timeout=1,check=True)
-            cls.e.run(['bash','scripts/project-preflight.sh'],stage='project-preflight',cwd=ROOT,
+            # Qualification reads the exact checkout, including CI's detached
+            # HEAD; development and publication keep their separate branch gates.
+            cls.e.run(['bash','scripts/project-preflight.sh','--audit'],stage='project-preflight',cwd=ROOT,
                       capture_output=True,timeout=20,check=True)
             from hia.tools import toolchain
             source_paths={ROOT/'hia/tests/test_oracle.py',ROOT/'hia/tests/oracle_native.py',
