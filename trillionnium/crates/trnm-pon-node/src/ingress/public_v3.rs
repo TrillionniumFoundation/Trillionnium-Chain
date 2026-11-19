@@ -166,6 +166,30 @@ impl MutationCpuMeasurement {
         }
     }
 }
+// Provisional scheduling data from the same authenticated native refusal. It
+// holds no grant, body, CPU credit or validity verdict. Successful settlement
+// only moves it to the existing bounded output owner; it publishes no hint.
+struct PendingNativeRootBodyDelay {
+    digest: Hash,
+    deadline: Instant,
+    stop: Arc<AtomicBool>,
+    cancelled: Arc<AtomicBool>,
+}
+struct SettledNativeRootBodyDelay(PendingNativeRootBodyDelay);
+impl SettledNativeRootBodyDelay {
+    // Called only after the original writer completes the actual response frame.
+    // This bookkeeping is reactor/public-process cost, outside the already-ended
+    // paid owner/CpuSettle and socket-write samples. No new CPU credit is issued.
+    fn publish(self, server: &PublicServer) {
+        let pending = self.0;
+        if task_alive(pending.deadline, &pending.stop, &pending.cancelled).is_ok() {
+            server
+                .body_refusals
+                .remember_digest(pending.digest, Instant::now());
+        }
+    }
+}
+
 struct PaidMutationCpuPermit {
     budget: Arc<Mutex<PaidMutationCpuBudget>>,
     stamp: Option<ThreadCpuStamp>,
@@ -304,13 +328,25 @@ impl PaidMutationCpuPermit {
     // Settlement cannot replace an already completed native outcome or ACK.
     // Observe the original finalization exactly once, including the original
     // durable journal write. Neither the phase nor its facts grants CPU credit.
+    #[cfg(test)]
     fn finish_observed(
-        mut self,
+        self,
         measurement: &MutationCpuMeasurement,
         server: &PublicServer,
         metrics: &Mutex<PublicMetrics>,
         observation: Option<&TaskObservation>,
     ) -> Option<u64> {
+        self.finish_observed_with_root_delay(measurement, server, metrics, observation, None)
+            .0
+    }
+    fn finish_observed_with_root_delay(
+        mut self,
+        measurement: &MutationCpuMeasurement,
+        server: &PublicServer,
+        metrics: &Mutex<PublicMetrics>,
+        observation: Option<&TaskObservation>,
+        root_delay: Option<PendingNativeRootBodyDelay>,
+    ) -> (Option<u64>, Option<SettledNativeRootBodyDelay>) {
         let phase = observation.map(|record| record.phase(SubmitPhase::CpuSettle));
         #[cfg(test)]
         if server
@@ -394,16 +430,23 @@ impl PaidMutationCpuPermit {
             } else {
                 None
             };
+        let actual = PublicCpuSettlementObservation::capture(
+            outer,
+            children,
+            charged,
+            already_charged,
+            residual,
+            budget_settled,
+            journal_persisted,
+        );
+        let root_delay = root_delay
+            .filter(|pending| {
+                actual.succeeded()
+                    && !live_refused
+                    && task_alive(pending.deadline, &pending.stop, &pending.cancelled).is_ok()
+            })
+            .map(SettledNativeRootBodyDelay);
         if let (Some(record), Some(phase)) = (observation, phase) {
-            let actual = PublicCpuSettlementObservation::capture(
-                outer,
-                children,
-                charged,
-                already_charged,
-                residual,
-                budget_settled,
-                journal_persisted,
-            );
             // This bool is the observed settlement result, not the earlier
             // native result. A known owner clock alone does not establish it.
             // No typed Err is invented from the journal's boolean return.
@@ -411,7 +454,7 @@ impl PaidMutationCpuPermit {
             record.settlement_finished(actual);
         }
         // The existing dispatch observer measures only its own actual thread.
-        outer
+        (outer, root_delay)
     }
 }
 impl Drop for PaidMutationCpuPermit {
@@ -428,7 +471,7 @@ impl Drop for PaidMutationCpuPermit {
 
 // Only immutable wire framing and code constants are cached. Each call appends
 // all six original suffix parts to its own unfinalized SHA-256 state.
-const PUBLIC_RESOURCE_CONTRACT: &[u8] = b"resource-revision-r21-exact-invalid-body-grant-delay-v1/fixed256-ways4-body-digests-only-after-completed-native-transcript-or-product-refusal/delay500ms-after-authenticated-solution-spent-reservation/original-expiry-stop-disconnect-no-lane-body-cpu-reservation/skip-delayed-grant-head-no-lookup-refresh-no-validity-verdict/unknown-contended-poison-miss-fresh-body-original-paid-verifier/resource-revision-r20-authenticated-caller-grants-v1/authenticated-caller-mutation-grants2-per-shared-intake-epoch/original-global8-read8-lane-body-reservations-unchanged/caller-rows-only-after-valid-solution-signature-and-spent-reservation/shared-arc-lane-lease-until-last-connection-or-task-owner-release/immediate-caller-capacity-refusal-no-pending-head-block/failed-global-or-body-reserve-no-caller-row/fixed-caller-map64-no-live-eviction-or-guest-persistence/no-new-deadline-worker-credit-or-identity-authority/no-anonymous-or-Sybil-fairness/output-refusal-reserved-original-pool-before-encoding/fallback-frame-classical2048-pq8192-factor4/refusal-headroom65536-within-original-control524288/control-floor458752/no-output-reserve-no-signature-no-bytes/local-capacity-no-native-dispatch/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-parent-task-M06-State-receipts-completion-priority-within-original-shared-bucket/held-detached-growth-History-original-owner-only-completion-token/precommit-only-no-added-W1-State-or-M06-replay/current-epoch-clock-BEGIN-IMMEDIATE-commit-fences-unchanged/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-native-work-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences";
+const PUBLIC_RESOURCE_CONTRACT: &[u8] = b"resource-revision-r22-native-root-body-grant-delay-v1/original-complete-held-or-detached-parent-M06-task-output-root-receipts-mismatch/private-provenance-exact-canonical-body-network-parameters-genesis/no-error-string-or-remote-local-corrupt-success-origin/original-pon-wire-domain-and-single-canonical-body-length-hash/original-known-full-CPU-settlement-then-owned-completion-and-real-complete-response-write/live-original-task-deadline-stop-cancel-before-publish/reactor-public-process-publication-cost-no-new-paid-credit/original256-ways4-delay500ms-no-extra-credit-worker-deadline-or-verdict/resource-revision-r21-exact-invalid-body-grant-delay-v1/fixed256-ways4-body-digests-only-after-completed-native-transcript-or-product-refusal/delay500ms-after-authenticated-solution-spent-reservation/original-expiry-stop-disconnect-no-lane-body-cpu-reservation/skip-delayed-grant-head-no-lookup-refresh-no-validity-verdict/unknown-contended-poison-miss-fresh-body-original-paid-verifier/resource-revision-r20-authenticated-caller-grants-v1/authenticated-caller-mutation-grants2-per-shared-intake-epoch/original-global8-read8-lane-body-reservations-unchanged/caller-rows-only-after-valid-solution-signature-and-spent-reservation/shared-arc-lane-lease-until-last-connection-or-task-owner-release/immediate-caller-capacity-refusal-no-pending-head-block/failed-global-or-body-reserve-no-caller-row/fixed-caller-map64-no-live-eviction-or-guest-persistence/no-new-deadline-worker-credit-or-identity-authority/no-anonymous-or-Sybil-fairness/output-refusal-reserved-original-pool-before-encoding/fallback-frame-classical2048-pq8192-factor4/refusal-headroom65536-within-original-control524288/control-floor458752/no-output-reserve-no-signature-no-bytes/local-capacity-no-native-dispatch/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-parent-task-M06-State-receipts-completion-priority-within-original-shared-bucket/held-detached-growth-History-original-owner-only-completion-token/precommit-only-no-added-W1-State-or-M06-replay/current-epoch-clock-BEGIN-IMMEDIATE-commit-fences-unchanged/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-native-work-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences";
 
 fn hash_public_policy(dynamic_parts: [&[u8]; 6]) -> Hash {
     static PREFIX: OnceLock<Sha256> = OnceLock::new();
@@ -871,6 +914,8 @@ pub struct PublicServer {
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
+    fail_next_output_write: AtomicBool,
+    #[cfg(test)]
     fail_next_cpu_start: AtomicBool,
     #[cfg(test)]
     fail_next_cpu_finish: AtomicBool,
@@ -898,6 +943,8 @@ impl PublicServer {
             body_refusals: body_refusal::BodyRefusals::default(),
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
+            #[cfg(test)]
+            fail_next_output_write: AtomicBool::new(false),
             #[cfg(test)]
             fail_next_cpu_start: AtomicBool::new(false),
             #[cfg(test)]
@@ -1339,6 +1386,7 @@ struct Finished {
     bytes: Result<Vec<u8>>,
     // A dropped receiver/completion keeps its allowance until its bytes die.
     permit: Option<BufferPermit>,
+    root_delay: Option<SettledNativeRootBodyDelay>,
     // A disconnected request stays open while the completion queue still owns
     // its output allocation. A live Output stage has its connection observer.
     _observation: Option<TaskObservation>,
@@ -1423,6 +1471,7 @@ enum Stage {
         bytes: Vec<u8>,
         cursor: usize,
         _permit: Option<BufferPermit>,
+        root_delay: Option<SettledNativeRootBodyDelay>,
     },
 }
 impl Stage {
@@ -1759,6 +1808,7 @@ fn apply_finished_connection(
         bytes,
         cursor: 0,
         _permit: done.permit,
+        root_delay: done.root_delay,
     };
     // This is the first output-stage budget of an on-time completion; neither
     // the original overall bound nor the original service lifetime is renewed.
@@ -2791,6 +2841,28 @@ fn serve_public_protected_v3_inner(
                             }
                             drop(m);
                             let accepted = outcome.is_ok();
+                            let root_delay = if task.cookie.op == 1
+                                && !server.identity.is_pq()
+                                && !server.native_growth
+                            {
+                                outcome
+                                    .as_ref()
+                                    .err()
+                                    .and_then(|error| {
+                                        error.completed_native_root_body(
+                                            settings,
+                                            &task.cookie.body_digest,
+                                        )
+                                    })
+                                    .map(|digest| PendingNativeRootBodyDelay {
+                                        digest,
+                                        deadline: task.deadline.min(end),
+                                        stop: Arc::clone(&stop),
+                                        cancelled: Arc::clone(&task.cancelled),
+                                    })
+                            } else {
+                                None
+                            };
                             if let (Some(record), Err(error)) = (&task.observation, &outcome) {
                                 record.dispatch_error(error);
                             }
@@ -2876,14 +2948,16 @@ fn serve_public_protected_v3_inner(
                             };
                             // Unknown accounting latches future mutation but never
                             // rewrites a completed native outcome or signed ACK.
-                            let cpu = match accounting {
-                                Some((permit, measurement)) => permit.finish_observed(
-                                    &measurement,
-                                    server,
-                                    &metrics,
-                                    observation.as_ref(),
-                                ),
-                                None => read_cpu.and_then(ThreadCpuStamp::finish),
+                            let (cpu, root_delay) = match accounting {
+                                Some((permit, measurement)) => permit
+                                    .finish_observed_with_root_delay(
+                                        &measurement,
+                                        server,
+                                        &metrics,
+                                        observation.as_ref(),
+                                        root_delay.filter(|_| matches!(&bytes, Some(Ok(_)))),
+                                    ),
+                                None => (read_cpu.and_then(ThreadCpuStamp::finish), None),
                             };
                             if dispatch_started {
                                 if let Some(record) = &observation {
@@ -2902,6 +2976,7 @@ fn serve_public_protected_v3_inner(
                                     permit,
                                     id,
                                     bytes,
+                                    root_delay,
                                     _observation: observation,
                                 })
                                 .is_err()
@@ -3416,10 +3491,22 @@ fn serve_public_protected_v3_inner(
                                 // Keep the owning variant intact on both success
                                 // and `?` failure. Detached locals would drop the
                                 // permit before the output buffer on an early exit.
-                                let Stage::Output { bytes, cursor, .. } = &mut output else {
+                                let Stage::Output {
+                                    bytes,
+                                    cursor,
+                                    root_delay,
+                                    ..
+                                } = &mut output
+                                else {
                                     unreachable!();
                                 };
                                 let before = *cursor;
+                                #[cfg(test)]
+                                if server.fail_next_output_write.swap(false, Ordering::AcqRel) {
+                                    // Fault injection closes the actual kernel write half;
+                                    // the unchanged writer must observe its real I/O error.
+                                    conn.socket.shutdown(std::net::Shutdown::Write)?;
+                                }
                                 if write_available_observed(
                                     &mut conn.socket,
                                     bytes,
@@ -3437,6 +3524,9 @@ fn serve_public_protected_v3_inner(
                                         .delivered_response_frames += 1;
                                     if let Some(record) = &conn.observation {
                                         record.terminal("response");
+                                    }
+                                    if let Some(root_delay) = root_delay.take() {
+                                        root_delay.publish(&server);
                                     }
                                     remove.push(*id);
                                     Ok(Stage::Await)
@@ -6262,6 +6352,7 @@ mod tests {
                     BufferPermit::acquire(output_pool.clone(), IO_QUANTUM, MAX_OUTPUT_BYTES)
                         .unwrap(),
                 ),
+                root_delay: None,
                 _observation: Some(observation),
             };
             let (sender, receiver) = mpsc::sync_channel(1);
@@ -6513,17 +6604,17 @@ mod tests {
         });
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a"
+            "1f45524fae91b3d13fc9bed2c27a48fc0e0c4e943db6f8dc3724bdd6a0dd30be"
         );
     }
 
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent r20 SHA-256/length-framing vector for development
+        // Fixed independent r22 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a"
+            "1f45524fae91b3d13fc9bed2c27a48fc0e0c4e943db6f8dc3724bdd6a0dd30be"
         );
         assert_ne!(
             hex::encode(PublicPolicy::development().id()),
@@ -7850,7 +7941,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r21_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r22_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -7858,15 +7949,16 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10-r15, r18, r19 and r20 signed predecessor inputs;
-        // combined r21 rejects them under the unchanged current signature checks.
+        // Preserve exact r10-r15 and r18-r21 signed predecessor inputs;
+        // combined r22 rejects them under the unchanged current signature checks.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, historical_r19, predecessor_profiles) in [
             (
                 8,
-                "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
+                "f42c4a65fe07c39b2ec4349231742f20714f4d9b0c12842ff6cb30cdb2e04748",
                 "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
                 [
+                    "af19bd40e20d1ad8f9ab010c6b40bd26e38a2dfff8105d1af2c92a2b8dcd8a94",
                     "ae83a59b214d10a93bccd557b3c9b20c05742648a52414bc3a2d32ecf03469cb",
                     "17d393fcb34624a7dda51a5b8385c6e8deddd4177693379ce431d2a48ad9c332",
                     "85ec5559c48860c02834a89f84a6dc779482c8c8ae09045e8cd161348e91290d",
@@ -7879,9 +7971,10 @@ mod tests {
             ),
             (
                 16,
-                "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a",
+                "1f45524fae91b3d13fc9bed2c27a48fc0e0c4e943db6f8dc3724bdd6a0dd30be",
                 "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
                 [
+                    "ef1e7166720901dc7ff6747823fc6c379702acf2e794ce2982e4fbb22492336a",
                     "59ee63889ec8f95e2bd6c45789bf7b5ff3b916cf1244a4970f8744ee49bb175b",
                     "def48acb27beeb6950013850e2306d8bc97f18571485c34226a6ae5563492e4d",
                     "272ea19faf73fd12ca83f43b1854fe6bfdf293848bf593a5f7f69797e88219c7",
@@ -7894,9 +7987,10 @@ mod tests {
             ),
             (
                 12,
-                "9eb8b90a2b797a4cce6c35eb3da0dfe3eec6f125b076c353301b2d82ed9d9377",
+                "2b6312e818992d9d323e457eb350824bcaa0f32162f565f336cf0a90fd983fc6",
                 "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
                 [
+                    "9eb8b90a2b797a4cce6c35eb3da0dfe3eec6f125b076c353301b2d82ed9d9377",
                     "3f88d9d9eb972e2512c39001b34f4678af5ef34c4a2362e6b69090184c1ce203",
                     "bcb405a632ccea135df5e2fb41b03a5ec3be74f262a77f77b9c082a446b1b255",
                     "986444aaad4ce993ecbf565af7e599bf32ddeac4b195eb2502da3d3135ba276b",
@@ -9925,6 +10019,7 @@ mod completion_deadline_tests {
                     BufferPermit::acquire(self.intake.output_pool.clone(), 128, MAX_OUTPUT_BYTES)
                         .unwrap(),
                 ),
+                root_delay: None,
                 _observation: Some(self.task.take().unwrap()),
             }
         }
@@ -10401,3 +10496,6 @@ mod completion_deadline_tests {
         assert_eq!(metrics.output_serialization_failures, 0);
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+mod native_root_delay_tests;
