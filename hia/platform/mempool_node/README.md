@@ -1,9 +1,9 @@
 # One held-disk Node and production M05 method
 
-The six files in hia/platform/node_owner own the disk/context source, canonical
+The files in hia/platform/node_owner own the disk/context source, canonical
 State, View lease, Parent and Prefix lifecycle. Mempool node_methods.hepta extends
-that producer with method 8. node_commitment/owner.hepta owns retained canonical
-Parent and Prepared objects in the same State heap. Existing State, application,
+that producer with method 8. node_commitment owns retained canonical Parent,
+Prepared, Snapshot and persistent shared-tree objects in the same State heap. Existing State, application,
 mandatory, protocol, hashing and group helpers are composed from canonical files.
 
 ## Current closure and authority
@@ -15,9 +15,13 @@ JSON-to-Value construction creates the State handle. Caller State, Config, nonce
 root, Prepared, signature results and lease tokens cannot initialize capabilities.
 
 Default Settings accepts absent timestamp or valid positive signed-64-bit
-timestamps. Qualification covers four Settings contexts. This differs from a
-commitment predecessor snapshot: the current Parent/Prepared path uses None
-predecessor. Native Some/CheckedApply is not claimed.
+timestamps. Qualification covers four Settings contexts. Reading the active
+State computes a checked commitment and publishes its real retained Snapshot.
+The private cache is keyed by epoch, tip, generation, slot and height. A later
+Parent constructor checks the complete actual State again, binds the resulting
+Some Snapshot, and transfers independent ownership before dropping temporary
+handles. Only actual binding relationship errors invalidate the cache and retry
+the original None path. A budget fallback never fabricates a Snapshot.
 
 Method 8 holds a real View lease and runs actual PNX1 decoding, canonical sender
 and metadata checks, exact-wire signature reuse, strict Ed25519 verification,
@@ -25,18 +29,26 @@ State nonce reads, typed admission and consuming Ready queue. Only successful
 admission enters the same private Parent/Prefix methods as public Node methods.
 Temporary Prepared is dropped before its Output State. Preview facts are
 published only at the original success boundary. Error, cancellation and panic
-preserve cache and base. Drop retires Prefix, Parent, checks real object counts,
-releases View and clears its own buffers.
+preserve the accepted Prefix, cache and base. Drop retires Prefix and Parent,
+checks real object counts, releases View and clears its own buffers. Node close,
+including close while the pool is live, also retires the Node-owned Snapshot
+before the base State. The next Prefix always starts from that original parent;
+a finalized successor Prepared never becomes the Node cache.
 
 The real Prepared is built after BeforeCommitment and before
 AfterCommitment/BeforeOutput. Its parent map is borrowed only during computation.
 No external success flag grants persistence.
 
-Original PendingPreview may internally choose a cached Some predecessor.
-Differentials compare complete Ready/State/root/receipt, error, cancellation and
-cache behavior; internal CheckedApply/cache-selection equivalence remains open.
-The separate None-parent Node comparison covers all selected public Parent and
-Prepared fields.
+The Some path executes the native tree's checked delta application, including
+the empty-delta integrity check. It preserves unaffected tree nodes and retains
+complete canonical values. Native observation requires an actual NPCSNP01 Parent
+and NPCDATA3 CheckedApply result in the healthy default-budget corpus. It checks
+every change, capacity charge, shared node and root. Across operations only live
+reference counters may change in the retained parent export; every other byte,
+including ownership context and node pointers, remains fixed. Original Rust
+comparison invokes the real Node cache and checked commitment APIs before
+binding. It compares every selected Prepared field and the complete public
+Ready/State/root/receipt, error, cancellation and signature-cache behavior.
 
 ## Executable qualification
 
@@ -51,7 +63,7 @@ python -B -m hia.platform.mempool_node.qualify --group cross --output OUT
 ~~~
 
 Explicit settings: HIA_TOOLCHAIN_ROOT, HIA_NATIVE_COMPILER and
-HIA_NATIVE_COMPILER_SHA256. All 24 images, source inputs, literal emitter payload,
+HIA_NATIVE_COMPILER_SHA256. All 27 runtime images, the emitter, source inputs, literal emitter payload,
 prefix and complete ELF are checked. Runtime child 240 seconds and cleanup
 3 seconds remain unchanged.
 
@@ -87,7 +99,7 @@ fences. Evidence archives retain independent original binary bytes in full.
 
 This finite owner does not open existing SQLite Node.db, admit successor blocks,
 persist a local pool, publish mutable catalog generations or COMMIT a Node
-transaction. Some/CheckedApply integration, live Paid/Host permit, block-derived
+transaction. Live Paid/Host permit, block-derived
 W1 capability and the 4-second / 16-request service qualification remain open.
 The qualification callback ACK conveys cancellation only, never a permit.
 Continuous hostile same-UID races and physical power loss are not claimed.

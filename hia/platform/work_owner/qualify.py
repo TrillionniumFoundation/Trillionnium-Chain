@@ -18,7 +18,7 @@ from .trace_controls import run_controls, run_signal_controls
 def qualify(output, *, require_trace=True):
     need(__debug__, "Work owner qualification refuses optimized Python")
     output = new_output(output)
-    report = {"schema": "trnm.hia.work-owner-qualification.v1", "status": "FAIL",
+    report = {"schema": "trnm.hia.work-owner-qualification.v2", "status": "FAIL",
               "semantic": [], "traces": [], "trace_status": "NOT_REQUESTED",
               "production_fixed_parent_authority": False, "actual_original_Rust": False,
               "whole_Node_or_paid_checkpoint_closed": False, "original_4s_16_service_gate_closed": False}
@@ -36,9 +36,12 @@ def qualify(output, *, require_trace=True):
         cases = corpus()
         (output / "cases.json").write_bytes(corpus_bytes())
         report["corpus"] = identity(output / "cases.json")
+        image = (output / "build/fixture.elf").read_bytes()
+        if require_trace:
+            from .paid_faults import run_native as run_paid_clock_faults
+            report["paid_clock_faults"] = run_paid_clock_faults(image, output / "paid-clock-faults")
         report["primitives"] = primitives(output / "build", cases, output / "primitives")
         semantic = output / "semantic"; semantic.mkdir(mode=0o700)
-        image = (output / "build/fixture.elf").read_bytes()
         for case in cases:
             physical = run_case(image, bytes.fromhex(case["request_hex"]), semantic / case["name"],
                                 **native_options(case))

@@ -66,7 +66,14 @@ def run_controls(text, stdin, stdout, output):
         ("output-byte-substitution", text, stdout[:-1] + bytes([stdout[-1] ^ 1]), False),
         ("main-call-after-terminal", text + f"{main} gettid() = {main}\n", stdout, False),
     ]
-    clock = next(c for c in calls if c["tid"] == worker and c["name"] == "clock_gettime" and c["start"] == c["end"])
+    # The same worker first begins Paid accounting (CLOCK3), then reserves
+    # (CLOCK1), before the first actual Work checkpoint (CLOCK1). Mutate that
+    # Work clock, preserving both preceding Paid roles and the original control.
+    worker_clocks = [c for c in calls if c["tid"] == worker and c["name"] == "clock_gettime"]
+    need(len(worker_clocks) >= 3 and [arguments(c["args"])[0] for c in worker_clocks[:3]]
+         == ["CLOCK_THREAD_CPUTIME_ID", "CLOCK_MONOTONIC", "CLOCK_MONOTONIC"],
+         "Actual Paid begin/reserve/first Work clock roles differ")
+    clock = worker_clocks[2]
     rows.append(("worker-wrong-clock", changed(clock, "CLOCK_MONOTONIC", "CLOCK_THREAD_CPUTIME_ID"), stdout, False))
     read = next(c for c in calls if c["tid"] == worker and c["name"] == "read"
                 and c["start"] == c["end"] and c["value"] == 0)

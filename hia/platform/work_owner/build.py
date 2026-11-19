@@ -1,4 +1,4 @@
-"""Build the actual same-worker Work/Host owner from checked HIA sources."""
+"""Build the actual same-worker Work, Host and Paid owner from checked HIA."""
 from __future__ import annotations
 import argparse
 import hashlib
@@ -25,7 +25,9 @@ OWNED = (
     "rust_reference.rs", "rust_bridge.rs", "owner_policy.hepta", "owner_fixture.hepta",
     "work_policy.hepta", "host_method.hepta", "host_fixture.hepta",
     "linux_emitter.hepta", "sha_fixture.hepta", "closed_fd_fixture_emitter.hepta",
+    "paid_method.hepta", "paid_fixture.hepta", "rust_paid_reference.rs",
     "qualify_production.py", "test_production.py",
+    "paid_faults.py", "paid_fault_evidence.py", "test_paid_faults.py",
 )
 SHARED = (
     "hia/src/work/verify.hepta", "hia/src/crypto/sha256_arena.hepta",
@@ -43,7 +45,20 @@ SHARED = (
     "trillionnium/crates/trnm-pon-node/src/lib.rs",
 )
 W1_HELPERS = ("f1", "f2", "f3", "f4", "f5", "f9", "f10", "f11", "f14", "f16")
+PAID_HELPERS = (
+    "cpu_get", "cpu_put", "cpu_read", "pc_ceiling",
+    "pc_charge_live", "pc_charge_request", "pc_clear_output", "pc_clock_tick",
+    "pc_command", "pc_count_add", "pc_elapsed", "pc_finish_tick",
+    "pc_flow_add", "pc_flow_snapshot", "pc_iadd", "pc_ilt",
+    "pc_init", "pc_isub", "pc_life_tick", "pc_lock",
+    "pc_main_tick", "pc_mulrate", "pc_next", "pc_observe",
+    "pc_observe_tick", "pc_offer", "pc_outer_result", "pc_owner_output",
+    "pc_panic", "pc_record_final", "pc_refill", "pc_reserve",
+    "pc_sample", "pc_settle", "pc_unknown", "pc_unknown_tick",
+    "pc_unlock", "pc_wall", "pc_worker_output", "pc_worker_unknown",
+)
 FROZEN = {
+    "hia/platform/paid_cpu/owner.hepta": "0a7341eac40791b3350282d2e1fdc44cc4c83ce155d01657c72bbfbb9721ad72",
     "hia/src/work/verify.hepta": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1",
     "hia/src/crypto/sha256_arena.hepta": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
     "hia/platform/host_checkpoint/owner_policy.hepta": "474aa5ce229c23723fe1f8bdcf7047c3e1bd3f2b95ed24f1a4c183702e86f3be",
@@ -124,6 +139,10 @@ def compose(sources):
     owner = sources["owner_policy.hepta"]
     work = sources["work_policy.hepta"]
     host = sources["host_method.hepta"]
+    paid_table = function_table(sources["hia/platform/paid_cpu/owner.hepta"])
+    need(set(PAID_HELPERS) <= set(paid_table), "Missing complete frozen Paid helper")
+    paid = sources["paid_method.hepta"].rstrip() + b"\n" + b"".join(
+        raw for name, raw in paid_table.items() if name in PAID_HELPERS)
     w1 = function_table(sources["hia/src/work/verify.hepta"])
     need(set(W1_HELPERS) <= set(w1), "Missing complete frozen W1 helper")
     helpers = b"".join(w1[name] for name in W1_HELPERS)
@@ -132,6 +151,8 @@ def compose(sources):
     return {
         "owner": owner,
         "owner-fixture": sources["owner_fixture.hepta"] + suffix(owner, "owner_entry"),
+        "paid": paid,
+        "paid-fixture": sources["paid_fixture.hepta"] + suffix(paid, "pw_entry"),
         "work": work + helpers,
         "host": host + host_helpers,
         "host-fixture": sources["host_fixture.hepta"] + suffix(host, "work_host_entry") + host_helpers,
@@ -200,14 +221,15 @@ class Build(PinnedBuild):
             for name in ("emitter", "closed-emitter"):
                 inspect_executable(flats[name])
             images = {}
-            for profile, owner, host, emitter in (
-                ("owner", "owner", "host", "emitter"),
-                ("fixture", "owner-fixture", "host-fixture", "emitter"),
-                ("closed-fd", "owner-fixture", "host-fixture", "closed-emitter"),
+            for profile, owner, host, paid, emitter in (
+                ("owner", "owner", "host", "paid", "emitter"),
+                ("fixture", "owner-fixture", "host-fixture", "paid-fixture", "emitter"),
+                ("closed-fd", "owner-fixture", "host-fixture", "paid-fixture", "closed-emitter"),
             ):
-                a, b, c = flats[owner], flats["work"], flats[host]
-                need(all(0 < len(x) <= 524288 for x in (a, b, c)), "Native section exceeds fixed profile")
-                payload = struct.pack("<4Q", int.from_bytes(b"OWBND001", "little"), len(a), len(b), len(c)) + a + b + c
+                sections = [flats[name] for name in (owner, "work", host, paid)]
+                need(all(0 < len(x) <= 524288 for x in sections), "Native section exceeds fixed profile")
+                payload = struct.pack("<5Q", int.from_bytes(b"OWPBND01", "little"),
+                                      *[len(x) for x in sections]) + b"".join(sections)
                 image = self.stage(flats[emitter], payload, "emit-" + profile)
                 elf = inspect_owner(image)
                 need(image.endswith(payload), "Emitter did not retain exact checked HIA sections")
@@ -228,6 +250,7 @@ class Build(PinnedBuild):
                           compiler_qualification_binding=self.binding,
                           runtime_host_language_or_dynamic_loader=False,
                           external_TID_clock_success_or_reauthorization_input=False,
+                          finite_same_worker_paid_checkpoints_implemented=True,
                           complete_Node_or_paid_checkpoint_closed=False)
         except BaseException as error:
             result["failure"] = repr(error)

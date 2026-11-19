@@ -315,7 +315,15 @@ fn cross_invoke(item:&Value,artifacts:&Path) {
       "state_hex":null,"root_hex":null,"receipts":null,"metrics":null});
     if op=="node_new" {
      drop(staged.take());drop(prefix.take());
-     let actual=CrossCheckedParent::bind(&base.2,record.root,None,CrossCacheLimits::default()).unwrap();
+     let prior=node.cached_parent(base.0).expect("actual Node cache lookup");
+     assert!(prior.is_some(),"actual read_active Snapshot");
+     let checked=node.checked_commitment(&base.2,record.root,prior.as_ref()).expect("actual checked Node commitment");
+     let actual=match CrossCheckedParent::bind(&base.2,checked.root,checked.snapshot.as_ref(),CrossCacheLimits::default()) {
+      Ok(bound)=>bound,
+      Err("COMMITMENT_PARENT"|"COMMITMENT_ROOT")=>{node.invalidate_commitment();CrossCheckedParent::bind(&base.2,record.root,None,CrossCacheLimits::default()).unwrap()},
+      Err(error)=>panic!("actual Some binding failed: {error}"),
+     };
+     drop(checked);drop(prior);
      let miner:[u8;32]=hex::decode(item["miner_hex"].as_str().unwrap()).unwrap().try_into().unwrap();
      let ctx=CrossPrefixContext{timestamp:optional_u64(&item["timestamp"]),height:record.height.checked_add(1).unwrap(),miner,parent_id:base.0};
      prefix=Some(actual.into_prefix_with_control(ctx,&node.settings.app,&control).unwrap());

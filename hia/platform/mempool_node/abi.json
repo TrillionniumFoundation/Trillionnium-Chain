@@ -17,7 +17,6 @@
     "runtime_child_seconds": 240
   },
   "open": [
-    "Some/CheckedApply",
     "live Paid/Host permit",
     "durable local pool",
     "successor admission",
@@ -39,6 +38,16 @@
       "View drop",
       "private buffers clear"
     ],
+    "node_close": [
+      "Prefix drop",
+      "temporary Prepared/Output drop",
+      "Parent drop",
+      "Node cached Snapshot drop",
+      "base State drop",
+      "full owner/allocation count zero",
+      "View drop",
+      "private buffers clear"
+    ],
     "normal_m05": [
       "Prepared drop",
       "Output State drop",
@@ -52,21 +61,43 @@
     "8": "Parent/Prepared operation",
     "9": "Parent/Prepared completion"
   },
+  "private_continuations": {
+    "300": "checked commitment reply",
+    "301": "consume Prepared into Snapshot",
+    "302": "drop fallback Prepared with no Snapshot",
+    "303": "actual Some bind reply",
+    "304": "drop temporary Snapshot after binding",
+    "305": "drop previous cached Snapshot, invalidate relation cache, or close"
+  },
   "private_slots": {
     "active_height": 192,
     "base": 16,
     "bind_sequence": 648,
+    "cache_epoch": 904,
+    "cache_generation": 912,
+    "cache_height": 1008,
+    "cache_sequence": 1016,
+    "cache_slot": 920,
+    "cache_tip": 928,
+    "checked_sequence": 984,
     "context_bytes": 16384,
     "context_length": 56,
     "m05_begin": 768,
     "m05_cleanup_reason": 864,
     "m05_temp_output": 824,
     "m05_temp_prepared": 832,
+    "node_cached_snapshot": 896,
     "output_state": 280,
     "parent": 640,
     "prefix_live": 216,
     "prepared": 328,
+    "relation_retry": 992,
     "retirement_stats": 656,
+    "snapshot_continuation_mode": 960,
+    "snapshot_return_continuation": 968,
+    "temporary_bound_parent": 976,
+    "temporary_checked_prepared": 880,
+    "temporary_checked_snapshot": 888,
     "view": 160
   },
   "public_transport": {
@@ -84,7 +115,7 @@
     },
     "request": "length-u64 + NBINPUT1 + method-u64 + payload"
   },
-  "runtime_images": 24,
+  "runtime_images": 27,
   "schema": "trnm.one-node-production-m05-abi.v1",
   "source_ownership": {
     "crypto_joint": "hia/src/crypto/ed25519_verify_joint.hepta",
@@ -93,7 +124,15 @@
       "node_methods.hepta"
     ],
     "node_commitment": [
-      "owner.hepta"
+      "owner.hepta",
+      "snapshot.hepta",
+      "snapshot_entry.hepta",
+      "checked.hepta",
+      "checked_entry.hepta",
+      "tree.hepta",
+      "tree_entry.hepta",
+      "sha256.hepta",
+      "sha256_fork.hepta"
     ],
     "node_owner": [
       "context.hepta",
@@ -101,7 +140,8 @@
       "json_value.hepta",
       "linux_emitter.hepta",
       "prefix_bridge.hepta",
-      "producer.hepta"
+      "producer.hepta",
+      "snapshot.hepta"
     ]
   }
 }

@@ -15,7 +15,7 @@ import tarfile
 import tempfile
 from hia.platform.work_owner import cases
 from hia.platform.work_owner.clock_comparison import original_input
-from hia.platform.work_owner.clock_evidence import audit, TEST
+from hia.platform.work_owner.clock_evidence import audit, TEST, validate_observer_controls
 from hia.platform.work_owner.faults import profiles
 
 RAW_NAMES = ("report.json", "events.jsonl", "stdout.raw", "stderr.raw")
@@ -39,6 +39,18 @@ CONTROL_SPECS = (
     ("coherent-actual-deadline-overrun", "private-raw-positive", False),
     ("failed-clock-claims-timespec", "clock-EIO-2", False),
     ("omitted-actual-injection", "clock-EIO-2", False),
+    ("paid-checkpoint-count-bool", "private-raw-positive", False),
+    ("paid-checkpoint-count-omitted", "private-raw-positive", False),
+    ("paid-live-not-retired", "private-raw-positive", False),
+    ("paid-live-charge-disconnected", "private-raw-positive", False),
+    ("paid-global-poison-type", "private-raw-positive", False),
+    ("paid-global-credit-minted", "private-raw-positive", False),
+    ("paid-global-extra-authority", "private-raw-positive", False),
+    ("paid-settlement-union", "private-raw-positive", False),
+    ("paid-settlement-residual", "private-raw-positive", False),
+    ("coherent-paid-clock-role", "private-raw-positive", False),
+    ("panic-paid-account-available", "clock-EIO-2", False),
+    ("panic-paid-returned-settlement", "clock-EIO-2", False),
     ("positive-fault-after-restoration", "clock-EIO-2", True),
 )
 RAW_COUNTS = {"case_count": 175, "call_count": 9489, "buffer_count": 538,
@@ -102,7 +114,7 @@ def patch_bytes(q, archive, entries):
 
 
 def clock_reader_controls(q, directory, report, complete, source_inputs, executable, baseline, argv, env):
-    q.need(type(report) is dict and report.get("schema") == "trnm.hia.work-owner-actual-clock-reader-controls.v1"
+    q.need(type(report) is dict and report.get("schema") == "trnm.hia.work-owner-actual-clock-reader-controls.v2"
            and report.get("status") == "PASS" and report.get("failure") is None
            and report.get("source_after") == report.get("baseline_after") == "MATCH"
            and report.get("final_fence_failure") is None and q.same(report.get("source_inputs"), source_inputs)
@@ -111,7 +123,7 @@ def clock_reader_controls(q, directory, report, complete, source_inputs, executa
            and report.get("public_actual_reader_api") == "hia.platform.work_owner.clock_evidence.audit"
            and report.get("full_source_qualification_claimed_by_these_controls") is False,
            "Actual CLOCK reader control scope/source/fence differs")
-    for key, count in (("count", 20), ("positive", 2), ("negative", 18)):
+    for key, count in (("count", 32), ("positive", 2), ("negative", 30)):
         q.need(type(report.get(key)) is int and report[key] == count, "CLOCK raw control count/type differs")
     rows = report.get("rows")
     q.need(type(rows) is list and len(rows) == len(CONTROL_SPECS)
@@ -163,9 +175,31 @@ def clock_reader_controls(q, directory, report, complete, source_inputs, executa
            "CLOCK raw controls contain missing, extra or unconsumed files")
     q.need(q.same(q.file_tree(directory / "working"), rows[-1]["complete_mutated_raw"]),
            "Restored final CLOCK control bytes differ")
-    return {"original_clock_raw_controls": 20, "original_clock_raw_positive_controls": 2,
-            "original_clock_raw_negative_controls": 18,
+    return {"original_clock_raw_controls": 32, "original_clock_raw_positive_controls": 2,
+            "original_clock_raw_negative_controls": 30,
             "original_clock_raw_controls_report": q.identity(directory / "report.json")}
+
+
+def observer_memory_controls(q, root, complete, source_inputs):
+    """Require complete owned-memory and ordinal controls through their public raw reader."""
+    directory = root / "observer-memory-controls"
+    report = q.read(directory / "report.json")
+    q.need(q.same(report, complete.get("observer_memory_controls"))
+           and q.same(q.identity(directory / "report.json"), complete.get("observer_memory_controls_report")),
+           "Original observer memory controls/report disconnected")
+    actual = validate_observer_controls(directory, source_inputs=source_inputs, clock_root=root, complete=complete)
+    expected = {"original_observer_memory_controls": 23, "original_observer_memory_positive_controls": 16,
+                "original_observer_memory_negative_controls": 7, "original_observer_owned_memory_children": 1,
+                "original_observer_clock_ordinal_replays": 20, "original_observer_memory_raw_reader_controls": 12,
+                "original_observer_memory_raw_positive_controls": 2, "original_observer_memory_raw_negative_controls": 10,
+                "original_observer_memory_controls_status": "PASS"}
+    for name, key in (("report.json", "original_observer_memory_control_report"),
+                      ("memory/report.json", "original_observer_memory_raw_report"),
+                      ("reader-controls/report.json", "original_observer_memory_reader_report")):
+        expected[key] = q.identity(directory / name)
+    q.need(type(actual) is dict and q.same(actual, expected),
+           "Complete original observer memory/ordinal control counts, scope or raw identities differ")
+    return actual
 
 
 def original_clock(q, directory, observed, report, admitted, executable):
@@ -173,7 +207,7 @@ def original_clock(q, directory, observed, report, admitted, executable):
     complete = q.read(root / "report.json")
     q.need(q.same(complete, report.get("controlled_clock"))
            and q.same(q.identity(root / "report.json"), report.get("controlled_clock_report"))
-           and complete.get("schema") == "trnm.hia.work-owner-original-clock-comparison.v1"
+           and complete.get("schema") == "trnm.hia.work-owner-original-clock-comparison.v2"
            and complete.get("status") == "PASS" and complete.get("failure") is None
            and complete.get("source_after") == complete.get("binary_after") == "MATCH"
            and complete.get("final_fence_failure") is None
@@ -212,7 +246,11 @@ def original_clock(q, directory, observed, report, admitted, executable):
                and q.same(q.read(path / "audit.json"), actual), "Actual CLOCK audit or duration differs")
         q.positive_test(q.regular(path / "stdout.raw").read_bytes(), TEST)
         expected = {"name": label, "status": "PASS", "audit": actual,
-                    "trace_report": q.identity(path / "report.json"), "actual_seconds": duration}
+                    "trace_report": q.identity(path / "report.json"), "actual_seconds": duration,
+                    "same_worker_paid_method_comparison": "PASS",
+                    "independent_CPU_nanoseconds_equal": False}
+        q.oracle.settlement(actual["observation"],
+            admitted["native"][0] if profile is None else native[label]["physical"]["decoded"])
         if profile is not None:
             frame = native[label]["physical"]["decoded"]; header = frame["header"]; original = actual["observation"]
             values = [header[k] for k in ("domain", "code", "progress_count", "worker_host_calls", "alive_clocks",
@@ -231,6 +269,7 @@ def original_clock(q, directory, observed, report, admitted, executable):
     q.need(q.same(controls, complete.get("actual_raw_reader_controls")), "Original raw controls/report disconnected")
     result = clock_reader_controls(q, root / "actual-reader-controls", controls, complete,
                                    admitted["source_inputs"], executable, baseline, argv, env)
+    result.update(observer_memory_controls(q, root, complete, admitted["source_inputs"]))
     result.update(original_controlled_CLOCK1_fault_comparison="PASS",
                   original_clock_positive_processes=2, original_clock_fault_processes=18,
                   original_clock_processes=20, original_clock_report=q.identity(root / "report.json"))

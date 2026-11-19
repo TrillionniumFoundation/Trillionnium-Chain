@@ -8,6 +8,12 @@ import ctypes,os,signal,struct,json,time,hashlib,traceback
 LIBC=ctypes.CDLL(None,use_errno=True)
 LIBC.ptrace.restype=ctypes.c_long
 LIBC.ptrace.argtypes=[ctypes.c_uint,ctypes.c_int,ctypes.c_void_p,ctypes.c_void_p]
+class IOVec(ctypes.Structure):
+ _fields_=[('base',ctypes.c_void_p),('length',ctypes.c_size_t)]
+LIBC.process_vm_readv.restype=ctypes.c_ssize_t
+LIBC.process_vm_readv.argtypes=[ctypes.c_int,ctypes.POINTER(IOVec),ctypes.c_ulong,
+ ctypes.POINTER(IOVec),ctypes.c_ulong,ctypes.c_ulong]
+PAGE_BYTES=os.sysconf('SC_PAGE_SIZE')
 class Regs(ctypes.Structure):
  _fields_=[(name,ctypes.c_ulonglong) for name in (
   'r15','r14','r13','r12','rbp','rbx','r11','r10','r9','r8','rax','rcx','rdx','rsi','rdi',
@@ -32,19 +38,24 @@ def peek(pid,address):return ptrace(2,pid,address,0)&((1<<64)-1)
 def bytes_at(pid,address,n):
  need(0<=n<=65536,'Private bounded memory read')
  need(address>0 or n==0,'Actual memory read address absent')
- value=bytearray()
- while len(value)<n:
-  cursor=address+len(value);aligned=cursor&~7
-  raw=peek(pid,aligned).to_bytes(8,'little')[cursor-aligned:]
-  value.extend(raw[:n-len(value)])
- return bytes(value)
+ if n==0:return b''
+ value=ctypes.create_string_buffer(n)
+ local=IOVec(ctypes.addressof(value),n);remote=IOVec(address,n)
+ ctypes.set_errno(0)
+ count=LIBC.process_vm_readv(pid,ctypes.byref(local),1,ctypes.byref(remote),1,0)
+ if count<0:
+  error=ctypes.get_errno();raise OSError(error,os.strerror(error),(pid,address,n))
+ need(count==n,'Actual owned memory read was incomplete')
+ return value.raw
 def cstring(pid,address,limit=4096):
  need(address>0 and 0<limit<=4096,'Bounded actual C string required')
  result=bytearray()
  while len(result)<limit:
-  cursor=address+len(result);aligned=cursor&~7
-  raw=peek(pid,aligned).to_bytes(8,'little')[cursor-aligned:]
-  raw=raw[:limit-len(result)]
+  cursor=address+len(result)
+  # A terminator in a readable page cannot require reading its unreadable
+  # successor. Every successful chunk still consists entirely of actual bytes.
+  extent=min(256,limit-len(result),PAGE_BYTES-(cursor%PAGE_BYTES))
+  raw=bytes_at(pid,cursor,extent)
   if b'\0' in raw:
    result.extend(raw.split(b'\0',1)[0]);return bytes(result)
   result.extend(raw)
@@ -102,7 +113,7 @@ def admit(argv,out,disable_vdso,env,fault,timeout):
  need(corpus.is_absolute() and corpus.resolve(strict=True)==corpus and not corpus.is_symlink(),
       'Canonical original CLOCK corpus required')
  if fault is not None:
-  allowed=[{'clock_roles':[3],'clock_when':p['ordinal'],'clock_error':5 if p['errno']=='EIO' else 22} for p in profiles()]
+  allowed=[{'clock_roles':[3],'clock_when':p['clock_syscall_ordinal'],'clock_error':5 if p['errno']=='EIO' else 22} for p in profiles()]
   need(disable_vdso and any(same(fault,row) for row in allowed),'Unreviewed private original CLOCK fault')
  destination=Path(out)
  need(destination.is_absolute() and destination.resolve()==destination and not destination.exists()
@@ -112,7 +123,7 @@ def admit(argv,out,disable_vdso,env,fault,timeout):
 def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=45):
  out=admit(argv,out,disable_vdso,env,fault,timeout);out.mkdir(mode=0o700)
  stdout=(out/'stdout.raw').open('xb');stderr=(out/'stderr.raw').open('xb')
- before=identity(argv[0]);events=[];pending={};alive=set();roster={};unknown={};clocks=[];aux=None;primary=None
+ before=identity(argv[0]);events=[];pending={};alive=set();roster={};unknown={};clocks=[];clock_counts={};aux=None;primary=None
  report={'schema':'trnm.hia.work-owner-original-clock-trace.v1','status':'FAIL',
   'argv':argv,'disable_vdso':disable_vdso,'environment':dict(env or {}),'executable_before':before}
  roles={};fired=[];gettid={};proc_tid={};spawn_fallback={};joins=[]
@@ -206,7 +217,7 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=45):
        row['join_child_tid_address']=address
        row['join_child_tid_word']=int.from_bytes(bytes_at(tid,address,4),'little')
      if nr==228:
-      row['clock_id']=signed(args[0]);row['clock_ordinal']=sum(1 for c in clocks if c['tid']==tid)+1
+      row['clock_id']=signed(args[0]);row['clock_ordinal']=clock_counts.get(tid,0)+1
       if tid in roles:
        roles[tid]['clock_count']+=1;row['role']=roles[tid]['role'];row['role_index']=roles[tid]['index'];row['role_clock_ordinal']=roles[tid]['clock_count']
        selected=fault and row['role'] in fault.get('clock_roles',[]) and row['role_clock_ordinal']==fault.get('clock_when')
@@ -322,7 +333,7 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=45):
         row['actual_timespec_hex']=value.hex()
         clock.update(timespec_hex=value.hex(),seconds=struct.unpack_from('<q',value)[0],
           nanoseconds=struct.unpack_from('<q',value,8)[0])
-       clocks.append(clock)
+       clocks.append(clock);clock_counts[tid]=clock['ordinal']
     resume(tid);continue
    if sig==signal.SIGSTOP and roster[tid]['parent'] is not None:
     event('child-initial-stop',tid);resume(tid);continue

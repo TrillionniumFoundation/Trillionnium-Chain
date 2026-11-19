@@ -37,8 +37,8 @@ class Admission(unittest.TestCase):
 
     def test_complete_declared_source_closure(self):
         rows = source_manifest()
-        self.assertEqual(len(OWNED), 32)
-        self.assertEqual(sum(name.endswith(".hepta") for name in OWNED), 8)
+        self.assertEqual(len(OWNED), 38)
+        self.assertEqual(sum(name.endswith(".hepta") for name in OWNED), 10)
         actual = {p.name for p in HERE.iterdir() if p.suffix in {".py", ".rs", ".hepta", ".json", ".md"}}
         self.assertEqual(actual, set(OWNED))
         for name in OWNED:
@@ -46,6 +46,64 @@ class Admission(unittest.TestCase):
         self.assertIn("hia/platform/paid_cpu/dependency.py", rows)
         self.assertIn("hia/platform/host_resource/rust_reference.rs", rows)
         self.assertIn("trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs", rows)
+
+    def test_original_paid_hooks_bind_complete_original_prefixes(self):
+        from .rust_oracle import DECLARATIONS, RESOURCE, PUBLIC, SCALAR, original_hooks
+        self.assertEqual(set(DECLARATIONS), {RESOURCE, PUBLIC, SCALAR})
+        self.assertEqual(DECLARATIONS[SCALAR],
+            b'\n#[cfg(test)]\npub(crate) mod hia_work_paid_probe { include!("hia_work_paid_probe.rs"); }\n')
+        hooks = original_hooks()
+        self.assertEqual(set(hooks), {
+            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_clock.rs",
+            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_oracle.rs",
+            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/hia_work_owner_bridge.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/hia_work_paid_probe.rs"})
+        self.assertEqual(hooks[SCALAR.removesuffix("scalar_cpu.rs") + "hia_work_paid_probe.rs"],
+                         (HERE / "rust_paid_reference.rs").read_bytes())
+        self.assertIn("hia/platform/work_owner/rust_paid_reference.rs", source_manifest())
+        for path, declaration in DECLARATIONS.items():
+            self.assertTrue(declaration.startswith(b"\n#[cfg(test)]\n"))
+            self.assertNotIn(b"mod hia_work_", (ROOT / path).read_bytes())
+
+    def test_paid_comparison_preserves_options_latches_and_independent_measurements(self):
+        from .rust_oracle import settlement
+        from hia.tests.test_work_owner_ci import EvidenceAdmission
+        # Source-only reader data, never a measured native or original process.
+        original = EvidenceAdmission.original_worker_row(self)
+        original["paid_checkpoints"] = 2
+        owner = [0] * 64; owner[0] = int.from_bytes(b"PCOWN001", "little")
+        owner[4:14] = [1,700,1,0,1,700,1,650,1,50]
+        epoch = [0] * 20
+        frame = {"paid": {"owner": owner, "epoch": epoch, "checkpoint_calls": 2, "global_poison": 0}}
+        settlement(original, frame)  # Original 100 ns and native 700 ns are independent.
+        variants = []
+        for path, replacement in (
+            (("paid_checkpoints",), True), (("paid_checkpoints",), 3),
+            (("paid_global", "poisoned"), 0), (("paid_global", "in_flight"), 0.0),
+            (("paid_global", "verified_completions"), 1), (("paid_global", "unavailable"), True),
+            (("paid",), None), (("paid", "schema"), "unbound"),
+            (("paid", "owner_cpu_ns"), None), (("paid", "total_cpu_ns"), 101),
+            (("paid", "residual_cpu_ns"), 21), (("paid", "scoped_worker_cpu_ns"), False),
+            (("paid", "owner_cpu_ns"), 1 << 64), (("paid", "finished_workers"), 1),
+            (("paid", "live_refused"), 0), (("paid", "accounting_unavailable"), True)):
+            changed = copy.deepcopy(original); target = changed
+            for key in path[:-1]: target = target[key]
+            target[path[-1]] = replacement; variants.append((path, changed))
+        for path, changed in variants:
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                settlement(changed, frame)
+        unknown = copy.deepcopy(original); unknown_frame = copy.deepcopy(frame)
+        for field, index in (("owner_cpu_ns",4),("scoped_worker_cpu_ns",6),("total_cpu_ns",8),
+                             ("live_paid_cpu_ns",10),("residual_cpu_ns",12)):
+            unknown["paid"][field] = None; unknown_frame["paid"]["owner"][index] = 0
+        unknown["paid"]["accounting_unavailable"] = True
+        unknown_frame["paid"]["owner"][19] = 1
+        unknown["paid_global"]["unavailable"] = True; unknown_frame["paid"]["epoch"][1] = 1
+        settlement(unknown, unknown_frame)
+        # Work panic can legitimately return no settlement after the real Drop.
+        unknown["paid"] = None; unknown["worker_panicked"] = True
+        settlement(unknown, unknown_frame)
 
     def test_public_compiler_runtime_override_rejected_before_copy(self):
         names = ["RUSTC", "CARGO_BUILD_RUSTC", "RUSTDOC", "CARGO_BUILD_RUSTDOC", "RUSTFLAGS",
@@ -78,7 +136,7 @@ class Admission(unittest.TestCase):
         for name, top, built in variants:
             with self.subTest(name=name), tempfile.TemporaryDirectory(prefix="hia-work-source-gate-") as tmp:
                 root = Path(tmp); bundle = root / "bundle"; bundle.mkdir()
-                write_json(bundle / "report.json", {"schema": "trnm.hia.work-owner-qualification.v1",
+                write_json(bundle / "report.json", {"schema": "trnm.hia.work-owner-qualification.v2",
                            "status": "PASS", "source_inputs": top, "build": {"source_inputs": built}})
                 self.assertIn("complete source maps differ", self.cli(root, bundle=bundle))
 
@@ -102,7 +160,7 @@ class Admission(unittest.TestCase):
         top[key]["bytes"] = float(top[key]["bytes"])
         with tempfile.TemporaryDirectory(prefix="hia-work-source-type-") as tmp:
             root = Path(tmp); bundle = root / "bundle"; bundle.mkdir()
-            write_json(bundle / "report.json", {"schema": "trnm.hia.work-owner-qualification.v1",
+            write_json(bundle / "report.json", {"schema": "trnm.hia.work-owner-qualification.v2",
                        "status": "PASS", "source_inputs": top, "build": {"source_inputs": top}})
             self.assertIn("complete source maps differ", self.cli(root, bundle=bundle))
 
@@ -110,11 +168,20 @@ class Admission(unittest.TestCase):
         # A deliberately encoded reader fixture, not a new native execution.
         # Actual ELF regressions and their complete raw bytes are separate.
         words = [0] * 64
-        words[0] = int.from_bytes(b"HIAWO001", "little")
+        words[0] = int.from_bytes(b"HIAPW001", "little")
         words[1:4] = [1, 2, 1]
         words[5] = 1
         words[10:14] = [11, 12, 1, 1]
-        raw = struct.pack("<64Q", *words) + bytes(768) + struct.pack("<5Q", 64, 0, 0, 0, 1)
+        words[45] = 1024
+        paid = [0] * 128
+        paid[:4] = [int.from_bytes(b"PWPAY001", "little"), 1024, 12, 1]
+        paid[32] = int.from_bytes(b"PCOWN001", "little")
+        paid[52:54] = [12, 2]
+        paid[96:106] = [0, 3, 3, 2, 1, 0, 0, 0, 1, 1]
+        paid[108:116] = [0, 0, 3, 3, 0, 0, 0, 0]
+        paid[116] = 1
+        raw = (struct.pack("<64Q", *words) + bytes(768) + struct.pack("<128Q", *paid)
+               + struct.pack("<5Q", 64, 0, 0, 0, 1))
         with tempfile.TemporaryDirectory(prefix="hia-work-frame-type-") as tmp:
             directory = Path(tmp)
             (directory / "stdout.raw").write_bytes(raw)
@@ -134,6 +201,9 @@ class Admission(unittest.TestCase):
                 (("decoded", "progress", 0, 4), True),
                 (("decoded", "host_after", 0), False),
                 (("decoded", "product_bytes"), False),
+                (("decoded", "paid", "checkpoint_calls"), True),
+                (("decoded", "paid", "global_poison"), False),
+                (("decoded", "paid", "binding", 0), False),
                 (("exit_code",), 66.0),
                 (("stdout", "bytes"), float(len(raw))),
                 (("fixture",), 1),

@@ -1,3 +1,21 @@
+## 2026-11-18 — 私有快照、持久租约、Work/Paid 与 PQ 基础的原生续接
+
+本轮从已发布 `180c642b4ad723118038b31639afc0d922f474b7` 恢复并继续。当前 **56 kernels /23 native foundations /160 HIA sources**；26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。唯一正式实现仍在 `hia/`，根 README 保持0字节。本文件仍是唯一开发计划；当前覆盖和缺口见 [完整审计](../../hia/AUDIT.md)，不同运行只认各自实际源图与原始记录。
+
+Some/CheckedApply 已进入私有 Node snapshot/tree 路径，冻结开发图223源的五个原生分区、必需trace、379项build控制及30项实际deadline控制通过；Some82、Checked94显式方法和65536/65537变化边界均有真实原生执行与原始Rust对照。此处不是持久Node.db事务闭合。Node仍有两套局部SHA256压缩路径；改为普通路径的真实候选虽过78个hash和94个Checked方法，但两个容量子进程均超过原240秒界限并被回收，未合入。准确README修正有新源身份；未将原0a934图的PASS改名为新图结果。继续完成同一owner的COMMIT、reorg、rollback floor、replay/outbox/ACK及同请求Paid/Host权限。
+
+PeerLeaseStore 的最终Linux私有owner用真实FD/flock/fsync持有journal/head、完整replay与单调last-observation；原18项全清单、618次对照、12个真实SIGKILL切点和I/O故障控制已运行，partial与注入failure均真实exit1。保持TPLR/TPLH字节契约、原256MiB边界和编译器128函数/8192指令限制。完整归档已两地逐SHA保存。下一步实现原Unix连接服务、SO_PEERCRED、64连接有界公平调度及共享绝对期限，再连接Core认证、payload stores和Node；私有journal不能代替这些权限。
+
+Work/Paid37份冻结源码已恢复；61个native histories、175个primitives、三条实际trace、57个原始histories、44原保留测试、18个CLOCK故障及15个Paid故障有完整双边运行。原默认layout和新的work-paid-v2各24个硬件断点握手控制通过；独立private development readback通过。完整原始阶段实际1113.410679秒，其中fresh Cargo325.848503秒，20分钟CI余量仍须由当前提交验证，不提高deadline或省略方法。新76成员negative fixture按实际原件重封为c982fb8a…，旧64成员137c4a0b…只由不可变Git历史解析；旧PASS不重绑新archive。
+
+Keccak-f[1600]、四种SHA3与两种SHAKE的增量生命周期，以及FIPS204多项式NTT/逆NTT/逐点与负循环乘法均为HIA原生基础。官方fixture含3442个完整选定byte vectors，保留两个原ZIP和八个成员身份。完整ML-DSA签名/验签、采样/编码、秘密键持有、constant-time与TLS/identity仍需实现和独立资格。移除无法验证的errata文字，不改算法行为。新增两模块进入完整crypto-types95项；不使用旧环境中已不可访问的95项完整raw档代替新执行。
+
+工作流现在57jobs/45独立bootstrap；新增commitment与peer-store mandatory作业，各保留原20分钟、原生子进程240秒与3秒回收。完整component发现551项（449 general、95 crypto-types、7 State-root），发现不等于执行。c98与180各两轮HIA工作流55/55成功；180的独立required-baseline已经观察到protocol、prospective protocol及两架构cost失败，其他长任务仍以最终GitHub状态为准。原0.25CPU/2GiB/0swap/256PID/4s/16条件及模型/研究门均不放宽。
+
+共享临时executor重建后，已发布Git源及Mac/Desktop/ROG封存原件为恢复依据。完整full530、Some两档、Peer、Work/Paid及support仍可逐字复核；仅在旧临时目录的170MB Some/core档、17MB失败SHA候选档及未传完31MB PQ档当前无已确认完整副本，保留实际摘要与明确缺口，不重造旧原始观察。以后每批源码和实际执行先在远端封存再整合；只发布最终源码、必需回归fixture和精确索引，避免把额外过程副本加入正式树。
+
+继续并行完成checkpoint-store全Linux公开接口/Unix/持久恢复的最终源绑定，Task/StateImport的真实SQLite/provider owner和service-settlement的原生私有owner；之后覆盖其余原包、跨目标、真实独立训练评测/Adopt-NoUpdate/下一任务/冷恢复、共识与经济资格。只有全套实际替代、原验收通过且工具依赖已有明确最终处置，才删除旧栈和无用过程文件。三项whole-chain、retirement、activation标记继续false。
+
 ## 2026-11-18 — 全树复核、原生交易与 Transcript 方法、共享哈希及完整分片
 
 本轮从 `56c6e560dd3192f89cca40542286166b8284cb4b` 继续，先发布 Oracle detached checkout 修复 `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`。当前 **54 kernels /22 native foundations /143 HIA sources**，26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。这些数量描述实际覆盖，不作为整链完成率；三项全栈、退役与生产激活标记继续 false。本文件保持唯一开发计划，当前完整审计集中在 [hia/AUDIT.md](../../hia/AUDIT.md)，旧审计流水留在精确 Git 历史中。

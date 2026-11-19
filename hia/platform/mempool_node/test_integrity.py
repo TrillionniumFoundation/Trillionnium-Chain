@@ -135,7 +135,7 @@ class Integrity(unittest.TestCase):
    self.assertFalse((WORK/"uncreated-cargo").exists())
  def test_07_full_actual_build_positive(self):
   row=build.validate_build(ARTIFACT)
-  COUNTS["controls"]+=1;self.assertEqual(len(row["stages"]),26)
+  COUNTS["controls"]+=1;self.assertEqual(len(row["stages"]),29)
   COUNTS["controls"]+=1;self.assertEqual(row["image_order"],list(build.ORDER))
   COUNTS["controls"]+=1;self.assertTrue(safe.same(row["executable"],build.compose()[0]["expected_executable"]))
  def test_08_actual_build_metadata_and_raw_refusal(self):

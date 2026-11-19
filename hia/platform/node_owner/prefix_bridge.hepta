@@ -1025,7 +1025,10 @@ block b73(v450:mutbuf,v451:mutbuf)
   v458:u64 = const() {"value":192}
   v459:u64 = call(v450,v458) {"function":"mg"}
   v460:u64 = const() {"value":3621268214677459022}
-  v461:bool = compare.ne(v459,v460)
+  parent_magic3:u64 = const() {"value":3693325808715386958}
+  parent_old_bad:bool = compare.ne(v459,v460)
+  parent_new_bad:bool = compare.ne(v459,parent_magic3)
+  v461:bool = bool.and(parent_old_bad,parent_new_bad)
   jump b74(v450,v451,v461)
 block b74(v454:mutbuf,v455:mutbuf,v457:bool)
   branch v457 b76(v454,v455,v457) b75(v454,v455)

@@ -3,7 +3,7 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**54 kernel components, 22 native foundations and 143 HIA source files**. All
+**56 kernel components, 23 native foundations and 160 HIA source files**. All
 26 original Rust packages remain: 17 are partially ported and 9 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
@@ -16,8 +16,10 @@ line-by-line review of all 702,001 original Rust lines, or successful execution
 of every historical experiment. The original baseline is
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; the branch inspected for this continuation
 was `56c6e560dd3192f89cca40542286166b8284cb4b`. The detached-Oracle correction
-was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. Later component
-observations identify their actual working-source hashes and do not inherit CI results.
+was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The current
+continuation restores the published `180c642b4ad723118038b31639afc0d922f474b7`
+base and the independently frozen source increments below. Every observation
+retains its actual working-source hash and does not inherit another commit's CI result.
 
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
 [migration inventory](../config/hia-migration-v1.json),
@@ -28,6 +30,71 @@ failures and source identities, remains in
 [immutable Git history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2601aa95250d888cafe9bb4fdfe04a8aad0b7626/hia/AUDIT.md).
 
 ## Findings addressed in this continuation
+
+### Current private owners and PQ foundations
+
+The [current evidence record](qualification/continuation-development.json)
+separates each actual execution from current-source admission and archival
+availability. The restored source tree has one implementation per component;
+the larger execution archives remain in verified operator copies. Complete raw
+CI artifacts are still required after success or failure.
+
+| Increment | Actual observed development result | Boundary still open |
+| --- | --- | --- |
+| [Some/CheckedApply](platform/node_commitment/README.md) | Five native Node partitions; 82 Some and 94 Checked methods; both 65,536/65,537 delta boundaries; original method comparisons | Durable Node.db COMMIT, reorg, recovery/outbox/ACK and the same request's Paid/Host authority |
+| [PeerLeaseStore](platform/peer_lease_store/README.md) | 18 complete tests, 618 original comparisons, actual journal/head/lock/fsync and crash controls; partial and injected-failure runs both reject | Unix authority, Core authentication, payload custody, cross-target support and Node integration |
+| [Work/Paid](platform/work_owner/README.md) | 61 native and 57 original histories, 175 primitives, 44 retained original tests, complete clock/Paid faults and independent private readback | Fixed-parent production positive, shared public admission, durable Node use and original service acceptance |
+| [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) and [ML-DSA polynomials](src/crypto/ML_DSA_POLY.md) | Fresh complete 95-test crypto/types PASS, 17 native builds, 21,210 shared calls and 3,442 selected official byte vectors | Full ML-DSA signer/verifier, secret ownership, timing qualification, authenticated identity and TLS |
+
+The current 1,244-file component source map is
+`36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5`.
+The complete discovery is 551 tests: 449 general, 95 crypto-types and seven
+State-root. Discovery alone is not execution. The fresh crypto-types run passed
+95/95, with zero failures, errors or skips in 515.760 seconds, and the complete
+1,244-input graph was unchanged before and after execution. Its 38,816,692-byte
+archive contains 1,366 logical files and 1,326 unique content objects; both
+retained hosts independently reopened and hashed every object. This run does
+not relabel the earlier 530-test result as execution of all current 551 tests.
+
+Some's qualified 223-source graph is `0a934b54…`; the current graph differs in
+the Peer composition registry entry and the corrected commitment README. Its
+old results are not relabeled as current-graph qualification. The original
+65,536-change native child completed in 201.143 seconds with no full-root pass;
+65,537 completed in 178.247 seconds with one DeltaBudget fallback. Both retain
+the original 240-second child and three-second cleanup bounds.
+
+Review found duplicated SHA-256 compression in the Node's general and 94-byte
+fork paths, additionally separate from the crypto arena/stream core. The old
+README incorrectly called them a single shared compression implementation.
+That statement is corrected. A real consolidation candidate passed all 78 hash
+cases and 94 Checked methods, then timed out in both capacity cases at about
+240.023 seconds; both children were killed and reaped. It was not integrated.
+Host load was not recorded, so this failure does not prove deduplication is
+fundamentally impossible. A new controlled implementation and capacity
+comparison remain necessary.
+
+Work/Paid's current 141 runtime inputs are byte-identical to the fully executed
+development source. Its original 4,368-file snapshot is still the frozen c98
+overlay and does not absorb later plan/config edits. The original stage took
+1,113.411 seconds, including 325.849 seconds of fresh Cargo work. This leaves
+little margin in the existing 20-minute CI job; no deadline or required method
+was relaxed. Both old and Work/Paid handshake layouts have 24 actual controlled
+cases. The new regression archive is a new compressed object containing the
+same 76 verified original-build files; historical old-layout evidence resolves
+through its immutable commit.
+
+### Recovery and evidence availability
+
+The temporary execution host was replaced during development. GitHub's exact
+published source and the retained Mac/Desktop/ROG files supplied recovery.
+Full530, both listed Some Node archives, PeerLeaseStore and Work/Paid archives
+were independently rehashed in their surviving copies. This did not restore
+three local-only archives: the Some/core direct-method archive, the failed SHA
+consolidation archive and the old 95-test PQ archive whose transfer was incomplete.
+Their previously observed identities and results remain explicit, but a complete
+raw copy is currently unconfirmed. The fresh PQ execution has its own verified
+source and raw archive; it does not recover the old run. Neither reconstructed
+prose nor a partial upload is called a recovered original artifact.
 
 ### Oracle exact-SHA checkout
 
@@ -77,7 +144,7 @@ comparisons, 1,512 shared-runner native calls and three separately bounded,
 unaligned inputs above 2 MiB. All eight original module tests passed. Generic
 Serde, relay authentication and durable Node ownership remain open.
 
-### One shared SHA implementation per algorithm
+### Shared crypto cores and the remaining Node SHA duplication
 
 [Incremental SHA-512](src/crypto/SHA512_STREAM.md) shares its canonical
 initialization/compression/load/store functions with the retained arena ABI.
@@ -87,7 +154,9 @@ chunk boundaries, lifecycle refusal, count carry/overflow, unaligned native
 calls and real messages through 4 MiB + 257 bytes, plus the earlier SHA-512 and
 Ed25519 tests. No second compression implementation was introduced.
 
-The SHA-256 stream likewise has one compression implementation. Its original
+The SHA-256 arena/stream family likewise has one compression implementation.
+The separate Node general/fork implementations described above remain an open
+deduplication obligation. Its original
 transport entry still enforces 2,098,176 bytes; the internal full-message helpers
 allow at most 2^61−1 bytes, so the encoded 64-bit bit count cannot overflow.
 The original transport cap, error order and refusal-without-mutation are tested
@@ -165,6 +234,25 @@ external path in the record; their inclusion is not claimed. The two historical
 source gaps above remain explicit. These archive operations do not change any
 runtime qualification result.
 
+The unchanged c98 source also completed the full 530-test component run in
+2,249.150 seconds with zero failures, errors or skips. Its 1,200-input source
+map matches the later 180 runtime map exactly. This was a controlled source
+export with 6,061 materialized tracked files and explicitly absent historical
+evidence paths; it was not a full tracked-checkout CI guard.
+
+Both c98 HIA runs ([push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44455017015),
+[PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44455036414))
+and both 180 HIA runs ([push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457316952),
+[PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457335753))
+finished 55/55 jobs successfully. The c98 required baseline was cancelled.
+The [180 required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457335906)
+has actual failures in both protocol lanes and both architecture cost lanes;
+its remaining long jobs had not finished at this record's last observation.
+Those independent failures are not masked by the HIA workflow's green result.
+The current candidate has 57 jobs and 45 independent compiler bootstraps,
+including complete commitment and private peer-store jobs. It still requires
+its own exact-commit hosted execution.
+
 ## Original package coverage
 
 “Partial” means named method/kernel or finite owner coverage, including native
@@ -191,7 +279,7 @@ The exact component-to-source mapping is machine checked in the migration invent
 | [trnm-release-bundle](../trillionnium/crates/trnm-release-bundle) | M15 | Not ported: — | Build/SBOM/provenance contracts independent of consensus. |
 | [trnm-checkpoint-store](../trillionnium/crates/trnm-checkpoint-store) | M03 | Not ported: — | Independent exact CAS and durable Unix service; generalized owner frontier only. |
 | [trnm-checkpoint-types](../trillionnium/crates/trnm-checkpoint-types) | M03 | Partial: `checkpoint/value_v2` | Extract canonical checkpoint/CAS record; remove safety-vote and validator types. |
-| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream`, `crypto/ed25519-sign`, `crypto/sha512-stream` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
+| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream`, `crypto/ed25519-sign`, `crypto/sha512-stream`, `crypto/keccak-stream`, `crypto/ml-dsa-poly` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
 | [trnm-verification-profiles](../trillionnium/crates/trnm-verification-profiles) | M11 | Partial: `verification/closed_round` | Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority. |
 | [trnm-transport](../trillionnium/crates/trnm-transport) | M04 | Partial: `transport/replay` | Extract generation-bound authenticated frame admission; delete pacemaker and node scaffold. |
 | [trnm-audit-events](../trillionnium/crates/trnm-audit-events) | M17 | Partial: `audit/event` | Consumer integration and dependency retirement remain open; the value has no consensus or durable authority. |
@@ -214,11 +302,11 @@ The exact component-to-source mapping is machine checked in the migration invent
 | `consensus-research` | original work-cost, public consensus, STARK/QROM and economic qualification | **OPEN** |
 | `retirement` | equivalent complete replacement of all 26 retained Rust packages and their indispensable tools | **OPEN** |
 
-The current held-disk Node/M05 owner can construct a private default State and
-consume a None-predecessor Parent through actual PNX1/SHA/Ed25519 admission.
-It still needs Some/CheckedApply, complete successor authentication and expected
-root checks, durable Node.db COMMIT, crash/reorg/rollback-floor/replay/outbox/ACK
-ownership, and the same request's real deadline, Paid account and Host permit.
+The current held-disk Node/M05 owner constructs private State, consumes typed
+requests through actual PNX1/SHA/Ed25519 admission and now implements private
+Some/CheckedApply snapshots. Complete live successor authentication, expected
+root acceptance, durable Node.db COMMIT, crash/reorg/rollback-floor/replay/outbox/ACK
+ownership and the same request's deadline, Paid account and Host permit remain.
 An isolated buffer codec, successful root computation or private fixture result
 cannot stand in for these capabilities.
 
@@ -248,6 +336,25 @@ obligations. No timeout, roster, target or refusal classification has been
 relaxed. Earlier `PUBLIC_REQUEST_DEADLINE`, history/lifetime and research HOLD
 observations retain their own exact sources in the historical audit and current
 qualification records.
+
+The later exact `180c642` baseline retained the same failure. Four complete
+GitHub artifact ZIPs and all their members were rehashed locally and in the
+retained operator copy; the [continuation record](qualification/continuation-development.json)
+binds their original identities. All four reported only `CONFIRMATION_TARGET`;
+all named original tests and format checks passed. Every pressure phase still
+acknowledged 7/7 submissions but confirmed 0/1 within the original window.
+
+| Exact 180 lane | No-attack confirmation latency | Pressure independent replay | Pressure confirmation |
+| --- | --- | --- | --- |
+| arm64 cost | 1.811797494 s | 6/6 attempts; only six of seven history pages fetched | 0/1 |
+| x64 cost | 3.214078118 s | 1/2; one failed or late | 0/1 |
+| head protocol | 3.305055181 s | 1/2; one failed or late | 0/1 |
+| prospective-merge protocol | 3.197675740 s | 1/2; one failed or late | 0/1 |
+
+The latter three pressure records contain `PUBLIC_REQUEST_DEADLINE`. The
+prospective merge is `7372dcef55cf984d071c46307b205355dee68c29` with the same
+`8dfb0cad23a556efbbef04061ba8563d2dfe1787` tested tree. These failures remain
+separate from the earlier branch observations above.
 
 ## Toolchain and evidence boundary
 

@@ -33,7 +33,12 @@ class EvidenceAdmission(unittest.TestCase):
         files = {name: tiny for name in ("native/report.json", "original/report.json",
                  "original/original-test-binary", "original/source-before.json", "original/source-after.json",
                  "original/controlled-clock/report.json", "original/controlled-clock/actual-reader-controls/report.json",
+                 "original/controlled-clock/observer-memory-controls/report.json",
+                 "original/controlled-clock/observer-memory-controls/memory/report.json",
+                 "original/controlled-clock/observer-memory-controls/reader-controls/report.json",
                  "original/actual-sqlite-qualification.json",
+                 "native/paid-clock-faults/report.json", "native/paid-clock-faults/reader-controls/report.json",
+                 "original/paid-clock-faults/report.json", "original/paid-clock-faults/reader-controls/report.json",
                  "native/primitives/raw-buffers/manifest.json", "native/primitives/raw-buffers/calls.jsonl")}
         value = {"schema": q.SCHEMA, "stage": q.STAGE, "status": "PASS",
                  "lineage": {"git_head": "a" * 40, "run_id": "42", "attempt": 1},
@@ -42,7 +47,8 @@ class EvidenceAdmission(unittest.TestCase):
                  "complete_predecessor_archives_retained": True,
                  **q.COUNTS, **{name: False for name in q.SCOPES},
                  "physical_trace": "PASS", "original_rust": "PASS",
-                 "original_controlled_CLOCK1_fault_comparison": "PASS",
+                 "original_controlled_CLOCK1_fault_comparison": "PASS", "original_paid_CLOCK_fault_comparison": "PASS",
+                 "original_observer_memory_controls_status": "PASS",
                  "primitive_raw_guard_arenas_retained": True, "primitive_raw_readback": "PASS",
                  "original_sqlite_build_fence": "sqlite-3.54.1-normal-native-linux-layout-v4",
                  "primitive_raw_evidence": {**q.next_evidence.RAW_COUNTS,
@@ -59,7 +65,14 @@ class EvidenceAdmission(unittest.TestCase):
                             ("original/source-after.json", "original_source_after"),
                             ("original/controlled-clock/report.json", "original_clock_report"),
                             ("original/controlled-clock/actual-reader-controls/report.json", "original_clock_raw_controls_report"),
-                            ("original/actual-sqlite-qualification.json", "original_sqlite_qualification")):
+                            ("original/controlled-clock/observer-memory-controls/report.json", "original_observer_memory_control_report"),
+                            ("original/controlled-clock/observer-memory-controls/memory/report.json", "original_observer_memory_raw_report"),
+                            ("original/controlled-clock/observer-memory-controls/reader-controls/report.json", "original_observer_memory_reader_report"),
+                            ("original/actual-sqlite-qualification.json", "original_sqlite_qualification"),
+                            ("native/paid-clock-faults/report.json", "native_paid_clock_report"),
+                            ("native/paid-clock-faults/reader-controls/report.json", "native_paid_clock_reader_report"),
+                            ("original/paid-clock-faults/report.json", "original_paid_clock_report"),
+                            ("original/paid-clock-faults/reader-controls/report.json", "original_paid_clock_reader_report")):
             value[field] = files[name]
         return value
 
@@ -114,6 +127,9 @@ class EvidenceAdmission(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 q.check_binding(wrong, value["lineage"])
         for wrong in ({"original_controlled_CLOCK1_fault_comparison": "OPEN"},
+                      {"original_paid_CLOCK_fault_comparison": "NOT_RUN"},
+                      {"original_observer_memory_controls_status": "NOT_RUN"},
+                      {"original_observer_memory_controls_status": True},
                       {"primitive_raw_guard_arenas_retained": False},
                       {"retained_original_tests": value["retained_original_tests"][:-1]},
                       {"retained_original_tests": value["retained_original_tests"][:-1] +
@@ -234,6 +250,14 @@ class EvidenceAdmission(unittest.TestCase):
             q.verify_archive(archive, {"native/raw": q.bytes_id(b"raw")}, destination=self.directory)
 
 
+    def paid_global(self):
+        return {"poisoned":False,"unavailable":False,"in_flight":0,
+                "credit_ns":"1999999900","termination_reserved_ns":0,"verified_completions":0,
+                "flow":{"initial_credit_ns":"2000000000","credited_refill_ns":0,
+                        "discarded_refill_ns":0,"booked_reservation_ns":0,
+                        "live_debited_cpu_ns":80,"settlement_residual_cpu_ns":20,
+                        "settled_full_cpu_ns":100,"settlement_discard_ns":0}}
+
     def original_worker_row(self):
         return {"name": "actual-original-format", "domain": 0, "code": 0, "error_text": None,
                 "work_code": 0, "progress": [[64, 0, 0, 0, 1]], "product_hex": "00" * 16384,
@@ -245,7 +269,13 @@ class EvidenceAdmission(unittest.TestCase):
                 "actual_original_Host_primitives": True,
                 "actual_original_task_alive_and_final_resource": True,
                 "fixture_uses_actual_AtomicBool_cancel_inputs": True,
-                "production_fixed_parent_authority": False, "complete_Node_or_paid_checkpoint": False}
+                "production_fixed_parent_authority": False, "complete_Node_or_paid_checkpoint": False,
+                "actual_original_finite_paid_work_checkpoints": True, "paid_checkpoints": 2,
+                "paid_global": EvidenceAdmission.paid_global(self),
+                "paid": {"schema":"service-owner-scoped-thread-cpu-settlement-v1",
+                    "owner_cpu_ns":100,"scoped_worker_cpu_ns":0,"total_cpu_ns":100,
+                    "live_paid_cpu_ns":80,"residual_cpu_ns":20,"spawned_workers":0,"started_workers":0,
+                    "finished_workers":0,"known_workers":0,"live_refused":False,"accounting_unavailable":False}}
 
     def test_original_actual_json_types_do_not_use_python_number_equality(self):
         good = self.original_worker_row()
@@ -253,7 +283,8 @@ class EvidenceAdmission(unittest.TestCase):
         mutants = []
         for key, value in (("domain", False), ("code", 0.0), ("main_tid", "101"),
                            ("worker_tid", 102.0), ("host_calls", 3.0), ("worker_checks", True),
-                           ("joined", 1), ("gate_observed", 0), ("actual_original_W1", 1)):
+                           ("joined", 1), ("gate_observed", 0), ("actual_original_W1", 1),
+                           ("actual_original_finite_paid_work_checkpoints", 1), ("paid_checkpoints", True)):
             wrong = copy.deepcopy(good)
             wrong[key] = value
             mutants.append((key, wrong))
@@ -262,6 +293,14 @@ class EvidenceAdmission(unittest.TestCase):
             wrong = copy.deepcopy(good)
             wrong[key][index] = value
             mutants.append((key, wrong))
+        for path,value in ((("paid_global","in_flight"),False),
+                           (("paid_global","credit_ns"),1999999900),
+                           (("paid_global","flow","live_debited_cpu_ns"),80.0),
+                           (("paid","schema"),"unbound"),(("paid","owner_cpu_ns"),True),
+                           (("paid","finished_workers"),0.0), (("paid","live_refused"),0)):
+            wrong=copy.deepcopy(good);target=wrong
+            for key in path[:-1]:target=target[key]
+            target[path[-1]]=value;mutants.append((path,wrong))
         wrong = copy.deepcopy(good)
         wrong["progress"][0][4] = True
         mutants.append(("actual-first-progress-sequence", wrong))
@@ -272,7 +311,7 @@ class EvidenceAdmission(unittest.TestCase):
 
     def test_original_pre_worker_shape_is_distinct_from_worker_results(self):
         good = {"name": "pre-worker", "domain": 3, "code": 1, "progress": [],
-                "product_hex": None, "worker_tid": None}
+                "product_hex": None, "worker_tid": None, "paid_global": self.paid_global()}
         q.original_shape(good)
         q.original_shape({**good, "main_tid": 101, "before_checks": 0})
         for wrong in ({**good, "code": True}, {**good, "main_tid": "101", "before_checks": 0},
@@ -286,7 +325,12 @@ class EvidenceAdmission(unittest.TestCase):
         q.check_binding(value, value["lineage"])
         for name in ("original/controlled-clock/report.json",
                      "original/controlled-clock/actual-reader-controls/report.json",
+                     "original/controlled-clock/observer-memory-controls/report.json",
+                     "original/controlled-clock/observer-memory-controls/memory/report.json",
+                     "original/controlled-clock/observer-memory-controls/reader-controls/report.json",
                      "original/actual-sqlite-qualification.json",
+                     "native/paid-clock-faults/report.json", "native/paid-clock-faults/reader-controls/report.json",
+                     "original/paid-clock-faults/report.json", "original/paid-clock-faults/reader-controls/report.json",
                      "native/primitives/raw-buffers/manifest.json",
                      "native/primitives/raw-buffers/calls.jsonl"):
             wrong = copy.deepcopy(value)
@@ -357,12 +401,12 @@ class EvidenceAdmission(unittest.TestCase):
             q.next_evidence.patch_bytes(q, path, {"events.jsonl": {"bytes": True, "sha256": hashlib.sha256(b"x").hexdigest()}})
 
     def test_clock_raw_roster_and_types_reject_before_opening_files(self):
-        report = {"schema": "trnm.hia.work-owner-actual-clock-reader-controls.v1",
+        report = {"schema": "trnm.hia.work-owner-actual-clock-reader-controls.v2",
                   "status": "PASS", "source_after": "MATCH", "baseline_after": "MATCH",
                   "source_inputs": {}, "actual_native_or_Rust_processes_executed_by_controls": 0,
                   "public_actual_reader_api": "hia.platform.work_owner.clock_evidence.audit",
                   "full_source_qualification_claimed_by_these_controls": False,
-                  "count": 20, "positive": 2, "negative": 18,
+                  "count": 32, "positive": 2, "negative": 30,
                   "rows": [{"name": name} for name, _, _ in q.next_evidence.CONTROL_SPECS]}
         mutations = []
         for key in ("count", "positive", "negative", "actual_native_or_Rust_processes_executed_by_controls"):
@@ -375,6 +419,46 @@ class EvidenceAdmission(unittest.TestCase):
             for wrong in mutations:
                 with self.subTest(wrong=wrong), self.assertRaises(ValueError):
                     q.next_evidence.clock_reader_controls(q, self.directory, wrong, {}, {}, {}, {}, [], {})
+
+        # This admission-only unit control proves the CI adapter calls the full
+        # observer reader and propagates its refusal; it is not a runtime positive.
+        source_inputs = {"owned-source": q.bytes_id(b"source")}
+        raw_report = {"fixture": "adapter admission only"}
+        raw_id = q.bytes_id(b"raw")
+        complete = {"observer_memory_controls": raw_report, "observer_memory_controls_report": raw_id}
+        expected = {key: value for key, value in q.COUNTS.items() if key.startswith("original_observer_")}
+        expected["original_observer_memory_controls_status"] = "PASS"
+        for key in ("original_observer_memory_control_report", "original_observer_memory_raw_report",
+                    "original_observer_memory_reader_report"):
+            expected[key] = raw_id
+        with mock.patch.object(q, "read", return_value=raw_report), mock.patch.object(q, "identity", return_value=raw_id):
+            with mock.patch.object(q.next_evidence, "validate_observer_controls", return_value=expected) as actual_reader:
+                self.assertEqual(q.next_evidence.observer_memory_controls(q, self.directory, complete, source_inputs), expected)
+                actual_reader.assert_called_once_with(self.directory / "observer-memory-controls",
+                    source_inputs=source_inputs, clock_root=self.directory, complete=complete)
+            with mock.patch.object(q.next_evidence, "validate_observer_controls", side_effect=ValueError("Incomplete owned raw bytes")):
+                with self.assertRaisesRegex(ValueError, "Incomplete owned raw bytes"):
+                    q.next_evidence.observer_memory_controls(q, self.directory, complete, source_inputs)
+            bad_summaries = []
+            for key in (name for name in expected if name in q.COUNTS):
+                for bad in (True, float(expected[key]), expected[key] - 1):
+                    wrong = copy.deepcopy(expected); wrong[key] = bad; bad_summaries.append(wrong)
+            for key in ("original_observer_memory_control_report", "original_observer_memory_raw_report",
+                        "original_observer_memory_reader_report"):
+                wrong = copy.deepcopy(expected); wrong.pop(key); bad_summaries.append(wrong)
+                wrong = copy.deepcopy(expected); wrong[key] = q.bytes_id(b"substituted raw"); bad_summaries.append(wrong)
+            bad_summaries.extend(({**expected, "original_observer_memory_controls_status": "NOT_RUN"},
+                                  {**expected, "production_fixed_parent_authority": True}))
+            for wrong in bad_summaries:
+                with self.subTest(observer_summary=wrong), mock.patch.object(q.next_evidence, "validate_observer_controls", return_value=wrong):
+                    with self.assertRaises(ValueError):
+                        q.next_evidence.observer_memory_controls(q, self.directory, complete, source_inputs)
+            for wrong in ({}, {**complete, "observer_memory_controls_report": q.bytes_id(b"substituted report")},
+                          {**complete, "observer_memory_controls": {"fixture": "another report"}}):
+                with self.subTest(disconnected_observer=wrong), mock.patch.object(q.next_evidence, "validate_observer_controls",
+                        side_effect=AssertionError("Disconnected parent must fail before raw admission")):
+                    with self.assertRaises(ValueError):
+                        q.next_evidence.observer_memory_controls(q, self.directory, wrong, source_inputs)
 
 
 if __name__ == "__main__":

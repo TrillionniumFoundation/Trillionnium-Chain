@@ -4,7 +4,7 @@ import struct
 from . import safe,evidence
 from .build import ROOT
 from .node_cases import histories,canonical_bytes,transaction
-from .node_observers import context,parent,parse_prefix,parse_parent,parse,DEFAULT
+from .node_observers import context,parent,parse_prefix,parse_parent,parse,DEFAULT,immutable_parent_payload
 from .observations import read,load
 need=safe.need;same=safe.same
 
@@ -51,16 +51,17 @@ def collect(artifact):
       raws=[transaction(k,bytes.fromhex(actual_context["network_hex"])) for k in action["transactions"]]
       response=call(5,struct.pack("<Q",len(raws))+b"".join(struct.pack("<Q",len(r))+r for r in raws));code=2
      seq+=1;actual=parse_prefix(response,code,ctx,seq);actual.update(index=index,op=op,transactions=[r.hex() for r in raws])
-     if op=="drop":need(actual["header"][28]==2 and actual["ready"] is False,"Actual scoped drop retained base and Parent before retirement")
+     if op=="drop":need(actual["header"][28]==3 and actual["ready"] is False,"Actual scoped drop retained base, Parent and cached Snapshot before retirement")
      if actual["outcome"]!="ok" and last is not None:
       need(same([actual[k] for k in ("held_state_hex","length","private_receipts")],[last[k] for k in ("held_state_hex","length","private_receipts")]) and actual["header"][9]==last["header"][9],"Actual failed Prefix rollback differs")
      def get_parent():
       r=call(10);need(r[:8]==b"NPCPARV1" and len(r)==16+struct.unpack_from("<Q",r,8)[0],"Actual parent map extent")
-      p=parse_parent(r[16:]);need(p["refs"]==1 and p["root_hex"]==actual_parent["root_hex"] and p["height"]==actual_parent["height"] and p["epoch"]==actual_parent["epoch"] and p["base"]!=0 and p["bind_seq"]!=0,"Actual Parent ownership/source")
+      p=parse_parent(r[16:]);need(r[16:24]==b"NPCSNP01" and p["refs"]>=2 and p["root_hex"]==actual_parent["root_hex"] and p["height"]==actual_parent["height"] and p["epoch"]==actual_parent["epoch"] and p["base"]!=0 and p["bind_seq"]!=0,"Actual Some Parent and retained Node Snapshot ownership/source")
       return p,r[16:]
      def get_prepared():
       r=call(9);need(r[:8]==b"NPCVIEW1" and len(r)==16+struct.unpack_from("<Q",r,8)[0],"Actual Prepared extent")
       v=parse(r[16:],DEFAULT,parent_map["rows"]);ss=v["snapshot"]
+      need(r[16:24]==b"NPCDATA3" and v["observation"]["method"]=="CheckedApply" and ss is not None,"Actual healthy Some branch must perform CheckedApply")
       public={k:v[k] for k in ("root_hex","changes","observation","before","after")}
       public["snapshot"]=None if ss is None else {k:ss[k] for k in ("keys","payload_bytes","retained_charge_bytes","root_hex")}
       return public,r[16:]
@@ -73,7 +74,8 @@ def collect(artifact):
        v,vr=get_prepared();need(same(v,retained) and vr==retained_raw,"Failed Prefix replaced prior Prepared")
      elif op=="drop":retained=None;retained_raw=None
      if actual["ready"]:
-      v,vr=get_parent();need(same(v,parent_map) and vr==parent_raw,"Actual fixed parent mutated or borrowed")
+      v,vr=get_parent();need(same({k:x for k,x in v.items() if k!="refs"},{k:x for k,x in parent_map.items() if k!="refs"}) and immutable_parent_payload(vr)==immutable_parent_payload(parent_raw),"Actual fixed parent canonical bytes, root, context or shared tree mutated")
+      parent_map,parent_raw=v,vr
      if op=="drop" or (op=="new" and not actual["ready"]):parent_map=None;parent_raw=None
      actual.update(canonical_parent=parent_map,canonical_parent_payload_hex=None if parent_raw is None else parent_raw.hex(),
        prepared=retained,prepared_owner_payload_hex=None if retained_raw is None else retained_raw.hex())

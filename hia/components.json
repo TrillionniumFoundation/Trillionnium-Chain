@@ -503,6 +503,39 @@
         "source": "platform/mempool_node/node_methods.hepta"
       }
     ],
+    "platform/peer_lease_store/owner_policy.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_wout",
+          "pl_compare",
+          "pl_hash",
+          "pl_mcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
     "platform/typed_store/root_finalize.hepta": [
       {
         "functions": [

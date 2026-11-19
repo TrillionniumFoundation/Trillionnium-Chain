@@ -22,7 +22,7 @@ def stamp(value):
 
 class Capture:
     """Pin the complete four-file original observation directory throughout audit."""
-    def __init__(self, root):
+    def __init__(self, root, *, exact_names=None):
         root = Path(root)
         need(root.is_absolute() and ".." not in root.parts, "Absolute original CLOCK evidence root required")
         flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
@@ -33,8 +33,8 @@ class Capture:
                 os.close(self.fd); self.fd = child
             self.directory = stamp(os.fstat(self.fd)); self.names = set(os.listdir(self.fd))
             mandatory = {"report.json", "events.jsonl", "stdout.raw", "stderr.raw"}
-            need(self.names in (mandatory, mandatory | {"audit.json"}),
-                 "Original CLOCK directory omitted or added evidence")
+            allowed = self.names in (mandatory, mandatory | {"audit.json"}) if exact_names is None else self.names == set(exact_names)
+            need(allowed, "Original CLOCK directory omitted or added evidence")
         except BaseException:
             self.close(); raise
 
@@ -335,13 +335,164 @@ def collect(events, stderr):
             "descriptor_history": descriptor_history, "entries": entries, "exits": exits,
             "exit_stops": exit_stops}
 
+def original_constructor_clocks(ledger, main, first_resource, worker_birth):
+    """Keep deadline, ListenerIntake creation and Paid budget watermark distinct."""
+    rows = [row for row in ledger["clocks"] if row["tid"] == main and row["role"] == 1]
+    need(len(rows) == 3
+         and all(same(row["clock_id"], 1) and same(row["result"], 0)
+                 and same(row["role"], 1) and same(row["role_index"], 0)
+                 and same(row["role_clock_ordinal"], index)
+                 and type(row["seconds"]) is int and row["seconds"] >= 0
+                 and type(row["nanoseconds"]) is int and 0 <= row["nanoseconds"] < 1_000_000_000
+                 for index, row in enumerate(rows, 1))
+         and ledger["roles"][main]["marker_exit"] < rows[0]["entry"]
+         and all(left["exit"] < right["entry"] for left, right in zip(rows, rows[1:]))
+         and rows[-1]["exit"] < first_resource < worker_birth,
+         "Actual original deadline, intake and Paid budget constructor clocks differ")
+    times = [row["seconds"] * 1_000_000_000 + row["nanoseconds"] for row in rows]
+    need(times == sorted(times), "Original constructors cannot replace or rewind the earlier deadline")
+    return rows[0]
+
+def clock_plan(profile, disable_vdso):
+    """Enumerate source-bound Work and Paid calls, including real unwind cleanup."""
+    from .faults import profiles
+    need(type(disable_vdso) is bool and (disable_vdso or profile is None),
+         "Controlled faults require the private raw-clock fixture")
+    need(profile is None or any(same(profile, row) for row in profiles()),
+         "Exact original Work CLOCK fault profile required")
+    calls = []; ordinal = 0; stopped = False; checkpoints = 0
+    def paid(kind):
+        calls.extend(((kind + "-cpu", 3, None), (kind + "-wall", 1, None)))
+    def work():
+        nonlocal ordinal, stopped
+        ordinal += 1
+        calls.append(("work", 1, ordinal))
+        stopped = profile is not None and ordinal == profile["ordinal"]
+    paid("begin")
+    work()
+    if not stopped:
+        paid("checkpoint"); checkpoints += 1
+    for _ in range(1099):
+        if stopped:
+            break
+        work()
+        if not stopped:
+            work()
+        if not stopped:
+            paid("checkpoint"); checkpoints += 1
+    if not stopped:
+        work()
+    if stopped:
+        paid("drop")
+        calls.append(("drop-unavailable-wall", 1, None))
+    else:
+        paid("finish-checkpoint")
+        paid("settlement")
+    need(ordinal == (profile["ordinal"] if profile is not None else 2200),
+         "Exact Work clock source sequence")
+    if not disable_vdso:
+        calls = [row for row in calls if row[1] == 3]
+    return calls, checkpoints
+
+def paid_clock_observation(value, worker_clocks, profile, disable_vdso):
+    """Bind same-thread Paid facts to complete observed calls and retained values."""
+    plan, checkpoints = clock_plan(profile, disable_vdso)
+    need(len(worker_clocks) == len(plan), "Complete original Work/Paid clock roster differs")
+    work = []; cpu = []; wall = []; paid_wall = []; expected_fault = None
+    for index, (row, (kind, clock_id, logical)) in enumerate(zip(worker_clocks, plan, strict=True), 1):
+        need(same(row.get("clock_id"), clock_id) and same(row.get("role"), 3)
+             and same(row.get("role_index"), 0) and same(row.get("role_clock_ordinal"), index)
+             and same(row.get("tid"), value.get("worker_tid")),
+             "Original Work/Paid clock identity, order or role differs")
+        injected = profile is not None and kind == "work" and logical == profile["ordinal"]
+        if injected:
+            error = 5 if profile["errno"] == "EIO" else 22
+            need(same(row.get("result"), -error)
+                 and same(row.get("injected"), {"kind": "clock", "error": error, "original_syscall_skipped": True}),
+                 "Original Work CLOCK fault was moved, retried or omitted")
+            expected_fault = {"clock_roles": [3], "clock_when": index, "clock_error": error}
+        else:
+            need(same(row.get("result"), 0) and row.get("injected") is None,
+                 "Original Paid/Work successful clock was failed or injected")
+            seconds, nanos = row.get("seconds"), row.get("nanoseconds")
+            need(type(seconds) is int and seconds >= 0 and type(nanos) is int
+                 and 0 <= nanos < 1_000_000_000, "Actual original successful clock extent")
+            timestamp = seconds * 1_000_000_000 + nanos
+            if clock_id == 3:
+                need(timestamp < 1 << 64 and (not cpu or timestamp >= cpu[-1]),
+                     "Original same-worker CPU timestamp overflow or rewind")
+                cpu.append(timestamp)
+            else:
+                need(not wall or timestamp >= wall[-1], "Original monotonic timestamp rewound")
+                wall.append(timestamp)
+                if kind != "work":
+                    paid_wall.append(timestamp)
+        if kind == "work":
+            work.append(row)
+    need(type(value.get("paid_checkpoints")) is int and value["paid_checkpoints"] == checkpoints,
+         "Original Paid checkpoint count differs from actual call sequence")
+    panicked = profile is not None
+    need(len(cpu) == checkpoints + (2 if panicked else 3), "Original Paid CPU lifetime is incomplete")
+    charged = cpu[-1 if panicked else -2] - cpu[0]
+    total = None if panicked else cpu[-1] - cpu[0]
+    residual = None if panicked else cpu[-1] - cpu[-2]
+    live = value.get("paid_live"); global_ = value.get("paid_global")
+    need(same(live, {"poisoned": False, "unavailable": False, "refused": False,
+                     "charged_ns": charged, "registered_threads": 0, "termination_reserved": False}),
+         "Actual original Paid live account did not retire with measured charges")
+    global_fields = {"poisoned", "unavailable", "in_flight", "credit_ns",
+                     "termination_reserved_ns", "verified_completions", "flow"}
+    need(type(global_) is dict and set(global_) == global_fields,
+         "Complete original Paid global snapshot required")
+    for key, expected in (("poisoned", False), ("unavailable", panicked), ("in_flight", 0),
+                          ("termination_reserved_ns", 0), ("verified_completions", 0)):
+        need(same(global_[key], expected), "Actual original Paid global lifecycle differs: " + key)
+    def signed_credit(raw):
+        need(type(raw) is str, "Original Paid credit must retain its decimal type")
+        value_ = int(raw)
+        need(str(value_) == raw and -(1 << 127) <= value_ < 1 << 127,
+             "Original Paid credit is not canonical signed 128-bit")
+        return value_
+    credit = signed_credit(global_["credit_ns"]); flow = global_["flow"]
+    flow_fields = {"initial_credit_ns", "credited_refill_ns", "discarded_refill_ns",
+                   "booked_reservation_ns", "live_debited_cpu_ns", "settlement_residual_cpu_ns",
+                   "settled_full_cpu_ns", "settlement_discard_ns"}
+    need(type(flow) is dict and set(flow) == flow_fields, "Complete original Paid flow snapshot required")
+    initial = signed_credit(flow["initial_credit_ns"])
+    need(initial == 2_000_000_000, "Original standalone Paid initial credit changed")
+    need(all(type(flow[k]) is int and 0 <= flow[k] < 1 << 64 for k in flow_fields - {"initial_credit_ns"}),
+         "Original Paid flow counter type or extent differs")
+    booked = 100_000_000 if panicked else 0
+    expected_flow = {"booked_reservation_ns": booked, "live_debited_cpu_ns": charged,
+                     "settlement_residual_cpu_ns": 0 if panicked else residual,
+                     "settled_full_cpu_ns": 0 if panicked else total, "settlement_discard_ns": 0}
+    need(all(same(flow[key], expected) for key, expected in expected_flow.items()),
+         "Actual original Paid flow differs from same-thread clocks and unwind")
+    need(credit == initial + flow["credited_refill_ns"] - booked - charged
+         - flow["settlement_residual_cpu_ns"], "Original Paid flow does not conserve measured charge")
+    if panicked:
+        need(value.get("paid") is None, "Original panic invented a returned Paid settlement")
+    else:
+        expected = {"schema": "service-owner-scoped-thread-cpu-settlement-v1",
+                    "owner_cpu_ns": total, "scoped_worker_cpu_ns": 0, "total_cpu_ns": total,
+                    "live_paid_cpu_ns": charged, "residual_cpu_ns": residual,
+                    "spawned_workers": 0, "started_workers": 0, "finished_workers": 0,
+                    "known_workers": 0, "live_refused": False, "accounting_unavailable": False}
+        need(same(value.get("paid"), expected), "Original Paid settlement differs from actual CPU intervals")
+    return {"work_clocks": work, "expected_fault": expected_fault,
+            "paid_checkpoints": checkpoints, "worker_clock1_calls": sum(row["clock_id"] == 1 for row in worker_clocks),
+            "paid_cpu_calls": len(cpu), "paid_wall_calls": len(paid_wall),
+            "actual_live_cpu_ns": charged, "actual_total_cpu_ns": total,
+            "actual_residual_cpu_ns": residual, "cleanup": "drop" if panicked else "finish"}
+
 def compare_observation(value, baseline, profile):
-    need(type(value) is dict and value.get("schema") == "trnm.hia.work-owner-original-clock-observation.v1"
+    need(type(value) is dict and value.get("schema") == "trnm.hia.work-owner-original-clock-observation.v2"
          and value.get("name") == baseline["name"]
          and value.get("input_sha256") == hashlib.sha256(bytes.fromhex(baseline["request_hex"])).hexdigest(),
          "Actual original CLOCK input observation differs")
     for field in ("actual_original_W1", "actual_original_Host_primitives",
                   "actual_original_task_alive_and_final_resource", "actual_original_std_scoped_spawn_and_join",
+                  "actual_original_finite_paid_work_checkpoints",
                   "parent_retained_observation_after_actual_join", "joined"):
         need(value.get(field) is True, "Actual original CLOCK method/observation scope omitted")
     for field in ("production_fixed_parent_authority", "complete_Node_or_paid_checkpoint"):
@@ -466,22 +617,11 @@ def audit(directory, *, argv, environment, executable, baseline, profile=None, d
              "Original actual complete clock roster differs")
         for derived, actual in zip(ledger["clocks"], actual_clocks, strict=True):
             need(same(actual, derived), "Original complete clock result/timespec differs")
-        expected_clock_count = (profile["ordinal"] if profile is not None else 2200) if disable_vdso else 0
-        need(len(worker_clocks) == expected_clock_count
-             and all(row["clock_id"] == 1 and row["role"] == 3 and row["role_index"] == 0 for row in worker_clocks),
-             "Actual original CLOCK1 count/thread identity differs")
-        expected_fault = None
-        if profile is not None:
-            error = 5 if profile["errno"] == "EIO" else 22
-            expected_fault = {"clock_roles": [3], "clock_when": profile["ordinal"], "clock_error": error}
-            need(len(ledger["injections"]) == 1 and worker_clocks[-1]["result"] == -error
-                 and worker_clocks[-1]["role_clock_ordinal"] == profile["ordinal"]
-                 and all(row["result"] == 0 for row in worker_clocks[:-1]),
-                 "Original CLOCK fault was retried, moved, or not reached")
-        else:
-            need(not ledger["injections"] and all(row["result"] == 0 for row in worker_clocks),
-                 "Positive original CLOCK run injected or failed a sample")
-        need(same(report.get("fault"), expected_fault), "Original requested CLOCK fault profile differs")
+        paid_clocks = paid_clock_observation(value, worker_clocks, profile, disable_vdso)
+        expected_fault = paid_clocks["expected_fault"]
+        need(len(ledger["injections"]) == (0 if profile is None else 1)
+             and same(report.get("fault"), expected_fault),
+             "Original requested Work fault and complete actual injection roster differ")
         auxv = report.get("auxv"); request_start = None
         if disable_vdso:
             need(type(auxv) is dict and auxv.get("private_platform_fixture") is True
@@ -495,17 +635,11 @@ def audit(directory, *, argv, environment, executable, baseline, profile=None, d
                  and next(v for k, v in old if k == 33) == auxv["AT_SYSINFO_EHDR_before"]
                  and new == [(k, 0 if k == 33 else v) for k, v in old],
                  "Private original fixture changed more than one actual AT_SYSINFO_EHDR word")
-            main_clocks = [row for row in ledger["clocks"] if row["tid"] == main and row["role"] == 1]
-            need(len(main_clocks) == 1 and main_clocks[0]["clock_id"] == 1
-                 and main_clocks[0]["result"] == 0 and main_clocks[0]["role_clock_ordinal"] == 1
-                 and ledger["roles"][main]["marker_exit"] < main_clocks[0]["entry"]
-                 and main_clocks[0]["exit"] < resources[0]["open_entry"] < worker_birth,
-                 "Actual original deadline-start clock differs")
-            request_start = main_clocks[0]
+            request_start = original_constructor_clocks(ledger, main, resources[0]["open_entry"], worker_birth)
             start = request_start["seconds"] * 1_000_000_000 + request_start["nanoseconds"]
             deadline = start + 4_000_000_000
             need(all(row["result"] != 0 or row["seconds"] * 1_000_000_000 + row["nanoseconds"] < deadline
-                     for row in worker_clocks),
+                     for row in paid_clocks["work_clocks"]),
                  "Original successful alive sample did not precede its actual four-second deadline")
         else:
             need(same(auxv, {"private_platform_fixture": False, "auxv_unchanged": True}),
@@ -520,7 +654,7 @@ def audit(directory, *, argv, environment, executable, baseline, profile=None, d
             need(files.get(name) == observation["host_calls"],
                  "Actual original fresh Host file-read count differs: " + name)
         capture.fence()
-        return {"schema": "trnm.hia.work-owner-original-clock-audit.v1", "status": "PASS",
+        return {"schema": "trnm.hia.work-owner-original-clock-audit.v2", "status": "PASS",
             "observation": value, "profile": profile, "private_no_vdso": disable_vdso,
             "raw": {"report.json": raw_identity(raw_report), "events.jsonl": raw_identity(raw_events),
                     "stdout.raw": raw_identity(stdout), "stderr.raw": raw_identity(stderr)},
@@ -528,10 +662,471 @@ def audit(directory, *, argv, environment, executable, baseline, profile=None, d
             "actual_join": joined, "actual_join_futex_waits": waits,
             "actual_post_join_tid_word": joined["actual_child_tid_word"],
             "kernel_clear_tid_zero_observed_at_wait_return": any(row["clear_word"] == 0 for row in waits),
-            "actual_worker_CLOCK1_syscalls": len(worker_clocks), "actual_counter_files": len(resources),
+            "actual_worker_CLOCK1_syscalls": paid_clocks["worker_clock1_calls"],
+            "actual_Work_CLOCK1_syscalls": len(paid_clocks["work_clocks"]),
+            "actual_Paid_CLOCK3_syscalls": paid_clocks["paid_cpu_calls"],
+            "actual_Paid_CLOCK1_syscalls": paid_clocks["paid_wall_calls"],
+            "paid_clock_observation": {key: item for key, item in paid_clocks.items() if key != "work_clocks"},
+            "actual_counter_files": len(resources),
             "actual_request_deadline_start": request_start, "actual_pre_role_clock_calls": pre_role_clocks,
             "full_counter_bytes_and_verified_parent_fd_lifetime": True,
             "original_deadline_seconds": 4, "normal_vdso_fault_behavior_claimed": False,
             "production_fixed_parent_authority": False, "whole_Node_or_paid_checkpoint_closed": False}
+    finally:
+        capture.close()
+
+
+# This observer gate has its own owned Python child. It cannot substitute for a
+# Work, Paid, native or Rust execution. All complete raw bytes are reread here.
+OBSERVER_SCOPE = {
+    "business_native_or_original_Rust_executed": False,
+    "full_source_qualification_claimed_by_these_controls": False,
+    "production_fixed_parent_authority": False,
+    "whole_Node_or_paid_checkpoint_closed": False,
+    "original_4s_16_service_gate_closed": False,
+}
+OBSERVER_MEMORY_RAW = (
+    "maps-before.raw", "maps-after.raw", "child-status.raw",
+    "child-self-readback.raw", "owned-readonly-before.raw",
+    "owned-readonly-after.raw", "memory-operations.jsonl", "kernel-transfer.json",
+)
+OBSERVER_READER_SPECS = (
+    ("positive-actual-owned-memory", True),
+    ("wrong-memory-schema", False),
+    ("extra-memory-authority", False),
+    ("foreign-source-inputs", False),
+    ("boolean-owned-child", False),
+    ("coherent-readonly-bytes", False),
+    ("coherent-readonly-permissions", False),
+    ("invented-full-kernel-read", False),
+    ("missing-actual-EFAULT", False),
+    ("omitted-memory-control", False),
+    ("truncated-child-self-readback", False),
+    ("positive-actual-restored-memory", True),
+)
+
+OBSERVER_READER_FAILURES = {
+    "wrong-memory-schema": "Observer memory schema/status/scope differs",
+    "extra-memory-authority": "Observer memory schema/status/scope differs",
+    "foreign-source-inputs": "Observer memory source binding differs",
+    "boolean-owned-child": "Observer owned child identity/lifecycle differs",
+    "coherent-readonly-bytes": "Observer complete readonly memory differs",
+    "coherent-readonly-permissions": "Observer readonly permissions changed",
+    "invented-full-kernel-read": "Observer actual kernel short read differs",
+    "missing-actual-EFAULT": "Observer memory operation differs: fully-unreadable-page",
+    "omitted-memory-control": "Observer memory control roster differs",
+    "truncated-child-self-readback": "Observer child self readback differs",
+}
+
+def observer_mutation(baseline, name):
+    """Retain exact controlled byte deltas; this never decides acceptance."""
+    need(name in {label for label, _ in OBSERVER_READER_SPECS},
+         "Unknown observer raw memory mutation")
+    raw = dict(baseline)
+    if name.startswith("positive-"):
+        return raw
+    report = decoded(raw["report.json"])
+    def encoded(value):
+        return (json.dumps(value, sort_keys=True, indent=2) + "\n").encode()
+    if name == "wrong-memory-schema":
+        report["schema"] = "trnm.hia.unbound-observer.v1"
+    elif name == "extra-memory-authority":
+        report["production_authority"] = True
+    elif name == "foreign-source-inputs":
+        report["source_inputs"] = {}
+    elif name == "boolean-owned-child":
+        report["owned_child"]["pid"] = True
+    elif name == "coherent-readonly-bytes":
+        changed = bytes([raw["owned-readonly-before.raw"][0] ^ 1]) + raw["owned-readonly-before.raw"][1:]
+        raw["owned-readonly-before.raw"] = raw["owned-readonly-after.raw"] = changed
+        own = decoded(raw["child-self-readback.raw"])
+        own["sha256"] = hashlib.sha256(changed).hexdigest()
+        raw["child-self-readback.raw"] = encoded(own)
+        rows = [decoded(line) for line in raw["memory-operations.jsonl"].splitlines()]
+        rows[0]["old_PEEK_hex"] = rows[0]["new_bulk_hex"] = changed[:1].hex()
+        raw["memory-operations.jsonl"] = b"".join(
+            (json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n").encode() for row in rows)
+    elif name == "coherent-readonly-permissions":
+        address = report["owned_child"]["address"]
+        lines = raw["maps-before.raw"].decode("ascii").splitlines(keepends=True)
+        selected = []
+        for index, line in enumerate(lines):
+            extent, mode, *_ = line.split()
+            low, high = (int(value, 16) for value in extent.split("-"))
+            if low <= address < high:
+                need(mode == "r--p", "Observer baseline is not read-only")
+                selected.append(index)
+        need(len(selected) == 1, "Observer readonly mutant has no unique mapped page")
+        lines[selected[0]] = lines[selected[0]].replace(" r--p ", " rw-p ", 1)
+        changed = "".join(lines).encode()
+        need(changed != raw["maps-before.raw"], "Observer permission mutant did not change bytes")
+        raw["maps-before.raw"] = raw["maps-after.raw"] = changed
+    elif name == "invented-full-kernel-read":
+        value = decoded(raw["kernel-transfer.json"]); value["returned"] = 16
+        raw["kernel-transfer.json"] = encoded(value)
+    elif name in ("missing-actual-EFAULT", "omitted-memory-control"):
+        rows = [decoded(line) for line in raw["memory-operations.jsonl"].splitlines()]
+        if name == "missing-actual-EFAULT":
+            next(row for row in rows if row["name"] == "fully-unreadable-page")["errno"] = 0
+        else:
+            rows.pop()
+        raw["memory-operations.jsonl"] = b"".join(
+            (json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n").encode() for row in rows)
+    elif name == "truncated-child-self-readback":
+        raw["child-self-readback.raw"] = raw["child-self-readback.raw"][:-3]
+    else:
+        raise ValueError("Observer raw mutation implementation missing")
+    report["raw"] = {file: raw_identity(raw[file]) for file in OBSERVER_MEMORY_RAW}
+    raw["report.json"] = encoded(report)
+    return raw
+
+def observer_json(raw, message):
+    try:
+        value = decoded(raw)
+    except (ValueError, UnicodeError):
+        raise ValueError(message) from None
+    return value
+
+def observer_layout(page):
+    need(type(page) is int and page == 4096, "Observer requires the qualified x86-64 page size")
+    data = bytearray((i * 17 + 11) % 256 for i in range(page * 4))
+    strings = (
+        ("plain", 64, b"owned/read-only/path"),
+        ("cross-page", page - 13, b"across-readable-pages/" + b"x" * 43),
+        ("last-readable-byte-terminator", 2 * page - 23, b"z" * 22),
+        ("empty-readonly", 3 * page + 64, b""),
+    )
+    for _, offset, value in strings:
+        data[offset:offset + len(value) + 1] = value + b"\0"
+    data[512:576] = b"q" * 64
+    reads = ((0, 1), (1, 7), (7, 9), (63, 32), (257, 257), (page - 13, 80),
+             (page - 1, 2), (page + 17, 513), (2 * page - 8, 8),
+             (3 * page + 16, 128), (4 * page - 17, 17))
+    return bytes(data), reads, strings
+
+def observer_operations(pid, page):
+    data, reads, strings = observer_layout(page)
+    rows = []
+    for offset, extent in reads:
+        value = data[offset:offset + extent].hex()
+        rows.append({"name": "complete-read-%d-%d" % (offset, extent), "pid": pid,
+                     "offset": offset, "extent": extent, "old_PEEK_hex": value,
+                     "new_bulk_hex": value, "status": "PASS"})
+    for name, offset, value in strings:
+        rows.append({"name": "cstring-" + name, "pid": pid, "offset": offset,
+                     "limit": 4096, "old_PEEK_hex": value.hex(),
+                     "new_bulk_hex": value.hex(), "status": "PASS"})
+    negatives = (
+        ("strict-actual-short-read", "bytes", 2 * page - 8, 16,
+         "ValueError", None, "Actual owned memory read was incomplete"),
+        ("fully-unreadable-page", "bytes", 2 * page, 16, "OSError", 14, None),
+        ("cstring-unreadable-page", "cstring", 2 * page, 4096, "OSError", 14, None),
+        ("cstring-no-terminator-in-bound", "cstring", 512, 32,
+         "ValueError", None, "Actual C string omitted bounded terminator"),
+        ("negative-memory-extent", "bytes", 0, -1,
+         "ValueError", None, "Private bounded memory read"),
+        ("oversized-memory-extent", "bytes", 0, 65537,
+         "ValueError", None, "Private bounded memory read"),
+        ("missing-nonempty-address", "null", 0, 1,
+         "ValueError", None, "Actual memory read address absent"),
+    )
+    for name, operation, offset, extent, kind, errno, message in negatives:
+        rows.append({"name": name, "pid": pid, "operation": operation,
+                     "offset": offset, "extent": extent, "status": "PASS",
+                     "rejected": True, "error_type": kind, "errno": errno,
+                     "message": message})
+    rows.append({"name": "zero-extent-no-read", "pid": pid, "status": "PASS",
+                 "old_PEEK_hex": "", "new_bulk_hex": ""})
+    return rows
+
+def observer_permissions(raw, address, page):
+    try:
+        lines = raw.decode("ascii").splitlines()
+        mappings = []
+        for line in lines:
+            fields = line.split()
+            low, high = (int(value, 16) for value in fields[0].split("-"))
+            need(low < high and len(fields) >= 5, "Observer map record differs")
+            mappings.append((low, high, fields[1]))
+        result = []
+        for index in range(4):
+            start = address + page * index
+            covering = [(low, high, mode) for low, high, mode in mappings
+                        if low <= start and high >= start + page]
+            need(len(covering) == 1, "Observer memory page lacks one complete mapping")
+            result.append(covering[0][2])
+        return result
+    except (ValueError, IndexError, UnicodeError):
+        raise ValueError("Observer readonly permissions changed") from None
+
+def validate_owned_memory(directory, *, source_inputs):
+    """Reread the actual stopped-child memory controls without creating a child."""
+    capture = Capture(Path(directory), exact_names=("report.json", *OBSERVER_MEMORY_RAW))
+    try:
+        report_raw = capture.read("report.json", 256 << 10)
+        report = observer_json(report_raw, "Observer memory report is not complete JSON")
+        keys = {"schema", "status", "source_inputs", "source_after", "control_count",
+                "positive", "negative", "owned_child", "raw", *OBSERVER_SCOPE}
+        need(type(report) is dict and set(report) == keys
+             and report.get("schema") == "trnm.hia.work-owner-observer-owned-memory.v1"
+             and report.get("status") == "PASS"
+             and all(report.get(key) is False for key in OBSERVER_SCOPE),
+             "Observer memory schema/status/scope differs")
+        need(same(report["source_inputs"], source_inputs) and report["source_after"] == "MATCH",
+             "Observer memory source binding differs")
+        need(same([report["control_count"], report["positive"], report["negative"]], [23, 16, 7]),
+             "Observer memory control counts differ")
+        child = report["owned_child"]
+        need(type(child) is dict and set(child) == {
+            "pid", "parent_pid", "address", "page_bytes", "initial_wait_status",
+            "terminal_wait_status", "exit_code", "reaped", "ptrace_exitkill"},
+            "Observer owned child identity/lifecycle differs")
+        pid = child["pid"]; parent = child["parent_pid"]; address = child["address"]; page = child["page_bytes"]
+        need(u32(pid) and pid > 0 and u32(parent) and parent > 0 and parent != pid
+             and unsigned(address) and address > 0 and type(page) is int and page == 4096
+             and address % page == 0 and same(child["initial_wait_status"], (19 << 8) | 127)
+             and same(child["terminal_wait_status"], 0) and same(child["exit_code"], 0)
+             and child["reaped"] is True and child["ptrace_exitkill"] is True,
+             "Observer owned child identity/lifecycle differs")
+        raw = {name: capture.read(name, 2 << 20) for name in OBSERVER_MEMORY_RAW}
+        need(same(report["raw"], {name: raw_identity(value) for name, value in raw.items()}),
+             "Observer memory complete raw identities differ")
+        try:
+            fields = {}
+            for line in raw["child-status.raw"].decode("ascii").splitlines():
+                key, value = line.split(":", 1)
+                need(key not in fields, "Observer child status repeated a field")
+                fields[key] = value.strip()
+            need(all(fields.get(name) == str(wanted) for name, wanted in (
+                ("Pid", pid), ("Tgid", pid), ("PPid", parent), ("TracerPid", parent)))
+                 and fields.get("State", "").split()[0] == "t",
+                 "Observer child was not its parent's stopped owned process")
+        except (ValueError, IndexError, UnicodeError):
+            raise ValueError("Observer child was not its parent's stopped owned process") from None
+        need(raw["maps-before.raw"] == raw["maps-after.raw"]
+             and observer_permissions(raw["maps-before.raw"], address, page) ==
+                 ["r--p", "r--p", "---p", "r--p"],
+             "Observer readonly permissions changed")
+        data, _, _ = observer_layout(page)
+        expected = data[:2 * page] + data[3 * page:]
+        need(raw["owned-readonly-before.raw"] == raw["owned-readonly-after.raw"] == expected,
+             "Observer complete readonly memory differs")
+        own = observer_json(raw["child-self-readback.raw"], "Observer child self readback differs")
+        need(same(own, {"pid": pid, "bytes": len(expected),
+                       "sha256": hashlib.sha256(expected).hexdigest()}),
+             "Observer child self readback differs")
+        partial = observer_json(raw["kernel-transfer.json"], "Observer actual kernel short read differs")
+        need(same(partial, {"pid": pid, "offset": 2 * page - 8, "requested": 16,
+                           "returned": 8, "errno": 0,
+                           "retained_prefix_hex": data[2 * page - 8:2 * page].hex()}),
+             "Observer actual kernel short read differs")
+        rows = [observer_json(line, "Observer memory operation JSON differs")
+                for line in raw["memory-operations.jsonl"].splitlines()]
+        expected_rows = observer_operations(pid, page)
+        need(len(rows) == 23 and all(type(row) is dict for row in rows)
+             and [row.get("name") for row in rows] == [row["name"] for row in expected_rows],
+             "Observer memory control roster differs")
+        for actual, expected in zip(rows, expected_rows, strict=True):
+            need(same(actual, expected), "Observer memory operation differs: " + expected["name"])
+        capture.fence()
+        return {"status": "PASS", "count": 23, "positive": 16, "negative": 7,
+                "owned_children": 1, "memory_report": raw_identity(report_raw),
+                "raw": {name: raw_identity(value) for name, value in raw.items()}}
+    finally:
+        capture.close()
+
+def observer_clock_replays(clock_root, complete):
+    """Compare old completed-clock scans and incremental counts on all real events."""
+    from .faults import profiles
+    roster = [("normal-vdso-positive", None), ("private-raw-positive", None)]
+    roster += [(profile["name"], profile) for profile in profiles()]
+    need(type(complete.get("rows")) is list and len(complete["rows"]) == 20
+         and [row.get("name") for row in complete["rows"]] == [name for name, _ in roster],
+         "Observer clock ordinal replay lacks the exact twenty original captures")
+    results = []
+    for (name, profile), admitted in zip(roster, complete["rows"], strict=True):
+        capture = Capture(Path(clock_root) / name)
+        try:
+            raw = {file: capture.read(file, 256 << 20) for file in
+                   ("report.json", "events.jsonl", "stdout.raw", "stderr.raw")}
+            identities = {file: raw_identity(value) for file, value in raw.items()}
+            need(same(admitted.get("audit", {}).get("raw"), identities),
+                 "Observer ordinal replay has another admitted complete capture")
+            report = observer_json(raw["report.json"], "Observer ordinal trace report differs")
+            events = [decoded(line) for line in raw["events.jsonl"].splitlines()]
+            ledger = collect(events, raw["stderr.raw"])
+            need(same(report.get("actual_clock_calls"), ledger["clocks"])
+                 and same(report.get("actual_roles"), {str(k): v for k, v in ledger["roles"].items()}),
+                 "Observer ordinal replay differs from complete actual clocks and roles")
+            for key, file in (("events", "events.jsonl"), ("stdout", "stdout.raw"), ("stderr", "stderr.raw")):
+                need(same(report.get(key), identities[file]), "Observer ordinal raw identity differs")
+            completed = []; counts = {}; roles = {}; pending = {}
+            pre_role = 0; post_role = 0; selected = []
+            for row in events:
+                tid = row["tid"]
+                if row["kind"] == "actual-role":
+                    need(tid not in roles, "Observer role reset repeated")
+                    roles[tid] = {"role": row["role"], "index": row["index"], "count": 0}
+                elif row["kind"] == "syscall-entry" and row["nr"] == 228:
+                    old = sum(value == tid for value in completed) + 1
+                    current = counts.get(tid, 0) + 1
+                    need(tid not in pending and old == current and same(row.get("clock_ordinal"), old),
+                         "Observer completed-clock ordinal changed")
+                    pending[tid] = (row, old)
+                    if tid in roles:
+                        role = roles[tid]; role["count"] += 1; post_role += 1
+                        need(same([row.get("role"), row.get("role_index"), row.get("role_clock_ordinal")],
+                                  [role["role"], role["index"], role["count"]]),
+                             "Observer role ordinal reset or injection position changed")
+                    else:
+                        pre_role += 1
+                        need(all(key not in row for key in ("role", "role_index", "role_clock_ordinal", "fault")),
+                             "Observer pre-role clock gained request authority")
+                    if "fault" in row:
+                        need(profile is not None and row.get("role") == 3 and row.get("role_index") == 0
+                             and same(row.get("role_clock_ordinal"), profile["clock_syscall_ordinal"])
+                             and same(row.get("clock_id"), 1)
+                             and same(row["fault"], {"kind": "clock",
+                                "error": 5 if profile["errno"] == "EIO" else 22,
+                                "original_syscall_skipped": True}),
+                             "Observer Work injection position changed")
+                        selected.append({"entry": row["sequence"], "tid": tid,
+                            "completed_ordinal": old, "role_ordinal": row["role_clock_ordinal"],
+                            "logical_Work_ordinal": profile["ordinal"], "clock_id": row["clock_id"]})
+                elif row["kind"] == "syscall-exit" and row["nr"] == 228:
+                    entry, ordinal = pending.pop(tid)
+                    need(same(row["entry"], entry["sequence"]), "Observer clock completion changed")
+                    completed.append(tid); counts[tid] = ordinal
+            need(not pending and post_role > 0 and len(completed) == pre_role + post_role
+                 and len(completed) == len(ledger["clocks"])
+                 and len(selected) == (0 if profile is None else 1),
+                 "Observer completed-clock replay omitted events or actual injection")
+            clock_bytes = (json.dumps(ledger["clocks"], sort_keys=True, separators=(",", ":")) + "\n").encode()
+            results.append({"name": name, "status": "PASS", "events": len(events),
+                "clock_count": len(completed), "before_role": pre_role, "after_role": post_role,
+                "per_tid_completed_counts": {str(k): v for k, v in sorted(counts.items())},
+                "role_counts": {str(k): v for k, v in sorted(roles.items())},
+                "actual_injection_positions": selected, "complete_clock_values": raw_identity(clock_bytes),
+                "raw": identities})
+            capture.fence()
+        finally:
+            capture.close()
+    return results
+
+def observer_control_outcome(directory, *, source_inputs):
+    try:
+        validate_owned_memory(directory, source_inputs=source_inputs)
+        return True, None
+    except (ValueError, OSError) as error:
+        return False, str(error)
+
+def validate_observer_reader_controls(directory, *, source_inputs, baseline):
+    names = ("report.json", *(name for name, _ in OBSERVER_READER_SPECS))
+    capture = Capture(Path(directory), exact_names=names)
+    original = None
+    try:
+        original = Capture(Path(directory).parent / "memory", exact_names=("report.json", *OBSERVER_MEMORY_RAW))
+        baseline_raw = {file: original.read(file, 2 << 20) for file in ("report.json", *OBSERVER_MEMORY_RAW)}
+        need(same({file: raw_identity(value) for file, value in baseline_raw.items()}, baseline),
+             "Observer reader baseline complete bytes differ")
+        encoded = capture.read("report.json", 512 << 10)
+        report = observer_json(encoded, "Observer memory reader report is incomplete")
+        keys = {"schema", "status", "source_inputs", "source_after", "baseline_after",
+                "baseline", "count", "positive", "negative", "rows",
+                "actual_owned_children_executed_by_reader_controls", *OBSERVER_SCOPE}
+        need(type(report) is dict and set(report) == keys
+             and report.get("schema") == "trnm.hia.work-owner-observer-memory-reader-controls.v1"
+             and report.get("status") == "PASS"
+             and all(report.get(key) is False for key in OBSERVER_SCOPE)
+             and same(report.get("source_inputs"), source_inputs)
+             and report.get("source_after") == report.get("baseline_after") == "MATCH",
+             "Observer memory reader schema/source/scope differs")
+        need(same([report["count"], report["positive"], report["negative"],
+                   report["actual_owned_children_executed_by_reader_controls"]], [12, 2, 10, 0])
+             and same(report["baseline"], baseline),
+             "Observer memory reader counts or baseline differ")
+        need(type(report["rows"]) is list and len(report["rows"]) == 12
+             and [row.get("name") for row in report["rows"]] == [name for name, _ in OBSERVER_READER_SPECS],
+             "Observer memory reader control roster differs")
+        for (name, expected), row in zip(OBSERVER_READER_SPECS, report["rows"], strict=True):
+            child = Capture(Path(directory) / name, exact_names=("report.json", *OBSERVER_MEMORY_RAW))
+            try:
+                actual_raw = {file: raw_identity(child.read(file, 2 << 20))
+                              for file in ("report.json", *OBSERVER_MEMORY_RAW)}
+                child.fence()
+            finally:
+                child.close()
+            expected_raw = observer_mutation(baseline_raw, name)
+            need(same(actual_raw, {file: raw_identity(value) for file, value in expected_raw.items()}),
+                 "Observer reader control changed outside its exact mutation: " + name)
+            acceptance, failure = observer_control_outcome(Path(directory) / name, source_inputs=source_inputs)
+            need(failure == OBSERVER_READER_FAILURES.get(name),
+                 "Observer raw memory control refused for another reason: " + name)
+            need(acceptance is expected and same(row, {
+                "name": name, "status": "PASS", "expected_acceptance": expected,
+                "actual_acceptance": acceptance, "actual_failure": failure, "raw": actual_raw}),
+                 "Observer raw memory reader control did not independently reproduce: " + name)
+            if expected:
+                need(same(actual_raw, baseline), "Observer restored full memory baseline differs")
+        capture.fence()
+        original.fence()
+        return raw_identity(encoded)
+    finally:
+        if original is not None: original.close()
+        capture.close()
+
+def validate_observer_controls(directory, *, source_inputs, clock_root, complete):
+    need(__debug__, "Observer memory readback refuses optimized Python")
+    directory = Path(directory); clock_root = Path(clock_root)
+    need(directory == clock_root / "observer-memory-controls",
+         "Observer controls are outside the admitted original clock root")
+    capture = Capture(directory, exact_names=("report.json", "memory", "reader-controls"))
+    try:
+        raw = capture.read("report.json", 2 << 20)
+        report = observer_json(raw, "Observer composite report is incomplete")
+        keys = {"schema", "status", "source_inputs", "source_after", "memory",
+                "memory_report", "reader_controls_report", "clock_ordinal_replays",
+                "memory_count", "memory_positive", "memory_negative", "owned_children",
+                "clock_ordinal_replay_count", "reader_count", "reader_positive", "reader_negative",
+                *OBSERVER_SCOPE}
+        need(type(report) is dict and set(report) == keys
+             and report.get("schema") == "trnm.hia.work-owner-observer-controls.v1"
+             and report.get("status") == "PASS"
+             and all(report.get(key) is False for key in OBSERVER_SCOPE)
+             and same(report.get("source_inputs"), source_inputs) and report.get("source_after") == "MATCH",
+             "Observer composite schema/source/scope differs")
+        need(same([report["memory_count"], report["memory_positive"], report["memory_negative"],
+                   report["owned_children"], report["clock_ordinal_replay_count"],
+                   report["reader_count"], report["reader_positive"], report["reader_negative"]],
+                  [23, 16, 7, 1, 20, 12, 2, 10]),
+             "Observer composite count types or values differ")
+        memory = validate_owned_memory(directory / "memory", source_inputs=source_inputs)
+        need(same(memory, report["memory"]) and same(memory["memory_report"], report["memory_report"]),
+             "Observer complete memory report is disconnected")
+        baseline = {"report.json": memory["memory_report"], **memory["raw"]}
+        reader = validate_observer_reader_controls(directory / "reader-controls",
+                                                   source_inputs=source_inputs, baseline=baseline)
+        need(same(reader, report["reader_controls_report"]), "Observer raw reader report is disconnected")
+        replays = observer_clock_replays(clock_root, complete)
+        need(same(report["clock_ordinal_replays"], replays),
+             "Observer complete original clock ordinal replay differs")
+        need(same(complete.get("observer_memory_controls"), report)
+             and same(complete.get("observer_memory_controls_report"), raw_identity(raw)),
+             "Original clock report omits or disconnects observer memory controls")
+        capture.fence()
+        return {
+            "original_observer_memory_controls": 23,
+            "original_observer_memory_positive_controls": 16,
+            "original_observer_memory_negative_controls": 7,
+            "original_observer_owned_memory_children": 1,
+            "original_observer_clock_ordinal_replays": 20,
+            "original_observer_memory_raw_reader_controls": 12,
+            "original_observer_memory_raw_positive_controls": 2,
+            "original_observer_memory_raw_negative_controls": 10,
+            "original_observer_memory_controls_status": "PASS",
+            "original_observer_memory_control_report": raw_identity(raw),
+            "original_observer_memory_raw_report": memory["memory_report"],
+            "original_observer_memory_reader_report": reader,
+        }
     finally:
         capture.close()

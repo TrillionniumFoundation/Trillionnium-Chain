@@ -30,7 +30,7 @@ def execute(case):
   seq+=1;row=parse_prefix(s.frame(),code,ctx,seq);row.update(index=index,op=op,transactions=[r.hex() for r in raws])
   if row["outcome"]!="ok" and last is not None:
    need((row["held_state_hex"],row["length"],row["header"][9],row["private_receipts"])==(last["held_state_hex"],last["length"],last["header"][9],last["private_receipts"]),"Full retained state rollback")
-  if op=="drop":need(row["header"][28]==2 and not row["ready"],"Scoped drop snapshot contains base and its Node-owned canonical parent before Node retirement")
+  if op=="drop":need(row["header"][28]==3 and not row["ready"],"Scoped drop retains actual base, Node Parent and cached Snapshot before Node retirement")
   if op=="new" and row["outcome"]=="ok":
    parent_map,parent_payload=observed_parent_map(s,actual_parent)
    need(parent_map["bind_seq"]==seq,"Parent bound to actual constructor sequence")
@@ -45,7 +45,8 @@ def execute(case):
    retained_prepared=None;retained_raw=None
   if row["ready"]:
    actual_map,actual_map_payload=observed_parent_map(s,actual_parent)
-   need(actual_map==parent_map and actual_map_payload==parent_payload,"Fixed parent map changed or borrow survived")
+   need({k:v for k,v in actual_map.items() if k!="refs"}=={k:v for k,v in parent_map.items() if k!="refs"} and immutable_parent_payload(actual_map_payload)==immutable_parent_payload(parent_payload),"Fixed parent canonical bytes, root, context or shared tree changed")
+   parent_map,parent_payload=actual_map,actual_map_payload
   if op=="drop" or (op=="new" and not row["ready"]):parent_map=None;parent_payload=None
   row["canonical_parent"]=parent_map
   row["canonical_parent_payload_hex"]=None if parent_payload is None else parent_payload.hex()
@@ -93,7 +94,7 @@ def main(argv=None):
    "controls":controls,"controls_total":len(controls),"real_processes":len(sessions),"elapsed_ns":time.monotonic_ns()-start,
    "scope":{"actual_private_disk_state_source":True,"actual_settings_some":True,"caller_state_or_root":False,"runtime_host_proxy":False,
    "original_rust":"NOT_RUN","successor_admission":False,"node_commit":False,"complete_node":False,"private_finalized_state_ownership":True,
-   "prepared_commitment_none_prior":True,"full_prepared_observation":True,"canonical_parent_owned_once_per_prefix":True,"prepared_retains_before_map":False,"checked_apply_some_prior":False}}
+   "prepared_commitment_none_prior":False,"full_prepared_observation":True,"canonical_parent_owned_once_per_prefix":True,"prepared_retains_before_map":False,"checked_apply_some_prior":True}}
   safe.write_json(OUT/"report.json",report)
   print(json.dumps({k:report[k] for k in ("status","controls_total","real_processes","failure","cleanup_errors","source_after")}),flush=True)
   if report["status"]!="PASS":raise SystemExit(1)

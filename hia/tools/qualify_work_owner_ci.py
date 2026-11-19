@@ -29,12 +29,13 @@ from hia.platform.work_owner import build, bundle, cases, rust_oracle as oracle
 ROOT = build.ROOT
 PREFIX = "hia-work-owner"
 STAGE = "work-owner"
-SCHEMA = "trnm.hia.work-owner-ci-binding.v3"
-PACKAGE = "trnm.hia.work-owner-ci-evidence.v3"
-REVIEW = "trnm.hia.work-owner-development-readback.v3"
+SCHEMA = "trnm.hia.work-owner-ci-binding.v4"
+PACKAGE = "trnm.hia.work-owner-ci-evidence.v4"
+REVIEW = "trnm.hia.work-owner-development-readback.v4"
 READERS = ("hia/tools/qualify_work_owner_ci.py", "hia/tests/test_work_owner_ci.py",
            "hia/tools/qualify_foundation_ci.py", "hia/tools/work_owner_clock_ci.py",
-           "hia/tools/work_owner_transfer_ci.py", "hia/tests/test_work_owner_transfer_ci.py")
+           "hia/tools/work_owner_transfer_ci.py", "hia/tests/test_work_owner_transfer_ci.py",
+           "hia/tools/qualify_work_handshake.py")
 COUNTS = {"native_histories": 61, "native_progress_points": 27843,
           "primitive_controls": 175, "actual_syscall_traces": 3, "trace_controls": 27,
           "signal_controls": 14, "native_clock_fault_controls": 18,
@@ -44,8 +45,18 @@ COUNTS = {"native_histories": 61, "native_progress_points": 27843,
           "primitive_actual_calls": 9489, "primitive_buffers": 538, "primitive_snapshots": 7800,
           "primitive_logical_capture_bytes": 6010134406, "primitive_chunk_count": 19413,
           "original_clock_positive_processes": 2, "original_clock_fault_processes": 18,
-          "original_clock_processes": 20, "original_clock_raw_controls": 20,
-          "original_clock_raw_positive_controls": 2, "original_clock_raw_negative_controls": 18}
+          "original_clock_processes": 20, "original_clock_raw_controls": 32,
+          "original_clock_raw_positive_controls": 2, "original_clock_raw_negative_controls": 30,
+          "original_observer_memory_controls": 23, "original_observer_memory_positive_controls": 16,
+          "original_observer_memory_negative_controls": 7, "original_observer_owned_memory_children": 1,
+          "original_observer_clock_ordinal_replays": 20, "original_observer_memory_raw_reader_controls": 12,
+          "original_observer_memory_raw_positive_controls": 2, "original_observer_memory_raw_negative_controls": 10,
+          "native_paid_clock_processes": 16, "native_paid_clock_fault_processes": 15,
+          "native_paid_clock_positive_processes": 1, "native_paid_clock_raw_reader_controls": 27,
+          "native_paid_clock_raw_positive_controls": 2, "native_paid_clock_raw_negative_controls": 25,
+          "original_paid_clock_processes": 17, "original_paid_clock_fault_processes": 15,
+          "original_paid_clock_positive_processes": 2, "original_paid_clock_raw_reader_controls": 27,
+          "original_paid_clock_raw_positive_controls": 2, "original_paid_clock_raw_negative_controls": 25}
 SCOPES = ("production_fixed_parent_authority", "whole_Node_or_paid_checkpoint_closed",
           "original_4s_16_service_gate_closed", "physical_power_loss")
 ROOT_LABELS = frozenset(("native", "original", "observations", "bootstrap", "capture"))
@@ -265,7 +276,7 @@ def native(directory, repository):
                       "native_histories": 61, "native_progress_points": 27843,
                       "actual_syscall_traces": 3, "trace_controls": 27, "signal_controls": 14,
                       "native_clock_fault_controls": 18, "physical_trace": "PASS",
-                      "images": report["build"]["images"], **primitives}
+                      "images": report["build"]["images"], **primitives, **admitted["paid_clock"]}
 
 
 def original_stages(directory, report, retained):
@@ -329,8 +340,9 @@ def original_shape(row):
     progress = row.get("progress")
     need(type(progress) is list and all(vector(point, 5) for point in progress),
          "Actual original progress is not a list of exact five-u64 observations")
+    oracle.paid_observation_shape(row)
     if row.get("worker_tid") is None:
-        minimal = {"name", "domain", "code", "progress", "product_hex", "worker_tid"}
+        minimal = {"name", "domain", "code", "progress", "product_hex", "worker_tid", "paid_global"}
         need(set(row) in (minimal, minimal | {"main_tid", "before_checks"})
              and row["domain"] == 3 and row["code"] > 0 and progress == []
              and row["product_hex"] is None,
@@ -345,7 +357,8 @@ def original_shape(row):
               "after_values", "delta_values", "gate_observed", "input_sha256",
               "actual_original_W1", "actual_original_Host_primitives",
               "actual_original_task_alive_and_final_resource", "fixture_uses_actual_AtomicBool_cancel_inputs",
-              "production_fixed_parent_authority", "complete_Node_or_paid_checkpoint"}
+              "production_fixed_parent_authority", "complete_Node_or_paid_checkpoint",
+              "actual_original_finite_paid_work_checkpoints", "paid", "paid_checkpoints", "paid_global"}
     need(set(row) == fields, "Complete actual original worker observer field roster differs")
     need(all(type(row[name]) is int and 0 < row[name] < (1 << 32) for name in ("main_tid", "worker_tid"))
          and row["main_tid"] != row["worker_tid"]
@@ -353,7 +366,7 @@ def original_shape(row):
          and row["worker_checks"] <= row["host_calls"], "Actual original worker identity/counter type differs")
     need(all(row[name] is True for name in ("joined", "actual_original_W1",
                   "actual_original_Host_primitives", "actual_original_task_alive_and_final_resource",
-                  "fixture_uses_actual_AtomicBool_cancel_inputs"))
+                  "fixture_uses_actual_AtomicBool_cancel_inputs", "actual_original_finite_paid_work_checkpoints"))
          and type(row["gate_observed"]) is bool
          and row["production_fixed_parent_authority"] is False
          and row["complete_Node_or_paid_checkpoint"] is False, "Actual original worker scope/Boolean type differs")
@@ -380,12 +393,13 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
     need(same(before, after) and same(before.get("source_inputs"), admitted["source_inputs"])
          and same(before.get("original_sources"), admitted["original_sources"])
          and same(before.get("native_bundle"), admitted["snapshot"])
-         and report.get("schema") == "trnm.hia.work-owner-original.v1"
+         and report.get("schema") == "trnm.hia.work-owner-original.v2"
          and report.get("status") == "PASS" and report.get("failure") is None
          and report.get("final_fence_failure") is None and report.get("source_after") == "MATCH"
          and report.get("binary_after") == "MATCH", "Complete original source/native/binary fences required")
     need(all(report.get(k) is False for k in SCOPES[:3])
          and report.get("original_controlled_CLOCK1_fault_comparison") == "PASS"
+         and report.get("original_paid_CLOCK_fault_comparison") == "PASS"
          and report.get("native_protocol_controls_without_original_equivalent") == sorted(cases.PROTOCOL_ONLY),
          "Original observation scope expanded")
     for key, count in (("passed", 57), ("total", 57), ("actual_original_progress_points", 27841),
@@ -415,7 +429,9 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
         "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs":
             repository / "hia/platform/host_resource/rust_reference.rs",
         "trillionnium/crates/trnm-pon-node/src/ingress/hia_work_owner_bridge.rs":
-            repository / "hia/platform/work_owner/rust_bridge.rs"}
+            repository / "hia/platform/work_owner/rust_bridge.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/hia_work_paid_probe.rs":
+            repository / "hia/platform/work_owner/rust_paid_reference.rs"}
     expected = dict(admitted["original_sources"])
     for name, declaration in oracle.DECLARATIONS.items():
         raw = regular(repository / name).read_bytes()
@@ -483,7 +499,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
     ignored = {line.removesuffix(": test")
                for line in rows["list-original-ignored-tests"][1]["stdout"].decode().splitlines()
                if line.startswith("host_kernel_parent::kernel_parent::") and line.endswith(": test")}
-    need(ignored == {oracle.IGNORED} and oracle.TEST in tests and oracle.CLOCK_TEST in tests, "Original ignored probe or private observer roster differs")
+    need(ignored == {oracle.IGNORED} and oracle.TEST in tests and oracle.CLOCK_TEST in tests and oracle.PAID_CLOCK_TEST in tests, "Original ignored probe or private observer roster differs")
     linked = sorted(name for name in tests if name.startswith("host_kernel_parent::kernel_parent::")
                     and "::hia_work_owner_oracle::" not in name and name not in ignored)
     need(linked == retained and report.get("ignored_direct_probe") == {
@@ -518,6 +534,13 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
          and sum(row.get("joined") is True for row in actual) == 56,
          "Complete original/native differential differs from actual stdout")
     clock = next_evidence.original_clock(sys.modules[__name__], directory, observed, report, admitted, binary_id)
+    from hia.platform.work_owner.paid_fault_evidence import read_original as read_paid_original
+    need(same(identity(directory / "paid-clock-faults/report.json"), report.get("paid_clock_faults_report")),
+         "Original Paid fault report disconnected")
+    paid = read_paid_original(directory / "paid-clock-faults", report["paid_clock_faults"],
+        native=admitted["report"]["paid_clock_faults"], executable=binary_id,
+        source_inputs=admitted["source_inputs"], original_sources=admitted["original_sources"],
+        observed=observed / "paid-clock-faults")
     need(identity(binary) == binary_id and same(read(directory / "source-after.json"), before),
          "Original independent binary/source changed during readback")
     need(file_tree(directory) == artifact_before, "Complete original raw evidence changed during admission")
@@ -529,7 +552,7 @@ def original(directory, repository, admitted, *, capture=None, live=True, expect
             "original_rust": "PASS", "original_source_before": identity(directory / "source-before.json"),
             "original_source_after": identity(directory / "source-after.json"),
             "original_dependency": standard,
-            "original_controlled_CLOCK1_fault_comparison": "PASS", **sqlite, **clock}
+            "original_controlled_CLOCK1_fault_comparison": "PASS", **sqlite, **clock, **paid}
 
 
 def assess(repository, native_directory, original_directory, capture=None, *, live=True, expected_target=None):
@@ -609,6 +632,8 @@ def check_binding(value, expected):
          "Binding omits a complete actual stage")
     need(all(value.get(k) is False for k in SCOPES)
          and value.get("original_controlled_CLOCK1_fault_comparison") == "PASS"
+         and value.get("original_paid_CLOCK_fault_comparison") == "PASS"
+         and value.get("original_observer_memory_controls_status") == "PASS"
          and value.get("primitive_raw_guard_arenas_retained") is True
          and value.get("primitive_raw_readback") == "PASS"
          and value.get("original_sqlite_build_fence") == "sqlite-3.54.1-normal-native-linux-layout-v4",
@@ -637,7 +662,14 @@ def check_binding(value, expected):
                       ("original/source-after.json", "original_source_after"),
                       ("original/controlled-clock/report.json", "original_clock_report"),
                       ("original/controlled-clock/actual-reader-controls/report.json", "original_clock_raw_controls_report"),
-                      ("original/actual-sqlite-qualification.json", "original_sqlite_qualification")):
+                      ("original/controlled-clock/observer-memory-controls/report.json", "original_observer_memory_control_report"),
+                      ("original/controlled-clock/observer-memory-controls/memory/report.json", "original_observer_memory_raw_report"),
+                      ("original/controlled-clock/observer-memory-controls/reader-controls/report.json", "original_observer_memory_reader_report"),
+                      ("original/actual-sqlite-qualification.json", "original_sqlite_qualification"),
+                      ("native/paid-clock-faults/report.json", "native_paid_clock_report"),
+                      ("native/paid-clock-faults/reader-controls/report.json", "native_paid_clock_reader_report"),
+                      ("original/paid-clock-faults/report.json", "original_paid_clock_report"),
+                      ("original/paid-clock-faults/reader-controls/report.json", "original_paid_clock_reader_report")):
         need(file_id(value.get(key)) and files.get(name) == value[key], "Mandatory full artifact missing: " + name)
     need(value["original_binary"]["bytes"] > 0, "Empty original binary is not evidence")
     raw = value.get("primitive_raw_evidence")
@@ -660,7 +692,8 @@ def reader_paths():
             "hia/tools/qualify_foundation_ci.py": Path(base.__file__).resolve(),
             "hia/tools/work_owner_clock_ci.py": Path(next_evidence.__file__).resolve(),
             "hia/tools/work_owner_transfer_ci.py": Path(transfer.__file__).resolve(),
-            "hia/tests/test_work_owner_transfer_ci.py": own.parents[1] / "tests/test_work_owner_transfer_ci.py"}
+            "hia/tests/test_work_owner_transfer_ci.py": own.parents[1] / "tests/test_work_owner_transfer_ci.py",
+            "hia/tools/qualify_work_handshake.py": own.parent / "qualify_work_handshake.py"}
 
 
 def reader_manifest():
@@ -670,7 +703,8 @@ def reader_manifest():
 def control_roster():
     modules = ("hia.tests.test_work_owner_ci", "hia.tests.test_work_owner_transfer_ci",
                "hia.platform.work_owner.test_integrity",
-               "hia.platform.work_owner.test_primitive_evidence", "hia.platform.work_owner.test_clock_evidence")
+               "hia.platform.work_owner.test_primitive_evidence", "hia.platform.work_owner.test_clock_evidence",
+               "hia.platform.work_owner.test_paid_faults")
     suite = unittest.defaultTestLoader.loadTestsFromNames(modules)
     def names(value):
         if isinstance(value, unittest.TestSuite):
@@ -962,7 +996,9 @@ def readback(package_directory, output, *, require_qualified=False):
     result = {"status": status, "archive": verification["archive"],
               "original_binary": current["original_binary"], **COUNTS,
               "qualification_status_not_changed_by_readback": True,
-              "original_controlled_CLOCK1_fault_comparison": "PASS"}
+              "original_controlled_CLOCK1_fault_comparison": "PASS",
+              "original_paid_CLOCK_fault_comparison": "PASS",
+              "original_observer_memory_controls_status": current["original_observer_memory_controls_status"]}
     write_new(output / "readback-result.json", result)
     return result
 

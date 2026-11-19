@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,struct,time,traceback
 from . import safe
 ROOT=Path(__file__).absolute().parents[3]
 HERE=ROOT/"hia/platform/mempool_node"
-ORDER=("master","worker","settings","pnx","sha","ed","state","root","mandatory_core","mandatory_cleanup","mandatory_expiry","mandatory_epilogue","application_core","application_task","application_model","application_release","application_quota","application_relation","application_claim","json","producer","genesis","prepared","mempool")
+ORDER=("master","worker","settings","pnx","sha","ed","state","root","mandatory_core","mandatory_cleanup","mandatory_expiry","mandatory_epilogue","application_core","application_task","application_model","application_release","application_quota","application_relation","application_claim","json","producer","genesis","prepared","mempool","snapshot","checked","tree")
 COMPILER="87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
 PATTERN=re.compile(rb"(?ms)^fn ([A-Za-z_][A-Za-z_0-9]*)\([^\n]*\n.*?^end(?:\n|$)")
 def source_manifest(repository=ROOT):
@@ -60,7 +60,7 @@ def build(output,repository=ROOT):
             image=pinned.stage(pinned.compiler,sources[role],"compile-"+role)
             safe.need(safe.same(safe.identity(image),plan["expected_images"][role]),"Exact qualified image differs "+role)
             images[role]=image;(output/(role+(".elf" if role=="linux_emitter" else ".flat"))).write_bytes(image)
-        payload=struct.pack("<24Q",*(len(images[n]) for n in ORDER))
+        payload=struct.pack("<27Q",*(len(images[n]) for n in ORDER))
         prefix=pinned.stage(images["linux_emitter"],payload,"emit-owner")
         safe.need(safe.same(safe.identity(prefix),plan["expected_emitted_prefix"]),"Exact literal prefix differs")
         elf=prefix+b"".join(images[n] for n in ORDER);inspect_executable(elf)
@@ -116,7 +116,7 @@ def validate_build(directory,repository=ROOT):
         safe.need(safe.read(directory,role+(".elf" if role=="linux_emitter" else ".flat"))==image and safe.same(safe.identity(image),plan["expected_images"][role]),"Compiler flat/saved image differs")
         images[role]=image
     safe.need(safe.same(report["images"],{n:safe.identity(raw) for n,raw in images.items()}),"Whole actual image map differs")
-    prefix=stage(stages[-1],struct.pack("<24Q",*(len(images[n]) for n in ORDER)),safe.identity(images["linux_emitter"]))
+    prefix=stage(stages[-1],struct.pack("<27Q",*(len(images[n]) for n in ORDER)),safe.identity(images["linux_emitter"]))
     safe.need(prefix==safe.read(directory,"prefix.raw") and safe.same(safe.identity(prefix),plan["expected_emitted_prefix"]) and safe.same(safe.identity(prefix),report["prefix"]),"Literal prefix input/output differs")
     elf=prefix+b"".join(images[n] for n in ORDER)
     safe.need(elf==safe.read(directory,"owner.elf") and safe.same(safe.identity(elf),report["executable"]) and safe.same(report["executable"],plan["expected_executable"]),"Complete actual ELF linkage differs")

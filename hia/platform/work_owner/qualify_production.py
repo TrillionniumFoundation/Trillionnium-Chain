@@ -133,13 +133,29 @@ def validate_native(raw,case,process_pid,observations,parent,expected_service,*,
  # The third request word is the target; the output carries the independently
  # derived ticket bound to the complete request's challenge and transcript.
  ticket=cases.tagged(b"ticket",request[:32],request[-32:])
- require(decoded["challenge_hex"]==request[:32].hex() and decoded["task_hex"]==request[32:64].hex() and decoded["ticket_hex"]==ticket.hex(),"NATIVE_PROOF_IDENTITY_CHANGED")
+ require(decoded["challenge_hex"]==request[:32].hex() and decoded["task_hex"]==request[32:64].hex()
+         and decoded["ticket_hex"]==ticket.hex(),"NATIVE_PROOF_IDENTITY_CHANGED")
  require(ticket<=request[64:96],"NATIVE_PROOF_TARGET_REFUSED")
  before,after,worker=(decoded[n] for n in ("host_before","host_after","host_worker_final"))
  require(before[2:8]==[0,1,3,1,1,1] and after[2:8]==[0,2,5,2,2,1] and worker[2:8]==[0,1102,1104,1,0,0],"NATIVE_RESOURCE_AND_WORKER_RECEIPT_ORDER_CHANGED")
  require(before[23]==after[23]==process_pid and worker[23]==h["worker_tid"],"HOST_RECEIPT_THREAD_DIFFERS")
  require(before[14:18]==[0]*4 and worker[8:18]==before[8:18] and all(after[8+i]>=before[8+i] and after[14+i]==after[8+i]-before[8+i] for i in range(4)),"ACTUAL_RESOURCE_DELTA_DIFFERS")
  require(before[28:31]==after[28:31]==[3,0,1] and worker[28:31]==[0,0,1] and all(r[22]==0 and r[25:27]==[0,0] for r in (before,after,worker)),"NATIVE_CLOSE_OR_EXTRA_OBSERVER_DIFFERED")
+
+ paid=decoded["paid"];account=paid["owner"];checkpoints=h["progress_count"]+1
+ require(paid["global_poison"]==paid["request_poison"]==0 and paid["epoch"][1]==0
+         and paid["epoch"][6:9]==[0,0,0],"ACTUAL_FINITE_PAID_ACCOUNT_NOT_RETIRED")
+ require(account[0]==int.from_bytes(b"PCOWN001","little") and account[1:4]==[0,0,0]
+         and account[20:22]==[h["worker_tid"],2] and account[22:]==[0]*42,
+         "ACTUAL_FINITE_PAID_OWNER_IDENTITY_REQUIRED")
+ require(all(account[i]==1 for i in (4,6,8,10,12)) and account[7]==0
+         and account[14:20]==[0]*6 and account[5]==account[9]
+         and account[9]==account[11]+account[13],
+         "ACTUAL_FINITE_PAID_KNOWN_UNIQUE_SETTLEMENT_REQUIRED")
+ require(paid["checkpoint_calls"]==checkpoints
+         and paid["binding"]==[0,3,checkpoints+2,2,checkpoints,0,0,0,1,0]
+         and paid["meta"]==[0,0,checkpoints+2,3,0,0,0,0],
+         "ACTUAL_FINITE_PAID_CHECKPOINT_AND_RETIREMENT_REQUIRED")
 
  for tid,row in observations.items():
   membership="0::/trnmponpublic.slice/"+expected_service

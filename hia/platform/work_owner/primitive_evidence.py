@@ -367,6 +367,18 @@ class Snapshots:
         return raw[32:-32]
 
 
+def owner_identity_initial():
+    """Exact first worker issue before any supplied Paid completion or Host result."""
+    event, command, state = bytearray(128), bytearray(4096), bytearray(65536)
+    for offset in (16, 24, 32):
+        struct.pack_into("<Q", event, offset, 1)
+    for offset, value in ((0, 11), (8, 1), (64, 90)):
+        struct.pack_into("<Q", command, offset, value)
+    for offset, value in ((0, 90), (16, 1), (24, 1), (32, 1)):
+        struct.pack_into("<Q", state, offset, value)
+    return bytes(event), bytes(command), bytes(state)
+
+
 def _expected_roster(cases):
     lengths = list(range(130)) + [255, 256, 257, 511, 512, 513, 1023, 1024, 1025,
         2047, 2048, 2049, 4095, 4096, 4097, 65535, 65536, 65537, 131135, 131136]
@@ -558,11 +570,10 @@ def validate(directory, report, cases, images):
                 require(observed["fixture_is_production_authority"] is False,
                         "Private owner event acquired production authority")
                 call, after = pull(name, image, 0, ids, expected)
-                require(call["return_code"] == 0 and struct.unpack_from("<Q", after[2])[0] == 101
-                        and struct.unpack_from("<Q", after[1])[0] == 3,
-                        "Actual private owner initial transition differs")
+                require(call["return_code"] == 0 and tuple(after) == owner_identity_initial(),
+                        "Actual private owner first Paid issue complete bytes differ")
                 event = bytearray(after[0])
-                struct.pack_into("<Q", event, 112, 101)
+                struct.pack_into("<Q", event, 112, 90)
                 struct.pack_into("<Q", event, detail[0], detail[1])
                 expected = [bytes(event), after[1], after[2]]
                 call, after = pull(name, image, 1, ids, expected)

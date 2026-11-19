@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_mempool_node_node_methods_v1
+hia-asm.v1 hepta.hia.program.v8 trnm_m05_node_methods_v2
 fn np_begin(v0:mutbuf,v1:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
 block b0(v0:mutbuf,v1:mutbuf)
   v2:u64 = const() {"value":824}
@@ -267,76 +267,6 @@ block b10(v107:readbuf,v108:mutbuf,v109:mutbuf)
   v141:u64 = int.cast(v140) {"mode":"wrap"}
   v142:u32 = int.cast(v141) {"mode":"wrap"}
   ret(v142)
-end
-fn np_cleared(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
-block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
-  v3:u64 = const() {"value":12}
-  v4:u64 = call(v0,v3) {"function":"nb_complete"}
-  v5:u64 = const() {"value":0}
-  v6:bool = compare.eq(v4,v5)
-  branch v6 b2(v0,v1,v2,v6) b1(v0,v1,v2)
-block b1(v7:readbuf,v8:mutbuf,v9:mutbuf)
-  v15:u64 = const() {"value":8}
-  v16:u64 = call(v7,v15,v15) {"function":"nb_read"}
-  v17:u64 = const() {"value":1}
-  v18:bool = compare.ne(v16,v17)
-  jump b2(v7,v8,v9,v18)
-block b2(v11:readbuf,v12:mutbuf,v13:mutbuf,v14:bool)
-  branch v14 b4(v11,v12,v13,v14) b3(v11,v12,v13)
-block b3(v19:readbuf,v20:mutbuf,v21:mutbuf)
-  v27:usize = buffer.len(v19)
-  v28:u64 = int.cast(v27) {"mode":"wrap"}
-  v29:u64 = const() {"value":64}
-  v30:bool = compare.ne(v28,v29)
-  jump b4(v19,v20,v21,v30)
-block b4(v23:readbuf,v24:mutbuf,v25:mutbuf,v26:bool)
-  branch v26 b5(v23,v24,v25) b6(v23,v24,v25)
-block b5(v31:readbuf,v32:mutbuf,v33:mutbuf)
-  v37:u64 = const() {"value":134}
-  v38:u32 = call(v33,v37) {"function":"nb_fail"}
-  v39:u64 = int.cast(v38) {"mode":"wrap"}
-  v40:u32 = int.cast(v39) {"mode":"wrap"}
-  ret(v40)
-block b6(v34:readbuf,v35:mutbuf,v36:mutbuf)
-  v41:u64 = const() {"value":768}
-  v42:u64 = const() {"value":8}
-  v43:u64 = const() {"value":0}
-  v44:u64 = call(v36,v41,v42,v43) {"function":"nb_put"}
-  v45:u64 = const() {"value":776}
-  v46:u64 = call(v36,v45,v42,v43) {"function":"nb_put"}
-  v47:u64 = const() {"value":224}
-  v48:u64 = call(v36,v47,v42,v43) {"function":"nb_put"}
-  v49:u64 = const() {"value":800}
-  v50:u64 = const() {"value":72}
-  v51:u64 = call(v36,v49,v50) {"function":"nb_zero"}
-  v52:u64 = const() {"value":1024}
-  v53:u64 = const() {"value":96}
-  v54:u64 = call(v36,v52,v53) {"function":"nb_zero"}
-  v55:u64 = const() {"value":208}
-  v56:u64 = call(v36,v55,v42) {"function":"nb_word"}
-  v57:u64 = const() {"value":2}
-  v58:bool = compare.eq(v56,v57)
-  branch v58 b7(v34,v35,v36) b8(v34,v35,v36)
-block b7(v59:readbuf,v60:mutbuf,v61:mutbuf)
-  v65:u64 = const() {"value":112}
-  v66:u64 = const() {"value":8}
-  v67:u64 = const() {"value":0}
-  v68:u64 = call(v61,v65,v66,v67) {"function":"nb_put"}
-  v69:u64 = const() {"value":7}
-  v70:u64 = const() {"value":16}
-  v71:u64 = call(v61,v70,v66) {"function":"nb_word"}
-  v72:u64 = const() {"value":102}
-  v73:u32 = call(v60,v61,v69,v71,v67,v72) {"function":"nb_state"}
-  v74:u64 = int.cast(v73) {"mode":"wrap"}
-  v75:u32 = int.cast(v74) {"mode":"wrap"}
-  ret(v75)
-block b8(v62:readbuf,v63:mutbuf,v64:mutbuf)
-  v76:u64 = const() {"value":1}
-  v77:u64 = const() {"value":0}
-  v78:u32 = call(v63,v64,v76,v77) {"function":"np_simple"}
-  v79:u64 = int.cast(v78) {"mode":"wrap"}
-  v80:u32 = int.cast(v79) {"mode":"wrap"}
-  ret(v80)
 end
 fn np_command(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
 block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)

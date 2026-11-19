@@ -156,6 +156,7 @@ class Cursor:
     def __init__(self, calls, tid):
         self.calls = sorted((c for c in calls if c['tid'] == tid), key=lambda c: c['start'])
         self.tid = tid; self.index = 0; self.active = {}; self.checks = 0; self.samples = 0; self.bytes = 0
+        self.paid_cpu_samples = []; self.paid_wall_samples = []
 
     def peek(self): return self.calls[self.index] if self.index < len(self.calls) else None
 
@@ -236,6 +237,38 @@ class Cursor:
         require(match is not None and 0 <= int(match[2]) < 1000000000, 'Clock identity/timespec differs')
         return int(match[1]) * 1000000000 + int(match[2])
 
+    def paid_cpu(self):
+        require(not self.active, 'Paid CPU clock retained an authority FD')
+        self.tid_call()
+        call = self.take('clock_gettime')
+        match = re.fullmatch(r'CLOCK_THREAD_CPUTIME_ID, \{tv_sec=(\d+), tv_nsec=(\d+)\}', call['args'])
+        require(match is not None and int(match[2]) < 1000000000, 'Actual same-worker CLOCK3 identity/timespec')
+        value = int(match[1]) * 1000000000 + int(match[2])
+        require(value < 1 << 64 and (not self.paid_cpu_samples or value >= self.paid_cpu_samples[-1]), 'Actual CPU timestamp overflow/rewind')
+        self.paid_cpu_samples.append(value)
+        return value
+
+    def paid_wall(self):
+        value = self.clock()
+        require(not self.paid_wall_samples or value >= self.paid_wall_samples[-1], 'Actual Paid CLOCK1 rewound')
+        self.paid_wall_samples.append(value)
+        return value
+
+    def paid_begin(self):
+        self.tid_call(); self.paid_cpu(); self.paid_wall()
+
+    def paid_checkpoint(self):
+        self.tid_call(); self.paid_cpu(); self.paid_wall()
+
+    def paid_finish(self):
+        self.tid_call(); self.paid_cpu(); self.paid_wall()
+        self.paid_cpu(); self.paid_wall()
+
+    def paid_drop(self):
+        # Work CLOCK1 panic occurs outside both mutexes. Original Drop still
+        # observes the live thread once, then settles the unknown reservation.
+        self.tid_call(); self.paid_cpu(); self.paid_wall(); self.paid_wall()
+
     def output(self, fd, raw):
         offset = 0
         while offset < len(raw):
@@ -275,7 +308,7 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
     require(parts[1] == '[' + parts[0] + ']' and len(parts) == 3, 'Unexpected native executable argv')
     env, end = c_string(parts[2], 1); require(env == b'PATH=' and parts[2][end:] == ']', 'Unexpected native environment')
     mappings = []
-    for size in (229376, 270336, 8192, 57344):
+    for size in (229376, 270336, 8192, 57344, 155648):
         call = p.take('mmap', f'NULL, {size}, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0', value='any')
         require(type(call['value']) is int and call['value'] > 0 and call['value'] % 4096 == 0, 'Failed/private mapping differs')
         mappings.append(call['value'])
@@ -304,6 +337,7 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
     p.take('fcntl', '3, F_GETFL', 1); p.take('fcntl', '4, F_GETFL', 0)
     p.take('mprotect', f'{captured_base:#x}, 57344, PROT_READ')
     started = p.clock(); deadline = started + 4000000000
+    p.tid_call(); p.paid_wall()
     p.take('getuid', '', parent[2]); p.tid_call()
     previous = None
     for index, name in enumerate((b'.', b'sys', b'fs', b'cgroup', b'trnmponpublic.slice')):
@@ -357,6 +391,9 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
     clocks = []; gates = []; consumed_signal_returns = []
     def clock():
         if clock_ordinal == len(clocks) + 1:
+            actual_ordinal = sum(c['name'] == 'clock_gettime' for c in w.calls[:w.index]) + 1
+            mapped_ordinal = 2 * clock_ordinal + (1 if clock_ordinal % 2 else 2)
+            require(actual_ordinal == mapped_ordinal, 'Controlled CLOCK1 moved across a Paid checkpoint')
             require(not w.active, 'Failing CLOCK1 retained an authority FD')
             call = w.take('clock_gettime', value=-1, injected=True)
             require(call['args'] == f'CLOCK_MONOTONIC, {global_base+65536+81920+64:#x}',
@@ -388,15 +425,18 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
             require(value == 1 and data == b'\x01', 'Gate ACK extent/value differs'); break
         if w.peek() and w.peek()['name'] == 'rt_sigreturn': signal_return()
         gates.append((stage, sequence)); return expected_signal is not None
+    w.paid_begin()
     w.host(parent, context_bound); require(clock() < deadline, 'Initial real task deadline already expired')
-    n = header['progress_count']; cancelled = False; failed_host = False; clock_panic = False
+    w.paid_checkpoint()
+    n = header['progress_count']; cancelled = False; expired = False; failed_host = False; clock_panic = False
     require(not closed_fd or n == 1, 'Closed parent fixture moved to another progress boundary')
     for number in range(1, n + 1):
         w.tid_call()
         if gate(3, number): cancelled = True; break
         timestamp = clock()
         if timestamp is None: clock_panic = True; break
-        require(timestamp < deadline, 'Progress clock violates the original 4-second deadline')
+        if timestamp >= deadline:
+            expired = True; break
         signalled = gate(4, number)
         if closed_fd:
             # The diagnostic adapter really closes the freshly opened parent;
@@ -415,16 +455,56 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
         if signalled: cancelled = True; break
         timestamp = clock()
         if timestamp is None: clock_panic = True; break
-        require(timestamp < deadline, 'Post-Host progress clock violates the original deadline')
-    if not cancelled and not failed_host and not clock_panic: w.tid_call()
+        if timestamp >= deadline:
+            expired = True; break
+        w.paid_checkpoint()
+    if not cancelled and not expired and not failed_host and not clock_panic: w.tid_call()
     if not clock_panic: w.host(parent, context_bound)
     final_host_ran = not clock_panic
-    if not cancelled and not failed_host and not clock_panic:
+    if not cancelled and not expired and not failed_host and not clock_panic:
         gate(7, n); final_time = clock()
         if final_time is None: clock_panic = True
-        else: require((final_time < deadline) == (header['domain'] == 0), 'Final resource-before-deadline outcome differs')
+        else:
+            expired = final_time >= deadline
+            require((not expired) == (header['domain'] == 0), 'Final resource-before-deadline outcome differs')
     elif cancelled:
         require(header['domain'] == 2 and header['code'] == expected_signal, 'Actual cancel/stop error priority differs')
+    if expired:
+        require(header['domain'] == 2 and header['code'] == 2, 'Actual deadline expiration differs from native refusal')
+    if clock_panic: w.paid_drop()
+    else: w.paid_finish()
+    paid = decoded['paid']; account = paid['owner']; binding = paid['binding']; epoch = paid['epoch']
+    cpu = w.paid_cpu_samples
+    require(len(cpu) == binding[4] + (2 if clock_panic else 3)
+            and len(p.paid_wall_samples) == 1 and len(w.paid_wall_samples) == binding[4]+3,
+            'Actual complete Paid clock roster')
+    require(paid['global_poison'] == paid['request_poison'] == 0,
+            'Work error outside a mutex claimed poison')
+    if clock_panic:
+        expected_account = [int.from_bytes(b'PCOWN001','little')] + [0] * 63
+        expected_account[19:23] = [1, worker, 2, 1]
+        require(account == expected_account,
+                'Work panic must retain Unknown account output and actual worker identity')
+        require(binding == [0,4,binding[4]+2,2,binding[4],3,0,0,1,1]
+                and paid['meta'] == [0,1,binding[4]+2,4,0,0,0,0],
+                'Work panic did not consume the one private Operation through Drop')
+        require(epoch[1] == 1, 'Work panic did not make the original account unavailable')
+    else:
+        require(account[4] == account[6] == account[8] == account[10] == account[12] == 1,
+                'Known native CPU accounting required by this trace profile')
+        require(account[2:4] == [0,0] and account[7] == 0 and account[14:20] == [0]*6
+                and account[22:] == [0]*42 and account[5] == account[9],
+                'Normal same-worker receipt claims panic, scoped workers or failed settlement')
+        require(binding == [0,3,binding[4]+2,2,binding[4],0,0,0,1,1]
+                and paid['meta'] == [0,0,binding[4]+2,3,0,0,0,0],
+                'Normal private method did not retire exactly once without a panic')
+        require(account[9] == cpu[-1]-cpu[0] and account[11] == cpu[-2]-cpu[0]
+                and account[13] == cpu[-1]-cpu[-2] and account[9] == account[11]+account[13],
+                'Raw CLOCK3 does not equal full/charged/unique residual receipt')
+        require(epoch[1] == 0, 'Normal Work path made the account unavailable')
+    require(epoch[6:9] == [0,0,0]
+            and epoch[4]*1000000000+epoch[5] == w.paid_wall_samples[-1],
+            'Actual settlement watermark or remaining account authority differs')
     w.take('exit', '0', None); require(w.peek() is None and not w.active, 'Extra child calls after final cleanup')
     if clock_panic:
         require(clock_ordinal == len(clocks) and clocks[-1] is None and header['domain'] == 4
@@ -453,8 +533,8 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
     else:
         require(decoded['host_worker_final'] == [0] * 32, 'Panic claimed an unexecuted final Host method')
     require(decoded['host_worker_final'][22] == int(failed_host), 'Actual failed-FD cleanup count differs')
-    product_start = 1280 + n * 40
-    for raw in (stdout[:512], stdout[512:1024], stdout[1024:1280], stdout[1280:product_start], stdout[product_start:]):
+    product_start = 2304 + n * 40
+    for raw in (stdout[:512], stdout[512:1024], stdout[1024:1280], stdout[1280:2304], stdout[2304:product_start], stdout[product_start:]):
         p.output(1, raw)
     terminal = p.take('exit_group', str(0 if header['domain'] == 0 else 64 + header['domain']), None)
     require(p.peek() is None and not p.active, 'Unaccounted main calls or leaked authority FD')
@@ -471,14 +551,18 @@ def audit_trace(text, stdin, stdout, *, expected_signal=None, fault_profile=None
         require(all(c['end'] < line for c in calls if c['tid'] == tid),
                 'Thread executes a syscall after its exit notification')
         notified.add(tid)
-    return {'status': 'PASS', 'schema': 'trnm.hia.work-owner-real-trace.v1', 'syscalls': len(calls),
+    return {'status': 'PASS', 'schema': 'trnm.hia.paid-work-same-worker-real-trace.v1', 'syscalls': len(calls),
         'actual_main_tid': main, 'actual_worker_tid': worker, 'worker_lifetimes': 1, 'actual_shared_join_calls': len(joined),
         'full_fresh_checks': p.checks + w.checks, 'worker_fresh_checks': w.checks,
-        'resource_samples': p.samples, 'actual_clock1_calls': len(clocks) + 1,
+        'resource_samples': p.samples, 'actual_clock1_calls': len(clocks) + 1 + len(p.paid_wall_samples) + len(w.paid_wall_samples),
+        'actual_clock3_calls': len(cpu), 'paid_checkpoints': binding[4],
+        'raw_cpu_samples_ns': cpu, 'full_cpu_known': account[8] == 1, 'full_cpu_ns': account[9], 'charged_ns': account[11], 'unique_residual_ns': account[13],
+        'actual_same_thread_paid_clock_identity': True,
         'actual_host_observer_clocks': 0, 'progress_points': n, 'signals': signal_rows,
         'all_resource_FDs_closed': True, 'closed_parent_fault_executed': failed_host,
         'optional_exit_notifications': len(exits), 'exit_notification_lifetimes_checked': True,
         'private_fault_profile': fault_profile, 'actual_clock_failure_ordinal': clock_ordinal,
         'original_panic_boundary_observed': clock_panic, 'sealed_input_bytes': len(stdin), 'stdout_bytes': len(stdout),
         'stdout_sha256': hashlib.sha256(stdout).hexdigest(), 'all_syscalls_consumed': True,
-        'production_fixed_parent_authority': False, 'whole_Node_or_paid_checkpoint_closed': False}
+        'production_fixed_parent_authority': False, 'whole_Node_or_public_intake_closed': False, 'finite_paid_work_checkpoints_complete': True,
+        'actual_original_4s_deadline_ns': deadline, 'actual_deadline_expired': expired}

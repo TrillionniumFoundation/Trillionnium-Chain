@@ -1,6 +1,6 @@
 """Qualification driver for the actual static native Work/Host owner.
 
-This process supplies only untrusted proof bytes and private fixture files.
+Private Paid/Work observer: this process supplies proof bytes and fixture files.
 Every authority syscall and arithmetic transition executes in the native ELF.
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ import time
 from hia.platform.build import sealed_executable
 from hia.platform.host_resource.native_io import provision, mutate
 
-MAGIC=b'HIAWO001'
+MAGIC=b'HIAPW001'
 FIELDS=('magic','fixture','domain','code','work_code','progress_count',
     'worker_host_calls','pre_checks','post_checks','aggregate_samples',
     'main_tid','worker_tid','generation','joins','alive_clocks','gates',
@@ -35,33 +35,42 @@ def identity(path: Path):
     return {'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
 
 def decode(raw: bytes) -> dict:
-    require(len(raw)>=1280 and raw[:8]==MAGIC,'Complete native owner frame magic/length')
+    require(len(raw)>=2304 and raw[:8]==MAGIC,'Complete Paid/Work frame')
     words=struct.unpack('<64Q',raw[:512]);header=dict(zip(FIELDS,words))
-    require(words[1] in (0,1) and words[2]<=5,'Unknown native owner profile/result')
+    require(words[1] in (0,1) and words[2]<=6,'Unknown Paid/Work result')
     count=words[5];product_bytes=words[44]
-    require(count<=1355 and product_bytes in (0,16384),'Owner output bounded lengths')
-    require(len(raw)==1280+count*40+product_bytes,'Owner output has missing or trailing bytes')
-    require((product_bytes==16384)==(words[2]==0),'Failure emitted a qualified product')
-    progress=[list(struct.unpack_from('<5Q',raw,1280+i*40)) for i in range(count)]
-    require(all(row[4]==i+1 and 64<=row[0]<=69 for i,row in enumerate(progress)),
-            'Progress sequence/kind discontinuity')
+    require(count<=1355 and product_bytes in (0,16384) and words[45]==1024,'Bounded native sections')
+    require(len(raw)==2304+count*40+product_bytes,'Complete exact native output')
+    require((product_bytes==16384)==(words[2]==0),'Failure published a Work product')
+    progress=[list(struct.unpack_from('<5Q',raw,2304+i*40)) for i in range(count)]
+    require(all(r[4]==i+1 and 64<=r[0]<=69 for i,r in enumerate(progress)),'Ordered W1 continuations')
     if words[11]:
-        require(words[10]>0 and words[11]!=words[10] and words[12:14]==(1,1),
-                'Actual worker lifetime/join identity differs')
+        require(words[10]>0 and words[11]!=words[10] and words[12:14]==(1,1),'Actual Work birth and join')
     else:
-        require(words[13]==0 and count==0,'Unborn worker produced progress or join')
+        require(words[13]==0 and count==0,'Unborn Work observations')
     receipts=[list(struct.unpack('<32Q',raw[p:p+256])) for p in (512,768,1024)]
     for receipt in receipts:
         if any(receipt):
-            require(receipt[0]==int.from_bytes(b'HIAKR001','little') and receipt[1]==words[1],
-                    'Unbound native Host/resource receipt')
-            require(receipt[25:27]==[0,0],'Standalone Host observation clocks unexpectedly survived embedding')
-    product=raw[1280+count*40:]
+            require(receipt[0]==int.from_bytes(b'HIAKR001','little') and receipt[1]==words[1],'Bound Host receipts')
+            require(receipt[25:27]==[0,0],'Extra Host observer clocks')
+    account=raw[1280:2304];a=struct.unpack('<128Q',account)
+    require(account[:8]==b'PWPAY001' and a[1]==1024 and a[2:4]==(words[11],words[13]),'Actual Paid/Work owner binding')
+    epoch=list(a[8:28]);owner=list(a[32:96]);binding=list(a[96:106]);meta=list(a[108:116])
+    require(a[4]&0xffffffff==0 and a[6]&0xffffffff==0 and a[4]>>32 in (0,1) and a[6]>>32 in (0,1),'No held shared mutex after join')
+    require(meta[0]==0 and meta[4]==0 and meta[2]==binding[2] and meta[3]==binding[1] and binding[0]==0,'Actual method fully returned')
+    if owner[0]:
+        require(owner[0]==int.from_bytes(b'PCOWN001','little') and owner[1]==0 and owner[20]==words[11] and owner[21]==2,'Native private Paid owner identity')
+        require(binding[3]==2 and binding[8]==a[116]==1 and binding[9]==words[1],'Paid lifetime/proof/profile retired')
+        require(binding[4]<=count+1,'Unexpected independent Paid checkpoint')
+    product=raw[2304+count*40:]
     return {'header':header,'progress':progress,'host_before':receipts[0],
         'host_after':receipts[1],'host_worker_final':receipts[2],
         'product_sha256':hashlib.sha256(product).hexdigest() if product else None,
         'challenge_hex':raw[256:288].hex(),'task_hex':raw[288:320].hex(),
-        'ticket_hex':raw[320:352].hex(),'product_bytes':product_bytes}
+        'ticket_hex':raw[320:352].hex(),'product_bytes':product_bytes,
+        'paid':{'raw_hex':account.hex(),'epoch':epoch,'owner':owner,'binding':binding,'meta':meta,
+        'checkpoint_calls':binding[4],'global_poison':a[4]>>32,'request_poison':a[6]>>32,
+        'remaining_public_intake_and_verified_completion_open':True}}
 
 def run_case(image: bytes, request: bytes, directory: Path, *, fixture=True,
              gate_sequence=0, gate_stage=0, actions=(), signal_number=None,
@@ -148,12 +157,17 @@ def run_case(image: bytes, request: bytes, directory: Path, *, fixture=True,
         row['status']='PHYSICAL_FRAME_PASS_SEMANTIC_EXPECTATIONS_PENDING'
     except BaseException as error:
         row['failure']=repr(error)
-        if process is not None and process.poll() is None:
-            try: os.killpg(process.pid,signal.SIGKILL);outcome='sent'
-            except ProcessLookupError: outcome='already_exited'
-            stdout,stderr=process.communicate(timeout=5)
-            row['cleanup']={'signal':'SIGKILL','result':outcome,'reaped':process.returncode is not None}
         if process is not None:
+            if process.poll() is None:
+                try: os.killpg(process.pid,signal.SIGKILL);outcome='sent'
+                except ProcessLookupError: outcome='already_exited'
+                row['cleanup']={'signal':'SIGKILL','result':outcome}
+            # Even an already exited child still owns buffered stdout/stderr.
+            # Always drain it after a gate/decode failure and retain the original
+            # failure; captured output never turns that failed control into PASS.
+            stdout,stderr=process.communicate(timeout=5)
+            row['capture_after_failure']=True
+            if 'cleanup' in row: row['cleanup']['reaped']=process.returncode is not None
             row['exit_code']=process.returncode
     finally:
         end=time.monotonic_ns();after_cpu=resource.getrusage(resource.RUSAGE_CHILDREN)

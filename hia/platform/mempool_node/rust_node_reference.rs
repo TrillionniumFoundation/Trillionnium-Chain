@@ -175,12 +175,26 @@ fn invoke(index: usize, item: &Value, artifact_root: &Path) {
                     "new" => {
                         drop(retained_staged.take());
                         drop(prefix.take());
-                        let bound = CheckedExecutionParent::bind(
+                        let prior = node.cached_parent(tip).expect("actual Node cache lookup");
+                        assert!(prior.is_some(), "read_active must retain its actual Snapshot");
+                        let checked = node.checked_commitment(&base, record.root, prior.as_ref())
+                            .expect("actual Node checked commitment");
+                        let binding = CheckedExecutionParent::bind(
                             &base,
-                            record.root,
-                            None,
+                            checked.root,
+                            checked.snapshot.as_ref(),
                             CacheLimits::default(),
-                        )?;
+                        );
+                        let bound = match binding {
+                            Ok(bound) => bound,
+                            Err("COMMITMENT_PARENT" | "COMMITMENT_ROOT") => {
+                                node.invalidate_commitment();
+                                CheckedExecutionParent::bind(&base, record.root, None, CacheLimits::default())?
+                            }
+                            Err(error) => return Err(error.into()),
+                        };
+                        drop(checked);
+                        drop(prior);
                         let miner: [u8; 32] = hex::decode(action["miner_hex"].as_str().unwrap())
                             .unwrap()
                             .try_into()

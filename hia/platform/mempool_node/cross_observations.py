@@ -70,18 +70,19 @@ def collect(artifact):
    else:need(n==16,"Node drop extent");parent_rows=None;last_output=None
    seq=struct.unpack_from("<Q",response,24)[0]
    parsed=parse_prefix(response,{4:5,5:2,7:4}[opcode],ctx,seq)
-   if opcode==7:need(parsed["header"][28]==2 and parsed["ready"] is False,"Actual cross scoped drop retirement")
+   if opcode==7:need(parsed["header"][28]==3 and parsed["ready"] is False,"Actual cross scoped drop retains Node Snapshot before retirement")
    need(parsed["outcome"]=="ok","Bound joint public Prefix method failed")
    for key in ("outcome","error","state_hex","root_hex","receipts","metrics","length","ready"):row[key]=parsed[key]
    if opcode==5:last_output=parsed
   elif opcode==10:
    need(n==16 and not pool and not events and response[:8]==b"NPCPARV1" and len(response)==16+struct.unpack_from("<Q",response,8)[0],"Canonical Parent observation")
-   parsed=parse_parent(response[16:]);need(parsed["refs"]==1 and parsed["root_hex"]==actual_parent["root_hex"],"Actual fixed Parent has live Prepared borrow")
+   parsed=parse_parent(response[16:]);need(response[16:24]==b"NPCSNP01" and parsed["refs"]>=2 and parsed["root_hex"]==actual_parent["root_hex"],"Actual fixed Some Parent and Node cache retain original Snapshot")
    parent_rows=parsed["rows"];item["op"]="canonical_parent";row.update(rows=parent_rows,root_hex=parsed["root_hex"])
   elif opcode==9:
    need(n==16 and not pool and not events and response[:8]==b"NPCVIEW1" and len(response)==16+struct.unpack_from("<Q",response,8)[0],"Actual Prepared observation")
    need(parent_rows is not None and last_output is not None,"No actual staged owner")
    value=parse(response[16:],DEFAULT,parent_rows);need(value["root_hex"]==last_output["root_hex"],"Actual Prepared/Output mismatch")
+   need(response[16:24]==b"NPCDATA3" and value["observation"]["method"]=="CheckedApply" and value["snapshot"] is not None,"Actual cross Some branch must perform CheckedApply")
    # Preserve every private field/raw byte, while comparing the same public
    # PreparedCommitment observation as the qualified C Node observer.
    row["prepared_private"]=value

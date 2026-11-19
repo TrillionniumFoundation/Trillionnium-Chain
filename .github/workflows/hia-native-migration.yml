@@ -377,6 +377,8 @@ jobs:
         env:
           TRNM_HIA_TRANSFER_REPORT_DIR: ${{ runner.temp }}/hia-transfer-original
           TRNM_HIA_TRANSCRIPT_REPORT_DIR: ${{ runner.temp }}/hia-transcript-original
+          TRNM_HIA_KECCAK_EVIDENCE_DIR: ${{ runner.temp }}/hia-keccak-native
+          TRNM_HIA_MLDSA_POLY_EVIDENCE_DIR: ${{ runner.temp }}/hia-mldsa-poly-native
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard crypto-types --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -408,6 +410,16 @@ jobs:
         with:
           name: hia-transcript-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/hia-transcript-original/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete native PQ arithmetic observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-pq-arithmetic-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-keccak-native/
+            ${{ runner.temp }}/hia-mldsa-poly-native/
           if-no-files-found: error
           retention-days: 30
   native-components-state-root:
@@ -4170,7 +4182,7 @@ jobs:
           python3 - "$RUNNER_TEMP/hia-work-handshake-original" <<'PY'
           import hashlib, pathlib, sys, tarfile
           source = pathlib.Path('hia/qualification/work-handshake-original-build.tar.xz')
-          if hashlib.sha256(source.read_bytes()).hexdigest() != '137c4a0b3ea6b86ad67916ec0c35df512d63fb19405f9c6e4b83bccac0f33811':
+          if hashlib.sha256(source.read_bytes()).hexdigest() != 'c982fb8a9bd8b3aa856df311c18f41b15467632a36e463d7c1fd6ffb228f9940':
               raise SystemExit('Retained original HIA build archive identity differs')
           target = pathlib.Path(sys.argv[1])
           target.mkdir(mode=0o700)
@@ -4190,10 +4202,10 @@ jobs:
                   path.parent.mkdir(parents=True, exist_ok=True)
                   with path.open('xb') as stream:
                       stream.write(data)
-          if len(seen) != 64:
+          if len(seen) != 76:
               raise SystemExit('Retained original build member roster differs')
           PY
-          python3 -B -m hia.tools.qualify_work_handshake --original-build "$RUNNER_TEMP/hia-work-handshake-original/original-build" --fixed-build "$RUNNER_TEMP/hia-work-owner-native/build" --output "$RUNNER_TEMP/hia-work-handshake" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-native-observations/handshake.log"
+          python3 -B -m hia.tools.qualify_work_handshake --layout work-paid-v2 --original-build "$RUNNER_TEMP/hia-work-handshake-original/original-build" --fixed-build "$RUNNER_TEMP/hia-work-owner-native/build" --output "$RUNNER_TEMP/hia-work-handshake" 2>&1 | tee "$RUNNER_TEMP/hia-work-owner-native-observations/handshake.log"
       - name: Verify all source bytes after native execution
         if: always()
         run: |-
@@ -6263,3 +6275,324 @@ jobs:
           retention-days: 30
     needs:
       - native-node-pool-node
+
+  native-node-commitment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha
+        }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-commitment/observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-commitment/observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-commitment/observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Download the exact current Node build
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-node-pool-node-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-commitment-download
+      - name: Admit every predecessor regular byte and exact lineage
+        run: |
+          set -euo pipefail
+          python3 -B -m hia.tools.qualify_node_pool_ci unpack --kind node --artifact "$RUNNER_TEMP/hia-node-commitment-download/artifact" --output "$RUNNER_TEMP/hia-node-commitment/prior-node" --report "$RUNNER_TEMP/hia-node-commitment/observations/transfer.json" 2>&1 | tee "$RUNNER_TEMP/hia-node-commitment/observations/transfer.log"
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          toolchain=1.95.0-x86_64-unknown-linux-gnu
+          rustup toolchain install "$toolchain" --profile minimal
+          rustc_bin="$(rustup which --toolchain "$toolchain" rustc)"
+          cargo_bin="$(rustup which --toolchain "$toolchain" cargo)"
+          test -x "$rustc_bin"
+          test -x "$cargo_bin"
+          rustc_dir="$(dirname "$rustc_bin")"
+          test "$rustc_dir" = "$(dirname "$cargo_bin")"
+          printf '%s\n' "$rustc_dir" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$toolchain" >> "$GITHUB_ENV"
+          export RUSTUP_TOOLCHAIN="$toolchain"
+          export PATH="$rustc_dir:$PATH"
+          test "$(command -v rustc)" = "$rustc_bin"
+          test "$(command -v cargo)" = "$cargo_bin"
+          rustc -Vv
+          cargo -Vv
+      - name: Run native hash Some CheckedApply and both exact delta boundaries
+        run: |
+          set -euo pipefail
+          build="$RUNNER_TEMP/hia-node-commitment/prior-node/native/build"
+          evidence="$RUNNER_TEMP/hia-node-commitment"
+          python3 -B -m hia.platform.node_commitment.qualify_hash --build "$build" --output "$evidence/hash"
+          python3 -B -m hia.platform.node_commitment.qualify_snapshot --group some --build "$build" --output "$evidence/some"
+          python3 -B -m hia.platform.node_commitment.qualify_snapshot --group checked --build "$build" --output "$evidence/checked"
+          for changes in 65536 65537; do
+            python3 -B -m hia.platform.node_commitment.qualify_delta --build "$build" --changes "$changes" --sha-check "$evidence/hash/report.json" --method-check "$evidence/checked/report.json" --output "$evidence/delta$changes"
+          done
+      - name: Recompile and compare the unchanged original complete methods
+        run: |
+          set -euo pipefail
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml
+          evidence="$RUNNER_TEMP/hia-node-commitment"
+          python3 -B -m hia.platform.node_commitment.rust_oracle --build "$evidence/prior-node/native/build" --some "$evidence/some" --checked "$evidence/checked" --delta65536 "$evidence/delta65536" --delta65537 "$evidence/delta65537" --cargo-target "$RUNNER_TEMP/hia-node-commitment-cargo-target" --output "$evidence/original"
+      - name: Verify complete source after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-commitment/observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-node-commitment/observations/source-after.json"
+      - name: Preserve complete original native bootstrap and failure bytes
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-node-commitment"
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then cp -a -- "$RUNNER_TEMP/hia-bootstrap" "$RUNNER_TEMP/hia-node-commitment/bootstrap"; fi
+          python3 -B scripts/ci/prepare_artifact_upload.py --source "$RUNNER_TEMP/hia-node-commitment" --output "$RUNNER_TEMP/hia-node-commitment-upload"
+      - name: Upload complete commitment observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-node-commitment-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-node-commitment-upload/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+    needs:
+      - native-node-pool-node
+  native-peer-lease-store:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      LC_ALL: C
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha
+        }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout the exact current chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind every current source byte and migration scope
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-peer-lease-store/observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-peer-lease-store/observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/hia-peer-lease-store/observations/source-before.log"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA native compiler identity differs')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Install the explicitly selected original Rust compiler
+        run: |
+          set -euo pipefail
+          toolchain=1.95.0-x86_64-unknown-linux-gnu
+          rustup toolchain install "$toolchain" --profile minimal
+          rustc_bin="$(rustup which --toolchain "$toolchain" rustc)"
+          cargo_bin="$(rustup which --toolchain "$toolchain" cargo)"
+          test -x "$rustc_bin"
+          test -x "$cargo_bin"
+          rustc_dir="$(dirname "$rustc_bin")"
+          test "$rustc_dir" = "$(dirname "$cargo_bin")"
+          printf '%s\n' "$rustc_dir" >> "$GITHUB_PATH"
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$toolchain" >> "$GITHUB_ENV"
+          export RUSTUP_TOOLCHAIN="$toolchain"
+          export PATH="$rustc_dir:$PATH"
+          test "$(command -v rustc)" = "$rustc_bin"
+          test "$(command -v cargo)" = "$cargo_bin"
+          rustc -Vv
+          cargo -Vv
+      - name: Prepare locked original inputs and require actual tracing
+        run: |
+          set -euo pipefail
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml --target x86_64-unknown-linux-gnu
+          strace -V
+          printf 'CARGO_TARGET_DIR=%s/hia-peer-lease-store-cargo-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Run every original and native private journal method
+        run: |
+          set -euo pipefail
+          unset HIA_PEER_STORE_ORIGINAL_BASELINE HIA_PEER_STORE_ORIGINAL_ARCHIVE HIA_PEER_STORE_SOURCE_ARCHIVE
+          python3 -B -m hia.platform.peer_lease_store.qualify --output "$RUNNER_TEMP/hia-peer-lease-store/full" 2>&1 | tee "$RUNNER_TEMP/hia-peer-lease-store/observations/full.log"
+      - name: Reject partial rosters and actual injected test failure
+        run: |
+          set -euo pipefail
+          unset HIA_PEER_STORE_ORIGINAL_BASELINE HIA_PEER_STORE_ORIGINAL_ARCHIVE HIA_PEER_STORE_SOURCE_ARCHIVE
+          set +e
+          python3 -B -m hia.platform.peer_lease_store.qualify --output "$RUNNER_TEMP/hia-peer-lease-store/partial" --only test_01_public_lifecycle_and_exact_disk_bytes 2>&1 | tee "$RUNNER_TEMP/hia-peer-lease-store/observations/partial.log"
+          partial_code=${PIPESTATUS[0]}
+          set -e
+          test "$partial_code" -eq 1
+          set +e
+          python3 -B -m hia.platform.peer_lease_store.qualify --output "$RUNNER_TEMP/hia-peer-lease-store/failure" --only test_01_public_lifecycle_and_exact_disk_bytes --inject-failure 2>&1 | tee "$RUNNER_TEMP/hia-peer-lease-store/observations/failure.log"
+          failure_code=${PIPESTATUS[0]}
+          set -e
+          test "$failure_code" -eq 1
+      - name: Independently read all actual source raw bytes and complete rosters
+        run: |
+          set -euo pipefail
+          python3 - "$RUNNER_TEMP/hia-peer-lease-store/full" "$RUNNER_TEMP/hia-peer-lease-store/partial" "$RUNNER_TEMP/hia-peer-lease-store/failure" <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,sys,unittest
+          sys.path.insert(0,os.environ["HIA_TOOLCHAIN_ROOT"])
+          from hia.platform.peer_lease_store.build import ROOT,identity,source_capture
+          from hia.platform.peer_lease_store.qualify import StoreTests
+          directories=[Path(p) for p in sys.argv[1:]]
+          expected=['__main__.StoreTests.'+x for x in unittest.defaultTestLoader.getTestCaseNames(StoreTests)]
+          current={name:identity(raw) for name,raw in source_capture()[0].items()}
+          for directory,(name,status,count) in zip(directories,[('full','PASS',18),('partial','INCOMPLETE',1),('failure','FAIL',1)],strict=True):
+              report=json.loads((directory/'report.json').read_bytes())
+              if report['status']!=status or report['expected_tests']!=expected or len(expected)!=18:
+                  raise SystemExit('Actual complete peer-store roster/status differs')
+              if len(report['started_tests'])!=count or len(report['completed_tests'])!=count or not report['finalized']:
+                  raise SystemExit('Actual peer-store execution missing')
+              if report['source_inputs']!=current or report['source_after']!=current or report['source_unchanged'] is not True:
+                  raise SystemExit('Complete current peer-store source differs')
+              if report['complete_successful_roster'] is not (name=='full'):
+                  raise SystemExit('Incomplete peer-store run accepted')
+              if name=='full' and (report['started_tests']!=expected or any(x['status']!='PASS' for x in report['completed_tests']) or report['failures']):
+                  raise SystemExit('Actual peer-store methods did not all pass')
+              retained=report['original_retained']
+              if retained['status']!='PASS' or retained['observation_host_is_current_test_host'] is not True or retained['reused_exact_observation'] is not False:
+                  raise SystemExit('Fresh same-host original suite required')
+              for relative,row in report['files'].items():
+                  path=Path(relative)
+                  if path.is_absolute() or '..' in path.parts or path.as_posix()!=relative:
+                      raise SystemExit('Escaping actual evidence path')
+                  path=directory/path
+                  if path.is_symlink() or not path.is_file() or identity(path.read_bytes())!=row:
+                      raise SystemExit('Actual execution evidence bytes differ')
+              for key in ('unix_daemon_implemented','core_authentication_implemented','payload_stores_implemented','whole_package_retired','production_activation'):
+                  if report[key] is not False:
+                      raise SystemExit('Unqualified peer-store authority')
+          print(json.dumps({'status':'PASS','full_tests':18,'partial_exit':1,'injected_failure_exit':1,'complete_source_and_raw_bytes_checked':True}))
+          PY
+      - name: Verify complete source after success or failure
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-peer-lease-store/observations"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-peer-lease-store/observations/source-after.json"
+      - name: Archive every actual regular byte and special-object metadata
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hia-peer-lease-store" "$RUNNER_TEMP/hia-peer-lease-store-upload"
+          if test -d "$RUNNER_TEMP/hia-bootstrap"; then cp -a -- "$RUNNER_TEMP/hia-bootstrap" "$RUNNER_TEMP/hia-peer-lease-store/bootstrap"; fi
+          python3 - "$RUNNER_TEMP/hia-peer-lease-store" "$RUNNER_TEMP/hia-peer-lease-store-upload" <<'PY'
+          from pathlib import Path
+          import hashlib,json,sys,tarfile
+          from hia.tools.qualify_node_pool_ci import object_inventory
+          root,out=map(Path,sys.argv[1:])
+          rows=object_inventory(root)
+          archive=out/'complete-evidence.tar.gz'
+          with tarfile.open(archive,'w:gz',compresslevel=1) as stream:
+              for name,row in rows.items():
+                  if row['type']=='file':stream.add(root/name,arcname=name,recursive=False)
+          if object_inventory(root)!=rows:raise SystemExit('Actual evidence changed during packing')
+          seen=set()
+          with tarfile.open(archive,'r:gz') as stream:
+              for member in stream:
+                  if not member.isfile() or member.name not in rows or member.name in seen:raise SystemExit('Unexpected archive member')
+                  seen.add(member.name)
+                  raw=stream.extractfile(member).read()
+                  if rows[member.name]['bytes']!=len(raw) or rows[member.name]['sha256']!=hashlib.sha256(raw).hexdigest():raise SystemExit('Actual archive bytes differ')
+          if seen!={name for name,row in rows.items() if row['type']=='file'}:raise SystemExit('Missing actual raw evidence')
+          h=hashlib.sha256()
+          with archive.open('rb') as stream:
+              for block in iter(lambda:stream.read(1048576),b''):h.update(block)
+          (out/'manifest.json').write_text(json.dumps({'schema':'trnm.hia.peer-store-raw-archive.v1','entries':rows,'archive':{'bytes':archive.stat().st_size,'sha256':h.hexdigest()},'special_objects_are_metadata_only':True,'runtime_status_is_not_inferred_from_packaging':True},indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Upload complete peer-store success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-peer-lease-store-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt
+            }}
+          path: ${{ runner.temp }}/hia-peer-lease-store-upload/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30

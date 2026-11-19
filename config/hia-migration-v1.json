@@ -611,6 +611,26 @@
         "hia/tests/test_transfer.py",
         "hia/tests/rust_transfer_reference.rs"
       ]
+    },
+    {
+      "id": "crypto/keccak-stream",
+      "node_integration_complete": false,
+      "scope": "Native Keccak-f[1600], all four SHA3 digests and streaming SHAKE128/256 with bounded byte-aligned calls and explicit private-context lifecycle; not complete PQ signatures, CAVP validation or constant-time qualification.",
+      "source": "hia/src/crypto/keccak_stream.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_keccak.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-poly",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 polynomial arithmetic: canonical residues, forward/inverse NTT, pointwise/add/subtract and negacyclic multiplication; no complete ML-DSA signer/verifier, key ownership or constant-time qualification.",
+      "source": "hia/src/crypto/ml_dsa_poly.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa_poly.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -815,7 +835,9 @@
         "crypto/ed25519_verify",
         "crypto/sha256_stream",
         "crypto/ed25519-sign",
-        "crypto/sha512-stream"
+        "crypto/sha512-stream",
+        "crypto/keccak-stream",
+        "crypto/ml-dsa-poly"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
       "module": "M01",
@@ -1220,7 +1242,7 @@
       "id": "platform/work-owner",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Same-worker W1 relation and immutable acquired Host/resource owner, with single-observation ready/go handshake decisions, actual clock fault refusal, real join and original resource limits. Native histories, primitive controls, original comparisons and deterministic handshake regression are separately source-bound. Earlier Node request deadline, shared Paid checkpoint/account, production fixed-parent positive, durable Node/batch integration and original service acceptance remain OPEN.",
+      "scope": "Native Linux private Work owner with complete original work/clock/paid fault histories, one-observation shared-word handshake, controlled real scheduling and complete private readback. Fixed-parent production authority, live Node/Paid admission, durable COMMIT and the original 4s/16 service acceptance remain OPEN.",
       "sources": [
         "hia/platform/work_owner/closed_fd_fixture_emitter.hepta",
         "hia/platform/work_owner/host_fixture.hepta",
@@ -1229,7 +1251,9 @@
         "hia/platform/work_owner/owner_fixture.hepta",
         "hia/platform/work_owner/owner_policy.hepta",
         "hia/platform/work_owner/sha_fixture.hepta",
-        "hia/platform/work_owner/work_policy.hepta"
+        "hia/platform/work_owner/work_policy.hepta",
+        "hia/platform/work_owner/paid_fixture.hepta",
+        "hia/platform/work_owner/paid_method.hepta"
       ],
       "tests": [
         "hia/platform/work_owner/build.py",
@@ -1289,17 +1313,28 @@
       "id": "platform/mempool-node",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Production PNX1, SHA-256 and strict Ed25519 admission, actual held-disk Settings/State/View/None Parent, one private PendingPreview lifecycle with exact-wire signature facts, nonce and Ready consumption, full M06 Prefix/Prepared and same-Node cross-method observation. The trusted isolated genesis disk format is a finite source owner. Some/CheckedApply, continuous Host/Paid permits, durable local pool, successor admission, SQLite Node.db COMMIT, and 4s/16-request service qualification remain OPEN.",
+      "scope": "Production PNX1, SHA-256 and strict Ed25519 admission, actual held-disk Settings/State/View and one private PendingPreview lifecycle. Native Some/CheckedApply snapshots and incremental tree ownership preserve the original 65536/65537 delta boundary with exact original methods. Durable Node.db COMMIT, reorganization, live cancellation/ACK, generic SQL ownership and service-budget acceptance remain OPEN.",
       "sources": [
         "hia/platform/mempool_node/node_methods.hepta",
         "hia/platform/mempool_node/owner.hepta",
+        "hia/platform/mempool_node/snapshot_capacity.hepta",
+        "hia/platform/node_commitment/checked.hepta",
+        "hia/platform/node_commitment/checked_entry.hepta",
+        "hia/platform/node_commitment/hash_qualification_entry.hepta",
         "hia/platform/node_commitment/owner.hepta",
+        "hia/platform/node_commitment/sha256.hepta",
+        "hia/platform/node_commitment/sha256_fork.hepta",
+        "hia/platform/node_commitment/snapshot.hepta",
+        "hia/platform/node_commitment/snapshot_entry.hepta",
+        "hia/platform/node_commitment/tree.hepta",
+        "hia/platform/node_commitment/tree_entry.hepta",
         "hia/platform/node_owner/context.hepta",
         "hia/platform/node_owner/disk_bridge.hepta",
         "hia/platform/node_owner/json_value.hepta",
         "hia/platform/node_owner/linux_emitter.hepta",
         "hia/platform/node_owner/prefix_bridge.hepta",
         "hia/platform/node_owner/producer.hepta",
+        "hia/platform/node_owner/snapshot.hepta",
         "hia/src/crypto/ed25519_verify_joint.hepta"
       ],
       "tests": [
@@ -1308,7 +1343,11 @@
         "hia/platform/mempool_node/test_integrity.py",
         "hia/platform/mempool_node/evidence.py",
         "hia/tools/qualify_node_pool_ci.py",
-        "hia/tools/test_node_pool_ci.py"
+        "hia/tools/test_node_pool_ci.py",
+        "hia/platform/node_commitment/qualify_hash.py",
+        "hia/platform/node_commitment/qualify_snapshot.py",
+        "hia/platform/node_commitment/qualify_delta.py",
+        "hia/platform/node_commitment/rust_oracle.py"
       ]
     },
     {
@@ -1321,6 +1360,19 @@
       ],
       "tests": [
         "hia/tests/test_governance.py"
+      ]
+    },
+    {
+      "id": "platform/peer-lease-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux private journal/head owner with actual FD/flock/fsync, acquisition/renew/revalidate/release/drop, full replay and monotonic observation time. Complete finite original comparison, crash cuts and fault controls; Unix authority, Core authentication, payload custody, cross-target support and live Node integration remain OPEN.",
+      "sources": [
+        "hia/platform/peer_lease_store/owner_policy.hepta",
+        "hia/platform/peer_lease_store/linux_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_lease_store/qualify.py"
       ]
     }
   ],

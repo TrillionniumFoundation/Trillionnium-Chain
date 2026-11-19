@@ -1,0 +1,1343 @@
+{
+  "baseline_180_service_raw_readback": {
+    "all_four_raw_archives_rehashed_on_local_and_Mac": true,
+    "gh_direct_archive_download_timed_out": true,
+    "observations": [
+      {
+        "all_members_rehashed": true,
+        "archive": {
+          "bytes": 9975052,
+          "sha256": "4cb46d94e194787e7c360146e6c7ab51ad8155ea540d9324194b87545b946ddd"
+        },
+        "artifact_id": 14500089948,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "members": 161,
+        "original_named_tests_passed": true,
+        "phases": [
+          {
+            "confirmed": 1,
+            "independent_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "mode": "attack-free-baseline",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": 1811797494,
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 0
+          },
+          {
+            "confirmed": 0,
+            "independent_replay": {
+              "accepted_in_original_window": 6,
+              "attempts": 6,
+              "failed_or_late": 0
+            },
+            "mode": "from-zero-pressure",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": null,
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 16
+          }
+        ],
+        "raw_objects_retained_in_operator_copy": true,
+        "source_after": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        },
+        "source_before": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        }
+      },
+      {
+        "all_members_rehashed": true,
+        "archive": {
+          "bytes": 10116028,
+          "sha256": "383a4d53470e42e2f41c686b27f561f7259296c3cfbc9969e213a978f5ec45ab"
+        },
+        "artifact_id": 14501340303,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "members": 161,
+        "original_named_tests_passed": true,
+        "phases": [
+          {
+            "confirmed": 1,
+            "independent_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "mode": "attack-free-baseline",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": 3214078118,
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 0
+          },
+          {
+            "confirmed": 0,
+            "independent_replay": {
+              "accepted_in_original_window": 1,
+              "attempts": 2,
+              "failed_or_late": 1
+            },
+            "mode": "from-zero-pressure",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": null,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000,
+            "workers": 16
+          }
+        ],
+        "raw_objects_retained_in_operator_copy": true,
+        "source_after": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        },
+        "source_before": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        }
+      },
+      {
+        "all_members_rehashed": true,
+        "archive": {
+          "bytes": 7310136,
+          "sha256": "0c865ced9b6d7cd539a4f808afe870c7653fdd0cb9d2dabc11ba81d5332afbb3"
+        },
+        "artifact_id": 14503670816,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "members": 109,
+        "original_named_tests_passed": true,
+        "phases": [
+          {
+            "confirmed": 1,
+            "independent_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "mode": "attack-free-baseline",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": 3197675740,
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 0
+          },
+          {
+            "confirmed": 0,
+            "independent_replay": {
+              "accepted_in_original_window": 1,
+              "attempts": 2,
+              "failed_or_late": 1
+            },
+            "mode": "from-zero-pressure",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": null,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000,
+            "workers": 16
+          }
+        ],
+        "raw_objects_retained_in_operator_copy": true,
+        "source_after": {
+          "commit": "7372dcef55cf984d071c46307b205355dee68c29",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "7372dcef55cf984d071c46307b205355dee68c29",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "7372dcef55cf984d071c46307b205355dee68c29",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        },
+        "source_before": {
+          "commit": "7372dcef55cf984d071c46307b205355dee68c29",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "7372dcef55cf984d071c46307b205355dee68c29",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "7372dcef55cf984d071c46307b205355dee68c29",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        }
+      },
+      {
+        "all_members_rehashed": true,
+        "archive": {
+          "bytes": 7192892,
+          "sha256": "19b455804e47473353832db90e94e65417364ed1fd27c97782d28c496452dce8"
+        },
+        "artifact_id": 14504175664,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "format_passed": true,
+        "members": 109,
+        "original_named_tests_passed": true,
+        "phases": [
+          {
+            "confirmed": 1,
+            "independent_replay": {
+              "accepted_in_original_window": 7,
+              "attempts": 7,
+              "failed_or_late": 0
+            },
+            "mode": "attack-free-baseline",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": 3305055181,
+            "verification_errors": [],
+            "window_ns": 4000000000,
+            "workers": 0
+          },
+          {
+            "confirmed": 0,
+            "independent_replay": {
+              "accepted_in_original_window": 1,
+              "attempts": 2,
+              "failed_or_late": 1
+            },
+            "mode": "from-zero-pressure",
+            "required": 1,
+            "submit_ack": {
+              "attempts": 7,
+              "failed_or_late": 0,
+              "successful_in_original_window": 7
+            },
+            "success_latency_ns": null,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "window_ns": 4000000000,
+            "workers": 16
+          }
+        ],
+        "raw_objects_retained_in_operator_copy": true,
+        "source_after": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        },
+        "source_before": {
+          "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+          "tracked_source_identity": {
+            "base": null,
+            "candidate": "180c642b4ad723118038b31639afc0d922f474b7",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+            "tested_tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3358657875,
+            "tracked_entries": 41069,
+            "tracked_worktree_verified": true
+          },
+          "tree": "8dfb0cad23a556efbbef04061ba8563d2dfe1787"
+        }
+      }
+    ],
+    "run": 44457335906,
+    "status": "ARCHIVE_BYTES_VERIFIED_BUSINESS_GATE_FAILED",
+    "successful_download": "GitHub connector download; exact GitHub ZIP digest verified before all-member readback"
+  },
+  "ci": {
+    "bootstrap_control_groups": 4,
+    "bootstrap_control_invocations": 180,
+    "committed_head_runtime_qualification": "REQUIRED",
+    "independent_bootstraps": 45,
+    "integration_controls": 43,
+    "job_minutes": 20,
+    "jobs": 57,
+    "latest_baseline_180_job_observation": {
+      "counts": {
+        "failure": 4,
+        "in_progress": 1,
+        "success": 15
+      },
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 135349316369,
+          "name": "repository-truth",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 135349316445,
+          "name": "protocol-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316506,
+          "name": "fuzz-smoke",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316509,
+          "name": "rust-baseline shard (runtime)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316566,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 135349316602,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316605,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316621,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 135349316622,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316676,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316686,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316701,
+          "name": "external-evidence-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 135349316715,
+          "name": "prospective Rust shard (runtime)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "failure",
+          "id": 135349316719,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316778,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316784,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316798,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135349316887,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135353132417,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 135392227342,
+          "name": "rust-baseline",
+          "status": "completed"
+        }
+      ],
+      "run": 44457335906
+    },
+    "new_inline_python_blocks_parsed": 4,
+    "workflow_bash_blocks_syntax_checked": 464
+  },
+  "current_component_source": {
+    "canonical_encoding": "UTF-8 JSON sorted keys, compact separators; path -> SHA256",
+    "canonical_sha256": "36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5",
+    "discovery": {
+      "all": 551,
+      "crypto-types": 95,
+      "general": 449,
+      "state-root": 7
+    },
+    "discovery_is_execution": false,
+    "paths": 1244
+  },
+  "current_source_builds": {
+    "archive": {
+      "archive_regular_members_including_manifest": 2212,
+      "availability": "COMPLETE_LOCAL_AND_MAC_COPIES_VERIFIED",
+      "bytes": 12753528,
+      "content_logical_bytes_excluding_manifest": 106367063,
+      "content_regular_members": 2211,
+      "embedded_in_repository": false,
+      "every_regular_member_rehashed_on_both_hosts": true,
+      "manifest": {
+        "bytes": 497582,
+        "sha256": "2f8f87defc69a8a517fce08594e974a58156e327dea81f822a8ec054e4af886b"
+      },
+      "name": "current-build-evidence.tar.xz",
+      "sha256": "5425e61c7bc654c538ba2bbd1c7d3778cc0e6b500ad0f4aea4f716cb8553a21a"
+    },
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "new_runtime_execution_claim": false,
+    "node": {
+      "executable": {
+        "bytes": 9400416,
+        "sha256": "7a38ebb80bcc11729ec16c2c46457016c25f56e14f34f2792aad83bc902cc4f2"
+      },
+      "failure": null,
+      "schema": "trnm.mempool-node-public-build-admission.v1",
+      "source_set_sha256": "bda6f655e5483aa4008183fa147ab726c3ac960ad38e22657241c61f1f3ffd78",
+      "status": "PASS"
+    },
+    "node_executable_byte_identical_to_prior_frozen_build": true,
+    "node_source_count": 223,
+    "node_source_map_sha256": "bda6f655e5483aa4008183fa147ab726c3ac960ad38e22657241c61f1f3ffd78",
+    "peer": {
+      "core": {
+        "emitter": {
+          "functions": 3,
+          "max_block_parameters": 4,
+          "ops": 420
+        },
+        "policy": {
+          "functions": 61,
+          "max_block_parameters": 11,
+          "ops": 4209
+        }
+      },
+      "executable": {
+        "bytes": 317578,
+        "dynamic_linker": false,
+        "entry": 4194480,
+        "format": "ELF64LE",
+        "instruction_semantics_verified_by_this_check": false,
+        "interpreter": null,
+        "load_flags": "RX",
+        "machine": "x86_64",
+        "sha256": "5a3e9eee03132ba121913b412f2aef88906c19410fdbabe5deb6ba5bbc20c807",
+        "stack_flags": "RW",
+        "type": "ET_EXEC"
+      },
+      "status": "PASS"
+    },
+    "peer_executable_byte_identical_to_prior_frozen_build": true,
+    "status": "PASS_ACTUAL_BUILDS_AND_TWO_HOST_ARCHIVE_READBACK"
+  },
+  "executor_replacement": {
+    "archival_gap_is_not_runtime_failure": true,
+    "inaccessible_local_only_archives": [
+      {
+        "bytes": 170390444,
+        "name": "some-local-evidence-v2.tar.xz",
+        "scope": "Core/direct/smoke and source/raw stores; old complete local copy is no longer accessible.",
+        "sha256": "89b62a340329656ad344726b1452f45ca73103929a2741209a9f06cfc9cb6bce"
+      },
+      {
+        "bytes": 17694524,
+        "name": "sha-general-candidate-v1.tar.xz",
+        "scope": "Failed SHA consolidation source/binary/runtime archive; no confirmed surviving full copy.",
+        "sha256": "d4b01f0f37ca61c8de715717aceab7103346d6fccdd5705dbf05315984d2c6de"
+      },
+      {
+        "bytes": 31007836,
+        "name": "pq-foundations-development.tar.xz",
+        "scope": "Old complete95 raw archive; only a transfer prefix survives, not a complete published file.",
+        "sha256": "610c33b8ed3e2118c4fe64e3931cec7ed3d4f26280ac639c4029e30005f0dfda"
+      }
+    ],
+    "old_observed_results_are_not_new_execution": true,
+    "published_source_restored_exactly": true,
+    "reconstructed_text_is_not_original_bytes": true,
+    "remote_complete_copies_rehashed": true
+  },
+  "full530": {
+    "archive": {
+      "availability": "COMPLETE_OPERATOR_COPIES_VERIFIED",
+      "bytes": 121895484,
+      "embedded_in_repository": false,
+      "every_content_object_rehashed": true,
+      "logical_bytes": 2510271203,
+      "logical_files": 29983,
+      "name": "full530-content-store.tar.xz",
+      "self_contained": true,
+      "sha256": "4b7e818e8336ff72c0a16a0f98abb7b96338b8269f799db6d6ff4006cc5bcb1c",
+      "unique_bytes": 2379096936,
+      "unique_objects": 28543
+    },
+    "elapsed_seconds": 2249.15045015,
+    "errors": 0,
+    "failures": 0,
+    "head": "c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4",
+    "original_compiler": "Rust 1.95.0 x86_64-unknown-linux-gnu",
+    "preparation": {
+      "fresh_commands": 14,
+      "retained_original_tests": 17,
+      "seconds": 43.174
+    },
+    "skipped": 0,
+    "source_count": 1200,
+    "source_export": {
+      "complete_tracked_checkout_guard": false,
+      "explicit_unmaterialized_historical_paths": 34977,
+      "materialized_tracked_files": 6061
+    },
+    "source_map_sha256": "2966d230187890c82b76ce8001c838a1476034a5c1c6e3378a53318f27d942d4",
+    "source_unchanged": true,
+    "status": "PASS",
+    "tests": 530
+  },
+  "hosted_predecessors": [
+    {
+      "commit": "c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4",
+      "each_hia_jobs": 55,
+      "each_hia_success": 55,
+      "pull_request_run": 44455036414,
+      "push_run": 44455017015,
+      "required_baseline_conclusion": "cancelled",
+      "required_baseline_run": 44455036175
+    },
+    {
+      "commit": "180c642b4ad723118038b31639afc0d922f474b7",
+      "each_hia_jobs": 55,
+      "each_hia_success": 55,
+      "pull_request_run": 44457335753,
+      "push_run": 44457316952,
+      "required_baseline_at_last_observation": {
+        "failed_jobs": [
+          135349316445,
+          135349316602,
+          135349316622,
+          135349316719
+        ],
+        "failure": 4,
+        "in_progress": 4,
+        "success": 11,
+        "terminal_workflow_conclusion_not_available": true
+      },
+      "required_baseline_run": 44457335906
+    }
+  ],
+  "inventory": {
+    "hia_sources": 160,
+    "kernels": 56,
+    "native_foundations": 23,
+    "not_ported": 9,
+    "original_packages": 26,
+    "partially_ported": 17,
+    "retired": 0,
+    "whole_project_open_gates": 9
+  },
+  "node_commitment": {
+    "archive_availability": "COMPLETE_OPERATOR_COPIES_VERIFIED_FOR_THE_TWO_LISTED_ARCHIVES_ONLY",
+    "available_archives": [
+      {
+        "bytes": 13845440,
+        "logical_bytes": 283101104,
+        "logical_files": 1285,
+        "name": "some-native-evidence.tar.xz",
+        "sha256": "d1e4beab55d638ef392137a0cf7a910ebc86b0f31ac996c9582ef1c014c95e11"
+      },
+      {
+        "bytes": 151664932,
+        "logical_bytes": 1561140914,
+        "logical_files": 9019,
+        "name": "some-original-evidence.tar.xz",
+        "sha256": "8d40dfc8f3305d32a74c5dd50e02c09cc56c20656595fdfdf9c81e8225436162"
+      }
+    ],
+    "budgets": {
+      "changed": false,
+      "child_seconds": 240,
+      "cleanup_seconds": 3
+    },
+    "build_controls": 379,
+    "checked": {
+      "controls": 14,
+      "full_roots": 43,
+      "methods": 94,
+      "native_calls": 692
+    },
+    "core_archive_not_implied_by_available_archives": true,
+    "current_delta_paths": [
+      "hia/components.json",
+      "hia/platform/node_commitment/README.md"
+    ],
+    "current_graph_inherits_historical_pass": false,
+    "current_source_map_sha256": "bda6f655e5483aa4008183fa147ab726c3ac960ad38e22657241c61f1f3ffd78",
+    "delta_65536": {
+      "child_seconds": 201.143078866,
+      "full_roots": 0,
+      "native_calls": 35
+    },
+    "delta_65537": {
+      "child_seconds": 178.247252088,
+      "full_roots": 1,
+      "native_calls": 35,
+      "reason": "DeltaBudget"
+    },
+    "durable_Node_db_commit": false,
+    "hash_cases": 78,
+    "historical_status": "OBSERVED_PASS_WITH_EXPLICIT_RAW_AVAILABILITY_GAPS",
+    "live_same_request_Paid_Host": false,
+    "mandatory_traces_passed": true,
+    "native_executable": {
+      "bytes": 9400416,
+      "sha256": "7a38ebb80bcc11729ec16c2c46457016c25f56e14f34f2792aad83bc902cc4f2"
+    },
+    "native_partitions": 5,
+    "original_core": {
+      "checked_methods": 94,
+      "complete_raw_copy_currently_confirmed": false,
+      "full_delta_observations": 2,
+      "preexisting_ignored": 6,
+      "retained_tests": 36,
+      "seconds": 140.447350115,
+      "some_methods": 82
+    },
+    "original_m05": {
+      "cross_cases": 24,
+      "histories": 11,
+      "methods": 122,
+      "retained_tests": 6,
+      "validation_cases": 58
+    },
+    "original_node": {
+      "methods": 96,
+      "retained_tests": 3,
+      "settings": 4
+    },
+    "physical_deadline_controls": 30,
+    "qualified_source_map_sha256": "0a934b54091926ae1f4b1864175f37f526df6e848a2fd301e0aa1444f8bed521",
+    "reorg_outbox_ACK": false,
+    "sha_deduplication": {
+      "both_reaped": true,
+      "both_sigkill_exit": -9,
+      "candidate_integrated": false,
+      "candidate_native_executable": {
+        "bytes": 9203926,
+        "sha256": "39851c600b45c9a87e9569b89cda1b2dafe0d7e7e9eb800d69ee79a372768770"
+      },
+      "candidate_source_count": 222,
+      "candidate_source_map_sha256": "15cd81edfb2640eeb10d9dc30a5eb8b2f044fdfecd63e4525cdb249570ebf073",
+      "checked_methods_passed": 94,
+      "cleanup_milliseconds": [
+        16.45,
+        16.398
+      ],
+      "current_crypto_core_separate": true,
+      "current_local_compression_paths": 2,
+      "delta_65536_timeout_seconds": 240.023218107,
+      "delta_65537_timeout_seconds": 240.0226907,
+      "full_raw_copy_currently_confirmed": false,
+      "hash_tests_passed": 78,
+      "host_load_recorded": false
+    },
+    "some": {
+      "controls": 13,
+      "methods": 82,
+      "native_calls": 619
+    },
+    "source_count": 223
+  },
+  "old_stack_can_be_removed": false,
+  "peer_store": {
+    "actual": {
+      "qualification-failure": {
+        "comparisons": 16,
+        "complete_successful_roster": false,
+        "completed": 1,
+        "expected": 18,
+        "finalized": true,
+        "source_unchanged": true,
+        "status": "FAIL"
+      },
+      "qualification-full": {
+        "comparisons": 618,
+        "complete_successful_roster": true,
+        "completed": 18,
+        "expected": 18,
+        "finalized": true,
+        "source_unchanged": true,
+        "status": "PASS"
+      },
+      "qualification-partial": {
+        "comparisons": 16,
+        "complete_successful_roster": false,
+        "completed": 1,
+        "expected": 18,
+        "finalized": true,
+        "source_unchanged": true,
+        "status": "INCOMPLETE"
+      }
+    },
+    "archive": {
+      "availability": "COMPLETE_OPERATOR_COPIES_VERIFIED",
+      "bytes": 130452028,
+      "embedded_in_repository": false,
+      "every_regular_member_rehashed": true,
+      "logical_bytes": 2585285126,
+      "logical_files": 17000,
+      "mode": 384,
+      "name": "peer-store-current.tar.xz",
+      "self_contained": true,
+      "sha256": "fb3ed403d5bee4160f6eb5a9599dad84e04213cd89bcc657032b65fe3fac2c8a",
+      "special_metadata_objects": 8,
+      "unique_bytes": 1211619791,
+      "unique_objects": 2823,
+      "view": {
+        "bytes": 3957417,
+        "mode": 384,
+        "sha256": "d85902e8efde0f569fcbab7cbd8f5f50edf2b2715708c26101458e84f5a65dc4"
+      }
+    },
+    "complete_original_crate": {
+      "compiler": "Rust 1.95.0 x86_64-unknown-linux-gnu",
+      "elapsed_ns": 9668660677,
+      "internal_child_tests_not_added_twice": 2,
+      "reused_observation": false,
+      "same_host": true,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 2952,
+        "sha256": "b71612ad2565d255549043ab36fd5891e4a45c812c37be2b9b6bf9197e044ea8"
+      },
+      "stdout": {
+        "bytes": 47571,
+        "sha256": "108977f11b9d882641d6212a22e89934606e48882748481e69300b272c90b1e6"
+      },
+      "tests": 121
+    },
+    "core": {
+      "emitter": {
+        "functions": 3,
+        "max_block_parameters": 4,
+        "ops": 420
+      },
+      "policy": {
+        "functions": 61,
+        "max_block_parameters": 11,
+        "ops": 4209
+      }
+    },
+    "expected_tests": [
+      "__main__.StoreTests.test_01_public_lifecycle_and_exact_disk_bytes",
+      "__main__.StoreTests.test_02_validation_precedence_and_observed_clock",
+      "__main__.StoreTests.test_03_multiple_scopes_generations_and_original_driven_requests",
+      "__main__.StoreTests.test_04_replay_hash_semantics_and_anchor_relations",
+      "__main__.StoreTests.test_05_parent_paths_namespaces_and_private_files",
+      "__main__.StoreTests.test_06_failed_head_publication_preserves_real_poison_and_state",
+      "__main__.StoreTests.test_07_cross_process_flock_and_release",
+      "__main__.StoreTests.test_08_actual_rlimit_partial_write_and_recovery",
+      "__main__.StoreTests.test_09_actual_sigkill_at_native_physical_boundaries",
+      "__main__.StoreTests.test_10_original_retained_and_complete_source",
+      "__main__.StoreTests.test_11_reporter_refuses_false_success",
+      "__main__.StoreTests.test_12_collision_resolution_keeps_full_scope_and_session_keys",
+      "__main__.StoreTests.test_13_original_journal_extent_cap_without_reduced_profile",
+      "__main__.StoreTests.test_14_canonical_alias_and_raw_posix_path_profile",
+      "__main__.StoreTests.test_15_kernel_fsync_eio_poison_and_cold_recovery",
+      "__main__.StoreTests.test_16_head_failure_syscalls_keep_committed_memory_and_poison",
+      "__main__.StoreTests.test_17_actual_syscall_order_covers_durable_publication",
+      "__main__.StoreTests.test_18_interrupted_syscalls_follow_original_retry_contract"
+    ],
+    "independent_ci_reader": {
+      "all_current_source_and_raw_checked": true,
+      "complete_component_presence_support": true,
+      "first_missing_toolchain_and_second_missing_registry_input_failures_retained": true,
+      "full_roster": 18,
+      "injected_failure_exit": 1,
+      "partial_exit": 1,
+      "status": "PASS"
+    },
+    "limits": {
+      "compiler_functions": 128,
+      "compiler_operations": 8192,
+      "journal_bytes": 268435456
+    },
+    "native_executable": {
+      "bytes": 317578,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "5a3e9eee03132ba121913b412f2aef88906c19410fdbabe5deb6ba5bbc20c807",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "report": {
+      "bytes": 1886494,
+      "sha256": "ba826ad6b5434a7274d63fcef4691716724c2afeb6b4d4b5c405d5cbddeeee77"
+    },
+    "scope": {
+      "core_authentication": false,
+      "payload_custody": false,
+      "production_activation": false,
+      "unix_daemon": false,
+      "whole_package_retired": false
+    },
+    "source_base": "180c642b4ad723118038b31639afc0d922f474b7",
+    "source_count": 1734,
+    "source_map_sha256": "79af034d1a29b22dea17ca9bf320979a2cb471ca4b896c9f3e960a9ff3034e8f",
+    "source_scope": "Exact current captured development overlay; exported source with fresh unborn Git metadata, not a full tracked-checkout CI guard",
+    "status": "PASS"
+  },
+  "pq_requalification": {
+    "archive": {
+      "availability": "COMPLETE_OPERATOR_COPIES_VERIFIED",
+      "bytes": 38816692,
+      "embedded_in_repository": false,
+      "every_collected_byte_present": true,
+      "every_content_object_rehashed_on_Desktop_and_Mac": true,
+      "external_content_store_dependencies": [],
+      "logical_files": 1366,
+      "manifest": {
+        "bytes": 756786,
+        "sha256": "eaf8f805ccfa01f212f79481b4d6ab31056f7a1c82fecc56bf01435ac5437a12"
+      },
+      "name": "pq-fresh95-content-store.tar.xz",
+      "self_contained": true,
+      "sha256": "5474a53fb7806a70872aa682d1cd9cd74411b3efb9d27043885daec3fca5884b",
+      "unique_bytes": 310544202,
+      "unique_objects": 1326
+    },
+    "behavior_after_docstring_identical_to_recovered_original": true,
+    "complete_ML_DSA": false,
+    "constant_time_qualified": false,
+    "execution": {
+      "builds": 17,
+      "errors": 0,
+      "failures": 0,
+      "head": "180c642b4ad723118038b31639afc0d922f474b7",
+      "old_stack_can_be_removed": false,
+      "prior_scratch_95_raw_status": "UNAVAILABLE",
+      "process_exit_code": 0,
+      "production_activation": false,
+      "schema": "trnm.hia.pq-restored-crypto-types-qualification.v1",
+      "shared_calls": 21210,
+      "skips": 0,
+      "source_count": 1244,
+      "source_set_sha256": "36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5",
+      "source_unchanged": true,
+      "status": "PASS",
+      "tests": 95,
+      "this_run_replaces_no_old_observation": true,
+      "wall_seconds": 515.7603517060052,
+      "whole_chain_native": false
+    },
+    "expected_tests": 95,
+    "keccak_observations": {
+      "artifact_sha256": "86507ef533c654d7be74b12092b845fac86253944f15dd845e535300ec364bbe",
+      "backend": "selfhost",
+      "claims": {
+        "cavp_validation": false,
+        "constant_time_qualified": false,
+        "fips_validation": false,
+        "identity_qualified": false,
+        "ml_dsa_complete": false,
+        "original_retired": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "fixture_sha256": "cbaf383ab66719229c7ec6890a7aa7502a535e8c0f81b8d8741b8d6a75e5cace",
+      "official_byte_vectors": 3442,
+      "raw_pointer_calls": 1242,
+      "schema": "trnm.hia.keccak-native-observation.v1",
+      "shared_runner_attempts": 7065,
+      "shared_runner_calls": 7065,
+      "source_sha256": "c385ce2f0625fcf5be69150c8bea2c67639720fae259b4a29b563287c8a904ea",
+      "source_unchanged": true,
+      "test_sha256": "15a60f6995a762d70a63de79a52e0676db39da03e0d6c6426fb5fda43ab9180a"
+    },
+    "official_selected_byte_vectors": 3442,
+    "old_comment_only_variant_unavailable_sha256": "9624e33d1afba4a3e3babd78559ea346a486385bc02d0447716aff5fe3b8eb89",
+    "polynomial_observations": {
+      "artifact_sha256": "ea6b53815885c8156834b1901b1747ef85239b4af369e5dc3e305c76433674a6",
+      "backend": "selfhost",
+      "claims": {
+        "cavp_validation": false,
+        "constant_time_qualified": false,
+        "fips_validation": false,
+        "identity_qualified": false,
+        "ml_dsa_complete": false,
+        "original_retired": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "raw_pointer_calls": 61,
+      "schema": "trnm.hia.ml-dsa-polynomial-native-observation.v1",
+      "shared_runner_attempts": 3342,
+      "shared_runner_calls": 3342,
+      "source_sha256": "95997b9573cd8b23c78358796531bb2fd7512d0e6e8f4c7123c9966573c5b3e2",
+      "source_unchanged": true,
+      "test_sha256": "b7d5be38aa25da8836c6227e1e205d773f6e2fcbc5ba03d5a500e91c609082cd"
+    },
+    "process": {
+      "cleanup": null,
+      "command": [
+        "python3",
+        "-B",
+        "hia/tools/qualify.py",
+        "--require-rust-oracle",
+        "--shard",
+        "crypto-types",
+        "--output",
+        "<fresh-private-output>/qualification.json"
+      ],
+      "elapsed_ns": 516752427552,
+      "exit_code": 0,
+      "stderr": {
+        "bytes": 15710,
+        "sha256": "f7a44677f87a05d6dec26302965fdbd9db7ecf3efc8e0a424fe6bcefd452634c"
+      },
+      "stdin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4778,
+        "sha256": "e41bd5f92944fce3205b4eebce341d37698ddf0bd297142ef510443d1d220f20"
+      },
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    "recovered_poly_test_sha256": "b7d5be38aa25da8836c6227e1e205d773f6e2fcbc5ba03d5a500e91c609082cd",
+    "retained_native_artifacts": "New Keccak and polynomial actual shared objects and direct runner outputs are complete. Other qualifier builds retain their normal source-bound receipts and stdout; already removed temporary native ELF files are not claimed as archive members.",
+    "reused_original_references": "Five exact original reference executables and types rlib from the actual full530 run; source and binary identities checked before and after this run. No fresh Cargo build is claimed for reused references.",
+    "source_map": "36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5",
+    "state": "PASS_ACTUAL_NEW_RUN_AND_FULL_ARCHIVE_READBACK"
+  },
+  "production_activation": false,
+  "published_base": "180c642b4ad723118038b31639afc0d922f474b7",
+  "schema": "trnm.hia.continuation-development.v1",
+  "status": "SOURCE_SPECIFIC_DEVELOPMENT_ONLY",
+  "whole_chain_native": false,
+  "work_paid": {
+    "actual_nice": 0,
+    "archive": {
+      "availability": "COMPLETE_OPERATOR_COPIES_VERIFIED",
+      "bytes": 266129640,
+      "embedded_in_repository": false,
+      "manifest": {
+        "bytes": 5909958,
+        "sha256": "5f66e95e1b3be7f5c7fca03cf549ecbbbd56904d64f5b7980542d5808f9763c9"
+      },
+      "name": "work-paid-complete-evidence.tar.xz",
+      "sha256": "bdb60c31eaf8df30bbedc3e86af4c7f94cd2c3866186bc5df6709dfe408b48d7"
+    },
+    "ci_original_stage_margin_requires_new_head_execution": true,
+    "current_runtime_map_sha256": "4001b1ecd560c36e7e10cbba697f9dce33eebe672ad19dcc5622b71d25ee7369",
+    "current_runtime_source_count": 141,
+    "failures_retained": [
+      {
+        "actual_deadline_expired": true,
+        "injections": 0,
+        "kind": "actual-first-complete-run-clock-EIO-2198",
+        "matching_bytes_targeted_nice0_followup_passed": true,
+        "observed_progress": 1090,
+        "production_budgets_changed": false,
+        "requested_ordinal": 4398,
+        "requested_progress": 1099
+      },
+      {
+        "kind": "missing-deleted-optional-Cargo-cache-orchestration",
+        "native_completed": true,
+        "original_started": false,
+        "resolution": "Fresh target with the exact admitted predecessor native evidence"
+      },
+      {
+        "kind": "support-packaging-v1-v2-schema-errors",
+        "runtime_failure_claim": false
+      }
+    ],
+    "full_same_request_Node_Paid_authority": false,
+    "handshake": {
+      "current_layout": "work-paid-v2",
+      "negative_fixture": {
+        "all_original_build_members_reopened_and_hashed": true,
+        "bytes": 379784,
+        "exact_member_bytes_preserved": true,
+        "missing_former_local_archive_sha256": "145b7071b6c98e77178660de857305009236dbce538df33b9d58fbe9528050b5",
+        "new_compressed_identity": true,
+        "path": "hia/qualification/work-handshake-original-build.tar.xz",
+        "regular_members": 76,
+        "sha256": "c982fb8a9bd8b3aa856df311c18f41b15467632a36e463d7c1fd6ffb228f9940"
+      },
+      "new_layout_cases": 24,
+      "old_layout_cases": 24
+    },
+    "independent_readback_seconds": 341.590471,
+    "native": {
+      "actual_syscall_traces": 3,
+      "histories": 61,
+      "primitive_calls": 9489,
+      "primitives": 175,
+      "progress_points": 27843,
+      "seconds": 243.183396,
+      "trace_calls": [
+        49853,
+        49805,
+        406
+      ]
+    },
+    "native_paid": {
+      "faults": 15,
+      "positive": 1,
+      "reader_controls": 27
+    },
+    "original": {
+      "clock_faults": 18,
+      "clock_positives": 2,
+      "fresh_cargo_seconds": 325.848503,
+      "histories": 57,
+      "paid_faults": 15,
+      "paid_positives": 2,
+      "progress_points": 27841,
+      "retained_tests": 44,
+      "seconds": 1113.410679
+    },
+    "original_scope": "Frozen c98 development overlay. Later plan/config changes do not inherit this original source identity.",
+    "original_source_count": 4368,
+    "owned_files": {
+      "hia/platform/paid_cpu/owned_ptrace.py": {
+        "bytes": 18979,
+        "sha256": "d5ab9bb5e7ca5a47dcf4952df942a928e7e60e59908aef1e489096224139871a"
+      },
+      "hia/platform/work_owner/README.md": {
+        "bytes": 17647,
+        "sha256": "d9ed2c0e333ef6ea4173358edc38440af1a1856236f5881f0f6ed03428531c89"
+      },
+      "hia/platform/work_owner/abi.json": {
+        "bytes": 3480,
+        "sha256": "f2df39adfca4ed8a8fb45034ee98154f88f9d7497f982a0a2ffe022269646a3d"
+      },
+      "hia/platform/work_owner/build.py": {
+        "bytes": 14539,
+        "sha256": "93b28ded5bd6465ea8596e7307ddfc6b9162b0fc9287cdb6690e9909489cb284"
+      },
+      "hia/platform/work_owner/bundle.py": {
+        "bytes": 26374,
+        "sha256": "93be24ae22e1e76eb853cffa8244e74b4cf78ddccc2b7a3f09c7199c69aa4f66"
+      },
+      "hia/platform/work_owner/clock_comparison.py": {
+        "bytes": 7216,
+        "sha256": "3697b3f43b3accfcd937eeed3d591c6f35efcee6fc6ed2ee7ca799b0c6e275a6"
+      },
+      "hia/platform/work_owner/clock_evidence.py": {
+        "bytes": 74992,
+        "sha256": "8d9b4370150a711f40c9379c655811def1a68042c7d27d2e82f8d7114a013b12"
+      },
+      "hia/platform/work_owner/clock_trace.py": {
+        "bytes": 22983,
+        "sha256": "a46e359e29baab0b66632d220dbd62d06daac435554c30de74fad89294b1ae49"
+      },
+      "hia/platform/work_owner/closed_fd_fixture_emitter.hepta": {
+        "bytes": 119269,
+        "sha256": "d3122acb69049ac4e7ee804b4fc4adfdb551a1511593a0c9b1058ea9b59f2c44"
+      },
+      "hia/platform/work_owner/faults.py": {
+        "bytes": 4732,
+        "sha256": "0d1e6fcb2bedcade144aaf0d30bc49afcd8d06f3acd94e532c35235d858e89b3"
+      },
+      "hia/platform/work_owner/linux_emitter.hepta": {
+        "bytes": 117893,
+        "sha256": "6ed0b16408ea157b2c299882e4b1373f7d26c5709a6bb0d9811796a71a7683a0"
+      },
+      "hia/platform/work_owner/native_io.py": {
+        "bytes": 10545,
+        "sha256": "d3dd694458743696946ef39e071860eb23851194fc2fa8dca58f088f0debdee4"
+      },
+      "hia/platform/work_owner/owner_fixture.hepta": {
+        "bytes": 307,
+        "sha256": "b3b0e178e485e4b72c2a9b104359033c6f0b0f94c3f9136294a58372d3412870"
+      },
+      "hia/platform/work_owner/owner_policy.hepta": {
+        "bytes": 56264,
+        "sha256": "2b0757508ebad1371bca1da39544281adb7b5f3173f6976180156cff89e4c2ac"
+      },
+      "hia/platform/work_owner/paid_fault_evidence.py": {
+        "bytes": 57105,
+        "sha256": "365c894e32ea94b8e211f610b59c343fbeec4e23b0fc3b1b048667e653fb76db"
+      },
+      "hia/platform/work_owner/paid_faults.py": {
+        "bytes": 12862,
+        "sha256": "e2c50bd4292141a94d74565813f71969146f19099e6dc6ddff98eb61923f5658"
+      },
+      "hia/platform/work_owner/paid_fixture.hepta": {
+        "bytes": 305,
+        "sha256": "d6bbc1f53940575cd361d18ecc3797d2946a13b27476f8dcd557f6e3fae85b50"
+      },
+      "hia/platform/work_owner/paid_method.hepta": {
+        "bytes": 34096,
+        "sha256": "4a5228b4eca152454dd7966fa43e8dcd65144d4b61a537de84c3188e9a02691f"
+      },
+      "hia/platform/work_owner/primitive_evidence.py": {
+        "bytes": 36430,
+        "sha256": "19bf7bf6f5265d8b11bdabd45eb1b3dda8cdc029efac65dbda014315b63f0067"
+      },
+      "hia/platform/work_owner/primitive_qualification.py": {
+        "bytes": 10757,
+        "sha256": "d53bae8aeb270b11b91d20e5dc14016f044bbfffa2cf785dff489a2892b5836e"
+      },
+      "hia/platform/work_owner/qualify.py": {
+        "bytes": 7330,
+        "sha256": "a555ba878f9b31614167a5e6a9587431ba2484eaf7d31aaabf7c0ffbb422274c"
+      },
+      "hia/platform/work_owner/qualify_production.py": {
+        "bytes": 33406,
+        "sha256": "7dd66b23af384399de72833f92c4a5c99d96a8bd39dfb305ae0ed03a385a27cb"
+      },
+      "hia/platform/work_owner/rust_bridge.rs": {
+        "bytes": 772,
+        "sha256": "188ef2988965a45123450c215a4143b07bf15681b4b7c3d0607d4417c4d04f1c"
+      },
+      "hia/platform/work_owner/rust_clock_reference.rs": {
+        "bytes": 11135,
+        "sha256": "5c391239294677ba74db8a90b2f1254a27e6edc800441da8ff130b2e88bcfb4f"
+      },
+      "hia/platform/work_owner/rust_oracle.py": {
+        "bytes": 27950,
+        "sha256": "4ad26b9f18914817fc551cd27ed464bdad404b1cff19be1c018743ed26b8b5b8"
+      },
+      "hia/platform/work_owner/rust_paid_reference.rs": {
+        "bytes": 2366,
+        "sha256": "47f2071e7d1c8e9f82bcf1dbac9501884fecd47901b4498ac1281e3788efdc02"
+      },
+      "hia/platform/work_owner/rust_reference.rs": {
+        "bytes": 17353,
+        "sha256": "03ca13b363eecf660dee95d2c90dbcce927f73852a70d2013e71eb04e4974e2d"
+      },
+      "hia/platform/work_owner/test_clock_evidence.py": {
+        "bytes": 51964,
+        "sha256": "77797c9ab7f6ff39d2fdd064e651aa89d256a4605ab708ffd72c761a16c8a659"
+      },
+      "hia/platform/work_owner/test_integrity.py": {
+        "bytes": 20687,
+        "sha256": "2dfae69a0de4c50387693a8eb017956ed5ff798c2a039213e9f9f5f2638a8c9e"
+      },
+      "hia/platform/work_owner/test_paid_faults.py": {
+        "bytes": 14167,
+        "sha256": "8051fc62205a986e46d0e7dc9cf433fbbcca0f20bed7b2c9e0b27af74cab6dc9"
+      },
+      "hia/platform/work_owner/test_production.py": {
+        "bytes": 27918,
+        "sha256": "a0fa187bda77103f6a422fade24cedc03acf397d81a37d7a3403943f2bc0bcf3"
+      },
+      "hia/platform/work_owner/trace_audit.py": {
+        "bytes": 38590,
+        "sha256": "2d67d223a8886ab01f6001166cafae494e88b0e05cc4afa1dd74eb3d8ce0397d"
+      },
+      "hia/platform/work_owner/trace_controls.py": {
+        "bytes": 12719,
+        "sha256": "d10b37fc150c445f655783bbf35db39594f94fe2d1ad5995ea24fe86ecec61c4"
+      },
+      "hia/tests/test_work_owner_ci.py": {
+        "bytes": 29960,
+        "sha256": "8e9c30cb2c00529957916dc03fec3b839d4522f506ebba5fcd93a40f0bad0b34"
+      },
+      "hia/tools/qualify_work_handshake.py": {
+        "bytes": 34207,
+        "sha256": "ca235359cf622801bf4687ef144f3ba5aee5a994cbbd1aa2cd94adcdf858dc95"
+      },
+      "hia/tools/qualify_work_owner_ci.py": {
+        "bytes": 65661,
+        "sha256": "a3a74ef42e69e41d7d8d7cb3fd8d20e7622c88b51ed3757485213bc3f2aecade"
+      },
+      "hia/tools/work_owner_clock_ci.py": {
+        "bytes": 23363,
+        "sha256": "b8613357b0ec2dbb0e28a4c8c7fb687a32dfdff75539ba93b91338f1949739a1"
+      }
+    },
+    "per_stage_cpu_not_measured": true,
+    "production_fixed_parent_positive": false,
+    "reader_source_map_sha256": "f3782b8d0a014d0c7aa101df2c473c5c1217c8cc58dd913969e272bb40dd9333",
+    "reader_sources": 7,
+    "review_seconds": 396.487766,
+    "service_budget_qualified": false,
+    "source_base": "c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4",
+    "status": "PRIVATE_DEVELOPMENT_READBACK_PASS",
+    "support_archive": {
+      "availability": "COMPLETE_OPERATOR_COPIES_VERIFIED",
+      "bytes": 15056948,
+      "closed_with_complete_archive": true,
+      "imports_from_complete_archive": 19652,
+      "manifest": {
+        "bytes": 16053988,
+        "sha256": "6b7789fdb4f1bfc737d5f5f32bb0149297a1316f9b55fad3d393d783537eaad1"
+      },
+      "name": "work-paid-integration-support.tar.xz",
+      "new_objects": 692,
+      "self_contained": false,
+      "sha256": "cc5c371419683aa8a4ed2184f4cb86e6335b495b9bfc71f1c98e35836672c76d"
+    }
+  }
+}

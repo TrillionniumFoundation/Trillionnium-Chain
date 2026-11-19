@@ -15,6 +15,9 @@ mod clock_fault_observation {
         host_checks: u64,
         work_code: u64,
         ordinary_finish_returned: bool,
+        paid_checkpoints: u64,
+        paid: Option<Value>,
+        live: Option<crate::ingress::public_v3::hia_work_owner_bridge::PaidLive>,
     }
 
     fn role(tid: u32, kind: u64) {
@@ -51,6 +54,7 @@ mod clock_fault_observation {
         // The same four-second Instant is created before acquire and initial
         // sampling, exactly as in the original ordinary-method observer.
         let deadline = Instant::now() + Duration::from_secs(4);
+        let paid_domain = PaidDomain::new();
         let cancel = AtomicBool::new(false);
         let stop = AtomicBool::new(false);
         let owner = FixtureOwner::acquire(temp.path()).unwrap();
@@ -68,15 +72,20 @@ mod clock_fault_observation {
             let input = &input;
             let stop = &stop;
             let cancel = &cancel;
+            let paid_domain = &paid_domain;
             let child = scope.spawn(move || {
                 retained.worker_tid = actual_tid();
                 assert_ne!(main_tid, retained.worker_tid);
                 role(retained.worker_tid, 3);
+                let operation = paid_domain.begin()?;
+                retained.live = Some(operation.live());
                 let native = (|| -> crate::Result<pon_work::VerifiedWork> {
                     checked(owner, retained)?;
                     crate::ingress::public_v3::hia_work_owner_bridge::alive(
                         deadline, stop, cancel,
                     )?;
+                    retained.paid_checkpoints += 1;
+                    operation.checkpoint()?;
                     let checked_work = pon_work::verify_with_progress(
                         challenge,
                         task,
@@ -91,7 +100,9 @@ mod clock_fault_observation {
                             checked(owner, retained)?;
                             crate::ingress::public_v3::hia_work_owner_bridge::alive(
                                 deadline, stop, cancel,
-                            )
+                            )?;
+                            retained.paid_checkpoints += 1;
+                            operation.checkpoint()
                         },
                     );
                     match checked_work {
@@ -108,6 +119,7 @@ mod clock_fault_observation {
                     deadline,
                     || checked(owner, retained),
                 );
+                retained.paid = Some(operation.finish());
                 retained.ordinary_finish_returned = true;
                 result
             });
@@ -183,7 +195,7 @@ mod clock_fault_observation {
             }
         };
         json!({
-            "schema": "trnm.hia.work-owner-original-clock-observation.v1",
+            "schema": "trnm.hia.work-owner-original-clock-observation.v2",
             "name": case["name"],
             "input_sha256": hex::encode(Sha256::digest(&input)),
             "main_tid": main_tid,
@@ -205,6 +217,11 @@ mod clock_fault_observation {
             "returned_code": returned_code,
             "work_code": observed.work_code,
             "ordinary_finish_returned": observed.ordinary_finish_returned,
+            "paid": observed.paid,
+            "paid_checkpoints": observed.paid_checkpoints,
+            "paid_live": observed.live.map(|live| live.snapshot()),
+            "paid_global": paid_domain.snapshot(),
+            "actual_original_finite_paid_work_checkpoints": true,
             "actual_original_W1": true,
             "actual_original_Host_primitives": true,
             "actual_original_task_alive_and_final_resource": true,

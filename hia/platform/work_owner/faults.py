@@ -8,6 +8,12 @@ from .trace_audit import audit_trace
 
 BOUNDARIES = (1, 2, 258, 386, 897, 898, 1098, 1099)
 
+def native_clock_ordinal(alive_ordinal):
+    need(type(alive_ordinal) is int and 1 <= alive_ordinal <= 2200,
+         'Unreviewed logical Work clock ordinal')
+    # Every completed Paid checkpoint adds its actual CLOCK3 and CLOCK1.
+    return 2 * alive_ordinal + (1 if alive_ordinal % 2 else 2)
+
 def profiles():
     rows = []
     for sequence in BOUNDARIES:
@@ -20,6 +26,8 @@ def profiles():
                  "progress": 1099, "worker_host_calls": 1101, "boundary": "final-success-deadline"})
     rows.append({"name": "clock-EINVAL-2", "errno": "EINVAL", "ordinal": 2,
                  "progress": 1, "worker_host_calls": 1, "boundary": "before-fresh-host"})
+    for row in rows:
+        row["clock_syscall_ordinal"] = native_clock_ordinal(row["ordinal"])
     need(len(rows) == 18 and len({r["name"] for r in rows}) == 18, "Actual clock fault roster differs")
     return rows
 
@@ -28,7 +36,7 @@ def trace_argv(path, *, error=None, ordinal=None):
     need(tool is not None, "Actual strace is mandatory for Work owner trace qualification")
     args = [str(Path(tool).resolve(strict=True)), "-f", "-qq", "-v", "-xx", "-s", "65536"]
     if error is not None:
-        need(error in ("EIO", "EINVAL") and type(ordinal) is int and 2 <= ordinal <= 2200,
+        need(error in ("EIO", "EINVAL") and type(ordinal) is int and 2 <= ordinal <= 4402,
              "Unreviewed private clock-fault profile")
         args += ["-e", "inject=clock_gettime:error=" + error + ":when=" + str(ordinal)]
     return [*args, "-o", str(path)]
@@ -45,7 +53,7 @@ def run_clock_faults(image, baseline, output):
             directory = output / profile["name"]
             row = run_case(image, bytes.fromhex(baseline["request_hex"]), directory,
                            trace_argv=trace_argv(directory / "syscalls.raw",
-                                                 error=profile["errno"], ordinal=profile["ordinal"]),
+                                                 error=profile["errno"], ordinal=profile["clock_syscall_ordinal"]),
                            timeout=30)
             need(row["status"] == "PHYSICAL_FRAME_PASS_SEMANTIC_EXPECTATIONS_PENDING",
                  "Actual controlled native execution did not yield its complete terminal frame")

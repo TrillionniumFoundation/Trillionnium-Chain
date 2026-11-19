@@ -10,7 +10,7 @@ import mmap
 from pathlib import Path
 import struct
 from .build import digest, identity, need, write_json
-from .primitive_evidence import Recorder, validate as validate_primitive_bytes
+from .primitive_evidence import Recorder, owner_identity_initial, validate as validate_primitive_bytes
 
 class Buffer:
     def __init__(self, size, raw=None):
@@ -147,9 +147,10 @@ def run(build_dir, cases, output):
             event, command, state = Buffer(128), Buffer(4096), Buffer(65536)
             for offset0, value0 in ((16, 1), (24, 1), (32, 1)): event.word(offset0, value0)
             need(modules["owner"].call(event, command, state) == 0
-                 and struct.unpack_from("<Q", state.body())[0] == 101
-                 and struct.unpack_from("<Q", command.body())[0] == 3, "Private live-owner initial transition differs")
-            event.word(112, 101); event.word(offset, value)
+                 and (event.body(), command.body(), state.body()) == owner_identity_initial(),
+                 "Private live-owner first Paid issue complete bytes differ")
+            # Keep the current phase valid so it cannot mask a foreign identity.
+            event.word(112, 90); event.word(offset, value)
             before = (command.body(), state.body())
             need(modules["owner"].call(event, command, state) == 88
                  and (command.body(), state.body()) == before, "Owner continuation identity/phase substitution accepted")

@@ -52,6 +52,20 @@ LOOPS = {
                   'old': '41837c242801741f41837c2428000f85af040000',
                   'new': '418b44242883f801741d85c00f85b10400009090'},
 }
+PAID_LOOPS = {
+    'parent-ready': {'field': 36, 'read': 0x4012c2, 'publish': 0x40131b,
+                     'main_break': 0x4012c2, 'worker_break': 0x40131b,
+                     'old': '41837c242401741f41837c2424000f8525060000',
+                     'new': '418b44242483f801741d85c00f85270600009090'},
+    'worker-go': {'field': 40, 'read': 0x40132e, 'publish': 0x4013d1,
+                  'main_break': 0x4013d1, 'worker_break': 0x40132e,
+                  'old': '41837c242801741f41837c2428000f85b9050000',
+                  'new': '418b44242883f801741d85c00f85bb0500009090'},
+}
+LAYOUTS = {
+    'work-owner-v1': {'loops': LOOPS, 'closed_fd_shift': 40},
+    'work-paid-v2': {'loops': PAID_LOOPS, 'closed_fd_shift': 50},
+}
 
 
 def need(ok, message):
@@ -413,19 +427,23 @@ def finish(trace, loop, waiter, publisher, version, invalid):
     return {'handshake_waits': waiting_calls, 'joins': joins, 'fatal_syscalls': fatal}
 
 
-def run_case(image, version, profile, loop_name, invalid, expected, directory):
+def run_case(image, version, profile, loop_name, invalid, expected, directory,
+             *, layout='work-owner-v1'):
     need(not directory.exists(), 'Fresh native case output required')
     directory.mkdir(mode=0o700); provision(directory)
     payload = struct.pack('<8Q', int.from_bytes(b'WOFIX001', 'little'), *([0] * 7))
     payload += bytes.fromhex(expected['request_hex'])
     (directory / 'stdin.raw').write_bytes(payload)
     row = {'schema': 'trnm.hia.work-handshake-case.v1', 'status': 'FAIL',
-           'version': version, 'profile': profile, 'loop': loop_name, 'invalid_word': invalid,
+           'version': version, 'profile': profile, 'layout': layout,
+           'loop': loop_name, 'invalid_word': invalid,
            'image': binding(image), 'stdin': binding(payload), 'production_authority': False,
            'instruction_patching': False, 'syscall_or_clock_substitution': False}
     trace = None
     try:
-        loop = dict(LOOPS[loop_name]); shift = 40 if profile == 'closed-fd' else 0
+        spec = LAYOUTS[layout]
+        loop = dict(spec['loops'][loop_name])
+        shift = spec['closed_fd_shift'] if profile == 'closed-fd' else 0
         for key in ('read', 'publish', 'main_break', 'worker_break'):
             loop[key] += shift
         trace = Trace(image, payload, directory)
@@ -495,7 +513,7 @@ def run_case(image, version, profile, loop_name, invalid, expected, directory):
     return row
 
 
-def build_inputs(directory, version):
+def build_inputs(directory, version, *, layout='work-owner-v1'):
     report = json_file(directory / 'build.json')
     need(report['schema'] == 'trnm.hia.work-owner-build.v1' and report['status'] == 'PASS',
          'Actual HIA build evidence required')
@@ -524,8 +542,9 @@ def build_inputs(directory, version):
         need(binding(code) == report['composed_sources'][emitter]
              and code == read_file(directory / ('compile-' + emitter) / 'stdin.raw'),
              'Emitter HIA source is not bound to actual compilation')
-        shift = 40 if profile == 'closed-fd' else 0
-        for loop in LOOPS.values():
+        spec = LAYOUTS[layout]
+        shift = spec['closed_fd_shift'] if profile == 'closed-fd' else 0
+        for loop in spec['loops'].values():
             start = loop['read'] + shift - BASE
             need(image[start:start + 20] == bytes.fromhex(loop['new' if version == 'fixed' else 'old']),
                  'Handshake instruction profile is not exact old/fixed source')
@@ -533,19 +552,23 @@ def build_inputs(directory, version):
     return report, result
 
 
-def qualify(original, fixed, output):
+def qualify(original, fixed, output, *, layout='work-owner-v1'):
     need(__debug__, 'Qualification refuses optimized Python')
     need(platform.system() == 'Linux' and platform.machine() == 'x86_64' and ctypes.sizeof(Regs) == 216,
          'Actual Linux x86_64 ptrace ABI required')
+    need(layout in LAYOUTS, 'Explicit reviewed native handshake layout required')
+    spec = LAYOUTS[layout]
+    loops = spec['loops']
     output = output.absolute()
     need(output.resolve() == output and not output.exists() and ROOT not in output.parents,
          'Fresh canonical output outside repository required')
     output.mkdir(parents=True, mode=0o700)
     expected_names = [f'{version}-{profile}-{loop}-{mode}' for profile in ('fixture', 'closed-fd')
-                      for loop in LOOPS for mode in ('race', 'invalid-2', 'invalid-4294967295')
+                      for loop in loops for mode in ('race', 'invalid-2', 'invalid-4294967295')
                       for version in ('original', 'fixed')]
     report = {'schema': 'trnm.hia.work-handshake-qualification.v1', 'status': 'INCOMPLETE',
-              'finalized': False, 'expected_cases': expected_names, 'started_cases': [],
+              'finalized': False, 'layout': layout,
+              'expected_cases': expected_names, 'started_cases': [],
               'completed_cases': [], 'cases': [], 'actual_original_rust': False,
               'production_fixed_parent_authority': False, 'whole_Node_or_paid_checkpoint_closed': False,
               'four_second_deadline_changed': False, 'ptrace_instruction_patching': False}
@@ -554,16 +577,16 @@ def qualify(original, fixed, output):
     try:
         before = {name: binding(read_file(ROOT / name)) for name in IMPORTS}
         report['qualification_sources'] = before
-        old_report, old = build_inputs(original, 'original')
-        new_report, new = build_inputs(fixed, 'fixed')
+        old_report, old = build_inputs(original, 'original', layout=layout)
+        new_report, new = build_inputs(fixed, 'fixed', layout=layout)
         report['builds'] = {'original': binding(read_file(original / 'build.json')),
                             'fixed': binding(read_file(fixed / 'build.json'))}
         report['build_source_inputs'] = {'original': old_report['source_inputs'], 'fixed': new_report['source_inputs']}
         for name in IMPORTS[1:]:
             need(new_report['source_inputs'][name] == before[name], 'Loaded harness dependency differs from actual build')
         for profile in old:
-            shift = 40 if profile == 'closed-fd' else 0
-            allowed = {loop['read'] + shift - BASE + i for loop in LOOPS.values() for i in range(20)}
+            shift = spec['closed_fd_shift'] if profile == 'closed-fd' else 0
+            allowed = {loop['read'] + shift - BASE + i for loop in loops.values() for i in range(20)}
             need(len(old[profile]) == len(new[profile]), 'Fix changed native section layout')
             actual = {i for i, (a, b) in enumerate(zip(old[profile], new[profile], strict=True)) if a != b}
             need(actual and actual <= allowed, 'Actual native build changed instructions outside the two reviewed loops')
@@ -576,13 +599,14 @@ def qualify(original, fixed, output):
         for profile in ('fixture', 'closed-fd'):
             expected = base_case if profile == 'fixture' else {**base_case, 'domain': 3, 'code': 4,
                        'product_hex': None, 'progress': base_case['progress'][:1]}
-            for loop in LOOPS:
+            for loop in loops:
                 for invalid in (None, 2, 0xffffffff):
                     mode = 'race' if invalid is None else 'invalid-' + str(invalid)
                     for version, images in (('original', old), ('fixed', new)):
                         name = f'{version}-{profile}-{loop}-{mode}'
                         report['started_cases'].append(name); write_json(output / 'report.json', report)
-                        result = run_case(images[profile], version, profile, loop, invalid, expected, output / name)
+                        result = run_case(images[profile], version, profile, loop, invalid, expected,
+                                          output / name, layout=layout)
                         report['cases'].append({'name': name, 'status': result['status'],
                                                 'report': binding(read_file(output / name / 'case.json'))})
                         report['completed_cases'].append(name); write_json(output / 'report.json', report)
@@ -611,8 +635,9 @@ def main():
     parser.add_argument('--original-build', type=Path, required=True)
     parser.add_argument('--fixed-build', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--layout', choices=tuple(LAYOUTS), default='work-owner-v1')
     args = parser.parse_args()
-    report = qualify(args.original_build, args.fixed_build, args.output)
+    report = qualify(args.original_build, args.fixed_build, args.output, layout=args.layout)
     print(json.dumps({'status': report['status'], 'completed': len(report['completed_cases']),
                       'expected': len(report['expected_cases']), 'failure': report.get('failure')}), flush=True)
     raise SystemExit(0 if report['status'] == 'PASS' else 1)

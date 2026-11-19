@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **54 kernel units, 22 native foundations and 143 HIA source
+inventory contains **56 kernel units, 23 native foundations and 160 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (17 partially ported and 9 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -10,6 +10,26 @@ The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELO
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
+
+## Current continuation
+
+The [current execution and availability record](qualification/continuation-development.json)
+binds private Some/CheckedApply snapshots, the persistent PeerLeaseStore owner,
+the combined Work/Paid owner and the restored PQ arithmetic foundations.
+All original package ownership and whole-project acceptance obligations remain
+explicit. This record distinguishes source recovery, actual development tests,
+hosted results and historical raw-evidence gaps.
+
+[Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) supplies native streaming hashing and
+XOF lifecycle with 3,442 selected official byte vectors.
+[ML-DSA polynomial arithmetic](src/crypto/ML_DSA_POLY.md) supplies native NTT,
+inverse, pointwise and negacyclic operations. These are prerequisites for the
+complete signature system; complete ML-DSA, secret custody, timing qualification,
+authenticated identity and TLS remain open. The crypto-types shard now has
+95 methods, all required by the same independent complete-roster consumer. The
+fresh exact-source run passed all 95 with zero failures, errors or skips, 17
+native builds and 21,210 shared-runner calls in 515.760 seconds. The complete
+collected source/raw archive was independently rehashed on both retained hosts.
 
 ## Transfer, request state, transcripts and continuous SHA-512
 
@@ -89,17 +109,21 @@ canonical hashes and the original 8 MiB body boundary. Thirteen tests cover
 [complete record](qualification/peer-lease-development.json) includes an actual
 unfiltered 121-test run of the unchanged Rust crate on the configured Linux host,
 all 16 executed binaries/libraries and the exact original source archive.
-Projection consistency does not establish Core authorization. The durable
-journal, Unix authority and live recovery owner still require native integration.
+Projection consistency does not establish Core authorization. The new
+[persistent journal owner](platform/peer_lease_store/README.md) implements actual
+FD/flock/fsync, journal/head replay and the private acquire/renew/revalidate/
+release/drop lifecycle. Its 18 tests, 618 comparisons, crash cuts and I/O faults
+have complete original execution and independent readback. Unix authority, Core
+authentication, payload custody and live Node recovery remain open.
 
-The [Work handshake record](qualification/work-handshake-development.json)
-records a real startup race: two reads of a shared word could observe a normal
-0-to-1 transition as corruption. Both HIA emitters now make one observation per
-loop. Hardware scheduling reproduces all four old races and verifies four fixed
-races plus 16 explicit corrupt-state refusals without patching instructions or
-general registers. The complete updated native regression passes 175 primitive
-controls, 61 histories, three syscall traces and 18 clock faults. The original
-four-second service budget and live Node/Paid obligations remain unchanged.
+The [combined Work/Paid owner](platform/work_owner/README.md) retains one
+same-thread Work/Paid worker, the corrected one-observation handshake and real
+join/error lifetime handling. The current development record contains 61 native
+histories, 175 primitive controls, three actual syscall traces, 57 original
+histories, 44 retained original tests and complete clock/Paid faults. Independent
+private readback passes. Both handshake layouts have 24 controlled scheduling
+cases. Public request admission, fixed-parent production authority, persistent
+Node use and the original four-second service budget remain open.
 
 The [control-plane implementation](src/control_plane/README.md) provides the
 original descriptor, action, plan and receipt digests, full signed 128-bit
@@ -160,42 +184,29 @@ checks enter typed admission. Consuming Ready enters the same private Parent and
 Prefix lifecycle as the public Node methods. Prepared is retired before Output
 State; Prefix and Parent are retired before releasing the View lease.
 
-This owner covers a **None-predecessor** Parent. Some/CheckedApply, successor
-admission, persistent Node.db COMMIT, reorganization, local-pool recovery and the
-live same-request Paid/Host permit remain integration obligations. Caller State,
-Config, root, signature-result flags and lease tokens cannot grant those rights.
-The component ABI and public evidence readers enforce the finite scope.
+The current private owner supports Some/CheckedApply snapshots and incremental
+tree ownership alongside the existing None-predecessor path. Some has 82
+explicit method observations and Checked has 94. Both exact 65,536/65,537 delta
+boundaries execute with the original 240-second child and three-second cleanup
+limits. Complete original Rust methods independently compare the snapshots,
+changes, roots and errors. Persistent Node.db COMMIT, live successor authority,
+reorg/local-pool recovery/outbox/ACK and the same request's Paid/Host permit
+still require integration.
 
-The qualification driver applies its existing absolute deadline to nonblocking
-stdin writes, including short writes, EAGAIN and interrupted readiness. Native
-report admission checks the exact schema, field sets, scope values and JSON
-types before consuming observations. Old blocked-writer and complete-reader
-false-accept observations are retained under their actual predecessor sources.
+All five frozen native partitions and their mandatory traces passed. Actual
+build-integrity controls total 379; the nonblocking writer has 30 physical
+deadline controls. Those observations belong to the frozen 223-source graph.
+The current registry and corrected README have a new graph identity, so current
+CI rebuilds and requalifies it. The two surviving complete Node archives and
+the separate unavailable local core archive are listed individually in the
+current record; one is not represented as containing another's missing bytes.
 
-The previous five-partition Node execution uses the 203-input graph
-`5ca555529a0dbdd23ad1af776daab5e827b311cf4f1b5f5b09edb254afae0c32`.
-Its five native partitions (smoke, boundaries, capacity, four-Settings Node and
-cross-method ownership) were each compiled and executed. The
-256-record strict-signature capacity case completed in 181.55 seconds; every
-runtime child retains its 240-second deadline and three-second cleanup limit.
-This finite execution is distinct from the original four-second service gate.
-
-The public reader accepts all five complete real baseline artifacts and rejects
-21 coherently rebound schema/scope mutations at the intended contract check.
-Source integrity executes six groups /361 controls /eight actual CLI calls;
-build integrity executes nine groups /379 controls /ten actual CLI calls.
-The first six groups overlap and their counts must not be added as disjoint
-coverage. The subsequent repair extends the bounded stdin writer to the
-boundaries and capacity drivers; **30 physical/fault controls** pass across all
-three drivers. The new 203-input graph is
-`959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685`.
-Its complete boundaries build passes, but local mandatory tracing is refused by
-the host before the first native frame. Zero runtime controls are credited for
-that attempt. The [deadline record](qualification/node-stdin-deadline.json)
-retains the original blocked writers, repaired controls and trace failure;
-exact-commit hosted execution is still required. Independent
-original Rust execution and commit-bound hosted results retain their separate
-source and artifact identities.
+Node currently has a general SHA-256 path and a specialized 94-byte fork path,
+with separate compression code also distinct from the crypto arena/stream core.
+An attempted consolidation passed hash and Checked-method tests but exceeded
+both capacity deadlines; that candidate was not integrated. The corrected
+[commitment guide](platform/node_commitment/README.md) records this remaining
+deduplication obligation accurately.
 
 ## CI and evidence
 
@@ -217,13 +228,16 @@ ELFs exactly. These observations require new commit-bound hosted execution.
 
 The [Node development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons and the original integrated reader profiles. The correction record above binds the successor readers and complete transport regression. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
-The workflow contains **55 jobs and 43 independent native compiler bootstrap
+The workflow contains **57 jobs and 45 independent native compiler bootstrap
 gates**, each with its original 20-minute deadline. Four bootstrap control groups
-exercise all 172 actual positive/negative invocations. The separate RS46 job
+exercise all 180 actual positive/negative invocations. The separate RS46 job
 builds the full original crate and retains both actual executed binaries and
 every comparison. Node adds five native
 partitions, two original Rust comparisons and seven explicit evidence-reader
-profiles. Native child budgets remain 240 seconds plus three-second cleanup.
+profiles. The additional commitment job checks complete Some/Checked methods,
+both delta boundaries and the unchanged original Rust methods. The peer-store
+job requires complete native/original execution plus actual incomplete/failure
+refusal. Native child budgets remain 240 seconds plus three-second cleanup.
 
 Full component discovery assigns every test to disjoint general, crypto-types
 and State-root jobs, followed by an independent coverage consumer requiring all
@@ -233,18 +247,12 @@ uses native, original, complete qualification/package and independent readback
 stages. Original executable bytes, complete raw streams, exact source trees and
 actual started/completed rosters remain mandatory.
 
-The published predecessor
-[`337fe8df54a5af59e10a1aea129022702b40b89d`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/337fe8df54a5af59e10a1aea129022702b40b89d)
-completed 53/53 HIA jobs in both
-[push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262237229)
-and [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261854)
-workflows. Those results belong to that predecessor. Its
-[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44262261731)
-failed the original confirmation target under 16-worker pressure on both
-x86-64 and arm64. All seven submission ACKs succeeded, but complete independent
-replay did not finish inside the original four-second window. New source
-controls, development executions and evidence readback cannot inherit hosted
-qualification or close that service gate.
+The published c98 and 180 predecessors each completed 55/55 HIA jobs in
+both push and PR runs. Their exact run links and separate required-baseline
+results are in the [audit](AUDIT.md). The 180 required baseline has actual
+protocol and x64/arm64 service failures; the historical four-second confirmation
+failure remains open. No new source or component test inherits a predecessor's
+hosted result. The current 57-job candidate requires its own complete execution.
 
 The [archive guide](qualification/ARCHIVES.md) identifies retained volume sets.
 The [Work/Host development record](qualification/work-owner-development.json),

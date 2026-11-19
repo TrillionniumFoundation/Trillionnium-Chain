@@ -17,12 +17,15 @@ from .bundle import canonical_root, check_snapshot, original_manifest, require_o
 from .cases import corpus, original_cases, PROTOCOL_ONLY
 from .clock_comparison import run as compare_clock_faults
 from .clock_evidence import TEST as CLOCK_TEST
+from .paid_faults import TEST as PAID_CLOCK_TEST, run_original as compare_paid_clock_faults
 
 RESOURCE = "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs"
 PUBLIC = "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+SCALAR = "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
 DECLARATIONS = {
     RESOURCE: b'\n#[cfg(test)]\nmod hia_work_owner_oracle {\n    include!("hia_work_owner_oracle.rs");\n}\n',
     PUBLIC: b'\n#[cfg(test)]\npub(crate) mod hia_work_owner_bridge {\n    include!("hia_work_owner_bridge.rs");\n}\n',
+    SCALAR: b'\n#[cfg(test)]\npub(crate) mod hia_work_paid_probe { include!("hia_work_paid_probe.rs"); }\n',
 }
 TEST = "host_kernel_parent::kernel_parent::resource_tests::hia_work_owner_oracle::same_worker_evaluate"
 IGNORED = "host_kernel_parent::kernel_parent::relative_tests::relative_limit_child_probe"
@@ -40,6 +43,114 @@ def original_artifact(events, isolated):
          "Actual original test artifact has another source or target")
     return row
 
+def paid_observation_shape(observed):
+    """Require the exact finite original Paid snapshots, including JSON types."""
+    unsigned = lambda value: type(value) is int and 0 <= value < 1 << 64
+    def credit(value):
+        need(type(value) is str, "Original Paid credit decimal type")
+        number = int(value)
+        need(str(number) == value and -(1 << 127) <= number < 1 << 127,
+             "Original Paid credit canonical extent")
+    global_ = observed.get("paid_global")
+    need(type(global_) is dict and set(global_) == {
+        "poisoned", "unavailable", "in_flight", "credit_ns",
+        "termination_reserved_ns", "verified_completions", "flow"},
+        "Complete original Paid global field roster")
+    need(all(type(global_[key]) is bool for key in ("poisoned", "unavailable"))
+         and all(unsigned(global_[key]) for key in ("in_flight", "termination_reserved_ns",
+                                                   "verified_completions")),
+         "Original Paid global exact counter/latch types")
+    credit(global_["credit_ns"])
+    flow = global_["flow"]
+    fields = {"initial_credit_ns", "credited_refill_ns", "discarded_refill_ns",
+              "booked_reservation_ns", "live_debited_cpu_ns", "settlement_residual_cpu_ns",
+              "settled_full_cpu_ns", "settlement_discard_ns"}
+    need(type(flow) is dict and set(flow) == fields, "Complete original Paid flow field roster")
+    credit(flow["initial_credit_ns"])
+    need(all(unsigned(flow[key]) for key in fields - {"initial_credit_ns"}),
+         "Original Paid flow exact counter types")
+    if "paid_checkpoints" in observed:
+        need(unsigned(observed["paid_checkpoints"]), "Original Paid checkpoint exact count type")
+    receipt = observed.get("paid")
+    if receipt is None:
+        return
+    cpu = {"owner_cpu_ns", "scoped_worker_cpu_ns", "total_cpu_ns",
+           "live_paid_cpu_ns", "residual_cpu_ns"}
+    workers = {"spawned_workers", "started_workers", "finished_workers", "known_workers"}
+    need(type(receipt) is dict and set(receipt) == cpu | workers | {
+        "schema", "live_refused", "accounting_unavailable"}
+         and receipt["schema"] == "service-owner-scoped-thread-cpu-settlement-v1",
+         "Complete original Paid settlement schema/field roster")
+    need(all(receipt[key] is None or unsigned(receipt[key]) for key in cpu)
+         and all(unsigned(receipt[key]) for key in workers)
+         and all(type(receipt[key]) is bool for key in ("live_refused", "accounting_unavailable")),
+         "Original Paid settlement exact Option/counter/latch types")
+
+def settlement(observed, frame):
+    """Compare original Paid facts and conservation, never independent CPU times.
+
+    These predicates are the complete checks used by the retained real
+    Work/Paid original run. Both implementations measure their own CPU clocks;
+    equal nanosecond values across those separate runs are not required.
+    """
+    paid_observation_shape(observed)
+    paid = frame["paid"]; owner = paid["owner"]; epoch = paid["epoch"]
+    receipt = observed.get("paid")
+    checkpoints = observed.get("paid_checkpoints", 0)
+    need(type(checkpoints) is int and checkpoints == paid["checkpoint_calls"],
+         "Original checkpoint invocation count")
+    global_ = observed["paid_global"]
+    need(type(global_["poisoned"]) is bool
+         and global_["poisoned"] == (paid["global_poison"] != 0),
+         "Actual original global poison")
+    for key, index in (("in_flight", 6), ("termination_reserved_ns", 7), ("verified_completions", 8)):
+        need(type(global_[key]) is int and global_[key] == epoch[index],
+             "Actual original global " + key)
+    if not global_["poisoned"]:
+        need(type(global_["unavailable"]) is bool and global_["unavailable"] == (epoch[1] != 0),
+             "Actual global Unknown")
+    if receipt is None:
+        need(owner[0] == 0 or observed.get("worker_panicked") is True
+             or (type(observed.get("begin_error")) is int and observed["begin_error"] == owner[2] != 0),
+             "Original omitted its returned Paid settlement")
+        return
+    mapping = {"owner_cpu_ns": (4, 5), "scoped_worker_cpu_ns": (6, 7),
+               "total_cpu_ns": (8, 9), "live_paid_cpu_ns": (10, 11),
+               "residual_cpu_ns": (12, 13)}
+    for key, (some, value) in mapping.items():
+        need((receipt[key] is not None) == bool(owner[some]), "Original known/Unknown " + key)
+        if receipt[key] is not None:
+            need(type(receipt[key]) is int and 0 <= receipt[key] < 1 << 64,
+                 "Actual original u64 CPU field")
+    for key, index in (("spawned_workers", 14), ("started_workers", 15),
+                       ("finished_workers", 16), ("known_workers", 17)):
+        need(type(receipt[key]) is int and receipt[key] == owner[index],
+             "Original real scoped-worker count")
+    for key, index in (("live_refused", 18), ("accounting_unavailable", 19)):
+        need(type(receipt[key]) is bool and receipt[key] == (owner[index] != 0),
+             "Original receipt failure latch")
+    if receipt["total_cpu_ns"] is not None:
+        need(receipt["total_cpu_ns"] == receipt["owner_cpu_ns"] + receipt["scoped_worker_cpu_ns"],
+             "Original CPU union")
+    if receipt["residual_cpu_ns"] is not None:
+        need(receipt["residual_cpu_ns"] == receipt["total_cpu_ns"] - receipt["live_paid_cpu_ns"],
+             "Original unique residual")
+
+def original_hooks():
+    """Only private test children accompany the complete original prefixes."""
+    return {
+        "trillionnium/crates/trnm-pon-node/src/hia_work_owner_clock.rs":
+            (HERE / "rust_clock_reference.rs").read_bytes(),
+        "trillionnium/crates/trnm-pon-node/src/hia_work_owner_oracle.rs":
+            (HERE / "rust_reference.rs").read_bytes(),
+        "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs":
+            (ROOT / "hia/platform/host_resource/rust_reference.rs").read_bytes(),
+        "trillionnium/crates/trnm-pon-node/src/ingress/hia_work_owner_bridge.rs":
+            (HERE / "rust_bridge.rs").read_bytes(),
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/hia_work_paid_probe.rs":
+            (HERE / "rust_paid_reference.rs").read_bytes(),
+    }
+
 def compare(actual, native, cases):
     need([r["name"] for r in actual] == [r["name"] for r in cases],
          "Actual original complete case roster/order differs")
@@ -55,6 +166,7 @@ def compare(actual, native, cases):
             need(observed.get("actual_original_W1") is True
                  and observed.get("actual_original_Host_primitives") is True
                  and observed.get("actual_original_task_alive_and_final_resource") is True
+                 and observed.get("actual_original_finite_paid_work_checkpoints") is True
                  and observed.get("production_fixed_parent_authority") is False
                  and observed.get("complete_Node_or_paid_checkpoint") is False,
                  "Actual original-method observation scope differs")
@@ -75,8 +187,15 @@ def compare(actual, native, cases):
                 if observed.get(key) != frame[key]: differences.append(key)
         elif observed.get("product_hex") is not None:
             differences.append("failed-original-published-product")
+        paid_difference = None
+        try:
+            settlement(observed, frame)
+        except (ValueError, KeyError, TypeError, IndexError) as error:
+            differences.append("paid_settlement")
+            paid_difference = repr(error)
         rows.append({"name": case["name"], "status": "PASS" if not differences else "FAIL",
-                     "different_fields": differences, "actual_original": observed, "actual_native": frame})
+                     "different_fields": differences, "paid_difference": paid_difference,
+                     "actual_original": observed, "actual_native": frame})
     return rows
 
 def capture_loader(standard):
@@ -138,11 +257,12 @@ def original_comparison(repository, bundle, output, target):
     rustdoc = Path(standard["compiler_executable"]["path"]).parent / "rustdoc"
     rustdoc_identity = identity(rustdoc); env["RUSTDOC"] = str(rustdoc)
     output.mkdir(parents=True, mode=0o700)
-    report = {"schema": "trnm.hia.work-owner-original.v1", "status": "FAIL",
+    report = {"schema": "trnm.hia.work-owner-original.v2", "status": "FAIL",
               "retained_original_tests": [], "stages": [], "comparisons": [],
               "production_fixed_parent_authority": False, "whole_Node_or_paid_checkpoint_closed": False,
               "original_4s_16_service_gate_closed": False,
               "original_controlled_CLOCK1_fault_comparison": "NOT_RUN",
+              "original_paid_CLOCK_fault_comparison": "NOT_RUN",
               "native_protocol_controls_without_original_equivalent": sorted(PROTOCOL_ONLY)}
     fence = None; binary = None; binary_identity = None; sqlite_files = {}; original = admitted["original_sources"]
     try:
@@ -159,16 +279,12 @@ def original_comparison(repository, bundle, output, target):
             destination = isolated / relative; destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, destination)
         prefixes = {}
-        hooks = {
-            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_clock.rs": (HERE / "rust_clock_reference.rs").read_bytes(),
-            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_oracle.rs": (HERE / "rust_reference.rs").read_bytes(),
-            "trillionnium/crates/trnm-pon-node/src/hia_work_owner_resource_fixture.rs":
-                (ROOT / "hia/platform/host_resource/rust_reference.rs").read_bytes(),
-            "trillionnium/crates/trnm-pon-node/src/ingress/hia_work_owner_bridge.rs": (HERE / "rust_bridge.rs").read_bytes(),
-        }
+        hooks = original_hooks()
         for relative, declaration in DECLARATIONS.items():
             path = isolated / relative; prefixes[relative] = path.read_bytes()
-            need(b"mod hia_work_owner_" not in prefixes[relative], "Original already contains private observer")
+            need(all(token not in prefixes[relative] for token in
+                     (b"mod hia_work_owner_", b"mod hia_work_paid_probe")),
+                 "Original already contains private observer")
             path.write_bytes(prefixes[relative] + declaration)
         for relative, raw in hooks.items():
             path = isolated / relative
@@ -245,7 +361,7 @@ def original_comparison(repository, bundle, output, target):
              in relative_tests.read_text(), "Ignored original probe no longer belongs to its bounded parent tests")
         retained = sorted(name for name in tests if name.startswith("host_kernel_parent::kernel_parent::")
                           and "::hia_work_owner_oracle::" not in name and name not in ignored)
-        need(TEST in tests and CLOCK_TEST in tests and len(retained) == 44 and set(REQUIRED_TESTS) <= set(retained),
+        need(TEST in tests and CLOCK_TEST in tests and PAID_CLOCK_TEST in tests and len(retained) == 44 and set(REQUIRED_TESTS) <= set(retained),
              "Mandatory complete original Host tests/observer were not linked")
         report["ignored_direct_probe"] = {"name": IGNORED, "ordinary_pass_claimed": False,
             "reason": "executed by its original bounded nonregular-limit parent tests"}
@@ -273,6 +389,14 @@ def original_comparison(repository, bundle, output, target):
         except BaseException:
             report["original_controlled_CLOCK1_fault_comparison"] = "FAIL"
             raise
+        report["original_paid_CLOCK_fault_comparison"] = "RUNNING"
+        try:
+            report["paid_clock_faults"] = compare_paid_clock_faults(binary, binary_identity,
+                output / "paid-clock-faults", admitted, check=check)
+            report["original_paid_CLOCK_fault_comparison"] = "PASS"
+        except BaseException:
+            report["original_paid_CLOCK_fault_comparison"] = "FAIL"
+            raise
         check(); report["status"] = "PASS"
     except BaseException as error:
         report.update(failure=repr(error), traceback=traceback.format_exc())
@@ -284,6 +408,9 @@ def original_comparison(repository, bundle, output, target):
             except BaseException as error:
                 report.update(status="FAIL", source_after="FAIL", final_fence_failure=repr(error))
         else: report["source_after"] = "ADMISSION_DID_NOT_COMPLETE"
+        paid_report = output / "paid-clock-faults/report.json"
+        if paid_report.exists():
+            report["paid_clock_faults_report"] = identity(paid_report)
         clock_report = output / "controlled-clock/report.json"
         if clock_report.exists():
             report["controlled_clock_report"] = identity(clock_report)

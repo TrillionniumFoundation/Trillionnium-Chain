@@ -22,6 +22,7 @@ def original_input():
 
 def run(binary, executable, output, native, *, check):
     """The caller has admitted the complete current native bundle and compiled source."""
+    from .rust_oracle import settlement
     need(__debug__, "Original controlled CLOCK comparison refuses optimized Python")
     output = Path(output)
     need(output.is_absolute() and output.resolve() == output and not output.exists(),
@@ -35,7 +36,7 @@ def run(binary, executable, output, native, *, check):
     environment = {"PATH": "/usr/bin:/bin", "TRNM_HIA_WORK_OWNER_CORPUS": str(input_path)}
     native_rows = native["report"]["clock_faults"]["rows"]
     need([row["profile"] for row in native_rows] == profiles(), "Original CLOCK comparison lacks native fault roster")
-    report = {"schema": "trnm.hia.work-owner-original-clock-comparison.v1", "status": "FAIL",
+    report = {"schema": "trnm.hia.work-owner-original-clock-comparison.v2", "status": "FAIL",
         "input": saved_input, "executable": executable, "argv": argv, "environment": environment,
         "rows": [], "positive_count": 0, "fault_count": 0,
         "source_inputs": native["source_inputs"], "original_sources": native["original_sources"],
@@ -53,7 +54,7 @@ def run(binary, executable, output, native, *, check):
         for label, disable_vdso, profile in work:
             directory = output / label
             fault = None if profile is None else {
-                "clock_roles": [3], "clock_when": profile["ordinal"],
+                "clock_roles": [3], "clock_when": profile["clock_syscall_ordinal"],
                 "clock_error": 5 if profile["errno"] == "EIO" else 22}
             actual = trace_original(argv, directory, disable_vdso=disable_vdso,
                                     env=environment, fault=fault, timeout=45)
@@ -62,13 +63,17 @@ def run(binary, executable, output, native, *, check):
             write_json(directory / "audit.json", observed)
             row = {"name": label, "status": "PASS", "audit": observed,
                    "trace_report": identity(directory / "report.json"),
-                   "actual_seconds": actual["duration_seconds"]}
+                   "actual_seconds": actual["duration_seconds"],
+                   "same_worker_paid_method_comparison": "PASS",
+                   "independent_CPU_nanoseconds_equal": False}
             if profile is None:
+                settlement(observed["observation"], native["native"][0])
                 report["positive_count"] += 1
             else:
                 original = observed["observation"]
                 selected = next(value for value in native_rows if value["name"] == label)
                 frame = selected["physical"]["decoded"]; header = frame["header"]
+                settlement(original, frame)
                 expected = (4, 1, profile["progress"], profile["worker_host_calls"], profile["ordinal"], 3, 0, 0, 1)
                 fields = ("domain", "code", "progress_count", "worker_host_calls", "alive_clocks",
                           "pre_checks", "post_checks", "aggregate_samples", "joins")
@@ -90,8 +95,11 @@ def run(binary, executable, output, native, *, check):
                               "clock_syscalls": observed["actual_worker_CLOCK1_syscalls"]}, sort_keys=True), flush=True)
         need(report["positive_count"] == 2 and report["fault_count"] == 18 and len(report["rows"]) == 20,
              "Actual original CLOCK run roster incomplete")
-        from .test_clock_evidence import actual_controls
+        from .test_clock_evidence import actual_controls, actual_observer_controls
         report["actual_raw_reader_controls"] = actual_controls(output, report, output / "actual-reader-controls")
+        report["observer_memory_controls"] = actual_observer_controls(
+            output, report, output / "observer-memory-controls")
+        report["observer_memory_controls_report"] = identity(output / "observer-memory-controls/report.json")
         fence(); report["status"] = "PASS"
     except BaseException as error:
         report.update(failure=repr(error), traceback=traceback.format_exc())

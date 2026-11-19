@@ -95,7 +95,8 @@ def sources():
         "hia/src/control_plane/LOCAL_GUARD.md", "hia/src/peer_lease/README.md",
         "hia/src/oracle/README.md", "hia/src/types/request_status.md",
         "hia/src/types/transfer.md", "hia/src/types/transcript.md",
-        "hia/src/crypto/SHA512_STREAM.md",
+        "hia/src/crypto/SHA512_STREAM.md", "hia/src/crypto/KECCAK.md",
+        "hia/src/crypto/ML_DSA_POLY.md",
         "scripts/ci/ci_job.sh")]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",

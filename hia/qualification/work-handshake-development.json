@@ -138,6 +138,15 @@
   },
   "full_regression_job_id": "1a1eedbcc7f-ffbe-340",
   "historical_failure": "The complete actual 5a hosted failure ZIP and diagnostics are inside the final archive; original failure remains unchanged.",
+  "historical_path_resolution": {
+    "work-handshake-original-build.tar.xz": {
+      "bytes": 147792,
+      "reason": "Historical work-owner-v1 build; the current path now holds the separately qualified work-paid-v2 negative fixture. Historical PASS is not rebound.",
+      "sha256": "137c4a0b3ea6b86ad67916ec0c35df512d63fb19405f9c6e4b83bccac0f33811",
+      "source_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/180c642b4ad723118038b31639afc0d922f474b7/hia/qualification/work-handshake-original-build.tar.xz"
+    }
+  },
   "hosted_execution": "NOT_RUN for this source increment at preparation",
   "old_stack_can_be_removed": false,
   "original_build_negative_fixture": {

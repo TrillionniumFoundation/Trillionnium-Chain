@@ -5,8 +5,8 @@ stand for an actual fixed-parent, Node, Paid, or service qualification.
 """
 from __future__ import annotations
 import copy
-import hashlib
 import importlib.util
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -38,7 +38,7 @@ class ProductionControls(unittest.TestCase):
 
     def header(self):
         values=[0]*64
-        rows={"magic":int.from_bytes(b"HIAWO001","little"),"fixture":0,"domain":0,"code":0,
+        rows={"magic":int.from_bytes(b"HIAPW001","little"),"fixture":0,"domain":0,"code":0,
               "work_code":0,"progress_count":1099,"worker_host_calls":1101,"pre_checks":3,
               "post_checks":5,"aggregate_samples":2,"main_tid":self.pid,"worker_tid":self.worker,
               "generation":1,"joins":1,"alive_clocks":2200,"gates":0,"post_sample_error":0,
@@ -47,6 +47,7 @@ class ProductionControls(unittest.TestCase):
               "acquirer_tid":self.pid}
         for index,name in enumerate(subject.native_io.FIELDS):values[index]=rows[name]
         values[44]=16384
+        values[45]=1024
         return values
 
     def receipts(self):
@@ -67,18 +68,33 @@ class ProductionControls(unittest.TestCase):
         worker[28:31]=[0,0,1]
         return before,after,worker
 
-    def raw(self,headers=None,receipts=None):
+    def paid_receipt(self):
+        # A synthetic retired same-worker account for reader controls only.
+        # These chosen counters do not represent a measured CPU execution.
+        words=[0]*128
+        words[:4]=[int.from_bytes(b"PWPAY001","little"),1024,self.worker,1]
+        owner=[0]*64
+        owner[0]=int.from_bytes(b"PCOWN001","little")
+        owner[4:14]=[1,100,1,0,1,100,1,80,1,20]
+        owner[20:22]=[self.worker,2]
+        words[32:96]=owner
+        checkpoints=len(self.case["progress"])+1
+        words[96:106]=[0,3,checkpoints+2,2,checkpoints,0,0,0,1,0]
+        words[108:116]=[0,0,checkpoints+2,3,0,0,0,0]
+        words[116]=1
+        return struct.pack("<128Q",*words)
+
+    def raw(self,headers=None,receipts=None,paid=None):
         words=self.header() if headers is None else headers
         raw=bytearray(struct.pack("<64Q",*words))
         request=bytes.fromhex(self.case["request_hex"])
-        raw[256:320]=request[:64]
-        # Independent fixed-domain framing; never copy the request target into
-        # the derived output ticket field.
-        wire=(b"TRNM-PON1"+bytes((0,))+struct.pack("<H",6)+b"ticket"+
-              struct.pack("<I",32)+request[:32]+struct.pack("<I",32)+request[-32:])
-        raw[320:352]=hashlib.sha256(wire).digest()
+        transcript=request[-32:]
+        ticket=hashlib.sha256(b"TRNM-PON1\0"+b"\x06\0ticket"+struct.pack("<I",32)+request[:32]
+                              +struct.pack("<I",32)+transcript).digest()
+        raw[256:352]=request[:64]+ticket
         for receipt in self.receipts() if receipts is None else receipts:
             raw.extend(struct.pack("<32Q",*receipt))
+        raw.extend(self.paid_receipt() if paid is None else paid)
         for row in self.case["progress"]:raw.extend(struct.pack("<5Q",*row))
         raw.extend(bytes.fromhex(self.case["product_hex"]))
         return bytes(raw)
@@ -190,8 +206,17 @@ class ProductionControls(unittest.TestCase):
         got=self.admit()
         self.assertEqual(got["product_bytes"],16384)
         self.assertEqual(got["header"]["worker_tid"],self.worker)
-        self.assertEqual(got["ticket_hex"],"b5255a1f04d918e33da7e64e85f135f5166ee32b92505106ed8fef87d20e7840")
-        self.assertNotEqual(got["ticket_hex"],self.case["request_hex"][128:192])
+        self.assertEqual(got["paid"]["checkpoint_calls"],1100)
+        # Mutate encoded receipt bytes; these remain synthetic reader controls.
+        for at,value in ((0,0),(1,1023),(2,self.pid),(3,0),(4,1<<32),(6,1<<32),
+                         (9,1),(14,1),(15,1),(16,1),(32,0),(36,0),(39,1),
+                         (41,99),(43,81),(45,21),(46,1),(50,1),(51,1),(52,self.pid),
+                         (53,1),(54,1),(100,1099),(104,0),(105,1),(110,1101),(116,0)):
+            words=list(struct.unpack("<128Q",self.paid_receipt()));words[at]=value
+            with self.subTest(paid_word=at),self.assertRaises(ValueError):
+                self.admit(raw=self.raw(paid=struct.pack("<128Q",*words)))
+        old=bytearray(self.raw());old[:8]=b"HIAWO001";del old[1280:2304]
+        with self.assertRaises(ValueError):self.admit(raw=bytes(old))
 
     def test_08_actual_lifetime_and_fresh_boundaries_cannot_be_removed(self):
         for key,value in (("fixture",1),("host_fixture",1),("domain",3),("code",1),("work_code",1),
@@ -211,19 +236,26 @@ class ProductionControls(unittest.TestCase):
             with self.assertRaises(ValueError):self.admit(raw=other)
 
     def test_10_challenge_task_ticket_and_every_progress_point_are_bound(self):
-        request=bytes.fromhex(self.case["request_hex"])
-        raw=bytearray(self.raw());raw[320:352]=request[64:96]
-        with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_IDENTITY_CHANGED"):
-            self.admit(raw=bytes(raw))
-        ticket=bytes.fromhex("b5255a1f04d918e33da7e64e85f135f5166ee32b92505106ed8fef87d20e7840")
+        request=bytes.fromhex(self.case["request_hex"]);raw=self.raw();ticket=raw[320:352]
+        self.assertEqual(ticket.hex(),"b5255a1f04d918e33da7e64e85f135f5166ee32b92505106ed8fef87d20e7840")
+        self.assertNotEqual(ticket,request[64:96])
+        wrong=bytearray(raw);wrong[320:352]=request[64:96]
+        with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_IDENTITY_CHANGED"):self.admit(raw=bytes(wrong))
         for target,accepted in ((ticket,True),((int.from_bytes(ticket,"big")-1).to_bytes(32,"big"),False)):
-            bounded=copy.deepcopy(self.case);wire=bytearray(request);wire[64:96]=target
-            bounded["request_hex"]=wire.hex()
-            with patch.object(self,"case",bounded):
-                if accepted:self.admit()
-                else:
-                    with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_TARGET_REFUSED"):self.admit()
-        for at in (256,288,320,1280,1280+1098*40):
+            case={**self.case,"request_hex":(request[:64]+target+request[96:]).hex()}
+            arguments=(raw,case,self.pid,self.observations(),self.parent,self.service)
+            keywords={"namespace":self.namespace,"image_hash":self.image,"uid":self.uid}
+            if accepted:subject.validate_native(*arguments,**keywords)
+            else:
+                with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_TARGET_REFUSED"):
+                    subject.validate_native(*arguments,**keywords)
+        for malformed in (request[:-1],request+bytes((0,)),request[:96]+b"PNX1"+request[100:]):
+            case={**self.case,"request_hex":malformed.hex()}
+            with self.subTest(request_bytes=len(malformed),magic=malformed[96:100]):
+                with self.assertRaisesRegex(ValueError,"NATIVE_PROOF_REQUEST_FORMAT_CHANGED"):
+                    subject.validate_native(raw,case,self.pid,self.observations(),self.parent,self.service,
+                                            namespace=self.namespace,image_hash=self.image,uid=self.uid)
+        for at in (256,288,320,2304,2304+1098*40):
             raw=bytearray(self.raw());raw[at]^=1
             with self.subTest(offset=at),self.assertRaises(ValueError):self.admit(raw=bytes(raw))
 

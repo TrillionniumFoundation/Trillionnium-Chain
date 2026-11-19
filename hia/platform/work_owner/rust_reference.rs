@@ -12,6 +12,7 @@ use std::{
 use trnm_crypto_primitives::pon_work::{self, VerificationError, VerificationProgress, WorkError};
 
 const WORK_MARKER: &str = "HIA_WORK_OWNER_ORACLE:";
+use crate::ingress::public_v3::hia_work_owner_bridge::PaidDomain;
 
 fn actual_tid() -> u32 {
     // The unchanged Node rustix feature set has no `thread` feature. Observe
@@ -35,6 +36,8 @@ fn relation_code(error: WorkError) -> u64 {
 }
 
 fn outcome_code(error: &crate::Error) -> (u64, u64) {
+    if error.is(crate::ErrorCode::PublicMutationCpuUnavailable) {return (6,1);}
+    if error.is(crate::ErrorCode::PublicMutationCpuBudget) {return (6,2);}
     let text=error.to_string();
     if let Some(raw)=text.strip_prefix("HIA_WORK_RELATION_") {
         return (1,raw.parse().unwrap());
@@ -97,10 +100,11 @@ fn run_original_work(case: &Value) -> Value {
     let initial_tid=actual_tid();
     let before_checks=Cell::new(0u64);
     let deadline=Instant::now()+Duration::from_secs(4);
+    let paid_domain=PaidDomain::new();
     let cancel=AtomicBool::new(false);let stop=AtomicBool::new(false);let seen=Cell::new(false);
     let owner=match FixtureOwner::acquire(temp.path()) {
         Ok(owner)=>owner,
-        Err(error)=>return json!({"name":case["name"],"domain":3,"code":error_code(&error),"progress":[],"product_hex":null,"worker_tid":null}),
+        Err(error)=>return json!({"name":case["name"],"domain":3,"code":error_code(&error),"progress":[],"product_hex":null,"worker_tid":null,"paid_global":paid_domain.snapshot()}),
     };
     let first=(|| -> crate::Result<_> {
         let opened=owner.checked()?;drop(opened);before_checks.set(1);
@@ -111,18 +115,23 @@ fn run_original_work(case: &Value) -> Value {
     })();
     let before=match first {
         Ok(sample)=>sample,
-        Err(error)=>return json!({"name":case["name"],"domain":3,"code":error_code(&error),"progress":[],"product_hex":null,"worker_tid":null,"main_tid":initial_tid,"before_checks":before_checks.get()}),
+        Err(error)=>return json!({"name":case["name"],"domain":3,"code":error_code(&error),"progress":[],"product_hex":null,"worker_tid":null,"main_tid":initial_tid,"before_checks":before_checks.get(),"paid_global":paid_domain.snapshot()}),
     };
     let inherited_gate=seen.get();
-    let (mut outcome,progress,worker_tid,host_calls,worker_checks,worker_gate,work_code)=thread::scope(|scope| {
+    let (mut outcome,progress,worker_tid,host_calls,worker_checks,worker_gate,work_code,paid,paid_checkpoints)=thread::scope(|scope| {
         let job=scope.spawn(|| {
             let worker_tid=actual_tid();
             assert_ne!(initial_tid,worker_tid);
             let calls=Cell::new(0);let checks=Cell::new(0);let gate_seen=Cell::new(inherited_gate);
-            let mut progress=Vec::<[u64;5]>::new();let mut work_code=0;
+            let mut progress=Vec::<[u64;5]>::new();let mut work_code=0;let mut paid_checkpoints=0u64;
+            let operation=match paid_domain.begin() {
+                Ok(value)=>value,
+                Err(error)=>return (Err(error),progress,worker_tid,0,0,gate_seen.get(),work_code,None,0),
+            };
             let native=(|| -> crate::Result<pon_work::VerifiedWork> {
                 count_check(&owner,&checks,&calls)?;
                 crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)?;
+                paid_checkpoints+=1;operation.checkpoint()?;
                 let checked=pon_work::verify_with_progress(challenge,task,target,&input[96..],&mut |point| {
                     let sequence=u64::try_from(progress.len()).unwrap()+1;
                     progress.push(progress_row(point,sequence));
@@ -131,7 +140,8 @@ fn run_original_work(case: &Value) -> Value {
                     gate(&owner,case,4,sequence,&gate_seen,&cancel,&stop);
                     count_check(&owner,&checks,&calls)?;
                     gate(&owner,case,5,sequence,&gate_seen,&cancel,&stop);
-                    crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)
+                    crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)?;
+                    paid_checkpoints+=1;operation.checkpoint()
                 });
                 match checked {
                     Ok(value)=>Ok(value),
@@ -150,7 +160,8 @@ fn run_original_work(case: &Value) -> Value {
                 if was_ok {gate(&owner,case,7,sequence,&gate_seen,&cancel,&stop);}
                 Ok(())
             });
-            (outcome,progress,worker_tid,calls.get(),checks.get(),gate_seen.get(),work_code)
+            let paid=Some(operation.finish());
+            (outcome,progress,worker_tid,calls.get(),checks.get(),gate_seen.get(),work_code,paid,paid_checkpoints)
         });
         // This is a real std scoped child; no parent counter value or boolean
         // replaces its execution, cleanup, or the actual ordered join.
@@ -185,7 +196,9 @@ fn run_original_work(case: &Value) -> Value {
         "actual_original_W1":true,"actual_original_Host_primitives":true,
         "actual_original_task_alive_and_final_resource":true,
         "fixture_uses_actual_AtomicBool_cancel_inputs":true,
-        "production_fixed_parent_authority":false,"complete_Node_or_paid_checkpoint":false})
+        "production_fixed_parent_authority":false,"complete_Node_or_paid_checkpoint":false,
+        "actual_original_finite_paid_work_checkpoints":true,"paid":paid,"paid_checkpoints":paid_checkpoints,
+        "paid_global":paid_domain.snapshot()})
 }
 
 #[test]
@@ -198,5 +211,123 @@ fn same_worker_evaluate() {
     }
 }
 
-// New private observation only; original production methods above remain unchanged.
+// Controlled original integration probe is appended below; no production prefix changes.
+
+
+fn paid_fault_role(role:u64) {
+    use std::io::Write;
+    let tid=u64::from(actual_tid());
+    let mut bytes=[0u8;32];bytes[..8].copy_from_slice(b"PCROLE01");
+    bytes[8..16].copy_from_slice(&tid.to_le_bytes());
+    bytes[16..24].copy_from_slice(&role.to_le_bytes());
+    std::io::stderr().lock().write_all(&bytes).expect("complete actual private thread marker");
+}
+
+#[test]
+fn same_worker_fault_evaluate() {
+    let path=std::env::var_os("TRNM_HIA_WORK_OWNER_CORPUS").expect("bound original cases");
+    let cases=fs::read_to_string(path).unwrap();
+    let case:Value=cases.lines().map(|line|serde_json::from_str::<Value>(line).unwrap())
+        .find(|row|row["name"]=="zero-target").expect("unchanged actual zero-target case");
+    let input=decoded(case["request_hex"].as_str().unwrap());
+    let challenge:[u8;32]=input[..32].try_into().unwrap();
+    let task:[u8;32]=input[32..64].try_into().unwrap();
+    let target:[u8;32]=input[64..96].try_into().unwrap();
+    let temp=tempfile::tempdir().unwrap();provision(temp.path());
+    let main_tid=actual_tid();
+    paid_fault_role(1);
+    let created=std::panic::catch_unwind(||{
+        let deadline=Instant::now()+Duration::from_secs(4);
+        (deadline,PaidDomain::new())
+    });
+    let (deadline,paid_domain)=match created {
+        Ok(v)=>v,
+        Err(_)=>{
+            println!("{WORK_MARKER}{}",json!({"kind":"paid-work-fault","constructor_panicked":true,
+              "domain":4,"code":1,"worker_tid":null,"joined":false,"post_checks":0,
+              "actual_original_finite_paid_work_checkpoints":true,
+              "production_fixed_parent_authority":false,"complete_Node_or_paid_checkpoint":false}));
+            return;
+        }
+    };
+    paid_fault_role(4);
+    let owner=FixtureOwner::acquire(temp.path()).expect("original private Host acquisition");
+    let checks=Cell::new(0u64);let opened=owner.checked().unwrap();drop(opened);checks.set(1);
+    let before=owner.sample(0,&[],&checks,&Cell::new(false)).unwrap();
+    let cancel=AtomicBool::new(false);let stop=AtomicBool::new(false);
+    let (mut outcome,progress,worker_tid,calls,worker_checks,work_code,paid,paid_checkpoints,
+            panicked,live,begin_error)=thread::scope(|scope|{
+        scope.spawn(||{
+            let tid=actual_tid();assert_ne!(tid,main_tid);paid_fault_role(2);
+            let calls=Cell::new(0u64);let checked=Cell::new(0u64);
+            let mut progress=Vec::new();let mut work_code=0;let mut paid_checkpoints=0u64;
+            let mut live=None;let mut begin_error=None;
+            let attempt=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+                let operation=match paid_domain.begin() {
+                    Ok(v)=>{begin_error=Some(0u64);v},
+                    Err(error)=>{
+                        begin_error=Some(outcome_code(&error).1);
+                        return (Err(error),None);
+                    }
+                };
+                live=Some(operation.live());
+                let native=(||->crate::Result<pon_work::VerifiedWork>{
+                    count_check(&owner,&checked,&calls)?;
+                    crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)?;
+                    paid_checkpoints+=1;operation.checkpoint()?;
+                    match pon_work::verify_with_progress(challenge,task,target,&input[96..],&mut|point|{
+                        let sequence=progress.len() as u64+1;progress.push(progress_row(point,sequence));
+                        crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)?;
+                        count_check(&owner,&checked,&calls)?;
+                        crate::ingress::public_v3::hia_work_owner_bridge::alive(deadline,&stop,&cancel)?;
+                        paid_checkpoints+=1;operation.checkpoint()
+                    }) {
+                        Ok(value)=>Ok(value),
+                        Err(VerificationError::Cancelled(error))=>Err(error),
+                        Err(VerificationError::Relation(error))=>{
+                            work_code=relation_code(error);Err(format!("HIA_WORK_RELATION_{work_code}").into())
+                        }
+                    }
+                })();
+                let result=crate::ingress::public_v3::hia_work_owner_bridge::finish(
+                    native,deadline,||count_check(&owner,&checked,&calls));
+                (result,Some(operation.finish()))
+            }));
+            let (outcome,paid,panicked)=match attempt {
+                Ok((result,paid))=>(Some(result),paid,false),
+                Err(_)=>(None,None,true)
+            };
+            (outcome,progress,tid,calls.get(),checked.get(),work_code,paid,paid_checkpoints,
+             panicked,live.map(|v|v.snapshot()),begin_error)
+        }).join().expect("private observer contains original worker panic")
+    });
+    let mut post_checks=0;let mut after_values=None;let mut delta_values=None;
+    if !panicked {
+        match owner.sample(0,&[],&checks,&Cell::new(false)) {
+            Err(error)=>outcome=Some(Err(error)),
+            Ok(after)=>match after.cpu_delta_since(before) {
+                Err(error)=>outcome=Some(Err(error)),
+                Ok(delta)=>{after_values=Some(values(after));
+                    delta_values=Some([delta.usage_usec,delta.nr_periods,delta.nr_throttled,delta.throttled_usec]);}
+            }
+        }
+        post_checks=checks.get();
+    }
+    let (domain,code,product)=if panicked {(4u64,1u64,None)} else {
+        match outcome.expect("ordinary outcome") {
+            Ok(value)=>(0,0,Some(hex::encode(value.product().iter()
+                .flat_map(|word|word.to_le_bytes()).collect::<Vec<_>>()))),
+            Err(error)=>{let (domain,code)=outcome_code(&error);(domain,code,None)}
+        }
+    };
+    println!("{WORK_MARKER}{}",json!({"kind":"paid-work-fault","constructor_panicked":false,
+      "domain":domain,"code":code,"product_hex":product,"progress":progress,"work_code":work_code,
+      "main_tid":main_tid,"worker_tid":worker_tid,"joined":true,"worker_panicked":panicked,
+      "worker_host_calls":calls,"worker_checks":worker_checks,"post_checks":post_checks,
+      "before_values":values(before),"after_values":after_values,"delta_values":delta_values,
+      "paid":paid,"paid_checkpoints":paid_checkpoints,"live":live,"begin_error":begin_error,
+      "paid_global":paid_domain.snapshot(),"actual_original_finite_paid_work_checkpoints":true,
+      "production_fixed_parent_authority":false,"complete_Node_or_paid_checkpoint":false}));
+}
+
 include!("hia_work_owner_clock.rs");

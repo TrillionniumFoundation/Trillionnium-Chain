@@ -15,3 +15,6 @@ pub(crate) fn finish<T>(
 ) -> crate::Result<T> {
     super::super::history_import::finish_with_resource(native, deadline, resource)
 }
+
+pub(crate) use super::scalar_cpu::hia_work_paid_probe::Domain as PaidDomain;
+pub(crate) use super::scalar_cpu::hia_work_paid_probe::Live as PaidLive;

@@ -28,9 +28,9 @@ _NODE_SCOPE={
  "actual_private_disk_state_source":True,"actual_settings_some":True,
  "caller_state_or_root":False,"runtime_host_proxy":False,"original_rust":"NOT_RUN",
  "successor_admission":False,"node_commit":False,"complete_node":False,
- "private_finalized_state_ownership":True,"prepared_commitment_none_prior":True,
+ "private_finalized_state_ownership":True,"prepared_commitment_none_prior":False,
  "full_prepared_observation":True,"canonical_parent_owned_once_per_prefix":True,
- "prepared_retains_before_map":False,"checked_apply_some_prior":False,
+ "prepared_retains_before_map":False,"checked_apply_some_prior":True,
 }
 _CROSS_SCOPE="Actual one-Node cross-method Parent/Prepared/Ready ownership; standalone original cross-history NOT_RUN"
 

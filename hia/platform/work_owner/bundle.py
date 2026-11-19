@@ -231,15 +231,18 @@ def validate_build(root, report):
                  "sha256": stage[prefix + "_sha256"]}), "Native build raw stream differs")
     contract = read_json(HERE / "abi.json")
     need(set(build["images"]) == {"owner", "fixture", "closed-fd"}, "Final native image roster differs")
-    for name, owner, host in (("owner", "owner", "host"), ("fixture", "owner-fixture", "host-fixture"),
-                             ("closed-fd", "owner-fixture", "host-fixture")):
+    for name, owner, host, paid in (("owner", "owner", "host", "paid"),
+                                   ("fixture", "owner-fixture", "host-fixture", "paid-fixture"),
+                                   ("closed-fd", "owner-fixture", "host-fixture", "paid-fixture")):
         raw = (root / "build" / (name + ".elf")).read_bytes()
         inspect_owner(raw); binding = contract["images"][name]
         need(same(identity(root / "build" / (name + ".elf")), binding["executable"]),
              "Native image no longer equals the reviewed adapter/HIA")
-        a, work, c = [(root / "build" / (part + ".flat.bin")).read_bytes() for part in (owner, "work", host)]
-        need(all(0 < len(part) <= 524288 for part in (a, work, c)), "Captured flat exceeds the fixed native profile")
-        payload = struct.pack("<4Q", int.from_bytes(b"OWBND001", "little"), len(a), len(work), len(c)) + a + work + c
+        sections = [(root / "build" / (part + ".flat.bin")).read_bytes()
+                    for part in (owner, "work", host, paid)]
+        need(all(0 < len(part) <= 524288 for part in sections), "Captured flat exceeds the fixed native profile")
+        payload = struct.pack("<5Q", int.from_bytes(b"OWPBND01", "little"),
+                              *[len(part) for part in sections]) + b"".join(sections)
         prefix = binding["prefix_bytes"]
         need(raw[prefix:] == payload and digest(raw[232:prefix]) == binding["adapter_sha256"],
              "Actual flat sections are not the complete payload of the pinned native ELF")
@@ -288,7 +291,7 @@ def validate_bundle(directory, repository, *, require_trace=True):
     need(__debug__, "Work owner admission refuses optimized Python")
     root = canonical_root(directory); repository = canonical_root(repository)
     report = read_json(root / "report.json")
-    need(report.get("schema") == "trnm.hia.work-owner-qualification.v1"
+    need(report.get("schema") == "trnm.hia.work-owner-qualification.v2"
          and report.get("status") == "PASS", "No complete successful native qualification")
     sources = source_bindings(report)
     original = original_manifest(repository)
@@ -322,6 +325,7 @@ def validate_bundle(directory, repository, *, require_trace=True):
              "Primitive was not executed from this actual native section")
     need(primitive.get("raw_readback") == "PASS", "Complete primitive byte readback is mandatory")
     validate_primitive_bytes(root / "primitives/raw-buffers", primitive, cases, primitive["images"])
+    paid_clock = {}
     if require_trace:
         need(report["trace_status"] == "PASS", "Actual syscall tracing is mandatory")
         names = ("baseline", "late-cancel", "closed-parent")
@@ -380,10 +384,14 @@ def validate_bundle(directory, repository, *, require_trace=True):
             need(same(audit, row["trace"]) and same(audit, read_json(d / "trace-audit.json")),
                  "Actual controlled clock trace differs")
             physical_frame(row["physical"], d, fixture_sha)
+        from .paid_fault_evidence import read_native as read_paid_native
+        paid_clock = read_paid_native(root / "paid-clock-faults", report["paid_clock_faults"],
+                                     image={key:report["build"]["images"]["fixture"][key] for key in ("bytes","sha256")},
+                                     source_inputs=sources)
     need(same(source_manifest(), sources) and same(original_manifest(repository), original),
          "Source changed during native admission")
     return {"report": report, "native": native, "source_inputs": sources,
-            "original_sources": original, "snapshot": snapshot(root)}
+            "paid_clock": paid_clock, "original_sources": original, "snapshot": snapshot(root)}
 
 def check_snapshot(directory, accepted):
     need(same(snapshot(directory), accepted["snapshot"]), "Previously admitted complete native bundle changed")

@@ -215,13 +215,13 @@ Lossless recompression reduced the peer transport from 186317232 to 92757028
 bytes; both complete decompressed tar streams were read and verified identical.
 No observation, binary, source or member was removed by recompression.
 
-The separate [original Work build](work-handshake-original-build.tar.xz) is a
+The historical [original Work build](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/180c642b4ad723118038b31639afc0d922f474b7/hia/qualification/work-handshake-original-build.tar.xz) is a
 147792-byte fixed regression input, SHA256
 `137c4a0b3ea6b86ad67916ec0c35df512d63fb19405f9c6e4b83bccac0f33811`.
 Its 64 regular members retain the actual old HIA build, emitter inputs/outputs
-and native images. CI validates its exact identity and safely extracts it before
-executing the old/new regression. It is required negative-test evidence, not a
-second current production implementation.
+and native images. That old-layout identity remains bound to its historical
+source. Current CI uses the new Work/Paid-layout regression fixture described
+below. Neither archive is a second current production implementation.
 
 The [integration record](native-extension-integration.json) and its archive
 retain root's exact inventory, 33 integration tests, four bootstrap groups,
@@ -252,3 +252,56 @@ at the explicit location in the record. The earliest Transfer scratch failure
 and superseded Transcript borrow-refusal source have explicit historical byte
 gaps. A complete archive of the declared available objects does not repair those
 gaps, erase failed runs or qualify the entire chain.
+
+## Current continuation and external archive availability
+
+The [continuation record](continuation-development.json) contains exact identities
+for the complete full530, PeerLeaseStore and Work/Paid archives, the Work/Paid
+support archive and the two surviving Some Node archives. They are retained in
+independently rehashed operator copies; these additional large archives are not
+embedded in the repository. Work/Paid support imports content from the complete
+Work/Paid archive and is not self-contained on its own. Current CI still uploads
+complete source, binary and raw success/failure artifacts.
+
+The [current Work/Paid negative build](work-handshake-original-build.tar.xz)
+has 76 regular `original-build/` members and 379,784 compressed bytes, SHA256
+`c982fb8a9bd8b3aa856df311c18f41b15467632a36e463d7c1fd6ffb228f9940`.
+Every member was reopened and hashed against the actual controlled-test build.
+Its new compressed identity does not alter those original file bytes. CI selects
+`work-paid-v2` explicitly, validates the exact archive and complete member roster,
+then performs the real controlled old/fixed-image comparisons.
+
+Three old local-only raw archives became inaccessible when the temporary
+executor was replaced: the Some/core direct-method archive, the failed SHA
+consolidation candidate archive and the old 95-test PQ archive whose upload was
+incomplete. Their former sizes, hashes and observed outcomes remain in the
+record, with no claim of a presently accessible complete copy. The two surviving
+Some archives do not supply the missing core/direct observations. Fresh runtime
+qualification has a new source/result identity; it cannot recreate the old raw
+observations or turn an incomplete upload into a complete archive.
+
+The fresh 95-test crypto-types archive is `pq-fresh95-content-store.tar.xz`,
+38,816,692 bytes, SHA256
+`5474a53fb7806a70872aa682d1cd9cd74411b3efb9d27043885daec3fca5884b`.
+It is self-contained: 1,366 logical files through 1,326 unique objects totaling
+310,544,202 unique bytes, with no imported content-store dependency. Both
+retained hosts reopened and hashed every object. The manifest is 756,786 bytes,
+SHA256 `eaf8f805ccfa01f212f79481b4d6ab31056f7a1c82fecc56bf01435ac5437a12`.
+Its actual 95-test execution binds the 1,244-file graph `36bf44bc…`, 17 builds
+and 21,210 calls; the continuation record contains the full identity. The new
+Keccak and polynomial actual native objects and all collected raw outputs are
+included. Temporary ELF files already removed by other normal qualifier builds
+are not claimed as retained original members. This archive does not replace or
+repair the unavailable earlier 95-test archive.
+
+The separate current-source build archive is 12,753,528 bytes, SHA256
+`5425e61c7bc654c538ba2bbd1c7d3778cc0e6b500ad0f4aea4f716cb8553a21a`.
+Both local and retained Mac copies independently verified all 2,211 content
+members and the manifest (2,212 regular archive members total). It retains
+106,367,063 content bytes: current Node and Peer builds, all their captured
+source inputs, actual bootstrap and integration-control logs. The manifest is
+497,582 bytes, SHA256
+`2f8f87defc69a8a517fce08594e974a58156e327dea81f822a8ec054e4af886b`.
+Both resulting ELFs equal their earlier frozen builds byte-for-byte. These are
+new compilation and source-admission results; they do not create a new runtime
+qualification for the changed source graph.

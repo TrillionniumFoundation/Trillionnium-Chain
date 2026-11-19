@@ -1,4 +1,4 @@
-"""Private x86-64 ptrace qualification of this process's own original child.
+"""Private x86-64 ptrace qualification of this process's own native/original child.
 No attachment to existing processes. AT_SYSINFO_EHDR is changed only in the new
 child's initial stack before its unmodified dynamic loader executes. This is a
 controlled platform fixture, not normal-vDSO performance or retry evidence.
@@ -66,20 +66,27 @@ def auxv_fixture(pid):
   'initial_stack_pointer':start,'argc':argc,'environment_count':env_count,
   'AT_SYSINFO_EHDR_before':base,'AT_SYSINFO_EHDR_after':0,'auxv_before_hex':before.hex(),
   'auxv_after_hex':after.hex(),'actual_vdso_mapping':vdso[0]}
-def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
+def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90,*,child_setup=None,clean_environment=False,expected_exit=0,expected_signal=None,native_roles=False,capture_writes=False):
+ scoped=native_roles or capture_writes
+ if scoped:
+  need(type(native_roles) is bool and type(capture_writes) is bool and capture_writes and clean_environment is True,'Finite capture requires exact clean environment and complete writes')
+  need(type(expected_exit) is int and 0<=expected_exit<=255 and expected_signal is None,'Finite capture requires its exact ordinary exit')
+  need(type(env) is dict and all(type(k) is str and type(v) is str for k,v in env.items()),'Finite capture requires explicit environment strings')
  out=Path(out);out.mkdir(mode=0o700)
  stdout=(out/'stdout.raw').open('xb');stderr=(out/'stderr.raw').open('xb')
  before=identity(argv[0]);events=[];pending={};alive=set();roster={};unknown={};clocks=[];aux=None;primary=None
  report={'schema':'trnm.private.actual-original-ptrace-fault.v1','status':'FAIL',
   'argv':argv,'disable_vdso':disable_vdso,'executable_before':before}
+ if scoped:report.update(schema='trnm.hia.work-owner-paid-clock-trace.v1',environment=dict(env),complete_write_capture=True,clean_environment=True,native_roles_from_actual_gettid=native_roles,expected_exit=expected_exit,expected_signal=expected_signal)
  roles={};fired=[];gettid={};proc_tid={};spawn_fallback={}
  start=time.monotonic();pid=os.fork()
  if pid==0:
   try:
    fd=os.open('/dev/null',os.O_RDONLY);os.dup2(fd,0);os.close(fd)
    os.dup2(stdout.fileno(),1);os.dup2(stderr.fileno(),2)
+   if child_setup is not None:child_setup()
    ptrace(0,0);os.kill(os.getpid(),signal.SIGSTOP)
-   os.execve(argv[0],argv,{**os.environ,**(env or {})})
+   os.execve(argv[0],argv,(dict(env or {}) if clean_environment else {**os.environ,**(env or {})}))
   except BaseException:os._exit(124)
  stdout.close();stderr.close()
  def deadline(signum,frame):raise TimeoutError('Owned private ptrace run exceeded deadline')
@@ -112,7 +119,11 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
     if ev in (1,2,3):
      child=ctypes.c_ulonglong();ptrace(0x4201,tid,0,ctypes.byref(child));c=child.value
      need(c>0 and c not in roster,'Child identity was not fresh')
-     born=event('birth',tid,child=c,ptrace_event=ev);roster[c]={'parent':tid,'birth':born['sequence']};alive.add(c)
+     born=event('birth',tid,child=c,ptrace_event=ev);roster[c]={'parent':tid,'birth':born['sequence']}
+     if scoped:
+      call=pending.get(tid);need(call is not None and call['nr'] in (56,435) and 'actual_clone' in call,'Birth must bind an actual captured clone')
+      roster[c].update(clone_entry=call['sequence'],child_tid_address=call['actual_clone']['child_tid'])
+     alive.add(c)
      if c in unknown:unknown.pop(c);resume(c)
     elif ev==4:
      need(tid==pid and aux is None,'Unexpected second or child exec')
@@ -133,6 +144,9 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
      nr=struct.unpack_from('<Q',raw,24)[0];args=list(struct.unpack_from('<6Q',raw,32))
      need(tid not in pending,'Overlapping syscall entry')
      row=event('syscall-entry',tid,nr=nr,args=args)
+     if scoped and nr==1:
+      need(args[2]<=65536,'Native write extent is bounded')
+      row['write_bytes_hex']=bytes_at(tid,args[1],args[2]).hex()
      if nr in (89,267):
       pointer=args[0] if nr==89 else args[1]
       name=bytearray()
@@ -149,10 +163,24 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
       row['clock_id']=signed(args[0]);row['clock_ordinal']=sum(1 for c in clocks if c['tid']==tid)+1
       if tid in roles:
        roles[tid]['clock_count']+=1;row['role']=roles[tid]['role'];row['role_index']=roles[tid]['index'];row['role_clock_ordinal']=roles[tid]['clock_count']
-       selected=fault and row['role'] in fault.get('clock_roles',[]) and row['role_clock_ordinal']==fault.get('clock_when')
+       selected=fault and row['role'] in fault.get('clock_roles',[]) and row['role_clock_ordinal'] in fault.get('clock_ordinals',[fault.get('clock_when')])
        if selected:
         need(row['clock_id'] in (1,3),'Fault targeted non-account clock')
+        if 'clock_id' in fault:need(row['clock_id']==fault['clock_id'],'Fault must bind its exact actual clock ID')
+        if native_roles:need(tid in gettid,'Native fault must bind actual gettid')
         row['fault']={'kind':'clock','error':fault.get('clock_error'),'invalid_timespec':fault.get('clock_invalid',False)}
+     if scoped and nr in (56,435):
+      if nr==56:
+       row['actual_clone']={'abi':'clone','flags':args[0],'stack':args[1],
+        'parent_tid':args[2],'child_tid':args[3],'tls':args[4]}
+      else:
+       need(64<=args[1]<=88,'Captured clone3 argument extent differs')
+       captured=bytes_at(tid,args[0],args[1]);words=struct.unpack('<11Q',captured+bytes(88-len(captured)))
+       row['actual_clone']={'abi':'clone3','argument_hex':captured.hex(),'argument_bytes':args[1],
+        **dict(zip(('flags','pidfd','child_tid','parent_tid','exit_signal','stack','stack_size','tls','set_tid','set_tid_size','cgroup'),words))}
+     if scoped and nr==202:
+      need(args[0]%4==0,'Captured futex word must be naturally aligned')
+      row['futex_word_before']=int.from_bytes(bytes_at(tid,args[0],4),'little')
      if nr in (56,435) and tid in roles:
       fallback=nr==56 and spawn_fallback.pop(tid,False)
       if not fallback:roles[tid]['spawn_count']+=1
@@ -194,6 +222,21 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
        proc_tid[tid]=row['sequence'];row['own_thread_link_result_hex']=raw_link.hex()
       if entry['nr']==186:
        need(result==tid,'Actual gettid differs from traced task');gettid[tid]=row['sequence']
+       if native_roles and tid not in roles:
+        role=1 if tid==pid else 2
+        need(tid==pid or roster[tid]['parent']==pid,'Native worker must be an actual direct clone child')
+        roles[tid]={'role':role,'index':0,'marker_entry':entry['sequence'],'marker_exit':row['sequence'],'clock_count':0,'spawn_count':0}
+        event('actual-role',tid,role=role,index=0,actual_gettid_exit=row['sequence'])
+      if native_roles and entry['nr'] in (0,17) and result>=0:
+       need(result<=entry['args'][2]<=65536,'Native captured read extent')
+       row['read_bytes_hex']=bytes_at(tid,entry['args'][1],result).hex()
+      if native_roles and entry['nr']==5 and result==0:
+       row['stat_bytes_hex']=bytes_at(tid,entry['args'][1],144).hex()
+      if scoped and entry['nr']==202:
+       row['futex_word_after']=int.from_bytes(bytes_at(tid,entry['args'][0],4),'little')
+      if scoped and entry['nr'] in (56,435) and result>0 and entry['actual_clone']['flags']&0x100000:
+       parent_tid=entry['actual_clone']['parent_tid'];need(parent_tid>0 and parent_tid%4==0,'Captured parent-settid address')
+       row['parent_tid_word_after']=int.from_bytes(bytes_at(tid,parent_tid,4),'little')
       if entry['nr']==435 and result==-38:spawn_fallback[tid]=True
       if 'role_marker_hex' in entry:
        need(result==32,'Role marker was not a complete actual write')
@@ -210,6 +253,7 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
         'role':entry.get('role'),'role_index':entry.get('role_index'),'role_clock_ordinal':entry.get('role_clock_ordinal'),'injected':entry.get('fault')}
        if result==0:
         value=bytes_at(tid,entry['args'][1],16)
+        if scoped:row['actual_timespec_hex']=value.hex()
         clock.update(timespec_hex=value.hex(),seconds=struct.unpack_from('<q',value)[0],
           nanoseconds=struct.unpack_from('<q',value,8)[0])
        clocks.append(clock)
@@ -219,7 +263,7 @@ def run(argv,out,disable_vdso=False,env=None,fault=None,timeout=90):
    event('signal',tid,signal=sig);resume(tid,sig)
   need(not unknown,'Unassociated traced child')
   need(aux is not None,'No actual exec event')
-  need(report.get('exit_code')==0 and report.get('signal') is None,'Actual original program failed')
+  need(report.get('exit_code')==expected_exit and report.get('signal')==expected_signal,'Actual owned native/original terminal result differs')
   need(identity(argv[0])==before,'Actual original binary changed')
   if fault:need(bool(fired),'Declared fault was never reached in the actual original program')
   report.update(status='PASS',actual_clock_calls=clocks,roster=roster,auxv=aux,

@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_hia_same_worker_work_fixture_v1
+hia-asm.v1 hepta.hia.program.v8 trnm_hia_work_paid_owner_fixture_v1
 fn f0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(e:readbuf,c:mutbuf,s:mutbuf)
   fixture:u64 = const() {"value":1}
