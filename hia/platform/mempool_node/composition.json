@@ -3,11 +3,11 @@
   "batch_parent": "408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d",
   "expected_emitted_prefix": {
     "bytes": 12776,
-    "sha256": "ebbbc513507bab424109a5f372ed786571777243db4d376b9f378895bc88b9de"
+    "sha256": "a3d5c72cbee7acfc7be920d5c2a94a5a70fddd9dff8a44777452afb9c9404c12"
   },
   "expected_executable": {
-    "bytes": 7795933,
-    "sha256": "abfdf558504c0080a7d6975b00b5d05aad8d7758145f52471c09ab719f926314"
+    "bytes": 7800775,
+    "sha256": "9887e7259f22463223770d6d8f3d09ccbe687c0dcbd15caf8c30c5dc36028b02"
   },
   "expected_images": {
     "application_claim": {
@@ -39,8 +39,8 @@
       "sha256": "89e5609adbd8767dea6729c778259800277db34b9b4ddb31072211094c4c5b68"
     },
     "ed": {
-      "bytes": 98341,
-      "sha256": "b675877bf541b3310a138bcda1673056c45ed1a9205f453449ecdce07c5ccf6d"
+      "bytes": 100762,
+      "sha256": "1ce8f710aae2a431766dffbbae1b4df16be708c4c201e01f02a1b9df1e26a0cf"
     },
     "genesis": {
       "bytes": 268603,
@@ -95,8 +95,8 @@
       "sha256": "efb0eeb04f3704ddd95db766b0202f6394c0da902df8dc5a111831662f70b509"
     },
     "settings": {
-      "bytes": 420370,
-      "sha256": "34676e8ee6e5c9839a53f55445b69e0cb5f8cf5331d0698fc87bd8258bf455e5"
+      "bytes": 422791,
+      "sha256": "ea105914200094baf17dedae0b63763da65b83613b99d6efc0421088d376385e"
     },
     "sha": {
       "bytes": 28938,
@@ -5437,10 +5437,10 @@
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_arena",
           "identity": {
-            "bytes": 26646,
-            "sha256": "01e8283c3a4903e6b75d88411d95b8d5abf698798fa96752688f36921a9fe87b"
+            "bytes": 4577,
+            "sha256": "b81fcd566900a3bf5ec0aaf82a2e0db41b03e3cb6e36c424c985e373cc43fac4"
           },
-          "ownership": "unchanged-M05",
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
@@ -5467,20 +5467,60 @@
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_work_load64",
           "identity": {
-            "bytes": 880,
-            "sha256": "58bd35f153d10a66d875287a0f8e3797de9b2aebdb8fa81c2cf2ce3ffa45fd24"
+            "bytes": 255,
+            "sha256": "4c350baea808bbb72b53c7a954c636493abcaec36f48ff9a7f2c26c3db16a5ec"
           },
-          "ownership": "unchanged-M05",
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_work_store64",
           "identity": {
-            "bytes": 919,
-            "sha256": "68c812a86a5c1ca0cfad5c9c933a96d1fc5d357821dd6454fdb00464b2d86bd8"
+            "bytes": 283,
+            "sha256": "630c89587d68ed8a80cc50396fb03889b3d807010162e124fa10e48e2cf006f2"
           },
-          "ownership": "unchanged-M05",
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_state_init",
+          "identity": {
+            "bytes": 13768,
+            "sha256": "035333dfc7eff2ae17ef322bf3d48d87550eef1ceb6c4c49ff414c33e6126299"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_compress",
+          "identity": {
+            "bytes": 8368,
+            "sha256": "8b45a6e742937ec8bccd4e49e2f3eb72acb2d56727b4d2a7fb1f4d3559fd9905"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_load64",
+          "identity": {
+            "bytes": 956,
+            "sha256": "05963fedfb63af1ea170318c7753808fad0c3ec4192acea765edba9c9925f352"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_store64",
+          "identity": {
+            "bytes": 995,
+            "sha256": "19b715713802e72298f86ee32df9dca26ec56f1bd684c610cc98e0fcfe2cac1d"
+          },
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
@@ -5495,8 +5535,8 @@
         }
       ],
       "source": {
-        "bytes": 105847,
-        "sha256": "d7b3e1c928eae63875af35369af03a40a5d10d5a5a10ad1d6957d466b23cf523"
+        "bytes": 106604,
+        "sha256": "ec918d822063f8cbdb563fc8728d90ae27dd3b920aa8ea4a94b37b34be40dfea"
       },
       "suffix_hex": ""
     },
@@ -13343,10 +13383,10 @@
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_arena",
           "identity": {
-            "bytes": 26646,
-            "sha256": "01e8283c3a4903e6b75d88411d95b8d5abf698798fa96752688f36921a9fe87b"
+            "bytes": 4577,
+            "sha256": "b81fcd566900a3bf5ec0aaf82a2e0db41b03e3cb6e36c424c985e373cc43fac4"
           },
-          "ownership": "unchanged-C",
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
@@ -13373,20 +13413,60 @@
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_work_load64",
           "identity": {
-            "bytes": 880,
-            "sha256": "58bd35f153d10a66d875287a0f8e3797de9b2aebdb8fa81c2cf2ce3ffa45fd24"
+            "bytes": 255,
+            "sha256": "4c350baea808bbb72b53c7a954c636493abcaec36f48ff9a7f2c26c3db16a5ec"
           },
-          "ownership": "unchanged-C",
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
           "file": "hia/src/crypto/sha512_arena.hepta",
           "function": "sha512_work_store64",
           "identity": {
-            "bytes": 919,
-            "sha256": "68c812a86a5c1ca0cfad5c9c933a96d1fc5d357821dd6454fdb00464b2d86bd8"
+            "bytes": 283,
+            "sha256": "630c89587d68ed8a80cc50396fb03889b3d807010162e124fa10e48e2cf006f2"
           },
-          "ownership": "unchanged-C",
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_state_init",
+          "identity": {
+            "bytes": 13768,
+            "sha256": "035333dfc7eff2ae17ef322bf3d48d87550eef1ceb6c4c49ff414c33e6126299"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_compress",
+          "identity": {
+            "bytes": 8368,
+            "sha256": "8b45a6e742937ec8bccd4e49e2f3eb72acb2d56727b4d2a7fb1f4d3559fd9905"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_load64",
+          "identity": {
+            "bytes": 956,
+            "sha256": "05963fedfb63af1ea170318c7753808fad0c3ec4192acea765edba9c9925f352"
+          },
+          "ownership": "shared-canonical-SHA512",
+          "prefix_hex": ""
+        },
+        {
+          "file": "hia/src/crypto/sha512_arena.hepta",
+          "function": "sha512_store64",
+          "identity": {
+            "bytes": 995,
+            "sha256": "19b715713802e72298f86ee32df9dca26ec56f1bd684c610cc98e0fcfe2cac1d"
+          },
+          "ownership": "shared-canonical-SHA512",
           "prefix_hex": ""
         },
         {
@@ -13581,8 +13661,8 @@
         }
       ],
       "source": {
-        "bytes": 400860,
-        "sha256": "4506de10962ac152da319eab85fcc54af334262f6150c0f0050f7805a364994c"
+        "bytes": 401617,
+        "sha256": "d90ec356a8fa708aabd98baa07bb0f841463c28109feb6c3a98cc306a47b8f3d"
       },
       "suffix_hex": ""
     },

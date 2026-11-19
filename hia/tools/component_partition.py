@@ -7,9 +7,14 @@ import os
 import re
 import unittest
 
-GROUPS = ("general", "state-root")
+GROUPS = ("general", "crypto-types", "state-root")
 ROOT_TEST_MODULE = "hia.tests.test_state_root_adversarial."
-SCHEMA = "trnm.hia.component-test-partition.v1"
+CRYPTO_TYPES_MODULES = tuple("hia.tests." + name + "." for name in (
+    "test_crypto", "test_ed25519", "test_ed25519_adversarial",
+    "test_sha512", "test_sha512_stream", "test_request_status",
+    "test_transfer", "test_transcript",
+))
+SCHEMA = "trnm.hia.component-test-partition.v2"
 
 
 def need(condition, message):
@@ -33,7 +38,11 @@ def group_for(identifier):
     need(type(identifier) is str and identifier.startswith("hia.tests.")
          and all(part.isidentifier() for part in identifier.split(".")),
          "Noncanonical component test identity")
-    return "state-root" if identifier.startswith(ROOT_TEST_MODULE) else "general"
+    if identifier.startswith(ROOT_TEST_MODULE):
+        return "state-root"
+    if identifier.startswith(CRYPTO_TYPES_MODULES):
+        return "crypto-types"
+    return "general"
 
 
 def descriptor(identifiers, group):
@@ -44,7 +53,7 @@ def descriptor(identifiers, group):
     need(len(identifiers) == len(set(identifiers)), "Duplicate discovered component test")
     ordered = sorted(identifiers)
     need({group_for(identifier) for identifier in ordered} == set(GROUPS),
-         "Both complete component partitions are required")
+         "All complete component partitions are required")
     selected = [identifier for identifier in ordered
                 if group == "all" or group_for(identifier) == group]
     return {"schema": SCHEMA, "group": group, "groups": list(GROUPS),

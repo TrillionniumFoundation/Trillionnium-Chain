@@ -1,3 +1,19 @@
+## 2026-11-18 — 全树复核、原生交易与 Transcript 方法、共享哈希及完整分片
+
+本轮从 `56c6e560dd3192f89cca40542286166b8284cb4b` 继续，先发布 Oracle detached checkout 修复 `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`。当前 **54 kernels /22 native foundations /143 HIA sources**，26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。这些数量描述实际覆盖，不作为整链完成率；三项全栈、退役与生产激活标记继续 false。本文件保持唯一开发计划，当前完整审计集中在 [hia/AUDIT.md](../../hia/AUDIT.md)，旧审计流水留在精确 Git 历史中。
+
+本轮 HIA 方法包括 RequestStatus 全7状态/49有序转换/Unicode解析与Display、TransferTx 原签名消息/地址/签名/严格验签，以及 Transcript 全9显式API、完整segment收集、实际Merkle层、单/批proof和任意typed proof验证。完整u64/u128域、原signed domain、错误先后及原u64饱和边界均保持。三个模块使用实际未改的 trnm-types 对照，不截取原函数改写算法充当独立实现；generic Serde、relay认证和live Node消费仍继续。原trnm-types完整all-targets实际283项、20个binary、零ignored/filtered通过。
+
+增量SHA-512复用原arena的唯一canonical压缩函数，支持128位消息计数、真实未对齐4MiB+257字节输入；SHA-256完整域助手复用原压缩，保留transport 2,098,176字节上限和原错误顺序。Transfer最大十进制字段少2字节scratch及非法hex `@`/反引号触发trap的真实缺陷均已修复。后者保留匹配的失败源与实际trap输出；最初scratch失败没有确认仍在的完整旧源码/原stdout，明确此历史字节缺口，不重造失败。制造的近2^61上下文只验证计数算术，不声称执行exabyte消息。共享函数改变后的固定平台清单和编译器128函数/8192指令边界必须在真实consumer重新编译；不复制哈希算法或提高编译器限制。
+
+Oracle只读audit修复保留dev/push分支和repo身份拒绝。其精确push [44442681639](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442681639) 已54/54 SUCCESS；独立PR [44442705474](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442705474) 的general472项零skip实际通过，但job在20分06秒结论CANCELLED，consumer正确失败；原log未明确取消原因，不改写为SUCCESS。
+
+新增后首次完整本地511项实际结束，1735.968秒、1 failure/5 errors，源前后一致。4项Unix socket创建被环境EPERM拒绝，原peer-lease完整保留suite也在实际socket操作失败；另1项暴露临时SHA256边界fixture被误当repo路径的报告器错误。完整FAIL保留，不能由后续修复覆盖。生成fixture现显式绑定test owner、完整实际UTF8输入/receipt、canonical依赖并拒绝symlink/traversal/重绑定，不能冒作production kernel。根合并后43项composition/migration/provenance/partition控制全部通过，临时fixture实际64次selfhost调用与删除临时目录后回读也通过。
+
+工作流现在55jobs/43独立bootstrap，四组共172次实际调用通过；各job仍20分钟，child仍原240秒/3秒清理。完整发现530项精确分为general449、crypto-types74、State-root7，发现不是执行。consumer要求三份同head/run/attempt/source map、所有实际开始/完成roster、零失败零skip及三个真实job SUCCESS；没有省略测试或借用其它提交结果。原4秒、16请求、0.25CPU/2GiB/0swap/256PID业务验收及CONFIRMATION_TARGET失败保持。
+
+继续把真实Some/CheckedApply私有snapshot和PendingPreview接入唯一Node，完成同一请求的Paid/Host期限与持久Node.db COMMIT、reorg、replay、outbox/ACK。原26包、PQ/TLS、跨目标、真实独立训练评测/Adopt-NoUpdate/冷恢复与研究门逐项保留。旧栈只有实际全替代及原验收成功后才能删除；冗余过程文件须先证明不再承担源、证据或验收依赖。
+
 ## 2026-11-18 — Oracle 全公开值与实际 JSON 配置的原生闭合
 
 本轮父提交 `d49083115e977f9c1947f92b9c10d93870e1b752`。当前 **50 kernels /22 native foundations /139 HIA sources**，逐源唯一归属；26原Rust包中16部分迁移、10未迁移，**0退役、9全项目门OPEN**。本轮只整合冻结的Oracle两内核、独立原库对照、CI接线及完整证据；真实持久Peer store、service settlement与task-kernel在独立工作树继续，并发Node/TCM1/Paid源不覆盖。

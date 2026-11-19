@@ -567,6 +567,50 @@
       "tests": [
         "hia/tests/test_oracle.py"
       ]
+    },
+    {
+      "id": "crypto/sha512-stream",
+      "node_integration_complete": false,
+      "scope": "Incremental SHA512 with the original shared compression core, full 128-bit bit length, external and disjoint arena input, explicit lifecycle and bounded scratch. Message length follows supplied extents without the previous one-shot arena ceiling.",
+      "source": "hia/src/crypto/sha512_stream.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sha512_stream.py",
+        "hia/tests/test_sha512.py"
+      ]
+    },
+    {
+      "id": "types/request-status",
+      "node_integration_complete": false,
+      "scope": "Every explicit RequestStatus and RequestStateError public value operation: seven states, complete transition matrix, exact Rust Unicode trimming and ASCII normalization, original error codes and display. Queue authority, generic Serde providers, the remaining type modules and durable Node use remain separate.",
+      "source": "hia/src/types/request_status.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_request_status.py",
+        "hia/tests/rust_request_status_reference.rs"
+      ]
+    },
+    {
+      "id": "types/transcript",
+      "node_integration_complete": false,
+      "scope": "All nine explicit original transcript APIs: exact envelope SHA256 field order, complete ordered segment collection/errors, materialized Merkle layers, root/leaf count/single and batch proofs, arbitrary typed proof verification. Full u64/u128 values and supplied extents; generic Serde, relay authentication, durable ownership and Node integration remain separate.",
+      "source": "hia/src/types/transcript.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_transcript.py",
+        "hia/tests/rust_transcript_reference.rs"
+      ]
+    },
+    {
+      "id": "types/transfer",
+      "node_integration_complete": false,
+      "scope": "Original TransferTx signing message, address derivation, seed signing and strict Ed25519 validation with full u128 values, unchanged original domains and Unicode/error ordering. Streaming SHA512 preserves long-message behavior; JSON providers, persistent key custody and Node settlement remain separate.",
+      "source": "hia/src/types/transfer.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_transfer.py",
+        "hia/tests/rust_transfer_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -574,12 +618,16 @@
   "history_archive": "evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json",
   "legacy_packages": [
     {
-      "components": [],
+      "components": [
+        "types/request-status",
+        "types/transfer",
+        "types/transcript"
+      ],
       "legacy_path": "trillionnium/crates/trnm-types",
       "module": "M00",
       "package": "trnm-types",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -766,7 +814,8 @@
         "crypto/ed25519_group",
         "crypto/ed25519_verify",
         "crypto/sha256_stream",
-        "crypto/ed25519-sign"
+        "crypto/ed25519-sign",
+        "crypto/sha512-stream"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
       "module": "M01",

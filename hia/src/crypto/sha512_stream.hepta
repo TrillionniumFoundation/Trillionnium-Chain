@@ -1,0 +1,534 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sha512_stream
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v1)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":64}
+  v6:bool = compare.ge(v4,v5)
+  v7:usize = buffer.len(v2)
+  v8:u64 = int.cast(v7) {"mode":"wrap"}
+  v9:u64 = const() {"value":131232}
+  v10:bool = compare.ge(v8,v9)
+  v11:bool = bool.and(v6,v10)
+  branch v11 header(v0,v1,v2) capacity()
+block capacity()
+  v12:u32 = const() {"value":100}
+  ret(v12)
+block header(v13:readbuf,v14:mutbuf,v15:mutbuf)
+  v16:usize = buffer.len(v13)
+  v17:u64 = int.cast(v16) {"mode":"wrap"}
+  v18:u64 = const() {"value":8}
+  v19:bool = compare.ge(v17,v18)
+  branch v19 dispatch(v13,v14,v15) request()
+block request()
+  v20:u32 = const() {"value":101}
+  ret(v20)
+block dispatch(v21:readbuf,v22:mutbuf,v23:mutbuf)
+  v24:u64 = const() {"value":0}
+  v25:u64 = call(v21,v24) {"function":"s512_read64"}
+  v26:u64 = const() {"value":0}
+  v27:bool = compare.eq(v25,v26)
+  branch v27 whole(v21,v22,v23) choose_init(v21,v22,v23,v25)
+block choose_init(v28:readbuf,v29:mutbuf,v30:mutbuf,v31:u64)
+  v32:u64 = const() {"value":1}
+  v33:bool = compare.eq(v31,v32)
+  branch v33 init(v28,v30) choose_update(v28,v29,v30,v31)
+block choose_update(v34:readbuf,v35:mutbuf,v36:mutbuf,v37:u64)
+  v38:u64 = const() {"value":2}
+  v39:bool = compare.eq(v37,v38)
+  branch v39 update(v34,v36) choose_work(v34,v35,v36,v37)
+block choose_work(v40:readbuf,v41:mutbuf,v42:mutbuf,v43:u64)
+  v44:u64 = const() {"value":3}
+  v45:bool = compare.eq(v43,v44)
+  branch v45 work(v40,v42) choose_final(v40,v41,v42,v43)
+block choose_final(v46:readbuf,v47:mutbuf,v48:mutbuf,v49:u64)
+  v50:u64 = const() {"value":4}
+  v51:bool = compare.eq(v49,v50)
+  v52:usize = buffer.len(v46)
+  v53:u64 = int.cast(v52) {"mode":"wrap"}
+  v54:u64 = const() {"value":8}
+  v55:bool = compare.eq(v53,v54)
+  v56:bool = bool.and(v51,v55)
+  branch v56 final(v47,v48) request()
+block init(v57:readbuf,v58:mutbuf)
+  v59:usize = buffer.len(v57)
+  v60:u64 = int.cast(v59) {"mode":"wrap"}
+  v61:u64 = const() {"value":8}
+  v62:bool = compare.eq(v60,v61)
+  branch v62 initialize(v58) request()
+block initialize(v63:mutbuf)
+  v64:u64 = call(v63) {"function":"s512_init"}
+  jump status(v64)
+block update(v65:readbuf,v66:mutbuf)
+  v67:usize = buffer.len(v65)
+  v68:u64 = int.cast(v67) {"mode":"wrap"}
+  v69:u64 = const() {"value":24}
+  v70:bool = compare.ge(v68,v69)
+  branch v70 read_update(v65,v66) request()
+block read_update(v71:readbuf,v72:mutbuf)
+  v73:u64 = const() {"value":8}
+  v74:u64 = call(v71,v73) {"function":"s512_read64"}
+  v75:u64 = const() {"value":16}
+  v76:u64 = call(v71,v75) {"function":"s512_read64"}
+  v77:u64 = call(v71,v74,v76,v72) {"function":"s512_update"}
+  jump status(v77)
+block work(v78:readbuf,v79:mutbuf)
+  v80:usize = buffer.len(v78)
+  v81:u64 = int.cast(v80) {"mode":"wrap"}
+  v82:u64 = const() {"value":24}
+  v83:bool = compare.eq(v81,v82)
+  branch v83 work_update(v78,v79) request()
+block work_update(v84:readbuf,v85:mutbuf)
+  v86:u64 = const() {"value":8}
+  v87:u64 = call(v84,v86) {"function":"s512_read64"}
+  v88:u64 = const() {"value":16}
+  v89:u64 = call(v84,v88) {"function":"s512_read64"}
+  v90:u64 = call(v85,v87,v89) {"function":"s512_update_work"}
+  jump status(v90)
+block whole(v91:readbuf,v92:mutbuf,v93:mutbuf)
+  v94:usize = buffer.len(v91)
+  v95:u64 = int.cast(v94) {"mode":"wrap"}
+  v96:u64 = const() {"value":16}
+  v97:bool = compare.ge(v95,v96)
+  branch v97 chunk(v91,v92,v93) request()
+block chunk(v98:readbuf,v99:mutbuf,v100:mutbuf)
+  v101:u64 = const() {"value":8}
+  v102:u64 = call(v98,v101) {"function":"s512_read64"}
+  v103:u64 = const() {"value":0}
+  v104:bool = compare.gt(v102,v103)
+  branch v104 begin(v98,v99,v100,v102) request()
+block begin(v105:readbuf,v106:mutbuf,v107:mutbuf,v108:u64)
+  v109:u64 = call(v107) {"function":"s512_init"}
+  v110:u64 = const() {"value":16}
+  jump chunks(v105,v106,v107,v108,v110)
+block chunks(v111:readbuf,v112:mutbuf,v113:mutbuf,v114:u64,v115:u64)
+  v116:usize = buffer.len(v111)
+  v117:u64 = int.cast(v116) {"mode":"wrap"}
+  v118:u64 = int.sub.wrap(v117,v115)
+  v119:u64 = const() {"value":0}
+  v120:bool = compare.gt(v118,v119)
+  branch v120 hash_chunk(v111,v112,v113,v114,v115,v118) final(v112,v113)
+block hash_chunk(v121:readbuf,v122:mutbuf,v123:mutbuf,v124:u64,v125:u64,v126:u64)
+  v127:bool = compare.lt(v126,v124)
+  v128:u64 = select(v127,v126,v124)
+  v129:u64 = call(v121,v125,v128,v123) {"function":"s512_update"}
+  v130:u64 = int.add.wrap(v125,v128)
+  v131:u64 = const() {"value":0}
+  v132:bool = compare.eq(v129,v131)
+  branch v132 chunks(v121,v122,v123,v124,v130) status(v129)
+block final(v133:mutbuf,v134:mutbuf)
+  v135:u64 = call(v134) {"function":"s512_final"}
+  v136:u64 = const() {"value":0}
+  v137:bool = compare.eq(v135,v136)
+  v138:u64 = const() {"value":0}
+  branch v137 publish(v133,v134,v138) status(v135)
+block publish(v139:mutbuf,v140:mutbuf,v141:u64)
+  v142:u64 = const() {"value":64}
+  v143:bool = compare.lt(v141,v142)
+  branch v143 publish_byte(v139,v140,v141) success()
+block publish_byte(v144:mutbuf,v145:mutbuf,v146:u64)
+  v147:u64 = const() {"value":131168}
+  v148:u64 = int.add.wrap(v147,v146)
+  v149:usize = int.cast(v148) {"mode":"wrap"}
+  v150:u8 = buffer.load(v145,v149)
+  v151:u64 = int.cast(v150) {"mode":"wrap"}
+  v152:usize = int.cast(v146) {"mode":"wrap"}
+  v153:u8 = int.cast(v151) {"mode":"wrap"}
+  _ = buffer.store(v144,v152,v153)
+  v154:u64 = const() {"value":1}
+  v155:u64 = int.add.wrap(v146,v154)
+  jump publish(v144,v145,v155)
+block success()
+  v156:u32 = const() {"value":0}
+  ret(v156)
+block status(v157:u64)
+  v158:u32 = int.cast(v157) {"mode":"wrap"}
+  ret(v158)
+end
+fn s512_init(v0:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf)
+  v1:usize = buffer.len(v0)
+  v2:u64 = int.cast(v1) {"mode":"wrap"}
+  v3:u64 = const() {"value":131232}
+  v4:bool = compare.ge(v2,v3)
+  branch v4 init(v0) capacity()
+block capacity()
+  v5:u64 = const() {"value":100}
+  ret(v5)
+block init(v6:mutbuf)
+  v7:u64 = const() {"value":0}
+  v8:u64 = call(v6,v7) {"function":"sha512_state_init"}
+  v9:u64 = const() {"value":1344}
+  jump clear(v6,v9)
+block clear(v10:mutbuf,v11:u64)
+  v12:u64 = const() {"value":1512}
+  v13:bool = compare.lt(v11,v12)
+  branch v13 byte(v10,v11) magic(v10)
+block byte(v14:mutbuf,v15:u64)
+  v16:u64 = const() {"value":0}
+  v17:usize = int.cast(v15) {"mode":"wrap"}
+  v18:u8 = int.cast(v16) {"mode":"wrap"}
+  _ = buffer.store(v14,v17,v18)
+  v19:u64 = const() {"value":1}
+  v20:u64 = int.add.wrap(v15,v19)
+  jump clear(v14,v20)
+block magic(v21:mutbuf)
+  v22:u64 = const() {"value":5932458084192831571}
+  v23:u64 = const() {"value":0}
+  v24:u64 = const() {"value":1496}
+  v25:u64 = call(v21,v23,v24,v22) {"function":"sha512_store64"}
+  v26:u64 = const() {"value":0}
+  ret(v26)
+end
+fn s512_valid(v0:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf)
+  v1:usize = buffer.len(v0)
+  v2:u64 = int.cast(v1) {"mode":"wrap"}
+  v3:u64 = const() {"value":131232}
+  v4:bool = compare.ge(v2,v3)
+  branch v4 state(v0) capacity()
+block capacity()
+  v5:u64 = const() {"value":100}
+  ret(v5)
+block state(v6:mutbuf)
+  v7:u64 = const() {"value":0}
+  v8:u64 = const() {"value":1496}
+  v9:u64 = call(v6,v7,v8) {"function":"sha512_load64"}
+  v10:u64 = const() {"value":0}
+  v11:u64 = const() {"value":1504}
+  v12:u64 = call(v6,v10,v11) {"function":"sha512_load64"}
+  v13:u64 = const() {"value":0}
+  v14:u64 = const() {"value":1472}
+  v15:u64 = call(v6,v13,v14) {"function":"sha512_load64"}
+  v16:u64 = const() {"value":0}
+  v17:u64 = const() {"value":1480}
+  v18:u64 = call(v6,v16,v17) {"function":"sha512_load64"}
+  v19:u64 = const() {"value":0}
+  v20:u64 = const() {"value":1488}
+  v21:u64 = call(v6,v19,v20) {"function":"sha512_load64"}
+  v22:u64 = const() {"value":5932458084192831571}
+  v23:bool = compare.eq(v9,v22)
+  v24:u64 = const() {"value":0}
+  v25:bool = compare.eq(v12,v24)
+  v26:u64 = const() {"value":2305843009213693951}
+  v27:bool = compare.le(v18,v26)
+  v28:u64 = const() {"value":128}
+  v29:bool = compare.lt(v21,v28)
+  v30:u64 = const() {"value":127}
+  v31:u64 = bit.and(v15,v30)
+  v32:bool = compare.eq(v31,v21)
+  v33:bool = bool.and(v23,v25)
+  v34:bool = bool.and(v33,v27)
+  v35:bool = bool.and(v34,v29)
+  v36:bool = bool.and(v35,v32)
+  branch v36 success() invalid()
+block success()
+  v37:u64 = const() {"value":0}
+  ret(v37)
+block invalid()
+  v38:u64 = const() {"value":102}
+  ret(v38)
+end
+fn s512_prepare(v0:mutbuf,v1:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf,v1:u64)
+  v2:u64 = call(v0) {"function":"s512_valid"}
+  v3:u64 = const() {"value":0}
+  v4:bool = compare.eq(v2,v3)
+  branch v4 count(v0,v1) status(v2)
+block count(v5:mutbuf,v6:u64)
+  v7:u64 = const() {"value":0}
+  v8:u64 = const() {"value":1472}
+  v9:u64 = call(v5,v7,v8) {"function":"sha512_load64"}
+  v10:u64 = const() {"value":0}
+  v11:u64 = const() {"value":1480}
+  v12:u64 = call(v5,v10,v11) {"function":"sha512_load64"}
+  v13:u64 = int.add.wrap(v9,v6)
+  v14:bool = compare.lt(v13,v9)
+  v15:u64 = const() {"value":1}
+  v16:u64 = const() {"value":0}
+  v17:u64 = select(v14,v15,v16)
+  v18:u64 = int.add.wrap(v12,v17)
+  v19:u64 = const() {"value":2305843009213693951}
+  v20:bool = compare.le(v18,v19)
+  branch v20 save(v5,v13,v18) overflow()
+block save(v21:mutbuf,v22:u64,v23:u64)
+  v24:u64 = const() {"value":0}
+  v25:u64 = const() {"value":1472}
+  v26:u64 = call(v21,v24,v25,v22) {"function":"sha512_store64"}
+  v27:u64 = const() {"value":0}
+  v28:u64 = const() {"value":1480}
+  v29:u64 = call(v21,v27,v28,v23) {"function":"sha512_store64"}
+  v30:u64 = const() {"value":0}
+  ret(v30)
+block overflow()
+  v31:u64 = const() {"value":103}
+  ret(v31)
+block status(v32:u64)
+  ret(v32)
+end
+fn s512_update(v0:readbuf,v1:u64,v2:u64,v3:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:readbuf,v1:u64,v2:u64,v3:mutbuf)
+  v4:usize = buffer.len(v0)
+  v5:u64 = int.cast(v4) {"mode":"wrap"}
+  v6:bool = compare.le(v1,v5)
+  branch v6 count(v0,v1,v2,v3) range()
+block range()
+  v7:u64 = const() {"value":101}
+  ret(v7)
+block count(v8:readbuf,v9:u64,v10:u64,v11:mutbuf)
+  v12:usize = buffer.len(v8)
+  v13:u64 = int.cast(v12) {"mode":"wrap"}
+  v14:u64 = int.sub.wrap(v13,v9)
+  v15:bool = compare.le(v10,v14)
+  branch v15 prepare(v8,v9,v10,v11) range()
+block prepare(v16:readbuf,v17:u64,v18:u64,v19:mutbuf)
+  v20:u64 = call(v19,v18) {"function":"s512_prepare"}
+  v21:u64 = const() {"value":0}
+  v22:bool = compare.eq(v20,v21)
+  v23:u64 = const() {"value":0}
+  branch v22 loop(v16,v17,v18,v19,v23) status(v20)
+block loop(v24:readbuf,v25:u64,v26:u64,v27:mutbuf,v28:u64)
+  v29:bool = compare.lt(v28,v26)
+  branch v29 byte(v24,v25,v26,v27,v28) success()
+block byte(v30:readbuf,v31:u64,v32:u64,v33:mutbuf,v34:u64)
+  v35:u64 = int.add.wrap(v31,v34)
+  v36:usize = int.cast(v35) {"mode":"wrap"}
+  v37:u8 = buffer.load(v30,v36)
+  v38:u64 = int.cast(v37) {"mode":"wrap"}
+  v39:u64 = call(v33,v38) {"function":"s512_feed"}
+  v40:u64 = const() {"value":1}
+  v41:u64 = int.add.wrap(v34,v40)
+  jump loop(v30,v31,v32,v33,v41)
+block success()
+  v42:u64 = const() {"value":0}
+  ret(v42)
+block status(v43:u64)
+  ret(v43)
+end
+fn s512_update_work(v0:mutbuf,v1:u64,v2:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf,v1:u64,v2:u64)
+  v3:u64 = const() {"value":1512}
+  v4:bool = compare.ge(v1,v3)
+  v5:usize = buffer.len(v0)
+  v6:u64 = int.cast(v5) {"mode":"wrap"}
+  v7:bool = compare.le(v1,v6)
+  v8:bool = bool.and(v4,v7)
+  branch v8 count(v0,v1,v2) range()
+block range()
+  v9:u64 = const() {"value":101}
+  ret(v9)
+block count(v10:mutbuf,v11:u64,v12:u64)
+  v13:usize = buffer.len(v10)
+  v14:u64 = int.cast(v13) {"mode":"wrap"}
+  v15:u64 = int.sub.wrap(v14,v11)
+  v16:bool = compare.le(v12,v15)
+  branch v16 prepare(v10,v11,v12) range()
+block prepare(v17:mutbuf,v18:u64,v19:u64)
+  v20:u64 = call(v17,v19) {"function":"s512_prepare"}
+  v21:u64 = const() {"value":0}
+  v22:bool = compare.eq(v20,v21)
+  v23:u64 = const() {"value":0}
+  branch v22 loop(v17,v18,v19,v23) status(v20)
+block loop(v24:mutbuf,v25:u64,v26:u64,v27:u64)
+  v28:bool = compare.lt(v27,v26)
+  branch v28 byte(v24,v25,v26,v27) success()
+block byte(v29:mutbuf,v30:u64,v31:u64,v32:u64)
+  v33:u64 = int.add.wrap(v30,v32)
+  v34:usize = int.cast(v33) {"mode":"wrap"}
+  v35:u8 = buffer.load(v29,v34)
+  v36:u64 = int.cast(v35) {"mode":"wrap"}
+  v37:u64 = call(v29,v36) {"function":"s512_feed"}
+  v38:u64 = const() {"value":1}
+  v39:u64 = int.add.wrap(v32,v38)
+  jump loop(v29,v30,v31,v39)
+block success()
+  v40:u64 = const() {"value":0}
+  ret(v40)
+block status(v41:u64)
+  ret(v41)
+end
+fn s512_feed(v0:mutbuf,v1:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf,v1:u64)
+  v2:u64 = const() {"value":0}
+  v3:u64 = const() {"value":1488}
+  v4:u64 = call(v0,v2,v3) {"function":"sha512_load64"}
+  v5:u64 = const() {"value":1344}
+  v6:u64 = int.add.wrap(v5,v4)
+  v7:usize = int.cast(v6) {"mode":"wrap"}
+  v8:u8 = int.cast(v1) {"mode":"wrap"}
+  _ = buffer.store(v0,v7,v8)
+  v9:u64 = const() {"value":1}
+  v10:u64 = int.add.wrap(v4,v9)
+  v11:u64 = const() {"value":128}
+  v12:bool = compare.eq(v10,v11)
+  branch v12 compress(v0) save(v0,v10)
+block compress(v13:mutbuf)
+  v14:u64 = call(v13) {"function":"s512_block"}
+  v15:u64 = const() {"value":0}
+  jump save(v13,v15)
+block save(v16:mutbuf,v17:u64)
+  v18:u64 = const() {"value":0}
+  v19:u64 = const() {"value":1488}
+  v20:u64 = call(v16,v18,v19,v17) {"function":"sha512_store64"}
+  v21:u64 = const() {"value":0}
+  ret(v21)
+end
+fn s512_block(v0:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf)
+  v1:u64 = const() {"value":0}
+  jump words(v0,v1)
+block words(v2:mutbuf,v3:u64)
+  v4:u64 = const() {"value":16}
+  v5:bool = compare.lt(v3,v4)
+  v6:u64 = const() {"value":0}
+  v7:u64 = const() {"value":0}
+  branch v5 bytes(v2,v3,v6,v7) compress(v2)
+block bytes(v8:mutbuf,v9:u64,v10:u64,v11:u64)
+  v12:u64 = const() {"value":8}
+  v13:bool = compare.lt(v10,v12)
+  branch v13 byte(v8,v9,v10,v11) store(v8,v9,v11)
+block byte(v14:mutbuf,v15:u64,v16:u64,v17:u64)
+  v18:u64 = const() {"value":1344}
+  v19:u64 = const() {"value":8}
+  v20:u64 = int.mul.wrap(v15,v19)
+  v21:u64 = int.add.wrap(v20,v16)
+  v22:u64 = int.add.wrap(v18,v21)
+  v23:u64 = const() {"value":8}
+  v24:u64 = int.shl.checked(v17,v23)
+  v25:usize = int.cast(v22) {"mode":"wrap"}
+  v26:u8 = buffer.load(v14,v25)
+  v27:u64 = int.cast(v26) {"mode":"wrap"}
+  v28:u64 = bit.or(v24,v27)
+  v29:u64 = const() {"value":1}
+  v30:u64 = int.add.wrap(v16,v29)
+  jump bytes(v14,v15,v30,v28)
+block store(v31:mutbuf,v32:u64,v33:u64)
+  v34:u64 = const() {"value":640}
+  v35:u64 = const() {"value":8}
+  v36:u64 = int.mul.wrap(v32,v35)
+  v37:u64 = int.add.wrap(v34,v36)
+  v38:u64 = const() {"value":0}
+  v39:u64 = call(v31,v38,v37,v33) {"function":"sha512_store64"}
+  v40:u64 = const() {"value":1}
+  v41:u64 = int.add.wrap(v32,v40)
+  jump words(v31,v41)
+block compress(v42:mutbuf)
+  v43:u64 = const() {"value":0}
+  v44:u64 = call(v42,v43) {"function":"sha512_compress"}
+  ret(v44)
+end
+fn s512_final(v0:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:mutbuf)
+  v1:u64 = call(v0) {"function":"s512_valid"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 pad(v0) status(v1)
+block pad(v4:mutbuf)
+  v5:u64 = const() {"value":0}
+  v6:u64 = const() {"value":1472}
+  v7:u64 = call(v4,v5,v6) {"function":"sha512_load64"}
+  v8:u64 = const() {"value":0}
+  v9:u64 = const() {"value":1480}
+  v10:u64 = call(v4,v8,v9) {"function":"sha512_load64"}
+  v11:u64 = const() {"value":3}
+  v12:u64 = int.shl.checked(v7,v11)
+  v13:u64 = const() {"value":3}
+  v14:u64 = int.shl.checked(v10,v13)
+  v15:u64 = const() {"value":61}
+  v16:u64 = int.shr.checked(v7,v15)
+  v17:u64 = bit.or(v14,v16)
+  v18:u64 = const() {"value":128}
+  v19:u64 = call(v4,v18) {"function":"s512_feed"}
+  jump zeros(v4,v12,v17)
+block zeros(v20:mutbuf,v21:u64,v22:u64)
+  v23:u64 = const() {"value":0}
+  v24:u64 = const() {"value":1488}
+  v25:u64 = call(v20,v23,v24) {"function":"sha512_load64"}
+  v26:u64 = const() {"value":112}
+  v27:bool = compare.eq(v25,v26)
+  v28:u64 = const() {"value":0}
+  branch v27 length(v20,v21,v22,v28) zero(v20,v21,v22)
+block zero(v29:mutbuf,v30:u64,v31:u64)
+  v32:u64 = const() {"value":0}
+  v33:u64 = call(v29,v32) {"function":"s512_feed"}
+  jump zeros(v29,v30,v31)
+block length(v34:mutbuf,v35:u64,v36:u64,v37:u64)
+  v38:u64 = const() {"value":16}
+  v39:bool = compare.lt(v37,v38)
+  v40:u64 = const() {"value":0}
+  branch v39 length_byte(v34,v35,v36,v37) digest(v34,v40)
+block length_byte(v41:mutbuf,v42:u64,v43:u64,v44:u64)
+  v45:u64 = const() {"value":8}
+  v46:bool = compare.lt(v44,v45)
+  v47:u64 = select(v46,v43,v42)
+  v48:u64 = const() {"value":7}
+  v49:u64 = const() {"value":7}
+  v50:u64 = bit.and(v44,v49)
+  v51:u64 = int.sub.wrap(v48,v50)
+  v52:u64 = const() {"value":8}
+  v53:u64 = int.mul.wrap(v51,v52)
+  v54:u64 = int.shr.checked(v47,v53)
+  v55:u64 = call(v41,v54) {"function":"s512_feed"}
+  v56:u64 = const() {"value":1}
+  v57:u64 = int.add.wrap(v44,v56)
+  jump length(v41,v42,v43,v57)
+block digest(v58:mutbuf,v59:u64)
+  v60:u64 = const() {"value":64}
+  v61:bool = compare.lt(v59,v60)
+  branch v61 digest_byte(v58,v59) finish(v58)
+block digest_byte(v62:mutbuf,v63:u64)
+  v64:u64 = const() {"value":1280}
+  v65:u64 = const() {"value":18446744073709551608}
+  v66:u64 = bit.and(v63,v65)
+  v67:u64 = int.add.wrap(v64,v66)
+  v68:u64 = const() {"value":0}
+  v69:u64 = call(v62,v68,v67) {"function":"sha512_load64"}
+  v70:u64 = const() {"value":7}
+  v71:u64 = const() {"value":7}
+  v72:u64 = bit.and(v63,v71)
+  v73:u64 = int.sub.wrap(v70,v72)
+  v74:u64 = const() {"value":8}
+  v75:u64 = int.mul.wrap(v73,v74)
+  v76:u64 = int.shr.checked(v69,v75)
+  v77:u64 = const() {"value":131168}
+  v78:u64 = int.add.wrap(v77,v63)
+  v79:usize = int.cast(v78) {"mode":"wrap"}
+  v80:u8 = int.cast(v76) {"mode":"wrap"}
+  _ = buffer.store(v62,v79,v80)
+  v81:u64 = const() {"value":1}
+  v82:u64 = int.add.wrap(v63,v81)
+  jump digest(v62,v82)
+block finish(v83:mutbuf)
+  v84:u64 = const() {"value":1}
+  v85:u64 = const() {"value":0}
+  v86:u64 = const() {"value":1504}
+  v87:u64 = call(v83,v85,v86,v84) {"function":"sha512_store64"}
+  v88:u64 = const() {"value":0}
+  ret(v88)
+block status(v89:u64)
+  ret(v89)
+end
+fn s512_read64(v0:readbuf,v1:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v0:readbuf,v1:u64)
+  v2:u64 = const() {"value":0}
+  v3:u64 = const() {"value":0}
+  jump bytes(v0,v1,v2,v3)
+block bytes(v4:readbuf,v5:u64,v6:u64,v7:u64)
+  v8:u64 = const() {"value":8}
+  v9:bool = compare.lt(v6,v8)
+  branch v9 byte(v4,v5,v6,v7) done(v7)
+block byte(v10:readbuf,v11:u64,v12:u64,v13:u64)
+  v14:u64 = int.add.wrap(v11,v12)
+  v15:usize = int.cast(v14) {"mode":"wrap"}
+  v16:u8 = buffer.load(v10,v15)
+  v17:u64 = int.cast(v16) {"mode":"wrap"}
+  v18:u64 = const() {"value":8}
+  v19:u64 = int.mul.wrap(v12,v18)
+  v20:u64 = int.shl.checked(v17,v19)
+  v21:u64 = bit.or(v13,v20)
+  v22:u64 = const() {"value":1}
+  v23:u64 = int.add.wrap(v12,v22)
+  jump bytes(v10,v11,v23,v21)
+block done(v24:u64)
+  ret(v24)
+end

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read both same-run component partitions and require exact complete coverage."""
+"""Read all same-run component partitions and require exact complete coverage."""
 from __future__ import annotations
 
 import argparse
@@ -22,7 +22,7 @@ from hia.tools.component_partition import (
     validate_completion, validate_lineage,
 )
 
-SCHEMA = "trnm.hia.component-ci-readback.v1"
+SCHEMA = "trnm.hia.component-ci-readback.v2"
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
@@ -115,6 +115,7 @@ def validate_report(value, group, expected, sources, identifiers, compiler_bindi
     for build in builds:
         need(type(build) is dict and type(build.get("chain_migration")) is dict,
              "Malformed actual native build")
+        qualify.validate_build_provenance(build, sources)
         if build["chain_migration"].get("backend") == "selfhost":
             native.append(build)
             need(build.get("compiler_sha256") == compiler_binding["compiler_sha256"],
@@ -195,7 +196,7 @@ def read_bundle(directory, group, expected, sources, identifiers, compiler_bindi
 
 def verify_all(bundles, expected, sources, identifiers, compiler_binding, expected_tree):
     need(type(bundles) is dict and set(bundles) == set(GROUPS),
-         "Exactly both component partitions are required")
+         "Exactly all component partitions are required")
     records = {group: read_bundle(bundles[group], group, expected, sources,
                                  identifiers, compiler_binding) for group in GROUPS}
     selected = [name for group in GROUPS for name in records[group]["selected_tests"]]
@@ -214,9 +215,17 @@ def verify_all(bundles, expected, sources, identifiers, compiler_binding, expect
             "production_activation": False}
 
 
+def validate_job_results(environ):
+    for group in GROUPS:
+        key = "TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT"
+        need(environ.get(key) == "success",
+             "All actual prerequisite CI jobs must succeed: " + group)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--general", type=Path, required=True)
+    parser.add_argument("--crypto-types", type=Path, required=True)
     parser.add_argument("--state-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -230,8 +239,7 @@ def main(argv=None):
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=ROOT, text=True).strip()
         need(head == expected["git_head"], "Actual consumer Git head differs from CI lineage")
-        for key in ("TRNM_COMPONENT_GENERAL_RESULT", "TRNM_COMPONENT_STATE_ROOT_RESULT"):
-            need(os.environ.get(key) == "success", "Both actual prerequisite CI jobs must succeed")
+        validate_job_results(os.environ)
         sources = qualify.sources()
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
                                                     pattern="test_*.py", top_level_dir=str(ROOT))
@@ -241,7 +249,8 @@ def main(argv=None):
         binding = read(binding_path)
         compiler = {"binding_sha256": identity(binding_path)["sha256"],
                     "compiler_sha256": binding["compiler_sha256"]}
-        report = verify_all({"general": args.general, "state-root": args.state_root},
+        report = verify_all({"general": args.general, "crypto-types": args.crypto_types,
+                             "state-root": args.state_root},
                             expected, sources, identifiers, compiler, tree)
         need(sources == qualify.sources(), "Source changed during independent component readback")
     except BaseException as error:

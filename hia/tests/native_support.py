@@ -20,6 +20,20 @@ import tempfile
 MAX_EXTENT = 1 << 20
 
 
+def unlinked_path(value, *, directory=False):
+    """Preserve lexical provenance; resolving first would hide a linked input."""
+    if isinstance(value, str) and Path(value).as_posix() != value:
+        raise ValueError("Noncanonical native provenance path")
+    path = Path(value).absolute()
+    if ".." in path.parts:
+        raise ValueError("Traversing native provenance path")
+    if any(item.is_symlink() for item in (path, *path.parents)):
+        raise ValueError("Linked native provenance path")
+    if not (path.is_dir() if directory else path.is_file()):
+        raise ValueError("Missing native provenance input")
+    return path
+
+
 @dataclass
 class NativeCall:
     status: str
@@ -36,15 +50,17 @@ class NativeCall:
 
 
 class NativeModule:
-    def __init__(self, source, *, byte_exports=(), backend="selfhost"):
+    def __init__(self, source, *, byte_exports=(), backend="selfhost", fixture_owner=None):
         # Namespace-package import also works with unittest's -s hia/tests.
         root = Path(__file__).resolve().parents[2]
         if str(root) not in sys.path:
             sys.path.insert(0, str(root))
-        from hia.tools.toolchain import build_native
+        from hia.tools.toolchain import HIA_ROOT, build_native
+        self.source = unlinked_path(source)
+        self.source_root = unlinked_path(HIA_ROOT, directory=True)
+        self.fixture_owner = None if fixture_owner is None else unlinked_path(fixture_owner)
         self._temporary = tempfile.TemporaryDirectory(prefix="trnm-hia-native-")
         self.library = Path(self._temporary.name) / "module.so"
-        self.source = Path(source).resolve()
         self.byte_exports = tuple(byte_exports)
         options = {}
         if backend == "selfhost":

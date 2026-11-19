@@ -1059,7 +1059,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       },
@@ -1129,7 +1133,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       }
@@ -1168,7 +1176,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       }
@@ -1204,7 +1216,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       }
@@ -1219,6 +1235,18 @@
           "sha256_work_store64"
         ],
         "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/crypto/sha512_stream.hepta": [
+      {
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
       }
     ],
     "src/data_availability/rs46.hepta": [
@@ -1448,7 +1476,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       },
@@ -1651,7 +1683,11 @@
           "tr_sha_compress",
           "tr_get",
           "tr_put",
-          "tr_read"
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
         ],
         "source": "src/crypto/sha256_stream.hepta"
       },
@@ -1686,7 +1722,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       },
@@ -1769,7 +1809,11 @@
           "tr_sha_compress",
           "tr_get",
           "tr_put",
-          "tr_read"
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
         ],
         "source": "src/crypto/sha256_stream.hepta"
       },
@@ -1806,7 +1850,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       },
@@ -1900,7 +1948,11 @@
           "tr_sha_compress",
           "tr_get",
           "tr_put",
-          "tr_read"
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
         ],
         "source": "src/crypto/sha256_stream.hepta"
       },
@@ -1922,7 +1974,11 @@
           "sha512_padding_byte",
           "sha512_rotr64",
           "sha512_work_load64",
-          "sha512_work_store64"
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
         ],
         "source": "src/crypto/sha512_arena.hepta"
       },
@@ -1947,6 +2003,207 @@
           "json_ascii_encode"
         ],
         "source": "src/state/json_string.hepta"
+      }
+    ],
+    "src/types/request_status.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start",
+          "or_trim_end"
+        ],
+        "source": "src/oracle/values.hepta"
+      }
+    ],
+    "src/types/transcript.hepta": [
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_copy",
+          "cp_wout",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "oj_div10",
+          "oj_div128",
+          "oj_json128"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_compress",
+          "tr_sha_rotr"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/types/transfer.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_get",
+          "cp_put",
+          "cp_read",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "or_char_size",
+          "or_character",
+          "or_space",
+          "or_trim_start"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "oj_div10",
+          "oj_div128",
+          "oj_json128"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_update_full",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_update_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "es_expand_public",
+          "es_fe_add",
+          "es_fe_mul",
+          "es_fe_sub",
+          "es_hash",
+          "es_inverse",
+          "es_normalize",
+          "es_point_add",
+          "es_point_encode",
+          "es_point_mul",
+          "es_scalar_muladd",
+          "es_scalar_reduce",
+          "es_wipe"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_store64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
       }
     ],
     "src/work/verify.hepta": [

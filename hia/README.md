@@ -1,15 +1,42 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **50 kernel units, 22 native foundations and 139 HIA source
+inventory contains **54 kernel units, 22 native foundations and 143 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (16 partially ported and 10 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (17 partially ported and 9 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
 accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
+
+## Transfer, request state, transcripts and continuous SHA-512
+
+The [TransferTx implementation](src/types/transfer.md) executes the original
+signing-message, address, signing and strict-verification methods. It keeps the
+original signed domain, full u128 fields, Unicode validation and error order.
+The [request-state implementation](src/types/request_status.md) covers all seven
+states, the complete transition matrix, parsing, display and stable errors.
+The [transcript implementation](src/types/transcript.md) covers all nine explicit
+original APIs: envelope hashes, complete ordered segment collection, materialized
+Merkle trees, single and batch proofs, root/leaf count and proof verification.
+It preserves full u64/u128 fields, odd-leaf duplication, the original six errors
+and the exact distinction between hashed fields and excluded raw payloads.
+All three compare actual HIA machine code with the unchanged original `trnm-types`
+library built with the repository's pinned Rust compiler. Generic Serde,
+authenticated relay consumption and full Node integration remain open.
+
+[Incremental SHA-512](src/crypto/SHA512_STREAM.md) shares one canonical compression
+implementation with the original arena interface. It supports continuous
+prefix/message hashing, checked 128-bit byte counts and finalization without the
+old message-window ceiling. Real native controls include unaligned messages
+through 4 MiB + 257 bytes and the complete earlier SHA-512/Ed25519 regressions.
+
+Oracle qualification now explicitly uses the read-only project audit mode in
+an exact-SHA detached checkout. Its regression controls still reject foreign
+repositories and incorrect project identity; development and push branch rules
+remain intact.
 
 ## Current Oracle values and JSON
 
@@ -180,16 +207,18 @@ ELFs exactly. These observations require new commit-bound hosted execution.
 
 The [Node development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons and the original integrated reader profiles. The correction record above binds the successor readers and complete transport regression. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
-The workflow contains **54 jobs and 42 independent native compiler bootstrap
+The workflow contains **55 jobs and 43 independent native compiler bootstrap
 gates**, each with its original 20-minute deadline. Four bootstrap control groups
-exercise all 168 actual positive/negative invocations. The separate RS46 job
+exercise all 172 actual positive/negative invocations. The separate RS46 job
 builds the full original crate and retains both actual executed binaries and
 every comparison. Node adds five native
 partitions, two original Rust comparisons and seven explicit evidence-reader
 profiles. Native child budgets remain 240 seconds plus three-second cleanup.
 
-Full component discovery assigns 457 tests to disjoint general (450) and
-State-root (seven) jobs, followed by an independent coverage consumer. Work/Host
+Full component discovery assigns every test to disjoint general, crypto-types
+and State-root jobs, followed by an independent coverage consumer requiring all
+three actual job successes. Every test must actually start and finish once, with
+no failures or skips, on the same head/run/attempt and complete source map. Work/Host
 uses native, original, complete qualification/package and independent readback
 stages. Original executable bytes, complete raw streams, exact source trees and
 actual started/completed rosters remain mandatory.
@@ -421,7 +450,9 @@ export TRNM_HIA_RUST_REFERENCE=/absolute/new/path/rust-reference
 RUST_VALUE_TARGET=/absolute/new/path/rust-values
 cargo build --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee \
+  -p trnm-types \
   --target-dir "$RUST_VALUE_TARGET" --message-format=json > /absolute/new/path/rust-build.jsonl
+export TRNM_HIA_RUST_TYPES_RLIB="$RUST_VALUE_TARGET/debug/libtrnm_types.rlib"
 rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs \
   --extern trnm_protocol="$RUST_VALUE_TARGET/debug/libtrnm_protocol.rlib" \
   -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-protocol
@@ -450,9 +481,15 @@ python3 -B hia/tools/qualify.py --require-rust-oracle \
   --output /absolute/new/path/native-and-rust-results.json
 ```
 
-Without a corresponding environment variable, the local report explicitly
-records that original Rust differential as not run. CI requires all five, compiles the actual
-original modules and preserves the exact head's observations. The fixed
+The five original reference executables and the unchanged `trnm-types` library
+are required for a complete component run. The Transfer and Transcript suites
+refuse a missing library; RequestStatus and Transcript also execute all seven
+and eight original module tests, respectively. The workflow also builds both isolated Oracle dependency profiles and
+exports their exact dependency directories. Follow its complete environment
+setup when reproducing the full suite; the snippet above builds only the shared
+reference adapters. CI preserves the exact head's observations, including the
+Transfer and Transcript native libraries, original executables and full comparison
+reports. The fixed
 `SourceOk` in the test fixture only exposes pure transport boundaries; source
 authentication is an independent integration obligation.
 

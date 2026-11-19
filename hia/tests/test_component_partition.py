@@ -13,9 +13,10 @@ from hia.tools import qualify_components_ci as ci
 
 IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_example.Example.test_two",
-       "hia.tests.test_state_root_adversarial.Example.test_maximum"]
+       "hia.tests.test_state_root_adversarial.Example.test_maximum",
+       "hia.tests.test_transfer.Example.test_signature"]
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
-SOURCES = {"hia/src/fixture.hepta": "d" * 64}
+SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 COMPILER = {"binding_sha256": "b" * 64, "compiler_sha256": "c" * 64}
 
 
@@ -42,7 +43,10 @@ def complete_report(group):
                                "finished_tests": selected, "all_selected_completed": True},
             "selfhost_compiler_matches_cold_qualified_image": True,
             "retained_compiler_binding_sha256": COMPILER["binding_sha256"],
-            "builds": [{"chain_migration": {"backend": "selfhost"},
+            "builds": [{"source": "hia/src/fixture.hepta",
+                        "chain_migration": {"backend": "selfhost", "source_sha256": "d" * 64,
+                                            "inputs": [{"path": "src/fixture.hepta", "sha256": "d" * 64},
+                                                       {"path": "components.json", "sha256": "f" * 64}]},
                         "compiler_sha256": COMPILER["compiler_sha256"]}],
             "rust_oracles": {key: {"executable_sha256": "e" * 64}
                              for key in ci.qualify.RUST_ORACLES},
@@ -61,7 +65,7 @@ def log_for(value):
 
 
 class ComponentPartitions(unittest.TestCase):
-    def test_both_partitions_execute_every_fixture_exactly_once(self):
+    def test_all_partitions_execute_every_fixture_exactly_once(self):
         observed = []
         for group in part.GROUPS:
             suite = unittest.TestSuite([unittest.TestSuite(
@@ -76,7 +80,7 @@ class ComponentPartitions(unittest.TestCase):
         self.assertEqual(part.descriptor(IDS, "all")["selected_tests"], sorted(IDS))
 
     def test_invalid_discovery_never_silently_drops_a_test(self):
-        variants = [[], IDS + [IDS[0]], IDS[:-1],
+        variants = [[], IDS + [IDS[0]], IDS[:-1], [i for i in IDS if "state_root" not in i],
                     ["unittest.loader._FailedTest.test_missing"], IDS + ["bad identity"]]
         for identifiers in variants:
             with self.subTest(identifiers=identifiers), self.assertRaises(ValueError):
@@ -157,6 +161,19 @@ class ComponentReadback(unittest.TestCase):
             with self.subTest(wrong=wrong), self.assertRaises(ValueError):
                 self.validate(wrong)
 
+    def test_every_actual_job_must_succeed_including_the_new_partition(self):
+        environ = {"TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT": "success"
+                   for group in part.GROUPS}
+        ci.validate_job_results(environ)
+        for key in environ:
+            for status in (None, "failure", "cancelled", "skipped", True, "PASS"):
+                changed = {**environ, key: status}
+                with self.subTest(key=key, status=status), self.assertRaises(ValueError):
+                    ci.validate_job_results(changed)
+            missing = {name: value for name, value in environ.items() if name != key}
+            with self.assertRaises(ValueError):
+                ci.validate_job_results(missing)
+
     def test_duplicate_and_nonfinite_json_are_refused(self):
         for raw in ('{"a":1,"a":2}', '{"nested":{"x":1,"x":1}}',
                     '{"value":NaN}', '{"value":Infinity}'):
@@ -201,21 +218,25 @@ class ComponentReadback(unittest.TestCase):
             path.write_bytes(raw)
         return directory
 
-    def test_two_complete_artifacts_cover_full_roster_and_keep_scope_finite(self):
+    def test_all_complete_artifacts_cover_full_roster_and_keep_scope_finite(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundles = {group: self.make_bundle(Path(tmp), group) for group in part.GROUPS}
             result = ci.verify_all(bundles, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
             self.assertIs(result["complete_disjoint_coverage"], True)
-            self.assertEqual(result["tests"], 3)
+            self.assertEqual(result["tests"], len(IDS))
             self.assertIs(result["actual_runtime_reexecuted"], False)
             self.assertIs(result["old_stack_can_be_removed"], False)
             with self.assertRaises(ValueError):
                 ci.verify_all({"general": bundles["general"]}, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
+            for missing in part.GROUPS:
+                with self.subTest(missing=missing), self.assertRaises(ValueError):
+                    ci.verify_all({key: value for key, value in bundles.items() if key != missing},
+                                  LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
             with self.assertRaises(ValueError):
-                ci.verify_all({"general": bundles["general"], "state-root": bundles["general"]},
+                ci.verify_all({**bundles, "crypto-types": bundles["general"]},
                               LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
 
-    def test_two_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
+    def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundles = {group: self.make_bundle(Path(tmp), group) for group in part.GROUPS}
             ci.verify_all(bundles, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)

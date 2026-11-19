@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -92,12 +93,175 @@ def sources():
         "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
         "hia/src/escrow/README.md", "hia/src/governance/README.md",
         "hia/src/control_plane/LOCAL_GUARD.md", "hia/src/peer_lease/README.md",
-        "hia/src/oracle/README.md", "scripts/ci/ci_job.sh")]
+        "hia/src/oracle/README.md", "hia/src/types/request_status.md",
+        "hia/src/types/transfer.md", "hia/src/types/transcript.md",
+        "hia/src/crypto/SHA512_STREAM.md",
+        "scripts/ci/ci_job.sh")]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/error.rs"]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
+
+
+def _relative_path(name):
+    if (type(name) is not str or not name or "\\" in name or "\0" in name
+            or Path(name).is_absolute() or ".." in Path(name).parts
+            or Path(name).as_posix() != name or name == "."):
+        raise ValueError("Noncanonical native provenance path")
+    return name
+
+
+def _native_input(name, *, entry=False):
+    _relative_path(name)
+    if (not entry and name == "components.json") or (
+            name.startswith(("src/", "platform/", "storage/")) and name.endswith(".hepta")):
+        return name
+    raise ValueError("Native build input is outside the canonical HIA source roots")
+
+
+def _sha256(value):
+    if type(value) is not str or re.fullmatch(r"[0-9a-f]{64}", value) is None:
+        raise ValueError("Invalid native source SHA256")
+    return value
+
+
+def _migration_inputs(build):
+    migration = build.get("chain_migration") if type(build) is dict else None
+    if type(migration) is not dict:
+        raise ValueError("Missing actual native build receipt")
+    rows = migration.get("inputs")
+    if type(rows) is not list or len(rows) < 2:
+        raise ValueError("Missing actual native source inputs")
+    seen = set()
+    for index, row in enumerate(rows):
+        if type(row) is not dict or set(row) != {"path", "sha256"}:
+            raise ValueError("Malformed actual native source identity")
+        name = _native_input(row["path"], entry=index == 0)
+        _sha256(row["sha256"])
+        if name in seen:
+            raise ValueError("Duplicate actual native source input")
+        seen.add(name)
+    if (rows[1]["path"] != "components.json"
+            or _sha256(migration.get("source_sha256")) != rows[0]["sha256"]):
+        raise ValueError("Native source identities differ from the actual build receipt")
+    return rows
+
+
+def validate_generated_fixture(build, source_inputs):
+    """Read retained fixture bytes as a fixture, with every dependency bound."""
+    actual = _migration_inputs(build)
+    if "source" not in build or build["source"] is not None:
+        raise ValueError("Generated fixture cannot identify a production entry")
+    value = build.get("generated_fixture")
+    if type(value) is not dict or set(value) != {"owner", "owner_sha256", "entry", "inputs"}:
+        raise ValueError("Missing generated fixture provenance")
+    owner = _relative_path(value["owner"])
+    if (not owner.startswith("hia/tests/") or not owner.endswith(".py")
+            or source_inputs.get(owner) != _sha256(value["owner_sha256"])):
+        raise ValueError("Generated fixture owner is not a bound test source")
+    entry = _native_input(value["entry"], entry=True)
+    if "hia/" + entry in source_inputs:
+        raise ValueError("Generated fixture entry shadows a production source")
+    rows = value["inputs"]
+    if type(rows) is not list or not rows:
+        raise ValueError("Generated fixture has no actual input bytes")
+    identities, seen = [], set()
+    for row in rows:
+        if type(row) is not dict or set(row) != {"path", "sha256", "utf8"}:
+            raise ValueError("Malformed generated fixture input")
+        name = _native_input(row["path"])
+        if name in seen:
+            raise ValueError("Duplicate generated fixture input")
+        seen.add(name)
+        if type(row["utf8"]) is not str or digest(row["utf8"].encode("utf-8")) != _sha256(row["sha256"]):
+            raise ValueError("Generated fixture bytes differ from their identity")
+        if name not in (entry, "components.json") and source_inputs.get("hia/" + name) != row["sha256"]:
+            raise ValueError("Generated fixture changed a production dependency")
+        identities.append({"path": name, "sha256": row["sha256"]})
+    if identities != actual or entry != actual[0]["path"]:
+        raise ValueError("Generated fixture differs from the actual build receipt")
+
+
+def validate_build_provenance(build, source_inputs):
+    """Bind both product builds and generated fixtures to their actual inputs."""
+    actual = _migration_inputs(build)
+    if "source" not in build:
+        raise ValueError("Missing native build source kind")
+    if build["source"] is None:
+        validate_generated_fixture(build, source_inputs)
+        return
+    source = _relative_path(build["source"])
+    if "generated_fixture" in build or source != "hia/" + actual[0]["path"]:
+        raise ValueError("Native build source differs from its actual entry")
+    for row in actual:
+        if source_inputs.get("hia/" + row["path"]) != row["sha256"]:
+            raise ValueError("Native build input differs from the qualification source map")
+
+
+def _read_bound(path, expected):
+    from hia.tests.native_support import unlinked_path
+    path = unlinked_path(path)
+    before = path.stat()
+    raw = path.read_bytes()
+    after = unlinked_path(path).stat()
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    if any(getattr(before, key) != getattr(after, key) for key in fields) or digest(raw) != _sha256(expected):
+        raise ValueError("Native source changed after its actual build")
+    return raw
+
+
+def build_provenance(module, source_inputs):
+    """Capture actual fixture bytes while the generated source tree still exists."""
+    from hia.tests.native_support import unlinked_path
+    source = unlinked_path(module.source)
+    source_root = unlinked_path(module.source_root, directory=True)
+    root = unlinked_path(ROOT, directory=True)
+    actual = _migration_inputs(module.receipt)
+    try:
+        entry = source.relative_to(source_root).as_posix()
+    except ValueError:
+        raise ValueError("Native entry is outside its actual source root") from None
+    if entry != actual[0]["path"]:
+        raise ValueError("Native entry differs from its actual build receipt")
+    if source.is_relative_to(root):
+        if source_root != root / "hia" or module.fixture_owner is not None:
+            raise ValueError("Canonical native entry has ambiguous fixture provenance")
+        value = {"source": source.relative_to(root).as_posix()}
+        validate_build_provenance({**value, "chain_migration": module.receipt["chain_migration"]}, source_inputs)
+        for row in actual:
+            _read_bound(source_root / row["path"], row["sha256"])
+        return value
+    if module.fixture_owner is None:
+        raise ValueError("External native fixtures require a bound test owner")
+    owner_path = unlinked_path(module.fixture_owner)
+    try:
+        owner = owner_path.relative_to(root).as_posix()
+    except ValueError:
+        raise ValueError("Generated fixture owner is outside the qualification source root") from None
+    owner_sha256 = source_inputs.get(owner)
+    _read_bound(owner_path, owner_sha256)
+    inputs = []
+    for row in actual:
+        raw = _read_bound(source_root / row["path"], row["sha256"])
+        if row["path"] not in (entry, "components.json"):
+            _read_bound(root / "hia" / row["path"], row["sha256"])
+        inputs.append({**row, "utf8": raw.decode("utf-8")})
+    value = {"source": None, "generated_fixture": {
+        "owner": owner, "owner_sha256": owner_sha256, "entry": entry, "inputs": inputs}}
+    validate_generated_fixture({**value, "chain_migration": module.receipt["chain_migration"]}, source_inputs)
+    return value
+
+
+def native_build_record(module, source_inputs):
+    """The same capture path is used by qualification and bounded regressions."""
+    receipt = module.receipt
+    return {**build_provenance(module, source_inputs),
+            "artifact_sha256": module.artifact_sha256,
+            "object_sha256": receipt.get("object_sha256"),
+            "compiler_sha256": receipt.get("compiler_sha256"),
+            "exports": sorted(module.exports), "claims": receipt.get("claims"),
+            "chain_migration": receipt["chain_migration"]}
 
 
 def main():
@@ -124,13 +288,11 @@ def main():
 
     def record_init(self, *values, **options):
         original_init(self, *values, **options)
-        receipt = self.receipt
-        builds.append({"source": self.source.relative_to(ROOT).as_posix(),
-            "artifact_sha256": self.artifact_sha256,
-            "object_sha256": receipt.get("object_sha256"),
-            "compiler_sha256": receipt.get("compiler_sha256"),
-            "exports": sorted(self.exports), "claims": receipt.get("claims"),
-            "chain_migration": receipt["chain_migration"]})
+        try:
+            builds.append(native_build_record(self, before))
+        except BaseException:
+            self.close()
+            raise
 
     def record_many(self, cases, **options):
         results = original_many(self, cases, **options)
@@ -183,6 +345,8 @@ def main():
             "compiler": subprocess.check_output(["rustc", "-Vv"], text=True)},
         "rust_oracles": {key: {"executable_sha256": digest(Path(os.environ[key]).read_bytes())}
                          for key in RUST_ORACLES if os.environ.get(key)},
+        "rust_libraries": {key: {"rlib_sha256": digest(Path(os.environ[key]).read_bytes())}
+                           for key in ("TRNM_HIA_RUST_TYPES_RLIB",) if os.environ.get(key)},
         "upstream_cold_gate_executed_in_this_run": False,
         "retained_compiler_binding_sha256": digest(binding_path.read_bytes()),
         "selfhost_compiler_matches_cold_qualified_image": compiler_matches,

@@ -90,7 +90,7 @@
     "standalone_returns": {"0": "success", "100": "short output/workspace", "101": "short step", "102": "invalid step", "103": "total message limit"},
     "public_state_capability": false,
     "requires_private_initialized_context": true,
-    "helpers": ["tr_sha_init", "tr_sha_update", "tr_sha_update_work", "tr_sha_feed", "tr_sha_final", "tr_sha_rotr", "tr_sha_compress", "tr_get", "tr_put", "tr_read"]
+    "helpers": ["tr_sha_init", "tr_sha_update", "tr_sha_update_work", "tr_sha_feed", "tr_sha_final", "tr_sha_rotr", "tr_sha_compress", "tr_get", "tr_put", "tr_read", "tr_sha_final_limit", "tr_sha_feed_limit", "tr_sha_update_work_limit", "tr_sha_update_limit"]
   },
   "fixture": {
     "platform": "x86_64-linux-gnu",
