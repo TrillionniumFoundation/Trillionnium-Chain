@@ -6591,14 +6591,18 @@ jobs:
       PYTHONOPTIMIZE: ''
       LC_ALL: C
       TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-      CS_OBSERVATIONS: ${{ runner.temp }}/checkpoint-store-observations
-      CS_QUALIFICATION: ${{ runner.temp }}/checkpoint-store-qualification
-      CS_ARTIFACT: ${{ runner.temp }}/checkpoint-store-artifact
     defaults:
       run:
         shell: bash
         working-directory: chain
     steps:
+      - name: Initialize runner-owned checkpoint observation paths
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          printf 'CS_OBSERVATIONS=%s/checkpoint-store-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CS_QUALIFICATION=%s/checkpoint-store-qualification\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CS_ARTIFACT=%s/checkpoint-store-artifact\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Checkout the exact current chain source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:

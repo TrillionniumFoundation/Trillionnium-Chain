@@ -13,6 +13,52 @@
     }
   },
   "ci": {
+    "context_repair": {
+      "fixed": {
+        "exit_code": 0,
+        "source_sha256": "83649507e75295c597b8551c903a53174189c9ae80a0bd456c0054579ffc437f"
+      },
+      "independent_bootstraps": 46,
+      "jobs": 58,
+      "local_checks": {
+        "actual_initializer": {
+          "environment_file_sha256": "063ed6acf028065b1e9b55942141bfa58105d9fc772a5979f5a4da84ae87cbe1",
+          "exit_code": 0
+        },
+        "bash_n_blocks": 473,
+        "bootstrap_controls": 4,
+        "bootstrap_exit_code": 0,
+        "bootstrap_invocations": 184,
+        "current_plan_blob_verified": true,
+        "jobs": 58,
+        "root_readme_bytes": 0,
+        "runtime_qualification_inferred": false,
+        "status": "PASS",
+        "workflow_sha256": "83649507e75295c597b8551c903a53174189c9ae80a0bd456c0054579ffc437f"
+      },
+      "operation": "Initialize CS_OBSERVATIONS, CS_QUALIFICATION and CS_ARTIFACT from actual RUNNER_TEMP in the first runner step via GITHUB_ENV; explicit existing working-directory",
+      "original": {
+        "exit_code": 1,
+        "source_sha256": "9795a33368cc2280bb6f002b5270b9effc26c6f9e80996721b12317562e68996"
+      },
+      "original_context_errors": 3,
+      "runtime_qualification_inferred": false,
+      "shellcheck_or_pyflakes_claimed": false,
+      "static_linter": {
+        "asset": {
+          "bytes": 2164202,
+          "name": "actionlint_1.7.12_darwin_arm64.tar.gz",
+          "sha256": "aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f"
+        },
+        "binary": {
+          "bytes": 5829842,
+          "sha256": "8db11704dc296f096216db4db65d86cd7f0ebfdf4c38453a1da276b137b88388"
+        },
+        "tool_release": "v1.7.12",
+        "version": "1.7.12\ninstalled by downloading from release page\nbuilt with go1.26.1 compiler for darwin/arm64\n"
+      },
+      "subprocess_job_id": "1a1f2e404ec-ffbe-c28"
+    },
     "hosted_result_for_current_candidate": "NOT_YET_OBSERVED",
     "job": "native-checkpoint-store",
     "job_minutes": 20,
@@ -26,6 +72,17 @@
       "independent readback",
       "all regular source and runtime bytes plus lstat metadata on success or failure"
     ],
+    "retained_failed_publication": {
+      "check_suite_id": 120416802471,
+      "conclusion": "failure",
+      "diagnosis": "runner context is unavailable in jobs.<job_id>.env; three checkpoint path expressions used it",
+      "failure_stage": "GitHub workflow validation",
+      "head": "cef50843e990bae58c1abf2fd74c8cf2859b7132",
+      "jobs_started": 0,
+      "raw_actionlint_directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ci-cef-actionlint",
+      "raw_api_directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ci-cef-workflow-validation",
+      "run_id": 44485504325
+    },
     "source_binding": "Each event head is checked before and after; all qualified source inputs must equal the committed Git blobs."
   },
   "complete_archive": {

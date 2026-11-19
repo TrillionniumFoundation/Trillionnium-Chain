@@ -1,3 +1,9 @@
+## 2026-11-19 UTC — 托管工作流上下文错误的实际重现与修复
+
+`cef50843e990bae58c1abf2fd74c8cf2859b7132` 已通过既定 Mac 身份发布精确65文件树，但HIA push run `44485504325` 实际在工作流验证阶段失败，check suite `120416802471` 没有任何已启动job。原YAML把三个 `runner.temp` 表达式放在job级env；该位置不允许runner context。保留原提交、API回执及完整原YAML，不把未启动的58jobs记作运行成功。
+
+本次只将三个路径移到checkout前的运行器步骤，由真实 `$RUNNER_TEMP` 写入 `$GITHUB_ENV`；该步骤显式在已存在的workspace运行。实际校验已验证官方release校验和的actionlint1.7.12：原工作流exit1且准确报三处context错误；修复后的完整工作流exit0。58jobs、46独立bootstrap、20分钟以及全部原original/native/negative/readback步骤不变。Shell语法、环境文件实际写入和bootstrap拒绝控制另行核验；此处静态验证不是托管runtime PASS。精确记录见 [Checkpoint开发记录](../../hia/qualification/checkpoint-store-development.json)。新提交仍须自己完整CI；Work/Paid新constructor修复继续独立资格，不夹带入本次配置修复。全链、旧栈退役、生产激活仍为false。
+
 ## 2026-11-19 UTC — Checkpoint 原生权威、完整方法与真实 CI 故障修复
 
 从已发布 `41948f98b7b9fcb24a6ba7d638d5391a88e26de6` 继续。当前 **56 kernels /24 native foundations /189 HIA sources**；26 原包中18部分迁移、8未迁移，**0退役、9全项目门OPEN**。此处是实际源码覆盖，不是完成率。根 README 仍为0字节；唯一正式实现及资格入口仍在 `hia/`，不加入作者脚本或平行过程版本。
