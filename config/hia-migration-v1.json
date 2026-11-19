@@ -631,6 +631,54 @@
       "tests": [
         "hia/tests/test_ml_dsa_poly.py"
       ]
+    },
+    {
+      "id": "crypto/ml-dsa-verify",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 verification, canonical encoding, selected full official groups and original-Candidate error order; private borrowed buffers require live disjoint caller-owned allocations.",
+      "source": "hia/src/crypto/ml_dsa.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-keygen",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 deterministic seed key generation and diagnostic key packing; no entropy-provider or automatic ownership integration.",
+      "source": "hia/src/crypto/ml_dsa_keygen.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-sign",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 signing and nonce exhaustion refusal, selected official contexts/randomizers and bounded original comparisons; no constant-time or side-channel qualification.",
+      "source": "hia/src/crypto/ml_dsa_sign.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-owner",
+      "node_integration_complete": false,
+      "scope": "Private Candidate verifier/signer lifecycle, trusted fixed algorithm, getters, deterministic signing with self-verification and explicit secret destruction; foreign ABI guards, unforgeable owner integration and automatic Drop remain open.",
+      "source": "hia/src/crypto/ml_dsa_owner.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -837,7 +885,11 @@
         "crypto/ed25519-sign",
         "crypto/sha512-stream",
         "crypto/keccak-stream",
-        "crypto/ml-dsa-poly"
+        "crypto/ml-dsa-poly",
+        "crypto/ml-dsa-verify",
+        "crypto/ml-dsa-keygen",
+        "crypto/ml-dsa-sign",
+        "crypto/ml-dsa-owner"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
       "module": "M01",

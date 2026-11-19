@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from contextvars import ContextVar
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -13,6 +14,7 @@ import re
 import subprocess
 import sys
 import time
+from types import SimpleNamespace
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,6 +25,30 @@ from hia.tools.component_partition import (
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
                 "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
                 "TRNM_HIA_RUST_STATE_REFERENCE")
+ML_DSA_ORACLE = "TRNM_HIA_RUST_ML_DSA_REFERENCE"
+
+
+def rust_oracle_names(group):
+    if group not in (*GROUPS, "all"):
+        raise ValueError("Unknown component shard")
+    return (*RUST_ORACLES, ML_DSA_ORACLE) if group in ("ml-dsa", "all") else RUST_ORACLES
+
+
+def pinned_rust_oracles(group, environ=None):
+    """ML-DSA uses its actual freshly qualified private adapter and explicit pin."""
+    env = os.environ if environ is None else environ
+    if ML_DSA_ORACLE not in rust_oracle_names(group):
+        return {}
+    expected = env.get(ML_DSA_ORACLE + "_SHA256")
+    path = env.get(ML_DSA_ORACLE)
+    if (type(expected) is not str or re.fullmatch(r"[0-9a-f]{64}", expected) is None
+            or type(path) is not str or not path):
+        raise ValueError("ML-DSA requires its actual original adapter and explicit SHA256")
+    from hia.tests.native_support import unlinked_path
+    actual = digest(unlinked_path(path).read_bytes())
+    if actual != expected:
+        raise ValueError("ML-DSA actual original adapter differs from the explicit SHA256")
+    return {ML_DSA_ORACLE: expected}
 
 
 def digest(raw):
@@ -43,6 +69,8 @@ def sources():
     paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json",
               ROOT / "hia/state-value-abi.json", ROOT / "hia/STATE_VALUE.md"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
+    paths += [ROOT / "hia/src/crypto/ML_DSA.md",
+              ROOT / "hia/tests/vectors/ml_dsa_acvp_975de31.json.xz"]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
     for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-checkpoint-store",
@@ -266,6 +294,22 @@ def native_build_record(module, source_inputs):
             "chain_migration": receipt["chain_migration"]}
 
 
+def direct_native_build_record(source, source_root, output, receipt, source_inputs):
+    """Capture an actual canonical build made outside the shared call runner."""
+    if receipt.get("ok") is not True:
+        raise ValueError("Unsuccessful direct build receipt")
+    artifact = _read_bound(output, receipt.get("artifact_sha256"))
+    if type(receipt.get("artifact_bytes")) is not int or receipt["artifact_bytes"] != len(artifact):
+        raise ValueError("Direct native artifact extent differs from its actual receipt")
+    module = SimpleNamespace(source=source, source_root=source_root, fixture_owner=None,
+                             receipt=receipt, artifact_sha256=digest(artifact),
+                             exports=receipt["exports"])
+    value = native_build_record(module, source_inputs)
+    if value["source"] is None:
+        raise ValueError("Direct native build requires canonical source provenance")
+    return value
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -276,25 +320,41 @@ def main():
         parser.error("Native component qualification refuses optimized Python")
     if args.output.exists() or args.output.is_symlink():
         parser.error("Observation output must be a new file")
-    missing = [key for key in RUST_ORACLES if not os.environ.get(key)]
+    oracle_names = rust_oracle_names(args.shard)
+    missing = [key for key in oracle_names if not os.environ.get(key)]
     if args.require_rust_oracle and missing:
         parser.error("The independent Rust oracles are required: " + ", ".join(missing))
+    pinned_oracles = pinned_rust_oracles(args.shard)
     actual_lineage = lineage()
     head_before = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     if actual_lineage is not None and actual_lineage["git_head"] != head_before:
         parser.error("Actual component checkout differs from CI lineage")
     before = sources()
     from hia.tests.native_support import NativeModule
+    from hia.tools import toolchain
     builds, calls = [], Counter()
     original_init, original_many = NativeModule.__init__, NativeModule.call_many
+    original_build = toolchain.build_native
+    module_build = ContextVar("hia_component_native_module_build", default=False)
 
     def record_init(self, *values, **options):
-        original_init(self, *values, **options)
+        token = module_build.set(True)
+        try:
+            original_init(self, *values, **options)
+        finally:
+            module_build.reset(token)
         try:
             builds.append(native_build_record(self, before))
         except BaseException:
             self.close()
             raise
+
+    def record_build(source, output, **options):
+        receipt, document = original_build(source, output, **options)
+        if not module_build.get():
+            builds.append(direct_native_build_record(source, toolchain.HIA_ROOT, output,
+                                                     receipt, before))
+        return receipt, document
 
     def record_many(self, cases, **options):
         results = original_many(self, cases, **options)
@@ -304,6 +364,7 @@ def main():
         return results
 
     NativeModule.__init__, NativeModule.call_many = record_init, record_many
+    toolchain.build_native = record_build
     started = time.monotonic()
     try:
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
@@ -313,6 +374,7 @@ def main():
                                          resultclass=ObservedResult).run(suite)
     finally:
         NativeModule.__init__, NativeModule.call_many = original_init, original_many
+        toolchain.build_native = original_build
     after = sources()
     head_after = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     stable = before == after and head_before == head_after
@@ -323,7 +385,11 @@ def main():
     compiler_binding = json.loads(binding_path.read_text())
     compiler_matches = all(b["compiler_sha256"] == compiler_binding["compiler_sha256"]
         for b in builds if b["chain_migration"]["backend"] == "selfhost")
-    accepted = accepted and compiler_matches
+    oracle_records = {key: {"executable_sha256": digest(Path(os.environ[key]).read_bytes())}
+                      for key in oracle_names if os.environ.get(key)}
+    pins_unchanged = all(oracle_records.get(key) == {"executable_sha256": wanted}
+                         for key, wanted in pinned_oracles.items())
+    accepted = accepted and compiler_matches and pins_unchanged
     reference = os.environ.get("TRNM_HIA_RUST_REFERENCE")
     report = {"schema": "trnm.hia.native-qualification.v1",
         "observed_at": datetime.now(timezone.utc).isoformat(),
@@ -345,8 +411,9 @@ def main():
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),
             "compiler": subprocess.check_output(["rustc", "-Vv"], text=True)},
-        "rust_oracles": {key: {"executable_sha256": digest(Path(os.environ[key]).read_bytes())}
-                         for key in RUST_ORACLES if os.environ.get(key)},
+        "rust_oracles": oracle_records,
+        "pinned_rust_oracles": pinned_oracles,
+        "pinned_rust_oracles_unchanged": pins_unchanged,
         "rust_libraries": {key: {"rlib_sha256": digest(Path(os.environ[key]).read_bytes())}
                            for key in ("TRNM_HIA_RUST_TYPES_RLIB",) if os.environ.get(key)},
         "upstream_cold_gate_executed_in_this_run": False,

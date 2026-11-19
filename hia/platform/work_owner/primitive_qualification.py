@@ -10,7 +10,8 @@ import mmap
 from pathlib import Path
 import struct
 from .build import digest, identity, need, write_json
-from .primitive_evidence import Recorder, owner_identity_initial, validate as validate_primitive_bytes
+from .primitive_evidence import (Recorder, owner_identity_initial, paid_constructor_steps,
+                                 validate as validate_primitive_bytes)
 
 class Buffer:
     def __init__(self, size, raw=None):
@@ -70,7 +71,7 @@ def run(build_dir, cases, output):
               "rows": rows, "production_authority": False, "actual_original_Rust": False,
               "mapping_profile": "private RW capture then RX; no RWX mapping"}
     try:
-        for name in ("sha", "work", "owner"):
+        for name in ("sha", "work", "owner", "paid", "paid-fixture"):
             modules[name] = Flat(Path(build_dir) / (name + ".flat.bin"), recorder, name)
         lengths = list(range(130)) + [255, 256, 257, 511, 512, 513, 1023, 1024, 1025,
             2047, 2048, 2049, 4095, 4096, 4097, 65535, 65536, 65537, 131135, 131136]
@@ -156,8 +157,22 @@ def run(build_dir, cases, output):
                  and (command.body(), state.body()) == before, "Owner continuation identity/phase substitution accepted")
             rows.append({"name": name, "kind": "owner-identity", "status": "PASS",
                          "fixture_is_production_authority": False})
+        for name, fixture in (("paid", False), ("paid-fixture", True)):
+            label = name + "-standalone-constructor"
+            recorder.begin(label, "paid-constructor", name)
+            event, state, empty, epoch = Buffer(640), Buffer(73728), Buffer(0), Buffer(4096)
+            for raw, mode, expected_state, expected_epoch, code in paid_constructor_steps(fixture):
+                ctypes.memmove(event.pointer, raw, len(raw))
+                need(modules[name].call(event, state, epoch if mode else empty) == code
+                     and event.body() == raw and state.body() == expected_state
+                     and epoch.body() == expected_epoch,
+                     "Actual standalone constructor complete bytes or refusal differs")
+            rows.append({"name": label, "kind": "paid-constructor", "status": "PASS",
+                         "initial_credit_ns": 2_000_000_000, "foreign_tid_refused": True,
+                         "reinitialize_refused": True, "fixture_is_production_authority": False})
         report.update(status="PASS", count=len(rows), sha_vectors=150, sha_bounds=4,
                       work_histories=13, work_bounds=4, owner_identity_controls=4,
+                      paid_constructor_controls=2,
                       images={name: module.identity for name, module in modules.items()})
     except BaseException as error:
         report["failure"] = repr(error)

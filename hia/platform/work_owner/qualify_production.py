@@ -143,6 +143,9 @@ def validate_native(raw,case,process_pid,observations,parent,expected_service,*,
  require(before[28:31]==after[28:31]==[3,0,1] and worker[28:31]==[0,0,1] and all(r[22]==0 and r[25:27]==[0,0] for r in (before,after,worker)),"NATIVE_CLOSE_OR_EXTRA_OBSERVER_DIFFERED")
 
  paid=decoded["paid"];account=paid["owner"];checkpoints=h["progress_count"]+1
+ require(paid["epoch"][0]==int.from_bytes(b"PCPU0001","little")
+         and paid["epoch"][9:12]==[1,2000000000,0],
+         "ACTUAL_TRUSTED_LOCAL_STANDALONE_EPOCH_REQUIRED")
  require(paid["global_poison"]==paid["request_poison"]==0 and paid["epoch"][1]==0
          and paid["epoch"][6:9]==[0,0,0],"ACTUAL_FINITE_PAID_ACCOUNT_NOT_RETIRED")
  require(account[0]==int.from_bytes(b"PCOWN001","little") and account[1:4]==[0,0,0]

@@ -3,7 +3,7 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**56 kernel components, 24 native foundations and 189 HIA source files**. All
+**60 kernel components, 24 native foundations and 193 HIA source files**. All
 26 original Rust packages remain: 18 are partially ported and 8 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
@@ -31,6 +31,48 @@ failures and source identities, remains in
 
 ## Findings addressed in this continuation
 
+### Complete bounded ML-DSA and actual Host/CI corrections
+
+The [ML-DSA contract](src/crypto/ML_DSA.md) and
+[execution record](qualification/ml-dsa-development.json) add four HIA sources
+for Pure ML-DSA-65/87 verify, keygen, sign and private Candidate ownership.
+The 159-input frozen development gate passed 500 official mathematical checks,
+669 comparisons with the unchanged original API, 1,213 shared native calls,
+96 actual private allocation lifecycles and 12 capacity refusals. All 343
+retained Rust tests, two doc tests, formatting and strict Clippy passed. Every
+one of the 16 native methods and 20 evidence-integrity controls executed.
+The 545,408,860-byte complete development archive was independently read back
+on both retained hosts, including every one of its 1,432 members.
+
+The original 12 overlapping-pointer probes remain explicit failed,
+out-of-contract observations: the private legacy entry has no general foreign
+ABI alias guard. The new source does not claim such a guard, automatic Drop,
+constant-time behavior, ML-DSA-44, prehash support, PQ authorization or TLS.
+The current integrated source has its own fresh qualification; earlier source
+identities and results are not renamed as that run.
+
+The [Work/Paid record](qualification/host-standalone-development.json) binds the
+actual standalone constructor correction, complete 177-primitive/61-history
+native run, 57-history original run, 44 retained tests, actual CLOCK/Paid faults
+and 24 handshake schedules. Trace observations now correctly distinguish the
+worker's real terminal and join phases. The reader-only follow-up changes the
+stale original CLOCK count from 20/18 to its actual 32/30 and rejects old or
+cross-module values; it does not claim another runtime execution. Fixed-parent
+production acceptance and the original service budgets remain open.
+
+On published source `88f610df3717b26f3c20e6455992da9004c144db`, both HIA
+workflows failed despite successful Checkpoint, PeerLeaseStore and source/archive
+jobs. The pull-request general component job reached its 20-minute limit;
+Work original execution completed but the stale count reader rejected packaging.
+The Oracle corpus and its preflight controls now have their own 22-method job.
+A fresh isolated Oracle run actually passed all 22 methods, with both original
+Cargo profiles and unchanged full retained original tests. Its old-source
+archive has 21,164 complete content members and is independently verified on
+both hosts. The new ML-DSA job executes its full original gate and all 36 native
+component/integrity methods. The final consumer requires the exact five-way
+600-method roster (440/95/7/22/36), each actual producer's success and one shared
+source/run/attempt. All 60 jobs retain the original 20-minute limit.
+
 ### Native checkpoint authority and actual CI failures
 
 The [checkpoint record](qualification/checkpoint-store-development.json) covers
@@ -48,8 +90,8 @@ The complete frozen development run belongs to 180 plus its exact owned overlay
 back. Both 4,221,936-byte executables are identical to the qualified development
 artifacts. No current runtime result is inferred from binary equality. The new
 58th HIA CI job repeats the full original/native/readback sequence on its own
-head. There are now 46 independent native bootstrap gates and 557 discovered
-component methods: 455 general, 95 crypto-types and seven State-root.
+head. At that checkpoint increment there were 46 independent native bootstrap gates
+and 557 discovered methods. The current five-partition roster is stated above.
 
 The 419 PeerLeaseStore CI finished its complete tests and deliberate refusal
 controls, then its archive step rejected a legitimate hard link. Runtime
@@ -84,8 +126,8 @@ CI artifacts are still required after success or failure.
 | --- | --- | --- |
 | [Some/CheckedApply](platform/node_commitment/README.md) | Five native Node partitions; 82 Some and 94 Checked methods; both 65,536/65,537 delta boundaries; original method comparisons | Durable Node.db COMMIT, reorg, recovery/outbox/ACK and the same request's Paid/Host authority |
 | [PeerLeaseStore](platform/peer_lease_store/README.md) | 18 complete tests, 618 original comparisons, actual journal/head/lock/fsync and crash controls; partial and injected-failure runs both reject | Unix authority, Core authentication, payload custody, cross-target support and Node integration |
-| [Work/Paid](platform/work_owner/README.md) | 61 native and 57 original histories, 175 primitives, 44 retained original tests, complete clock/Paid faults and independent private readback | Fixed-parent production positive, shared public admission, durable Node use and original service acceptance |
-| [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) and [ML-DSA polynomials](src/crypto/ML_DSA_POLY.md) | Fresh complete 95-test crypto/types PASS, 17 native builds, 21,210 shared calls and 3,442 selected official byte vectors | Full ML-DSA signer/verifier, secret ownership, timing qualification, authenticated identity and TLS |
+| [Work/Paid](platform/work_owner/README.md) | 61 native and 57 original histories, 177 primitives, 44 retained original tests, complete clock/Paid faults and independent private readback | Fixed-parent production positive, shared public admission, durable Node use and original service acceptance |
+| [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) and [ML-DSA polynomials](src/crypto/ML_DSA_POLY.md) | Fresh complete 95-test crypto/types PASS, 17 native builds, 21,210 shared calls and 3,442 selected official byte vectors | Native ML-DSA now has a separate bounded gate; automatic secret ownership, timing qualification, authenticated identity and TLS remain open |
 
 The published 419 private-owner/PQ 1,244-file component source map is
 `36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5`.

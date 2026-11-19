@@ -19,12 +19,38 @@ def uint(value,bits=64):return type(value) is int and 0<=value<1<<bits
 def sint(value):return type(value) is int and -(1<<63)<=value<1<<63
 def signed(value):return value-(1<<64) if value>>63 else value
 
+def terminal_binding(ledger,tid,*,native):
+    """Retain per-thread exit-stop and any later shared group wait status."""
+    entries=ledger["entries"];stopped=ledger["exit_stops"][tid]
+    terminal=ledger["roster"][tid]["terminal"]
+    own=[e for e in entries.values() if e["tid"]==tid and e["nr"] in (60,231)]
+    need(len(own)==1 and uint(own[0]["args"][0],8)
+         and same(stopped["status"],own[0]["args"][0]<<8)
+         and own[0]["sequence"]<stopped["sequence"]<terminal["sequence"]
+         and uint(terminal["exit_code"],8) and terminal["signal"] is None,
+         "Paid terminal lacks its exact actual exit syscall and exit-stop")
+    if same(terminal["exit_code"],own[0]["args"][0]):return None
+    root=ledger["root"];group=[e for e in entries.values() if e["tid"]==root and e["nr"]==231]
+    need(native is True and tid!=root and ledger["roster"][tid]["parent"]==root
+         and own[0]["nr"]==60 and same(own[0]["args"][0],0)
+         and len(group)==1 and uint(group[0]["args"][0],8) and group[0]["args"][0]>0,
+         "Paid thread wait status lacks its observed native group exit")
+    group=group[0];root_stop=ledger["exit_stops"][root];root_terminal=ledger["roster"][root]["terminal"]
+    need(same(group["args"][0],terminal["exit_code"])
+         and same(root_stop["status"],terminal["exit_code"]<<8)
+         and same(root_terminal["exit_code"],terminal["exit_code"]) and root_terminal["signal"] is None
+         and stopped["sequence"]<group["sequence"]<root_stop["sequence"]<terminal["sequence"]
+         and root_stop["sequence"]<root_terminal["sequence"],
+         "Paid shared wait status differs from the actual parent group exit")
+    return {"main_tid":root,"entry":group["sequence"],"exit_stop":root_stop["sequence"],
+            "exit_code":terminal["exit_code"]}
+
 def collect(events,stdout,stderr,*,native):
     need(type(events) is list and events,"Complete Paid event ledger required")
     root=events[0].get("tid");need(uint(root,32) and root>0,"Actual Paid root TID required")
     roster={root:{"parent":None,"birth":0}};pending={};entries={};exits={};roles={}
     clocks=[];injections=[];role_history=[];links={};tids={};fallback={};execs=[];writes={1:[],2:[]}
-    input_parts=[];terminal=set();exit_stops=set()
+    input_parts=[];terminal=set();exit_stops={}
     entry_fields={"sequence","kind","tid","nr","args","write_bytes_hex","own_thread_link","role_marker_hex",
                   "clock_id","clock_ordinal","role","role_index","role_clock_ordinal","fault",
                   "actual_clone","futex_word_before","role_spawn_ordinal","logical_clone_fallback"}
@@ -176,12 +202,12 @@ def collect(events,stdout,stderr,*,native):
             execs.append(row)
         elif kind=="exit-stop":
             need(set(row)=={"sequence","kind","tid","status"} and uint(row.get("status")) and tid not in exit_stops,
-                 "Paid exit-stop annotation differs");exit_stops.add(tid)
+                 "Paid exit-stop annotation differs");exit_stops[tid]=row
         elif kind=="terminal":
             need(set(row)=={"sequence","kind","tid","exit_code","signal"} and uint(row.get("exit_code"),8)
                  and row.get("signal") is None and tid in exit_stops,"Paid terminal result/signal differs")
             entry=pending.pop(tid,None)
-            need(entry is not None and entry["nr"] in (60,231) and entry["args"][0]==row["exit_code"],
+            need(entry is not None and entry["nr"] in (60,231),
                  "Paid terminal lacks its actual exit syscall")
             roster[tid]["terminal"]=row;terminal.add(tid)
         elif kind=="child-clone-return":
@@ -192,8 +218,80 @@ def collect(events,stdout,stderr,*,native):
         else:raise ValueError("Unreviewed Paid event kind: "+str(kind))
     need(not pending and set(roster)==terminal and len(execs)==1,"Paid owned thread lifetime incomplete")
     need(b"".join(writes[1])==stdout and b"".join(writes[2])==stderr,"Paid raw stdout/stderr not equal actual writes")
-    return {"root":root,"roster":roster,"roles":roles,"role_history":role_history,"entries":entries,"exits":exits,
-            "clocks":clocks,"injections":injections,"exec":execs[0],"input":b"".join(input_parts)}
+    ledger={"root":root,"roster":roster,"roles":roles,"role_history":role_history,"entries":entries,"exits":exits,
+            "clocks":clocks,"injections":injections,"exec":execs[0],"input":b"".join(input_parts),
+            "exit_stops":exit_stops}
+    ledger["terminal_groups"]={}
+    for tid in roster:
+        binding=terminal_binding(ledger,tid,native=native)
+        if binding is not None:ledger["terminal_groups"][tid]=binding
+    return ledger
+
+def joined_before_output(ledger,shape,first_output,*,native):
+    """Bind publication to the actual kernel-cleared child-TID futex.
+
+    waitpid may deliver a worker's terminal notification after the parent is
+    stopped at its first write, even though the kernel has already cleared the
+    thread ID and completed that parent's join. Notification collection order
+    is not an execution-order witness. Keep the complete terminal observation,
+    and independently require the real join return before publication.
+    """
+    worker=shape["worker"]
+    if worker is None:return None
+    main=shape["main"];child=ledger["roster"][worker]
+    need(type(native) is bool and uint(first_output) and first_output>0
+         and child["parent"]==main,"Paid join owner/publication identity differs")
+    clone=ledger["entries"][child["clone_entry"]]
+    actual=clone["actual_clone"];address=child["child_tid_address"]
+    need(clone["tid"]==main and clone["nr"] in (56,435)
+         and uint(address) and address>0 and address%4==0
+         and same(actual["child_tid"],address) and uint(actual["flags"])
+         and actual["flags"]&0x310100==0x310100,
+         "Paid join lacks its actual shared-thread clear-TID clone")
+    exit_calls=[row for row in ledger["entries"].values()
+                if row["tid"]==worker and row["nr"] in (60,231)]
+    need(len(exit_calls)==1 and exit_calls[0]["nr"]==60 and same(exit_calls[0]["args"][0],0),
+         "Paid owner did not execute its own successful thread exit")
+    stopped=ledger["exit_stops"][worker];terminal=child["terminal"]
+    need(same(stopped["status"],0) and uint(terminal["exit_code"],8)
+         and terminal["signal"] is None
+         and exit_calls[0]["sequence"]<stopped["sequence"]<terminal["sequence"],
+         "Paid owner actual exit-stop/terminal sequence differs")
+    joins=[row for row in ledger["entries"].values()
+           if row["tid"]==main and row["nr"]==202 and row["args"][0]==address]
+    need(joins,"Paid owner has no actual child-TID join syscall")
+    # HIA uses shared FUTEX_WAIT; the bound original glibc uses shared
+    # FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME with an infinite timeout.
+    expected=[address,0 if native else 265,worker,0,0,0 if native else 0xffffffff]
+    completed=[]
+    for entry in joins:
+        returned=ledger["exits"][entry["sequence"]]
+        need(same(entry["args"],expected)
+             and uint(entry["futex_word_before"],32) and entry["futex_word_before"] in (0,worker)
+             and returned["tid"]==main and returned["nr"]==202
+             and same(returned["entry"],entry["sequence"])
+             and sint(returned["result"]) and returned["result"] in (0,-11,-4)
+             and same(returned["kernel_result_before_injection"],returned["result"])
+             and entry["sequence"]<returned["sequence"]<first_output,
+             "Paid actual child-TID futex invocation/result differs")
+        completed.append(returned)
+    last=completed[-1]
+    need(last["result"] in (0,-11) and same(last["futex_word_after"],0)
+         and stopped["sequence"]<last["sequence"],
+         "Paid publication lacks a successful kernel-cleared child-TID join")
+    group=ledger.get("terminal_groups",{}).get(worker)
+    if terminal["exit_code"]!=0:
+        need(native is True and group is not None and group["main_tid"]==main
+             and same(group["exit_code"],terminal["exit_code"])
+             and first_output<group["entry"]<group["exit_stop"]<terminal["sequence"],
+             "Paid nonzero thread notification lacks a group exit after joined publication")
+    else:need(group is None,"Unbound Paid group wait status")
+    return {"child_tid_address":address,"clone_entry":child["clone_entry"],
+            "worker_exit_entry":exit_calls[0]["sequence"],"worker_exit_stop":stopped["sequence"],
+            "join_entry":joins[-1]["sequence"],"join_exit":last["sequence"],
+            "terminal_notification":terminal["sequence"],"first_output":first_output,
+            "worker_terminal_exit_code":terminal["exit_code"],"group_exit":group,
+            "terminal_notification_followed_output":terminal["sequence"]>first_output}
 
 def native_input(ledger,payload):
     """Replay the actual sealed memfd read: seals, fstat size, one offset-zero pread."""
@@ -538,15 +636,14 @@ def audit(directory,*,profile,native,private,executable,argv,environment,input_b
                      and MARKER in hex_bytes(r.get("write_bytes_hex"))]
             need(outputs and all(r["tid"]==shape["main"] for r in outputs),"Original Paid observation producer differs")
             first_output=min(r["sequence"] for r in outputs);value={"observation":observed}
-        if shape["worker"] is not None:
-            need(ledger["roster"][shape["worker"]]["terminal"]["sequence"]<first_output,
-                 "Paid observation preceded actual owner exit/join")
+        join=joined_before_output(ledger,shape,first_output,native=native)
         capture.fence()
         return {"schema":"trnm.hia.work-owner-paid-clock-audit.v1","status":"PASS","profile":profile,
                 "native":native,"private_no_vdso":private,"raw":{name:raw_identity(data) for name,data in raw.items()},
                 "actual_main_tid":shape["main"],"actual_worker_tid":shape["worker"],
                 "actual_clock_calls":len(ledger["clocks"]),"actual_injections":ledger["injections"],
-                "all_owned_threads_retired":True,"complete_write_bytes_replayed":True,**SCOPES,**value}
+                "all_owned_threads_retired":True,"complete_write_bytes_replayed":True,
+                "actual_join_before_output":join,**SCOPES,**value}
     finally:capture.close()
 
 
@@ -557,9 +654,12 @@ def control_specs(native):
     rows += [(name,baseline,False) for name in (
         "wrong-schema","extra-authority","role-ordinal-float","disconnected-cpu-timespec",
         "coherent-cpu-timespec","role-index-bool","event-after-terminal","foreign-executed-image",
-        "raw-output-truncated","constructor-clock-omitted")]
+        "raw-output-truncated","constructor-clock-omitted",
+        "join-address-other-word","join-wait-other-tid","join-word-not-cleared",
+        "join-kernel-error","join-private-futex","join-before-word-other-tid",
+        "terminal-exit-stop-status","terminal-worker-exit-failure","terminal-unbound-exit-code")]
     rows.append(("positive-restored-fallback","begin-clock3-eio-fallback",True))
-    need(len(rows)==27,"Paid reader control source roster changed")
+    need(len(rows)==36,"Paid reader control source roster changed")
     return rows
 
 def _capture(root):
@@ -615,6 +715,33 @@ def mutate(raw,name):
     elif name=="foreign-executed-image":
         next(e for e in events if e["kind"]=="exec")["actual_executable"]="/foreign/unbound-image"
     elif name=="raw-output-truncated":stdout=stdout[:-1]
+    elif name.startswith("terminal-"):
+        worker=next(e["tid"] for e in events if e["kind"]=="actual-role" and e["role"]==2)
+        own=next(e for e in events if e["kind"]=="syscall-entry" and e["tid"]==worker and e["nr"]==60)
+        stopped=next(e for e in events if e["kind"]=="exit-stop" and e["tid"]==worker)
+        terminal=next(e for e in events if e["kind"]=="terminal" and e["tid"]==worker)
+        if name=="terminal-exit-stop-status":stopped["status"]=256
+        elif name=="terminal-worker-exit-failure":
+            own["args"][0]=1;stopped["status"]=256;terminal["exit_code"]=1
+        elif name=="terminal-unbound-exit-code":
+            root=events[0]["tid"]
+            code=next(e["exit_code"] for e in events if e["kind"]=="terminal" and e["tid"]==root)
+            terminal["exit_code"]=1 if code!=1 else 2
+        else:raise ValueError("Unknown Paid terminal mutation")
+        report["roster"][str(worker)]["terminal"]=terminal.copy()
+    elif name.startswith("join-"):
+        worker=next(e["tid"] for e in events if e["kind"]=="actual-role" and e["role"]==2)
+        child=report["roster"][str(worker)];main=child["parent"];address=child["child_tid_address"]
+        selected=next(e for e in reversed(events) if e["kind"]=="syscall-entry"
+                      and e["tid"]==main and e["nr"]==202 and e["args"][0]==address)
+        returned=next(e for e in events if e["kind"]=="syscall-exit" and e["entry"]==selected["sequence"])
+        if name=="join-address-other-word":selected["args"][0]+=8
+        elif name=="join-wait-other-tid":selected["args"][2]=worker+1
+        elif name=="join-word-not-cleared":returned["futex_word_after"]=worker
+        elif name=="join-kernel-error":returned["result"]=returned["kernel_result_before_injection"]=-4
+        elif name=="join-private-futex":selected["args"][1]|=128
+        elif name=="join-before-word-other-tid":selected["futex_word_before"]=worker+1
+        else:raise ValueError("Unknown Paid join mutation")
     elif name=="constructor-clock-omitted":
         selected=next(r for r in report["actual_clock_calls"] if r["role"]==1 and r["role_clock_ordinal"]==2)
         report["actual_clock_calls"].remove(selected)
@@ -648,7 +775,7 @@ def reader_controls(root,complete,*,native,native_report=None):
             report["rows"].append(row);write_json(out/(name+".json"),row)
             print(json.dumps({"paid_raw_reader_control":name,"native":native,"status":row["status"],"failure":failure}),flush=True)
             need(row["status"]=="PASS","Paid raw reader control accepted/refused the wrong complete evidence")
-        report.update(status="PASS",count=27,positive=2,negative=25)
+        report.update(status="PASS",count=36,positive=2,negative=34)
     except BaseException as error:report.update(failure=repr(error),traceback=traceback.format_exc())
     finally:
         try:
@@ -673,7 +800,7 @@ def read_controls(root,complete,*,native,native_report=None):
          and report.get("failure") is None and report.get("final_fence_failure") is None
          and report.get("source_after")==report.get("baseline_after")=="MATCH"
          and same(report.get("source_inputs"),complete["source_inputs"])
-         and same([report.get(k) for k in ("count","positive","negative","actual_native_or_Rust_processes_executed")],[27,2,25,0])
+         and same([report.get(k) for k in ("count","positive","negative","actual_native_or_Rust_processes_executed")],[36,2,34,0])
          and report.get("current_source_runtime_qualification_claimed") is False,"Paid raw-control source/scope/counts differ")
     specs=control_specs(native);rows=report.get("rows")
     need(type(rows) is list and [row.get("name") for row in rows]==[r[0] for r in specs],"Paid exact raw-control roster differs")
@@ -700,7 +827,7 @@ def read_controls(root,complete,*,native,native_report=None):
         need(accepted is wanted and failure==row["failure"],
              "Paid retained complete mutation changed its reader result/root cause")
     need(set(os.listdir(directory))==expected_files,"Paid reader-control extra or missing evidence")
-    return {"count":27,"positive":2,"negative":25,"report":identity(directory/"report.json")}
+    return {"count":36,"positive":2,"negative":34,"report":identity(directory/"report.json")}
 
 
 def read_native(root,report,*,image,source_inputs):
@@ -725,8 +852,8 @@ def read_native(root,report,*,image,source_inputs):
              "Complete native Paid row differs from actual raw replay")
     controls=read_controls(root,report,native=True)
     return {"native_paid_clock_processes":16,"native_paid_clock_fault_processes":15,
-            "native_paid_clock_positive_processes":1,"native_paid_clock_raw_reader_controls":27,
-            "native_paid_clock_raw_positive_controls":2,"native_paid_clock_raw_negative_controls":25,
+            "native_paid_clock_positive_processes":1,"native_paid_clock_raw_reader_controls":36,
+            "native_paid_clock_raw_positive_controls":2,"native_paid_clock_raw_negative_controls":34,
             "native_paid_clock_report":identity(root/"report.json"),
             "native_paid_clock_reader_report":controls["report"]}
 
@@ -761,7 +888,7 @@ def read_original(root,report,*,native,executable,source_inputs,original_sources
     controls=read_controls(root,report,native=False,native_report=native)
     return {"original_paid_CLOCK_fault_comparison":"PASS","original_paid_clock_processes":17,
             "original_paid_clock_fault_processes":15,"original_paid_clock_positive_processes":2,
-            "original_paid_clock_raw_reader_controls":27,"original_paid_clock_raw_positive_controls":2,
-            "original_paid_clock_raw_negative_controls":25,
+            "original_paid_clock_raw_reader_controls":36,"original_paid_clock_raw_positive_controls":2,
+            "original_paid_clock_raw_negative_controls":34,
             "original_paid_clock_report":identity(root/"report.json"),
             "original_paid_clock_reader_report":controls["report"]}

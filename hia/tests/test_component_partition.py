@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -14,7 +15,9 @@ from hia.tools import qualify_components_ci as ci
 IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_example.Example.test_two",
        "hia.tests.test_state_root_adversarial.Example.test_maximum",
-       "hia.tests.test_transfer.Example.test_signature"]
+       "hia.tests.test_transfer.Example.test_signature",
+       "hia.tests.test_ml_dsa.Example.test_signature",
+       "hia.tests.test_oracle.Example.test_original"]
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 COMPILER = {"binding_sha256": "b" * 64, "compiler_sha256": "c" * 64}
@@ -49,7 +52,9 @@ def complete_report(group):
                                                        {"path": "components.json", "sha256": "f" * 64}]},
                         "compiler_sha256": COMPILER["compiler_sha256"]}],
             "rust_oracles": {key: {"executable_sha256": "e" * 64}
-                             for key in ci.qualify.RUST_ORACLES},
+                             for key in ci.qualify.rust_oracle_names(group)},
+            "pinned_rust_oracles": {ci.qualify.ML_DSA_ORACLE: "e" * 64} if group == "ml-dsa" else {},
+            "pinned_rust_oracles_unchanged": True,
             "whole_chain_native": False, "old_stack_can_be_removed": False,
             "production_activation": False}
 
@@ -81,6 +86,8 @@ class ComponentPartitions(unittest.TestCase):
 
     def test_invalid_discovery_never_silently_drops_a_test(self):
         variants = [[], IDS + [IDS[0]], IDS[:-1], [i for i in IDS if "state_root" not in i],
+                    [i for i in IDS if "test_transfer" not in i],
+                    [i for i in IDS if "test_ml_dsa" not in i],
                     ["unittest.loader._FailedTest.test_missing"], IDS + ["bad identity"]]
         for identifiers in variants:
             with self.subTest(identifiers=identifiers), self.assertRaises(ValueError):
@@ -90,6 +97,47 @@ class ComponentPartitions(unittest.TestCase):
                 "hia.tests.module_that_does_not_exist"), "general")
         with self.assertRaises(ValueError):
             part.descriptor(IDS, "unregistered-shard")
+
+    def test_oracle_profile_and_preflight_controls_have_one_explicit_partition(self):
+        for identifier in ("hia.tests.test_oracle.OracleNativeTests.test_01_original_source_graph_and_retained_roster",
+                           "hia.tests.test_oracle_preflight.OraclePreflightTests.test_detached_qualification_reaches_source_admission_without_mutating_git"):
+            self.assertEqual(part.group_for(identifier), "oracle")
+        self.assertEqual(part.group_for("hia.tests.test_oracle_extra.Example.test_one"), "general")
+        self.assertEqual(part.descriptor(IDS, "oracle")["selected_tests"], [IDS[-1]])
+        self.assertEqual(set(part.GROUPS), {"general", "crypto-types", "state-root", "oracle", "ml-dsa"})
+
+    def test_complete_ml_dsa_and_its_integrity_roster_have_one_explicit_partition(self):
+        for identifier in ("hia.tests.test_ml_dsa.MlDsaNativeTests.test_verify",
+                           "hia.tests.test_ml_dsa_qualification.MlDsaIntegrity.test_source"):
+            self.assertEqual(part.group_for(identifier), "ml-dsa")
+        self.assertEqual(part.group_for("hia.tests.test_ml_dsa_poly.PolyTests.test_vectors"), "crypto-types")
+        self.assertEqual(part.descriptor(IDS, "ml-dsa")["selected_tests"], [IDS[-2]])
+        self.assertEqual(ci.qualify.rust_oracle_names("general"), ci.qualify.RUST_ORACLES)
+        for group in ("all", "ml-dsa"):
+            self.assertEqual(ci.qualify.rust_oracle_names(group), (*ci.qualify.RUST_ORACLES, ci.qualify.ML_DSA_ORACLE))
+
+    def test_ml_dsa_explicit_pin_reads_actual_binary_and_rejects_missing_or_changed_bytes(self):
+        self.assertEqual(ci.qualify.pinned_rust_oracles("general", {}), {})
+        with tempfile.TemporaryDirectory() as tmp:
+            binary = Path(tmp) / "original-reference"
+            raw = b"actual private reader fixture, not a cryptographic implementation"
+            binary.write_bytes(raw)
+            key = ci.qualify.ML_DSA_ORACLE
+            env = {key: str(binary), key + "_SHA256": hashlib.sha256(raw).hexdigest()}
+            self.assertEqual(ci.qualify.pinned_rust_oracles("ml-dsa", env), {key: env[key + "_SHA256"]})
+            for wrong in ({}, {key: str(binary)}, {key + "_SHA256": env[key + "_SHA256"]},
+                          {**env, key + "_SHA256": "0" * 64}, {**env, key + "_SHA256": True}):
+                with self.subTest(wrong=wrong), self.assertRaises(ValueError):
+                    ci.qualify.pinned_rust_oracles("ml-dsa", wrong)
+            binary.write_bytes(raw + b"changed")
+            with self.assertRaisesRegex(ValueError, "differs"):
+                ci.qualify.pinned_rust_oracles("ml-dsa", env)
+            binary.unlink()
+            target = Path(tmp) / "target"
+            target.write_bytes(raw)
+            binary.symlink_to(target)
+            with self.assertRaisesRegex(ValueError, "Linked"):
+                ci.qualify.pinned_rust_oracles("ml-dsa", env)
 
     def test_actual_start_finish_rosters_cannot_be_inferred_from_count(self):
         baseline = complete_report("general")["test_partition"]
@@ -173,6 +221,23 @@ class ComponentReadback(unittest.TestCase):
             missing = {name: value for name, value in environ.items() if name != key}
             with self.assertRaises(ValueError):
                 ci.validate_job_results(missing)
+
+    def test_ml_dsa_cannot_omit_or_substitute_the_actual_original_adapter(self):
+        good = complete_report("ml-dsa")
+        def validate(value):
+            return ci.validate_report(value, "ml-dsa", LINEAGE, SOURCES, IDS, COMPILER)
+        self.assertEqual(validate(good), [IDS[-2]])
+        variants = []
+        wrong = copy.deepcopy(good)
+        del wrong["rust_oracles"][ci.qualify.ML_DSA_ORACLE]
+        variants.append(wrong)
+        for key, value in (("pinned_rust_oracles", {}), ("pinned_rust_oracles_unchanged", False),
+                           ("pinned_rust_oracles_unchanged", 1),
+                           ("pinned_rust_oracles", {ci.qualify.ML_DSA_ORACLE: "0" * 64})):
+            variants.append({**copy.deepcopy(good), key: value})
+        for wrong in variants:
+            with self.subTest(wrong=wrong), self.assertRaises(ValueError):
+                validate(wrong)
 
     def test_duplicate_and_nonfinite_json_are_refused(self):
         for raw in ('{"a":1,"a":2}', '{"nested":{"x":1,"x":1}}',

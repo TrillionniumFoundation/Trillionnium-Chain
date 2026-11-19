@@ -96,6 +96,14 @@ receipts. Reports are qualification evidence and do not become runtime
 authority. Trace exit notifications are optional under strace -qq. Every
 notification that does appear must identify one of the actual threads exactly
 once after its terminal syscall. An absent notification is not fabricated.
+Private gate signals use `tgkill` with the observed process and worker TIDs,
+after checking the owned two-thread process group. Their syscall result is
+retained; a process-directed signal cannot stand in for this worker control.
+Acquisition gates 1 and 2 run on the main thread before worker creation; gate 8
+runs on the main thread after join. They do not accept signal injection. At
+gate 8 the retired worker may still appear in `/proc` after its child-TID word
+has cleared; any observed second TID must match the worker in the complete
+native frame. Every gate remains bound to the actual owned process group.
 Signal returns are consumed only inside the actual worker's private gate. The
 trace audit covers both an interrupted ACK read and delivery immediately after
 that read succeeds, without replaying a successful read. Fourteen separate
@@ -105,12 +113,19 @@ The primitive observer captures each complete backing buffer immediately before
 and after every actual native flat call, including both 32-byte guards. Original
 bytes are retained as 4 KiB content-addressed chunks, whole-buffer snapshots and
 an ordered call stream. The separate reader reconstructs every byte and checks
-the complete 175-control roster, initial inputs, immutable inputs, continuation
+the complete 177-control roster, initial inputs, immutable inputs, continuation
 chains, progress, products, extent refusals and owner-identity refusals. It also
 checks exact file rosters, strict JSON types and directory-descriptor fences.
 The recorded native CPU intervals surround only the actual function calls;
 chunk hashing and evidence I/O are separate observation overhead. Earlier
 records that did not retain these buffers remain explicitly non-replayable.
+
+The two constructor controls execute the production and private Paid flat
+entries with the same private continuation events. They check every byte of
+the initialized standalone epoch, reject a foreign owner TID, and reject a
+second initialization even with a fresh method generation. The fixture flag
+changes entry identity only; it cannot select a different CPU budget. These
+private clock and mutex events are never production stdin inputs.
 
 ## Integration limits
 
@@ -120,7 +135,13 @@ three 256-byte Host receipts and one 1,024-byte PWPAY001 Paid receipt. Ordered
 production reader rejects the preceding HIAWO001 layout and requires a retired,
 known same-thread Paid receipt for a successful finite relation.
 
-The standalone entry owns one finite four-second interval. A Node caller must
+The standalone entry owns one finite four-second interval and the original
+trusted-local `ServiceMutationCpuDomain::standalone()` epoch. Both native
+profiles therefore start with the original 2,000,000,000 ns credit and retain
+the original 100,000,000 ns start reserve and 0.25 CPU refill rate. This finite
+entry does not select the separate zero-credit Node remote-History epoch.
+A serving miner must share its existing public budget; launching a new
+standalone process does not provide public request admission. A Node caller must
 retain its earlier private request deadline and original acquired snapshot;
 starting this entry cannot renew an intake budget. Paid.history_checkpoint,
 the full shared paid account, request intake, batch dispatch, persistence and
@@ -206,12 +227,28 @@ roster from those events. It checks exact CPU intervals, refill rounding and
 ceiling, the one reservation, live debits, residual settlement, poison state
 and known/Unknown receipts. It cannot obtain a new authority from a report bit.
 
-Each complete Paid qualification also requires 27 actual raw-reader controls:
-two accepted copies and 25 rejected mutations. All 15 fault injections are
+Each complete Paid qualification also requires 36 actual raw-reader controls:
+two accepted copies and 34 rejected mutations. All 15 fault injections are
 individually removed in retained complete copies; ten further controls cover
 schema, extra authority, exact JSON types, clock/event disconnection, a coherent
 CPU change, thread retirement, executable identity, output truncation and a
-missing constructor clock. Native and original controls have distinct rosters.
+missing constructor clock. Six additional controls corrupt the join address,
+expected child TID, cleared word, kernel result, shared-futex operation or
+observed input word. Three further controls corrupt the exit-stop status,
+the worker's own exit code or the terminal status. Native and original controls
+have distinct rosters.
+Publication requires the actual child exit syscall and exit stop, the clone's
+kernel-cleared child-TID address, and the parent's completed shared futex wait
+with a zero word before its first result write. The complete successful terminal
+notification is retained as well; its later delivery to the tracer cannot
+substitute for, or invalidate, that earlier kernel join witness.
+Linux `wait_task_zombie` can report the shared group exit status after the
+parent calls `exit_group`, even for the already joined worker. The reader
+retains that observed code and requires the worker's own `exit(0)` and zero
+exit-stop, its cleared-TID join, publication, and then the matching parent's
+group-exit syscall, exit-stop and terminal result in that order. It does not
+reinterpret a failed worker exit as success. The kernel status selection is
+in the upstream [Linux exit implementation](https://github.com/torvalds/linux/blob/master/kernel/exit.c).
 The separate Work CLOCK observer retains its own complete syscall, descriptor,
 thread and clock ledger. Bulk reads of the stopped child's actual memory and
 counters of completed clocks reduce observation overhead. Protected memory,

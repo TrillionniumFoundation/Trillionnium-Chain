@@ -2,7 +2,7 @@
 
 These are test observations, not production authority or execution attestations.
 The recorder stores complete original guarded buffers in content-addressed chunks;
-the reader reconstructs them and checks the source-defined 175-control contract.
+the reader reconstructs them and checks the source-defined 177-control contract.
 """
 from __future__ import annotations
 from collections import OrderedDict
@@ -379,6 +379,55 @@ def owner_identity_initial():
     return bytes(event), bytes(command), bytes(state)
 
 
+def paid_constructor_steps(fixture):
+    """Exact private standalone-constructor ABI observations, not a CPU model.
+
+    Both entries use the original trusted-local standalone epoch. The fixture
+    bit binds the entry identity only; it never changes that epoch's credit.
+    The supplied clock and lock completions exist only inside this flat test.
+    No supplied event is accepted by the production executable's stdin.
+    """
+    require(type(fixture) is bool, "Exact private constructor profile required")
+    event, state, epoch = bytearray(640), bytearray(73728), bytearray(4096)
+
+    def put(raw, values):
+        for offset, value in values:
+            struct.pack_into("<Q", raw, offset, value)
+
+    def step(mode, code):
+        return (bytes(event), mode, bytes(state), bytes(epoch), code)
+
+    put(event, ((8, 11), (16, 1), (32, (1 << 64) - 1), (608, 1)))
+    put(state, ((256, 3), (320, 910), (392, 11), (400, 1),
+                (416, (1 << 64) - 1), (448, 102), (1600, 1),
+                (1616, 1), (1672, int(fixture))))
+    rows = [step(0, 0)]
+    # A foreign actual-owner identity cannot continue the private constructor.
+    put(event, ((8, 12), (56, 3), (64, 7), (72, 123)))
+    rows.append(step(0, 1))
+    put(event, ((8, 11),))
+    put(state, ((256, 0), (320, 102), (1160, 7), (1168, 123)))
+    rows.append(step(0, 0))
+    put(event, ((56, 0),))
+    put(state, ((256, 4), (264, 1), (320, 103)))
+    rows.append(step(0, 0))
+    put(event, ((56, 4), (80, 1)))
+    put(state, ((256, 5), (320, 104)))
+    put(epoch, ((0, int.from_bytes(b"PCPU0001", "little")),
+                (16, 2_000_000_000), (32, 7), (40, 123), (72, 1),
+                (80, 2_000_000_000)))
+    rows.append(step(1, 0))
+    put(event, ((56, 5), (80, 0)))
+    put(state, ((1600, 0), (1624, 1),
+                (4096, int.from_bytes(b"PCOWN001", "little")),
+                (4104, (1 << 64) - 1), (4248, 1), (4256, 11), (4264, 1)))
+    rows.append(step(0, 512))
+    # Even a fresh method generation cannot remint this completed epoch.
+    put(event, ((608, 2),))
+    rows.append(step(0, 1))
+    return rows
+
+
 def _expected_roster(cases):
     lengths = list(range(130)) + [255, 256, 257, 511, 512, 513, 1023, 1024, 1025,
         2047, 2048, 2049, 4095, 4096, 4097, 65535, 65536, 65537, 131135, 131136]
@@ -395,7 +444,9 @@ def _expected_roster(cases):
     rows += [(name, "owner-identity", "owner", 2, (offset, value)) for name, offset, value in (
         ("foreign-tid", 24, 2), ("foreign-generation", 32, 2),
         ("foreign-role", 16, 0), ("out-of-order-phase", 112, 102))]
-    require(len(rows) == 175 and len({r[0] for r in rows}) == 175, "Primitive control roster differs")
+    rows += [(name + "-standalone-constructor", "paid-constructor", name, 7, fixture)
+             for name, fixture in (("paid", False), ("paid-fixture", True))]
+    require(len(rows) == 177 and len({r[0] for r in rows}) == 177, "Primitive control roster differs")
     return rows
 
 
@@ -412,7 +463,7 @@ def validate(directory, report, cases, images):
         require(index["schema"] == SCHEMA and index["status"] == "PASS"
                 and type(index["chunk_bytes"]) is int and index["chunk_bytes"] == CHUNK_BYTES
                 and index["production_authority"] is False, "Unsuccessful or wrong primitive capture")
-        require(type(images) is dict and set(images) == {"sha", "work", "owner"}
+        require(type(images) is dict and set(images) == {"sha", "work", "owner", "paid", "paid-fixture"}
                 and all(identity_shape(v) for v in images.values())
                 and same(index["images"], images), "Primitive image bindings differ")
         roster = _expected_roster(cases)
@@ -427,7 +478,7 @@ def validate(directory, report, cases, images):
         require(len(lines) == total and all(line.endswith(b"\n") for line in lines),
                 "Missing or extra primitive call")
         call_rows = [decoded(line) for line in lines]
-        require(type(index["cases"]) is list and len(index["cases"]) == 175,
+        require(type(index["cases"]) is list and len(index["cases"]) == 177,
                 "Primitive captured case roster incomplete")
         require(type(index["buffers"]) is list, "Missing primitive buffer allocation roster")
         sizes = {}
@@ -441,11 +492,12 @@ def validate(directory, report, cases, images):
                 and report.get("status") == "PASS"
                 and report.get("production_authority") is False and report.get("actual_original_Rust") is False
                 and same(report.get("images"), images), "Primitive report scope or actual images differ")
-        require(type(report.get("count")) is int and report["count"] == 175
-                and type(report.get("rows")) is list and len(report["rows"]) == 175,
+        require(type(report.get("count")) is int and report["count"] == 177
+                and type(report.get("rows")) is list and len(report["rows"]) == 177,
                 "Primitive report is incomplete")
         for key, value in (("sha_vectors", 150), ("sha_bounds", 4), ("work_histories", 13),
-                           ("work_bounds", 4), ("owner_identity_controls", 4)):
+                           ("work_bounds", 4), ("owner_identity_controls", 4),
+                           ("paid_constructor_controls", 2)):
             require(type(report.get(key)) is int and report[key] == value, "Primitive category count differs")
         snapshots = Snapshots(safe, index)
         cursor = 0
@@ -503,6 +555,9 @@ def validate(directory, report, cases, images):
                 extents, return_code = detail
                 data = bytes.fromhex(cases[0]["request_hex"])[:extents[0]]
                 expected = [data, bytes(extents[1]), bytes(extents[2])]
+            elif kind == "paid-constructor":
+                extents = (640, 73728, 0)
+                expected = [paid_constructor_steps(detail)[0][0], bytes(73728), b""]
             else:
                 extents = (128, 4096, 65536)
                 event = bytearray(128)
@@ -564,6 +619,29 @@ def validate(directory, report, cases, images):
                 call, after = pull(name, image, terminal + 2, ids, expected)
                 require(call["return_code"] == 11 and after == expected,
                         "Consumed continuation accepted or mutated another proof")
+            elif kind == "paid-constructor":
+                exact_keys(observed, ("name", "kind", "status", "initial_credit_ns",
+                                      "foreign_tid_refused", "reinitialize_refused",
+                                      "fixture_is_production_authority"), "Paid constructor report")
+                require(type(observed["initial_credit_ns"]) is int
+                        and observed["initial_credit_ns"] == 2_000_000_000
+                        and observed["foreign_tid_refused"] is True
+                        and observed["reinitialize_refused"] is True
+                        and observed["fixture_is_production_authority"] is False,
+                        "Private standalone constructor scope or initial credit differs")
+                require(next_buffer in sizes and sizes[next_buffer] == 4096,
+                        "Missing complete private Paid epoch buffer")
+                epoch_id = next_buffer
+                next_buffer += 1
+                before_state, before_epoch = bytes(73728), bytes(4096)
+                for ordinal, (event, mode, state, epoch, code) in enumerate(paid_constructor_steps(detail)):
+                    call_ids = ids[:2] + [epoch_id if mode else ids[2]]
+                    expected = [event, before_state, before_epoch if mode else b""]
+                    call, after = pull(name, image, ordinal, call_ids, expected)
+                    require(call["return_code"] == code
+                            and after == [event, state, epoch if mode else b""],
+                            "Actual standalone constructor complete bytes or refusal differs")
+                    before_state, before_epoch = state, epoch
             else:
                 exact_keys(observed, ("name", "kind", "status", "fixture_is_production_authority"),
                            "Owner identity report")
@@ -669,7 +747,8 @@ def main():
         primitive = decoded(report_raw)
         require(type(primitive) is dict and primitive.get("raw_readback") == "PASS",
                 "No successful producer byte readback")
-        images = {name: built["native_images"][name] for name in ("sha", "work", "owner")}
+        images = {name: built["native_images"][name]
+                  for name in ("sha", "work", "owner", "paid", "paid-fixture")}
         observed = validate(args.capture.absolute(), primitive, corpus(), images)
         result.update(status="PASS", raw_evidence=observed, build=raw_identity(build_raw),
                       primitive_report=raw_identity(report_raw), source_inputs=before)

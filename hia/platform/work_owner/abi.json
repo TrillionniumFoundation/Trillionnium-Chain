@@ -3,6 +3,7 @@
     "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
     "initial_snapshot": "immutable boot bytes, parent dev/inode/UID and five limits",
     "node_commit_authority": false,
+    "paid_epoch": "original ServiceMutationCpuDomain::standalone trusted-local epoch; fixture flag does not change credit; not shared serving/public admission or cold remote-History",
     "partial_or_failed_product_authority": false,
     "resource": "checked parent FD remains live through CPU, memory and PID reads, closes before second fresh check",
     "worker_context": "fresh actual gettid and per-thread membership with retained original snapshot"
@@ -15,7 +16,10 @@
     "memory_swap_bytes": 0,
     "original_attackers": 16,
     "original_service_seconds": 1800,
-    "pids": 256
+    "paid_refill_ns_per_second": 250000000,
+    "paid_start_reserve_ns": 100000000,
+    "pids": 256,
+    "standalone_initial_credit_ns": 2000000000
   },
   "entry": "actual Linux x86_64 static ELF; immutable acquired Host snapshot and one owned same-thread Work/Paid worker",
   "fixture": {
@@ -29,24 +33,24 @@
     "closed-fd": {
       "adapter_sha256": "225a9d052ce0471ba6cf71b0b91ad8b448ab1c854568464a766afcdddfb0e952",
       "executable": {
-        "bytes": 789087,
-        "sha256": "429ce3e454d841e7579c7efb9970e2c49debb7dcd0891a641f92ccba84f23b5d"
+        "bytes": 789022,
+        "sha256": "dc3e181eab14f765fc04137bd51b1d5085421fc38c4e3ed18d14fac1155ed184"
       },
       "prefix_bytes": 6466
     },
     "fixture": {
       "adapter_sha256": "983ae42fefec07b852159471e2cf1bcc042988d9e01a28439e5d667656074e5a",
       "executable": {
-        "bytes": 789037,
-        "sha256": "48e4574e937df430a1cc3712a03d50357b7d311a2a8d6cb8ea1940360875755d"
+        "bytes": 788972,
+        "sha256": "52bf071da8d2019fd7e17da05a3eb1c3c1aabe1a51536b18088e0f374b828751"
       },
       "prefix_bytes": 6416
     },
     "owner": {
       "adapter_sha256": "983ae42fefec07b852159471e2cf1bcc042988d9e01a28439e5d667656074e5a",
       "executable": {
-        "bytes": 789037,
-        "sha256": "0d503d1889d1d7ef980f48369774090ee7f476025ef21b20e4d68e4351c929ce"
+        "bytes": 788972,
+        "sha256": "90c324a3125f2b10d5d39f1de276bfe5e3945ca68d86a90aad1cee589f0b7012"
       },
       "prefix_bytes": 6416
     }
@@ -68,7 +72,7 @@
     "actual_original_controlled_CLOCK1_faults": 18,
     "original_normal_vdso_positive": 1,
     "original_private_no_vdso_positive": 1,
-    "primitive_complete_guard_before_after_raw": 175,
+    "primitive_complete_guard_before_after_raw": 177,
     "requirement_is_not_a_pass_claim": true,
     "same_complete_source_required": true
   },

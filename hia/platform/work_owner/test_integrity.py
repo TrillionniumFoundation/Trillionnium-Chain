@@ -1,14 +1,17 @@
 """Concrete public admission controls; no native or Cargo success is simulated."""
 from __future__ import annotations
 import copy
+import errno
 import json
 import os
+import signal
 from pathlib import Path
 import subprocess
 import struct
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from .build import ROOT, HERE, OWNED, identity, read_json, source_manifest, write_json
 from .bundle import (artifacts, canonical_file, require_output_and_target, include_graph,
                      validate_control_roster, TRACE_CONTROL_PROFILE, SIGNAL_CONTROL_PROFILE, physical_frame)
@@ -18,6 +21,71 @@ from .rust_oracle import original_artifact
 from hia.platform.paid_cpu.dependency import FORBIDDEN, forbidden_override
 
 class Admission(unittest.TestCase):
+    def test_private_gate_phase_owns_only_its_actual_threads(self):
+        from .native_io import require_gate_owner
+        for stage in range(1,9):
+            tid=123 if stage in (1,2,8) else 124
+            tasks=[123] if stage in (1,2,8) else [123,124]
+            args=[stage,tid,123,tasks,100,100,None]
+            require_gate_owner(*args)
+            for index,value in ((0,0),(0,9),(0,True),(1,999),(2,999),
+                                (3,[]),(3,[123,124,125]),(3,[123,123]),
+                                (4,101),(5,101),(6,signal.SIGKILL)):
+                bad=copy.deepcopy(args);bad[index]=value
+                with self.subTest(stage=stage,index=index,value=value):
+                    with self.assertRaises(ValueError):require_gate_owner(*bad)
+            if stage in (1,2,8):
+                bad=copy.deepcopy(args);bad[6]=signal.SIGUSR1
+                with self.assertRaises(ValueError):require_gate_owner(*bad)
+            else:
+                for number in (signal.SIGUSR1,signal.SIGUSR2):
+                    require_gate_owner(*args[:-1],number)
+        require_gate_owner(8,123,123,[123,124],100,100,None)
+
+    def test_post_join_gate_binds_optional_retiring_task_to_frame(self):
+        from .native_io import require_gate_frame
+        decoded={'header':{'main_tid':123,'worker_tid':124,'joins':1}}
+        for tasks in ([123],[123,124]):
+            gate={'actual_tgid':123,'actual_tid':123,'actual_tasks':tasks}
+            require_gate_frame(8,gate,decoded)
+            for field,value in (('main_tid',125),('worker_tid',0),('joins',0)):
+                bad=copy.deepcopy(decoded);bad['header'][field]=value
+                with self.subTest(tasks=tasks,field=field):
+                    with self.assertRaises(ValueError):require_gate_frame(8,gate,bad)
+        foreign={'actual_tgid':123,'actual_tid':123,'actual_tasks':[123,125]}
+        with self.assertRaises(ValueError):require_gate_frame(8,foreign,decoded)
+        worker={'actual_tgid':123,'actual_tid':124,'actual_tasks':[123,124]}
+        require_gate_frame(3,worker,decoded)
+        with self.assertRaises(ValueError):require_gate_frame(3,foreign,decoded)
+
+    def test_private_signal_binds_exact_worker_and_group(self):
+        from . import native_io
+        with mock.patch.object(native_io.ctypes,'CDLL') as loader:
+            call=loader.return_value.tgkill;call.return_value=0
+            for number in (signal.SIGUSR1,signal.SIGUSR2):
+                observed=native_io.send_worker_signal(123,124,number)
+                self.assertEqual(observed,{'syscall':'tgkill','tgid':123,'tid':124,
+                                           'signal':int(number),'result':0})
+                call.assert_called_with(123,124,int(number))
+            self.assertEqual(call.argtypes,(native_io.ctypes.c_int,)*3)
+            self.assertIs(call.restype,native_io.ctypes.c_int)
+            self.assertEqual(loader.call_args,mock.call(None,use_errno=True))
+        for args in ((0,124,10),(123,0,10),(123,123,10),(-1,124,10),
+                     (123,1<<31,10),(True,124,10),(123,False,10),
+                     (123.0,124,10),(123,124,True),(123,124,9),(123,124,10.0)):
+            with self.subTest(args=args),mock.patch.object(native_io.ctypes,'CDLL') as loader:
+                with self.assertRaises(ValueError):native_io.send_worker_signal(*args)
+                loader.assert_not_called()
+
+    def test_private_signal_kernel_refusal_is_not_success(self):
+        from . import native_io
+        with mock.patch.object(native_io.ctypes,'CDLL') as loader, \
+             mock.patch.object(native_io.ctypes,'get_errno',return_value=errno.ESRCH):
+            loader.return_value.tgkill.return_value=-1
+            with self.assertRaises(OSError) as caught:
+                native_io.send_worker_signal(123,124,signal.SIGUSR1)
+            self.assertEqual(caught.exception.errno,errno.ESRCH)
+
     def cli(self, root, *, env=None, bundle=None, output=None, target=None, optimized=False):
         bundle = bundle or root / "bundle"; bundle.mkdir(exist_ok=True)
         output = output or root / "original"
@@ -75,11 +143,20 @@ class Admission(unittest.TestCase):
         owner = [0] * 64; owner[0] = int.from_bytes(b"PCOWN001", "little")
         owner[4:14] = [1,700,1,0,1,700,1,650,1,50]
         epoch = [0] * 20
+        epoch[0] = int.from_bytes(b"PCPU0001", "little")
+        epoch[9:12] = [1, 2_000_000_000, 0]
         frame = {"paid": {"owner": owner, "epoch": epoch, "checkpoint_calls": 2, "global_poison": 0}}
         settlement(original, frame)  # Original 100 ns and native 700 ns are independent.
+        for index, replacement in ((0, 0), (9, 0), (10, 0), (10, 2_000_000_001), (11, 1)):
+            changed_frame = copy.deepcopy(frame)
+            changed_frame["paid"]["epoch"][index] = replacement
+            with self.subTest(epoch_index=index, replacement=replacement), self.assertRaises(ValueError):
+                settlement(original, changed_frame)
         variants = []
         for path, replacement in (
             (("paid_checkpoints",), True), (("paid_checkpoints",), 3),
+            (("paid_global", "flow", "initial_credit_ns"), "0"),
+            (("paid_global", "flow", "initial_credit_ns"), "2000000001"),
             (("paid_global", "poisoned"), 0), (("paid_global", "in_flight"), 0.0),
             (("paid_global", "verified_completions"), 1), (("paid_global", "unavailable"), True),
             (("paid",), None), (("paid", "schema"), "unbound"),

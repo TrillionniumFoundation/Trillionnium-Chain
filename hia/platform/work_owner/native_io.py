@@ -4,6 +4,7 @@ Private Paid/Work observer: this process supplies proof bytes and fixture files.
 Every authority syscall and arithmetic transition executes in the native ELF.
 """
 from __future__ import annotations
+import ctypes
 import fcntl
 import hashlib
 import json
@@ -33,6 +34,55 @@ def require(condition, message):
 def identity(path: Path):
     raw=path.read_bytes()
     return {'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+
+def require_gate_owner(stage,tid,tgid,tasks,pgid,leader,number):
+    """Bind each private gate to its actual phase and owned process group."""
+    require(type(stage) is int and 1<=stage<=8
+            and all(type(n) is int and 0<n<1<<31 for n in (tid,tgid,pgid,leader))
+            and type(tasks) is list and all(type(n) is int and 0<n<1<<31 for n in tasks)
+            and tasks==sorted(set(tasks)) and tgid in tasks and tid in tasks and pgid==leader,
+            'Private gate is outside this actual owned process group')
+    if stage in (1,2):
+        require(tid==tgid and tasks==[tgid] and number is None,
+                'Acquisition gate must precede worker creation on the main thread')
+    elif stage==8:
+        # clear_child_tid precedes final task removal; the retired worker may
+        # still appear in /proc here. Bind that optional TID to the final frame.
+        require(tid==tgid and len(tasks) in (1,2) and number is None,
+                'Post-join gate must run on the owned main thread without a signal')
+    else:
+        require(tid!=tgid and tasks==sorted((tgid,tid))
+                and (number is None or (type(number) in (int,signal.Signals)
+                     and number in (signal.SIGUSR1,signal.SIGUSR2))),
+                'Worker gate requires its exact live two-thread owner')
+
+def require_gate_frame(stage,gate,decoded):
+    """Bind the observed gate task roster to the actual returned native frame."""
+    header=decoded['header'];main=header['main_tid'];worker=header['worker_tid']
+    expected=main if stage in (1,2,8) else worker
+    require(gate['actual_tgid']==main and gate['actual_tid']==expected
+            and set(gate['actual_tasks'])<={main,worker},
+            'Private gate TIDs differ from the actual native frame')
+    if stage==8:
+        require(worker>0 and worker!=main and header['joins']==1,
+                'Post-join gate lacks the actual worker and completed join')
+
+def send_worker_signal(tgid,tid,number):
+    """Send this private gate control to its exact native working thread."""
+    require(type(tgid) is int and type(tid) is int and 0<tgid<1<<31
+            and 0<tid<1<<31 and tid!=tgid
+            and type(number) in (int,signal.Signals)
+            and number in (signal.SIGUSR1,signal.SIGUSR2),
+            'Exact private worker/group and cancel/stop signal required')
+    libc=ctypes.CDLL(None,use_errno=True)
+    call=libc.tgkill
+    call.argtypes=(ctypes.c_int,ctypes.c_int,ctypes.c_int)
+    call.restype=ctypes.c_int
+    ctypes.set_errno(0)
+    result=call(tgid,tid,int(number));error=ctypes.get_errno()
+    if result!=0:
+        raise OSError(error,'tgkill refused the actual owned working thread')
+    return {'syscall':'tgkill','tgid':tgid,'tid':tid,'signal':int(number),'result':result}
 
 def decode(raw: bytes) -> dict:
     require(len(raw)>=2304 and raw[:8]==MAGIC,'Complete Paid/Work frame')
@@ -135,16 +185,20 @@ def run_case(image: bytes, request: bytes, directory: Path, *, fixture=True,
             tid=observed[3];status=Path(f'/proc/{tid}/status').read_text()
             tgid=int(next(x.split()[1] for x in status.splitlines() if x.startswith('Tgid:')))
             task_ids=sorted(int(p.name) for p in Path(f'/proc/{tgid}/task').iterdir())
+            pgid=os.getpgid(tgid)
+            row['gate']={'raw_hex':bytes(gate).hex(),'actual_tid':tid,'actual_tgid':tgid,
+                         'actual_tasks':task_ids,'actual_pgid':pgid,'owned_group_leader':process.pid}
+            require_gate_owner(gate_stage,tid,tgid,task_ids,pgid,process.pid,signal_number)
             links={}
             for fd in Path(f'/proc/{tgid}/fd').iterdir():
                 try: links[fd.name]=os.readlink(fd)
                 except FileNotFoundError: pass
             require(not any(value.startswith(str(directory)) for value in links.values()),
                     'A Host/resource FD leaked across a complete boundary')
-            row['gate']={'raw_hex':bytes(gate).hex(),'actual_tid':tid,'actual_tgid':tgid,
-                         'actual_tasks':task_ids,'descriptor_links':links}
+            row['gate']['descriptor_links']=links
             mutate(directory,list(actions))
-            if signal_number is not None: os.kill(tid,signal_number)
+            if signal_number is not None:
+                row['gate']['signal_delivery']=send_worker_signal(tgid,tid,signal_number)
             if gate_delay: time.sleep(gate_delay)
             if gate_ack is not None: os.write(gate_write,gate_ack)
             os.close(gate_write);descriptors.remove(gate_write)
@@ -152,6 +206,7 @@ def run_case(image: bytes, request: bytes, directory: Path, *, fixture=True,
         row['exit_code']=process.returncode
         row['stderr_hex']=stderr.hex()
         row['decoded']=decode(stdout)
+        if 'gate' in row: require_gate_frame(gate_stage,row['gate'],row['decoded'])
         expected_exit=0 if row['decoded']['header']['domain']==0 else 64+row['decoded']['header']['domain']
         require(process.returncode==expected_exit and not stderr,'Actual exit disagrees with complete native frame')
         row['status']='PHYSICAL_FRAME_PASS_SEMANTIC_EXPECTATIONS_PENDING'

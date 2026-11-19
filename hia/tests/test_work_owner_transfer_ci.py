@@ -13,6 +13,7 @@ from unittest import mock
 
 from hia.tools import qualify_work_owner_ci as q
 from hia.tools import work_owner_transfer_ci as t
+from hia.tools import work_owner_clock_ci as clock
 
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/platform/work_owner/reader-fixture.py": q.bytes_id(b"source")}
@@ -121,6 +122,21 @@ class CompleteTransfers(unittest.TestCase):
                            {"lineage": {**LINEAGE, "git_head": "b" * 40}}):
                 with self.subTest(fields=fields), self.assertRaises(ValueError):
                     self.check({**binding, **fields}, phase)
+
+    def test_transfer_counts_match_complete_qualification_and_actual_clock_roster(self):
+        for phase, counts in (("native", t.NATIVE_COUNTS), ("original", t.ORIGINAL_COUNTS)):
+            self.assertEqual(counts, {name: q.COUNTS[name] for name in counts})
+            _, binding = self.phase(phase, phase + "-full-qualifier-counts")
+            binding.update({name: q.COUNTS[name] for name in counts})
+            self.check(binding, phase)
+        self.assertEqual(len(clock.CONTROL_SPECS), 32)
+        self.assertEqual(sum(wanted is True for _, _, wanted in clock.CONTROL_SPECS), 2)
+        self.assertEqual(sum(wanted is False for _, _, wanted in clock.CONTROL_SPECS), 30)
+        _, binding = self.phase("original", "stale-original-raw-counts")
+        binding.update(original_clock_raw_controls=20, original_clock_raw_positive_controls=2,
+                       original_clock_raw_negative_controls=18)
+        with self.assertRaisesRegex(ValueError, "actual stage count"):
+            self.check(binding, "original")
 
     def test_complete_source_and_reader_maps_are_not_digest_only(self):
         _, binding = self.phase("native", "source-shape")

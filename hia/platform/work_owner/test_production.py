@@ -73,6 +73,8 @@ class ProductionControls(unittest.TestCase):
         # These chosen counters do not represent a measured CPU execution.
         words=[0]*128
         words[:4]=[int.from_bytes(b"PWPAY001","little"),1024,self.worker,1]
+        words[8]=int.from_bytes(b"PCPU0001","little")
+        words[17:20]=[1,2000000000,0]
         owner=[0]*64
         owner[0]=int.from_bytes(b"PCOWN001","little")
         owner[4:14]=[1,100,1,0,1,100,1,80,1,20]
@@ -209,7 +211,8 @@ class ProductionControls(unittest.TestCase):
         self.assertEqual(got["paid"]["checkpoint_calls"],1100)
         # Mutate encoded receipt bytes; these remain synthetic reader controls.
         for at,value in ((0,0),(1,1023),(2,self.pid),(3,0),(4,1<<32),(6,1<<32),
-                         (9,1),(14,1),(15,1),(16,1),(32,0),(36,0),(39,1),
+                         (8,0),(9,1),(14,1),(15,1),(16,1),(17,0),(18,0),(18,2000000001),(19,1),
+                         (32,0),(36,0),(39,1),
                          (41,99),(43,81),(45,21),(46,1),(50,1),(51,1),(52,self.pid),
                          (53,1),(54,1),(100,1099),(104,0),(105,1),(110,1101),(116,0)):
             words=list(struct.unpack("<128Q",self.paid_receipt()));words[at]=value

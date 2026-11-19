@@ -2893,6 +2893,217 @@
         "source": "src/crypto/sha512_arena.hepta"
       }
     ],
+    "src/crypto/ml_dsa.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_keygen.hepta": [
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_owner.hepta": [
+      {
+        "functions": [
+          "ms_bits",
+          "ms_decode_secret",
+          "ms_mu",
+          "ms_sample_mask",
+          "ms_sample_challenge",
+          "ms_product",
+          "ms_norm",
+          "ms_attempt",
+          "ms_encode",
+          "ms_sign_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_sign.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_secret",
+          "mk_sample_a",
+          "mk_matrix_row",
+          "mk_encode_secret",
+          "mk_keygen_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_sign.hepta": [
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_a",
+          "mk_matrix_row"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_high_bits",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
     "src/crypto/pon_hash.hepta": [
       {
         "functions": [

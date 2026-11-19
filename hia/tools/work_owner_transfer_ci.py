@@ -16,19 +16,19 @@ BINDING = "trnm.hia.work-owner-stage-binding.v1"
 PACKAGE = "trnm.hia.work-owner-stage-evidence.v1"
 PHASES = ("native", "original")
 NATIVE_COUNTS = {
-    "native_histories": 61, "native_progress_points": 27843, "primitive_controls": 175,
+    "native_histories": 61, "native_progress_points": 27843, "primitive_controls": 177,
     "actual_syscall_traces": 3, "trace_controls": 27, "signal_controls": 14,
-    "native_clock_fault_controls": 18, "primitive_actual_calls": 9489,
-    "primitive_buffers": 538, "primitive_snapshots": 7800,
-    "primitive_logical_capture_bytes": 6010134406, "primitive_chunk_count": 19413,
+    "native_clock_fault_controls": 18, "primitive_actual_calls": 9503,
+    "primitive_buffers": 546, "primitive_snapshots": 7819,
+    "primitive_logical_capture_bytes": 6012238470, "primitive_chunk_count": 19432,
 }
 ORIGINAL_COUNTS = {
     "original_histories": 57, "original_progress_points": 27841,
     "original_worker_histories": 56, "retained_original_test_count": 44,
     "original_process_stages": 48, "original_clock_positive_processes": 2,
     "original_clock_fault_processes": 18, "original_clock_processes": 20,
-    "original_clock_raw_controls": 20, "original_clock_raw_positive_controls": 2,
-    "original_clock_raw_negative_controls": 18,
+    "original_clock_raw_controls": 32, "original_clock_raw_positive_controls": 2,
+    "original_clock_raw_negative_controls": 30,
 }
 
 

@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **56 kernel units, 24 native foundations and 189 HIA source
+inventory contains **60 kernel units, 24 native foundations and 193 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (18 partially ported and 8 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -12,6 +12,21 @@ accounts for every original package and native source. The [audit](AUDIT.md)
 retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
+
+The [Work/Paid correction](qualification/host-standalone-development.json)
+selects the original trusted-local standalone constructor at the production
+worker boundary. Its frozen development runtime passed 177 primitives, all 61
+native histories and 57 original histories, retained tests, CLOCK/Paid controls
+and 24 actual handshake schedules. The transfer reader now requires the actual
+32/30 original CLOCK counts. A separate reader-only rerun retained the runtime
+and original artifacts' identities. Fixed-parent production qualification and
+the original four-second service acceptance remain open.
+
+The complete component discovery is now 600 methods split disjointly into
+440 general, 95 crypto/types, seven State-root, 22 Oracle and 36 ML-DSA methods.
+All five jobs keep their 20-minute limit. The consumer requires every same-head,
+same-run and same-attempt job to succeed and every discovered method to have
+actually completed; discovery and successful packaging do not imply execution.
 
 The [checkpoint authority and commit ledger](platform/checkpoint_store/README.md)
 now implements all six original CLI commands, private API methods, Unix client
@@ -43,9 +58,16 @@ hosted results and historical raw-evidence gaps.
 [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) supplies native streaming hashing and
 XOF lifecycle with 3,442 selected official byte vectors.
 [ML-DSA polynomial arithmetic](src/crypto/ML_DSA_POLY.md) supplies native NTT,
-inverse, pointwise and negacyclic operations. These are prerequisites for the
-complete signature system; complete ML-DSA, secret custody, timing qualification,
-authenticated identity and TLS remain open. The crypto-types shard now has
+inverse, pointwise and negacyclic operations. The four additional
+[ML-DSA modules](src/crypto/ML_DSA.md) implement complete Pure ML-DSA-65/87
+verification, seed key generation, signing and the Candidate's private verifier
+and signer lifecycle. The frozen development gate executed 500 selected official
+mathematical cases, 669 original method comparisons, 16 native methods, 20
+integrity controls, all 343 retained original tests and both doc tests. The
+private entry requires disjoint live caller allocations; automatic ownership,
+foreign ABI guards, timing qualification, PQ authorization and TLS remain open.
+The new independent ML-DSA CI job repeats the complete original/native gate and
+all 36 assigned component methods against each event's own exact source. The crypto-types shard now has
 95 methods, all required by the same independent complete-roster consumer. The
 fresh exact-source run passed all 95 with zero failures, errors or skips, 17
 native builds and 21,210 shared-runner calls in 515.760 seconds. The complete

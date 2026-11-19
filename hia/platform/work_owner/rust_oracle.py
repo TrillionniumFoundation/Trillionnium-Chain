@@ -100,6 +100,10 @@ def settlement(observed, frame):
     need(type(checkpoints) is int and checkpoints == paid["checkpoint_calls"],
          "Original checkpoint invocation count")
     global_ = observed["paid_global"]
+    need(global_["flow"]["initial_credit_ns"] == "2000000000"
+         and epoch[0] == int.from_bytes(b"PCPU0001", "little")
+         and epoch[9:12] == [1, int(global_["flow"]["initial_credit_ns"]), 0],
+         "Actual original trusted-local standalone epoch differs")
     need(type(global_["poisoned"]) is bool
          and global_["poisoned"] == (paid["global_poison"] != 0),
          "Actual original global poison")

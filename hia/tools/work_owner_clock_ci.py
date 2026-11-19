@@ -53,9 +53,9 @@ CONTROL_SPECS = (
     ("panic-paid-returned-settlement", "clock-EIO-2", False),
     ("positive-fault-after-restoration", "clock-EIO-2", True),
 )
-RAW_COUNTS = {"case_count": 175, "call_count": 9489, "buffer_count": 538,
-              "snapshot_count": 7800, "logical_capture_bytes": 6010134406,
-              "chunk_count": 19413, "physical_chunk_bytes": 73427021}
+RAW_COUNTS = {"case_count": 177, "call_count": 9503, "buffer_count": 546,
+              "snapshot_count": 7819, "logical_capture_bytes": 6012238470,
+              "chunk_count": 19432, "physical_chunk_bytes": 73481101}
 
 
 def primitive_summary(q, report):
@@ -73,10 +73,10 @@ def primitive_summary(q, report):
            and q.file_id(raw.get("manifest")) and q.file_id(raw.get("calls")),
            "Primitive actual timing or full raw identity has another type")
     return {"primitive_raw_guard_arenas_retained": True, "primitive_raw_evidence": raw,
-            "primitive_actual_calls": 9489, "primitive_buffers": 538, "primitive_snapshots": 7800,
-            "primitive_logical_capture_bytes": 6010134406, "primitive_chunk_count": 19413,
+            "primitive_actual_calls": 9503, "primitive_buffers": 546, "primitive_snapshots": 7819,
+            "primitive_logical_capture_bytes": 6012238470, "primitive_chunk_count": 19432,
             "primitive_raw_readback": "PASS",
-            "primitive_readback_scope": "All actual guarded backing buffers before/after all 9489 calls; complete 175-control roster independently reconstructed."}
+            "primitive_readback_scope": "All actual guarded backing buffers before/after all 9503 calls; complete 177-control roster independently reconstructed."}
 
 
 def patch_bytes(q, archive, entries):

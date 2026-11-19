@@ -37,13 +37,13 @@ READERS = ("hia/tools/qualify_work_owner_ci.py", "hia/tests/test_work_owner_ci.p
            "hia/tools/work_owner_transfer_ci.py", "hia/tests/test_work_owner_transfer_ci.py",
            "hia/tools/qualify_work_handshake.py")
 COUNTS = {"native_histories": 61, "native_progress_points": 27843,
-          "primitive_controls": 175, "actual_syscall_traces": 3, "trace_controls": 27,
+          "primitive_controls": 177, "actual_syscall_traces": 3, "trace_controls": 27,
           "signal_controls": 14, "native_clock_fault_controls": 18,
           "original_histories": 57, "original_progress_points": 27841,
           "original_worker_histories": 56, "retained_original_test_count": 44,
           "original_process_stages": 48,
-          "primitive_actual_calls": 9489, "primitive_buffers": 538, "primitive_snapshots": 7800,
-          "primitive_logical_capture_bytes": 6010134406, "primitive_chunk_count": 19413,
+          "primitive_actual_calls": 9503, "primitive_buffers": 546, "primitive_snapshots": 7819,
+          "primitive_logical_capture_bytes": 6012238470, "primitive_chunk_count": 19432,
           "original_clock_positive_processes": 2, "original_clock_fault_processes": 18,
           "original_clock_processes": 20, "original_clock_raw_controls": 32,
           "original_clock_raw_positive_controls": 2, "original_clock_raw_negative_controls": 30,
@@ -52,11 +52,11 @@ COUNTS = {"native_histories": 61, "native_progress_points": 27843,
           "original_observer_clock_ordinal_replays": 20, "original_observer_memory_raw_reader_controls": 12,
           "original_observer_memory_raw_positive_controls": 2, "original_observer_memory_raw_negative_controls": 10,
           "native_paid_clock_processes": 16, "native_paid_clock_fault_processes": 15,
-          "native_paid_clock_positive_processes": 1, "native_paid_clock_raw_reader_controls": 27,
-          "native_paid_clock_raw_positive_controls": 2, "native_paid_clock_raw_negative_controls": 25,
+          "native_paid_clock_positive_processes": 1, "native_paid_clock_raw_reader_controls": 36,
+          "native_paid_clock_raw_positive_controls": 2, "native_paid_clock_raw_negative_controls": 34,
           "original_paid_clock_processes": 17, "original_paid_clock_fault_processes": 15,
-          "original_paid_clock_positive_processes": 2, "original_paid_clock_raw_reader_controls": 27,
-          "original_paid_clock_raw_positive_controls": 2, "original_paid_clock_raw_negative_controls": 25}
+          "original_paid_clock_positive_processes": 2, "original_paid_clock_raw_reader_controls": 36,
+          "original_paid_clock_raw_positive_controls": 2, "original_paid_clock_raw_negative_controls": 34}
 SCOPES = ("production_fixed_parent_authority", "whole_Node_or_paid_checkpoint_closed",
           "original_4s_16_service_gate_closed", "physical_power_loss")
 ROOT_LABELS = frozenset(("native", "original", "observations", "bootstrap", "capture"))
@@ -202,7 +202,7 @@ def validate_primitives(report):
          and p.get("failure") is None and not p.get("final_fence_errors"),
          "Primitive execution scope or final fence differs")
     rows = p["rows"]
-    need(type(p.get("count")) is int and p["count"] == len(rows) == 175,
+    need(type(p.get("count")) is int and p["count"] == len(rows) == 177,
          "Complete primitive observation roster required")
     lengths = list(range(130)) + [255, 256, 257, 511, 512, 513, 1023, 1024, 1025,
         2047, 2048, 2049, 4095, 4096, 4097, 65535, 65536, 65537, 131135, 131136]
@@ -229,8 +229,13 @@ def validate_primitives(report):
     for name in ("foreign-tid", "foreign-generation", "foreign-role", "out-of-order-phase"):
         expected.append({"name": name, "kind": "owner-identity", "status": "PASS",
                          "fixture_is_production_authority": False})
+    for name in ("paid", "paid-fixture"):
+        expected.append({"name": name + "-standalone-constructor", "kind": "paid-constructor",
+                         "status": "PASS", "initial_credit_ns": 2_000_000_000,
+                         "foreign_tid_refused": True, "reinitialize_refused": True,
+                         "fixture_is_production_authority": False})
     need(same(rows, expected), "Primitive digest/progress/product/extent/identity observations differ")
-    return {"primitive_controls": 175, **next_evidence.primitive_summary(sys.modules[__name__], report)}
+    return {"primitive_controls": 177, **next_evidence.primitive_summary(sys.modules[__name__], report)}
 
 
 def native(directory, repository):

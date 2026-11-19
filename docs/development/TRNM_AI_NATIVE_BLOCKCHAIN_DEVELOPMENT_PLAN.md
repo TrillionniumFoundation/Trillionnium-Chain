@@ -1,3 +1,15 @@
+## 2026-11-19 UTC — 完整有限 ML-DSA、Host 实际修复与不放宽期限的 CI 分片
+
+从已发布 `88f610df3717b26f3c20e6455992da9004c144db` 继续。当前 **60 kernels /24 native foundations /193 HIA sources**；26 原包仍为18部分迁移、8未迁移、0退役，9全项目门OPEN。根 README 保持0字节；全链、旧栈退役和激活标记仍为false。以下开发运行各自保留实际 source graph，当前集成须其自己的资格及提交级CI。
+
+ML-DSA 的11份最终owned files和4项显式依赖已合入。完整 Pure 65/87 verify/keygen/sign以及Candidate私有owner均由HIA执行；冻结159源正式轮实际完成500官方数学检查、669原API比较、1213 shared native调用、96真实私有allocation生命周期和12容量拒绝；16 native方法、20完整性控制、原343测试+2doctest、fmt/Clippy全通过。545408860B完整档SHA `6d05d1f4353927848104f1654a1c0fb9a6004bd49a4e39dabe7a1365e32d090d` 在两端逐1432成员读回。原12个alias探测失败、provider下载/系统OpenSSL失败和早期失败快照继续保留；私有f0没有foreign alias guard，不把caller前置条件改称内存安全或自动Drop，constant-time、44/prehash、授权/TLS仍开放。详情见 [ML-DSA契约](../../hia/src/crypto/ML_DSA.md)及[最终开发记录](../../hia/qualification/ml-dsa-development.json)。
+
+Host/Work/Paid 最终17源修复已合入。production worker使用与原trusted-local一致的standalone初始credit；不靠等待充值或放宽reserve获得通过。实际v7全轮177 primitives、61 native histories/27843progress、57 original histories/27841progress、44原保留测试及完整CLOCK/Paid故障、24握手控制均通过，141 runtime/4368 original源前后一致。v8仅更新7-reader图，真实独立review和archive readback通过；保留v7执行身份，不虚构重复原运行。旧20/18的transfer reader改为实际32/30，并新增跨模块和旧值拒绝。唯一canonical握手包替换为255432B /76成员 /SHA `bec8554a436aac64b3ef6fd60ed4fba30e93fdf5a48db7c6cdf06e9edce90ed9`，旧包在不可变Git历史，工作树不并列过程版。fixed-parent production、同请求Node权限及原0.25CPU/2GiB/0swap/256PID/4s/16worker验收仍开放。详情见 [Host开发记录](../../hia/qualification/host-standalone-development.json)。
+
+88f的push/PR HIA实际失败；两边Checkpoint、PeerStore和source/archive通过不等于整轮通过。PR general被原20分钟限制取消，Work original已运行完但旧计数reader拒绝；原失败及完整CI档保留。Oracle22方法已拆为独立job，fresh两原Cargo图和全部原保留profile实际通过，22方法零skip，21,164成员完整档双端读回。新增独立ML-DSA job先完整原始资格，再用同一live adapter和SHA实际执行36组件方法。当前完整发现600项：440general、95crypto-types、7State-root、22Oracle、36ML-DSA；五方consumer必须同source/run/attempt且全部方法真实完成。60jobs/48独立bootstrap均保留20分钟，不删测试或扩大预算来消除失败。
+
+Peer Unix 在隔离树继续：真实客户端299组与原API完整逐输出差分、daemon37组CLI及真实socket/持久化联调通过，原Rust全部121外层测试、fmt/strictClippy通过，1759源码前后一致；完整541184471B档两端逐10408普通内容成员读回。新增真实daemon容量、慢客户端、碎片/异常帧和重启验证已发现并修复超大poll timeout的错误种类差异；其实际失败继续保留，尚未整合或宣称完整Unix owner闭合。Task继续真实SQLite事务、PQ auth继续64MiB流式SHA384及TPQ1原行为，均不混入本次已冻结交付。随后完成唯一Node owner的持久COMMIT、reorg、recovery/outbox/ACK及同请求Paid/Host、跨目标、独立模型学习与共识经济资格。只有实际全替代及原验收闭合后才删除旧栈及最终冗余清理。
+
 ## 2026-11-19 UTC — 托管工作流上下文错误的实际重现与修复
 
 `cef50843e990bae58c1abf2fd74c8cf2859b7132` 已通过既定 Mac 身份发布精确65文件树，但HIA push run `44485504325` 实际在工作流验证阶段失败，check suite `120416802471` 没有任何已启动job。原YAML把三个 `runner.temp` 表达式放在job级env；该位置不允许runner context。保留原提交、API回执及完整原YAML，不把未启动的58jobs记作运行成功。

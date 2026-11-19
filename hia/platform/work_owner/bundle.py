@@ -316,11 +316,11 @@ def validate_bundle(directory, repository, *, require_trace=True):
         native.append(validate_physical(case, row["physical"], root / "semantic" / case["name"], fixture_sha))
     primitive = read_json(root / "primitives/report.json")
     need(same(primitive, report["primitives"]) and primitive["status"] == "PASS"
-         and same([primitive.get(k) for k in ("sha_vectors", "sha_bounds", "work_histories", "work_bounds", "owner_identity_controls")],
-                  [150, 4, 13, 4, 4])
-         and len(primitive["rows"]) == 175 and all(r["status"] == "PASS" for r in primitive["rows"]),
+         and same([primitive.get(k) for k in ("sha_vectors", "sha_bounds", "work_histories", "work_bounds", "owner_identity_controls", "paid_constructor_controls")],
+                  [150, 4, 13, 4, 4, 2])
+         and len(primitive["rows"]) == 177 and all(r["status"] == "PASS" for r in primitive["rows"]),
          "Primitive arithmetic/bounds/identity qualification incomplete")
-    for name in ("sha", "work", "owner"):
+    for name in ("sha", "work", "owner", "paid", "paid-fixture"):
         need(same(primitive["images"][name], identity(root / "build" / (name + ".flat.bin"))),
              "Primitive was not executed from this actual native section")
     need(primitive.get("raw_readback") == "PASS", "Complete primitive byte readback is mandatory")

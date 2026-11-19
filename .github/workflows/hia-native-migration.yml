@@ -185,11 +185,6 @@ jobs:
           printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Compile both exact original Oracle dependency profiles
-        run: |
-          set -euo pipefail
-          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --target-dir "$RUNNER_TEMP/oracle-default-deps" --message-format=json > "$RUNNER_TEMP/oracle-default-build.jsonl" 2> "$RUNNER_TEMP/oracle-default-build.stderr"
-          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --features serde_json/arbitrary_precision --target-dir "$RUNNER_TEMP/oracle-workspace-deps" --message-format=json > "$RUNNER_TEMP/oracle-workspace-build.jsonl" 2> "$RUNNER_TEMP/oracle-workspace-build.stderr"
       - name: Execute every assigned native HIA and independent reference case
         env:
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
@@ -197,9 +192,6 @@ jobs:
           TRNM_HIA_GOVERNANCE_OUTPUT: ${{ runner.temp }}/hia-governance-original
           HIA_CONTROL_GUARD_OUTPUT: ${{ runner.temp }}/hia-control-guard-original
           HIA_PEER_LEASE_OUTPUT: ${{ runner.temp }}/hia-peer-lease-original
-          HIA_ORACLE_DEPS: ${{ runner.temp }}/oracle-default-deps/debug/deps
-          HIA_ORACLE_WORKSPACE_DEPS: ${{ runner.temp }}/oracle-workspace-deps/debug/deps
-          HIA_ORACLE_OUTPUT: ${{ runner.temp }}/hia-oracle-original
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard general --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -255,6 +247,136 @@ jobs:
         with:
           name: hia-peer-lease-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/hia-peer-lease-original/
+          if-no-files-found: error
+          retention-days: 30
+  native-components-oracle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-observations/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Compile the original Rust reference policies
+        run: |
+          set -euo pipefail
+          rustc --version
+          rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
+          rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
+          "$RUNNER_TEMP/trnm-rust-original-tests"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee -p trnm-types --target-dir "$RUNNER_TEMP/original-rust-values" --message-format=json | tee "$RUNNER_TEMP/original-rust-build.jsonl"
+          python3 - "$RUNNER_TEMP/original-rust-build.jsonl" "$RUNNER_TEMP" <<'PYCODE'
+          import json, os, pathlib, subprocess, sys
+          events = [json.loads(line) for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.startswith('{')]
+          serde = [row for row in events if row.get('reason') == 'compiler-artifact' and row['target']['name'] == 'serde_json']
+          if len(serde) != 1:
+              raise SystemExit('one actual locked serde_json artifact required')
+          if not serde[0]['package_id'].endswith('serde_json@1.0.149'):
+              raise SystemExit('unexpected serde_json package_id: ' + serde[0]['package_id'])
+          if set(serde[0]['features']) != {'default', 'std'}:
+              raise SystemExit('unexpected serde_json features: ' + repr(serde[0]['features']))
+          rlibs = [name for name in serde[0]['filenames'] if name.endswith('.rlib')]
+          if len(rlibs) != 1:
+              raise SystemExit('one original serde_json rlib required')
+          sha2 = [row for row in events if row.get('reason') == 'compiler-artifact'
+                  and row['target']['name'] == 'sha2' and row['package_id'].endswith('sha2@0.10.9')]
+          if len(sha2) != 1:
+              raise SystemExit('one locked sha2 0.10.9 artifact required for the original control-plane crate')
+          sha2_rlibs = [name for name in sha2[0]['filenames'] if name.endswith('.rlib')]
+          if len(sha2_rlibs) != 1:
+              raise SystemExit('one original sha2 rlib required')
+          types = [row for row in events if row.get('reason') == 'compiler-artifact'
+                   and row['target']['name'] == 'trnm_types']
+          if len(types) != 1 or types[0]['features'] != []:
+              raise SystemExit('one unchanged original trnm-types dependency profile required')
+          types_rlibs = [name for name in types[0]['filenames'] if name.endswith('.rlib')]
+          if len(types_rlibs) != 1:
+              raise SystemExit('one original trnm-types rlib required')
+          with open(os.environ['GITHUB_ENV'], 'a') as out:
+              out.write('HIA_CONTROL_PLANE_SHA2=' + sha2_rlibs[0] + '\n')
+              out.write('TRNM_HIA_RUST_TYPES_RLIB=' + types_rlibs[0] + '\n')
+          target = pathlib.Path(sys.argv[2]) / 'original-rust-values/debug'
+          subprocess.run(['rustc', '--edition=2021', '-O', 'hia/tests/rust_state_reference.rs', '--extern', 'trnm_mvcc_fee=' + str(target / 'libtrnm_mvcc_fee.rlib'), '--extern', 'serde_json=' + rlibs[0], '-L', 'dependency=' + str(target / 'deps'), '-o', str(pathlib.Path(sys.argv[2]) / 'trnm-rust-state')], check=True)
+          PYCODE
+          rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs --extern trnm_protocol="$RUNNER_TEMP/original-rust-values/debug/libtrnm_protocol.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-protocol"
+          rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs --extern trnm_checkpoint_types="$RUNNER_TEMP/original-rust-values/debug/libtrnm_checkpoint_types.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-checkpoint"
+          rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs --extern trnm_crypto_primitives="$RUNNER_TEMP/original-rust-values/debug/libtrnm_crypto_primitives.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-crypto"
+          printf 'TRNM_HIA_RUST_REFERENCE=%s/trnm-hia-rust-reference\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_PROTOCOL_REFERENCE=%s/trnm-rust-protocol\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Compile both exact original Oracle dependency profiles
+        run: |
+          set -euo pipefail
+          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --target-dir "$RUNNER_TEMP/oracle-default-deps" --message-format=json > "$RUNNER_TEMP/oracle-default-build.jsonl" 2> "$RUNNER_TEMP/oracle-default-build.stderr"
+          cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-oracle --lib --no-run --features serde_json/arbitrary_precision --target-dir "$RUNNER_TEMP/oracle-workspace-deps" --message-format=json > "$RUNNER_TEMP/oracle-workspace-build.jsonl" 2> "$RUNNER_TEMP/oracle-workspace-build.stderr"
+      - name: Execute the complete Oracle corpus and every original profile
+        env:
+          HIA_ORACLE_DEPS: ${{ runner.temp }}/oracle-default-deps/debug/deps
+          HIA_ORACLE_WORKSPACE_DEPS: ${{ runner.temp }}/oracle-workspace-deps/debug/deps
+          HIA_ORACLE_OUTPUT: ${{ runner.temp }}/hia-oracle-original
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify.py --require-rust-oracle --shard oracle --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
+      - name: Verify candidate sources remained unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-observations/source-after.json"
+      - name: Retain success and failure observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-components-oracle-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-observations/
+            ${{ runner.temp }}/hia-bootstrap/bootstrap.json
+            ${{ runner.temp }}/original-rust-build.jsonl
           if-no-files-found: error
           retention-days: 30
       - name: Retain complete original and HIA Oracle observations
@@ -422,6 +544,177 @@ jobs:
             ${{ runner.temp }}/hia-mldsa-poly-native/
           if-no-files-found: error
           retention-days: 30
+  native-components-ml-dsa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-observations/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          if value.get('status') != 'PASS':
+              raise SystemExit('HIA compiler bootstrap did not pass')
+          if value.get('compiler_sha256') != '87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54':
+              raise SystemExit('HIA compiler identity differs from the pinned native compiler')
+          if not value.get('compiler'):
+              raise SystemExit('HIA native compiler path is absent')
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Compile the original Rust reference policies
+        run: |
+          set -euo pipefail
+          rustc --version
+          rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
+          rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
+          "$RUNNER_TEMP/trnm-rust-original-tests"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee -p trnm-types --target-dir "$RUNNER_TEMP/original-rust-values" --message-format=json | tee "$RUNNER_TEMP/original-rust-build.jsonl"
+          python3 - "$RUNNER_TEMP/original-rust-build.jsonl" "$RUNNER_TEMP" <<'PYCODE'
+          import json, os, pathlib, subprocess, sys
+          events = [json.loads(line) for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.startswith('{')]
+          serde = [row for row in events if row.get('reason') == 'compiler-artifact' and row['target']['name'] == 'serde_json']
+          if len(serde) != 1:
+              raise SystemExit('one actual locked serde_json artifact required')
+          if not serde[0]['package_id'].endswith('serde_json@1.0.149'):
+              raise SystemExit('unexpected serde_json package_id: ' + serde[0]['package_id'])
+          if set(serde[0]['features']) != {'default', 'std'}:
+              raise SystemExit('unexpected serde_json features: ' + repr(serde[0]['features']))
+          rlibs = [name for name in serde[0]['filenames'] if name.endswith('.rlib')]
+          if len(rlibs) != 1:
+              raise SystemExit('one original serde_json rlib required')
+          sha2 = [row for row in events if row.get('reason') == 'compiler-artifact'
+                  and row['target']['name'] == 'sha2' and row['package_id'].endswith('sha2@0.10.9')]
+          if len(sha2) != 1:
+              raise SystemExit('one locked sha2 0.10.9 artifact required for the original control-plane crate')
+          sha2_rlibs = [name for name in sha2[0]['filenames'] if name.endswith('.rlib')]
+          if len(sha2_rlibs) != 1:
+              raise SystemExit('one original sha2 rlib required')
+          types = [row for row in events if row.get('reason') == 'compiler-artifact'
+                   and row['target']['name'] == 'trnm_types']
+          if len(types) != 1 or types[0]['features'] != []:
+              raise SystemExit('one unchanged original trnm-types dependency profile required')
+          types_rlibs = [name for name in types[0]['filenames'] if name.endswith('.rlib')]
+          if len(types_rlibs) != 1:
+              raise SystemExit('one original trnm-types rlib required')
+          with open(os.environ['GITHUB_ENV'], 'a') as out:
+              out.write('HIA_CONTROL_PLANE_SHA2=' + sha2_rlibs[0] + '\n')
+              out.write('TRNM_HIA_RUST_TYPES_RLIB=' + types_rlibs[0] + '\n')
+          target = pathlib.Path(sys.argv[2]) / 'original-rust-values/debug'
+          subprocess.run(['rustc', '--edition=2021', '-O', 'hia/tests/rust_state_reference.rs', '--extern', 'trnm_mvcc_fee=' + str(target / 'libtrnm_mvcc_fee.rlib'), '--extern', 'serde_json=' + rlibs[0], '-L', 'dependency=' + str(target / 'deps'), '-o', str(pathlib.Path(sys.argv[2]) / 'trnm-rust-state')], check=True)
+          PYCODE
+          rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs --extern trnm_protocol="$RUNNER_TEMP/original-rust-values/debug/libtrnm_protocol.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-protocol"
+          rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs --extern trnm_checkpoint_types="$RUNNER_TEMP/original-rust-values/debug/libtrnm_checkpoint_types.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-checkpoint"
+          rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs --extern trnm_crypto_primitives="$RUNNER_TEMP/original-rust-values/debug/libtrnm_crypto_primitives.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-crypto"
+          printf 'TRNM_HIA_RUST_REFERENCE=%s/trnm-hia-rust-reference\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_PROTOCOL_REFERENCE=%s/trnm-rust-protocol\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Prepare the exact original PQ provider and locked dependencies
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/hia-ml-dsa"
+          touch "$RUNNER_TEMP/hia-ml-dsa/provider.env"
+          GITHUB_ENV="$RUNNER_TEMP/hia-ml-dsa/provider.env" \
+          TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/hia-ml-dsa/provider-receipts" \
+          CARGO_BUILD_JOBS=8 bash scripts/ci/prepare_pq_provider.sh
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml \
+            >"$RUNNER_TEMP/hia-ml-dsa/cargo-fetch.stdout.raw" \
+            2>"$RUNNER_TEMP/hia-ml-dsa/cargo-fetch.stderr.raw"
+      - name: Execute the complete original and native ML-DSA gate
+        run: |
+          set -euo pipefail
+          rust_bin="$(dirname "$(rustup which --toolchain 1.95.0 rustc)")"
+          python3 -B hia/tools/qualify_ml_dsa.py run \
+            --output "$RUNNER_TEMP/hia-ml-dsa/qualification" \
+            --rust-bin "$rust_bin" \
+            --provider-environment "$RUNNER_TEMP/hia-ml-dsa/provider.env" \
+            --provider-receipt "$RUNNER_TEMP/hia-ml-dsa/provider-receipts/pq-provider/provider.json" \
+            2>&1 | tee "$RUNNER_TEMP/hia-ml-dsa/qualification.log"
+          python3 -B hia/tools/qualify_ml_dsa.py readback \
+            --input "$RUNNER_TEMP/hia-ml-dsa/qualification" \
+            2>&1 | tee "$RUNNER_TEMP/hia-ml-dsa/readback.log"
+          python3 - "$RUNNER_TEMP/hia-ml-dsa/qualification/original/report.json" "$GITHUB_ENV" <<'PYCODE'
+          import hashlib, json, pathlib, sys
+          value = json.loads(pathlib.Path(sys.argv[1]).read_bytes())
+          if value.get('status') != 'PASS':
+              raise SystemExit('The complete original ML-DSA gate did not pass')
+          reference = value['reference']
+          path = pathlib.Path(reference['path'])
+          if (not path.is_absolute() or path.is_symlink()
+                  or hashlib.sha256(path.read_bytes()).hexdigest() != reference['sha256']):
+              raise SystemExit('The live original ML-DSA adapter differs')
+          with pathlib.Path(sys.argv[2]).open('a') as stream:
+              stream.write('TRNM_HIA_RUST_ML_DSA_REFERENCE=' + str(path) + '\n')
+              stream.write('TRNM_HIA_RUST_ML_DSA_REFERENCE_SHA256=' + reference['sha256'] + '\n')
+          PYCODE
+      - name: Execute all ML-DSA methods in the complete disjoint component roster
+        env:
+          TRNM_HIA_ML_DSA_OBSERVATIONS: ${{ runner.temp }}/hia-ml-dsa/component-observations
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify.py --require-rust-oracle --shard ml-dsa --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
+      - name: Verify candidate sources remained unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-observations/source-after.json"
+      - name: Retain success and failure observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-components-ml-dsa-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-observations/
+            ${{ runner.temp }}/hia-bootstrap/bootstrap.json
+            ${{ runner.temp }}/original-rust-build.jsonl
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete original and native ML-DSA execution and provider inputs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-ml-dsa-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-ml-dsa/
+            !${{ runner.temp }}/hia-ml-dsa/qualification/original/target/**
+          if-no-files-found: error
+          retention-days: 30
   native-components-state-root:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -527,7 +820,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   native-components-readback:
-    needs: [native-components, native-components-crypto-types, native-components-state-root]
+    needs: [native-components, native-components-crypto-types, native-components-state-root, native-components-oracle, native-components-ml-dsa]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -539,6 +832,8 @@ jobs:
       TRNM_COMPONENT_GENERAL_RESULT: ${{ needs.native-components.result }}
       TRNM_COMPONENT_CRYPTO_TYPES_RESULT: ${{ needs.native-components-crypto-types.result }}
       TRNM_COMPONENT_STATE_ROOT_RESULT: ${{ needs.native-components-state-root.result }}
+      TRNM_COMPONENT_ORACLE_RESULT: ${{ needs.native-components-oracle.result }}
+      TRNM_COMPONENT_ML_DSA_RESULT: ${{ needs.native-components-ml-dsa.result }}
     steps:
       - name: Checkout exact chain candidate and archive history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -568,13 +863,25 @@ jobs:
         with:
           name: hia-components-state-root-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/component-state-root-download
-      - name: Require all three actual job successes and exact disjoint full test coverage
+      - name: Download complete Oracle partition from this run and attempt
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-components-oracle-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/component-oracle-download
+      - name: Download complete ML-DSA partition from this run and attempt
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: hia-components-ml-dsa-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/component-ml-dsa-download
+      - name: Require all five actual job successes and exact disjoint full test coverage
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify_components_ci.py \
             --general "$RUNNER_TEMP/component-general-download" \
             --crypto-types "$RUNNER_TEMP/component-crypto-types-download" \
             --state-root "$RUNNER_TEMP/component-state-root-download" \
+            --oracle "$RUNNER_TEMP/component-oracle-download" \
+            --ml-dsa "$RUNNER_TEMP/component-ml-dsa-download" \
             --output "$RUNNER_TEMP/component-readback/qualification.json" \
             2>&1 | tee "$RUNNER_TEMP/component-readback/readback.log"
       - name: Verify candidate sources remained unchanged
@@ -4182,7 +4489,7 @@ jobs:
           python3 - "$RUNNER_TEMP/hia-work-handshake-original" <<'PY'
           import hashlib, pathlib, sys, tarfile
           source = pathlib.Path('hia/qualification/work-handshake-original-build.tar.xz')
-          if hashlib.sha256(source.read_bytes()).hexdigest() != 'c982fb8a9bd8b3aa856df311c18f41b15467632a36e463d7c1fd6ffb228f9940':
+          if hashlib.sha256(source.read_bytes()).hexdigest() != 'bec8554a436aac64b3ef6fd60ed4fba30e93fdf5a48db7c6cdf06e9edce90ed9':
               raise SystemExit('Retained original HIA build archive identity differs')
           target = pathlib.Path(sys.argv[1])
           target.mkdir(mode=0o700)

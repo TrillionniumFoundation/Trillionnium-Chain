@@ -260,6 +260,53 @@ class GeneratedFixtureProvenance(unittest.TestCase):
         with self.assertRaises(ValueError):
             ci.validate_report(wrong, "general", LINEAGE, self.sources, IDS, COMPILER)
 
+    def direct_fixture(self):
+        module = self.canonical_module()
+        output = self.base / "actual.so"
+        output.write_bytes(b"actual bounded test artifact")
+        receipt = {**module.receipt, "ok": True, "artifact_sha256": qualify.digest(output.read_bytes()),
+                   "artifact_bytes": output.stat().st_size, "exports": ["f0"],
+                   "compiler_sha256": COMPILER["compiler_sha256"]}
+        return module, output, receipt
+
+    def test_direct_canonical_build_binds_actual_output_and_full_source_closure(self):
+        module, output, receipt = self.direct_fixture()
+        record = qualify.direct_native_build_record(module.source, module.source_root,
+                                                     output, receipt, self.sources)
+        self.assertEqual(record["source"], "hia/src/canonical.hepta")
+        self.assertEqual(record["artifact_sha256"], qualify.digest(output.read_bytes()))
+        self.assertEqual(record["chain_migration"]["inputs"], receipt["chain_migration"]["inputs"])
+        qualify.validate_build_provenance(record, self.sources)
+        report = complete_report("oracle")
+        report.update(source_inputs=self.sources, source_set_sha256=object_hash(self.sources), builds=[record])
+        self.assertEqual(ci.validate_report(report, "oracle", LINEAGE, self.sources, IDS, COMPILER), [IDS[-1]])
+
+    def test_direct_canonical_capture_refuses_changed_output_source_and_receipt(self):
+        module, output, receipt = self.direct_fixture()
+        def capture(current=receipt):
+            return qualify.direct_native_build_record(module.source, module.source_root,
+                                                       output, current, self.sources)
+        for key, value in (("ok", 1), ("ok", False), ("artifact_sha256", "0" * 64),
+                           ("artifact_bytes", True), ("artifact_bytes", output.stat().st_size + 1)):
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                capture({**receipt, key: value})
+        raw = output.read_bytes()
+        output.write_bytes(raw + b"changed")
+        with self.assertRaisesRegex(ValueError, "changed"):
+            capture()
+        output.write_bytes(raw)
+        dependency = self.dependency.read_bytes()
+        self.dependency.write_bytes(dependency + b"changed")
+        with self.assertRaisesRegex(ValueError, "changed"):
+            capture()
+        self.dependency.write_bytes(dependency)
+        backing = self.base / "backing.so"
+        backing.write_bytes(raw)
+        output.unlink()
+        output.symlink_to(backing)
+        with self.assertRaisesRegex(ValueError, "Linked"):
+            capture()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from . import paid_faults as subject
-from .paid_fault_evidence import clock_shape, layout, budget_flow, native_shape, control_specs
+from .paid_fault_evidence import clock_shape, layout, budget_flow, native_shape, control_specs, joined_before_output, terminal_binding
 from .build import ROOT
 
 class PaidFaultControls(unittest.TestCase):
@@ -187,13 +187,103 @@ class PaidFaultControls(unittest.TestCase):
 
     def test_native_and_original_full_raw_control_rosters_are_distinct(self):
         native=control_specs(True);original=control_specs(False)
-        self.assertEqual((len(native),sum(x[2] for x in native)),(27,2))
-        self.assertEqual((len(original),sum(x[2] for x in original)),(27,2))
+        self.assertEqual((len(native),sum(x[2] for x in native)),(36,2))
+        self.assertEqual((len(original),sum(x[2] for x in original)),(36,2))
         self.assertEqual(native[0][1],"normal-zero-target")
         self.assertEqual(original[0][1],"private-raw-positive")
         self.assertEqual([r[1] for r in native[1:16]],[p["name"] for p in subject.profiles()[1:]])
         self.assertEqual([r[1] for r in original[1:16]],[p["name"] for p in subject.profiles()[1:]])
-        self.assertEqual(len({r[0] for r in native}),27)
+        self.assertEqual(len({r[0] for r in native}),36)
         self.assertEqual(native[-1],("positive-restored-fallback","begin-clock3-eio-fallback",True))
+        self.assertEqual([r[0] for r in native if r[0].startswith("join-")], [
+            "join-address-other-word","join-wait-other-tid","join-word-not-cleared",
+            "join-kernel-error","join-private-futex","join-before-word-other-tid"])
+
+    def test_join_uses_actual_clear_tid_before_output_not_terminal_delivery_order(self):
+        # Deliberate reader data; the actual late-delivery regression retains
+        # its original complete events, terminal frame and failed old audit.
+        shape={"main":101,"worker":102}
+        for native in (True,False):
+            entry={"sequence":4,"tid":101,"nr":202,
+                   "args":[4096,0 if native else 265,102,0,0,0 if native else 0xffffffff],
+                   "futex_word_before":102}
+            returned={"sequence":10,"tid":101,"nr":202,"entry":4,"result":0,
+                      "kernel_result_before_injection":0,"futex_word_after":0}
+            ledger={"roster":{102:{"parent":101,"clone_entry":1,"child_tid_address":4096,
+                       "terminal":{"sequence":12,"exit_code":0,"signal":None}}},
+                    "entries":{1:{"sequence":1,"tid":101,"nr":56,
+                       "actual_clone":{"flags":0x310100,"child_tid":4096}},
+                       4:entry,7:{"sequence":7,"tid":102,"nr":60,"args":[0]*6}},
+                    "exits":{4:returned},"exit_stops":{102:{"sequence":8,"status":0}}}
+            actual=joined_before_output(ledger,shape,11,native=native)
+            self.assertTrue(actual["terminal_notification_followed_output"])
+            early=copy.deepcopy(ledger);early["roster"][102]["terminal"]["sequence"]=9
+            self.assertFalse(joined_before_output(early,shape,11,native=native)["terminal_notification_followed_output"])
+            raced=copy.deepcopy(ledger);raced["entries"][4]["futex_word_before"]=0
+            raced["exits"][4]["result"]=raced["exits"][4]["kernel_result_before_injection"]=-11
+            joined_before_output(raced,shape,11,native=native)
+            mutants=[]
+            for path,value in (
+                (("roster",102,"parent"),100),(("roster",102,"child_tid_address"),4104),
+                (("entries",1,"actual_clone","flags"),0x110100),
+                (("entries",4,"args",0),4104),(("entries",4,"args",1),128 if native else 393),
+                (("entries",4,"args",2),103),(("entries",4,"args",3),8192),
+                (("entries",4,"futex_word_before"),103),(("entries",7,"nr"),231),
+                (("entries",7,"args",0),1),(("exit_stops",102,"status"),256),
+                (("exit_stops",102,"sequence"),11),(("exits",4,"sequence"),11),
+                (("exits",4,"futex_word_after"),102),(("exits",4,"futex_word_after"),False),
+                (("exits",4,"result"),-4),(("exits",4,"kernel_result_before_injection"),-11),
+                (("roster",102,"terminal","exit_code"),1),
+                (("roster",102,"terminal","sequence"),7)):
+                bad=copy.deepcopy(ledger);target=bad
+                for key in path[:-1]:target=target[key]
+                target[path[-1]]=value;mutants.append((path,bad))
+            omitted=copy.deepcopy(ledger);del omitted["entries"][4];mutants.append(("omitted-join",omitted))
+            for path,bad in mutants:
+                with self.subTest(native=native,path=path),self.assertRaises(ValueError):
+                    joined_before_output(bad,shape,11,native=native)
+            # An early terminal notification alone must not admit output that
+            # precedes the captured kernel-cleared futex return.
+            with self.assertRaises(ValueError):joined_before_output(early,shape,10,native=native)
+            with self.assertRaises(ValueError):joined_before_output(ledger,shape,True,native=native)
+
+    def test_group_terminal_status_requires_prior_zero_exit_and_joined_publication(self):
+        # Synthetic reader control; the real syscall/stop/wait regression is
+        # retained separately with its untouched nonzero terminal notification.
+        shape={"main":101,"worker":102}
+        ledger={"root":101,
+            "roster":{101:{"parent":None,"terminal":{"sequence":18,"exit_code":68,"signal":None}},
+                      102:{"parent":101,"clone_entry":1,"child_tid_address":4096,
+                           "terminal":{"sequence":17,"exit_code":68,"signal":None}}},
+            "entries":{1:{"sequence":1,"tid":101,"nr":56,
+                       "actual_clone":{"flags":0x310100,"child_tid":4096}},
+                       4:{"sequence":4,"tid":101,"nr":202,"args":[4096,0,102,0,0,0],"futex_word_before":102},
+                       7:{"sequence":7,"tid":102,"nr":60,"args":[0]*6},
+                       14:{"sequence":14,"tid":101,"nr":231,"args":[68,0,0,0,0,0]}},
+            "exits":{4:{"sequence":10,"tid":101,"nr":202,"entry":4,"result":0,
+                         "kernel_result_before_injection":0,"futex_word_after":0}},
+            "exit_stops":{102:{"sequence":8,"status":0},101:{"sequence":15,"status":68<<8}}}
+        def verify(data,first=11):
+            group=terminal_binding(data,102,native=True)
+            self.assertIsNone(terminal_binding(data,101,native=True))
+            data["terminal_groups"]={102:group}
+            return joined_before_output(data,shape,first,native=True)
+        result=verify(copy.deepcopy(ledger))
+        self.assertEqual(result["worker_terminal_exit_code"],68)
+        self.assertEqual(result["group_exit"],{"main_tid":101,"entry":14,"exit_stop":15,"exit_code":68})
+        for path,value in (
+            (("roster",102,"parent"),100),(("roster",102,"terminal","exit_code"),69),
+            (("roster",101,"terminal","exit_code"),0),(("roster",101,"terminal","signal"),9),
+            (("roster",102,"terminal","signal"),9),(("entries",7,"args",0),1),
+            (("entries",14,"nr"),60),(("entries",14,"args",0),True),
+            (("entries",14,"sequence"),8),(("exit_stops",102,"status"),256),
+            (("exit_stops",101,"status"),0),(("exit_stops",101,"sequence"),18),
+            (("exits",4,"futex_word_after"),102)):
+            changed=copy.deepcopy(ledger);target=changed
+            for key in path[:-1]:target=target[key]
+            target[path[-1]]=value
+            with self.subTest(path=path),self.assertRaises(ValueError):verify(changed)
+        with self.assertRaises(ValueError):verify(copy.deepcopy(ledger),14)
+        with self.assertRaises(ValueError):terminal_binding(ledger,102,native=False)
 
 if __name__=="__main__":unittest.main()

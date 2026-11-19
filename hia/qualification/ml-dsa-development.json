@@ -1,0 +1,677 @@
+{
+  "archive": {
+    "basename": "ml-dsa-complete-final-5.tar.xz",
+    "both_retained_hosts_fully_reopened_and_hashed": true,
+    "bytes": 545408860,
+    "members": 1432,
+    "sha256": "6d05d1f4353927848104f1654a1c0fb9a6004bd49a4e39dabe7a1365e32d090d"
+  },
+  "base_commit": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+  "current_integration": {
+    "actual_handoff": {
+      "actual_native_artifacts": {
+        "keygen": "7519008b088014170afc861dcd611eae323683661b97d5773390c3fe3b3fdf2e",
+        "nonce": "f9de63060493f0d55bf845eb44c08154bf54c2bbfa918466f0ecd985ee254a60",
+        "owner": "b92edf08e4f1d65cf8f643155dc40d57cb9fc11c6c57b97489d2e60aaa85e864",
+        "sign": "c7ef9cf21c19fb5a0595fd9442e8928f4c81199917a14fce9b5688d0e44aabce",
+        "verify": "01b603db82bbdafa479dc0ed8514ab2fbe852f0fbd6e6d18210fef58a5cb2a80"
+      },
+      "actual_native_build_records": [
+        {
+          "artifact_sha256": "01b603db82bbdafa479dc0ed8514ab2fbe852f0fbd6e6d18210fef58a5cb2a80",
+          "canonical_record_sha256": "612ab3a61121c2f1d38312e693c5c51f604d76d73c7d0a4625890f0e25ff80ca",
+          "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "record_index": 0,
+          "source": "hia/src/crypto/ml_dsa.hepta",
+          "source_sha256": null
+        },
+        {
+          "artifact_sha256": "7519008b088014170afc861dcd611eae323683661b97d5773390c3fe3b3fdf2e",
+          "canonical_record_sha256": "b93ec9c6f59f76e16c09a3134462cc2e1edb2ad3a929a7f7939713abf2e6bfc1",
+          "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "record_index": 1,
+          "source": "hia/src/crypto/ml_dsa_keygen.hepta",
+          "source_sha256": null
+        },
+        {
+          "artifact_sha256": "c7ef9cf21c19fb5a0595fd9442e8928f4c81199917a14fce9b5688d0e44aabce",
+          "canonical_record_sha256": "d2ebf7d9e2a2f9b32743fe0ffe6adcef3110ca84186dac644f461ed014fa872f",
+          "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "record_index": 2,
+          "source": "hia/src/crypto/ml_dsa_sign.hepta",
+          "source_sha256": null
+        },
+        {
+          "artifact_sha256": "b92edf08e4f1d65cf8f643155dc40d57cb9fc11c6c57b97489d2e60aaa85e864",
+          "canonical_record_sha256": "8931c3309f8c2346d842e7a0749a398255f5ec772ca101ee3881e167fc3d36da",
+          "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "record_index": 3,
+          "source": "hia/src/crypto/ml_dsa_owner.hepta",
+          "source_sha256": null
+        },
+        {
+          "artifact_sha256": "f9de63060493f0d55bf845eb44c08154bf54c2bbfa918466f0ecd985ee254a60",
+          "canonical_record_sha256": "9d7fc908aaa63b54b3057f4afe0e92ac22548fe34c335b37ebbebd863a4253a7",
+          "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+          "record_index": 4,
+          "source": null,
+          "source_sha256": null
+        }
+      ],
+      "archive_status": "PASS_DUAL_HOST_COMPLETE_MEMBER_READBACK",
+      "archives": {
+        "desktop": {
+          "archive": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/ml-dsa-current88-complete.tar.xz",
+          "bytes": 270518844,
+          "component_source_set_sha256": "992a36bba57d986f6e754dee729c58ae5ed6de9677f9f94467f6dbbb19f1b347",
+          "manifest_sha256": "ae63d7c6221d4857b01befbf57f25db156a8fb2c12bed4cd23ef8dc586fb26f4",
+          "members_checked": 2382,
+          "mode": 384,
+          "private_source_set_sha256": "4ddff529d696a0b50d7b3e69830bf0fabbdd99486cec42b142a115fa51f4748e",
+          "seconds": 287.2039840820362,
+          "sha256": "05a592f7ce4e8f7656170cc60031674af658994118cde86e3ee140fb517e8fcc",
+          "status": "PASS"
+        },
+        "mac": {
+          "archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-current88-20261119/ml-dsa-current88-complete.tar.xz",
+          "bytes": 270518844,
+          "component_source_set_sha256": "992a36bba57d986f6e754dee729c58ae5ed6de9677f9f94467f6dbbb19f1b347",
+          "manifest_sha256": "ae63d7c6221d4857b01befbf57f25db156a8fb2c12bed4cd23ef8dc586fb26f4",
+          "members_checked": 2382,
+          "private_source_set_sha256": "4ddff529d696a0b50d7b3e69830bf0fabbdd99486cec42b142a115fa51f4748e",
+          "seconds": 12.946315375000001,
+          "sha256": "05a592f7ce4e8f7656170cc60031674af658994118cde86e3ee140fb517e8fcc",
+          "status": "PASS"
+        }
+      },
+      "complete_component_source_set": {
+        "count": 1315,
+        "sha256": "992a36bba57d986f6e754dee729c58ae5ed6de9677f9f94467f6dbbb19f1b347"
+      },
+      "component_ci_admission": "NOT_CLAIMED_DIRTY_OVERLAY",
+      "full_native_build_records_retained_in": "phase2-final/qualification.json inside the complete archive",
+      "generic_actual_counts": {
+        "native_keygen": 112,
+        "native_nonce": 7,
+        "native_owner": 315,
+        "native_sign": 265,
+        "native_verify": 514,
+        "original_batches": 10,
+        "original_calls": 669,
+        "raw_capacity_refusals": 12,
+        "raw_owned_calls": 96
+      },
+      "generic_discovered_methods": 600,
+      "generic_selected_methods": [
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_01_complete_selected_official_verification_and_original",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_02_complete_selected_official_key_generation_and_original",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_03_complete_selected_official_signatures_and_original_public_surface",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_04_candidate_complete_lifecycle_matches_original",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_05_candidate_mixed_error_priority_and_content_mutations",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_06_signature_z_norm_exact_boundaries",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_07_hint_canonical_encoding_and_error_precedence",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_08_candidate_algorithm_and_every_error_display",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_09_owned_key_error_priority_and_reinitialization_refusal",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_10_selfverification_and_secret_failure_cleanup",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_11_all_public_envelopes_refuse_before_caller_writes",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_12_diagnostic_secret_encoding_failure_clears_work",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_13_pure_internal_mu_and_context_separation",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_14_minimum_capacity_and_full_borrow_tail_preservation",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_15_actual_last_nonce_and_explicit_overflow_refusal",
+        "hia.tests.test_ml_dsa.MlDsaNativeTests.test_16_real_private_allocations_unaligned_lifetimes_and_capacity_refusals",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_actual_provider_input_mutation_is_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_clippy_warning_gate_is_mandatory",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_complete_serialization_fixture_is_accepted_without_execution_claim",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cross_crate_includes_and_example_support_cannot_be_omitted",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cwd_and_timeout_are_part_of_the_original_stage_identity",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_duplicate_json_keys_and_worker_literal_damage_are_visible",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failed_and_partial_native_reports_never_read_back_as_complete",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failure_and_missing_original_stages_are_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_ignored_filtered_or_missing_tests_are_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_inherited_build_runtime_overrides_and_cargo_config_are_rejected_before_output",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_locked_offline_all_features_cannot_be_removed_from_both_receipts",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_missing_original_source_and_changed_canonical_dependency_are_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_adapter_source_and_library_are_bound",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_no_run_event_must_bind_each_test_executable",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_profile_cannot_change_in_both_cargo_events_and_report",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_readback_does_not_promote_foreign_alias_or_constant_time_scope",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_receipt_mismatch_and_raw_mutation_are_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_test_filter_and_alternate_binary_are_rejected_even_with_matching_receipt",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_traversal_and_symlink_inputs_are_rejected",
+        "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_wrong_rust_host_is_rejected_after_self_consistent_raw_update"
+      ],
+      "generic_tests": {
+        "errors": [],
+        "failures": [],
+        "run": 36,
+        "skipped": []
+      },
+      "limits": {
+        "automatic_owner_lifetime_qualified": false,
+        "constant_time_qualified": false,
+        "crypto_crate_retired": false,
+        "foreign_pointer_gate_qualified": false,
+        "production_activation": false,
+        "whole_chain_native": false
+      },
+      "lineage": null,
+      "official_selected_executions_each_pass": 500,
+      "official_vector_materialization": {
+        "bytes": 3705100,
+        "materialized_without_network_retransmission": true,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-references-975de31/ml_dsa_acvp_975de31.json.xz",
+        "seconds": 0.023954958,
+        "sha256": "d83ddcc98649e99c270f6d5791d074f80437aa63cd0d92e7663822ead5f9f8df",
+        "source_archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ml-dsa-references-975de31/ml-dsa-complete-final-5.tar.xz",
+        "source_member": "formal-source-4/hia/tests/vectors/ml_dsa_acvp_975de31.json.xz",
+        "status": "PASS"
+      },
+      "original_complete_gate": {
+        "adapter_graph": [
+          {
+            "bytes": 530798,
+            "features": [
+              "alloc",
+              "default"
+            ],
+            "name": "zeroize",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.1",
+            "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/target/debug/deps/libzeroize-9917054cf4892abb.rlib",
+            "retained": "dependencies/libzeroize-9917054cf4892abb.rlib",
+            "sha256": "fc61a7ba5d4eceb5a1fa3c5251a6f0ec26b4770d323d66674a2acaab4b2ebd89"
+          },
+          {
+            "bytes": 396778,
+            "features": [
+              "alloc",
+              "default",
+              "std"
+            ],
+            "name": "hex",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+            "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+            "retained": "dependencies/libhex-1558f6adc06e3fa8.rlib",
+            "sha256": "d6f28cf00861dec5cf84908756aa0e669e68e50ec9a78a1d2a7bfde3aacb24e0"
+          },
+          {
+            "bytes": 4450956,
+            "features": [
+              "default",
+              "std"
+            ],
+            "name": "serde_json",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+            "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/target/debug/deps/libserde_json-a91b3599af627e6f.rlib",
+            "retained": "dependencies/libserde_json-a91b3599af627e6f.rlib",
+            "sha256": "4cd38bd3bd0d7765047a2f0e09e56964002a25b35d4b3d977753654e83a988e8"
+          },
+          {
+            "bytes": 1163772,
+            "features": [
+              "alloc",
+              "zeroize"
+            ],
+            "name": "ml_dsa",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#ml-dsa@0.1.1",
+            "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/target/debug/deps/libml_dsa-bb1d22e7c191d930.rlib",
+            "retained": "dependencies/libml_dsa-bb1d22e7c191d930.rlib",
+            "sha256": "c709f05f699119d656ca179b9b5fa90a11725d065f43f1a4ba8814e68e05eb5e"
+          },
+          {
+            "bytes": 27682356,
+            "features": [
+              "default",
+              "pq-native-openssl"
+            ],
+            "name": "trnm_crypto_primitives",
+            "package_id": "path+file:///tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/repo/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+            "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/target/debug/deps/libtrnm_crypto_primitives-757bd9c563639ebd.rlib",
+            "retained": "dependencies/libtrnm_crypto_primitives-757bd9c563639ebd.rlib",
+            "sha256": "b6b7666036ae02a78741d3dc40c221157f5164166222eba151b2fb9952844797"
+          }
+        ],
+        "doctests": 2,
+        "passed": 343,
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "rust_host": "x86_64-unknown-linux-gnu",
+        "rust_release": "1.95.0",
+        "stages": 79,
+        "test_binaries": 34
+      },
+      "original_reference_delta_overlap": [],
+      "out_of_contract_alias_failures": "The prior formal5 complete archive retains 12 true foreign-pointer alias counterexamples; foreign_pointer_gate_qualified remains false.",
+      "private_actual_counts": {
+        "native_keygen": 112,
+        "native_nonce": 7,
+        "native_owner": 315,
+        "native_sign": 265,
+        "native_verify": 514,
+        "original_batches": 10,
+        "original_calls": 669,
+        "raw_capacity_refusals": 12,
+        "raw_owned_calls": 96
+      },
+      "private_controls": 20,
+      "private_delta_overlap": [],
+      "private_methods": 16,
+      "private_source_set": {
+        "count": 159,
+        "sha256": "4ddff529d696a0b50d7b3e69830bf0fabbdd99486cec42b142a115fa51f4748e"
+      },
+      "production_ci_admission_claimed": false,
+      "qualification_status": "PASS",
+      "repeated_execution_counts_note": "The same selected official fixture set and method corpus ran in private qualification and again in generic36; repeating it does not expand distinct-vector coverage.",
+      "reports": {
+        "generic": {
+          "bytes": 518469,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/phase2-final/qualification.json",
+          "sha256": "757d7aba8c599108fc3c24637e8f33e23c8f0e7f836c8f1569d4341524d14cc2"
+        },
+        "generic_observations": {
+          "bytes": 1928,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/component-observations-final/observations.json",
+          "sha256": "43da9c4f6a387d91dc237c19cc077542b82b53f20ab76360c40dc9cc12023d8d"
+        },
+        "original": {
+          "bytes": 174889,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/report.json",
+          "sha256": "96b6bf94e14540e142d91339cd4d2b0829e1bd273ae6ea4646c4d4f80a0c76b5"
+        },
+        "phase1": {
+          "bytes": 180778,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/phase1/report.json",
+          "sha256": "7a8af5c5eb823c953ab6a24f8cb139413ad17266a4805cd3fe638c321a676c91"
+        },
+        "phase2": {
+          "bytes": 8179,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/phase2-final/report.json",
+          "sha256": "125d53d93bab69e96355a46e6e6e9fd293ab28ec5861353a1529a58fb8e01815"
+        },
+        "phase2_prepare_failure": {
+          "bytes": 1542,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/phase2/report.json",
+          "sha256": "5628b44f8397998e9a3c2a980fe4e33b28172331c16ae2d1ada73ee467b339de"
+        },
+        "private": {
+          "bytes": 345266,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/report.json",
+          "sha256": "7b1f1d368ba46ad79210c008a4128abfbe09163cdb298e4395edb8c2e6cd72e4"
+        },
+        "private_observations": {
+          "bytes": 1928,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/observations/observations.json",
+          "sha256": "43da9c4f6a387d91dc237c19cc077542b82b53f20ab76360c40dc9cc12023d8d"
+        },
+        "process_receipts": {
+          "bytes": 16013,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/process-receipts.json",
+          "sha256": "2dc2e6c860a9717b7188a77fb151502fcab30d858b859a436a5342bf06efb235"
+        }
+      },
+      "retained_current_failure": "phase2 missing sparse historical archive before any delta writes; exact88 Git blob restored and SHA checked; no tests skipped",
+      "same_fixture_passes": 2,
+      "schema": "trnm.hia.ml-dsa-current88-development-handoff.v1",
+      "six_original_references": {
+        "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+          "bytes": 4737096,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/trnm-rust-checkpoint",
+          "sha256": "dbed887671987fa6abf53fc2b583b38d689a51039b3c98203ae25d0d83e94b77"
+        },
+        "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+          "bytes": 20856360,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/trnm-rust-crypto",
+          "sha256": "4f90868acc63c3b83b8392bc37fc567100362695bc7d15ef5010f3d8cb3c797d"
+        },
+        "TRNM_HIA_RUST_ML_DSA_REFERENCE": {
+          "bytes": 29033240,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/qualification-current88-1/original/original-reference",
+          "sha256": "075a7454ee7f64a6441ef1a62d42f590114deb884535ab610f117c613d4e21a2"
+        },
+        "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+          "bytes": 8258832,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/trnm-rust-protocol",
+          "sha256": "86f6c9edebddf350bb1a0ea93dfeddf1470a435e96e08c3abf4fbb73236386c3"
+        },
+        "TRNM_HIA_RUST_REFERENCE": {
+          "bytes": 4402808,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/trnm-hia-rust-reference",
+          "sha256": "563f2c921462624329dc24ed581ee22765fddb76887effeaf2cc72b1f466a9b9"
+        },
+        "TRNM_HIA_RUST_STATE_REFERENCE": {
+          "bytes": 47517256,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/trnm-rust-state",
+          "sha256": "82df1acba68285cd17ffcabe9743b4d94647cf34a8e50985dbf719d2f9f0824e"
+        }
+      },
+      "source_commit_observed": "88f610df3717b26f3c20e6455992da9004c144db",
+      "source_tree_observed": "36b57816fcfdf79de173e3992e4fd1dead27884b",
+      "source_unchanged_during_tests": true,
+      "status": "PASS",
+      "supporting_original_libraries": {
+        "HIA_CONTROL_PLANE_SHA2": {
+          "bytes": 930996,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/target/debug/deps/libsha2-8444ffe34d14b801.rlib",
+          "sha256": "3ce917e02d21155171f0c850c78661d25108c8bf7b594d1cfe7d47eed16284ea"
+        },
+        "TRNM_HIA_RUST_TYPES_RLIB": {
+          "bytes": 6048596,
+          "path": "/tmp/trnm-ml-dsa-current88-20261119-lnbyceqd/generic-references/target/debug/libtrnm_types.rlib",
+          "sha256": "f37417436e9d4e18717dd9d21e092960e97380ab6f08fd4b1e7ae66cd39a0a7b"
+        }
+      },
+      "timing": {
+        "all_attempt_execution_seconds": 547.2903760299087,
+        "interphase_interval_seconds_from_file_end_marker": 591.951258645,
+        "phase1_seconds": 400.5757614649483,
+        "phase2_seconds": 145.93656293099048,
+        "preserved_failed_preparation_seconds": 0.7780516339698806,
+        "total_execution_seconds": 546.5123243959388
+      },
+      "timing_notes": [
+        "The two execution phases were separate; the interphase interval is not execution time.",
+        "The fixed already-bootstrapped HIA compiler and independently retained OpenSSL 3.5.9 provider were reused; provider preparation and bootstrap were not timed anew.",
+        "The original all-features Rust target and all five generic Rust references were freshly built for this current88 checkout.",
+        "These are Desktop development observations, not completed GitHub CI admission for a committed candidate."
+      ],
+      "whole_chain_native": false,
+      "working_tree_dirty": true
+    },
+    "base_commit": "88f610df3717b26f3c20e6455992da9004c144db",
+    "current_committed_CI_admission_inferred": false,
+    "fresh_qualification": "PRIVATE_DEVELOPMENT_AND_FINAL_COMPONENT_READBACK_PASS",
+    "handoff_identity": {
+      "bytes": 19744,
+      "sha256": "b6eb5838fb65772ba6f259dd6bc3b00f0f671c9a830a145d67749b9121e1ad20"
+    }
+  },
+  "elapsed_seconds": 358.229,
+  "formal_report_sha256": "3af24754d0afe6ef15e4ff642a620f107b469a1d3d10f495e802bc724c472e8f",
+  "integrity_controls": [
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_actual_provider_input_mutation_is_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_clippy_warning_gate_is_mandatory",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_complete_serialization_fixture_is_accepted_without_execution_claim",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cross_crate_includes_and_example_support_cannot_be_omitted",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_cwd_and_timeout_are_part_of_the_original_stage_identity",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_duplicate_json_keys_and_worker_literal_damage_are_visible",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failed_and_partial_native_reports_never_read_back_as_complete",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_failure_and_missing_original_stages_are_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_ignored_filtered_or_missing_tests_are_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_inherited_build_runtime_overrides_and_cargo_config_are_rejected_before_output",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_locked_offline_all_features_cannot_be_removed_from_both_receipts",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_missing_original_source_and_changed_canonical_dependency_are_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_adapter_source_and_library_are_bound",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_no_run_event_must_bind_each_test_executable",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_original_profile_cannot_change_in_both_cargo_events_and_report",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_readback_does_not_promote_foreign_alias_or_constant_time_scope",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_receipt_mismatch_and_raw_mutation_are_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_test_filter_and_alternate_binary_are_rejected_even_with_matching_receipt",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_traversal_and_symlink_inputs_are_rejected",
+    "hia.tests.test_ml_dsa_qualification.MlDsaQualificationIntegrity.test_wrong_rust_host_is_rejected_after_self_consistent_raw_update"
+  ],
+  "native_methods": [
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_01_complete_selected_official_verification_and_original",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_02_complete_selected_official_key_generation_and_original",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_03_complete_selected_official_signatures_and_original_public_surface",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_04_candidate_complete_lifecycle_matches_original",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_05_candidate_mixed_error_priority_and_content_mutations",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_06_signature_z_norm_exact_boundaries",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_07_hint_canonical_encoding_and_error_precedence",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_08_candidate_algorithm_and_every_error_display",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_09_owned_key_error_priority_and_reinitialization_refusal",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_10_selfverification_and_secret_failure_cleanup",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_11_all_public_envelopes_refuse_before_caller_writes",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_12_diagnostic_secret_encoding_failure_clears_work",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_13_pure_internal_mu_and_context_separation",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_14_minimum_capacity_and_full_borrow_tail_preservation",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_15_actual_last_nonce_and_explicit_overflow_refusal",
+    "hia.tests.test_ml_dsa.MlDsaNativeTests.test_16_real_private_allocations_unaligned_lifetimes_and_capacity_refusals"
+  ],
+  "observations": {
+    "actual_private_allocation_lifecycles": 96,
+    "all_features": true,
+    "capacity_refusals": 12,
+    "doctests": 2,
+    "official_math_checks": 500,
+    "original_format_and_strict_clippy": "PASS",
+    "original_method_comparisons": 669,
+    "original_stages": 79,
+    "original_test_executables": 34,
+    "retained_original_tests": 343,
+    "shared_native_calls": 1213
+  },
+  "old_stack_can_be_removed": false,
+  "owned_files": {
+    "hia/src/crypto/ML_DSA.md": {
+      "bytes": 17632,
+      "sha256": "c774681f610501198fb7ddd3c5701685ab5187c465427c3a35d4ecaddf23dfa9"
+    },
+    "hia/src/crypto/ml_dsa.hepta": {
+      "bytes": 61970,
+      "sha256": "783dbcdd70bbf64c7a1f9f3ed14df78762d21b212be0671b12bc76abc8522358"
+    },
+    "hia/src/crypto/ml_dsa_keygen.hepta": {
+      "bytes": 31245,
+      "sha256": "372d4e425d6387057e1ac2a5fc4e3613a1d2167dcee5f03753e074e35b6230ea"
+    },
+    "hia/src/crypto/ml_dsa_owner.hepta": {
+      "bytes": 66246,
+      "sha256": "596b66b565ca27fc3479379ccb8440207adffc182a7fd796267ea8699cba2a05"
+    },
+    "hia/src/crypto/ml_dsa_sign.hepta": {
+      "bytes": 57491,
+      "sha256": "b0c514055262ff9943941d3abf44088f3ce6b1a3536c520523ba89e08b55ba93"
+    },
+    "hia/tests/rust_ml_dsa_reference.rs": {
+      "bytes": 7386,
+      "sha256": "2d57ad244560c0c5a298315b252068149b66bb6bedd8f6dbe6eba468462578e9"
+    },
+    "hia/tests/test_ml_dsa.py": {
+      "bytes": 46186,
+      "sha256": "e4f60eb1150362d5cf25124f51d7e717b1305522f3aea6e241096b8be61de95a"
+    },
+    "hia/tests/test_ml_dsa_qualification.py": {
+      "bytes": 20654,
+      "sha256": "ae264c477ad3a81d09017cd79eac820daca65b87bd42dfccd4b843e64cccd4d8"
+    },
+    "hia/tests/vectors/ml_dsa_acvp_975de31.json.xz": {
+      "bytes": 3705100,
+      "sha256": "d83ddcc98649e99c270f6d5791d074f80437aa63cd0d92e7663822ead5f9f8df"
+    },
+    "hia/tools/ml_dsa_original.py": {
+      "bytes": 14546,
+      "sha256": "d1d87e08599e4afeff542274553041af7ff8c66ad6650f044a5de5cb6d0be037"
+    },
+    "hia/tools/qualify_ml_dsa.py": {
+      "bytes": 30118,
+      "sha256": "4d6480f42e871f8bb7ac0358a44d1ea587e7ccd8ed31c04d8bf91b620474c2de"
+    }
+  },
+  "preserved_failures": [
+    "12 out-of-contract alias probes: the private legacy entry has no foreign ABI alias guard",
+    "initial missing termination and actual compiler refusal",
+    "reused memfd path selected a previously loaded diagnostic image",
+    "system OpenSSL compile failure and pinned-provider download timeout",
+    "earlier arithmetic and private owner counterexamples"
+  ],
+  "production_activation": false,
+  "schema": "trnm.hia.ml-dsa-development.v1",
+  "scope_exclusions": [
+    "ML-DSA-44",
+    "prehash public API",
+    "general foreign pointer ABI guards",
+    "automatic Drop and unforgeable application ownership",
+    "constant-time and side-channel qualification",
+    "PQ authorization, identity and TLS",
+    "whole-chain quantum security"
+  ],
+  "source_inputs": {
+    "AGENTS.md": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "hia/components.json": "ead18854e37bb0b19c544071192d791a2955703cfcddec56c3c1d00baca67f7b",
+    "hia/qualification/compiler-binding.json": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636",
+    "hia/src/crypto/ML_DSA.md": "c774681f610501198fb7ddd3c5701685ab5187c465427c3a35d4ecaddf23dfa9",
+    "hia/src/crypto/keccak_stream.hepta": "c385ce2f0625fcf5be69150c8bea2c67639720fae259b4a29b563287c8a904ea",
+    "hia/src/crypto/ml_dsa.hepta": "783dbcdd70bbf64c7a1f9f3ed14df78762d21b212be0671b12bc76abc8522358",
+    "hia/src/crypto/ml_dsa_keygen.hepta": "372d4e425d6387057e1ac2a5fc4e3613a1d2167dcee5f03753e074e35b6230ea",
+    "hia/src/crypto/ml_dsa_owner.hepta": "596b66b565ca27fc3479379ccb8440207adffc182a7fd796267ea8699cba2a05",
+    "hia/src/crypto/ml_dsa_poly.hepta": "95997b9573cd8b23c78358796531bb2fd7512d0e6e8f4c7123c9966573c5b3e2",
+    "hia/src/crypto/ml_dsa_sign.hepta": "b0c514055262ff9943941d3abf44088f3ce6b1a3536c520523ba89e08b55ba93",
+    "hia/tests/native_support.py": "2994f6ef96b121d424a42d3bd56b3a692f4338fe211059aeb432799970408803",
+    "hia/tests/rust_ml_dsa_reference.rs": "2d57ad244560c0c5a298315b252068149b66bb6bedd8f6dbe6eba468462578e9",
+    "hia/tests/test_ml_dsa.py": "e4f60eb1150362d5cf25124f51d7e717b1305522f3aea6e241096b8be61de95a",
+    "hia/tests/test_ml_dsa_qualification.py": "ae264c477ad3a81d09017cd79eac820daca65b87bd42dfccd4b843e64cccd4d8",
+    "hia/tests/vectors/ml_dsa_acvp_975de31.json.xz": "d83ddcc98649e99c270f6d5791d074f80437aa63cd0d92e7663822ead5f9f8df",
+    "hia/toolchain.lock.json": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71",
+    "hia/tools/component_partition.py": "130cebbfa90896533b25c147203064fbef8a3d6ab99a39f366fd4a7ec2357232",
+    "hia/tools/ml_dsa_original.py": "d1d87e08599e4afeff542274553041af7ff8c66ad6650f044a5de5cb6d0be037",
+    "hia/tools/qualify.py": "14a7505417fe1c2e745d603b414bd683883502221f8fa7eb76982b6c94f59922",
+    "hia/tools/qualify_ml_dsa.py": "4d6480f42e871f8bb7ac0358a44d1ea587e7ccd8ed31c04d8bf91b620474c2de",
+    "hia/tools/toolchain.py": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+    "scripts/ci/prepare_pq_provider.sh": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+    "tests/fixtures/cpq1-content-v1/vectors.json": "b295ac507b880840176e5dc836dbb1773c13f16f4c4a60c0c89a0c57905dda5e",
+    "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
+    "trillionnium/crates/trnm-crypto-primitives/README.md": "3cdc046026f6cb54a4f01d2e94b60b277f14337de86a81f8ee380cae8794d822",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs": "0d091365566386c60d90cd69ef040aff0500bd396a7f94e70410b4aed72e9fd9",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs": "78665546a09da49bc100da9357743781eae282379a6eae40f0e286d7cbbc8cde",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs": "1efb46c8d663829688a60084031186795ceaf4837e2167f417a27f159afc611d",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs": "aed36ea1d2dc71b8b1f5c70af4781a937c00998dabb6d9848c049761411faaa4",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs": "9ac01ea460ec3e8c2280500c390faf918a93a73debc0a66ad55e0cd53c3519ab",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs": "c82c7a6c91cac154b4f229c8b318ca1778fd5d04eebc9de6dca23893cff49493",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs": "1c29a290fffc5481b1980e19c13ef381e5caf9540af3787f227f2a145083d128",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs": "657ba21f36ca6b2efd229b1c0a019bbc59236a5c96e0b293d3d1a3d5fea5d1bb",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs": "ee1a573012568b1f104d66f37ff08a083719d8745031c6904929899217e9d7d1",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs": "b4906b6782e7bbe28e80f0837bf638bd9ddbeed66926dcc15478ec529eaa2b03",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs": "758f2954bc572a45900c3e653438f6d763643e5c4acb1f0f0fbf84489ae8855e",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs": "8567e6a09d03fb7b63d73dedc1b0ae8bd77f25790af19a6c9d670974494336fb",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb",
+    "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
+    "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": "7763bd52066366b0f30c9b4bc314ae713fbcf9063abd651c48c5c495cdfcad29",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs": "e9416457ee3df24cf5446ebffde6d7748a8eeff8f0f46e77b6ad9555e0ef6b0a",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "cb3d908e1a88e599d6f17b7678271cf9e93fe8b8dc973be30ff031abcc140b96",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "2fecf9fc65b9d3557f1cd92e7da3132ddd66e1d014c6d6b6497f35bfc1e06022",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs": "368a78996346f5e5005ba64da42cd85a4f906c25e2ae1bdc45f5e79d2b111a2e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs": "f94910f4eefc7be98c0741a48140d59d3a638f4613fdc1e7d0f6f5137c3fca73",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/profile_boundary_tests.rs": "0a5a6950d30d998ea3f89e8698d3aae64dd1c0126fc5435a57c9ee57942f5dd5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/tests.rs": "b96ec0d04833d8c69faeb958a6ddb4c0b7881bfae92035d3ba739f095d8b7ac7",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "59fd7fb334161fd869237cfe35765747a6b9f675f070e3e617a24d11de2fe2c7",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "ddc79df2879c9ab011cbec1e6d3ad3945e5236dda69bee4f8b41a5343abb87f9",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f",
+    "trillionnium/crates/trnm-crypto-primitives/tests/ed25519_rfc8032.rs": "f59f0291ebce4672f85b8cb3219f77e61aa0186be29038c51dd621bb0165ac94",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json": "d56d1c460e0372e262fe4d0cfc4b255b9dc325eda93e512638bedbd3e18deef2",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/LICENSE": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/PROVENANCE.md": "08a767d23d13b73702d1df8dbc4692f2b35864de3f0cf31cd031d2e9595d87ad",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py": "c291315fca62f5149b99eec2dda8580d07bc2b3d9b9c65eab4bd890f11eb229e",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py": "222395c704bc8b63ef47e196c1fc9e99b8735b51532307504777a92fb3217218",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_oracle.c": "2c8639b02cebb49e9eea8a079080b33913b808c10176784d07fbc75afb7233a6",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py": "e68630ca453cb4edf96f7116904dad963efa3172c6a839fa7aafdb0811910813",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py": "fb4c5138114e735a98c09db2f7c62595b30c6d72c01f9203250cbafc4f0a17d4",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py": "6d721cacaabe5fbbdc4608293247c6660fbcc573b1d307ffb77636b3c3cbf0ba",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs": "3826964229379674be933f963b0860332ee19fc545143cdc40c4e92393b1fac7",
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs": "da2d906d90f5f1a7ed80eff3368305a7275c52bcd80a6a9a4cbfd507901a2a2f",
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs": "8ad9579c1b96f319c46bd63acc4d1838e5b39609474bb8e1ecdc14192efc74bd",
+    "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs": "ca4fcb7198dfcadf5ed0fa609594f7cb1e6104aeafe428fee57bfba169857052",
+    "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21_fixture.py": "613dd8caf07fce84c6cda3ab05d39336e78281bf415b49bc1d061f777e57a9e7",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+    "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
+    "trillionnium/crates/trnm-protocol/README.md": "743dd4c144287cd74dc91df613c829df11854cda988fd37642f27f43db45829d",
+    "trillionnium/crates/trnm-protocol/examples/pon_wire.rs": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad",
+    "trillionnium/crates/trnm-protocol/src/content_commitment.rs": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1",
+    "trillionnium/crates/trnm-protocol/src/content_commitment/tests.rs": "8ed765a896ea89891c921b216f4a5dd7c3ee89b8f4eb1a5b6b9e1d7e5eec5fe6",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs": "600bb311882e1094c55826040b7d215f2f7b680bfcedab10678cdcb409a2ba27",
+    "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1",
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "0ed69ce0a7e4868186038042708eb134633f7707c08e939e9eb6ff5b5c7ca844",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+    "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+    "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs": "5ba12e5b3bedcfcb2e495ef255ac4c4d457d27cbd9e6f90f8f839dda445fea75",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4",
+    "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+    "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+    "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs": "4056f533271873d6b8a4d1ea5aefa99f10ea4a8bf2d7fd8df2aff2410878aecd",
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs": "c02f0dc67d6ae82e823729c224d945dbf228cd8eaeca877d7821520efb763873",
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs": "d1d0d0e3909768035d4f9770ab94407ad871931cdd44dcd10e16118cac579eb6",
+    "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs": "e6a79653acace6efc30ba289c0624fb3581f90d1267c4e8a427a44e2b41ea9f8",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs": "ec4b8732e4fa8dc151cad9679845213e3d47d7099d3feb4db885de1e5f55706d",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+  },
+  "source_set_sha256": "43bed439f820601337c775bc09100b960727241cdb12b267438b160cbd94f3c2",
+  "status": "FROZEN_DEVELOPMENT_PASS",
+  "whole_chain_native": false
+}

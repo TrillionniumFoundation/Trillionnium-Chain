@@ -274,9 +274,7 @@ block b24(v299:readbuf,v300:mutbuf,v301:mutbuf,v302:u64,v303:u64,v304:u64,v306:u
   v321:u64 = const() {"value":424}
   v322:u64 = const() {"value":0}
   v323:u64 = call(v300,v321,v322) {"function":"cpu_put"}
-  v324:u64 = const() {"value":1}
-  v325:bool = compare.eq(v302,v324)
-  v326:u64 = select(v325,v322,v324)
+  v326:u64 = const() {"value":0}
   v327:u64 = const() {"value":8}
   v328:u64 = call(v300,v327,v326) {"function":"cpu_put"}
   jump b54(v299,v300,v301,v302,v303,v304)

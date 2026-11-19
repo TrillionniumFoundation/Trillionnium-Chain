@@ -7,14 +7,16 @@ import os
 import re
 import unittest
 
-GROUPS = ("general", "crypto-types", "state-root")
+GROUPS = ("general", "crypto-types", "state-root", "oracle", "ml-dsa")
 ROOT_TEST_MODULE = "hia.tests.test_state_root_adversarial."
+ORACLE_MODULES = ("hia.tests.test_oracle.", "hia.tests.test_oracle_preflight.")
+ML_DSA_MODULES = ("hia.tests.test_ml_dsa.", "hia.tests.test_ml_dsa_qualification.")
 CRYPTO_TYPES_MODULES = tuple("hia.tests." + name + "." for name in (
     "test_crypto", "test_ed25519", "test_ed25519_adversarial",
     "test_sha512", "test_sha512_stream", "test_request_status",
     "test_transfer", "test_transcript", "test_keccak", "test_ml_dsa_poly",
 ))
-SCHEMA = "trnm.hia.component-test-partition.v2"
+SCHEMA = "trnm.hia.component-test-partition.v4"
 
 
 def need(condition, message):
@@ -42,6 +44,10 @@ def group_for(identifier):
         return "state-root"
     if identifier.startswith(CRYPTO_TYPES_MODULES):
         return "crypto-types"
+    if identifier.startswith(ORACLE_MODULES):
+        return "oracle"
+    if identifier.startswith(ML_DSA_MODULES):
+        return "ml-dsa"
     return "general"
 
 

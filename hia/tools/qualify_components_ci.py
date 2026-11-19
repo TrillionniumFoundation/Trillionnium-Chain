@@ -22,7 +22,7 @@ from hia.tools.component_partition import (
     validate_completion, validate_lineage,
 )
 
-SCHEMA = "trnm.hia.component-ci-readback.v2"
+SCHEMA = "trnm.hia.component-ci-readback.v4"
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
@@ -122,13 +122,20 @@ def validate_report(value, group, expected, sources, identifiers, compiler_bindi
                  "Actual component build used a different compiler")
     need(native, "No actual self-hosted component builds")
     oracles = value.get("rust_oracles")
-    need(type(oracles) is dict and set(oracles) == set(qualify.RUST_ORACLES),
+    need(type(oracles) is dict and set(oracles) == set(qualify.rust_oracle_names(group)),
          "Incomplete original Rust oracle roster")
     for oracle in oracles.values():
         need(type(oracle) is dict and set(oracle) == {"executable_sha256"}
              and type(oracle["executable_sha256"]) is str
              and re.fullmatch(r"[0-9a-f]{64}", oracle["executable_sha256"]) is not None,
              "Missing original Rust binary identity")
+    pins = value.get("pinned_rust_oracles")
+    expected_pins = {qualify.ML_DSA_ORACLE} if group == "ml-dsa" else set()
+    need(type(pins) is dict and set(pins) == expected_pins
+         and value.get("pinned_rust_oracles_unchanged") is True
+         and all(type(sha) is str and oracles[key] == {"executable_sha256": sha}
+                 for key, sha in pins.items()),
+         "Explicit original adapter pin changed or differs from the executed binary")
     for key in ("whole_chain_native", "old_stack_can_be_removed", "production_activation"):
         need(value.get(key) is False, "Component coverage cannot expand whole-project scope")
     return selected
@@ -227,6 +234,8 @@ def main(argv=None):
     parser.add_argument("--general", type=Path, required=True)
     parser.add_argument("--crypto-types", type=Path, required=True)
     parser.add_argument("--state-root", type=Path, required=True)
+    parser.add_argument("--oracle", type=Path, required=True)
+    parser.add_argument("--ml-dsa", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
@@ -250,7 +259,8 @@ def main(argv=None):
         compiler = {"binding_sha256": identity(binding_path)["sha256"],
                     "compiler_sha256": binding["compiler_sha256"]}
         report = verify_all({"general": args.general, "crypto-types": args.crypto_types,
-                             "state-root": args.state_root},
+                             "state-root": args.state_root, "oracle": args.oracle,
+                             "ml-dsa": args.ml_dsa},
                             expected, sources, identifiers, compiler, tree)
         need(sources == qualify.sources(), "Source changed during independent component readback")
     except BaseException as error:
