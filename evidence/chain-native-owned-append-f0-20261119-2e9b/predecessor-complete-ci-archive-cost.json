@@ -1,0 +1,12 @@
+{
+  "schema": "chain-old-source-complete-terminal-ci-lossless-retention-v1",
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "complete": true,
+  "members": 618,
+  "raw_bytes": 86154008,
+  "archive_bytes": 724836,
+  "archive_sha256": "e48a44484cffe9ed01b5b9a055ecc9a0b98819cde976397d2ab51daa505f2c6e",
+  "wall_seconds": 12.51446086197393,
+  "self_user_cpu_seconds": 11.375817,
+  "self_system_cpu_seconds": 0.160294
+}
