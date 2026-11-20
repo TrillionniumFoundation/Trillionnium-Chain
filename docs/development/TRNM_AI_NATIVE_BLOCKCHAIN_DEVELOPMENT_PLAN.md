@@ -1,3 +1,15 @@
+## 2026-11-20 UTC — 修复 Metadata 全量源码登记遗漏并保留真实 CI 失败
+
+已发布 `492ee6f451e9e582adde52434807ffb5c01bdcea` 的 [push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653573047) 与 [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653593128) 各66作业，均为51失败、15跳过。两路实际提交身份检查通过，逐一核对41442个tracked条目及3377461072字节；随后原迁移检查明确拒绝：`HIA source inventory differs from the complete HIA tree`。这不是原生运行资格通过，也不是已观察到的源码字节篡改。
+
+根整合遗漏了新14份Metadata HIA文件在 `config/hia-migration-v1.json` 中的foundation登记。上一条“28 native foundations登记不变”对应这个真实缺口，本条予以纠正。现在精确登记唯一 `platform/peer-payload-metadata` owner及原验收入口；原完整源码集合检查不改，当前清单为 **60 kernels /29 native foundations /276 HIA sources**。26原包仍19部分、7未迁移，**0退役、9全项目门OPEN**；Node整合、整包退役、全链原生与生产激活均保持false，根README仍0字节。
+
+原检查在本地修复前准确复现同一拒绝，修复后完整迁移检查通过，原5个源码清单测试全部通过，包括未登记、重复、别名、越界路径及提前退役拒绝。四个改动文件仅为该清单、[现有Metadata精确记录](../../hia/qualification/payload-metadata-development.json)、本计划及本计划的当前Git blob pin；所有HIA/Rust业务源码、原Cargo图和锁、检查器、测试、CI工作流及全部历史pins不变。这里的源码恢复根仍缺74份历史大归档，未宣称完整clean工作树或当前提交运行资格；原两路CI完整tracked身份记录与这一本地有限恢复状态分别保留。
+
+两路失败的原日志、精确source身份和原迁移stderr均保留，四个官方ZIP已完整逐成员校验。376开发图的完整原/native/reader资格仍只归属它的冻结输入，不提升为492或本修复提交的验收。必须在新提交自己的clean head/tree上执行全部原CI、完整Payload Metadata原121测试与2次child重执行、12分组/41控制及独立reader；20分钟、240秒与唯一3秒清理不变。
+
+Body最大256MiB大正文两模式已在原240秒内与原版完整返回一致，645277条记录的宽索引两模式仍超时；它们是私有候选的实际结果，本修复不带入这些改动。Task180秒完整门与Settlement240秒完整门继续按原输入和门限推进。Body/recovery/ACK、Archive/StateImport、项目C provider、唯一Node COMMIT/reorg/replay/outbox/ACK、剩余crypto/TLS/TUF、跨目标、模型与研究经济门继续开放。只有全部等价替代、原验收和依赖处置完成后才退役旧栈及最终清理；本文件仍为唯一计划。
+
 ## 2026-11-20 UTC — Payload Metadata 持久化 owner、完整原验收与提交级 CI
 
 从已发布 `fc867d207644a1288980553b8f4c32bc062152c9` 继续。本轮整合42份最终Metadata文件（14份HIA），HIA源码总数为276；原60 kernels /28 native foundations登记不变。26原包仍为19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README保持0字节。[本轮精确记录](../../hia/qualification/payload-metadata-development.json)分别绑定实际开发图、原失败、根整合重建和待执行的新提交CI。

@@ -643,6 +643,134 @@
     "sha256": "81d73b41943fe228735f707e2721ab7e4958e3da0de61ccf9f4fe30012836d7c"
   },
   "integration_parent": "fc867d207644a1288980553b8f4c32bc062152c9",
+  "migration_inventory_repair": {
+    "actual_failed_current_ci": [
+      {
+        "event": "push",
+        "failure": 51,
+        "jobs": 66,
+        "run_id": 44653573047,
+        "skipped": 15
+      },
+      {
+        "event": "pull_request",
+        "failure": 51,
+        "jobs": 66,
+        "run_id": 44653593128,
+        "skipped": 15
+      }
+    ],
+    "actual_source_identity_passed": {
+      "source_before_and_after": {
+        "bytes": 423,
+        "sha256": "4c6ea3706f750c3e518b4f2f799360fa9255be2776bdd9e987e18676cb035228"
+      },
+      "tracked_bytes": 3377461072,
+      "tracked_entries": 41442
+    },
+    "added_foundation": {
+      "id": "platform/peer-payload-metadata",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux x86_64 PayloadReplayStoreV1 metadata owner with twelve public methods, owned journal and lock descriptors, complete replay indexes, live file identity checks, ambiguity and poison semantics. The frozen 376 development overlay passed the complete original tests, twelve native groups, forty-one integrity controls and independent readback. Exact current-commit CI remains required. Payload Body, external recovery and ACK, complete Peer and Node integration, cross-target support, original four-second service acceptance and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/peer_payload/commands.hepta",
+        "hia/platform/peer_payload/file_policy.hepta",
+        "hia/platform/peer_payload/filesystem.hepta",
+        "hia/platform/peer_payload/linux_emitter.hepta",
+        "hia/platform/peer_payload/metadata_codec.hepta",
+        "hia/platform/peer_payload/metadata_log.hepta",
+        "hia/platform/peer_payload/metadata_runtime.hepta",
+        "hia/platform/peer_payload/open.hepta",
+        "hia/platform/peer_payload/owner.hepta",
+        "hia/platform/peer_payload/parent_bridge.hepta",
+        "hia/platform/peer_payload/publication.hepta",
+        "hia/platform/peer_payload/runtime_queries.hepta",
+        "hia/platform/peer_payload/snapshot_policy.hepta",
+        "hia/platform/peer_payload/view_fixture.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_payload/build.py",
+        "hia/platform/peer_payload/original.py",
+        "hia/platform/peer_payload/qualify.py",
+        "hia/platform/peer_payload/readback.py",
+        "hia/platform/peer_payload/readback_observations.py",
+        "hia/platform/peer_payload/control_readback.py",
+        "hia/platform/peer_payload/test_qualification.py"
+      ]
+    },
+    "base_commit": "492ee6f451e9e582adde52434807ffb5c01bdcea",
+    "base_tree": "b24496da18a7cb441897a62f3841b8ce138a71ba",
+    "corrected_complete_migration_check": {
+      "all_hia_source_files": 276,
+      "archive_index_sha256": "c5618a7a653e8492e3977ed2dc0cf54ce0975edc8ebbe9ae0e6d4cdc08474c3b",
+      "legacy_packages_accounted_for": 26,
+      "native_foundations": 29,
+      "native_source_units": 60,
+      "old_stack_can_be_removed": false,
+      "open_gates": [
+        "system-io",
+        "persistent-node",
+        "cryptography",
+        "node-integration",
+        "service-budget",
+        "cross-target",
+        "model-loop",
+        "consensus-research",
+        "retirement"
+      ],
+      "result": "PASS",
+      "retained_compiler_qualification": {
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "nested_checks": 5049,
+        "outer_checks": 11,
+        "wall_seconds": 154.807339324
+      },
+      "retired_packages": 0,
+      "whole_chain_native": false
+    },
+    "current_committed_native_runtime_tests_executed": false,
+    "fresh_original_cargo_tests_in_this_repair": false,
+    "local_restoration": {
+      "all_hia_source_files": 276,
+      "complete_tracked_worktree": false,
+      "unmaterialized_historical_archive_paths": 74
+    },
+    "official_complete_failure_zips": [
+      {
+        "artifact_id": 14592506524,
+        "bytes": 7047,
+        "sha256": "02bb09c3dd547943868ed252b34ab541960df11be76c58740baa4bc4ce8d4830"
+      },
+      {
+        "artifact_id": 14592651783,
+        "bytes": 7042,
+        "sha256": "00f6e5ccebf72c74f56341b0ac91adbb8aa847eb92ca458eb8ac18832a6b74a2"
+      },
+      {
+        "artifact_id": 14592571206,
+        "bytes": 375,
+        "sha256": "972c007e7d995382aebe4b11dd5e888332191818262ada9acf3c05b85dc5b9c8"
+      },
+      {
+        "artifact_id": 14592276064,
+        "bytes": 375,
+        "sha256": "38da469cd7a3439b9cb196357fb4d535f346b22d72e322bff00fd72bdff05cea"
+      }
+    ],
+    "old_failures_preserved": true,
+    "original_checker_unchanged": true,
+    "original_failure": {
+      "stderr": {
+        "bytes": 56,
+        "sha256": "7218333b81f61317449c3053260e09b7f548887d24e3919133e3a5ea5e15f2be"
+      },
+      "text": "HIA source inventory differs from the complete HIA tree"
+    },
+    "original_inventory_test_methods": 5,
+    "qualification_scope": "declarative inventory repair and original inventory checks; current committed native execution remains required",
+    "runtime_or_workflow_changed": false
+  },
   "old_stack_can_be_removed": false,
   "original_service_budget_qualified": false,
   "owned_final_files": {
