@@ -10,6 +10,8 @@ Private continuation crypto stays below the cache ranges. The generic kp_joint2
 table uses [143360, 151552), so it must use a separate arena; the production Store
 closure never calls it. The uncached comparison uses that separate arena here.
 This observer cannot authorize caching in caller-controlled generic scratch.
+Normal object hashing is interleaved with the live caches. Its bounded staging
+buffer must remain below them, including when an object exceeds two MiB.
 """
 from __future__ import annotations
 
@@ -34,24 +36,32 @@ POINT_START, POINT_END, POINT_CURSOR = 147456, 149664, 149664
 COMB_START, COMB_END, COMB_CURSOR = 149696, 149816, 149816
 POINT_MARKER = 3551735579062913868
 SEQUENCE = [0, 1, 0, 2, 1, 3, 0, 4, 5, 4, 2, 6, 7, 0, 7]
-EXPECTED_CASES = 115
+PAYLOAD_SIZES = (0, 1, 16383, 16384, 16385, 65535, 65536, 65537, 2097153)
+EXPECTED_CASES = 115 + len(PAYLOAD_SIZES)
 
 HARNESS = '''hia-asm.v1 hepta.hia.program.v8 trnm_task_private_cache_comparison
 fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(start)
 block start(input:readbuf,output:mutbuf,work:mutbuf)
   zero:u64 = const() {"value":0}
   mode:u64 = call(input,zero) {"function":"cp_read"}
+  six:u64 = const() {"value":6}
+  hash_mode:bool = compare.eq(mode,six)
+  branch hash_mode hash_object(input,output,work) key_start(input,output,work,mode)
+block hash_object(hash_input:readbuf,hash_output:mutbuf,hash_work:mutbuf)
+  hash_code:u32 = call(hash_input,hash_output,hash_work) {"function":"cache_hash_object"}
+  ret(hash_code)
+block key_start(key_input:readbuf,key_output:mutbuf,key_work:mutbuf,key_mode:u64)
   eight:u64 = const() {"value":8}
   key:u64 = const() {"value":140160}
   width:u64 = const() {"value":32}
-  copied:u64 = call(input,eight,work,key,width) {"function":"cp_copy"}
-  initialized:u32 = call(work) {"function":"ed_init"}
+  copied:u64 = call(key_input,eight,key_work,key,width) {"function":"cp_copy"}
+  initialized:u32 = call(key_work) {"function":"ed_init"}
   two:u64 = const() {"value":2}
-  cached_key_only:bool = compare.eq(mode,two)
+  cached_key_only:bool = compare.eq(key_mode,two)
   five:u64 = const() {"value":5}
-  cached_full:bool = compare.eq(mode,five)
+  cached_full:bool = compare.eq(key_mode,five)
   cached:bool = select(cached_key_only,cached_key_only,cached_full)
-  branch cached cached_key(input,output,work,mode) original_key(input,output,work,mode)
+  branch cached cached_key(key_input,key_output,key_work,key_mode) original_key(key_input,key_output,key_work,key_mode)
 block cached_key(input_c:readbuf,output_c:mutbuf,work_c:mutbuf,mode_c:u64)
   cached_value:u64 = call(work_c) {"function":"sp_public_key"}
   jump prepared(input_c,output_c,work_c,mode_c,cached_value)
@@ -133,6 +143,38 @@ block result(output_f:mutbuf,work_f:mutbuf,value:u64)
   success:u32 = const() {"value":0}
   ret(success)
 end
+fn cache_hash_object(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(start)
+block start(input:readbuf,output:mutbuf,work:mutbuf)
+  extent:usize = buffer.len(input)
+  length:u64 = int.cast(extent) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  size:u64 = int.sub.wrap(length,eight)
+  zero:u64 = const() {"value":0}
+  copied:u64 = call(input,eight,output,zero,size) {"function":"cp_copy"}
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  ready:bool = compare.eq(initialized,zero)
+  branch ready feed(output,work,size) failed()
+block feed(feed_output:mutbuf,feed_work:mutbuf,feed_size:u64)
+  feed_zero:u64 = const() {"value":0}
+  fed:u64 = call(feed_output,feed_zero,feed_size,feed_work) {"function":"so_sha_feed"}
+  feed_ok:bool = compare.eq(fed,feed_zero)
+  branch feed_ok finish(feed_output,feed_work) failed()
+block finish(final_output:mutbuf,final_work:mutbuf)
+  finished:u64 = call(final_work) {"function":"tr_sha_final_full"}
+  final_zero:u64 = const() {"value":0}
+  final_ok:bool = compare.eq(finished,final_zero)
+  branch final_ok publish(final_output,final_work) failed()
+block publish(result_output:mutbuf,result_work:mutbuf)
+  digest_at:u64 = const() {"value":1168}
+  result_zero:u64 = const() {"value":0}
+  digest_width:u64 = const() {"value":32}
+  written:u64 = call(result_work,digest_at,result_output,result_zero,digest_width) {"function":"cp_wout"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block failed()
+  failure:u32 = const() {"value":1}
+  ret(failure)
+end
 '''
 
 
@@ -174,8 +216,9 @@ def qualify(output):
     require(__debug__ and output.resolve() == output and not output.exists() and ROOT not in output.parents,
             "Fresh canonical evidence directory outside checkout required")
     output.mkdir(parents=True, mode=0o700)
-    report = {"schema": "trnm.hia.task-store.signature-cache-qualification.v1", "status": "FAIL",
+    report = {"schema": "trnm.hia.task-store.signature-cache-qualification.v2", "status": "FAIL",
               "finalized": False, "controls": [], "native_calls": 0,
+              "payload_interleaving": [], "hash_staging_range": [131072, POINT_START],
               "public_key_cache_slots": 4, "comb_cache_slots": 3, "private_work_bytes": WORK_BYTES,
               "point_cache_range": [POINT_START, POINT_END], "point_cursor_range": [POINT_CURSOR, POINT_CURSOR + 8],
               "comb_metadata_range": [COMB_START, COMB_END], "comb_cursor_range": [COMB_CURSOR, COMB_CURSOR + 8],
@@ -295,7 +338,37 @@ def qualify(output):
         ]
         for index, (label, public, sig, msg, expected) in enumerate(variants):
             compare(label, public + struct.pack("<I", 64) + sig + msg, 4, 5, expected, index)
-        require(len(report["controls"]) == EXPECTED_CASES and report["native_calls"] == EXPECTED_CASES * 2,
+        for index, size in enumerate(PAYLOAD_SIZES):
+            payload = bytes([0x51]) * size
+            raw = struct.pack("<Q", 6) + payload
+            data = ctypes.create_string_buffer(raw)
+            result = ctypes.create_string_buffer(max(size, 32))
+            before = cached.read(POINT_START, WORK_BYTES)
+            label = "object-hash-" + str(size)
+            (output / (label + ".input.raw")).write_bytes(raw)
+            (output / (label + ".cache-before.raw")).write_bytes(before)
+            started = time.monotonic_ns()
+            code = invoke_native(data, len(raw), result, len(result), cached.pointer, WORK_BYTES)
+            elapsed = time.monotonic_ns() - started
+            report["native_calls"] += 1
+            after = cached.read(POINT_START, WORK_BYTES)
+            (output / (label + ".cache-after.raw")).write_bytes(after)
+            actual = result.raw[:32]
+            (output / (label + ".digest.raw")).write_bytes(actual)
+            row = {"name": label, "size": size, "return": code, "elapsed_ns": elapsed,
+                   "input_unchanged": data.raw[:-1] == raw, "arena_guards": cached.guarded(),
+                   "sha256": actual.hex(), "cache_preserved": before == after,
+                   "artifacts": {suffix: identity(output / (label + "." + suffix)) for suffix in
+                                 ("input.raw", "cache-before.raw", "cache-after.raw", "digest.raw")}}
+            report["payload_interleaving"].append(row)
+            save()
+            require(code == 0 and row["input_unchanged"] and row["arena_guards"] and before == after
+                    and actual == hashlib.sha256(payload).digest(),
+                    "Object hash changed its digest or the live private cache: " + label)
+            compare("prepared-after-object-hash", key + struct.pack("<I", 64) + signature + message,
+                    4, 5, 1, index)
+        require(len(report["controls"]) == EXPECTED_CASES
+                and report["native_calls"] == EXPECTED_CASES * 2 + len(PAYLOAD_SIZES),
                 "Complete cache regression roster differs")
         require(any(row.get("failed_decode_preserved_cache") for row in report["controls"]),
                 "No actual decoding failure exercised")

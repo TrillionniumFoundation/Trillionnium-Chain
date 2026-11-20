@@ -677,7 +677,7 @@ block b5(v31:mutbuf,v32:u64,v33:u64,v34:mutbuf,v35:u64)
   branch v36 b6(v31,v32,v33,v34,v35) b7(v31,v34)
 block b6(v37:mutbuf,v38:u64,v39:u64,v40:mutbuf,v41:u64)
   v47:u64 = int.sub.wrap(v39,v41)
-  v48:u64 = const() {"value":65536}
+  v48:u64 = const() {"value":16384}
   v49:bool = compare.gt(v47,v48)
   v50:u64 = select(v49,v48,v47)
   v51:u64 = int.add.wrap(v38,v41)

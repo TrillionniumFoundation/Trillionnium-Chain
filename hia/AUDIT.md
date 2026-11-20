@@ -23,6 +23,12 @@ The audited continuation parent is
 actual source identity; successful development checks do not assign a hosted
 result to a later commit.
 
+Current component discovery contains **645 methods** in five disjoint groups:
+484 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. General
+includes all eight Research canonical/hash methods. The workflow expands to
+67 jobs and 55 native compiler bootstrap invocations from 49 source admission
+blocks. Discovery and workflow enumeration do not establish successful execution.
+
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
 [migration inventory](../config/hia-migration-v1.json),
 [original ownership inventory](../config/portability-inventory-v1.json) and
@@ -51,6 +57,17 @@ cache regression and the original 1,390 records, 445 public cases and 112
 allocation controls must complete on the current graph; the 180-second allocation
 phase is unchanged.
 
+The complete `f87d18646c727a9e573ea16e3f6c8e31becc57df` Task run failed at
+records index 1138 with an actual native trap. The earlier object larger than
+2 MiB at index 268 had reused `[131072,196608)` for SHA staging and overwritten
+the private caches. Staging now uses `[131072,147456)` in 16 KiB chunks; it does
+not impose an object-size limit or change the 262,144-byte owner allocation.
+The new interleaving control actually failed before the repair at 16,385 bytes.
+After repair, all nine sizes through 2 MiB + 1 preserved the entire cache region,
+matched independent SHA-256, and retained correct subsequent signatures. All
+124 signature comparisons and 257 actual native calls passed independent
+readback. The failed complete run remains failed; a fresh complete owner run is required.
+
 Metadata's previous stack-size read reset the configured stack to the platform
 default. The corrected observer records each actual 1 MiB pthread stack and
 bounds glibc arena reservation to two within 512 MiB. Independent diagnostics
@@ -60,6 +77,16 @@ passed; this is a measured explanation of the reservation pressure, not a
 substitute for the failed hosted run. Every original native call, allocation
 failure and concurrent owner remains required. Forty-five integrity controls
 retain the original 41 and add four memory/stack report mutations.
+
+The complete local Metadata `36d7196` attempt rejected generated Cargo output
+inside the original source namespace. The Research oracle now uses its own
+temporary target directory; its eight tests passed again in 62.556 seconds,
+with zero extra or missing original source files. The complete `f87d186`
+Metadata attempt then stopped on retained original Unix socket tests returning
+`EPERM` in this environment. Its separately executed allocation observation
+passed all 2,827 actual calls, 840 actual allocation failures and all eight
+measured 1 MiB worker stacks. Neither failed complete attempt is relabelled as
+successful or substituted for the required hosted run.
 
 The exact baseline has 24 completed workflows: 18 success and six failure.
 Its HIA PR run is 66/67 and HIA push run is 64/67. The baseline failures include
@@ -76,7 +103,7 @@ histories remain reachable; no old implementation is removed without replacement
 
 ### Prior shared SHA, native PQ owner and observed CI failures
 
-The [current continuation record](qualification/shared-sha-pq-peer-development.json)
+The [prior continuation record](qualification/shared-sha-pq-peer-development.json)
 extends published `ae23b0a745186262eb8c987f714b5e9b7231e737`. Five additional
 native HIA files bring the inventory to 260 sources and 27 foundations. The
 public PQ owner passed all 343 original tests and two doc tests, 1,609 paired
@@ -100,10 +127,11 @@ The complete corrected run passed 121 original tests, seven runtime groups and
 14 integrity controls. Both predecessor CI archives and all corrective runs
 were fully rehashed on two retained hosts. No original failure is relabelled.
 
-Current discovery is 625 methods over disjoint 464/95/7/22/37 groups; the public
-qualification graph contains 1,481 inputs. The workflow expands to 64 jobs,
-including mandatory PQ qualification. All 66 root integration controls and
-196 bootstrap cases passed; committed native execution remains required.
+At that frozen increment, discovery contained 625 methods over disjoint
+464/95/7/22/37 groups, and the public qualification graph contained 1,481 inputs.
+Its workflow expanded to 64 jobs, including mandatory PQ qualification. All 66
+root integration controls and 196 bootstrap cases passed on that source graph;
+its committed native execution remained a separate requirement.
 The reader cannot replace the producer's report, even with a zero exit code.
 All previous source-specific records below remain historical observations.
 
@@ -380,11 +408,12 @@ The crypto-types job builds the unchanged `trnm-types` library with the locked
 workspace graph and exports its exact rlib. It requires the real original
 comparisons and always uploads Transfer's and Transcript's native libraries, original
 adapters and executables, comparison observations and identities. Qualification binds all new
-sources, tests, adapters and contracts. Full discovery is partitioned into
-disjoint general, crypto-types and State-root rosters; incomplete setup, skipped
-tests or missing actual executions cannot satisfy the independent readback.
-Each job retains the original 20-minute limit. The new partition moves complete
-cryptographic and types suites into their own job; it removes no cases.
+sources, tests, adapters and contracts. At that historical increment, discovery
+was partitioned into disjoint general, crypto-types and State-root rosters;
+incomplete setup, skipped tests or missing actual executions could not satisfy
+the independent readback. Each job retained the original 20-minute limit. That
+partition moved complete cryptographic and types suites into their own job and
+removed no cases. The current five-partition roster is stated above.
 
 The Oracle correction's exact
 [push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442681639)
@@ -444,9 +473,10 @@ The [180 required baseline](https://github.com/TrillionniumFoundation/Trillionni
 has actual failures in both protocol lanes and both architecture cost lanes;
 its remaining long jobs had not finished at this record's last observation.
 Those independent failures are not masked by the HIA workflow's green result.
-The current candidate has 57 jobs and 45 independent compiler bootstraps,
-including complete commitment and private peer-store jobs. It still requires
-its own exact-commit hosted execution.
+The candidate described at that historical checkpoint had 57 jobs and 45
+independent compiler bootstraps, including complete commitment and private
+peer-store jobs. It still required its own exact-commit hosted execution; these
+historical workflow counts do not describe the current candidate.
 
 ## Original package coverage
 

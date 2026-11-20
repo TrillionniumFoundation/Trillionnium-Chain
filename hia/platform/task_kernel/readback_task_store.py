@@ -561,13 +561,13 @@ class Readback:
     def signature_cache(self):
         directory = self.evidence / "signature-cache"
         report = self.passed(directory / "report.json")
-        require(report["schema"] == "trnm.hia.task-store.signature-cache-qualification.v1" and
-                report["cases"] == 115 and report["native_calls"] == 230 and len(report["controls"]) == 115,
+        require(report["schema"] == "trnm.hia.task-store.signature-cache-qualification.v2" and
+                report["cases"] == 124 and report["native_calls"] == 257 and len(report["controls"]) == 124,
                 "Private cache regression roster differs")
         ranges = {"private_work_bytes": 262144, "public_key_cache_slots": 4, "comb_cache_slots": 3,
                   "point_cache_range": [147456, 149664], "point_cursor_range": [149664, 149672],
                   "comb_metadata_range": [149696, 149816], "comb_cursor_range": [149816, 149824],
-                  "comb_tables_range": [163840, 262144]}
+                  "comb_tables_range": [163840, 262144], "hash_staging_range": [131072, 147456]}
         require(all(report.get(key) == value for key, value in ranges.items()), "Private cache arena layout differs")
         for path, expected in report["source_before"].items():
             source = Path(path)
@@ -612,7 +612,8 @@ class Readback:
         expected = (["public-key"] * 15 + [name for _ in range(7) for name in ("boundary-key", "boundary-key-repeat")] +
                     ["changed-key-byte"] * 32 + [name for _ in range(15) for name in ("valid", "changed-s", "changed-h")] +
                     ["prepared-valid", "prepared-message-changed", "prepared-r-changed", "prepared-s-changed",
-                     "prepared-s-order", "prepared-s-malleable", "prepared-r-weak", "prepared-key-weak", "prepared-valid-recovery"])
+                     "prepared-s-order", "prepared-s-malleable", "prepared-r-weak", "prepared-key-weak", "prepared-valid-recovery"] +
+                    ["prepared-after-object-hash"] * 9)
         require([row["name"] for row in report["controls"]] == expected, "Cache control sequence differs")
         vectors = self.json(self.repo / "hia/platform/task_kernel/qualification/store_signature_cache_vectors.json")["vectors"]
         keys = {row["key"]: bytes.fromhex(row["public_key"]) for row in vectors}
@@ -643,6 +644,8 @@ class Readback:
                     ((1).to_bytes(32, "little"), sig, message), (key, sig, message)]
         for index, (public, signature, msg) in enumerate(variants):
             inputs.append((index, 4, 5, public + struct.pack("<I", 64) + signature + msg))
+        for index in range(9):
+            inputs.append((index, 4, 5, key + struct.pack("<I", 64) + sig + message))
         require([(row["index"], row["original_mode"], row["cached_mode"], bytes.fromhex(row["input_hex"]))
                  for row in report["controls"]] == inputs, "Exact cache native input roster differs")
         failed_decodes = 0
@@ -656,10 +659,33 @@ class Readback:
                     require(row["point_state_before"] == row["point_state_after"], "Cache hit or failed decode changed cache")
                 failed_decodes += not row["cached_result"]
             else:
-                accepted = row["name"] in ("valid", "prepared-valid", "prepared-valid-recovery")
+                accepted = row["name"] in ("valid", "prepared-valid", "prepared-valid-recovery", "prepared-after-object-hash")
                 require(row["cached_result"] == accepted, "Warm cache accepted changed signature or message")
         require(failed_decodes > 0, "No failed decoding cache control")
-        self.report["checks"]["signature_cache"] = {"exact_controls": 115, "native_calls": 230,
+        payload_sizes = [0, 1, 16383, 16384, 16385, 65535, 65536, 65537, 2097153]
+        payload_rows = report["payload_interleaving"]
+        require([row["size"] for row in payload_rows] == payload_sizes, "Object hash/cache interleaving roster differs")
+        for size, row in zip(payload_sizes, payload_rows, strict=True):
+            name = "object-hash-" + str(size)
+            require(row["name"] == name and row["return"] == 0 and row["input_unchanged"] is True
+                    and row["arena_guards"] is True and row["cache_preserved"] is True
+                    and type(row["elapsed_ns"]) is int and row["elapsed_ns"] >= 0,
+                    "Object hash/cache interleaving failed")
+            artifacts = row["artifacts"]
+            require(set(artifacts) == {"input.raw", "cache-before.raw", "cache-after.raw", "digest.raw"},
+                    "Object hash/cache artifacts differ")
+            raw = {suffix: self.read(directory / (name + "." + suffix), expected)
+                   for suffix, expected in artifacts.items()}
+            payload = bytes([0x51]) * size
+            require(raw["input.raw"] == struct.pack("<Q", 6) + payload
+                    and raw["digest.raw"] == hashlib.sha256(payload).digest()
+                    and row["sha256"] == raw["digest.raw"].hex()
+                    and len(raw["cache-before.raw"]) == 262144 - 147456
+                    and any(raw["cache-before.raw"])
+                    and raw["cache-before.raw"] == raw["cache-after.raw"],
+                    "Object hashing changed a live cache or its exact SHA-256 result")
+        self.report["checks"]["signature_cache"] = {"exact_controls": 124, "native_calls": 257,
+            "object_hash_interleavings": 9, "object_hash_staging_disjoint_from_cache": True,
             "native_original_differential": True, "every_key_byte_exercised": True,
             "message_r_s_and_scalar_canonicality_retained": True, "guarded_private_arena": True}
 

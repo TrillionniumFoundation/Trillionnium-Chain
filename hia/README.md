@@ -28,6 +28,13 @@ message hashing, R/S validation, small-order rejection and the signature equatio
 still execute for every command. The original allocation-failure roster and
 180-second deadline remain required. The official Task qualification also runs
 the independent cache regression before the existing full owner observations.
+Object hashing stages at most 16 KiB in `[131072,147456)` so it cannot overwrite
+the live caches starting at 147456. The earlier 64 KiB staging overlapped them
+and caused a trap during the complete transaction sequence on `f87d186`.
+The corrected regression retains all 115 signature controls and adds nine
+object-hash/signature interleavings, including the 16 KiB boundary and an object
+larger than 2 MiB: 124 signature comparisons and 257 actual native calls passed
+and were independently read back. This does not replace the full owner gate.
 
 Metadata's allocator observer now sets a real 1 MiB worker stack and reads each
 live pthread's actual stack size. The previous no-argument `stack_size()` call
@@ -37,6 +44,10 @@ The original 840 allocation failures, 2,827 ABI calls, eight workers and 256
 concurrent calls remain; four added reader controls enforce the recorded memory
 and stack limits, for 45 total controls. Both fixes affect the observation
 process; production HIA objects are unchanged.
+The complete local `f87d186` run stopped when retained original Unix socket tests
+received `EPERM` from the execution environment. Its separately executed
+allocation/lifetime observation passed all 2,827 calls and 840 failures, with all
+eight actual stacks measured at 1 MiB. Complete hosted qualification remains required.
 
 The exact baseline HIA [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44693652443)
 completed 66 of 67 jobs successfully, with Task Store's allocator phase timing
@@ -255,9 +266,10 @@ ELFs exactly. These observations require new commit-bound hosted execution.
 
 The [Node development record](qualification/node-owner-development.json) binds the five native runs, two actual original Rust comparisons and the original integrated reader profiles. The correction record above binds the successor readers and complete transport regression. Full raw evidence and both independent original binaries remain explicitly external; this record does not claim hosted qualification.
 
-The workflow contains **57 jobs and 45 independent native compiler bootstrap
-gates**, each with its original 20-minute deadline. Four bootstrap control groups
-exercise all 180 actual positive/negative invocations. The separate RS46 job
+The workflow expands to **67 jobs and 55 independent native compiler bootstrap
+invocations**, with the original 20-minute job deadlines. The 49 source admission
+blocks include one seven-owner matrix. Four bootstrap control groups exercise
+196 positive/negative admission cases across those 49 blocks. The separate RS46 job
 builds the full original crate and retains both actual executed binaries and
 every comparison. Node adds five native
 partitions, two original Rust comparisons and seven explicit evidence-reader
@@ -266,9 +278,10 @@ both delta boundaries and the unchanged original Rust methods. The peer-store
 job requires complete native/original execution plus actual incomplete/failure
 refusal. Native child budgets remain 240 seconds plus three-second cleanup.
 
-Full component discovery assigns every test to disjoint general, crypto-types
-and State-root jobs, followed by an independent coverage consumer requiring all
-three actual job successes. Every test must actually start and finish once, with
+Current component discovery contains **645 methods** in five disjoint groups:
+484 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. The eight
+Research canonical/hash methods belong to general. An independent coverage
+consumer requires all five actual job successes. Every test must actually start and finish once, with
 no failures or skips, on the same head/run/attempt and complete source map. Work/Host
 uses native, original, complete qualification/package and independent readback
 stages. Original executable bytes, complete raw streams, exact source trees and
@@ -279,7 +292,7 @@ both push and PR runs. Their exact run links and separate required-baseline
 results are in the [audit](AUDIT.md). The 180 required baseline has actual
 protocol and x64/arm64 service failures; the historical four-second confirmation
 failure remains open. No new source or component test inherits a predecessor's
-hosted result. The current 57-job candidate requires its own complete execution.
+hosted result. The current 67-job candidate requires its own complete execution.
 
 The [archive guide](qualification/ARCHIVES.md) identifies retained volume sets.
 The [Work/Host development record](qualification/work-owner-development.json),
