@@ -1,0 +1,136 @@
+{
+  "schema": "trnm.hia.platform-fixture-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "scope": "Finite trusted-policy operating-system qualification fixture",
+  "language_schema": "hepta.hia.program.v8",
+  "entry": {
+    "function": "f0",
+    "parameters": ["readbuf:event", "mutbuf:command", "mutbuf:state"],
+    "result": "u32",
+    "result_codes": {"0": "execute command", "1": "terminal success", "other": "terminal failure"},
+    "machine_argument_registers": ["rdi:event_pointer", "rsi:64", "rdx:command_pointer", "rcx:4096", "r8:state_pointer", "r9:4096"],
+    "machine_result_register": "eax"
+  },
+  "arena": {
+    "bytes": 16384,
+    "mapping": "anonymous private RW, no executable permission",
+    "event": {"offset": 0, "bytes": 64},
+    "command": {"offset": 4096, "bytes": 4096},
+    "state": {"offset": 8192, "bytes": 4096},
+    "adapter_signal_scratch": {"offset": 12288, "bytes": 4096}
+  },
+  "encoding": "little endian u64 fields; negative Linux results use two's-complement bits",
+  "event_fields": {
+    "0": "actual preceding command syscall result",
+    "8": "command phase from command[64]",
+    "16": "adapter CLOCK_MONOTONIC seconds before this policy call",
+    "24": "adapter CLOCK_MONOTONIC nanoseconds before this policy call",
+    "32..63": "reserved zero"
+  },
+  "command_fields": {
+    "0": "Linux x86-64 syscall number",
+    "8": "argument 1",
+    "16": "argument 2",
+    "24": "argument 3",
+    "32": "argument 4",
+    "40": "argument 5",
+    "48": "argument 6",
+    "56": "pointer relocation mask; bit i selects argument i+1",
+    "64": "phase echoed into event[8]",
+    "72..127": "reserved",
+    "128..4095": "command data area"
+  },
+  "command_profiles": [
+    {"numbers": [0, 1], "names": ["read", "write"], "mask": 2, "range": "argument2 + argument3 within data area"},
+    {"numbers": [318], "names": ["getrandom"], "mask": 1, "range": "argument1 + argument2 within data area"},
+    {"numbers": [42, 49], "names": ["connect", "bind"], "mask": 2, "range": "argument2 + 16 within data area; argument3 = 16"},
+    {"numbers": [51], "names": ["getsockname"], "mask": 6, "range": "argument2 + 16 and argument3 + 4 within data area; initial socklen = 16"},
+    {"numbers": [228], "names": ["clock_gettime"], "mask": 2, "range": "argument2 + 16 within data area"},
+    {"numbers": [232], "names": ["epoll_wait"], "mask": 2, "range": "argument2 + 12 within data area; argument3 = 1; argument4 unsigned <= 100"},
+    {"numbers": [233], "names": ["epoll_ctl"], "mask": 8, "range": "argument2 = EPOLL_CTL_ADD; argument4 + 12 within data area"},
+    {"numbers": [257], "names": ["openat"], "mask": 2, "range": "AT_FDCWD; flags 655554; mode 384; NUL pathname within data area and at most 256 bytes"},
+    {"numbers": [288], "names": ["accept4"], "mask": 0, "range": "argument2 = 0; argument3 = 0; argument4 = SOCK_CLOEXEC"},
+    {"numbers": [3, 8, 41, 50, 74, 291], "names": ["close", "lseek", "socket", "listen", "fsync", "epoll_create1"], "mask": 0, "range": "trusted-policy scalar arguments"}
+  ],
+  "adapter_implicit_effects": [
+    "mmap private RW arena",
+    "umask 0077 in this process",
+    "rt_sigaction ignore SIGPIPE",
+    "rt_sigaction install non-SA_RESTART SIGUSR1 handler",
+    "rt_sigreturn from the emitted SIGUSR1 restorer",
+    "CLOCK_MONOTONIC before every policy call",
+    "write stderr failure event; at most eight attempts",
+    "exit"
+  ],
+  "native_exit_codes": {
+    "0": "fixed policy completed",
+    "70": "policy or internal adapter failure",
+    "78": "command profile rejected before syscall",
+    "79": "arena mapping failed"
+  },
+  "failure_diagnostic": {
+    "bytes": 32,
+    "format": "first four event u64 words",
+    "internal_adapter_error_phase": "18446744073709551615",
+    "internal_adapter_errno": "actual failing syscall result replaces event[0]",
+    "attempt_limit": 8,
+    "retries": "EINTR and positive partial writes; other failures stop diagnostics",
+    "hard_time_bound": false,
+    "mapping_failure_has_event": false,
+    "delivery_guaranteed": false
+  },
+  "fixed_policy": {
+    "input_hex": "48494170726f6265",
+    "input_bytes": 8,
+    "private_relative_path": "hia-platform-probe.bin",
+    "open_flags": ["O_RDWR", "O_CREAT", "O_EXCL", "O_CLOEXEC", "O_NOFOLLOW"],
+    "file_mode": "0600",
+    "native_umask": "0077",
+    "file_sequence": ["exclusive open", "write all eight bytes", "fsync file", "seek start", "read and compare", "close"],
+    "network": "one AF_INET SOCK_STREAM loopback listener on an ephemeral port and one client",
+    "epoll": "one ready server socket; event token checked",
+    "descriptors": "actual kernel FDs in state; explicit normal-path closes; process exit handles failures",
+    "deadline_nanoseconds": 5000000000,
+    "deadline_scope": "elapsed check between returning syscalls; a blocking syscall is not independently interrupted",
+    "eintr_retries": ["read", "write", "fsync", "clock_gettime", "epoll_wait", "getrandom"],
+    "eagain": "failure, not readiness resumption",
+    "positive_partial_results": "advance offset and remaining count for read/write/getrandom"
+  },
+  "success_observation": {
+    "bytes": 96,
+    "0..7": "ASCII HIAOS002",
+    "8..23": "start CLOCK_MONOTONIC seconds/nanoseconds",
+    "24..39": "end CLOCK_MONOTONIC seconds/nanoseconds",
+    "40..47": "socket payload read back",
+    "48..63": "sixteen bytes returned by getrandom",
+    "64..71": "positive partial-result count",
+    "72..79": "EINTR count",
+    "80..87": "policy invocation count before stdout command",
+    "88..95": "file readback bytes"
+  },
+  "packer": {
+    "input": "trusted flat native policy image compiled from the captured HIA source",
+    "minimum_bytes": 1,
+    "maximum_bytes": 524288,
+    "output_capacity_bytes": 1048576,
+    "output": "static ELF64 ET_EXEC, one RX segment, non-executable RW stack",
+    "layout_and_relative_fixups": "computed by native execution of linux_adapter_emitter.hepta",
+    "elf_relocation_linker_used": false,
+    "machine_code_semantics_verified": false,
+    "arbitrary_untrusted_input_admitted": false
+  },
+  "qualification_limits": {
+    "short_read_control": "actual kernel reads of 1, 2, then 5 bytes, synchronized through proc syscall observations",
+    "eintr_control": "actual SIGUSR1 via pidfd after handler installation and blocked read, with read re-entry observations",
+    "short_write_fault_control": "NOT_RUN",
+    "partial_getrandom_fault_control": "NOT_RUN",
+    "hard_deadline_without_wakeup": "OPEN; required failed observation is recorded separately",
+    "syscall_trace": "independent observation; ptrace denial remains UNKNOWN",
+    "core_buffer_effects_prove_emitted_isa_semantics": false,
+    "generic_syscall_language_primitive": false,
+    "directory_or_peer_sandbox": false,
+    "fd_generation_rights_capabilities": false,
+    "durable_owner": false,
+    "full_node_io": false
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "schema": "trnm.hia.execution-batch-owner-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "entry": "f0(readbuf, mutbuf, mutbuf) -> u32",
+  "profiles": [
+    "batch",
+    "prefix",
+    "scoped"
+  ],
+  "runtime_host_proxy": false,
+  "private_owner_only": true,
+  "image_order": [
+    "master",
+    "worker",
+    "settings",
+    "pnx",
+    "sha",
+    "ed",
+    "state",
+    "root",
+    "mandatory_core",
+    "mandatory_cleanup",
+    "mandatory_expiry",
+    "mandatory_epilogue",
+    "application_core",
+    "application_task",
+    "application_model",
+    "application_release",
+    "application_quota",
+    "application_relation",
+    "application_claim"
+  ],
+  "installed_config": {
+    "policy": "legacy-first-two-v3",
+    "task": "legacy-task-v1",
+    "work": "linear-expert-dev-v1",
+    "workers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "account_point_access": null,
+    "private_settings_constructor": true
+  },
+  "batch": {
+    "request": {
+      "prefix_bytes": 8,
+      "length_encoding": "u64 little endian",
+      "magic": "BPEXEC01",
+      "fixed_bytes": 128,
+      "fields": [
+        "height",
+        "workers",
+        "transaction_count",
+        "sequence",
+        "progress_write_fd",
+        "reply_read_fd",
+        "State_bytes"
+      ],
+      "miner_offset": 64,
+      "parent_offset": 96,
+      "payload": "complete typed State map, then u64 length + exact raw bytes for each transaction"
+    },
+    "response": {
+      "magic": "BFOUT001",
+      "header_bytes": 256,
+      "payload": "actual SDO1 context + immutable input State + optional finalized State + complete receipt vector"
+    },
+    "progress_magic": "BPPROG01",
+    "reply_magic": "BPGO0001",
+    "main_lane": 8,
+    "worker_slots": 8,
+    "actual_threads": true,
+    "join": "real kernel clear_tid before retirement",
+    "heap_mutex": "aligned atomic u32 plus futex",
+    "one_pending_callback_per_worker": true
+  },
+  "prefix": {
+    "request": {
+      "prefix_bytes": 8,
+      "magic": "PFXREQ01",
+      "fixed_bytes": 144,
+      "context_fields": [
+        "opcode",
+        "sequence",
+        "height",
+        "timestamp_some",
+        "timestamp",
+        "progress_write_fd",
+        "reply_read_fd"
+      ],
+      "miner_offset": 64,
+      "parent_offset": 96,
+      "state_length_offset": 128,
+      "transaction_count_offset": 136
+    },
+    "methods": {
+      "1": "actual new from finite qualification State fixture",
+      "2": "execute complete raw accepted-prefix plus suffix list",
+      "3": "observe retained unfinalized State",
+      "4": "retire Prefix and owner qualification heap"
+    },
+    "response": {
+      "magic": "PXOUT001",
+      "header_bytes": 256,
+      "extent": "256 + header[18] context + header[16] held State + header[17] output State + header[15] receipt bytes"
+    },
+    "progress_magic": "PXPROG01",
+    "progress_bytes": 64,
+    "reply_magic": "PXGO0001",
+    "reply_bytes": 48
+  },
+  "scoped": {
+    "request_magic": "BRGREQ01",
+    "response_magic": "BRGOUT01",
+    "methods": {
+      "1": "qualification base import and clone/new",
+      "2": "execute retained prefix",
+      "3": "observe private retained Prefix",
+      "4": "drop only this Prefix",
+      "5": "new from genuine internally retained base",
+      "6": "full owner base observation",
+      "7": "qualification-only final owner retirement"
+    },
+    "private_offsets": {
+      "base_serial": 54000,
+      "generation": 54016,
+      "live_objects": 54024,
+      "allocation_blocks": 54032,
+      "stats_ready": 54040
+    },
+    "response_header_slots": {
+      "base_live": 27,
+      "live_objects": 28,
+      "allocation_blocks": 29,
+      "private_owner_marker": 31
+    },
+    "external_base_serial_admitted": false,
+    "whole_heap_close_on_prefix_drop": false
+  },
+  "progress": {
+    "kinds": {
+      "1": "BeforePrepare",
+      "2": "AfterPrepare",
+      "10": "BeforeStateClone",
+      "11": "AfterMandatory",
+      "12": "BeforeApply",
+      "13": "AfterApply",
+      "14": "BeforeReward",
+      "15": "BeforeCommitment",
+      "16": "AfterCommitment",
+      "17": "BeforeOutput"
+    },
+    "classifications": {
+      "0": "continue",
+      "1": "cancel with original token",
+      "2": "panic"
+    },
+    "input_is_test_execution_control": true,
+    "paid_authority": false
+  },
+  "qualification": {
+    "semantic_histories": {
+      "batch": 102,
+      "prefix": 186
+    },
+    "prefix_partitions": 4,
+    "selection": "range(part,186,4)",
+    "process_wall_seconds": 240,
+    "cleanup_seconds": 3,
+    "physical_controls": 30,
+    "scoped_processes": 6,
+    "original_retained": {
+      "batch": 9,
+      "prefix": 6
+    }
+  },
+  "scope": {
+    "default_config": true,
+    "custom_config": false,
+    "pq": false,
+    "growth_selected_commitment": false,
+    "ordinary_account_point_access": null,
+    "full_node": false,
+    "admission_persistence": false,
+    "persistent_commit": false,
+    "service_deadline_qualified": false,
+    "continuous_same_uid_safety": false
+  }
+}

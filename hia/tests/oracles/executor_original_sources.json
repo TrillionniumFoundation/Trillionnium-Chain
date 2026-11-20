@@ -1,0 +1,36 @@
+{
+  "schema": "trnm.hia.executor-original-sources.v1",
+  "library_policy": "Compile unchanged original Cargo library; never edit or patch source to match the candidate.",
+  "sources": [
+    {
+      "path": "trillionnium/crates/trnm-executor/src/lib.rs",
+      "bytes": 260802,
+      "sha256": "d5cf48dfe4daa00bd739b39bd3dbbc2148f6bddf171eb0e356b0f1df434db5f4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-executor/Cargo.toml",
+      "bytes": 184,
+      "sha256": "56b26002797bad62e4c078e10357a4cb529a209e80192490394161128a9824a3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/src/lib.rs",
+      "bytes": 71420,
+      "sha256": "ab9e48f0e70c44e714394b0455d1d12c5a52f280a4a51f1490525400d2b793d4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/Cargo.toml",
+      "bytes": 254,
+      "sha256": "a1575bd0372e63bdc5f733a8754ec2ec03caf288d43a74f7383e7953c9657538"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 42127,
+      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+    }
+  ]
+}

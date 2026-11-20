@@ -1,0 +1,2433 @@
+{
+  "created_wall_time_ns": 1794843601563509074,
+  "historical_observations": {
+    "first_actual_original_admission_failure_and_old_decoder_acceptance": {
+      "actual_original_build_executed": false,
+      "actual_original_case_rows": 0,
+      "bytes": 1577608,
+      "path": "/tmp/trnm-genesis-original-first-failure-evidence-20261116-574x7q71/genesis-first-original-failure-and-decoder-evidence.tar.xz",
+      "sha256": "8bcf545b68da2d061f3863b60ed72d56997247eac8e29cdb2463bb8955d4dbef",
+      "status": "FAIL_PRESERVED"
+    },
+    "old_a0fa_complete_five_native_suites": {
+      "bytes": 8150988,
+      "controls": 254,
+      "path": "/tmp/trnm-genesis-owner-20261116-8ppak97a/final-native-evidence.tar.xz",
+      "processes": 356,
+      "sha256": "c17aa5f11f10544c8a2ff3762f1700abc0c243220ca99ab42c3be6a0adc40506",
+      "source_set_sha256": "a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046",
+      "upgraded_to_current_source": false
+    }
+  },
+  "integration": {
+    "base_commit": "535ce9865d6764de8184aab04204459f6f05001b",
+    "bootstrap_gates": 21,
+    "ci_controller_validation": {
+      "actual_cli_controls": 4,
+      "actual_reports_revalidated": {
+        "native_reports": 6,
+        "new_native_or_rust_execution": false,
+        "original_cases": 30,
+        "path": "/tmp/trnm-genesis-owner-20261116-8ppak97a/ci-proposal/actual-shape-review-v2.json",
+        "retained_tests": 3,
+        "status": "PASS"
+      },
+      "apply_only_six_blocks_to_latest_parent_workflow": true,
+      "bootstrap_jobs": 21,
+      "chain_checkout_depth": 1,
+      "controls": 133,
+      "full_committed_private_ci_bind": "NOT_RUN",
+      "jobs": 24,
+      "native_child_seconds": 240,
+      "native_cleanup_seconds": 3,
+      "new_bash_fragments": 52,
+      "original_needs_only": "native-genesis-semantic",
+      "outer_minutes": 20,
+      "same_head_run_attempt_required": true,
+      "source_after_before_binding": true,
+      "special_files": "Metadata only; never opened/restored",
+      "test_groups": 10,
+      "test_report": {
+        "bytes": 14952,
+        "path": "/tmp/trnm-genesis-owner-20261116-8ppak97a/ci-proposal/test-run-v2/report.json",
+        "sha256": "ed1a76775240be46bccf148e3620f3bc7ca605e0c0e7cb0b12d0a5c892cf7de5"
+      },
+      "wiring_report": {
+        "bytes": 4178,
+        "path": "/tmp/trnm-genesis-owner-20261116-8ppak97a/ci-proposal/workflow-review-v1/report.json",
+        "sha256": "fe64dbc0fd6693ceeadf565124ba74984c962d664545594cfe159b43be070b9b"
+      }
+    },
+    "ci_wiring_correction": {
+      "actual_cli_parameter": "--report",
+      "affected_native_jobs": 5,
+      "observed_failure": "argparse exit 2 before all integrity tests because proposal passed --output to a --report-only CLI",
+      "original_failure_preserved": true,
+      "report_path": "$RUNNER_TEMP/hia-genesis-observations/integrity.json",
+      "source45_unchanged": true
+    },
+    "current_source_inputs": {
+      "config/pon/devnet-v1.json": {
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      "config/pon/ledger-v1.json": {
+        "bytes": 7793,
+        "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+      },
+      "config/pon/model-family-v1.json": {
+        "bytes": 1383,
+        "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+      },
+      "config/pon/work-profile-v1.json": {
+        "bytes": 1596,
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      "hia/components.json": {
+        "bytes": 25346,
+        "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+      },
+      "hia/platform/README.md": {
+        "bytes": 11641,
+        "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
+      },
+      "hia/platform/abi.json": {
+        "bytes": 6864,
+        "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+      },
+      "hia/platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "hia/platform/genesis_store/README.md": {
+        "bytes": 8939,
+        "sha256": "ae03c4ec4a0bccd2be8e4929280ac75efe31e74e7c9b1cc58530b2209b283517"
+      },
+      "hia/platform/genesis_store/abi.json": {
+        "bytes": 5890,
+        "sha256": "1b8d5650c97b32ac3e3d7adc6d74537522d167f11db514885568fb49ee86bf51"
+      },
+      "hia/platform/genesis_store/build.py": {
+        "bytes": 10303,
+        "sha256": "b57b3533eb2c4e4c1cab6096908e11c2a30fc926832fd0bcfc8e37d0e3940cdd"
+      },
+      "hia/platform/genesis_store/cases.py": {
+        "bytes": 2793,
+        "sha256": "3b6d94c8010f69dafad8f9800813ca3fd25151e54626803a6c5cbe7bc469b982"
+      },
+      "hia/platform/genesis_store/interleaving_cases.py": {
+        "bytes": 7436,
+        "sha256": "2ce5f7bcab3e96153cefed1f03092032359355cd0495edc9c783853cee6d5465"
+      },
+      "hia/platform/genesis_store/linux_emitter.hepta": {
+        "bytes": 37806,
+        "sha256": "d769b2330d643676618848fd12dee98731747932699a8605b2f0ddfa0d0a169a"
+      },
+      "hia/platform/genesis_store/namespace_cases.py": {
+        "bytes": 16542,
+        "sha256": "1b74ba86f0b2eab7533164fcd5ffdc853c4ab659cf05696f88b5380988e82b3d"
+      },
+      "hia/platform/genesis_store/native_io.py": {
+        "bytes": 13505,
+        "sha256": "9e5d08a32995401b3dfa7d3d0c85008606c1119dfac6e11e17d1fc0422ba17cd"
+      },
+      "hia/platform/genesis_store/owner_policy.hepta": {
+        "bytes": 185994,
+        "sha256": "85acbc6cc2d27234db2b82eabd0b43f6d7349ddd4b48d24f6bb083055bd09a4f"
+      },
+      "hia/platform/genesis_store/qualify.py": {
+        "bytes": 15147,
+        "sha256": "bf68a2eb5f08a2fb54ab0bd2fa067fe7a5ba0e8af7c7efdd3cf148c55d925bce"
+      },
+      "hia/platform/genesis_store/recovery_cases.py": {
+        "bytes": 11463,
+        "sha256": "13c08fead397d73c95b5f78a9ddc4c522354b6a2438047c1b621c1545fb19685"
+      },
+      "hia/platform/genesis_store/rust_oracle.py": {
+        "bytes": 69180,
+        "sha256": "3a2ebabb2c9664e7b8f04e3a290384c8c8c0a01e852b8680f90dfebd3d94986b"
+      },
+      "hia/platform/genesis_store/rust_reference.rs": {
+        "bytes": 13905,
+        "sha256": "e28e1512fd54b6a26e5f9c8ba7bab8361605ab1cced3ce9842fec841bceab9a4"
+      },
+      "hia/platform/genesis_store/source-inputs.json": {
+        "bytes": 214,
+        "sha256": "33459181661cfbc5f41c1854b46d1aecfb61e7145b870c2e7b1547517fa5ae3b"
+      },
+      "hia/platform/genesis_store/test_integrity.py": {
+        "bytes": 35663,
+        "sha256": "a11932b8ed6efe845998a1c6445ca97153b8fe87e44082a21f50d06f806e3a54"
+      },
+      "hia/platform/linux_adapter_emitter.hepta": {
+        "bytes": 45152,
+        "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+      },
+      "hia/platform/probe_policy.hepta": {
+        "bytes": 38621,
+        "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/qualification/compiler-cold-full.json.xz": {
+        "bytes": 838544,
+        "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+      },
+      "hia/qualification/compiler-cold.json": {
+        "bytes": 108675,
+        "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+      },
+      "hia/src/codec/json_number.hepta": {
+        "bytes": 66485,
+        "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/codec/json_value_encode.hepta": {
+        "bytes": 33335,
+        "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+      },
+      "hia/src/crypto/ed25519_group.hepta": {
+        "bytes": 73381,
+        "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+      },
+      "hia/src/crypto/ed25519_sign.hepta": {
+        "bytes": 33639,
+        "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+      },
+      "hia/src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 39017,
+        "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+      },
+      "hia/src/crypto/sha512_arena.hepta": {
+        "bytes": 32447,
+        "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+      },
+      "hia/src/math/binary64.hepta": {
+        "bytes": 21416,
+        "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+      },
+      "hia/src/node/settings_development.hepta": {
+        "bytes": 179998,
+        "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+      },
+      "hia/src/protocol/state_root_compact.hepta": {
+        "bytes": 35045,
+        "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+      },
+      "hia/src/state/json_string.hepta": {
+        "bytes": 22061,
+        "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/test_platform_cleanup.py": {
+        "bytes": 9301,
+        "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/qualify_platform.py": {
+        "bytes": 30419,
+        "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "current_source_set_sha256": "032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305",
+    "initial_strict_full_original_comparison": "REFUSED_PRESERVED",
+    "jobs": 24,
+    "new_actual_original_jobs": 1,
+    "new_native_jobs": 5,
+    "original_binding": {
+      "bytes": 77571,
+      "git_blob": "0b3ca4d2831ba320b4829dd4ea8c83a7ffff210c",
+      "sha256": "2ec716efa95c9a1be1a4fb775ec3a4c52c7794b69f68ff4f293ff8b4bbdd9f66"
+    },
+    "original_source_transition": {
+      "changed_inputs": {
+        "config/hia-migration-v1.json": {
+          "executed": {
+            "bytes": 32693,
+            "sha256": "1b3fa6c938e24c75acf7f2a7948e1e6704b10299c54e112a44c579c411429660"
+          },
+          "integrated": {
+            "bytes": 35965,
+            "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
+          }
+        },
+        "config/pon/pq-cross-branch-corpus-v1.json": {
+          "executed": {
+            "bytes": 525351,
+            "sha256": "5446d0e5a19af860e65d89a5d542c5abf54c24705bd99ee3df87e02ed0649d6e"
+          },
+          "integrated": {
+            "bytes": 525351,
+            "sha256": "547fd79699f1968c6b2496131ed301ddfd304585032a59c140c7fa91cdd30732"
+          }
+        }
+      },
+      "current_full_original_execution": "NOT_RUN",
+      "executed_source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+      "independent_content_checks": {
+        "only_native_foundation_ownership_and_qualification_metadata_changed": true,
+        "pq_only_sole_plan_blob_pin_changed": true
+      },
+      "inputs": 4361,
+      "integrated_source_set_sha256": "6bc48356f6b4427921266671a3e63ac569601b7c76e3d4fa99b84b6a52d9c00d",
+      "prior_actual_original_results_not_relabelled": true,
+      "unchanged_inputs": 4359
+    },
+    "pre_format_all_45_executed_native_inputs_matched": true,
+    "retirement_accepted": false,
+    "same_head_ci": "PENDING",
+    "source_formatting_transition": {
+      "actual_native_rerun_on_final_format": "NOT_RUN",
+      "actual_original_rerun_on_final_format": "NOT_RUN",
+      "changed_inputs": [
+        {
+          "after": {
+            "bytes": 69180,
+            "sha256": "3a2ebabb2c9664e7b8f04e3a290384c8c8c0a01e852b8680f90dfebd3d94986b"
+          },
+          "before": {
+            "bytes": 69181,
+            "sha256": "fb3bb325a86c79eaf2fb902e7af3a1ceb62725dc7db8bc5b1939a02fcb6bfca5"
+          },
+          "path": "hia/platform/genesis_store/rust_oracle.py",
+          "python_ast_identical": true,
+          "python_ast_sha256": "26e934f9f812cfe1d90c68f37e4187a7520b6e4c8da0aec8e9fd53411c488f7b",
+          "removed_exactly_one_terminal_lf": true
+        },
+        {
+          "after": {
+            "bytes": 35663,
+            "sha256": "a11932b8ed6efe845998a1c6445ca97153b8fe87e44082a21f50d06f806e3a54"
+          },
+          "before": {
+            "bytes": 35664,
+            "sha256": "d65acf0b9c18a9e5b7fa1c7380babbd0b6b9f75debcddca30414971783d3efd4"
+          },
+          "path": "hia/platform/genesis_store/test_integrity.py",
+          "python_ast_identical": true,
+          "python_ast_sha256": "e18b6a6787699d3691dfac921444ea00fda9fe222bf582afea45d8b4e86f75a0",
+          "removed_exactly_one_terminal_lf": true
+        }
+      ],
+      "current_source_set_sha256": "032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305",
+      "executed_source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+      "original_rust_production_byte_identical": true,
+      "runtime_hia_and_adapter_inputs_byte_identical": true,
+      "same_head_ci_required": true,
+      "status": "FORMAT_ONLY_SOURCE_TRANSITION",
+      "unchanged_source_inputs": 43
+    }
+  },
+  "native": {
+    "build": {
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "executable": {
+        "bytes": 753794,
+        "dynamic_linker": false,
+        "entry": 4194480,
+        "format": "ELF64LE",
+        "instruction_semantics_verified_by_this_check": false,
+        "interpreter": null,
+        "load_flags": "RX",
+        "machine": "x86_64",
+        "sha256": "304dfb77e6c4909d703995fafb523419dfb2f09ee432c2cf6a95a9956af17f85",
+        "stack_flags": "RW",
+        "type": "ET_EXEC"
+      },
+      "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b"
+    },
+    "bundle_artifacts": {
+      "corpus.jsonl": {
+        "bytes": 2234,
+        "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c"
+      },
+      "corpus.jsonl.xz": {
+        "bytes": 364,
+        "sha256": "63ffd3cccb4b1b77ace8dc2c79eb54c485380afb9f335bfcf83efc070f743957"
+      },
+      "native-comparison.json": {
+        "bytes": 1929381,
+        "sha256": "29e7ecbf840e8802a744cc200ea91329f62fd3bde8a3ddf494998755ef76199f"
+      },
+      "native-report.json": {
+        "bytes": 1956819,
+        "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+      }
+    },
+    "controls": 30,
+    "elapsed_ns": 451381077145,
+    "processes": 62,
+    "report": {
+      "bytes": 1956819,
+      "path": "/tmp/trnm-genesis-owner-20261116-8ppak97a/registry-fixed-semantic/report.json",
+      "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+    }
+  },
+  "native_source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+  "native_sources": {
+    "config/pon/devnet-v1.json": {
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "config/pon/ledger-v1.json": {
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    "config/pon/model-family-v1.json": {
+      "bytes": 1383,
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    "config/pon/work-profile-v1.json": {
+      "bytes": 1596,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    "hia/components.json": {
+      "bytes": 25346,
+      "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+    },
+    "hia/platform/README.md": {
+      "bytes": 11641,
+      "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
+    },
+    "hia/platform/abi.json": {
+      "bytes": 6864,
+      "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+    },
+    "hia/platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "hia/platform/genesis_store/README.md": {
+      "bytes": 8939,
+      "sha256": "ae03c4ec4a0bccd2be8e4929280ac75efe31e74e7c9b1cc58530b2209b283517"
+    },
+    "hia/platform/genesis_store/abi.json": {
+      "bytes": 5890,
+      "sha256": "1b8d5650c97b32ac3e3d7adc6d74537522d167f11db514885568fb49ee86bf51"
+    },
+    "hia/platform/genesis_store/build.py": {
+      "bytes": 10303,
+      "sha256": "b57b3533eb2c4e4c1cab6096908e11c2a30fc926832fd0bcfc8e37d0e3940cdd"
+    },
+    "hia/platform/genesis_store/cases.py": {
+      "bytes": 2793,
+      "sha256": "3b6d94c8010f69dafad8f9800813ca3fd25151e54626803a6c5cbe7bc469b982"
+    },
+    "hia/platform/genesis_store/interleaving_cases.py": {
+      "bytes": 7436,
+      "sha256": "2ce5f7bcab3e96153cefed1f03092032359355cd0495edc9c783853cee6d5465"
+    },
+    "hia/platform/genesis_store/linux_emitter.hepta": {
+      "bytes": 37806,
+      "sha256": "d769b2330d643676618848fd12dee98731747932699a8605b2f0ddfa0d0a169a"
+    },
+    "hia/platform/genesis_store/namespace_cases.py": {
+      "bytes": 16542,
+      "sha256": "1b74ba86f0b2eab7533164fcd5ffdc853c4ab659cf05696f88b5380988e82b3d"
+    },
+    "hia/platform/genesis_store/native_io.py": {
+      "bytes": 13505,
+      "sha256": "9e5d08a32995401b3dfa7d3d0c85008606c1119dfac6e11e17d1fc0422ba17cd"
+    },
+    "hia/platform/genesis_store/owner_policy.hepta": {
+      "bytes": 185994,
+      "sha256": "85acbc6cc2d27234db2b82eabd0b43f6d7349ddd4b48d24f6bb083055bd09a4f"
+    },
+    "hia/platform/genesis_store/qualify.py": {
+      "bytes": 15147,
+      "sha256": "bf68a2eb5f08a2fb54ab0bd2fa067fe7a5ba0e8af7c7efdd3cf148c55d925bce"
+    },
+    "hia/platform/genesis_store/recovery_cases.py": {
+      "bytes": 11463,
+      "sha256": "13c08fead397d73c95b5f78a9ddc4c522354b6a2438047c1b621c1545fb19685"
+    },
+    "hia/platform/genesis_store/rust_oracle.py": {
+      "bytes": 69181,
+      "sha256": "fb3bb325a86c79eaf2fb902e7af3a1ceb62725dc7db8bc5b1939a02fcb6bfca5"
+    },
+    "hia/platform/genesis_store/rust_reference.rs": {
+      "bytes": 13905,
+      "sha256": "e28e1512fd54b6a26e5f9c8ba7bab8361605ab1cced3ce9842fec841bceab9a4"
+    },
+    "hia/platform/genesis_store/source-inputs.json": {
+      "bytes": 214,
+      "sha256": "33459181661cfbc5f41c1854b46d1aecfb61e7145b870c2e7b1547517fa5ae3b"
+    },
+    "hia/platform/genesis_store/test_integrity.py": {
+      "bytes": 35664,
+      "sha256": "d65acf0b9c18a9e5b7fa1c7380babbd0b6b9f75debcddca30414971783d3efd4"
+    },
+    "hia/platform/linux_adapter_emitter.hepta": {
+      "bytes": 45152,
+      "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+    },
+    "hia/platform/probe_policy.hepta": {
+      "bytes": 38621,
+      "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+    },
+    "hia/qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "hia/qualification/compiler-cold-full.json.xz": {
+      "bytes": 838544,
+      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+    },
+    "hia/qualification/compiler-cold.json": {
+      "bytes": 108675,
+      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+    },
+    "hia/src/codec/json_number.hepta": {
+      "bytes": 66485,
+      "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+    },
+    "hia/src/codec/json_primitives.hepta": {
+      "bytes": 8258,
+      "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+    },
+    "hia/src/codec/json_value_encode.hepta": {
+      "bytes": 33335,
+      "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+    },
+    "hia/src/crypto/ed25519_group.hepta": {
+      "bytes": 73381,
+      "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+    },
+    "hia/src/crypto/ed25519_sign.hepta": {
+      "bytes": 33639,
+      "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+    },
+    "hia/src/crypto/sha256_arena.hepta": {
+      "bytes": 28919,
+      "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+    },
+    "hia/src/crypto/sha256_stream.hepta": {
+      "bytes": 39017,
+      "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+    },
+    "hia/src/crypto/sha512_arena.hepta": {
+      "bytes": 32447,
+      "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+    },
+    "hia/src/math/binary64.hepta": {
+      "bytes": 21416,
+      "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+    },
+    "hia/src/node/settings_development.hepta": {
+      "bytes": 179998,
+      "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+    },
+    "hia/src/protocol/state_root_compact.hepta": {
+      "bytes": 35045,
+      "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+    },
+    "hia/src/state/json_string.hepta": {
+      "bytes": 22061,
+      "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+    },
+    "hia/tests/native_support.py": {
+      "bytes": 9793,
+      "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+    },
+    "hia/tests/test_platform_cleanup.py": {
+      "bytes": 9301,
+      "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+    },
+    "hia/toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "hia/tools/qualify_platform.py": {
+      "bytes": 30419,
+      "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
+    },
+    "hia/tools/toolchain.py": {
+      "bytes": 14157,
+      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    }
+  },
+  "original": {
+    "binary": {
+      "bytes": 611585296,
+      "path": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+      "sha256": "08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d"
+    },
+    "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "controls": 30,
+    "elapsed_ns": 262077690691,
+    "failed": 0,
+    "hook": {
+      "bytes": 13905,
+      "sha256": "e28e1512fd54b6a26e5f9c8ba7bab8361605ab1cced3ce9842fec841bceab9a4"
+    },
+    "original_method_and_observer_invocations_attempted": 494,
+    "passed": 30,
+    "production_store": {
+      "bytes": 394623,
+      "sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+    },
+    "report": {
+      "bytes": 976051,
+      "path": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/report.json",
+      "sha256": "b8f803da2232dafbf49d32e63982c73dad9ef27228fcadfd9ba69e3c480326a0"
+    },
+    "retained_tests": [
+      "store::init_marker_tests::initialization_marker_preserves_exact_context_errors",
+      "store::init_marker_tests::initialization_marker_recovery_and_cold_reopen_preserve_state",
+      "store::init_marker_tests::initialization_marker_rejects_special_files_and_post_precheck_substitution"
+    ],
+    "serde_json_artifact": {
+      "executable": null,
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/libserde_json-a91b3599af627e6f.rlib",
+        "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/libserde_json-a91b3599af627e6f.rmeta"
+      ],
+      "fresh": true,
+      "manifest_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/Cargo.toml",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde_json",
+        "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs",
+        "test": true
+      }
+    },
+    "serde_json_source": {
+      "archive_source_files": {
+        ".cargo_vcs_info.json": {
+          "bytes": 94,
+          "sha256": "33226fbc17c4afefa569b5ecffe5b8e5b7d2427e28e26a83ee2dc1b5341718fe"
+        },
+        ".github/workflows/ci.yml": {
+          "bytes": 5417,
+          "sha256": "d3bf466db14f2dc33fc3955e49fcb5c098bf23085420012ca92447887aec7ef6"
+        },
+        ".gitignore": {
+          "bytes": 21,
+          "sha256": "07d64eb09a56c853b7853a47276799b38d7d6d25a4314b0c1abc10432c214e17"
+        },
+        "CONTRIBUTING.md": {
+          "bytes": 1733,
+          "sha256": "f5270cafba66223a7b51ffc0d286075a17bb7cd88762fc80d333d3102629f4d8"
+        },
+        "Cargo.lock": {
+          "bytes": 12577,
+          "sha256": "b1c7c7f1fc40816c3ac4e0a658a03b53aa44443a1928ef36fe305d3a957a128d"
+        },
+        "Cargo.toml": {
+          "bytes": 3118,
+          "sha256": "65dabeea0112c066ff16c6d93142c4a08c01396f4e99a27d9255d19974eaeb73"
+        },
+        "Cargo.toml.orig": {
+          "bytes": 3642,
+          "sha256": "ddcbef59d5daaeae8c33beff5b205c6af228b5f691747b4217fb6aa845851509"
+        },
+        "LICENSE-APACHE": {
+          "bytes": 9723,
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        "LICENSE-MIT": {
+          "bytes": 1023,
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        },
+        "README.md": {
+          "bytes": 14043,
+          "sha256": "10cb8c14d9d29f29a031329747b352fc149a689b449ee5a8abb43712695aed72"
+        },
+        "build.rs": {
+          "bytes": 1206,
+          "sha256": "a681e754be844c7dbef957f5d2d00b01f37c5dca160ef1055a8d8f975697a881"
+        },
+        "src/de.rs": {
+          "bytes": 86371,
+          "sha256": "2364aaa767bb40eeedd4aa24e3bf917be5e007a00bd3d911b61f9de74aa5f074"
+        },
+        "src/error.rs": {
+          "bytes": 17221,
+          "sha256": "a13add05a63adf53d89e37effa03221d897a60486cfe360a5a958c0dd2a7e90d"
+        },
+        "src/io/core.rs": {
+          "bytes": 1739,
+          "sha256": "60ba28f67a9acaecf8964b611efba416b13f9f2bae4befc329fdf0e037293802"
+        },
+        "src/io/mod.rs": {
+          "bytes": 684,
+          "sha256": "fd1ed5080495cab21117f6f7d3c2c9e3687cad0c69a0cd087b08a145a9e672da"
+        },
+        "src/iter.rs": {
+          "bytes": 1848,
+          "sha256": "f832c469cd7999d26ba9b76baa69b257a212a7edb3dfdf9b1d1bb35e8da85fa9"
+        },
+        "src/lexical/algorithm.rs": {
+          "bytes": 6117,
+          "sha256": "54d599033e5a182a3076a0ba23a3550bf8680c99399b0313166b3c42c85b35b9"
+        },
+        "src/lexical/bhcomp.rs": {
+          "bytes": 7035,
+          "sha256": "26f39d52008225a6b377d7246d326940d44200e160a7b4652733e712e1a45a04"
+        },
+        "src/lexical/bignum.rs": {
+          "bytes": 679,
+          "sha256": "db688e8112389998d0f91906f6857e28f9b510a8b4065ad476c8e8be2f77becf"
+        },
+        "src/lexical/cached.rs": {
+          "bytes": 2156,
+          "sha256": "0e127398691f8042c19cde209e7f4b0161f0f3150342430145929f711e6fdac8"
+        },
+        "src/lexical/cached_float80.rs": {
+          "bytes": 5782,
+          "sha256": "0f8f74a22cb7d871322a9893bffd0255ca10bf9dffd13afb2462dd3d7f51805f"
+        },
+        "src/lexical/digit.rs": {
+          "bytes": 444,
+          "sha256": "9502805adbc3da059131d1fac0a802e17065b36cd7472606b3af24e3241d5cb8"
+        },
+        "src/lexical/errors.rs": {
+          "bytes": 5082,
+          "sha256": "3d9f6de6245533bcb101dfd718cfed61d59dc293f6768cedae28aa13ace164f5"
+        },
+        "src/lexical/exponent.rs": {
+          "bytes": 1562,
+          "sha256": "51f19443008e8884b15c7d5d4b1f1cfbd5673a9d1da02f1af39fcf20e315f01f"
+        },
+        "src/lexical/float.rs": {
+          "bytes": 5482,
+          "sha256": "fe356213c92a049f4bef2f58bc0e3a26866ca06b8c1d74d0f961c5b883852cad"
+        },
+        "src/lexical/large_powers.rs": {
+          "bytes": 250,
+          "sha256": "18d697b846b44ecb61bfaaa3b881e0696f9b7bb6be582623e9d3a8a176a48d2f"
+        },
+        "src/lexical/large_powers32.rs": {
+          "bytes": 15362,
+          "sha256": "c70b57a727960beec258758a4d4a1050f8eaf3b4e60027c663a2bfb0246e0153"
+        },
+        "src/lexical/large_powers64.rs": {
+          "bytes": 15879,
+          "sha256": "e7af83ce3159b5fc4669fc5a231e767d8af21bacaece52a0a48951198965b197"
+        },
+        "src/lexical/math.rs": {
+          "bytes": 26324,
+          "sha256": "00519897ba54fb282102549a8c2a973af1f6534fcba1e283436b00141baccc13"
+        },
+        "src/lexical/mod.rs": {
+          "bytes": 1059,
+          "sha256": "ace2ccea2cd541f019a84b9eeb3b9ecd88daf6bccbe9edf0eac00b62704f47c4"
+        },
+        "src/lexical/num.rs": {
+          "bytes": 11179,
+          "sha256": "2d06111d28616221995f7b4d4f13625b8d902884921268b0e02e544f871a5339"
+        },
+        "src/lexical/parse.rs": {
+          "bytes": 2241,
+          "sha256": "c2bfac4c70a19938ced61e991f4ec606764887cf12bac1a0978b5b5318a56aac"
+        },
+        "src/lexical/rounding.rs": {
+          "bytes": 7388,
+          "sha256": "4762af3612880b17468ff2a1bb800c8e99f08330ae439699dd53d8dc5463ad13"
+        },
+        "src/lexical/shift.rs": {
+          "bytes": 1235,
+          "sha256": "bc1ed053dd63d45ac9c35302f18de9f00d94027f28af4ab749c9248439de832a"
+        },
+        "src/lexical/small_powers.rs": {
+          "bytes": 1345,
+          "sha256": "73c56b7b83310c6fefa898fb94771c65bdc251c1579ab105151da43935ea02be"
+        },
+        "src/lib.rs": {
+          "bytes": 14369,
+          "sha256": "6cbb5e1394bd47080fb1a2305590960ea90b1690257b7ed5ee3d6ff03350cec6"
+        },
+        "src/macros.rs": {
+          "bytes": 10361,
+          "sha256": "94dda91c847e819a95e64d655eb066dfa44ed69712064016c3fe862c34ef92e6"
+        },
+        "src/map.rs": {
+          "bytes": 35057,
+          "sha256": "b5a2fd1ee865e6cfd83ef2da0a2e1057f892465ac7ede8a78a11354a60526f33"
+        },
+        "src/number.rs": {
+          "bytes": 25294,
+          "sha256": "327e30a5542e169df2bbea59e4a7a4861c5a6994876f74cadab49f8133cbae34"
+        },
+        "src/raw.rs": {
+          "bytes": 21542,
+          "sha256": "bc15c4d82d07c2c8b5d3f598915e917f2177de6573f327717da33658d2528922"
+        },
+        "src/read.rs": {
+          "bytes": 33041,
+          "sha256": "17a2efe49e5a6937c8d7d4a5c0b9eac84453de0f86bf8e7ee421387e82341bb3"
+        },
+        "src/ser.rs": {
+          "bytes": 63877,
+          "sha256": "f2b8cc0b97e30c49dbc58698fa22c14a7d56ea616cdb57b067835a59af49a75f"
+        },
+        "src/value/de.rs": {
+          "bytes": 41251,
+          "sha256": "ceda1bf415aafde89caa83bf275811b70d393717d4e1038e0c61822d2da02993"
+        },
+        "src/value/from.rs": {
+          "bytes": 6357,
+          "sha256": "ae4b5f93b27e578fa40e3a8d25d0df2032fe40b680cddb15963e47cbd56db613"
+        },
+        "src/value/index.rs": {
+          "bytes": 8734,
+          "sha256": "f1404ed12e795a5553da4bdf72835c441a5e0cc0f6e794fee875eaa887d65319"
+        },
+        "src/value/mod.rs": {
+          "bytes": 30963,
+          "sha256": "6331d59ea362a74b6cd3d302d08114a63a73a384ff56fef737de29edea2f8d91"
+        },
+        "src/value/partial_eq.rs": {
+          "bytes": 2267,
+          "sha256": "c565f7886d3bdf5dd39b8c99acca17091c251f15b3c257addf5d02f414fd0571"
+        },
+        "src/value/ser.rs": {
+          "bytes": 28223,
+          "sha256": "11f2b7daa1eba826d4086d5497f73729478dd7647bff77deccde5e47b0f126f2"
+        },
+        "tests/compiletest.rs": {
+          "bytes": 214,
+          "sha256": "4e381aa8ca3eabb7ac14d1e0c3700b3223e47640547a6988cfa13ad68255f60f"
+        },
+        "tests/debug.rs": {
+          "bytes": 2038,
+          "sha256": "7d54721bbaea19c362e7c39046745ffb3c774d6af0b3af5643e4bdfbf0fa1011"
+        },
+        "tests/lexical.rs": {
+          "bytes": 1027,
+          "sha256": "a863468815c2c1f1415b30eef42971604d860e6128e66c39d965322fbc567240"
+        },
+        "tests/lexical/algorithm.rs": {
+          "bytes": 3867,
+          "sha256": "da378df9ee24bfa033968d5c94e91b58e52c39bf6c825dec51c3eb7250cc5874"
+        },
+        "tests/lexical/exponent.rs": {
+          "bytes": 1288,
+          "sha256": "dc8fa8d05e561ff256f8b09385291768c7f45e5ad6cb878ef9194757aa014386"
+        },
+        "tests/lexical/float.rs": {
+          "bytes": 14186,
+          "sha256": "0440f2d85c993bcccd925096d7f4136bf624ffd66b3c7ee565d158390685eb11"
+        },
+        "tests/lexical/math.rs": {
+          "bytes": 5436,
+          "sha256": "4142ef090f563df1f6b14c9a4e6d4723535fa816dca3febc94b3423240e9db20"
+        },
+        "tests/lexical/num.rs": {
+          "bytes": 1602,
+          "sha256": "e0bdc3b4facd579e9cfdf87c8bae107ed227c63cf9ef920fd85e9febb985c693"
+        },
+        "tests/lexical/parse.rs": {
+          "bytes": 17147,
+          "sha256": "a11f09bb003a3a024548008cf78bf76526ed71b00077d1989f45eb8cebc93b9c"
+        },
+        "tests/lexical/rounding.rs": {
+          "bytes": 9038,
+          "sha256": "6c56e39ba534616c1b2146e8efa6eb57aed322e683bf23183cd32a61fae6447e"
+        },
+        "tests/macros/mod.rs": {
+          "bytes": 1511,
+          "sha256": "93aa1d54af20bc2c55b6ae8db73c1414cda2626eb9fa7bd57b9d613a3c6e6a19"
+        },
+        "tests/map.rs": {
+          "bytes": 1603,
+          "sha256": "232a980d98b0ceac022ad34d25b0a0fc613389784222a45da4f5650a9414a847"
+        },
+        "tests/regression.rs": {
+          "bytes": 130,
+          "sha256": "2f2aa349a0dcc399e246e08e2fbae8fb349831b461169014605538fed8d65622"
+        },
+        "tests/regression/issue1004.rs": {
+          "bytes": 362,
+          "sha256": "38d7e3b6c515b881078ebd21ca8063d2ca105cd319695d29538f879e37f091b5"
+        },
+        "tests/regression/issue520.rs": {
+          "bytes": 401,
+          "sha256": "f95b362e45c57b431720c48eb47f7ddddf4078195d6859df523dc32950ce980a"
+        },
+        "tests/regression/issue795.rs": {
+          "bytes": 1646,
+          "sha256": "37ff26744b1f950dd212565c6e3f276268882f7724cc589ac8b21ca8bd608413"
+        },
+        "tests/regression/issue845.rs": {
+          "bytes": 1919,
+          "sha256": "10d2895cd1412cb6630f0a59db367f79ee672edb501151c7581e9921b5a84b92"
+        },
+        "tests/regression/issue953.rs": {
+          "bytes": 236,
+          "sha256": "b2cddc761f5ca6639900c173765a8a5868528a896924e5e925db2696469208f7"
+        },
+        "tests/stream.rs": {
+          "bytes": 5089,
+          "sha256": "794b672b52eb8f1696b32b8dd125a660fc19b83fcfef5390896b02149b5f0a9b"
+        },
+        "tests/test.rs": {
+          "bytes": 76680,
+          "sha256": "5c6e629525978c8fd190bdbbe3d62ff391bc8c8e86c143a0087b34ae2e7923e9"
+        },
+        "tests/ui/missing_colon.rs": {
+          "bytes": 57,
+          "sha256": "d07e0c34d98eb43465f0a0310f2c0b5d5b0d26d243b352a1c6bbe6ad3b27eda9"
+        },
+        "tests/ui/missing_colon.stderr": {
+          "bytes": 456,
+          "sha256": "a543cf9931a6224ba74f4592ea551f19438752c09427c649cd0211d363e88e75"
+        },
+        "tests/ui/missing_comma.rs": {
+          "bytes": 69,
+          "sha256": "b8a9662f99c3e6dd2b6417892c37640578ce91d3a8365bf10c1f686a3227aa87"
+        },
+        "tests/ui/missing_comma.stderr": {
+          "bytes": 367,
+          "sha256": "05de5cd378a91be9631b0491c326d45e180bb76ea834052e214ec9e1e14b1aaf"
+        },
+        "tests/ui/missing_value.rs": {
+          "bytes": 59,
+          "sha256": "bca25d67127fb88e7c191c7b03af5a4ce8a9abb630f3d2e6a6c1e77e213dc9a4"
+        },
+        "tests/ui/missing_value.stderr": {
+          "bytes": 460,
+          "sha256": "a03be58cfa3d80cf1bd967bc8473933e87226db69c7967710084b13ca43bccdc"
+        },
+        "tests/ui/not_found.rs": {
+          "bytes": 61,
+          "sha256": "d0a7adb309879ff65aee115b52cc33d36f4bad353cf97c4effc34a6128c2bee3"
+        },
+        "tests/ui/not_found.stderr": {
+          "bytes": 162,
+          "sha256": "359b751c0c21fab6d460daef4d5f73a265f7769c9b578f98ea3cb6cbf2387643"
+        },
+        "tests/ui/parse_expr.rs": {
+          "bytes": 61,
+          "sha256": "32e6d51f528db3d1ab0ed1e24765b865be393565c26f77413c5aa39d601ac563"
+        },
+        "tests/ui/parse_expr.stderr": {
+          "bytes": 295,
+          "sha256": "1daa690bd744a9559ed51019d88d0b4a1ffaea42f74a24d48688a7029a87e013"
+        },
+        "tests/ui/parse_key.rs": {
+          "bytes": 65,
+          "sha256": "18829b2af320d5cf8a0a5cd3aaf84c7e92cc874651c30e45a3acafb76c2d8b93"
+        },
+        "tests/ui/parse_key.stderr": {
+          "bytes": 153,
+          "sha256": "20cf0d2898749f3c36780fc065f5049ee809e74cb6f0ef776f43f45e01596ee3"
+        },
+        "tests/ui/unexpected_after_array_element.rs": {
+          "bytes": 61,
+          "sha256": "a343fc3104431720bdfcf330bcc3cfcd98c8dec3e951133b495242478b0b7eb3"
+        },
+        "tests/ui/unexpected_after_array_element.stderr": {
+          "bytes": 231,
+          "sha256": "9ec755bf0cd5a3e9dc9c4027ae03fbb3f33987b1ab61aa76cd88d4148b766487"
+        },
+        "tests/ui/unexpected_after_map_entry.rs": {
+          "bytes": 66,
+          "sha256": "6e3bd2def435ca610e346bbc75cdbaf61963eb2ef1885bb5f76781ba1fac37ef"
+        },
+        "tests/ui/unexpected_after_map_entry.stderr": {
+          "bytes": 237,
+          "sha256": "a39bd7a3ae4d20a24d311392022caa48f59697967995c2bb2cf5c1bc5c9c21d0"
+        },
+        "tests/ui/unexpected_colon.rs": {
+          "bytes": 60,
+          "sha256": "a313cff3fed4be4c33f1eda5d0c5c98147fb835a56d36470d9f367352c1d61ef"
+        },
+        "tests/ui/unexpected_colon.stderr": {
+          "bytes": 209,
+          "sha256": "80afe490b9615fd2d769b80602a7f64c5804fda666356fbcebd7658107d89c70"
+        },
+        "tests/ui/unexpected_comma.rs": {
+          "bytes": 69,
+          "sha256": "55a8b684bde1ce905837cce719fd457d8898b61cebc27e5b420d05cb6be97256"
+        },
+        "tests/ui/unexpected_comma.stderr": {
+          "bytes": 222,
+          "sha256": "0b6488f2e63c4cd7debc38696b76b325ef230fa97c33bf17476573993883a448"
+        }
+      },
+      "archive_source_set_sha256": "ad78c20f9374ae5c18bbaea3bc66eab995711a87ddb1af31a4d8df34e9181e85",
+      "crate_directory": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149",
+      "crate_source_set_sha256": "a098ddfb9f8a226a1bfd37ee6b46c7efa62ddab7e3ef6e4d84b5e9b33ce7bab7",
+      "crate_sources": {
+        ".cargo-ok": {
+          "bytes": 7,
+          "sha256": "afbf9d0f3560b0fd7795e81c42a0a79ee6b6fc67e064f77826aee642cad28d91"
+        },
+        ".cargo_vcs_info.json": {
+          "bytes": 94,
+          "sha256": "33226fbc17c4afefa569b5ecffe5b8e5b7d2427e28e26a83ee2dc1b5341718fe"
+        },
+        ".github/workflows/ci.yml": {
+          "bytes": 5417,
+          "sha256": "d3bf466db14f2dc33fc3955e49fcb5c098bf23085420012ca92447887aec7ef6"
+        },
+        ".gitignore": {
+          "bytes": 21,
+          "sha256": "07d64eb09a56c853b7853a47276799b38d7d6d25a4314b0c1abc10432c214e17"
+        },
+        "CONTRIBUTING.md": {
+          "bytes": 1733,
+          "sha256": "f5270cafba66223a7b51ffc0d286075a17bb7cd88762fc80d333d3102629f4d8"
+        },
+        "Cargo.lock": {
+          "bytes": 12577,
+          "sha256": "b1c7c7f1fc40816c3ac4e0a658a03b53aa44443a1928ef36fe305d3a957a128d"
+        },
+        "Cargo.toml": {
+          "bytes": 3118,
+          "sha256": "65dabeea0112c066ff16c6d93142c4a08c01396f4e99a27d9255d19974eaeb73"
+        },
+        "Cargo.toml.orig": {
+          "bytes": 3642,
+          "sha256": "ddcbef59d5daaeae8c33beff5b205c6af228b5f691747b4217fb6aa845851509"
+        },
+        "LICENSE-APACHE": {
+          "bytes": 9723,
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        "LICENSE-MIT": {
+          "bytes": 1023,
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        },
+        "README.md": {
+          "bytes": 14043,
+          "sha256": "10cb8c14d9d29f29a031329747b352fc149a689b449ee5a8abb43712695aed72"
+        },
+        "build.rs": {
+          "bytes": 1206,
+          "sha256": "a681e754be844c7dbef957f5d2d00b01f37c5dca160ef1055a8d8f975697a881"
+        },
+        "src/de.rs": {
+          "bytes": 86371,
+          "sha256": "2364aaa767bb40eeedd4aa24e3bf917be5e007a00bd3d911b61f9de74aa5f074"
+        },
+        "src/error.rs": {
+          "bytes": 17221,
+          "sha256": "a13add05a63adf53d89e37effa03221d897a60486cfe360a5a958c0dd2a7e90d"
+        },
+        "src/io/core.rs": {
+          "bytes": 1739,
+          "sha256": "60ba28f67a9acaecf8964b611efba416b13f9f2bae4befc329fdf0e037293802"
+        },
+        "src/io/mod.rs": {
+          "bytes": 684,
+          "sha256": "fd1ed5080495cab21117f6f7d3c2c9e3687cad0c69a0cd087b08a145a9e672da"
+        },
+        "src/iter.rs": {
+          "bytes": 1848,
+          "sha256": "f832c469cd7999d26ba9b76baa69b257a212a7edb3dfdf9b1d1bb35e8da85fa9"
+        },
+        "src/lexical/algorithm.rs": {
+          "bytes": 6117,
+          "sha256": "54d599033e5a182a3076a0ba23a3550bf8680c99399b0313166b3c42c85b35b9"
+        },
+        "src/lexical/bhcomp.rs": {
+          "bytes": 7035,
+          "sha256": "26f39d52008225a6b377d7246d326940d44200e160a7b4652733e712e1a45a04"
+        },
+        "src/lexical/bignum.rs": {
+          "bytes": 679,
+          "sha256": "db688e8112389998d0f91906f6857e28f9b510a8b4065ad476c8e8be2f77becf"
+        },
+        "src/lexical/cached.rs": {
+          "bytes": 2156,
+          "sha256": "0e127398691f8042c19cde209e7f4b0161f0f3150342430145929f711e6fdac8"
+        },
+        "src/lexical/cached_float80.rs": {
+          "bytes": 5782,
+          "sha256": "0f8f74a22cb7d871322a9893bffd0255ca10bf9dffd13afb2462dd3d7f51805f"
+        },
+        "src/lexical/digit.rs": {
+          "bytes": 444,
+          "sha256": "9502805adbc3da059131d1fac0a802e17065b36cd7472606b3af24e3241d5cb8"
+        },
+        "src/lexical/errors.rs": {
+          "bytes": 5082,
+          "sha256": "3d9f6de6245533bcb101dfd718cfed61d59dc293f6768cedae28aa13ace164f5"
+        },
+        "src/lexical/exponent.rs": {
+          "bytes": 1562,
+          "sha256": "51f19443008e8884b15c7d5d4b1f1cfbd5673a9d1da02f1af39fcf20e315f01f"
+        },
+        "src/lexical/float.rs": {
+          "bytes": 5482,
+          "sha256": "fe356213c92a049f4bef2f58bc0e3a26866ca06b8c1d74d0f961c5b883852cad"
+        },
+        "src/lexical/large_powers.rs": {
+          "bytes": 250,
+          "sha256": "18d697b846b44ecb61bfaaa3b881e0696f9b7bb6be582623e9d3a8a176a48d2f"
+        },
+        "src/lexical/large_powers32.rs": {
+          "bytes": 15362,
+          "sha256": "c70b57a727960beec258758a4d4a1050f8eaf3b4e60027c663a2bfb0246e0153"
+        },
+        "src/lexical/large_powers64.rs": {
+          "bytes": 15879,
+          "sha256": "e7af83ce3159b5fc4669fc5a231e767d8af21bacaece52a0a48951198965b197"
+        },
+        "src/lexical/math.rs": {
+          "bytes": 26324,
+          "sha256": "00519897ba54fb282102549a8c2a973af1f6534fcba1e283436b00141baccc13"
+        },
+        "src/lexical/mod.rs": {
+          "bytes": 1059,
+          "sha256": "ace2ccea2cd541f019a84b9eeb3b9ecd88daf6bccbe9edf0eac00b62704f47c4"
+        },
+        "src/lexical/num.rs": {
+          "bytes": 11179,
+          "sha256": "2d06111d28616221995f7b4d4f13625b8d902884921268b0e02e544f871a5339"
+        },
+        "src/lexical/parse.rs": {
+          "bytes": 2241,
+          "sha256": "c2bfac4c70a19938ced61e991f4ec606764887cf12bac1a0978b5b5318a56aac"
+        },
+        "src/lexical/rounding.rs": {
+          "bytes": 7388,
+          "sha256": "4762af3612880b17468ff2a1bb800c8e99f08330ae439699dd53d8dc5463ad13"
+        },
+        "src/lexical/shift.rs": {
+          "bytes": 1235,
+          "sha256": "bc1ed053dd63d45ac9c35302f18de9f00d94027f28af4ab749c9248439de832a"
+        },
+        "src/lexical/small_powers.rs": {
+          "bytes": 1345,
+          "sha256": "73c56b7b83310c6fefa898fb94771c65bdc251c1579ab105151da43935ea02be"
+        },
+        "src/lib.rs": {
+          "bytes": 14369,
+          "sha256": "6cbb5e1394bd47080fb1a2305590960ea90b1690257b7ed5ee3d6ff03350cec6"
+        },
+        "src/macros.rs": {
+          "bytes": 10361,
+          "sha256": "94dda91c847e819a95e64d655eb066dfa44ed69712064016c3fe862c34ef92e6"
+        },
+        "src/map.rs": {
+          "bytes": 35057,
+          "sha256": "b5a2fd1ee865e6cfd83ef2da0a2e1057f892465ac7ede8a78a11354a60526f33"
+        },
+        "src/number.rs": {
+          "bytes": 25294,
+          "sha256": "327e30a5542e169df2bbea59e4a7a4861c5a6994876f74cadab49f8133cbae34"
+        },
+        "src/raw.rs": {
+          "bytes": 21542,
+          "sha256": "bc15c4d82d07c2c8b5d3f598915e917f2177de6573f327717da33658d2528922"
+        },
+        "src/read.rs": {
+          "bytes": 33041,
+          "sha256": "17a2efe49e5a6937c8d7d4a5c0b9eac84453de0f86bf8e7ee421387e82341bb3"
+        },
+        "src/ser.rs": {
+          "bytes": 63877,
+          "sha256": "f2b8cc0b97e30c49dbc58698fa22c14a7d56ea616cdb57b067835a59af49a75f"
+        },
+        "src/value/de.rs": {
+          "bytes": 41251,
+          "sha256": "ceda1bf415aafde89caa83bf275811b70d393717d4e1038e0c61822d2da02993"
+        },
+        "src/value/from.rs": {
+          "bytes": 6357,
+          "sha256": "ae4b5f93b27e578fa40e3a8d25d0df2032fe40b680cddb15963e47cbd56db613"
+        },
+        "src/value/index.rs": {
+          "bytes": 8734,
+          "sha256": "f1404ed12e795a5553da4bdf72835c441a5e0cc0f6e794fee875eaa887d65319"
+        },
+        "src/value/mod.rs": {
+          "bytes": 30963,
+          "sha256": "6331d59ea362a74b6cd3d302d08114a63a73a384ff56fef737de29edea2f8d91"
+        },
+        "src/value/partial_eq.rs": {
+          "bytes": 2267,
+          "sha256": "c565f7886d3bdf5dd39b8c99acca17091c251f15b3c257addf5d02f414fd0571"
+        },
+        "src/value/ser.rs": {
+          "bytes": 28223,
+          "sha256": "11f2b7daa1eba826d4086d5497f73729478dd7647bff77deccde5e47b0f126f2"
+        },
+        "tests/compiletest.rs": {
+          "bytes": 214,
+          "sha256": "4e381aa8ca3eabb7ac14d1e0c3700b3223e47640547a6988cfa13ad68255f60f"
+        },
+        "tests/debug.rs": {
+          "bytes": 2038,
+          "sha256": "7d54721bbaea19c362e7c39046745ffb3c774d6af0b3af5643e4bdfbf0fa1011"
+        },
+        "tests/lexical.rs": {
+          "bytes": 1027,
+          "sha256": "a863468815c2c1f1415b30eef42971604d860e6128e66c39d965322fbc567240"
+        },
+        "tests/lexical/algorithm.rs": {
+          "bytes": 3867,
+          "sha256": "da378df9ee24bfa033968d5c94e91b58e52c39bf6c825dec51c3eb7250cc5874"
+        },
+        "tests/lexical/exponent.rs": {
+          "bytes": 1288,
+          "sha256": "dc8fa8d05e561ff256f8b09385291768c7f45e5ad6cb878ef9194757aa014386"
+        },
+        "tests/lexical/float.rs": {
+          "bytes": 14186,
+          "sha256": "0440f2d85c993bcccd925096d7f4136bf624ffd66b3c7ee565d158390685eb11"
+        },
+        "tests/lexical/math.rs": {
+          "bytes": 5436,
+          "sha256": "4142ef090f563df1f6b14c9a4e6d4723535fa816dca3febc94b3423240e9db20"
+        },
+        "tests/lexical/num.rs": {
+          "bytes": 1602,
+          "sha256": "e0bdc3b4facd579e9cfdf87c8bae107ed227c63cf9ef920fd85e9febb985c693"
+        },
+        "tests/lexical/parse.rs": {
+          "bytes": 17147,
+          "sha256": "a11f09bb003a3a024548008cf78bf76526ed71b00077d1989f45eb8cebc93b9c"
+        },
+        "tests/lexical/rounding.rs": {
+          "bytes": 9038,
+          "sha256": "6c56e39ba534616c1b2146e8efa6eb57aed322e683bf23183cd32a61fae6447e"
+        },
+        "tests/macros/mod.rs": {
+          "bytes": 1511,
+          "sha256": "93aa1d54af20bc2c55b6ae8db73c1414cda2626eb9fa7bd57b9d613a3c6e6a19"
+        },
+        "tests/map.rs": {
+          "bytes": 1603,
+          "sha256": "232a980d98b0ceac022ad34d25b0a0fc613389784222a45da4f5650a9414a847"
+        },
+        "tests/regression.rs": {
+          "bytes": 130,
+          "sha256": "2f2aa349a0dcc399e246e08e2fbae8fb349831b461169014605538fed8d65622"
+        },
+        "tests/regression/issue1004.rs": {
+          "bytes": 362,
+          "sha256": "38d7e3b6c515b881078ebd21ca8063d2ca105cd319695d29538f879e37f091b5"
+        },
+        "tests/regression/issue520.rs": {
+          "bytes": 401,
+          "sha256": "f95b362e45c57b431720c48eb47f7ddddf4078195d6859df523dc32950ce980a"
+        },
+        "tests/regression/issue795.rs": {
+          "bytes": 1646,
+          "sha256": "37ff26744b1f950dd212565c6e3f276268882f7724cc589ac8b21ca8bd608413"
+        },
+        "tests/regression/issue845.rs": {
+          "bytes": 1919,
+          "sha256": "10d2895cd1412cb6630f0a59db367f79ee672edb501151c7581e9921b5a84b92"
+        },
+        "tests/regression/issue953.rs": {
+          "bytes": 236,
+          "sha256": "b2cddc761f5ca6639900c173765a8a5868528a896924e5e925db2696469208f7"
+        },
+        "tests/stream.rs": {
+          "bytes": 5089,
+          "sha256": "794b672b52eb8f1696b32b8dd125a660fc19b83fcfef5390896b02149b5f0a9b"
+        },
+        "tests/test.rs": {
+          "bytes": 76680,
+          "sha256": "5c6e629525978c8fd190bdbbe3d62ff391bc8c8e86c143a0087b34ae2e7923e9"
+        },
+        "tests/ui/missing_colon.rs": {
+          "bytes": 57,
+          "sha256": "d07e0c34d98eb43465f0a0310f2c0b5d5b0d26d243b352a1c6bbe6ad3b27eda9"
+        },
+        "tests/ui/missing_colon.stderr": {
+          "bytes": 456,
+          "sha256": "a543cf9931a6224ba74f4592ea551f19438752c09427c649cd0211d363e88e75"
+        },
+        "tests/ui/missing_comma.rs": {
+          "bytes": 69,
+          "sha256": "b8a9662f99c3e6dd2b6417892c37640578ce91d3a8365bf10c1f686a3227aa87"
+        },
+        "tests/ui/missing_comma.stderr": {
+          "bytes": 367,
+          "sha256": "05de5cd378a91be9631b0491c326d45e180bb76ea834052e214ec9e1e14b1aaf"
+        },
+        "tests/ui/missing_value.rs": {
+          "bytes": 59,
+          "sha256": "bca25d67127fb88e7c191c7b03af5a4ce8a9abb630f3d2e6a6c1e77e213dc9a4"
+        },
+        "tests/ui/missing_value.stderr": {
+          "bytes": 460,
+          "sha256": "a03be58cfa3d80cf1bd967bc8473933e87226db69c7967710084b13ca43bccdc"
+        },
+        "tests/ui/not_found.rs": {
+          "bytes": 61,
+          "sha256": "d0a7adb309879ff65aee115b52cc33d36f4bad353cf97c4effc34a6128c2bee3"
+        },
+        "tests/ui/not_found.stderr": {
+          "bytes": 162,
+          "sha256": "359b751c0c21fab6d460daef4d5f73a265f7769c9b578f98ea3cb6cbf2387643"
+        },
+        "tests/ui/parse_expr.rs": {
+          "bytes": 61,
+          "sha256": "32e6d51f528db3d1ab0ed1e24765b865be393565c26f77413c5aa39d601ac563"
+        },
+        "tests/ui/parse_expr.stderr": {
+          "bytes": 295,
+          "sha256": "1daa690bd744a9559ed51019d88d0b4a1ffaea42f74a24d48688a7029a87e013"
+        },
+        "tests/ui/parse_key.rs": {
+          "bytes": 65,
+          "sha256": "18829b2af320d5cf8a0a5cd3aaf84c7e92cc874651c30e45a3acafb76c2d8b93"
+        },
+        "tests/ui/parse_key.stderr": {
+          "bytes": 153,
+          "sha256": "20cf0d2898749f3c36780fc065f5049ee809e74cb6f0ef776f43f45e01596ee3"
+        },
+        "tests/ui/unexpected_after_array_element.rs": {
+          "bytes": 61,
+          "sha256": "a343fc3104431720bdfcf330bcc3cfcd98c8dec3e951133b495242478b0b7eb3"
+        },
+        "tests/ui/unexpected_after_array_element.stderr": {
+          "bytes": 231,
+          "sha256": "9ec755bf0cd5a3e9dc9c4027ae03fbb3f33987b1ab61aa76cd88d4148b766487"
+        },
+        "tests/ui/unexpected_after_map_entry.rs": {
+          "bytes": 66,
+          "sha256": "6e3bd2def435ca610e346bbc75cdbaf61963eb2ef1885bb5f76781ba1fac37ef"
+        },
+        "tests/ui/unexpected_after_map_entry.stderr": {
+          "bytes": 237,
+          "sha256": "a39bd7a3ae4d20a24d311392022caa48f59697967995c2bb2cf5c1bc5c9c21d0"
+        },
+        "tests/ui/unexpected_colon.rs": {
+          "bytes": 60,
+          "sha256": "a313cff3fed4be4c33f1eda5d0c5c98147fb835a56d36470d9f367352c1d61ef"
+        },
+        "tests/ui/unexpected_colon.stderr": {
+          "bytes": 209,
+          "sha256": "80afe490b9615fd2d769b80602a7f64c5804fda666356fbcebd7658107d89c70"
+        },
+        "tests/ui/unexpected_comma.rs": {
+          "bytes": 69,
+          "sha256": "55a8b684bde1ce905837cce719fd457d8898b61cebc27e5b420d05cb6be97256"
+        },
+        "tests/ui/unexpected_comma.stderr": {
+          "bytes": 222,
+          "sha256": "0b6488f2e63c4cd7debc38696b76b325ef230fa97c33bf17476573993883a448"
+        }
+      },
+      "locked_package": {
+        "checksum": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+        "dependencies": [
+          "itoa",
+          "memchr",
+          "serde",
+          "serde_core",
+          "zmij"
+        ],
+        "name": "serde_json",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "version": "1.0.149"
+      },
+      "optional_cargo_generated_files": {
+        ".cargo-ok": {
+          "bytes": 7,
+          "sha256": "afbf9d0f3560b0fd7795e81c42a0a79ee6b6fc67e064f77826aee642cad28d91"
+        }
+      },
+      "package": {
+        "authors": [
+          "Erick Tryzelaar <erick.tryzelaar@gmail.com>",
+          "David Tolnay <dtolnay@gmail.com>"
+        ],
+        "categories": [
+          "encoding",
+          "parser-implementations",
+          "no-std"
+        ],
+        "default_run": null,
+        "dependencies": [
+          {
+            "features": [],
+            "kind": null,
+            "name": "indexmap",
+            "optional": true,
+            "registry": null,
+            "rename": null,
+            "req": "^2.2.3",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": null,
+            "name": "itoa",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": null,
+            "name": "memchr",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^2",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": false
+          },
+          {
+            "features": [],
+            "kind": null,
+            "name": "serde_core",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.220",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": false
+          },
+          {
+            "features": [],
+            "kind": null,
+            "name": "zmij",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "automod",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.11",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "indoc",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^2.0.2",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "ref-cast",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.18",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "rustversion",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.13",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [
+              "derive"
+            ],
+            "kind": "dev",
+            "name": "serde",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.194",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "serde_bytes",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^0.11.10",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "serde_derive",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.166",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": "dev",
+            "name": "serde_stacker",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^0.1.8",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [
+              "diff"
+            ],
+            "kind": "dev",
+            "name": "trybuild",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.108",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": null,
+            "uses_default_features": true
+          },
+          {
+            "features": [],
+            "kind": null,
+            "name": "serde",
+            "optional": false,
+            "registry": null,
+            "rename": null,
+            "req": "^1.0.220",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "target": "cfg(any())",
+            "uses_default_features": false
+          }
+        ],
+        "description": "A JSON serialization file format",
+        "documentation": "https://docs.rs/serde_json",
+        "edition": "2021",
+        "features": {
+          "alloc": [
+            "serde_core/alloc"
+          ],
+          "arbitrary_precision": [],
+          "default": [
+            "std"
+          ],
+          "float_roundtrip": [],
+          "indexmap": [
+            "dep:indexmap"
+          ],
+          "preserve_order": [
+            "indexmap",
+            "std"
+          ],
+          "raw_value": [],
+          "std": [
+            "memchr/std",
+            "serde_core/std"
+          ],
+          "unbounded_depth": []
+        },
+        "homepage": null,
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+        "keywords": [
+          "json",
+          "serde",
+          "serialization"
+        ],
+        "license": "MIT OR Apache-2.0",
+        "license_file": null,
+        "links": null,
+        "manifest_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/Cargo.toml",
+        "metadata": {
+          "docs": {
+            "rs": {
+              "features": [
+                "preserve_order",
+                "raw_value",
+                "unbounded_depth"
+              ],
+              "rustdoc-args": [
+                "--generate-link-to-definition",
+                "--generate-macro-expansion",
+                "--extern-html-root-url=core=https://doc.rust-lang.org",
+                "--extern-html-root-url=alloc=https://doc.rust-lang.org",
+                "--extern-html-root-url=std=https://doc.rust-lang.org"
+              ],
+              "targets": [
+                "x86_64-unknown-linux-gnu"
+              ]
+            }
+          },
+          "playground": {
+            "features": [
+              "float_roundtrip",
+              "raw_value",
+              "unbounded_depth"
+            ]
+          }
+        },
+        "name": "serde_json",
+        "publish": null,
+        "readme": "README.md",
+        "repository": "https://github.com/serde-rs/json",
+        "rust_version": "1.68",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "targets": [
+          {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "serde_json",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "compiletest",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/compiletest.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "debug",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/debug.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "lexical",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/lexical.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "map",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/map.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "regression",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/regression.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "stream",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/stream.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "test",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/tests/test.rs",
+            "test": true
+          },
+          {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "custom-build"
+            ],
+            "name": "build-script-build",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/build.rs",
+            "test": false
+          }
+        ],
+        "version": "1.0.149"
+      },
+      "registry_archive": {
+        "bytes": 155994,
+        "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149.crate",
+        "sha256": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86"
+      },
+      "resolve_node": {
+        "dependencies": [
+          "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18",
+          "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.0",
+          "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+          "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.21"
+        ],
+        "deps": [
+          {
+            "dep_kinds": [
+              {
+                "kind": null,
+                "target": null
+              }
+            ],
+            "name": "itoa",
+            "pkg": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18"
+          },
+          {
+            "dep_kinds": [
+              {
+                "kind": null,
+                "target": null
+              }
+            ],
+            "name": "memchr",
+            "pkg": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.0"
+          },
+          {
+            "dep_kinds": [
+              {
+                "kind": null,
+                "target": null
+              }
+            ],
+            "name": "serde_core",
+            "pkg": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229"
+          },
+          {
+            "dep_kinds": [
+              {
+                "kind": null,
+                "target": null
+              }
+            ],
+            "name": "zmij",
+            "pkg": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.21"
+          }
+        ],
+        "features": [
+          "arbitrary_precision",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149"
+      },
+      "vendor_checksum_file_required": false
+    },
+    "source_fences": [
+      {
+        "errors": [],
+        "label": "source-before",
+        "observations": {
+          "bundle_and_corpus": {
+            "artifacts": {
+              "corpus.jsonl": {
+                "bytes": 2234,
+                "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c"
+              },
+              "corpus.jsonl.xz": {
+                "bytes": 364,
+                "sha256": "63ffd3cccb4b1b77ace8dc2c79eb54c485380afb9f335bfcf83efc070f743957"
+              },
+              "native-comparison.json": {
+                "bytes": 1929381,
+                "sha256": "29e7ecbf840e8802a744cc200ea91329f62fd3bde8a3ddf494998755ef76199f"
+              },
+              "native-report.json": {
+                "bytes": 1956819,
+                "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+              }
+            },
+            "status": "MATCH"
+          },
+          "native_source": {
+            "files": 45,
+            "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+            "status": "MATCH"
+          },
+          "original_source": {
+            "files": 4361,
+            "source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+            "status": "MATCH"
+          }
+        },
+        "status": "PASS"
+      },
+      {
+        "errors": [],
+        "label": "isolated-source-before",
+        "observations": {
+          "actual_original_corpus": {
+            "bytes": 2234,
+            "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c",
+            "status": "MATCH"
+          },
+          "bundle_and_corpus": {
+            "artifacts": {
+              "corpus.jsonl": {
+                "bytes": 2234,
+                "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c"
+              },
+              "corpus.jsonl.xz": {
+                "bytes": 364,
+                "sha256": "63ffd3cccb4b1b77ace8dc2c79eb54c485380afb9f335bfcf83efc070f743957"
+              },
+              "native-comparison.json": {
+                "bytes": 1929381,
+                "sha256": "29e7ecbf840e8802a744cc200ea91329f62fd3bde8a3ddf494998755ef76199f"
+              },
+              "native-report.json": {
+                "bytes": 1956819,
+                "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+              }
+            },
+            "status": "MATCH"
+          },
+          "isolated_original_with_only_declared_hook": {
+            "files": 4362,
+            "source_set_sha256": "87ed4b7e5325329627bddbf696ab5f126a9c006e8ebf47cfac081ca75da59722",
+            "status": "MATCH"
+          },
+          "native_source": {
+            "files": 45,
+            "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+            "status": "MATCH"
+          },
+          "original_source": {
+            "files": 4361,
+            "source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+            "status": "MATCH"
+          }
+        },
+        "status": "PASS"
+      },
+      {
+        "errors": [],
+        "label": "compiled-source-and-binary-before",
+        "observations": {
+          "actual_original_corpus": {
+            "bytes": 2234,
+            "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c",
+            "status": "MATCH"
+          },
+          "actual_serde_dependency": {
+            "files": 89,
+            "source_set_sha256": "a098ddfb9f8a226a1bfd37ee6b46c7efa62ddab7e3ef6e4d84b5e9b33ce7bab7",
+            "status": "MATCH"
+          },
+          "bundle_and_corpus": {
+            "artifacts": {
+              "corpus.jsonl": {
+                "bytes": 2234,
+                "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c"
+              },
+              "corpus.jsonl.xz": {
+                "bytes": 364,
+                "sha256": "63ffd3cccb4b1b77ace8dc2c79eb54c485380afb9f335bfcf83efc070f743957"
+              },
+              "native-comparison.json": {
+                "bytes": 1929381,
+                "sha256": "29e7ecbf840e8802a744cc200ea91329f62fd3bde8a3ddf494998755ef76199f"
+              },
+              "native-report.json": {
+                "bytes": 1956819,
+                "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+              }
+            },
+            "status": "MATCH"
+          },
+          "independent_executable": {
+            "bytes": 611585296,
+            "sha256": "08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d",
+            "status": "MATCH"
+          },
+          "isolated_original_with_only_declared_hook": {
+            "files": 4362,
+            "source_set_sha256": "87ed4b7e5325329627bddbf696ab5f126a9c006e8ebf47cfac081ca75da59722",
+            "status": "MATCH"
+          },
+          "native_source": {
+            "files": 45,
+            "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+            "status": "MATCH"
+          },
+          "original_source": {
+            "files": 4361,
+            "source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+            "status": "MATCH"
+          }
+        },
+        "status": "PASS"
+      },
+      {
+        "errors": [],
+        "label": "source-and-binary-after",
+        "observations": {
+          "actual_original_corpus": {
+            "bytes": 2234,
+            "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c",
+            "status": "MATCH"
+          },
+          "actual_serde_dependency": {
+            "files": 89,
+            "source_set_sha256": "a098ddfb9f8a226a1bfd37ee6b46c7efa62ddab7e3ef6e4d84b5e9b33ce7bab7",
+            "status": "MATCH"
+          },
+          "bundle_and_corpus": {
+            "artifacts": {
+              "corpus.jsonl": {
+                "bytes": 2234,
+                "sha256": "cfa3dde3dc0a02a02a1d3f543b7a5cb83199996a642dda7221291391cf47089c"
+              },
+              "corpus.jsonl.xz": {
+                "bytes": 364,
+                "sha256": "63ffd3cccb4b1b77ace8dc2c79eb54c485380afb9f335bfcf83efc070f743957"
+              },
+              "native-comparison.json": {
+                "bytes": 1929381,
+                "sha256": "29e7ecbf840e8802a744cc200ea91329f62fd3bde8a3ddf494998755ef76199f"
+              },
+              "native-report.json": {
+                "bytes": 1956819,
+                "sha256": "b0929ab20b036a76d2bfb1859862ee58b531d00a655b335cfd18871306f6fd45"
+              }
+            },
+            "status": "MATCH"
+          },
+          "independent_executable": {
+            "bytes": 611585296,
+            "sha256": "08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d",
+            "status": "MATCH"
+          },
+          "isolated_original_with_only_declared_hook": {
+            "files": 4362,
+            "source_set_sha256": "87ed4b7e5325329627bddbf696ab5f126a9c006e8ebf47cfac081ca75da59722",
+            "status": "MATCH"
+          },
+          "native_source": {
+            "files": 45,
+            "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b",
+            "status": "MATCH"
+          },
+          "original_source": {
+            "files": 4361,
+            "source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+            "status": "MATCH"
+          }
+        },
+        "status": "PASS"
+      }
+    ],
+    "stages": [
+      {
+        "argv": [
+          "rustc",
+          "-Vv"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 16449679,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193215283243386,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2117492,
+        "stage": "rustc-version",
+        "started_monotonic_ns": 193215266793707,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 196,
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 15
+      },
+      {
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--format-version=1",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu",
+          "--manifest-path",
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source/trillionnium/Cargo.toml"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 465520548,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193215749370784,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2117494,
+        "stage": "cargo-original-metadata",
+        "started_monotonic_ns": 193215283850236,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 708757,
+          "sha256": "cfeaa6ceea744a9b206f124387b7e9352d9814747d3e0b04cc1601d5deac0abc"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 120
+      },
+      {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source/trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--no-run",
+          "--message-format=json",
+          "--target-dir",
+          "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 218464165672,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193434390487837,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2117614,
+        "stage": "cargo-original-test-build",
+        "started_monotonic_ns": 193215926322165,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 2155,
+          "sha256": "025da2f209a869cb127c42a71cc85151be7b5cc8fc0a13a9b0c045de4e4b3802"
+        },
+        "stdout": {
+          "bytes": 113350,
+          "sha256": "4e1278e19240041a005a0df1a382ff008336c4b5cb2eef3a633fc72194fc30e4"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 900
+      },
+      {
+        "argv": [
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+          "--list"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 8201447,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193450535695803,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2140249,
+        "stage": "list-original-tests",
+        "started_monotonic_ns": 193450527494356,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 179412,
+          "sha256": "8ec9736d763711ca981e3e95f8ee58961d5b51bba6e7d489d73e9e451c2e2df0"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 30
+      },
+      {
+        "argv": [
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+          "--exact",
+          "store::init_marker_tests::initialization_marker_preserves_exact_context_errors",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 1067100844,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193451605897921,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2140252,
+        "stage": "retained-original-0",
+        "started_monotonic_ns": 193450538797077,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 206,
+          "sha256": "7ddd35f9ae6b42f3611668950c7784259c969911448df002ac2ae0c7fd98aa35"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 240
+      },
+      {
+        "argv": [
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+          "--exact",
+          "store::init_marker_tests::initialization_marker_recovery_and_cold_reopen_preserve_state",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 1017409402,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193452624431471,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2140320,
+        "stage": "retained-original-1",
+        "started_monotonic_ns": 193451607022069,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 215,
+          "sha256": "b4e804845171385652da5b96e1971311d8ee53e2a306a26f0a5102366e1c8c4e"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 240
+      },
+      {
+        "argv": [
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+          "--exact",
+          "store::init_marker_tests::initialization_marker_rejects_special_files_and_post_precheck_substitution",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 1518256654,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193454143572574,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2140428,
+        "stage": "retained-original-2",
+        "started_monotonic_ns": 193452625315920,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 228,
+          "sha256": "03739bc53825f4c7f8973b4073dea5bd9dfdba192b65810bff4b8a0ac91527dc"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 240
+      },
+      {
+        "argv": [
+          "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+          "--exact",
+          "store::hia_genesis_owner_oracle::evaluate",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cleanup_error": null,
+        "cleanup_limit_seconds": 10,
+        "cwd": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/isolated-source",
+        "elapsed_ns": 1918844858,
+        "exit_code": 0,
+        "finished_monotonic_ns": 193456063205932,
+        "launch_error": null,
+        "output_files_closed": true,
+        "pid": 2140599,
+        "stage": "actual-default-genesis-corpus",
+        "started_monotonic_ns": 193454144361074,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 836095,
+          "sha256": "25efa67e1242845c4a6259e36ed6f0408e0c4c2625b44ec2caea45984a48596f"
+        },
+        "timed_out": false,
+        "wall_limit_seconds": 600
+      }
+    ],
+    "statuses": {
+      "ERR": 14,
+      "OK": 16
+    },
+    "wrapper": {
+      "bytes": 3163,
+      "path": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/wrapper-execution.json",
+      "sha256": "8d44586b2ae9409ae366d056b6fcfd59d268864f8bfa104cbadc9777f8242133"
+    },
+    "wrapper_elapsed_ns": 266962099558
+  },
+  "original_source_files": 4361,
+  "original_source_set_sha256": "5392fc23b5c72b72c9ac1db18c66d6a07caf3d2aaeaef5a7dcb34ef7856f923b",
+  "repository_evidence": [
+    {
+      "bytes": 8150988,
+      "path": "hia/qualification/genesis-native-history.tar.xz",
+      "scope": "Five old-source native suites, 254 controls and 356 actual native processes; historical implementation failures preserved. Not a current-source rerun.",
+      "sha256": "c17aa5f11f10544c8a2ff3762f1700abc0c243220ca99ab42c3be6a0adc40506",
+      "source_set_sha256": "a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046"
+    },
+    {
+      "bytes": 1577608,
+      "path": "hia/qualification/genesis-original-failure.tar.xz",
+      "scope": "First actual original admission failure before Cargo build and zero actual cases/tests, plus old decoder negative observations. FAIL remains FAIL.",
+      "sha256": "8bcf545b68da2d061f3863b60ed72d56997247eac8e29cdb2463bb8955d4dbef"
+    },
+    {
+      "bytes": 2902896,
+      "path": "hia/qualification/genesis-development.tar.xz",
+      "scope": "Current-source complete native semantic 30 controls/62 processes and actual original 30 cases/3 retained tests, all full execution records and source fences.",
+      "sha256": "695b12c467056dc2f9d6280f18d58ac51ac741351b017ae9fcc166a95f22acce",
+      "source_set_sha256": "a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b"
+    }
+  ],
+  "schema": "trnm.genesis-registry-fixed-native-original-observation.v1",
+  "scope": {
+    "actual_source_bound_development_observation": true,
+    "arbitrary_commit": false,
+    "complete_node": false,
+    "cross_format_sqlite_compatibility": false,
+    "four_other_physical_suites_current_source_rerun": false,
+    "original_error_strings_equivalent": false,
+    "os_page_cache_flushed": false,
+    "physical_power_loss": false,
+    "same_head_ci_still_required": true,
+    "successor_admission": false
+  },
+  "status": "PASS",
+  "terminal_observations": {
+    "independent_binary": {
+      "metadata": {
+        "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gid": 1000,
+        "link_count": 1,
+        "metadata_platform": "linux",
+        "mode": 320,
+        "uid": 1000,
+        "xattr_names": [],
+        "xattr_sha256": {}
+      },
+      "mode": 320,
+      "path": "/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/original/original-test-binary",
+      "sha256": "08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d",
+      "size": 611585296,
+      "version": "2050:38063677:611585296:1794843334130398575:1794843334130398575"
+    },
+    "initial": {
+      "archive_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-fa3ea6b5705f1b18f0ccce57a21268a067d9407c09e48290e85ac1f2e00c322e/output.log",
+      "available_end": 114,
+      "bytes_hex": "7b22737461747573223a2022535441525445445f41444d495353494f4e5f50454e44494e47222c20226f7574707574223a20222f746d702f74726e6d2d67656e657369732d6f726967696e616c2d72656769737472792d66697865642d32303236313131362d6d617939626e6b65227d0d0a",
+      "chunk_sha256": "0bce7d1c9859f048c6140ced9ac0a0764c36bf5bf0c0091219e6131a219f0b5f",
+      "host": "desktop",
+      "next_offset": 114,
+      "offset": 0,
+      "output_complete": false,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-fa3ea6b5705f1b18f0ccce57a21268a067d9407c09e48290e85ac1f2e00c322e",
+      "status": {
+        "boot": "8c55b477-233a-4771-995a-6f666f6299b3",
+        "bytes_seen": 114,
+        "bytes_stored": 114,
+        "capture_error": null,
+        "created_unix_ms": 1794843095479,
+        "output_complete": false,
+        "owner_pid": 2115613,
+        "pid": 2115614,
+        "state": "running"
+      },
+      "storage": "target_archive",
+      "text": "{\"status\": \"STARTED_ADMISSION_PENDING\", \"output\": \"/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke\"}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    },
+    "launch": {
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "host": "desktop",
+      "persistent_across_runtime_restart": true,
+      "reused": false,
+      "session_id": "dpty-fa3ea6b5705f1b18f0ccce57a21268a067d9407c09e48290e85ac1f2e00c322e",
+      "status": {
+        "boot": "8c55b477-233a-4771-995a-6f666f6299b3",
+        "bytes_seen": 114,
+        "bytes_stored": 114,
+        "capture_error": null,
+        "created_unix_ms": 1794843095479,
+        "output_complete": false,
+        "owner_pid": 2115613,
+        "pid": 2115614,
+        "state": "running"
+      }
+    },
+    "terminal": {
+      "archive_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-fa3ea6b5705f1b18f0ccce57a21268a067d9407c09e48290e85ac1f2e00c322e/output.log",
+      "available_end": 340,
+      "bytes_hex": "7b22737461747573223a202250415353222c20227175616c69666965725f657869745f636f6465223a20302c202273756d6d617279223a20222f746d702f74726e6d2d67656e657369732d6f726967696e616c2d72656769737472792d66697865642d32303236313131362d6d617939626e6b652f777261707065722d657865637574696f6e2e6a736f6e222c202261637475616c5f726f7773223a2033302c202261637475616c5f706173736564223a2033302c202261637475616c5f6f726967696e616c5f7465737473223a20332c20226572726f72223a206e756c6c7d0d0a",
+      "chunk_sha256": "1cc216f5879e4dd53893991c49a17c0734a4574c378f16b61909c5aa3970e419",
+      "host": "desktop",
+      "next_offset": 340,
+      "offset": 114,
+      "output_complete": true,
+      "persistent_across_runtime_restart": true,
+      "session_id": "dpty-fa3ea6b5705f1b18f0ccce57a21268a067d9407c09e48290e85ac1f2e00c322e",
+      "status": {
+        "boot": "8c55b477-233a-4771-995a-6f666f6299b3",
+        "bytes_seen": 340,
+        "bytes_stored": 340,
+        "capture_error": null,
+        "closed": false,
+        "created_unix_ms": 1794843095479,
+        "exit_code": 0,
+        "output_complete": true,
+        "owner_pid": 2115613,
+        "pid": 2115614,
+        "state": "exited"
+      },
+      "storage": "target_archive",
+      "text": "{\"status\": \"PASS\", \"qualifier_exit_code\": 0, \"summary\": \"/tmp/trnm-genesis-original-registry-fixed-20261116-may9bnke/wrapper-execution.json\", \"actual_rows\": 30, \"actual_passed\": 30, \"actual_original_tests\": 3, \"error\": null}\r\n",
+      "text_is_lossy": false,
+      "truncated_before_offset": false,
+      "utf8_pending": false
+    }
+  }
+}

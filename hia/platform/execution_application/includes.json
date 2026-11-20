@@ -1,0 +1,503 @@
+{
+  "includes": {
+    "platform/execution_application/claim.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_bit_width",
+          "ap_bytes_equal",
+          "ap_cleanup",
+          "ap_edit",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash32",
+          "ap_hex",
+          "ap_hex_digit",
+          "ap_import",
+          "ap_index",
+          "ap_initialize",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_mul_div",
+          "ap_number",
+          "ap_payload",
+          "ap_payload_byte",
+          "ap_payload_number",
+          "ap_request_capacity",
+          "ap_request_svp",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/execution_application/core.hepta": [
+      {
+        "functions": [
+          "ap_add",
+          "ap_alloc",
+          "ap_cfg_position",
+          "ap_cleanup",
+          "ap_concat",
+          "ap_edit",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_finish",
+          "ap_hex",
+          "ap_import",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_mul",
+          "ap_number",
+          "ap_object",
+          "ap_receipt",
+          "ap_request_callback",
+          "ap_request_capacity",
+          "ap_request_svp",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ap_wire",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/execution_application/linux_emitter.hepta": [],
+    "platform/execution_application/model.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_bytes_equal",
+          "ap_cfg_position",
+          "ap_cfg_text_equal",
+          "ap_cleanup",
+          "ap_concat",
+          "ap_decimal",
+          "ap_div",
+          "ap_edit",
+          "ap_error",
+          "ap_evaluator",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash_begin",
+          "ap_hash_number",
+          "ap_hash_part",
+          "ap_hex",
+          "ap_import",
+          "ap_index",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_member_first",
+          "ap_member_next",
+          "ap_member_node",
+          "ap_nonzero",
+          "ap_number",
+          "ap_object",
+          "ap_payload",
+          "ap_payload_number",
+          "ap_request_capacity",
+          "ap_request_sha",
+          "ap_request_svp",
+          "ap_rows_first",
+          "ap_rows_next",
+          "ap_rows_node",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/execution_application/prepare_bridge.hepta": [
+      {
+        "functions": [
+          "mp_fail",
+          "mp_finish",
+          "mp_g",
+          "mp_g32",
+          "mp_gate",
+          "mp_go",
+          "mp_hash",
+          "mp_inside",
+          "mp_io",
+          "mp_issue",
+          "mp_p",
+          "mp_prepare",
+          "mp_prepare_0",
+          "mp_prepare_1",
+          "mp_prepare_2",
+          "mp_putn",
+          "mp_r",
+          "mp_take",
+          "mp_wipe",
+          "mp_zero"
+        ],
+        "source": "platform/execution_prepare/owner_policy.hepta"
+      }
+    ],
+    "platform/execution_application/quota.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_bytes_equal",
+          "ap_cfg_position",
+          "ap_cleanup",
+          "ap_concat",
+          "ap_edit",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash32",
+          "ap_hash_begin",
+          "ap_hash_number",
+          "ap_hash_part",
+          "ap_hex",
+          "ap_hex_digit",
+          "ap_import",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_mul",
+          "ap_nonzero",
+          "ap_number",
+          "ap_object",
+          "ap_payload",
+          "ap_payload_number",
+          "ap_request_capacity",
+          "ap_request_ed",
+          "ap_request_sha",
+          "ap_request_svp",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/execution_application/relation.hepta": [
+      {
+        "functions": [
+          "ap_add",
+          "ap_alloc",
+          "ap_cfg_position",
+          "ap_cleanup",
+          "ap_div",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash_begin",
+          "ap_hash_number",
+          "ap_hash_part",
+          "ap_hex",
+          "ap_import",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_number",
+          "ap_request_capacity",
+          "ap_request_sha",
+          "ap_request_svp",
+          "ap_rows_first",
+          "ap_rows_next",
+          "ap_rows_node",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_untrack",
+          "ax_compare",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/execution_application/release.hepta": [
+      {
+        "functions": [
+          "ap_add",
+          "ap_alloc",
+          "ap_bytes_equal",
+          "ap_cfg_position",
+          "ap_cleanup",
+          "ap_concat",
+          "ap_edit",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash32",
+          "ap_hash_begin",
+          "ap_hash_number",
+          "ap_hash_part",
+          "ap_hex",
+          "ap_hex_digit",
+          "ap_import",
+          "ap_index",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_number",
+          "ap_object",
+          "ap_payload",
+          "ap_payload_byte",
+          "ap_payload_number",
+          "ap_request_capacity",
+          "ap_request_sha",
+          "ap_request_svp",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/execution_application/support.hepta": [
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/execution_application/task.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_boolean",
+          "ap_bytes_equal",
+          "ap_cfg_position",
+          "ap_cleanup",
+          "ap_concat",
+          "ap_edit",
+          "ap_error",
+          "ap_field",
+          "ap_field_number",
+          "ap_field_text",
+          "ap_finish",
+          "ap_hash_begin",
+          "ap_hash_number",
+          "ap_hash_part",
+          "ap_hex",
+          "ap_import",
+          "ap_initialize",
+          "ap_limit",
+          "ap_literals",
+          "ap_literals_0",
+          "ap_literals_1",
+          "ap_literals_2",
+          "ap_literals_3",
+          "ap_literals_4",
+          "ap_literals_5",
+          "ap_literals_6",
+          "ap_literals_7",
+          "ap_nonzero",
+          "ap_number",
+          "ap_object",
+          "ap_payload",
+          "ap_payload_number",
+          "ap_request_capacity",
+          "ap_request_sha",
+          "ap_request_svp",
+          "ap_text",
+          "ap_text_equal",
+          "ap_track",
+          "ap_uint",
+          "ap_untrack",
+          "ax_compare",
+          "ax_edit",
+          "ax_edit_size",
+          "ax_emit_member",
+          "ax_field",
+          "ax_move",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ]
+  },
+  "schema": "trnm.hia.execution-application-includes.v1"
+}

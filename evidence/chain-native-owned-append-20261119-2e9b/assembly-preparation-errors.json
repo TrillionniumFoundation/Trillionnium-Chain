@@ -1,0 +1,18 @@
+[
+  {
+    "stage": "controller-script-construction",
+    "error": "SyntaxError: Unexpected identifier 'continuously_distinct_bad_products_exhaust_one_original_prepaid_domain'",
+    "remote_pty_launched": false,
+    "native_exit_code": null,
+    "wall_seconds": null,
+    "cpu_seconds": null,
+    "reason": "Unescaped Markdown backticks in JavaScript template; corrected before any remote mutation."
+  },
+  {
+    "stage": "candidate-freeze-13/staged-diff-check",
+    "native_exit_code": 2,
+    "owner_exit_code": 1,
+    "error": "The retained patch's legitimate blank context lines were treated as trailing whitespace when added as a text artifact. Every reported path was candidate-source.patch. Exact patch bytes are now stored as deterministic gzip, and the complete original packaging result/logs and earlier evidence are retained in the new raw archive.",
+    "source_changed": false
+  }
+]

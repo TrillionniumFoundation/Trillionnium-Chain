@@ -1,0 +1,122 @@
+{
+  "schema": "chain-native-root-body-delay-frozen-source-v1",
+  "base_commit": "8d8e50e4256c1f4a5e0bcaa6dfb4d0e19eb5510f",
+  "base_tree": "4b45692a1c356dad66aa8076e59a382085427e4e",
+  "only_listed_files_overlay_base": true,
+  "execution_checkout_head": "7e3e454f9b18d5d135e72cc5ea373e04fc5a2ef8",
+  "qualification": false,
+  "f0_run": "NOT_RUN",
+  "plan_pinned": true,
+  "source_files": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 526441,
+      "sha256": "005b409f3db22fe0d1b8878f604eec480a6b0c00f96de769105189720c069d06",
+      "git_blob": "208a8cb5b0bbe83cf802aee4f35e7fae0a88ae5c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "bytes": 38451,
+      "sha256": "c8957f71a7aa404b48f241395bd239c93f3d480d6b9224c8a7d8fa4eb7e59f6d",
+      "git_blob": "77781217ebe2b7215f86df211243e311d8123736"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 456679,
+      "sha256": "7d2ef2212d9be34ff0615b75d2f4f568c000e1aa7ce1b6ddea233fe79dc8e4e9",
+      "git_blob": "0a6048d4ea653da03c2d934a7e54abf9a1d6e1fe"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs",
+      "bytes": 4866,
+      "sha256": "39c6e5360707628d8d12877ff3f031126febfbe05fd92b86e2a1450ce9f0dbac",
+      "git_blob": "478f479cea62b02b1035422b929ceaeb5d536e38"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs",
+      "bytes": 22514,
+      "sha256": "17b03d12e27c70e0c2cd1e221b04e3b1483fbf6e923480ea704a416a6c78dc1e",
+      "git_blob": "4165653ce7599ac8cdde594600f6889d07e67ad8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs",
+      "bytes": 19508,
+      "sha256": "0e99e25e57143e700c34d4c6e699fdde85450843dd0c7acb52e58f6aab2bf5b7",
+      "git_blob": "657aca65618d474b6f0fe74003c3f6091101d844"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/native_root_delay_tests.rs",
+      "bytes": 14611,
+      "sha256": "2fd7de3b6e2c3e6d85f271ada0346cc5847a018d6cfaa37eca7f5ec8fcd08801",
+      "git_blob": "9f05543dcedb8ed471758be8151c6e2c059fe732"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs",
+      "bytes": 16794,
+      "sha256": "28b2c290fde2bef15571a011b648a8b13a2539ccfd49f647c0abc25b8b70aae1",
+      "git_blob": "2eaff40c5b18a61224a3759ec4e1e7db2fde5254"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 397703,
+      "sha256": "cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9",
+      "git_blob": "feb66e96059121ee71b4e4951547ec58f9707a56"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "bytes": 23164,
+      "sha256": "6220f2c2a8dca71ebbe3ed3c9a3ee65f5f0eda3f0da3cb0a416b39f2a79e8ef1",
+      "git_blob": "4f90ac6ffc51612a1b9e6c5c57a287edd66ef21b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "bytes": 73075,
+      "sha256": "9d09f2579a0014d85257d783170c77db31858698d1c38c0c7a0ce40ac9376fe9",
+      "git_blob": "d56f261fa50663b2612ebefa20150e320c93ac30"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_root_refusal.rs",
+      "bytes": 5025,
+      "sha256": "c45e76431fc287246dd8f4725e25821f9f0431dd8342032c5742f7d577967f2d",
+      "git_blob": "1c05426c3cd3300ffece40c6d86d4c0c1bc90605"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "bytes": 37371,
+      "sha256": "b71748ec6137f43f90f24ac3e7d921966e8febded42a88797b857e141df80c2f",
+      "git_blob": "f263b7368b9aa2315fbbe6bca4976c75d8e1f52d"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 1294039,
+      "sha256": "c22689a2b3b2c9321d56602493f5015639cf368f3c7030257d918402ad39dc91",
+      "git_blob": "cb1ef928b18a1592bd7c33999a4b069ab236ea27"
+    }
+  ],
+  "source_gate_stages": [
+    {
+      "name": "ci-contract",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.11404632218182087,
+      "child_user_cpu_seconds": 0.06927900000000001,
+      "child_system_cpu_seconds": 0.007130999999999999
+    },
+    {
+      "name": "pq-exact-source",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.3145014839246869,
+      "child_user_cpu_seconds": 0.22610199999999997,
+      "child_system_cpu_seconds": 0.079387
+    }
+  ]
+}

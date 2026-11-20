@@ -1,0 +1,96 @@
+{
+  "TCM1_context_owner_qualified": false,
+  "actual_original_comparison": {
+    "accepted": 738,
+    "compared": 929,
+    "complete_original_source_set_sha256": "e88162250df5b632827bc0db8e9bdc6a4b43baea82a7b529215a344471789117",
+    "complete_raw_report_member": "original-comparison/report.json",
+    "encode_cases": 33,
+    "explicit_original_pins": 27,
+    "failures": 0,
+    "original_erasure_body_sha256": "0eada2da9d8147c1e7a69166b9de0efcb99650b2ffca81238ca5a8473715069a",
+    "original_source_inputs": 4414,
+    "recover_cases": 896,
+    "rejected": 191,
+    "retained_original_tests": 12,
+    "source_stability": "Exact executed map retained; later integration plan-pin changes require fresh hosted execution.",
+    "status": "PASS"
+  },
+  "archive": {
+    "all_declared_members_read_completely": true,
+    "bytes": 450692,
+    "logical_bytes": 54519869,
+    "member_index": "MANIFEST.json",
+    "member_index_sha256": "9a4f0c594d622ee4b414468682a780b9e31f5934d20159297b3e2f6da3b81316",
+    "path": "rs46-development.tar.xz",
+    "readback": "PASS",
+    "regular_members": 3599,
+    "sha256": "6bfd2cf45260df4b8d099950add9c4e2d9c0155414c76e997be8de6ca78049e0"
+  },
+  "base_commit": "337fe8df54a5af59e10a1aea129022702b40b89d",
+  "external": {
+    "isolated_original_source": {
+      "inputs": 4414,
+      "source_map_member": "original-comparison/original/source-inputs.json",
+      "source_set_sha256": "e88162250df5b632827bc0db8e9bdc6a4b43baea82a7b529215a344471789117",
+      "storage": "external to compact archive; complete exact map and explicit original pins are included"
+    },
+    "original_cargo_target": {
+      "storage": "build cache excluded; compiler events and executed binary identity retained"
+    },
+    "original_executable": {
+      "bytes": 154360792,
+      "development_path": "/workspace/scratch/bc089b09ffa5/rs46-original-qualification-v2/original-rs46-tests",
+      "hosted_retention": "The mandatory independent CI job uploads the actual executed top-level original-rs46-tests binary.",
+      "sha256": "e7dbd6b38831ef86e062b2b50b1c0442ce9dcaa9f16a48c45bd9722b7d431378",
+      "storage": "external to this compact development archive"
+    }
+  },
+  "hosted_execution": "NOT_RUN for this increment at preparation",
+  "initial_original_build": {
+    "cause": "Isolated copy omitted root tests/fixtures/cell-content-graph-v3/vectors.json used by include_str!",
+    "fixed_by": "Copy and fence the complete original root tests directory; execute a fresh v2 output directory",
+    "raw_report_member": "initial-original-build-failure/report.json",
+    "status": "FAIL"
+  },
+  "integration_controls": {
+    "bootstrap_controls": "PASS all four existing groups across 42 gates, 168 invocations",
+    "bound_toolchain_attempt": "PASS 33 tests with exact pinned compiler/toolchain variables",
+    "unbound_toolchain_attempt": "FAIL before CompositionTests: HIA_TOOLCHAIN_ROOT absent; 15 tests observed, one setup error"
+  },
+  "native_artifact": {
+    "bytes": 90984,
+    "member": "native/selfhost.so",
+    "sha256": "4fa0531c05ccb2ae2c3c4fc5ec6e81914aa42465c4c51684d8ae567b74493841"
+  },
+  "native_source": {
+    "bytes": 56102,
+    "sha256": "ece97c3190e0e308928361bbcfad0b0aa6b9d7e643b232923c8d02c0331cf56d"
+  },
+  "native_tests": {
+    "failures": 0,
+    "field_products": 65536,
+    "log": "controls/rs46-final-tests.log",
+    "maximum_recovery_input_bytes": 6292022,
+    "maximum_sixth_shard_last_byte_corruption": {
+      "output_bytes_preserved": 4194304,
+      "status": 10
+    },
+    "maximum_source_bytes": 4194304,
+    "recovery_subsets": 22,
+    "skips": 0,
+    "status": "PASS",
+    "test_source": {
+      "bytes": 14976,
+      "sha256": "e610af28d15dbafa9ac5fca474ee0827c90b8596e6a81792d589c213637ad924"
+    },
+    "tests": 15,
+    "wall_seconds": 37.407
+  },
+  "old_stack_can_be_removed": false,
+  "production_activation": false,
+  "retirement_accepted": false,
+  "schema": "trnm.hia.rs46-development.v1",
+  "scope": "Full original 4 MiB selected-chunk RS(6,4)/CRS1 codec; separate manifest/context owner required",
+  "whole_chain_native": false
+}

@@ -498,6 +498,11 @@ impl PreparedExecution {
             )
             .map_err(local_execution_error)?;
         drop(bound);
+        let execution_deltas = (prepared.pin.backend == StateBackend::AuthenticatedV1
+            && prepared.eligibility.manifest().is_none()
+            && !pq_accounts_v2::enabled(&prepared.app)
+            && !growth_profile_v2::enabled(&prepared.app))
+        .then(|| std::mem::take(&mut staged.commitment.changes));
         if prepared.eligibility.manifest().is_some() {
             let product: Vec<u8> = prepared
                 .checked
@@ -522,11 +527,33 @@ impl PreparedExecution {
             }
         }
         (control.progress)(ExecutionProgress::BeforeOutput)?;
-        ensure(
-            h.state == staged.output.root
-                && h.receipts == sequence_root("receipts", &staged.output.receipts),
-            "ROOT",
-        )?;
+        let receipts_root = sequence_root("receipts", &staged.output.receipts);
+        if h.state != staged.output.root || h.receipts != receipts_root {
+            // The original full parent binding, M06, qualified task output and
+            // final progress fence have all completed. An encoding miss only
+            // omits this optional scheduling provenance; ROOT stays ROOT.
+            let refusal = if !pq_accounts_v2::enabled(&prepared.app)
+                && !growth_profile_v2::enabled(&prepared.app)
+            {
+                prepared.checked.packet.encode().ok().and_then(|bytes| {
+                    NativeRootRefusal::after_complete_output_comparison(
+                        [
+                            prepared.pin.network,
+                            prepared.pin.parameters,
+                            prepared.pin.genesis,
+                        ],
+                        &bytes,
+                        (h.state, h.receipts),
+                        (staged.output.root, receipts_root),
+                    )
+                })
+            } else {
+                None
+            };
+            return Err(refusal
+                .map(Error::native_output_root_refusal)
+                .unwrap_or_else(|| "ROOT".into()));
+        }
         drop(prepared.execution_measurement.take());
         let bytes = if pq_accounts_v2::enabled(&prepared.app) {
             crate::pq_application_v6::encode_packet_for_profile(
@@ -545,6 +572,7 @@ impl PreparedExecution {
                 prior: prepared.prior,
                 output: staged.output,
                 commitment: staged.commitment,
+                execution_deltas,
             },
             _measurement: prepared._admission_measurement,
         })

@@ -1,0 +1,441 @@
+{
+  "actual_original": {
+    "comparison": {
+      "bytes": 780232,
+      "sha256": "227b913d503107cd63986ccf7d4b6c8bdc656167e1535dd7b4ac3ceb9fd1fcd5"
+    },
+    "histories": 65,
+    "independent_binary": {
+      "bytes": 612182000,
+      "path": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/thread-cpu-hosted-terminal-qualification-v1/original-run/original/original-test-binary",
+      "sha256": "4e4cee93eb14dc8f2e3edf394d69ab1ae7c27eb210a992cfa78ea76b42c655eb"
+    },
+    "locked_clock_dependency_after": "MATCH",
+    "mandatory_linux_positive": true,
+    "operations": 724,
+    "original_calls": 518,
+    "report": {
+      "bytes": 1076579,
+      "sha256": "85e8c3cd97a1433b827d57d98edba9eb135115be4a5cf67e815bcc626072b852"
+    },
+    "retained_test_count": 36,
+    "retained_test_summary": [
+      "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 1541 filtered out; finished in 0.16s"
+    ],
+    "seconds": 237.52858459198615,
+    "source_after": "MATCH",
+    "status": "PASS"
+  },
+  "base_commit": "535ce9865d6764de8184aab04204459f6f05001b",
+  "complete_corpus": {
+    "bytes": 68539,
+    "sha256": "42c9e9b8d04505fb64d1d3852d092450d181df036523761083e4ba946832fa52"
+  },
+  "current_source_matches_native_and_original": true,
+  "execution": {
+    "bytes": 1952,
+    "sha256": "c9028fcc9dee84da303b59b56f8fda14e28efa3c63ea01a67014ad5f11b1b786"
+  },
+  "hosted_predecessor_failures": [
+    {
+      "actual_signal_return": [
+        {
+          "actual_return_line": "2882  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)",
+          "fixed_live_wait_matches": true,
+          "legacy_live_wait_matches": false,
+          "padding_hex": "2020",
+          "tid": 2882
+        }
+      ],
+      "archive_zip": {
+        "bytes": 2341146,
+        "sha256": "6e1aabe88c0f536f61859c1d3fcc36c7bec79ceef7a791965d5a4cead96981dc"
+      },
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 56828,
+        "sha256": "d371bfba654c95e90d9d2625557f61aa3a3b00d32864b7cf9054061406d76dd5"
+      },
+      "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+      "job": 133359090163,
+      "original_execution": "NOT_RUN",
+      "partial_semantic_histories": 65,
+      "physical_controls_completed": 0,
+      "review": {
+        "bytes": 1040,
+        "sha256": "5247b999c7298a03d8a96e9e00c11b74feef3aecef82434af2c5750123742bfa"
+      },
+      "run": 43884564137,
+      "status": "FAIL"
+    },
+    {
+      "actual_signal_return": [
+        {
+          "actual_return_line": "2895  rt_sigreturn({mask=[]})           = -1 EINTR (Interrupted system call)",
+          "fixed_live_wait_matches": true,
+          "legacy_live_wait_matches": false,
+          "padding_hex": "2020",
+          "tid": 2895
+        }
+      ],
+      "archive_zip": {
+        "bytes": 2341465,
+        "sha256": "09f4685d42ca19c1872a39103ebb027854159c6cf7feafa1f2d9e4f2f5de8ddb"
+      },
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 57149,
+        "sha256": "52247cef3588365aec54813cb0e462c5af02e9d93cb760d87934901863102254"
+      },
+      "head": "44b3c6e622d009b6b92b270b4e1f5c82fc844b81",
+      "job": 133360095846,
+      "original_execution": "NOT_RUN",
+      "partial_semantic_histories": 65,
+      "physical_controls_completed": 0,
+      "review": {
+        "bytes": 1040,
+        "sha256": "58319453a2b6287c25a4816df6202a7af93572bb4750c96a7bef6929df48d68e"
+      },
+      "run": 43884851140,
+      "status": "FAIL"
+    },
+    {
+      "actual_terminal_lines": [
+        "2625  exit_group(0)                     = ?"
+      ],
+      "archive_zip": {
+        "bytes": 2407779,
+        "sha256": "c584b4f4f27868d5c9fd6369c1dd07dcb099940b1c233d7925dbf4636981f5a6"
+      },
+      "artifact": 14237529740,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 56528,
+        "sha256": "754ed34cf3b918d30dc3b2bd5b7bff1b86e8b4635fbcafd9ea24187d2c1bf500"
+      },
+      "head": "535ce9865d6764de8184aab04204459f6f05001b",
+      "job": 133396542521,
+      "operations_observed": 724,
+      "original_execution": "NOT_RUN",
+      "physical_controls_completed": 74,
+      "review": {
+        "bytes": 9044,
+        "sha256": "91f04897a05cf3f6483e6f90a848f2cd3edc19edbf001b48da60bc6c62f96fd5"
+      },
+      "run": 43895143250,
+      "semantic_histories_observed": 65,
+      "status": "FAIL",
+      "trace_negative_controls_completed": 0
+    },
+    {
+      "actual_terminal_lines": [
+        "2633  exit_group(0)                     = ?"
+      ],
+      "archive_zip": {
+        "bytes": 2407726,
+        "sha256": "88ae9528a41bf013f9f19c30f94cfdd4004fd58c8bf0f01c6c43b0df51f3b9a1"
+      },
+      "artifact": 14238872248,
+      "attempt": 1,
+      "complete_job_log": {
+        "bytes": 50013,
+        "sha256": "376d68415924f1065c6f1dc8ffa714a21da1cf01e48c1bbcf890f08cbcae2f15"
+      },
+      "head": "535ce9865d6764de8184aab04204459f6f05001b",
+      "job": 133399336863,
+      "operations_observed": 724,
+      "original_execution": "NOT_RUN",
+      "physical_controls_completed": 74,
+      "review": {
+        "bytes": 9044,
+        "sha256": "78a54f86c46226a62552edf15fb8c0490bb13c5ad4739f9e2c2977e7dff78432"
+      },
+      "run": 43895921099,
+      "semantic_histories_observed": 65,
+      "status": "FAIL",
+      "trace_negative_controls_completed": 0
+    }
+  ],
+  "independent_verification": {
+    "bytes": 993,
+    "sha256": "169630fd356d2b380c53971693646b6362b4f96b7e360abccb1cfb7be254d1df"
+  },
+  "native": {
+    "actual_signal_pairing_negative_controls": 4,
+    "build": {
+      "bytes": 15769,
+      "sha256": "5fec752bdfb597e3bc9451ac7f4e036cbb270d3517ad3c53fd9a79cc391cc439"
+    },
+    "fixture_executable": {
+      "adapter_prefix_bytes": 2076,
+      "bytes": 125683,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "histories": 65,
+    "native_comparison": {
+      "bytes": 1996083,
+      "sha256": "78b10af640e4440d27c0ffe8f04c387e8647e2cecd6104931a89004b03c2808e"
+    },
+    "native_report": {
+      "bytes": 1069265,
+      "sha256": "2e78491c20f054cc38f9585a42917a5ea021fcf313b12d4ea31fb48224c713e4"
+    },
+    "operations": 724,
+    "ordinary_trace_refusals": 12,
+    "physical_controls": 74,
+    "production_executable": {
+      "adapter_prefix_bytes": 2076,
+      "bytes": 125683,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "seconds": 17.425923250004416,
+    "status": "PASS"
+  },
+  "native_adapter_changed": false,
+  "new_exact_commit_ci": "NOT_RUN",
+  "paid_cpu_account_qualified": false,
+  "preserved_raw_archive": {
+    "bytes": 5830600,
+    "manifest": {
+      "bytes": 319399,
+      "member": "member-manifest.json",
+      "scope": "all remaining archive members",
+      "sha256": "d47acd7acd51fd02bb9f31d4c50bda87402cc8ef73e8e8f71bca888eeb2ef4e6"
+    },
+    "members": 1479,
+    "path": "hia/qualification/thread-cpu-development.tar.xz",
+    "regular_bytes": 18980186,
+    "regular_files": 1212,
+    "sha256": "82faf2bb89d4883751537e077a3a095df08b8e26f08807af71e1be48aa8f4e73"
+  },
+  "prior_published_record": {
+    "actual_results_not_relabelled": true,
+    "bytes": 13300,
+    "commit": "535ce9865d6764de8184aab04204459f6f05001b",
+    "complete_previous_archive": {
+      "redundant_nested_copy_removed": true,
+      "retained_in_git": {
+        "bytes": 7793524,
+        "commit": "535ce9865d6764de8184aab04204459f6f05001b",
+        "git_blob": "ea1b7270262f00c458b92890627e21e5678cede8",
+        "path": "hia/qualification/thread-cpu-development.tar.xz",
+        "sha256": "ba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94"
+      }
+    },
+    "preserved_as": "prior/previous-development.json",
+    "previous_source_set_sha256": "e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b",
+    "record_path": "hia/qualification/thread-cpu-development.json",
+    "sha256": "45a005badd8581473f974a5c8501d70d14cb509793e1c7de1d8eb849f8f8c0ab"
+  },
+  "publication_packaging": {
+    "branch_or_tree_changed_by_refusal": false,
+    "first_expanded_archive": {
+      "bytes": 13630612,
+      "sha256": "697ce25ca049ed60e3372e385dd639bd104b57618ac26ae5f9b624000ce1d049"
+    },
+    "first_upload": "REFUSED_BY_CONNECTOR_16_MIB_REQUEST_LIMIT",
+    "remediation": "Remove only exact duplicate of already published predecessor archive; preserve its immutable Git identity and every new execution/failure member"
+  },
+  "qualifier_fix": {
+    "changed_source_inputs": [
+      "hia/platform/thread_cpu/qualify.py",
+      "hia/platform/thread_cpu/test_integrity.py"
+    ],
+    "child_exit_mutation_removes_exact_parsed_lines": true,
+    "complete_actual_hosted_fixture": {
+      "horizontal_padding_forms": 5,
+      "job": 133396542521,
+      "negative_controls_each": 12,
+      "trace_input_output": {
+        "bytes": 35304,
+        "sha256": "328b6ceb234f1cc672d7117e436d97663ccb16fe4498be2d299ddbe9149ae83e"
+      }
+    },
+    "full_trace_audit_unchanged": true,
+    "integrity_log": {
+      "bytes": 1851,
+      "sha256": "a1899f5bb87744e7e71c0bec4bec2bdc7637d038b46b6a3a0f4d2ea682339168"
+    },
+    "integrity_test_groups": 10,
+    "reason": "The actual hosted negative-control builder still searched for exactly one space before exit_group after the earlier live-wait repair",
+    "trace_mutations_use_parsed_task_syscall_and_line_positions": true
+  },
+  "retirement_accepted": false,
+  "runtime_hia_changed": false,
+  "schema": "trnm.hia.thread-cpu.development.v2",
+  "source_inputs": {
+    "hia/platform/README.md": {
+      "bytes": 11641,
+      "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
+    },
+    "hia/platform/abi.json": {
+      "bytes": 6864,
+      "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+    },
+    "hia/platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "hia/platform/linux_adapter_emitter.hepta": {
+      "bytes": 45152,
+      "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+    },
+    "hia/platform/probe_policy.hepta": {
+      "bytes": 38621,
+      "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+    },
+    "hia/platform/thread_cpu/README.md": {
+      "bytes": 8128,
+      "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
+    },
+    "hia/platform/thread_cpu/abi.json": {
+      "bytes": 5172,
+      "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
+    },
+    "hia/platform/thread_cpu/build.py": {
+      "bytes": 8419,
+      "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
+    },
+    "hia/platform/thread_cpu/cases.py": {
+      "bytes": 7248,
+      "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
+    },
+    "hia/platform/thread_cpu/fixture_entry.hepta": {
+      "bytes": 288,
+      "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
+    },
+    "hia/platform/thread_cpu/linux_emitter.hepta": {
+      "bytes": 39791,
+      "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
+    },
+    "hia/platform/thread_cpu/native_io.py": {
+      "bytes": 9894,
+      "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
+    },
+    "hia/platform/thread_cpu/owner_policy.hepta": {
+      "bytes": 85504,
+      "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
+    },
+    "hia/platform/thread_cpu/qualify.py": {
+      "bytes": 27441,
+      "sha256": "d64de5eb7a9627e9c9cda0dc307efc48dcba7f0d1165a192813f0a72566e89d2"
+    },
+    "hia/platform/thread_cpu/rust_oracle.py": {
+      "bytes": 29369,
+      "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
+    },
+    "hia/platform/thread_cpu/rust_reference.rs": {
+      "bytes": 13897,
+      "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
+    },
+    "hia/platform/thread_cpu/test_integrity.py": {
+      "bytes": 51546,
+      "sha256": "206aebe04c4b9d18bb46d70dd7b188508a62389871b1df0920bea7ed5e34f268"
+    },
+    "hia/platform/thread_cpu/trace_audit.py": {
+      "bytes": 26502,
+      "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
+    },
+    "hia/platform/transport_request/rust_oracle.py": {
+      "bytes": 12311,
+      "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+    },
+    "hia/qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "hia/qualification/compiler-cold-full.json.xz": {
+      "bytes": 838544,
+      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+    },
+    "hia/qualification/compiler-cold.json": {
+      "bytes": 108675,
+      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+    },
+    "hia/tests/test_platform_cleanup.py": {
+      "bytes": 9301,
+      "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+    },
+    "hia/toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "hia/tools/qualify_platform.py": {
+      "bytes": 30419,
+      "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
+    },
+    "hia/tools/toolchain.py": {
+      "bytes": 14157,
+      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 42127,
+      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 161926,
+      "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
+    },
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+      "bytes": 2357,
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 446331,
+      "sha256": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "bytes": 114097,
+      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
+      "bytes": 82351,
+      "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": {
+      "bytes": 30919,
+      "sha256": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs": {
+      "bytes": 10769,
+      "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": {
+      "bytes": 15568,
+      "sha256": "a9e4d1705335925d0f3c2a01cac7855155c61b4c54b3e42dd6caaaecf3720696"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
+      "bytes": 15351,
+      "sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs": {
+      "bytes": 10954,
+      "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
+    }
+  },
+  "source_set_sha256": "5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805",
+  "status": "CURRENT_SOURCE_NATIVE_AND_ACTUAL_ORIGINAL_PASS_EXACT_COMMIT_CI_PENDING",
+  "whole_node_qualified": false
+}

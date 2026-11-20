@@ -25,6 +25,31 @@ REGISTRY_SHA256 = {
     'node': '357025f7f34769299392d01f26e33047f4b81d8e25594ef5158a474f47175865',
 }
 POSTWRITE_PREFIX = PREFIX + 'post_write_readback::tests::'
+CURRENT_EVIDENCE = ROOT / 'evidence/chain-native-owned-append-20261119-2e9b/controls'
+CURRENT_ROSTER = ROOT / 'config/pon/authenticated-current-roster-v1.json'
+CURRENT_ROSTER_SHA256 = '1e98393ca0a366d99714bd3e4c813b078afa4be6f450888ca47a4882234950fa'
+CURRENT_NATIVE_SHA256 = '83ca708525ff68f8bfa67db329b769507f109f78ca5db832e8580e9c692dc371'
+CURRENT_REGISTRY_SHA256 = '53145dd409aa99a75cab15fa96e66a102ccc19f731f2b016ae62e29cdeab3559'
+HISTORICAL_REGISTRY_GUARD_SHA256 = '2e6f389f8c25f8b3298979a58ce3eda54980439a2dda4342427f7a6b51f8859e'
+
+
+def current_roster():
+    raw = CURRENT_ROSTER.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == CURRENT_ROSTER_SHA256
+    value = json.loads(raw)
+    assert set(value) == {'schema', 'tests'}
+    assert value['schema'] == 'trnm-authenticated-current-roster-v1'
+    names = value['tests']
+    assert names == sorted(set(names)) and len(names) == 133
+    assert sum(name.startswith(POSTWRITE_PREFIX) for name in names) == 55
+    return names
+
+
+def current_native_fixture():
+    raw = gzip.decompress((CURRENT_EVIDENCE / 'native-authenticated.log.gz').read_bytes())
+    assert hashlib.sha256(raw).hexdigest() == CURRENT_NATIVE_SHA256
+    return raw.decode()
+
 LEGACY_TAIL_PREFIX = PREFIX + 'history_arithmetic::legacy_activation_tail::tests::'
 LEGACY_TAIL_CONTROLS = {
     LEGACY_TAIL_PREFIX + 'disabled_paths_do_not_read_diagnostic_clocks',
@@ -36,7 +61,7 @@ LEGACY_TAIL_CONTROLS = {
 }
 
 # Frozen verbatim from the c3e53d2 workflow. These four observations established
-# the historical 97-control roster; they cannot establish the current 103.
+# the historical 97-control roster; they cannot establish the current 133.
 HISTORICAL_LOG_SHA256 = {
     127701926958: '244f253489f52e62e8985323ca2041de293039981b1c2bd86f1ddab6a5f0e692',
     127701927002: 'e51a5d58671626c3d6e48b4e908a18724da393de0bcedd7c1d1ffeece2a4dc62',
@@ -87,7 +112,7 @@ def check(log, old=False, historical=False):
     with tempfile.TemporaryDirectory(prefix='auth-suite-guard-') as directory:
         path = Path(directory) / 'native.log'
         path.write_text(log)
-        inline = subprocess.run([sys.executable, '-B', '-c', code, str(path)], capture_output=True)
+        inline = subprocess.run([sys.executable, '-B', '-c', code, str(path)], cwd=ROOT, capture_output=True)
     return grep.returncode == 0, inline.returncode == 0
 
 
@@ -100,31 +125,42 @@ def fixture(job):
 
 def synthetic_current_parser_control():
     """Parser input only: it is not a native observation or execution receipt."""
-    names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
-                       fixture(JOBS[0]), re.M)
-    names += sorted(LEGACY_TAIL_CONTROLS)
     return ('SYNTHETIC READER CONTROL ONLY; no native execution\n'
-            + ''.join(f'test {name} ... ok\n' for name in names)
-            + 'test result: ok. 103 passed; 0 failed; 0 ignored; 0 measured; '
+            + ''.join(f'test {name} ... ok\n' for name in current_roster())
+            + 'test result: ok. 133 passed; 0 failed; 0 ignored; 0 measured; '
               '0 filtered out; finished in 0.00s\n')
 
 
-def registry_fixtures():
+def registry_fixtures(historical=False):
     result = {}
     for crate, expected in REGISTRY_SHA256.items():
         raw = gzip.decompress((REGISTRY_EVIDENCE / f'{crate}-registry.log.gz').read_bytes())
         assert hashlib.sha256(raw).hexdigest() == expected, crate + ' native registry fixture changed'
         result[crate] = raw.decode()
+    if not historical:
+        # Current node registry is an actual default-feature release libtest
+        # observation; the unchanged m06 fixture remains explicitly historical.
+        # Neither is a complete current workspace execution qualification.
+        raw = gzip.decompress((CURRENT_EVIDENCE / 'node-registry.log.gz').read_bytes())
+        assert hashlib.sha256(raw).hexdigest() == CURRENT_REGISTRY_SHA256
+        result['node'] = raw.decode()
     return result
 
 
-def workspace_registry_check(registries, old=False):
+def workspace_registry_check(registries, old=False, historical=False):
     workflow = WORKSPACE_WORKFLOW.read_text()
     code = textwrap.dedent(workflow.split("<<'PYREGISTRY'\n", 1)[1].split('        PYREGISTRY\n', 1)[0])
+    current = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", 55)'
+    assert current in code
+    if historical:
+        code = code.replace(current, current.replace(', 55)', ', 25)'))
+        assert hashlib.sha256(code.encode()).hexdigest() == HISTORICAL_REGISTRY_GUARD_SHA256
     if old:
-        corrected = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", 25)'
+        count = 25 if historical else 55
+        wanted = 23 if historical else 25
+        corrected = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", {count})'
         assert corrected in code
-        code = code.replace(corrected, corrected.replace(', 25)', ', 23)'))
+        code = code.replace(corrected, corrected.replace(f', {count})', f', {wanted})'))
     with tempfile.TemporaryDirectory(prefix='workspace-registry-guard-') as directory:
         controls = Path(directory) / 'semantic-controls'
         controls.mkdir()
@@ -151,21 +187,22 @@ class AuthenticatedSuiteCount(unittest.TestCase):
         owned = {path: re.findall(r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(',
                                  path.read_text()) for path in files}
         source = [name for names in owned.values() for name in names]
+        current = current_roster()
+        self.assertEqual(len(source), 133)
+        self.assertCountEqual(source, [name.rsplit('::', 1)[1] for name in current])
         tail = store / 'native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs'
-        added = owned[tail]
-        self.assertEqual(len(source), 103)
-        self.assertEqual(len(added), 6)
-        self.assertCountEqual([LEGACY_TAIL_PREFIX + name for name in added],
+        self.assertCountEqual([LEGACY_TAIL_PREFIX + name for name in owned[tail]],
                               LEGACY_TAIL_CONTROLS)
-        retained = [name for path, names in owned.items() if path != tail for name in names]
-        self.assertEqual(len(retained), 97)
+        executed = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
+                              current_native_fixture(), re.M)
+        self.assertCountEqual(current, executed)
+        self.assertEqual(check(current_native_fixture()), (True, True))
         for job in JOBS:
             names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', fixture(job), re.M)
             self.assertEqual(len(names), 97)
             self.assertEqual(len(set(names)), 97)
-            historical_names = [name.rsplit('::', 1)[1] for name in names]
-            self.assertCountEqual(retained, historical_names)
-            self.assertCountEqual(source, historical_names + added)
+            self.assertTrue(set(names) < set(current))
+            self.assertEqual(len(set(current) - set(names)), 36)
             self.assertEqual(sum('::post_write_readback::tests::' in name for name in names), 25)
             self.assertEqual(sum('::current_accounts_tests::' in name for name in names), 5)
 
@@ -184,7 +221,7 @@ class AuthenticatedSuiteCount(unittest.TestCase):
 
     def test_reduced_extra_failed_ignored_partial_and_repeated_summary_rejected(self):
         for log, historical, count in ((fixture(JOBS[0]), True, 97),
-                                       (synthetic_current_parser_control(), False, 103)):
+                                       (synthetic_current_parser_control(), False, 133)):
             changes = [(f'{count} passed', f'{value} passed')
                        for value in (count - 6, count - 1, count + 1)]
             changes += [('0 failed', '1 failed'), ('0 ignored', '1 ignored'),
@@ -215,15 +252,19 @@ class AuthenticatedSuiteCount(unittest.TestCase):
     def test_each_new_control_must_be_unique_named_and_successful(self):
         log = synthetic_current_parser_control()
         self.assertEqual(check(log), (True, True))
-        for name in LEGACY_TAIL_CONTROLS:
+        historical = set(re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$',
+                                    fixture(JOBS[0]), re.M))
+        added = set(current_roster()) - historical
+        self.assertEqual(len(added), 36)
+        for name in added:
             line = f'test {name} ... ok\n'
-            duplicate = next(other for other in LEGACY_TAIL_CONTROLS if other != name)
+            duplicate = next(other for other in added if other != name)
             changes = {
                 'missing': log.replace(line, '', 1),
                 'extra-duplicate': log + line,
                 'same-count-duplicate': log.replace(line, f'test {duplicate} ... ok\n', 1),
                 'substitute': log.replace(line, f'test {LEGACY_TAIL_PREFIX}unexpected_control ... ok\n', 1),
-                'wrong-group': log.replace(line, line.replace(LEGACY_TAIL_PREFIX, PREFIX + 'other::'), 1),
+                'wrong-group': log.replace(line, line.replace(PREFIX, PREFIX + 'other::'), 1),
                 'failed': log.replace(line, line.replace(' ... ok', ' ... FAILED'), 1),
                 'ignored': log.replace(line, line.replace(' ... ok', ' ... ignored'), 1),
             }
@@ -243,40 +284,87 @@ class AuthenticatedSuiteCount(unittest.TestCase):
 
 
 class WorkspaceSemanticRegistry(unittest.TestCase):
-    def test_actual_native_registry_passes_current_guard_and_rejects_stale_count(self):
+    def test_previous_127_control_observation_is_retained_and_not_current(self):
+        old = ROOT / 'evidence/chain-native-operation-readback-20261119-2e9b/controls'
+        raw = gzip.decompress((old / 'native-authenticated.log.gz').read_bytes())
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),
+                         '38ef82773e04943365b8a16fbe420fdb345fc493ed1a4e5ae20c2b2055cd77e9')
+        self.assertIn('test result: ok. 127 passed; 0 failed; 0 ignored;', raw.decode())
+        self.assertEqual(check(raw.decode()), (False, False))
+        registry = gzip.decompress((old / 'node-registry.log.gz').read_bytes())
+        self.assertEqual(hashlib.sha256(registry).hexdigest(),
+                         '2e3c2c5a355fe61d1358e4c9b591d1b0cf868a63a8d45ea857fac4225540f4e4')
+        registries = registry_fixtures()
+        registries['node'] = registry.decode()
+        result, selected = workspace_registry_check(registries)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('postwrite-readback: expected 55 actual registered controls, got 49', result.stderr)
+        self.assertIsNone(selected)
+
+    def test_actual_current_node_registry_selects_all_current_controls(self):
         registries = registry_fixtures()
         result, selected = workspace_registry_check(registries)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report['selected_count'], 60)
-        self.assertEqual(len(selected.splitlines()), 60)
-        self.assertEqual(len(set(selected.splitlines())), 60)
+        self.assertEqual(report['selected_count'], 90)
+        self.assertEqual(len(selected.splitlines()), 90)
+        self.assertEqual(len(set(selected.splitlines())), 90)
         self.assertEqual({group['group']: group['expected_count'] for group in report['groups']}, {
             'full-root-arithmetic': 5, 'unchanged-canonical-map': 6, 'account-root-digest': 3,
             'growth-return-observations': 2, 'canonical-ascii': 7, 'reorg-tail': 6,
             'direct-append-readback': 2, 'current-sql-root': 1,
-            'prepared-current-history': 3, 'postwrite-readback': 25,
+            'prepared-current-history': 3, 'postwrite-readback': 55,
         })
         old, omitted = workspace_registry_check(registries, old=True)
         self.assertNotEqual(old.returncode, 0)
-        self.assertIn('postwrite-readback: expected 23 actual registered controls, got 25', old.stderr)
+        self.assertIn('postwrite-readback: expected 25 actual registered controls, got 55', old.stderr)
         self.assertIsNone(omitted)
 
-    def test_selected_postwrite_roster_matches_source_and_four_executed_native_logs(self):
+    def test_historical_registry_and_four_logs_keep_their_original_25_controls(self):
+        registries = registry_fixtures(historical=True)
+        result, selected = workspace_registry_check(registries, historical=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['selected_count'], 60)
+        observed = [line.split('\t')[2] for line in selected.splitlines()
+                    if line.split('\t')[1] == 'postwrite-readback']
+        self.assertEqual(len(observed), 25)
+        for job in JOBS:
+            executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$', fixture(job), re.M)
+            self.assertCountEqual(observed, executed)
+        old, omitted = workspace_registry_check(registries, old=True, historical=True)
+        self.assertNotEqual(old.returncode, 0)
+        self.assertIn('postwrite-readback: expected 23 actual registered controls, got 25', old.stderr)
+        self.assertIsNone(omitted)
+        current, omitted = workspace_registry_check(registries)
+        self.assertNotEqual(current.returncode, 0)
+        self.assertIn('postwrite-readback: expected 55 actual registered controls, got 25', current.stderr)
+        self.assertIsNone(omitted)
+
+    def test_current_postwrite_roster_matches_source_and_current_native_log(self):
         result, selected = workspace_registry_check(registry_fixtures())
         self.assertEqual(result.returncode, 0, result.stderr)
         observed = [line.split('\t')[2] for line in selected.splitlines()
                     if line.split('\t')[1] == 'postwrite-readback']
         source = ROOT / 'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs'
-        expected = [POSTWRITE_PREFIX + name for name in re.findall(r'#\[test\]\s*fn (\w+)\(', source.read_text())]
-        for path, module in re.findall(r'#\[path = "([^"]+)"\]\s*mod (\w+);', source.read_text()):
-            expected += [POSTWRITE_PREFIX + module + '::' + name for name in
-                         re.findall(r'#\[test\]\s*fn (\w+)\(', (source.parent / path).read_text())]
-        self.assertEqual(len(expected), 25)
+        visited = set()
+        def declared_tests(path, prefix):
+            # Follow only the real declared module edges, including nested controls.
+            self.assertTrue(path.is_relative_to(source.parent))
+            self.assertNotIn(path, visited)
+            visited.add(path)
+            text = path.read_text()
+            names = [prefix + name for name in re.findall(r'#\[test\]\s*fn (\w+)\(', text)]
+            for child, module in re.findall(r'#\[path = "([^"]+)"\]\s*mod (\w+);', text):
+                names += declared_tests((path.parent / child).resolve(), prefix + module + '::')
+            return names
+        expected = declared_tests(source, POSTWRITE_PREFIX)
+        self.assertEqual(len(expected), 55)
         self.assertCountEqual(observed, expected)
-        for job in JOBS:
-            executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$', fixture(job), re.M)
-            self.assertCountEqual(observed, executed)
+        self.assertCountEqual(expected, [name for name in current_roster()
+                                        if name.startswith(POSTWRITE_PREFIX)])
+        executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$',
+                              current_native_fixture(), re.M)
+        self.assertCountEqual(observed, executed)
 
     def test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected(self):
         registries = registry_fixtures()

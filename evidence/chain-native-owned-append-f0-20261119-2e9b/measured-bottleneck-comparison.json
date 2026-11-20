@@ -1,0 +1,4231 @@
+{
+  "qualification": "Different runner allocations and completed work counts; nested observations overlap; no causal speed or full cost claim",
+  "receiver_tail_diagnostic": [
+    {
+      "observer_complete": true,
+      "observer_keys": [
+        "accepted_connections_seen",
+        "capacity",
+        "counter_overflow",
+        "cpu_includes_reactor_authentication",
+        "cpu_includes_reactor_authentication_or_response_signing",
+        "cpu_intervals_are_nested_not_additive",
+        "cpu_wait_is_outside_dispatch",
+        "dispatch_cpu_includes_paid_body_decode",
+        "dispatch_cpu_includes_response_signing",
+        "measurement_failures",
+        "monotonic_epoch_is_observer_local",
+        "observation_has_consensus_authority",
+        "phase_parent_links_are_inclusive",
+        "records",
+        "records_not_retained",
+        "schema",
+        "stream_bytes_are_physical_network_bytes",
+        "submit_phase_cpu_excludes_scoped_workers"
+      ],
+      "phase": "baseline",
+      "record_count": 28,
+      "tail_records": [
+        {
+          "application_bytes_read": 380,
+          "application_bytes_written": 101643,
+          "body_digest": [
+            109,
+            164,
+            245,
+            72,
+            76,
+            57,
+            120,
+            104,
+            144,
+            142,
+            130,
+            111,
+            150,
+            69,
+            18,
+            130,
+            101,
+            68,
+            247,
+            35,
+            242,
+            192,
+            70,
+            210,
+            122,
+            98,
+            223,
+            166,
+            30,
+            36,
+            120,
+            24
+          ],
+          "cancellation": {
+            "clock_is_observer_local": true,
+            "first_flag_transition": {
+              "after_ns": 28101976972,
+              "before_ns": 28101976922,
+              "phase": "cleanup",
+              "source": "connection_cleanup"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "observed_signal_calls": 1,
+            "schema": "public-v3-request-cancellation-observation-v1",
+            "signals_are_request_flag_writes": true,
+            "worker_entered": true,
+            "worker_entered_ns": 28101162329,
+            "worker_returned": true,
+            "worker_returned_ns": 28101895731
+          },
+          "challenge_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 28098871607,
+            "error_code": null,
+            "started_ns": 28098818669,
+            "wall_ns": 52938
+          },
+          "complete": true,
+          "connection_closed": true,
+          "connection_id": 27,
+          "dispatch_accepted": true,
+          "dispatch_error_code": null,
+          "dispatch_started": true,
+          "dispatch_thread_cpu_ns": 725817,
+          "error_diagnostics": {
+            "dispatch": null,
+            "has_control_authority": false,
+            "message_capacity_bytes": 96,
+            "messages_are_untrusted": true,
+            "schema": "public-v3-request-error-diagnostics-v1",
+            "terminal": null
+          },
+          "error_timing": {
+            "clock_is_observer_local": true,
+            "first_dispatch_error": null,
+            "first_terminal_error": null,
+            "has_control_authority": false,
+            "observation_failed": false,
+            "schema": "public-v3-request-error-timing-v1"
+          },
+          "frames": [
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "hello"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 1224,
+              "complete": true,
+              "phase": "challenge"
+            },
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "solution"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 120,
+              "complete": true,
+              "phase": "ready"
+            },
+            {
+              "bytes_read": 164,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "body"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 100299,
+              "complete": true,
+              "phase": "response"
+            }
+          ],
+          "full_work_accepted": null,
+          "full_work_started": false,
+          "full_work_thread_cpu_ns": null,
+          "grant_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 28100054193,
+            "error_code": null,
+            "started_ns": 28100043417,
+            "wall_ns": 10776
+          },
+          "lifecycle": {
+            "accepted_ns": 28098795815,
+            "clock_is_observer_local": true,
+            "connection_closed_ns": 28101986596,
+            "has_control_authority": false,
+            "schema": "public-v3-request-lifecycle-v1",
+            "task_closed_ns": 28101915571
+          },
+          "observation_failed": false,
+          "operation": 3,
+          "paid_task_queue_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 28101163310,
+            "error_code": null,
+            "started_ns": 28101145144,
+            "wall_ns": 18166
+          },
+          "physical_network_bytes": null,
+          "reactor_io": {
+            "calls_are_wrapper_returns": true,
+            "cpu_is_reactor_thread_only": true,
+            "frames": [
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "hello",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 4336,
+                "thread_cpu_ns_known_sum": 4336,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4777,
+                "wall_ns_known_sum": 4777,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "challenge",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 27060,
+                "thread_cpu_ns_known_sum": 27060,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 27120,
+                "wall_ns_known_sum": 27120,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "solution",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 4266,
+                "thread_cpu_ns_known_sum": 4266,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4316,
+                "wall_ns_known_sum": 4316,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "ready",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 13510,
+                "thread_cpu_ns_known_sum": 13510,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 13470,
+                "wall_ns_known_sum": 13470,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "body",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 4316,
+                "thread_cpu_ns_known_sum": 4316,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4406,
+                "wall_ns_known_sum": 4406,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "response",
+                "progressed_calls": 2,
+                "thread_cpu_ns": 51096,
+                "thread_cpu_ns_known_sum": 51096,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 51466,
+                "wall_ns_known_sum": 51466,
+                "wall_unknown_calls": 0
+              }
+            ],
+            "has_control_authority": false,
+            "includes_read_buffer_preparation": true,
+            "includes_wait_between_calls": false,
+            "observation_failed": false,
+            "schema": "public-v3-reactor-frame-io-observation-v1"
+          },
+          "response_frame_complete": true,
+          "response_write": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 28101974428,
+            "error_code": null,
+            "started_ns": 28101914980,
+            "wall_ns": 59448
+          },
+          "submit_phases": [
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "work",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "submit_result",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "admission_prepare",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "execution",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "ended_ns": 28101178402,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "body_decode",
+              "started": true,
+              "started_ns": 28101165253,
+              "thread_cpu_ns": 13080,
+              "wall_ns": 13149
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "ended_ns": 28101887800,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "response_encoding",
+              "started": true,
+              "started_ns": 28101664650,
+              "thread_cpu_ns": 222741,
+              "wall_ns": 223150
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_open",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_close",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_import",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_settle",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "execution",
+              "phase": "root_commitment",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            }
+          ],
+          "task_closed": true,
+          "task_created": true,
+          "terminal_error_code": null,
+          "terminal_phase": "response"
+        },
+        {
+          "application_bytes_read": 380,
+          "application_bytes_written": 101642,
+          "body_digest": [
+            83,
+            60,
+            11,
+            233,
+            251,
+            42,
+            111,
+            63,
+            100,
+            66,
+            226,
+            107,
+            69,
+            50,
+            177,
+            28,
+            74,
+            13,
+            235,
+            134,
+            184,
+            194,
+            108,
+            6,
+            4,
+            110,
+            29,
+            188,
+            239,
+            52,
+            103,
+            6
+          ],
+          "cancellation": {
+            "clock_is_observer_local": true,
+            "first_flag_transition": {
+              "after_ns": 29594509035,
+              "before_ns": 29594508975,
+              "phase": "cleanup",
+              "source": "connection_cleanup"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "observed_signal_calls": 1,
+            "schema": "public-v3-request-cancellation-observation-v1",
+            "signals_are_request_flag_writes": true,
+            "worker_entered": true,
+            "worker_entered_ns": 29593749859,
+            "worker_returned": true,
+            "worker_returned_ns": 29594447589
+          },
+          "challenge_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 29591444440,
+            "error_code": null,
+            "started_ns": 29591393495,
+            "wall_ns": 50945
+          },
+          "complete": true,
+          "connection_closed": true,
+          "connection_id": 28,
+          "dispatch_accepted": true,
+          "dispatch_error_code": null,
+          "dispatch_started": true,
+          "dispatch_thread_cpu_ns": 690465,
+          "error_diagnostics": {
+            "dispatch": null,
+            "has_control_authority": false,
+            "message_capacity_bytes": 96,
+            "messages_are_untrusted": true,
+            "schema": "public-v3-request-error-diagnostics-v1",
+            "terminal": null
+          },
+          "error_timing": {
+            "clock_is_observer_local": true,
+            "first_dispatch_error": null,
+            "first_terminal_error": null,
+            "has_control_authority": false,
+            "observation_failed": false,
+            "schema": "public-v3-request-error-timing-v1"
+          },
+          "frames": [
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "hello"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 1224,
+              "complete": true,
+              "phase": "challenge"
+            },
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "solution"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 120,
+              "complete": true,
+              "phase": "ready"
+            },
+            {
+              "bytes_read": 164,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "body"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 100298,
+              "complete": true,
+              "phase": "response"
+            }
+          ],
+          "full_work_accepted": null,
+          "full_work_started": false,
+          "full_work_thread_cpu_ns": null,
+          "grant_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 29592634157,
+            "error_code": null,
+            "started_ns": 29592622149,
+            "wall_ns": 12008
+          },
+          "lifecycle": {
+            "accepted_ns": 29591370381,
+            "clock_is_observer_local": true,
+            "connection_closed_ns": 29594526811,
+            "has_control_authority": false,
+            "schema": "public-v3-request-lifecycle-v1",
+            "task_closed_ns": 29594458320
+          },
+          "observation_failed": false,
+          "operation": 3,
+          "paid_task_queue_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 29593750900,
+            "error_code": null,
+            "started_ns": 29593733950,
+            "wall_ns": 16950
+          },
+          "physical_network_bytes": null,
+          "reactor_io": {
+            "calls_are_wrapper_returns": true,
+            "cpu_is_reactor_thread_only": true,
+            "frames": [
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "hello",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 3776,
+                "thread_cpu_ns_known_sum": 3776,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4216,
+                "wall_ns_known_sum": 4216,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "challenge",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 27200,
+                "thread_cpu_ns_known_sum": 27200,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 27221,
+                "wall_ns_known_sum": 27221,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "solution",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 5067,
+                "thread_cpu_ns_known_sum": 5067,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 5167,
+                "wall_ns_known_sum": 5167,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "ready",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 19108,
+                "thread_cpu_ns_known_sum": 19108,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 19108,
+                "wall_ns_known_sum": 19108,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "body",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 4387,
+                "thread_cpu_ns_known_sum": 4387,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4667,
+                "wall_ns_known_sum": 4667,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "response",
+                "progressed_calls": 2,
+                "thread_cpu_ns": 38687,
+                "thread_cpu_ns_known_sum": 38687,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 38577,
+                "wall_ns_known_sum": 38577,
+                "wall_unknown_calls": 0
+              }
+            ],
+            "has_control_authority": false,
+            "includes_read_buffer_preparation": true,
+            "includes_wait_between_calls": false,
+            "observation_failed": false,
+            "schema": "public-v3-reactor-frame-io-observation-v1"
+          },
+          "response_frame_complete": true,
+          "response_write": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 29594505640,
+            "error_code": null,
+            "started_ns": 29594457889,
+            "wall_ns": 47751
+          },
+          "submit_phases": [
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "work",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "submit_result",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "admission_prepare",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "execution",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "ended_ns": 29593765422,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "body_decode",
+              "started": true,
+              "started_ns": 29593752883,
+              "thread_cpu_ns": 12588,
+              "wall_ns": 12539
+            },
+            {
+              "accepted": true,
+              "completed": true,
+              "ended_ns": 29594439707,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "response_encoding",
+              "started": true,
+              "started_ns": 29594191191,
+              "thread_cpu_ns": 248578,
+              "wall_ns": 248516
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_open",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_close",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_import",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_settle",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "execution",
+              "phase": "root_commitment",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            }
+          ],
+          "task_closed": true,
+          "task_created": true,
+          "terminal_error_code": null,
+          "terminal_phase": "response"
+        }
+      ]
+    },
+    {
+      "observer_complete": true,
+      "observer_keys": [
+        "accepted_connections_seen",
+        "capacity",
+        "counter_overflow",
+        "cpu_includes_reactor_authentication",
+        "cpu_includes_reactor_authentication_or_response_signing",
+        "cpu_intervals_are_nested_not_additive",
+        "cpu_wait_is_outside_dispatch",
+        "dispatch_cpu_includes_paid_body_decode",
+        "dispatch_cpu_includes_response_signing",
+        "measurement_failures",
+        "monotonic_epoch_is_observer_local",
+        "observation_has_consensus_authority",
+        "phase_parent_links_are_inclusive",
+        "records",
+        "records_not_retained",
+        "schema",
+        "stream_bytes_are_physical_network_bytes",
+        "submit_phase_cpu_excludes_scoped_workers"
+      ],
+      "phase": "valid-work-root",
+      "record_count": 395,
+      "tail_records": [
+        {
+          "application_bytes_read": 216,
+          "application_bytes_written": 1226,
+          "body_digest": [
+            223,
+            169,
+            238,
+            130,
+            177,
+            99,
+            76,
+            49,
+            152,
+            107,
+            188,
+            191,
+            181,
+            139,
+            180,
+            240,
+            208,
+            68,
+            64,
+            82,
+            158,
+            143,
+            143,
+            198,
+            254,
+            105,
+            122,
+            125,
+            247,
+            221,
+            83,
+            62
+          ],
+          "cancellation": {
+            "clock_is_observer_local": true,
+            "first_flag_transition": {
+              "after_ns": 30195649186,
+              "before_ns": 30195649156,
+              "phase": "solution",
+              "source": "pending_peer_write_closed"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "observed_signal_calls": 2,
+            "schema": "public-v3-request-cancellation-observation-v1",
+            "signals_are_request_flag_writes": true,
+            "worker_entered": false,
+            "worker_entered_ns": null,
+            "worker_returned": false,
+            "worker_returned_ns": null
+          },
+          "challenge_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 30006365006,
+            "error_code": null,
+            "started_ns": 30006270968,
+            "wall_ns": 94038
+          },
+          "complete": true,
+          "connection_closed": true,
+          "connection_id": 394,
+          "dispatch_accepted": null,
+          "dispatch_error_code": null,
+          "dispatch_started": false,
+          "dispatch_thread_cpu_ns": null,
+          "error_diagnostics": {
+            "dispatch": null,
+            "has_control_authority": false,
+            "message_capacity_bytes": 96,
+            "messages_are_untrusted": true,
+            "schema": "public-v3-request-error-diagnostics-v1",
+            "terminal": {
+              "kind": "transport",
+              "message_prefix": "PUBLIC_EOF",
+              "message_truncated": false
+            }
+          },
+          "error_timing": {
+            "clock_is_observer_local": true,
+            "first_dispatch_error": null,
+            "first_terminal_error": {
+              "error_code": "PUBLIC_EOF",
+              "observed_ns": 30195650237,
+              "phase": "solution"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "schema": "public-v3-request-error-timing-v1"
+          },
+          "frames": [
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "hello"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 1226,
+              "complete": true,
+              "phase": "challenge"
+            },
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "solution"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "ready"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "body"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "response"
+            }
+          ],
+          "full_work_accepted": null,
+          "full_work_started": false,
+          "full_work_thread_cpu_ns": null,
+          "grant_wait": {
+            "accepted": false,
+            "completed": true,
+            "ended_ns": 30195650518,
+            "error_code": "PUBLIC_EOF",
+            "started_ns": 30007599529,
+            "wall_ns": 188050989
+          },
+          "lifecycle": {
+            "accepted_ns": 30006202697,
+            "clock_is_observer_local": true,
+            "connection_closed_ns": 30195823824,
+            "has_control_authority": false,
+            "schema": "public-v3-request-lifecycle-v1",
+            "task_closed_ns": null
+          },
+          "observation_failed": false,
+          "operation": 1,
+          "paid_task_queue_wait": {
+            "accepted": null,
+            "completed": false,
+            "ended_ns": null,
+            "error_code": null,
+            "started_ns": null,
+            "wall_ns": null
+          },
+          "physical_network_bytes": null,
+          "reactor_io": {
+            "calls_are_wrapper_returns": true,
+            "cpu_is_reactor_thread_only": true,
+            "frames": [
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "hello",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 2624,
+                "thread_cpu_ns_known_sum": 2624,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 2664,
+                "wall_ns_known_sum": 2664,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "challenge",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 21823,
+                "thread_cpu_ns_known_sum": 21823,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 21812,
+                "wall_ns_known_sum": 21812,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "solution",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 4215,
+                "thread_cpu_ns_known_sum": 4215,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 4437,
+                "wall_ns_known_sum": 4437,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "ready",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "body",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "response",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              }
+            ],
+            "has_control_authority": false,
+            "includes_read_buffer_preparation": true,
+            "includes_wait_between_calls": false,
+            "observation_failed": false,
+            "schema": "public-v3-reactor-frame-io-observation-v1"
+          },
+          "response_frame_complete": false,
+          "response_write": {
+            "accepted": null,
+            "completed": false,
+            "ended_ns": null,
+            "error_code": null,
+            "started_ns": null,
+            "wall_ns": null
+          },
+          "submit_phases": [
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "work",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "submit_result",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "admission_prepare",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "execution",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "body_decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "response_encoding",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_open",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_close",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_import",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_settle",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "execution",
+              "phase": "root_commitment",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            }
+          ],
+          "task_closed": false,
+          "task_created": false,
+          "terminal_error_code": "PUBLIC_EOF",
+          "terminal_phase": "solution"
+        },
+        {
+          "application_bytes_read": 216,
+          "application_bytes_written": 1226,
+          "body_digest": [
+            159,
+            139,
+            60,
+            134,
+            196,
+            156,
+            121,
+            2,
+            2,
+            147,
+            4,
+            226,
+            165,
+            113,
+            160,
+            70,
+            156,
+            13,
+            207,
+            199,
+            5,
+            121,
+            68,
+            54,
+            244,
+            86,
+            203,
+            81,
+            83,
+            169,
+            51,
+            253
+          ],
+          "cancellation": {
+            "clock_is_observer_local": true,
+            "first_flag_transition": {
+              "after_ns": 30143942367,
+              "before_ns": 30143942077,
+              "phase": "solution",
+              "source": "pending_peer_write_closed"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "observed_signal_calls": 2,
+            "schema": "public-v3-request-cancellation-observation-v1",
+            "signals_are_request_flag_writes": true,
+            "worker_entered": false,
+            "worker_entered_ns": null,
+            "worker_returned": false,
+            "worker_returned_ns": null
+          },
+          "challenge_wait": {
+            "accepted": true,
+            "completed": true,
+            "ended_ns": 30095862578,
+            "error_code": null,
+            "started_ns": 30095706488,
+            "wall_ns": 156090
+          },
+          "complete": true,
+          "connection_closed": true,
+          "connection_id": 395,
+          "dispatch_accepted": null,
+          "dispatch_error_code": null,
+          "dispatch_started": false,
+          "dispatch_thread_cpu_ns": null,
+          "error_diagnostics": {
+            "dispatch": null,
+            "has_control_authority": false,
+            "message_capacity_bytes": 96,
+            "messages_are_untrusted": true,
+            "schema": "public-v3-request-error-diagnostics-v1",
+            "terminal": {
+              "kind": "transport",
+              "message_prefix": "PUBLIC_EOF",
+              "message_truncated": false
+            }
+          },
+          "error_timing": {
+            "clock_is_observer_local": true,
+            "first_dispatch_error": null,
+            "first_terminal_error": {
+              "error_code": "PUBLIC_EOF",
+              "observed_ns": 30143946653,
+              "phase": "solution"
+            },
+            "has_control_authority": false,
+            "observation_failed": false,
+            "schema": "public-v3-request-error-timing-v1"
+          },
+          "frames": [
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "hello"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 1226,
+              "complete": true,
+              "phase": "challenge"
+            },
+            {
+              "bytes_read": 108,
+              "bytes_written": 0,
+              "complete": true,
+              "phase": "solution"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "ready"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "body"
+            },
+            {
+              "bytes_read": 0,
+              "bytes_written": 0,
+              "complete": false,
+              "phase": "response"
+            }
+          ],
+          "full_work_accepted": null,
+          "full_work_started": false,
+          "full_work_thread_cpu_ns": null,
+          "grant_wait": {
+            "accepted": false,
+            "completed": true,
+            "ended_ns": 30143948065,
+            "error_code": "PUBLIC_EOF",
+            "started_ns": 30097146574,
+            "wall_ns": 46801491
+          },
+          "lifecycle": {
+            "accepted_ns": 30095606631,
+            "clock_is_observer_local": true,
+            "connection_closed_ns": 30143986312,
+            "has_control_authority": false,
+            "schema": "public-v3-request-lifecycle-v1",
+            "task_closed_ns": null
+          },
+          "observation_failed": false,
+          "operation": 1,
+          "paid_task_queue_wait": {
+            "accepted": null,
+            "completed": false,
+            "ended_ns": null,
+            "error_code": null,
+            "started_ns": null,
+            "wall_ns": null
+          },
+          "physical_network_bytes": null,
+          "reactor_io": {
+            "calls_are_wrapper_returns": true,
+            "cpu_is_reactor_thread_only": true,
+            "frames": [
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "hello",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 5548,
+                "thread_cpu_ns_known_sum": 5548,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 5899,
+                "wall_ns_known_sum": 5899,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 1,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "challenge",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 22784,
+                "thread_cpu_ns_known_sum": 22784,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 22743,
+                "wall_ns_known_sum": 22743,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 2,
+                "failed_calls": 0,
+                "no_progress_calls": 1,
+                "phase": "solution",
+                "progressed_calls": 1,
+                "thread_cpu_ns": 5458,
+                "thread_cpu_ns_known_sum": 5458,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": 5739,
+                "wall_ns_known_sum": 5739,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "ready",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "body",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              },
+              {
+                "calls_returned": 0,
+                "failed_calls": 0,
+                "no_progress_calls": 0,
+                "phase": "response",
+                "progressed_calls": 0,
+                "thread_cpu_ns": null,
+                "thread_cpu_ns_known_sum": 0,
+                "thread_cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_ns_known_sum": 0,
+                "wall_unknown_calls": 0
+              }
+            ],
+            "has_control_authority": false,
+            "includes_read_buffer_preparation": true,
+            "includes_wait_between_calls": false,
+            "observation_failed": false,
+            "schema": "public-v3-reactor-frame-io-observation-v1"
+          },
+          "response_frame_complete": false,
+          "response_write": {
+            "accepted": null,
+            "completed": false,
+            "ended_ns": null,
+            "error_code": null,
+            "started_ns": null,
+            "wall_ns": null
+          },
+          "submit_phases": [
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "context",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "work",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "admission",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "submit_result",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "admission_prepare",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "execution",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit_owner_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "admission",
+              "phase": "commit",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_wait",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "body_decode",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "response_encoding",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_open",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_epoch_close",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "history_import",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": null,
+              "phase": "cpu_settle",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            },
+            {
+              "accepted": null,
+              "completed": false,
+              "ended_ns": null,
+              "error_code": null,
+              "parent_phase": "execution",
+              "phase": "root_commitment",
+              "started": false,
+              "started_ns": null,
+              "thread_cpu_ns": null,
+              "wall_ns": null
+            }
+          ],
+          "task_closed": false,
+          "task_created": false,
+          "terminal_error_code": "PUBLIC_EOF",
+          "terminal_phase": "solution"
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "archive_sha256": "744a0d353fb5055fd111cb5acae33259c0e526a8e4240a8f33752d01bfac5ccd",
+      "compiler_and_dependency_acquisition_cpu_ns": null,
+      "four_second_confirmations": 0,
+      "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+      "native_exit_code": 101,
+      "original_honest_preparation": {
+        "actual_signed_seed_transfers": null,
+        "business_blocks": null,
+        "cpu_ns": 2427560672,
+        "rss": null,
+        "seed_blocks": null,
+        "state_backend": null,
+        "wall_ns": 2459859237
+      },
+      "original_window_confirmations": 1,
+      "phases": [
+        {
+          "complete_physical_cost": null,
+          "final_actual_cpu_credit_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 930250000,
+            "discarded_refill_ns": 5271115223,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 937353365,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 937367822,
+            "remaining_paid_credit_ns": 1992882178,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 937367822,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 14457,
+            "stored_credit_ns": 1992882178,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "graph_frequency": [
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 14,
+              "database_sha256": "2970982986060c8215fe4c4d7adecbe1e1ce221d89571dd3a6c7bb90b6d2c23f",
+              "no_account_change_blocks": 12,
+              "owner": "receiver",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 24660
+            },
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 9,
+              "database_sha256": "1d6f6c50198d702d52347021eda2c4b62beb6ef004f3f5c035fb80513cbdd9da",
+              "no_account_change_blocks": 7,
+              "owner": "independent-client",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 14385
+            }
+          ],
+          "history_client_cpu": {
+            "complete_observed_sum": 5438173614,
+            "known_sum": 5438173614,
+            "observed_rows": 10,
+            "unknown_rows": 0
+          },
+          "history_host_calls": 80709,
+          "history_host_cpu_nested": {
+            "complete_observed_sum": 4517504795,
+            "known_sum": 4517504795,
+            "observed_rows": 10,
+            "unknown_rows": 0
+          },
+          "host_checkpoint_bucket_totals": [
+            {
+              "calls": 20,
+              "cpu": {
+                "complete_observed_sum": 1111584,
+                "known_sum": 1111584,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 135,
+              "cpu": {
+                "complete_observed_sum": 7806325,
+                "known_sum": 7806325,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 10990,
+              "cpu": {
+                "complete_observed_sum": 599989971,
+                "known_sum": 599989971,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "work",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 10,
+              "cpu": {
+                "complete_observed_sum": 531452,
+                "known_sum": 531452,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 21173,
+              "cpu": {
+                "complete_observed_sum": 1183851154,
+                "known_sum": 1183851154,
+                "observed_rows": 9,
+                "unknown_rows": 0
+              },
+              "owner_phase": "submit_result",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 20802,
+              "cpu": {
+                "complete_observed_sum": 1169161857,
+                "known_sum": 1169161857,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_prepare",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 58,
+              "cpu": {
+                "complete_observed_sum": 3380956,
+                "known_sum": 3380956,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "execution",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 27297,
+              "cpu": {
+                "complete_observed_sum": 1537859940,
+                "known_sum": 1537859940,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 184,
+              "cpu": {
+                "complete_observed_sum": 11514742,
+                "known_sum": 11514742,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "body_decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "response_encoding",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 10,
+              "cpu": {
+                "complete_observed_sum": 572110,
+                "known_sum": 572110,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_open",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_close",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 20,
+              "cpu": {
+                "complete_observed_sum": 1091159,
+                "known_sum": 1091159,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_import",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_settle",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 10,
+              "cpu": {
+                "complete_observed_sum": 633545,
+                "known_sum": 633545,
+                "observed_rows": 10,
+                "unknown_rows": 0
+              },
+              "owner_phase": "root_commitment",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": null,
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            }
+          ],
+          "imports": [
+            {
+              "client_cpu_ns": 530312958,
+              "client_wall_ns": 2680810134,
+              "history_index": 0,
+              "host_checkpoint_calls": 7940,
+              "host_checkpoint_cpu_ns": 451504306,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 377546187,
+              "client_wall_ns": 1694307255,
+              "history_index": 1,
+              "host_checkpoint_calls": 5664,
+              "host_checkpoint_cpu_ns": 314464716,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 376747313,
+              "client_wall_ns": 1695203882,
+              "history_index": 2,
+              "host_checkpoint_calls": 5670,
+              "host_checkpoint_cpu_ns": 314771774,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 382859970,
+              "client_wall_ns": 1700163818,
+              "history_index": 3,
+              "host_checkpoint_calls": 5676,
+              "host_checkpoint_cpu_ns": 317819746,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 380066375,
+              "client_wall_ns": 1694193822,
+              "history_index": 4,
+              "host_checkpoint_calls": 5682,
+              "host_checkpoint_cpu_ns": 316660451,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 387535012,
+              "client_wall_ns": 1704833805,
+              "history_index": 5,
+              "host_checkpoint_calls": 5688,
+              "host_checkpoint_cpu_ns": 317117743,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 1845229519,
+              "client_wall_ns": 8193661933,
+              "history_index": 6,
+              "host_checkpoint_calls": 26858,
+              "host_checkpoint_cpu_ns": 1502322973,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 516639061,
+              "client_wall_ns": 2297226262,
+              "history_index": 7,
+              "host_checkpoint_calls": 7842,
+              "host_checkpoint_cpu_ns": 440175210,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 389046992,
+              "client_wall_ns": 1705138506,
+              "history_index": 8,
+              "host_checkpoint_calls": 5733,
+              "host_checkpoint_cpu_ns": 323596275,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 252190227,
+              "client_wall_ns": 1105196661,
+              "history_index": 9,
+              "host_checkpoint_calls": 3956,
+              "host_checkpoint_cpu_ns": 219071601,
+              "import_error": "PUBLIC_REQUEST_DEADLINE",
+              "import_observed": true
+            }
+          ],
+          "native_stage_deltas_nested_not_additive": {
+            "client": {
+              "account_graph": {
+                "calls": 66,
+                "cpu_ns": 4196283850,
+                "wall_ns": 18849457191
+              },
+              "activation": {
+                "calls": 1,
+                "cpu_ns": 1460398809,
+                "wall_ns": 6495501957
+              },
+              "admission": {
+                "calls": 10,
+                "cpu_ns": 3309527030,
+                "wall_ns": 14795100528
+              },
+              "complete_commitment": {
+                "calls": 111,
+                "cpu_ns": 87420906,
+                "wall_ns": 472432266
+              },
+              "complete_state_root": {
+                "calls": 40,
+                "cpu_ns": 13415873,
+                "wall_ns": 90582583
+              },
+              "delta": {
+                "calls": 303,
+                "cpu_ns": 133559024,
+                "wall_ns": 677993920
+              },
+              "execute": {
+                "calls": 10,
+                "cpu_ns": 20461806,
+                "wall_ns": 20484215
+              },
+              "execution_parent_binding": {
+                "calls": 10,
+                "cpu_ns": 3168430,
+                "wall_ns": 3194241
+              },
+              "packet": {
+                "calls": 312,
+                "cpu_ns": 10598429,
+                "wall_ns": 10896300
+              },
+              "persisted_state_root": {
+                "calls": 81,
+                "cpu_ns": 19793955,
+                "wall_ns": 19889746
+              },
+              "publish": {
+                "calls": 10,
+                "cpu_ns": 1575752380,
+                "wall_ns": 6930555170
+              },
+              "read_active": {
+                "calls": 5,
+                "cpu_ns": 367367370,
+                "wall_ns": 1686416244
+              },
+              "record": {
+                "calls": 561,
+                "cpu_ns": 5835957,
+                "wall_ns": 6373219
+              },
+              "state_at": {
+                "calls": 28,
+                "cpu_ns": 1443040983,
+                "wall_ns": 6484548210
+              },
+              "verify_history": {
+                "calls": 27,
+                "cpu_ns": 150083018,
+                "wall_ns": 694325846
+              },
+              "verify_state": {
+                "calls": 102,
+                "cpu_ns": 4341820804,
+                "wall_ns": 19613276700
+              }
+            },
+            "receiver": {
+              "account_graph": {
+                "calls": 74,
+                "cpu_ns": 393642089,
+                "wall_ns": 1996419992
+              },
+              "activation": {
+                "calls": 14,
+                "cpu_ns": 257492553,
+                "wall_ns": 1191768546
+              },
+              "admission": {
+                "calls": 14,
+                "cpu_ns": 640467234,
+                "wall_ns": 2771089874
+              },
+              "complete_commitment": {
+                "calls": 154,
+                "cpu_ns": 59158054,
+                "wall_ns": 214569682
+              },
+              "complete_state_root": {
+                "calls": 19,
+                "cpu_ns": 5152451,
+                "wall_ns": 5179157
+              },
+              "delta": {
+                "calls": 651,
+                "cpu_ns": 99157534,
+                "wall_ns": 177467013
+              },
+              "execute": {
+                "calls": 14,
+                "cpu_ns": 18199721,
+                "wall_ns": 167561520
+              },
+              "execution_parent_binding": {
+                "calls": 14,
+                "cpu_ns": 2139674,
+                "wall_ns": 76296632
+              },
+              "packet": {
+                "calls": 665,
+                "cpu_ns": 15872132,
+                "wall_ns": 94568428
+              },
+              "persisted_state_root": {
+                "calls": 112,
+                "cpu_ns": 8095735,
+                "wall_ns": 85304988
+              },
+              "publish": {
+                "calls": 14,
+                "cpu_ns": 223582248,
+                "wall_ns": 833053860
+              },
+              "read_active": {
+                "calls": 28,
+                "cpu_ns": 237752671,
+                "wall_ns": 990510273
+              },
+              "record": {
+                "calls": 1232,
+                "cpu_ns": 7361060,
+                "wall_ns": 161475820
+              },
+              "state_at": {
+                "calls": 42,
+                "cpu_ns": 259755636,
+                "wall_ns": 1395572939
+              },
+              "verify_history": {
+                "calls": 42,
+                "cpu_ns": 124058178,
+                "wall_ns": 358146222
+              },
+              "verify_state": {
+                "calls": 140,
+                "cpu_ns": 463992663,
+                "wall_ns": 2520048132
+              }
+            }
+          },
+          "observed_imports": 10,
+          "original_public_process_rss_diagnostic": {
+            "kernel_rusage_self_peak_rss_bytes": 74481664,
+            "lifetime_peak_rss_bytes": 74702848,
+            "rss_bytes": 74702848,
+            "scope": "Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"
+          },
+          "phase": "baseline",
+          "public_setup_cpu_ns_nested": 1080572318,
+          "public_setup_wall_ns_nested": 4382773703,
+          "receiver_application_read_bytes": {
+            "complete_observed_sum": 1394230,
+            "known_sum": 1394230,
+            "observed_rows": 24,
+            "unknown_rows": 0
+          },
+          "receiver_application_written_bytes": {
+            "complete_observed_sum": 1049435,
+            "known_sum": 1049435,
+            "observed_rows": 24,
+            "unknown_rows": 0
+          },
+          "receiver_measurement_failures": 0,
+          "receiver_observer_complete": true,
+          "receiver_physical_network_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 0,
+            "observed_rows": 24,
+            "unknown_rows": 24
+          },
+          "receiver_records_not_retained": 0,
+          "retained_database_files": [
+            {
+              "bytes": 3506176,
+              "compressed_zip_member_bytes": 1434540,
+              "member": "execution/raw/baseline/independent-client/native.sqlite"
+            },
+            {
+              "bytes": 4317184,
+              "compressed_zip_member_bytes": 1756908,
+              "member": "execution/raw/baseline/receiver/native.sqlite"
+            }
+          ],
+          "whole_public_phase_cpu_ns": 8374266693,
+          "whole_public_phase_wall_ns": 34581570236
+        },
+        {
+          "complete_physical_cost": null,
+          "final_actual_cpu_credit_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 6344940903,
+            "discarded_refill_ns": 1204571237,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 6352538730,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 6352965233,
+            "remaining_paid_credit_ns": 1991975670,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 6352965233,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 426503,
+            "stored_credit_ns": 1991975670,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "graph_frequency": [
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 4,
+              "database_sha256": "6a71fbe53e338c6fdbc4c980b2850977aac4edbc23862d90b5420bb2db898777",
+              "no_account_change_blocks": 3,
+              "owner": "receiver",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 6165
+            },
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 0,
+              "database_sha256": "882c95a64ddabdc37ed0ab031c253aeec3c8098e7c7e7f984a9a2ff361dd85de",
+              "no_account_change_blocks": 0,
+              "owner": "independent-client",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 0
+            }
+          ],
+          "history_client_cpu": {
+            "complete_observed_sum": 0,
+            "known_sum": 0,
+            "observed_rows": 0,
+            "unknown_rows": 0
+          },
+          "history_host_calls": 0,
+          "history_host_cpu_nested": {
+            "complete_observed_sum": 0,
+            "known_sum": 0,
+            "observed_rows": 0,
+            "unknown_rows": 0
+          },
+          "host_checkpoint_bucket_totals": [],
+          "imports": [],
+          "native_stage_deltas_nested_not_additive": {
+            "client": {
+              "account_graph": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "activation": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "admission": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "complete_commitment": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "complete_state_root": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "delta": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "execute": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "execution_parent_binding": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "packet": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "persisted_state_root": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "publish": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "read_active": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "record": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "state_at": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "verify_history": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "verify_state": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              }
+            },
+            "receiver": {
+              "account_graph": {
+                "calls": 356,
+                "cpu_ns": 3634151865,
+                "wall_ns": 15391767478
+              },
+              "activation": {
+                "calls": 7,
+                "cpu_ns": 91907723,
+                "wall_ns": 495987642
+              },
+              "admission": {
+                "calls": 343,
+                "cpu_ns": 5146303025,
+                "wall_ns": 26935624536
+              },
+              "complete_commitment": {
+                "calls": 388,
+                "cpu_ns": 132545356,
+                "wall_ns": 532709300
+              },
+              "complete_state_root": {
+                "calls": 20,
+                "cpu_ns": 5587293,
+                "wall_ns": 5615323
+              },
+              "delta": {
+                "calls": 494,
+                "cpu_ns": 189746248,
+                "wall_ns": 1064864206
+              },
+              "execute": {
+                "calls": 286,
+                "cpu_ns": 472242069,
+                "wall_ns": 2659662868
+              },
+              "execution_parent_binding": {
+                "calls": 286,
+                "cpu_ns": 41574023,
+                "wall_ns": 41912899
+              },
+              "packet": {
+                "calls": 502,
+                "cpu_ns": 17046863,
+                "wall_ns": 97124368
+              },
+              "persisted_state_root": {
+                "calls": 41,
+                "cpu_ns": 3950588,
+                "wall_ns": 241989769
+              },
+              "publish": {
+                "calls": 10,
+                "cpu_ns": 143382354,
+                "wall_ns": 774588718
+              },
+              "read_active": {
+                "calls": 135,
+                "cpu_ns": 1692930395,
+                "wall_ns": 8276871683
+              },
+              "record": {
+                "calls": 964,
+                "cpu_ns": 10289969,
+                "wall_ns": 171301709
+              },
+              "state_at": {
+                "calls": 354,
+                "cpu_ns": 4295381453,
+                "wall_ns": 21903760168
+              },
+              "verify_history": {
+                "calls": 17,
+                "cpu_ns": 43827016,
+                "wall_ns": 278520121
+              },
+              "verify_state": {
+                "calls": 391,
+                "cpu_ns": 3949140119,
+                "wall_ns": 18177253299
+              }
+            }
+          },
+          "observed_imports": 0,
+          "original_public_process_rss_diagnostic": {
+            "kernel_rusage_self_peak_rss_bytes": 117710848,
+            "lifetime_peak_rss_bytes": 117948416,
+            "rss_bytes": 117948416,
+            "scope": "Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"
+          },
+          "phase": "valid-work-root",
+          "public_setup_cpu_ns_nested": 1085038227,
+          "public_setup_wall_ns_nested": 4387375322,
+          "receiver_application_read_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 38269662,
+            "observed_rows": 401,
+            "unknown_rows": 1
+          },
+          "receiver_application_written_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 745398,
+            "observed_rows": 401,
+            "unknown_rows": 1
+          },
+          "receiver_measurement_failures": 1,
+          "receiver_observer_complete": false,
+          "receiver_physical_network_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 0,
+            "observed_rows": 401,
+            "unknown_rows": 401
+          },
+          "receiver_records_not_retained": 0,
+          "retained_database_files": [
+            {
+              "bytes": 2002944,
+              "compressed_zip_member_bytes": 920841,
+              "member": "execution/raw/valid-work-root/independent-client/native.sqlite"
+            },
+            {
+              "bytes": 2666496,
+              "compressed_zip_member_bytes": 1159040,
+              "member": "execution/raw/valid-work-root/receiver/native.sqlite"
+            }
+          ],
+          "whole_public_phase_cpu_ns": 8718771078,
+          "whole_public_phase_wall_ns": 34994772932
+        }
+      ],
+      "preparation_steps": [
+        {
+          "complete_success": true,
+          "elapsed_ns": 4153000375,
+          "name": "source-before",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 54834611,
+          "name": "preflight",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 12746005,
+          "name": "rustc-version",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 17241463,
+          "name": "cargo-version",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 15759005262,
+          "name": "format",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 86101769173,
+          "name": "clippy",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 204324184173,
+          "name": "build",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 4150150063,
+          "name": "source-after",
+          "returncode": 0
+        }
+      ],
+      "report_sha256": "d4c03501f193ba01a4a8e7fbc9080a34625847393d82bcfa9e4fc4a8ddde22b6",
+      "run_id": 44451798839,
+      "source": {
+        "bytes": 195338,
+        "path": "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/current-cost-profile.json",
+        "sha256": "0f12a9e90c8a209f97bb211aeb0265ee1ae2cd562de79be91dd46c1f2e30d6b9"
+      },
+      "tree": "4877dd4e945841e734a57234e89fb1eb0440805e"
+    },
+    {
+      "archive_sha256": "6f0550eff271a1f6b2328595cf75b2099b5b34963460df16bd7220412f84d46b",
+      "compiler_and_dependency_acquisition_cpu_ns": null,
+      "four_second_confirmations": 0,
+      "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+      "native_exit_code": 101,
+      "original_honest_preparation": {
+        "actual_signed_seed_transfers": null,
+        "business_blocks": null,
+        "cpu_ns": 2117059114,
+        "rss": null,
+        "seed_blocks": null,
+        "state_backend": null,
+        "wall_ns": 2161684302
+      },
+      "original_window_confirmations": 1,
+      "phases": [
+        {
+          "complete_physical_cost": null,
+          "final_actual_cpu_credit_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 803839437,
+            "discarded_refill_ns": 4392772200,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 808903293,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 808917821,
+            "remaining_paid_credit_ns": 1994921616,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 808917821,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 14528,
+            "stored_credit_ns": 1994921616,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "graph_frequency": [
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 14,
+              "database_sha256": "2970982986060c8215fe4c4d7adecbe1e1ce221d89571dd3a6c7bb90b6d2c23f",
+              "no_account_change_blocks": 12,
+              "owner": "receiver",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 24660
+            },
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 13,
+              "database_sha256": "808933840c156a33b85bf21bc37c483fec068ec229f75e5be07bb2191f607868",
+              "no_account_change_blocks": 11,
+              "owner": "independent-client",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 22605
+            }
+          ],
+          "history_client_cpu": {
+            "complete_observed_sum": 5654544360,
+            "known_sum": 5654544360,
+            "observed_rows": 14,
+            "unknown_rows": 0
+          },
+          "history_host_calls": 97451,
+          "history_host_cpu_nested": {
+            "complete_observed_sum": 4678058554,
+            "known_sum": 4678058554,
+            "observed_rows": 14,
+            "unknown_rows": 0
+          },
+          "host_checkpoint_bucket_totals": [
+            {
+              "calls": 28,
+              "cpu": {
+                "complete_observed_sum": 1559737,
+                "known_sum": 1559737,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 216,
+              "cpu": {
+                "complete_observed_sum": 10714222,
+                "known_sum": 10714222,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 15386,
+              "cpu": {
+                "complete_observed_sum": 730360501,
+                "known_sum": 730360501,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "work",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 14,
+              "cpu": {
+                "complete_observed_sum": 681354,
+                "known_sum": 681354,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 21177,
+              "cpu": {
+                "complete_observed_sum": 1018481327,
+                "known_sum": 1018481327,
+                "observed_rows": 13,
+                "unknown_rows": 0
+              },
+              "owner_phase": "submit_result",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 27719,
+              "cpu": {
+                "complete_observed_sum": 1331143973,
+                "known_sum": 1331143973,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_prepare",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 73,
+              "cpu": {
+                "complete_observed_sum": 3635895,
+                "known_sum": 3635895,
+                "observed_rows": 13,
+                "unknown_rows": 0
+              },
+              "owner_phase": "execution",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 32565,
+              "cpu": {
+                "complete_observed_sum": 1567176499,
+                "known_sum": 1567176499,
+                "observed_rows": 13,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 218,
+              "cpu": {
+                "complete_observed_sum": 11535979,
+                "known_sum": 11535979,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "body_decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "response_encoding",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 14,
+              "cpu": {
+                "complete_observed_sum": 687590,
+                "known_sum": 687590,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_open",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_close",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 28,
+              "cpu": {
+                "complete_observed_sum": 1327850,
+                "known_sum": 1327850,
+                "observed_rows": 14,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_import",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_settle",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 13,
+              "cpu": {
+                "complete_observed_sum": 753627,
+                "known_sum": 753627,
+                "observed_rows": 13,
+                "unknown_rows": 0
+              },
+              "owner_phase": "root_commitment",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": null,
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            }
+          ],
+          "imports": [
+            {
+              "client_cpu_ns": 340996193,
+              "client_wall_ns": 1796615605,
+              "history_index": 0,
+              "host_checkpoint_calls": 5911,
+              "host_checkpoint_cpu_ns": 284310435,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 324562391,
+              "client_wall_ns": 1412586924,
+              "history_index": 1,
+              "host_checkpoint_calls": 5664,
+              "host_checkpoint_cpu_ns": 271462214,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 324592520,
+              "client_wall_ns": 1512261398,
+              "history_index": 2,
+              "host_checkpoint_calls": 5670,
+              "host_checkpoint_cpu_ns": 272222869,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 326973855,
+              "client_wall_ns": 1365407380,
+              "history_index": 3,
+              "host_checkpoint_calls": 5676,
+              "host_checkpoint_cpu_ns": 272473710,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 325679029,
+              "client_wall_ns": 1481624875,
+              "history_index": 4,
+              "host_checkpoint_calls": 5682,
+              "host_checkpoint_cpu_ns": 271639763,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 333627020,
+              "client_wall_ns": 1426617096,
+              "history_index": 5,
+              "host_checkpoint_calls": 5688,
+              "host_checkpoint_cpu_ns": 272994683,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 1585695072,
+              "client_wall_ns": 7065445357,
+              "history_index": 6,
+              "host_checkpoint_calls": 26858,
+              "host_checkpoint_cpu_ns": 1290469365,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 330631342,
+              "client_wall_ns": 1410377109,
+              "history_index": 7,
+              "host_checkpoint_calls": 5787,
+              "host_checkpoint_cpu_ns": 276955082,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 329539882,
+              "client_wall_ns": 1486928759,
+              "history_index": 8,
+              "host_checkpoint_calls": 5733,
+              "host_checkpoint_cpu_ns": 274819339,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 330151713,
+              "client_wall_ns": 1483311144,
+              "history_index": 9,
+              "host_checkpoint_calls": 5739,
+              "host_checkpoint_cpu_ns": 275376800,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 333840999,
+              "client_wall_ns": 1415712291,
+              "history_index": 10,
+              "host_checkpoint_calls": 5745,
+              "host_checkpoint_cpu_ns": 277036736,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 336100758,
+              "client_wall_ns": 1493363291,
+              "history_index": 11,
+              "host_checkpoint_calls": 5751,
+              "host_checkpoint_cpu_ns": 277215200,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 332995902,
+              "client_wall_ns": 1488598501,
+              "history_index": 12,
+              "host_checkpoint_calls": 5757,
+              "host_checkpoint_cpu_ns": 274980058,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 99157684,
+              "client_wall_ns": 406524296,
+              "history_index": 13,
+              "host_checkpoint_calls": 1790,
+              "host_checkpoint_cpu_ns": 86102300,
+              "import_error": "PUBLIC_REQUEST_DEADLINE",
+              "import_observed": true
+            }
+          ],
+          "native_stage_deltas_nested_not_additive": {
+            "client": {
+              "account_graph": {
+                "calls": 79,
+                "cpu_ns": 4212871962,
+                "wall_ns": 18414139705
+              },
+              "activation": {
+                "calls": 1,
+                "cpu_ns": 1255475720,
+                "wall_ns": 5592817249
+              },
+              "admission": {
+                "calls": 14,
+                "cpu_ns": 3582026111,
+                "wall_ns": 15577043917
+              },
+              "complete_commitment": {
+                "calls": 146,
+                "cpu_ns": 97712579,
+                "wall_ns": 404112632
+              },
+              "complete_state_root": {
+                "calls": 56,
+                "cpu_ns": 13811987,
+                "wall_ns": 166350494
+              },
+              "delta": {
+                "calls": 448,
+                "cpu_ns": 148623360,
+                "wall_ns": 765992750
+              },
+              "execute": {
+                "calls": 13,
+                "cpu_ns": 22055576,
+                "wall_ns": 98947599
+              },
+              "execution_parent_binding": {
+                "calls": 13,
+                "cpu_ns": 4059716,
+                "wall_ns": 4074464
+              },
+              "packet": {
+                "calls": 461,
+                "cpu_ns": 14603126,
+                "wall_ns": 92178073
+              },
+              "persisted_state_root": {
+                "calls": 101,
+                "cpu_ns": 18074257,
+                "wall_ns": 18183797
+              },
+              "publish": {
+                "calls": 13,
+                "cpu_ns": 1606485870,
+                "wall_ns": 7247664432
+              },
+              "read_active": {
+                "calls": 5,
+                "cpu_ns": 280034873,
+                "wall_ns": 1206437864
+              },
+              "record": {
+                "calls": 839,
+                "cpu_ns": 6290807,
+                "wall_ns": 7028453
+              },
+              "state_at": {
+                "calls": 40,
+                "cpu_ns": 1605069183,
+                "wall_ns": 6934334119
+              },
+              "verify_history": {
+                "calls": 35,
+                "cpu_ns": 174828092,
+                "wall_ns": 792940379
+              },
+              "verify_state": {
+                "calls": 133,
+                "cpu_ns": 4368166030,
+                "wall_ns": 19262374305
+              }
+            },
+            "receiver": {
+              "account_graph": {
+                "calls": 72,
+                "cpu_ns": 360215670,
+                "wall_ns": 1627593903
+              },
+              "activation": {
+                "calls": 14,
+                "cpu_ns": 225481909,
+                "wall_ns": 1002269638
+              },
+              "admission": {
+                "calls": 14,
+                "cpu_ns": 546315669,
+                "wall_ns": 2201913180
+              },
+              "complete_commitment": {
+                "calls": 154,
+                "cpu_ns": 46105495,
+                "wall_ns": 273122369
+              },
+              "complete_state_root": {
+                "calls": 19,
+                "cpu_ns": 4404387,
+                "wall_ns": 79329180
+              },
+              "delta": {
+                "calls": 651,
+                "cpu_ns": 73681467,
+                "wall_ns": 227462765
+              },
+              "execute": {
+                "calls": 14,
+                "cpu_ns": 15265408,
+                "wall_ns": 15278444
+              },
+              "execution_parent_binding": {
+                "calls": 14,
+                "cpu_ns": 2189558,
+                "wall_ns": 2205315
+              },
+              "packet": {
+                "calls": 665,
+                "cpu_ns": 15104020,
+                "wall_ns": 90832136
+              },
+              "persisted_state_root": {
+                "calls": 112,
+                "cpu_ns": 5694830,
+                "wall_ns": 5807392
+              },
+              "publish": {
+                "calls": 14,
+                "cpu_ns": 185672490,
+                "wall_ns": 843792820
+              },
+              "read_active": {
+                "calls": 28,
+                "cpu_ns": 214608790,
+                "wall_ns": 811072733
+              },
+              "record": {
+                "calls": 1232,
+                "cpu_ns": 6211396,
+                "wall_ns": 7232605
+              },
+              "state_at": {
+                "calls": 42,
+                "cpu_ns": 231090037,
+                "wall_ns": 903687320
+              },
+              "verify_history": {
+                "calls": 42,
+                "cpu_ns": 95592964,
+                "wall_ns": 400924509
+              },
+              "verify_state": {
+                "calls": 140,
+                "cpu_ns": 412710493,
+                "wall_ns": 1832607194
+              }
+            }
+          },
+          "observed_imports": 14,
+          "original_public_process_rss_diagnostic": {
+            "kernel_rusage_self_peak_rss_bytes": 78909440,
+            "lifetime_peak_rss_bytes": 79228928,
+            "rss_bytes": 79228928,
+            "scope": "Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"
+          },
+          "phase": "baseline",
+          "public_setup_cpu_ns_nested": 927556448,
+          "public_setup_wall_ns_nested": 3706350772,
+          "receiver_application_read_bytes": {
+            "complete_observed_sum": 1395750,
+            "known_sum": 1395750,
+            "observed_rows": 28,
+            "unknown_rows": 0
+          },
+          "receiver_application_written_bytes": {
+            "complete_observed_sum": 1456004,
+            "known_sum": 1456004,
+            "observed_rows": 28,
+            "unknown_rows": 0
+          },
+          "receiver_measurement_failures": 0,
+          "receiver_observer_complete": true,
+          "receiver_physical_network_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 0,
+            "observed_rows": 28,
+            "unknown_rows": 28
+          },
+          "receiver_records_not_retained": 0,
+          "retained_database_files": [
+            {
+              "bytes": 4157440,
+              "compressed_zip_member_bytes": 1670157,
+              "member": "execution/raw/baseline/independent-client/native.sqlite"
+            },
+            {
+              "bytes": 4317184,
+              "compressed_zip_member_bytes": 1756908,
+              "member": "execution/raw/baseline/receiver/native.sqlite"
+            }
+          ],
+          "whole_public_phase_cpu_ns": 8191949624,
+          "whole_public_phase_wall_ns": 33904056197
+        },
+        {
+          "complete_physical_cost": null,
+          "final_actual_cpu_credit_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 5011216826,
+            "discarded_refill_ns": 2537865173,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 5011076785,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 5011486185,
+            "remaining_paid_credit_ns": 1999730641,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 5011486185,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 409400,
+            "stored_credit_ns": 1999730641,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "graph_frequency": [
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 7,
+              "database_sha256": "5cbd7f9b7281d5ac8bbaf6d9412523c915308e09fb96c2b6158fe8290490f85f",
+              "no_account_change_blocks": 6,
+              "owner": "receiver",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 12330
+            },
+            {
+              "actual_trigger_names": [],
+              "completed_business_blocks": 4,
+              "database_sha256": "38cdfd8d07ba137acceca1d175b5d9af34909f5296c950fb01eaba28d7277501",
+              "no_account_change_blocks": 3,
+              "owner": "independent-client",
+              "potential_is_not_measured_saved_work": true,
+              "potential_one_graph_node_visits": 6165
+            }
+          ],
+          "history_client_cpu": {
+            "complete_observed_sum": 1528271627,
+            "known_sum": 1528271627,
+            "observed_rows": 5,
+            "unknown_rows": 0
+          },
+          "history_host_calls": 24058,
+          "history_host_cpu_nested": {
+            "complete_observed_sum": 1270500241,
+            "known_sum": 1270500241,
+            "observed_rows": 5,
+            "unknown_rows": 0
+          },
+          "host_checkpoint_bucket_totals": [
+            {
+              "calls": 10,
+              "cpu": {
+                "complete_observed_sum": 516617,
+                "known_sum": 516617,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 55,
+              "cpu": {
+                "complete_observed_sum": 3051795,
+                "known_sum": 3051795,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "context",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 5495,
+              "cpu": {
+                "complete_observed_sum": 283229140,
+                "known_sum": 283229140,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "work",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 5,
+              "cpu": {
+                "complete_observed_sum": 236461,
+                "known_sum": 236461,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 4,
+              "cpu": {
+                "complete_observed_sum": 268279,
+                "known_sum": 268279,
+                "observed_rows": 4,
+                "unknown_rows": 0
+              },
+              "owner_phase": "submit_result",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 8449,
+              "cpu": {
+                "complete_observed_sum": 444131263,
+                "known_sum": 444131263,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "admission_prepare",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 24,
+              "cpu": {
+                "complete_observed_sum": 1234610,
+                "known_sum": 1234610,
+                "observed_rows": 4,
+                "unknown_rows": 0
+              },
+              "owner_phase": "execution",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit_owner_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 9918,
+              "cpu": {
+                "complete_observed_sum": 532054302,
+                "known_sum": 532054302,
+                "observed_rows": 4,
+                "unknown_rows": 0
+              },
+              "owner_phase": "commit",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 79,
+              "cpu": {
+                "complete_observed_sum": 4644279,
+                "known_sum": 4644279,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_wait",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "body_decode",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "response_encoding",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 5,
+              "cpu": {
+                "complete_observed_sum": 262609,
+                "known_sum": 262609,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_open",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_epoch_close",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 10,
+              "cpu": {
+                "complete_observed_sum": 522938,
+                "known_sum": 522938,
+                "observed_rows": 5,
+                "unknown_rows": 0
+              },
+              "owner_phase": "history_import",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": "cpu_settle",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 4,
+              "cpu": {
+                "complete_observed_sum": 347948,
+                "known_sum": 347948,
+                "observed_rows": 4,
+                "unknown_rows": 0
+              },
+              "owner_phase": "root_commitment",
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            },
+            {
+              "calls": 0,
+              "cpu": {
+                "complete_observed_sum": 0,
+                "known_sum": 0,
+                "observed_rows": 0,
+                "unknown_rows": 0
+              },
+              "owner_phase": null,
+              "unfinished_calls": 0,
+              "unknown_cpu_calls": 0
+            }
+          ],
+          "imports": [
+            {
+              "client_cpu_ns": 383051888,
+              "client_wall_ns": 3983045326,
+              "history_index": 0,
+              "host_checkpoint_calls": 5790,
+              "host_checkpoint_cpu_ns": 318757435,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 350374444,
+              "client_wall_ns": 3304148997,
+              "history_index": 1,
+              "host_checkpoint_calls": 5664,
+              "host_checkpoint_cpu_ns": 291107321,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 352224143,
+              "client_wall_ns": 3302712376,
+              "history_index": 2,
+              "host_checkpoint_calls": 5670,
+              "host_checkpoint_cpu_ns": 293233495,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 367111440,
+              "client_wall_ns": 3589800955,
+              "history_index": 3,
+              "host_checkpoint_calls": 5676,
+              "host_checkpoint_cpu_ns": 301368417,
+              "import_error": null,
+              "import_observed": true
+            },
+            {
+              "client_cpu_ns": 75509712,
+              "client_wall_ns": 698958386,
+              "history_index": 4,
+              "host_checkpoint_calls": 1258,
+              "host_checkpoint_cpu_ns": 66033573,
+              "import_error": "PUBLIC_REQUEST_DEADLINE",
+              "import_observed": true
+            }
+          ],
+          "native_stage_deltas_nested_not_additive": {
+            "client": {
+              "account_graph": {
+                "calls": 17,
+                "cpu_ns": 1063897542,
+                "wall_ns": 9827281548
+              },
+              "activation": {
+                "calls": 0,
+                "cpu_ns": 0,
+                "wall_ns": 0
+              },
+              "admission": {
+                "calls": 5,
+                "cpu_ns": 1213140706,
+                "wall_ns": 11410757897
+              },
+              "complete_commitment": {
+                "calls": 37,
+                "cpu_ns": 24046199,
+                "wall_ns": 203095662
+              },
+              "complete_state_root": {
+                "calls": 12,
+                "cpu_ns": 4080966,
+                "wall_ns": 93718163
+              },
+              "delta": {
+                "calls": 83,
+                "cpu_ns": 34818115,
+                "wall_ns": 481824106
+              },
+              "execute": {
+                "calls": 4,
+                "cpu_ns": 7387255,
+                "wall_ns": 189130408
+              },
+              "execution_parent_binding": {
+                "calls": 4,
+                "cpu_ns": 1339147,
+                "wall_ns": 1343092
+              },
+              "packet": {
+                "calls": 87,
+                "cpu_ns": 3018440,
+                "wall_ns": 90103309
+              },
+              "persisted_state_root": {
+                "calls": 20,
+                "cpu_ns": 2116992,
+                "wall_ns": 2137695
+              },
+              "publish": {
+                "calls": 4,
+                "cpu_ns": 561793974,
+                "wall_ns": 5196663907
+              },
+              "read_active": {
+                "calls": 2,
+                "cpu_ns": 139348966,
+                "wall_ns": 1207999254
+              },
+              "record": {
+                "calls": 154,
+                "cpu_ns": 1504733,
+                "wall_ns": 91567037
+              },
+              "state_at": {
+                "calls": 13,
+                "cpu_ns": 542606958,
+                "wall_ns": 5204423310
+              },
+              "verify_history": {
+                "calls": 8,
+                "cpu_ns": 37563162,
+                "wall_ns": 571501203
+              },
+              "verify_state": {
+                "calls": 33,
+                "cpu_ns": 1102239719,
+                "wall_ns": 10221080278
+              }
+            },
+            "receiver": {
+              "account_graph": {
+                "calls": 319,
+                "cpu_ns": 2862170113,
+                "wall_ns": 20626583349
+              },
+              "activation": {
+                "calls": 7,
+                "cpu_ns": 110092402,
+                "wall_ns": 424434659
+              },
+              "admission": {
+                "calls": 303,
+                "cpu_ns": 3938515525,
+                "wall_ns": 27023161697
+              },
+              "complete_commitment": {
+                "calls": 360,
+                "cpu_ns": 97410587,
+                "wall_ns": 748157603
+              },
+              "complete_state_root": {
+                "calls": 24,
+                "cpu_ns": 5655564,
+                "wall_ns": 5689241
+              },
+              "delta": {
+                "calls": 540,
+                "cpu_ns": 149798893,
+                "wall_ns": 230257908
+              },
+              "execute": {
+                "calls": 200,
+                "cpu_ns": 285618377,
+                "wall_ns": 1277359898
+              },
+              "execution_parent_binding": {
+                "calls": 200,
+                "cpu_ns": 34538616,
+                "wall_ns": 203550867
+              },
+              "packet": {
+                "calls": 547,
+                "cpu_ns": 19688783,
+                "wall_ns": 20208200
+              },
+              "persisted_state_root": {
+                "calls": 56,
+                "cpu_ns": 2875684,
+                "wall_ns": 2931626
+              },
+              "publish": {
+                "calls": 7,
+                "cpu_ns": 91144259,
+                "wall_ns": 404862777
+              },
+              "read_active": {
+                "calls": 47,
+                "cpu_ns": 540231851,
+                "wall_ns": 2613944387
+              },
+              "record": {
+                "calls": 1040,
+                "cpu_ns": 9874062,
+                "wall_ns": 12899656
+              },
+              "state_at": {
+                "calls": 317,
+                "cpu_ns": 3348748496,
+                "wall_ns": 23597140604
+              },
+              "verify_history": {
+                "calls": 21,
+                "cpu_ns": 43066124,
+                "wall_ns": 43086323
+              },
+              "verify_state": {
+                "calls": 365,
+                "cpu_ns": 3104035035,
+                "wall_ns": 22345285323
+              }
+            }
+          },
+          "observed_imports": 5,
+          "original_public_process_rss_diagnostic": {
+            "kernel_rusage_self_peak_rss_bytes": 122486784,
+            "lifetime_peak_rss_bytes": 122834944,
+            "rss_bytes": 122834944,
+            "scope": "Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"
+          },
+          "phase": "valid-work-root",
+          "public_setup_cpu_ns_nested": 935023149,
+          "public_setup_wall_ns_nested": 3787955177,
+          "receiver_application_read_bytes": {
+            "complete_observed_sum": 37276158,
+            "known_sum": 37276158,
+            "observed_rows": 395,
+            "unknown_rows": 0
+          },
+          "receiver_application_written_bytes": {
+            "complete_observed_sum": 1182310,
+            "known_sum": 1182310,
+            "observed_rows": 395,
+            "unknown_rows": 0
+          },
+          "receiver_measurement_failures": 0,
+          "receiver_observer_complete": true,
+          "receiver_physical_network_bytes": {
+            "complete_observed_sum": null,
+            "known_sum": 0,
+            "observed_rows": 395,
+            "unknown_rows": 395
+          },
+          "receiver_records_not_retained": 0,
+          "retained_database_files": [
+            {
+              "bytes": 2666496,
+              "compressed_zip_member_bytes": 1158572,
+              "member": "execution/raw/valid-work-root/independent-client/native.sqlite"
+            },
+            {
+              "bytes": 3153920,
+              "compressed_zip_member_bytes": 1336403,
+              "member": "execution/raw/valid-work-root/receiver/native.sqlite"
+            }
+          ],
+          "whole_public_phase_cpu_ns": 8556721560,
+          "whole_public_phase_wall_ns": 34497845623
+        }
+      ],
+      "preparation_steps": [
+        {
+          "complete_success": true,
+          "elapsed_ns": 3529290151,
+          "name": "source-before",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 43928737,
+          "name": "preflight",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 10925257,
+          "name": "rustc-version",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 14929288,
+          "name": "cargo-version",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 12073848494,
+          "name": "format",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 70557000331,
+          "name": "clippy",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 169059812891,
+          "name": "build",
+          "returncode": 0
+        },
+        {
+          "complete_success": true,
+          "elapsed_ns": 3554071687,
+          "name": "source-after",
+          "returncode": 0
+        }
+      ],
+      "report_sha256": "0e1bdd1606b0643bb6adce1952e3c24fcbeb38853feb4283e95d64a5ce02692c",
+      "run_id": 44465153982,
+      "source": {
+        "bytes": 346786,
+        "path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/current-cost-profile.json",
+        "sha256": "3acbe5bc9d9165b71ce864fe7923ed472b3ed563ce1e37e5751a1000d06fac1f"
+      },
+      "tree": "c896826d4f376d6643b05c15486f573e9aff6546"
+    }
+  ],
+  "schema": "chain-original-f0-append-complete-bottleneck-comparison-v1"
+}

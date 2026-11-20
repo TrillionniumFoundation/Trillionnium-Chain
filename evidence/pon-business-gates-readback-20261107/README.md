@@ -299,3 +299,46 @@ attempt is not reclassified or discarded.
 [COMBINED_93277_COPY.json](COMBINED_93277_COPY.json) records every copied byte,
 including the original source and native readers. No additional native body,
 benchmark or business-gate result is inferred from these observations.
+
+
+## Archived original D26 SQLite containers (2026-11-15)
+
+Eight `native.sqlite.gz` containers, totaling 176,597,049 bytes, now resolve to
+their exact original Git blobs at `893210a45b44742edfe2510fea1d92e9974b5f95`.
+[D26_SQLITE_ARCHIVE.json](D26_SQLITE_ARCHIVE.json) binds all eight complete leaf
+scopes, their modes, sizes and SHA-256 values, the original sealed controls and
+all 609 unchanged retained files. The sealed `ci-d26/COPY_PLAN.json`,
+`GATE_CORE.json`, `README.md`, original failures, UNKNOWN observations and
+pre-delivery corrections retain their original bytes. This parent-level archive
+index is outside the sealed D26 package.
+
+The dedicated byte checker reconstructs the complete logical 617-file original
+view from current retained files and local Git objects. It verifies all 614
+prepared payloads (201,804,106 bytes), streams every one of the 232 gzip files
+through EOF and verifies 1,992,917,425 decoded bytes, checks both sealed control
+files and the copy plan itself, and cross-checks all eight database identities.
+The remaining 382 raw payloads total 5,901,434 bytes. Gzip CRC/trailers, raw and
+compressed hashes, retained files, and actual Git index blobs/modes all remain
+required; an omitted or unavailable historical object is a failure.
+
+```sh
+python3 scripts/ci/check_d26_sqlite_archive.py \
+  --manifest evidence/pon-business-gates-readback-20261107/D26_SQLITE_ARCHIVE.json
+```
+
+The checker reads bytes only. It does not open SQLite, run the Node, perform
+recovery, execute archived readers, revalidate original transport ZIPs, write
+receipts into the sealed package, or fetch missing objects. To retrieve one
+original compressed file, use the generic reader with an exact indexed path:
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pon-business-gates-readback-20261107/D26_SQLITE_ARCHIVE.json \
+  --cat evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz \
+  > /absolute/new/replay/native.sqlite.gz
+```
+
+This is a storage and original-byte check. The original status remains **HOLD**,
+`native_gate_validated=false`; historical CI failures and missing-original
+UNKNOWN results are not upgraded. A passing archive check is not a current
+work/service, performance, native, or production qualification.

@@ -253,28 +253,65 @@ retained byte for byte, including their original metadata. Absolute paths
 describe the original capture machine. Complete logs, source receipts, JSONL and provider artifacts
 retain their bytes; missing output is explicitly identified below.
 
+The 13 archive containers now reside in reachable Git history, indexed by
+[ORIGINAL_ARCHIVE_INDEX.json](ORIGINAL_ARCHIVE_INDEX.json). Each entry binds
+its original path, Git blob, byte count and SHA-256 to commit
+`893210a45b44742edfe2510fea1d92e9974b5f95`, tree
+`a2d04b29621bb78504244471aacac3be3bc78d1d`. The containers are absent from the
+current checkout. Their contents and all original outcome records are unchanged.
+
 | Archive | Bytes | Members | Scope |
 | --- | ---: | ---: | --- |
-| [117-ai395-native.tar.gz](archives/117-ai395-native.tar.gz) | 2,787,512 | 478 | Original ai395 native archive |
-| [117-desktop-publication-receipts.tar.xz](archives/117-desktop-publication-receipts.tar.xz) | 363,296 | 317 | Desktop publication, workflow logs and latest CI snapshot |
-| [117-local-publication-readbacks.tar.xz](archives/117-local-publication-readbacks.tar.xz) | 769,840 | 407 | Local receipts, complete job logs and runtime failure readback |
-| [117-local-validation.tar.xz](archives/117-local-validation.tar.xz) | 976,596 | 105 | Final local static/native/V4 observations |
-| [fc5-validation.tar.xz](archives/fc5-validation.tar.xz) | 607,772 | 102 | Initial implementation successes and failures |
-| [history-original-control.tar.xz](archives/history-original-control.tar.xz) | 2,850,152 | 15 | Original-source History comparison |
-| [original-campaign-42553751914.zip](archives/original-campaign-42553751914.zip) | 76,217,297 | 1,766 | Complete original campaign ZIP, including executable |
-| [preliminary-ci-failure.tar.xz](archives/preliminary-ci-failure.tar.xz) | 49,800 | 6 | Preliminary failure and capture gap |
-| [preparation-and-hosted-failures.tar.xz](archives/preparation-and-hosted-failures.tar.xz) | 28,496,340 | 119 | Preparation and original six baseline/QROM failure captures |
-| [runtime-observations-13648102770.zip](archives/runtime-observations-13648102770.zip) | 9,188,196 | 697 | Complete prospective runtime observations ZIP |
-| [runtime-shard-proof-13647628991.zip](archives/runtime-shard-proof-13647628991.zip) | 2,143 | 2 | Complete prospective runtime source-proof ZIP |
-| [worktime-head-42553751985.zip](archives/worktime-head-42553751985.zip) | 1,812,700 | 19 | Complete work/time head ZIP |
-| [worktime-merge-42553751985.zip](archives/worktime-merge-42553751985.zip) | 1,812,824 | 19 | Complete work/time prospective-merge ZIP |
+| `117-ai395-native.tar.gz` | 2,787,512 | 478 | Original ai395 native archive |
+| `117-desktop-publication-receipts.tar.xz` | 363,296 | 317 | Desktop publication, workflow logs and latest CI snapshot |
+| `117-local-publication-readbacks.tar.xz` | 769,840 | 407 | Local receipts, complete job logs and runtime failure readback |
+| `117-local-validation.tar.xz` | 976,596 | 105 | Final local static/native/V4 observations |
+| `fc5-validation.tar.xz` | 607,772 | 102 | Initial implementation successes and failures |
+| `history-original-control.tar.xz` | 2,850,152 | 15 | Original-source History comparison |
+| `original-campaign-42553751914.zip` | 76,217,297 | 1,766 | Complete original campaign ZIP, including executable |
+| `preliminary-ci-failure.tar.xz` | 49,800 | 6 | Preliminary failure and capture gap |
+| `preparation-and-hosted-failures.tar.xz` | 28,496,340 | 119 | Preparation and original six baseline/QROM failure captures |
+| `runtime-observations-13648102770.zip` | 9,188,196 | 697 | Complete prospective runtime observations ZIP |
+| `runtime-shard-proof-13647628991.zip` | 2,143 | 2 | Complete prospective runtime source-proof ZIP |
+| `worktime-head-42553751985.zip` | 1,812,700 | 19 | Complete work/time head ZIP |
+| `worktime-merge-42553751985.zip` | 1,812,824 | 19 | Complete work/time prospective-merge ZIP |
 
 Exact outer SHA-256 values are in [artifacts.json](artifacts.json).
-[SHA256SUMS](SHA256SUMS) covers every package file except itself; the Git
-commit binds that index. Per-member inventories and independent reviews
+[SHA256SUMS](SHA256SUMS) remains unchanged and covers every file in the original
+sealed logical package except itself; the Git commit binds that index. Its
+README entry refers to the original README preserved in the archive index,
+before this storage explanation was added. Per-member inventories and independent reviews
 are retained under inventories/ and integrity/. The 1,724 selected desktop
 extraction entries do not replace the original campaign ZIP's complete
 1,766-file denominator.
+
+From the repository root, verify all 74 original checksum entries and the
+13 archive/sidecar bindings with:
+
+```sh
+python3 scripts/ci/check_joint_resource_archive.py \
+  --manifest evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json
+```
+
+The reader requires all 61 retained original files to remain present and
+byte-identical. Missing retained files, modified failures, missing Git objects,
+unlisted observations or altered original denominators fail verification.
+Only the indexed containers and original README resolve from history. The
+HOLD / NO-GO conclusion and the failed three-run campaign remain unchanged.
+
+Retrieve a container by its exact indexed path, for example:
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pon-joint-resource-contract-20261109/ORIGINAL_ARCHIVE_INDEX.json \
+  --cat evidence/pon-joint-resource-contract-20261109/archives/runtime-shard-proof-13647628991.zip \
+  > /tmp/runtime-shard-proof-13647628991.zip
+```
+
+These are complete original-container byte checks. They do not extract archives,
+rehash internal members, execute captured helpers or repeat native observations.
+The original member-verification receipts remain separate historical records;
+byte equality preserves their inputs without creating a new qualification.
 
 The captured integrity verifier is retained as
 [verify_archives.py.gz](integrity/verify_archives.py.gz); decompression preserves

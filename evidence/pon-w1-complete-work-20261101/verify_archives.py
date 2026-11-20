@@ -118,4 +118,9 @@ def main():
                       'work_hardness_or_service_qualification': False}, sort_keys=True))
 
 if __name__ == '__main__':
-    main()
+    # The current package always uses the read-only historical-byte view.
+    # The private view restores the exact original verifier from its Git blob.
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts' / 'ci'))
+    from check_w1_complete_archive import current_cli
+    raise SystemExit(current_cli(Path(__file__).resolve().parent))

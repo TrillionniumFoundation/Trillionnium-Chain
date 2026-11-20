@@ -19,7 +19,7 @@ from types import FunctionType, ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
-CONTRACT_SHA256 = "ea0f8e2a0c82a01c0601e627cf64d8df34682457904fb00a65639138a0be46fa"
+CONTRACT_SHA256 = "85a2f56206ba46d79a2d75ab821da1a4dfffbc76e88e200decbdf4594eaac6d4"
 # Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
 # scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
 LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'

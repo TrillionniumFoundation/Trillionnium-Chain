@@ -1,0 +1,40 @@
+{
+  "schema": "chain-original-f0-readback-execution-v1",
+  "business_reexecuted": false,
+  "head": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "run_id": 44465153982,
+  "invocation_count": 1,
+  "reader_semantics_changed": false,
+  "collection_filename_adapter_only": true,
+  "collection_interface": {
+    "native_original_receipt_sha256": "1eaec4b6d63a051775d00bdd441201dda9d024ebe8e782953e23ec717949cae8",
+    "reader_receipt_sha256": "c824defe2b3258d93ef8b0e4d6fcf775f3c57459977b724f6638fe277c6f7465",
+    "only_added_field": "expected_head",
+    "value_verified_against_both_native_collector_and_provider": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+    "provider_alias_source": "run-15.stdout",
+    "provider_raw_sha256": "b4518118cac0ae090e5437ddc52da4454c1fc95f1c990e85fef3d9f601cad88c",
+    "artifact_alias_source": "artifacts-page-1.stdout",
+    "artifact_raw_sha256": "db95590503956b1441c47cee78afdf364b6c67002bdb26b38fb2ec3e1f58ca18"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/f0-readback.py"
+  ],
+  "pid": 876907,
+  "exit_code": 0,
+  "wall_seconds": 2.0477790079894476,
+  "child_user_cpu_seconds": 1.800219,
+  "child_system_cpu_seconds": 0.245893,
+  "outputs": [
+    {
+      "path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/f0-independent-readback.json",
+      "bytes": 17067,
+      "sha256": "f1ef86cd439b3456d1d33f30a126b5938c43accc7b454c75b32c8d22bd25b29d"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-native-owned-append-f0-20261119-2e9b/current-cost-profile.json",
+      "bytes": 346786,
+      "sha256": "3acbe5bc9d9165b71ce864fe7923ed472b3ed563ce1e37e5751a1000d06fac1f"
+    }
+  ]
+}

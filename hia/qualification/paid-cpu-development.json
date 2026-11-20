@@ -1,0 +1,445 @@
+{
+  "actual_compiler_and_cargo": {
+    "cargo_executable": {
+      "bytes": 42185192,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+    },
+    "compiler_executable": {
+      "bytes": 644784,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+    }
+  },
+  "actual_cpu_trace": {
+    "actual_clock3_tids": [
+      2786931,
+      2786932,
+      2786933,
+      2786934,
+      2786935,
+      2786936,
+      2786937,
+      2786938,
+      2786939,
+      2786940,
+      2786941,
+      2786942,
+      2786943,
+      2786944,
+      2786945,
+      2786946,
+      2786947,
+      2786948,
+      2786949,
+      2786950,
+      2786951,
+      2786952,
+      2786953,
+      2786954,
+      2786955,
+      2786956,
+      2786957,
+      2786958,
+      2786959,
+      2786960,
+      2786963
+    ],
+    "bytes": 213748,
+    "clock1_vdso_may_not_emit_syscalls": true,
+    "complete_original_runtime_syscall_whitelist_claimed": false,
+    "direct_clock3_call_starts": 129,
+    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-original-v2/actual-original-scoped-clocks.trace",
+    "sha256": "459083fade5375311381d9ff1fbb7e6effd79f33d4534b6f5c88d3ecce0eab56"
+  },
+  "actual_host_dynamic_libraries": {
+    "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": {
+      "bytes": 236616,
+      "sha256": "5fc0940888e9d2e1a00e66d6b1a559c36364ee867683652e1074fa576952cc3f"
+    },
+    "/usr/lib/x86_64-linux-gnu/libc.so.6": {
+      "bytes": 2129424,
+      "sha256": "755a371e86cc9f564ab54f66140747700fb0a103f698f659f2060f707897e09a"
+    }
+  },
+  "actual_original": {
+    "actual_original_boundary_cases": 67,
+    "actual_original_budget_calls": 83,
+    "actual_original_fault_histories": 13,
+    "actual_original_owner_profiles": 5,
+    "binary_after": "MATCH",
+    "retained_original_passed": 23,
+    "source_after": "MATCH"
+  },
+  "actual_original_fault_report": {
+    "bytes": 83984,
+    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-original-v2/fault-differential/report.json",
+    "sha256": "341c36663e04e13632f760d8f7cb7b9c69123e149050551d1c89de6fcf57bbb3"
+  },
+  "actual_original_report": {
+    "bytes": 1217792,
+    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-original-v2/report.json",
+    "sha256": "fe7f3727a37aab6f1e70de0563085984e96f41880af7a7bd7218f6a8cbad3ab9"
+  },
+  "ci_reader_development_review": {
+    "actual_native_or_original_execution_performed_by_review": false,
+    "actual_recorded_faults_replayed": 13,
+    "actual_recorded_platform_baselines_replayed": 2,
+    "admission_test_groups": 12
+  },
+  "compiler_toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "distinct_prior_passes": [
+    "V5 original positive 83/67/5 and 23 retained with fault differential still open at that time",
+    "V8 original actual 13-fault negative comparison on separately retained V7 executable"
+  ],
+  "evidence": {
+    "actual_runtime_executed_by_independent_review": false,
+    "bytes": 4763040,
+    "complete_archive_and_all_regular_members_independently_rehashed": true,
+    "complete_declared_member_manifest_matches_actual_bytes": true,
+    "path": "hia/qualification/paid-cpu-development.tar.xz",
+    "regular_bytes": 30769054,
+    "regular_members": 1754,
+    "sha256": "84954c9df4a9e7e9877f20c5a8b881d1bd520408625a41ef59063177b2b31588"
+  },
+  "excluded_reconstructable_or_large_artifacts": [
+    "Cargo target trees",
+    "isolated complete original copies",
+    "separately retained independent original test executables"
+  ],
+  "explicit_build_environment": {
+    "CARGO": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": "",
+    "RUSTC_WRAPPER": "",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu"
+  },
+  "final_durable_job": "1a1e563a8a1-392-3917",
+  "independent_original_binary": {
+    "bytes": 612093040,
+    "links": 1,
+    "mode": "0500",
+    "not_embedded_in_small_archive": true,
+    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-original-v2/original-test-binary",
+    "sha256": "13535146c7d5b6b56b2566aacc51fd65beba6093588352f4519ae4f42d5a5857"
+  },
+  "integrated_original_source_metadata_changes_require_new_ci": true,
+  "integration_source_transition": {
+    "changed_original_inputs": [
+      {
+        "development": {
+          "bytes": 35965,
+          "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
+        },
+        "integration": {
+          "bytes": 39375,
+          "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
+        },
+        "path": "config/hia-migration-v1.json"
+      },
+      {
+        "development": {
+          "bytes": 525351,
+          "sha256": "547fd79699f1968c6b2496131ed301ddfd304585032a59c140c7fa91cdd30732"
+        },
+        "integration": {
+          "bytes": 525351,
+          "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
+        },
+        "path": "config/pon/pq-cross-branch-corpus-v1.json"
+      }
+    ],
+    "development_original_source_set_sha256": "6bc48356f6b4427921266671a3e63ac569601b7c76e3d4fa99b84b6a52d9c00d",
+    "integration_original_source_set_sha256": "79500d42e8659910b787fe6a7a6bcb5547f89e2bb5326ed9d8248fa01b5951f8",
+    "native_source_files": 58,
+    "native_source_inputs_unchanged": true,
+    "native_source_set_sha256": "9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f",
+    "new_committed_source_original_execution_required": true,
+    "original_source_files": 4361,
+    "unchanged_original_inputs": 4359
+  },
+  "intentional_fixture_aliases": [
+    {
+      "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-qualification-v2/actual-public-refusals/alias",
+      "reason": "intentional target-alias negative; archive contains regular evidence only",
+      "target": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-qualification-v2/actual-public-refusals/isolated-alias/isolated-source"
+    }
+  ],
+  "launch_timeout_reconciled_with_same_key": true,
+  "native": {
+    "arithmetic_boundaries": 67,
+    "budget_operations": 83,
+    "fault_histories": 13,
+    "owner_histories": 6,
+    "protocol_controls": 40,
+    "report": {
+      "bytes": 1317255,
+      "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-final-source-qualification-v2/native/native-comparison.json",
+      "sha256": "59eea11dde02175e179c40782f18a7786ee69978ac42548975ce3aa09c37d99e"
+    },
+    "trace_negative_controls": 10
+  },
+  "native_hia_files": 4,
+  "original_repository_head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+  "original_source_files": 4361,
+  "owned_files": 20,
+  "preserved_failures": [
+    "native V1 fixed-profile compiler refusal",
+    "native V2 private continuation offset overlap",
+    "original V3/V4 private adapter compile errors",
+    "original V6 unsafe private role marker refused by unchanged forbid(unsafe_code)",
+    "original V7 verifier wrongly required zero booked principal after Unknown settlement",
+    "final component V1 missing struct import after actual budget/boundary/retained execution"
+  ],
+  "public_request_node_service_W1_closed": false,
+  "repository_source_inputs": 58,
+  "schema": "trnm.hia.paid-cpu-final-development-handoff.v1",
+  "scope": "finite native account epoch and actual scoped workers; not the entire persistent PaidCPU/Node/service owner",
+  "source_archive": {
+    "bytes": 83532,
+    "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/paid-cpu-component-handoff-v2/paid-cpu-final-source-v2.tar.xz",
+    "sha256": "a319aeb044ca472ff59cc370a0db7c86e61f38cb46b39dd3ac4ffe2ea54a7e64"
+  },
+  "source_control_groups": 10,
+  "source_inputs": {
+    "hia/platform/README.md": {
+      "bytes": 11641,
+      "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
+    },
+    "hia/platform/abi.json": {
+      "bytes": 6864,
+      "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+    },
+    "hia/platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "hia/platform/linux_adapter_emitter.hepta": {
+      "bytes": 45152,
+      "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+    },
+    "hia/platform/paid_cpu/README.md": {
+      "bytes": 9380,
+      "sha256": "bfe796bf4b78d520c49d08337d13f19abcd2a1fe0d9c475a9be41c7ef4c0b18b"
+    },
+    "hia/platform/paid_cpu/__init__.py": {
+      "bytes": 76,
+      "sha256": "d125a47be745a79f83cfd23e87e3dcfb0ad810a675cda707a7286a1cfb758915"
+    },
+    "hia/platform/paid_cpu/abi.json": {
+      "bytes": 7733,
+      "sha256": "6a02836083278b3bd673f581ff5a85b60a68e29d62584fd5f422791af8519720"
+    },
+    "hia/platform/paid_cpu/arithmetic_fixture.hepta": {
+      "bytes": 64903,
+      "sha256": "d6c16744a30e10cb20dca396ca1b3b2e9608b0afb1110a8d93f5fa27bf1216ae"
+    },
+    "hia/platform/paid_cpu/build.py": {
+      "bytes": 7024,
+      "sha256": "9873a14432e074070310af3611ee8a191e9f22a7f2a09526c0d4ddbffa398c15"
+    },
+    "hia/platform/paid_cpu/cases.py": {
+      "bytes": 10270,
+      "sha256": "df8c69fefde83fafabb253f816b5e3dc9dc2137b10c52e49e0920a010caba189"
+    },
+    "hia/platform/paid_cpu/dependency.py": {
+      "bytes": 5209,
+      "sha256": "3ec8c2d7f45a742cc1bd36b8297b5992d901a4b3ac5ae7e87f1ed9916986bb7b"
+    },
+    "hia/platform/paid_cpu/fault_audit.py": {
+      "bytes": 17179,
+      "sha256": "af413f340c79e7196f7acb8e6430c273e395619d4fb1d4d7467aa463ac1fd0b0"
+    },
+    "hia/platform/paid_cpu/fault_oracle.py": {
+      "bytes": 12108,
+      "sha256": "90fd826f2409657a43b7d2041b717a98f3b0e42e98a5dd9df30e6f1bea8fb8d8"
+    },
+    "hia/platform/paid_cpu/linux_arithmetic_emitter.hepta": {
+      "bytes": 9856,
+      "sha256": "bd4fd9f10d6cbdc823a81d57828185bad0645af65e23448a3b5d116e50a393b9"
+    },
+    "hia/platform/paid_cpu/linux_owner_emitter.hepta": {
+      "bytes": 49215,
+      "sha256": "85df2c6f3c735d47893c4e02b03f339e2681bd8e2ff182e43a41f7ec42379db4"
+    },
+    "hia/platform/paid_cpu/native_io.py": {
+      "bytes": 6664,
+      "sha256": "51a72b4caf63f7cd192c449a36d0bcec4aa20555fceca795c58b26db56c21577"
+    },
+    "hia/platform/paid_cpu/owned_ptrace.py": {
+      "bytes": 15235,
+      "sha256": "38c5b98e18352fa3e780e5dc82ba1286acd8ce33033c9b9363dee967430ba980"
+    },
+    "hia/platform/paid_cpu/owner.hepta": {
+      "bytes": 189017,
+      "sha256": "0a7341eac40791b3350282d2e1fdc44cc4c83ce155d01657c72bbfbb9721ad72"
+    },
+    "hia/platform/paid_cpu/private_layout.json": {
+      "bytes": 6676,
+      "sha256": "f26a865e0ce706c5d4196386fc7f83d3b219e2b62589d9312bb9ab6a38db393e"
+    },
+    "hia/platform/paid_cpu/qualify.py": {
+      "bytes": 19388,
+      "sha256": "1448e916159b1ff231d93e75dd23a850ff50f22863f02b9ff76040b33517d96a"
+    },
+    "hia/platform/paid_cpu/rust_oracle.py": {
+      "bytes": 18536,
+      "sha256": "5948fcd8495b9de211f7e5aaa48fdf2e44c2d8eb36a0c4d5f6abe3223f95aa50"
+    },
+    "hia/platform/paid_cpu/rust_reference.rs": {
+      "bytes": 27109,
+      "sha256": "b1881745c88ccf66e9b33795b73280b14ad97e0cf107d76561f6812a49823773"
+    },
+    "hia/platform/paid_cpu/test_integrity.py": {
+      "bytes": 9653,
+      "sha256": "cf779e5156821cb133620a9e7af0dd07b9598b15aff7155b0022581088b3bc3f"
+    },
+    "hia/platform/paid_cpu/trace_audit.py": {
+      "bytes": 19943,
+      "sha256": "ebb6f6e94d291952f1f34ad703ec62e82c69868469bdc769c29840157139b5e4"
+    },
+    "hia/platform/probe_policy.hepta": {
+      "bytes": 38621,
+      "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+    },
+    "hia/platform/thread_cpu/README.md": {
+      "bytes": 8128,
+      "sha256": "17632c62a36a1390122733eb1ac743c130a4c9f1ea6acfdfeb3fbc6e672be81c"
+    },
+    "hia/platform/thread_cpu/abi.json": {
+      "bytes": 5172,
+      "sha256": "9e574de10e070c09905c44116517d9a65d6569d2caca479c474f7a97154bb8d5"
+    },
+    "hia/platform/thread_cpu/build.py": {
+      "bytes": 8419,
+      "sha256": "cf0874e981e1c8b2233907ced4864cbe58cf2218e306f975043a87d33d981faa"
+    },
+    "hia/platform/thread_cpu/cases.py": {
+      "bytes": 7248,
+      "sha256": "f6363ea15890bbbe737989a9c07f00778d86014c4c4f5e4790f490f48a9bd3de"
+    },
+    "hia/platform/thread_cpu/fixture_entry.hepta": {
+      "bytes": 288,
+      "sha256": "77627095e05939f4ccad3c29f251fe5661ffbd55a83deb7cc6d9f0fa0c5ab0a9"
+    },
+    "hia/platform/thread_cpu/linux_emitter.hepta": {
+      "bytes": 39791,
+      "sha256": "9323ed9db85334476a74e3d80a9eabf8fd4a07b1d36f2519ad615bd226b3a371"
+    },
+    "hia/platform/thread_cpu/native_io.py": {
+      "bytes": 9894,
+      "sha256": "b8917f719e652cdc0d0b09364a3e6181d199927e4db8655c09f91f89e0bde6a8"
+    },
+    "hia/platform/thread_cpu/owner_policy.hepta": {
+      "bytes": 85504,
+      "sha256": "42721c5d31d07997a9edd987b79b2b6501b382a6f09439fdac7f16f855b1b522"
+    },
+    "hia/platform/thread_cpu/qualify.py": {
+      "bytes": 27441,
+      "sha256": "d64de5eb7a9627e9c9cda0dc307efc48dcba7f0d1165a192813f0a72566e89d2"
+    },
+    "hia/platform/thread_cpu/rust_oracle.py": {
+      "bytes": 29369,
+      "sha256": "26a3f3dcfd1b6960b13861138db2383bd1fde9852cdafb4296132c604424c1f3"
+    },
+    "hia/platform/thread_cpu/rust_reference.rs": {
+      "bytes": 13897,
+      "sha256": "d0e77f788405687cc646fc67dcfdb0568ebcf6157f145bff2839f7968c73c730"
+    },
+    "hia/platform/thread_cpu/test_integrity.py": {
+      "bytes": 51546,
+      "sha256": "206aebe04c4b9d18bb46d70dd7b188508a62389871b1df0920bea7ed5e34f268"
+    },
+    "hia/platform/thread_cpu/trace_audit.py": {
+      "bytes": 26502,
+      "sha256": "a0149cffebce68023f9f2c6cb635c8b9646a9eb8ca8efbec993fceb246845b49"
+    },
+    "hia/platform/transport_request/rust_oracle.py": {
+      "bytes": 12311,
+      "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+    },
+    "hia/qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "hia/qualification/compiler-cold-full.json.xz": {
+      "bytes": 838544,
+      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+    },
+    "hia/qualification/compiler-cold.json": {
+      "bytes": 108675,
+      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+    },
+    "hia/tests/test_platform_cleanup.py": {
+      "bytes": 9301,
+      "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+    },
+    "hia/toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "hia/tools/qualify_platform.py": {
+      "bytes": 30419,
+      "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
+    },
+    "hia/tools/toolchain.py": {
+      "bytes": 14157,
+      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 42127,
+      "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 161926,
+      "sha256": "86365541647e8ded120c87c43959074578ad78c933baeab4e4b0b9387b2c5059"
+    },
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+      "bytes": 2357,
+      "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 446331,
+      "sha256": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "bytes": 114097,
+      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": {
+      "bytes": 82351,
+      "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs": {
+      "bytes": 30919,
+      "sha256": "e896ffc4f47ebc7ae80004a6e0293e7a927f9cb92c51bce98d97091720b31919"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs": {
+      "bytes": 10769,
+      "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": {
+      "bytes": 15568,
+      "sha256": "a9e4d1705335925d0f3c2a01cac7855155c61b4c54b3e42dd6caaaecf3720696"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": {
+      "bytes": 15351,
+      "sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs": {
+      "bytes": 10954,
+      "sha256": "5cfd2e62fcd30cffbe653de1e628052bdccc99023fc11617e481766b992c76c4"
+    }
+  },
+  "source_set_sha256": "9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f",
+  "standard_library_compiled_files": 2,
+  "standard_library_source_files": 14,
+  "status": "PASS",
+  "valid_bundle_environment_refusals": 25,
+  "valid_bundle_target_refusals": 7,
+  "whole_paid_account_closed": false
+}

@@ -803,8 +803,17 @@ impl PublicRequestObserver {
         // Registration publishes each slot once. Reading another record must
         // never hold a registry lock that can make an accepted connection vanish.
         for cell in self.0.rows.iter().filter_map(OnceLock::get) {
+            // Acquire each owner closure BEFORE copying any mutable row. A
+            // later close cannot make this earlier live copy look complete.
+            let connection_closed = cell.connection_closed.load(Ordering::Acquire);
+            let task_closed = cell.task_closed.load(Ordering::Acquire);
             if let Ok(row) = cell.row.lock() {
                 let mut value = row.clone();
+                // Never retain the reactor row while waiting for another
+                // owner: reactor updates use try_lock and must not be lost.
+                drop(row);
+                #[cfg(test)]
+                snapshot_lock_tests::after_row_copy();
                 match cell.task.lock() {
                     Ok(task) => {
                         value.full_work_started = task.full_work_started;
@@ -828,8 +837,8 @@ impl PublicRequestObserver {
                 }
                 let (phases, phase_failures) = cell.phases.snapshot();
                 value.submit_phases = phases;
-                value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
-                value.task_closed = cell.task_closed.load(Ordering::Acquire);
+                value.connection_closed = connection_closed;
+                value.task_closed = task_closed;
                 // A task-close acquire observes the preceding creation store.
                 // Reading creation first could combine an older false with a
                 // newly published close in this explicitly live snapshot.
@@ -2821,3 +2830,7 @@ mod tests {
         assert_eq!(impossible_end.finish(), None);
     }
 }
+
+#[cfg(test)]
+#[path = "request_observation_snapshot_tests.rs"]
+mod snapshot_lock_tests;

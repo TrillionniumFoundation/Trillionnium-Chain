@@ -1,0 +1,21 @@
+{
+  "bytes": 212896,
+  "entries": 82,
+  "f0_qualified": false,
+  "final_files": {
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs": {
+      "bytes": 22943,
+      "git_blob": "4b35768e4c939bdf782effc96f547e0af623be92",
+      "sha256": "728effe2a6fedae09766cbee5fb1dbfb2bf9b8baf914586d5baa652614967440"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs": {
+      "bytes": 36828,
+      "git_blob": "542a192a1a6835ad5882e0b091943838c213a39d",
+      "sha256": "4fab7ad3886d9a70be229c1717dd9e58432e5b6a507f3c81af6680bf83594fe8"
+    }
+  },
+  "path": "/home/qq/chain-native-record-frontier-20261118-2e9b-validation/native-originals.tar.xz",
+  "sha256": "9f38359c327d935f4bec287b37a348339fe35e0d2ec96297a9c10e0c8f39695e",
+  "source_contract_sha256": "fcfd91f6fa26d80af2861b959de895f093a16e88848dc86ae7a4adab1445341d",
+  "source_gate": "HOLD_NO_GO: source integrity only"
+}

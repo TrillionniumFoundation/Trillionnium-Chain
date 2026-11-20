@@ -54,6 +54,13 @@ class JointQualificationTests(unittest.TestCase):
                     "execution_authority"):
             self.assertIs(report[key], False)
 
+    def test_prior_store_digest_cannot_reinstall_the_old_current_map(self):
+        data = deepcopy(self.original)
+        data["source_sha256"]["trillionnium/crates/trnm-pon-node/src/store.rs"] = (
+            "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820"
+        )
+        self.reject(data, "REVIEWED_SOURCE_MAP")
+
     def test_prior_or_unknown_source_revision_is_refused(self):
         self.assertEqual(self.original["reviewed_native_source_commit"],
                          "2d9baf313e54e49a4507c5057578e89ddbe7a1b6")

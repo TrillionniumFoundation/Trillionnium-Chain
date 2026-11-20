@@ -1,0 +1,27 @@
+{
+  "schema": "trnm.hia.private-stack-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "entry": "f0(readbuf, mutbuf, mutbuf) -> u32",
+  "registers": ["rdi", "rsi", "rdx", "rcx", "r8", "r9"],
+  "private_stack_bytes": 1048576,
+  "guard_bytes_each_side": 4096,
+  "mapping_bytes": 1056768,
+  "prefix_bytes": 288,
+  "maximum_native_image_bytes": 524288,
+  "errors": {
+    "mmap": "0x80001000 | errno",
+    "mprotect": "0x80002000 | errno",
+    "munmap": "0x80003000 | errno"
+  },
+  "kernel_result_preserved_only_after_cleanup_success": true,
+  "late_cleanup_failure_may_leave_completed_output": true,
+  "late_cleanup_failure_forbids_output_publication": true,
+  "ordinary_return_private_stack_fully_zeroed": true,
+  "caller_callee_saved_registers_must_not_hold_unrelated_secrets": true,
+  "failure_to_unmap_requires_reap_not_unbounded_retry": true,
+  "input_seed_erasure": false,
+  "trap_or_async_abort_erasure_qualified": false,
+  "machine_constant_time_proved": false,
+  "whole_key_owner_qualified": false,
+  "literal_isa_is_a_separate_trusted_boundary": true
+}

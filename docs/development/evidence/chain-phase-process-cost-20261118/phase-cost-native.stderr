@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-liveness-e1e6-20261118/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 5.06s
+     Running tests/public_v3_from_zero.rs (/home/qian-qi/work/chain-liveness-evidence-20261118/target/release/deps/public_v3_from_zero-e1ce94b852e44392)

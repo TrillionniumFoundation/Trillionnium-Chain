@@ -86,8 +86,11 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertEqual(lock['bytes'], 42127)
         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
+        self.assertEqual(self.contract['sources'][7]['path'],
+                         'trillionnium/crates/trnm-pon-node/src/store.rs')
+        self.assertEqual(self.contract['sources'][7]['bytes'], 397703)
         self.assertEqual(self.contract['sources'][7]['current_sha256'],
-                         '9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820')
+                         'cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9')
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
 

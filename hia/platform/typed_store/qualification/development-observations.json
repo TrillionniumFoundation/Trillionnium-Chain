@@ -1,0 +1,4519 @@
+{
+  "actual_original_rust": {
+    "binding": {
+      "actual_process": {
+        "authoritative_terminal_status": {
+          "at_unix_ms": 1794819872578,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1e3964247-392-3446",
+          "launch_nonce": "496463fdd4434143d1a6ba8d9bc6d9c1",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 915,
+              "stored": 915
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        },
+        "host": "desktop",
+        "job_id": "1a1e3964247-392-3446",
+        "oracle_finished_utc": "2026-11-16T09:04:32.504414+00:00",
+        "oracle_started_utc": "2026-11-16T09:00:44.147807+00:00",
+        "process_creation_or_status_observation_is_not_used_as_execution_start_or_finish": true,
+        "process_stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "process_stdout": {
+          "bytes": 915,
+          "sha256": "18d2d6f6c3e336bb597027d911e95a137136027e5e854fa3b4496a36f84e53af"
+        },
+        "wrapper_elapsed_seconds": 232.7567267389968,
+        "wrapper_finished_utc": "2026-11-16T09:04:32.525668+00:00",
+        "wrapper_started_utc": "2026-11-16T09:00:39.768977+00:00"
+      },
+      "archive_verification": {
+        "all_member_bytes_and_sha256_match": true,
+        "full_raw_original_outputs_parsed_again": true,
+        "manifest_entries_checked": 60,
+        "no_implementation_reexecuted_by_this_report": true,
+        "regular_members": 61
+      },
+      "created_utc": "2026-11-16T09:18:06.698397+00:00",
+      "evidence": {
+        "archive": {
+          "bytes": 258540,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/typed_store_remote/actual-original-evidence-v3.tar.xz",
+          "sha256": "a216543de3649446c9a4852a0a2fea788bb8e1773b42f3a178a72cb6322a4074"
+        },
+        "collector_terminal_status": {
+          "at_unix_ms": 1794819976484,
+          "audit_recorded": true,
+          "automatic_retry": false,
+          "cancelled": false,
+          "exit_code": 0,
+          "job_id": "1a1e39b3817-392-3458",
+          "launch_nonce": "5acca46412bafe9692ced959512dec6d",
+          "log_bytes": {
+            "stderr": {
+              "seen": 0,
+              "stored": 0
+            },
+            "stdout": {
+              "seen": 341,
+              "stored": 341
+            }
+          },
+          "log_errors": {
+            "stderr": null,
+            "stdout": null
+          },
+          "log_synced": {
+            "stderr": true,
+            "stdout": true
+          },
+          "log_truncated": {
+            "stderr": false,
+            "stdout": false
+          },
+          "output_complete": true,
+          "output_durable": true,
+          "state": "succeeded",
+          "terminal_publication_confirmed": true,
+          "terminal_publication_protocol": 1,
+          "timed_out": false
+        },
+        "comparison_member": "original-rust-run-v3/comparison.json",
+        "exact_corpus_member": "original-rust-run-v3/corpus.jsonl",
+        "internal_manifest": {
+          "bytes": 8899,
+          "sha256": "8f6ebb9344083b69b21250e3d9fe0dbab5457db96109f1e30df7a85f1c41c62c"
+        },
+        "original_report_member": "original-rust-run-v3/report.json",
+        "raw_cargo_stdout_member": "original-rust-run-v3/cargo-original-test-build/stdout.raw",
+        "raw_oracle_stdout_member": "original-rust-run-v3/actual-apply-slot-root-corpus/stdout.raw",
+        "retained_binary_is_independent_and_not_inside_archive": true,
+        "transport_receipt": {
+          "bytes": 1682,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/typed_store_remote/evidence-v3-transfer-receipt.json",
+          "sha256": "a9af76a72dc096a8ec820299dc34ac8b50685c7e1708fd8ea3591711e018e75d"
+        }
+      },
+      "history": {
+        "v1": {
+          "actual_rust_job_id": "1a1e3685c83-392-33b3",
+          "controls": 374,
+          "evidence_archive": {
+            "bytes": 76340,
+            "path": "/workspace/scratch/e623e849c8fd/recovery/typed_store_remote/actual-original-evidence-v1.tar.xz",
+            "sha256": "c8167ccf4cc3949f562c716d5b650b55512e53b720f5336167db235738ab134d"
+          },
+          "failed": 1,
+          "failure": {
+            "name": "key--0",
+            "native": {
+              "code": 0,
+              "name": "key--0",
+              "progresses": 6,
+              "result_hex": "544b5653545230310100000000000000000000000000000004000000000000006e756c6c",
+              "root_hex": "3466837951486d1dec10da1fae8aef31e0376c3d76cf55e9cbfd8a940b298218"
+            },
+            "original": {
+              "code": 83,
+              "error_stage": "slot_state",
+              "name": "key--0",
+              "original_error": "STORAGE: Invalid column type Null at index: 0, name: CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END",
+              "original_kind": "LocalStructure",
+              "progresses": 5,
+              "requires_owner_stop": true,
+              "result_hex": null,
+              "rollback_exact": true,
+              "root_hex": null
+            },
+            "status": "FAIL"
+          },
+          "old_native_controls_pass_did_not_override_actual_difference": true,
+          "passed": 373,
+          "status": "FAIL"
+        },
+        "v2": {
+          "cache_current_owner": "Host ci_audit job1a1e384e70a-392-3414",
+          "native_package": {
+            "bytes": 295904,
+            "sha256": "759bdf23b0f4b7e1e8d949f3dbc3ef43a5ff25402746569af17b6937f2aba272"
+          },
+          "native_source_set_sha256": "2bd7f4385804e05959ccba3e907c404c82f7b8323ee647b6b48ba91c3d1d809e",
+          "original_rust_job_id": null,
+          "original_rust_launched": false,
+          "reason": "Root identified capacity.py source qualification defects before original Rust launch. Await a newly source-bound package. Immutable transport v2 is retained; repository repo-v2 remains clean exact453 and has not received the overlay.",
+          "remote_chunks": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/chunks-v2",
+          "remote_driver": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/desktop_run_v2.py",
+          "schema": "trnm.typed-store.actual-original-v2-not-run.v1",
+          "source_inputs_changed_by_this_agent": false,
+          "status": "NOT_RUN"
+        },
+        "v3": {
+          "added_cases": [
+            "projection-both-empty",
+            "projection-empty-key-before-json",
+            "projection-empty-key-before-m06",
+            "projection-empty-value",
+            "projection-value-dimension-before-key-null",
+            "projection-key-dimension-before-value-null",
+            "projection-truncated-utf8-key-dimension-first",
+            "projection-empty-key-insert",
+            "projection-empty-key-delete",
+            "projection-empty-key-detach-delete",
+            "projection-empty-value-repair",
+            "projection-empty-value-delete",
+            "projection-empty-key-before-mismatch",
+            "projection-empty-key-absent-delete",
+            "projection-empty-key-after-unrelated-mismatch",
+            "projection-empty-key-deleted-before-next-serde",
+            "projection-cancel-before-key-null-4",
+            "projection-cancel-before-key-null-5"
+          ],
+          "corrected_key_empty_case": {
+            "name": "key--0",
+            "native": {
+              "code": 83,
+              "name": "key--0",
+              "progresses": 5,
+              "result_hex": null,
+              "root_hex": null
+            },
+            "original": {
+              "code": 83,
+              "error_stage": "slot_state",
+              "name": "key--0",
+              "original_error": "STORAGE: Invalid column type Null at index: 0, name: CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END",
+              "original_kind": "LocalStructure",
+              "progresses": 5,
+              "requires_owner_stop": true,
+              "result_hex": null,
+              "rollback_exact": true,
+              "root_hex": null
+            },
+            "status": "PASS"
+          },
+          "original_374_actual_rust_results_unchanged": true,
+          "original_374_inputs_preserved_byte_for_byte_and_in_order": true,
+          "status": "PASS"
+        }
+      },
+      "limitations": {
+        "all_sql_materialization_error_order_qualified": false,
+        "exact_published_head_ci_required": true,
+        "full_capacity_qualification_included_in_this_report": false,
+        "full_serde_error_text_or_source_chain_parity": false,
+        "old_stack_retirement_authorized_by_this_report": false,
+        "physical_power_loss_qualified": false,
+        "rust_is_a_qualification_oracle_not_a_production_runtime_dependency": true,
+        "same_uid_continuous_attack_resistance_qualified": false,
+        "typed_namespace_or_atomic_commit_authority": false,
+        "whole_node_qualified": false
+      },
+      "native": {
+        "comparison": {
+          "bytes": 1175065,
+          "sha256": "f115828457d0195387929bc0d4f5463c29beea63dbc031a53931a3cb3b4f36bb"
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "current_local_source_inputs_match": true,
+        "executable": {
+          "bytes": 661773,
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        },
+        "native_controls": 603,
+        "original_report_rust_field_preserved": "NOT_RUN",
+        "original_report_status_preserved": "NATIVE_PASS_ORIGINAL_NOT_RUN",
+        "report": {
+          "bytes": 2375121,
+          "sha256": "49c9c9c770cd26b28aa024e6677ce14b67c3f29a0053b86a453744ff2c158486"
+        },
+        "semantic_cases": 392,
+        "source_inputs": {
+          "hia/components.json": {
+            "bytes": 19858,
+            "sha256": "af93ece550969f78154afae997d1faf2a5f7696364db3f32e01b683e9ae15173"
+          },
+          "hia/platform/build.py": {
+            "bytes": 11808,
+            "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+          },
+          "hia/platform/transport_request/rust_oracle.py": {
+            "bytes": 12311,
+            "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+          },
+          "hia/platform/typed_store/README.md": {
+            "bytes": 15285,
+            "sha256": "120b14fbae01c3e415bb84b512d1d62e622dd3f6db4c637ddd24e5ff9e128406"
+          },
+          "hia/platform/typed_store/abi.json": {
+            "bytes": 3086,
+            "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+          },
+          "hia/platform/typed_store/build.py": {
+            "bytes": 9592,
+            "sha256": "b840b0a9dacdfbbfa09dbb63735ba01ac7307d8b4da061be6bcf4bdebf97c112"
+          },
+          "hia/platform/typed_store/capacity.py": {
+            "bytes": 18586,
+            "sha256": "4d68747ce22fc3dbe34c397fbe615361e3a58fd0087ad5c812324288db891dc0"
+          },
+          "hia/platform/typed_store/cases.py": {
+            "bytes": 11530,
+            "sha256": "3c466661593e264e22b75aa0ac7b0f4b07e03a473733256ab04ebfc8e969bec3"
+          },
+          "hia/platform/typed_store/includes.json": {
+            "bytes": 2672,
+            "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+          },
+          "hia/platform/typed_store/linux_stage_emitter.hepta": {
+            "bytes": 27195,
+            "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+          },
+          "hia/platform/typed_store/native_io.py": {
+            "bytes": 11873,
+            "sha256": "f0727238d07d3726da67902cc13b242192eaeb8bf413fc85892297f8698135d9"
+          },
+          "hia/platform/typed_store/qualify.py": {
+            "bytes": 14303,
+            "sha256": "868f4e02999051fe9b48f21d9541aabed6106aec2134d0fbe42cefa10eea0783"
+          },
+          "hia/platform/typed_store/root_finalize.hepta": {
+            "bytes": 6116,
+            "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+          },
+          "hia/platform/typed_store/rust_oracle.py": {
+            "bytes": 11251,
+            "sha256": "c9ff24b0024b8e57158ce56b49b813c91aa1c894ab1778571943632c8cb1a635"
+          },
+          "hia/platform/typed_store/rust_reference.rs": {
+            "bytes": 7562,
+            "sha256": "9f816a8ec1ce8bf7561d239e5ec96605c24408f86ad4aa4ed648286b886f8aab"
+          },
+          "hia/platform/typed_store/stage_policy.hepta": {
+            "bytes": 206730,
+            "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+          },
+          "hia/qualification/compiler-binding.json": {
+            "bytes": 878,
+            "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+          },
+          "hia/src/codec/json_number.hepta": {
+            "bytes": 66485,
+            "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+          },
+          "hia/src/codec/json_primitives.hepta": {
+            "bytes": 8258,
+            "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+          },
+          "hia/src/codec/json_value_wire.hepta": {
+            "bytes": 39174,
+            "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+          },
+          "hia/src/crypto/sha256_arena.hepta": {
+            "bytes": 28919,
+            "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+          },
+          "hia/src/crypto/sha256_stream.hepta": {
+            "bytes": 39017,
+            "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+          },
+          "hia/src/math/binary64.hepta": {
+            "bytes": 21416,
+            "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+          },
+          "hia/src/protocol/state_root.hepta": {
+            "bytes": 221073,
+            "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+          },
+          "hia/tests/test_state_root.py": {
+            "bytes": 9901,
+            "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+          },
+          "hia/toolchain.lock.json": {
+            "bytes": 221,
+            "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+          },
+          "hia/tools/toolchain.py": {
+            "bytes": 14157,
+            "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+          }
+        },
+        "source_inputs_count": 27,
+        "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f",
+        "status": "PASS",
+        "toolchain": {
+          "assembly_schema": "hia-asm.v1",
+          "language_schema": "hepta.hia.program.v8",
+          "repository": "TrillionniumFoundation/Hepta",
+          "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "target": "x86_64-linux-gnu"
+        }
+      },
+      "original_rust": {
+        "actual_binary": {
+          "bytes": 610619024,
+          "path": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+          "sha256": "4b6466b59496323cdf98e9232038dc77c6bc0b0b9c22b1d9f895bc5c8f695dad"
+        },
+        "actual_corpus_stdout": {
+          "bytes": 261640,
+          "sha256": "1cb26548b37d20731dc4e981b570e3f580559c75acc051855067605613fd8ad7"
+        },
+        "actual_private_original_apply_slot_state_and_root_called": true,
+        "appended_declaration_hex": "0a235b6366672874657374295d0a235b70617468203d20226869615f74797065645f73746167696e675f6f7261636c652e7273225d0a6d6f64206869615f74797065645f73746167696e675f6f7261636c653b0a",
+        "compared_fields": [
+          "name",
+          "code",
+          "progresses",
+          "result_hex",
+          "root_hex"
+        ],
+        "comparison": {
+          "bytes": 558354,
+          "sha256": "64c46cd7715a08fd04e7218909151895ba7d2a4feb40c80d8188b693c15e5ae9"
+        },
+        "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+        "controls": 392,
+        "failed": 0,
+        "node_test_artifact_count_from_actual_cargo_stdout": 1,
+        "original_production_function_bytes_preserved": true,
+        "original_source_files": 4361,
+        "original_source_manifest_canonical_identity": {
+          "bytes": 790546,
+          "sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44"
+        },
+        "original_source_manifest_equal_to_native": true,
+        "original_store_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+        "report": {
+          "bytes": 916809,
+          "sha256": "9975a970393681f611246f3341a0ba680e80c3c0ef6f2ba3ec7fb3e754788324"
+        },
+        "retained_independent_binary": {
+          "bytes": 610619024,
+          "path": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/retained-original-test-binary-v3",
+          "sha256": "4b6466b59496323cdf98e9232038dc77c6bc0b0b9c22b1d9f895bc5c8f695dad"
+        },
+        "retained_original_tests": [
+          "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+          "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+          "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state"
+        ],
+        "rollback_exact_true_for_all_cases": true,
+        "serde_json_artifact": {
+          "executable": null,
+          "features": [
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/libserde_json-a91b3599af627e6f.rlib",
+            "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/libserde_json-a91b3599af627e6f.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/Cargo.toml",
+          "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "serde_json",
+            "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs",
+            "test": true
+          }
+        },
+        "serde_json_artifact_count_from_actual_cargo_stdout": 1,
+        "stages": {
+          "actual-apply-slot-root-corpus": {
+            "argv": [
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+              "--exact",
+              "store::hia_typed_staging_oracle::evaluate",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 4076441122,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 261640,
+            "stdout_sha256": "1cb26548b37d20731dc4e981b570e3f580559c75acc051855067605613fd8ad7",
+            "timed_out": false,
+            "wall_limit_seconds": 600
+          },
+          "cargo-original-test-build": {
+            "argv": [
+              "cargo",
+              "test",
+              "--locked",
+              "--manifest-path",
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source/trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--lib",
+              "--no-run",
+              "--message-format=json",
+              "--target-dir",
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 207102768194,
+            "exit_code": 0,
+            "stderr_bytes": 2006,
+            "stderr_sha256": "b6d483ee5ffcd9e4710d5eb919f9ba6c7f85c906498f615c191b42d1cc6ac32c",
+            "stdout_bytes": 113502,
+            "stdout_sha256": "e04f7c2a88ac908caff07d1e0ad2d42257b6175a74cda8428d0d7a803601895b",
+            "timed_out": false,
+            "wall_limit_seconds": 900
+          },
+          "list-original-tests": {
+            "argv": [
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+              "--list"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 9011570,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 179412,
+            "stdout_sha256": "9d85dc381f8f2e21ea7ebff551dba3acbcc86cd54148974a3ba183401270f6fe",
+            "timed_out": false,
+            "wall_limit_seconds": 20
+          },
+          "retained-state-0": {
+            "argv": [
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+              "--exact",
+              "store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 565743627,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 235,
+            "stdout_sha256": "af57658daa6ba1eaa26e4530a548628eb4759a7289f4cd0814df49b4b2c0ed9c",
+            "timed_out": false,
+            "wall_limit_seconds": 240
+          },
+          "retained-state-1": {
+            "argv": [
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+              "--exact",
+              "store::bounded_active_state_tests::live_state_reads_exact_wire_edges_without_normalizing_sql_types",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 115026027,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 226,
+            "stdout_sha256": "ac95170aa7304fc5129171dcc1bbf76fe0ad61aaf432eb19f1f280dc17ad828c",
+            "timed_out": false,
+            "wall_limit_seconds": 240
+          },
+          "retained-state-2": {
+            "argv": [
+              "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/isolated-cargo-target/debug/deps/trnm_pon_node-a97d717ea353fb2f",
+              "--exact",
+              "store::bounded_active_state_tests::live_state_count_bound_and_cancellation_return_no_partial_state",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 1017470438,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 226,
+            "stdout_sha256": "765740817dc5d60c92389cc14514d4138a7ed79302c6554b0d177528cd1d6093",
+            "timed_out": false,
+            "wall_limit_seconds": 240
+          },
+          "rustc-version": {
+            "argv": [
+              "rustc",
+              "-Vv"
+            ],
+            "cleanup": null,
+            "cleanup_limit_seconds": 3,
+            "cwd": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/original-rust-run-v3/isolated-source",
+            "elapsed_ns": 64792887,
+            "exit_code": 0,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 196,
+            "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+            "timed_out": false,
+            "wall_limit_seconds": 10
+          }
+        },
+        "status": "PASS",
+        "test_hook_sha256": "9f816a8ec1ce8bf7561d239e5ec96605c24408f86ad4aa4ed648286b886f8aab"
+      },
+      "schema": "trnm.hia.typed-staging.actual-native-original-binding.v3",
+      "scope": "Captured actual native staging, original private Node apply/slot_state, classical root, cancellation and SQL rollback differential only",
+      "source": {
+        "components": {
+          "bytes": 19858,
+          "sha256": "af93ece550969f78154afae997d1faf2a5f7696364db3f32e01b683e9ae15173"
+        },
+        "corpus": {
+          "bytes": 17765732,
+          "sha256": "0dcd894ab6e54199750b9c546b265db77fb77ca69173d68a7fb344f7ef08fde9"
+        },
+        "package": {
+          "bytes": 298952,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/typed-store-final-v3-bundle.tar.xz",
+          "sha256": "7bd349a2a60c254607bddc6f4e101bdb9a58f2e214e63c66a4ffaaabefd6ce01"
+        },
+        "rechecked_after_execution": {
+          "native_inputs": 27,
+          "original_files": 4361
+        },
+        "repository_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+        "repository_tree": "fc5a31e67b207078ee1b01ad98e918df11ad8b8f"
+      },
+      "status": "PASS"
+    },
+    "binding_report": {
+      "bytes": 25407,
+      "path": "/workspace/scratch/e623e849c8fd/recovery/typed_store_remote/actual-native-original-binding-v3.json",
+      "sha256": "38c73aefdb60bc562911d6737750b227847268405869035e8ad66678dad5fd61"
+    }
+  },
+  "complete_classical_capacity": {
+    "cold_scope": "Fresh native process, complete file restore/sync/SHA, complete reread/root; not a claim of evicted operating-system caches or physical power loss",
+    "independent_root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+    "key_bytes": 160,
+    "native_root_total_wall_seconds": 1219.249865761,
+    "raw_bytes": 279969808,
+    "raw_sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+    "rows": 65536,
+    "stage_deadline_seconds": 1200,
+    "stages": [
+      {
+        "attempt": 1,
+        "complete_evidence_archive": {
+          "bytes": 951028,
+          "lineage": {
+            "attempt": 1,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+            "native_source_inputs_match_git_head": false,
+            "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+            "run_id": "typed-store-projection-v3-20261116",
+            "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+          },
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/capacity-v3-produce-evidence.tar.xz",
+          "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+          "sha256": "60a72b636aa0a9b5488a4b88e307b352e45ac2f0b0ab26aefa6677645cf9ecf0",
+          "snapshot": {
+            "archive": {
+              "bytes": 208328,
+              "sha256": "02a52fb661ce6ffd6b18c3b486e6dfb6eed1a4a22fd5482d4d79dd3f03a279f2"
+            },
+            "filename": "maximum-state.kv.xz",
+            "raw": {
+              "bytes": 279969808,
+              "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+            }
+          },
+          "stage": "produce",
+          "status": "PASS",
+          "wall_seconds": 644.13996704
+        },
+        "controls": [
+          {
+            "actual": {
+              "controller_stop": [],
+              "controller_stop_requested": false,
+              "elapsed_ns": 607751658800,
+              "exit": 0,
+              "gate_errors": [],
+              "input_hashes_before": [
+                "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+                "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+              ],
+              "inputs_unchanged": true,
+              "output_before_hex": "",
+              "output_bytes": 279969808,
+              "output_path": "/tmp/typed-stage-capacity-v3-produce/native-root/staging.kv",
+              "output_sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+              "progress_records": [],
+              "receipt": {
+                "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "count": 65536,
+                "delta_count": 0,
+                "kind": 2,
+                "output_bytes": 279969808,
+                "progresses": 261,
+                "reserved": 0,
+                "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+                "slot": 7
+              },
+              "stderr_hex": "",
+              "stdout_hex": "5453524553554c54020000000000000000000100000000001000b0100000000000000000000000000501000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f0700000000000000f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b457020000000000000000",
+              "timed_out": false
+            },
+            "name": "complete-classical-state-root"
+          }
+        ],
+        "events": [
+          {
+            "elapsed_seconds": 5.669611479,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "label": "independent-native-build-verified"
+          },
+          {
+            "bytes": 279969808,
+            "elapsed_seconds": 6.612794458,
+            "label": "full-input-created",
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          {
+            "elapsed_seconds": 615.110770271,
+            "exit": 0,
+            "label": "native-root-returned",
+            "wall_seconds": 607.7516588
+          },
+          {
+            "elapsed_seconds": 615.132246252,
+            "label": "independent-full-root-started"
+          },
+          {
+            "elapsed_seconds": 640.766299907,
+            "label": "independent-full-root-matched",
+            "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+            "wall_seconds": 25.621796747
+          },
+          {
+            "controls": 1,
+            "elapsed_seconds": 644.139974061,
+            "label": "stage-complete",
+            "wall_seconds": 644.13996704
+          }
+        ],
+        "expected_source_sha": null,
+        "github_event_sha": null,
+        "growth_maximum_extent_qualified": false,
+        "independent_root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+        "independent_root_wall_seconds": 25.621796747,
+        "key_bytes": 160,
+        "lineage": {
+          "attempt": 1,
+          "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+          "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+          "native_source_inputs_match_git_head": false,
+          "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+          "run_id": "typed-store-projection-v3-20261116",
+          "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+        },
+        "namespace_or_commit_authority": false,
+        "original_report": {
+          "bytes": 959076,
+          "path": "/tmp/typed-stage-capacity-v3-produce/report.json",
+          "sha256": "3346c2e91f97f6c8b49143191c0e97e0e2101411441c2a593c755415ebaeac4d"
+        },
+        "physical_power_loss_qualified": false,
+        "raw_state_bytes": 279969808,
+        "resource_scope": "RSS high-water includes hosted verifier/native build; cgroup peak is the observed whole cgroup, not an isolated native RSS claim",
+        "resources_after": {
+          "children_peak_rss_kib_including_native_build": 58236,
+          "hosted_self_peak_rss_kib": 58236
+        },
+        "resources_before": {
+          "children_peak_rss_kib_including_native_build": 896,
+          "hosted_self_peak_rss_kib": 16440
+        },
+        "root_child_wall_seconds": 900,
+        "row_child_wall_seconds": 240,
+        "rows": 65536,
+        "run_id": "typed-store-projection-v3-20261116",
+        "runtime_host_proxy": false,
+        "schema": "trnm.hia.typed-staging-capacity-stage.v1",
+        "snapshot": {
+          "archive": {
+            "bytes": 208328,
+            "sha256": "02a52fb661ce6ffd6b18c3b486e6dfb6eed1a4a22fd5482d4d79dd3f03a279f2"
+          },
+          "filename": "maximum-state.kv.xz",
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          }
+        },
+        "source_inputs_stable": true,
+        "stage": "produce",
+        "status": "PASS",
+        "value_bytes": 4096,
+        "wall_seconds": 644.13996704
+      },
+      {
+        "attempt": 1,
+        "complete_evidence_archive": {
+          "bytes": 951044,
+          "lineage": {
+            "attempt": 1,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+            "native_source_inputs_match_git_head": false,
+            "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+            "run_id": "typed-store-projection-v3-20261116",
+            "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+          },
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/capacity-v3-cold-evidence.tar.xz",
+          "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+          "sha256": "beb566cc5f443bd5cc98ac51f4353ce46a5f56964d5904fa02c03ff02df6655b",
+          "snapshot": {
+            "archive": {
+              "bytes": 208328,
+              "sha256": "02a52fb661ce6ffd6b18c3b486e6dfb6eed1a4a22fd5482d4d79dd3f03a279f2"
+            },
+            "filename": "maximum-state.kv.xz",
+            "raw": {
+              "bytes": 279969808,
+              "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+            }
+          },
+          "stage": "cold",
+          "status": "PASS",
+          "wall_seconds": 621.776575668
+        },
+        "controls": [
+          {
+            "actual": {
+              "controller_stop": [],
+              "controller_stop_requested": false,
+              "elapsed_ns": 611498206961,
+              "exit": 0,
+              "gate_errors": [],
+              "input_hashes_before": [
+                "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+                "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+              ],
+              "inputs_unchanged": true,
+              "output_before_hex": "",
+              "output_bytes": 279969808,
+              "output_path": "/tmp/typed-stage-capacity-v3-cold/cold-root/staging.kv",
+              "output_sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+              "progress_records": [],
+              "receipt": {
+                "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "count": 65536,
+                "delta_count": 0,
+                "kind": 2,
+                "output_bytes": 279969808,
+                "progresses": 261,
+                "reserved": 0,
+                "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+                "slot": 7
+              },
+              "stderr_hex": "",
+              "stdout_hex": "5453524553554c54020000000000000000000100000000001000b0100000000000000000000000000501000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f0700000000000000f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b457020000000000000000",
+              "timed_out": false
+            },
+            "name": "fresh-process-complete-cold-root"
+          }
+        ],
+        "events": [
+          {
+            "elapsed_seconds": 4.305724157,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "label": "independent-native-build-verified"
+          },
+          {
+            "bytes": 279969808,
+            "elapsed_seconds": 5.249022397,
+            "label": "complete-prior-output-restored-and-synchronized",
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          {
+            "elapsed_seconds": 617.725480646,
+            "exit": 0,
+            "label": "cold-root-returned",
+            "wall_seconds": 611.498206961
+          },
+          {
+            "controls": 1,
+            "elapsed_seconds": 621.776584451,
+            "label": "stage-complete",
+            "wall_seconds": 621.776575668
+          }
+        ],
+        "expected_source_sha": null,
+        "github_event_sha": null,
+        "growth_maximum_extent_qualified": false,
+        "independent_root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+        "key_bytes": 160,
+        "lineage": {
+          "attempt": 1,
+          "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+          "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+          "native_source_inputs_match_git_head": false,
+          "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+          "run_id": "typed-store-projection-v3-20261116",
+          "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+        },
+        "namespace_or_commit_authority": false,
+        "original_report": {
+          "bytes": 958813,
+          "path": "/tmp/typed-stage-capacity-v3-cold/report.json",
+          "sha256": "879e5c32e4bf945caccd0418cc82aa55dcac1c96be373e4cc34a0038e2430c2e"
+        },
+        "physical_power_loss_qualified": false,
+        "prior_receipt_sha256": "3346c2e91f97f6c8b49143191c0e97e0e2101411441c2a593c755415ebaeac4d",
+        "raw_state_bytes": 279969808,
+        "resource_scope": "RSS high-water includes hosted verifier/native build; cgroup peak is the observed whole cgroup, not an isolated native RSS claim",
+        "resources_after": {
+          "children_peak_rss_kib_including_native_build": 46392,
+          "hosted_self_peak_rss_kib": 46392
+        },
+        "resources_before": {
+          "children_peak_rss_kib_including_native_build": 896,
+          "hosted_self_peak_rss_kib": 16524
+        },
+        "root_child_wall_seconds": 900,
+        "row_child_wall_seconds": 240,
+        "rows": 65536,
+        "run_id": "typed-store-projection-v3-20261116",
+        "runtime_host_proxy": false,
+        "schema": "trnm.hia.typed-staging-capacity-stage.v1",
+        "snapshot": {
+          "archive": {
+            "bytes": 208328,
+            "sha256": "02a52fb661ce6ffd6b18c3b486e6dfb6eed1a4a22fd5482d4d79dd3f03a279f2"
+          },
+          "filename": "maximum-state.kv.xz",
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          }
+        },
+        "source_inputs_stable": true,
+        "stage": "cold",
+        "status": "PASS",
+        "value_bytes": 4096,
+        "wall_seconds": 621.776575668
+      },
+      {
+        "attempt": 1,
+        "complete_evidence_archive": {
+          "bytes": 954348,
+          "controls": [
+            {
+              "exit": 83,
+              "name": "physical-final-byte-serde-refusal",
+              "output_bytes": 0,
+              "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "exit": 84,
+              "name": "classical-count-plus-one",
+              "output_bytes": 0,
+              "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "exit": 0,
+              "name": "growth-dimension-classical-plus-one",
+              "output_bytes": 279969985,
+              "output_sha256": "e690ebf75105418bbd23eaab9d77c41bd7b4d65425a6747af8ded72398d8ed29"
+            }
+          ],
+          "lineage": {
+            "attempt": 1,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+            "native_source_inputs_match_git_head": false,
+            "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+            "run_id": "typed-store-projection-v3-20261116",
+            "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+          },
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/capacity-v3-bounds-evidence.tar.xz",
+          "root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+          "sha256": "0e2c460df9c1f26072fbafaf7f470cbf60e78465cc91907a22822bfe3ea64f34",
+          "stage": "bounds",
+          "status": "PASS",
+          "wall_seconds": 71.819485816
+        },
+        "controls": [
+          {
+            "actual": {
+              "controller_stop": [],
+              "controller_stop_requested": false,
+              "diagnostic": [
+                83,
+                107,
+                4256,
+                260,
+                0,
+                0,
+                0
+              ],
+              "elapsed_ns": 18680713739,
+              "exit": 83,
+              "gate_errors": [],
+              "input_hashes_before": [
+                "caed6fe825a0f67399b2de502659aa8641d7be369206eea289a19b7d14d47991",
+                "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+              ],
+              "inputs_unchanged": true,
+              "output_before_hex": "",
+              "output_bytes": 0,
+              "output_path": "/tmp/typed-stage-capacity-v3-bounds/cold-corrupt-last-byte/staging.kv",
+              "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "progress_records": [],
+              "stderr_hex": "53000000000000006b00000000000000a0100000000000000401000000000000000000000000000000000000000000000000000000000000",
+              "stdout_hex": "",
+              "timed_out": false
+            },
+            "name": "physical-final-byte-serde-refusal",
+            "source": {
+              "bytes": 279969808,
+              "sha256": "caed6fe825a0f67399b2de502659aa8641d7be369206eea289a19b7d14d47991"
+            },
+            "source_archive": {
+              "archive": {
+                "bytes": 208328,
+                "sha256": "689eacb192112cdfe5ab0a5da854447c1b21415f29d452aea02d863530f3ac1f"
+              },
+              "filename": "corrupt-last-byte.input.xz",
+              "raw": {
+                "bytes": 279969808,
+                "sha256": "caed6fe825a0f67399b2de502659aa8641d7be369206eea289a19b7d14d47991"
+              }
+            }
+          },
+          {
+            "actual": {
+              "controller_stop": [],
+              "controller_stop_requested": false,
+              "diagnostic": [
+                84,
+                105,
+                16,
+                262,
+                0,
+                0,
+                0
+              ],
+              "elapsed_ns": 20091123630,
+              "exit": 84,
+              "gate_errors": [],
+              "input_hashes_before": [
+                "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+                "27ff4432ff783988c6a027b42098093669c6039bd4de1b92d6f1093fff400299"
+              ],
+              "inputs_unchanged": true,
+              "output_before_hex": "",
+              "output_bytes": 0,
+              "output_path": "/tmp/typed-stage-capacity-v3-bounds/classic-plus-one/staging.kv",
+              "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "progress_records": [],
+              "stderr_hex": "5400000000000000690000000000000010000000000000000601000000000000000000000000000000000000000000000000000000000000",
+              "stdout_hex": "",
+              "timed_out": false
+            },
+            "name": "classical-count-plus-one"
+          },
+          {
+            "actual": {
+              "controller_stop": [],
+              "controller_stop_requested": false,
+              "elapsed_ns": 19678209496,
+              "exit": 0,
+              "gate_errors": [],
+              "input_hashes_before": [
+                "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3",
+                "27ff4432ff783988c6a027b42098093669c6039bd4de1b92d6f1093fff400299"
+              ],
+              "inputs_unchanged": true,
+              "output_before_hex": "",
+              "output_bytes": 279969985,
+              "output_path": "/tmp/typed-stage-capacity-v3-bounds/growth-classic-plus-one/staging.kv",
+              "output_sha256": "e690ebf75105418bbd23eaab9d77c41bd7b4d65425a6747af8ded72398d8ed29",
+              "progress_records": [],
+              "receipt": {
+                "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+                "count": 65537,
+                "delta_count": 1,
+                "kind": 1,
+                "output_bytes": 279969985,
+                "progresses": 263,
+                "reserved": 0,
+                "root_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+                "slot": 7
+              },
+              "stderr_hex": "",
+              "stdout_hex": "5453524553554c5401000000000000000100010000000000c100b0100000000001000000000000000701000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f070000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "timed_out": false
+            },
+            "name": "growth-dimension-classical-plus-one",
+            "output_archive": {
+              "archive": {
+                "bytes": 208336,
+                "sha256": "d7c34a7ef2a8035c362e31fa468e8690385ae554f5bf5d45592fbd59728172e4"
+              },
+              "filename": "growth-classic-plus-one.kv.xz",
+              "raw": {
+                "bytes": 279969985,
+                "sha256": "e690ebf75105418bbd23eaab9d77c41bd7b4d65425a6747af8ded72398d8ed29"
+              }
+            }
+          }
+        ],
+        "events": [
+          {
+            "elapsed_seconds": 5.250453749,
+            "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+            "label": "independent-native-build-verified"
+          },
+          {
+            "bytes": 279969808,
+            "elapsed_seconds": 6.252722208,
+            "label": "complete-prior-output-restored-and-synchronized",
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          {
+            "elapsed_seconds": 27.053476758,
+            "exit": 83,
+            "label": "final-byte-control-returned",
+            "wall_seconds": 18.680713739
+          },
+          {
+            "elapsed_seconds": 49.246226185,
+            "exit": 84,
+            "label": "classical-count-control-returned",
+            "wall_seconds": 20.09112363
+          },
+          {
+            "elapsed_seconds": 69.322138037,
+            "exit": 0,
+            "label": "growth-count-control-returned",
+            "wall_seconds": 19.678209496
+          },
+          {
+            "controls": 3,
+            "elapsed_seconds": 71.819492376,
+            "label": "stage-complete",
+            "wall_seconds": 71.819485816
+          }
+        ],
+        "expected_source_sha": null,
+        "github_event_sha": null,
+        "growth_maximum_extent_qualified": false,
+        "independent_root_hex": "f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702",
+        "key_bytes": 160,
+        "lineage": {
+          "attempt": 1,
+          "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+          "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+          "native_source_inputs_match_git_head": false,
+          "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+          "run_id": "typed-store-projection-v3-20261116",
+          "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f"
+        },
+        "namespace_or_commit_authority": false,
+        "original_report": {
+          "bytes": 961881,
+          "path": "/tmp/typed-stage-capacity-v3-bounds/report.json",
+          "sha256": "7888a061acd7f361375ab9ceb49c979d621b88cbe8dd586dc0c0d34fe9613770"
+        },
+        "physical_power_loss_qualified": false,
+        "prior_receipt_sha256": "879e5c32e4bf945caccd0418cc82aa55dcac1c96be373e4cc34a0038e2430c2e",
+        "raw_state_bytes": 279969808,
+        "resource_scope": "RSS high-water includes hosted verifier/native build; cgroup peak is the observed whole cgroup, not an isolated native RSS claim",
+        "resources_after": {
+          "children_peak_rss_kib_including_native_build": 46004,
+          "hosted_self_peak_rss_kib": 46004
+        },
+        "resources_before": {
+          "children_peak_rss_kib_including_native_build": 896,
+          "hosted_self_peak_rss_kib": 16500
+        },
+        "root_child_wall_seconds": 900,
+        "row_child_wall_seconds": 240,
+        "rows": 65536,
+        "run_id": "typed-store-projection-v3-20261116",
+        "runtime_host_proxy": false,
+        "schema": "trnm.hia.typed-staging-capacity-stage.v1",
+        "source_inputs_stable": true,
+        "stage": "bounds",
+        "status": "PASS",
+        "value_bytes": 4096,
+        "wall_seconds": 71.819485816
+      }
+    ],
+    "value_bytes": 4096
+  },
+  "development_source_binding": {
+    "base_git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+    "base_git_tree": "fc5a31e67b207078ee1b01ad98e918df11ad8b8f",
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "executable": {
+      "bytes": 661773,
+      "dynamic_linker": false,
+      "entry": 4194480,
+      "format": "ELF64LE",
+      "instruction_semantics_verified_by_this_check": false,
+      "interpreter": null,
+      "load_flags": "RX",
+      "machine": "x86_64",
+      "sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+      "stack_flags": "RW",
+      "type": "ET_EXEC"
+    },
+    "native_source_inputs_match_git_head": false,
+    "original_source_files": 4361,
+    "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+    "reason": "The 13 candidate component files were not yet committed at the base head; every exact input byte is separately bound. Final published-head CI must rerun these gates.",
+    "source_inputs": {
+      "hia/components.json": {
+        "bytes": 19858,
+        "sha256": "af93ece550969f78154afae997d1faf2a5f7696364db3f32e01b683e9ae15173"
+      },
+      "hia/platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "hia/platform/transport_request/rust_oracle.py": {
+        "bytes": 12311,
+        "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+      },
+      "hia/platform/typed_store/README.md": {
+        "bytes": 15285,
+        "sha256": "120b14fbae01c3e415bb84b512d1d62e622dd3f6db4c637ddd24e5ff9e128406"
+      },
+      "hia/platform/typed_store/abi.json": {
+        "bytes": 3086,
+        "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+      },
+      "hia/platform/typed_store/build.py": {
+        "bytes": 9592,
+        "sha256": "b840b0a9dacdfbbfa09dbb63735ba01ac7307d8b4da061be6bcf4bdebf97c112"
+      },
+      "hia/platform/typed_store/capacity.py": {
+        "bytes": 18586,
+        "sha256": "4d68747ce22fc3dbe34c397fbe615361e3a58fd0087ad5c812324288db891dc0"
+      },
+      "hia/platform/typed_store/cases.py": {
+        "bytes": 11530,
+        "sha256": "3c466661593e264e22b75aa0ac7b0f4b07e03a473733256ab04ebfc8e969bec3"
+      },
+      "hia/platform/typed_store/includes.json": {
+        "bytes": 2672,
+        "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+      },
+      "hia/platform/typed_store/linux_stage_emitter.hepta": {
+        "bytes": 27195,
+        "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+      },
+      "hia/platform/typed_store/native_io.py": {
+        "bytes": 11873,
+        "sha256": "f0727238d07d3726da67902cc13b242192eaeb8bf413fc85892297f8698135d9"
+      },
+      "hia/platform/typed_store/qualify.py": {
+        "bytes": 14303,
+        "sha256": "868f4e02999051fe9b48f21d9541aabed6106aec2134d0fbe42cefa10eea0783"
+      },
+      "hia/platform/typed_store/root_finalize.hepta": {
+        "bytes": 6116,
+        "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+      },
+      "hia/platform/typed_store/rust_oracle.py": {
+        "bytes": 11251,
+        "sha256": "c9ff24b0024b8e57158ce56b49b813c91aa1c894ab1778571943632c8cb1a635"
+      },
+      "hia/platform/typed_store/rust_reference.rs": {
+        "bytes": 7562,
+        "sha256": "9f816a8ec1ce8bf7561d239e5ec96605c24408f86ad4aa4ed648286b886f8aab"
+      },
+      "hia/platform/typed_store/stage_policy.hepta": {
+        "bytes": 206730,
+        "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_number.hepta": {
+        "bytes": 66485,
+        "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/codec/json_value_wire.hepta": {
+        "bytes": 39174,
+        "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+      },
+      "hia/src/crypto/sha256_arena.hepta": {
+        "bytes": 28919,
+        "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 39017,
+        "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+      },
+      "hia/src/math/binary64.hepta": {
+        "bytes": 21416,
+        "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+      },
+      "hia/src/protocol/state_root.hepta": {
+        "bytes": 221073,
+        "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+      },
+      "hia/tests/test_state_root.py": {
+        "bytes": 9901,
+        "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "source_set_sha256": "6eaa009ddceefa026568ee632946778fc46c65be889c897f8f72dd17b08e6d9f",
+    "toolchain": {
+      "assembly_schema": "hia-asm.v1",
+      "language_schema": "hepta.hia.program.v8",
+      "repository": "TrillionniumFoundation/Hepta",
+      "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+      "target": "x86_64-linux-gnu"
+    }
+  },
+  "hosted_controller_guards": {
+    "controls": [
+      {
+        "accepted": true,
+        "error": null,
+        "expected": true,
+        "github_event_sha_preserved": true,
+        "name": "pr-event-merge-sha-is-not-source",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "error": "Missing or invalid TRNM_EXPECTED_SOURCE_SHA for the exact source checkout",
+        "expected": false,
+        "github_event_sha_preserved": true,
+        "name": "missing-source-pin",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "error": "Missing or invalid TRNM_EXPECTED_SOURCE_SHA for the exact source checkout",
+        "expected": false,
+        "github_event_sha_preserved": true,
+        "name": "short-source-pin",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "error": "Missing or invalid TRNM_EXPECTED_SOURCE_SHA for the exact source checkout",
+        "expected": false,
+        "github_event_sha_preserved": true,
+        "name": "nonhex-source-pin",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "error": "Checkout differs from exact expected source head",
+        "expected": false,
+        "github_event_sha_preserved": true,
+        "name": "wrong-source-pin",
+        "status": "PASS"
+      },
+      {
+        "accepted": true,
+        "actual_decoded_file": {
+          "bytes": 279969808,
+          "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+        },
+        "error": null,
+        "expected": true,
+        "input_archive": {
+          "bytes": 208328,
+          "sha256": "02a52fb661ce6ffd6b18c3b486e6dfb6eed1a4a22fd5482d4d79dd3f03a279f2"
+        },
+        "lossless_decoded_evidence": {
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          "same_full_bytes_as": "/tmp/typed-stage-full-classic-extent-1/maximum-state.input.xz"
+        },
+        "name": "valid",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "actual_decoded_file": {
+          "bytes": 279969808,
+          "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+        },
+        "error": "ValueError('Truncated snapshot archive')",
+        "expected": false,
+        "input_archive": {
+          "bytes": 208327,
+          "sha256": "4065f84427dd3f970b1ea82087cefe01dba2e41583f63dce5a467464c026672c"
+        },
+        "lossless_decoded_evidence": {
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          "same_full_bytes_as": "/tmp/typed-stage-full-classic-extent-1/maximum-state.input.xz"
+        },
+        "name": "truncated-footer",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "actual_decoded_file": {
+          "bytes": 279969808,
+          "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+        },
+        "error": "ValueError('Trailing snapshot archive data')",
+        "expected": false,
+        "input_archive": {
+          "bytes": 208329,
+          "sha256": "fcd9449cadc50a9646b869148c1bbb130f5c3c6da9c25f6ac2974c55bec63d6b"
+        },
+        "lossless_decoded_evidence": {
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          "same_full_bytes_as": "/tmp/typed-stage-full-classic-extent-1/maximum-state.input.xz"
+        },
+        "name": "trailing-byte",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "actual_decoded_file": {
+          "bytes": 279969808,
+          "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+        },
+        "error": "ValueError('Trailing snapshot archive data')",
+        "expected": false,
+        "input_archive": {
+          "bytes": 208388,
+          "sha256": "043eb9f9eebdfc95c39e32cf859fb7d8033874c5464b8b43d767488ec9b4035c"
+        },
+        "lossless_decoded_evidence": {
+          "raw": {
+            "bytes": 279969808,
+            "sha256": "cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3"
+          },
+          "same_full_bytes_as": "/tmp/typed-stage-full-classic-extent-1/maximum-state.input.xz"
+        },
+        "name": "concatenated-stream",
+        "status": "PASS"
+      },
+      {
+        "accepted": false,
+        "actual_decoded_file": {
+          "bytes": 278943934,
+          "sha256": "b2874e6e55766979b3031339cd8a201b984b36ac2e5f957f3b2f1f462f1b3246"
+        },
+        "error": "ValueError('Snapshot expands beyond the fixed complete State extent')",
+        "expected": false,
+        "input_archive": {
+          "bytes": 208328,
+          "sha256": "191db248f347c98f42aaa7598be85c2a6282e43e9868ae3e1ee72dbf47ef9d28"
+        },
+        "lossless_decoded_evidence": {
+          "archive": "/tmp/typed-stage-controller-guards-v3/overlong-raw-decoded/refused-decoded-prefix.xz",
+          "raw": {
+            "bytes": 278943934,
+            "sha256": "b2874e6e55766979b3031339cd8a201b984b36ac2e5f957f3b2f1f462f1b3246"
+          }
+        },
+        "name": "overlong-raw",
+        "status": "PASS"
+      }
+    ],
+    "original_report": {
+      "bytes": 5344,
+      "path": "/tmp/typed-stage-controller-guards-v3/report.json",
+      "sha256": "73b2dc346dfc0f237acfa665edbb61fd4bcbc608528ba79f25e5fa990d7f754e"
+    },
+    "schema": "trnm.hia.typed-staging-controller-admission-controls.v1",
+    "scope": "hosted test-controller source pin and actual bounded archive I/O; no native Stage success is manufactured",
+    "source": {
+      "bytes": 18586,
+      "sha256": "4d68747ce22fc3dbe34c397fbe615361e3a58fd0087ad5c812324288db891dc0"
+    },
+    "status": "PASS"
+  },
+  "integration_admission_hardening": {
+    "final_committed_source_ci_required": true,
+    "new_native_source_inputs": 28,
+    "new_owned_files": 14,
+    "report": {
+      "bound_sources_before": {
+        "hia/components.json": {
+          "bytes": 25346,
+          "sha256": "443d42289d99a0a306e557f29c1779133c5ae51b960afcd40fc772552cc0b15d"
+        },
+        "hia/platform/build.py": {
+          "bytes": 11808,
+          "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+        },
+        "hia/platform/transport_request/rust_oracle.py": {
+          "bytes": 12311,
+          "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+        },
+        "hia/platform/typed_store/README.md": {
+          "bytes": 15285,
+          "sha256": "120b14fbae01c3e415bb84b512d1d62e622dd3f6db4c637ddd24e5ff9e128406"
+        },
+        "hia/platform/typed_store/abi.json": {
+          "bytes": 3086,
+          "sha256": "1bef376f818643d653cfbf4ecdb40d0d47f582777451b0aeeea6b32c17c2f179"
+        },
+        "hia/platform/typed_store/build.py": {
+          "bytes": 9592,
+          "sha256": "b840b0a9dacdfbbfa09dbb63735ba01ac7307d8b4da061be6bcf4bdebf97c112"
+        },
+        "hia/platform/typed_store/capacity.py": {
+          "bytes": 18586,
+          "sha256": "4d68747ce22fc3dbe34c397fbe615361e3a58fd0087ad5c812324288db891dc0"
+        },
+        "hia/platform/typed_store/cases.py": {
+          "bytes": 11530,
+          "sha256": "3c466661593e264e22b75aa0ac7b0f4b07e03a473733256ab04ebfc8e969bec3"
+        },
+        "hia/platform/typed_store/includes.json": {
+          "bytes": 2672,
+          "sha256": "4b54faf57cacae724c8778bdf8a09ffda6b7cbd34ff5591f47ccf8e078f67f92"
+        },
+        "hia/platform/typed_store/linux_stage_emitter.hepta": {
+          "bytes": 27195,
+          "sha256": "4d4448d8607f218aa24d8a18311245ddaa3295c8b0717fb8eab2d0540cdd53fb"
+        },
+        "hia/platform/typed_store/native_io.py": {
+          "bytes": 11873,
+          "sha256": "f0727238d07d3726da67902cc13b242192eaeb8bf413fc85892297f8698135d9"
+        },
+        "hia/platform/typed_store/qualify.py": {
+          "bytes": 14303,
+          "sha256": "868f4e02999051fe9b48f21d9541aabed6106aec2134d0fbe42cefa10eea0783"
+        },
+        "hia/platform/typed_store/root_finalize.hepta": {
+          "bytes": 6116,
+          "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+        },
+        "hia/platform/typed_store/rust_oracle.py": {
+          "bytes": 23182,
+          "sha256": "9667f0ee27e9fd05e6add24a3d7652d35cd5250c13d04d678590e08bf44bd6ba"
+        },
+        "hia/platform/typed_store/rust_reference.rs": {
+          "bytes": 7562,
+          "sha256": "9f816a8ec1ce8bf7561d239e5ec96605c24408f86ad4aa4ed648286b886f8aab"
+        },
+        "hia/platform/typed_store/stage_policy.hepta": {
+          "bytes": 206730,
+          "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+        },
+        "hia/platform/typed_store/test_integrity.py": {
+          "bytes": 23984,
+          "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+        },
+        "hia/qualification/compiler-binding.json": {
+          "bytes": 878,
+          "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+        },
+        "hia/src/codec/json_number.hepta": {
+          "bytes": 66485,
+          "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+        },
+        "hia/src/codec/json_primitives.hepta": {
+          "bytes": 8258,
+          "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+        },
+        "hia/src/codec/json_value_wire.hepta": {
+          "bytes": 39174,
+          "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+        },
+        "hia/src/crypto/sha256_arena.hepta": {
+          "bytes": 28919,
+          "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+        },
+        "hia/src/crypto/sha256_stream.hepta": {
+          "bytes": 39017,
+          "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+        },
+        "hia/src/math/binary64.hepta": {
+          "bytes": 21416,
+          "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+        },
+        "hia/src/protocol/state_root.hepta": {
+          "bytes": 221073,
+          "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+        },
+        "hia/tests/test_state_root.py": {
+          "bytes": 9901,
+          "sha256": "ff77095a47092e8d8a5ef8e80f3054bb02af15f55db1de90f380c777e48cbdec"
+        },
+        "hia/toolchain.lock.json": {
+          "bytes": 221,
+          "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+        },
+        "hia/tools/toolchain.py": {
+          "bytes": 14157,
+          "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+        }
+      },
+      "bound_sources_stable": true,
+      "cargo_executions": 0,
+      "case_count": 392,
+      "controls": [
+        {
+          "name": "truncated-xz",
+          "observed_rejection": "Truncated native corpus archive",
+          "status": "PASS"
+        },
+        {
+          "name": "trailing-xz",
+          "observed_rejection": "Truncated or trailing native corpus archive",
+          "status": "PASS"
+        },
+        {
+          "name": "concatenated-xz",
+          "observed_rejection": "Truncated or trailing native corpus archive",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized-xz",
+          "observed_rejection": "Native corpus archive exceeds its source-defined extent",
+          "status": "PASS"
+        },
+        {
+          "name": "same-extent-wrong-xz",
+          "observed_rejection": "Actual archived corpus differs from source-defined inputs",
+          "status": "PASS"
+        },
+        {
+          "name": "truncated-plain",
+          "observed_rejection": "Actual corpus bytes differ from source-defined inputs",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized-plain",
+          "observed_rejection": "Actual corpus bytes differ from source-defined inputs",
+          "status": "PASS"
+        },
+        {
+          "name": "same-extent-wrong-plain",
+          "observed_rejection": "Actual corpus bytes differ from source-defined inputs",
+          "status": "PASS"
+        },
+        {
+          "binding_only": true,
+          "name": "valid-plain-corpus",
+          "status": "PASS"
+        },
+        {
+          "binding_only": true,
+          "name": "complete-fixture-source-and-corpus",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate-key-hia/components.json",
+          "observed_rejection": "Duplicate qualification/manifest key: schema",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate-key-hia/platform/typed_store/includes.json",
+          "observed_rejection": "Duplicate qualification/manifest key: schema",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate-key-native-comparison",
+          "observed_rejection": "Duplicate qualification/manifest key: schema",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/components.json",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/build.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/transport_request/rust_oracle.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/README.md",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/abi.json",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/build.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/capacity.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/cases.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/includes.json",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/linux_stage_emitter.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/native_io.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/qualify.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/root_finalize.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/rust_oracle.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/rust_reference.rs",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/stage_policy.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/platform/typed_store/test_integrity.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/qualification/compiler-binding.json",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/codec/json_number.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/codec/json_primitives.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/codec/json_value_wire.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/crypto/sha256_arena.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/crypto/sha256_stream.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/math/binary64.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/src/protocol/state_root.hepta",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/tests/test_state_root.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/toolchain.lock.json",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omit-hia/tools/toolchain.py",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "forged-identity-sha256-0000000000000000000000000000000000000000000000000000000000000000",
+          "observed_rejection": "Native-bound source bytes differ",
+          "status": "PASS"
+        },
+        {
+          "name": "forged-identity-bytes-0",
+          "observed_rejection": "Native-bound source bytes differ",
+          "status": "PASS"
+        },
+        {
+          "name": "forged-identity-bytes-True",
+          "observed_rejection": "Malformed source identity: hia/platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "forged-source-set-digest",
+          "observed_rejection": "Native source-set digest differs",
+          "status": "PASS"
+        },
+        {
+          "name": "extra-existing-source",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "future-owned-source-omitted",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "binding_only": true,
+          "name": "future-owned-source-included",
+          "status": "PASS"
+        },
+        {
+          "name": "mandatory-owner-source-deleted-and-unbound",
+          "observed_rejection": "A mandatory typed Store owner source is absent",
+          "status": "PASS"
+        },
+        {
+          "name": "noncanonical-'/hia/platform/typed_store/cases.py'",
+          "observed_rejection": "Escaping or noncanonical source path: /hia/platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "noncanonical-'hia/../hia/platform/typed_store/cases.py'",
+          "observed_rejection": "Escaping or noncanonical source path: hia/../hia/platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "noncanonical-'./hia/platform/typed_store/cases.py'",
+          "observed_rejection": "Escaping or noncanonical source path: ./hia/platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "noncanonical-'hia//platform/typed_store/cases.py'",
+          "observed_rejection": "Escaping or noncanonical source path: hia//platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "noncanonical-'hia\\\\platform\\\\typed_store\\\\cases.py'",
+          "observed_rejection": "Noncanonical source path",
+          "status": "PASS"
+        },
+        {
+          "name": "same-bytes-leaf-symlink",
+          "observed_rejection": "Symlinked source path: hia/platform/typed_store/cases.py",
+          "status": "PASS"
+        },
+        {
+          "name": "same-bytes-ancestor-symlink",
+          "observed_rejection": "Symlinked source path: hia/src/codec/json_number.hepta",
+          "status": "PASS"
+        },
+        {
+          "name": "corpus-symlink",
+          "observed_rejection": "Symlinked source path: corpus.jsonl.xz",
+          "status": "PASS"
+        },
+        {
+          "name": "public-valid-binding-not-run-without-tools",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-rust_reference.rs",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-capacity.py",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-test_integrity.py",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-build.py",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-json_number.hepta",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Incomplete or extra native source dependency closure')",
+          "name": "public-missing-state_root.hepta",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Native source-set digest differs')",
+          "name": "public-forged-set-digest",
+          "status": "PASS"
+        },
+        {
+          "error": "ValueError('Native corpus identity differs from the complete source-defined input corpus')",
+          "name": "public-forged-corpus-digest",
+          "status": "PASS"
+        },
+        {
+          "name": "public-reject--O",
+          "status": "PASS"
+        },
+        {
+          "name": "public-reject--OO",
+          "status": "PASS"
+        },
+        {
+          "binding_only": true,
+          "name": "recursive-independent-source-included",
+          "status": "PASS"
+        },
+        {
+          "name": "recursive-independent-source-omitted",
+          "observed_rejection": "Incomplete or extra native source dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown-callee",
+          "observed_rejection": "Unknown, re-exported or duplicate typed Store callee: integrity_missing",
+          "status": "PASS"
+        },
+        {
+          "name": "reexported-callee",
+          "observed_rejection": "Unknown, re-exported or duplicate typed Store callee: integrity_leaf",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate-callee",
+          "observed_rejection": "Unknown, re-exported or duplicate typed Store callee: integrity_parent",
+          "status": "PASS"
+        },
+        {
+          "name": "recursive-include-cycle",
+          "observed_rejection": "Cyclic HIA dependency closure",
+          "status": "PASS"
+        },
+        {
+          "name": "omitted-input-with-self-consistent-hash",
+          "observed_rejection": "Native corpus identity differs from the complete source-defined input corpus",
+          "status": "PASS"
+        },
+        {
+          "name": "reordered-input-with-self-consistent-hash",
+          "observed_rejection": "Native corpus identity differs from the complete source-defined input corpus",
+          "status": "PASS"
+        },
+        {
+          "name": "altered-input-with-self-consistent-hash",
+          "observed_rejection": "Native corpus identity differs from the complete source-defined input corpus",
+          "status": "PASS"
+        },
+        {
+          "name": "missing-native-case",
+          "observed_rejection": "Native corpus cases are missing, reordered, extra or duplicated",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate-native-case",
+          "observed_rejection": "Native corpus cases are missing, reordered, extra or duplicated",
+          "status": "PASS"
+        },
+        {
+          "name": "reordered-native-case",
+          "observed_rejection": "Native corpus cases are missing, reordered, extra or duplicated",
+          "status": "PASS"
+        },
+        {
+          "name": "nondict-native-case",
+          "observed_rejection": "Native corpus cases are missing, reordered, extra or duplicated",
+          "status": "PASS"
+        }
+      ],
+      "core_compiler_executions": 0,
+      "elapsed_ns": 5632245201,
+      "errors": 0,
+      "exact_source_defined_corpus": {
+        "bytes": 17765732,
+        "sha256": "0dcd894ab6e54199750b9c546b265db77fb77ca69173d68a7fb344f7ef08fde9"
+      },
+      "failures": 0,
+      "native_executions": 0,
+      "native_or_original_runtime_qualification_claimed": false,
+      "oracle_source": {
+        "bytes": 23182,
+        "sha256": "9667f0ee27e9fd05e6add24a3d7652d35cd5250c13d04d678590e08bf44bd6ba"
+      },
+      "public_cli_calls": [
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-valid-binding-no-tools",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-valid-binding-no-tools"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "valid-binding-no-tools",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "full_serde_error_text_or_source_chain_parity": false,
+            "missing_tools": [
+              "cargo",
+              "rustc"
+            ],
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "status": "NOT_RUN",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_utf8": "",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-rust_reference.rs",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-rust_reference.rs"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-rust_reference.rs",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-capacity.py",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-capacity.py"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-capacity.py",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-test_integrity.py",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-test_integrity.py"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-test_integrity.py",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-build.py",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-build.py"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-build.py",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-json_number.hepta",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-json_number.hepta"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-json_number.hepta",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-missing-state_root.hepta",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-missing-state_root.hepta"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "missing-state_root.hepta",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Incomplete or extra native source dependency closure')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1407,
+            "sha256": "0b9cfacb74c523288c5e31d65a1e7ec0aa121f9cdfbc2ac58c1552d836e0d65b"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 205, in validate_source_bindings\n    require(set(supplied) == set(expected), \"Incomplete or extra native source dependency closure\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Incomplete or extra native source dependency closure\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-forged-set-digest",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-forged-set-digest"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "forged-set-digest",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Native source-set digest differs')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1400,
+            "sha256": "961a1057a427755589d066f6ce110fed487e64b3f5ae6b253ea40f1e09ee9737"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 271, in validate_bundle\n    sources = validate_source_bindings(repository, comparison)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 207, in validate_source_bindings\n    require(built.get(\"source_set_sha256\") == canonical_json_hash(expected), \"Native source-set digest differs\")\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Native source-set digest differs\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-forged-corpus-digest",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-forged-corpus-digest"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "forged-corpus-digest",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": {
+            "error": "ValueError('Native corpus identity differs from the complete source-defined input corpus')",
+            "full_serde_error_text_or_source_chain_parity": false,
+            "production_runtime_dependency": false,
+            "schema": "trnm.hia.original-typed-staging-differential.v1",
+            "sql_materialization_error_order_qualified": false,
+            "stages": [],
+            "status": "FAIL",
+            "whole_node_qualified": false
+          },
+          "stderr": {
+            "bytes": 1425,
+            "sha256": "e445e7d849f72b4e3d2e8fbace2d3796d88dc085d1b3df11125e65edc83a1ad6"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 302, in main\n    comparison, captured_comparison, source_inputs, corpus_raw = validate_bundle(repository, bundle)\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 272, in validate_bundle\n    corpus = validate_corpus(repository, bundle, comparison)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 233, in validate_corpus\n    require(valid_identity(comparison.get(\"corpus\")) and comparison[\"corpus\"] == bytes_identity(expected),\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 45, in require\n    raise ValueError(message)\nValueError: Native corpus identity differs from the complete source-defined input corpus\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-O",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-optimized-O",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-optimized-O"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "optimized-O",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": null,
+          "stderr": {
+            "bytes": 601,
+            "sha256": "1f8bc673f839b213237e45b58860595befdf56b02ea4ab6becd1b6bf971079f9"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 281, in main\n    raise RuntimeError(\"Optimized Python is not admitted by this verifier\")\nRuntimeError: Optimized Python is not admitted by this verifier\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-OO",
+            "-m",
+            "hia.platform.typed_store.rust_oracle",
+            "--repository",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source",
+            "--bundle",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/bundle",
+            "--output",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/output-optimized-OO",
+            "--target-dir",
+            "/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/target-optimized-OO"
+          ],
+          "empty_path": true,
+          "exit_code": 1,
+          "hia_toolchain_environment_absent": true,
+          "name": "optimized-OO",
+          "no_cargo_target": true,
+          "no_isolated_source": true,
+          "report": null,
+          "stderr": {
+            "bytes": 601,
+            "sha256": "1f8bc673f839b213237e45b58860595befdf56b02ea4ab6becd1b6bf971079f9"
+          },
+          "stderr_utf8": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 429, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/trnm-typed-store-integrity-ims9oc8b/case-zffjtbz6/source/hia/platform/typed_store/rust_oracle.py\", line 281, in main\n    raise RuntimeError(\"Optimized Python is not admitted by this verifier\")\nRuntimeError: Optimized Python is not admitted by this verifier\n",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "rust_executions": 0,
+      "schema": "trnm.hia.typed-store-oracle-integrity-controls.v1",
+      "status": "PASS",
+      "test_errors": [],
+      "test_failures": [],
+      "test_source": {
+        "bytes": 23984,
+        "sha256": "39beb2cd7e5691cf6e46e495a8d023470422fa9b0194336d909228b08acef5c9"
+      },
+      "tests": 9
+    },
+    "scope": "Strict source/corpus admission only; no new native or original-Rust runtime pass"
+  },
+  "interpreter_or_rust_runtime_fallback": false,
+  "literal_isa_adapter_is_separate_trusted_boundary": true,
+  "native_controls": {
+    "complete_evidence_archive": {
+      "bytes": 1339140,
+      "files": 3085,
+      "hosted_controller_guards": 10,
+      "lossless_archive_verified": true,
+      "native_controls": 603,
+      "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/typed-store-final-native-evidence-v3.tar.xz",
+      "semantic_cases": 392,
+      "sha256": "42b8254340e53717f6342e601e3f7f22ab8554b1b169d060ff498498d184fdf4"
+    },
+    "controls_index_sha256": "106911f83a9f1db25b5b4bcf862563f9354d3c3a0532397e8329bbbbf1770581",
+    "count": 603,
+    "original_report": {
+      "bytes": 2375121,
+      "path": "/tmp/typed-stage-recovered-qualification-4/report.json",
+      "sha256": "49c9c9c770cd26b28aa024e6677ce14b67c3f29a0053b86a453744ff2c158486"
+    },
+    "original_report_rust_field_preserved": "NOT_RUN",
+    "original_report_status_preserved": "NATIVE_PASS_ORIGINAL_NOT_RUN",
+    "selected_physical_controls": [
+      {
+        "actual": {
+          "controller_stop": [
+            {
+              "pid": 821,
+              "requested": true,
+              "signal": "SIGKILL",
+              "signal_outcome": "sent"
+            }
+          ],
+          "controller_stop_requested": true,
+          "elapsed_ns": 52323249,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/owned-controller-stop/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "owned-controller-stop",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1360194,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gw-output-alias/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gw-output-alias",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1188740,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gr-output-alias/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gr-output-alias",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1030937,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gw-base-alias/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gw-base-alias",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1008994,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gr-delta-alias/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gr-delta-alias",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            13,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1092908,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gw-read-end/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gw-read-end",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            15,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1219495,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gr-write-end/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000f0000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gr-write-end",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1147639,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gate-self-loop/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gate-self-loop",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1231493,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gw-separate-regular/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gw-separate-regular",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1032198,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gr-separate-regular/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gr-separate-regular",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            13,
+            34818,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1330289,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gate-rdwr-fifo/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000d0000000000000002880000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gate-rdwr-fifo",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            65,
+            15,
+            2097152,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1222550,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/gate-opath-fifo/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000f0000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "gate-opath-fifo",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 1084515,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/sigkill-1/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "sigkill-1",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 27342818,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/cold-1/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 6,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000000000000000000000600000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "name": "restart-cold-1",
+        "restarted": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 23238552,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/restart-1/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 3,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000003000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 1754187,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/sigkill-3/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "sigkill-3",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 24129622,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/cold-3/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 6,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000000000000000000000600000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "name": "restart-cold-3",
+        "restarted": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 26108426,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/restart-3/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 3,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000003000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 1979690,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 34,
+          "output_hex": "544b5653545230310000000000000000010000000000000001000000000000006132",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/sigkill-5/staging.kv",
+          "output_sha256": "dfdf653645cc29cd364a3cf9380f27f795cb4e1818c28182bcf93808e25a6d18",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "sigkill-5",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 24590009,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/cold-5/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 6,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000000000000000000000600000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "name": "restart-cold-5",
+        "restarted": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 23610974,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/restart-5/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 3,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000003000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 1654339,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/sigkill-7/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "sigkill-7",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 26744913,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/cold-7/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 6,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000000000000000000000600000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "name": "restart-cold-7",
+        "restarted": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 22462704,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/restart-7/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 3,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000003000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 2070255,
+          "exit": -9,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/sigkill-9/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "stderr_hex": "",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "sigkill-9",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 23291761,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/cold-9/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 6,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000000000000000000000600000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "name": "restart-cold-9",
+        "restarted": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 24612282,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/restart-9/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 3,
+            "delta_count": 3,
+            "kind": 2,
+            "output_bytes": 70,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "1cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa964",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c5402000000000000000300000000000000460000000000000003000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f07000000000000001cfd2ce19587e05f2b73817382d0fec64de2d1c266b90a73af41cf34fe9fa9640000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            70,
+            51,
+            18446744073709551589,
+            5,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 4285855,
+          "exit": 70,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/real-efbig/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ]
+          ],
+          "stderr_hex": "46000000000000003300000000000000e5ffffffffffffff0500000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "real-efbig",
+        "status": "PASS"
+      },
+      {
+        "actual": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "diagnostic": [
+            70,
+            136,
+            18446744073709551584,
+            9,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 28465700,
+          "exit": 70,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "492d9faf20881e558ad1b94fe1c12e1fd5335da51920f09eb91c300f27cde23d",
+            "27389ab3d585cf84a9959524fca839b8143298bea5af90cae582d48d52061b8e"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 70,
+          "output_hex": "544b5653545230310300000000000000010000000000000001000000000000006132010000000000000001000000000000006234010000000000000001000000000000007a39",
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/lost-staging-receipt/staging.kv",
+          "output_sha256": "b558b42a4f4a4f14695d852b2eb1b324c4d2c42fa3f6f28c4880f881bfa1fcff",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              0
+            ],
+            [
+              5,
+              4,
+              1
+            ],
+            [
+              6,
+              4,
+              2
+            ],
+            [
+              7,
+              5,
+              0
+            ],
+            [
+              8,
+              6,
+              0
+            ],
+            [
+              9,
+              7,
+              3
+            ]
+          ],
+          "stderr_hex": "46000000000000008800000000000000e0ffffffffffffff0900000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "name": "lost-staging-receipt",
+        "status": "PASS"
+      },
+      {
+        "cold": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 10307088725,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "afb91767e92a1b499cd4955f9963a955ca89a47a970bc0701d8a8004dfb328e8",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 4374544,
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/large-cold/staging.kv",
+          "output_sha256": "afb91767e92a1b499cd4955f9963a955ca89a47a970bc0701d8a8004dfb328e8",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              6,
+              256
+            ],
+            [
+              7,
+              6,
+              512
+            ],
+            [
+              8,
+              6,
+              768
+            ],
+            [
+              9,
+              7,
+              1024
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 1024,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 4374544,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "f19ca510e1a624cf46e66c5eaf98a6dbcd7b7ea9e211757fff7926775f9d236e",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c540200000000000000000400000000000010c042000000000000000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f0700000000000000f19ca510e1a624cf46e66c5eaf98a6dbcd7b7ea9e211757fff7926775f9d236e0000000000000000",
+          "timed_out": false
+        },
+        "independent_root_hex": "f19ca510e1a624cf46e66c5eaf98a6dbcd7b7ea9e211757fff7926775f9d236e",
+        "name": "large-complete-cold-root",
+        "native": {
+          "controller_stop": [],
+          "controller_stop_requested": false,
+          "elapsed_ns": 10175621255,
+          "exit": 0,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "afb91767e92a1b499cd4955f9963a955ca89a47a970bc0701d8a8004dfb328e8",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 4374544,
+          "output_path": "/tmp/typed-stage-recovered-qualification-4/physical/large-native/staging.kv",
+          "output_sha256": "afb91767e92a1b499cd4955f9963a955ca89a47a970bc0701d8a8004dfb328e8",
+          "progress_records": [
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              5,
+              0
+            ],
+            [
+              5,
+              6,
+              0
+            ],
+            [
+              6,
+              6,
+              256
+            ],
+            [
+              7,
+              6,
+              512
+            ],
+            [
+              8,
+              6,
+              768
+            ],
+            [
+              9,
+              7,
+              1024
+            ]
+          ],
+          "receipt": {
+            "block_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "count": 1024,
+            "delta_count": 0,
+            "kind": 2,
+            "output_bytes": 4374544,
+            "progresses": 9,
+            "reserved": 0,
+            "root_hex": "f19ca510e1a624cf46e66c5eaf98a6dbcd7b7ea9e211757fff7926775f9d236e",
+            "slot": 7
+          },
+          "stderr_hex": "",
+          "stdout_hex": "5453524553554c540200000000000000000400000000000010c042000000000000000000000000000900000000000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f0700000000000000f19ca510e1a624cf46e66c5eaf98a6dbcd7b7ea9e211757fff7926775f9d236e0000000000000000",
+          "timed_out": false
+        },
+        "status": "PASS"
+      }
+    ],
+    "semantic_cases": 392,
+    "status_counts": {
+      "PASS": 603
+    }
+  },
+  "not_qualified": [
+    "Typed Node namespace or atomic publication/ACK authority",
+    "Continuity, complete admitted branch/reorg/replay/outbox/history owners",
+    "GSC2 roots or the complete maximum growth-State extent",
+    "All raw SQLite materialization error order, serde error display text, or full Rust error-source chains",
+    "Original production service CPU/input-acquisition budgets",
+    "Physical power loss, operating-system cache eviction, or hostile continuous same-UID mutation",
+    "A wholly native development toolchain, literal adapter ISA proof, or whole-project retirement of the retained stack"
+  ],
+  "old_stack_retirement_authorized": false,
+  "preserved_history": {
+    "initial_reconstruction_compile_refusal": {
+      "complete_evidence_archive": {
+        "bytes": 420224,
+        "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/typed-store-native-evidence-584-and-alias.tar.xz",
+        "sha256": "84a952ad1233025a22da605cd1fb8b17fceaa3720e85fa6f2559ea6f58e9d734"
+      },
+      "scope": "First reconstruction used a different source join with extra blank lines; corrected composition was rebuilt before the actual counterexample. This was not a runtime pass.",
+      "status": "NATIVE_COMPILER_EXIT_2"
+    },
+    "interrupted_capacity_attempts": [
+      {
+        "complete_evidence_archive": {
+          "bytes": 405316,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/full-classic-interrupted-old-image-evidence.tar.xz",
+          "sha256": "71ba9ab75f4ee006d84eea21e0e79db638ca708892f4d8c1a68dc4071bbc0e31"
+        },
+        "executable": {
+          "bytes": 660497,
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "sha256": "7bed95cd32c84a883f201bcb99280adb661616e8f816fe9db06f57b9b7cb591b",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        },
+        "interruption": {
+          "arbitrary_host_pid_signal_used": false,
+          "at_monotonic_ns": 67439273837007,
+          "exec_session": 25883,
+          "independent_pid_namespace_observed": true,
+          "method": "write_stdin Ctrl-C session termination",
+          "native_success_observed": false,
+          "reason": "actual original Rust key--0 mismatch requires stored projection correction; no old-image full-extent success is bound to revised source",
+          "tool_exit_code": 130
+        },
+        "lineage": null,
+        "original_report": {
+          "bytes": 913921,
+          "path": "/tmp/typed-stage-full-classic-extent-1/report.json",
+          "sha256": "1d500d812ccc3f6e9ddfa226e757c519c9e33ef1f6a7881f266a0f69e9673df2"
+        },
+        "status": "INTERRUPTED_FOR_SOURCE_CORRECTION"
+      },
+      {
+        "complete_evidence_archive": {
+          "bytes": 951068,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/native_owner/capacity-v2-interrupted-evidence.tar.xz",
+          "sha256": "579aea54d15f28c61caff13b8a8f1ce04a02d38ab63cb20ea3ec0242b6cd6495"
+        },
+        "executable": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+        "interruption": {
+          "exec_session": 80224,
+          "native_success_observed": false,
+          "reason": "CI expected source head and bounded archive restore require correction; no updated-source root qualification is claimed",
+          "tool_exit_code": 1,
+          "tool_output": "^C"
+        },
+        "lineage": {
+          "attempt": 1,
+          "executable_sha256": "9eaa80933df99ac41c177b66c52939b39c17af2e2f79dfe063e6c2106b7c08c5",
+          "git_head": "453326b335af9375f2f6796d4e906cb4cdf2ce4d",
+          "native_source_inputs_match_git_head": false,
+          "original_source_set_sha256": "bdddc262f3326474988f279830716a312b2f9b21a748e4c50e690be5615b9d44",
+          "run_id": "typed-store-projection-v2-20261116",
+          "source_set_sha256": "2bd7f4385804e05959ccba3e907c404c82f7b8323ee647b6b48ba91c3d1d809e"
+        },
+        "original_report": {
+          "bytes": 956699,
+          "path": "/tmp/typed-stage-capacity-v2-produce/report.json",
+          "sha256": "458befa94b74d7e7e8109566cdf45edf27ad8bf0362bc54962fb58e79cd89490"
+        },
+        "status": "INTERRUPTED_FOR_HARNESS_CORRECTION"
+      }
+    ],
+    "lost_prior_executor": {
+      "physical_artifact_available": false,
+      "qualifies_current_source": false,
+      "reported_executable_sha256": "ff7b66e5f2308e4f5185ec21c66ef8cbbacbb085d22951e8c7ed8a5e8b105f90",
+      "reported_native_controls": 321
+    },
+    "original_rust_first_failure_and_unused_v2": {
+      "v1": {
+        "actual_rust_job_id": "1a1e3685c83-392-33b3",
+        "controls": 374,
+        "evidence_archive": {
+          "bytes": 76340,
+          "path": "/workspace/scratch/e623e849c8fd/recovery/typed_store_remote/actual-original-evidence-v1.tar.xz",
+          "sha256": "c8167ccf4cc3949f562c716d5b650b55512e53b720f5336167db235738ab134d"
+        },
+        "failed": 1,
+        "failure": {
+          "name": "key--0",
+          "native": {
+            "code": 0,
+            "name": "key--0",
+            "progresses": 6,
+            "result_hex": "544b5653545230310100000000000000000000000000000004000000000000006e756c6c",
+            "root_hex": "3466837951486d1dec10da1fae8aef31e0376c3d76cf55e9cbfd8a940b298218"
+          },
+          "original": {
+            "code": 83,
+            "error_stage": "slot_state",
+            "name": "key--0",
+            "original_error": "STORAGE: Invalid column type Null at index: 0, name: CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END",
+            "original_kind": "LocalStructure",
+            "progresses": 5,
+            "requires_owner_stop": true,
+            "result_hex": null,
+            "rollback_exact": true,
+            "root_hex": null
+          },
+          "status": "FAIL"
+        },
+        "old_native_controls_pass_did_not_override_actual_difference": true,
+        "passed": 373,
+        "status": "FAIL"
+      },
+      "v2": {
+        "cache_current_owner": "Host ci_audit job1a1e384e70a-392-3414",
+        "native_package": {
+          "bytes": 295904,
+          "sha256": "759bdf23b0f4b7e1e8d949f3dbc3ef43a5ff25402746569af17b6937f2aba272"
+        },
+        "native_source_set_sha256": "2bd7f4385804e05959ccba3e907c404c82f7b8323ee647b6b48ba91c3d1d809e",
+        "original_rust_job_id": null,
+        "original_rust_launched": false,
+        "reason": "Root identified capacity.py source qualification defects before original Rust launch. Await a newly source-bound package. Immutable transport v2 is retained; repository repo-v2 remains clean exact453 and has not received the overlay.",
+        "remote_chunks": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/chunks-v2",
+        "remote_driver": "/tmp/trnm-typedstore-rust-20261116-jqi3qetj/desktop_run_v2.py",
+        "schema": "trnm.typed-store.actual-original-v2-not-run.v1",
+        "source_inputs_changed_by_this_agent": false,
+        "status": "NOT_RUN"
+      },
+      "v3": {
+        "added_cases": [
+          "projection-both-empty",
+          "projection-empty-key-before-json",
+          "projection-empty-key-before-m06",
+          "projection-empty-value",
+          "projection-value-dimension-before-key-null",
+          "projection-key-dimension-before-value-null",
+          "projection-truncated-utf8-key-dimension-first",
+          "projection-empty-key-insert",
+          "projection-empty-key-delete",
+          "projection-empty-key-detach-delete",
+          "projection-empty-value-repair",
+          "projection-empty-value-delete",
+          "projection-empty-key-before-mismatch",
+          "projection-empty-key-absent-delete",
+          "projection-empty-key-after-unrelated-mismatch",
+          "projection-empty-key-deleted-before-next-serde",
+          "projection-cancel-before-key-null-4",
+          "projection-cancel-before-key-null-5"
+        ],
+        "corrected_key_empty_case": {
+          "name": "key--0",
+          "native": {
+            "code": 83,
+            "name": "key--0",
+            "progresses": 5,
+            "result_hex": null,
+            "root_hex": null
+          },
+          "original": {
+            "code": 83,
+            "error_stage": "slot_state",
+            "name": "key--0",
+            "original_error": "STORAGE: Invalid column type Null at index: 0, name: CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END",
+            "original_kind": "LocalStructure",
+            "progresses": 5,
+            "requires_owner_stop": true,
+            "result_hex": null,
+            "rollback_exact": true,
+            "root_hex": null
+          },
+          "status": "PASS"
+        },
+        "original_374_actual_rust_results_unchanged": true,
+        "original_374_inputs_preserved_byte_for_byte_and_in_order": true,
+        "status": "PASS"
+      }
+    },
+    "reconstructed_retired_gate_counterexample": {
+      "author_sha256": "702c4e9002f318bdc9cde0db5964a301f657c5ad1389975ef23f35b9ab5dde40",
+      "candidate_reconstructed_after_executor_loss": true,
+      "counterexample": {
+        "actual": {
+          "diagnostic": [
+            80,
+            901,
+            24,
+            1,
+            2,
+            305419896,
+            0
+          ],
+          "elapsed_ns": 970333,
+          "exit": 80,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 32,
+          "output_hex": "545350524f473031010000000000000001000000000000000000000000000000",
+          "output_path": "/tmp/typed-stage-gate-alias-reconstruction-2/actual-counterexample/staging.kv",
+          "output_sha256": "6791d4644072d2ef5939b8c9b3ed8c40f65166395d4ce19803e58ed22bc0fbe2",
+          "progress_records": [],
+          "stderr_hex": "5000000000000000850300000000000018000000000000000100000000000000020000000000000078563412000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "composed_source_sha256": "fdce37c490f2c22ae46b12b0705072bf53c2990e68ebb7aaee5c854c2ae19bc3",
+        "image_sha256": "e29a2f3072bef3fb8aea719b5a95f3397f49eb371abc6f84c14e71b7df7d1b39",
+        "observed": true
+      },
+      "fixed": {
+        "actual": {
+          "diagnostic": [
+            65,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "elapsed_ns": 1105614,
+          "exit": 65,
+          "gate_errors": [],
+          "input_hashes_before": [
+            "7fb382be3c4e0b654a3bfcf9c5d2a9ef59a66d1f8dfa4f3339076bf0b825f613",
+            "732a26613eebaacbff3a9275402556c060ded849287f3774abaa02d42ab600e0"
+          ],
+          "inputs_unchanged": true,
+          "output_before_hex": "",
+          "output_bytes": 0,
+          "output_hex": "",
+          "output_path": "/tmp/typed-stage-gate-alias-reconstruction-2/fixed-refusal/staging.kv",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "progress_records": [],
+          "stderr_hex": "41000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "stdout_hex": "",
+          "timed_out": false
+        },
+        "build_source_set_sha256": "90e67292f0b2c7d72ce100579f00e797beb2da50e6984ca52b18f720d8864566",
+        "image_sha256": "7bed95cd32c84a883f201bcb99280adb661616e8f816fe9db06f57b9b7cb591b",
+        "refused_before_first_progress": true
+      },
+      "lost_historical_elf_reproduced": false,
+      "retired_semantics": "numeric descriptor inequality without actual FIFO/access/object admission",
+      "schema": "trnm.hia.typed-stage-gate-alias-counterexample.v1",
+      "status": "OBSERVED_AND_FIXED"
+    }
+  },
+  "recorded_utc_on_local_executor": "2026-11-16T09:22:56.383958+00:00",
+  "remaining_owner_call_order": {
+    "atomic_tail": "original transaction owner -> caller final writes -> namespace/context/active singleton/complete slot State/root/ancestry/history checks -> service checkpoints -> final progress -> unchanged write scope -> COMMIT; no cancellation after COMMIT",
+    "integration": "The eventual same native owner must create its own typed captures and bind metadata, context, generation, admitted blocks and continuity before a private publication transition. A TSRESULT receipt cannot authorize the generic opaque COMMIT interface.",
+    "original_store": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "persisted_check": "record -> continuity_v1::check_state -> actual root -> stored record root equality -> authenticated state readback when selected"
+  },
+  "runtime_host_algorithm_proxy": false,
+  "schema": "trnm.hia.typed-staging.development-observations.v1",
+  "scope": "Real HIA native streaming sorted-KV Delta merge, complete staged State scan, classical root, original private Node differential, and complete classical physical extent; no Node publication authority",
+  "status": "PASS_FOR_STATED_STAGING_SCOPE",
+  "whole_node_qualified": false
+}

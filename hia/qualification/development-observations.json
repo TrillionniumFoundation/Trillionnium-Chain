@@ -1,0 +1,718 @@
+{
+  "baseline_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+  "failed_observations": [
+    {
+      "operation": "HeptaRuntime hia_describe manifest",
+      "resolution": "Read the fixed official Hepta source and executed its local native compiler; the timed-out MCP request is not counted as discovery success.",
+      "result": "MCP request timed out"
+    },
+    {
+      "operation": "First M11 container-count corruption test",
+      "resolution": "Added a minimum encoded-capacity check for declared roster/vote counts; kept the original assertion and reran the complete suite.",
+      "result": "One of thirteen tests failed: observed 102, expected 100"
+    },
+    {
+      "operation": "Initial full cold qualification preflight",
+      "resolution": "Materialized the exact original source set in an isolated checkout and ran the unmodified 180-second qualification and 3-second cleanup gate.",
+      "result": "Required pinned source tests/test_hia_agent_data_json_native.py was missing in a sparse checkout; qualification did not start"
+    },
+    {
+      "operation": "Native builds during sparse-source materialization",
+      "resolution": "Restored only that exact Git blob, verified a clean pinned source tree, moved further cold work to an isolated checkout and reran native tests. No dirty guard was disabled.",
+      "result": "Tracked-source dirty checks refused builds; a timed-out checkout left one incomplete test file"
+    },
+    {
+      "operation": "PNX1 selfhost compile of implicit mutable-to-readonly call arguments",
+      "resolution": "Confirmed both call sites independently; established explicit shared borrow.read/loan.end around each ILF validator call. Kept the same compiler, source semantics and resource budgets. Native compilation and full PNX1 plus prior protocol tests then passed.",
+      "result": "Hosted Core accepted the program; pinned selfhost compiler exited 2 with no object or stderr"
+    },
+    {
+      "operation": "Published 893210a repository-truth source inventory",
+      "resolution": "Compared the exact baseline and candidate trees: baseline1745 entries matched; first migration added one config path. Ran the unchanged original refresh_distributed_source_inventory.py to add its seven-line include and passed the original --check; no checker or scan scope was changed.",
+      "result": "Both head and prospective-merge jobs refused a distributed source inventory missing config/hia-migration-v1.json"
+    },
+    {
+      "acceptance_check_or_budget_changed": false,
+      "first_generated_inventory_drift_commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "first_plan_drift_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+      "introduced_by_this_migration": true,
+      "native_pq_acceptance_granted": false,
+      "operation": "Original PQ corpus check after the first and second HIA migration commits",
+      "original_negative_suite_tests_passed": 113,
+      "resolution": "Followed the existing sole-plan/source-inventory reconciliation procedure: refreshed only the two exact current blob pins; all 2611 other pins and every research-only/HOLD/false acceptance field remain identical. The unchanged checker succeeds as a source-consistency check while retaining status HOLD_NO_GO. Its original negative suite and exact committed CI remain required.",
+      "result": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md; complete 2613-pin readback also identified the generated distributed_source_inventory.rs change",
+      "source_consistency_receipt": "pq-source-consistency.json"
+    }
+  ],
+  "fifth_candidate_executor_link_failure": {
+    "acceptance_checks_or_budgets_changed": false,
+    "adapter_rustc_build": "FAIL_E0463",
+    "cargo_original_library_build": "PASS",
+    "cause": "The qualifier supplied only the primary executor rlib parent as a dependency search directory. Actual Cargo JSON also reports transitive dependency artifacts under a different directory; rustc could not load trnm_executor or trnm_types.",
+    "introduced_by_this_migration": true,
+    "job_id": 132921478454,
+    "native_differential_calls": 0,
+    "old_stack_can_be_removed": false,
+    "original_execution": "NOT_RUN",
+    "original_scheduler_defect_reproduced_in_rust": false,
+    "production_activation": false,
+    "repair": "Derive all library dependency directories only from this successful Cargo invocation artifact filenames, reject missing or ambiguous required externs, and retain the exact rustc command.",
+    "report_sha256": "c313cfdfff9a9315cb2f3fbdfc011d8e05f80d061e486ae6cb990e55456dda82",
+    "resolution": "Exact repaired commit 4cc0464ff9632f2a493cb76d5b8b51eaad332dac passed run 43751782144, including 5274 actual original-Rust/native comparisons. The original failed run remains FAIL and is not reclassified.",
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "FAIL",
+    "stderr_bytes": 622,
+    "stderr_sha256": "6f91c59db3ec9e3975990a4ce86e2aa98fe29b187ad0499f58ab01526062b636",
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
+  "fifth_candidate_local_combined_controls": {
+    "command": "python3 -B -m unittest hia.tests.test_binary64 hia.tests.test_executor_schedule hia.tests.test_state_string hia.tests.test_state_value -v",
+    "errors": 0,
+    "failures": 0,
+    "fixed_native_compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "inputs_recorded_after_execution": {
+      "hia/components.json": "dcf9cf499fbb5fcd019738709e3aade19b278660b8f103e73ca1e8aef95c4eb9",
+      "hia/src/executor/schedule.hepta": "4d330d485cb3736ecb79a855c547c268568477b4160972c73221db99c6df7de7",
+      "hia/src/math/binary64.hepta": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0",
+      "hia/src/state/json_string.hepta": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd",
+      "hia/src/state/json_value.hepta": "4e073091bfa609292a78c01ac11dee4ede2b5384fc49895d6e658d397f2bac25",
+      "hia/tests/native_support.py": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4",
+      "hia/tests/state_value_cases.py": "6d4805dab557ef106a6e13d38c5a4fa7018175fca3b77162d96fd398eb5c07e6",
+      "hia/tests/test_binary64.py": "6f0caf0efcec8086e42b07e03cd2664913ffe898cb95b92b4f940eee214ba382",
+      "hia/tests/test_executor_schedule.py": "73ffe868a2a53c14428160d7ec65b22e5f663b3df9e6b1bb606416f489df1332",
+      "hia/tests/test_state_string.py": "b08cbeec280cb2bc8a71b61aced696af956ed41b00d15e43587193167fe2cc0c",
+      "hia/tests/test_state_value.py": "5885433b314e67c4d8bf05d0e2332bb8afbd1e069af8f1846278751794b99bd0",
+      "hia/tools/build.py": "c5a11c7d3edc528479c4f6e5069685f07297bef28f54c431ca221f90b669b7c4"
+    },
+    "old_stack_can_be_removed": false,
+    "passed_methods": 15,
+    "skipped_methods": 2,
+    "skipped_scope": "Original State Rust differential is NOT_RUN: Cargo/rustc and TRNM_HIA_RUST_STATE_REFERENCE unavailable locally",
+    "source_commit_observed": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "status": "NATIVE_PASS_RUST_NOT_RUN",
+    "tests": 17,
+    "wall_seconds": 35.864,
+    "whole_chain_native": false,
+    "working_tree_dirty": true
+  },
+  "fifth_candidate_native_ci": {
+    "all_five_original_rust_oracles_executed": true,
+    "artifact_bytes": 2289436,
+    "artifact_id": 14176171965,
+    "artifact_zip_sha256": "0d666e63c740344948d78c151af7e39f2ea4707abd09f4d2d68bcfb89cc90b07",
+    "errors": 0,
+    "failing_later_step": "Compare all scheduler strategies with the original Rust implementation",
+    "failures": 0,
+    "job_conclusion": "failure",
+    "job_id": 132921478454,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1121,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 55763,
+        "outcome": "returned"
+      }
+    ],
+    "old_stack_can_be_removed": false,
+    "platform_report_sha256": "698d11f761d8ceeba7b07899652c4eb37c5119d4a641f686dc7b09219fe3fee6",
+    "production_activation": false,
+    "reactor_report_sha256": "66f029c0c3a0a4b69c975f7c19d7b7f04c27f9efc340bbde4490d29a35f8dce0",
+    "report_sha256": "e71d67d0e7f236b366755197a516c28e76d288be77474a4a5a2a0881fa9a5e7d",
+    "rust_oracles": {
+      "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+        "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+      },
+      "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+        "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+      },
+      "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+        "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+      },
+      "TRNM_HIA_RUST_REFERENCE": {
+        "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+      },
+      "TRNM_HIA_RUST_STATE_REFERENCE": {
+        "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+      }
+    },
+    "shared_runner_native_calls": 56884,
+    "skipped": 0,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_set_sha256": "86641ba807867e8dc4a9d6b62351716c8a7f1ffa7a60de27a7e89667984da42d",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "MAIN_QUALIFIER_PASS_JOB_FAIL",
+    "storage_report_sha256": "b3c592afef363fa83eff942e4392bfeef106993e0c901d645db03262f851910d",
+    "tests": 177,
+    "wall_seconds": 502.483024963,
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
+  "fifth_candidate_promotion_format_adjustment": {
+    "after_sha256": "6103123b457d8523e1e2fc9e911b0c45184f6fe8b76e247b018c41473b02ded7",
+    "before_sha256": "10e02b7b09b1977766df3f32e68f420c583ef6b2d36c98256292cfc2b9df8c58",
+    "earlier_local_native_report_scope": "Still binds the original frozen overlay bytes; final candidate requires its own exact CI",
+    "path": "hia/platform/transport_request/cases.py",
+    "reason": "Remove an extra blank line at EOF required by the existing git diff --check gate"
+  },
+  "fifth_candidate_source_ci": {
+    "artifact_bytes": 7862,
+    "artifact_id": 14175828497,
+    "artifact_zip_sha256": "afbc1d9682603a76777a0ac451fb79b8de188bb1ebd5af3c4c69608356b33f72",
+    "current_work_or_service_acceptance": false,
+    "hosted_cost_original_checker_executed": true,
+    "job_id": 132921478549,
+    "old_stack_can_be_removed": false,
+    "pq_negative_log_sha256": "5dd3c49ee0d66fa835435ef75ba8dc8373f6646ef3fa96b9dc08ddb21bc3b021",
+    "pq_negative_tests": 113,
+    "pq_negative_wall_seconds": 536.656,
+    "pq_source_consistency": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "production_activation": false,
+    "public_readiness_original_checker_executed": true,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "PASS",
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
+  "fifth_candidate_transport_ci": {
+    "artifact_bytes": 1505343,
+    "artifact_id": 14176197538,
+    "artifact_zip_sha256": "825db375cd7cbb1f01c3695d5ff808123e8b1afd80bc7e591c45603585b34de1",
+    "full_node_owner_integration": false,
+    "job_id": 132921478239,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "new_owner_container_cases_excluded": 8,
+    "old_stack_can_be_removed": false,
+    "original_executable_sha256": "0c5ac51c7f4b5fb28927cd240d3961e34d1d63b4cb18c8e64fbe144af480bddc",
+    "original_functions_byte_preserved": true,
+    "original_ingress_sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+    "original_node_differential_cases": 170,
+    "original_node_differential_failures": 0,
+    "original_node_unit_tests_passed": 6,
+    "production_activation": false,
+    "report_sha256": "62f9db3ec2529840de53fed9b0e3225715a3dd6a95e88746a78ad06ae3fd35c2",
+    "request_controls_failed": 0,
+    "request_controls_passed": 178,
+    "sha256_stream_controls_failed": 0,
+    "sha256_stream_controls_passed": 14,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "PASS",
+    "wall_seconds": 473.284641419,
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
+  "fifth_repaired_candidate_native_ci": {
+    "all_five_original_rust_oracles_executed": true,
+    "artifact_bytes": 5145184,
+    "artifact_id": 14176927252,
+    "artifact_zip_sha256": "71191d0e6458d00c442b4effa29a4697f78deb7caf03f051228f8d17f2fe331a",
+    "errors": 0,
+    "executor_original_expected_version_panics": 27,
+    "executor_original_intentional_differences": 181,
+    "executor_original_native_calls": 5274,
+    "executor_original_report": "executor-original-ci.json",
+    "executor_original_report_sha256": "3d8d147aca3c97f3df2c67119eca946a13450abf3bfb631c72e7ba63f1dc7ff6",
+    "executor_original_status": "PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT",
+    "executor_original_unsafe_cases": 131,
+    "executor_original_wall_seconds": 19.230891337000003,
+    "failures": 0,
+    "finite_os_controls": 25,
+    "job_conclusion": "success",
+    "job_id": 132927126875,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1121,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 55763,
+        "outcome": "returned"
+      }
+    ],
+    "old_stack_can_be_removed": false,
+    "platform_report_sha256": "5e643777ee278f52ed9efbfd2ac7cc70a545cdc1b8148e7e81e0195e1944cf5f",
+    "production_activation": false,
+    "reactor_report_sha256": "b37c00ad862a82587256cfb5dc1b29060ae94f96c00ffbc6f3ae098df19d3fcf",
+    "report_sha256": "d665e6ac67d8613e89d62045dfcbaa497b2525df0114f3c22e8081eabb511400",
+    "rust_oracles": {
+      "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+        "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+      },
+      "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+        "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+      },
+      "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+        "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+      },
+      "TRNM_HIA_RUST_REFERENCE": {
+        "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+      },
+      "TRNM_HIA_RUST_STATE_REFERENCE": {
+        "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+      }
+    },
+    "shared_runner_native_calls": 56884,
+    "skipped": 0,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_set_sha256": "fe94efedc30dba67e3c89cf95b17a7135d29f7b6dc9bd29ffa290dd519ba337c",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "storage_native_contracts": 14,
+    "storage_os_controls": 48,
+    "storage_report_sha256": "7b8197fa543042be920dee04ae2df21f3af7db88e7cec2d117a53c30dfe9d339",
+    "stream_reactor_controls": 49,
+    "stream_reactor_native_contracts": 13,
+    "tests": 189,
+    "wall_seconds": 367.77274564500004,
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
+  },
+  "fifth_repaired_candidate_source_ci": {
+    "artifact_bytes": 7867,
+    "artifact_id": 14176604866,
+    "artifact_zip_sha256": "29426455f5b0d461998bbceb6e0b64167437933384527c1a157ce6e84f8ebf0d",
+    "current_work_or_service_acceptance": false,
+    "hosted_cost_original_checker_executed": true,
+    "job_id": 132927127020,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "old_stack_can_be_removed": false,
+    "pq_negative_log_sha256": "b874d80ccd2977e9ef898e78cb4b88e068f5a2538308f4c34d4a7a64303b9ce3",
+    "pq_negative_tests": 113,
+    "pq_negative_wall_seconds": 419.167,
+    "pq_source_consistency": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "production_activation": false,
+    "public_readiness_original_checker_executed": true,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
+  },
+  "fifth_repaired_candidate_transport_ci": {
+    "artifact_bytes": 1505368,
+    "artifact_id": 14176668998,
+    "artifact_zip_sha256": "2589e6fcfcd229144c5159b241e474579545d3f813bd07f1cbecc431946bd34c",
+    "full_node_owner_integration": false,
+    "job_id": 132927127200,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "new_owner_container_cases_excluded": 8,
+    "old_stack_can_be_removed": false,
+    "original_executable_sha256": "0c5ac51c7f4b5fb28927cd240d3961e34d1d63b4cb18c8e64fbe144af480bddc",
+    "original_functions_byte_preserved": true,
+    "original_ingress_sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+    "original_node_differential_cases": 170,
+    "original_node_differential_failures": 0,
+    "original_node_unit_tests_passed": 6,
+    "production_activation": false,
+    "report_sha256": "56b5798ffe8c471566f84ac7f30a3cbe5f98416a4bea9bbcd3f594a54e293696",
+    "request_controls_failed": 0,
+    "request_controls_passed": 178,
+    "sha256_stream_controls_failed": 0,
+    "sha256_stream_controls_passed": 14,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "wall_seconds": 470.657159024,
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
+  },
+  "fourth_candidate_native_ci": {
+    "all_four_original_rust_oracles_executed": true,
+    "artifact_bytes": 2265439,
+    "artifact_id": 14175470420,
+    "artifact_zip_sha256": "8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03",
+    "errors": 0,
+    "failures": 0,
+    "finite_os_controls": 25,
+    "job_id": 132912920213,
+    "later_fifth_batch_sources_qualified_by_this_run": false,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1121,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 35101,
+        "outcome": "returned"
+      }
+    ],
+    "original_reference_unit_tests": 17,
+    "platform_report_sha256": "48e9709ab4eac9ca6b1207ecf5fb7d6ffb3d4abc51a2e29c882c5f410a4559f0",
+    "production_activation": false,
+    "reactor_report_sha256": "4164f37765396a4e5767e573ebe7a70fa24c7813c8e64a5c24c2bc8f7e35220d",
+    "report_sha256": "adcef71fe36e416df0f467adb01679f0a2d1e567bd49e07f12ae03051d9d9214",
+    "shared_runner_native_calls": 36222,
+    "skipped": 0,
+    "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "source_set_sha256": "b4a657cc76c97a022ae31742c98ad573a45b94edb8fea00c36b527891c708d3b",
+    "source_tree": "b58fd5b8cf1e8d49b4901cf1806ca11096063d05",
+    "state_root_maximum_rows": 65536,
+    "state_root_maximum_wall_seconds": 299.705821145,
+    "state_root_raw_calls": 86,
+    "status": "PASS",
+    "storage_native_contracts": 14,
+    "storage_os_controls": 48,
+    "storage_report_sha256": "5e451f76d8839546e8605065fe16b6b7584d369fba10c08c009be2ddef044606",
+    "stream_reactor_controls": 49,
+    "stream_reactor_native_contracts": 13,
+    "tests": 160,
+    "whole_chain_native": false,
+    "workflow_run": 43746877132
+  },
+  "fourth_candidate_source_ci": {
+    "artifact_bytes": 4092,
+    "artifact_id": 14174738760,
+    "artifact_zip_sha256": "e1b63f04cd912162824bb7b4a58e221d8abb10a67397ceb650b79cd77f5baddb",
+    "current_work_or_service_acceptance": false,
+    "job_id": 132912920069,
+    "pq_negative_log_sha256": "b3d2cc3e25079e765b44cdec7bd27d15730a5075a71581846d9eb8e15df83e29",
+    "pq_negative_tests": 113,
+    "pq_negative_wall_seconds": 546.161,
+    "pq_source_consistency": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "public_readiness_original_checker_executed": true,
+    "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "source_tree": "b58fd5b8cf1e8d49b4901cf1806ca11096063d05",
+    "status": "PASS",
+    "workflow_run": 43746877132
+  },
+  "fourth_candidate_storage_cli_failure": {
+    "artifact_bytes": 1352023,
+    "artifact_id": 14174811521,
+    "artifact_zip_sha256": "7702e1f7c9db8dceddbf80f2838e3988cee5e284f17d50b53f0ef73f826fc84b",
+    "candidate": "739aef3966f8896c161a0cd870fe404726b87c55",
+    "cause": "The two documented storage direct-script entrypoints imported the hia namespace without adding their repository root; ambient local Python path had masked the startup error.",
+    "command": "python3 -B hia/tools/qualify_storage.py --output \"$RUNNER_TEMP/hia-storage\"",
+    "decoded_log_sha256": "537c4ca45ae07887b1e94dca43ee6ba292e8e556ad0e64354570ce6f3dc0b12f",
+    "failure": "ModuleNotFoundError: No module named hia",
+    "job": "native-components",
+    "job_id": 132909793199,
+    "later_rust_and_kernel_steps_in_this_ci": "NOT_RUN",
+    "native_algorithm_changed": false,
+    "prior_steps": {
+      "finite_os_controls": {
+        "passed": 25,
+        "required": 25,
+        "syscall_trace": "CAPTURED"
+      },
+      "stream_reactor": {
+        "native_synthetic_contracts_passed": 13,
+        "native_synthetic_contracts_required": 13,
+        "passed": 49,
+        "required": 49,
+        "syscall_trace": "CAPTURED"
+      }
+    },
+    "production_activation": false,
+    "repair": "Bind each direct-script entrypoint to its repository root before hia imports; regression launches both absolute paths from a fresh directory after removing PYTHONPATH/PYTHONHOME.",
+    "resolution": "Fixed in 96a0846e383745f88e033c7db2abc0611f1dae63; exact run 43746877132 passed both mandatory jobs, including storage and later original-Rust/kernel steps.",
+    "run_id": 43746152828,
+    "service_budgets_changed": false,
+    "status": "FAIL",
+    "step": "Execute native transaction owner and crash recovery controls",
+    "storage_native_controls_in_this_ci": "NOT_RUN",
+    "tree": "ecfa2a709a435044e038986eaf7fb1b18b5689f7"
+  },
+  "historical_artifact_retrieval": {
+    "artifact_id": 11531476198,
+    "cause": "unknown_expiration_or_deletion",
+    "existing_gap": true,
+    "observed_job_id": 132878556625,
+    "result": "zero_matching_artifacts",
+    "run_id": 37730166589,
+    "substitute_supplied": false
+  },
+  "native_ci_observations": [
+    {
+      "commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+      "failures": 0,
+      "result": "PASS",
+      "run_id": 43735956757,
+      "shared_runner_native_calls": 21593,
+      "skips": 0,
+      "tests": 72
+    },
+    {
+      "artifact_id": 14170997975,
+      "artifact_zip_sha256": "33e80781c18d4e8eda42c51707a03d180d8cf4d41f721f180de261af4c812f36",
+      "commit": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+      "failures": 0,
+      "job_id": 132884320405,
+      "later_crypto_and_platform_changes_qualified_by_this_run": false,
+      "report_sha256": "9f6d27cb82a9eda701906d5239b67cc881b74ddb86ef11debd33e6cbd23a6f92",
+      "result": "PASS",
+      "run_id": 43737855981,
+      "shared_runner_native_calls": 34297,
+      "skips": 0,
+      "source_set_sha256": "2f7e03f35d659c64ed5d9d036b263a9dd5eeb98665886539ed9432f6cf8b0675",
+      "tests": 97
+    }
+  ],
+  "old_stack_can_be_removed": false,
+  "original_service_ci": {
+    "base59_existing_gate_readback": {
+      "artifact_downloaded_in_this_triage": false,
+      "artifact_id": 14168246168,
+      "cargo_preparation_passed": true,
+      "conclusion": "failure",
+      "host_errors": [],
+      "job_id": 132859243865,
+      "native_failure_detail": "not_read",
+      "run_id": 43729710156,
+      "source_before_after_verified": true,
+      "source_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+      "source_error": null,
+      "systemd_run_exit": 1
+    },
+    "budget_relaxed": false,
+    "cargo_preparation_passed": true,
+    "diagnosis": "honest_history_native_replay_reached_original_deadline_before_six_depth_confirmation",
+    "hia_kernel_results_replace_service_gate": false,
+    "host_errors": [],
+    "jobs": [
+      {
+        "artifact_id": 14169943744,
+        "artifact_zip_sha256": "a788b4f060398e232e69aa8bddd570b30d9fa1d7e93efd4d360ade5bc8885387",
+        "failures": [
+          "CONFIRMATION_TARGET",
+          "FRESH_NATIVE_TEST_FAILED"
+        ],
+        "gate": "W1 fresh challenge service",
+        "job_id": 132878556137,
+        "observations": [
+          {
+            "baseline_confirmed": 1,
+            "baseline_latency_ns": 2496705059,
+            "expected_confirmed": 1,
+            "last_replay_ended_ns": 4001016833,
+            "last_replay_history_call_index": 4,
+            "pressure_confirmed": 0,
+            "successful_submit_acks": 7,
+            "variant": "original",
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          {
+            "baseline_confirmed": 1,
+            "baseline_latency_ns": 2397282255,
+            "expected_confirmed": 1,
+            "last_replay_ended_ns": 4097919316,
+            "last_replay_history_call_index": 1,
+            "pressure_confirmed": 0,
+            "successful_submit_acks": 7,
+            "variant": "fresh",
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ],
+        "run_id": 43735978622,
+        "systemd_run_exit": 1
+      },
+      {
+        "all_five_named_rust_tests_passed": true,
+        "artifact_id": 14170339809,
+        "artifact_zip_sha256": "a5f973f5567aee7349e5a7887538dc907f640b2a4cecc6d27b7b53e89f93d93e",
+        "baseline_confirmed": 1,
+        "baseline_latency_ns": 1882963429,
+        "expected_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "gate": "cross-arch-cost arm64",
+        "job_id": 132878556357,
+        "last_replay_ended_ns": 4000908403,
+        "last_replay_history_call_index": 5,
+        "pressure_confirmed": 0,
+        "run_id": 43735978720,
+        "successful_submit_acks": 7,
+        "systemd_run_exit": 1,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    ],
+    "measurement_failures": 0,
+    "oom_events": 0,
+    "original_rust_tree_and_relevant_gate_scripts_changed_from_base59": false,
+    "rerun_performed": false,
+    "source_before_after_verified": true,
+    "source_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+    "status": "FAIL",
+    "unchanged_budget": {
+      "attack_workers": 16,
+      "business_window_ns": 4000000000,
+      "confirmation_depth": 6,
+      "cpu_max": "25000 100000",
+      "memory_max": 2147483648,
+      "memory_swap_max": 0,
+      "pids_max": 256
+    }
+  },
+  "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
+  "schema": "trnm.hia.development-observations.v1",
+  "sixth_candidate_cleanup_integration": {
+    "completed_archive_sets": 8,
+    "d26_report": "d26-sqlite-cleanup.json",
+    "history_rewritten": false,
+    "original_payload_bytes_removed_in_this_batch": 315347561,
+    "original_qualification_changed": false,
+    "payloads_removed_in_this_batch": 67,
+    "production_activation": false,
+    "status": "LOCAL_ORIGINAL_READERS_PASS_CI_PENDING",
+    "total_original_payload_bytes_removed": 1628294407,
+    "total_original_payload_files_removed": 1622,
+    "w1_report": "w1-complete-cleanup.json",
+    "whole_chain_native": false
+  },
+  "sixth_candidate_explicit_component_composition": {
+    "checks": 23,
+    "complete_inventory_checks": 5,
+    "composition_checks": 18,
+    "emission_rechecks_admission_only_sources": true,
+    "full_node_integration": false,
+    "implicit_callee_resolution": false,
+    "imported_helpers_reexported": false,
+    "independent_complete_dependency_core_validation": true,
+    "native_compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "resource_bounds_changed": false,
+    "source_inputs": {
+      "hia/components.json": "190d6356c83198231c2772c8b32158078df075ee6ca946d4d99669ce3d3e6067",
+      "hia/src/codec/json_primitives.hepta": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f",
+      "hia/src/state/json_value.hepta": "8bd1366dbc5e83461b12c1e1c6387356bf31ef5792268381993dc70aa3e668aa",
+      "hia/tests/test_composition.py": "cbc74c96036bde0ade3a5bf291f137aa6c649f0062a00746a22c581b24ecee3d",
+      "hia/tools/toolchain.py": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    },
+    "source_inputs_stable": true,
+    "status": "PASS",
+    "test_output_sha256": "d5f9563f0733c89b2eada30daea1a25f98ce7fbc53c16c8f18137ca5059f8fd9",
+    "wall_seconds": 0.21708048499931465,
+    "whole_chain_native": false
+  },
+  "third_candidate_archive_publication_failure": {
+    "checker": "scripts/ci/check_pq_triage_archive.py",
+    "failed_step": "Verify removed preparation files and retained failures",
+    "failure": "Three exact stderr copies existed locally but were excluded from the committed tree by the existing log ignore rule. The strict archive checker failed at the first missing file.",
+    "fixed_commit": "79fc1d4c970f8ecb414f011605e0a6fbcf7332e8",
+    "introduced_by_this_migration": true,
+    "job_conclusion": "failure",
+    "job_id": 132895885512,
+    "missing_records": [
+      {
+        "blob_sha1": "6f3a9982889de99dbfc572970e5ff7dc7609b123",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-1.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-1.stderr.log",
+        "sha256": "24f1e6b62f79a4a3f8494b52a1b968fa208515d7fef77632da28d4b5d9080954"
+      },
+      {
+        "blob_sha1": "82905ada2cb45a7d246ae25059ef27aeff405ed5",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-2.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-2.stderr.log",
+        "sha256": "495f25639e8e171c145ee7569d9cd90e11b24a1e05823726cb3d6a038a8f53ba"
+      },
+      {
+        "blob_sha1": "a378f6d58a05b8e1520a2fef5e0d2c39b3b349dc",
+        "bytes": 1615,
+        "original_path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/attempt-streams/run-3.stderr.log",
+        "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/retained-native-campaign-13610289272/attempt-streams/run-3.stderr.log",
+        "sha256": "27cc81f1ed9dc6af0fbb2f75f2cb7ca0fddd91d0728fe39ae19c5532b71128bb"
+      }
+    ],
+    "new_crypto_and_platform_steps_executed": false,
+    "observed_at": "2026-11-15T17:34:55.693969+00:00",
+    "passing_workflow_run": 43741974022,
+    "repair": "Explicitly track the three unchanged original files. Preserve the checker and original archive index.",
+    "rerun_result": "PASS",
+    "source_commit": "3861f5cf17f1bd354bd232df4643f4f1212d1800",
+    "workflow_run": 43741641815
+  },
+  "third_candidate_native_ci": {
+    "all_four_original_rust_oracles_executed": true,
+    "artifact_id": 14173162454,
+    "artifact_zip_sha256": "8d944c61e612430e773f81f9455baf8e62b03f0d835102a09d47d30df3cc04ad",
+    "job_id": 132896898272,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1117,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 34915,
+        "outcome": "returned"
+      }
+    ],
+    "platform_report_sha256": "286ddfe1c5e60374da5a5c24dd11a84e84557abb420425da2002b3f71aeb11e3",
+    "production_activation": false,
+    "report_sha256": "455227380fb51e4e7b8bcd253d718e06d547f6bcd42a5052aa9f0a589d462c23",
+    "skipped": 0,
+    "source_commit": "79fc1d4c970f8ecb414f011605e0a6fbcf7332e8",
+    "source_set_sha256": "4f459ede08ad14419e57eeef1c0fcb6b27dd7b89954da47cfd34e14904c24a17",
+    "status": "PASS",
+    "tests": 126,
+    "whole_chain_native": false,
+    "workflow_run": 43741974022
+  },
+  "whole_chain_native": false
+}

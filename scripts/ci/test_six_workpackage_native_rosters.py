@@ -6,6 +6,7 @@ The retained ZIP is the unchanged b173 head artifact, including its failure.
 """
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
@@ -22,6 +23,9 @@ EVIDENCE = ROOT / 'evidence/pon-six-workpackages-20261106/ci'
 WORKSPACE = ROOT / '.github/workflows/pon-original-workspace-large-state-cpu.yml'
 PQ = ROOT / '.github/workflows/pon-pq-system-continuation.yml'
 PREFIX = 'store::native_authenticated::post_write_readback::tests::'
+CURRENT_NODE_REGISTRY = ROOT / 'evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz'
+ORIGINAL_WORKSPACE_SELECTOR = ROOT / 'evidence/chain-w1-delay-controls-20261120-e9e051/fixtures/workspace-selector-b173.py'
+ORIGINAL_SELECTOR_SHA256 = '50ea5c0f3fa312e084ec695107f468fee64ebc121816624b59cc019e84aeb73b'
 
 
 def heredoc(path: Path, marker: str, end: str) -> str:
@@ -49,9 +53,20 @@ class NativeRosterTests(unittest.TestCase):
         if hashlib.sha256(archive.read_bytes()).hexdigest() != '6d48706b953d7d7dde3fbe384931081b7f2e7894ecca6551a1c4c7b6a299f079':
             raise ValueError('retained original artifact changed')
         with zipfile.ZipFile(archive) as source:
-            cls.registries = {name: source.read(f'semantic-controls/{name}-registry.log').decode()
+            cls.original_registries = {name: source.read(f'semantic-controls/{name}-registry.log').decode()
                               for name in ('m06', 'node')}
             cls.original_failure = source.read('semantic-controls/registry-check.stderr').decode()
+        # The b173 registry remains the historical failure's actual input.
+        # The current 55-control selector uses the retained owned-append Node
+        # registry. These registration fixtures do not claim a shared runtime run.
+        current_node = gzip.decompress(CURRENT_NODE_REGISTRY.read_bytes())
+        if hashlib.sha256(current_node).hexdigest() != '53145dd409aa99a75cab15fa96e66a102ccc19f731f2b016ae62e29cdeab3559':
+            raise ValueError('retained current Node registry changed')
+        cls.registries = dict(cls.original_registries, node=current_node.decode())
+        original_selector = ORIGINAL_WORKSPACE_SELECTOR.read_bytes()
+        if hashlib.sha256(original_selector).hexdigest() != ORIGINAL_SELECTOR_SHA256:
+            raise ValueError('retained b173 workspace selector changed')
+        cls.original_workspace_selector = original_selector.decode()
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
 
     def run_workspace(self, *, script=None, node=None, m06=None):
@@ -87,10 +102,11 @@ class NativeRosterTests(unittest.TestCase):
 
     def test_original_workspace_failure_remains_reproducible(self):
         self.assertIn('expected 23 actual registered controls, got 25', self.original_failure)
-        old = workspace_script().replace('post_write_readback::tests::", 25)',
-                                         'post_write_readback::tests::", 23)')
+        old = self.original_workspace_selector
         self.assertNotEqual(old, workspace_script())
-        result, selected = self.run_workspace(script=old)
+        result, selected = self.run_workspace(
+            script=old, node=self.original_registries['node'],
+            m06=self.original_registries['m06'])
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('expected 23 actual registered controls, got 25', result.stderr)
         self.assertIsNone(selected)
@@ -100,7 +116,7 @@ class NativeRosterTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
-        self.assertEqual(group['expected_count'], 25)
+        self.assertEqual(group['expected_count'], 55)
         names = [line[:-6] for line in self.registries['node'].splitlines()
                  if line.startswith(PREFIX) and line.endswith(': test')]
         self.assertCountEqual(group['tests'], names)
@@ -110,6 +126,12 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIn('reorg-tail', selected)
         self.assertIn('current-sql-root', selected)
         self.assertIn('prepared-current-history', selected)
+
+    def test_historical_node_registry_cannot_qualify_current_workspace(self):
+        result, selected = self.run_workspace(node=self.original_registries['node'])
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('expected 55 actual registered controls, got 25', result.stderr)
+        self.assertIsNone(selected)
 
     def test_missing_extra_and_duplicate_native_registration_refused(self):
         node = self.registries['node']

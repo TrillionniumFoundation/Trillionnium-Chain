@@ -1,0 +1,252 @@
+{
+  "schema": "trnm.hia.paid-cpu-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "scope": "finite actual owner epoch and scoped work profile; public request/persistent-domain/Node interfaces remain open",
+  "entry": {
+    "buffers": [
+      {
+        "name": "event",
+        "mode": "readbuf",
+        "bytes": 640
+      },
+      {
+        "name": "private",
+        "mode": "mutbuf",
+        "bytes": 73728
+      },
+      {
+        "name": "locked_view",
+        "mode": "mutbuf",
+        "bytes": 4096,
+        "work_mode_bytes": 0
+      }
+    ],
+    "return": "u32 private command tag"
+  },
+  "input": {
+    "bytes": 192,
+    "magic": "PCDOM001",
+    "word_order": "little-endian u64",
+    "caller_fields": [
+      "cold",
+      "requests",
+      "workers",
+      "txs",
+      "units",
+      "seed"
+    ],
+    "caller_clock_cpu_tid_generation_or_outcome_fields": false,
+    "requests": [
+      1,
+      2
+    ],
+    "workers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "transactions_max": 32,
+    "units_max": 1000000,
+    "profiles_always": 2,
+    "reserved_words_zero": true,
+    "complete_eof_required": true
+  },
+  "output": {
+    "bytes": 1536,
+    "magic": "PCACC001",
+    "type": "post-join diagnostic, not blanket success authority",
+    "panic_or_unknown_may_exit_zero": true,
+    "owner_words": 64,
+    "epoch_words": 64
+  },
+  "budgets": {
+    "burst_ns": 2000000000,
+    "refill_ns_per_second": 250000000,
+    "start_reserve_ns": 100000000,
+    "owners": 2,
+    "termination_reserved_ns": 25000000,
+    "completion_slots": 4096,
+    "changed": false
+  },
+  "clocks": {
+    "cpu": {
+      "id": 3,
+      "actual_executing_thread": true,
+      "first_errno_EINVAL": "None without fallback",
+      "other_first_error": "one actual raw fallback",
+      "second_error": "None; no third call",
+      "invalid_timespec": "None without fallback",
+      "negative_seconds": "None",
+      "nanoseconds_max_exclusive": 1000000000,
+      "baseline_advances_only_on_success": true
+    },
+    "monotonic": {
+      "id": 1,
+      "error": "managed panic with reverse lock poisoning",
+      "invalid_nanoseconds": "managed panic",
+      "negative_seconds": "valid signed i64",
+      "retry": false,
+      "elapsed": "u64 seconds and u128 nanoseconds",
+      "original_rustc_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860"
+    }
+  },
+  "native_threads": {
+    "maximum_children": 18,
+    "owner_lanes": [
+      1,
+      10
+    ],
+    "generation": "private fixed nonreused within this finite batch",
+    "caller_tid_or_generation": false,
+    "clone_flags": "CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID",
+    "guard_bytes": 4096,
+    "writable_stack_bytes": 1048576,
+    "join": "shared FUTEX_WAIT on actual parent-set/clear-tid u32; retain stack until zero",
+    "mutex": "0/1/2 acquire-release; WAIT_BITSET_PRIVATE fullmask with null timeout",
+    "poison_order": [
+      "global",
+      "request"
+    ],
+    "ordinary_return_requires_all_actual_children_joined": true
+  },
+  "arithmetic_fixture": {
+    "bytes": 512,
+    "output_bytes": 376,
+    "magic": "PCFIX001",
+    "production_counter_abi": false,
+    "methods": [
+      "init",
+      "refill",
+      "reserve",
+      "charge_live",
+      "charge_request_live",
+      "record_final_live",
+      "settle_observed",
+      "flow_snapshot",
+      "freshness_projection"
+    ]
+  },
+  "shared_budget_functions": [
+    "cpu_get",
+    "cpu_put",
+    "cpu_read",
+    "pc_ceiling",
+    "pc_charge_live",
+    "pc_charge_request",
+    "pc_elapsed",
+    "pc_flow_add",
+    "pc_flow_snapshot",
+    "pc_freshness",
+    "pc_iadd",
+    "pc_ilt",
+    "pc_init",
+    "pc_isub",
+    "pc_mulrate",
+    "pc_offer",
+    "pc_record_final",
+    "pc_refill",
+    "pc_reserve",
+    "pc_settle"
+  ],
+  "images": {
+    "owner": {
+      "adapter_bytes": 2390,
+      "adapter_sha256": "6622236f429e7a4bed0bf78f3fe93fd039573091886b5a0be125093cf774e56f",
+      "executable": {
+        "bytes": 267565,
+        "sha256": "4d8ccc3de2557240c12709938157e61829f9a73cb07e5867032a8ac11b0aadd7"
+      }
+    },
+    "arithmetic": {
+      "adapter_bytes": 248,
+      "adapter_sha256": "1069b7a9576a60258fafa02d7bf2ec30e20930952ec8aa626b5ffed8a603e33d",
+      "executable": {
+        "bytes": 88069,
+        "sha256": "53ae41d90c033c2ba46c81c920f3c787c66615ae5373582f6aa1fbfcddfcd65f"
+      }
+    }
+  },
+  "open": [
+    "public intake and authentication",
+    "actual original Node work/State embedding",
+    "persistent shared domain lifecycle and arbitrary API values",
+    "public deadlines/cancellation/termination continuation",
+    "complete original block executor",
+    "4-second/16-attacker service budget qualification"
+  ],
+  "standard_library": {
+    "rustc_version_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "toolchain": "1.95.0-x86_64-unknown-linux-gnu",
+    "sources": {
+      "library/std/src/sync/poison.rs": {
+        "bytes": 13505,
+        "sha256": "540646690dc3bffebb4bfcb412b07020a2e13c0312a5fd6f46c2b72ed565fba1"
+      },
+      "library/std/src/sync/poison/mutex.rs": {
+        "bytes": 34960,
+        "sha256": "5e45f2804aaee6b2dd24af91b471757cd15010058b03b39b4cbba90809e3fb8c"
+      },
+      "library/std/src/sys/pal/unix/futex.rs": {
+        "bytes": 9626,
+        "sha256": "7a3649b2fea96ff61773a91aee306e08ed35c552fe7a2f4d6deac47361a27785"
+      },
+      "library/std/src/sys/pal/unix/mod.rs": {
+        "bytes": 13793,
+        "sha256": "4a0fe2ece40299f70a5c4a028154c36d318153d2da3d72b88e0e578454ba6c83"
+      },
+      "library/std/src/sys/pal/unix/time.rs": {
+        "bytes": 8107,
+        "sha256": "4f48c25a49fedfba0ac1c33bbe10374c7e31ea0282cb98ef1cc2b9ae52cc345d"
+      },
+      "library/std/src/sys/sync/mutex/futex.rs": {
+        "bytes": 3399,
+        "sha256": "bb566c9097ec2c4478427de576e5335b7dfb60a2ff41f24beae2eea99d3209bf"
+      },
+      "library/std/src/sys/thread/unix.rs": {
+        "bytes": 38828,
+        "sha256": "95920ddfd37a3864783624e0fa8df849fe919a8c5a9b733892e1bea38c0f411d"
+      },
+      "library/std/src/sys/time/mod.rs": {
+        "bytes": 1125,
+        "sha256": "449afdd86955252a302d889032a6cb2cbb04dd786f8cb81d9a9059ad933e7e4c"
+      },
+      "library/std/src/sys/time/unix.rs": {
+        "bytes": 4999,
+        "sha256": "2250ca181d117737d32734c50156a7a9e74852251a17bf70b2a002b8d6fbac43"
+      },
+      "library/std/src/thread/current.rs": {
+        "bytes": 10501,
+        "sha256": "1084535565799fa30c42320309fa2cf4d95aacdfb022ce301b17b0a299e52109"
+      },
+      "library/std/src/thread/id.rs": {
+        "bytes": 4671,
+        "sha256": "d90dd05673d052597802f3f3f16a88aa0ed0647b59ef72253ec7c1c66c1f8bfa"
+      },
+      "library/std/src/thread/lifecycle.rs": {
+        "bytes": 10345,
+        "sha256": "5026b291e05e1f2ecce494a573ec1c073527be38e40a63095e0c9e77b4c769cb"
+      },
+      "library/std/src/thread/scoped.rs": {
+        "bytes": 13092,
+        "sha256": "5030a18b1ae9745b48e98b06c0877f31d010ad8838796a5f79685a01f1cf92bb"
+      },
+      "library/std/src/time.rs": {
+        "bytes": 34441,
+        "sha256": "28a33c12597bbbb33342681696734d83d1a8045c0b6f8d70e7bfb468161eae62"
+      }
+    },
+    "binaries": {
+      "libstd-d1237ef7159db0a2.rlib": {
+        "bytes": 11684724,
+        "sha256": "2f4c8945547a8487dd6a5bf38cd94167a3566876006b9abda7544ba9825b9a95"
+      },
+      "libstd-d1237ef7159db0a2.so": {
+        "bytes": 5418488,
+        "sha256": "abca53e870629e3f9f97ae72897181dcc4db555d8e6ace00351b02a74ef77c81"
+      }
+    },
+    "libc": "bind the actual loaded host libc and loader before/after; controlled raw fallback and normal positive tests are separate"
+  }
+}

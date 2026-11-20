@@ -1,0 +1,114 @@
+{
+  "actual_original_reference": {
+    "actual_count": 5344,
+    "actual_sha256": "d4de2239334a3d95782d1f8344f7d52bbcdcef8052b9c6248c8ccaefa9d57040",
+    "adapter_sha256": "29cbd89df65ff847987e6ebe4cec53c9e2d987fa1517aa05d7c5133c4fc3aef0",
+    "cases": 5344,
+    "combined_sha256": "18c5bb9b31e9d03766b1e633d3f2dd42d2a87c97514ad1c7f853cb6c2ab862f1",
+    "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "executable_sha256": "2d4bd24797f5ab6388170524394b279d821bb71034274b031bf246d4dcee7b56",
+    "expected_sha256": "d4de2239334a3d95782d1f8344f7d52bbcdcef8052b9c6248c8ccaefa9d57040",
+    "input_sha256": "add465c980d5b412028058e3c05809fb8f7a40e1717c7abb39ab1b04bd24139b",
+    "mismatches": [],
+    "original_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+    "original_source_compiled_and_executed": true,
+    "status": "PASS"
+  },
+  "binding": "Both independently execute the same 5344 canonical inputs against the same arbitrary-precision mathematical outcomes; the native run additionally exercises ABI and malformed inputs. Hosted exact-head unittest must still run its mandatory direct original/native differential.",
+  "hosted_exact_head_qualification": "PENDING",
+  "native_observation": {
+    "all_native_calls_returned": true,
+    "arithmetic_cases": 4206,
+    "builds": [
+      {
+        "artifact_bytes": 66408,
+        "artifact_sha256": "2b4f972fa579213ccb082534292063a1d8b716e079636e7fba29f8d5d60adba1",
+        "borrowed_entry_profile": "legacy-f0-private-buffers",
+        "chain_migration": {
+          "backend": "selfhost",
+          "composed_source_sha256": "07f40ed6dc1a24a2d5593e6c727b1ddbf18a6a630211ce3c0d502a849298f8aa",
+          "core_sha256": "b9e3d421db932322b71c1741084b120232ae72fc87a68933769f840290943ac0",
+          "hosted_build_driver": true,
+          "inputs": [
+            {
+              "path": "src/consensus/work.hepta",
+              "sha256": "07f40ed6dc1a24a2d5593e6c727b1ddbf18a6a630211ce3c0d502a849298f8aa"
+            },
+            {
+              "path": "components.json",
+              "sha256": "d6aadc322b6ba2b78d2e859d3984b4127bd64a0af3bf5e4ca2f992d3177db654"
+            }
+          ],
+          "source_sha256": "07f40ed6dc1a24a2d5593e6c727b1ddbf18a6a630211ce3c0d502a849298f8aa",
+          "toolchain_repository": "TrillionniumFoundation/Hepta",
+          "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "whole_chain_native": false
+        },
+        "claims": {
+          "direct_machine_code": true,
+          "external_linker_used": true,
+          "fallback_used": false,
+          "python_emitter_used": false,
+          "self_hosted": true,
+          "whole_native_delivery_qualified": false
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compiler_wire_sha256": "57abb513a44c913a03d7ea164520b12830aa92bdb1942066bff5a54b44f85cc2",
+        "exports": [
+          "f0"
+        ],
+        "kind": "shared",
+        "object_sha256": "922caeed7c6a5dc08d952a83a045cde0e07bacb3c2dab7cde47d9905c658a12c",
+        "ok": true,
+        "output": "/tmp/trnm-hia-native-9ly7v4nc/module.so",
+        "output_profile_selection": "selfhost_elf",
+        "schema": "trnm.hia.selfhost-build.v1",
+        "status": "native_emitted_not_executed"
+      }
+    ],
+    "executed_tests": [
+      "test_retained_independent_integer_vectors",
+      "test_complete_512_bit_arithmetic_and_conversion",
+      "test_retarget_parent_window_and_time_policy",
+      "test_output_commit_and_scratch_boundaries",
+      "test_frame_refusal_has_no_effects"
+    ],
+    "historical_authoring_observation": {
+      "initial_core_refusal": "E_HIA_TYPE: int.cast operand must be integer; boolean-to-integer casts replaced with explicit select before successful emission",
+      "runtime_executed_before_that_repair": false
+    },
+    "mandatory_original_rust_differential": {
+      "cases": 5344,
+      "reason": "No local rustc installed; CI mandatory method does not skip missing compiler",
+      "status": "NOT_RUN"
+    },
+    "native_calls": 6308,
+    "node_integration_complete": false,
+    "old_stack_can_be_removed": false,
+    "policy_cases": 980,
+    "retained_integer_vectors": 158,
+    "schema": "trnm.hia.consensus-work-local-observation.v1",
+    "semantic_refusals": 1738,
+    "source_inputs": {
+      "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json": "e1146d6a055790c89a8b66f96bc5a9c36bc1b0bf1102d6bf3b4063cc308ab737",
+      "formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json": "2ebfa83522e95b9ce259b18f16905a7fb6b62bd8cf7a71c3419d1c0343e87836",
+      "hia/components.json": "d6aadc322b6ba2b78d2e859d3984b4127bd64a0af3bf5e4ca2f992d3177db654",
+      "hia/src/consensus/README.md": "cefd00b6c5e394a7ffdd22f1ccd0c67c767af33b37b16bb087647e0adea0e8c4",
+      "hia/src/consensus/work.hepta": "07f40ed6dc1a24a2d5593e6c727b1ddbf18a6a630211ce3c0d502a849298f8aa",
+      "hia/tests/native_support.py": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4",
+      "hia/tests/rust_consensus_reference.rs": "29cbd89df65ff847987e6ebe4cec53c9e2d987fa1517aa05d7c5133c4fc3aef0",
+      "hia/tests/test_consensus_work.py": "47bf8bb0cbcce13d764fd69e84c3cdb1357a84810347334b92cfa3e31089e66c",
+      "hia/toolchain.lock.json": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71",
+      "hia/tools/toolchain.py": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057",
+      "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+    },
+    "sources_unchanged": true,
+    "status": "PASS_NATIVE_ONLY",
+    "test_count": 5,
+    "wall_seconds": 6.892006261994538
+  },
+  "old_stack_can_be_removed": false,
+  "schema": "trnm.hia.consensus-work-development.v1",
+  "status": "NATIVE_AND_ORIGINAL_REFERENCE_PASS",
+  "whole_node_replaced": false
+}

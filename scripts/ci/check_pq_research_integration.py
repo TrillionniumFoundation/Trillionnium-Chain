@@ -1336,6 +1336,18 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs',
 ))
 
+# Exact owned-append and observer controls; these pins grant no F0 qualification.
+OWNED_APPEND_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs',
+    'evidence/chain-native-owned-append-20261119-2e9b/controls/native-authenticated.log.gz',
+    'evidence/chain-native-owned-append-20261119-2e9b/controls/node-registry.log.gz',
+    'evidence/chain-native-owned-append-20261119-2e9b/controls/PROVENANCE.json',
+    'evidence/chain-native-owned-append-20261119-2e9b/controls/README.md',
+))
+NATIVE_REQUIRED_PATHS |= OWNED_APPEND_OBSERVATION_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
@@ -1715,6 +1727,13 @@ MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
 ))
 NATIVE_REQUIRED_PATHS |= MINING_TIMESTAMP_ORIGINAL_CONTROLS_REQUIRED_PATHS
+
+# Exact native refusal scheduling stays in the source closure. These pins
+# cannot grant a successful business window or turn a hint into a verdict.
+PUBLIC_EXACT_BODY_DELAY_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/body_refusal.rs",
+))
+NATIVE_REQUIRED_PATHS |= PUBLIC_EXACT_BODY_DELAY_REQUIRED_PATHS
 
 
 class IntegrityError(ValueError):

@@ -1,0 +1,100 @@
+{
+  "schema": "chain-original-operation-completed-graph-candidate-v1",
+  "source_base": "f088f1d4f8a50aff0c5ecd465480b2aeee6e5e94",
+  "base_tree": "9181b29ff0a4f90bb7b9ec99c1d79e51c10dd95e",
+  "production_patch_sha256": "74949e2e203c064b4e70ec80e330bdf3436bcec4d101caa968908af2bc0cbc24",
+  "rust_source_and_controls_patch_sha256": "ea8a73a7311e8183cffc55c9492105ed72f7c1b1ec1e2c4d27debeee5490b766",
+  "all_tracked_patch_before_archive_sha256": "a739ed43f47b50902c9f03e4bba29bb99ff70c72f84827a61f513796f5473281",
+  "original_repeat_control": {
+    "native_exit_code": 101,
+    "full_callbacks": 140,
+    "first_partial_callbacks": 44,
+    "repeated_callbacks": 44
+  },
+  "candidate_repeat_control": {
+    "full_callbacks": 140,
+    "first_partial_callbacks": 44,
+    "repeated_callbacks": 5,
+    "actual_graphs": 2
+  },
+  "owner_replay_controls": {
+    "new_scope_same_transaction": "NATIVE_ACCOUNT_FRONTIER",
+    "new_scope_after_commit": "NATIVE_ACCOUNT_FRONTIER"
+  },
+  "current_native": {
+    "authenticated": {
+      "passed": 127,
+      "failed": 0,
+      "ignored": 0,
+      "post_write_controls": 49
+    },
+    "detached_admission": {
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1
+    },
+    "history_import": {
+      "passed": 56,
+      "failed": 0,
+      "ignored": 1
+    },
+    "strict_clippy_exit": 0,
+    "original_locked_linux_tree_exit": 0,
+    "broader_offline_metadata_exit": 101,
+    "broader_offline_metadata_reason": "socket2 0.6.1 absent from cache"
+  },
+  "current_source_guards": {
+    "native_roster_tests": 19,
+    "applicability_tests": 42,
+    "pq_current_map_tests": 25,
+    "w1_current_map_tests": 14,
+    "source_binding_negatives": 114,
+    "raw_source_negatives": 43,
+    "pinned_blobs": 2622,
+    "ci_contract_exit": 0
+  },
+  "original_f0_workflow": {
+    "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+    "sha256": "bcc790adee96acb233385c37c5391e3f18244cce95292fd89e57860d253b199d"
+  },
+  "original_f0_business": {
+    "previous_source": "333fe8cd89f0ec855e7b856e99e40f48f56c2137",
+    "previous_run": 44441548029,
+    "30s_confirmations": 1,
+    "30s_denominator": 6,
+    "scheduled_4s_confirmations": 0,
+    "scheduled_4s_denominator": 6,
+    "strict_depletion_witness": false,
+    "candidate_new_f0_status": "not yet run at candidate preparation"
+  },
+  "unchanged_original_controls": [
+    "public_v3 source and 512-attempt depletion assertion",
+    "2-second prepaid burst and refill",
+    "all original six 30s and scheduled 4s business targets",
+    "queues/workers/physical Host file reads/checkpoints for actual work",
+    "4 nominated records/16 source frontier slots/65536 accounts/131071 nodes/64 retained snapshots"
+  ],
+  "failed_attempts_retained": [
+    "original-repeat-control-1/native exit101 (expected repeated-path defect)",
+    "native-validation-2/E0505 compile exit101",
+    "native-validation-3/126pass1fail required cost output environment absent",
+    "native-validation-4/broader offline metadata exit101",
+    "source-gates-1/missing historical manifests and old W1 current SHA",
+    "source-gates-2/stale generated applicability table",
+    "current-source-registration-3/driver KeyError after exact one-name documentation update; independent byte readback preserved"
+  ],
+  "archive": {
+    "path": "complete-local-originals.tar.xz",
+    "bytes": 246172,
+    "sha256": "619759356f04d6ec145924b81673c2d3ba585c8eb9bb6114871e2ee50b9fe66c",
+    "members": 197,
+    "every_member_verified": true,
+    "creation_and_verification_wall_seconds": 0.27223365497775376
+  },
+  "cost_report": "cost-observations.json",
+  "all_previous_negative_f0_and_22_ci_workflows_in_base": true,
+  "f0_qualified": false,
+  "all_blockers_closed": false,
+  "full_physical_cost_closed": false,
+  "production_activation": false
+}

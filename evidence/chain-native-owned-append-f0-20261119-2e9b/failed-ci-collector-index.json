@@ -1,0 +1,251 @@
+{
+  "original_error_retained": true,
+  "business_reexecuted": false,
+  "files": [
+    {
+      "path": "automatic-ci-1/SNAPSHOT.json",
+      "bytes": 522537,
+      "sha256": "ffc9e6e1d44c645a1e7699bcc10f61007e35a27fb9aad10b44e0ae9a85137563"
+    },
+    {
+      "path": "automatic-ci-1/error.log",
+      "bytes": 90,
+      "sha256": "1e96c22aa61b0fff2380f7fe4bff62f42c1ddfb8d86f1263872587a0e5beac04"
+    },
+    {
+      "path": "automatic-ci-1/owner.py",
+      "bytes": 5464,
+      "sha256": "88c6ff3f5f69c82f5efcd0438769ad9b0d41416257fcb440baaaff5de6e78b4d"
+    },
+    {
+      "path": "automatic-ci-1/roster-0-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-0-page-1.stdout",
+      "bytes": 435184,
+      "sha256": "4ff3d79817223eb8c540497f86cb9ee31f2d4a08a3ec9e0c76bea4c7615d5571"
+    },
+    {
+      "path": "automatic-ci-1/roster-1-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-1-page-1.stdout",
+      "bytes": 435192,
+      "sha256": "3bf7391a7a4a85903ca75ef814d80e400e4e3d3003e11698fd866c78b28b2b3d"
+    },
+    {
+      "path": "automatic-ci-1/roster-10-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-10-page-1.stdout",
+      "bytes": 435209,
+      "sha256": "a1a472716db69c2d637001c3a78d8a9e62c614ff389488290b5779b1687ca679"
+    },
+    {
+      "path": "automatic-ci-1/roster-11-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-11-page-1.stdout",
+      "bytes": 435212,
+      "sha256": "e50f54c6ff6df1cc2236188984279c85327b4bb27723ac72e0cc1ce57077d740"
+    },
+    {
+      "path": "automatic-ci-1/roster-12-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-12-page-1.stdout",
+      "bytes": 435207,
+      "sha256": "114e128812f97683b950bbb3b18328d8a8652074e12d1730ccca21f9ee69479d"
+    },
+    {
+      "path": "automatic-ci-1/roster-13-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-13-page-1.stdout",
+      "bytes": 435212,
+      "sha256": "9d46a14408eb81bb1fedf8e849af7ba13c1a938b19d3857b36254821bfa578e4"
+    },
+    {
+      "path": "automatic-ci-1/roster-14-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-14-page-1.stdout",
+      "bytes": 435212,
+      "sha256": "9d46a14408eb81bb1fedf8e849af7ba13c1a938b19d3857b36254821bfa578e4"
+    },
+    {
+      "path": "automatic-ci-1/roster-15-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-15-page-1.stdout",
+      "bytes": 435212,
+      "sha256": "9d46a14408eb81bb1fedf8e849af7ba13c1a938b19d3857b36254821bfa578e4"
+    },
+    {
+      "path": "automatic-ci-1/roster-16-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-16-page-1.stdout",
+      "bytes": 435220,
+      "sha256": "1f91b5334ddf14aa416aea3d3f46019145a763bb857f10da415e844a1b99f2f8"
+    },
+    {
+      "path": "automatic-ci-1/roster-17-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-17-page-1.stdout",
+      "bytes": 435226,
+      "sha256": "5e3c63bea07e1e5b9e04c22d32a4b5b4d991328ca3a52f73de621f84c51197e2"
+    },
+    {
+      "path": "automatic-ci-1/roster-18-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-18-page-1.stdout",
+      "bytes": 435226,
+      "sha256": "5e3c63bea07e1e5b9e04c22d32a4b5b4d991328ca3a52f73de621f84c51197e2"
+    },
+    {
+      "path": "automatic-ci-1/roster-19-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-19-page-1.stdout",
+      "bytes": 435226,
+      "sha256": "5e3c63bea07e1e5b9e04c22d32a4b5b4d991328ca3a52f73de621f84c51197e2"
+    },
+    {
+      "path": "automatic-ci-1/roster-2-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-2-page-1.stdout",
+      "bytes": 435197,
+      "sha256": "1d17deec08dd7b6d667a101f48d73ba2f0cf323424036c9a3bdaa4386997d24e"
+    },
+    {
+      "path": "automatic-ci-1/roster-20-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-20-page-1.stdout",
+      "bytes": 435226,
+      "sha256": "2647afc9d65999fe7bec50c4fb05017ab320737c72874c43efcfca4caf96f56c"
+    },
+    {
+      "path": "automatic-ci-1/roster-21-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-21-page-1.stdout",
+      "bytes": 435226,
+      "sha256": "2647afc9d65999fe7bec50c4fb05017ab320737c72874c43efcfca4caf96f56c"
+    },
+    {
+      "path": "automatic-ci-1/roster-22-page-1.stderr",
+      "bytes": 193,
+      "sha256": "655e06671e1933ef2f2f5874486fff2bebad5003fa3cf23f7011b7c60db7294c"
+    },
+    {
+      "path": "automatic-ci-1/roster-22-page-1.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-3-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-3-page-1.stdout",
+      "bytes": 435197,
+      "sha256": "1d17deec08dd7b6d667a101f48d73ba2f0cf323424036c9a3bdaa4386997d24e"
+    },
+    {
+      "path": "automatic-ci-1/roster-4-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-4-page-1.stdout",
+      "bytes": 435197,
+      "sha256": "1d17deec08dd7b6d667a101f48d73ba2f0cf323424036c9a3bdaa4386997d24e"
+    },
+    {
+      "path": "automatic-ci-1/roster-5-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-5-page-1.stdout",
+      "bytes": 435200,
+      "sha256": "0ea8dce62e1c3423d8593022aa2fda1c24e3395133c71165d01b90e9ec79a997"
+    },
+    {
+      "path": "automatic-ci-1/roster-6-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-6-page-1.stdout",
+      "bytes": 435203,
+      "sha256": "6a04dc0b48bf37da152c5b7e23ab57afcf3147ac204686cfd912724baa882800"
+    },
+    {
+      "path": "automatic-ci-1/roster-7-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-7-page-1.stdout",
+      "bytes": 435209,
+      "sha256": "a1a472716db69c2d637001c3a78d8a9e62c614ff389488290b5779b1687ca679"
+    },
+    {
+      "path": "automatic-ci-1/roster-8-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-8-page-1.stdout",
+      "bytes": 435209,
+      "sha256": "a1a472716db69c2d637001c3a78d8a9e62c614ff389488290b5779b1687ca679"
+    },
+    {
+      "path": "automatic-ci-1/roster-9-page-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "automatic-ci-1/roster-9-page-1.stdout",
+      "bytes": 435209,
+      "sha256": "a1a472716db69c2d637001c3a78d8a9e62c614ff389488290b5779b1687ca679"
+    }
+  ]
+}

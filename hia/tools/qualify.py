@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""Run finite native migration qualification and retain exact source bindings."""
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from hia.tools.component_partition import (
+    GROUPS, ObservedResult, lineage, record_completion, select_suite,
+)
+RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
+                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
+                "TRNM_HIA_RUST_STATE_REFERENCE")
+
+
+def digest(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def sources():
+    paths = sorted((ROOT / "hia").rglob("*.hepta"))
+    paths += sorted((ROOT / "hia/tools").glob("*.py"))
+    for pattern in ("*.py", "*.rs", "*.json"):
+        paths += sorted((ROOT / "hia/tests").rglob(pattern))
+    for name in ("platform", "storage"):
+        directory = ROOT / "hia" / name
+        paths += sorted(directory.rglob("*.py"))
+        paths += sorted(directory.rglob("*.rs"))
+        paths += sorted(directory.rglob("abi.json"))
+        paths += sorted(directory.rglob("README.md"))
+    paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json",
+              ROOT / "hia/state-value-abi.json", ROOT / "hia/STATE_VALUE.md"]
+    paths += [ROOT / "hia/qualification/compiler-binding.json"]
+    paths += [ROOT / ".github/workflows/hia-native-migration.yml",
+              ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
+    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives",
+                 "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability"):
+        crate = ROOT / "trillionnium/crates" / name
+        paths += sorted((crate / "src").rglob("*.rs"))
+        paths.append(crate / "Cargo.toml")
+    paths += sorted((ROOT / "config/pon").rglob("*.json"))
+    paths += [ROOT / name for name in (
+        "trillionnium/crates/trnm-transport/src/lib.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "formal/pon-nakamoto-v1/contract_wire.py",
+        "formal/pon-nakamoto-v1/vectors/header.bin",
+        "formal/pon-nakamoto-v1/vectors/header-short.bin",
+        "formal/pon-nakamoto-v1/vectors/header-version.bin",
+        "formal/pon-nakamoto-v1/vectors/header-trailing.bin",
+        "formal/pon-nakamoto-v1/vectors/model-evolution-v5.json")]
+    # M05: bind the exact original implementation files compiled by the
+    # independent quota/fairness source adapter, not only its wrapper.
+    paths += [ROOT / "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/lib.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml",
+              ROOT / "hia/src/mempool/OWNER.md"]
+    # The complete original M02 module is actually compiled by the independent
+    # reference; bind its bytes and both pre-existing integer vector corpora.
+    paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+              ROOT / "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json",
+              ROOT / "formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json",
+              ROOT / "hia/src/consensus/README.md"]
+    # Exact original data/owner bodies and their complete native contracts.
+    paths += [ROOT / name for name in (
+        "trillionnium/crates/trnm-audit-events/src/lib.rs",
+        "trillionnium/crates/trnm-audit-events/Cargo.toml",
+        "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md",
+        "hia/src/data_availability/README.md")]
+    # Bind the complete retained original Host implementation and typed errors.
+    paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+              ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+              ROOT / "trillionnium/crates/trnm-pon-node/src/error.rs"]
+    return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--require-rust-oracle", action="store_true")
+    parser.add_argument("--shard", choices=(*GROUPS, "all"), default="all")
+    args = parser.parse_args()
+    if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
+        parser.error("Native component qualification refuses optimized Python")
+    if args.output.exists() or args.output.is_symlink():
+        parser.error("Observation output must be a new file")
+    missing = [key for key in RUST_ORACLES if not os.environ.get(key)]
+    if args.require_rust_oracle and missing:
+        parser.error("The independent Rust oracles are required: " + ", ".join(missing))
+    actual_lineage = lineage()
+    head_before = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    if actual_lineage is not None and actual_lineage["git_head"] != head_before:
+        parser.error("Actual component checkout differs from CI lineage")
+    before = sources()
+    from hia.tests.native_support import NativeModule
+    builds, calls = [], Counter()
+    original_init, original_many = NativeModule.__init__, NativeModule.call_many
+
+    def record_init(self, *values, **options):
+        original_init(self, *values, **options)
+        receipt = self.receipt
+        builds.append({"source": self.source.relative_to(ROOT).as_posix(),
+            "artifact_sha256": self.artifact_sha256,
+            "object_sha256": receipt.get("object_sha256"),
+            "compiler_sha256": receipt.get("compiler_sha256"),
+            "exports": sorted(self.exports), "claims": receipt.get("claims"),
+            "chain_migration": receipt["chain_migration"]})
+
+    def record_many(self, cases, **options):
+        results = original_many(self, cases, **options)
+        backend = self.receipt["chain_migration"]["backend"]
+        for result in results:
+            calls[(backend, result.status)] += 1
+        return results
+
+    NativeModule.__init__, NativeModule.call_many = record_init, record_many
+    started = time.monotonic()
+    try:
+        suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
+                                                   pattern="test_*.py", top_level_dir=str(ROOT))
+        suite, partition = select_suite(suite, args.shard)
+        result = unittest.TextTestRunner(stream=sys.stderr, verbosity=2,
+                                         resultclass=ObservedResult).run(suite)
+    finally:
+        NativeModule.__init__, NativeModule.call_many = original_init, original_many
+    after = sources()
+    head_after = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    stable = before == after and head_before == head_after
+    partition = record_completion(partition, result)
+    accepted = (result.wasSuccessful() and stable and partition["all_selected_completed"]
+                and (not args.require_rust_oracle or not result.skipped))
+    binding_path = ROOT / "hia/qualification/compiler-binding.json"
+    compiler_binding = json.loads(binding_path.read_text())
+    compiler_matches = all(b["compiler_sha256"] == compiler_binding["compiler_sha256"]
+        for b in builds if b["chain_migration"]["backend"] == "selfhost")
+    accepted = accepted and compiler_matches
+    reference = os.environ.get("TRNM_HIA_RUST_REFERENCE")
+    report = {"schema": "trnm.hia.native-qualification.v1",
+        "observed_at": datetime.now(timezone.utc).isoformat(),
+        "status": "PASS" if accepted and not result.skipped else "PASS_WITH_SKIPS" if accepted else "FAIL",
+        "source_commit_observed": head_before,
+        "lineage": actual_lineage,
+        "test_partition": partition,
+        "independent_rust_oracles_required": args.require_rust_oracle,
+        "working_tree_dirty": bool(subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT, text=True)),
+        "source_inputs": before, "source_set_sha256": digest(json.dumps(before, sort_keys=True, separators=(",", ":")).encode()),
+        "source_unchanged_during_tests": stable,
+        "tests": {"run": result.testsRun, "failures": [(str(test), error) for test, error in result.failures],
+            "errors": [(str(test), error) for test, error in result.errors],
+            "skipped": [(str(test), why) for test, why in result.skipped]},
+        "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
+                                               for (b, s), count in sorted(calls.items())],
+        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. M05 lane-owner tests retain actual private contexts across raw native calls, compare complete public-operation histories with the original Rust crate and exercise a real allocator refusal. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. RS46 executes the original 4 MiB chunk and 6292022-byte six-shard input through its separately bounded native runner; these byte calls are outside the shared-runner counts. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original, transport-original and RS46-original controls run in their own mandatory workflow steps.",
+        "builds": builds, "wall_seconds": time.monotonic() - started,
+        "rust_reference": None if reference is None else {
+            "executable_sha256": digest(Path(reference).read_bytes()),
+            "compiler": subprocess.check_output(["rustc", "-Vv"], text=True)},
+        "rust_oracles": {key: {"executable_sha256": digest(Path(os.environ[key]).read_bytes())}
+                         for key in RUST_ORACLES if os.environ.get(key)},
+        "upstream_cold_gate_executed_in_this_run": False,
+        "retained_compiler_binding_sha256": digest(binding_path.read_bytes()),
+        "selfhost_compiler_matches_cold_qualified_image": compiler_matches,
+        "whole_chain_native": False,
+        "old_stack_can_be_removed": False, "production_activation": False}
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with args.output.open("x") as stream:
+        json.dump(report, stream, indent=2, sort_keys=True)
+        stream.write("\n")
+    print(json.dumps({"status": report["status"], "tests": result.testsRun, "shard": args.shard,
+                      "skipped": len(result.skipped), "source_set_sha256": report["source_set_sha256"],
+                      "shared_runner_calls": sum(calls.values()), "wall_seconds": report["wall_seconds"]}))
+    return 0 if accepted else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,132 @@
+{
+  "schema": "chain-operation-original-f0-dispatch-v1",
+  "head": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+  "tree": "4877dd4e945841e734a57234e89fb1eb0440805e",
+  "branch": "fix/chain-native-operation-readback-20261119-2e9b",
+  "workflow": "pon-fixed-host-root-f0.yml",
+  "planned_invocations": 1,
+  "stages": [
+    {
+      "name": "account",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "started_utc": "2026-11-19T03:29:25.981872+00:00",
+      "pid": 345075,
+      "exit_code": 0,
+      "wall_seconds": 1.781959026993718,
+      "child_user_cpu_seconds": 0.16642099999999999,
+      "child_system_cpu_seconds": 0.06978899999999999
+    },
+    {
+      "name": "frozen-head",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-native-operation-readback-20261119-2e9b"
+      ],
+      "started_utc": "2026-11-19T03:29:27.764436+00:00",
+      "pid": 345486,
+      "exit_code": 0,
+      "wall_seconds": 2.1718177139991894,
+      "child_user_cpu_seconds": 0.133345,
+      "child_system_cpu_seconds": 0.030078000000000008
+    },
+    {
+      "name": "frozen-tree",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/3db79eb2682ba3bcbbf33557c5eee3b67731028f"
+      ],
+      "started_utc": "2026-11-19T03:29:29.937144+00:00",
+      "pid": 345565,
+      "exit_code": 0,
+      "wall_seconds": 1.5019505129894242,
+      "child_user_cpu_seconds": 0.142907,
+      "child_system_cpu_seconds": 0.024900999999999993
+    },
+    {
+      "name": "before-dispatch",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/pon-fixed-host-root-f0.yml/runs?head_sha=3db79eb2682ba3bcbbf33557c5eee3b67731028f&event=workflow_dispatch&per_page=100"
+      ],
+      "started_utc": "2026-11-19T03:29:31.440175+00:00",
+      "pid": 345606,
+      "exit_code": 0,
+      "wall_seconds": 1.5099662370048463,
+      "child_user_cpu_seconds": 0.11385800000000001,
+      "child_system_cpu_seconds": 0.03551499999999999
+    },
+    {
+      "name": "dispatch-once",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "POST",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/pon-fixed-host-root-f0.yml/dispatches",
+        "--input",
+        "/home/qian-qi/work/chain-native-operation-readback-f0-20261119-2e9b/dispatch-1/dispatch-request.json"
+      ],
+      "started_utc": "2026-11-19T03:29:32.955281+00:00",
+      "pid": 346009,
+      "exit_code": 0,
+      "wall_seconds": 2.9856946069630794,
+      "child_user_cpu_seconds": 0.11798699999999995,
+      "child_system_cpu_seconds": 0.03661600000000001
+    },
+    {
+      "name": "observe-0",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/pon-fixed-host-root-f0.yml/runs?head_sha=3db79eb2682ba3bcbbf33557c5eee3b67731028f&event=workflow_dispatch&per_page=100"
+      ],
+      "started_utc": "2026-11-19T03:29:35.954248+00:00",
+      "pid": 346371,
+      "exit_code": 0,
+      "wall_seconds": 1.986402612994425,
+      "child_user_cpu_seconds": 0.12963199999999997,
+      "child_system_cpu_seconds": 0.028808
+    },
+    {
+      "name": "observe-1",
+      "command": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/pon-fixed-host-root-f0.yml/runs?head_sha=3db79eb2682ba3bcbbf33557c5eee3b67731028f&event=workflow_dispatch&per_page=100"
+      ],
+      "started_utc": "2026-11-19T03:29:47.942030+00:00",
+      "pid": 348084,
+      "exit_code": 0,
+      "wall_seconds": 2.141105144051835,
+      "child_user_cpu_seconds": 0.136034,
+      "child_system_cpu_seconds": 0.030581000000000025
+    }
+  ],
+  "business_qualified": false,
+  "full_physical_cost_closed": false,
+  "dispatch_post_attempts": 1,
+  "dispatch_intent_utc": "2026-11-19T03:29:32.951391+00:00",
+  "dispatch_native_exit_code": 0,
+  "run": {
+    "id": 44451798839,
+    "run_attempt": 1,
+    "status": "queued",
+    "conclusion": null,
+    "head_sha": "3db79eb2682ba3bcbbf33557c5eee3b67731028f",
+    "head_branch": "fix/chain-native-operation-readback-20261119-2e9b",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44451798839",
+    "created_at": "2026-11-19T03:29:35Z",
+    "updated_at": "2026-11-19T03:29:35Z",
+    "event": "workflow_dispatch",
+    "path": ".github/workflows/pon-fixed-host-root-f0.yml"
+  }
+}

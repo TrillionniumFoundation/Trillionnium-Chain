@@ -1,0 +1,11 @@
+test_complete_envelope_does_not_become_window_cost_or_success (test_from_zero_phase_cost.PhaseProcessCostTests.test_complete_envelope_does_not_become_window_cost_or_success) ... ok
+test_disk_error_is_unknown_not_a_partial_or_zero_total (test_from_zero_phase_cost.PhaseProcessCostTests.test_disk_error_is_unknown_not_a_partial_or_zero_total) ... ok
+test_forged_totals_boolean_cpu_boundaries_and_authority_rejected (test_from_zero_phase_cost.PhaseProcessCostTests.test_forged_totals_boolean_cpu_boundaries_and_authority_rejected) ... ok
+test_missing_endpoint_retains_other_intervals_and_unknown_whole (test_from_zero_phase_cost.PhaseProcessCostTests.test_missing_endpoint_retains_other_intervals_and_unknown_whole) ... ok
+test_reversed_counter_never_becomes_zero (test_from_zero_phase_cost.PhaseProcessCostTests.test_reversed_counter_never_becomes_zero) ... ok
+test_signed_disk_growth_keeps_deletions (test_from_zero_phase_cost.PhaseProcessCostTests.test_signed_disk_growth_keeps_deletions) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+OK
