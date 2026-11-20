@@ -571,7 +571,7 @@ block b9(v154:readbuf,v155:mutbuf,v157:mutbuf,v162:u64,v163:u64)
   v181:u64 = const() {"value":124}
   v182:u64 = int.mul.wrap(v163,v181)
   v183:u64 = int.add.wrap(v180,v182)
-  v184:u64 = call(v154,v162,v183,v157) {"function":"tr_sha_update_full"}
+  v184:u64 = call(v154,v162,v183,v157) {"function":"tv_sha_update_blocks"}
   v185:u64 = const() {"value":0}
   v186:bool = compare.ne(v184,v185)
   jump b10(v154,v155,v157,v162,v163,v186)

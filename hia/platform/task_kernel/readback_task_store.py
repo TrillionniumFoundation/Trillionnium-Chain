@@ -226,7 +226,7 @@ class Readback:
         stages = {row["name"]: row for row in build["stages"]}
         units = ["root", "query", "files", "open", "roots", "schema", "objects", "operations", "markers", "blocks",
                  "records", "progress", "bootstrap", "verified", "policy", "grants", "budget", "task_create", "bid", "lease",
-                 "provider_accept", "authorize", "scope", "consume", "execution", "empty", "preview"]
+                 "provider_accept", "authorize", "scope", "consume", "execution", "empty", "preview", "signature_cache"]
         emitters = ["driver", "dispatch"] + (["owned"] if public else [])
         require(set(build["function_sources"]) == set(units + [x + "-emitter" for x in emitters]), "Exact native image roster differs")
         for index, unit in enumerate(units):

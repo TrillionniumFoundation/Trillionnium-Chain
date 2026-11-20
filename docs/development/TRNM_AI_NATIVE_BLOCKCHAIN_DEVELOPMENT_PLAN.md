@@ -1,3 +1,30 @@
+## 2026-11-20 UTC — Task 主存储、Metadata 线程资源和 Settlement Engine 的冻结组合图
+
+本轮从已发布 `3adfedb43371b2cff3658d6228cdd1493d89c9df`（tree `61d7502c0491d20c42ec051b10d07ec12633c84f`）继续。曾缺失的74份历史归档已全部按原Git blob、长度和SHA256恢复；41442个原tracked条目逐一核验，非本轮声明路径的原字节与模式不变。恢复的是当前提交已有的证据文件，不是重新引入已退役的业务代码。完整工作树的未限定路径 `git diff --check` 已通过；原Cargo图、Cargo.lock、Rust源码、测试、fmt和strict Clippy要求继续保留。
+
+### 已实际完成的有限运行结果
+
+- Task Main Store 的独立current3ad开发图使用2285个固定输入，完整qualification与独立reader在173.946236164秒内通过。保留1390个records对照、445个公开场景、2290次公开ABI调用/51个exports、112个分配场景（96个实际失败序号）、8线程各32次调用、原41个测试、fmt、strict Clippy及37个reader拒绝控制。分配门仍为原180秒，外围240秒及唯一3秒清理不变。该图的完整实际归档SHA256为 `5689bdabd90d2263fc198976222f00defb2a7a59f968432885be0db81c7770f5`，Mac与Desktop均逐成员读回。Archive、StateImport、原项目C SQLite provider和Node全运行不在这项通过范围内。
+- 共享SHA256只展开原compressor的操作顺序，文件SHA256为 `82ecf6fef48e72cd56c8daffd449df1a27edcbd2c8c96abe464e1e5683ea2333`；Ed25519只在原有效limb乘法次序内消除无效循环迭代，文件为 `dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc`。公共点缓存只保存已解码公开点，仍验证严格A/R/S、弱点拒绝和原公钥字节散列；唯一公共源为 `3345ca7f0c27029eddb1d03bc008c9da8cff740320cb73f6b0633b0ff8ad21ac`。Node组合构建和既有reader通过，但其选入函数不执行本次改动的SHA compressor，不能据此宣称Node全运行或新compressor已由Node验证。
+- Metadata在3ad的push/PR实际失败均发生于8线程池启动，原错误为 `RuntimeError("can't start new thread")`；此前2571次顺序ABI及840个实际分配失败对照完成。观察器现在为这8个Python观察线程明确配置1MiB栈并在finally恢复原设置，保留512MiB地址空间、8线程/256并行调用和全部业务输入。此前3ad加这一处观察器改动的完整独立运行通过：原121个外层测试及2次child执行、12个分组、41个控制和独立reader合计842.171825617秒，qualification本身725.493356650秒。该结果属于旧共享SHA输入图；V1—V4原始记录、失败和实际依赖完整归档 `4b7ff765bbbc35ccf5fba9ce9d345b5bc65b2e487f05fbf4f47910f2d20e1dfd` 已双端读回，不替代本节冻结组合图的再次验收。
+- Settlement Engine的16份runtime/ABI源码及components新增依赖已冻结；13份为新HIA源。8个原生单元和公开库构建通过，最大单元7515操作，仍低于8192上限。当前3ad原生运行完整通过320/320输入、2636/2636操作、16066次native调用，并记录1754次实际传入FFI的height；用时199.912351260秒，原240秒及唯一3秒清理不变。此项只证明该原生运行门，完整fresh original、allocator、独立reader和仓内公开重建入口分别收口，不以旧419开发图的结果替换当前输入。Store/SQLite、Node与整crate退役仍开放。
+
+### 已确认的当前提交失败
+
+3ad的Metadata与Task push/PR官方失败ZIP均保留完整原始内容并在Mac/Desktop逐成员读回。Task两路在records1390与public445完成后，分别停于allocation 80/112和93/112；它们不能和其他运行的尾段拼成通过。
+
+[PoN priority运行44661872490](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44661872490)的六份当前失败官方ZIP已双端完整校验。x64/arm、head/prospective四路from-zero原版执行的named tests通过，但16-worker压力阶段在原4秒内独立确认数为0，正式失败为 `CONFIRMATION_TARGET`。x64两路长历史同步实际报告 `IO: Connection refused (os error 111)`，原进程、测试及完成条件随之拒绝。host的 `failure:null` 不表示业务验收通过；这里路径中的“native”也不是HIA整链资格。历史artifact11531476198仍不可取得，保留UNKNOWN，不能用当前错误或诊断包替代它。
+
+W1当前压力确认与fresh challenge仍未达到原4秒/6深度门；Task boundary push取消发生在apt-get update阶段，未进入原生编译和资格运行。这些失败没有据此归因于未经观测的CPU、磁盘或网络根因。原0.25CPU、2GiB、无swap、256PID、4秒、16workers与CI20分钟门槛均保持原值。
+
+### 本轮组合与剩余工作
+
+本节先冻结实现字节、依赖声明和验收范围；这份组合图的Metadata完整qualification及独立reader结果写入[既有Metadata资格记录](../../hia/qualification/payload-metadata-development.json)，不以修改本节来反向配合测试结果。正式发布前仍须完成Engine源码归属及公开重建/资格入口登记，运行未修改的完整迁移检查和原五个清单控制；提交后必须在该提交自己的clean head/tree上通过原CI，开发图通过不能提前转换成提交资格。
+
+Task Archive七个公开API和StateImport继续在独立源码图实现。StateImport已完成的canonical/namespace/row/Merkle与raw delta对照仅证明相应有限范围；VerifiedExport、VerifiedContext、FinalizedSourceBinding、SQLite/Handoff与生产root owner仍需实际原生实现和原版对照。Body此前有限codec/WAL及owner结果保留，最大宽索引仍有两个原240秒超时，尚无新的最大规模通过结果。
+
+当前仍为0个原包退役；整链HIA原生、旧栈可删除、生产激活和原4秒服务资格保持false。唯一Node COMMIT/reorg/replay/outbox/ACK、剩余crypto/TLS/TUF、跨目标、模型训练/评估/采用/恢复、共识与研究经济义务继续开放。只有全部等价替代、原验收和依赖处置完成，才退役旧栈并清理过程副本；不能靠删测试、换输入、提高时限或保留隐藏业务回退取得闭合。根README继续0字节，本文件仍为唯一开发计划。
+
 ## 2026-11-20 UTC — 修复 Metadata 全量源码登记遗漏并保留真实 CI 失败
 
 已发布 `492ee6f451e9e582adde52434807ffb5c01bdcea` 的 [push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653573047) 与 [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653593128) 各66作业，均为51失败、15跳过。两路实际提交身份检查通过，逐一核对41442个tracked条目及3377461072字节；随后原迁移检查明确拒绝：`HIA source inventory differs from the complete HIA tree`。这不是原生运行资格通过，也不是已观察到的源码字节篡改。

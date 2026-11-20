@@ -1123,14 +1123,22 @@ block outer(outer_a:mutbuf,outer_o:usize,outer_x:usize,outer_y:usize,outer_k:usi
   v5:bool = compare.lt(outer_k,v4)
   v6:usize = const() {"value":0}
   v7:u64 = const() {"value":0}
-  branch v5 inner(outer_a,outer_o,outer_x,outer_y,outer_k,v6,v7) finish(outer_a,outer_o)
+  branch v5 lower(outer_a,outer_o,outer_x,outer_y,outer_k,v6,v7) finish(outer_a,outer_o)
+block lower(lower_a:mutbuf,lower_o:usize,lower_x:usize,lower_y:usize,lower_k:usize,lower_i:usize,lower_sum:u64)
+  lower_limit:usize = const() {"value":16}
+  lower_small:bool = compare.lt(lower_k,lower_limit)
+  branch lower_small inner(lower_a,lower_o,lower_x,lower_y,lower_k,lower_i,lower_sum) lower_high(lower_a,lower_o,lower_x,lower_y,lower_k,lower_sum)
+block lower_high(lower_high_a:mutbuf,lower_high_o:usize,lower_high_x:usize,lower_high_y:usize,lower_high_k:usize,lower_high_sum:u64)
+  lower_high_fifteen:usize = const() {"value":15}
+  lower_high_start:usize = int.sub.checked(lower_high_k,lower_high_fifteen)
+  jump inner(lower_high_a,lower_high_o,lower_high_x,lower_high_y,lower_high_k,lower_high_start,lower_high_sum)
 block inner(inner_a:mutbuf,inner_o:usize,inner_x:usize,inner_y:usize,inner_k:usize,inner_i:usize,inner_sum:u64)
   v8:usize = const() {"value":16}
   v9:bool = compare.lt(inner_i,v8)
   branch v9 check_i(inner_a,inner_o,inner_x,inner_y,inner_k,inner_i,inner_sum) coefficient(inner_a,inner_o,inner_x,inner_y,inner_k,inner_sum)
 block check_i(check_i_a:mutbuf,check_i_o:usize,check_i_x:usize,check_i_y:usize,check_i_k:usize,check_i_i:usize,check_i_sum:u64)
   v10:bool = compare.le(check_i_i,check_i_k)
-  branch v10 check_j(check_i_a,check_i_o,check_i_x,check_i_y,check_i_k,check_i_i,check_i_sum) next(check_i_a,check_i_o,check_i_x,check_i_y,check_i_k,check_i_i,check_i_sum)
+  branch v10 check_j(check_i_a,check_i_o,check_i_x,check_i_y,check_i_k,check_i_i,check_i_sum) coefficient(check_i_a,check_i_o,check_i_x,check_i_y,check_i_k,check_i_sum)
 block check_j(check_j_a:mutbuf,check_j_o:usize,check_j_x:usize,check_j_y:usize,check_j_k:usize,check_j_i:usize,check_j_sum:u64)
   v11:usize = int.sub.checked(check_j_k,check_j_i)
   v12:usize = const() {"value":16}
@@ -1140,11 +1148,123 @@ block term(term_a:mutbuf,term_o:usize,term_x:usize,term_y:usize,term_k:usize,ter
   v14:usize = const() {"value":8}
   v15:usize = int.mul.checked(term_i,v14)
   v16:usize = int.add.checked(term_x,v15)
-  v17:u64 = call(term_a,v16) {"function":"ed_load64"}
+  term_x_read_0:u64 = const() {"value":0}
+  term_x_read_1:usize = const() {"value":0}
+  term_x_read_2:usize = int.add.checked(v16,term_x_read_1)
+  term_x_read_3:u8 = buffer.load(term_a,term_x_read_2)
+  term_x_read_4:u64 = int.cast(term_x_read_3) {"mode":"wrap"}
+  term_x_read_5:u64 = const() {"value":0}
+  term_x_read_6:u64 = int.shl.checked(term_x_read_4,term_x_read_5)
+  term_x_read_7:u64 = bit.or(term_x_read_0,term_x_read_6)
+  term_x_read_8:usize = const() {"value":1}
+  term_x_read_9:usize = int.add.checked(v16,term_x_read_8)
+  term_x_read_10:u8 = buffer.load(term_a,term_x_read_9)
+  term_x_read_11:u64 = int.cast(term_x_read_10) {"mode":"wrap"}
+  term_x_read_12:u64 = const() {"value":8}
+  term_x_read_13:u64 = int.shl.checked(term_x_read_11,term_x_read_12)
+  term_x_read_14:u64 = bit.or(term_x_read_7,term_x_read_13)
+  term_x_read_15:usize = const() {"value":2}
+  term_x_read_16:usize = int.add.checked(v16,term_x_read_15)
+  term_x_read_17:u8 = buffer.load(term_a,term_x_read_16)
+  term_x_read_18:u64 = int.cast(term_x_read_17) {"mode":"wrap"}
+  term_x_read_19:u64 = const() {"value":16}
+  term_x_read_20:u64 = int.shl.checked(term_x_read_18,term_x_read_19)
+  term_x_read_21:u64 = bit.or(term_x_read_14,term_x_read_20)
+  term_x_read_22:usize = const() {"value":3}
+  term_x_read_23:usize = int.add.checked(v16,term_x_read_22)
+  term_x_read_24:u8 = buffer.load(term_a,term_x_read_23)
+  term_x_read_25:u64 = int.cast(term_x_read_24) {"mode":"wrap"}
+  term_x_read_26:u64 = const() {"value":24}
+  term_x_read_27:u64 = int.shl.checked(term_x_read_25,term_x_read_26)
+  term_x_read_28:u64 = bit.or(term_x_read_21,term_x_read_27)
+  term_x_read_29:usize = const() {"value":4}
+  term_x_read_30:usize = int.add.checked(v16,term_x_read_29)
+  term_x_read_31:u8 = buffer.load(term_a,term_x_read_30)
+  term_x_read_32:u64 = int.cast(term_x_read_31) {"mode":"wrap"}
+  term_x_read_33:u64 = const() {"value":32}
+  term_x_read_34:u64 = int.shl.checked(term_x_read_32,term_x_read_33)
+  term_x_read_35:u64 = bit.or(term_x_read_28,term_x_read_34)
+  term_x_read_36:usize = const() {"value":5}
+  term_x_read_37:usize = int.add.checked(v16,term_x_read_36)
+  term_x_read_38:u8 = buffer.load(term_a,term_x_read_37)
+  term_x_read_39:u64 = int.cast(term_x_read_38) {"mode":"wrap"}
+  term_x_read_40:u64 = const() {"value":40}
+  term_x_read_41:u64 = int.shl.checked(term_x_read_39,term_x_read_40)
+  term_x_read_42:u64 = bit.or(term_x_read_35,term_x_read_41)
+  term_x_read_43:usize = const() {"value":6}
+  term_x_read_44:usize = int.add.checked(v16,term_x_read_43)
+  term_x_read_45:u8 = buffer.load(term_a,term_x_read_44)
+  term_x_read_46:u64 = int.cast(term_x_read_45) {"mode":"wrap"}
+  term_x_read_47:u64 = const() {"value":48}
+  term_x_read_48:u64 = int.shl.checked(term_x_read_46,term_x_read_47)
+  term_x_read_49:u64 = bit.or(term_x_read_42,term_x_read_48)
+  term_x_read_50:usize = const() {"value":7}
+  term_x_read_51:usize = int.add.checked(v16,term_x_read_50)
+  term_x_read_52:u8 = buffer.load(term_a,term_x_read_51)
+  term_x_read_53:u64 = int.cast(term_x_read_52) {"mode":"wrap"}
+  term_x_read_54:u64 = const() {"value":56}
+  term_x_read_55:u64 = int.shl.checked(term_x_read_53,term_x_read_54)
+  v17:u64 = bit.or(term_x_read_49,term_x_read_55)
   v18:usize = const() {"value":8}
   v19:usize = int.mul.checked(term_j,v18)
   v20:usize = int.add.checked(term_y,v19)
-  v21:u64 = call(term_a,v20) {"function":"ed_load64"}
+  term_y_read_0:u64 = const() {"value":0}
+  term_y_read_1:usize = const() {"value":0}
+  term_y_read_2:usize = int.add.checked(v20,term_y_read_1)
+  term_y_read_3:u8 = buffer.load(term_a,term_y_read_2)
+  term_y_read_4:u64 = int.cast(term_y_read_3) {"mode":"wrap"}
+  term_y_read_5:u64 = const() {"value":0}
+  term_y_read_6:u64 = int.shl.checked(term_y_read_4,term_y_read_5)
+  term_y_read_7:u64 = bit.or(term_y_read_0,term_y_read_6)
+  term_y_read_8:usize = const() {"value":1}
+  term_y_read_9:usize = int.add.checked(v20,term_y_read_8)
+  term_y_read_10:u8 = buffer.load(term_a,term_y_read_9)
+  term_y_read_11:u64 = int.cast(term_y_read_10) {"mode":"wrap"}
+  term_y_read_12:u64 = const() {"value":8}
+  term_y_read_13:u64 = int.shl.checked(term_y_read_11,term_y_read_12)
+  term_y_read_14:u64 = bit.or(term_y_read_7,term_y_read_13)
+  term_y_read_15:usize = const() {"value":2}
+  term_y_read_16:usize = int.add.checked(v20,term_y_read_15)
+  term_y_read_17:u8 = buffer.load(term_a,term_y_read_16)
+  term_y_read_18:u64 = int.cast(term_y_read_17) {"mode":"wrap"}
+  term_y_read_19:u64 = const() {"value":16}
+  term_y_read_20:u64 = int.shl.checked(term_y_read_18,term_y_read_19)
+  term_y_read_21:u64 = bit.or(term_y_read_14,term_y_read_20)
+  term_y_read_22:usize = const() {"value":3}
+  term_y_read_23:usize = int.add.checked(v20,term_y_read_22)
+  term_y_read_24:u8 = buffer.load(term_a,term_y_read_23)
+  term_y_read_25:u64 = int.cast(term_y_read_24) {"mode":"wrap"}
+  term_y_read_26:u64 = const() {"value":24}
+  term_y_read_27:u64 = int.shl.checked(term_y_read_25,term_y_read_26)
+  term_y_read_28:u64 = bit.or(term_y_read_21,term_y_read_27)
+  term_y_read_29:usize = const() {"value":4}
+  term_y_read_30:usize = int.add.checked(v20,term_y_read_29)
+  term_y_read_31:u8 = buffer.load(term_a,term_y_read_30)
+  term_y_read_32:u64 = int.cast(term_y_read_31) {"mode":"wrap"}
+  term_y_read_33:u64 = const() {"value":32}
+  term_y_read_34:u64 = int.shl.checked(term_y_read_32,term_y_read_33)
+  term_y_read_35:u64 = bit.or(term_y_read_28,term_y_read_34)
+  term_y_read_36:usize = const() {"value":5}
+  term_y_read_37:usize = int.add.checked(v20,term_y_read_36)
+  term_y_read_38:u8 = buffer.load(term_a,term_y_read_37)
+  term_y_read_39:u64 = int.cast(term_y_read_38) {"mode":"wrap"}
+  term_y_read_40:u64 = const() {"value":40}
+  term_y_read_41:u64 = int.shl.checked(term_y_read_39,term_y_read_40)
+  term_y_read_42:u64 = bit.or(term_y_read_35,term_y_read_41)
+  term_y_read_43:usize = const() {"value":6}
+  term_y_read_44:usize = int.add.checked(v20,term_y_read_43)
+  term_y_read_45:u8 = buffer.load(term_a,term_y_read_44)
+  term_y_read_46:u64 = int.cast(term_y_read_45) {"mode":"wrap"}
+  term_y_read_47:u64 = const() {"value":48}
+  term_y_read_48:u64 = int.shl.checked(term_y_read_46,term_y_read_47)
+  term_y_read_49:u64 = bit.or(term_y_read_42,term_y_read_48)
+  term_y_read_50:usize = const() {"value":7}
+  term_y_read_51:usize = int.add.checked(v20,term_y_read_50)
+  term_y_read_52:u8 = buffer.load(term_a,term_y_read_51)
+  term_y_read_53:u64 = int.cast(term_y_read_52) {"mode":"wrap"}
+  term_y_read_54:u64 = const() {"value":56}
+  term_y_read_55:u64 = int.shl.checked(term_y_read_53,term_y_read_54)
+  v21:u64 = bit.or(term_y_read_49,term_y_read_55)
   v22:u64 = int.mul.checked(v17,v21)
   v23:u64 = int.add.checked(term_sum,v22)
   jump next(term_a,term_o,term_x,term_y,term_k,term_i,v23)

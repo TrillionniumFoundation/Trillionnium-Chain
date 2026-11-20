@@ -3774,6 +3774,26 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/crypto/ed25519_public_point_cache.hepta": [
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_point_add",
+          "ed_point_identity",
+          "ed_point_equal"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
     "src/crypto/ed25519_sign.hepta": [
       {
         "functions": [
@@ -4898,6 +4918,984 @@
           "sha256_work_store64"
         ],
         "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/service_settlement/arithmetic.hepta": [
+      {
+        "functions": [
+          "cs_put_integer",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_copy",
+          "cs_wcopy"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      }
+    ],
+    "src/service_settlement/bilateral.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_compare",
+          "st_point_decode",
+          "st_public_key"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/engine_control.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/receipt.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_prefix_compare",
+          "su_usage_compare",
+          "su_validate",
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_cumulative",
+          "su_price",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/receipt_owned.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_prefix_compare",
+          "su_usage_compare",
+          "su_validate",
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_cumulative",
+          "su_price",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sr_body",
+          "sr_state",
+          "sr_prior",
+          "sr_common",
+          "sr_prefix",
+          "sr_signatures",
+          "sr_sequence",
+          "sr_cumulative",
+          "sr_charge",
+          "sr_append",
+          "sr_admit",
+          "sr_error"
+        ],
+        "source": "src/service_settlement/receipt.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/rollup.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_point_decode",
+          "st_public_key"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_verify",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/settle.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_sub",
+          "ss_u128_inc",
+          "ss_proportional_fee"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/trust.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_u128_cmp"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_is_weak"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/service_settlement/trust_owned.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_u128_cmp"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail",
+          "st_price_compare",
+          "st_validate",
+          "st_initial",
+          "st_error"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sc_base_columns",
+          "sc_make_from",
+          "sc_make"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/service_settlement/usage.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_compare",
+          "st_scalar_compare",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/values.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       }
     ],
     "src/state/json_value.hepta": [

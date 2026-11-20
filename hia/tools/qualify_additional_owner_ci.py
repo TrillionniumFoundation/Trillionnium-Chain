@@ -1,4 +1,4 @@
-"""Bind actual Peer, Payload metadata, Task and PQ execution to one exact CI source."""
+"""Bind actual Peer, Payload metadata, Task, PQ and Engine execution to one exact CI source."""
 from __future__ import annotations
 
 import argparse
@@ -13,7 +13,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPONENTS = ("peer-unix", "payload-metadata", "task-store", "task-boundary", "pq-auth", "pq-candidate")
+COMPONENTS = ("peer-unix", "payload-metadata", "task-store", "task-boundary", "pq-auth", "pq-candidate", "settlement-engine")
 FALSE_SCOPES = ("whole_chain_native", "whole_package_retired", "node_integration_complete",
                 "original_service_budget_qualified", "cross_target_qualified", "production_activation")
 PQ_COUNTS = {"original_retained": 343, "original_doctests": 2, "native_original_pairs": 1609,
@@ -100,6 +100,89 @@ PAYLOAD_CONTROL_METHODS = (
     'test_wal_corrupt_history_cannot_be_reported_as_replay',
     'test_wal_partitions_cannot_duplicate_a_native_call',
     'test_wal_partitions_cannot_omit_maximum_index',
+)
+
+
+SETTLEMENT_COUNTS = {"original_registered":137,"original_outer":136,"original_nested_fixture_types":1,"original_nested_phases":2,"doctests":2,"fixtures":320,"operations":2636,"native_calls":16066,"actual_height_calls":1754,"allocator_controls":162,"allocator_failures":136,"allocator_calls":2058,"allocator_frees":1922,"concurrent_threads":8,"concurrent_owners":256,"live_owners":0,"allocator_live":0,"allocator_live_bytes":0,"allocator_bad_frees":0}
+SETTLEMENT_LIMITS = {"qualification_seconds":1200,"native_seconds":240,"generator_seconds":120,"allocator_seconds":240,"original_stage_seconds_max":240,"cleanup_seconds":3,"compiler_seconds":30,"compiler_functions":128,"compiler_ops":8192,"compiler_blocks":1536,"compiler_blocks_per_function":256,"compiler_parameters_per_block":16,"compiler_values_per_function":2048}
+SETTLEMENT_FALSE_SCOPES = FALSE_SCOPES + (
+    "store_qualified", "full_host_dependency_closure_claimed", "rust_or_interpreter_fallback",
+)
+SETTLEMENT_TOOL_LABELS = (
+    "native_compiler", "rustc", "cargo", "rustdoc", "cargo_clippy", "clippy_driver",
+    "cargo_fmt", "python", "ld", "objcopy", "allocator_cc",
+)
+# Frozen required roster. Only complete fresh execution of every named control
+# can satisfy this binding; this constant is not evidence of a successful run.
+SETTLEMENT_CONTROL_ROSTER = (
+    "actual_complete_fresh_original_positive",
+    "actual_foreign_success_240_receipt_cannot_replace_original_all",
+    "generator_wrong_argv",
+    "generator_wrong_cwd",
+    "generator_wrong_env",
+    "generator_incomplete_status",
+    "generator_missing_actual_start",
+    "generator_boolean_exit_code",
+    "generator_late_success",
+    "generator_unreaped_domain",
+    "generator_cleanup_error",
+    "generator_changed_deadline",
+    "generator_changed_cleanup",
+    "generator_changed_command_hash",
+    "generator_changed_original_executable",
+    "generator_changed_source_report",
+    "generator_failed_source_fence",
+    "generator_incomplete_roster",
+    "original_optimized_adapter",
+    "original_reused_adapter",
+    "original_outer_roster_miscount",
+    "original_config_present",
+    "generator_exec_request_wrong_executable",
+    "generator_exec_intent_wrong_height_independent_argv",
+    "missing_full_stdout",
+    "changed_capture_wrapper",
+    "changed_raw_process_stdout",
+    "nonempty_actual_original_stderr",
+    "actual_original_binary_bytes_changed",
+    "strict_json_{\"x\":1e999}",
+    "strict_json_{\"x\":NaN}",
+    "strict_json_{\"x\":Infinity}",
+    "strict_json_{\"x\":1,\"x\":2}",
+    "engine_apply_actual_ctypes_u64_0",
+    "engine_apply_actual_ctypes_u64_1",
+    "engine_apply_actual_ctypes_u64_4294967295",
+    "engine_apply_actual_ctypes_u64_9223372036854775808",
+    "engine_apply_actual_ctypes_u64_18446744073709551615",
+    "engine_replay_actual_ctypes_u64_0",
+    "engine_replay_actual_ctypes_u64_1",
+    "engine_replay_actual_ctypes_u64_4294967295",
+    "engine_replay_actual_ctypes_u64_9223372036854775808",
+    "engine_replay_actual_ctypes_u64_18446744073709551615",
+    "observer_invalid_height_-1",
+    "observer_invalid_height_True",
+    "observer_invalid_height_18446744073709551616",
+    "observer_invalid_height_1.5",
+    "observer_invalid_height_None",
+    "reader_actual_height_0",
+    "reader_actual_height_18446744073709551615",
+    "reader_height_missing",
+    "reader_height_wrong",
+    "reader_height_bool",
+    "reader_height_extra",
+    "pending_qualification_cannot_be_upgraded",
+    "reused_execution_cannot_be_upgraded",
+    "unstable_source_cannot_be_upgraded",
+    "missing_actual_tool_cannot_be_upgraded",
+    "changed_actual_tool_cannot_be_upgraded",
+    "wrong_source_digest_cannot_be_upgraded",
+    "whole_store_claim_cannot_be_upgraded",
+    "foreign_control_report_refused",
+    "traversal_control_report_refused",
+    "missing_canonical_reader_source_refused",
+    "missing_allocator_control_refused",
+    "changed_compiler_input_refused",
+    "changed_native_image_refused",
+    "allocator_leak_refused",
 )
 
 
@@ -290,6 +373,87 @@ def payload_summary(report, independent, head, tree):
     need(report.get("source_set_sha256") == digest, "Payload metadata source graph was substituted")
 
 
+def settlement_summary(report, independent, head, tree):
+    need(type(report) is dict and type(independent) is dict, "Engine reports must be objects")
+    for value, schema in (
+            (report, "trnm.hia.service-settlement-engine.qualification.v1"),
+            (independent, "trnm.hia.service-settlement-engine.readback.v1")):
+        need(value.get("schema") == schema and value.get("status") == "PASS"
+             and value.get("head") == head and value.get("tree") == tree
+             and value.get("repository_clean") is True
+             and value.get("source_inputs_stable") is True
+             and value.get("prior_execution_reused") is False
+             and value.get("failure") is None and value.get("traceback") is None,
+             "Engine requires this clean committed source and fresh complete execution")
+        need(type(value.get("counts")) is dict and value["counts"] == SETTLEMENT_COUNTS
+             and all(type(item) is int for item in value["counts"].values()),
+             "Engine original/native/height/allocation/lifetime roster differs")
+        need(type(value.get("limits")) is dict and value["limits"] == SETTLEMENT_LIMITS
+             and all(type(item) is int for item in value["limits"].values()),
+             "Engine original execution or compiler limits changed")
+        need(all(value.get(name) is False for name in SETTLEMENT_FALSE_SCOPES),
+             "Engine evidence promoted an unqualified scope")
+        sources = value.get("source_inputs")
+        need(type(sources) is dict and sources and all(
+             type(name) is str and name and name != "." and not Path(name).is_absolute()
+             and ".." not in Path(name).parts and Path(name).as_posix() == name
+             and "\\" not in name and "\0" not in name and type(item) is dict
+             and set(item) == {"bytes", "sha256"} and type(item.get("bytes")) is int
+             and item["bytes"] >= 0 and type(item.get("sha256")) is str
+             and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
+             for name, item in sources.items()), "Malformed Engine source closure")
+        digest = hashlib.sha256(json.dumps(sources, sort_keys=True, separators=(",", ":"),
+                                           ensure_ascii=False).encode("utf-8")).hexdigest()
+        need(value.get("source_digest") == digest, "Engine source graph digest differs")
+        tools = value.get("tools")
+        need(type(tools) is dict and set(SETTLEMENT_TOOL_LABELS) <= set(tools)
+             and all(type(name) is str and name and type(item) is dict
+                     and set(item) == {"path", "bytes", "sha256"}
+                     and type(item["path"]) is str and Path(item["path"]).is_absolute()
+                     and type(item["bytes"]) is int and item["bytes"] > 0
+                     and type(item["sha256"]) is str
+                     and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
+                     for name, item in tools.items()), "Incomplete actual Engine tool identities")
+        controls = value.get("integrity_controls")
+        need(type(controls) is dict
+             and set(controls) == {"status", "roster", "passed", "failed", "not_run", "report",
+                                   "process_receipt"}
+             and SETTLEMENT_CONTROL_ROSTER and controls["status"] == "PASS"
+             and controls["roster"] == list(SETTLEMENT_CONTROL_ROSTER)
+             and type(controls["passed"]) is int and controls["passed"] == len(SETTLEMENT_CONTROL_ROSTER)
+             and type(controls["failed"]) is int and controls["failed"] == 0
+             and type(controls["not_run"]) is int and controls["not_run"] == 0,
+             "Engine requires every exact original and canonical integrity control")
+        for name in ("report", "process_receipt"):
+            item = controls[name]
+            need(type(item) is dict and set(item) == {"path", "bytes", "sha256"}
+                 and type(item["path"]) is str and item["path"] and "\0" not in item["path"]
+                 and Path(item["path"]).as_posix() == item["path"] and ".." not in Path(item["path"]).parts
+                 and type(item["bytes"]) is int and item["bytes"] > 0
+                 and type(item["sha256"]) is str and re.fullmatch(r"[0-9a-f]{64}", item["sha256"]),
+                 "Engine integrity report or actual process receipt is absent")
+    for name in ("head", "tree", "repository_clean", "source_inputs_stable", "prior_execution_reused",
+                 "source_inputs", "source_digest", "counts", "limits", "tools", "integrity_controls",
+                 *SETTLEMENT_FALSE_SCOPES):
+        need(independent[name] == report[name], "Engine reader belongs to different execution: " + name)
+    need(type(independent.get("qualification_report_sha256")) is str
+         and re.fullmatch(r"[0-9a-f]{64}", independent["qualification_report_sha256"]),
+         "Engine independent reader did not bind its qualification bytes")
+
+
+def settlement_evidence(report, independent, qualification):
+    need(independent["qualification_report_sha256"] == identity(qualification / "report.json")["sha256"],
+         "Engine independent reader belongs to different qualification bytes")
+    for name in ("report", "process_receipt"):
+        item = report["integrity_controls"][name]
+        target = Path(item["path"])
+        if not target.is_absolute():
+            target = qualification / target
+        need(target.resolve(strict=True) == target and target.is_relative_to(qualification)
+             and identity(target) == {key: item[key] for key in ("bytes", "sha256")},
+             "Engine control evidence is not from this exact qualification directory")
+
+
 def run(component, root, rust_bin):
     root = directory(root)
     observation = root / "observations"
@@ -302,6 +466,15 @@ def run(component, root, rust_bin):
                      "hia.platform." + platform + ".qualify", "run", "--output", str(qualified)]),
                     ("readback", [sys.executable, "-B", "-m", "hia.platform." + platform + ".qualify",
                      "readback", "--input", str(qualified)])]
+    elif component == "settlement-engine":
+        need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
+             "Canonical original Rust toolchain directory required")
+        commands = [
+            ("qualification", [sys.executable, "-B", "-m", "hia.platform.service_settlement.qualify",
+                               "run", "--output", str(qualified), "--rust-bin", str(rust_bin)]),
+            ("readback", [sys.executable, "-B", "-m", "hia.platform.service_settlement.readback",
+                          "--input", str(qualified), "--output", str(root / "independent-readback")]),
+        ]
     elif component in ("pq-auth", "pq-candidate"):
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
              "Canonical original Rust toolchain directory required")
@@ -385,7 +558,7 @@ def bind(component, root, rust_bin):
          and before["tested_tree"] == tree and before["tracked_worktree_verified"] is True,
          "Whole committed source before/after qualification differs")
     process = read(observation / "process.json")
-    stages = ["qualification", "readback"] if component in ("peer-unix", "payload-metadata", "pq-auth", "pq-candidate") else ["qualification"]
+    stages = ["qualification", "readback"] if component in ("peer-unix", "payload-metadata", "pq-auth", "pq-candidate", "settlement-engine") else ["qualification"]
     need(process["schema"] == "trnm.hia.additional-owner-process.v1"
          and process["component"] == component and process["status"] == "PASS"
          and [row["name"] for row in process["stages"]] == stages
@@ -398,6 +571,15 @@ def bind(component, root, rust_bin):
                               "run", "--output", str(qualified_path)],
             "readback": [sys.executable, "-B", "-m", "hia.platform." + platform + ".qualify",
                          "readback", "--input", str(qualified_path)],
+        }
+    elif component == "settlement-engine":
+        need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
+             "The actual original Rust directory must remain explicit")
+        expected_commands = {
+            "qualification": [sys.executable, "-B", "-m", "hia.platform.service_settlement.qualify",
+                              "run", "--output", str(qualified_path), "--rust-bin", str(rust_bin)],
+            "readback": [sys.executable, "-B", "-m", "hia.platform.service_settlement.readback",
+                         "--input", str(qualified_path), "--output", str(root / "independent-readback")],
         }
     elif component in ("pq-auth", "pq-candidate"):
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
@@ -446,6 +628,11 @@ def bind(component, root, rust_bin):
         independent = read(observation / "readback.stdout.raw")
         payload_summary(report, independent, head, tree)
         inputs = {str(ROOT / name): row for name, row in report["source_inputs"].items()}
+    elif component == "settlement-engine":
+        independent = read(observation / "readback.stdout.raw")
+        settlement_summary(report, independent, head, tree)
+        settlement_evidence(report, independent, qualification)
+        inputs = {str(ROOT / name): row for name, row in report["source_inputs"].items()}
     elif component in ("pq-auth", "pq-candidate"):
         independent = read(observation / "readback.stdout.raw")
         (pq_summary if component == "pq-auth" else candidate_summary)(report, independent, head, tree)
@@ -483,6 +670,15 @@ def bind(component, root, rust_bin):
                          "hia/platform/peer_payload/control_readback.py", "hia/platform/peer_payload/test_qualification.py",
                          "hia/platform/peer_lease_unix/process.py", "hia/platform/peer_lease_unix/original_build.py",
                          "hia/platform/peer_lease_unix/readback.py", "scripts/w1_owned_process_collector_v1.py"))
+    elif component == "settlement-engine":
+        required.extend(("hia/platform/service_settlement/build.py",
+                         "hia/platform/service_settlement/qualify.py",
+                         "hia/platform/service_settlement/readback.py",
+                         "hia/platform/service_settlement/original.py",
+                         "hia/platform/service_settlement/contract.py",
+                         "hia/platform/service_settlement/process.py",
+                         "hia/platform/service_settlement/qualification/integrity.py",
+                         "hia/platform/service_settlement/qualification/integrity_roster.py"))
     elif component == "pq-auth":
         required.extend(("hia/platform/pq_auth/qualify.py", "hia/platform/pq_auth/readback.py",
                          "hia/platform/pq_auth/qualification/contract.py",
@@ -509,7 +705,7 @@ def bind(component, root, rust_bin):
         tools.extend(read(qualification / "original/build.json")["tools"].values())
     elif component == "payload-metadata":
         tools.extend(read(qualification / "original/complete/build.json")["tools"].values())
-    elif component in ("pq-auth", "pq-candidate"):
+    elif component in ("pq-auth", "pq-candidate", "settlement-engine"):
         tools.extend(report["tools"].values())
     captured = root / "ci-inputs"
     captured.mkdir(mode=0o700)

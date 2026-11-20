@@ -21,6 +21,7 @@
     "so_hash_domain": "hia/src/task_kernel/store_owner_common.hepta",
     "so_return": "hia/src/task_kernel/store_owner_common.hepta",
     "so_sha_feed": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_sha_update_blocks": "hia/src/task_kernel/store_owner_common.hepta",
     "so_snapshot": "hia/src/task_kernel/store_owner_common.hepta",
     "so_view": "hia/src/task_kernel/store_owner_common.hepta",
     "st_allocate": "hia/src/task_kernel/store_common.hepta",
@@ -41,7 +42,6 @@
     "tr_sha_final_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_final_limit": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_init": "hia/src/crypto/sha256_stream.hepta",
-    "tr_sha_rotr": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_work_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_work_limit": "hia/src/crypto/sha256_stream.hepta",
     "tv_domain": "hia/src/task_kernel/typed_values.hepta"

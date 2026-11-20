@@ -823,7 +823,7 @@
       "module": "M12",
       "package": "trnm-service-settlement",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -1488,6 +1488,7 @@
         "hia/platform/task_kernel/records_dispatch.hepta",
         "hia/platform/task_kernel/store_dispatch.hepta",
         "hia/platform/task_kernel/store_owned.hepta",
+        "hia/src/crypto/ed25519_public_point_cache.hepta",
         "hia/src/task_kernel/agent_transaction_wire.hepta",
         "hia/src/task_kernel/codec.hepta",
         "hia/src/task_kernel/kernel_policy.hepta",
@@ -1521,6 +1522,7 @@
         "hia/src/task_kernel/store_roots.hepta",
         "hia/src/task_kernel/store_schema.hepta",
         "hia/src/task_kernel/store_scope.hepta",
+        "hia/src/task_kernel/store_signature_cache.hepta",
         "hia/src/task_kernel/store_task_create.hepta",
         "hia/src/task_kernel/store_verified.hepta",
         "hia/src/task_kernel/typed_values.hepta"
@@ -1630,6 +1632,33 @@
         "hia/platform/peer_payload/readback_observations.py",
         "hia/platform/peer_payload/control_readback.py",
         "hia/platform/peer_payload/test_qualification.py"
+      ]
+    },
+    {
+      "id": "platform/service-settlement-engine",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Partial M12 trnm-service-settlement native Linux x86_64 Engine owner, including the value, receipt, trust, rollup and owned public operation graph. The canonical qualification retains the original 137 registered tests, both nested fixture phases, two compile-fail doctests, strict Clippy and format checks; all 320 fixtures, 2636 operations, 16066 actual native calls, 1754 actual height calls, 162 allocation controls and the independent reader remain required under their original limits. A fresh clean current-commit CI result is still required. Persistent Store/SQLite, complete Node integration, cross-target support, original four-second service acceptance and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/service_settlement/engine_owned.hepta",
+        "hia/src/service_settlement/arithmetic.hepta",
+        "hia/src/service_settlement/bilateral.hepta",
+        "hia/src/service_settlement/codec.hepta",
+        "hia/src/service_settlement/engine_control.hepta",
+        "hia/src/service_settlement/receipt.hepta",
+        "hia/src/service_settlement/receipt_owned.hepta",
+        "hia/src/service_settlement/rollup.hepta",
+        "hia/src/service_settlement/settle.hepta",
+        "hia/src/service_settlement/trust.hepta",
+        "hia/src/service_settlement/trust_owned.hepta",
+        "hia/src/service_settlement/usage.hepta",
+        "hia/src/service_settlement/values.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/build.py",
+        "hia/platform/service_settlement/qualify.py",
+        "hia/platform/service_settlement/readback.py",
+        "hia/platform/service_settlement/qualification/integrity.py"
       ]
     }
   ],

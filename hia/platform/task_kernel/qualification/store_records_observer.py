@@ -14,7 +14,7 @@ def blob(raw):
     if not p.exists():p.write_bytes(raw)
     assert p.read_bytes()==raw
     return {'bytes':len(raw),'sha256':sha,'path':'blobs/'+sha}
-def save():(WORK/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+def save():(WORK/'report.json').write_text(json.dumps(report,separators=(',',':'))+'\n')
 def stage(label,executable,data):
     (WORK/(label+'.stdin.raw')).write_bytes(data);start=time.monotonic_ns()
     completed=subprocess.run([str(executable)],input=data,capture_output=True,cwd=CASES,timeout=30)

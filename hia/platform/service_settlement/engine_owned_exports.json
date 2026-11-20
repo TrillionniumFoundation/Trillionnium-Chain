@@ -1,0 +1,25 @@
+{
+  "exports": [
+    "trnm_settlement_engine_new",
+    "trnm_settlement_engine_apply",
+    "trnm_settlement_engine_replay",
+    "trnm_settlement_engine_validate_execution",
+    "trnm_settlement_engine_clone",
+    "trnm_settlement_owned_clone",
+    "trnm_settlement_owned_drop",
+    "trnm_settlement_owned_kind",
+    "trnm_settlement_engine_trust",
+    "trnm_settlement_engine_state",
+    "trnm_settlement_engine_state_root",
+    "trnm_settlement_engine_history_count",
+    "trnm_settlement_engine_state_copy",
+    "trnm_settlement_error_code",
+    "trnm_settlement_error_message",
+    "trnm_settlement_error_display",
+    "trnm_settlement_bytes_view",
+    "trnm_settlement_consumption_receipt_id",
+    "trnm_settlement_consumption_rollup_id",
+    "trnm_settlement_settlement_policy_hash",
+    "trnm_settlement_operation_id"
+  ]
+}

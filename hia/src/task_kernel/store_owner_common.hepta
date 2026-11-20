@@ -529,6 +529,129 @@ block b10(v152:mutbuf,v153:mutbuf,v154:u64,v155:u64,v159:u64,v160:u64,v161:u64,v
   v170:u32 = int.cast(v169) {"mode":"wrap"}
   ret(v170)
 end
+fn so_sha_update_blocks(v0:mutbuf,v1:u64,v2:u64) -> (u64) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:u64,v2:u64)
+  v3:usize = buffer.len(v0)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":1208}
+  v6:bool = compare.lt(v4,v5)
+  branch v6 b2(v0,v1,v2,v6) b1(v0,v1,v2)
+block b1(v7:mutbuf,v8:u64,v9:u64)
+  v15:u64 = const() {"value":1208}
+  v16:bool = compare.lt(v8,v15)
+  jump b2(v7,v8,v9,v16)
+block b2(v11:mutbuf,v12:u64,v13:u64,v14:bool)
+  branch v14 b4(v11,v12,v13,v14) b3(v11,v12,v13)
+block b3(v17:mutbuf,v18:u64,v19:u64)
+  v25:usize = buffer.len(v17)
+  v26:u64 = int.cast(v25) {"mode":"wrap"}
+  v27:bool = compare.gt(v18,v26)
+  jump b4(v17,v18,v19,v27)
+block b4(v21:mutbuf,v22:u64,v23:u64,v24:bool)
+  branch v24 b5(v21,v22,v23) b6(v21,v22,v23)
+block b5(v28:mutbuf,v29:u64,v30:u64)
+  v34:u64 = call(v28,v29,v30) {"function":"tr_sha_update_work_full"}
+  ret(v34)
+block b6(v31:mutbuf,v32:u64,v33:u64)
+  v35:usize = buffer.len(v31)
+  v36:u64 = int.cast(v35) {"mode":"wrap"}
+  v37:u64 = int.sub.wrap(v36,v32)
+  v38:bool = compare.gt(v33,v37)
+  branch v38 b8(v31,v32,v33,v38) b7(v31,v32,v33)
+block b7(v39:mutbuf,v40:u64,v41:u64)
+  v47:u64 = const() {"value":2305843009213693951}
+  v48:bool = compare.gt(v41,v47)
+  jump b8(v39,v40,v41,v48)
+block b8(v43:mutbuf,v44:u64,v45:u64,v46:bool)
+  branch v46 b9(v43,v44,v45) b10(v43,v44,v45)
+block b9(v49:mutbuf,v50:u64,v51:u64)
+  v55:u64 = call(v49,v50,v51) {"function":"tr_sha_update_work_full"}
+  ret(v55)
+block b10(v52:mutbuf,v53:u64,v54:u64)
+  v56:u64 = const() {"value":1088}
+  v57:u64 = call(v52,v56) {"function":"tr_get"}
+  v58:u64 = const() {"value":1096}
+  v59:u64 = call(v52,v58) {"function":"tr_get"}
+  v60:u64 = const() {"value":2305843009213693951}
+  v61:bool = compare.gt(v57,v60)
+  branch v61 b12(v52,v53,v54,v57,v59,v61) b11(v52,v53,v54,v57,v59)
+block b11(v62:mutbuf,v63:u64,v64:u64,v65:u64,v66:u64)
+  v74:u64 = const() {"value":2305843009213693951}
+  v75:u64 = int.sub.wrap(v74,v65)
+  v76:bool = compare.gt(v64,v75)
+  jump b12(v62,v63,v64,v65,v66,v76)
+block b12(v68:mutbuf,v69:u64,v70:u64,v71:u64,v72:u64,v73:bool)
+  branch v73 b14(v68,v69,v70,v71,v72,v73) b13(v68,v69,v70,v71,v72)
+block b13(v77:mutbuf,v78:u64,v79:u64,v80:u64,v81:u64)
+  v89:u64 = const() {"value":64}
+  v90:bool = compare.ge(v81,v89)
+  jump b14(v77,v78,v79,v80,v81,v90)
+block b14(v83:mutbuf,v84:u64,v85:u64,v86:u64,v87:u64,v88:bool)
+  branch v88 b16(v83,v84,v85,v86,v87,v88) b15(v83,v84,v85,v86,v87)
+block b15(v91:mutbuf,v92:u64,v93:u64,v94:u64,v95:u64)
+  v103:u64 = const() {"value":1200}
+  v104:u64 = call(v91,v103) {"function":"tr_get"}
+  v105:u64 = const() {"value":0}
+  v106:bool = compare.ne(v104,v105)
+  jump b16(v91,v92,v93,v94,v95,v106)
+block b16(v97:mutbuf,v98:u64,v99:u64,v100:u64,v101:u64,v102:bool)
+  branch v102 b17(v97,v98,v99) b18(v97,v98,v99,v100,v101)
+block b17(v107:mutbuf,v108:u64,v109:u64)
+  v117:u64 = call(v107,v108,v109) {"function":"tr_sha_update_work_full"}
+  ret(v117)
+block b18(v112:mutbuf,v113:u64,v114:u64,v115:u64,v116:u64)
+  v118:u64 = const() {"value":0}
+  jump b19(v112,v113,v114,v115,v116,v118)
+block b19(v119:mutbuf,v120:u64,v121:u64,v122:u64,v123:u64,v124:u64)
+  v125:bool = compare.lt(v124,v121)
+  branch v125 b20(v119,v120,v121,v122,v123,v124) b21(v119)
+block b20(v126:mutbuf,v127:u64,v128:u64,v129:u64,v130:u64,v131:u64)
+  v138:u64 = int.sub.wrap(v128,v131)
+  v139:u64 = const() {"value":64}
+  v140:u64 = int.sub.wrap(v139,v130)
+  v141:bool = compare.gt(v138,v140)
+  v142:u64 = select(v141,v140,v138)
+  v143:u64 = const() {"value":0}
+  jump b22(v126,v127,v128,v129,v130,v131,v142,v143)
+block b21(v132:mutbuf)
+  v216:u64 = const() {"value":0}
+  ret(v216)
+block b22(v144:mutbuf,v145:u64,v146:u64,v147:u64,v148:u64,v149:u64,v150:u64,v151:u64)
+  v152:bool = compare.lt(v151,v150)
+  branch v152 b23(v144,v145,v146,v147,v148,v149,v150,v151) b24(v144,v145,v146,v147,v148,v149,v150)
+block b23(v153:mutbuf,v154:u64,v155:u64,v156:u64,v157:u64,v158:u64,v159:u64,v160:u64)
+  v169:u64 = const() {"value":1104}
+  v170:u64 = int.add.wrap(v169,v157)
+  v171:u64 = int.add.wrap(v170,v160)
+  v172:u64 = int.add.wrap(v154,v158)
+  v173:u64 = int.add.wrap(v172,v160)
+  v174:usize = int.cast(v173) {"mode":"wrap"}
+  v175:u8 = buffer.load(v153,v174)
+  v176:u64 = int.cast(v175) {"mode":"wrap"}
+  v177:usize = int.cast(v171) {"mode":"wrap"}
+  v178:u8 = int.cast(v176) {"mode":"wrap"}
+  _ = buffer.store(v153,v177,v178)
+  v179:u64 = const() {"value":1}
+  v180:u64 = int.add.wrap(v160,v179)
+  jump b22(v153,v154,v155,v156,v157,v158,v159,v180)
+block b24(v161:mutbuf,v162:u64,v163:u64,v164:u64,v165:u64,v166:u64,v167:u64)
+  v181:u64 = int.add.wrap(v164,v167)
+  v182:u64 = const() {"value":1088}
+  v183:u64 = call(v161,v182,v181) {"function":"tr_put"}
+  v184:u64 = int.add.wrap(v165,v167)
+  v185:u64 = const() {"value":64}
+  v186:bool = compare.eq(v184,v185)
+  branch v186 b25(v161,v162,v163,v181,v166,v167) b27(v161,v162,v163,v181,v184,v166,v167)
+block b25(v187:mutbuf,v188:u64,v189:u64,v190:u64,v192:u64,v193:u64)
+  v203:u64 = call(v187) {"function":"tr_sha_compress"}
+  v204:u64 = const() {"value":0}
+  jump b27(v187,v188,v189,v190,v204,v192,v193)
+block b27(v205:mutbuf,v206:u64,v207:u64,v208:u64,v209:u64,v210:u64,v211:u64)
+  v213:u64 = const() {"value":1096}
+  v214:u64 = call(v205,v213,v209) {"function":"tr_put"}
+  v215:u64 = int.add.wrap(v210,v211)
+  jump b19(v205,v206,v207,v208,v209,v215)
+end
 fn so_sha_feed(v0:mutbuf,v1:u64,v2:u64,v3:mutbuf) -> (u64) effects(read,write,trap) entry(b0)
 block b0(v0:mutbuf,v1:u64,v2:u64,v3:mutbuf)
   v4:usize = buffer.len(v0)
@@ -560,7 +683,7 @@ block b6(v37:mutbuf,v38:u64,v39:u64,v40:mutbuf,v41:u64)
   v51:u64 = int.add.wrap(v38,v41)
   v52:u64 = const() {"value":131072}
   v53:u64 = call(v37,v51,v40,v52,v50) {"function":"cp_wout"}
-  v54:u64 = call(v40,v52,v50) {"function":"tr_sha_update_work_full"}
+  v54:u64 = call(v40,v52,v50) {"function":"so_sha_update_blocks"}
   v55:u64 = const() {"value":0}
   v56:bool = compare.ne(v54,v55)
   branch v56 b8(v37,v40) b9(v37,v38,v39,v40,v41,v50)

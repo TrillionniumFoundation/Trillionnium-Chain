@@ -174,8 +174,15 @@ try:
             results.append({'name': case['name'], **result})
         return {'thread': number, 'calls': results}
 
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        parallel = list(executor.map(thread, range(8)))
+    # Bound observer worker stacks independently of the platform default.
+    previous_thread_stack_bytes = threading.stack_size(1 << 20)
+    try:
+        parallel_thread_stack_bytes = threading.stack_size()
+        assert parallel_thread_stack_bytes == 1 << 20
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            parallel = list(executor.map(thread, range(8)))
+    finally:
+        threading.stack_size(previous_thread_stack_bytes)
     final = stats()
     assert sum(len(row['calls']) for row in parallel) == 256
     assert final[0] - before_parallel[0] == final[1] - before_parallel[1] == 256
@@ -186,6 +193,7 @@ try:
               'paired_shapes': len(rows), 'actual_allocation_failures': failures,
               'zero_allocation_refusals': no_allocations, 'sequential_native_calls': sequential_calls,
               'parallel_threads': 8, 'parallel_native_calls': 256, 'allocation_counters': final,
+              'parallel_thread_stack_bytes': parallel_thread_stack_bytes,
               'production_object_unchanged': True, 'test_observer_supplies_business_logic': False,
               'whole_payload_owner_qualified': False, 'original_service_budget_qualified': False,
               'original_tests_rerun_by_this_control': False}

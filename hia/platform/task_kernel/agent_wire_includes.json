@@ -26,7 +26,6 @@
     "tr_sha_final_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_final_limit": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_init": "hia/src/crypto/sha256_stream.hepta",
-    "tr_sha_rotr": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_limit": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_work_full": "hia/src/crypto/sha256_stream.hepta",
@@ -34,6 +33,8 @@
     "tv_domain": "hia/src/task_kernel/typed_values.hepta",
     "tv_hash": "hia/src/task_kernel/typed_values.hepta",
     "tv_literals": "hia/src/task_kernel/typed_values.hepta",
+    "tv_sha_copy_block": "hia/src/task_kernel/typed_values.hepta",
+    "tv_sha_update_blocks": "hia/src/task_kernel/typed_values.hepta",
     "value_integer_size": "hia/src/codec/json_primitives.hepta",
     "value_integer_write": "hia/src/codec/json_primitives.hepta"
   },

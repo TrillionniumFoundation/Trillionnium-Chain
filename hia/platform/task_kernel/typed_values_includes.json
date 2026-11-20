@@ -24,7 +24,6 @@
     "tr_sha_final_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_final_limit": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_init": "hia/src/crypto/sha256_stream.hepta",
-    "tr_sha_rotr": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_full": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_limit": "hia/src/crypto/sha256_stream.hepta",
     "tr_sha_update_work_full": "hia/src/crypto/sha256_stream.hepta",

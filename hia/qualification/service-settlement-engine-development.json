@@ -1,0 +1,1049 @@
+{
+  "actual_stage_receipts": {
+    "allocator": {
+      "cleanup_deadline_seconds": 3,
+      "elapsed_ns": 4834566524,
+      "execution_deadline_seconds": 240,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "integrity": {
+      "cleanup_deadline_seconds": 3,
+      "elapsed_ns": 35487510432,
+      "execution_deadline_seconds": 240,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "native": {
+      "cleanup_deadline_seconds": 3,
+      "elapsed_ns": 206967781696,
+      "execution_deadline_seconds": 240,
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  },
+  "allocator": {
+    "concurrent_owners": 256,
+    "controls": 162,
+    "failures": 136,
+    "final_counters": {
+      "bad_frees": 0,
+      "bytes": 0,
+      "calls": 2058,
+      "failures": 136,
+      "frees": 1922,
+      "live": 0
+    },
+    "journal_records": 475,
+    "native_calls": 473,
+    "threads": 8
+  },
+  "commands": {
+    "readback": [
+      "python3",
+      "-B",
+      "-m",
+      "hia.platform.service_settlement.readback",
+      "--input",
+      "QUALIFICATION",
+      "--output",
+      "NEW_INDEPENDENT_OUTPUT"
+    ],
+    "readback_mutates_qualification": false,
+    "readback_stdout": "one complete JSON report",
+    "run": [
+      "python3",
+      "-B",
+      "-m",
+      "hia.platform.service_settlement.qualify",
+      "run",
+      "--output",
+      "NEW_OUTSIDE_REPOSITORY",
+      "--rust-bin",
+      "PINNED_RUST_1_95_BIN"
+    ]
+  },
+  "complete_archives": {
+    "canonical_attempts": {
+      "archive": {
+        "bytes": 894680989,
+        "sha256": "88f42010642be3c5a77cb5d3cf59fa7235e3764ec8fb79975363e7e2f68aeeb4"
+      },
+      "dual_receipt": {
+        "bytes": 1074,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-full-seal-v1-heyu54nw/dual-readback.json",
+        "sha256": "26f43c2155eeb59388d270009d2829898b311c4f3975db3b09f5167f19d3091e"
+      },
+      "includes_final_allocator": true,
+      "logical_files": 38433,
+      "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-full-seal-v1-heyu54nw/canonical-engine-evidence.tar.gz",
+      "mac_receipt": {
+        "bytes": 4084,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-full-seal-v1-heyu54nw/receipt.json",
+        "sha256": "5f28eb3acbe35922e96eab9bbbec4d8a7c50440eec4752f4bcdc545e047772ea"
+      },
+      "members": 12031,
+      "qualification_evidence_complete": true,
+      "scope": "Preserved complete canonical attempts v1-v4 under their exact original identities. It does not contain the later EOF-only source v5 execution.",
+      "second": "/var/tmp/trnm-engine-canonical-full-seal-v1-vwhz9wwe/canonical-engine-evidence.tar.gz",
+      "status": "DUAL_FULL_MEMBER_CANONICAL_ENGINE_ARCHIVE_PASS",
+      "view": {
+        "bytes": 17837171,
+        "sha256": "d68a238bb85067aa8898c466f4a61587c49ecdacf224803ddbf5e9e96b424493"
+      }
+    },
+    "canonical_final_v5": {
+      "archive": {
+        "bytes": 643408112,
+        "sha256": "9d7d6e9b829063374e4dc507d5b1e84c007fad24eb4a99c3bfccd2258329b8fd"
+      },
+      "dual_receipt": {
+        "bytes": 1069,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-final-seal-v2-xw11wdcp/dual-readback.json",
+        "sha256": "b06ab383100ee27fe8904092cd65ac6c18f888e6efe1bd56dbb78fd81db2ec78"
+      },
+      "includes_final_allocator": true,
+      "logical_files": 14651,
+      "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-final-seal-v2-xw11wdcp/canonical-engine-evidence.tar.gz",
+      "mac_receipt": {
+        "bytes": 1890,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-final-seal-v2-xw11wdcp/receipt.json",
+        "sha256": "b665bbc747e4a53c1cea3f7d83046ae62e10710d6c36eab4318ed18200ee7f41"
+      },
+      "members": 9821,
+      "qualification_evidence_complete": true,
+      "scope": "Complete fresh canonical v5 root, including all actual original/native/allocator/control/compiler inputs, outputs, source bytes, Git object input pack, captured external tools/dependencies, process supervision, failures where present, and independent readback. Metadata excludes only the declared Git administrative paths; all qualification evidence inventory members are rehashed.",
+      "second": "/var/tmp/trnm-engine-canonical-final-seal-v2-31zsawr7/canonical-engine-evidence.tar.gz",
+      "status": "DUAL_FULL_MEMBER_CANONICAL_ENGINE_ARCHIVE_PASS",
+      "view": {
+        "bytes": 6787019,
+        "sha256": "00fc72a6fd04c4d77bd2e268ad136191b0f34e560fe6e9ffccf2a188c6216a1f"
+      }
+    },
+    "prior_native_original_reader": {
+      "archive": {
+        "bytes": 614368775,
+        "sha256": "d4084b594045daa2be40e59bf6b27fe9b64381a843ad2212554e6d1200f12c10"
+      },
+      "logical_files": 13414,
+      "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-current3ad-native-original-sealed-v1/engine-current3ad-native-original-full.tar.gz",
+      "members": 9745,
+      "scope": "Earlier standalone current3ad native, fresh original, generator and independent reader. This archive does not contain the standalone allocator.",
+      "second": "/var/tmp/trnm-engine-current3ad-seal-v1-l7mubd_a/engine-current3ad-native-original-full.tar.gz"
+    },
+    "prior_separate_allocator": {
+      "archive": {
+        "bytes": 36096093,
+        "sha256": "22385ea090d992f47a2ccf652544b8e976fa26512eae51ffc26fdb5ef1aad0fa"
+      },
+      "dual_receipt": {
+        "bytes": 1000,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-current3ad-old-allocator-seal-v1-rl_xnwzk/dual-readback.json",
+        "sha256": "729e39befcabbb6de0f86837cbd1dde12e7dc52fda0ef3c9344fad31f793737f"
+      },
+      "logical_files": 4227,
+      "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-current3ad-old-allocator-seal-v1-rl_xnwzk/allocator-evidence.tar.gz",
+      "members": 4032,
+      "scope": "The earlier standalone current3ad allocator run, plus its actual selected production objects and source. Kept under its original identity; not relabeled as the canonical final execution.",
+      "second": "/tmp/trnm-engine-current3ad-allocator-seal-v1-hobjxxwj/allocator-evidence.tar.gz",
+      "status": "DUAL_FULL_MEMBER_ALLOCATOR_ARCHIVE_PASS",
+      "view": {
+        "bytes": 1982529,
+        "sha256": "e87a5640a56b6aeca6b84dde02897768840e92368bccfee7c8822fbda89abddd"
+      }
+    }
+  },
+  "counts": {
+    "actual_height_calls": 1754,
+    "allocator_bad_frees": 0,
+    "allocator_calls": 2058,
+    "allocator_controls": 162,
+    "allocator_failures": 136,
+    "allocator_frees": 1922,
+    "allocator_live": 0,
+    "allocator_live_bytes": 0,
+    "concurrent_owners": 256,
+    "concurrent_threads": 8,
+    "doctests": 2,
+    "fixtures": 320,
+    "live_owners": 0,
+    "native_calls": 16066,
+    "operations": 2636,
+    "original_nested_fixture_types": 1,
+    "original_nested_phases": 2,
+    "original_outer": 136,
+    "original_registered": 137
+  },
+  "final_reports": {
+    "formal": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/1cc85f736dc9dd05bc8b5715cf4e4f029eb0692884375fc2e314691fae0f74b3",
+      "bytes": 2220,
+      "logical_path": "formal-v5/formal-report.json",
+      "sha256": "1cc85f736dc9dd05bc8b5715cf4e4f029eb0692884375fc2e314691fae0f74b3"
+    },
+    "independent_readback": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/0d26e2a102d524ac6f63f4ac08895f4b84c5d0f10ff43e674e37724da0b9f47f",
+      "bytes": 323603,
+      "logical_path": "formal-v5/independent-readback/report.json",
+      "sha256": "0d26e2a102d524ac6f63f4ac08895f4b84c5d0f10ff43e674e37724da0b9f47f"
+    },
+    "qualification": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/bea7dcefbda7b0f1b82f42dae76499db2ce6698fa534a11b0c91730c037484e6",
+      "bytes": 323475,
+      "logical_path": "formal-v5/qualification/report.json",
+      "sha256": "bea7dcefbda7b0f1b82f42dae76499db2ce6698fa534a11b0c91730c037484e6"
+    },
+    "qualification_report_sha256": "bea7dcefbda7b0f1b82f42dae76499db2ce6698fa534a11b0c91730c037484e6"
+  },
+  "foundation": "platform/service-settlement-engine",
+  "handoff_packaging_observations": {
+    "first_mac_receipt": {
+      "bytes": 3153,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-final-handoff-v2-ks5id9rd/receipt.json",
+      "scope": "Receipt serialization only, after all actual reports had been copied and hash verified; no source or execution report change",
+      "sha256": "b2c8c1540108033bc546945b0766311533a4bf8ac518344303f531f5f750024a",
+      "status": "FAIL"
+    },
+    "independent_rehash_receipt": {
+      "bytes": 3674,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-canonical-final-handoff-v2-ks5id9rd/receipt-readback-v2.json",
+      "sha256": "4c267f0263ea2bdc4f5bdf9a3716d257073333d16cef7ac244993d28926dbf28",
+      "status": "PASS"
+    }
+  },
+  "integrity": {
+    "additional_build_metadata_subcontrols": [
+      {
+        "exception": "AssertionError",
+        "name": "public_stage_receipts_changed",
+        "result": "REJECTED"
+      },
+      {
+        "exception": "AssertionError",
+        "name": "emitter_check_roster_empty",
+        "result": "REJECTED"
+      }
+    ],
+    "failed": 0,
+    "main_controls": 68,
+    "not_run": 0,
+    "owned_process_receipt": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/e8740091530558a8f12ce51ef037260e9cf8a773f8010651df2cd0d55fe5d01c",
+      "bytes": 9370,
+      "logical_path": "formal-v5/qualification/stages/integrity/receipt.json",
+      "sha256": "e8740091530558a8f12ce51ef037260e9cf8a773f8010651df2cd0d55fe5d01c"
+    },
+    "passed": 68,
+    "report": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/146f8bdf2e3654d2c34094e3ae25d25756bfaa775275af1a761fc1087951df35",
+      "bytes": 377930,
+      "logical_path": "formal-v5/qualification/integrity/report.json",
+      "sha256": "146f8bdf2e3654d2c34094e3ae25d25756bfaa775275af1a761fc1087951df35"
+    },
+    "roster": [
+      "actual_complete_fresh_original_positive",
+      "actual_foreign_success_240_receipt_cannot_replace_original_all",
+      "generator_wrong_argv",
+      "generator_wrong_cwd",
+      "generator_wrong_env",
+      "generator_incomplete_status",
+      "generator_missing_actual_start",
+      "generator_boolean_exit_code",
+      "generator_late_success",
+      "generator_unreaped_domain",
+      "generator_cleanup_error",
+      "generator_changed_deadline",
+      "generator_changed_cleanup",
+      "generator_changed_command_hash",
+      "generator_changed_original_executable",
+      "generator_changed_source_report",
+      "generator_failed_source_fence",
+      "generator_incomplete_roster",
+      "original_optimized_adapter",
+      "original_reused_adapter",
+      "original_outer_roster_miscount",
+      "original_config_present",
+      "generator_exec_request_wrong_executable",
+      "generator_exec_intent_wrong_height_independent_argv",
+      "missing_full_stdout",
+      "changed_capture_wrapper",
+      "changed_raw_process_stdout",
+      "nonempty_actual_original_stderr",
+      "actual_original_binary_bytes_changed",
+      "strict_json_{\"x\":1e999}",
+      "strict_json_{\"x\":NaN}",
+      "strict_json_{\"x\":Infinity}",
+      "strict_json_{\"x\":1,\"x\":2}",
+      "engine_apply_actual_ctypes_u64_0",
+      "engine_apply_actual_ctypes_u64_1",
+      "engine_apply_actual_ctypes_u64_4294967295",
+      "engine_apply_actual_ctypes_u64_9223372036854775808",
+      "engine_apply_actual_ctypes_u64_18446744073709551615",
+      "engine_replay_actual_ctypes_u64_0",
+      "engine_replay_actual_ctypes_u64_1",
+      "engine_replay_actual_ctypes_u64_4294967295",
+      "engine_replay_actual_ctypes_u64_9223372036854775808",
+      "engine_replay_actual_ctypes_u64_18446744073709551615",
+      "observer_invalid_height_-1",
+      "observer_invalid_height_True",
+      "observer_invalid_height_18446744073709551616",
+      "observer_invalid_height_1.5",
+      "observer_invalid_height_None",
+      "reader_actual_height_0",
+      "reader_actual_height_18446744073709551615",
+      "reader_height_missing",
+      "reader_height_wrong",
+      "reader_height_bool",
+      "reader_height_extra",
+      "pending_qualification_cannot_be_upgraded",
+      "reused_execution_cannot_be_upgraded",
+      "unstable_source_cannot_be_upgraded",
+      "missing_actual_tool_cannot_be_upgraded",
+      "changed_actual_tool_cannot_be_upgraded",
+      "wrong_source_digest_cannot_be_upgraded",
+      "whole_store_claim_cannot_be_upgraded",
+      "foreign_control_report_refused",
+      "traversal_control_report_refused",
+      "missing_canonical_reader_source_refused",
+      "missing_allocator_control_refused",
+      "changed_compiler_input_refused",
+      "changed_native_image_refused",
+      "allocator_leak_refused"
+    ]
+  },
+  "legacy_package": {
+    "id": "M12",
+    "name": "trnm-service-settlement",
+    "retirement_allowed": false,
+    "state": "partially-ported"
+  },
+  "limitations": [
+    "This is the finite Engine owner qualification on the actual ROG Linux x86-64 target and declared current3ad candidate source graph. It is not a completed clean-head hosted CI run.",
+    "ServiceSettlement Store/SQLite, Node integration, full host dependency closure, service resource acceptance, cross-target acceptance and whole-chain retirement remain open.",
+    "The separate historical 577 roster was not located and is not substituted with the 2636 operation count.",
+    "Git repository metadata are excluded from evidence content stores; exact object input packs, source bytes, head/tree commands, per-path original blobs and all qualification files are retained. No prior failure or legacy implementation was removed."
+  ],
+  "limits": {
+    "allocator_seconds": 240,
+    "cleanup_seconds": 3,
+    "compiler_blocks": 1536,
+    "compiler_blocks_per_function": 256,
+    "compiler_functions": 128,
+    "compiler_ops": 8192,
+    "compiler_parameters_per_block": 16,
+    "compiler_seconds": 30,
+    "compiler_values_per_function": 2048,
+    "generator_seconds": 120,
+    "native_seconds": 240,
+    "original_stage_seconds_max": 240,
+    "qualification_seconds": 1200
+  },
+  "native_build": {
+    "artifact": {
+      "bytes": 1915664,
+      "sha256": "132579dab83b7214c967353d1953c5f68ab4dbd14c222c3d517325c722b45df9"
+    },
+    "source_digest": "e956799b5a3dc455b3a8e44e95bd430422338a42c7ab9ebf9ed12483544e5d36",
+    "stages": 31,
+    "units": 8
+  },
+  "original": {
+    "compile_fail_doctests": 2,
+    "fresh_build_report_identity": {
+      "bytes": 937004,
+      "sha256": "46fd08f4f6435475f33e4b2868ef9baaece46c3f071d7c3cb0f7e3d5c5eab95e"
+    },
+    "fresh_current_execution": true,
+    "fresh_fixture_raw": {
+      "bytes": 37267073,
+      "sha256": "d0a7700ed2b6a25a2ef41a3894de4ce4139a53547c1eec0ac9a0f925042b2550"
+    },
+    "fresh_report_identity": {
+      "bytes": 43883,
+      "sha256": "90cbbccb4e05b6bdce49b7d312e42d1c858441ec0feaae6837018995034723c2"
+    },
+    "generator": {
+      "actual_elapsed_ns": 52815112952,
+      "actual_original_argv": [
+        "/var/tmp/trnm-engine-canonical-formal-v5-luf06hpk/qualification/original/cargo-target/debug/settlement-reference",
+        "generate"
+      ],
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/var/tmp/trnm-engine-canonical-formal-v5-luf06hpk/qualification/generator/capture_exec.py",
+        "/var/tmp/trnm-engine-canonical-formal-v5-luf06hpk/qualification/generator/exec-request.json"
+      ],
+      "collector_logs_are_separate": true,
+      "executable": {
+        "bytes": 22256696,
+        "sha256": "bac58891408fcaa6a56e83402cfaa47b960b01f730aca721fe77997ffca7e0fd"
+      },
+      "output_is_full_fd_redirected_file": true,
+      "receipt": {
+        "bytes": 9574,
+        "sha256": "ed0f207ded49fa0f395a3ff618fc02fdd012c4324ab59507c5181904d0a4afa8"
+      },
+      "stdout": {
+        "bytes": 37267073,
+        "sha256": "d0a7700ed2b6a25a2ef41a3894de4ce4139a53547c1eec0ac9a0f925042b2550"
+      }
+    },
+    "nested_actual_phases": 2,
+    "nested_fixture_types": 1,
+    "original_outer_tests": 136,
+    "original_source_map": {
+      "bytes": 419290,
+      "sha256": "5a9956bb08fdc4f14d5090a3e020a3a3e4a328796faab6512d4163a222d7b3bc"
+    },
+    "registry_inputs": 6953,
+    "source_files": 1700,
+    "status": "INDEPENDENT_FULL_FRESH_ORIGINAL_PROVENANCE_PASS"
+  },
+  "preserved_attempts": [
+    {
+      "attempt": "formal-v1",
+      "cause": "The first isolated clone could not read a required object from the finite source repository. No qualification command or native test started. The next attempt imported the exact independently retained Git object pack and used normal non-cone sparse checkout.",
+      "formal_report": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/bce3fdbe81f066585e3a9e4f10c029ea7fa5d91189971b77668c82c3c444af43",
+        "bytes": 1200,
+        "logical_path": "formal-v1/formal-report.json",
+        "sha256": "bce3fdbe81f066585e3a9e4f10c029ea7fa5d91189971b77668c82c3c444af43"
+      },
+      "scope": "qualification setup only",
+      "status": "FAIL"
+    },
+    {
+      "attempt": "formal-v2",
+      "cause": "The evidence output path made TMPDIR too long for the unchanged UnixListener sidecar test; it returned path must be shorter than SUN_LEN. Original 135 outer tests passed, one failed, one parent-invoked child entry remained marked ignored; both doctests passed. Native execution was not started.",
+      "formal_report": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/5083ec31b69b0ed34c9eb824297428ea0dafdfecb37986c3930b656cda88f699",
+        "bytes": 1554,
+        "logical_path": "formal-v2/formal-report.json",
+        "sha256": "5083ec31b69b0ed34c9eb824297428ea0dafdfecb37986c3930b656cda88f699"
+      },
+      "original_stderr": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/8fd68e548ef9b1611be6afc1adbf51052232d7fc161cf4e2ebe75bb88f45f4bc",
+        "bytes": 2775,
+        "logical_path": "formal-v2/qualification/original/qualification/original-all/stderr.raw",
+        "sha256": "8fd68e548ef9b1611be6afc1adbf51052232d7fc161cf4e2ebe75bb88f45f4bc"
+      },
+      "original_stdout": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/f861b197d104e186337a97dd1dd41fbc55a738ef159c56e7eab6d8509c5079d1",
+        "bytes": 92494,
+        "logical_path": "formal-v2/qualification/original/qualification/original-all/stdout.raw",
+        "sha256": "f861b197d104e186337a97dd1dd41fbc55a738ef159c56e7eab6d8509c5079d1"
+      },
+      "scope": "original Rust test stage",
+      "status": "FAIL"
+    },
+    {
+      "attempt": "formal-v3",
+      "formal_report": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/2be8b11a87d4d3b41501f7d302bbd5ad6533d144e620d07cdec75e7ac897ee98",
+        "bytes": 2220,
+        "logical_path": "formal-v3/formal-report.json",
+        "sha256": "2be8b11a87d4d3b41501f7d302bbd5ad6533d144e620d07cdec75e7ac897ee98"
+      },
+      "qualification_seconds": 381.194298776,
+      "reason_for_followup": "Independent review found two redundant build report consistency fields were not explicitly compared. Actual compiler, link and emitted buffer bytes were already validated. Final v4 additionally binds the public eight stage reports and the exact five emitter check names, with two explicit mutation subcontrols; the complete 68 main controls are unchanged.",
+      "source_digest": "09314eb8193a1524ef416a19de1bfd19c66e6405e6cbfacae5d49e5c30266ab2",
+      "status": "PASS_ON_ITS_OWN_FROZEN_SOURCE"
+    },
+    {
+      "attempt": "formal-v4",
+      "changed_inputs": {
+        "hia/platform/service_settlement/qualification/observations.py": {
+          "after": {
+            "bytes": 15012,
+            "sha256": "e85b392370c1dc693454eb5bfad4b67a9e48c153b8237d52e16411e44a633630"
+          },
+          "before": {
+            "bytes": 15013,
+            "sha256": "76c71dbdcf3a718174a9a08069d60da471a1099af6e53f383a40b4aa8ff86c9c"
+          }
+        }
+      },
+      "formal_report": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/9ea679978869f3fd5f484cbe77aad0cdd205dfa09130ef164e8418caa35984ca",
+        "bytes": 2220,
+        "logical_path": "formal-v4/formal-report.json",
+        "sha256": "9ea679978869f3fd5f484cbe77aad0cdd205dfa09130ef164e8418caa35984ca"
+      },
+      "qualification_elapsed_ns": 379341922544,
+      "qualification_report": {
+        "archive_key": "canonical_attempts",
+        "archive_member": "objects/06f8661295977ae769e333b2f451a855e2b6b7754e2fac9cdadc0550d2a4c463",
+        "bytes": 323475,
+        "logical_path": "formal-v4/qualification/report.json",
+        "sha256": "06f8661295977ae769e333b2f451a855e2b6b7754e2fac9cdadc0550d2a4c463"
+      },
+      "reason_for_followup": "The full independent-index whitespace check found one extra blank line at the end of observations.py. Exactly its final newline byte was removed; AST including all positions is unchanged. All original v4 evidence remains unchanged. v5 freshly executed the complete gate against the new file identity, with the same limits, roster, native runtime and shared algorithms.",
+      "source_digest": "cbc27b4c2a96fc9fd94f7c8d4a58a9b68ba409c6a786bf8e88681abfacae0543",
+      "status": "PASS_ON_ITS_OWN_FROZEN_SOURCE"
+    }
+  ],
+  "qualification_elapsed_ns": 365261179561,
+  "schema": "trnm.hia.service-settlement-engine-development.v1",
+  "scope": {
+    "build_stages": 31,
+    "canonical_cli_qualified": true,
+    "cross_target_qualified": false,
+    "engine_owner_qualified_on_declared_target": true,
+    "full_host_dependency_closure_claimed": false,
+    "native_units": 8,
+    "node_integration_complete": false,
+    "original_service_budget_qualified": false,
+    "production_activation": false,
+    "public_exports": 21,
+    "qualification_entry_rebuilds_from_repository_sources": true,
+    "rust_or_interpreter_fallback": false,
+    "store_qualified": false,
+    "whole_chain_native": false,
+    "whole_package_retired": false
+  },
+  "source": {
+    "base_head": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+    "base_tree": "61d7502c0491d20c42ec051b10d07ec12633c84f",
+    "digest": "2aba2e1b5d5b225a65c9f5ba2ee4ab70b65378c6c3e30205395d84446a9fa4c9",
+    "inputs": 1913,
+    "owned_entry_and_parent_ci_paths": {
+      ".github/workflows/hia-native-migration.yml": {
+        "base": {
+          "bytes": 437535,
+          "git_blob": "633190d99c0084ee57be1a71657ae5444b8daf41",
+          "mode": "100644",
+          "sha256": "53f17ff552cb3ab88ec370a0476721da0e79f1ac0536f29723279e2988962906"
+        },
+        "candidate": {
+          "bytes": 437554,
+          "sha256": "ac1f304bbb5f96d1e431e6700350bf9e6492c1b6c51afdc223c5d888ca6b2790"
+        },
+        "role": "parent_owned_ci_registry"
+      },
+      "config/hia-migration-v1.json": {
+        "base": {
+          "bytes": 73145,
+          "git_blob": "e2c20e95d6a9b39ef64c1c3279d80392d7d4c1cf",
+          "mode": "100644",
+          "sha256": "71a3267e7dffce312d623c5c30bbf72fa7ed65d27e0c17d213865724267b0a4f"
+        },
+        "candidate": {
+          "bytes": 75114,
+          "sha256": "96a6cf880524fd9bd6aa1986f49a8f1afb40e7ee0ee7bc6a8b20d79c1de5310d"
+        },
+        "role": "parent_owned_ci_registry"
+      },
+      "hia/platform/service_settlement/README.md": {
+        "base": null,
+        "candidate": {
+          "bytes": 3842,
+          "sha256": "90ca2438e41cf2c8071dacc452701dc6c0f48b768364d852bf67e4f6817f82fb"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/__init__.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 67,
+          "sha256": "b08539dff98fcd967bc07b032eb8c80546e55de219a7b72158d8e1f88c95b89e"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/build.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 41936,
+          "sha256": "fd63008e0e68a569d61e61c2def1224ec7dcbba3a5aea37601032492db94943a"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/contract.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 6911,
+          "sha256": "cad5af2aeb27a3a5d1c605d0b143c2048a670f07d6d54d06823db5be1d7691d2"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/original.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 16092,
+          "sha256": "f3ddbe6d4b783e16aa1867944c9a144c41f1629610c248901bba8a8bb0558852"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/process.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 9581,
+          "sha256": "85bcfe2e02221e0e1c02062d7b2e03cea5e1f98fee3e409a36e3071ba91d98a7"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/__init__.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 75,
+          "sha256": "2b82a11be5a5e42d4a230042c3f92ea0dd52c14fc92e0534f457ccfcc7c231a7"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/allocation_readback.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 11220,
+          "sha256": "277b13c268e7fb8bb0bcf85f1b7ecde43fafe386e47affe31363d662d960b410"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/allocator.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 9923,
+          "sha256": "28858c4ff132aae641338dea2fefab6b7439374181742f8044b3db74ea44b5a0"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/allocator_observer.c": {
+        "base": null,
+        "candidate": {
+          "bytes": 2725,
+          "sha256": "4289fd982da626a2ae9936d11f164be780188926959be6ea538a5d61bba1f872"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/assessment.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 9809,
+          "sha256": "d139370aebced2c9f8c362c8fcde7fbe6f53e58b1ddcba02d7fb8944b1d38a56"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/build_allocator.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 4914,
+          "sha256": "650a81de05fc8af34129868cc115cd623aa41bbebb6e50657e599d4f2b4febd7"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/build_readback.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 16063,
+          "sha256": "342feb735611a18ee3dbaf5862dc4f8036e9e97bee1ef4ce421bbe1a66faead7"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/capture_exec.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 1541,
+          "sha256": "9cf66393b9ec5b94d2b5b1b3a73eaa8a9ce04c49e4fed1e6310bf2317070eda8"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/common.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 754,
+          "sha256": "a2630f388f3bd0e380ae476a0e62bf2df6bcd957bedc24ae0b2b54b41d288880"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/errors.json": {
+        "base": null,
+        "candidate": {
+          "bytes": 6365,
+          "sha256": "633574e4874b7c736290eac3ba1ddb2e8dd2b8f6fef6fbd9d74ef6ab448fcfcb"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/evidence.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 4895,
+          "sha256": "9f6a040f129a808142f6861c5fef8539d0a8a16c8a32b5c65ed0454e2af76c71"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/fixtures.json.xz": {
+        "base": null,
+        "candidate": {
+          "bytes": 555400,
+          "sha256": "bf417e6b3d4086767b0614c9de0094d8794945100a8e6e149823d84869decc26"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/generator.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 7151,
+          "sha256": "5322c70aaf5d23ecf43a2769c3375b7f133542028c50f24378d144d59c30d33b"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/integrity.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 12054,
+          "sha256": "15868f488e91551de0484844e492897fbecc7bd147cb7d6fa8877eaf55ae00d8"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/integrity_roster.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 2620,
+          "sha256": "e5ed674d7380c0b01dd28298189229e9e164024067264512bb7b3391b8d70fbb"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/native.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 20435,
+          "sha256": "f775219c749f4e85a7535c86d9ab9ae910fc9bf75e8bb97b4fb81a7616f489f2"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/observations.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 15012,
+          "sha256": "e85b392370c1dc693454eb5bfad4b67a9e48c153b8237d52e16411e44a633630"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/original_readback.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 16662,
+          "sha256": "061a128758a301e40da14e2feb7c978ceb1c86aef2ff042766f8c6566d84b064"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/original_sources.json": {
+        "base": null,
+        "candidate": {
+          "bytes": 419290,
+          "sha256": "5a9956bb08fdc4f14d5090a3e020a3a3e4a328796faab6512d4163a222d7b3bc"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/process_readback.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 4425,
+          "sha256": "01f421b11c48bab9159f1b1ca74588e9f6f5a33c246f81d334bff1e839165d30"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/reference.Cargo.lock": {
+        "base": null,
+        "candidate": {
+          "bytes": 17927,
+          "sha256": "15c3bf160ed3c1932b3efab2b02500826facfcb5f7e8d9ea4c8fc3f2f9f940cd"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/reference.Cargo.toml": {
+        "base": null,
+        "candidate": {
+          "bytes": 357,
+          "sha256": "c8658a935911ce71b4930d79f02780cfbb6826faf38d6466d01c836ad0077285"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualification/reference.rs": {
+        "base": null,
+        "candidate": {
+          "bytes": 41245,
+          "sha256": "3ca09c00c6f061a09417e44a33ad68748322f6bc75301c460deb64938cab7182"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/qualify.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 10397,
+          "sha256": "150378e321b23e4acb268cfd31fcfd9d0c825d8366146ac45c617ebc2597c0f8"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/platform/service_settlement/readback.py": {
+        "base": null,
+        "candidate": {
+          "bytes": 1848,
+          "sha256": "e39f903b0a0b4a58e1ea60bd35ab76814571b37ed2e6749759e8033f05014717"
+        },
+        "role": "canonical_engine_entry"
+      },
+      "hia/tools/qualify_additional_owner_ci.py": {
+        "base": {
+          "bytes": 35871,
+          "git_blob": "77ab8cbf3866a986a63dfe6ce29c015b5b0f74eb",
+          "mode": "100644",
+          "sha256": "c8fbc9cf39425f797654591738bd6161b79003d9aee8cce3821159a150b4fb4d"
+        },
+        "candidate": {
+          "bytes": 47861,
+          "sha256": "d21b61275ae6f7a79fe5f3565266db50b3599e234f69f67ef1bf8e27a16f9f04"
+        },
+        "role": "parent_owned_ci_registry"
+      },
+      "scripts/ci/test_additional_owner_binding.py": {
+        "base": {
+          "bytes": 34592,
+          "git_blob": "da80ccee59c701b31f8fdd428bdbe5d5b2010f0c",
+          "mode": "100644",
+          "sha256": "d8c2d406444bf74019f3a7c18c46361d1e355458721d8746a8bfd6b2b540f82e"
+        },
+        "candidate": {
+          "bytes": 46772,
+          "sha256": "0c8540c292615b1046849c213e70f0bacc908251ba531582646b9392cb822818"
+        },
+        "role": "parent_owned_ci_registry"
+      }
+    },
+    "prior_execution_reused": false,
+    "repository_clean_at_qualification": false,
+    "runtime17": {
+      "hia/components.json": {
+        "bytes": 151413,
+        "sha256": "b0db0b2aef3424c7008515fdecd79de697a34e1358c48dea14ffc99cfcb6d0b8"
+      },
+      "hia/platform/service_settlement/engine_owned.h": {
+        "bytes": 3466,
+        "sha256": "a5cf22ad6c5c33914cca1e4292b934e59e47bb176c47272267f1eac926d7e39d"
+      },
+      "hia/platform/service_settlement/engine_owned.hepta": {
+        "bytes": 156096,
+        "sha256": "bcb90eec4478d951b91cd7cbede81cde12ff90485d7b9f0a362f7d109180fc18"
+      },
+      "hia/platform/service_settlement/engine_owned.map": {
+        "bytes": 793,
+        "sha256": "cecd421f9b5a33fe3506c4f62acaa30df21048325365e87d62064bfcef4a9f52"
+      },
+      "hia/platform/service_settlement/engine_owned_exports.json": {
+        "bytes": 830,
+        "sha256": "068d83a5f3c53d20392f5fb34ff6beeca74885879ab2ba616bd300d609b46fbd"
+      },
+      "hia/src/service_settlement/arithmetic.hepta": {
+        "bytes": 28854,
+        "sha256": "6563dcb31fb190e74a32828a5641df6a12a5c399cea268e3f75566ba91282fb5"
+      },
+      "hia/src/service_settlement/bilateral.hepta": {
+        "bytes": 23433,
+        "sha256": "57b36d33e4b27ae317cb03ca7581a3484d7064b5260719354f25a4cdfd3e02e4"
+      },
+      "hia/src/service_settlement/codec.hepta": {
+        "bytes": 75236,
+        "sha256": "e7d413b363a660477d483b21062faac1a608760be9052bc22bd624a71e3918da"
+      },
+      "hia/src/service_settlement/engine_control.hepta": {
+        "bytes": 78271,
+        "sha256": "2bd4af2969604516b71db01b937e28bb5391724925c445dc114031769c576dd6"
+      },
+      "hia/src/service_settlement/receipt.hepta": {
+        "bytes": 52390,
+        "sha256": "5aa5bdd779e87de753eff5f66c07ea1319e3550f5f5ad3042f3bf5f3e729d8b1"
+      },
+      "hia/src/service_settlement/receipt_owned.hepta": {
+        "bytes": 13862,
+        "sha256": "aa607a3fa0c965e4fbfccf7435a6c23765b56953d68cbb43a563575cf82b8fc0"
+      },
+      "hia/src/service_settlement/rollup.hepta": {
+        "bytes": 54340,
+        "sha256": "02b89c19e75bbbf2486c70a2aeac0d18ca1623ef7c8f4f1e1fc4fada06f499df"
+      },
+      "hia/src/service_settlement/settle.hepta": {
+        "bytes": 78392,
+        "sha256": "f28d74da55bac362dce24ba597a707e4327c9bb8f4b384f08733760f9967830d"
+      },
+      "hia/src/service_settlement/trust.hepta": {
+        "bytes": 52607,
+        "sha256": "360b544f56be85536f5c115de67373e9dc3f47bee1880bb28171df44304e3f76"
+      },
+      "hia/src/service_settlement/trust_owned.hepta": {
+        "bytes": 5462,
+        "sha256": "713b0961839f200c57843b1f223cc8c541ef00314252ebdfe49577859ac64095"
+      },
+      "hia/src/service_settlement/usage.hepta": {
+        "bytes": 60325,
+        "sha256": "7b9674ba658acb495c029bce678e0302998f4c6b65dc118a490352825a0b0231"
+      },
+      "hia/src/service_settlement/values.hepta": {
+        "bytes": 41538,
+        "sha256": "77c99137e11c990062804c40428da7be726768d12371571db112faf1ed5bdd21"
+      }
+    },
+    "shared3": {
+      "hia/src/crypto/ed25519_group.hepta": {
+        "bytes": 80448,
+        "sha256": "dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc"
+      },
+      "hia/src/crypto/ed25519_public_point_cache.hepta": {
+        "bytes": 38984,
+        "sha256": "3345ca7f0c27029eddb1d03bc008c9da8cff740320cb73f6b0633b0ff8ad21ac"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 86907,
+        "sha256": "82ecf6fef48e72cd56c8daffd449df1a27edcbd2c8c96abe464e1e5683ea2333"
+      }
+    },
+    "source_after": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/d896e70d9edf5d11cb614a84dffcd4e7051b9ca391438bd8801364d9a6ebe416",
+      "bytes": 314143,
+      "logical_path": "formal-v5/qualification/source-after.json",
+      "sha256": "d896e70d9edf5d11cb614a84dffcd4e7051b9ca391438bd8801364d9a6ebe416"
+    },
+    "source_before": {
+      "archive_key": "canonical_final_v5",
+      "archive_member": "objects/d896e70d9edf5d11cb614a84dffcd4e7051b9ca391438bd8801364d9a6ebe416",
+      "bytes": 314143,
+      "logical_path": "formal-v5/qualification/source-before.json",
+      "sha256": "d896e70d9edf5d11cb614a84dffcd4e7051b9ca391438bd8801364d9a6ebe416"
+    },
+    "source_inputs_stable": true,
+    "working_tree_kind": "declared private candidate with normal non-cone sparse checkout; independent exact Git object store; no manual skip-worktree changes, replace objects, or fabricated history"
+  },
+  "source_packet": {
+    "bytes": 842762,
+    "canonical_entry_files": 31,
+    "files": 35,
+    "manifest": {
+      "bytes": 13607,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-formal-overlay-v4-1gndgt8h/manifest.json",
+      "sha256": "3d202729ea7874ccff31cf31d96bf4f6aaa0e81929598d969be857a12984c61a"
+    },
+    "parent_owned_ci_registry_files": 4,
+    "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-formal-overlay-v4-1gndgt8h/overlay.tar.gz",
+    "qualified_by": "formal-v5",
+    "sha256": "d5a697f9bc77f06e05c80b466ccc3a213f6bac0fe463bbe84677ba6c1eb2dbac",
+    "source_digest": "2aba2e1b5d5b225a65c9f5ba2ee4ab70b65378c6c3e30205395d84446a9fa4c9"
+  },
+  "status": "FINITE_CANONICAL_SETTLEMENT_ENGINE_DEVELOPMENT_PASS",
+  "tools": {
+    "allocator_cc": {
+      "bytes": 1305304,
+      "path": "/usr/bin/x86_64-linux-gnu-gcc-15",
+      "sha256": "b5f1b773a7c733738352000c92a077dc5852a1a2fc6d836b1e411be1e9ec5f88"
+    },
+    "bash": {
+      "bytes": 1540520,
+      "path": "/usr/bin/bash",
+      "sha256": "3efccc187bafa75ff1e37d246270ab3e7aa559f242c7a52bf3ec2a1b5450bdbd"
+    },
+    "cargo": {
+      "bytes": 42185192,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+    },
+    "cargo_clippy": {
+      "bytes": 1263912,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+      "sha256": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb"
+    },
+    "cargo_fmt": {
+      "bytes": 3715584,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-fmt",
+      "sha256": "cd554fed0211e007995a6a540a7fd67bf22354986ae64960c752bb943d8e1184"
+    },
+    "clippy_driver": {
+      "bytes": 20339280,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+      "sha256": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729"
+    },
+    "git": {
+      "bytes": 4547768,
+      "path": "/usr/bin/git",
+      "sha256": "ed8b2df973b28c0fb773b9c0dc0816d3ee2b3835bb932d9153c21417bb51b362"
+    },
+    "ld": {
+      "bytes": 1890472,
+      "path": "/usr/bin/x86_64-linux-gnu-ld.bfd",
+      "sha256": "97f48d93b8b076a92d2809ec29dcb17f0f37c8827358f832255e2ed22fef6075"
+    },
+    "ldd": {
+      "bytes": 5390,
+      "path": "/usr/bin/ldd",
+      "sha256": "c1e7e48ebb430dc26245c77811202791937f2eee9283d153dff6c4d74effa6df"
+    },
+    "native_compiler": {
+      "bytes": 673903,
+      "path": "/tmp/trnm-task-kernel-provider-20261118-a638-v8/fd-tests/hia/compiler",
+      "sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+    },
+    "nm": {
+      "bytes": 48712,
+      "path": "/usr/bin/x86_64-linux-gnu-nm",
+      "sha256": "f04262bf48192a7cbb78a17ca49ae03f8930b0372bd0115576f957b2e2a57a01"
+    },
+    "objcopy": {
+      "bytes": 165584,
+      "path": "/usr/bin/x86_64-linux-gnu-objcopy",
+      "sha256": "05f4473d24f7330a9b13f43d007d619a2e792e33de453cd7533a2d97c30da770"
+    },
+    "python": {
+      "bytes": 7477160,
+      "path": "/usr/bin/python3.14",
+      "sha256": "52e0a13e60a981d8c4b6478be2ba5176f69da07948a056bf49cf6f077e30cb41"
+    },
+    "readelf": {
+      "bytes": 818312,
+      "path": "/usr/bin/x86_64-linux-gnu-readelf",
+      "sha256": "c857339616bbbfa5eba32733e22365048903fbaf6ed2126b897dd138bcb741fc"
+    },
+    "rustc": {
+      "bytes": 644784,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+    },
+    "rustdoc": {
+      "bytes": 13303096,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+      "sha256": "e5144902aed6cf94280eae3ad7708da5bdd3819b5281728af432d0e70231439c"
+    },
+    "rustfmt": {
+      "bytes": 5295560,
+      "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "sha256": "56b31ad3ec8fe0277a2884a189e243b8f04e9b48e5fd22e547c1516c5f8fd34c"
+    }
+  },
+  "whitespace_repair": {
+    "after": {
+      "bytes": 15012,
+      "sha256": "e85b392370c1dc693454eb5bfad4b67a9e48c153b8237d52e16411e44a633630"
+    },
+    "ast_including_positions_equal": true,
+    "before": {
+      "bytes": 15013,
+      "sha256": "76c71dbdcf3a718174a9a08069d60da471a1099af6e53f383a40b4aa8ff86c9c"
+    },
+    "code_or_assertion_changed": false,
+    "deleted_bytes": 1,
+    "fresh_complete_qualification": "formal-v5",
+    "patch": {
+      "bytes": 479,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/engine-observations-eof-fix-v1-ylqftnzr/patch.diff",
+      "sha256": "3b3d974f6e09a82431173612db8021903daf2fdfb4c7358b6c54c19947e0215d"
+    },
+    "path": "hia/platform/service_settlement/qualification/observations.py"
+  }
+}

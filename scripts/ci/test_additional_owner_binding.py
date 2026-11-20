@@ -545,5 +545,195 @@ if a.phase=='run':
         self.fixture_run(True)
 
 
+class SettlementEngineBinding(unittest.TestCase):
+    def setUp(self):
+        self.head, self.tree = "a" * 40, "b" * 40
+        controls = {"status": "PASS", "roster": list(binding.SETTLEMENT_CONTROL_ROSTER),
+                    "passed": len(binding.SETTLEMENT_CONTROL_ROSTER), "failed": 0, "not_run": 0,
+                    "report": {"path": "controls/report.json", "bytes": 12, "sha256": "3" * 64},
+                    "process_receipt": {"path": "controls/process.json", "bytes": 13, "sha256": "4" * 64}}
+        self.report = {
+            "schema": "trnm.hia.service-settlement-engine.qualification.v1", "status": "PASS",
+            "head": self.head, "tree": self.tree, "repository_clean": True,
+            "source_inputs_stable": True, "prior_execution_reused": False,
+            "counts": copy.deepcopy(binding.SETTLEMENT_COUNTS),
+            "limits": copy.deepcopy(binding.SETTLEMENT_LIMITS),
+            "source_inputs": {"hia/platform/service_settlement/qualify.py": {"bytes": 17, "sha256": "c" * 64}},
+            "tools": {name: {"path": "/actual-tools/" + name, "bytes": 123, "sha256": "d" * 64}
+                      for name in binding.SETTLEMENT_TOOL_LABELS},
+            "integrity_controls": controls, **dict.fromkeys(binding.SETTLEMENT_FALSE_SCOPES, False),
+        }
+        self.report["source_digest"] = self.digest(self.report["source_inputs"])
+        self.reader = copy.deepcopy(self.report)
+        self.reader["schema"] = "trnm.hia.service-settlement-engine.readback.v1"
+        self.reader["qualification_report_sha256"] = "e" * 64
+
+    @staticmethod
+    def digest(sources):
+        return hashlib.sha256(json.dumps(sources, sort_keys=True, separators=(",", ":"),
+                                         ensure_ascii=False).encode("utf-8")).hexdigest()
+
+    def check(self, report=None, reader=None):
+        binding.settlement_summary(self.report if report is None else report,
+                                   self.reader if reader is None else reader, self.head, self.tree)
+
+    def test_complete_engine_binding_allows_additional_exact_source_inputs(self):
+        self.check()
+        self.report["source_inputs"]["hia/platform/service_settlement/readback.py"] = {
+            "bytes": 23, "sha256": "f" * 64}
+        self.reader["source_inputs"] = copy.deepcopy(self.report["source_inputs"])
+        self.report["source_digest"] = self.reader["source_digest"] = self.digest(self.report["source_inputs"])
+        self.check()
+
+    def test_engine_refuses_changed_counts_even_when_both_summaries_agree(self):
+        for field, actual in binding.SETTLEMENT_COUNTS.items():
+            for value in (None, actual + 1, str(actual), bool(actual), float(actual)):
+                report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+                report["counts"][field] = reader["counts"][field] = value
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    self.check(report, reader)
+
+    def test_engine_refuses_raised_or_untyped_original_limits(self):
+        for field, actual in binding.SETTLEMENT_LIMITS.items():
+            for value in (actual + 1, None, str(actual), float(actual), True):
+                report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+                report["limits"][field] = reader["limits"][field] = value
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    self.check(report, reader)
+
+    def test_engine_refuses_old_dirty_failed_and_reused_execution(self):
+        for field, value in (("head", "0" * 40), ("tree", "0" * 40), ("repository_clean", False),
+                             ("status", "FAIL"), ("status", "EXECUTED"),
+                             ("source_inputs_stable", False), ("prior_execution_reused", True)):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report[field] = reader[field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                self.check(report, reader)
+
+    def test_engine_refuses_every_scope_promotion(self):
+        for field in binding.SETTLEMENT_FALSE_SCOPES:
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report[field] = reader[field] = True
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check(report, reader)
+
+    def test_engine_refuses_source_substitution_and_escaping_paths(self):
+        for name in ("", ".", "../escape", "/escape", "hia//duplicate", "hia/../escape", "hia\\escape"):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report["source_inputs"] = reader["source_inputs"] = {name: {"bytes": 17, "sha256": "c" * 64}}
+            report["source_digest"] = reader["source_digest"] = self.digest(report["source_inputs"])
+            with self.subTest(path=name), self.assertRaises(ValueError):
+                self.check(report, reader)
+        reader = copy.deepcopy(self.reader)
+        reader["source_digest"] = "0" * 64
+        with self.assertRaises(ValueError):
+            self.check(reader=reader)
+
+    def test_engine_refuses_omitted_actual_tools_and_controls(self):
+        for label in binding.SETTLEMENT_TOOL_LABELS:
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            del report["tools"][label]
+            del reader["tools"][label]
+            with self.subTest(tool=label), self.assertRaises(ValueError):
+                self.check(report, reader)
+        original = list(binding.SETTLEMENT_CONTROL_ROSTER)
+        for roster in ([], original[:-1], list(reversed(original)), original + original[:1]):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            for value in (report, reader):
+                value["integrity_controls"]["roster"] = roster
+                value["integrity_controls"]["passed"] = len(roster)
+            with self.subTest(roster=roster), self.assertRaises(ValueError):
+                self.check(report, reader)
+        for field in ("failed", "not_run"):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report["integrity_controls"][field] = reader["integrity_controls"][field] = 1
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check(report, reader)
+
+    def test_engine_binds_actual_report_and_receipt_bytes_inside_this_run(self):
+        with tempfile.TemporaryDirectory(prefix="hia-engine-evidence-binding-") as temporary:
+            root = Path(temporary).resolve()
+            qualification = root / "qualification"
+            (qualification / "controls").mkdir(parents=True)
+            (qualification / "report.json").write_bytes(b'{"status":"WRAPPER_TEST_FIXTURE"}\n')
+            for name in ("report.json", "process.json"):
+                (qualification / "controls" / name).write_bytes(b'{"qualification":false}\n')
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            reader["qualification_report_sha256"] = binding.identity(qualification / "report.json")["sha256"]
+            for field, filename in (("report", "report.json"), ("process_receipt", "process.json")):
+                report["integrity_controls"][field] = {
+                    "path": "controls/" + filename, **binding.identity(qualification / "controls" / filename)}
+            binding.settlement_evidence(report, reader, qualification)
+            outside = root / "previous-process.json"
+            outside.write_bytes((qualification / "controls/process.json").read_bytes())
+            changed = copy.deepcopy(report)
+            changed["integrity_controls"]["process_receipt"]["path"] = str(outside)
+            with self.assertRaises(ValueError):
+                binding.settlement_evidence(changed, reader, qualification)
+            (qualification / "controls/process.json").write_bytes(b'{"qualification":false,"replaced":true}\n')
+            with self.assertRaises(ValueError):
+                binding.settlement_evidence(report, reader, qualification)
+            (qualification / "report.json").write_bytes(b'{"status":"WRAPPER_TEST_FIXTURE","changed":true}\n')
+            with self.assertRaises(ValueError):
+                binding.settlement_evidence(report, reader, qualification)
+
+    def fixture_run(self, mutate):
+        with tempfile.TemporaryDirectory(prefix="hia-engine-ci-command-control-") as temporary:
+            base = Path(temporary).resolve()
+            repository, output, rust_bin = base / "repository", base / "output", base / "rust-bin"
+            modules = repository / "hia/platform/service_settlement"
+            modules.mkdir(parents=True)
+            (output / "observations").mkdir(parents=True)
+            rust_bin.mkdir()
+            # These actual children test command and immutable-report binding.
+            # They deliberately have no PASS qualification or native execution.
+            (modules / "qualify.py").write_text(
+                "import argparse,json,pathlib\n"
+                "p=argparse.ArgumentParser();p.add_argument('phase');p.add_argument('--output');p.add_argument('--rust-bin')\n"
+                "a=p.parse_args();q=pathlib.Path(a.output);q.mkdir()\n"
+                "q.joinpath('report.json').write_text(json.dumps({'status':'WRAPPER_TEST_FIXTURE','version':1})+'\\n')\n"
+                "print(json.dumps({'qualification':False}))\n")
+            reader = (
+                "import argparse,json,pathlib\n"
+                "p=argparse.ArgumentParser();p.add_argument('--input');p.add_argument('--output')\n"
+                "a=p.parse_args();q=pathlib.Path(a.input);pathlib.Path(a.output).mkdir()\n")
+            if mutate:
+                reader += "q.joinpath('report.json').write_text(json.dumps({'status':'WRAPPER_TEST_FIXTURE','version':2})+'\\n')\n"
+            reader += "print(json.dumps({'qualification':False}))\n"
+            (modules / "readback.py").write_text(reader)
+            with patch.object(binding, "ROOT", repository):
+                if mutate:
+                    with self.assertRaisesRegex(ValueError, "changed during independent readback"):
+                        binding.run("settlement-engine", output, rust_bin)
+                else:
+                    binding.run("settlement-engine", output, rust_bin)
+            process = binding.read(output / "observations/process.json")
+            expected = [
+                [sys.executable, "-B", "-m", "hia.platform.service_settlement.qualify", "run",
+                 "--output", str(output / "qualification"), "--rust-bin", str(rust_bin)],
+                [sys.executable, "-B", "-m", "hia.platform.service_settlement.readback",
+                 "--input", str(output / "qualification"), "--output", str(output / "independent-readback")],
+            ]
+            self.assertEqual([row["argv"] for row in process["stages"]], expected)
+            self.assertEqual([row["name"] for row in process["stages"]], ["qualification", "readback"])
+            self.assertEqual(process["status"], "FAIL" if mutate else "PASS")
+            for row in process["stages"]:
+                self.assertEqual(row["cwd"], str(repository))
+                self.assertEqual(row["exit_code"], 0)
+                self.assertTrue(row["started"])
+                self.assertEqual(binding.read(output / "observations" / (row["name"] + ".receipt.json")), row)
+                for stream in ("stdout", "stderr"):
+                    self.assertEqual(binding.identity(output / "observations" /
+                        (row["name"] + "." + stream + ".raw")), row[stream])
+            self.assertEqual(binding.read(output / "qualification/report.json")["status"],
+                             "WRAPPER_TEST_FIXTURE")
+
+    def test_actual_engine_wrapper_preserves_both_canonical_commands_and_complete_streams(self):
+        self.fixture_run(False)
+
+    def test_zero_exit_engine_reader_cannot_replace_the_qualified_report(self):
+        self.fixture_run(True)
+
+
 if __name__ == "__main__":
     unittest.main()
