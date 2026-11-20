@@ -7,7 +7,8 @@ import os
 import re
 import unittest
 
-GROUPS = ("general", "crypto-types", "state-root", "oracle", "ml-dsa")
+GROUPS = ("general", "crypto-types", "state-root", "oracle", "ml-dsa", "research")
+RESEARCH_MODULE_PREFIX = "hia.tests.test_research_"
 ROOT_TEST_MODULE = "hia.tests.test_state_root_adversarial."
 ORACLE_MODULES = ("hia.tests.test_oracle.", "hia.tests.test_oracle_preflight.")
 ML_DSA_MODULES = ("hia.tests.test_ml_dsa.", "hia.tests.test_ml_dsa_qualification.")
@@ -16,7 +17,7 @@ CRYPTO_TYPES_MODULES = tuple("hia.tests." + name + "." for name in (
     "test_sha512", "test_sha512_stream", "test_request_status",
     "test_transfer", "test_transcript", "test_keccak", "test_ml_dsa_poly",
 ))
-SCHEMA = "trnm.hia.component-test-partition.v4"
+SCHEMA = "trnm.hia.component-test-partition.v5"
 
 
 def need(condition, message):
@@ -48,6 +49,10 @@ def group_for(identifier):
         return "oracle"
     if identifier.startswith(ML_DSA_MODULES):
         return "ml-dsa"
+    # Own the complete test_research_* family, including new command/owner
+    # modules. Discovery and actual start/finish records remain mandatory.
+    if identifier.startswith(RESEARCH_MODULE_PREFIX):
+        return "research"
     return "general"
 
 

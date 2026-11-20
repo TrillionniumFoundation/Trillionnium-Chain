@@ -1,4 +1,4 @@
-"""Fail-closed tests for all forty-nine native compiler bootstrap admission blocks."""
+"""Fail-closed tests for all fifty native compiler bootstrap admission blocks."""
 from __future__ import annotations
 
 import json
@@ -24,9 +24,9 @@ class BootstrapGuards(unittest.TestCase):
     def setUpClass(cls):
         text = WORKFLOW.read_text(encoding="utf-8")
         cls.bodies = [textwrap.dedent(m.group("body")) for m in BOOTSTRAP.finditer(text)]
-        if len(cls.bodies) != 49:
+        if len(cls.bodies) != 50:
             raise AssertionError(
-                f"expected forty-nine native bootstrap admission blocks, found {len(cls.bodies)}"
+                f"expected fifty native bootstrap admission blocks, found {len(cls.bodies)}"
             )
 
     def check_case(self, body, payload, *, python_args, succeed):

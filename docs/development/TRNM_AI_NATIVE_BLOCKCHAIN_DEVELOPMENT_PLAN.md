@@ -1,3 +1,19 @@
+## 2026-11-20 — Signed Research、Authority、Bench profile、Recovery ACK 与六分区验收
+
+从已发布 `99bcfc11c00c393b7d48ac0f6352b9afe33e913f` 继续。当前 **76 kernels /30 native foundations /309 HIA sources**，26原包仍22部分迁移、4未迁移、0退役，9项全项目门OPEN。新增6个纯内核各只有一份正式源码；ACK归入 `hia/src/peer_lease/recovery_ack.hepta`，目录归属检查保持不变。原Rust源码、Cargo图、lock、原测试、编译预算与服务门均保留，根README仍0字节。
+
+99bcfc1的[HIA push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44738516036)全部67作业成功，包括Task Store、Settlement、source/archive、五组件分区、Work/typed-store依赖门及独立读回。682方法实际完整不重叠覆盖；36227B官方读回ZIP已完整独立核验，SHA256 `80f39df9eff6de59e2219db0ef259a8a09f797c43136fb4e375ce6ca4f8aaa7b`。同源本地Task全门PASS289.648秒，112 allocator控制/96真实失败在原180秒内55.803秒完成，41原测试、strictClippy/fmt与37 reader反证通过。上述结果不转授新提交。
+
+Research新增完整SignedResearchCommandV1与Authority value core。签名8方法PASS203.408秒：5045原/native配对、87 ABI、154独立hash、5132真实调用、118函数7858操作935blocks。保留dalek非规范Y与原错误顺序，独立审查发现的提前失败seed暂存问题已修复，39真实控制检查签名所有可暂存路径的整段私有scratch清零。Authority5方法PASS43.759秒：590原/native配对+180 ABI=770调用，50函数2882操作356blocks，保持原public raw未验证集合的binary_search行为。首次14方法run因测试选择错误JSON字段失败的223.280秒原记录保留；generic Serde、State/Snapshot/Handoff与Node继续实现。
+
+Bench新增ln/profile/format_value三份HIA。7方法PASS42.368秒，4实际编译、14745录制调用、3另存真实overflow traps；6560有限MPFR对照、17原Rust特殊值、317完整profile的16167字段及格式字符串一致。6559有限案例保存400bit区间，6553在128bit收敛、6在256bit，ln(1)单列；数学范围与实现假设在唯一LOGARITHM.md说明。84 profile来自42次实际scheduler，20组保持原high-water修复差异。错误测试字段导致的前次失败不改写。CLI/OS时钟/完整报告/持久化继续推进。
+
+Recovery ACK5方法PASS17.787秒：2编译3858调用，3175原Rust配对、1313独立hash、673 ABI，并独立读回3848 ACK+10既有native value观察；完整ACK journal/recovery、Body最大规模及Peer/Node接线仍开放。首轮observer优化级别错误保持原记录。
+
+原general实际759秒、整job992秒，故将全部 `hia.tests.test_research_*` 动态划为独立第六组，保持原20分钟。当前实际discover711：general516/crypto95/state7/oracle22/ML37/research34。68展开jobs/56bootstrap/50admission；33控制PASS，含六ZIP和missing/overlap/duplicate/failed Research拒绝、10 SHA reader控制及4×50=200实际bootstrap子进程。strict general60成员不变，Bench profile与ACK各自always归档。两macOS清理job未获得runner、无steps的NOT_RUN证据保留，重试不改变源或预算。
+
+后续按唯一计划继续Research State/Snapshot、Bench完整进程owner、State Import原71公开API/事务/故障资格及独立reader，再推进Node单一COMMIT/reorg/replay/outbox/ACK、Body、剩余crypto/TLS/TUF、原4秒16worker服务门、跨目标和真实模型/研究/经济闭环。全部替代及原验收闭合后才执行旧栈退役和最终清理。
+
 ## 2026-11-20 — 七类 Research 载荷、Bench 配置与动态编译预算修复
 
 从已发布 `267989537b255f168ac132edfbe317aba6c0e34a` 继续。本次最终目录新增4个内核，为 **70 kernels /30 native foundations /303 HIA sources**；26原包仍22部分迁移、4未迁移、0退役，9项整项目门OPEN。原Rust源码、Cargo图和lock未改变，根README仍0字节。当前审计页合并重复过程叙述，完整旧观察与失败保留在不可变Git历史和原资格证据中。

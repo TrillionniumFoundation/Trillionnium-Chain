@@ -3606,6 +3606,99 @@
         "source": "src/bench/workload.hepta"
       }
     ],
+    "src/bench/format_value.hepta": [
+      {
+        "functions": [
+          "bench_fixed4",
+          "bench_big_div10"
+        ],
+        "source": "src/bench/format_fixed.hepta"
+      },
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/logarithm.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_jam"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/profile.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "bench_ln",
+          "blog_phase",
+          "blog_atanh",
+          "blog_fraction",
+          "blog_copy",
+          "blog_fixed_mul",
+          "blog_small_mul",
+          "blog_div_small",
+          "blog_combine",
+          "blog_nonzero",
+          "blog_bits",
+          "blog_getbit",
+          "blog_sticky",
+          "blog_round"
+        ],
+        "source": "src/bench/logarithm.hepta"
+      },
+      {
+        "functions": [
+          "fp64_read",
+          "fp64_put",
+          "fp64_valid",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_add",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div",
+          "fp64_ratio"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
     "src/bench/repeat.hepta": [
       {
         "functions": [
@@ -5046,6 +5139,39 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/peer_lease/recovery_ack.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_wout",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/peer_lease/values.hepta": [
       {
         "functions": [
@@ -5114,6 +5240,200 @@
           "sha256_work_store64"
         ],
         "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/research_protocol/authority.hepta": [
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_token",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_nonzero",
+          "rt_read_word",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/research_protocol/command.hepta": [
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_nonzero",
+          "rt_option",
+          "rt_positive",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text",
+          "rt_validate_challenge",
+          "rt_validate_claim",
+          "rt_validate_claimants",
+          "rt_validate_contributors",
+          "rt_validate_evaluation",
+          "rt_validate_evidence",
+          "rt_validate_license",
+          "rt_validate_match",
+          "rt_validate_payload",
+          "rt_validate_ref",
+          "rt_validate_resolution",
+          "rt_validate_spdx",
+          "rt_validate_workload"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "es_expand_public",
+          "es_fe_add",
+          "es_fe_mul",
+          "es_fe_sub",
+          "es_hash",
+          "es_inverse",
+          "es_normalize",
+          "es_point_add",
+          "es_point_encode",
+          "es_point_mul",
+          "es_scalar_muladd",
+          "es_scalar_reduce",
+          "es_wipe"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_store64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       }
     ],
     "src/research_protocol/external_key.hepta": [

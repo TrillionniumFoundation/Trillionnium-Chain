@@ -11,9 +11,10 @@ neither supplies a decision to the native implementation.
 byte access, hexadecimal/display output and canonical CBOR encoding. These native
 components are part of M10's research protocol. `payload.hepta` implements all
 seven `ResearchCommandV1` payloads, including their canonical encoding, strict
-decoding, validation, command type and primary object reference. Signed envelopes,
-protocol state transitions, Hepta handoff, full consumer integration and
-original-package retirement still require implementation and acceptance. The
+decoding, validation, command type and primary object reference. `command.hepta`
+also implements signed envelopes, signing, strict verification and both command
+hashes. Protocol state transitions, generic Serde ingestion, Hepta handoff, full
+consumer integration and original-package retirement still require acceptance. The
 primitive decoder leaves protocol versions, enum discriminants and round-trip
 checks to the typed consumer; the payload implementation performs those checks.
 
@@ -207,6 +208,85 @@ Rust crate, not a copied Python implementation. This acceptance covers the
 payload component; it does not certify signed commands, state or package
 retirement.
 
+## Signed command envelopes
+
+`command.hepta` implements `SignedResearchCommandV1::sign`, `signing_bytes`,
+`from_canonical_bytes`, `validate`, `canonical_bytes`, `command_fingerprint`
+and `payload_hash` through the shared HIA payload, Ed25519 and SHA functions.
+It preserves the original nine-field signing array, ten-field full array,
+encoding marker, all field bounds and the exact role authorization rule.
+The original Rust crate supplies expected public values and errors only in
+qualification; production execution neither calls Rust nor accepts a host
+verification decision.
+
+The private 24-byte `RSC1` request consists of magic, one operation byte and
+nineteen zero bytes. Operation 1 encodes a typed envelope without semantic
+validation; 2 validates it; 3 decodes a complete canonical envelope, checks exact
+re-encoding and validates; 4 derives the public key and signs from a 32-byte
+seed. The typed representation is chain-id UTF-8 length/data, command-id key,
+signer-DID UTF-8 length/data, role, nonce, 32-byte public key, command tag,
+payload fields in the existing typed layout, and signature length/data.
+Words are little-endian u64. For operation 4 only, the public-key slot holds
+the input seed and the signature must be empty. Input bytes remain read-only.
+
+The 160-byte output prefix contains eight u64 fields: full canonical length,
+typed length, command kind, signing-byte length, error name, two error details,
+and encoding-mismatch string length. Bytes 64–95 hold the command fingerprint,
+96–127 the payload hash, and 128–159 the public key. Full canonical bytes,
+normalized typed bytes and signing bytes follow. The signature is part of both
+the full and typed envelopes. Fingerprints exclude the signature exactly as in
+the original method. On an encoding mismatch, the actual UTF-8 marker occupies
+bytes 64 onwards, with its length at byte 56; other protocol errors preserve
+only their specified name/details in the otherwise zero prefix.
+
+Canonical and payload errors retain codes 1–11 and 101–115. Codes 201–207 map
+to encoding mismatch, invalid chain ID, invalid signer DID, zero nonce, invalid
+public key, invalid signature and unauthorized role/command. Unknown role uses
+the original `AuthorityRole` discriminant error. Error name indexes append
+`AuthorityRole` and `command_id` to the existing payload table. Unauthorized
+role/command details contain the actual role and command kind. Code 208 denotes
+an internal cryptographic failure; it is never a protocol acceptance.
+
+Validation order is chain ID, nonzero command ID, DID, nonce, nonzero public key,
+payload validation, role authorization, exact signature length, public-point
+validation and strict signature verification. Public Y decoding follows the
+original dalek `VerifyingKey::from_bytes` behavior for the 19 representable
+noncanonical field encodings; the original public bytes still enter the Ed25519
+challenge hash. Weak public points, noncanonical R and noncanonical S remain
+rejected. A malformed signature does not change an earlier payload or role error.
+
+The scratch requirement is `266752 + 16 * request_payload_length` bytes, with
+checked arithmetic before any write. Metadata, crypto workspace, temporary
+seed, hash framing, result hashes, metadata backup and flat/canonical staging
+occupy separate regions. Every well-framed operation-4 return with sufficient
+scratch clears the entire declared private region after output publication,
+including early typed-shape, nonempty-signature and output-capacity failures.
+The input and canary beyond the declared region remain unchanged. An incomplete
+scratch extent or invalid header is rejected before seed staging. Codes 64 and
+65 are the private capacity/shape refusals and leave the output unchanged.
+
+The final unit contains 118 functions, 7,858 operations and 935 blocks, including
+its exact explicit shared-function closure. It compiles with the unchanged
+128-function, 8,192-operation, 1,536-block and 256-block-per-function limits.
+The existing 1 MiB borrowed-buffer test bound remains. Generic Serde ingestion,
+protocol state, handoff and consumer integration are separate unfinished scope;
+this implementation does not retire the original package.
+
+Eight methods passed 5,045 actual original/native comparisons, 154 independent
+hash checks and 87 ABI controls, including 39 actual success/failure seed-staging
+cases. Every original fixture truncation, canonical head/marker mutations, all
+ASCII chain/DID bytes, role and multi-error precedence, public-Y normalization,
+weak points, scalar boundaries and signature corruptions were exercised. The
+unchanged formal recorder observed 5,132 returned native calls, no skipped
+methods, an unchanged complete source fence and valid actual build provenance.
+The affected payload layer separately retained all 6,968 original/native pairs
+and 20 ABI controls with its exact revised source. No first-run failed fixture
+or pre-cleanup development observation is relabeled as a passing result.
+
+The [authority implementation](AUTHORITY.md) also implements native identity/set
+construction, canonical encoding, exact ordering and both original membership
+methods. State transitions and snapshot ownership remain separate work.
+
 ## Reproduction
 
 With the pinned compiler and toolchain environment used by the existing HIA
@@ -216,6 +296,8 @@ workflow, run:
 python3 -m unittest hia.tests.test_research_canonical -v
 python3 -m unittest hia.tests.test_research_external_key -v
 python3 -m unittest hia.tests.test_research_payload -v
+python3 -m unittest hia.tests.test_research_command -v
+python3 -m unittest hia.tests.test_research_authority -v
 ```
 
 The suite builds the original locked workspace dependency graph in offline mode

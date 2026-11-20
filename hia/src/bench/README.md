@@ -16,8 +16,10 @@ and tests transport buffers, build artifacts and observe results.
 The [environment-value implementation](ENVIRONMENT.md) adds all 12 original
 parsers/defaults and exact decimal conversion; [fixed formatting](FORMATTING.md)
 adds native four-decimal output. These value layers preserve the same existing
-scheduler contract. OS environment acquisition, the complete CLI, derived
-logarithmic profiles, clock measurement and persistence remain separate owners.
+scheduler contract. [Native logarithms](LOGARITHM.md),
+[all 51 derived profile fields](PROFILE.md) and complete field formatting are
+also implemented. OS environment acquisition, the complete CLI, clock measurement,
+ordered report assembly and persistence remain separate owners.
 
 ## Original observable contract
 
@@ -137,7 +139,7 @@ initial call. Each replay must match both the SHA-256 digest and every ordered
 member vector. A digest alone is insufficient. The HIA owner executes this loop
 itself; Python test loops are not the implementation.
 
-### Timing and complete profiles — OPEN; fixed formatting implemented
+### Timing/report ownership — OPEN; derived profiles and formatting implemented
 
 The original captures SystemTime after workload construction. It times only the
 first scheduler call with Instant. Digest generation, all deterministic replays,
@@ -184,9 +186,10 @@ computes `sum(-p * ln(p)) / ln(3)` using attributed hits as its denominator.
 The estimated conflict rate is binary64 `1 - min(keys/n, 1)`; this must not be
 silently replaced with `(n-keys)/n`, whose rounding can differ. Groups per 1000
 transactions multiply by binary64 1000 before dividing. Every displayed float
-uses the original fixed four-decimal formatting and operation order. Existing
-nonnegative binary64 arithmetic does not complete signed subtraction, natural
-logarithms, decimal text parsing or formatting.
+uses the original fixed four-decimal formatting and operation order. The current native profile composition includes the required signed arithmetic,
+natural logarithm and exact output formatting. Its separate contracts retain
+operation order, overflow behavior and numerical qualification; they do not
+substitute for actual OS time or complete report/persistence ownership.
 
 ### Persistence — OPEN
 
@@ -296,7 +299,9 @@ and undersized buffers, comparator negative controls, default 20,000-transaction
 workloads, inputs exceeding 2 MiB, physically unaligned buffers and sequential
 arena reuse. Hash, membership, output-tail, input and arena guards are checked.
 
-The CLI parser, environment text parsing, derived profile methods and entropy,
-four-decimal formatting, clock capture and persistent-file owner remain OPEN.
+The environment text parsing, derived profile methods and entropy, and
+four-decimal formatting now have their own actual native qualifications. The
+CLI parser, OS environment acquisition, clock capture, complete ordered report
+and persistent-file owner remain OPEN.
 The original `trnm-bench` package and executor dependency must remain until those
 contracts and their complete real-original qualification are closed.

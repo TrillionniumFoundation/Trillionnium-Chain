@@ -6,8 +6,10 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import re
 import tempfile
 import unittest
+import zipfile
 
 from hia.tools import component_partition as part
 from hia.tools import qualify_components_ci as ci
@@ -17,6 +19,8 @@ IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_example.Example.test_two",
        "hia.tests.test_state_root_adversarial.Example.test_maximum",
        "hia.tests.test_transfer.Example.test_signature",
+       "hia.tests.test_research_canonical.Example.test_original",
+       "hia.tests.test_research_command.Example.test_signature",
        "hia.tests.test_ml_dsa.Example.test_signature",
        "hia.tests.test_oracle.Example.test_original"]
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
@@ -91,6 +95,7 @@ class ComponentPartitions(unittest.TestCase):
         variants = [[], IDS + [IDS[0]], IDS[:-1], [i for i in IDS if "state_root" not in i],
                     [i for i in IDS if "test_transfer" not in i],
                     [i for i in IDS if "test_ml_dsa" not in i],
+                    [i for i in IDS if "test_research_" not in i],
                     ["unittest.loader._FailedTest.test_missing"], IDS + ["bad identity"]]
         for identifiers in variants:
             with self.subTest(identifiers=identifiers), self.assertRaises(ValueError):
@@ -107,7 +112,82 @@ class ComponentPartitions(unittest.TestCase):
             self.assertEqual(part.group_for(identifier), "oracle")
         self.assertEqual(part.group_for("hia.tests.test_oracle_extra.Example.test_one"), "general")
         self.assertEqual(part.descriptor(IDS, "oracle")["selected_tests"], [IDS[-1]])
-        self.assertEqual(set(part.GROUPS), {"general", "crypto-types", "state-root", "oracle", "ml-dsa"})
+        self.assertEqual(set(part.GROUPS), {"general", "crypto-types", "state-root", "oracle", "ml-dsa", "research"})
+
+    def test_complete_research_module_family_has_one_owner(self):
+        for module in ("canonical", "external_key", "payload", "command", "future_owner"):
+            identifier = "hia.tests.test_research_" + module + ".Example.test_case"
+            self.assertEqual(part.group_for(identifier), "research")
+        for identifier in ("hia.tests.test_research.Example.test_case",
+                           "hia.tests.test_researcher.Example.test_case",
+                           "hia.tests.test_example.Research.test_case"):
+            self.assertEqual(part.group_for(identifier), "general")
+        self.assertEqual(part.descriptor(IDS, "research")["selected_tests"], sorted(IDS[4:6]))
+        self.assertEqual(ci.qualify.rust_oracle_names("research"), ci.qualify.RUST_ORACLES)
+
+    def test_actual_discovery_keeps_all_research_methods_and_all_six_groups(self):
+        root = Path(__file__).resolve().parents[2]
+        suite = unittest.defaultTestLoader.discover(str(root / "hia/tests"),
+                    pattern="test_*.py", top_level_dir=str(root))
+        identifiers = [case.id() for case in part.flatten(suite)]
+        research = sorted(identifier for identifier in identifiers
+                          if identifier.split(".")[2].startswith("test_research_"))
+        modules = {identifier.split(".")[2] for identifier in research}
+        self.assertEqual(modules, {path.stem for path in (root / "hia/tests").glob("test_research_*.py")})
+        self.assertTrue(research)
+        self.assertEqual(part.descriptor(identifiers, "research")["selected_tests"], research)
+        observed = []
+        for group in part.GROUPS:
+            selected = part.descriptor(identifiers, group)["selected_tests"]
+            if group != "research":
+                self.assertFalse(set(selected).intersection(research))
+            observed.extend(selected)
+        self.assertEqual(sorted(observed), sorted(identifiers))
+        self.assertEqual(len(observed), len(set(observed)))
+
+    def test_workflow_wires_six_exact_jobs_with_unchanged_deadlines(self):
+        root = Path(__file__).resolve().parents[2]
+        text = (root / ".github/workflows/hia-native-migration.yml").read_text().split("jobs:\n", 1)[1]
+        headers = list(re.finditer(r"(?m)^  ([a-z][a-z0-9-]*):\n", text))
+        jobs = {match[1]: text[match.start():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
+                for index, match in enumerate(headers)}
+        expected = {group: "native-components" + ("-" + group if group != "general" else "")
+                    for group in part.GROUPS}
+        for group, name in expected.items():
+            job = jobs[name]
+            self.assertEqual(re.findall(r"(?m)^    timeout-minutes: ([0-9]+)$", job), ["20"])
+            self.assertEqual(job.count("qualify.py --require-rust-oracle --shard " + group + " --output"), 1)
+            self.assertNotIn("continue-on-error:", job)
+        research = jobs["native-components-research"]
+        self.assertIn("cargo fetch --locked --manifest-path trillionnium/Cargo.toml", research)
+        self.assertIn("$RUNNER_TEMP/hia-research-dependencies/cargo-fetch.stderr.raw", research)
+        self.assertIn("name: Verify candidate sources remained unchanged\n        if: always()", research)
+        upload = re.search(r"(?ms)^      - name: Retain success and failure observations\n(.*?)(?=^      - name:|\Z)", research)[1]
+        paths = upload.split("          path: |\n", 1)[1].split("          if-no-files-found:", 1)[0]
+        self.assertEqual([line.strip() for line in paths.splitlines()], [
+            "${{ runner.temp }}/hia-observations/", "${{ runner.temp }}/hia-bootstrap/bootstrap.json",
+            "${{ runner.temp }}/original-rust-build.jsonl"])
+        self.assertIn("if: always()", upload)
+        general = jobs["native-components"]
+        self.assertIn("HIA_BENCH_PROFILE_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/profile", general)
+        self.assertIn("HIA_RECOVERY_ACK_OUTPUT: ${{ runner.temp }}/hia-recovery-ack-observations", general)
+        ack = re.search(r"(?ms)^      - name: Retain complete native recovery ACK observations\n(.*?)(?=^      - name:|\Z)", general)[1]
+        self.assertIn("if: always()", ack)
+        self.assertIn("path: ${{ runner.temp }}/hia-recovery-ack-observations/", ack)
+        general_upload = re.search(r"(?ms)^      - name: Retain success and failure observations\n(.*?)(?=^      - name:|\Z)", general)[1]
+        self.assertNotIn("hia-recovery-ack-observations", general_upload)
+        self.assertNotIn("hia-bench-observations", general_upload)
+        reader = jobs["native-components-readback"]
+        needs = re.search(r"(?m)^    needs: \[(.*)\]$", reader)[1].split(", ")
+        self.assertEqual(set(needs), set(expected.values()))
+        self.assertEqual(len(needs), 6)
+        for group, producer in expected.items():
+            variable = "TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT"
+            self.assertIn(variable + ": ${{ needs." + producer + ".result }}", reader)
+            self.assertIn("--" + group + ' "$RUNNER_TEMP/component-' + group + '-download"', reader)
+            artifact = "name: hia-components-" + group + "-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}"
+            self.assertIn(artifact, jobs[producer])
+            self.assertIn(artifact, reader)
 
     def test_complete_ml_dsa_and_its_integrity_roster_have_one_explicit_partition(self):
         for identifier in ("hia.tests.test_ml_dsa.MlDsaNativeTests.test_verify",
@@ -308,6 +388,51 @@ class ComponentReadback(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ci.verify_all({**bundles, "crypto-types": bundles["general"]},
                               LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
+
+    def test_six_downloaded_zip_fixtures_reject_missing_overlapping_or_failed_research(self):
+        # Real ZIP/regular-file transport around explicit semantic reader
+        # fixtures. This is not evidence of actual component native execution.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            originals = {group: self.make_bundle(root / "producer", group) for group in part.GROUPS}
+            bundles = {}
+            for group, directory in originals.items():
+                archive = root / (group + ".zip")
+                with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as stream:
+                    for path in sorted(directory.rglob("*")):
+                        if path.is_file():
+                            stream.write(path, path.relative_to(directory).as_posix())
+                destination = root / "download" / group
+                with zipfile.ZipFile(archive) as stream:
+                    self.assertEqual(set(stream.namelist()), ci.artifact_files(group))
+                    stream.extractall(destination)
+                bundles[group] = destination
+            result = ci.verify_all(bundles, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
+            self.assertEqual(set(result["partitions"]), set(part.GROUPS))
+            with self.assertRaisesRegex(ValueError, "Exactly all component partitions"):
+                ci.verify_all({group: value for group, value in bundles.items() if group != "research"},
+                              LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
+            path = bundles["research"] / "hia-observations/qualification.json"
+            baseline = path.read_bytes()
+            good = json.loads(baseline)
+            variants = []
+            for names in ([IDS[0], IDS[5]], [IDS[4], IDS[4]], [IDS[4]]):
+                wrong = copy.deepcopy(good)
+                wrong["test_partition"].update(selected_tests=names, selected_sha256=part.object_hash(names),
+                                                started_tests=names, finished_tests=names)
+                wrong["tests"]["run"] = len(names)
+                variants.append((wrong, "Discovered or selected component roster differs"))
+            wrong = copy.deepcopy(good)
+            wrong["status"] = "FAIL"
+            variants.append((wrong, "Component execution did not finish"))
+            wrong = copy.deepcopy(good)
+            wrong["tests"]["failures"] = [[IDS[4], "retained actual failure"]]
+            variants.append((wrong, "Failed or skipped component tests"))
+            for value, reason in variants:
+                path.write_text(json.dumps(value))
+                with self.subTest(reason=reason), self.assertRaisesRegex(ValueError, reason):
+                    ci.verify_all(bundles, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
+                path.write_bytes(baseline)
 
     def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
         with tempfile.TemporaryDirectory() as tmp:

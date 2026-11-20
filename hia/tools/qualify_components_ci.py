@@ -22,7 +22,7 @@ from hia.tools.component_partition import (
     validate_completion, validate_lineage,
 )
 
-SCHEMA = "trnm.hia.component-ci-readback.v5"
+SCHEMA = "trnm.hia.component-ci-readback.v6"
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
@@ -252,6 +252,7 @@ def main(argv=None):
     parser.add_argument("--state-root", type=Path, required=True)
     parser.add_argument("--oracle", type=Path, required=True)
     parser.add_argument("--ml-dsa", type=Path, required=True)
+    parser.add_argument("--research", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
@@ -276,7 +277,7 @@ def main(argv=None):
                     "compiler_sha256": binding["compiler_sha256"]}
         report = verify_all({"general": args.general, "crypto-types": args.crypto_types,
                              "state-root": args.state_root, "oracle": args.oracle,
-                             "ml-dsa": args.ml_dsa},
+                             "ml-dsa": args.ml_dsa, "research": args.research},
                             expected, sources, identifiers, compiler, tree)
         need(sources == qualify.sources(), "Source changed during independent component readback")
     except BaseException as error:

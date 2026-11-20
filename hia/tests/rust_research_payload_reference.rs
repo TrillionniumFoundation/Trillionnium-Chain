@@ -4,7 +4,7 @@ use serde_json::{json, Value};
 use std::io::{self, BufRead};
 use trnm_research_protocol::*;
 
-fn hex(bytes: &[u8]) -> String {
+pub(crate) fn hex(bytes: &[u8]) -> String {
     const DIGITS: &[u8] = b"0123456789abcdef";
     let mut out = String::with_capacity(bytes.len() * 2);
     for &b in bytes {
@@ -14,7 +14,7 @@ fn hex(bytes: &[u8]) -> String {
     out
 }
 
-fn unhex(text: &str) -> Vec<u8> {
+pub(crate) fn unhex(text: &str) -> Vec<u8> {
     assert_eq!(text.len() % 2, 0);
     text.as_bytes()
         .chunks_exact(2)
@@ -47,7 +47,7 @@ fn shares(out: &mut Vec<u8>, values: &[ClaimShareV1]) {
     }
 }
 
-fn flat(command: &ResearchCommandV1) -> Vec<u8> {
+pub(crate) fn flat(command: &ResearchCommandV1) -> Vec<u8> {
     let mut out = Vec::new();
     match command {
         ResearchCommandV1::MatchEvidenceCommitment(v) => {
@@ -133,7 +133,7 @@ fn flat(command: &ResearchCommandV1) -> Vec<u8> {
     out
 }
 
-fn validation(e: &ResearchPayloadValidationError) -> (u64, &'static str, u64, u64) {
+pub(crate) fn validation(e: &ResearchPayloadValidationError) -> (u64, &'static str, u64, u64) {
     use ResearchPayloadValidationError::*;
     match e {
         ZeroExternalKey(name) => (101, name, 0, 0),
@@ -158,7 +158,7 @@ fn validation(e: &ResearchPayloadValidationError) -> (u64, &'static str, u64, u6
     }
 }
 
-fn canonical(e: &CanonicalDecodeError) -> (u64, &'static str, u64, u64) {
+pub(crate) fn canonical(e: &CanonicalDecodeError) -> (u64, &'static str, u64, u64) {
     use CanonicalDecodeError::*;
     match e {
         UnexpectedEof => (1, "", 0, 0),

@@ -753,7 +753,7 @@
     {
       "id": "research-protocol/payload",
       "node_integration_complete": false,
-      "scope": "All seven ResearchCommandV1 payloads: canonical encoding, strict decoding/round-trip, validation/error order, checked contributor accounting, exact shares, command type and primary object reference. Signed envelopes, Serde, state, handoff, Node integration and retirement remain open.",
+      "scope": "All seven ResearchCommandV1 payloads: canonical encoding, strict decoding/round-trip, validation/error order, checked contributor accounting, exact shares, command type and primary object reference. The signed-envelope component consumes these shared codecs; Serde, state, handoff, Node integration and retirement remain open.",
       "source": "hia/src/research_protocol/payload.hepta",
       "state": "native-kernel-implemented",
       "tests": [
@@ -793,6 +793,73 @@
         "hia/tests/test_bench_environment.py",
         "hia/tests/rust_bench_environment_reference.rs"
       ]
+    },
+    {
+      "id": "research-protocol/command",
+      "node_integration_complete": false,
+      "scope": "Original SignedResearchCommandV1 canonical/signing bytes, complete strict decoding and validation/error order, native Ed25519 sign/verify, fingerprint/payload hashes, dalek public-Y behavior and all-exit private seed clearing; generic Serde, state, handoff, Node integration and retirement remain open.",
+      "source": "hia/src/research_protocol/command.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_command.py",
+        "hia/tests/rust_research_command_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/logarithm",
+      "node_integration_complete": false,
+      "scope": "Native binary64 logarithm through bounded integer interval refinement; actual MPFR and retained Rust comparisons, including hard rounding and special values. Full process/CLI/report and retirement remain open.",
+      "source": "hia/src/bench/logarithm.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/profile",
+      "node_integration_complete": false,
+      "scope": "All 51 original derived profile fields, actual scheduler integration, entropy and final four-decimal strings; prior scheduling safety differences remain explicit. Whole process ownership and retirement remain open.",
+      "source": "hia/src/bench/profile.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/format-value",
+      "node_integration_complete": false,
+      "scope": "Complete binary64 four-decimal field formatting, including non-finite special values, with actual Rust comparison and atomic output guards; complete ordered CLI report remains open.",
+      "source": "hia/src/bench/format_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "peer-payload-recovery/ack-codec",
+      "node_integration_complete": false,
+      "scope": "Original fixed 188-byte recovery ACK encode/decode/checksum/error precedence and existing native type wiring; full ACK ledger/recovery owner and original wide Body bounds remain open.",
+      "source": "hia/src/peer_lease/recovery_ack.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_peer_payload_ack.py",
+        "hia/tests/rust_peer_payload_ack_reference.rs",
+        "hia/platform/peer_payload_recovery/codec_reference_hook.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/authority",
+      "node_integration_complete": false,
+      "scope": "Original authority identity/set constructors, exact tuple sorting/validation, canonical encoders and both membership methods, preserving raw unvalidated binary-search behavior; generic Serde, protocol state, snapshot and Node integration remain open.",
+      "source": "hia/src/research_protocol/authority.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_authority.py",
+        "hia/tests/rust_research_authority_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -829,7 +896,10 @@
         "bench/repeat",
         "bench/decimal",
         "bench/environment",
-        "bench/format-fixed"
+        "bench/format-fixed",
+        "bench/logarithm",
+        "bench/profile",
+        "bench/format-value"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
@@ -872,7 +942,9 @@
         "research-protocol/canonical",
         "research-protocol/hash",
         "research-protocol/external-key",
-        "research-protocol/payload"
+        "research-protocol/payload",
+        "research-protocol/command",
+        "research-protocol/authority"
       ],
       "legacy_path": "trillionnium/crates/trnm-research-protocol",
       "module": "M10",
@@ -901,7 +973,8 @@
     },
     {
       "components": [
-        "peer-lease/values"
+        "peer-lease/values",
+        "peer-payload-recovery/ack-codec"
       ],
       "legacy_path": "trillionnium/crates/trnm-peer-lease",
       "module": "M04",

@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **70 kernel units, 30 native foundations and 303 HIA source
+inventory contains **76 kernel units, 30 native foundations and 309 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (22 partially ported and 4 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -13,48 +13,44 @@ retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
 
-This continuation extends published
-`267989537b255f168ac132edfbe317aba6c0e34a`. The exact implementation, limits,
-source-specific successful observations and failures are maintained in the
-[current audit](AUDIT.md); the next clean source graph requires its own full CI.
+This continuation extends published `99bcfc11c00c393b7d48ac0f6352b9afe33e913f`.
+All 67 predecessor HIA workflow jobs and its independent 682-method component
+readback passed. The complete exact-source local Task gate passed in 289.648
+seconds, including all 112 allocator controls within the unchanged 180-second
+phase, original tests, strict Clippy/fmt and independent tamper controls.
+The [current audit](AUDIT.md) distinguishes these source-specific results from
+the new graph, which requires its own clean committed qualification.
 
-The [Research implementation](src/research_protocol/README.md) contains canonical
-CBOR, domain-separated hashing, ExternalKey construction, and all seven typed
-command payloads. The payload layer passed 6,968 actual original/native pairs
-and 20 ABI controls across seven methods. It preserves canonical round trips,
-validation precedence, reference ordering, contributor totals and exact shares.
-Signed envelopes, generic serialization, protocol state and Hepta handoff remain.
+The [Research implementation](src/research_protocol/README.md) now contains
+canonical CBOR, hashing, ExternalKey, all seven typed payloads, complete signed
+commands and [Authority identity/set values](src/research_protocol/AUTHORITY.md).
+The payload layer retains 6,968 original/native pairs and 20 ABI controls.
+Eight signed methods passed 5,045 pairs and 87 ABI controls; five Authority
+methods passed 590 pairs and 180 ABI controls. Native signing preserves exact
+original validation and signature behavior and clears private scratch on all
+admitted signing exits. Generic Serde, the full state/snapshot owner, Hepta
+handoff and Node integration remain open.
 
-The [Bench implementation](src/bench/README.md) contains native workload
-generation, SHA-256 digests, repeated execution of all seven scheduling
-strategies, [environment-value parsing](src/bench/ENVIRONMENT.md), exact decimal
-conversion and [four-decimal formatting](src/bench/FORMATTING.md). Its new seven
-methods recorded six builds and 2,110 native calls; the existing eight methods
-retain 1,566 calls and all 11 original tests. Full ordered members and digests are
-compared, and the intentional scheduler safety corrections are explicit.
-Complete CLI, OS environment/clock/persistence ownership, logarithmic profile
-calculation and report presentation are still being implemented.
+The [Bench implementation](src/bench/README.md) adds native
+[logarithms](src/bench/LOGARITHM.md), [all 51 derived profile fields](src/bench/PROFILE.md)
+and complete formatted field values to existing workload, scheduling, repeat,
+digest and environment/decimal implementations. Seven new methods passed 317
+complete profiles and 6,560 finite MPFR logarithm comparisons. Existing scheduler
+safety differences remain explicit. Full CLI, OS acquisition, clock, ordered
+report and persistence ownership remain under development.
 
-Task's canonical metadata writer now reuses its original returned cursor, saving
-598 operations while preserving all 648 writes and their partial traps. All
-123 actual dynamic entries, representing 75 distinct compiler inputs, fit the
-original limits after this change. The two formerly oversized policy units now
-have 7,927 and 7,949 operations; the limit remains 8,192. A native old/new
-comparator completed 5,220 memory/trap cases and 10,440 calls. The
-[complete Task gate](platform/task_kernel/QUALIFICATION.md), including original
-41 tests, 1,390 records, 445 public cases, 112 allocator controls and independent
-readback, must run on the frozen candidate.
+The [Recovery ACK codec](platform/peer_payload_recovery/README.md) passed 3,175
+actual Rust pairs, 1,313 independent hashes and 673 ABI controls, with all actual
+captures independently reread. ACK journal/recovery and wide Body remain open.
 
-The Task provider's six lifecycle entries and all 29 operations are HIA-emitted.
-Its separate runtime witness uses an actual build-time ABI probe. External
-SQLite and system libraries remain; the old project C provider is only the
-explicitly fenced test oracle. Published `2679895` passed hosted Task Boundary
-and complete Settlement qualification/readback. Its Task compiler regression
-and Bench offline dependency failure are preserved and corrected by this
-continuation. The general workflow retains exact offline/lock semantics and
-actual failed Cargo diagnostics, with all original Bench sources included in
-the global source fence. Component discovery is 682 methods in five disjoint
-groups (521/95/7/22/37); enumeration is not execution.
+Fresh component discovery has 711 methods in six disjoint groups:
+516 general, 95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 34 Research.
+Research now has an independent job under the same 20-minute limit. The combined
+reader requires every actual method and all six successful strict bundles.
+All 33 partition/reader/bootstrap controls passed; enumeration alone is not
+execution. The workflow expands to 68 jobs, 56 bootstraps and 50 source-admission
+blocks. Original compiler limits, service budget, failed observations and
+retirement conditions remain unchanged.
 
 ## Transfer, request state, transcripts and continuous SHA-512
 
