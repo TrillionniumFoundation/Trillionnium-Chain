@@ -49,6 +49,7 @@ def build_original(directory):
     """Build the retained workspace graph; select its exact dependency artifacts."""
     before = ORIGINAL.read_bytes()
     command = ["cargo", "build", "--manifest-path", str(ROOT / "trillionnium/Cargo.toml"),
+               "--target-dir", str(Path(directory) / "original-target"),
                "--locked", "--offline", "-p", "trnm-research-protocol",
                "--message-format=json"]
     result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
