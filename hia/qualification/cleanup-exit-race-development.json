@@ -1,0 +1,495 @@
+{
+  "actual_failure_reproduction": {
+    "cases": 10,
+    "interpretation": "Actual SIGKILL/killpg EPERM while immediate WNOWAIT had no exit observation; later WNOWAIT and complete singleton census both succeeded. Controlled exit timing used os._exit and at most 150 microseconds of signal delay.",
+    "job_id": "1a1f2c7896a-ffbe-bf2",
+    "observations": [
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11648,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11648,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11648,
+        "time_ns": 537796864857041
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11649,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11649,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11649,
+        "time_ns": 537796876867666
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11650,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11650,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11650,
+        "time_ns": 537796888495500
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11652,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11652,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11652,
+        "time_ns": 537796900268791
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11654,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11654,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11654,
+        "time_ns": 537796912019708
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11655,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11655,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11655,
+        "time_ns": 537796924108125
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11656,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11656,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11656,
+        "time_ns": 537796936175208
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11657,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11657,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11657,
+        "time_ns": 537796948053208
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11658,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11658,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11658,
+        "time_ns": 537796959760583
+      },
+      {
+        "after_waitid": null,
+        "before_waitid": null,
+        "census": [
+          11659,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "census_bytes": 4,
+        "census_errno": 0,
+        "decision": false,
+        "later_decision": true,
+        "later_waitid": [
+          11659,
+          0,
+          20,
+          0,
+          1
+        ],
+        "pid": 11659,
+        "time_ns": 537796971629666
+      }
+    ],
+    "report": {
+      "bytes": 15392,
+      "sha256": "c2c818bf2531f3c155a88ebad675b453b3bb185f35867708ab193ae403b2977d"
+    },
+    "root": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-mac-cleanup-419-v3-8obhknv7"
+  },
+  "archive": {
+    "archive": {
+      "bytes": 162825,
+      "sha256": "5d1a3df03e281c4a11fc448370a515dba1b3f86de7dcc53aa8fd92df04efb4b3"
+    },
+    "archive_members_including_manifest": 48,
+    "manifest": {
+      "bytes": 25986,
+      "sha256": "4b49394febefbbb0757674766e0efc0cfa3de8e859b9bdd47d1b6eae2bbea06b"
+    },
+    "metadata_entries": 60,
+    "original_hardlinked_paths": 0,
+    "regular_content_members": 47,
+    "regular_logical_bytes": 1243023,
+    "runtime_qualification_inferred_from_packaging": false,
+    "special_objects_are_metadata_only": true,
+    "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+  },
+  "archive_locations": {
+    "local": "/workspace/scratch/5cee04bf67f6/mac-cleanup-qualified-v4/complete-observations.tar.gz",
+    "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cleanup-exit-race-archive/complete-observations.tar.gz"
+  },
+  "base_commit": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+  "change": {
+    "actual_exit_and_complete_singleton_still_required": true,
+    "exchange_deadline_changed": false,
+    "extra_foreign_empty_or_failed_census_refused": true,
+    "live_permission_denial_remains_failure": true,
+    "maximum_cleanup_observation_seconds": 0.05,
+    "original_group_identity_retained_until_reap": true,
+    "scope": "Read-only exit visibility observation after Darwin EPERM; no extra signal, no discovered PID ownership and no sandbox or descendant-session claim."
+  },
+  "date_utc": "2026-11-19",
+  "earlier_observations": {
+    "system_python_without_waitid": "Original Mac diagnostic failed NATIVE_PROCESS_PLATFORM with the installed Xcode Python; it did not execute the intended native owner.",
+    "unchanged_normal_exit_controls": "A subsequent actual Homebrew 3.14 run passed all 52 original methods and 1000 ordinary flood controls without reproducing EPERM."
+  },
+  "linux_qualification": {
+    "complete_four_suite_corrected_run": {
+      "archive_host_readback_job": "1a1f2d63ef4-ffbe-c10",
+      "complete_archive": {
+        "elapsed_ns": 237040041,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/cleanup-complete87-archive/complete-observations.tar.gz",
+        "readback": {
+          "archive": {
+            "bytes": 137162,
+            "sha256": "5d1c8aa6b63bd82d104dde97f025b8e0902cae58f62ea3e9b778b64e35a0b059"
+          },
+          "archive_members_including_manifest": 65,
+          "manifest": {
+            "bytes": 45364,
+            "sha256": "1b44975f592e3f237cb14ad517b0f9e883a7c0add34d9a3cd9d9056a17b04629"
+          },
+          "metadata_entries": 108,
+          "original_hardlinked_paths": 0,
+          "regular_content_members": 64,
+          "regular_logical_bytes": 16962578,
+          "runtime_qualification_inferred_from_packaging": false,
+          "special_objects_are_metadata_only": true,
+          "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+        }
+      },
+      "job_id": "1a1f2d27b61-ffbe-c0a",
+      "report": {
+        "elapsed_ns": 4972404661,
+        "exit_code": 0,
+        "expected_tests": 87,
+        "gnu_time": {
+          "bytes": 27232,
+          "sha256": "34ba90f8199989d88f2f02d40ddcee60be27a7f361db9fb7c100578cc8d7bf1e"
+        },
+        "host": "Linux",
+        "python_version": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+        "source_inputs": {
+          "formal/pon-nakamoto-v1/bounded_process.py": {
+            "bytes": 9088,
+            "sha256": "823cd4f915b359207b6fe6f92a5a12fde7da71d55b2c5c49ce420b6ff808f95e"
+          },
+          "formal/pon-nakamoto-v1/test_bounded_process.py": {
+            "bytes": 16444,
+            "sha256": "566ac55133b8e5d1efa544f4f77ae0164d8036d41fc5fe178fc1d90bd51d04af"
+          },
+          "formal/pon-nakamoto-v1/test_bounded_process_cleanup.py": {
+            "bytes": 8001,
+            "sha256": "ffd3c9af95b1dd3bd5313b03bfa192fcb03f56f18e65e25ad09bfd1d02e3c38b"
+          },
+          "formal/pon-nakamoto-v1/test_bounded_process_darwin.py": {
+            "bytes": 10798,
+            "sha256": "cc6034c7d55e4b6a9ead80cd90365b8473c0e4afa5d3f5e83fa1b78a211c6e9a"
+          },
+          "scripts/ci/read_native_cache_observation.py": {
+            "bytes": 9219,
+            "sha256": "66da3ae13ded590fbef939233a158a9ca9ad38567f70a89d9796f01bbdab1e3b"
+          },
+          "scripts/qualification_runtime.py": {
+            "bytes": 6121,
+            "sha256": "cff43eeccc06d7ca8e8cbc533bc04d599ac043af9835efcaff7e324d16f2d5b4"
+          },
+          "scripts/run_evaluation_qualification.py": {
+            "bytes": 14758,
+            "sha256": "8bd737b14b63b3db39c68eb69c38e98e181ec071f748a84343deebe432c3062d"
+          },
+          "scripts/run_public_readiness_qualification.py": {
+            "bytes": 19002,
+            "sha256": "a90ed462238959225628fee9447a706b16cf0e278df6d5e8324b15bfabe55bbd"
+          },
+          "scripts/run_public_v3_service_campaign.py": {
+            "bytes": 6692,
+            "sha256": "815e5c66fe4649304e9f1a7005ded575ce717afbe0c958522b224fa9e7a2b524"
+          },
+          "scripts/test_qualification_runtime.py": {
+            "bytes": 25326,
+            "sha256": "7dfc0b3afd5c51472c4be7874379a26dbb76bbe5951822574bc258e859d5e8ca"
+          }
+        },
+        "source_unchanged": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 13675,
+          "sha256": "bf1a438fce0cac03e3be3d61393db819b51e38d99c5a9640aa785dce3f93b448"
+        },
+        "stdout": {
+          "bytes": 358,
+          "sha256": "c78ce4cb0f5e947ee7fda35c1ab8814fafc255f59af9f9aab2ecb6d95b7aa900"
+        }
+      },
+      "root": "/tmp/trnm-cleanup-complete87-jqj6f13i"
+    },
+    "complete_three_suites_tests": 55,
+    "exit_code": 0,
+    "expanded_attempt_failure": "13 errors, each because this scratch host lacks /usr/bin/time. The original 32 observer tests were not skipped or reported as passing.",
+    "expanded_four_suite_attempt": {
+      "elapsed_ns": 4817341975,
+      "exit_code": 1,
+      "expected_tests": 87,
+      "sources": {
+        "formal/pon-nakamoto-v1/bounded_process.py": {
+          "bytes": 9088,
+          "sha256": "823cd4f915b359207b6fe6f92a5a12fde7da71d55b2c5c49ce420b6ff808f95e"
+        },
+        "formal/pon-nakamoto-v1/test_bounded_process_darwin.py": {
+          "bytes": 10798,
+          "sha256": "cc6034c7d55e4b6a9ead80cd90365b8473c0e4afa5d3f5e83fa1b78a211c6e9a"
+        }
+      },
+      "streams": {
+        "stderr.raw": {
+          "bytes": 34377,
+          "sha256": "621f42ecfa36f65b2779f5351d36ed9edbdbc33429871c10586c63d7f8321d61"
+        },
+        "stdout.raw": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  },
+  "mac_qualification": {
+    "actual_eperm_cases": 2000,
+    "complete_tests": 55,
+    "job_id": "1a1f2c9b3f1-ffbe-bf6",
+    "report": {
+      "bytes": 759885,
+      "sha256": "21560cde0e14f9a1c27b12df0a317917b5ee4e9b1c2edee31f6fd0171d061e80"
+    },
+    "results": {
+      "ProcessFailure:NATIVE_STDERR_LIMIT": 1000,
+      "ProcessFailure:NATIVE_STDOUT_LIMIT": 1000
+    },
+    "root": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-mac-cleanup-qualified-v4-ivkx3gqp",
+    "sources": {
+      "formal/pon-nakamoto-v1/bounded_process.py": {
+        "bytes": 9088,
+        "sha256": "823cd4f915b359207b6fe6f92a5a12fde7da71d55b2c5c49ce420b6ff808f95e"
+      },
+      "formal/pon-nakamoto-v1/test_bounded_process.py": {
+        "bytes": 16444,
+        "sha256": "566ac55133b8e5d1efa544f4f77ae0164d8036d41fc5fe178fc1d90bd51d04af"
+      },
+      "formal/pon-nakamoto-v1/test_bounded_process_cleanup.py": {
+        "bytes": 8001,
+        "sha256": "ffd3c9af95b1dd3bd5313b03bfa192fcb03f56f18e65e25ad09bfd1d02e3c38b"
+      },
+      "formal/pon-nakamoto-v1/test_bounded_process_darwin.py": {
+        "bytes": 10798,
+        "sha256": "cc6034c7d55e4b6a9ead80cd90365b8473c0e4afa5d3f5e83fa1b78a211c6e9a"
+      },
+      "scripts/run_public_v3_service_campaign.py": {
+        "bytes": 6692,
+        "sha256": "815e5c66fe4649304e9f1a7005ded575ce717afbe0c958522b224fa9e7a2b524"
+      }
+    },
+    "tests_exit_code": 0,
+    "unexpected_errors": 0
+  },
+  "new_hosted_head_and_prospective_result": "NOT_YET_OBSERVED",
+  "original_ci_failure": {
+    "error": "PermissionError at killpg during the stderr output-cap test",
+    "full_log": {
+      "bytes": 55126,
+      "sha256": "40bec6fc67169023b477cc0806c6fc99e586e830c2d8b8b77627627a9a501c9e"
+    },
+    "job_id": 135400519348,
+    "lane": "macos-15 prospective-merge",
+    "run_id": 44477203041
+  },
+  "production_activation": false,
+  "schema": "trnm.hia.cleanup-exit-race-development.v1",
+  "status": "LINUX_87_MACOS_55_AND_2000_ACTUAL_EPERM_PASS",
+  "whole_chain_native": false,
+  "whole_node_shutdown_qualified": false
+}

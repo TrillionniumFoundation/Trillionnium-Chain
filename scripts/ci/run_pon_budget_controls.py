@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exact-source component controls, not a service campaign or TPS qualification.
 
-Each old production group and current source execute identical group test bytes.
+Each controlled source group and current source execute identical test bytes.
 Build once per source; the fixed arm also builds pool_mining and its actual CLI.
 Retain executable identities, actual lists and every named native outcome.
 An arbitrary nonzero exit is never a negative control.
@@ -29,18 +29,23 @@ from replay_pinned_native import json_load, require
 from verify_ci_source import verify as verify_source
 
 ROOT = Path(__file__).resolve().parents[2]
-BUDGET_BEFORE_SHA = '89fb2269b0dd306fbd32c36f464842c3d7daee2b'
-BUDGET_BEFORE_TREE = 'c4cd82ed0004709192eff1563d90423bd5641e99'
-# V2 changes only the old subject's temporary fixture-schema cleanup.
-# Keep the original subject and failed native receipts as separate evidence.
-POOL_BEFORE_SHA = '84e68b4f7a9b2f48f9c47ed05c9a44229d186e30'
-POOL_BEFORE_TREE = '4e85966ae98b0081fcc2f9d0e8af313bc4f7d005'
-POOL_SCAN_BEFORE_SHA = 'ae657e262278ae4a058220f66a6a0495721eb9ad'
-POOL_SCAN_BEFORE_TREE = 'def5ae894d06b787222b6b2b2b2d97bf8be59366'
+BUDGET_BEFORE_SHA = '270eb51919d9b02e3962ffab5140ccffbbbb1470'
+BUDGET_BEFORE_TREE = '4745c959808fb2610e7c8b03180b40129027d078'
+# All three subjects have parent 88f610df3717b26f3c20e6455992da9004c144db
+# and retain the driver's Cargo graph, toolchain and unchanged native tests.
+# The budget subject restores shared-as-held post-COMMIT refusal and
+# uninterruptible registered-parent binding within current completion APIs;
+# it is a controlled counterexample, not the historical 89fb226 source.
+# The pool subjects retain exact older production algorithms. Prior sources
+# and admission failures remain historical observations, never new PASSes.
+POOL_BEFORE_SHA = 'e6c530ccd3edd035892870315877ae9adfff7e23'
+POOL_BEFORE_TREE = 'de8e7f2ebd66c88ced29e5ffcf93854588ff6117'
+POOL_SCAN_BEFORE_SHA = 'd84b9e0af0943c1f779b432589e31ca58db3364f'
+POOL_SCAN_BEFORE_TREE = '1503028c567b6d327450880308ae78ef8259eeee'
 BEFORE_SOURCES = {
-    'budget-before-v2': (BUDGET_BEFORE_SHA, BUDGET_BEFORE_TREE),
-    'pool-before-v2': (POOL_BEFORE_SHA, POOL_BEFORE_TREE),
-    'pool-scan-before': (POOL_SCAN_BEFORE_SHA, POOL_SCAN_BEFORE_TREE),
+    'budget-before-v3': (BUDGET_BEFORE_SHA, BUDGET_BEFORE_TREE),
+    'pool-before-v3': (POOL_BEFORE_SHA, POOL_BEFORE_TREE),
+    'pool-scan-before-v2': (POOL_SCAN_BEFORE_SHA, POOL_SCAN_BEFORE_TREE),
 }
 HISTORY_PREFIX = 'ingress::history_import::tests::detached_budget_controls::'
 MINING_PREFIX = 'mining::prepare_control_tests::'
@@ -58,7 +63,7 @@ EQUIVALENCE = MINING_PREFIX + 'registered_prepare_control_preserves_packets_erro
 BUDGET_CONTROLS = (*HISTORY, *MINING_FAILURES, EQUIVALENCE)
 # These are the assertion sites in the identical, committed test-only input.
 # A setup unwrap or an unrelated assertion cannot establish this counterexample.
-PANIC_LINES = {**dict.fromkeys(HISTORY, 221),
+PANIC_LINES = {**dict.fromkeys(HISTORY, 259),
                **dict(zip(MINING_FAILURES, (82, 124, 176)))}
 GROUP_INPUTS = {
     'budget': (
@@ -79,7 +84,7 @@ RELEASE_PROFILE = dict(debug_assertions=False, debuginfo=0, opt_level='3',
 RELEASE_CLI_PROFILE = dict(RELEASE_PROFILE, test=False)
 FALSE_FLAGS = ('native_campaign_executed', 'whole_business_liveness_qualified',
                'throughput_measured', 'production_activation')
-SCHEMA = 'pon-original-budget-component-controls-v2'
+SCHEMA = 'pon-original-budget-component-controls-v4'
 
 POOL_PREFIX = 'mining::pool_run_control_tests::'
 POOL_FAILURES = {
@@ -127,8 +132,8 @@ HANDOFF_CONTROLS = tuple(HANDOFF_PREFIX + suffix for suffix in (
 ))
 CONTROL_GROUPS = {'budget': BUDGET_CONTROLS, 'pool': POOL_CONTROLS,
                   'history-handoff': HANDOFF_CONTROLS, 'pool-scan': POOL_SCAN_CONTROLS}
-MODE_GROUPS = {'budget-before-v2': ('budget',), 'pool-before-v2': ('pool',),
-              'pool-scan-before': ('pool-scan',),
+MODE_GROUPS = {'budget-before-v3': ('budget',), 'pool-before-v3': ('pool',),
+              'pool-scan-before-v2': ('pool-scan',),
               'fixed': ('budget', 'pool', 'history-handoff', 'pool-scan')}
 FIXED_ONLY_INPUTS = (
     'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs',
@@ -360,8 +365,8 @@ def history_cpu_observation(cpu: object, balance: int, unavailable: bool) -> Non
 
 
 def history_evidence(raw: str, name: str, mode: str) -> dict:
-    # The old refusal and current native-completion observations have different
-    # phase semantics. A version label alone cannot transfer either outcome.
+    # Both arms use current native-completion tests. Historical pre-COMMIT
+    # refusal records cannot establish the controlled post-COMMIT mechanism.
     old_schema = 'history-detached-original-refill-control-v2'
     current_schema = 'history-detached-native-completion-control-v3'
     records = []
@@ -370,9 +375,9 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
             records.append(json_load(line[line.index('{'):]))
     require(len(records) == 1, 'ONE_ACTUAL_HISTORY_RECORD_REQUIRED')
     record = records[0]
-    before = mode == 'budget-before-v2'
-    require(mode in ('budget-before-v2', 'fixed')
-            and record.get('schema') == (old_schema if before else current_schema)
+    before = mode == 'budget-before-v3'
+    require(mode in ('budget-before-v3', 'fixed')
+            and record.get('schema') == current_schema
             and record.get('mode') == HISTORY[name]
             and record.get('native_campaign_executed') is False, 'HISTORY_SCOPE_AND_MODE')
     replay = record.get('replay')
@@ -391,7 +396,7 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
     require(type(history) is dict and type(history.get('measurement_failures')) is int
             and history['measurement_failures'] == 0
             and type(history.get('packets')) is list
-            and len(history['packets']) == (1 if before else 2)
+            and len(history['packets']) == 2
             and all(type(packet) is dict for packet in history['packets']),
             'ACTUAL_HISTORY_PACKET_REQUIRED')
     by_phase = history_phase_map(history['packets'][0].get('phases'))
@@ -419,43 +424,47 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
                 and record.get('epoch_marker') is None, 'CLEAN_ORIGINAL_EPOCH_CLOSE_REQUIRED')
     checks = record.get('refill_resource_checks')
     require(type(checks) is int and checks >= 0, 'REFILL_CHECK_COUNT')
-    if mode == 'budget-before-v2':
-        require(checks == 0 and completed_phase(execution, False, 'PUBLIC_MUTATION_CPU_BUDGET')
-                and unstarted_phase(commit),
-                'ORIGINAL_DETACHED_REFUSAL_REQUIRED')
+    require(record.get('qualification') == 'NativeCommitted',
+            'ACTUAL_NATIVE_COMPLETION_QUALIFICATION_REQUIRED')
+    require(completed_phase(execution, True) and completed_phase(commit, True),
+            'NATIVE_COMMIT_BEFORE_REFILL_REQUIRED')
+
+    def packet_id(value):
+        require(type(value) is list and len(value) == 32
+                and all(type(byte) is int and 0 <= byte <= 255 for byte in value),
+                'ACTUAL_PACKET_ID_REQUIRED')
+        return bytes(value)
+
+    packets = history['packets']
+    ids = [packet_id(packet.get('packet_id')) for packet in packets]
+    require(ids[0] != ids[1]
+            and all(type(packet.get('packet_index')) is int and packet['packet_index'] == index
+                    for index, packet in enumerate(packets))
+            and history.get('schema') == 'pon-local-history-import-observation-v1'
+            and history.get('observation_has_consensus_authority') is False
+            and type(history.get('supplied_packets')) is int and history['supplied_packets'] == 2
+            and packet_id(history.get('tip')) == ids[1],
+            'EXACT_NATIVE_SUCCESSOR_PAGE_REQUIRED')
+    successor = history_phase_map(packets[1].get('phases'))
+    require(set(successor) == set(by_phase), 'COMPLETE_SUCCESSOR_PHASES_REQUIRED')
+    first_credit = record.get('first_refill_credited_ns')
+    if before:
+        require(checks == 0 and first_credit is None
+                and completed_phase(by_phase.get('submit_result', {}), False,
+                                    'PUBLIC_MUTATION_CPU_BUDGET')
+                and completed_phase(by_phase.get('history_import', {}), False,
+                                    'PUBLIC_MUTATION_CPU_BUDGET')
+                and all(unstarted_phase(phase) for phase in successor.values()),
+                'CONTROLLED_POST_COMMIT_REFUSAL_REQUIRED')
         if not dirty:
             require(record.get('outcome') == {'Err': 'PUBLIC_MUTATION_CPU_BUDGET'}
                     and completed_phase(page.get('history_import', {}), False,
                                         'PUBLIC_MUTATION_CPU_BUDGET'),
-                    'ORIGINAL_REFUSAL_OUTCOME_REQUIRED')
+                    'CONTROLLED_REFUSAL_OUTCOME_REQUIRED')
     else:
-        require(record.get('qualification') == 'NativeCommitted',
-                'ACTUAL_NATIVE_COMPLETION_QUALIFICATION_REQUIRED')
         require(checks > 0, 'ORIGINAL_REFILL_CONTROL_REQUIRED')
-        first_credit = record.get('first_refill_credited_ns')
         require(type(first_credit) is int and 0 <= first_credit <= flow['credited_refill_ns'],
                 'ORIGINAL_FIRST_REFILL_CREDIT_REQUIRED')
-        require(completed_phase(execution, True) and completed_phase(commit, True),
-                'NATIVE_COMMIT_BEFORE_REFILL_REQUIRED')
-
-        def packet_id(value):
-            require(type(value) is list and len(value) == 32
-                    and all(type(byte) is int and 0 <= byte <= 255 for byte in value),
-                    'ACTUAL_PACKET_ID_REQUIRED')
-            return bytes(value)
-
-        packets = history['packets']
-        ids = [packet_id(packet.get('packet_id')) for packet in packets]
-        require(ids[0] != ids[1]
-                and all(type(packet.get('packet_index')) is int and packet['packet_index'] == index
-                        for index, packet in enumerate(packets))
-                and history.get('schema') == 'pon-local-history-import-observation-v1'
-                and history.get('observation_has_consensus_authority') is False
-                and type(history.get('supplied_packets')) is int and history['supplied_packets'] == 2
-                and packet_id(history.get('tip')) == ids[1],
-                'EXACT_NATIVE_SUCCESSOR_PAGE_REQUIRED')
-        successor = history_phase_map(packets[1].get('phases'))
-        require(set(successor) == set(by_phase), 'COMPLETE_SUCCESSOR_PHASES_REQUIRED')
         if HISTORY[name] == 'Continue':
             required = ('work', 'execution', 'commit', 'submit_result', 'cpu_settle', 'history_import')
             require(not dirty and all(completed_phase(phases.get(key, {}), True)
@@ -478,8 +487,8 @@ def history_evidence(raw: str, name: str, mode: str) -> dict:
 
 
 def validate_case(name: str, mode: str, process: dict, stdout: str, stderr: str) -> dict:
-    require(name in BUDGET_CONTROLS and mode in ('budget-before-v2', 'fixed'), 'EXACT_CASE_REQUIRED')
-    failed = mode == 'budget-before-v2' and name != EQUIVALENCE
+    require(name in BUDGET_CONTROLS and mode in ('budget-before-v3', 'fixed'), 'EXACT_CASE_REQUIRED')
+    failed = mode == 'budget-before-v3' and name != EQUIVALENCE
     require(process.get('started') is True and process.get('failure') is None
             and process.get('cleanup_errors') == []
             and type(process.get('exit_code')) is int
@@ -496,8 +505,8 @@ def validate_case(name: str, mode: str, process: dict, stdout: str, stderr: str)
                                  panics[0][1]) is not None,
                 'EXPECTED_CONTROL_PANIC_SOURCE')
         if name in HISTORY:
-            marker = 'detached execution refused actual debt before its original refill control:'
-            require(marker in stderr, 'EXPECTED_DETACHED_REFUSAL_ASSERTION')
+            marker = 'complete native continuation missed its original refill control:'
+            require(marker in stderr, 'EXPECTED_POST_COMMIT_REFUSAL_ASSERTION')
         elif name == MINING_FAILURES[0]:
             require('assertion failed: error.is(code)' in stderr, 'EXPECTED_PRE_CANCEL_ASSERTION')
         else:
@@ -517,9 +526,9 @@ def validate_case(name: str, mode: str, process: dict, stdout: str, stderr: str)
 
 def validate_pool_case(name: str, mode: str, process: dict,
                        stdout: str, stderr: str) -> dict:
-    require(name in POOL_CONTROLS and mode in ('pool-before-v2', 'fixed'),
+    require(name in POOL_CONTROLS and mode in ('pool-before-v3', 'fixed'),
             'EXACT_POOL_CASE_REQUIRED')
-    failed = mode == 'pool-before-v2' and name in POOL_FAILURES
+    failed = mode == 'pool-before-v3' and name in POOL_FAILURES
     require(process.get('started') is True and process.get('failure') is None
             and process.get('cleanup_errors') == []
             and type(process.get('exit_code')) is int
@@ -555,9 +564,9 @@ def validate_pool_case(name: str, mode: str, process: dict,
 
 def validate_pool_scan_case(name: str, mode: str, process: dict,
                             stdout: str, stderr: str) -> dict:
-    require(name in POOL_SCAN_CONTROLS and mode in ('pool-scan-before', 'fixed'),
+    require(name in POOL_SCAN_CONTROLS and mode in ('pool-scan-before-v2', 'fixed'),
             'EXACT_POOL_SCAN_CASE_REQUIRED')
-    failed = mode == 'pool-scan-before'
+    failed = mode == 'pool-scan-before-v2'
     require(process.get('started') is True and process.get('failure') is None
             and process.get('cleanup_errors') == []
             and type(process.get('exit_code')) is int
@@ -640,7 +649,7 @@ def run(args: argparse.Namespace) -> dict:
             and not out.is_relative_to(ROOT), 'OUTPUT_OUTSIDE_BOTH_CHECKOUTS')
     out.mkdir(exist_ok=False)
     selected = controls_for_mode(args.mode)
-    failures = {'budget-before-v2': 6, 'pool-before-v2': 5, 'pool-scan-before': 2, 'fixed': 0}[args.mode]
+    failures = {'budget-before-v3': 6, 'pool-before-v3': 5, 'pool-scan-before-v2': 2, 'fixed': 0}[args.mode]
     report = {'schema': SCHEMA, 'result': 'FAIL', 'scope': 'assigned-native-component-controls-only',
               'mode': args.mode, 'expected_driver': args.driver_sha, 'expected_source': args.source_sha,
               'groups': list(MODE_GROUPS[args.mode]), 'required_lib_tests': list(selected),

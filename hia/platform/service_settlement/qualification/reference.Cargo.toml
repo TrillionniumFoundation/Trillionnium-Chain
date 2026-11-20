@@ -1,0 +1,14 @@
+[package]
+name="trnm-settlement-hia-reference"
+version="0.1.0"
+edition="2021"
+[dependencies]
+borsh={version="1",features=["derive"]}
+ed25519-dalek="3"
+rusqlite={version="=0.41.1",features=["bundled","fallible_uint"]}
+sha2="0.10"
+serde_json="1"
+trnm-task-kernel={path="@TASK_KERNEL@",version="=0.1.0"}
+[[bin]]
+name="settlement-reference"
+path="reference.rs"

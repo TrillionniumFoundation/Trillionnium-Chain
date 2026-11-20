@@ -1,0 +1,22 @@
+{
+  "schema": "trnm.hia.contiguous-archive.v1",
+  "logical_name": "governance-development.tar.xz",
+  "archive": {
+    "bytes": 10476388,
+    "sha256": "463424d8dbbf64745e409f797d15b8bec8562717758fc0c912ad01e4e5944e8e"
+  },
+  "parts": [
+    {
+      "path": "part-000",
+      "offset": 0,
+      "bytes": 6291456,
+      "sha256": "9b19d6dcc43f2741d7618a03e4e09edb9cc097c22272076054c6877c1ee4f3f2"
+    },
+    {
+      "path": "part-001",
+      "offset": 6291456,
+      "bytes": 4184932,
+      "sha256": "4b2ee0af6a9857d07bbb9c1b5599f565056a66617e77f5878dc55b059d5f0071"
+    }
+  ]
+}

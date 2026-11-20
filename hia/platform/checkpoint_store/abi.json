@@ -1,0 +1,126 @@
+{
+  "schema": "trnm.hia.checkpoint-store-abi.v1",
+  "target": "linux-x86_64",
+  "request_magic": "HCSAPI01",
+  "response_magic": "HCSAPO01",
+  "request_header_bytes": 32,
+  "response_header_bytes": 48,
+  "integers": "little-endian u64 except unchanged canonical original payloads",
+  "request_policy_cap": null,
+  "unix_frame_limit": 4096,
+  "ledger_record_limit": 1000000,
+  "codec_methods": [
+    {
+      "number": 0,
+      "name": "pin_encode",
+      "input_bytes": 40,
+      "output_bytes": 84
+    },
+    {
+      "number": 1,
+      "name": "pin_decode",
+      "input_bytes": 84,
+      "output_bytes": 84
+    },
+    {
+      "number": 2,
+      "name": "anchor_encode",
+      "input_bytes": 40,
+      "output_bytes": 84
+    },
+    {
+      "number": 3,
+      "name": "anchor_decode",
+      "input_bytes": 84,
+      "output_bytes": 84
+    },
+    {
+      "number": 4,
+      "name": "log_encode",
+      "input_bytes": 1424,
+      "output_bytes": 1461
+    },
+    {
+      "number": 5,
+      "name": "log_decode",
+      "input_bytes": 1461,
+      "output_bytes": 1461
+    },
+    {
+      "number": 6,
+      "name": "request_encode",
+      "input_bytes": 1392,
+      "output_bytes": "41 or 713 or 1385"
+    },
+    {
+      "number": 7,
+      "name": "request_decode",
+      "input_bytes": "41 or 713 or 1385",
+      "output_bytes": 1392
+    },
+    {
+      "number": 8,
+      "name": "response_encode",
+      "input_bytes": 680,
+      "output_bytes": "8 or 680"
+    },
+    {
+      "number": 9,
+      "name": "response_decode",
+      "input_bytes": "8 or 680",
+      "output_bytes": 680
+    },
+    {
+      "number": 10,
+      "name": "pin_response_encode",
+      "input_bytes": 84,
+      "output_bytes": 92
+    },
+    {
+      "number": 11,
+      "name": "pin_response_decode",
+      "input_bytes": 92,
+      "output_bytes": 84
+    },
+    {
+      "number": 12,
+      "name": "ledger_anchor_encode",
+      "input_bytes": 672,
+      "output_bytes": 720
+    },
+    {
+      "number": 13,
+      "name": "ledger_anchor_decode",
+      "input_bytes": 720,
+      "output_bytes": 672
+    },
+    {
+      "number": 14,
+      "name": "ledger_record_encode",
+      "input_bytes": 1384,
+      "output_bytes": 1432
+    },
+    {
+      "number": 15,
+      "name": "ledger_record_decode",
+      "input_bytes": 1432,
+      "output_bytes": 1432
+    },
+    {
+      "number": 16,
+      "name": "ledger_head_encode",
+      "input_bytes": 40,
+      "output_bytes": 56
+    },
+    {
+      "number": 17,
+      "name": "ledger_head_decode",
+      "input_bytes": 56,
+      "output_bytes": 56
+    }
+  ],
+  "runtime_images": 26,
+  "reserved_input": 0,
+  "response_last_word": "echoed method number",
+  "activation": false
+}

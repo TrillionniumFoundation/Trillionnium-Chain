@@ -57,14 +57,23 @@ def _darwin_only_exited_leader(child):
     Its proc_listpids(PROC_PGRP_ONLY=2) walks both live and zombie lists under
     proc_list_lock. An eight-byte buffer returning exactly our single PID is
     therefore a complete singleton census, not a truncated list or size hint.
-    Require WNOWAIT exit evidence first; zero/error/extra/foreign entries refuse.
+    Exit can precede waitid visibility: allow at most 50 ms for that read-only
+    observation inside cleanup. This does not extend the exchange deadline or
+    signal another process. Require WNOWAIT exit evidence first; unavailable,
+    zero/error/extra/foreign entries and a still-live leader all refuse.
     This trusts the system libproc/kernel and exclusive reaping, as the owner
     already trusts POSIX process isolation. It neither signals discovered PIDs
     nor manages descendants which left this session.
     """
     if sys.platform!='darwin' or child.returncode is not None:return False
     try:
-        status=os.waitid(os.P_PID,child.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
+        deadline=time.monotonic()+.05
+        while True:
+            status=os.waitid(os.P_PID,child.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
+            if status is not None:break
+            remaining=deadline-time.monotonic()
+            if remaining<=0:return False
+            time.sleep(min(remaining,.001))
         if (status is None or status.si_pid!=child.pid or
                 status.si_code not in (os.CLD_EXITED,os.CLD_KILLED,os.CLD_DUMPED)):
             return False

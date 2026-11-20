@@ -1,0 +1,9 @@
+{
+  "files": [
+    "config/pon/devnet-v1.json",
+    "config/pon/ledger-v1.json",
+    "config/pon/work-profile-v1.json",
+    "config/pon/model-family-v1.json"
+  ],
+  "schema": "trnm.hia.legacy-preparation-default-inputs.v1"
+}

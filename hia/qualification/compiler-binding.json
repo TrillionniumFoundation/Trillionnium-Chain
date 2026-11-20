@@ -1,0 +1,17 @@
+{
+  "schema": "trnm.hia.compiler-qualification-binding.v1",
+  "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+  "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+  "outer_report": "compiler-cold.json",
+  "outer_sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab",
+  "nested_report": "compiler-cold-full.json.xz",
+  "compressed_sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9",
+  "uncompressed_sha256": "7d01bc56b6dc8c211549e9c4ba16f7c580933812a6952654403f399c0cc3fa13",
+  "uncompressed_bytes": 53163943,
+  "wall_limit_seconds": 180,
+  "cleanup_limit_seconds": 3,
+  "observed_seconds": 154.807339324,
+  "source_inputs": 916,
+  "scope": "Original pinned Linux x86-64 fixed-core compiler profile; does not qualify the complete Chain runtime",
+  "whole_chain_native": false
+}

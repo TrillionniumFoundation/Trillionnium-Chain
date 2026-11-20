@@ -1,0 +1,125 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_protocol_ilf2
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u32 = call(v0,v3) {"function":"validate_ilf2"}
+  ret(v4)
+end
+fn validate_ilf2(span_input:readbuf,payload_len:usize) -> (u32) effects(read,trap) entry(span)
+block span(span_input:readbuf,payload_len:usize)
+  span_capacity:usize = buffer.len(span_input)
+  span_fits:bool = compare.le(payload_len,span_capacity)
+  branch span_fits entry(span_input,payload_len) length()
+block entry(input:readbuf,v0:usize)
+  v1:usize = const() {"value":242}
+  v2:bool = compare.ge(v0,v1)
+  branch v2 version(input,v0) length()
+block version(version_input:readbuf,version_size:usize)
+  v3:usize = const() {"value":0}
+  v4:u8 = buffer.load(version_input,v3)
+  v5:u8 = const() {"value":73}
+  v6:bool = compare.eq(v4,v5)
+  v7:usize = const() {"value":1}
+  v8:u8 = buffer.load(version_input,v7)
+  v9:u8 = const() {"value":76}
+  v10:bool = compare.eq(v8,v9)
+  v11:usize = const() {"value":2}
+  v12:u8 = buffer.load(version_input,v11)
+  v13:u8 = const() {"value":70}
+  v14:bool = compare.eq(v12,v13)
+  v15:usize = const() {"value":3}
+  v16:u8 = buffer.load(version_input,v15)
+  v17:u8 = const() {"value":50}
+  v18:bool = compare.eq(v16,v17)
+  v19:usize = const() {"value":4}
+  v20:u8 = buffer.load(version_input,v19)
+  v21:u8 = const() {"value":2}
+  v22:bool = compare.eq(v20,v21)
+  v23:usize = const() {"value":5}
+  v24:u8 = buffer.load(version_input,v23)
+  v25:u8 = const() {"value":0}
+  v26:bool = compare.eq(v24,v25)
+  v27:bool = bool.and(v6,v10)
+  v28:bool = bool.and(v27,v14)
+  v29:bool = bool.and(v28,v18)
+  v30:bool = bool.and(v29,v22)
+  v31:bool = bool.and(v30,v26)
+  v32:usize = const() {"value":8}
+  v33:u8 = buffer.load(version_input,v32)
+  v34:u8 = const() {"value":0}
+  v35:bool = compare.eq(v33,v34)
+  v36:usize = const() {"value":9}
+  v37:u8 = buffer.load(version_input,v36)
+  v38:u8 = const() {"value":4}
+  v39:bool = compare.eq(v37,v38)
+  v40:bool = bool.and(v35,v39)
+  v41:bool = bool.and(v31,v40)
+  branch v41 shape(version_input,version_size) bad_version()
+block shape(shape_input:readbuf,shape_size:usize)
+  v42:usize = const() {"value":6}
+  v43:u8 = buffer.load(shape_input,v42)
+  v44:usize = const() {"value":7}
+  v45:u8 = buffer.load(shape_input,v44)
+  v46:u8 = const() {"value":1}
+  v47:bool = compare.ge(v43,v46)
+  v48:u8 = const() {"value":2}
+  v49:bool = compare.le(v43,v48)
+  v50:u8 = const() {"value":3}
+  v51:bool = compare.lt(v45,v50)
+  v52:bool = bool.and(v47,v49)
+  v53:bool = bool.and(v52,v51)
+  branch v53 extent(shape_input,shape_size,v43) limit()
+block extent(extent_input:readbuf,extent_size:usize,extent_rank:u8)
+  v54:usize = int.cast(extent_rank) {"mode":"wrap"}
+  v55:usize = const() {"value":520}
+  v56:usize = int.mul.wrap(v54,v55)
+  v57:usize = const() {"value":242}
+  v58:usize = int.add.wrap(v56,v57)
+  v59:bool = compare.eq(v58,extent_size)
+  branch v59 factors(extent_input,extent_size) length()
+block factors(factors_input:readbuf,factors_size:usize)
+  v60:usize = const() {"value":242}
+  v61:bool = call(factors_input,v60,factors_size) {"function":"ilf2_coefficients"}
+  branch v61 ok() noncanonical()
+block ok()
+  v62:u32 = const() {"value":0}
+  ret(v62)
+block length()
+  v63:u32 = const() {"value":1}
+  ret(v63)
+block bad_version()
+  v64:u32 = const() {"value":2}
+  ret(v64)
+block noncanonical()
+  v65:u32 = const() {"value":3}
+  ret(v65)
+block limit()
+  v66:u32 = const() {"value":4}
+  ret(v66)
+end
+fn ilf2_coefficients(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:usize,stop:usize)
+  jump scan(input,start,stop)
+block scan(scan_input:readbuf,scan_pos:usize,scan_stop:usize)
+  v0:bool = compare.lt(scan_pos,scan_stop)
+  branch v0 pair(scan_input,scan_pos,scan_stop) good()
+block pair(pair_input:readbuf,pair_pos:usize,pair_stop:usize)
+  v1:u8 = buffer.load(pair_input,pair_pos)
+  v2:usize = const() {"value":1}
+  v3:usize = int.add.wrap(pair_pos,v2)
+  v4:u8 = buffer.load(pair_input,v3)
+  v5:u8 = const() {"value":0}
+  v6:bool = compare.eq(v1,v5)
+  v7:u8 = const() {"value":128}
+  v8:bool = compare.eq(v4,v7)
+  v9:bool = bool.and(v6,v8)
+  v10:usize = const() {"value":2}
+  v11:usize = int.add.wrap(pair_pos,v10)
+  branch v9 bad() scan(pair_input,v11,pair_stop)
+block good()
+  v12:bool = const() {"value":true}
+  ret(v12)
+block bad()
+  v13:bool = const() {"value":false}
+  ret(v13)
+end

@@ -1,0 +1,61 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_protocol_id
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  v0:usize = buffer.len(input)
+  v1:usize = const() {"value":1}
+  v2:bool = compare.ge(v0,v1)
+  v3:usize = const() {"value":160}
+  v4:bool = compare.le(v0,v3)
+  v5:bool = bool.and(v2,v4)
+  v6:usize = const() {"value":0}
+  branch v5 scan(input,v0,v6) noncanonical()
+block scan(scan_input:readbuf,scan_size:usize,scan_pos:usize)
+  v7:bool = compare.lt(scan_pos,scan_size)
+  branch v7 check(scan_input,scan_size,scan_pos) ok()
+block check(check_input:readbuf,check_size:usize,check_pos:usize)
+  v8:u8 = buffer.load(check_input,check_pos)
+  v9:u8 = const() {"value":48}
+  v10:bool = compare.ge(v8,v9)
+  v11:u8 = const() {"value":57}
+  v12:bool = compare.le(v8,v11)
+  v13:bool = bool.and(v10,v12)
+  v14:u8 = const() {"value":65}
+  v15:bool = compare.ge(v8,v14)
+  v16:u8 = const() {"value":90}
+  v17:bool = compare.le(v8,v16)
+  v18:bool = bool.and(v15,v17)
+  v19:u8 = const() {"value":97}
+  v20:bool = compare.ge(v8,v19)
+  v21:u8 = const() {"value":122}
+  v22:bool = compare.le(v8,v21)
+  v23:bool = bool.and(v20,v22)
+  v24:u8 = const() {"value":45}
+  v25:bool = compare.eq(v8,v24)
+  v26:u8 = const() {"value":95}
+  v27:bool = compare.eq(v8,v26)
+  v28:u8 = const() {"value":46}
+  v29:bool = compare.eq(v8,v28)
+  v30:u8 = const() {"value":58}
+  v31:bool = compare.eq(v8,v30)
+  v32:u8 = const() {"value":47}
+  v33:bool = compare.eq(v8,v32)
+  v34:u8 = const() {"value":64}
+  v35:bool = compare.eq(v8,v34)
+  v36:bool = bool.or(v13,v18)
+  v37:bool = bool.or(v36,v23)
+  v38:bool = bool.or(v37,v25)
+  v39:bool = bool.or(v38,v27)
+  v40:bool = bool.or(v39,v29)
+  v41:bool = bool.or(v40,v31)
+  v42:bool = bool.or(v41,v33)
+  v43:bool = bool.or(v42,v35)
+  v44:usize = const() {"value":1}
+  v45:usize = int.add.wrap(check_pos,v44)
+  branch v43 scan(check_input,check_size,v45) noncanonical()
+block ok()
+  v46:u32 = const() {"value":0}
+  ret(v46)
+block noncanonical()
+  v47:u32 = const() {"value":3}
+  ret(v47)
+end

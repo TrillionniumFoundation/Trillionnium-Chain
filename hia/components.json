@@ -1,0 +1,7496 @@
+{
+  "includes": {
+    "platform/checkpoint_store/api_driver.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/api_methods.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/api_objects.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_fence.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_head.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_open.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/authority_operations.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/checkpoint_files.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/errno_text.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_formatter.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_text_a.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/error_text_b.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/filesystem.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/io.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_files.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_inventory.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_open.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_operations.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/ledger_recovery.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/main.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/runtime.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/socket_owner.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/socket_path.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/transport_frame.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/unix_client.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/unix_daemon.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_equal",
+          "cp_nonzero",
+          "cp_be64"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_be_put"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/checkpoint_store/value_bridge.hepta": [
+      {
+        "functions": [
+          "rt_return",
+          "rt_call",
+          "rt_fail",
+          "rt_command",
+          "rt_read32",
+          "rt_identity",
+          "rt_identity_equal",
+          "rt_stat_shape",
+          "rt_cache_find",
+          "rt_decimal",
+          "rt_normalize",
+          "rt_parent",
+          "rt_has_nul",
+          "rt_socket_record",
+          "rt_socket_address",
+          "lg_parse_decimal",
+          "lg_name",
+          "lg_twenty",
+          "lg_path",
+          "lg_identity",
+          "rt_hex"
+        ],
+        "source": "platform/checkpoint_store/runtime.hepta"
+      },
+      {
+        "functions": [
+          "cs_copy",
+          "cs_move",
+          "cs_zero",
+          "cs_equal",
+          "cs_be_put",
+          "cs_log_hash",
+          "cs_pin_encode",
+          "cs_pin_decode",
+          "cs_anchor_encode",
+          "cs_anchor_decode",
+          "cs_log_encode",
+          "cs_log_decode",
+          "cs_request_encode",
+          "cs_request_decode",
+          "cs_response_encode",
+          "cs_response_decode",
+          "cs_pin_response_encode",
+          "cs_pin_response_decode",
+          "cs_ledger_anchor_encode",
+          "cs_ledger_anchor_decode",
+          "cs_ledger_record_encode",
+          "cs_ledger_record_decode",
+          "cs_ledger_head_encode",
+          "cs_ledger_head_decode"
+        ],
+        "source": "platform/checkpoint_store/values.hepta"
+      },
+      {
+        "functions": [
+          "cp_nonzero",
+          "cp_equal",
+          "cp_be64",
+          "cp_copy",
+          "cp_copy_mut",
+          "cp_watermark",
+          "cp_fields",
+          "cp_domain",
+          "cp_record_header",
+          "cp_checksum",
+          "cp_decode",
+          "cp_successor"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/checkpoint_store/values.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_nonzero",
+          "cp_equal",
+          "cp_be64",
+          "cp_copy",
+          "cp_watermark",
+          "cp_fields",
+          "cp_domain",
+          "cp_checksum",
+          "cp_decode",
+          "cp_successor"
+        ],
+        "source": "src/checkpoint/value_v2.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "platform/host_resource/fixture_entry.hepta": [
+      {
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ],
+        "source": "platform/host_resource/resource_policy.hepta"
+      },
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/host_resource/resource_policy.hepta": [
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/mempool_node/node_methods.hepta": [
+      {
+        "functions": [
+          "nb_capture",
+          "nb_complete",
+          "nb_copy",
+          "nb_fail",
+          "nb_issue",
+          "nb_need",
+          "nb_parent_accept",
+          "nb_parent_begin",
+          "nb_parent_call",
+          "nb_parent_retire_start",
+          "nb_prefix_emit",
+          "nb_prefix_finish",
+          "nb_prefix_initialize_to",
+          "nb_prepared_ok",
+          "nb_put",
+          "nb_read",
+          "nb_state",
+          "nb_state_ok",
+          "nb_word",
+          "nb_zero"
+        ],
+        "source": "platform/node_owner/producer.hepta"
+      }
+    ],
+    "platform/mempool_node/owner.hepta": [
+      {
+        "functions": [
+          "tg_allocate_slot",
+          "tg_allowed",
+          "tg_copy",
+          "tg_empty",
+          "tg_equal",
+          "tg_equal_input",
+          "tg_erase",
+          "tg_g",
+          "tg_has_slot",
+          "tg_move",
+          "tg_p",
+          "tg_take",
+          "tg_zero"
+        ],
+        "source": "platform/mempool_typed/typed_fixture.hepta"
+      }
+    ],
+    "platform/node_commitment/owner.hepta": [
+      {
+        "functions": [
+          "eh_alloc",
+          "eh_free",
+          "eh_link",
+          "eh_unlink",
+          "em_first",
+          "em_init",
+          "em_next"
+        ],
+        "source": "platform/execution_state/map.hepta"
+      },
+      {
+        "functions": [
+          "eo_find",
+          "eo_id",
+          "eo_new",
+          "eo_reply",
+          "eo_root_extent",
+          "eo_unlink"
+        ],
+        "source": "platform/execution_state/owner.hepta"
+      },
+      {
+        "functions": [
+          "ev_ascii",
+          "ev_g",
+          "ev_g32",
+          "ev_json_atom",
+          "ev_json_close",
+          "ev_json_size",
+          "ev_json_write",
+          "ev_move",
+          "ev_p",
+          "ev_p32",
+          "ev_r",
+          "ev_string_size",
+          "ev_string_write",
+          "ev_validate"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "csr_put32",
+          "csr_tag_10",
+          "csr_tag_6",
+          "csr_tag_7",
+          "csr_tag_9"
+        ],
+        "source": "src/protocol/state_root_compact.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "platform/node_delta/delta_fixture.hepta": [
+      {
+        "functions": [
+          "dr",
+          "dg",
+          "dp",
+          "dcopy_in",
+          "dcopy",
+          "delta_compare",
+          "delta_validate",
+          "delta_start",
+          "delta_fail",
+          "delta_command",
+          "delta_progress",
+          "delta_row",
+          "delta_collect",
+          "delta_next",
+          "delta_ack"
+        ],
+        "source": "platform/node_delta/delta_owner.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/node_delta/delta_owner.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/node_owner/context.hepta": [
+      {
+        "functions": [
+          "ap_alloc",
+          "ap_error",
+          "ax_put",
+          "ax_take",
+          "ax_word"
+        ],
+        "source": "platform/execution_application/support.hepta"
+      },
+      {
+        "functions": [
+          "mb_literals",
+          "mb_literals_0",
+          "mb_literals_1",
+          "mb_literals_2",
+          "mb_literals_3"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      },
+      {
+        "functions": [
+          "ev_r"
+        ],
+        "source": "platform/execution_state/value.hepta"
+      }
+    ],
+    "platform/node_owner/disk_bridge.hepta": [
+      {
+        "functions": [
+          "ng_begin_scan",
+          "ng_boot",
+          "ng_boot_0",
+          "ng_boot_1",
+          "ng_boot_2",
+          "ng_boot_3",
+          "ng_boot_4",
+          "ng_boot_5",
+          "ng_boot_6",
+          "ng_cold",
+          "ng_cold_0",
+          "ng_cold_1",
+          "ng_cold_2",
+          "ng_control",
+          "ng_copy",
+          "ng_cut",
+          "ng_equal",
+          "ng_fail",
+          "ng_fd_identity",
+          "ng_file_stat",
+          "ng_g",
+          "ng_go",
+          "ng_initialize",
+          "ng_initialize_0",
+          "ng_initialize_1",
+          "ng_initialize_2",
+          "ng_initialize_3",
+          "ng_initialize_4",
+          "ng_initialize_5",
+          "ng_initialize_6",
+          "ng_initialize_7",
+          "ng_inside",
+          "ng_inventory",
+          "ng_io",
+          "ng_issue",
+          "ng_name",
+          "ng_p",
+          "ng_path",
+          "ng_r",
+          "ng_r32",
+          "ng_record",
+          "ng_requests",
+          "ng_requests_0",
+          "ng_requests_1",
+          "ng_requests_2",
+          "ng_requests_3",
+          "ng_scan",
+          "ng_scan_0",
+          "ng_scan_1",
+          "ng_scan_2",
+          "ng_stdio",
+          "ng_stdio_0",
+          "ng_stdio_1",
+          "ng_stdio_alias",
+          "ng_take",
+          "ng_zero"
+        ],
+        "source": "platform/genesis_store/owner_policy.hepta"
+      }
+    ],
+    "platform/node_owner/json_value.hepta": [
+      {
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "platform/node_owner/linux_emitter.hepta": [],
+    "platform/node_owner/prefix_bridge.hepta": [
+      {
+        "functions": [
+          "config_limit",
+          "go",
+          "state_call"
+        ],
+        "source": "platform/execution_batch/prefix.hepta"
+      },
+      {
+        "functions": [
+          "px_begin",
+          "px_cleanup",
+          "px_output"
+        ],
+        "source": "platform/execution_batch/scoped_prefix.hepta"
+      },
+      {
+        "functions": [
+          "bg",
+          "capture_next",
+          "capture_start",
+          "copy_start",
+          "failure",
+          "input_less",
+          "mc",
+          "mg",
+          "mi",
+          "mn",
+          "mp",
+          "mt",
+          "mz",
+          "px_ack",
+          "px_apply",
+          "px_callback",
+          "px_capture",
+          "px_component",
+          "px_copy",
+          "px_finalize",
+          "px_parse_transactions",
+          "px_restore",
+          "px_write_rows",
+          "request",
+          "restore_start",
+          "row_admit",
+          "state_ok",
+          "work_compare"
+        ],
+        "source": "platform/execution_batch/support.hepta"
+      }
+    ],
+    "platform/node_owner/producer.hepta": [
+      {
+        "functions": [
+          "np_begin",
+          "np_capture_prefix",
+          "np_cleared",
+          "np_command",
+          "np_disk",
+          "np_emit",
+          "np_finalize",
+          "np_mm_ok",
+          "np_mm_reply",
+          "np_opened",
+          "np_output_dropped",
+          "np_parent_created",
+          "np_policy",
+          "np_prefix_bound",
+          "np_prefix_call",
+          "np_prefix_done",
+          "np_prefix_dropped",
+          "np_prefix_new",
+          "np_prefix_ok",
+          "np_prepared_dropped",
+          "np_released",
+          "np_retired_finish",
+          "np_root",
+          "np_simple",
+          "np_taken"
+        ],
+        "source": "platform/mempool_node/node_methods.hepta"
+      }
+    ],
+    "platform/peer_lease_store/owner_policy.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_wout",
+          "pl_compare",
+          "pl_hash",
+          "pl_mcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/cleanup.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/client.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_be"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_deadline",
+          "up_store_init"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "up_normalize"
+        ],
+        "source": "platform/peer_lease_unix/paths.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_paths",
+          "ps_error",
+          "ps_utf8",
+          "ps_lock_extension",
+          "ps_literal",
+          "ps_scope_valid",
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/client_finish.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_expired"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/client_io.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_expired"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "ux_request_encode",
+          "ux_response_decode",
+          "ux_unframe",
+          "ux_token_validate",
+          "ux_scope_decode"
+        ],
+        "source": "platform/peer_lease_unix/codec.hepta"
+      },
+      {
+        "functions": [
+          "ps_scope_valid",
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/client_owner.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/codec.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq",
+          "ps_scope_valid"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/common.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_paths",
+          "ps_error",
+          "ps_utf8",
+          "ps_lock_extension",
+          "ps_literal"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/daemon_setup.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_eq",
+          "ps_utf8",
+          "ps_paths",
+          "ps_error",
+          "ps_lock_extension",
+          "ps_literal"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_store_init"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "up_daemon_paths",
+          "up_normalize",
+          "up_path_equal"
+        ],
+        "source": "platform/peer_lease_unix/paths.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/errno.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "errno_text_chunk_0",
+          "errno_text_chunk_36",
+          "errno_text_chunk_72",
+          "errno_text_chunk_108"
+        ],
+        "source": "platform/checkpoint_store/errno_text.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/errors.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/linux_emitter.hepta": [
+      {
+        "functions": [
+          "em_header",
+          "em_read",
+          "em_put",
+          "em_zero"
+        ],
+        "source": "platform/checkpoint_store/linux_emitter.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/paths.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_eq",
+          "ps_utf8"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "up_store_init"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "ps_paths",
+          "ps_error",
+          "ps_lock_extension",
+          "ps_literal"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/service.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_zero",
+          "ps_eq",
+          "ps_scope_valid"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_deadline",
+          "up_expired"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "ux_unframe",
+          "ux_scope_decode",
+          "ux_request_decode"
+        ],
+        "source": "platform/peer_lease_unix/codec.hepta"
+      }
+    ],
+    "platform/peer_lease_unix/store_bridge.hepta": [
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq",
+          "ps_set",
+          "ps_nul",
+          "ps_hashkey",
+          "ps_scope_slot",
+          "ps_seen_slot",
+          "ps_scope_valid",
+          "ps_commit",
+          "ps_replay_one",
+          "ps_head_encode",
+          "ps_head_decode",
+          "ps_token",
+          "ps_make_record",
+          "ps_apply",
+          "ps_sys",
+          "ps_error",
+          "ps_ioerror",
+          "ps_response",
+          "ps_startio",
+          "ps_io",
+          "ps_at",
+          "ps_lstat",
+          "ps_stat",
+          "ps_private",
+          "ps_ancestry",
+          "ps_parent_length",
+          "ps_next_component",
+          "ps_lock_extension",
+          "ps_paths",
+          "ps_decimal",
+          "ps_temporary",
+          "ps_gate",
+          "ps_literal",
+          "ps_boot",
+          "ps_directory",
+          "ps_files",
+          "ps_opened",
+          "ps_anchor",
+          "ps_commands",
+          "ps_output",
+          "ps_gate_run",
+          "ps_utf8",
+          "ps_div10"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_wout",
+          "pl_compare",
+          "pl_hash",
+          "pl_mcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "up_cstrlen"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_payload/commands.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_eq",
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "px_find",
+          "px_snapshot_equal"
+        ],
+        "source": "platform/peer_payload/snapshot_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      }
+    ],
+    "platform/peer_payload/file_policy.hepta": [
+      {
+        "functions": [
+          "pl_get",
+          "pl_put",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_utf8"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/peer_payload/filesystem.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_private_file",
+          "pf_private_parent",
+          "pf_same_identity",
+          "pf_canonical_form",
+          "pf_prepare_directory"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/linux_emitter.hepta": [
+      {
+        "functions": [
+          "em_header",
+          "em_read",
+          "em_put",
+          "em_zero"
+        ],
+        "source": "platform/checkpoint_store/linux_emitter.hepta"
+      },
+      {
+        "functions": [
+          "up_em_word"
+        ],
+        "source": "platform/peer_lease_unix/linux_emitter.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_codec.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_log.hepta": [
+      {
+        "functions": [
+          "pr_namespace_hash",
+          "pr_record_check",
+          "pr_record_hash"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_runtime.hepta": [
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key",
+          "pw_height",
+          "pw_refresh",
+          "pw_rotate_left",
+          "pw_rotate_right",
+          "pw_balance",
+          "pw_slot",
+          "pw_record_context",
+          "pw_genesis",
+          "pw_frame",
+          "pw_transition",
+          "pw_insert",
+          "pw_validate"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      },
+      {
+        "functions": [
+          "pr_fill",
+          "pr_namespace_valid",
+          "pr_frame_valid",
+          "pr_wire_frame_valid",
+          "pr_namespace_hash",
+          "pr_record_hash",
+          "pr_head_hash",
+          "pr_record_encode",
+          "pr_record_check",
+          "pr_record_decode",
+          "pr_head_encode",
+          "pr_head_decode",
+          "pr_preview",
+          "pr_dispatch"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "prq_find",
+          "prq_key",
+          "prq_context",
+          "prq_preview",
+          "prq_lookup",
+          "prq_commit",
+          "prq_dispatch"
+        ],
+        "source": "platform/peer_payload/runtime_queries.hepta"
+      },
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq",
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/open.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul",
+          "ps_eq",
+          "ps_utf8"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_cstrlen"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_path_parts",
+          "pf_make_sidecars",
+          "pf_private_file",
+          "pf_private_parent",
+          "pf_canonical_form",
+          "pf_prepare_directory"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/owner.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_payload/parent_bridge.hepta": [
+      {
+        "functions": [
+          "ps_ancestry",
+          "ps_at",
+          "ps_directory",
+          "ps_error",
+          "ps_ioerror",
+          "ps_lstat",
+          "ps_next_component",
+          "ps_nul",
+          "ps_parent_length",
+          "ps_sys"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pl_copy",
+          "pl_get",
+          "pl_put",
+          "pl_read",
+          "pl_wcopy",
+          "pl_wout"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "up_store_bounds"
+        ],
+        "source": "platform/peer_lease_unix/store_bridge.hepta"
+      },
+      {
+        "functions": [
+          "up_cstrlen"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_payload/publication.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_private_file",
+          "pf_same_identity",
+          "pf_head_temp",
+          "pf_decimal"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/runtime_queries.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_be",
+          "pl_beread",
+          "pl_hash"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key",
+          "pw_record_context",
+          "pw_insert",
+          "pw_slot",
+          "pw_frame",
+          "pw_transition",
+          "pw_height",
+          "pw_refresh",
+          "pw_rotate_left",
+          "pw_rotate_right",
+          "pw_balance"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      },
+      {
+        "functions": [
+          "pr_frame_valid",
+          "pr_wire_frame_valid",
+          "pr_preview",
+          "pr_record_check",
+          "pr_record_hash"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/snapshot_policy.hepta": [
+      {
+        "functions": [
+          "pl_get"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_key",
+          "pw_compare_part"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      }
+    ],
+    "platform/peer_payload/view_fixture.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      }
+    ],
+    "platform/typed_store/root_finalize.hepta": [
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "state_compare",
+          "state_copy",
+          "state_empty",
+          "state_load32",
+          "state_load64",
+          "state_node",
+          "state_output_copy",
+          "state_sha_compress",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sift",
+          "state_sort",
+          "state_store32",
+          "state_store64",
+          "state_swap",
+          "state_tree"
+        ],
+        "source": "src/protocol/state_root.hepta"
+      }
+    ],
+    "platform/typed_store/stage_policy.hepta": [
+      {
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "platform/work_owner/host_fixture.hepta": [
+      {
+        "functions": [
+          "work_host_entry",
+          "work_host_start",
+          "work_host_begin_method",
+          "work_host_intercept"
+        ],
+        "source": "platform/work_owner/host_method.hepta"
+      },
+      {
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ],
+        "source": "platform/host_resource/resource_policy.hepta"
+      },
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/host_method.hepta": [
+      {
+        "functions": [
+          "resource_entry",
+          "resource_tick",
+          "resource_gate",
+          "resource_base",
+          "resource_bound",
+          "resource_open_counter",
+          "resource_read_counter",
+          "resource_parse",
+          "resource_duplicate",
+          "resource_number",
+          "resource_required_key",
+          "resource_finish"
+        ],
+        "source": "platform/host_resource/resource_policy.hepta"
+      },
+      {
+        "functions": [
+          "host_entry",
+          "host_tick",
+          "host_canonical_next",
+          "host_context_start",
+          "host_context_read",
+          "host_context_done",
+          "host_parent_open",
+          "host_metadata_matches",
+          "host_limits_start",
+          "host_limit_open",
+          "host_limit_read",
+          "host_gate",
+          "host_fail",
+          "host_cleanup",
+          "host_close_count",
+          "host_receipt",
+          "host_output_progress",
+          "host_timespec",
+          "host_issue",
+          "host_account",
+          "host_parse_limits",
+          "host_numeric",
+          "host_zero_text",
+          "host_ascii_space",
+          "host_whitespace",
+          "host_trim_start",
+          "host_trim_end",
+          "host_utf8",
+          "host_membership",
+          "host_code",
+          "host_path",
+          "host_parent_prefix",
+          "host_read",
+          "host_get",
+          "host_put"
+        ],
+        "source": "platform/host_checkpoint/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/owner_fixture.hepta": [
+      {
+        "functions": [
+          "owner_entry",
+          "owner_dispatch",
+          "owner_main",
+          "owner_worker",
+          "owner_alive",
+          "owner_alive_done",
+          "owner_worker_finish",
+          "owner_worker_exit",
+          "owner_gate",
+          "owner_publish",
+          "owner_error",
+          "owner_issue",
+          "owner_copy",
+          "owner_put",
+          "owner_get",
+          "owner_read"
+        ],
+        "source": "platform/work_owner/owner_policy.hepta"
+      }
+    ],
+    "platform/work_owner/sha_fixture.hepta": [
+      {
+        "functions": [
+          "work_precheck",
+          "work_noise_header",
+          "work_noise_start",
+          "work_noise_resume",
+          "work_matrix_resume",
+          "work_transcript_resume",
+          "work_correction_resume",
+          "work_row",
+          "work_tile",
+          "work_progress",
+          "work_terminal",
+          "work_get",
+          "work_put",
+          "work_copy",
+          "work_code",
+          "work_reduce",
+          "work_task_header",
+          "work_ticket_header",
+          "work_noise_prefix",
+          "work_trace_header",
+          "work_sha256_arena",
+          "work_sha_byte",
+          "work_sha_rotr",
+          "work_sha_s0",
+          "work_sha_s1",
+          "work_sha_b0",
+          "work_sha_b1",
+          "work_sha_schedule",
+          "work_sha_compress",
+          "work_sha_constants"
+        ],
+        "source": "platform/work_owner/work_policy.hepta"
+      },
+      {
+        "functions": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f9",
+          "f10",
+          "f11",
+          "f14",
+          "f16"
+        ],
+        "source": "src/work/verify.hepta"
+      }
+    ],
+    "platform/work_owner/work_policy.hepta": [
+      {
+        "functions": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f9",
+          "f10",
+          "f11",
+          "f14",
+          "f16"
+        ],
+        "source": "src/work/verify.hepta"
+      }
+    ],
+    "src/audit/event.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/bench/decimal.hepta": [
+      {
+        "functions": [
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/digests.hepta": [
+      {
+        "functions": [
+          "bench_get",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sch_frame",
+          "sch_read"
+        ],
+        "source": "src/executor/schedule.hepta"
+      }
+    ],
+    "src/bench/environment.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_compare",
+          "benv_big_copy",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_quotient",
+          "benv_big_right_one",
+          "benv_big_sub",
+          "benv_decimal",
+          "benv_decimal_convert"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_pack"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "research_utf8"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/bench/format_fixed.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/format_value.hepta": [
+      {
+        "functions": [
+          "bench_fixed4",
+          "bench_big_div10"
+        ],
+        "source": "src/bench/format_fixed.hepta"
+      },
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/logarithm.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_jam"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/profile.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "bench_ln",
+          "blog_phase",
+          "blog_atanh",
+          "blog_fraction",
+          "blog_copy",
+          "blog_fixed_mul",
+          "blog_small_mul",
+          "blog_div_small",
+          "blog_combine",
+          "blog_nonzero",
+          "blog_bits",
+          "blog_getbit",
+          "blog_sticky",
+          "blog_round"
+        ],
+        "source": "src/bench/logarithm.hepta"
+      },
+      {
+        "functions": [
+          "fp64_read",
+          "fp64_put",
+          "fp64_valid",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_add",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div",
+          "fp64_ratio"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/repeat.hepta": [
+      {
+        "functions": [
+          "bench_copy_digest",
+          "bench_hash_groups_work",
+          "bench_hash_input_raw",
+          "bench_hash_word"
+        ],
+        "source": "src/bench/digests.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sch_adaptive",
+          "sch_adaptive_b",
+          "sch_adaptive_hist_count",
+          "sch_adaptive_result",
+          "sch_adaptive_seed",
+          "sch_aggressive_one",
+          "sch_append",
+          "sch_bucket_hint",
+          "sch_bucket_merge",
+          "sch_candidate",
+          "sch_domain_summary",
+          "sch_emit",
+          "sch_emit_groups",
+          "sch_fill",
+          "sch_frame",
+          "sch_get",
+          "sch_group_intersects",
+          "sch_hot_reorder",
+          "sch_inc",
+          "sch_key_find",
+          "sch_key_map",
+          "sch_max",
+          "sch_min",
+          "sch_normal_one",
+          "sch_normalize",
+          "sch_place",
+          "sch_profile",
+          "sch_put",
+          "sch_query",
+          "sch_read",
+          "sch_record_less",
+          "sch_remember",
+          "sch_reorder",
+          "sch_required",
+          "sch_sat_mul",
+          "sch_setup",
+          "sch_sift",
+          "sch_sort",
+          "sch_sparse_start",
+          "sch_stage_pair",
+          "sch_swap"
+        ],
+        "source": "src/executor/schedule.hepta"
+      },
+      {
+        "functions": [
+          "fp64_add",
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low",
+          "fp64_ratio",
+          "fp64_valid"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/report.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_big_div10",
+          "bench_fixed4"
+        ],
+        "source": "src/bench/format_fixed.hepta"
+      },
+      {
+        "functions": [
+          "bench_float4"
+        ],
+        "source": "src/bench/format_value.hepta"
+      },
+      {
+        "functions": [
+          "bt_div_euclid",
+          "bt_i64",
+          "bt_iso",
+          "bt_u128",
+          "bt_u64"
+        ],
+        "source": "src/bench/text.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low",
+          "fp64_ratio"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/text.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/workload.hepta": [],
+    "src/checkpoint/value_v2.hepta": [
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/codec/json_number.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/codec/json_value_encode.hepta": [
+      {
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_product_high"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "src/codec/json_value_wire.hepta": [
+      {
+        "functions": [
+          "jn_peek",
+          "jn_pow10",
+          "jn_parts",
+          "jn_parse",
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/control_plane/core.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/control_plane/guard.hepta": [
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_be",
+          "cp_copy",
+          "cp_wcopy",
+          "cp_wout",
+          "cp_reverse",
+          "cp_zero",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_compare",
+          "cp_hash",
+          "cp_action_frame",
+          "cp_action",
+          "cp_plan_frame",
+          "cp_plan_primary",
+          "cp_plan",
+          "cp_plan_actions",
+          "cp_signed_le",
+          "cp_bound",
+          "cp_domain_set",
+          "cp_domain_place",
+          "cp_domain_forbidden",
+          "cp_domain_plan",
+          "cp_domain_receipt"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/control_plane/registry.hepta": [
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_be",
+          "cp_copy",
+          "cp_wout",
+          "cp_zero",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_compare",
+          "cp_sort",
+          "cp_hash",
+          "cp_descriptor_frame",
+          "cp_descriptor",
+          "cp_measurement",
+          "cp_domain_descriptor"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/crypto/ed25519_public_point_cache.hepta": [
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_point_add",
+          "ed_point_identity",
+          "ed_point_equal"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/crypto/ed25519_sign.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/crypto/ed25519_verify.hepta": [
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_encode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/crypto/ed25519_verify_joint.hepta": [
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_keygen.hepta": [
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_owner.hepta": [
+      {
+        "functions": [
+          "ms_bits",
+          "ms_decode_secret",
+          "ms_mu",
+          "ms_sample_mask",
+          "ms_sample_challenge",
+          "ms_product",
+          "ms_norm",
+          "ms_attempt",
+          "ms_encode",
+          "ms_sign_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_sign.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_secret",
+          "mk_sample_a",
+          "mk_matrix_row",
+          "mk_encode_secret",
+          "mk_keygen_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/ml_dsa_sign.hepta": [
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_a",
+          "mk_matrix_row"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_high_bits",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      }
+    ],
+    "src/crypto/pon_hash.hepta": [
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/crypto/pq_auth_owner.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work",
+          "mk_pack_bits",
+          "mk_sample_secret",
+          "mk_sample_a",
+          "mk_matrix_row",
+          "mk_encode_secret",
+          "mk_keygen_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "mo_header",
+          "mo_valid",
+          "mo_reply",
+          "mo_mu",
+          "mo_verify_parts",
+          "mo_external_verify",
+          "mo_self_verify"
+        ],
+        "source": "src/crypto/ml_dsa_owner.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "ms_bits",
+          "ms_decode_secret",
+          "ms_mu",
+          "ms_sample_mask",
+          "ms_sample_challenge",
+          "ms_product",
+          "ms_norm",
+          "ms_attempt",
+          "ms_encode",
+          "ms_sign_loaded"
+        ],
+        "source": "src/crypto/ml_dsa_sign.hepta"
+      },
+      {
+        "functions": [
+          "pf_key_id",
+          "pf_be64",
+          "pf_header",
+          "pf_sha384_init",
+          "pf_spki_byte",
+          "pf_literal"
+        ],
+        "source": "src/crypto/pq_frame.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_auth_verify.hepta": [
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_mu",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_verify",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_candidate_gate.hepta": [
+      {
+        "functions": [
+          "md_read64"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "kf_store64"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_frame.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_copy"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/crypto/pq_profile_auth.hepta": [
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mk_copy_between",
+          "mk_copy_work"
+        ],
+        "source": "src/crypto/ml_dsa_keygen.hepta"
+      },
+      {
+        "functions": [
+          "mo_reply",
+          "mo_mu",
+          "mo_verify_parts",
+          "mo_decimal",
+          "mo_error_text",
+          "mo_literal"
+        ],
+        "source": "src/crypto/ml_dsa_owner.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/crypto/sha512_stream.hepta": [
+      {
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      }
+    ],
+    "src/data_availability/rs46.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/escrow/vault.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/executor/schedule.hepta": [
+      {
+        "functions": [
+          "fp64_valid",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_add",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div",
+          "fp64_ratio"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/governance/boundary_fixture.hepta": [
+      {
+        "functions": [
+          "gv_literals",
+          "gv_field",
+          "gv_find",
+          "gv_append",
+          "gv_member",
+          "gv_version",
+          "gv_set",
+          "gv_event",
+          "gv_active_restore",
+          "gv_propose",
+          "gv_queue",
+          "gv_cancel",
+          "gv_pause",
+          "gv_finalize",
+          "gv_execute",
+          "gv_execute_param",
+          "gv_execute_restore",
+          "gv_mutate",
+          "gv_clear",
+          "gv_clone",
+          "gv_write",
+          "gv_decimal",
+          "gv_proposal_reply",
+          "gv_less",
+          "gv_sorted_next",
+          "gv_bridge",
+          "gv_raw_event",
+          "gv_nf",
+          "gv_normal_event",
+          "gv_logs",
+          "gv_query",
+          "gv_new",
+          "gv_step"
+        ],
+        "source": "src/governance/guard.hepta"
+      },
+      {
+        "functions": [
+          "sv_read",
+          "sv_get",
+          "sv_put",
+          "sv_copy",
+          "sv_move",
+          "sv_equal",
+          "sv_room"
+        ],
+        "source": "src/escrow/vault.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/governance/guard.hepta": [
+      {
+        "functions": [
+          "sv_read",
+          "sv_get",
+          "sv_put",
+          "sv_copy",
+          "sv_move",
+          "sv_equal",
+          "sv_room"
+        ],
+        "source": "src/escrow/vault.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/mempool/lane_owner.hepta": [
+      {
+        "functions": [
+          "lane_policy",
+          "f1",
+          "f2"
+        ],
+        "source": "src/mempool/lane_quota.hepta"
+      }
+    ],
+    "src/node/settings_development.hepta": [
+      {
+        "functions": [
+          "je_walk",
+          "je_u32",
+          "je_string_size",
+          "je_key_order"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "fp64_product_high"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      },
+      {
+        "functions": [
+          "es_expand_public",
+          "es_hash",
+          "es_normalize",
+          "es_fe_add",
+          "es_fe_sub",
+          "es_fe_mul",
+          "es_point_add",
+          "es_point_mul",
+          "es_inverse",
+          "es_point_encode",
+          "es_wipe"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "csr_arena_root",
+          "csr_bottom_up",
+          "csr_copy",
+          "csr_digest",
+          "csr_get32",
+          "csr_key_less",
+          "csr_node",
+          "csr_parent_key",
+          "csr_part",
+          "csr_put32",
+          "csr_read32",
+          "csr_same_parent",
+          "csr_sift",
+          "csr_sort_keys",
+          "csr_swap",
+          "csr_tag_10",
+          "csr_tag_6",
+          "csr_tag_7",
+          "csr_tag_9"
+        ],
+        "source": "src/protocol/state_root_compact.hepta"
+      }
+    ],
+    "src/oracle/serde_json.hepta": [
+      {
+        "functions": [
+          "or_string_frame",
+          "or_snapshot_frame",
+          "or_policy_frame",
+          "or_words32",
+          "or_mul128"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_wout",
+          "cp_zero"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      }
+    ],
+    "src/oracle/values.hepta": [
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_be",
+          "cp_copy",
+          "cp_wcopy",
+          "cp_wout",
+          "cp_zero",
+          "cp_equal",
+          "cp_hash"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/peer_lease/recovery_ack.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_wout",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/peer_lease/values.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/protocol/pnx1.hepta": [
+      {
+        "functions": [
+          "validate_ilf2",
+          "ilf2_coefficients"
+        ],
+        "source": "src/protocol/ilf2.hepta"
+      },
+      {
+        "functions": [
+          "validate_ilf3",
+          "ilf3_coefficients"
+        ],
+        "source": "src/protocol/ilf3.hepta"
+      }
+    ],
+    "src/protocol/state_root.hepta": [
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/protocol/state_root_compact.hepta": [
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/research_protocol/authority.hepta": [
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_token",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_nonzero",
+          "rt_read_word",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/research_protocol/command.hepta": [
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_nonzero",
+          "rt_option",
+          "rt_positive",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text",
+          "rt_validate_challenge",
+          "rt_validate_claim",
+          "rt_validate_claimants",
+          "rt_validate_contributors",
+          "rt_validate_evaluation",
+          "rt_validate_evidence",
+          "rt_validate_license",
+          "rt_validate_match",
+          "rt_validate_payload",
+          "rt_validate_ref",
+          "rt_validate_resolution",
+          "rt_validate_spdx",
+          "rt_validate_workload"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "es_expand_public",
+          "es_fe_add",
+          "es_fe_mul",
+          "es_fe_sub",
+          "es_hash",
+          "es_inverse",
+          "es_normalize",
+          "es_point_add",
+          "es_point_encode",
+          "es_point_mul",
+          "es_scalar_muladd",
+          "es_scalar_reduce",
+          "es_wipe"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_store64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/research_protocol/external_key.hepta": [
+      {
+        "functions": [
+          "research_hash_integer"
+        ],
+        "source": "src/research_protocol/hash.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/research_protocol/hash.hepta": [
+      {
+        "functions": [
+          "research_utf8"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/research_protocol/payload.hepta": [
+      {
+        "functions": [
+          "research_read",
+          "research_get",
+          "research_put",
+          "research_utf8",
+          "research_head_size",
+          "research_write_head",
+          "research_head",
+          "research_take",
+          "research_decode"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_graph.hepta": [
+      {
+        "functions": [
+          "rsi_identity_compare",
+          "rsi_text_compare"
+        ],
+        "source": "src/research_protocol/state_index.hepta"
+      },
+      {
+        "functions": [
+          "ra_compare",
+          "ra_identity_valid"
+        ],
+        "source": "src/research_protocol/authority.hepta"
+      },
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_token",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_compare",
+          "rt_error",
+          "rt_nonzero",
+          "rt_positive",
+          "rt_validate_challenge",
+          "rt_validate_claim",
+          "rt_validate_claimants",
+          "rt_validate_contributors",
+          "rt_validate_evaluation",
+          "rt_validate_evidence",
+          "rt_validate_license",
+          "rt_validate_match",
+          "rt_validate_payload",
+          "rt_validate_ref",
+          "rt_validate_resolution",
+          "rt_validate_spdx",
+          "rt_validate_workload"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_get",
+          "research_put"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/research_protocol/state_index.hepta": [
+      {
+        "functions": [
+          "rsv_authorities",
+          "rsv_identity",
+          "rsv_optional_ref"
+        ],
+        "source": "src/research_protocol/state_values.hepta"
+      },
+      {
+        "functions": [
+          "rc_copy",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_query.hepta": [
+      {
+        "functions": [
+          "rsg_error",
+          "rsg_find_ref",
+          "rsg_first",
+          "rsg_require"
+        ],
+        "source": "src/research_protocol/state_graph.hepta"
+      },
+      {
+        "functions": [
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_compare"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_get",
+          "research_put"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_transition.hepta": [
+      {
+        "functions": [
+          "rsg_error",
+          "rsg_find_ref",
+          "rsg_first",
+          "rsg_require"
+        ],
+        "source": "src/research_protocol/state_graph.hepta"
+      },
+      {
+        "functions": [
+          "rsi_identity_compare",
+          "rsi_text_compare"
+        ],
+        "source": "src/research_protocol/state_index.hepta"
+      },
+      {
+        "functions": [
+          "ra_compare",
+          "ra_find"
+        ],
+        "source": "src/research_protocol/authority.hepta"
+      },
+      {
+        "functions": [
+          "rc_codec",
+          "rc_copy",
+          "rc_encoding",
+          "rc_signature",
+          "rc_text",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_values.hepta": [
+      {
+        "functions": [
+          "rc_copy",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "research_hash_integer"
+        ],
+        "source": "src/research_protocol/hash.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/arithmetic.hepta": [
+      {
+        "functions": [
+          "cs_put_integer",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_copy",
+          "cs_wcopy"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      }
+    ],
+    "src/service_settlement/bilateral.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_compare",
+          "st_point_decode",
+          "st_public_key"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/engine_control.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/receipt.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_prefix_compare",
+          "su_usage_compare",
+          "su_validate",
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_cumulative",
+          "su_price",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/receipt_owned.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_prefix_compare",
+          "su_usage_compare",
+          "su_validate",
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_cumulative",
+          "su_price",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sr_body",
+          "sr_state",
+          "sr_prior",
+          "sr_common",
+          "sr_prefix",
+          "sr_signatures",
+          "sr_sequence",
+          "sr_cumulative",
+          "sr_charge",
+          "sr_append",
+          "sr_admit",
+          "sr_error"
+        ],
+        "source": "src/service_settlement/receipt.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/rollup.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_point_decode",
+          "st_public_key"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "sb_scalar_compare",
+          "sb_challenge_cached",
+          "sb_verify_cached",
+          "sb_verify",
+          "sb_error"
+        ],
+        "source": "src/service_settlement/bilateral.hepta"
+      },
+      {
+        "functions": [
+          "sc_digit",
+          "sc_verify"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      }
+    ],
+    "src/service_settlement/settle.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_sub",
+          "ss_u128_inc",
+          "ss_proportional_fee"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "su_sha_update_work_bulk",
+          "su_hash_work",
+          "su_finish_error",
+          "su_error"
+        ],
+        "source": "src/service_settlement/usage.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/trust.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_u128_cmp"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_is_weak"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/service_settlement/trust_owned.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_u128_cmp"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_field",
+          "st_compare",
+          "st_scalar_compare",
+          "st_point_decode",
+          "st_public_key",
+          "st_price_tail",
+          "st_price_compare",
+          "st_validate",
+          "st_initial",
+          "st_error"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sc_base_columns",
+          "sc_make_from",
+          "sc_make"
+        ],
+        "source": "src/crypto/ed25519_public_point_cache.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_is_weak"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/service_settlement/usage.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_move",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ss_range",
+          "ss_disjoint",
+          "ss_u128_cmp",
+          "ss_u128_add",
+          "ss_u128_mul"
+        ],
+        "source": "src/service_settlement/arithmetic.hepta"
+      },
+      {
+        "functions": [
+          "st_compare",
+          "st_scalar_compare",
+          "st_price_tail"
+        ],
+        "source": "src/service_settlement/trust.hepta"
+      },
+      {
+        "functions": [
+          "sd_domain_length",
+          "sd_domain"
+        ],
+        "source": "src/service_settlement/values.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/service_settlement/values.hepta": [
+      {
+        "functions": [
+          "cs_need",
+          "cs_alloc",
+          "cs_error",
+          "cs_decimal",
+          "cs_put_integer",
+          "cs_utf8_step",
+          "cs_div",
+          "cs_get",
+          "cs_read",
+          "cs_put",
+          "cs_zero",
+          "cs_copy",
+          "cs_wcopy",
+          "cs_width",
+          "cs_schema",
+          "cs_codec_text",
+          "cs_codec_integer",
+          "cs_decode_error",
+          "cs_scan",
+          "cs_decode"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/state/json_value.hepta": [
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_measure",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_word",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/transport/authenticated_request.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/transport/authenticated_response.hepta": [
+      {
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar",
+          "jv_string",
+          "jv_key_order",
+          "jv_skip",
+          "jv_literal",
+          "jv_parse"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "jn_peek",
+          "jn_pow10",
+          "jn_parts",
+          "jn_parse",
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "tr_begin",
+          "tr_ws",
+          "tr_peek",
+          "tr_take",
+          "tr_append",
+          "tr_string",
+          "tr_utf8",
+          "tr_escape",
+          "tr_hex4",
+          "tr_hex_digit",
+          "tr_codepoint",
+          "tr_uint",
+          "tr_signature_hex",
+          "tr_hex_character",
+          "tr_hex_input",
+          "tr_copy_input",
+          "tr_copy_work",
+          "tr_ed_digest",
+          "tr_code"
+        ],
+        "source": "src/transport/authenticated_request.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_encode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/transport/signed_response.hepta": [
+      {
+        "functions": [
+          "je_u32",
+          "je_string_size",
+          "je_key_order",
+          "je_walk"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "jf_format64",
+          "jf_odd",
+          "jf_power",
+          "jf_pow10_m",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_fixup"
+        ],
+        "source": "src/codec/json_number.hepta"
+      },
+      {
+        "functions": [
+          "es_sign_loaded",
+          "es_expand_public",
+          "es_hash",
+          "es_wipe",
+          "es_normalize",
+          "es_fe_add",
+          "es_fe_sub",
+          "es_fe_mul",
+          "es_point_add",
+          "es_point_mul",
+          "es_inverse",
+          "es_point_encode",
+          "es_scalar_reduce",
+          "es_scalar_muladd"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "rs_hash_start",
+          "rs_hash_u32",
+          "rs_length",
+          "rs_byte"
+        ],
+        "source": "src/transport/authenticated_response.hepta"
+      },
+      {
+        "functions": [
+          "tr_hex_character"
+        ],
+        "source": "src/transport/authenticated_request.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_final_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_pack",
+          "ed_point_identity"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64",
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_product_high"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
+    "src/types/request_status.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start",
+          "or_trim_end"
+        ],
+        "source": "src/oracle/values.hepta"
+      }
+    ],
+    "src/types/transcript.hepta": [
+      {
+        "functions": [
+          "cp_read",
+          "cp_get",
+          "cp_put",
+          "cp_copy",
+          "cp_wout",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8",
+          "value_integer_size",
+          "value_integer_write"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "oj_div10",
+          "oj_div128",
+          "oj_json128"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_compress",
+          "tr_sha_rotr"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/types/transfer.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_equal",
+          "cp_equal_read",
+          "cp_get",
+          "cp_put",
+          "cp_read",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "or_char_size",
+          "or_character",
+          "or_space",
+          "or_trim_start"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "oj_div10",
+          "oj_div128",
+          "oj_json128"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_update_full",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_update_limit",
+          "tr_sha_feed_limit",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "es_expand_public",
+          "es_fe_add",
+          "es_fe_mul",
+          "es_fe_sub",
+          "es_hash",
+          "es_inverse",
+          "es_normalize",
+          "es_point_add",
+          "es_point_encode",
+          "es_point_mul",
+          "es_scalar_muladd",
+          "es_scalar_reduce",
+          "es_wipe"
+        ],
+        "source": "src/crypto/ed25519_sign.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_pack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_scalar_compare",
+          "ed_scalar_reduce",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_store64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "ed_joint_verify"
+        ],
+        "source": "src/crypto/ed25519_verify_joint.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/work/verify.hepta": [
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "storage/owner_policy.hepta": [
+      {
+        "functions": [
+          "storage_sha256",
+          "storage_word"
+        ],
+        "source": "storage/sha256_framing.hepta"
+      },
+      {
+        "functions": [
+          "state_copy",
+          "state_load32",
+          "state_store32",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sha_compress"
+        ],
+        "source": "src/protocol/state_root.hepta"
+      }
+    ],
+    "storage/sha256_framing.hepta": [
+      {
+        "functions": [
+          "state_copy",
+          "state_load32",
+          "state_store32",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sha_compress"
+        ],
+        "source": "src/protocol/state_root.hepta"
+      }
+    ]
+  },
+  "schema": "trnm.hia.component-includes.v1"
+}

@@ -1,0 +1,246 @@
+{
+  "actual_github_ci_run": false,
+  "actual_integrated_validation": {
+    "archive_path": "root-integration/integrated-validation-v1/report.json",
+    "bytes": 3392,
+    "ran_before_final_plan_pin_refresh": true,
+    "runtime_executed": false,
+    "sha256": "bdcaedc054fa0833de7e9a8691f628811b4dcd07f3631e84a74dcd92b79edd04",
+    "source_and_evidence_tests": 89
+  },
+  "batch_ci": {
+    "actual_frozen_original_scope_profiles": {
+      "batch": {
+        "actual_cli_calls": 5,
+        "controls": 102,
+        "groups": 9,
+        "skipped": 0
+      },
+      "prefix": {
+        "actual_cli_calls": 5,
+        "controls": 102,
+        "groups": 9,
+        "skipped": 0
+      }
+    },
+    "actual_integrated_transport": {
+      "actual_cli_calls": 5,
+      "controls": 70,
+      "groups": 6,
+      "report": {
+        "bytes": 18198,
+        "sha256": "224412f9c5c831f39f8a55fcb59020243ec521858577875157eaa425ce4012b2"
+      },
+      "skipped": 0
+    },
+    "explicit_scopes": [
+      "transport",
+      "original"
+    ],
+    "fresh_integrated_head_hosted_execution": "NOT_RUN",
+    "integrated_source_integrity": {
+      "actual_cli_calls": 18,
+      "controls": 173,
+      "groups": 10
+    },
+    "new_native_jobs": 7,
+    "new_original_jobs": 2,
+    "runtime_record": "hia/qualification/execution-batch-development.json"
+  },
+  "current_ci_sources": {
+    ".github/workflows/hia-native-migration.yml": {
+      "bytes": 278385,
+      "sha256": "d1104f158084351ab1ec7080a54ebdbace1cf99ac7f2099122826db6c826d565"
+    },
+    "config/hia-migration-v1.json": {
+      "bytes": 45577,
+      "sha256": "00b38646be75ae19c2d8280b7531d80d90f30db5a9abd3d49f5220e50f89109a"
+    },
+    "hia/components.json": {
+      "bytes": 30941,
+      "sha256": "add302a78f9af55b757354fb7c408094d8c7dafc694fdb3ddfbe05372d0f58e8"
+    },
+    "hia/platform/mempool_typed/rust_oracle.py": {
+      "bytes": 15466,
+      "sha256": "5de5fc82c309527bc607ea9020e7abb85a9ece45e24c357dff1a136d00a98c01"
+    },
+    "hia/platform/mempool_typed/test_integrity.py": {
+      "bytes": 22716,
+      "sha256": "07d98b6dcd4945920d7e31c85295909f315e3b4a7beceb3dd8f760536ae616b9"
+    },
+    "hia/platform/work_owner/test_integrity.py": {
+      "bytes": 12454,
+      "sha256": "7f89b6d743d925ac2a9821b2d78119f4864368c200ee5fea38e55016e62a63e4"
+    },
+    "hia/qualification/ARCHIVES.md": {
+      "bytes": 4129,
+      "sha256": "37e51064d1e201d0c53655d71c9d28315b93f5c0e1c0ad2fa7283d229a32ddb6"
+    },
+    "hia/qualification/execution-application-ci.json": {
+      "bytes": 4178,
+      "sha256": "b996fe6f69b397d417b15a8d38cb554d00697724ae83461fe5c76df096f70782"
+    },
+    "hia/qualification/execution-batch-development.json": {
+      "bytes": 14003,
+      "sha256": "8b15ff5f4ebc99958a1063e1bc90b588d97a3f9867f78dca4a5d22aba3e635d4"
+    },
+    "hia/qualification/mempool-typed-development.json": {
+      "bytes": 16428,
+      "sha256": "3bbb8c322b32525c5ddf0c81375a9cf6a42cbb750fb1d8bc9027c64b98ccabfc"
+    },
+    "hia/qualification/work-owner-ci.json": {
+      "bytes": 3983,
+      "sha256": "3222cfddca92bb532b722273f3bc6a26836ab12dc5df7ea53694e6b5223f7b08"
+    },
+    "hia/tests/test_application_ci.py": {
+      "bytes": 32022,
+      "sha256": "3f46bcc35c67ff8f82485ca45d254f77c0ce5c701dd5c8406c0afd984044f6a2"
+    },
+    "hia/tests/test_execution_ci.py": {
+      "bytes": 25985,
+      "sha256": "9e1549cc2e67535297bb3e112c709747d4df6a0eadae66dd5328ae4bb4cd98d8"
+    },
+    "hia/tests/test_foundation_ci.py": {
+      "bytes": 8400,
+      "sha256": "78decc2c4f414b6f5c17426d4b700ac69d2e4eed2ef31605c6d015d97607ddd9"
+    },
+    "hia/tests/test_genesis_ci.py": {
+      "bytes": 32055,
+      "sha256": "99098bd14bfdbd978913fb4f1bc22de82dbe8b9942bdfc4f2cfe6554f9d31893"
+    },
+    "hia/tests/test_mempool_ci.py": {
+      "bytes": 17844,
+      "sha256": "dc22f3b0894d4c30a44393ba1103a0b5bef26c473b54a9c6a527db28899ca616"
+    },
+    "hia/tests/test_paid_cpu_ci.py": {
+      "bytes": 61998,
+      "sha256": "433811a8e9ad12cb80e33e7307467cd9699f4d5aa5c358ce885681e8a60d3b37"
+    },
+    "hia/tests/test_work_owner_ci.py": {
+      "bytes": 15036,
+      "sha256": "b215ece318fa38d4242b3d0a3a7621f678a70b8122ef7bca3db589ae9a22bd5d"
+    },
+    "hia/tools/qualify_application_ci.py": {
+      "bytes": 75353,
+      "sha256": "650b1132f48ca6fa02c8d843a9c5a55f8c6eaedf8aa3b332d645bd4e687d55b3"
+    },
+    "hia/tools/qualify_batch_ci.py": {
+      "bytes": 61389,
+      "sha256": "6a2a9e7a307d7f19e40d85565e06934f5ae4bb031c4d2945dab08d110cad4a21"
+    },
+    "hia/tools/qualify_mempool_ci.py": {
+      "bytes": 25398,
+      "sha256": "1708a37b923163fc19763d97677a7dae761fe253c589ba7e7a49bfc5c064565e"
+    },
+    "hia/tools/qualify_work_owner_ci.py": {
+      "bytes": 59952,
+      "sha256": "7db0bb88f1d79551cfb710262a5936c33ace2f498698f46bca5dc63cf7d3f107"
+    },
+    "hia/tools/test_batch_ci.py": {
+      "bytes": 26148,
+      "sha256": "6bb65403cb182b5f819f90bded2fcbc568d69ee2844ab687f0273b5a9b69cb7d"
+    },
+    "scripts/ci/test_hia_workflow_bootstrap.py": {
+      "bytes": 3899,
+      "sha256": "86498950fa1190aef519a39598a62279c725117541921df1c165e9c958358b48"
+    }
+  },
+  "current_native_source_sets": {
+    "application": "b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70",
+    "batch": "63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f",
+    "mempool": "455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7",
+    "work_owner": "e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91"
+  },
+  "current_original_source_sets": {
+    "application_and_batch": "bd405a7aaac603c2f3f8153590cfb441bc486eb2340c435201515d7426b87a22",
+    "mempool": "3bc6870d32cc41252461888580556600da252d14d4b8f2ab10c71fa2935bd8e3",
+    "work_owner": "097727a7b02abd9b776019ae45c4fc3b5aeb07fa768021459f693ae0db950663"
+  },
+  "evidence": {
+    "bytes": 4650756,
+    "every_member_reopened": true,
+    "index": {
+      "bytes": 106056,
+      "sha256": "7e29f8ed0907007b8806e05915898add2e1f45161c1944068f2a95a29d487105"
+    },
+    "logical_bytes": 15869310,
+    "logical_files": 233,
+    "path": "hia/qualification/application-mempool-ci-development.tar.xz",
+    "previous_complete_archive_included": true,
+    "regular_members": 175,
+    "sha256": "253aba5346bb32fb11b3ed52274baf13cec906caa16bd176e3f409124d81a64a"
+  },
+  "final_integrated_ci_unit_tests": 89,
+  "final_native_bootstrap_guard_groups": 4,
+  "final_source_validation": {
+    "archive_path": "root-integration/final-validation-v1/report.json",
+    "local_markdown_links": 758,
+    "old_test_execution_relabelled": false,
+    "report": {
+      "bytes": 4728,
+      "sha256": "83fe3453930cb4e5b617ab025bba69a384164a6ea6b82dc82f8ca3babde6c724"
+    },
+    "status": "PASS"
+  },
+  "historical_failures_preserved": true,
+  "history": {
+    "complete_876_evidence_archive_path": "history-876/complete-evidence.tar.xz",
+    "complete_876_record_archive_path": "history-876/qualification.json",
+    "previous_archive": {
+      "bytes": 3518652,
+      "sha256": "24cd4ff16830ca1de624e89e0f85f2cb7440f1311ff43bcac75b51d8dde643af"
+    },
+    "previous_record": {
+      "bytes": 8310,
+      "sha256": "ee16f8853cc31aeecbd81298b5414effe0d15dbe138ccb0fcef0e39515441462"
+    }
+  },
+  "last_actual_complete_hia_ci": {
+    "application_record": "hia/qualification/execution-application-ci.json",
+    "head": "876eb577dac61854c535a91ab1480f312d1d6173",
+    "jobs": 33,
+    "qualifies_current_integration": false,
+    "run_id": 44000856130,
+    "successful_jobs": 33,
+    "work_owner_record": "hia/qualification/work-owner-ci.json"
+  },
+  "mempool_ci": {
+    "actual_original_stdout_type_witnesses": 4,
+    "actual_public_cli_processes": 22,
+    "additional_summary_helper_type_witnesses": 3,
+    "fresh_integrated_head_hosted_execution": "NOT_RUN",
+    "public_byte_controls": 5,
+    "public_witness_controls": 12,
+    "runtime_record": "hia/qualification/mempool-typed-development.json",
+    "source_controls": 21,
+    "summary_helper_is_public_cli": false,
+    "unit_tests": 11
+  },
+  "native_or_original_execution_relabelled": false,
+  "old_packages_retired": 0,
+  "preserved_current_failures": [
+    "Old876 M05 public reader accepted four self-consistent original stdout type substitutions; actual full repaired source execution is separate.",
+    "Old M05 CI summary helper accepted three float counts; exact type rejects them.",
+    "Initial Batch CI test entry skipped three original groups and still reported PASS; explicit scopes now require zero skips.",
+    "Initial integrated YAML formatting hid seven gates from the unchanged bootstrap counter; parsed semantics preserved in the formatting repair.",
+    "Shared Cargo incremental cleanup refused nlink2 before deleting anything; refusal retained.",
+    "Expired GitHub artifact URL returned HTTP403; a fresh URL for the same full artifact succeeded; no CI execution was replayed."
+  ],
+  "production_activation": false,
+  "qualification_status": "NOT_BOUND",
+  "schema": "trnm.hia.application-mempool-ci-development.v1",
+  "source_origin_git_head": "876eb577dac61854c535a91ab1480f312d1d6173",
+  "status": "DEVELOPMENT_VALIDATED_HOSTED_CI_REQUIRED",
+  "whole_migration_complete": false,
+  "whole_project_gates_open": 9,
+  "workflow": {
+    "all_python_heredocs_checked": 49,
+    "bash_fragments_checked": 340,
+    "independent_native_bootstraps": 35,
+    "jobs": 42,
+    "source": {
+      "bytes": 278385,
+      "sha256": "d1104f158084351ab1ec7080a54ebdbace1cf99ac7f2099122826db6c826d565"
+    }
+  }
+}

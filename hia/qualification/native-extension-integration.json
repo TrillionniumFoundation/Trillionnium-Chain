@@ -1,0 +1,146 @@
+{
+  "archive": {
+    "bytes": 734524,
+    "member_index": "MANIFEST.json",
+    "path": "native-extension-integration.tar.xz",
+    "readback": "PASS",
+    "regular_members": 79,
+    "sha256": "dfc56cef1bbb8df10985a1ef6f4fea49b11373fe4f8a39241828c016cd42e3d4"
+  },
+  "base_commit": "88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4",
+  "components": [
+    "governance/guard",
+    "control-plane/local-guard",
+    "peer-lease/values"
+  ],
+  "corpus_pin_update": "Only the actual changed sole-plan blob; all 2613 pins and 2517 required paths remain.",
+  "current_source_hosted_execution": "NOT_RUN at preparation",
+  "final_markdown_links": {
+    "anchors_checked": false,
+    "documents": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "hia/AUDIT.md",
+      "hia/README.md",
+      "hia/qualification/ARCHIVES.md",
+      "hia/src/control_plane/LOCAL_GUARD.md",
+      "hia/src/governance/README.md",
+      "hia/src/peer_lease/README.md"
+    ],
+    "external_urls_fetched": false,
+    "links_checked": 821,
+    "status": "PASS"
+  },
+  "full_original_workspace_build_test_clippy_claimed": false,
+  "historical_failures_retained": [
+    "Actual first merged ENOSPC run",
+    "Original local peer Unix socket refusal",
+    "Original hosted Work exit-88 race",
+    "Remote process-start RPC timeout and interrupted download",
+    "Local integration driver omitted toolchain environment",
+    "Initial read-only archive/static reader mistakes"
+  ],
+  "integration_controls": {
+    "bootstrap": {
+      "actual_invocations": 168,
+      "gates": 42,
+      "groups": 4,
+      "status": "PASS"
+    },
+    "discovery_only": {
+      "general": 450,
+      "runtime_executed": false,
+      "state_root": 7,
+      "tests": 457
+    },
+    "migration_composition_partition": {
+      "status": "PASS",
+      "tests": 33
+    },
+    "new_component_runtime": {
+      "control_guard": 14,
+      "governance": 10,
+      "peer_lease": 13,
+      "source_fences": "PASS",
+      "status": "PASS"
+    },
+    "static": {
+      "all_timeout_minutes": 20,
+      "bash_steps_checked": 441,
+      "bootstrap_gates": 42,
+      "changed_python_files_parsed": 7,
+      "corpus_pins_changed": [
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "final_component_source_fences": "PASS",
+      "foundations": 22,
+      "git_diff_whitespace": "PASS",
+      "jobs": 54,
+      "kernels": 48,
+      "not_ported_packages": 11,
+      "open_gates": 9,
+      "partially_ported_packages": 15,
+      "pinned_count": 2613,
+      "python_heredocs_checked": 57,
+      "required_paths_count": 2517,
+      "retained_packages": 26,
+      "retired_packages": 0,
+      "runtime_executed": false,
+      "schema": "trnm.hia.extension-static-checks.v1",
+      "status": "PASS",
+      "unique_hia_sources": 137,
+      "volume_readbacks": [
+        {
+          "bytes": 10476388,
+          "name": "governance",
+          "parts": 2,
+          "sha256": "463424d8dbbf64745e409f797d15b8bec8562717758fc0c912ad01e4e5944e8e"
+        },
+        {
+          "bytes": 13259644,
+          "name": "control-guard",
+          "parts": 3,
+          "sha256": "92ee4be881e23483373019bef0987433239967de5737b0467329edafea080623"
+        },
+        {
+          "bytes": 92757028,
+          "name": "peer-lease",
+          "parts": 15,
+          "sha256": "dfbdf6ac0239898d94ee0494d818112485b6a20fdc050a0dd95d0a5ed3c0e23d"
+        },
+        {
+          "bytes": 38955024,
+          "name": "work-handshake",
+          "parts": 7,
+          "sha256": "8dfb55c4f9f7ff8c1198aca30670f606f1faf0593276105d57683662c44d11dd"
+        }
+      ],
+      "workflow": {
+        "bytes": 366171,
+        "sha256": "ea106fed0c65388acd9aff23a0865cc067887b48058ca567c1c29e17d1ee5511"
+      }
+    },
+    "work_runtime": {
+      "actual_scheduled_cases": 24,
+      "actual_traces": 3,
+      "clock_faults": 18,
+      "histories": 61,
+      "primitive_controls": 175,
+      "status": "PASS"
+    }
+  },
+  "inventory": {
+    "foundations": 22,
+    "kernels": 48,
+    "not_ported_packages": 11,
+    "open_gates": 9,
+    "partially_ported_packages": 15,
+    "retained_packages": 26,
+    "retired_packages": 0,
+    "unique_hia_sources": 137
+  },
+  "old_stack_can_be_removed": false,
+  "production_activation": false,
+  "schema": "trnm.hia.native-extension-integration.v1",
+  "whole_chain_native": false,
+  "work_change": "Single observed ready/go handshake word in both HIA emitters, with actual old/new scheduling and full regression."
+}

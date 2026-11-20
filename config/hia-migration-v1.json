@@ -1,0 +1,1960 @@
+{
+  "baseline_audit": {
+    "evidence_bytes": 3804721963,
+    "evidence_files": 36222,
+    "rust_workspace_packages": 26,
+    "scope": "whole tracked-tree inventory, all package/dependency ownership, targeted semantic audit; not a claim that all historical evidence has passed",
+    "tracked_bytes": 3999565648,
+    "tracked_files": 41834,
+    "workspace_rust_files": 1621,
+    "workspace_rust_physical_lines_including_tests": 702001
+  },
+  "baseline_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+  "baseline_toolchain": "f33d8da316de8fdf27b504371f1a5310997ff548",
+  "blocking_gates": [
+    {
+      "id": "system-io",
+      "obligation": "HIA v8 general filesystem/network/process syscall and host capability boundary",
+      "state": "OPEN"
+    },
+    {
+      "id": "persistent-node",
+      "obligation": "single durable Node owner, SQLite semantics, crash cuts, rollback floor and reorg",
+      "state": "OPEN"
+    },
+    {
+      "id": "cryptography",
+      "obligation": "complete PQ signatures, authenticated TLS/identity and signature-domain parity",
+      "state": "OPEN"
+    },
+    {
+      "id": "node-integration",
+      "obligation": "full transaction/application flow, mempool, cancellation, private authority types and end-to-end use",
+      "state": "OPEN"
+    },
+    {
+      "id": "service-budget",
+      "obligation": "original 0.25 CPU / 2 GiB / zero-swap / 256 PID / 4-second / 16-request acceptance",
+      "state": "OPEN"
+    },
+    {
+      "id": "cross-target",
+      "obligation": "original architecture/OS support and exact artifact qualification",
+      "state": "OPEN"
+    },
+    {
+      "id": "model-loop",
+      "obligation": "actual train, independent evaluation, Adopt/NoUpdate, subsequent task and cold recovery",
+      "state": "OPEN"
+    },
+    {
+      "id": "consensus-research",
+      "obligation": "original work-cost, public consensus, STARK/QROM and economic qualification",
+      "state": "OPEN"
+    },
+    {
+      "id": "retirement",
+      "obligation": "equivalent complete replacement of all 26 retained Rust packages and their indispensable tools",
+      "state": "OPEN"
+    }
+  ],
+  "components": [
+    {
+      "id": "protocol/id",
+      "node_integration_complete": false,
+      "scope": "ASCII identifier validation",
+      "source": "hia/src/protocol/id.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "protocol/hash",
+      "node_integration_complete": false,
+      "scope": "lowercase hexadecimal hash text validation",
+      "source": "hia/src/protocol/hash.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "protocol/pnh1",
+      "node_integration_complete": false,
+      "scope": "PNH1 fixed header validation",
+      "source": "hia/src/protocol/pnh1.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "protocol/pgh2",
+      "node_integration_complete": false,
+      "scope": "PGH2 fixed header validation",
+      "source": "hia/src/protocol/pgh2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "protocol/ilf2",
+      "node_integration_complete": false,
+      "scope": "complete ILF2 factor witness byte grammar",
+      "source": "hia/src/protocol/ilf2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "protocol/ilf3",
+      "node_integration_complete": false,
+      "scope": "complete ILF3 evolution witness byte grammar",
+      "source": "hia/src/protocol/ilf3.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "crypto/sha256",
+      "node_integration_complete": false,
+      "scope": "SHA-256 for at most 1 MiB input",
+      "source": "hia/src/crypto/sha256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ]
+    },
+    {
+      "id": "crypto/sha256_arena",
+      "node_integration_complete": false,
+      "scope": "shared single-arena SHA-256 implementation",
+      "source": "hia/src/crypto/sha256_arena.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ]
+    },
+    {
+      "id": "crypto/pon_hash",
+      "node_integration_complete": false,
+      "scope": "original PoN domain and length-prefix hash framing",
+      "source": "hia/src/crypto/pon_hash.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ]
+    },
+    {
+      "id": "work/encoding",
+      "node_integration_complete": false,
+      "scope": "PNW1 canonical proof encoding precheck",
+      "source": "hia/src/work/encoding.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ]
+    },
+    {
+      "id": "work/field",
+      "node_integration_complete": false,
+      "scope": "exact W1 finite-field arithmetic",
+      "source": "hia/src/work/field.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ]
+    },
+    {
+      "id": "work/matrix",
+      "node_integration_complete": false,
+      "scope": "bounded canonical W1 matrix multiplication",
+      "source": "hia/src/work/matrix.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ]
+    },
+    {
+      "id": "work/verify",
+      "node_integration_complete": false,
+      "scope": "complete deterministic non-cancelling PNW1 relation kernel",
+      "source": "hia/src/work/verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verifier.py"
+      ]
+    },
+    {
+      "id": "transport/replay",
+      "node_integration_complete": false,
+      "scope": "pure replay/session/nonce checks and successor proposals",
+      "source": "hia/src/transport/replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_replay.py"
+      ]
+    },
+    {
+      "id": "verification/closed_round",
+      "node_integration_complete": false,
+      "scope": "complete evaluator-round policy on a bounded canonical UTF-8 container ABI",
+      "source": "hia/src/verification/closed_round.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_closed_round.py"
+      ]
+    },
+    {
+      "id": "protocol/pnx1",
+      "node_integration_complete": false,
+      "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
+      "source": "hia/src/protocol/pnx1.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_pnx1.py",
+        "hia/tests/test_pnx1_adversarial.py"
+      ]
+    },
+    {
+      "id": "checkpoint/value_v2",
+      "node_integration_complete": false,
+      "scope": "complete V2 checkpoint canonical value, SHA-256 binding, watermark and successor checks; no store/CAS authority",
+      "source": "hia/src/checkpoint/value_v2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint.py"
+      ]
+    },
+    {
+      "id": "crypto/sha512_arena",
+      "node_integration_complete": false,
+      "scope": "SHA-512 single-arena hashing for up to 131168 bytes",
+      "source": "hia/src/crypto/sha512_arena.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sha512.py"
+      ]
+    },
+    {
+      "id": "crypto/ed25519_group",
+      "node_integration_complete": false,
+      "scope": "Canonical field and extended Edwards group arithmetic with full 256-bit public scalars",
+      "source": "hia/src/crypto/ed25519_group.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ed25519.py",
+        "hia/tests/test_ed25519_adversarial.py"
+      ]
+    },
+    {
+      "id": "crypto/ed25519_verify",
+      "node_integration_complete": false,
+      "scope": "Strict public Ed25519 verification for messages at most 128 KiB; canonical and weak-point policy from original crypto crate",
+      "source": "hia/src/crypto/ed25519_verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ed25519.py",
+        "hia/tests/test_ed25519_adversarial.py"
+      ]
+    },
+    {
+      "id": "protocol/state-root",
+      "node_integration_complete": false,
+      "scope": "complete original 256-bit sparse byte-state root with 65536 rows, 160-byte keys and 4096-byte values; no M06 JSON or owner authority",
+      "source": "hia/src/protocol/state_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_root.py",
+        "hia/tests/test_state_root_adversarial.py"
+      ]
+    },
+    {
+      "id": "math/binary64",
+      "node_integration_complete": false,
+      "scope": "Exact finite binary64 arithmetic used by scheduler decisions and original serde number admission; not a general decimal serializer",
+      "source": "hia/src/math/binary64.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_binary64.py"
+      ]
+    },
+    {
+      "id": "executor/schedule",
+      "node_integration_complete": false,
+      "scope": "All seven explicit-configuration conflict scheduling strategies with max-reader dependency repair; original environment parsing, convenience entropy profile and Node integration remain open",
+      "source": "hia/src/executor/schedule.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_executor_schedule.py",
+        "hia/tools/qualify_executor_original.py"
+      ]
+    },
+    {
+      "id": "state/json_string",
+      "node_integration_complete": false,
+      "scope": "Complete ASCII Value::String canonical codec within the explicit 1 MiB borrowed profile; strict inverse is not a general JSON parser",
+      "source": "hia/src/state/json_string.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_string.py"
+      ]
+    },
+    {
+      "id": "state/json_value",
+      "node_integration_complete": false,
+      "scope": "Iterative JVT1 finite Value construction, decoded-key sorting/last-wins, winning-Value M06 grammar and canonical serialization; local 65536-byte/8192-node profile",
+      "source": "hia/src/state/json_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_value.py"
+      ]
+    },
+    {
+      "id": "crypto/sha256_stream",
+      "node_integration_complete": false,
+      "scope": "True incremental SHA256 context and final padding across the complete transport signing domain",
+      "source": "hia/src/crypto/sha256_stream.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_transport.py",
+        "hia/tests/test_sha256_words.py"
+      ]
+    },
+    {
+      "id": "transport/authenticated_request",
+      "node_integration_complete": false,
+      "scope": "All five classical request variants through 2 MiB framing, original serde admission and canonical/auth order, complete domain hashing and strict Ed25519; trusted owner settings and service deadline integration remain open",
+      "source": "hia/src/transport/authenticated_request.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_transport.py"
+      ]
+    },
+    {
+      "id": "codec/json_primitives",
+      "node_integration_complete": false,
+      "scope": "Single canonical borrowed-region UTF8 validation and exact integer/token output helpers, extracted byte-identically from qualified typed Value; private helper preconditions remain explicit",
+      "source": "hia/src/codec/json_primitives.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_string.py",
+        "hia/tests/test_state_value.py"
+      ]
+    },
+    {
+      "id": "codec/json-number",
+      "node_integration_complete": false,
+      "scope": "Full original-default serde JSON finite number parsing and shortest binary64 formatting through the frame bound",
+      "source": "hia/src/codec/json_number.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "codec/json-value-wire",
+      "node_integration_complete": false,
+      "scope": "Complete Unicode finite-number Value JSON syntax and canonicality, preserving syntax-before-noncanonical order",
+      "source": "hia/src/codec/json_value_wire.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "codec/json-value-encode",
+      "node_integration_complete": false,
+      "scope": "Complete typed Value canonical JSON encoding with original nesting and 2 MiB frame bounds",
+      "source": "hia/src/codec/json_value_encode.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "crypto/ed25519-sign",
+      "node_integration_complete": false,
+      "scope": "Seed32/digest32 Ed25519 mathematical signing and public derivation; raw compiler-stack erasure defect retained and separate guarded caller required",
+      "source": "hia/src/crypto/ed25519_sign.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py",
+        "hia/platform/private_stack/qualify.py"
+      ]
+    },
+    {
+      "id": "transport/authenticated-response",
+      "node_integration_complete": false,
+      "scope": "Complete classical authenticated response frame/Value/context/signature relation; private peer and connection authority remain separate",
+      "source": "hia/src/transport/authenticated_response.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "transport/signed-response",
+      "node_integration_complete": false,
+      "scope": "Native typed Value canonical signed response generation with frame limits; terminal commit authority remains with the Node owner",
+      "source": "hia/src/transport/signed_response.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "protocol/state-root-compact",
+      "node_integration_complete": false,
+      "scope": "General complete SRV1 sparse root using shared SHA arena within fixed composition limits; maximum-count performance not qualified by Settings tests",
+      "source": "hia/src/protocol/state_root_compact.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_settings.py"
+      ]
+    },
+    {
+      "id": "node/settings-development",
+      "node_integration_complete": false,
+      "scope": "Complete public Settings::development(Option<u64>) default Config, maintenance task, accounts, roots and genesis; other constructors and CLI remain open",
+      "source": "hia/src/node/settings_development.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_settings.py",
+        "hia/tests/test_node_settings_memory.py",
+        "hia/tools/qualify_settings_original.py"
+      ]
+    },
+    {
+      "id": "mempool/lane_quota",
+      "node_integration_complete": false,
+      "scope": "Original M05 lane global capacity, critical reserve, bounded borrowing, fairness transitions and five real-QoS-snapshot headroom/admissibility fields plus next-dequeue lane selection and full-drain-aware post-pop fairness on supplied counts; does not implement admission caches, queue mutation, nonce reservation or persistent Node authority",
+      "source": "hia/src/mempool/lane_quota.hepta",
+      "state": "native-candidate-awaiting-qualification",
+      "tests": [
+        "hia/tests/test_mempool_quota.py"
+      ]
+    },
+    {
+      "id": "mempool/lane_owner",
+      "node_integration_complete": false,
+      "scope": "Real private in-process LaneAdmissionGate owner with two persistent FIFO rings, exact ID membership, canonical lane/fairness/QoS policy, atomic resource refusal and explicit clear/close; no signed/nonce/local-pool/Node or restart authority",
+      "source": "hia/src/mempool/lane_owner.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_mempool_owner.py"
+      ]
+    },
+    {
+      "id": "consensus/work",
+      "node_integration_complete": false,
+      "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
+      "source": "hia/src/consensus/work.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_consensus_work.py"
+      ]
+    },
+    {
+      "id": "audit/event",
+      "node_integration_complete": false,
+      "scope": "Complete original public AuditEvent new, six builders, value Clone and Eq; exact optional presence, independent UTF-8 fields and all u128 bits; no event-origin, durable or ledger authority",
+      "source": "hia/src/audit/event.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_audit_event.py"
+      ]
+    },
+    {
+      "id": "mempool/raw-bindings-owner",
+      "node_integration_complete": false,
+      "scope": "Actual private Node RawBindings digest/body owner, duplicate/capacity order and consume-before-mismatch semantics, with full erasure and explicit clear/close; no signature, signer nonce, durable local-pool or Node commit authority",
+      "source": "hia/src/mempool/raw_bindings_owner.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_raw_bindings_owner.py"
+      ]
+    },
+    {
+      "id": "data-availability/rs46",
+      "node_integration_complete": false,
+      "scope": "RS(6,4) byte codec over owner-supplied chunk pins: canonical CRS1 shards, GF(256) encoding and recovery, padding, SHA-256 and all supplied shard consistency; full original 4 MiB chunk limit; manifest admission and network/provider authority remain with their owners",
+      "source": "hia/src/data_availability/rs46.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_rs46.py"
+      ]
+    },
+    {
+      "id": "control-plane/core",
+      "node_integration_complete": false,
+      "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
+      "source": "hia/src/control_plane/core.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_plane.py"
+      ]
+    },
+    {
+      "id": "control-plane/registry",
+      "node_integration_complete": false,
+      "scope": "Private native ObserverRegistry lifecycle with complete register/observe/lookup semantics, generation/substitution refusal and owned allocation failure cleanup; live control-plane I/O and plan guard remain separate",
+      "source": "hia/src/control_plane/registry.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_plane.py"
+      ]
+    },
+    {
+      "id": "escrow/vault",
+      "node_integration_complete": false,
+      "scope": "Private native SettlementVault complete-session lifecycle: full u128 balances, permanent lock IDs, exact Unicode validation, all public methods, isolated clones and both audit logs; live caller authentication and durable Node settlement remain separate",
+      "source": "hia/src/escrow/vault.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_escrow.py"
+      ]
+    },
+    {
+      "id": "governance/guard",
+      "node_integration_complete": false,
+      "scope": "Complete private HIA GovernanceGuard session: role and guardian sets, all proposal and bridge transitions, u64 counters, exact raw and normalized audit, consume marker and independent Clone; authenticated incremental Node lifetime and durability remain separate",
+      "source": "hia/src/governance/guard.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_governance.py"
+      ]
+    },
+    {
+      "id": "control-plane/local-guard",
+      "node_integration_complete": false,
+      "scope": "Original LocalPlanGuard construction and complete evaluate policy with private immutable configuration, full i128 bounds, ordered receipts and an explicit new strict Ed25519 local provider; no original production provider existed; live authorized plan application and PQ identity remain separate",
+      "source": "hia/src/control_plane/guard.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_control_guard.py"
+      ]
+    },
+    {
+      "id": "peer-lease/values",
+      "node_integration_complete": false,
+      "scope": "Private native immutable peer-lease values: full constructors/getters/clone/drop/equality/scope ordering; original run/body hashes and recovery projection integrity decoder. Durable journals, Unix credential authority, daemon/client and Core authentication remain unimplemented; original package is retained.",
+      "source": "hia/src/peer_lease/values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_peer_lease.py"
+      ]
+    },
+    {
+      "id": "oracle/values",
+      "node_integration_complete": false,
+      "scope": "All 22 explicit public Oracle functions/methods from the unchanged actual inline lib.rs: full UTF-8 IDs, canonical snapshot/hash/policy, i128/u128 arithmetic, u32 release wrapping and checked native traps, complete observed reports and original first-error order. Source sorting, duplicate detection and canonical cardinality use O(n log n) String comparisons. Actual Node/network/replay/finality ownership remains separate.",
+      "source": "hia/src/oracle/values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_oracle.py"
+      ]
+    },
+    {
+      "id": "oracle/serde-json",
+      "node_integration_complete": false,
+      "scope": "Six public Oracle data types through the actual serde_json 1.0.149 from_slice/to_vec surface, both default and workspace arbitrary_precision profiles: full integer/String domains, map/sequence/default/duplicate/unknown/ignored-value behavior and original serialized field order. No claim to generic Serde providers or serde_json diagnostic wording.",
+      "source": "hia/src/oracle/serde_json.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_oracle.py"
+      ]
+    },
+    {
+      "id": "crypto/sha512-stream",
+      "node_integration_complete": false,
+      "scope": "Incremental SHA512 with the original shared compression core, full 128-bit bit length, external and disjoint arena input, explicit lifecycle and bounded scratch. Message length follows supplied extents without the previous one-shot arena ceiling.",
+      "source": "hia/src/crypto/sha512_stream.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sha512_stream.py",
+        "hia/tests/test_sha512.py"
+      ]
+    },
+    {
+      "id": "types/request-status",
+      "node_integration_complete": false,
+      "scope": "Every explicit RequestStatus and RequestStateError public value operation: seven states, complete transition matrix, exact Rust Unicode trimming and ASCII normalization, original error codes and display. Queue authority, generic Serde providers, the remaining type modules and durable Node use remain separate.",
+      "source": "hia/src/types/request_status.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_request_status.py",
+        "hia/tests/rust_request_status_reference.rs"
+      ]
+    },
+    {
+      "id": "types/transcript",
+      "node_integration_complete": false,
+      "scope": "All nine explicit original transcript APIs: exact envelope SHA256 field order, complete ordered segment collection/errors, materialized Merkle layers, root/leaf count/single and batch proofs, arbitrary typed proof verification. Full u64/u128 values and supplied extents; generic Serde, relay authentication, durable ownership and Node integration remain separate.",
+      "source": "hia/src/types/transcript.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_transcript.py",
+        "hia/tests/rust_transcript_reference.rs"
+      ]
+    },
+    {
+      "id": "types/transfer",
+      "node_integration_complete": false,
+      "scope": "Original TransferTx signing message, address derivation, seed signing and strict Ed25519 validation with full u128 values, unchanged original domains and Unicode/error ordering. Streaming SHA512 preserves long-message behavior; JSON providers, persistent key custody and Node settlement remain separate.",
+      "source": "hia/src/types/transfer.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_transfer.py",
+        "hia/tests/rust_transfer_reference.rs"
+      ]
+    },
+    {
+      "id": "crypto/keccak-stream",
+      "node_integration_complete": false,
+      "scope": "Native Keccak-f[1600], all four SHA3 digests and streaming SHAKE128/256 with bounded byte-aligned calls and explicit private-context lifecycle; not complete PQ signatures, CAVP validation or constant-time qualification.",
+      "source": "hia/src/crypto/keccak_stream.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_keccak.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-poly",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 polynomial arithmetic: canonical residues, forward/inverse NTT, pointwise/add/subtract and negacyclic multiplication; no complete ML-DSA signer/verifier, key ownership or constant-time qualification.",
+      "source": "hia/src/crypto/ml_dsa_poly.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa_poly.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-verify",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 verification, canonical encoding, selected full official groups and original-Candidate error order; private borrowed buffers require live disjoint caller-owned allocations.",
+      "source": "hia/src/crypto/ml_dsa.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-keygen",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 deterministic seed key generation and diagnostic key packing; no entropy-provider or automatic ownership integration.",
+      "source": "hia/src/crypto/ml_dsa_keygen.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-sign",
+      "node_integration_complete": false,
+      "scope": "Native FIPS 204 ML-DSA-65/87 signing and nonce exhaustion refusal, selected official contexts/randomizers and bounded original comparisons; no constant-time or side-channel qualification.",
+      "source": "hia/src/crypto/ml_dsa_sign.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "crypto/ml-dsa-owner",
+      "node_integration_complete": false,
+      "scope": "Private Candidate verifier/signer lifecycle, trusted fixed algorithm, getters, deterministic signing with self-verification and explicit secret destruction; foreign ABI guards, unforgeable owner integration and automatic Drop remain open.",
+      "source": "hia/src/crypto/ml_dsa_owner.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_ml_dsa.py",
+        "hia/tests/test_ml_dsa_qualification.py",
+        "hia/tools/qualify_ml_dsa.py"
+      ]
+    },
+    {
+      "id": "research-protocol/canonical",
+      "node_integration_complete": false,
+      "scope": "Canonical CBOR primitive encoding and strict decoding with original cursor advancement, error precedence, UTF-8 validation and output bounds; complete command/type consumers and Node integration remain open.",
+      "source": "hia/src/research_protocol/canonical.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_canonical.py",
+        "hia/tests/rust_research_canonical_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/hash",
+      "node_integration_complete": false,
+      "scope": "Original research-protocol domain-separated canonical hashing through native streaming SHA-256, with explicit domain/message length framing; complete research state and handoff consumers remain open.",
+      "source": "hia/src/research_protocol/hash.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_canonical.py",
+        "hia/tests/rust_research_canonical_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/external-key",
+      "node_integration_complete": false,
+      "scope": "Original public ExternalKey UUID/external-ID derivation, namespace and identifier validation order, byte access, lowercase hex/Display and canonical CBOR through native SHA-256; signed/state consumers, generic Serde and Node integration remain open.",
+      "source": "hia/src/research_protocol/external_key.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_external_key.py",
+        "hia/tests/rust_research_external_key_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/workload",
+      "node_integration_complete": false,
+      "scope": "Native Classic/Mixed/HotStreak synthetic transactions with exact wrapping arithmetic and workload input contracts; CLI/environment, full profile output and persistence remain open.",
+      "source": "hia/src/bench/workload.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
+    },
+    {
+      "id": "bench/digests",
+      "node_integration_complete": false,
+      "scope": "Native original domain-separated input/group SHA-256 over full ordered transactions and indices, including unaligned inputs beyond two MiB; not a replacement for complete Bench execution.",
+      "source": "hia/src/bench/digests.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
+    },
+    {
+      "id": "bench/repeat",
+      "node_integration_complete": false,
+      "scope": "Native first schedule and up to 1000 bounded re-schedules, exact ordered-membership and group-digest verification through all seven existing strategies; retains explicit high-water safety corrections. Whole CLI/profile/entropy/persistence remains open.",
+      "source": "hia/src/bench/repeat.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
+    },
+    {
+      "id": "research-protocol/payload",
+      "node_integration_complete": false,
+      "scope": "All seven ResearchCommandV1 payloads: canonical encoding, strict decoding/round-trip, validation/error order, checked contributor accounting, exact shares, command type and primary object reference. The signed-envelope component consumes these shared codecs; Serde, state, handoff, Node integration and retirement remain open.",
+      "source": "hia/src/research_protocol/payload.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_payload.py",
+        "hia/tests/rust_research_payload_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/decimal",
+      "node_integration_complete": false,
+      "scope": "Native decimal text to binary64 with exact rounding, bounded significand/sticky handling and original Rust parsing/error behavior. Full CLI/OS environment owner, profile and retirement remain open.",
+      "source": "hia/src/bench/decimal.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/environment",
+      "node_integration_complete": false,
+      "scope": "Native parsing/defaults/precedence of all 12 Bench environment values, exact adaptive policy fields and configured workloads/schedules. Actual OS environment acquisition and full Bench owner remain open.",
+      "source": "hia/src/bench/environment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/format-fixed",
+      "node_integration_complete": false,
+      "scope": "Native four-decimal binary64 formatting including original finite, nonfinite and signed-zero forms, with exact ties-to-even. Remaining complete profile/CLI presentation and persistence remain open.",
+      "source": "hia/src/bench/format_fixed.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/command",
+      "node_integration_complete": false,
+      "scope": "Original SignedResearchCommandV1 canonical/signing bytes, complete strict decoding and validation/error order, native Ed25519 sign/verify, fingerprint/payload hashes, dalek public-Y behavior and all-exit private seed clearing; generic Serde, state, handoff, Node integration and retirement remain open.",
+      "source": "hia/src/research_protocol/command.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_command.py",
+        "hia/tests/rust_research_command_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/logarithm",
+      "node_integration_complete": false,
+      "scope": "Native binary64 logarithm through bounded integer interval refinement; actual MPFR and retained Rust comparisons, including hard rounding and special values. Full process/CLI/report and retirement remain open.",
+      "source": "hia/src/bench/logarithm.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/profile",
+      "node_integration_complete": false,
+      "scope": "All 51 original derived profile fields, actual scheduler integration, entropy and final four-decimal strings; prior scheduling safety differences remain explicit. Whole process ownership and retirement remain open.",
+      "source": "hia/src/bench/profile.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/format-value",
+      "node_integration_complete": false,
+      "scope": "Complete binary64 four-decimal field formatting, including non-finite special values, with actual Rust comparison and atomic output guards; complete ordered CLI report remains open.",
+      "source": "hia/src/bench/format_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_profile.py",
+        "hia/tests/rust_bench_profile_reference.rs"
+      ]
+    },
+    {
+      "id": "peer-payload-recovery/ack-codec",
+      "node_integration_complete": false,
+      "scope": "Original fixed 188-byte recovery ACK encode/decode/checksum/error precedence and existing native type wiring; full ACK ledger/recovery owner and original wide Body bounds remain open.",
+      "source": "hia/src/peer_lease/recovery_ack.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_peer_payload_ack.py",
+        "hia/tests/rust_peer_payload_ack_reference.rs",
+        "hia/platform/peer_payload_recovery/codec_reference_hook.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/authority",
+      "node_integration_complete": false,
+      "scope": "Original authority identity/set constructors, exact tuple sorting/validation, canonical encoders and both membership methods, preserving raw unvalidated binary-search behavior; generic Serde, protocol state, snapshot and Node integration remain open.",
+      "source": "hia/src/research_protocol/authority.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_authority.py",
+        "hia/tests/rust_research_authority_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-values",
+      "node_integration_complete": false,
+      "scope": "Original raw seven state objects, applied records and snapshot canonical encodings and hash domains, preserving public vector order and unvalidated typed values. These values do not admit a state graph. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_values.py",
+        "hia/tests/rust_research_state_values_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-index",
+      "node_integration_complete": false,
+      "scope": "Private typed snapshot index preserving input-order first errors, complete keys and nonce identities with separate sorted pointer indexes; only a native owner may retain and admit this arena. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_index.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_graph.py",
+        "hia/tests/rust_research_state_reference.rs",
+        "hia/tests/rust_research_state_values_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-graph",
+      "node_integration_complete": false,
+      "scope": "Original bound/unbound snapshot admission, authority/journal/nonce/object checks, strict and historical references, claim/challenge/resolution graph and exact error precedence. Private continuation; whole state ownership remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_graph.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_graph.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-transition",
+      "node_integration_complete": false,
+      "scope": "All seven original apply transitions, four resolution decisions, replay/nonce/authorization/error ordering, atomic candidate snapshots and exact changed references. Requires native signed verification and owner custody before this private continuation; publication remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_transition.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_transition.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-query",
+      "node_integration_complete": false,
+      "scope": "Native normalized snapshot export, sorted current references, seven keyed getters and strict object lookup, composed with native canonical/hash values; private index custody and complete state owner remain open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_query.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_query.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/text",
+      "node_integration_complete": false,
+      "scope": "Original integer and UTC calendar text formatting, including full-width signed/unsigned fields and SystemTime range behavior; pure text does not replace process ownership. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/bench/text.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_report.py",
+        "hia/tests/rust_bench_report_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/report",
+      "node_integration_complete": false,
+      "scope": "Complete ordered original main report and persisted result bytes from native profile fields, with original formatting and failure ordering; real CLI/environment/clock/file owner remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/bench/report.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_report.py",
+        "hia/tests/rust_bench_report_reference.rs"
+      ]
+    }
+  ],
+  "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
+  "historical_failures_preserved": true,
+  "history_archive": "evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json",
+  "legacy_packages": [
+    {
+      "components": [
+        "types/request-status",
+        "types/transfer",
+        "types/transcript"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-types",
+      "module": "M00",
+      "package": "trnm-types",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "executor/schedule",
+        "math/binary64"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-executor",
+      "module": "M06",
+      "package": "trnm-executor",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "bench/workload",
+        "bench/digests",
+        "bench/repeat",
+        "bench/decimal",
+        "bench/environment",
+        "bench/format-fixed",
+        "bench/logarithm",
+        "bench/profile",
+        "bench/format-value",
+        "bench/text",
+        "bench/report"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-bench",
+      "module": "M17",
+      "package": "trnm-bench",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "mempool/lane_quota",
+        "mempool/lane_owner"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-mempool",
+      "module": "M05",
+      "package": "trnm-mempool",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-worker-agent",
+      "module": "M10",
+      "package": "trnm-worker-agent",
+      "retirement_accepted": false,
+      "state": "not-ported"
+    },
+    {
+      "components": [
+        "oracle/values",
+        "oracle/serde-json"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-oracle",
+      "module": "M11",
+      "package": "trnm-oracle",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "research-protocol/canonical",
+        "research-protocol/hash",
+        "research-protocol/external-key",
+        "research-protocol/payload",
+        "research-protocol/command",
+        "research-protocol/authority",
+        "research-protocol/state-values",
+        "research-protocol/state-index",
+        "research-protocol/state-graph",
+        "research-protocol/state-transition",
+        "research-protocol/state-query"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-research-protocol",
+      "module": "M10",
+      "package": "trnm-research-protocol",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "protocol/id",
+        "protocol/hash",
+        "protocol/pnh1",
+        "protocol/pgh2",
+        "protocol/ilf2",
+        "protocol/ilf3",
+        "crypto/pon_hash",
+        "protocol/pnx1",
+        "protocol/state-root",
+        "protocol/state-root-compact"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-protocol",
+      "module": "M00",
+      "package": "trnm-protocol",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "peer-lease/values",
+        "peer-payload-recovery/ack-codec"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-peer-lease",
+      "module": "M04",
+      "package": "trnm-peer-lease",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "data-availability/rs46"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-data-availability",
+      "module": "M09",
+      "package": "trnm-data-availability",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-task-kernel",
+      "module": "M10",
+      "package": "trnm-task-kernel",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "state/json_string",
+        "state/json_value",
+        "codec/json_primitives",
+        "codec/json-number",
+        "codec/json-value-wire",
+        "codec/json-value-encode"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
+      "module": "M06",
+      "package": "trnm-mvcc-fee",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-service-settlement",
+      "module": "M12",
+      "package": "trnm-service-settlement",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "control-plane/core",
+        "control-plane/registry",
+        "control-plane/local-guard"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-control-plane",
+      "module": "M16",
+      "package": "trnm-control-plane",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-state-import",
+      "module": "M13",
+      "package": "trnm-state-import",
+      "retirement_accepted": false,
+      "state": "not-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-release-bundle",
+      "module": "M15",
+      "package": "trnm-release-bundle",
+      "retirement_accepted": false,
+      "state": "not-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-checkpoint-store",
+      "module": "M03",
+      "package": "trnm-checkpoint-store",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "checkpoint/value_v2"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-checkpoint-types",
+      "module": "M03",
+      "package": "trnm-checkpoint-types",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "work/encoding",
+        "work/field",
+        "work/matrix",
+        "work/verify",
+        "crypto/sha256",
+        "crypto/sha256_arena",
+        "crypto/sha512_arena",
+        "crypto/ed25519_group",
+        "crypto/ed25519_verify",
+        "crypto/sha256_stream",
+        "crypto/ed25519-sign",
+        "crypto/sha512-stream",
+        "crypto/keccak-stream",
+        "crypto/ml-dsa-poly",
+        "crypto/ml-dsa-verify",
+        "crypto/ml-dsa-keygen",
+        "crypto/ml-dsa-sign",
+        "crypto/ml-dsa-owner"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
+      "module": "M01",
+      "package": "trnm-crypto-primitives",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "verification/closed_round"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-verification-profiles",
+      "module": "M11",
+      "package": "trnm-verification-profiles",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "transport/replay"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-transport",
+      "module": "M04",
+      "package": "trnm-transport",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "audit/event"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-audit-events",
+      "module": "M17",
+      "package": "trnm-audit-events",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "governance/guard"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-governance-guard",
+      "module": "M01",
+      "package": "trnm-governance-guard",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "escrow/vault"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-escrow-vault",
+      "module": "M12",
+      "package": "trnm-escrow-vault",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [
+        "transport/authenticated_request",
+        "codec/json-number",
+        "codec/json-value-wire",
+        "codec/json-value-encode",
+        "transport/authenticated-response",
+        "transport/signed-response",
+        "node/settings-development",
+        "consensus/work",
+        "mempool/raw-bindings-owner"
+      ],
+      "legacy_path": "trillionnium/crates/trnm-pon-node",
+      "module": "M15",
+      "package": "trnm-pon-node",
+      "retirement_accepted": false,
+      "state": "partially-ported"
+    },
+    {
+      "components": [],
+      "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
+      "module": "M15",
+      "package": "trnm-sqlite-io-boundary",
+      "retirement_accepted": false,
+      "state": "not-ported"
+    }
+  ],
+  "native_foundations": [
+    {
+      "id": "platform/os-fixture",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "finite file, entropy and loopback OS qualification fixture; blocking hard deadline remains unqualified",
+      "sources": [
+        "hia/platform/probe_policy.hepta",
+        "hia/platform/linux_adapter_emitter.hepta"
+      ],
+      "tests": [
+        "hia/tools/qualify_platform.py",
+        "hia/tests/test_platform_cleanup.py"
+      ]
+    },
+    {
+      "id": "platform/stream-reactor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "current nonblocking connected-stream reactor and its native reusable-context qualification caller",
+      "sources": [
+        "hia/platform/reactor/policy.hepta",
+        "hia/platform/reactor/linux_emitter.hepta",
+        "hia/platform/reactor/context_fixture.hepta",
+        "hia/platform/reactor/api_fixture.hepta"
+      ],
+      "tests": [
+        "hia/tools/qualify_platform.py",
+        "hia/tests/test_platform_reactor_cleanup.py",
+        "hia/tests/test_platform_reactor_contracts.py"
+      ]
+    },
+    {
+      "id": "storage/transaction-owner",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Fresh-v2 streaming immutable transactions with directory FD/lock/CAS/fsync/reopen, complete bounded genesis initialization recovery and post-publication readback; full 279445512-byte State extent and 4105 commits; typed Node integration and original service budget remain OPEN",
+      "sources": [
+        "hia/storage/owner_policy.hepta",
+        "hia/storage/linux_adapter_emitter.hepta",
+        "hia/storage/sha256_framing.hepta"
+      ],
+      "tests": [
+        "hia/tools/qualify_storage.py",
+        "hia/tests/test_storage_native.py",
+        "hia/tools/qualify_storage_recovery.py",
+        "hia/tests/test_storage_recovery.py"
+      ]
+    },
+    {
+      "id": "platform/transport-request-caller",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native request and incremental-hash qualification caller; no connection, Settings, private key or Node authority",
+      "sources": [
+        "hia/platform/transport_request/linux_fixture_emitter.hepta"
+      ],
+      "tests": [
+        "hia/tools/qualify_transport.py"
+      ]
+    },
+    {
+      "id": "platform/node-delta",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Typed ordinary Node Delta command actor and native transactional fixture; original read/compare/write/progress semantics for admitted typed tapes, while physical SQL materialization, whole-State, durable commit, cancellation ownership and peer ACK remain open",
+      "sources": [
+        "hia/platform/node_delta/delta_owner.hepta",
+        "hia/platform/node_delta/delta_fixture.hepta"
+      ],
+      "tests": [
+        "hia/platform/node_delta/qualify.py",
+        "hia/tests/test_node_delta_cli.py"
+      ]
+    },
+    {
+      "id": "platform/private-stack",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux guarded private stack with ordinary-return wiping and explicit cleanup failures; caller seed lifetime, asynchronous termination and complete Node key owner remain open",
+      "sources": [
+        "hia/platform/private_stack/linux_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/private_stack/qualify.py"
+      ]
+    },
+    {
+      "id": "platform/transport-response-caller",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Variable-length native response/Value caller with output redzones and explicit failure publication rules; no peer, replay or terminal commit authority",
+      "sources": [
+        "hia/platform/transport_response/linux_value_fixture_emitter.hepta",
+        "hia/platform/transport_response/fixture_contract.hepta"
+      ],
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ]
+    },
+    {
+      "id": "platform/host-checkpoint",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Fresh fixed-parent Linux acquisition and each complete calling-thread/boot/identity/five-limit check in native HIA; actual physical refusal controls, explicit fixture and mandatory syscall trace; resource sampling, worker embedding and original service budget remain OPEN",
+      "sources": [
+        "hia/platform/host_checkpoint/owner_policy.hepta",
+        "hia/platform/host_checkpoint/linux_emitter.hepta",
+        "hia/platform/host_checkpoint/fixture_entry.hepta"
+      ],
+      "tests": [
+        "hia/platform/host_checkpoint/qualify.py",
+        "hia/platform/host_checkpoint/rust_oracle.py",
+        "hia/platform/host_checkpoint/qualify_production.py",
+        "hia/tests/test_host_checkpoint.py",
+        "hia/tests/test_host_production.py"
+      ]
+    },
+    {
+      "id": "platform/typed-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux sealed-input streaming Delta merge, complete stored State decoding and optional complete classical root with real descriptor admission and writes; no namespace, continuity, expected-root, COMMIT, replay or ACK authority; growth GSC2 and full Node integration remain OPEN",
+      "sources": [
+        "hia/platform/typed_store/stage_policy.hepta",
+        "hia/platform/typed_store/root_finalize.hepta",
+        "hia/platform/typed_store/linux_stage_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/typed_store/qualify.py",
+        "hia/platform/typed_store/rust_oracle.py",
+        "hia/platform/typed_store/capacity.py",
+        "hia/platform/typed_store/test_integrity.py"
+      ]
+    },
+    {
+      "id": "platform/host-resource",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Actual fixed-parent CPU/memory/PID sampling under two complete fresh Host checks, exact bounded regular-file reads, original parsing/error order and checked CPU deltas. Same-job production execution reuses only the preceding exact-source Host lease and audits all sample syscalls; both 2e3e5dc hosted runs passed with independently replayed full traces. Node worker embedding, paid thread accounting, wait4 and original 4s/16 service acceptance remain OPEN.",
+      "sources": [
+        "hia/platform/host_resource/resource_policy.hepta",
+        "hia/platform/host_resource/fixture_entry.hepta"
+      ],
+      "tests": [
+        "hia/platform/host_resource/qualify.py",
+        "hia/platform/host_resource/rust_oracle.py",
+        "hia/platform/host_resource/test_integrity.py",
+        "hia/platform/host_resource/qualify_production.py",
+        "hia/platform/host_resource/test_production.py"
+      ]
+    },
+    {
+      "id": "platform/continuity-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native streaming typed State staging, exact installed constructor contexts, maintenance/liability/capacity validation and optional complete classical root. Four installed configurations and a full 1065536-row growth extent are explicit finite profiles. Actual original Rust is mandatory in CI; directory namespace, expected-root acceptance, COMMIT, replay, ACK, PQ/GSC2 and complete Node integration remain OPEN.",
+      "sources": [
+        "hia/platform/continuity_store/primary_policy.hepta",
+        "hia/platform/continuity_store/continuity_policy.hepta",
+        "hia/platform/continuity_store/context.hepta",
+        "hia/platform/continuity_store/linux_continuity_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/continuity_store/qualify.py",
+        "hia/platform/continuity_store/rust_oracle.py",
+        "hia/platform/continuity_store/capacity.py",
+        "hia/platform/continuity_store/test_integrity.py",
+        "hia/tools/qualify_foundation_ci.py",
+        "hia/tests/test_foundation_ci.py"
+      ]
+    },
+    {
+      "id": "platform/thread-cpu",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux ThreadCpuStamp value and finite main/one-worker lifetime owner using real thread CPU clocks, private generation identity, independent clone/drop/consuming finish, actual clone and clear-TID join. Complete natural and controlled-error histories require actual original Rust and independent syscall traces. Numeric kernel TID reuse, complete paid-account/scoped-executor ownership, Node worker embedding and the original service budget remain OPEN.",
+      "sources": [
+        "hia/platform/thread_cpu/owner_policy.hepta",
+        "hia/platform/thread_cpu/fixture_entry.hepta",
+        "hia/platform/thread_cpu/linux_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/thread_cpu/qualify.py",
+        "hia/platform/thread_cpu/rust_oracle.py",
+        "hia/platform/thread_cpu/test_integrity.py",
+        "hia/tools/qualify_foundation_ci.py"
+      ]
+    },
+    {
+      "id": "platform/genesis-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native default Settings/genesis catalog/active selector/slot-zero seven-row State construction, private directory and cooperative exclusive flock, full file reads, native M06 root, durable initialization and cold reopen. Trusted private directory; no continuous hostile same-UID claim. Successor M06 execution/admission, expected-root, arbitrary COMMIT, reorg/replay/outbox/ACK, PQ/GSC2, all Configs and the original service budget remain OPEN.",
+      "sources": [
+        "hia/platform/genesis_store/owner_policy.hepta",
+        "hia/platform/genesis_store/linux_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/genesis_store/build.py",
+        "hia/platform/genesis_store/qualify.py",
+        "hia/platform/genesis_store/rust_oracle.py",
+        "hia/platform/genesis_store/test_integrity.py",
+        "hia/tools/qualify_genesis_ci.py",
+        "hia/tests/test_genesis_ci.py"
+      ]
+    },
+    {
+      "id": "platform/paid-cpu",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux shared signed-i128 paid CPU accounting and actual main/one-worker scoped ownership with real CPU clocks, mutex/futex ordering, cleanup and complete finite original comparisons. Six owner profiles, boundary arithmetic and thirteen physical fault scenarios are qualified in the recorded development source. General worker pools, complete application/executor integration, original public-service budget and full Node ownership remain OPEN.",
+      "sources": [
+        "hia/platform/paid_cpu/arithmetic_fixture.hepta",
+        "hia/platform/paid_cpu/linux_arithmetic_emitter.hepta",
+        "hia/platform/paid_cpu/linux_owner_emitter.hepta",
+        "hia/platform/paid_cpu/owner.hepta"
+      ],
+      "tests": [
+        "hia/platform/paid_cpu/build.py",
+        "hia/platform/paid_cpu/qualify.py",
+        "hia/platform/paid_cpu/rust_oracle.py",
+        "hia/platform/paid_cpu/test_integrity.py",
+        "hia/platform/paid_cpu/trace_audit.py",
+        "hia/platform/paid_cpu/fault_audit.py",
+        "hia/tools/qualify_paid_cpu_ci.py",
+        "hia/tests/test_paid_cpu_ci.py",
+        "hia/tools/qualify_foundation_ci.py"
+      ]
+    },
+    {
+      "id": "platform/execution-state",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native typed Value/State/View/Patch lifetime owner with point/prefix snapshots, semantic equality, patch current checks, explicit consuming apply, complete State root, actual relocation and exhaustion refusal. Application commands, fee/reward/fund conservation, canonical M06 workers and replay, expected-root admission and durable Node COMMIT remain OPEN.",
+      "sources": [
+        "hia/platform/execution_state/linux_emitter.hepta",
+        "hia/platform/execution_state/map.hepta",
+        "hia/platform/execution_state/owner.hepta",
+        "hia/platform/execution_state/value.hepta"
+      ],
+      "tests": [
+        "hia/platform/execution_state/build.py",
+        "hia/platform/execution_state/qualify.py",
+        "hia/platform/execution_state/physical.py",
+        "hia/platform/execution_state/rust_oracle.py",
+        "hia/platform/execution_state/test_integrity.py",
+        "hia/tools/qualify_execution_ci.py",
+        "hia/tests/test_execution_ci.py"
+      ]
+    },
+    {
+      "id": "platform/execution-prepare",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private default-configuration legacy PNX1 preparation with native SHA256 and strict Ed25519, attempt counters, callback/cancellation order and private Prepared generations. Complete actual original preparation comparison is required. Batch workers, State application/revalidation/replay, block mandatory/reward/receipts, PQ and private durable Node admission remain OPEN.",
+      "sources": [
+        "hia/platform/execution_prepare/linux_emitter.hepta",
+        "hia/platform/execution_prepare/owner_policy.hepta"
+      ],
+      "tests": [
+        "hia/platform/execution_prepare/build.py",
+        "hia/platform/execution_prepare/qualify.py",
+        "hia/platform/execution_prepare/rust_oracle.py",
+        "hia/platform/execution_prepare/test_integrity.py",
+        "hia/tools/qualify_execution_ci.py",
+        "hia/tests/test_execution_ci.py"
+      ]
+    },
+    {
+      "id": "platform/execution-application",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native private default M06 application tags 1..12 with actual preparation/signature, State/View/Patch, fees/nonce/error ordering, callbacks and consuming Patch ownership; 328 histories, 32 physical controls and actual original comparison. Full batch/scoped workers, all configurations/PQ, expected-root block admission and durable Node COMMIT remain OPEN.",
+      "sources": [
+        "hia/platform/execution_application/claim.hepta",
+        "hia/platform/execution_application/core.hepta",
+        "hia/platform/execution_application/linux_emitter.hepta",
+        "hia/platform/execution_application/model.hepta",
+        "hia/platform/execution_application/prepare_bridge.hepta",
+        "hia/platform/execution_application/quota.hepta",
+        "hia/platform/execution_application/relation.hepta",
+        "hia/platform/execution_application/release.hepta",
+        "hia/platform/execution_application/support.hepta",
+        "hia/platform/execution_application/task.hepta"
+      ],
+      "tests": [
+        "hia/platform/execution_application/build.py",
+        "hia/platform/execution_application/qualify.py",
+        "hia/platform/execution_application/physical.py",
+        "hia/platform/execution_application/rust_oracle.py",
+        "hia/platform/execution_application/test_integrity.py",
+        "hia/tools/qualify_application_ci.py",
+        "hia/tests/test_application_ci.py"
+      ]
+    },
+    {
+      "id": "platform/mempool-typed",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native typed M05 queue, canonical metadata, Ready lifetime and pending-lease cleanup under explicit test traits; 323 histories/9332 commands, full unchanged original library and 153 retained tests, 38 physical processes and 26 guarded calls. Production PNX/signature/Node nonce adapters, persistent local pool/recovery and original service qualification remain OPEN.",
+      "sources": [
+        "hia/platform/mempool_typed/linux_emitter.hepta",
+        "hia/platform/mempool_typed/typed_fixture.hepta"
+      ],
+      "tests": [
+        "hia/platform/mempool_typed/build.py",
+        "hia/platform/mempool_typed/qualify.py",
+        "hia/platform/mempool_typed/physical.py",
+        "hia/platform/mempool_typed/guarded.py",
+        "hia/platform/mempool_typed/rust_oracle.py",
+        "hia/platform/mempool_typed/test_integrity.py",
+        "hia/tools/qualify_mempool_ci.py",
+        "hia/tests/test_mempool_ci.py"
+      ]
+    },
+    {
+      "id": "platform/work-owner",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux private Work owner with complete original work/clock/paid fault histories, one-observation shared-word handshake, controlled real scheduling and complete private readback. Fixed-parent production authority, live Node/Paid admission, durable COMMIT and the original 4s/16 service acceptance remain OPEN.",
+      "sources": [
+        "hia/platform/work_owner/closed_fd_fixture_emitter.hepta",
+        "hia/platform/work_owner/host_fixture.hepta",
+        "hia/platform/work_owner/host_method.hepta",
+        "hia/platform/work_owner/linux_emitter.hepta",
+        "hia/platform/work_owner/owner_fixture.hepta",
+        "hia/platform/work_owner/owner_policy.hepta",
+        "hia/platform/work_owner/sha_fixture.hepta",
+        "hia/platform/work_owner/work_policy.hepta",
+        "hia/platform/work_owner/paid_fixture.hepta",
+        "hia/platform/work_owner/paid_method.hepta"
+      ],
+      "tests": [
+        "hia/platform/work_owner/build.py",
+        "hia/platform/work_owner/clock_evidence.py",
+        "hia/platform/work_owner/primitive_evidence.py",
+        "hia/platform/work_owner/primitive_qualification.py",
+        "hia/platform/work_owner/qualify.py",
+        "hia/platform/work_owner/rust_oracle.py",
+        "hia/platform/work_owner/test_clock_evidence.py",
+        "hia/platform/work_owner/test_integrity.py",
+        "hia/platform/work_owner/test_primitive_evidence.py",
+        "hia/tests/test_work_owner_ci.py",
+        "hia/tests/test_work_owner_transfer_ci.py",
+        "hia/tools/qualify_work_owner_ci.py",
+        "hia/tools/work_owner_clock_ci.py",
+        "hia/tools/work_owner_transfer_ci.py",
+        "hia/platform/work_owner/qualify_production.py",
+        "hia/platform/work_owner/test_production.py",
+        "hia/tools/qualify_work_handshake.py"
+      ]
+    },
+    {
+      "id": "platform/execution-batch",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Ordinary default-Config M06 execute_with_control and retained TransactionPrefix, with real native scoped workers, private State/Value/Patch, mandatory work, fees/rewards/root and rollback. Frozen development source executed 102 batch histories and 186 Prefix histories, full actual original comparison plus 9 batch and 6 Prefix retained tests, 30 physical controls and 6 scoped lifecycles. Original AccountPointAccess=None and workers 1/2/4/8 only; custom Config/PQ/growth selection, paid Host, authenticated Node admission, durable successor COMMIT and original service qualification remain OPEN.",
+      "sources": [
+        "hia/platform/execution_batch/batch.hepta",
+        "hia/platform/execution_batch/batch_emitter.hepta",
+        "hia/platform/execution_batch/batch_mandatory_cleanup.hepta",
+        "hia/platform/execution_batch/batch_mandatory_core.hepta",
+        "hia/platform/execution_batch/batch_mandatory_epilogue.hepta",
+        "hia/platform/execution_batch/batch_mandatory_expiry.hepta",
+        "hia/platform/execution_batch/batch_worker.hepta",
+        "hia/platform/execution_batch/mandatory_cleanup.hepta",
+        "hia/platform/execution_batch/mandatory_core.hepta",
+        "hia/platform/execution_batch/mandatory_epilogue.hepta",
+        "hia/platform/execution_batch/mandatory_expiry.hepta",
+        "hia/platform/execution_batch/prefix.hepta",
+        "hia/platform/execution_batch/prefix_emitter.hepta",
+        "hia/platform/execution_batch/scoped_prefix.hepta",
+        "hia/platform/execution_batch/support.hepta",
+        "hia/platform/execution_batch/worker.hepta"
+      ],
+      "tests": [
+        "hia/platform/execution_batch/build.py",
+        "hia/platform/execution_batch/qualification.py",
+        "hia/platform/execution_batch/physical.py",
+        "hia/platform/execution_batch/lifecycle.py",
+        "hia/platform/execution_batch/rust_oracle.py",
+        "hia/platform/execution_batch/test_integrity.py",
+        "hia/tools/qualify_batch_ci.py",
+        "hia/tools/test_batch_ci.py"
+      ]
+    },
+    {
+      "id": "platform/mempool-node",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Production PNX1, SHA-256 and strict Ed25519 admission, actual held-disk Settings/State/View and one private PendingPreview lifecycle. Native Some/CheckedApply snapshots and incremental tree ownership preserve the original 65536/65537 delta boundary with exact original methods. Durable Node.db COMMIT, reorganization, live cancellation/ACK, generic SQL ownership and service-budget acceptance remain OPEN.",
+      "sources": [
+        "hia/platform/mempool_node/node_methods.hepta",
+        "hia/platform/mempool_node/owner.hepta",
+        "hia/platform/mempool_node/snapshot_capacity.hepta",
+        "hia/platform/node_commitment/checked.hepta",
+        "hia/platform/node_commitment/checked_entry.hepta",
+        "hia/platform/node_commitment/hash_qualification_entry.hepta",
+        "hia/platform/node_commitment/owner.hepta",
+        "hia/platform/node_commitment/sha256.hepta",
+        "hia/platform/node_commitment/sha256_fork.hepta",
+        "hia/platform/node_commitment/snapshot.hepta",
+        "hia/platform/node_commitment/snapshot_entry.hepta",
+        "hia/platform/node_commitment/tree.hepta",
+        "hia/platform/node_commitment/tree_entry.hepta",
+        "hia/platform/node_owner/context.hepta",
+        "hia/platform/node_owner/disk_bridge.hepta",
+        "hia/platform/node_owner/json_value.hepta",
+        "hia/platform/node_owner/linux_emitter.hepta",
+        "hia/platform/node_owner/prefix_bridge.hepta",
+        "hia/platform/node_owner/producer.hepta",
+        "hia/platform/node_owner/snapshot.hepta",
+        "hia/src/crypto/ed25519_verify_joint.hepta"
+      ],
+      "tests": [
+        "hia/platform/mempool_node/qualify.py",
+        "hia/platform/mempool_node/rust_oracle.py",
+        "hia/platform/mempool_node/test_integrity.py",
+        "hia/platform/mempool_node/evidence.py",
+        "hia/tools/qualify_node_pool_ci.py",
+        "hia/tools/test_node_pool_ci.py",
+        "hia/platform/node_commitment/qualify_hash.py",
+        "hia/platform/node_commitment/qualify_snapshot.py",
+        "hia/platform/node_commitment/qualify_delta.py",
+        "hia/platform/node_commitment/rust_oracle.py"
+      ]
+    },
+    {
+      "id": "governance/fixed-boundaries",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Separate fixed no-input native qualification of original private nonce/version exhaustion, internal drift and pause-state boundaries; invokes the same production HIA helpers and is not a public state injection interface",
+      "sources": [
+        "hia/src/governance/boundary_fixture.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_governance.py"
+      ]
+    },
+    {
+      "id": "platform/peer-lease-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux private journal/head owner with actual FD/flock/fsync, acquisition/renew/revalidate/release/drop, full replay and monotonic observation time. Complete finite original comparison, crash cuts and fault controls; Unix authority, Core authentication, payload custody, cross-target support and live Node integration remain OPEN.",
+      "sources": [
+        "hia/platform/peer_lease_store/owner_policy.hepta",
+        "hia/platform/peer_lease_store/linux_emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_lease_store/qualify.py"
+      ]
+    },
+    {
+      "id": "platform/checkpoint-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux checkpoint authority, Unix service/client, original six CLI commands and separate commit ledger with exact retained methods, journal replay, endpoint ownership, deadline handling and crash/fault recovery. Complete finite original comparison and independent readback; live Node.db integration, cross-target support and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/checkpoint_store/api_driver.hepta",
+        "hia/platform/checkpoint_store/api_methods.hepta",
+        "hia/platform/checkpoint_store/api_objects.hepta",
+        "hia/platform/checkpoint_store/authority_fence.hepta",
+        "hia/platform/checkpoint_store/authority_head.hepta",
+        "hia/platform/checkpoint_store/authority_open.hepta",
+        "hia/platform/checkpoint_store/authority_operations.hepta",
+        "hia/platform/checkpoint_store/checkpoint_files.hepta",
+        "hia/platform/checkpoint_store/errno_text.hepta",
+        "hia/platform/checkpoint_store/error_formatter.hepta",
+        "hia/platform/checkpoint_store/error_text_a.hepta",
+        "hia/platform/checkpoint_store/error_text_b.hepta",
+        "hia/platform/checkpoint_store/filesystem.hepta",
+        "hia/platform/checkpoint_store/io.hepta",
+        "hia/platform/checkpoint_store/ledger_files.hepta",
+        "hia/platform/checkpoint_store/ledger_inventory.hepta",
+        "hia/platform/checkpoint_store/ledger_open.hepta",
+        "hia/platform/checkpoint_store/ledger_operations.hepta",
+        "hia/platform/checkpoint_store/ledger_recovery.hepta",
+        "hia/platform/checkpoint_store/linux_emitter.hepta",
+        "hia/platform/checkpoint_store/main.hepta",
+        "hia/platform/checkpoint_store/runtime.hepta",
+        "hia/platform/checkpoint_store/socket_owner.hepta",
+        "hia/platform/checkpoint_store/socket_path.hepta",
+        "hia/platform/checkpoint_store/transport_frame.hepta",
+        "hia/platform/checkpoint_store/unix_client.hepta",
+        "hia/platform/checkpoint_store/unix_daemon.hepta",
+        "hia/platform/checkpoint_store/value_bridge.hepta",
+        "hia/platform/checkpoint_store/values.hepta"
+      ],
+      "tests": [
+        "hia/platform/checkpoint_store/qualify.py",
+        "hia/platform/checkpoint_store/test_integrity.py",
+        "hia/tests/rust_checkpoint_api_reference.rs"
+      ]
+    },
+    {
+      "id": "platform/task-kernel-main-store",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA Task Store six main transitions, durable audits, preview/commit and opaque owner methods, plus the complete 29-operation HIA provider and four dynamic HIA witness exports. Original C is an explicitly isolated qualification oracle; third-party SQLite and build-time ABI probes remain. Archive, StateImport, live Node integration and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/task_kernel/audit_dispatch.hepta",
+        "hia/platform/task_kernel/native_dispatch.hepta",
+        "hia/platform/task_kernel/native_driver.hepta",
+        "hia/platform/task_kernel/provider_native.hepta",
+        "hia/platform/task_kernel/qualification/fd_fixture.hepta",
+        "hia/platform/task_kernel/qualification/filesystem_fixture.hepta",
+        "hia/platform/task_kernel/qualification/path_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_audit_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_io_fixture.hepta",
+        "hia/platform/task_kernel/qualification/store_records_fixture.hepta",
+        "hia/platform/task_kernel/records_dispatch.hepta",
+        "hia/platform/task_kernel/store_dispatch.hepta",
+        "hia/platform/task_kernel/store_owned.hepta",
+        "hia/platform/task_kernel/witness_emitter.hepta",
+        "hia/src/crypto/ed25519_public_point_cache.hepta",
+        "hia/src/task_kernel/agent_transaction_wire.hepta",
+        "hia/src/task_kernel/codec.hepta",
+        "hia/src/task_kernel/kernel_policy.hepta",
+        "hia/src/task_kernel/store_authorize.hepta",
+        "hia/src/task_kernel/store_bid.hepta",
+        "hia/src/task_kernel/store_blocks.hepta",
+        "hia/src/task_kernel/store_bootstrap.hepta",
+        "hia/src/task_kernel/store_budget.hepta",
+        "hia/src/task_kernel/store_command_values.hepta",
+        "hia/src/task_kernel/store_common.hepta",
+        "hia/src/task_kernel/store_consume.hepta",
+        "hia/src/task_kernel/store_empty.hepta",
+        "hia/src/task_kernel/store_execution.hepta",
+        "hia/src/task_kernel/store_execution_common.hepta",
+        "hia/src/task_kernel/store_files.hepta",
+        "hia/src/task_kernel/store_grants.hepta",
+        "hia/src/task_kernel/store_lease.hepta",
+        "hia/src/task_kernel/store_markers.hepta",
+        "hia/src/task_kernel/store_objects.hepta",
+        "hia/src/task_kernel/store_open.hepta",
+        "hia/src/task_kernel/store_operations.hepta",
+        "hia/src/task_kernel/store_owner_common.hepta",
+        "hia/src/task_kernel/store_path.hepta",
+        "hia/src/task_kernel/store_policy.hepta",
+        "hia/src/task_kernel/store_preview.hepta",
+        "hia/src/task_kernel/store_progress.hepta",
+        "hia/src/task_kernel/store_provider_accept.hepta",
+        "hia/src/task_kernel/store_public.hepta",
+        "hia/src/task_kernel/store_query.hepta",
+        "hia/src/task_kernel/store_records.hepta",
+        "hia/src/task_kernel/store_roots.hepta",
+        "hia/src/task_kernel/store_schema.hepta",
+        "hia/src/task_kernel/store_scope.hepta",
+        "hia/src/task_kernel/store_signature_cache.hepta",
+        "hia/src/task_kernel/store_task_create.hepta",
+        "hia/src/task_kernel/store_verified.hepta",
+        "hia/src/task_kernel/typed_values.hepta"
+      ],
+      "tests": [
+        "hia/platform/task_kernel/build_provider.py",
+        "hia/platform/task_kernel/qualify_boundary.py",
+        "hia/platform/task_kernel/qualify_task_store.py",
+        "hia/platform/task_kernel/readback_task_store.py",
+        "hia/platform/task_kernel/qualification/readback_negative_controls.py",
+        "hia/platform/task_kernel/build_witness.py",
+        "hia/platform/task_kernel/qualify_provider_native.py",
+        "hia/platform/task_kernel/readback_provider.py",
+        "hia/platform/task_kernel/qualification/provider_readback_controls.py",
+        "hia/tests/test_task_metadata_initializer.py"
+      ]
+    },
+    {
+      "id": "platform/peer-lease-unix",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux peer lease Unix daemon, client, private client owner, exact wire codec and original CLI; complete finite original comparison, real storage/syscall faults and independently read back process lifecycles. Payload storage/recovery, Core authentication, cross-target support, live Node integration and original service-budget qualification remain OPEN.",
+      "sources": [
+        "hia/platform/peer_lease_unix/cleanup.hepta",
+        "hia/platform/peer_lease_unix/client.hepta",
+        "hia/platform/peer_lease_unix/client_finish.hepta",
+        "hia/platform/peer_lease_unix/client_io.hepta",
+        "hia/platform/peer_lease_unix/client_owner.hepta",
+        "hia/platform/peer_lease_unix/codec.hepta",
+        "hia/platform/peer_lease_unix/common.hepta",
+        "hia/platform/peer_lease_unix/daemon_setup.hepta",
+        "hia/platform/peer_lease_unix/errno.hepta",
+        "hia/platform/peer_lease_unix/errors.hepta",
+        "hia/platform/peer_lease_unix/linux_emitter.hepta",
+        "hia/platform/peer_lease_unix/paths.hepta",
+        "hia/platform/peer_lease_unix/service.hepta",
+        "hia/platform/peer_lease_unix/store_bridge.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_lease_unix/build.py",
+        "hia/platform/peer_lease_unix/original_build.py",
+        "hia/platform/peer_lease_unix/qualify.py",
+        "hia/platform/peer_lease_unix/readback.py",
+        "hia/platform/peer_lease_unix/test_qualification.py"
+      ]
+    },
+    {
+      "id": "platform/pq-public-authentication",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA public owned-seed PQ signing, pinned-SPKI/raw verification, TPQ1 authentication, profile views and cumulative verification budgets with 55 exports, independent result lifetimes and actual allocation-failure controls. Six real native child families retain the 240-second execution limit and one 3-second cleanup limit; 49 independent reader controls reject incomplete evidence. Frozen development evidence is separate from the integrated current-source qualification. OpenSSL owned-key construction, TUF, constant-time qualification, live Node integration and whole-crypto retirement remain OPEN.",
+      "sources": [
+        "hia/platform/pq_auth/owned_emitter.hepta",
+        "hia/src/crypto/pq_auth_owner.hepta",
+        "hia/src/crypto/pq_auth_verify.hepta",
+        "hia/src/crypto/pq_frame.hepta",
+        "hia/src/crypto/pq_profile_auth.hepta"
+      ],
+      "tests": [
+        "hia/platform/pq_auth/qualify.py",
+        "hia/platform/pq_auth/readback.py",
+        "hia/platform/pq_auth/qualification/integrity.py",
+        "hia/tests/rust_pq_auth_reference.rs",
+        "hia/tests/rust_pq_profile_reference.rs",
+        "hia/platform/pq_auth/qualification/supervision_controls.py"
+      ]
+    },
+    {
+      "id": "platform/pq-candidate-owner",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA owned Candidate ML-DSA seed, public key, signing, verification, independent values and heap-secret lifecycle through 25 public exports. Current 10b2 development graph passed the complete original 343 tests and two doctests, 894 original/native pairs, 14680 ABI calls, 186 allocation controls, eight parallel readers, 59 independent reader refusals and eight real process controls. Exact current-commit CI remains mandatory. Nonce exhaustion uses the explicit native SigningFailed edge; foreign arbitrary pointers, constant time, register/stack erasure, OpenSSL owned provider, TUF, live Node integration and whole crypto retirement remain OPEN.",
+      "sources": [
+        "hia/platform/pq_candidate/owned_emitter.hepta",
+        "hia/src/crypto/pq_candidate_gate.hepta"
+      ],
+      "tests": [
+        "hia/platform/pq_candidate/qualify.py",
+        "hia/platform/pq_candidate/readback.py",
+        "hia/platform/pq_candidate/qualification/integrity.py",
+        "hia/platform/pq_candidate/qualification/abi_client.c",
+        "hia/platform/pq_candidate/qualification/allocations.py",
+        "hia/platform/pq_candidate/qualification/lifetimes.py"
+      ]
+    },
+    {
+      "id": "platform/peer-payload-metadata",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native Linux x86_64 PayloadReplayStoreV1 metadata owner with twelve public methods, owned journal and lock descriptors, complete replay indexes, live file identity checks, ambiguity and poison semantics. The frozen 376 development overlay passed the complete original tests, twelve native groups, forty-one integrity controls and independent readback. Exact current-commit CI remains required. Payload Body, external recovery and ACK, complete Peer and Node integration, cross-target support, original four-second service acceptance and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/peer_payload/commands.hepta",
+        "hia/platform/peer_payload/file_policy.hepta",
+        "hia/platform/peer_payload/filesystem.hepta",
+        "hia/platform/peer_payload/linux_emitter.hepta",
+        "hia/platform/peer_payload/metadata_codec.hepta",
+        "hia/platform/peer_payload/metadata_log.hepta",
+        "hia/platform/peer_payload/metadata_runtime.hepta",
+        "hia/platform/peer_payload/open.hepta",
+        "hia/platform/peer_payload/owner.hepta",
+        "hia/platform/peer_payload/parent_bridge.hepta",
+        "hia/platform/peer_payload/publication.hepta",
+        "hia/platform/peer_payload/runtime_queries.hepta",
+        "hia/platform/peer_payload/snapshot_policy.hepta",
+        "hia/platform/peer_payload/view_fixture.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_payload/build.py",
+        "hia/platform/peer_payload/original.py",
+        "hia/platform/peer_payload/qualify.py",
+        "hia/platform/peer_payload/readback.py",
+        "hia/platform/peer_payload/readback_observations.py",
+        "hia/platform/peer_payload/control_readback.py",
+        "hia/platform/peer_payload/test_qualification.py"
+      ]
+    },
+    {
+      "id": "platform/service-settlement-engine",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Partial M12 trnm-service-settlement native Linux x86_64 Engine owner, including the value, receipt, trust, rollup and owned public operation graph. The canonical qualification retains the original 137 registered tests, both nested fixture phases, two compile-fail doctests, strict Clippy and format checks; all 320 fixtures, 2636 operations, 16066 actual native calls, 1754 actual height calls, 162 allocation controls and the independent reader remain required under their original limits. A fresh clean current-commit CI result is still required. Persistent Store/SQLite, complete Node integration, cross-target support, original four-second service acceptance and whole-package retirement remain OPEN.",
+      "sources": [
+        "hia/platform/service_settlement/engine_owned.hepta",
+        "hia/src/service_settlement/arithmetic.hepta",
+        "hia/src/service_settlement/bilateral.hepta",
+        "hia/src/service_settlement/codec.hepta",
+        "hia/src/service_settlement/engine_control.hepta",
+        "hia/src/service_settlement/receipt.hepta",
+        "hia/src/service_settlement/receipt_owned.hepta",
+        "hia/src/service_settlement/rollup.hepta",
+        "hia/src/service_settlement/settle.hepta",
+        "hia/src/service_settlement/trust.hepta",
+        "hia/src/service_settlement/trust_owned.hepta",
+        "hia/src/service_settlement/usage.hepta",
+        "hia/src/service_settlement/values.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/build.py",
+        "hia/platform/service_settlement/qualify.py",
+        "hia/platform/service_settlement/readback.py",
+        "hia/platform/service_settlement/qualification/integrity.py"
+      ]
+    }
+  ],
+  "old_stack_can_be_removed": false,
+  "production_activation": false,
+  "schema": "trnm.hia.migration.v1",
+  "status": "IN_PROGRESS",
+  "whole_chain_native": false
+}

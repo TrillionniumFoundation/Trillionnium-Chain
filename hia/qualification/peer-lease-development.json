@@ -1,0 +1,256 @@
+{
+  "archive": {
+    "all_declared_members_read_completely": true,
+    "bytes": 92757028,
+    "logical_bytes": 1061758586,
+    "logical_name": "peer-lease-development.tar.xz",
+    "manifest": "peer-lease-development.parts/manifest.json",
+    "member_index": "MANIFEST.json",
+    "member_index_identity": {
+      "bytes": 242716,
+      "sha256": "76c48b890a23ff35ffd80e3097792e2197966622338bcc76a2ddbace82045fec"
+    },
+    "parts": 15,
+    "physical_volume_readback": "PASS",
+    "regular_members": 1188,
+    "sha256": "dfbdf6ac0239898d94ee0494d818112485b6a20fdc050a0dd95d0a5ed3c0e23d",
+    "single_xz_stream": true,
+    "tar_tail_all_zero": true
+  },
+  "base_commit": "88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4",
+  "durable_journal_owner_implemented": false,
+  "final_execution": {
+    "actual_allocation_refusals": 4,
+    "actual_original_comparisons": 53,
+    "allocator_runs": 6,
+    "complete_report_member": "final/report.json",
+    "complete_report_sha256": "ce4e7b2ad9a8b97d998160d11f79f49376fd18ba432f536a86e25b490f56e00a",
+    "finalized": true,
+    "native_calls": 66,
+    "native_processes": 56,
+    "public_operations": 8095,
+    "source_inputs": {
+      "hia/components.json": {
+        "bytes": 45948,
+        "sha256": "2a8195251a1c58d8345300d0b2d463a0086140f433f22c3c4462cfa97a53cd52"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/crypto/sha256_stream.hepta": {
+        "bytes": 39017,
+        "sha256": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3"
+      },
+      "hia/src/peer_lease/README.md": {
+        "bytes": 9468,
+        "sha256": "1d94abfbbac7f750e3c4bc6b544f992dd79502103fc6cb9f5e57f3ee57d5b08e"
+      },
+      "hia/src/peer_lease/values.hepta": {
+        "bytes": 290207,
+        "sha256": "4164aee2d8ce368d44d888969397da81c7ff4391249c48f234e2f72793a574a2"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/peer_lease_native.py": {
+        "bytes": 10198,
+        "sha256": "58435359b991b4d5ae7b38c4fd6a471cedd707c400fcf4c463e2b77a993c47e3"
+      },
+      "hia/tests/peer_lease_original.rs": {
+        "bytes": 15725,
+        "sha256": "f7d6bff11bdbf4f3d2865ab7d5d83bddecaa81dc88a6f3d30960507f37454847"
+      },
+      "hia/tests/test_peer_lease.py": {
+        "bytes": 38629,
+        "sha256": "79cd0626eca088c2da35d21fd0bfcbe608ab39050f409431b2f3b69804a7b9ff"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 42127,
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      },
+      "trillionnium/Cargo.toml": {
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      "trillionnium/crates/trnm-peer-lease/Cargo.toml": {
+        "bytes": 2011,
+        "sha256": "b7e5569c90986694983fcbdcd7ceb36b792f2111bdf277a07dacacd8ef85344f"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs": {
+        "bytes": 5723,
+        "sha256": "1885e2cca78c754673ce27390ffc9522621feaa78930b87beb1778533a377ba8"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs": {
+        "bytes": 21680,
+        "sha256": "f26c4f247870dcb71601079499964a8cba627215a16fcd8df906cb24573d5706"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon-v1.rs": {
+        "bytes": 243,
+        "sha256": "0b032e8512bf10fbceb042d4e135c49cc8dbd23e2cc4b79b76b0be3611dcddbc"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-peer-lease-daemon.rs": {
+        "bytes": 3012,
+        "sha256": "c5dbec55b5cc6844e2a406f7c0b3452aef7f9ebf378739d65bdf3f11552adf32"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/lib.rs": {
+        "bytes": 6164,
+        "sha256": "3e012fd8044480e9d4c45553309fbadb9689e1b24b896a65e9d17ef540de7b4d"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload.rs": {
+        "bytes": 91449,
+        "sha256": "868e9aa80d9bb395eaebb385f41de79c91bdd4174209b13710c2865afa36e725"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_body.rs": {
+        "bytes": 55937,
+        "sha256": "c2185035cdd2c5836d986a50dfa6a5bd3560f973ad719a46ccc95548f2e9a384"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery.rs": {
+        "bytes": 1280,
+        "sha256": "1ccef4af85d3356b916f2e6a42a2934672a25d4ab9c61192f14512408abfd78e"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs": {
+        "bytes": 16091,
+        "sha256": "3415bc599dea90db2cce1596b711463ee772bbf45083a70ddc19439d0fe1350a"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs": {
+        "bytes": 22855,
+        "sha256": "95d342dede6edd5b8225eb0cd8a546875116f68f30f64a1020d4f68df56be00f"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs": {
+        "bytes": 16214,
+        "sha256": "fc71d00c2c63e9a9a504a00928f2c4d6d306c5435bd5c3f99a5b0065640cb9c9"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs": {
+        "bytes": 12417,
+        "sha256": "f11aba7b64d683bcab00bd268a46ec4f5ce302523f552f5a72e91a2c6ebf260a"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs": {
+        "bytes": 21197,
+        "sha256": "ebcdcd52f9d4d712ee75e0ccc4038c0d69b1a2b53bcd29f5fbb9da7d1c2ca888"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs": {
+        "bytes": 23911,
+        "sha256": "9ba0fe4f0f4405d1c53f43ad5f0f6c136a084af69f80c551f05c642e39316f4b"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_07_socket.rs": {
+        "bytes": 52720,
+        "sha256": "636d8768b57b8d34d450176c60c05068f7a4a11c48bf8cb2dde08db0475ecaaa"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/protocol.rs": {
+        "bytes": 17697,
+        "sha256": "28ec46069577b7f0261d0b587d530ae5ea277a653222cabc5eca143e196399a2"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/store.rs": {
+        "bytes": 59352,
+        "sha256": "6b467dcdf7abd8bd5da0b848abbfb2e7df2029246e031e3609c85a3fbc425027"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/unix.rs": {
+        "bytes": 46160,
+        "sha256": "c314960256f77bd63297a5615e5af8fde0d3074e1dc5016208c5fce1efffb08f"
+      },
+      "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs": {
+        "bytes": 12951,
+        "sha256": "815d40eb22def95d23a734b599366b1095084e91243eafa8a799beb3bda5d5a2"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/cross_process.rs": {
+        "bytes": 15416,
+        "sha256": "6ad5f9b3242271fe5b39c302e5c3d0e7558e800a13a0a209de065bdd7315e520"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/payload_recovery_quarantine_collision.rs": {
+        "bytes": 3691,
+        "sha256": "767e66623bf0d2be827490fd80fcc7863945110d9d404120e460b10cfab96851"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/payload_replay_cross_process.rs": {
+        "bytes": 2949,
+        "sha256": "9bb0f824b803fac5f22cbcd38d576b65933a20bf6bacb3f0d4a68d291fd52e7e"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_owner_socket.rs": {
+        "bytes": 8666,
+        "sha256": "b06ffa381f2da1ddd564c568da8e871255be6f6d06c5454c9369ff6faf2ebc11"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process.rs": {
+        "bytes": 5467,
+        "sha256": "976743c414e9d0dba9f5341001465b3915f7ed513ad2291527120534add71091"
+      },
+      "trillionnium/crates/trnm-peer-lease/tests/payload_replay_recovery_process_matrix.rs": {
+        "bytes": 13805,
+        "sha256": "4bbb861519245c6b012b351feeb5f47f918327f286602b0f9c51987381355d79"
+      }
+    },
+    "source_unchanged": true,
+    "status": "PASS",
+    "test_methods": 13,
+    "wall_seconds": 76.9295689089995
+  },
+  "hosted_execution": "NOT_RUN for this source increment at preparation",
+  "independent_readback": {
+    "files_read": 481,
+    "logical_bytes_read": 277334755,
+    "record_member": "independent-readback.json",
+    "runtime_reexecuted": false,
+    "status": "PASS",
+    "verifier_member": "independent-reader.py"
+  },
+  "native_and_original_artifacts": {},
+  "native_core_authentication_implemented": false,
+  "old_stack_can_be_removed": false,
+  "original_retained_execution": {
+    "actual_binary_bytes": 231382068,
+    "all_binary_and_source_bytes_read_by_root": true,
+    "argv_policy": "cargo test --offline --locked --no-fail-fast -p trnm-peer-lease --all-features --message-format=json -- --test-threads=1",
+    "executed_binaries_and_libraries": 16,
+    "full_archive": {
+      "bytes": 34172544,
+      "sha256": "04d5e4522dea96a4196a481b9b1b99dc380fb191f5e53c730961ed444ed37b0c"
+    },
+    "full_source_archive": {
+      "bytes": 3867400,
+      "sha256": "345ebffaeabe4fc9f093aea4d444c3b8456bc8641bdd96c22fabddd3986bc555"
+    },
+    "full_source_files": 1700,
+    "host": "rog",
+    "job_id": "1a1eec4371f-ffbe-2c3",
+    "local_retained_test_reexecution": false,
+    "local_unchanged_crate_build_role": "Independent API adapter only; --no-run is not a replacement for the remote complete test run.",
+    "nested_child_tests_not_added": 2,
+    "outer_filtered": 0,
+    "outer_ignored": 0,
+    "outer_tests": 121,
+    "status": "PASS"
+  },
+  "preserved_history": {
+    "failure_reporter_control": "FAIL: actual one-method assertion failure",
+    "initial_merged_run": "FAIL/INCOMPLETE after actual Cargo ENOSPC setup failure",
+    "negative_driver_supplement": "native-extension-integration.tar.xz / peer-lease/qualification-report-negative.py",
+    "partial_reporter_control": "INCOMPLETE: one of thirteen methods, although unittest exits 0",
+    "qualification_v1": "FAIL: local original Unix socket operations denied; old test and README complete source bytes were not retained, only observed hashes. Its native value comparisons do not grant complete qualification or source reproduction.",
+    "reporter_control_source_bytes": "All reported hashes match separately preserved source snapshots; these are retained matching bytes, not a claim of contemporaneous snapshot creation."
+  },
+  "production_activation": false,
+  "remaining": [
+    "Private durable journal, locks, fsync and crash recovery owner",
+    "Unix daemon/client and authenticated Core authority",
+    "Native payload/body/recovery ownership and live Node integration",
+    "Whole-package and whole-chain retirement gates"
+  ],
+  "retirement_accepted": false,
+  "schema": "trnm.hia.peer-lease-development.v1",
+  "scope": "Original private lease/recovery value operations, Clone/Drop, ordering, projection decoding and full 8 MiB body hashing; durable journal and live authority are separate owners.",
+  "source_profile": "Pinned HIA self-host compiler; Linux x86_64 shared-library target, external linker and calloc/free; private owned state and staged output.",
+  "unix_authority_implemented": false,
+  "whole_chain_native": false
+}

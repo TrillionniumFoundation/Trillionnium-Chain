@@ -1,0 +1,258 @@
+{
+  "actual_stack_observation": {
+    "actual_machine_constant_time_proved": false,
+    "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "diagnostic_input_caller_owned_and_not_erased": true,
+    "diagnostic_seed_is_public_synthetic": true,
+    "observations": [
+      {
+        "case": 0,
+        "changed_stack_bytes": 11531,
+        "contiguous_secret_windows": [
+          {
+            "kind": "seed",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "expanded_sha512",
+            "length": 64,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "clamped_scalar",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "prefix",
+            "length": 32,
+            "offsets_below_stack_top": []
+          }
+        ],
+        "elapsed_seconds": 1.1689909060005448,
+        "message_hex": "97cffc382d528f5f26d5827b1c887ab793565fb07cea2851d04426c1eb6f82ee",
+        "output_bytes": 1190280,
+        "output_sha256": "99e94e96a7cd21208a4424c9e16632ab4c176b21cb0eadb33d0bbafd609d025a",
+        "public_seed_hex": "4661e5c63e372888d61cea7d5ff3ad492f3a3d5a81a9aecfa28923ed23b76bf9",
+        "secret_word_windows": [
+          {
+            "kind": "scalar",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          },
+          {
+            "kind": "prefix",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          }
+        ],
+        "stack_sha256": "bdcc9dd640d998c3ed05f585eaab58d8224bf38182940a3988a93ba1fee659ea",
+        "status": 0,
+        "work_tail_canary_intact": true,
+        "work_used_all_zero": true
+      },
+      {
+        "case": 1,
+        "changed_stack_bytes": 11531,
+        "contiguous_secret_windows": [
+          {
+            "kind": "seed",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "expanded_sha512",
+            "length": 64,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "clamped_scalar",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "prefix",
+            "length": 32,
+            "offsets_below_stack_top": []
+          }
+        ],
+        "elapsed_seconds": 1.050238279000041,
+        "message_hex": "97cffc382d528f5f26d5827b1c887ab793565fb07cea2851d04426c1eb6f82ee",
+        "output_bytes": 1190280,
+        "output_sha256": "35fd831a956cad6ebf299de98c7bbe953d36046ea33d81cc56394fa2af403f58",
+        "public_seed_hex": "6ad2ba6000e7ae983c811955b4d4966064e77a0647b5877de0206f445e9ec6ca",
+        "secret_word_windows": [
+          {
+            "kind": "scalar",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          },
+          {
+            "kind": "prefix",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          }
+        ],
+        "stack_sha256": "b7dd4287af01ccc1aba8d834abe9a15a03b94d43e7eb4162395a70708dcecaee",
+        "status": 0,
+        "work_tail_canary_intact": true,
+        "work_used_all_zero": true
+      },
+      {
+        "case": 2,
+        "changed_stack_bytes": 11532,
+        "contiguous_secret_windows": [
+          {
+            "kind": "seed",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "expanded_sha512",
+            "length": 64,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "clamped_scalar",
+            "length": 32,
+            "offsets_below_stack_top": []
+          },
+          {
+            "kind": "prefix",
+            "length": 32,
+            "offsets_below_stack_top": []
+          }
+        ],
+        "elapsed_seconds": 1.0538183970020327,
+        "message_hex": "97cffc382d528f5f26d5827b1c887ab793565fb07cea2851d04426c1eb6f82ee",
+        "output_bytes": 1190280,
+        "output_sha256": "1ab1ff6b382aaf1c3354a1b0c38bcb9d000113ef63115f1f5d71e374ceac63f9",
+        "public_seed_hex": "086bf8d6190159adcebae35f9000dda1367a8652120c030876e59cd9943b084f",
+        "secret_word_windows": [
+          {
+            "kind": "scalar",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          },
+          {
+            "kind": "prefix",
+            "u64_le_word_matches": [
+              [],
+              [],
+              [],
+              []
+            ]
+          }
+        ],
+        "stack_sha256": "e55533f0c0ed11b774a424fb64db0b75b8c1f3edc95d3136349e938969249d9a",
+        "status": 0,
+        "work_tail_canary_intact": true,
+        "work_used_all_zero": true
+      }
+    ],
+    "original_fixture_elf_sha256": "20fb841295117fa0dd323d7d0890964a8286da07845182e44fc7eb666be90b9d",
+    "raw_kernel_sha256": "c9c2d5ca9a9d8fe2df77736c08ea69ef998db6627746aaf9f531a7b45f695415",
+    "schema": "trnm.hia.signer-real-stack-observation.v1",
+    "whole_chain_native": false
+  },
+  "conclusion": "Low HIA work-buffer erasure does not erase compiler stack spills or caller-owned input. This raw-kernel failure remains independent of any later separately qualified private-stack owner.",
+  "exact_cross_case_secret_byte_matches": [
+    {
+      "byte_index": 31,
+      "kind": "seed",
+      "same_offsets_below_stack_top": [
+        -1632,
+        -1616,
+        -1600
+      ],
+      "values": [
+        249,
+        202,
+        79
+      ]
+    },
+    {
+      "byte_index": 31,
+      "kind": "clamped_scalar",
+      "same_offsets_below_stack_top": [
+        -6640,
+        -6624
+      ],
+      "values": [
+        80,
+        90,
+        66
+      ]
+    },
+    {
+      "byte_index": 24,
+      "kind": "prefix",
+      "same_offsets_below_stack_top": [
+        -16656,
+        -16640
+      ],
+      "values": [
+        227,
+        29,
+        176
+      ]
+    },
+    {
+      "byte_index": 31,
+      "kind": "nonce_scalar",
+      "same_offsets_below_stack_top": [
+        -5504,
+        -5488
+      ],
+      "values": [
+        10,
+        8,
+        0
+      ]
+    }
+  ],
+  "machine_code_constant_time_proof": "OPEN",
+  "private_key_owner": "OPEN",
+  "raw_signing_kernel_stack_erasure": "FAIL",
+  "schema": "trnm.hia.response-retained-failures.v1",
+  "scope": "Actual returned private stack of unchanged raw signing kernel under a diagnostic host-assembled caller. All seeds are public synthetic test material. The host assembly is an observation tool, never shipped as the native HIA runtime.",
+  "sources": {
+    "pinned-kernel.flat": {
+      "bytes": 97169,
+      "sha256": "c9c2d5ca9a9d8fe2df77736c08ea69ef998db6627746aaf9f531a7b45f695415"
+    },
+    "secret-byte-cross-cases.json": {
+      "bytes": 728,
+      "sha256": "6964e7fd1e1ef6157172258fb48c24ece81d283d5c4891adfe893a609e56a942"
+    },
+    "stack-observation.json": {
+      "bytes": 4941,
+      "sha256": "250d3c020aca332c9f878da2712d5965f55eb6f44cf74883e4e63ee7deb7667a"
+    },
+    "stack-observer.s": {
+      "bytes": 1684,
+      "sha256": "11514a11348313737f1489674f6af31eb87fa87b569e6b13c1b3f1c00a949763"
+    }
+  }
+}

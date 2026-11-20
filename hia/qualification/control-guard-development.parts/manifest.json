@@ -1,0 +1,28 @@
+{
+  "schema": "trnm.hia.contiguous-archive.v1",
+  "logical_name": "control-guard-development.tar.xz",
+  "archive": {
+    "bytes": 13259644,
+    "sha256": "92ee4be881e23483373019bef0987433239967de5737b0467329edafea080623"
+  },
+  "parts": [
+    {
+      "path": "part-000",
+      "offset": 0,
+      "bytes": 6291456,
+      "sha256": "b417c9525136bc8d82120c744950fb7018346177112d79b34b0d7b4ab406fa62"
+    },
+    {
+      "path": "part-001",
+      "offset": 6291456,
+      "bytes": 6291456,
+      "sha256": "fd77438fcc981a7f43081ddc8ac77efc77f45b3f333846d5bc6f8e828c7553da"
+    },
+    {
+      "path": "part-002",
+      "offset": 12582912,
+      "bytes": 676732,
+      "sha256": "1d45c7433b14da17761f0b694f7c2ca49b3e52ea1c40e2db8262a2236c87375f"
+    }
+  ]
+}

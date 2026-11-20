@@ -1,0 +1,696 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_store_api_driver
+fn f0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:usize = buffer.len(e)
+  v1:u64 = int.cast(v0) {"mode":"wrap"}
+  v2:u64 = const() {"value":64}
+  v3:bool = compare.ge(v1,v2)
+  v4:usize = buffer.len(c)
+  v5:u64 = int.cast(v4) {"mode":"wrap"}
+  v6:u64 = const() {"value":196608}
+  v7:bool = compare.ge(v5,v6)
+  v8:bool = bool.and(v3,v7)
+  v9:usize = buffer.len(s)
+  v10:u64 = int.cast(v9) {"mode":"wrap"}
+  v11:u64 = const() {"value":131072}
+  v12:bool = compare.ge(v10,v11)
+  v13:bool = bool.and(v8,v12)
+  branch v13 guard0(e,c,s) error78()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v14:u64 = const() {"value":0}
+  v15:u64 = call(guard0_s,v14) {"function":"tr_get"}
+  jump select0(guard0_e,guard0_c,guard0_s,v15)
+block select0(select0_e:readbuf,select0_c:mutbuf,select0_s:mutbuf,select0_pc:u64)
+  v16:u64 = const() {"value":0}
+  v17:bool = compare.eq(select0_pc,v16)
+  branch v17 run0(select0_e,select0_c,select0_s) select1(select0_e,select0_c,select0_s,select0_pc)
+block run0(run0_e:readbuf,run0_c:mutbuf,run0_s:mutbuf)
+  v18:u32 = call(run0_e,run0_c,run0_s) {"function":"st_api_driver_0"}
+  ret(v18)
+block select1(select1_e:readbuf,select1_c:mutbuf,select1_s:mutbuf,select1_pc:u64)
+  v19:u64 = const() {"value":1}
+  v20:bool = compare.eq(select1_pc,v19)
+  branch v20 run1(select1_e,select1_c,select1_s) select2(select1_e,select1_c,select1_s,select1_pc)
+block run1(run1_e:readbuf,run1_c:mutbuf,run1_s:mutbuf)
+  v21:u32 = call(run1_e,run1_c,run1_s) {"function":"st_api_driver_1"}
+  ret(v21)
+block select2(select2_e:readbuf,select2_c:mutbuf,select2_s:mutbuf,select2_pc:u64)
+  v22:u64 = const() {"value":2}
+  v23:bool = compare.eq(select2_pc,v22)
+  branch v23 run2(select2_e,select2_c,select2_s) select3(select2_e,select2_c,select2_s,select2_pc)
+block run2(run2_e:readbuf,run2_c:mutbuf,run2_s:mutbuf)
+  v24:u32 = call(run2_e,run2_c,run2_s) {"function":"st_api_driver_2"}
+  ret(v24)
+block select3(select3_e:readbuf,select3_c:mutbuf,select3_s:mutbuf,select3_pc:u64)
+  v25:u64 = const() {"value":3}
+  v26:bool = compare.eq(select3_pc,v25)
+  branch v26 run3(select3_e,select3_c,select3_s) select4(select3_e,select3_c,select3_s,select3_pc)
+block run3(run3_e:readbuf,run3_c:mutbuf,run3_s:mutbuf)
+  v27:u32 = call(run3_e,run3_c,run3_s) {"function":"st_api_driver_3"}
+  ret(v27)
+block select4(select4_e:readbuf,select4_c:mutbuf,select4_s:mutbuf,select4_pc:u64)
+  v28:u64 = const() {"value":4}
+  v29:bool = compare.eq(select4_pc,v28)
+  branch v29 run4(select4_e,select4_c,select4_s) select5(select4_e,select4_c,select4_s,select4_pc)
+block run4(run4_e:readbuf,run4_c:mutbuf,run4_s:mutbuf)
+  v30:u32 = call(run4_e,run4_c,run4_s) {"function":"st_api_driver_4"}
+  ret(v30)
+block select5(select5_e:readbuf,select5_c:mutbuf,select5_s:mutbuf,select5_pc:u64)
+  v31:u64 = const() {"value":5}
+  v32:bool = compare.eq(select5_pc,v31)
+  branch v32 run5(select5_e,select5_c,select5_s) select6(select5_e,select5_c,select5_s,select5_pc)
+block run5(run5_e:readbuf,run5_c:mutbuf,run5_s:mutbuf)
+  v33:u32 = call(run5_e,run5_c,run5_s) {"function":"st_api_driver_5"}
+  ret(v33)
+block select6(select6_e:readbuf,select6_c:mutbuf,select6_s:mutbuf,select6_pc:u64)
+  v34:u64 = const() {"value":6}
+  v35:bool = compare.eq(select6_pc,v34)
+  branch v35 run6(select6_e,select6_c,select6_s) select7(select6_e,select6_c,select6_s,select6_pc)
+block run6(run6_e:readbuf,run6_c:mutbuf,run6_s:mutbuf)
+  v36:u32 = call(run6_e,run6_c,run6_s) {"function":"st_api_driver_6"}
+  ret(v36)
+block select7(select7_e:readbuf,select7_c:mutbuf,select7_s:mutbuf,select7_pc:u64)
+  v37:u64 = const() {"value":7}
+  v38:bool = compare.eq(select7_pc,v37)
+  branch v38 run7(select7_e,select7_c,select7_s) select8(select7_e,select7_c,select7_s,select7_pc)
+block run7(run7_e:readbuf,run7_c:mutbuf,run7_s:mutbuf)
+  v39:u32 = call(run7_e,run7_c,run7_s) {"function":"st_api_driver_7"}
+  ret(v39)
+block select8(select8_e:readbuf,select8_c:mutbuf,select8_s:mutbuf,select8_pc:u64)
+  v40:u64 = const() {"value":8}
+  v41:bool = compare.eq(select8_pc,v40)
+  branch v41 run8(select8_e,select8_c,select8_s) select9(select8_e,select8_c,select8_s,select8_pc)
+block run8(run8_e:readbuf,run8_c:mutbuf,run8_s:mutbuf)
+  v42:u32 = call(run8_e,run8_c,run8_s) {"function":"st_api_driver_8"}
+  ret(v42)
+block select9(select9_e:readbuf,select9_c:mutbuf,select9_s:mutbuf,select9_pc:u64)
+  v43:u64 = const() {"value":9}
+  v44:bool = compare.eq(select9_pc,v43)
+  branch v44 run9(select9_e,select9_c,select9_s) select10(select9_e,select9_c,select9_s,select9_pc)
+block run9(run9_e:readbuf,run9_c:mutbuf,run9_s:mutbuf)
+  v45:u32 = call(run9_e,run9_c,run9_s) {"function":"st_api_driver_9"}
+  ret(v45)
+block select10(select10_e:readbuf,select10_c:mutbuf,select10_s:mutbuf,select10_pc:u64)
+  v46:u64 = const() {"value":10}
+  v47:bool = compare.eq(select10_pc,v46)
+  branch v47 run10(select10_e,select10_c,select10_s) select11(select10_e,select10_c,select10_s,select10_pc)
+block run10(run10_e:readbuf,run10_c:mutbuf,run10_s:mutbuf)
+  v48:u32 = call(run10_e,run10_c,run10_s) {"function":"st_api_driver_10"}
+  ret(v48)
+block select11(select11_e:readbuf,select11_c:mutbuf,select11_s:mutbuf,select11_pc:u64)
+  v49:u32 = const() {"value":78}
+  ret(v49)
+block error78()
+  v50:u32 = const() {"value":78}
+  ret(v50)
+end
+fn st_api_driver_0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":208}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":52928}
+  v3:u64 = call(s,v2,v1) {"function":"tr_put"}
+  v4:u64 = const() {"value":0}
+  v5:u64 = const() {"value":52952}
+  v6:u64 = call(s,v5,v4) {"function":"tr_put"}
+  v7:u64 = const() {"value":0}
+  v8:u64 = const() {"value":52944}
+  v9:u64 = call(s,v8,v7) {"function":"tr_put"}
+  v10:u64 = const() {"value":1}
+  v11:u64 = const() {"value":0}
+  v12:u64 = call(s,v11,v10) {"function":"tr_put"}
+  v13:u64 = const() {"value":144}
+  v14:u64 = const() {"value":14}
+  v15:u64 = call(c,v13,v14) {"function":"tr_put"}
+  v16:u32 = const() {"value":2}
+  ret(v16)
+end
+fn st_api_driver_1(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":0}
+  v1:u64 = const() {"value":32}
+  v2:u64 = call(s,v1,v0) {"function":"tr_put"}
+  v3:u64 = const() {"value":0}
+  v4:u64 = const() {"value":40}
+  v5:u64 = call(s,v4,v3) {"function":"tr_put"}
+  v6:u64 = const() {"value":0}
+  v7:u64 = const() {"value":48}
+  v8:u64 = call(s,v7,v6) {"function":"tr_put"}
+  v9:u64 = const() {"value":0}
+  v10:u64 = const() {"value":4096}
+  v11:u64 = const() {"value":32}
+  v12:u64 = const() {"value":0}
+  v13:u64 = const() {"value":0}
+  v14:u64 = const() {"value":17016765175}
+  v15:u64 = const() {"value":0}
+  v16:u64 = const() {"value":0}
+  v17:u64 = const() {"value":1248}
+  v18:u64 = call(s,v17,v9) {"function":"tr_put"}
+  v19:u64 = const() {"value":1256}
+  v20:u64 = call(s,v19,v10) {"function":"tr_put"}
+  v21:u64 = const() {"value":1264}
+  v22:u64 = call(s,v21,v11) {"function":"tr_put"}
+  v23:u64 = const() {"value":1272}
+  v24:u64 = call(s,v23,v12) {"function":"tr_put"}
+  v25:u64 = const() {"value":1280}
+  v26:u64 = call(s,v25,v13) {"function":"tr_put"}
+  v27:u64 = const() {"value":1288}
+  v28:u64 = call(s,v27,v14) {"function":"tr_put"}
+  v29:u64 = const() {"value":1296}
+  v30:u64 = call(s,v29,v15) {"function":"tr_put"}
+  v31:u64 = const() {"value":1304}
+  v32:u64 = call(s,v31,v16) {"function":"tr_put"}
+  v33:u64 = const() {"value":1}
+  v34:u64 = const() {"value":100}
+  v35:u64 = const() {"value":14}
+  v36:u64 = const() {"value":2}
+  v37:u32 = call(c,s,v33,v34,v35,v36) {"function":"rt_call"}
+  ret(v37)
+end
+fn st_api_driver_2(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 guard0(e,c,s) error229()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v4:u64 = const() {"value":1312}
+  v5:u64 = call(guard0_s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":0}
+  v7:bool = compare.eq(v5,v6)
+  branch v7 eof(guard0_e,guard0_c,guard0_s) header(guard0_e,guard0_c,guard0_s)
+block eof(eof_e:readbuf,eof_c:mutbuf,eof_s:mutbuf)
+  v8:u32 = const() {"value":1}
+  ret(v8)
+block header(header_e:readbuf,header_c:mutbuf,header_s:mutbuf)
+  v9:u64 = const() {"value":1312}
+  v10:u64 = call(header_s,v9) {"function":"tr_get"}
+  v11:u64 = const() {"value":32}
+  v12:bool = compare.eq(v10,v11)
+  branch v12 guard1(header_e,header_c,header_s) error192()
+block guard1(guard1_e:readbuf,guard1_c:mutbuf,guard1_s:mutbuf)
+  v13:u64 = const() {"value":4096}
+  v14:bool = const() {"value":true}
+  v15:u64 = const() {"value":0}
+  v16:u64 = int.add.checked(v13,v15)
+  v17:usize = int.cast(v16) {"mode":"wrap"}
+  v18:u8 = buffer.load(guard1_s,v17)
+  v19:u8 = const() {"value":72}
+  v20:bool = compare.eq(v18,v19)
+  v21:bool = bool.and(v14,v20)
+  v22:u64 = const() {"value":1}
+  v23:u64 = int.add.checked(v13,v22)
+  v24:usize = int.cast(v23) {"mode":"wrap"}
+  v25:u8 = buffer.load(guard1_s,v24)
+  v26:u8 = const() {"value":67}
+  v27:bool = compare.eq(v25,v26)
+  v28:bool = bool.and(v21,v27)
+  v29:u64 = const() {"value":2}
+  v30:u64 = int.add.checked(v13,v29)
+  v31:usize = int.cast(v30) {"mode":"wrap"}
+  v32:u8 = buffer.load(guard1_s,v31)
+  v33:u8 = const() {"value":83}
+  v34:bool = compare.eq(v32,v33)
+  v35:bool = bool.and(v28,v34)
+  v36:u64 = const() {"value":3}
+  v37:u64 = int.add.checked(v13,v36)
+  v38:usize = int.cast(v37) {"mode":"wrap"}
+  v39:u8 = buffer.load(guard1_s,v38)
+  v40:u8 = const() {"value":65}
+  v41:bool = compare.eq(v39,v40)
+  v42:bool = bool.and(v35,v41)
+  v43:u64 = const() {"value":4}
+  v44:u64 = int.add.checked(v13,v43)
+  v45:usize = int.cast(v44) {"mode":"wrap"}
+  v46:u8 = buffer.load(guard1_s,v45)
+  v47:u8 = const() {"value":80}
+  v48:bool = compare.eq(v46,v47)
+  v49:bool = bool.and(v42,v48)
+  v50:u64 = const() {"value":5}
+  v51:u64 = int.add.checked(v13,v50)
+  v52:usize = int.cast(v51) {"mode":"wrap"}
+  v53:u8 = buffer.load(guard1_s,v52)
+  v54:u8 = const() {"value":73}
+  v55:bool = compare.eq(v53,v54)
+  v56:bool = bool.and(v49,v55)
+  v57:u64 = const() {"value":6}
+  v58:u64 = int.add.checked(v13,v57)
+  v59:usize = int.cast(v58) {"mode":"wrap"}
+  v60:u8 = buffer.load(guard1_s,v59)
+  v61:u8 = const() {"value":48}
+  v62:bool = compare.eq(v60,v61)
+  v63:bool = bool.and(v56,v62)
+  v64:u64 = const() {"value":7}
+  v65:u64 = int.add.checked(v13,v64)
+  v66:usize = int.cast(v65) {"mode":"wrap"}
+  v67:u8 = buffer.load(guard1_s,v66)
+  v68:u8 = const() {"value":49}
+  v69:bool = compare.eq(v67,v68)
+  v70:bool = bool.and(v63,v69)
+  v71:u64 = const() {"value":4120}
+  v72:u64 = call(guard1_s,v71) {"function":"tr_get"}
+  v73:u64 = const() {"value":0}
+  v74:bool = compare.eq(v72,v73)
+  v75:bool = bool.and(v70,v74)
+  branch v75 guard2(guard1_e,guard1_c,guard1_s) error192()
+block guard2(guard2_e:readbuf,guard2_c:mutbuf,guard2_s:mutbuf)
+  v76:u64 = const() {"value":4104}
+  v77:u64 = call(guard2_s,v76) {"function":"tr_get"}
+  v78:u64 = const() {"value":52976}
+  v79:u64 = call(guard2_s,v78,v77) {"function":"tr_put"}
+  v80:u64 = const() {"value":4112}
+  v81:u64 = call(guard2_s,v80) {"function":"tr_get"}
+  v82:u64 = const() {"value":52984}
+  v83:u64 = call(guard2_s,v82,v81) {"function":"tr_put"}
+  v84:u64 = const() {"value":52984}
+  v85:u64 = call(guard2_s,v84) {"function":"tr_get"}
+  v86:u64 = const() {"value":9223372036854771712}
+  v87:bool = compare.lt(v85,v86)
+  branch v87 guard3(guard2_e,guard2_c,guard2_s) error192()
+block guard3(guard3_e:readbuf,guard3_c:mutbuf,guard3_s:mutbuf)
+  v88:u64 = const() {"value":52984}
+  v89:u64 = call(guard3_s,v88) {"function":"tr_get"}
+  v90:u64 = const() {"value":52944}
+  v91:u64 = call(guard3_s,v90) {"function":"tr_get"}
+  v92:bool = compare.lt(v89,v91)
+  branch v92 available(guard3_e,guard3_c,guard3_s) allocate(guard3_e,guard3_c,guard3_s)
+block available(available_e:readbuf,available_c:mutbuf,available_s:mutbuf)
+  v93:u64 = const() {"value":4}
+  v94:u64 = const() {"value":0}
+  v95:u64 = call(available_s,v94,v93) {"function":"tr_put"}
+  v96:u64 = const() {"value":144}
+  v97:u64 = const() {"value":14}
+  v98:u64 = call(available_c,v96,v97) {"function":"tr_put"}
+  v99:u32 = const() {"value":2}
+  ret(v99)
+block allocate(allocate_e:readbuf,allocate_c:mutbuf,allocate_s:mutbuf)
+  v100:u64 = const() {"value":52984}
+  v101:u64 = call(allocate_s,v100) {"function":"tr_get"}
+  v102:u64 = const() {"value":1}
+  v103:u64 = int.add.checked(v101,v102)
+  v104:u64 = const() {"value":52944}
+  v105:u64 = call(allocate_s,v104) {"function":"tr_get"}
+  v106:u64 = const() {"value":2}
+  v107:u64 = int.mul.wrap(v105,v106)
+  v108:u64 = const() {"value":4611686018427385856}
+  v109:bool = compare.le(v105,v108)
+  v110:bool = compare.gt(v107,v103)
+  v111:bool = bool.and(v109,v110)
+  v112:u64 = select(v111,v107,v103)
+  v113:u64 = const() {"value":94208}
+  v114:u64 = call(allocate_s,v113,v112) {"function":"tr_put"}
+  v115:u64 = const() {"value":1248}
+  v116:u64 = call(allocate_s,v115,v112) {"function":"tr_put"}
+  v117:u64 = const() {"value":2}
+  v118:u64 = const() {"value":0}
+  v119:u64 = const() {"value":14}
+  v120:u64 = const() {"value":3}
+  v121:u32 = call(allocate_c,allocate_s,v117,v118,v119,v120) {"function":"rt_call"}
+  ret(v121)
+block error192()
+  v122:u32 = const() {"value":192}
+  ret(v122)
+block error229()
+  v123:u32 = const() {"value":229}
+  ret(v123)
+end
+fn st_api_driver_3(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 guard0(e,c,s) error229()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v4:u64 = const() {"value":1312}
+  v5:u64 = call(guard0_s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":52936}
+  v7:u64 = call(guard0_s,v6,v5) {"function":"tr_put"}
+  v8:u64 = const() {"value":94208}
+  v9:u64 = call(guard0_s,v8) {"function":"tr_get"}
+  v10:u64 = const() {"value":52944}
+  v11:u64 = call(guard0_s,v10,v9) {"function":"tr_put"}
+  v12:u64 = const() {"value":4}
+  v13:u64 = const() {"value":0}
+  v14:u64 = call(guard0_s,v13,v12) {"function":"tr_put"}
+  v15:u64 = const() {"value":144}
+  v16:u64 = const() {"value":14}
+  v17:u64 = call(guard0_c,v15,v16) {"function":"tr_put"}
+  v18:u32 = const() {"value":2}
+  ret(v18)
+block error229()
+  v19:u32 = const() {"value":229}
+  ret(v19)
+end
+fn st_api_driver_4(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":0}
+  v1:u64 = const() {"value":52936}
+  v2:u64 = call(s,v1) {"function":"tr_get"}
+  v3:u64 = const() {"value":52984}
+  v4:u64 = call(s,v3) {"function":"tr_get"}
+  v5:u64 = const() {"value":0}
+  v6:u64 = const() {"value":0}
+  v7:u64 = const() {"value":15692515830}
+  v8:u64 = const() {"value":0}
+  v9:u64 = const() {"value":0}
+  v10:u64 = const() {"value":1248}
+  v11:u64 = call(s,v10,v0) {"function":"tr_put"}
+  v12:u64 = const() {"value":1256}
+  v13:u64 = call(s,v12,v2) {"function":"tr_put"}
+  v14:u64 = const() {"value":1264}
+  v15:u64 = call(s,v14,v4) {"function":"tr_put"}
+  v16:u64 = const() {"value":1272}
+  v17:u64 = call(s,v16,v5) {"function":"tr_put"}
+  v18:u64 = const() {"value":1280}
+  v19:u64 = call(s,v18,v6) {"function":"tr_put"}
+  v20:u64 = const() {"value":1288}
+  v21:u64 = call(s,v20,v7) {"function":"tr_put"}
+  v22:u64 = const() {"value":1296}
+  v23:u64 = call(s,v22,v8) {"function":"tr_put"}
+  v24:u64 = const() {"value":1304}
+  v25:u64 = call(s,v24,v9) {"function":"tr_put"}
+  v26:u64 = const() {"value":1}
+  v27:u64 = const() {"value":0}
+  v28:u64 = const() {"value":14}
+  v29:u64 = const() {"value":5}
+  v30:u32 = call(c,s,v26,v27,v28,v29) {"function":"rt_call"}
+  ret(v30)
+end
+fn st_api_driver_5(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 guard0(e,c,s) error192()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v4:u64 = const() {"value":52936}
+  v5:u64 = call(guard0_s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":52984}
+  v7:u64 = call(guard0_s,v6) {"function":"tr_get"}
+  v8:u64 = int.add.checked(v5,v7)
+  v9:u8 = const() {"value":0}
+  v10:usize = int.cast(v8) {"mode":"wrap"}
+  _ = buffer.store(guard0_s,v10,v9)
+  v11:u64 = const() {"value":208}
+  v12:u64 = call(guard0_s,v11) {"function":"tr_get"}
+  v13:u64 = const() {"value":52960}
+  v14:u64 = call(guard0_s,v13,v12) {"function":"tr_put"}
+  v15:u64 = const() {"value":0}
+  v16:u64 = const() {"value":52968}
+  v17:u64 = call(guard0_s,v16,v15) {"function":"tr_put"}
+  v18:u64 = const() {"value":0}
+  v19:u64 = const() {"value":52992}
+  v20:u64 = call(guard0_s,v19,v18) {"function":"tr_put"}
+  v21:u64 = const() {"value":52976}
+  v22:u64 = call(guard0_s,v21) {"function":"tr_get"}
+  v23:u64 = const() {"value":30}
+  v24:bool = compare.lt(v22,v23)
+  branch v24 methods(guard0_e,guard0_c,guard0_s) objects(guard0_e,guard0_c,guard0_s)
+block methods(methods_e:readbuf,methods_c:mutbuf,methods_s:mutbuf)
+  v25:u64 = const() {"value":24}
+  v26:u64 = const() {"value":0}
+  v27:u64 = const() {"value":14}
+  v28:u64 = const() {"value":6}
+  v29:u32 = call(methods_c,methods_s,v25,v26,v27,v28) {"function":"rt_call"}
+  ret(v29)
+block objects(objects_e:readbuf,objects_c:mutbuf,objects_s:mutbuf)
+  v30:u64 = const() {"value":25}
+  v31:u64 = const() {"value":0}
+  v32:u64 = const() {"value":14}
+  v33:u64 = const() {"value":6}
+  v34:u32 = call(objects_c,objects_s,v30,v31,v32,v33) {"function":"rt_call"}
+  ret(v34)
+block error192()
+  v35:u32 = const() {"value":192}
+  ret(v35)
+end
+fn st_api_driver_6(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":94216}
+  v3:u64 = call(s,v2,v1) {"function":"tr_put"}
+  v4:u64 = const() {"value":40}
+  v5:u64 = call(s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":94224}
+  v7:u64 = call(s,v6,v5) {"function":"tr_put"}
+  v8:u64 = const() {"value":52976}
+  v9:u64 = call(s,v8) {"function":"tr_get"}
+  v10:u64 = const() {"value":94232}
+  v11:u64 = call(s,v10,v9) {"function":"tr_put"}
+  v12:u64 = const() {"value":94216}
+  v13:u64 = call(s,v12) {"function":"tr_get"}
+  v14:u64 = const() {"value":0}
+  v15:bool = compare.eq(v13,v14)
+  branch v15 success(e,c,s) failure(e,c,s)
+block success(success_e:readbuf,success_c:mutbuf,success_s:mutbuf)
+  v16:u64 = const() {"value":1312}
+  v17:u64 = call(success_s,v16) {"function":"tr_get"}
+  v18:u64 = const() {"value":94240}
+  v19:u64 = call(success_s,v18,v17) {"function":"tr_put"}
+  v20:u64 = const() {"value":1320}
+  v21:u64 = call(success_s,v20) {"function":"tr_get"}
+  v22:u64 = const() {"value":94248}
+  v23:u64 = call(success_s,v22,v21) {"function":"tr_put"}
+  v24:u64 = const() {"value":0}
+  v25:u64 = const() {"value":94256}
+  v26:u64 = call(success_s,v25,v24) {"function":"tr_put"}
+  v27:u64 = const() {"value":8}
+  v28:u64 = const() {"value":0}
+  v29:u64 = call(success_s,v28,v27) {"function":"tr_put"}
+  v30:u64 = const() {"value":144}
+  v31:u64 = const() {"value":14}
+  v32:u64 = call(success_c,v30,v31) {"function":"tr_put"}
+  v33:u32 = const() {"value":2}
+  ret(v33)
+block failure(failure_e:readbuf,failure_c:mutbuf,failure_s:mutbuf)
+  v34:u64 = const() {"value":1}
+  v35:u64 = const() {"value":94216}
+  v36:u64 = call(failure_s,v35) {"function":"tr_get"}
+  v37:u64 = const() {"value":4328357505}
+  v38:bool = compare.eq(v36,v37)
+  v39:u64 = const() {"value":2}
+  v40:u64 = select(v38,v39,v34)
+  v41:u64 = const() {"value":94216}
+  v42:u64 = call(failure_s,v41) {"function":"tr_get"}
+  v43:u64 = const() {"value":4361301333}
+  v44:bool = compare.eq(v42,v43)
+  v45:u64 = const() {"value":2}
+  v46:u64 = select(v44,v45,v40)
+  v47:u64 = const() {"value":94216}
+  v48:u64 = call(failure_s,v47) {"function":"tr_get"}
+  v49:u64 = const() {"value":4855660645}
+  v50:bool = compare.eq(v48,v49)
+  v51:u64 = const() {"value":2}
+  v52:u64 = select(v50,v51,v46)
+  v53:u64 = const() {"value":94216}
+  v54:u64 = call(failure_s,v53) {"function":"tr_get"}
+  v55:u64 = const() {"value":5926842521}
+  v56:bool = compare.eq(v54,v55)
+  v57:u64 = const() {"value":2}
+  v58:u64 = select(v56,v57,v52)
+  v59:u64 = const() {"value":94256}
+  v60:u64 = call(failure_s,v59,v58) {"function":"tr_put"}
+  v61:u64 = const() {"value":94216}
+  v62:u64 = call(failure_s,v61) {"function":"tr_get"}
+  v63:u64 = const() {"value":94224}
+  v64:u64 = call(failure_s,v63) {"function":"tr_get"}
+  v65:u64 = const() {"value":0}
+  v66:u64 = const() {"value":1248}
+  v67:u64 = call(failure_s,v66,v62) {"function":"tr_put"}
+  v68:u64 = const() {"value":1256}
+  v69:u64 = call(failure_s,v68,v64) {"function":"tr_put"}
+  v70:u64 = const() {"value":1264}
+  v71:u64 = call(failure_s,v70,v65) {"function":"tr_put"}
+  v72:u64 = const() {"value":12}
+  v73:u64 = const() {"value":0}
+  v74:u64 = const() {"value":14}
+  v75:u64 = const() {"value":7}
+  v76:u32 = call(failure_c,failure_s,v72,v73,v74,v75) {"function":"rt_call"}
+  ret(v76)
+end
+fn st_api_driver_7(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":1312}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":94240}
+  v3:u64 = call(s,v2,v1) {"function":"tr_put"}
+  v4:u64 = const() {"value":1320}
+  v5:u64 = call(s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":94248}
+  v7:u64 = call(s,v6,v5) {"function":"tr_put"}
+  v8:u64 = const() {"value":8}
+  v9:u64 = const() {"value":0}
+  v10:u64 = call(s,v9,v8) {"function":"tr_put"}
+  v11:u64 = const() {"value":144}
+  v12:u64 = const() {"value":14}
+  v13:u64 = call(c,v11,v12) {"function":"tr_put"}
+  v14:u32 = const() {"value":2}
+  ret(v14)
+end
+fn st_api_driver_8(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":7168}
+  v1:u64 = const() {"value":0}
+  v2:u64 = int.add.checked(v0,v1)
+  v3:u64 = const() {"value":3544420112852534088}
+  v4:u64 = call(s,v2,v3) {"function":"tr_put"}
+  v5:u64 = const() {"value":94256}
+  v6:u64 = call(s,v5) {"function":"tr_get"}
+  v7:u64 = const() {"value":7176}
+  v8:u64 = call(s,v7,v6) {"function":"tr_put"}
+  v9:u64 = const() {"value":94216}
+  v10:u64 = call(s,v9) {"function":"tr_get"}
+  v11:u64 = const() {"value":7184}
+  v12:u64 = call(s,v11,v10) {"function":"tr_put"}
+  v13:u64 = const() {"value":94224}
+  v14:u64 = call(s,v13) {"function":"tr_get"}
+  v15:u64 = const() {"value":7192}
+  v16:u64 = call(s,v15,v14) {"function":"tr_put"}
+  v17:u64 = const() {"value":94248}
+  v18:u64 = call(s,v17) {"function":"tr_get"}
+  v19:u64 = const() {"value":7200}
+  v20:u64 = call(s,v19,v18) {"function":"tr_put"}
+  v21:u64 = const() {"value":94232}
+  v22:u64 = call(s,v21) {"function":"tr_get"}
+  v23:u64 = const() {"value":7208}
+  v24:u64 = call(s,v23,v22) {"function":"tr_put"}
+  v25:u64 = const() {"value":1}
+  v26:u64 = const() {"value":7168}
+  v27:u64 = const() {"value":48}
+  v28:u64 = const() {"value":0}
+  v29:u64 = const() {"value":0}
+  v30:u64 = const() {"value":16180538525}
+  v31:u64 = const() {"value":0}
+  v32:u64 = const() {"value":0}
+  v33:u64 = const() {"value":1248}
+  v34:u64 = call(s,v33,v25) {"function":"tr_put"}
+  v35:u64 = const() {"value":1256}
+  v36:u64 = call(s,v35,v26) {"function":"tr_put"}
+  v37:u64 = const() {"value":1264}
+  v38:u64 = call(s,v37,v27) {"function":"tr_put"}
+  v39:u64 = const() {"value":1272}
+  v40:u64 = call(s,v39,v28) {"function":"tr_put"}
+  v41:u64 = const() {"value":1280}
+  v42:u64 = call(s,v41,v29) {"function":"tr_put"}
+  v43:u64 = const() {"value":1288}
+  v44:u64 = call(s,v43,v30) {"function":"tr_put"}
+  v45:u64 = const() {"value":1296}
+  v46:u64 = call(s,v45,v31) {"function":"tr_put"}
+  v47:u64 = const() {"value":1304}
+  v48:u64 = call(s,v47,v32) {"function":"tr_put"}
+  v49:u64 = const() {"value":1}
+  v50:u64 = const() {"value":200}
+  v51:u64 = const() {"value":14}
+  v52:u64 = const() {"value":9}
+  v53:u32 = call(c,s,v49,v50,v51,v52) {"function":"rt_call"}
+  ret(v53)
+end
+fn st_api_driver_9(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 guard0(e,c,s) error229()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v4:u64 = const() {"value":1}
+  v5:u64 = const() {"value":94240}
+  v6:u64 = call(guard0_s,v5) {"function":"tr_get"}
+  v7:u64 = const() {"value":94248}
+  v8:u64 = call(guard0_s,v7) {"function":"tr_get"}
+  v9:u64 = const() {"value":0}
+  v10:u64 = const() {"value":0}
+  v11:u64 = const() {"value":16180538525}
+  v12:u64 = const() {"value":0}
+  v13:u64 = const() {"value":0}
+  v14:u64 = const() {"value":1248}
+  v15:u64 = call(guard0_s,v14,v4) {"function":"tr_put"}
+  v16:u64 = const() {"value":1256}
+  v17:u64 = call(guard0_s,v16,v6) {"function":"tr_put"}
+  v18:u64 = const() {"value":1264}
+  v19:u64 = call(guard0_s,v18,v8) {"function":"tr_put"}
+  v20:u64 = const() {"value":1272}
+  v21:u64 = call(guard0_s,v20,v9) {"function":"tr_put"}
+  v22:u64 = const() {"value":1280}
+  v23:u64 = call(guard0_s,v22,v10) {"function":"tr_put"}
+  v24:u64 = const() {"value":1288}
+  v25:u64 = call(guard0_s,v24,v11) {"function":"tr_put"}
+  v26:u64 = const() {"value":1296}
+  v27:u64 = call(guard0_s,v26,v12) {"function":"tr_put"}
+  v28:u64 = const() {"value":1304}
+  v29:u64 = call(guard0_s,v28,v13) {"function":"tr_put"}
+  v30:u64 = const() {"value":1}
+  v31:u64 = const() {"value":200}
+  v32:u64 = const() {"value":14}
+  v33:u64 = const() {"value":10}
+  v34:u32 = call(guard0_c,guard0_s,v30,v31,v32,v33) {"function":"rt_call"}
+  ret(v34)
+block error229()
+  v35:u32 = const() {"value":229}
+  ret(v35)
+end
+fn st_api_driver_10(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:u64 = const() {"value":32}
+  v1:u64 = call(s,v0) {"function":"tr_get"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.eq(v1,v2)
+  branch v3 guard0(e,c,s) error229()
+block guard0(guard0_e:readbuf,guard0_c:mutbuf,guard0_s:mutbuf)
+  v4:u64 = const() {"value":52952}
+  v5:u64 = call(guard0_s,v4) {"function":"tr_get"}
+  v6:u64 = const() {"value":0}
+  v7:bool = compare.eq(v5,v6)
+  branch v7 reset(guard0_e,guard0_c,guard0_s) owner(guard0_e,guard0_c,guard0_s)
+block reset(reset_e:readbuf,reset_c:mutbuf,reset_s:mutbuf)
+  v8:u64 = const() {"value":52928}
+  v9:u64 = call(reset_s,v8) {"function":"tr_get"}
+  v10:u64 = const() {"value":208}
+  v11:u64 = call(reset_s,v10,v9) {"function":"tr_put"}
+  v12:u64 = const() {"value":0}
+  v13:u64 = const() {"value":52944}
+  v14:u64 = call(reset_s,v13,v12) {"function":"tr_put"}
+  v15:u64 = const() {"value":1}
+  v16:u64 = const() {"value":0}
+  v17:u64 = call(reset_s,v16,v15) {"function":"tr_put"}
+  v18:u64 = const() {"value":144}
+  v19:u64 = const() {"value":14}
+  v20:u64 = call(reset_c,v18,v19) {"function":"tr_put"}
+  v21:u32 = const() {"value":2}
+  ret(v21)
+block owner(owner_e:readbuf,owner_c:mutbuf,owner_s:mutbuf)
+  v22:u64 = const() {"value":52968}
+  v23:u64 = call(owner_s,v22) {"function":"tr_get"}
+  v24:u64 = const() {"value":0}
+  v25:bool = compare.eq(v23,v24)
+  branch v25 temporary(owner_e,owner_c,owner_s) retained(owner_e,owner_c,owner_s)
+block temporary(temporary_e:readbuf,temporary_c:mutbuf,temporary_s:mutbuf)
+  v26:u64 = const() {"value":52960}
+  v27:u64 = call(temporary_s,v26) {"function":"tr_get"}
+  v28:u64 = const() {"value":208}
+  v29:u64 = call(temporary_s,v28,v27) {"function":"tr_put"}
+  v30:u64 = const() {"value":1}
+  v31:u64 = const() {"value":0}
+  v32:u64 = call(temporary_s,v31,v30) {"function":"tr_put"}
+  v33:u64 = const() {"value":144}
+  v34:u64 = const() {"value":14}
+  v35:u64 = call(temporary_c,v33,v34) {"function":"tr_put"}
+  v36:u32 = const() {"value":2}
+  ret(v36)
+block retained(retained_e:readbuf,retained_c:mutbuf,retained_s:mutbuf)
+  v37:u64 = const() {"value":1}
+  v38:u64 = const() {"value":0}
+  v39:u64 = call(retained_s,v38,v37) {"function":"tr_put"}
+  v40:u64 = const() {"value":144}
+  v41:u64 = const() {"value":14}
+  v42:u64 = call(retained_c,v40,v41) {"function":"tr_put"}
+  v43:u32 = const() {"value":2}
+  ret(v43)
+block error229()
+  v44:u32 = const() {"value":229}
+  ret(v44)
+end

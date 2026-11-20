@@ -1,0 +1,451 @@
+{
+  "base_commit": "83c8c076550ee620f63a889d5f6f14f9a3192a07",
+  "base_tree": "10df7a2bc3c874e028836102c2d827c8fc2a3a09",
+  "current_ci": {
+    "actual_bootstrap_cases": 196,
+    "actual_interpreter_and_captured_source_binding_required": true,
+    "bootstrap_observation": {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_hia_workflow_bootstrap.py",
+        "-v"
+      ],
+      "bootstrap.stderr.raw": {
+        "bytes": 721,
+        "sha256": "99a695750342ae91d2cc397d576f97035b4c9deb192b04402953849f8d387905"
+      },
+      "bootstrap.stdout.raw": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "discovered": 624,
+      "discovery_sha256": "1fae443fc9a58e22ce403d4d49fde99e11ba49a9ed647d9c5fdb0e63fc1204b9",
+      "exit_code": 0,
+      "groups": {
+        "crypto-types": 95,
+        "general": 463,
+        "ml-dsa": 37,
+        "oracle": 22,
+        "state-root": 7
+      },
+      "seconds": 25.83426154100016
+    },
+    "complete_original_native_reader_execution_required": true,
+    "discovery": {
+      "crypto_types": 95,
+      "discovery_is_execution": false,
+      "general": 463,
+      "methods": 624,
+      "ml_dsa": 37,
+      "oracle": 22,
+      "state_root": 7
+    },
+    "expanded_job_count": 63,
+    "fresh_committed_execution": "PENDING",
+    "lexical_job_definitions": 61,
+    "native_bootstrap_blocks": 49,
+    "new_matrix_components": [
+      "peer-unix",
+      "task-store",
+      "task-boundary"
+    ],
+    "per_job_minutes": 20,
+    "public_source_input_count": 1460,
+    "root_integration_controls": {
+      "actual_tests": 59,
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "hia.tests.test_migration_inventory",
+        "hia.tests.test_composition",
+        "hia.tests.test_component_partition",
+        "hia.tests.test_observation_archive",
+        "hia.tests.test_task_ci"
+      ],
+      "exit_code": 0,
+      "native_or_original_runtime_qualification_claimed": false,
+      "seconds": 1.1979121069962275,
+      "stderr.raw": {
+        "bytes": 10218,
+        "sha256": "7b80cdc30aec02d70c89ecc1936153303ea6148cb339f44a60628c480dffac69"
+      },
+      "stdout.raw": {
+        "bytes": 414,
+        "sha256": "7f7b6f1529a2ab72710071ddcb2828c895c22adc44a06bf063983dc1ca2cfa85"
+      }
+    },
+    "runner_hard_termination_artifact_completeness_guaranteed": false,
+    "success_or_failure_regular_bytes_and_special_inode_metadata_retained": true,
+    "task_orchestration_controls": 15,
+    "whole_checkout_before_after_required": true
+  },
+  "current_commit_qualification": "REQUIRED_NOT_INFERRED_FROM_DEVELOPMENT",
+  "inventory": {
+    "hia_sources": 255,
+    "kernels": 60,
+    "native_foundations": 26,
+    "not_ported": 7,
+    "original_packages": 26,
+    "partially_ported": 19,
+    "retired": 0,
+    "whole_project_gates_open": 9
+  },
+  "peer_unix": {
+    "actual_cleanup_correction": "Fixture uses a pinned direct tracee pidfd; strace remains alive to reap its tracee, then the owned collector verifies the complete family. One absolute three-second cleanup deadline is retained.",
+    "actual_fresh_runtime_job": "1a1f4553892-ffbe-f82",
+    "archive": {
+      "bytes": 444098788,
+      "complete_member_readback_on_both_hosts": true,
+      "mac_retained_path": "peer-unix-formal-v9-final-rtfor7p5/peer-unix-formal-v9-complete.tar.xz",
+      "ordinary_members": 28224,
+      "sha256": "da9e4b78b435d7121049588f12bb5f8fa1a3d3c14fef65889c0126454392241f"
+    },
+    "archive_logical_entries": 88644,
+    "current_integrated_readme_changed_after_development": true,
+    "exit_code": 0,
+    "hia_sources": 14,
+    "independent_readback_seconds": 15.933896497,
+    "integrity_controls": 13,
+    "job_state": "succeeded",
+    "maximum_cumulative_process_observations": 4096,
+    "native_image_sha256": {
+      "client": "2d7ea0c7c15022b927368aff4d02466206dab8797f48dffb2ec0ff8837c1cdb7",
+      "client_owner": "a235139ccad47f7161383c236ea81232886353d522083697cd5113a675400f19",
+      "daemon_api": "2f7cf2150628222807ec63949712605726a210372f364be0705600011c51ee88",
+      "daemon_cli": "e401ea7b2c045abd2df176646a9885402d6e93293379fee08c00bb89d9a9922a"
+    },
+    "native_runtime_images": 4,
+    "observed_groups": {
+      "cli_cases": 37,
+      "client_cases": 299,
+      "codec_abi_controls": 40,
+      "codec_cases": 4755,
+      "daemon_exchanges": 476,
+      "daemon_scenarios_per_implementation": 18,
+      "filesystem_cases": 9,
+      "owner_abi_calls_per_implementation": 1782,
+      "owner_max_message_bytes": 1048576,
+      "owner_objects": 544,
+      "syscall_cases": 30
+    },
+    "original_live_pid_budget_qualification_claimed": false,
+    "original_nested_reexecutions_not_added_to_outer_count": 2,
+    "original_retained_outer_tests": 121,
+    "owned_files": 34,
+    "payload_metadata_body_recovery_ack_node_and_retirement": "OPEN",
+    "qualification_report": {
+      "bytes": 588918,
+      "sha256": "f7e114b6743f97cf2bd69b5c1e167dda5e57a48239e86aeb6ed1cd6e502511ce"
+    },
+    "retained_failures": [
+      "formal-v6",
+      "formal-v7-umask-fixture",
+      "formal-v8-tracer-and-tracee-group-kill"
+    ],
+    "runtime_seconds": 463.328650254,
+    "source_graph": {
+      "count": 1898,
+      "sha256": "7d2df098c2e979967e8d016691c6c487ce887de92c97936537cb9575901d29f2"
+    },
+    "strict_clippy_and_formatting": true
+  },
+  "published_83_budget_readback": {
+    "actual_native_reexecuted": false,
+    "head": "83c8c076550ee620f63a889d5f6f14f9a3192a07",
+    "modes": [
+      {
+        "actual_controls": 7,
+        "actual_expected_failures": 5,
+        "actual_expected_passes": 2,
+        "actual_integration_passes": 0,
+        "archive": {
+          "bytes": 34924525,
+          "sha256": "af1e59d7755814021c625fcaebb452a97f34956a56488bd9bce7dd94b6ab40c1"
+        },
+        "artifact_id": 14534500003,
+        "mode": "pool-before-v3",
+        "report": {
+          "bytes": 26994,
+          "sha256": "fa7825b060129fd692ffaf82e47c0e87672cfa7de6de4bafd40786197a3ceadf"
+        }
+      },
+      {
+        "actual_controls": 21,
+        "actual_expected_failures": 0,
+        "actual_expected_passes": 21,
+        "actual_integration_passes": 10,
+        "archive": {
+          "bytes": 47045630,
+          "sha256": "80cff6deaa539e0e0429492f64b111d0d09b3c8cc0d0e014fa50f25780c64a7a"
+        },
+        "artifact_id": 14533647212,
+        "mode": "fixed",
+        "report": {
+          "bytes": 217107,
+          "sha256": "68bcf29313192a7a5f506bd61acc2278d15dea6d8878aae76a554361b4455e9e"
+        }
+      },
+      {
+        "actual_controls": 7,
+        "actual_expected_failures": 6,
+        "actual_expected_passes": 1,
+        "actual_integration_passes": 0,
+        "archive": {
+          "bytes": 34946772,
+          "sha256": "59a79be4458126f5ff53b920a1030ab2b6a4ff0442d710d2284d427b88626abf"
+        },
+        "artifact_id": 14532964824,
+        "mode": "budget-before-v3",
+        "report": {
+          "bytes": 181179,
+          "sha256": "1c6bf8304ecbe73eb5dc7bcf2c1688817eb941dac3600e0ea90342508d11183b"
+        }
+      },
+      {
+        "actual_controls": 2,
+        "actual_expected_failures": 2,
+        "actual_expected_passes": 0,
+        "actual_integration_passes": 0,
+        "archive": {
+          "bytes": 34913725,
+          "sha256": "db4c7ac3fb44d1ef236d124ff38cb98e4958ebb688fd67d210779f594972df7c"
+        },
+        "artifact_id": 14532364734,
+        "mode": "pool-scan-before-v2",
+        "report": {
+          "bytes": 19711,
+          "sha256": "33e0a8a5f4b1a53049a96da3db1d1c831b50688cf58c4103beb87ee182465c57"
+        }
+      }
+    ],
+    "reader_source_capsule_full_checkout": false,
+    "report": {
+      "bytes": 11812,
+      "sha256": "0ad81a7631f4c4de4f6f63ae7ef0cd8ca528581d7bbbda523489b6635c5c6529"
+    },
+    "service_budget_qualified": false,
+    "status": "PASS_COMPLETE_RETAINED_COMPONENT_RAW_READBACK",
+    "tree": "10df7a2bc3c874e028836102c2d827c8fc2a3a09"
+  },
+  "published_83_hosted": {
+    "budget_jobs_passed": 4,
+    "budget_run": 44528128471,
+    "macos_cleanup": "NOT_RUN_CANCELLED_NO_RUNNER",
+    "original_limits": {
+      "cpu": 0.25,
+      "live_pids": 256,
+      "memory_gib": 2,
+      "request_seconds": 4,
+      "swap_bytes": 0,
+      "workers": 16
+    },
+    "original_service_confirmation": "FAIL_CONFIRMATION_TARGET_PUBLIC_REQUEST_DEADLINE",
+    "pr_hia_conclusion": "cancelled",
+    "pr_hia_run": 44528128761,
+    "pr_original_job_total_timeout_minutes": 20,
+    "pr_original_work_job": 135584420997,
+    "push_hia_jobs_passed": 60,
+    "push_hia_run": 44528099321,
+    "w1_pressure_confirmation_passes": 0
+  },
+  "published_83_ml_dsa": {
+    "actual_integrity_controls": 21,
+    "archive": {
+      "bytes": 526540800,
+      "complete_member_readback_on_both_hosts": true,
+      "mac_retained_path": "ml-dsa-ci83-final-6xdsbm1_/ml-dsa-ci83-complete.tar",
+      "ordinary_members": 45,
+      "sha256": "62cf70980499b33de992044c37153c2b13751c4c2981fc967a7f2ed4e37de787"
+    },
+    "generic_methods": 37,
+    "handoff": {
+      "bytes": 39683,
+      "sha256": "fcce67199aa888554c5ef2e25942d22407cee94ea0ea4787f50dadc94c0fac02"
+    },
+    "head": "83c8c076550ee620f63a889d5f6f14f9a3192a07",
+    "native_calls": 1213,
+    "native_methods": 16,
+    "new_display_uses_actual_report_count": true,
+    "old_display_count_preserved": 20,
+    "original_api_calls": 669,
+    "original_doctests": 2,
+    "original_elfs": 34,
+    "original_stages": 79,
+    "original_tests": 343,
+    "private_and_generic_readback_on_push_and_pr": true,
+    "status": "PASS",
+    "tree": "10df7a2bc3c874e028836102c2d827c8fc2a3a09",
+    "whole_crypto_or_chain_closed": false
+  },
+  "schema": "trnm.hia.additional-owner-development.v1",
+  "scope": {
+    "cross_target_qualified": false,
+    "full_host_dependency_closure_claimed": false,
+    "old_stack_can_be_removed": false,
+    "original_service_budget_qualified": false,
+    "production_activation": false,
+    "whole_chain_native": false,
+    "whole_peer_package_retired": false,
+    "whole_task_package_retired": false
+  },
+  "task_main_store": {
+    "actual_calloc_failures": 96,
+    "actual_fresh_runtime_job": "1a1f43bc979-ffbe-f4a",
+    "allocator_controls": 112,
+    "archive_state_import_node_and_package_retirement": "OPEN",
+    "archives": [
+      {
+        "bytes": 273969324,
+        "complete_member_readback_on_both_hosts": true,
+        "mac_retained_path": "task-main-store-archive-v1-zsdg3ynr/task-store-stage-evidence-v1.tar.xz",
+        "ordinary_members": null,
+        "sha256": "077d195af3415d5e922a7603bd566a7a84779c1916a4cf292f491ed65a51d9fc"
+      },
+      {
+        "bytes": 41031816,
+        "complete_member_readback_on_both_hosts": true,
+        "mac_retained_path": "task-main-store-companion-v2-kj092a4g/task-store-final-evidence-v2.tar.xz",
+        "ordinary_members": null,
+        "sha256": "7eba1f5c0b824a5bae7a79a3472ac4bb1de20c8a78e90f8b3434355810142a28"
+      },
+      {
+        "bytes": 39759336,
+        "complete_member_readback_on_both_hosts": true,
+        "mac_retained_path": "task-main-store-companion-v3-a_0kuqoa/task-store-final-evidence-v3.tar.xz",
+        "ordinary_members": 2083,
+        "sha256": "e193e71ec93804e951e69aab04909488a0a9351f5b2e37878d8c7091a5d39a27"
+      }
+    ],
+    "calloc_calls": 9369,
+    "current_archive_unresolved_references": 0,
+    "current_integrated_audit_preflight_changes": 12,
+    "exit_code": 0,
+    "final_live_allocations": 0,
+    "frees": 9273,
+    "fresh_current_source_gate_after_audit_change": "REQUIRED",
+    "hia_sources": 48,
+    "historical_missing_original_rlibs": [
+      {
+        "bytes": 5306196,
+        "sha256": "a423b29790e8463e8b3d79e5351dc2f17f21d5ad4468c390188ab59efc6154c2"
+      },
+      {
+        "bytes": 18358846,
+        "sha256": "d0adee0934ec2b754d9341725f7658fe1a5296a989b15a74287d67a00d940c5b"
+      }
+    ],
+    "invalid_frees": 0,
+    "job_state": "succeeded",
+    "owned_files": 131,
+    "private_calls": 1390,
+    "private_fixtures": 143,
+    "project_owned_c_provider_operations_remaining": 29,
+    "public_cases": 445,
+    "public_getter_calls": 1877,
+    "public_method_drop_equality_calls": 413,
+    "qualification_report": {
+      "bytes": 163836,
+      "sha256": "574dc98d26da185f82e07b88a2154de177667621c2ef4fb7adbdd1f23acd5a5c"
+    },
+    "readback_seconds": 1.67,
+    "reader_negative_seconds": 4.628,
+    "reader_rejection_controls": 37,
+    "retained_original_tests": {
+      "archive": 2,
+      "doctest": 2,
+      "total": 41,
+      "unit": 35,
+      "wire": 2
+    },
+    "retained_prior_reader_false_accepts": 4,
+    "runtime_seconds": 283.404,
+    "source44_reader_corrections": [
+      "missing-reader",
+      "missing-document",
+      "foreign-source-roster",
+      "foreign-function-owner"
+    ],
+    "source_graph_manifest": {
+      "bytes": 841853,
+      "sha256": "333671bdc4b307f5753964efb3d33ca2f149ea82c53df8039dcd2d48a3bc8fce"
+    },
+    "strict_clippy_and_formatting": true
+  },
+  "work_capture_correction": {
+    "archive": {
+      "bytes": 4553248,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/work-capture-zbrrvbeh/work-original-capture-evidence-v1.tar.xz",
+      "sha256": "6c5764d5398154b5d63c71953640b45e634fd2bc9b873a4bdc35fd7a5edc4f26"
+    },
+    "base_head": "83c8c076550ee620f63a889d5f6f14f9a3192a07",
+    "base_tree": "10df7a2bc3c874e028836102c2d827c8fc2a3a09",
+    "control_job": "1a1f46e4aff-ffbe-ff3",
+    "control_report": {
+      "bytes": 9121,
+      "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/work-original-capture-v1/remote-v2/report.json",
+      "sha256": "a5ad36821f75fe272eeb97eb6e2b3ec39af840f5405e3035f1db5dd596c657c4"
+    },
+    "failures_preserved": [
+      {
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/work-original-capture-v1/run-v2",
+        "reason": "91 successes; original compiler identity test refused because this executor has no rustc"
+      },
+      {
+        "path": "/tmp/trnm-work-capture-20261119-zbrrvbeh/controls-v1",
+        "reason": "Pre-test Git read-tree refused missing real tree; fixed by importing real published commit/tree objects into own new clone"
+      },
+      {
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/work-original-capture-v1/transport-journal.json",
+        "reason": "Large Mac Git-object file chunk MCP timeout; exact readback showed destination absent; switched to smaller new create-only chunk files"
+      },
+      {
+        "path": "/workspace/scratch/5cee04bf67f6/host-fix-dev/work-original-capture-v1/archive-journal.json",
+        "reason": "First Mac readback helper double-escaped its private test-log regex; archive bytes had verified; fixed helper to exact complete test-line membership with no product/source change"
+      }
+    ],
+    "final_actual_control_skips": 0,
+    "final_actual_control_tests": 92,
+    "final_control_seconds": 10.131898888008436,
+    "full_assess_still_mandatory": true,
+    "full_original_prior_semantic_statements_preserved": 68,
+    "handoff": {
+      "bytes": 5354,
+      "sha256": "4fc338071541b336291415b2f972a1411a8e45bc9faa1cb9a876d74cc1f60cf5"
+    },
+    "mac_readback_job": "1a1f476d903-ffbe-101c",
+    "original_capture_status": "CAPTURED",
+    "original_pack_new_wall_time_measured": false,
+    "original_runtime_reexecuted_in_this_fix_validation": false,
+    "owned": {
+      "hia/tests/test_work_owner_transfer_ci.py": {
+        "bytes": 35688,
+        "sha256": "cba477f722367f51169c92811eceb2f11e04a84d3dbc41d38985255fc825f66d"
+      },
+      "hia/tools/qualify_work_owner_ci.py": {
+        "bytes": 70581,
+        "sha256": "e24de7451e41d60a1a97baa50f7294046ac19b63f1e7f5d7563889afea385eb8"
+      },
+      "hia/tools/work_owner_transfer_ci.py": {
+        "bytes": 31758,
+        "sha256": "66d72addc83f886a8da2eabc6ea3de14ed5c3d59b67bfd9f2975df6a6d537c76"
+      }
+    },
+    "reason": "PR original job completed runtime and packing stages but exceeded the unchanged total 20-minute job budget. Original packing now captures live-only evidence; the mandatory successor still performs the complete original semantic assessment.",
+    "retained_all_five_sqlite_witness_files": true,
+    "retained_original_before_after_fences": true,
+    "retained_original_cargo_and_48_process_stage_receipts": true,
+    "retained_original_full_directory": true,
+    "status": "SOURCE_CONTROLS_AND_ARCHIVE_READBACK_PASS",
+    "workflow_or_timeout_changed": false
+  }
+}

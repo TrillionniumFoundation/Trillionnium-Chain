@@ -1,0 +1,611 @@
+{
+  "base_commit": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+  "base_tree": "f93def3a68af358ece75245ddbffcc91bc4e3acd",
+  "compiler_gate_changed": false,
+  "full_new_637_method_suite_executed": false,
+  "job_deadlines_changed": false,
+  "old_stack_can_be_removed": false,
+  "original_tests_removed": 0,
+  "predecessor_ci_final": {
+    "github_mutations": 0,
+    "runs": [
+      {
+        "conclusion": "failure",
+        "counts": {
+          "failure": 1,
+          "success": 64
+        },
+        "event": "push",
+        "failed": [
+          {
+            "conclusion": "failure",
+            "id": 135943108818,
+            "name": "native-components-readback",
+            "steps": [
+              {
+                "conclusion": "failure",
+                "name": "Require all five actual job successes and exact disjoint full test coverage",
+                "status": "completed"
+              }
+            ]
+          }
+        ],
+        "head_sha": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+        "id": 44630932140,
+        "jobs": 65,
+        "owners": [
+          {
+            "conclusion": "success",
+            "id": 135937038990,
+            "name": "source-and-archive",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937039834,
+            "name": "native-node-delta",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937039942,
+            "name": "native-work-owner",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040139,
+            "name": "native-node-settings",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040162,
+            "name": "native-peer-lease-store",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040300,
+            "name": "native-node-pool-capacity",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040341,
+            "name": "native-host-resource",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040346,
+            "name": "native-node-pool-node",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040398,
+            "name": "native-task-boundary",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040399,
+            "name": "native-task-store",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040409,
+            "name": "native-node-pool-cross",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040437,
+            "name": "native-peer-unix",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040533,
+            "name": "native-node-pool-boundaries",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937040751,
+            "name": "native-node-pool-smoke",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135940601268,
+            "name": "native-node-commitment",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135940601289,
+            "name": "native-node-pool-original-node",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135941025958,
+            "name": "native-work-owner-original",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135941086214,
+            "name": "native-node-pool-original-m05",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135949790926,
+            "name": "native-work-owner-qualification",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135954696560,
+            "name": "native-work-owner-readback",
+            "status": "completed"
+          }
+        ],
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "counts": {
+          "failure": 2,
+          "success": 63
+        },
+        "event": "pull_request",
+        "failed": [
+          {
+            "conclusion": "failure",
+            "id": 135937135579,
+            "name": "native-task-store",
+            "steps": [
+              {
+                "conclusion": "failure",
+                "name": "Execute the complete component and its independent reader",
+                "status": "completed"
+              }
+            ]
+          },
+          {
+            "conclusion": "failure",
+            "id": 135945603932,
+            "name": "native-components-readback",
+            "steps": [
+              {
+                "conclusion": "failure",
+                "name": "Require all five actual job successes and exact disjoint full test coverage",
+                "status": "completed"
+              }
+            ]
+          }
+        ],
+        "head_sha": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+        "id": 44630957654,
+        "jobs": 65,
+        "owners": [
+          {
+            "conclusion": "success",
+            "id": 135937134586,
+            "name": "source-and-archive",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937134980,
+            "name": "native-node-settings",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135017,
+            "name": "native-node-pool-smoke",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135174,
+            "name": "native-node-pool-capacity",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135181,
+            "name": "native-work-owner",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135186,
+            "name": "native-node-pool-node",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135195,
+            "name": "native-node-delta",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135238,
+            "name": "native-node-pool-boundaries",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135333,
+            "name": "native-host-resource",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135352,
+            "name": "native-peer-lease-store",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135407,
+            "name": "native-node-pool-cross",
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "id": 135937135579,
+            "name": "native-task-store",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135588,
+            "name": "native-peer-unix",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135937135641,
+            "name": "native-task-boundary",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135943851922,
+            "name": "native-node-pool-original-node",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135943851951,
+            "name": "native-node-commitment",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135944345812,
+            "name": "native-node-pool-original-m05",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135944453435,
+            "name": "native-work-owner-original",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135952374505,
+            "name": "native-work-owner-qualification",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "id": 135956705219,
+            "name": "native-work-owner-readback",
+            "status": "completed"
+          }
+        ],
+        "status": "completed"
+      }
+    ],
+    "status": "ACTUAL_EXACT_HEAD_CI_OBSERVATION"
+  },
+  "production_activation": false,
+  "reader_development": {
+    "all_components_qualified": false,
+    "archive": {
+      "local": {
+        "bytes": 1850476,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/component-reader-376-qualified-v1.tar.xz",
+        "sha256": "8d27be0648f24dd798ed8eaaee2f8edb9756ddea4fc4af8c774b0817a81e5d1d"
+      },
+      "local_readback": {
+        "bytes": 487,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/local-archive-readback-v1.json",
+        "sha256": "7b039986d3a26731618f1c7251faf0c57695067858091721112bf7d91346c141"
+      },
+      "mac": {
+        "bytes": 1850476,
+        "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/component-reader-376-qualified-v1.tar.xz",
+        "sha256": "8d27be0648f24dd798ed8eaaee2f8edb9756ddea4fc4af8c774b0817a81e5d1d"
+      },
+      "mac_job": "1a1f62fdb05-ffbe-1464",
+      "mac_output_complete": true,
+      "mac_readback": {
+        "bytes": 1528,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/mac-archive-readback-v1.json",
+        "sha256": "ae6ff716a020515ada487db1bce88496bccc614264b13d96d49dee6c70a8fdde"
+      },
+      "mac_readback_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/component-reader-376-qualified-v1.readback.json",
+      "mac_terminal_exit_code": 0,
+      "manifest": {
+        "bytes": 49094,
+        "sha256": "a71d3013e977a068fd640f5aabf62fc12d3784f2206739c34f49b64065686a11"
+      },
+      "members": 215,
+      "nested_ci_zip_members": 60,
+      "retained_exact_mutation_objects": 164,
+      "source_dependency": "Immutable376 Git checkout plus exact5 source members; full repository not duplicated in archive"
+    },
+    "artifact_contract": {
+      "files_per_label": 18,
+      "general_files": 60,
+      "labels": [
+        "complete-440",
+        "child-deadline-control",
+        "observer-deadline-control"
+      ],
+      "ordinary_envelope_files": 6,
+      "other_partitions_files": 6,
+      "symlinks_or_hardlinks_refused": true,
+      "unknown_files_or_directories_refused": true
+    },
+    "base": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+    "formal_recovery": {
+      "files": 2576,
+      "logical_bytes_reclaimed": 128403504,
+      "receipt": {
+        "bytes": 759567,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/new-worktree-formal-reclaim.json",
+        "sha256": "8fd7b88f85b10a58ba5f42c6dab35df1ab91441d12a8861e0e2520b8ed4c7c35"
+      },
+      "scope": "Only own fresh, never edited376 formal checkout; exactGit/SHA bytes verified before unlink. Eight required small formal inputs restored exactly; main untouched."
+    },
+    "membership": {
+      "added_sources": [
+        "hia/tests/test_sha256_word_evidence.py",
+        "hia/tools/sha256_word_evidence.py"
+      ],
+      "added_tests": [
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_actual_build_receipt_and_generated_input_owner_cannot_be_substituted",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_complete_and_partial_child_timers_cannot_expand_or_reset",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_full_case_roster_order_completions_and_outer_log_are_mandatory",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_manifest_members_and_each_member_identity_are_exact",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_nonfinite_duplicate_and_false_numeric_json_cannot_be_accepted",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_reader_and_controls_are_bound_to_full_discovery_without_hepta_checkout",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_real_timeout_cannot_be_promoted_or_omit_the_native_child_reap",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_rehashed_source_compiler_wire_worker_and_image_changes_are_rejected",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_self_consistent_observations_cannot_hide_wrong_partial_writes_or_traps",
+        "hia.tests.test_sha256_word_evidence.Sha256WordEvidence.test_three_exact_captures_and_all_440_states_are_required"
+      ],
+      "changed_existing_sources": [
+        ".github/workflows/hia-native-migration.yml",
+        "hia/tests/test_component_partition.py",
+        "hia/tools/qualify_components_ci.py"
+      ],
+      "full_new_native_suite_executed": false,
+      "new_discovered_tests": 637,
+      "new_sources": 1497,
+      "old_head": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+      "old_sources": 1495,
+      "old_tests": 627,
+      "removed_sources": [],
+      "removed_tests": [],
+      "status": "PRESERVED_EXISTING_MEMBERSHIP_PLUS_EXPLICIT_READER_CONTROLS"
+    },
+    "old_stack_can_be_removed": false,
+    "original_ci_failure": {
+      "artifact_id": 14581857042,
+      "attempt": 1,
+      "job_id": 135943108818,
+      "job_log": {
+        "bytes": 50022,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/ci-failure-v1/job.log.raw",
+        "sha256": "68a3ffe5aa1068433005ee1241b566e71bac1a7bf87629eba617a33c9f40caaa"
+      },
+      "official_zip": {
+        "bytes": 833440,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/ci-failure-v1/general.zip",
+        "sha256": "1837f6ed386988c6168742390a0fa091804fc18e33ad41d39224aab8c92071e7"
+      },
+      "reproduced_refusal": {
+        "bytes": 963,
+        "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/ci-failure-v1/original-reader-reproduced.json",
+        "sha256": "a8ea64c28162f3703f2b23ebea250dd8c47ad98cc437323c5a106bd1df32027a"
+      },
+      "run_id": 44630932140
+    },
+    "owned": {
+      ".github/workflows/hia-native-migration.yml": {
+        "bytes": 437517,
+        "sha256": "962aaf6a9862fbdc61c08e2bca6865b759d130b2fea7cf331e3f3c6ddd74452b"
+      },
+      "hia/tests/test_component_partition.py": {
+        "bytes": 19404,
+        "sha256": "b7273f6ffb380e44fbd7c215da801acbf1f13095c1a5c7b886290f3de0f52f5f"
+      },
+      "hia/tests/test_sha256_word_evidence.py": {
+        "bytes": 23680,
+        "sha256": "1b7bc0b237011a72303e1fa270a5cd7d36bdd389d939705b3fbd634e8316b3c1"
+      },
+      "hia/tools/qualify_components_ci.py": {
+        "bytes": 15301,
+        "sha256": "bd5949c3521bb7fdb67034b9ebd43558efc8b74e0692bbc0c8efc726e7cb2d97"
+      },
+      "hia/tools/sha256_word_evidence.py": {
+        "bytes": 19685,
+        "sha256": "3ee7bc1393658ec4e427c3b99094e6b9b9fb8b39b893b8381b123101f49009d2"
+      }
+    },
+    "patch": {
+      "bytes": 51599,
+      "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/reader-final.patch",
+      "sha256": "82608c880f7613d92a2e7a410c70ee5c61c37bf79dbe08938323022e256a3a53"
+    },
+    "patch_replay": {
+      "bytes": 189,
+      "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/patch-replay-v1.json",
+      "sha256": "cd44eeafe0e8a11f9d3e9c16090d40aec774fb83847e777700db22fbb5633d0d"
+    },
+    "preserved_failed_diagnostics": [
+      "Original actual376 CI extra-files refusal and independent local reproduction",
+      "First new synthetic-unit mutation-design failures: wrong byte was identical; +10 seconds still inside existing envelope. Raw preserved; fixed new controls flip a real bit and exceed the unchanged fixed limit.",
+      "Actual-control v1 diagnostic caller omitted binding identity pair and failed before controls; exact executed script/raw/receipt preserved."
+    ],
+    "qualification": {
+      "actual_artifact_mutants": 127,
+      "actual_readback_native_cases": 440,
+      "actual_readback_producer_tests": 466,
+      "actual_readback_timeout_controls": 2,
+      "bootstrap_actual_invocations": 196,
+      "bootstrap_jobs": 49,
+      "bootstrap_methods": 4,
+      "full_new_637_method_suite_run": false,
+      "mutants_refused": 127,
+      "native_runtime_reexecuted_by_reader": false,
+      "new_unit_exit_code": 0,
+      "new_unit_methods": 25
+    },
+    "schema": "trnm.hia.general-reader-final-handoff.v1",
+    "service_settlement_engine_closed": false,
+    "source_inputs": 1497,
+    "source_set_sha256": "af889867011dc18512861c82f4827360bc0946f7cb0d901a9a6a0dc653ab1b25",
+    "sources_manifest": {
+      "bytes": 265723,
+      "path": "/workspace/scratch/5cee04bf67f6/component-reader-dev/discovery-source-v1.json",
+      "sha256": "21ab61d9dd57629cf158b1eaf991ebe77a520e94abc0e5f0de2976e524184248"
+    },
+    "status": "FIVE_FILE_READER_AND_REAL_ARTIFACT_CONTROLS_PASS",
+    "whole_chain_native": false,
+    "workflow_delta": {
+      "added_lines": 5,
+      "added_step": "Refuse incomplete component and SHA word evidence",
+      "changed_timeouts": false,
+      "command": "python3 -B -m unittest hia.tests.test_component_partition hia.tests.test_sha256_word_evidence -v",
+      "job": "native-components-readback",
+      "new_jobs": 0,
+      "output": "$RUNNER_TEMP/component-readback/reader-controls.log",
+      "requires_hepta_checkout": false
+    },
+    "worktree": "/workspace/scratch/5cee04bf67f6/Trillionnium-Chain-component-reader"
+  },
+  "remaining": {
+    "payload_body": "Private codec and WAL parser comparison is finite development evidence; maximum WAL, persistent owner, recovery and whole package remain open.",
+    "settlement_engine_gate": "FAIL: canonical SHA development candidate still reaches original 240 seconds after 319/320 fixtures; no replacement gate invented.",
+    "task_store_current_pr_records_gate": "FAIL: 180.115685432 seconds, 1290 complete equal pairs; native 158.9525 seconds and large-context 50.3384 seconds. Original failure and whole artifact retained."
+  },
+  "root_integration": {
+    "bootstrap": {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_hia_workflow_bootstrap.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/5cee04bf67f6/Trillionnium-Chain",
+      "elapsed_ns": 24990238400,
+      "exit_code": 0,
+      "source_inputs": {
+        ".github/workflows/hia-native-migration.yml": {
+          "bytes": 437517,
+          "sha256": "962aaf6a9862fbdc61c08e2bca6865b759d130b2fea7cf331e3f3c6ddd74452b"
+        },
+        "hia/tests/test_component_partition.py": {
+          "bytes": 19404,
+          "sha256": "b7273f6ffb380e44fbd7c215da801acbf1f13095c1a5c7b886290f3de0f52f5f"
+        },
+        "hia/tests/test_sha256_word_evidence.py": {
+          "bytes": 23680,
+          "sha256": "1b7bc0b237011a72303e1fa270a5cd7d36bdd389d939705b3fbd634e8316b3c1"
+        },
+        "hia/tools/qualify_components_ci.py": {
+          "bytes": 15301,
+          "sha256": "bd5949c3521bb7fdb67034b9ebd43558efc8b74e0692bbc0c8efc726e7cb2d97"
+        },
+        "hia/tools/sha256_word_evidence.py": {
+          "bytes": 19685,
+          "sha256": "3ee7bc1393658ec4e427c3b99094e6b9b9fb8b39b893b8381b123101f49009d2"
+        }
+      },
+      "source_inputs_stable": true,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 721,
+        "sha256": "ae58c436c8fbe0ff26ca9227572294281816919a10a17c626e0c9c7920872e51"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "scope": "Exact five code inputs remain unchanged; subsequent plan/current-corpus-pin bookkeeping is separately verified, and the new commit must run its own full CI.",
+    "unit": {
+      "exit_code": 0,
+      "native_runtime_reexecuted": false,
+      "source_inputs": {
+        ".github/workflows/hia-native-migration.yml": {
+          "bytes": 437517,
+          "sha256": "962aaf6a9862fbdc61c08e2bca6865b759d130b2fea7cf331e3f3c6ddd74452b"
+        },
+        "hia/tests/test_component_partition.py": {
+          "bytes": 19404,
+          "sha256": "b7273f6ffb380e44fbd7c215da801acbf1f13095c1a5c7b886290f3de0f52f5f"
+        },
+        "hia/tests/test_sha256_word_evidence.py": {
+          "bytes": 23680,
+          "sha256": "1b7bc0b237011a72303e1fa270a5cd7d36bdd389d939705b3fbd634e8316b3c1"
+        },
+        "hia/tools/qualify_components_ci.py": {
+          "bytes": 15301,
+          "sha256": "bd5949c3521bb7fdb67034b9ebd43558efc8b74e0692bbc0c8efc726e7cb2d97"
+        },
+        "hia/tools/sha256_word_evidence.py": {
+          "bytes": 19685,
+          "sha256": "3ee7bc1393658ec4e427c3b99094e6b9b9fb8b39b893b8381b123101f49009d2"
+        }
+      },
+      "source_inputs_stable": true,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 4948,
+        "sha256": "0956e1c94d743c2803c9651b40964a79fdb3de2db5c18ac2e62191d34942a459"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": 25
+    }
+  },
+  "runtime_sources_changed": false,
+  "schema": "trnm.hia.component-evidence-reader-development.v1",
+  "service_limits_changed": false,
+  "status": "READER_DEVELOPMENT_CONTROLS_PASS_CURRENT_COMMIT_CI_REQUIRED",
+  "whole_chain_native": false
+}

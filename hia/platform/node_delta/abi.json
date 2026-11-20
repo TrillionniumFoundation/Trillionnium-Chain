@@ -1,0 +1,147 @@
+{
+  "command": {
+    "block_id_offset": 72,
+    "header_bytes": 104,
+    "kinds": {
+      "1": "Progress",
+      "2": "Read actual optional value",
+      "3": "Put",
+      "4": "Delete"
+    },
+    "magic_ascii": "NDLCMD01",
+    "payload_offset": 104,
+    "tail": "Undeclared bytes have no command meaning",
+    "target_slot_offset": 64,
+    "u64le_fields_first64": [
+      "magic",
+      "kind",
+      "ticket",
+      "key_bytes",
+      "value_bytes",
+      "delta_index",
+      "progress_index",
+      "private_phase"
+    ]
+  },
+  "constructor_boundary": {
+    "constructor_interruptible": false,
+    "input": "already constructible complete typed vector",
+    "next_owner_obligation": "real row materialization under one snapshot between the original callbacks; no mutation until collection completes",
+    "original_cpu_or_input_acquisition_budget_qualified": false,
+    "physical_sql_materialization_retired": false,
+    "sql_conversion_error_order_qualified": false,
+    "validation_and_capture": "full tape scan/copy before the first emitted Progress"
+  },
+  "context": {
+    "error_kind_offset": 224,
+    "error_origin_offset": 160,
+    "error_token_offset": 168,
+    "header_bytes": 256,
+    "logical_errors": {
+      "origin=2 token=1": "UNDO_ROOT / local integrity",
+      "origin=2 token=2": "STORAGE_WRITE / local integrity"
+    },
+    "phases": {
+      "1": "apply initial progress",
+      "2": "Delta collection initial progress",
+      "3": "every 256 collected rows progress",
+      "4": "collection final progress",
+      "5": "per-row apply progress",
+      "6": "read pending",
+      "7": "write pending",
+      "8": "staged complete",
+      "9": "failed"
+    },
+    "required_extent": "256 + tape bytes",
+    "tape_offset": 256,
+    "terminal_reuse": "Fresh Start accepted on terminal context; pending Start/refusal never overwrites a live operation"
+  },
+  "entry": {
+    "aliasing": "Disjoint borrowed entry buffers; private context owned exclusively by the enclosing native operation",
+    "name": "f0",
+    "parameters": [
+      "readbuf event",
+      "mutbuf command",
+      "mutbuf private_context"
+    ],
+    "returns": "u32"
+  },
+  "event": {
+    "header_bytes": 48,
+    "magic_ascii": "NDLEVT01",
+    "reply": {
+      "error_classes": {
+        "0": "success",
+        "1": "opaque original operation error",
+        "2": "original cancellation",
+        "3": "original public CPU budget error",
+        "4": "original continuous-owner CPU budget error"
+      },
+      "error_value": "opaque original error identity token; payload empty",
+      "operation": 2,
+      "ticket": "exact pending private ticket"
+    },
+    "start": {
+      "error_class": 0,
+      "operation": 1,
+      "payload": "complete NDLT0001 typed tape",
+      "ticket": 0,
+      "value": "detach 0 or 1"
+    },
+    "u64le_fields": [
+      "magic",
+      "operation",
+      "ticket",
+      "error_class",
+      "value",
+      "payload_bytes"
+    ]
+  },
+  "native_test_profile": {
+    "batch_input_bytes_maximum": 33554432,
+    "buffer_extent_maximum": 8388608,
+    "per_worker_seconds_maximum": 60,
+    "production_limit": false,
+    "worker_address_space_maximum": 268435456
+  },
+  "open": [
+    "Full typed State/M06-before-wire-limit order",
+    "continuity and root/MVCC admission",
+    "original writer/snapshot identity",
+    "native durable StoreOwner transaction integration",
+    "reorg ancestry/intent/cursor/publish/recovery",
+    "paid cancellation cleanup that must commit metadata",
+    "terminal ACK only after durable finish_authenticated_request",
+    "physical crash/power-loss and original service CPU budgets"
+  ],
+  "returns": {
+    "0": "command issued",
+    "1024": "synchronous malformed/stale event or local typed-constructor refusal",
+    "1025": "local supplied buffer extent refusal",
+    "256": "Delta staging complete; no durable commit/publication authority",
+    "512": "terminal original or local-integrity operation error stored in private context"
+  },
+  "schema": "trnm.hia.native-delta-actor-abi.v1",
+  "tape": {
+    "absent_length": "18446744073709551615",
+    "fields": [
+      "magic8",
+      "count:u64le",
+      "block_id:32 bytes",
+      "target_slot:u64le"
+    ],
+    "header_bytes": 56,
+    "key_order": "strict UTF8 byte order; unique keys as original BINARY primary key ordered SQL projection",
+    "magic_ascii": "NDLT0001",
+    "present_empty_length": 0,
+    "row_fields": [
+      "key_length:u64le",
+      "before_length:u64le",
+      "after_length:u64le",
+      "key UTF8",
+      "before bytes if present",
+      "after bytes if present"
+    ],
+    "value_grammar": "raw Option<Vec<u8>>; JSON/M06 validation deliberately belongs to the later original stage"
+  }
+}

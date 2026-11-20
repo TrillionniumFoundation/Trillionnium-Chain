@@ -1,0 +1,37 @@
+{
+  "archive": {
+    "bytes": 24888160,
+    "sha256": "d58b3cf105271e7d76f332a59a9b95969c23d8e1b7d2edfd99c9981172db7ee0"
+  },
+  "chunk_bytes": 6291456,
+  "logical_name": "mempool-typed-development.tar.xz",
+  "parts": [
+    {
+      "bytes": 6291456,
+      "offset": 0,
+      "path": "part-000",
+      "sha256": "6d9446675ead742f4d8c9cba53151295ca72369531fa6120ad31fda71a55661c"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 6291456,
+      "path": "part-001",
+      "sha256": "39e3699721510d66425d6c82fcbf4c7488e4f5993aa2bb5f3873748fd8c62fa2"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 12582912,
+      "path": "part-002",
+      "sha256": "e864bbf29c32db90ef5e81ec21b2a8effab88ca692a13c6175386cf13e4c7465"
+    },
+    {
+      "bytes": 6013792,
+      "offset": 18874368,
+      "path": "part-003",
+      "sha256": "75414fbe2947afc9d7678fd1f350aa0f9660aedeeb655cd1e1b0b3ad75abe80e"
+    }
+  ],
+  "qualification_is_not_changed_by_storage": true,
+  "reassembly": "Concatenate the regular files in the declared order, verify each part identity and the full archive identity before opening it.",
+  "schema": "trnm.hia.contiguous-archive.v1"
+}

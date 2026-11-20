@@ -1,0 +1,524 @@
+{
+  "archive_bytes": 181012739,
+  "archive_files": 37,
+  "archive_members_extracted": false,
+  "checker_inputs_recorded_after_execution": {
+    "evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json": "0ce7d303dc4d50ce29235c700ec6f943e17946ed947f0b39ce36bd931df6a7e4",
+    "evidence/pon-work-security-eight-samples-20261101/verify_evidence.py": "f51e0950a2fc7cf233530e01160eadc28797469c8735307d7d00c5e53b155be3",
+    "scripts/ci/check_historical_archive.py": "f44b88fa83a26fddad017cf21656efdd6a22780db3e5f58a3c443bf3ddaa7ddc",
+    "scripts/ci/check_hosted_cost_archive.py": "e0725f608b55ad354117a5f76b915ab2c515ad845cac33bc643c221fda62fcb2",
+    "scripts/ci/test_hosted_cost_archive.py": "e9637c1de936be7fe8d8afccc29f3eb0950b4b4645e20a7f5163dcec3565f009"
+  },
+  "current_and_original_tracking_verified": true,
+  "current_native_tests_executed": 0,
+  "current_runtime_tests_executed": 0,
+  "current_work_or_service_qualification": false,
+  "exact_head_ci_qualification": false,
+  "final_cli_stdout_sha256": "b04bfb8c051aff5e9b936c761e53f97d77ef5f801e3d964c8c4562fb333edf2c",
+  "historical_observations_only": true,
+  "independent_dispatch_fix_review": {
+    "observation": {
+      "checker_sha256": "f51e0950a2fc7cf233530e01160eadc28797469c8735307d7d00c5e53b155be3",
+      "controls": [
+        {
+          "all_retained_bytes_unchanged": true,
+          "case": "missing",
+          "exit": 2,
+          "stderr": "Hosted-cost archive check failed: missing retained file: evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json\n",
+          "stdout": ""
+        },
+        {
+          "all_retained_bytes_unchanged": true,
+          "case": "dangling_symlink",
+          "exit": 2,
+          "stderr": "Hosted-cost archive check failed: symlink in retained path: evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json\n",
+          "stdout": ""
+        }
+      ],
+      "full_original_archive_reexecuted": false,
+      "original_pre_fix_failure": "hosted-cost-dispatch-review.json",
+      "schema": "trnm.hosted-cost-readonly-dispatch-fix-review.v1",
+      "status": "PASS"
+    },
+    "observation_sha256": "a46f4566d46c649088e1ff78ed7c02a449faa7ec749c761ce9de7485245306eb"
+  },
+  "negative_tests": {
+    "errors": 0,
+    "failures": 0,
+    "log_sha256": "d8f9a58c6224578b09e9ba92f5cb1e7a186f80a5c7429c3588ae556c44fbfec8",
+    "skips": 0,
+    "tests": 16,
+    "wall_seconds": 0.813
+  },
+  "network_fetches": 0,
+  "original_archive_members_rehashed": 808,
+  "original_archive_parts_rehashed": 32,
+  "original_archives_verified": 12,
+  "original_checker_executed": true,
+  "original_checker_exit": 0,
+  "original_manifest_entries": 208,
+  "original_member_bytes_rehashed": 3762781104,
+  "original_observation": {
+    "archive_extraction_performed": false,
+    "complete_top_level_inventory_verified": true,
+    "elapsed_ns": 16596197890,
+    "failures": [],
+    "finished_utc": "2026-11-15T18:46:33.079502+00:00",
+    "native_execution_performed": false,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "read_chunk_bytes": 1048576,
+    "receipt_excluded_from_its_own_hashes": true,
+    "result": "PASS",
+    "schema": "pon-frozen-evidence-byte-verification-v1",
+    "script": {
+      "bytes": 25378,
+      "name": "verify_evidence.py",
+      "sha256": "ee96dd6aebf2817762831393d687f3b650c93545a3ea18ddf6f17f7d8a1c68b6"
+    },
+    "sections": {
+      "cache-benchmark": {
+        "archive": {
+          "every_member_sha256_and_size_verified": true,
+          "exact_member_set": true,
+          "extracted_files": 0,
+          "regular_members": 43,
+          "uncompressed_bytes": 1984251
+        },
+        "command_receipts_verified": 10,
+        "files_verified": 45,
+        "index_sha256": "f33646f2dac2f851f007f38bf8e196375109bae8f44056127bea2b5a6d3be9b4",
+        "result": "PASS"
+      },
+      "hosted-cost": {
+        "archives": [
+          {
+            "archive_bytes": 897420,
+            "archive_name": "13093136677.tar.xz",
+            "archive_sha256": "decbf18ed9695234457b6c8e910563925b8244101c2a5099663ff50cd9c723e2",
+            "artifact_id": 13093136677,
+            "artifact_name": "w1-false-trace-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093136677.tar.xz"
+            ],
+            "parts_verified": 1,
+            "regular_members": 40,
+            "uncompressed_bytes": 62562561
+          },
+          {
+            "archive_bytes": 35123028,
+            "archive_name": "13093301643.tar.xz",
+            "archive_sha256": "a4cd0a5a7437a03526e6c322005462593119b0f9f2851c2f5c7cf25dabf774d4",
+            "artifact_id": 13093301643,
+            "artifact_name": "w1-legal-strategy-v2-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093301643.tar.xz.part01",
+              "13093301643.tar.xz.part02",
+              "13093301643.tar.xz.part03",
+              "13093301643.tar.xz.part04",
+              "13093301643.tar.xz.part05"
+            ],
+            "parts_verified": 5,
+            "regular_members": 81,
+            "uncompressed_bytes": 699714672
+          },
+          {
+            "archive_bytes": 955060,
+            "archive_name": "13093396655.tar.xz",
+            "archive_sha256": "32b84b9fbc0400bc76baab3e26628edc8bd555f95e416c43728076a315809d0e",
+            "artifact_id": 13093396655,
+            "artifact_name": "w1-false-trace-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093396655.tar.xz"
+            ],
+            "parts_verified": 1,
+            "regular_members": 40,
+            "uncompressed_bytes": 62527586
+          },
+          {
+            "archive_bytes": 9062256,
+            "archive_name": "13093416862.tar.xz",
+            "archive_sha256": "24bc1fa78e55c845e917d52e0f6f2aebff6d722d37edae10b72f244ab61a42ae",
+            "artifact_id": 13093416862,
+            "artifact_name": "w1-legal-strategy-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093416862.tar.xz.part01",
+              "13093416862.tar.xz.part02"
+            ],
+            "parts_verified": 2,
+            "regular_members": 81,
+            "uncompressed_bytes": 178416230
+          },
+          {
+            "archive_bytes": 9037500,
+            "archive_name": "13093421854.tar.xz",
+            "archive_sha256": "87426f9af7bad74220bb129f51d299a3812119693ef251c09854baea657c64be",
+            "artifact_id": 13093421854,
+            "artifact_name": "w1-legal-strategy-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093421854.tar.xz.part01",
+              "13093421854.tar.xz.part02"
+            ],
+            "parts_verified": 2,
+            "regular_members": 81,
+            "uncompressed_bytes": 178416522
+          },
+          {
+            "archive_bytes": 955420,
+            "archive_name": "13093436001.tar.xz",
+            "archive_sha256": "73ce99b0b5b057b26c522a055539bf6ddc6b8879e404b1701e69ab9b9a820680",
+            "artifact_id": 13093436001,
+            "artifact_name": "w1-false-trace-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093436001.tar.xz"
+            ],
+            "parts_verified": 1,
+            "regular_members": 40,
+            "uncompressed_bytes": 62527767
+          },
+          {
+            "archive_bytes": 9037380,
+            "archive_name": "13093480950.tar.xz",
+            "archive_sha256": "54136b0407753470b768b6d488f4511347d0c8939fddcc27edbfe754784a99cd",
+            "artifact_id": 13093480950,
+            "artifact_name": "w1-legal-strategy-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093480950.tar.xz.part01",
+              "13093480950.tar.xz.part02"
+            ],
+            "parts_verified": 2,
+            "regular_members": 81,
+            "uncompressed_bytes": 178416336
+          },
+          {
+            "archive_bytes": 9062448,
+            "archive_name": "13093776046.tar.xz",
+            "archive_sha256": "3eb07c7579099f52dcf1a940569a3825cca21c5b6895e62f47ed9202a45bd5a1",
+            "artifact_id": 13093776046,
+            "artifact_name": "w1-legal-strategy-prospective-merge-x64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093776046.tar.xz.part01",
+              "13093776046.tar.xz.part02"
+            ],
+            "parts_verified": 2,
+            "regular_members": 81,
+            "uncompressed_bytes": 178416378
+          },
+          {
+            "archive_bytes": 897348,
+            "archive_name": "13093880577.tar.xz",
+            "archive_sha256": "2c1948e87e141c0a18205b30f8892ac31062a9cb3727fc0fc34e610a1092227f",
+            "artifact_id": 13093880577,
+            "artifact_name": "w1-false-trace-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093880577.tar.xz"
+            ],
+            "parts_verified": 1,
+            "regular_members": 40,
+            "uncompressed_bytes": 62562709
+          },
+          {
+            "archive_bytes": 35104256,
+            "archive_name": "13093891287.tar.xz",
+            "archive_sha256": "babec93649d193ba446a76189aa924bba5c486e3d113bb1ee19b0073e22b4587",
+            "artifact_id": 13093891287,
+            "artifact_name": "w1-legal-strategy-v2-prospective-merge-arm64-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093891287.tar.xz.part01",
+              "13093891287.tar.xz.part02",
+              "13093891287.tar.xz.part03",
+              "13093891287.tar.xz.part04",
+              "13093891287.tar.xz.part05"
+            ],
+            "parts_verified": 5,
+            "regular_members": 81,
+            "uncompressed_bytes": 699752966
+          },
+          {
+            "archive_bytes": 35098464,
+            "archive_name": "13093926141.tar.xz",
+            "archive_sha256": "95bb38cdc3477d0d1fe8d62cc106c520f626069472ef7201185c752fbb86f9a7",
+            "artifact_id": 13093926141,
+            "artifact_name": "w1-legal-strategy-v2-head-arm64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13093926141.tar.xz.part01",
+              "13093926141.tar.xz.part02",
+              "13093926141.tar.xz.part03",
+              "13093926141.tar.xz.part04",
+              "13093926141.tar.xz.part05"
+            ],
+            "parts_verified": 5,
+            "regular_members": 81,
+            "uncompressed_bytes": 699752745
+          },
+          {
+            "archive_bytes": 35120652,
+            "archive_name": "13094025188.tar.xz",
+            "archive_sha256": "0a6fe770a4cdc23c660a523bc0d01d64fa605c2a610b36a825df93252d213464",
+            "artifact_id": 13094025188,
+            "artifact_name": "w1-legal-strategy-v2-head-x64-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "original_zip_container_reverified": false,
+            "original_zip_metadata_matches_saved_api": true,
+            "part_paths_in_concatenation_order": [
+              "13094025188.tar.xz.part01",
+              "13094025188.tar.xz.part02",
+              "13094025188.tar.xz.part03",
+              "13094025188.tar.xz.part04",
+              "13094025188.tar.xz.part05"
+            ],
+            "parts_verified": 5,
+            "regular_members": 81,
+            "uncompressed_bytes": 699714632
+          }
+        ],
+        "index_sha256": "4565022514441340b0ab5b1b2a6c97860a9d94813f9aa58ee3fb3d3434cf1c39",
+        "result": "PASS",
+        "saved_api_sha256": "4fc8da495ff5dd9e7a6a777e979450eee035df3782cde40dcd816365d1256a24",
+        "scope": "Recompressed TAR/XZ containers and exact indexed members verified. Original cost ZIP bytes are not stored here; only their metadata is compared with the saved API."
+      },
+      "hosted-service": {
+        "archives": [
+          {
+            "artifact_id": 13093520419,
+            "artifact_name": "w1-fresh-service-head-3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129-1",
+            "binary_sha256": "aabb0484e94022a28bde90107bd5070a376255e7befe18c9d0a5cb86ae1972e3",
+            "container": {
+              "bytes": 5092958,
+              "path": "13093520419.zip",
+              "sha256": "9b62f0ed279bd90219cc11a7c1e98ef45a87d4e759c84c51f06d3133c8cfaf68"
+            },
+            "embedded_manifest_sha256_files_verified": 26,
+            "every_member_payload_crc32_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "lane": "head",
+            "receipt_sha256": "5760a2945c0c0ddb1ef2e4791bf1371e0658aee0a7927059d7bb16f3e3c90b79",
+            "regular_members": 53,
+            "source_before_and_after": {
+              "base": null,
+              "candidate": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+              "tested_tree": "f52299288ca23426e5186f37fb3a58788e40dbee",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 792504967,
+              "tracked_entries": 6856,
+              "tracked_worktree_verified": true
+            },
+            "uncompressed_bytes": 25651830
+          },
+          {
+            "artifact_id": 13092834210,
+            "artifact_name": "w1-fresh-service-prospective-merge-ea43b65fdd91b741b8f9e577061710dd2aebbb2e-1",
+            "binary_sha256": "aabb0484e94022a28bde90107bd5070a376255e7befe18c9d0a5cb86ae1972e3",
+            "container": {
+              "bytes": 4980739,
+              "path": "13092834210.zip",
+              "sha256": "6671cf1a9c599965da5a341abf898d1f8362260929fd02a2a99c5b4cfab5b360"
+            },
+            "embedded_manifest_sha256_files_verified": 26,
+            "every_member_payload_crc32_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "lane": "prospective-merge",
+            "receipt_sha256": "29b74865976b93a4b30cca56eedcbba240732adec17bf191738ca378017d91fa",
+            "regular_members": 53,
+            "source_before_and_after": {
+              "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+              "candidate": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+              "kind": "prospective-merge",
+              "prospective_merge": "ea43b65fdd91b741b8f9e577061710dd2aebbb2e",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "ea43b65fdd91b741b8f9e577061710dd2aebbb2e",
+              "tested_tree": "f52299288ca23426e5186f37fb3a58788e40dbee",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 792504967,
+              "tracked_entries": 6856,
+              "tracked_worktree_verified": true
+            },
+            "uncompressed_bytes": 23679860
+          }
+        ],
+        "result": "PASS",
+        "saved_api_sha256": "4fc8da495ff5dd9e7a6a777e979450eee035df3782cde40dcd816365d1256a24"
+      },
+      "local-v2": {
+        "archives": [
+          {
+            "archive": "raw-part-01.tar.xz",
+            "bytes": 4677924,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 12,
+            "sha256": "401b117dbc25b5c1eef21b9c999fcef78c85ac1a7d3c2b69ad80124ff92dfb09",
+            "uncompressed_bytes": 138509201
+          },
+          {
+            "archive": "raw-part-02.tar.xz",
+            "bytes": 4464448,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 12,
+            "sha256": "447c50e161756a0c4a7b4b9f7c7cd2d0277e53063da434db5325e5e28de572ef",
+            "uncompressed_bytes": 138337485
+          },
+          {
+            "archive": "raw-part-03.tar.xz",
+            "bytes": 4528584,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 12,
+            "sha256": "f9fab679ab58f0c71ab2dc42db481e2fbb632d73267b31f28aa97e9a6e2f2be3",
+            "uncompressed_bytes": 138623075
+          },
+          {
+            "archive": "raw-part-04.tar.xz",
+            "bytes": 4503868,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 12,
+            "sha256": "f3e5d833d821515497172c76745fae12679deec668b51c15cdb5899444957752",
+            "uncompressed_bytes": 138520210
+          },
+          {
+            "archive": "raw-part-05.tar.xz",
+            "bytes": 4532336,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 12,
+            "sha256": "19abc392a51dc91e164c89768ce6a48c9383d19c39f1d73e92ea858030307877",
+            "uncompressed_bytes": 138501088
+          },
+          {
+            "archive": "execution-metadata-and-binary.tar.xz",
+            "bytes": 912092,
+            "every_member_sha256_and_size_verified": true,
+            "exact_member_set": true,
+            "extracted_files": 0,
+            "regular_members": 11,
+            "sha256": "a7db2319b1003ed0c44c26a3d5e96e9ebc7a75aa23abd472e54ff588078ca946",
+            "uncompressed_bytes": 6398613
+          }
+        ],
+        "exact_disjoint_archive_partition": true,
+        "index_sha256": "faccdc9ff653257c44aadb5e1dad21a80ae3f543354ca4e5beaa02d2892a0090",
+        "raw_files_verified": 71,
+        "result": "PASS",
+        "source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129"
+      },
+      "top-level-index": {
+        "bytes_verified": 245304380,
+        "checked": true,
+        "exact_file_set": true,
+        "excluded_self_references": [
+          "INDEX.json",
+          "verification-receipt.json"
+        ],
+        "files_verified": 208,
+        "index_sha256": "01738d21a0470cbe3c941383bd39022ec01048a63254ee58644fbdeab6907c82",
+        "present": true,
+        "result": "PASS"
+      }
+    },
+    "semantic_work_or_service_qualification": false,
+    "started_utc": "2026-11-15T18:46:16.483421+00:00",
+    "temporary_archive_reassembly_bytes": 0,
+    "verification_scope": "subindexes and complete top-level file inventory"
+  },
+  "original_package_bytes": 245358947,
+  "original_package_files": 210,
+  "original_report_sha256": "00fae775887796954a793479309db4ea5a239dd09b20c8253a37da898aa212a9",
+  "original_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "original_stdout_sha256": "d84c5bc55fb962c1ef545dbc05a3ee81b9cf197f4ba1c4018021c3a6ce26fd48",
+  "original_zip_bytes_reverified": false,
+  "preserved_files": 171,
+  "production_activation": false,
+  "removed_payload_bytes": 180351232,
+  "removed_payload_files": 32,
+  "result": "PASS",
+  "retained_dispatch_failure": {
+    "observation": {
+      "case": "archived CLI with missing HOSTED_COST_ARCHIVE.json",
+      "exit": 1,
+      "new_receipt_sha256": "800e6beb9d9d002e7ac4986b079df10a6be0cdb29f5a9f8638730c2e3aa7a928",
+      "old_receipt_sha256": "dddbf3eb1eeab2e2a0e0917ffba7882947b9dd96d2af1b25ff318ebcadea17c1",
+      "original_receipt_overwritten": true,
+      "result": "REPRODUCED",
+      "stderr": "hosted-cost: FAIL: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/hosted-cost-dispatch-review-53gleogc/evidence/pon-work-security-eight-samples-20261101/hosted-cost/ARCHIVES.json'\nlocal-v2: FAIL: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/hosted-cost-dispatch-review-53gleogc/evidence/pon-work-security-eight-samples-20261101/local-v2/RAW_INDEX.json'\ncache-benchmark: FAIL: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/hosted-cost-dispatch-review-53gleogc/evidence/pon-work-security-eight-samples-20261101/cache-benchmark/INDEX.json'\nhosted-service: FAIL: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/hosted-cost-dispatch-review-53gleogc/evidence/pon-work-security-eight-samples-20261101/hosted-service/all-artifacts-api.json'\n",
+      "stdout": "{\"result\": \"FAIL\", \"scope\": \"requested existing subindexes; top-level completeness not established\", \"receipt\": \"/tmp/hosted-cost-dispatch-review-53gleogc/evidence/pon-work-security-eight-samples-20261101/verification-receipt.json\", \"elapsed_ns\": 458869}\n"
+    },
+    "observation_sha256": "9ee8a34e1193fd0e0c9f2a7ba879ab61762f8811570992f4e1865ef25cdb6c07",
+    "resolution": "Current CLI always dispatches the strict read-only checker; the private historical view executes the unchanged original verifier blob.",
+    "scope": "Temporary copied candidate before unconditional read-only dispatch; no retained repository receipt was overwritten"
+  },
+  "retained_summaries": 5,
+  "schema": "trnm.hia.hosted-cost-cleanup-observation.v1",
+  "source_commit": "893210a45b44742edfe2510fea1d92e9974b5f95",
+  "source_commit_observed": "96a0846e383745f88e033c7db2abc0611f1dae63",
+  "whole_chain_native": false,
+  "working_tree_dirty": true
+}

@@ -1,0 +1,299 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_node_owner_disk_bridge_development
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":65536}
+  v6:bool = compare.ne(v4,v5)
+  branch v6 b2(v0,v1,v2,v6) b1(v0,v1,v2)
+block b1(v7:readbuf,v8:mutbuf,v9:mutbuf)
+  v15:usize = buffer.len(v8)
+  v16:u64 = int.cast(v15) {"mode":"wrap"}
+  v17:u64 = const() {"value":65536}
+  v18:bool = compare.ne(v16,v17)
+  jump b2(v7,v8,v9,v18)
+block b2(v11:readbuf,v12:mutbuf,v13:mutbuf,v14:bool)
+  branch v14 b4(v11,v12,v13,v14) b3(v11,v12,v13)
+block b3(v19:readbuf,v20:mutbuf,v21:mutbuf)
+  v27:usize = buffer.len(v21)
+  v28:u64 = int.cast(v27) {"mode":"wrap"}
+  v29:u64 = const() {"value":196608}
+  v30:bool = compare.ne(v28,v29)
+  jump b4(v19,v20,v21,v30)
+block b4(v23:readbuf,v24:mutbuf,v25:mutbuf,v26:bool)
+  branch v26 b5(v23,v24,v25) b6(v23,v24,v25)
+block b5(v31:readbuf,v32:mutbuf,v33:mutbuf)
+  v37:u64 = const() {"value":64}
+  v38:u32 = int.cast(v37) {"mode":"wrap"}
+  ret(v38)
+block b6(v34:readbuf,v35:mutbuf,v36:mutbuf)
+  v39:u64 = const() {"value":20000}
+  v40:u64 = call(v36,v39) {"function":"ng_g"}
+  v41:u64 = const() {"value":2000}
+  v42:bool = compare.eq(v40,v41)
+  branch v42 b7(v34,v35,v36) b8(v34,v35,v36,v40)
+block b7(v43:readbuf,v44:mutbuf,v45:mutbuf)
+  v51:u64 = const() {"value":16}
+  v52:u64 = call(v43,v51) {"function":"ng_r"}
+  v53:u64 = const() {"value":3544415727824159310}
+  v54:bool = compare.ne(v52,v53)
+  branch v54 b9(v43,v44,v45) b10(v43,v44,v45)
+block b8(v47:readbuf,v48:mutbuf,v49:mutbuf,v50:u64)
+  v108:u64 = const() {"value":0}
+  v109:u64 = call(v47,v108) {"function":"ng_r"}
+  v110:u64 = const() {"value":20008}
+  v111:u64 = call(v49,v110,v109) {"function":"ng_p"}
+  v112:bool = compare.ne(v50,v108)
+  branch v112 b15(v47,v48,v49,v50,v109) b23(v47,v48,v49)
+block b9(v55:readbuf,v56:mutbuf,v57:mutbuf)
+  v63:u64 = const() {"value":64}
+  v64:u32 = call(v56,v57,v63) {"function":"ng_fail"}
+  v65:u64 = int.cast(v64) {"mode":"wrap"}
+  v66:u32 = int.cast(v65) {"mode":"wrap"}
+  ret(v66)
+block b10(v59:readbuf,v60:mutbuf,v61:mutbuf)
+  v67:u64 = const() {"value":24}
+  v68:u64 = call(v59,v67) {"function":"ng_r"}
+  v69:u64 = const() {"value":1}
+  v70:bool = compare.eq(v68,v69)
+  branch v70 b11(v59,v60,v61) b12(v59,v60,v61,v68)
+block b11(v71:readbuf,v72:mutbuf,v73:mutbuf)
+  v81:u64 = const() {"value":92}
+  v82:u64 = const() {"value":3}
+  v83:u32 = call(v72,v73,v81,v82) {"function":"ng_begin_scan"}
+  v84:u64 = int.cast(v83) {"mode":"wrap"}
+  v85:u32 = int.cast(v84) {"mode":"wrap"}
+  ret(v85)
+block b12(v76:readbuf,v77:mutbuf,v78:mutbuf,v80:u64)
+  v86:u64 = const() {"value":2}
+  v87:bool = compare.eq(v80,v86)
+  branch v87 b13(v76,v77,v78) b14(v76,v77,v78)
+block b13(v88:readbuf,v89:mutbuf,v90:mutbuf)
+  v98:u64 = const() {"value":95}
+  v99:u32 = call(v90,v98) {"function":"ng_go"}
+  v100:u64 = int.cast(v99) {"mode":"wrap"}
+  v101:u32 = call(v88,v89,v90) {"function":"ng_requests"}
+  v102:u64 = int.cast(v101) {"mode":"wrap"}
+  v103:u32 = int.cast(v102) {"mode":"wrap"}
+  ret(v103)
+block b14(v93:readbuf,v94:mutbuf,v95:mutbuf)
+  v104:u64 = const() {"value":64}
+  v105:u32 = call(v94,v95,v104) {"function":"ng_fail"}
+  v106:u64 = int.cast(v105) {"mode":"wrap"}
+  v107:u32 = int.cast(v106) {"mode":"wrap"}
+  ret(v107)
+block b15(v113:readbuf,v114:mutbuf,v115:mutbuf,v116:u64,v117:u64)
+  v123:u64 = const() {"value":8}
+  v124:u64 = call(v113,v123) {"function":"ng_r"}
+  v125:bool = compare.ne(v124,v116)
+  branch v125 b17(v113,v114,v115) b18(v113,v114,v115,v117)
+block b17(v126:readbuf,v127:mutbuf,v128:mutbuf)
+  v136:u64 = const() {"value":64}
+  v137:u32 = call(v127,v128,v136) {"function":"ng_fail"}
+  v138:u64 = int.cast(v137) {"mode":"wrap"}
+  v139:u32 = int.cast(v138) {"mode":"wrap"}
+  ret(v139)
+block b18(v131:readbuf,v132:mutbuf,v133:mutbuf,v135:u64)
+  v140:u64 = const() {"value":18446744073709551612}
+  v141:bool = compare.eq(v135,v140)
+  branch v141 b19(v131,v132,v133) b23(v131,v132,v133)
+block b19(v142:readbuf,v143:mutbuf,v144:mutbuf)
+  v152:u64 = const() {"value":0}
+  v153:u64 = call(v143,v152) {"function":"ng_g"}
+  v154:bool = compare.eq(v153,v152)
+  v155:u64 = const() {"value":1}
+  v156:bool = compare.eq(v153,v155)
+  v157:bool = bool.or(v154,v156)
+  v158:u64 = const() {"value":17}
+  v159:bool = compare.eq(v153,v158)
+  v160:bool = bool.or(v157,v159)
+  v161:u64 = const() {"value":18}
+  v162:bool = compare.eq(v153,v161)
+  v163:bool = bool.or(v160,v162)
+  v164:u64 = const() {"value":5}
+  v165:bool = compare.eq(v153,v164)
+  v166:bool = bool.or(v163,v165)
+  v167:u64 = const() {"value":74}
+  v168:bool = compare.eq(v153,v167)
+  v169:bool = bool.or(v166,v168)
+  v170:u64 = const() {"value":217}
+  v171:bool = compare.eq(v153,v170)
+  v172:bool = bool.or(v169,v171)
+  branch v172 b21(v142,v143,v144) b22(v142,v143,v144)
+block b21(v173:readbuf,v174:mutbuf,v175:mutbuf)
+  v185:u64 = const() {"value":0}
+  v186:u32 = int.cast(v185) {"mode":"wrap"}
+  ret(v186)
+block b22(v179:readbuf,v180:mutbuf,v181:mutbuf)
+  v187:u64 = const() {"value":70}
+  v188:u32 = call(v180,v181,v187) {"function":"ng_fail"}
+  v189:u64 = int.cast(v188) {"mode":"wrap"}
+  v190:u32 = int.cast(v189) {"mode":"wrap"}
+  ret(v190)
+block b23(v191:readbuf,v192:mutbuf,v193:mutbuf)
+  v196:u64 = const() {"value":256}
+  jump b24(v191,v192,v193,v196)
+block b24(v197:readbuf,v198:mutbuf,v199:mutbuf,v202:u64)
+  v203:u64 = const() {"value":256}
+  v204:bool = compare.eq(v202,v203)
+  branch v204 b25(v197,v198,v199) b26(v197,v198,v199,v202)
+block b25(v205:readbuf,v206:mutbuf,v207:mutbuf)
+  v217:u64 = const() {"value":20000}
+  v218:u64 = call(v207,v217) {"function":"ng_g"}
+  v219:u64 = const() {"value":80}
+  v220:bool = compare.eq(v218,v219)
+  v221:u64 = const() {"value":110}
+  v222:bool = compare.eq(v218,v221)
+  v223:bool = bool.or(v220,v222)
+  branch v223 b27(v205,v206,v207) b28(v205,v206,v207,v218)
+block b26(v211:readbuf,v212:mutbuf,v213:mutbuf,v216:u64)
+  v351:u32 = int.cast(v216) {"mode":"wrap"}
+  ret(v351)
+block b27(v224:readbuf,v225:mutbuf,v226:mutbuf)
+  v236:u32 = call(v225,v226) {"function":"ng_bridge_capture"}
+  v237:u64 = int.cast(v236) {"mode":"wrap"}
+  v238:u32 = int.cast(v237) {"mode":"wrap"}
+  ret(v238)
+block b28(v230:readbuf,v231:mutbuf,v232:mutbuf,v233:u64)
+  v239:u64 = const() {"value":20}
+  v240:bool = compare.lt(v233,v239)
+  branch v240 b29(v230,v231,v232) b30(v230,v231,v232,v233)
+block b29(v241:readbuf,v242:mutbuf,v243:mutbuf)
+  v253:u32 = call(v241,v242,v243) {"function":"ng_boot"}
+  v254:u64 = int.cast(v253) {"mode":"wrap"}
+  jump b24(v241,v242,v243,v254)
+block b30(v247:readbuf,v248:mutbuf,v249:mutbuf,v250:u64)
+  v255:u64 = const() {"value":60}
+  v256:bool = compare.lt(v250,v255)
+  branch v256 b31(v247,v248,v249) b32(v247,v248,v249,v250)
+block b31(v257:readbuf,v258:mutbuf,v259:mutbuf)
+  v269:u32 = call(v257,v258,v259) {"function":"ng_initialize"}
+  v270:u64 = int.cast(v269) {"mode":"wrap"}
+  jump b24(v257,v258,v259,v270)
+block b32(v263:readbuf,v264:mutbuf,v265:mutbuf,v266:u64)
+  v271:u64 = const() {"value":80}
+  v272:bool = compare.lt(v266,v271)
+  branch v272 b33(v263,v264,v265) b34(v263,v264,v265,v266)
+block b33(v273:readbuf,v274:mutbuf,v275:mutbuf)
+  v285:u32 = call(v273,v274,v275) {"function":"ng_cold"}
+  v286:u64 = int.cast(v285) {"mode":"wrap"}
+  jump b24(v273,v274,v275,v286)
+block b34(v279:readbuf,v280:mutbuf,v281:mutbuf,v282:u64)
+  v287:u64 = const() {"value":200}
+  v288:bool = compare.lt(v282,v287)
+  branch v288 b35(v279,v280,v281) b36(v279,v280,v281,v282)
+block b35(v289:readbuf,v290:mutbuf,v291:mutbuf)
+  v301:u32 = call(v289,v290,v291) {"function":"ng_requests"}
+  v302:u64 = int.cast(v301) {"mode":"wrap"}
+  jump b24(v289,v290,v291,v302)
+block b36(v295:readbuf,v296:mutbuf,v297:mutbuf,v298:u64)
+  v303:u64 = const() {"value":1000}
+  v304:bool = compare.lt(v298,v303)
+  branch v304 b37(v295,v296,v297) b38(v295,v296,v297)
+block b37(v305:readbuf,v306:mutbuf,v307:mutbuf)
+  v317:u32 = call(v305,v306,v307) {"function":"ng_control"}
+  v318:u64 = int.cast(v317) {"mode":"wrap"}
+  jump b24(v305,v306,v307,v318)
+block b38(v311:readbuf,v312:mutbuf,v313:mutbuf)
+  v319:u32 = call(v311,v312,v313) {"function":"ng_scan"}
+  v320:u64 = int.cast(v319) {"mode":"wrap"}
+  jump b24(v311,v312,v313,v320)
+end
+fn ng_bridge_capture(v0:mutbuf,v1:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:mutbuf)
+  v2:u64 = const() {"value":20144}
+  v3:u64 = call(v1,v2) {"function":"ng_g"}
+  v4:u64 = const() {"value":20216}
+  v5:u64 = call(v1,v4) {"function":"ng_g"}
+  v6:u64 = const() {"value":0}
+  v7:bool = compare.ne(v5,v6)
+  branch v7 b2(v0,v1,v3,v7) b1(v0,v1,v3)
+block b1(v8:mutbuf,v9:mutbuf,v10:u64)
+  v16:u64 = const() {"value":20224}
+  v17:u64 = call(v9,v16) {"function":"ng_g"}
+  v18:u64 = const() {"value":1}
+  v19:bool = compare.ne(v17,v18)
+  jump b2(v8,v9,v10,v19)
+block b2(v12:mutbuf,v13:mutbuf,v14:u64,v15:bool)
+  branch v15 b4(v12,v13,v14,v15) b3(v12,v13,v14)
+block b3(v20:mutbuf,v21:mutbuf,v22:u64)
+  v28:u64 = const() {"value":20272}
+  v29:u64 = call(v21,v28) {"function":"ng_g"}
+  v30:u64 = const() {"value":1}
+  v31:bool = compare.ne(v29,v30)
+  jump b4(v20,v21,v22,v31)
+block b4(v24:mutbuf,v25:mutbuf,v26:u64,v27:bool)
+  branch v27 b5(v24,v25) b6(v24,v25,v26)
+block b5(v32:mutbuf,v33:mutbuf)
+  v38:u64 = const() {"value":64}
+  v39:u32 = call(v32,v33,v38) {"function":"ng_fail"}
+  v40:u64 = int.cast(v39) {"mode":"wrap"}
+  v41:u32 = int.cast(v40) {"mode":"wrap"}
+  ret(v41)
+block b6(v35:mutbuf,v36:mutbuf,v37:u64)
+  v42:u64 = const() {"value":20048}
+  v43:u64 = call(v36,v42) {"function":"ng_g"}
+  v44:u64 = const() {"value":3}
+  v45:bool = compare.lt(v43,v44)
+  branch v45 b8(v35,v36,v37,v45) b7(v35,v36,v37)
+block b7(v46:mutbuf,v47:mutbuf,v48:u64)
+  v54:u64 = const() {"value":20056}
+  v55:u64 = call(v47,v54) {"function":"ng_g"}
+  v56:u64 = const() {"value":3}
+  v57:bool = compare.lt(v55,v56)
+  jump b8(v46,v47,v48,v57)
+block b8(v50:mutbuf,v51:mutbuf,v52:u64,v53:bool)
+  branch v53 b10(v50,v51,v52,v53) b9(v50,v51,v52)
+block b9(v58:mutbuf,v59:mutbuf,v60:u64)
+  v66:u64 = const() {"value":20032}
+  v67:u64 = call(v59,v66) {"function":"ng_g"}
+  v68:u64 = const() {"value":3}
+  v69:bool = compare.lt(v67,v68)
+  jump b10(v58,v59,v60,v69)
+block b10(v62:mutbuf,v63:mutbuf,v64:u64,v65:bool)
+  branch v65 b11(v62,v63) b12(v62,v63,v64)
+block b11(v70:mutbuf,v71:mutbuf)
+  v76:u64 = const() {"value":64}
+  v77:u32 = call(v70,v71,v76) {"function":"ng_fail"}
+  v78:u64 = int.cast(v77) {"mode":"wrap"}
+  v79:u32 = int.cast(v78) {"mode":"wrap"}
+  ret(v79)
+block b12(v73:mutbuf,v74:mutbuf,v75:u64)
+  v80:u64 = const() {"value":1088}
+  v81:bool = compare.lt(v75,v80)
+  branch v81 b14(v73,v74,v75,v81) b13(v73,v74,v75)
+block b13(v82:mutbuf,v83:mutbuf,v84:u64)
+  v90:u64 = const() {"value":16896}
+  v91:bool = compare.gt(v84,v90)
+  jump b14(v82,v83,v84,v91)
+block b14(v86:mutbuf,v87:mutbuf,v88:u64,v89:bool)
+  branch v89 b16(v86,v87,v88,v89) b15(v86,v87,v88)
+block b15(v92:mutbuf,v93:mutbuf,v94:u64)
+  v100:u64 = const() {"value":20264}
+  v101:u64 = call(v93,v100) {"function":"ng_g"}
+  v102:u64 = const() {"value":512}
+  v103:u64 = int.sub.wrap(v94,v102)
+  v104:bool = compare.ne(v101,v103)
+  jump b16(v92,v93,v94,v104)
+block b16(v96:mutbuf,v97:mutbuf,v98:u64,v99:bool)
+  branch v99 b17(v96,v97) b18(v96,v97,v98)
+block b17(v105:mutbuf,v106:mutbuf)
+  v111:u64 = const() {"value":64}
+  v112:u32 = call(v105,v106,v111) {"function":"ng_fail"}
+  v113:u64 = int.cast(v112) {"mode":"wrap"}
+  v114:u32 = int.cast(v113) {"mode":"wrap"}
+  ret(v114)
+block b18(v108:mutbuf,v109:mutbuf,v110:u64)
+  v115:u64 = const() {"value":0}
+  v116:u64 = const() {"value":128}
+  v117:u64 = call(v108,v115,v116) {"function":"ng_zero"}
+  v118:u64 = call(v108,v115,v110) {"function":"ng_p"}
+  v119:u64 = const() {"value":32768}
+  v120:u64 = call(v109,v108,v116,v119,v110) {"function":"ng_copy"}
+  v121:u64 = const() {"value":20000}
+  v122:u64 = const() {"value":2000}
+  v123:u64 = call(v109,v121,v122) {"function":"ng_p"}
+  v124:u64 = const() {"value":2}
+  v125:u32 = int.cast(v124) {"mode":"wrap"}
+  ret(v125)
+end

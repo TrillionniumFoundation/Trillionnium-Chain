@@ -1,3 +1,0 @@
-local	file:.git/config	core.repositoryformatversion 0
-local	file:.git/config	core.filemode true
-local	file:.git/config	core.bare false

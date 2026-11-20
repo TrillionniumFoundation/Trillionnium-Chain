@@ -1,0 +1,104 @@
+{
+  "authority": {
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "initial_snapshot": "immutable boot bytes, parent dev/inode/UID and five limits",
+    "node_commit_authority": false,
+    "paid_epoch": "original ServiceMutationCpuDomain::standalone trusted-local epoch; fixture flag does not change credit; not shared serving/public admission or cold remote-History",
+    "partial_or_failed_product_authority": false,
+    "resource": "checked parent FD remains live through CPU, memory and PID reads, closes before second fresh check",
+    "worker_context": "fresh actual gettid and per-thread membership with retained original snapshot"
+  },
+  "budgets": {
+    "cpu_period": 100000,
+    "cpu_quota": 25000,
+    "finite_entry_seconds": 4,
+    "memory_bytes": 2147483648,
+    "memory_swap_bytes": 0,
+    "original_attackers": 16,
+    "original_service_seconds": 1800,
+    "paid_refill_ns_per_second": 250000000,
+    "paid_start_reserve_ns": 100000000,
+    "pids": 256,
+    "standalone_initial_credit_ns": 2000000000
+  },
+  "entry": "actual Linux x86_64 static ELF; immutable acquired Host snapshot and one owned same-thread Work/Paid worker",
+  "fixture": {
+    "authority": false,
+    "prefix": "WOFIX001",
+    "prefix_bytes": 64,
+    "private_callback_ack_fd": 4,
+    "private_callback_write_fd": 3
+  },
+  "images": {
+    "closed-fd": {
+      "adapter_sha256": "225a9d052ce0471ba6cf71b0b91ad8b448ab1c854568464a766afcdddfb0e952",
+      "executable": {
+        "bytes": 789022,
+        "sha256": "dc3e181eab14f765fc04137bd51b1d5085421fc38c4e3ed18d14fac1155ed184"
+      },
+      "prefix_bytes": 6466
+    },
+    "fixture": {
+      "adapter_sha256": "983ae42fefec07b852159471e2cf1bcc042988d9e01a28439e5d667656074e5a",
+      "executable": {
+        "bytes": 788972,
+        "sha256": "52bf071da8d2019fd7e17da05a3eb1c3c1aabe1a51536b18088e0f374b828751"
+      },
+      "prefix_bytes": 6416
+    },
+    "owner": {
+      "adapter_sha256": "983ae42fefec07b852159471e2cf1bcc042988d9e01a28439e5d667656074e5a",
+      "executable": {
+        "bytes": 788972,
+        "sha256": "90c324a3125f2b10d5d39f1de276bfe5e3945ca68d86a90aad1cee589f0b7012"
+      },
+      "prefix_bytes": 6416
+    }
+  },
+  "profiles": {
+    "clock_faults": 18,
+    "original_histories": 57,
+    "paid_clock_faults": 15,
+    "protocol_only": 4,
+    "retained_original_tests": 44,
+    "semantic_histories": 61,
+    "success_progress": 1099,
+    "success_worker_host_checks": 1101,
+    "successful_aggregate_samples": 2,
+    "successful_main_fresh_checks": 5
+  },
+  "qualification_requirements": {
+    "actual_original_Paid_CLOCK_faults": 15,
+    "actual_original_controlled_CLOCK1_faults": 18,
+    "original_normal_vdso_positive": 1,
+    "original_private_no_vdso_positive": 1,
+    "primitive_complete_guard_before_after_raw": 177,
+    "requirement_is_not_a_pass_claim": true,
+    "same_complete_source_required": true
+  },
+  "remaining_open": [
+    "original public intake, earlier absolute deadline and cancellation lifetime retention",
+    "verified NativeAdmissionCompletion sharing and concurrent public Paid history admission",
+    "native Node/batch integration and durable commit",
+    "production fixed-parent positive for this combined owner",
+    "original fixed 4-second/16-attacker and 1800-second service gates"
+  ],
+  "reply": {
+    "header_bytes": 512,
+    "host_receipt_bytes": 256,
+    "host_receipts": 3,
+    "magic": "HIAPW001",
+    "paid_receipt_bytes": 1024,
+    "paid_receipt_magic": "PWPAY001",
+    "progress_record_bytes": 40,
+    "success_product_bytes": 16384
+  },
+  "request": {
+    "bytes": 49284,
+    "caller_tid_clock_generation_success": false,
+    "layout": "challenge32 task32 target32 proof49188",
+    "sealed": true
+  },
+  "runtime_hia_sources": 10,
+  "schema": "trnm.hia.work-owner-abi.v2"
+}

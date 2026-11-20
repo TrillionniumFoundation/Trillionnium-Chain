@@ -1,0 +1,57 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_snapshot_hash_qualification
+fn f0(nv0:readbuf,nv1:mutbuf,nv2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(nv0:readbuf,nv1:mutbuf,nv2:mutbuf)
+  nv3:usize = buffer.len(nv0)
+  nv4:usize = buffer.len(nv1)
+  nv5:usize = buffer.len(nv2)
+  nv6:usize = const() {"value":131136}
+  nv7:usize = const() {"value":32}
+  nv8:usize = const() {"value":132256}
+  nv9:bool = compare.gt(nv3,nv6)
+  nv10:bool = compare.ne(nv4,nv7)
+  nv11:bool = compare.lt(nv5,nv8)
+  nv12:bool = bool.or(nv9,nv10)
+  nv13:bool = bool.or(nv12,nv11)
+  branch nv13 fail() start(nv0,nv1,nv2,nv3)
+block fail()
+  nv14:u32 = const() {"value":1}
+  ret(nv14)
+block start(nv15:readbuf,nv16:mutbuf,nv17:mutbuf,nv18:usize)
+  nv19:usize = const() {"value":0}
+  jump copy(nv15,nv16,nv17,nv18,nv19)
+block copy(nv20:readbuf,nv21:mutbuf,nv22:mutbuf,nv23:usize,nv24:usize)
+  nv25:bool = compare.lt(nv24,nv23)
+  branch nv25 copy_one(nv20,nv21,nv22,nv23,nv24) run(nv20,nv21,nv22,nv23)
+block copy_one(nv26:readbuf,nv27:mutbuf,nv28:mutbuf,nv29:usize,nv30:usize)
+  nv31:u8 = buffer.load(nv26,nv30)
+  _ = buffer.store(nv28,nv30,nv31)
+  nv32:usize = const() {"value":1}
+  nv33:usize = int.add.checked(nv30,nv32)
+  jump copy(nv26,nv27,nv28,nv29,nv33)
+block run(nv34:readbuf,nv35:mutbuf,nv36:mutbuf,nv37:usize)
+  nv38:u32 = call(nv36,nv37) {"function":"sha256_arena"}
+  nv39:u32 = const() {"value":32}
+  nv40:bool = compare.eq(nv38,nv39)
+  branch nv40 output_start(nv35,nv36) failed()
+block failed()
+  nv41:u32 = const() {"value":2}
+  ret(nv41)
+block output_start(nv42:mutbuf,nv43:mutbuf)
+  nv44:usize = const() {"value":0}
+  jump output(nv42,nv43,nv44)
+block output(nv45:mutbuf,nv46:mutbuf,nv47:usize)
+  nv48:usize = const() {"value":32}
+  nv49:bool = compare.lt(nv47,nv48)
+  branch nv49 output_one(nv45,nv46,nv47) done()
+block output_one(nv50:mutbuf,nv51:mutbuf,nv52:usize)
+  nv53:usize = const() {"value":131136}
+  nv54:usize = int.add.checked(nv53,nv52)
+  nv55:u8 = buffer.load(nv51,nv54)
+  _ = buffer.store(nv50,nv52,nv55)
+  nv56:usize = const() {"value":1}
+  nv57:usize = int.add.checked(nv52,nv56)
+  jump output(nv50,nv51,nv57)
+block done()
+  nv58:u32 = const() {"value":0}
+  ret(nv58)
+end

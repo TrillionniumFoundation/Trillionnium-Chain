@@ -1,0 +1,295 @@
+{
+  "schema": "trnm.hia.continuity-store-includes.v1",
+  "includes": {
+    "context.hepta": [
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8",
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_encode.hepta",
+        "functions": [
+          "je_key_order",
+          "je_string_size",
+          "je_u32",
+          "je_walk"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_product_high"
+        ]
+      },
+      {
+        "source": "src/node/settings_development.hepta",
+        "functions": [
+          "sd_encode",
+          "sd_expand",
+          "sd_transfer"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root_compact.hepta",
+        "functions": [
+          "csr_copy",
+          "csr_digest",
+          "csr_get32",
+          "csr_part",
+          "csr_put32"
+        ]
+      },
+      {
+        "source": "src/state/json_string.hepta",
+        "functions": [
+          "json_ascii_encode",
+          "json_short_escape"
+        ]
+      }
+    ],
+    "continuity_policy.hepta": [
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8",
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ]
+      },
+      {
+        "source": "src/node/settings_development.hepta",
+        "functions": [
+          "sd_transfer"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root.hepta",
+        "functions": [
+          "state_compare",
+          "state_copy",
+          "state_sift",
+          "state_sort",
+          "state_swap"
+        ]
+      }
+    ],
+    "primary_policy.hepta": [
+      {
+        "source": "platform/typed_store/stage_policy.hepta",
+        "functions": [
+          "ts_begin_copy",
+          "ts_boot",
+          "ts_boot_0",
+          "ts_boot_1",
+          "ts_boot_2",
+          "ts_boot_3",
+          "ts_boot_4",
+          "ts_boot_5",
+          "ts_cmp_more",
+          "ts_cmp_start",
+          "ts_compare",
+          "ts_control",
+          "ts_copy",
+          "ts_copy_more",
+          "ts_dispatch",
+          "ts_emitdelta",
+          "ts_fail",
+          "ts_file_match",
+          "ts_finish",
+          "ts_finish_0",
+          "ts_finish_1",
+          "ts_finish_2",
+          "ts_g",
+          "ts_go",
+          "ts_io",
+          "ts_issue",
+          "ts_leaf",
+          "ts_loadbase",
+          "ts_loaddelta",
+          "ts_m06",
+          "ts_merge",
+          "ts_merge_0",
+          "ts_merge_1",
+          "ts_merge_2",
+          "ts_merge_3",
+          "ts_merge_4",
+          "ts_merge_5",
+          "ts_move",
+          "ts_p",
+          "ts_progress",
+          "ts_r",
+          "ts_scan",
+          "ts_scan_0",
+          "ts_scan_1",
+          "ts_scan_key",
+          "ts_self_copy",
+          "ts_state",
+          "ts_state_0",
+          "ts_state_1",
+          "ts_state_2",
+          "ts_state_3",
+          "ts_state_4",
+          "ts_state_key",
+          "ts_take",
+          "ts_u32",
+          "ts_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ]
+      }
+    ]
+  }
+}

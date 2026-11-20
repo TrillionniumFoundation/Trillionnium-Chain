@@ -1,0 +1,305 @@
+{
+  "build_manifest_note": "The receipt binds the complete component manifest as it existed during the native run. Later common-manifest edits do not rewrite that observation and require final exact-head CI.",
+  "checks": {
+    "actual_native_replies_match_actual_rust": true,
+    "actual_native_stdout_matches_actual_rust": true,
+    "actual_original_ensure_identical": true,
+    "actual_original_method_body_identical": true,
+    "actual_original_reference_identical": true,
+    "actual_original_rust_passed": true,
+    "four_component_files_still_match_native_capture": true,
+    "fresh_native_run_passed": true,
+    "history_count_identical": true,
+    "input_identical": true,
+    "operation_count_identical": true,
+    "original_job_terminal_complete": true,
+    "test_source_identical": true
+  },
+  "component": "raw-bindings-owner",
+  "created_utc": "2026-11-16T07:57:28.705399+00:00",
+  "current_source_sha256": {
+    "hia/src/mempool/RAW_BINDINGS.md": "9c9530f13cffc06dcdaf2e8917fb8cfc4abf32c00da0c3ff5fd241ad5445a23c",
+    "hia/src/mempool/raw_bindings_owner.hepta": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2",
+    "hia/tests/rust_raw_bindings_reference.rs": "6b1e247206d6cb13ac3ffc785fdc335476d1e60ae2e510fbc62b7ab99461892d",
+    "hia/tests/test_raw_bindings_owner.py": "f9dd616d50bf473f8786c935ea470cb208df72304621e243885c5dbdedd7eeb9"
+  },
+  "exact_committed_head_direct_ci_still_required": true,
+  "execution_separation": {
+    "comparison": "Exact input corpus identities, operation counts and actual output digests are joined; no Python model result is used in place of either execution.",
+    "native_and_original_rust_were_independent_executions": true,
+    "new_process_started_by_this_evidence_join": false,
+    "original_job_creation_and_status_observation_are_not_runtime_start_finish": true
+  },
+  "final_integrated_native_observation": "hia/qualification/value-owners-native-integrated.json",
+  "historical_native_only": {
+    "artifact_sha256": "d1f44770ce46b3dfa376a66387fc0c2e51ea667e410cfd5a68ea27fd5f5cfedd",
+    "source_sha256": "1e978ab83a418e9055517ec7781c086f3c2c36e9419595d5153d591c3ce0466c",
+    "status": "Historical context only; lost temporary source/artifact is not current evidence."
+  },
+  "legacy_runtime_retirement_authorized": false,
+  "native_execution": {
+    "build": {
+      "artifact": "/workspace/scratch/e623e849c8fd/recovery/raw_bindings/recovered-native.so",
+      "bytes": 41832,
+      "functions": 14,
+      "receipt": {
+        "artifact_bytes": 41832,
+        "artifact_sha256": "a48b93cb3c1c1437d758a45b5cf33aed4edc29dcf049ebc0bab6b77ccab96410",
+        "borrowed_entry_profile": "legacy-f0-private-buffers",
+        "chain_migration": {
+          "backend": "selfhost",
+          "composed_source_sha256": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2",
+          "core_sha256": "826b4d747c3c5a8715da83fd010573303c71b00c267151b0f8394936cd9c8ea8",
+          "hosted_build_driver": true,
+          "inputs": [
+            {
+              "path": "src/mempool/raw_bindings_owner.hepta",
+              "sha256": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2"
+            },
+            {
+              "path": "components.json",
+              "sha256": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0"
+            }
+          ],
+          "source_sha256": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2",
+          "toolchain_repository": "TrillionniumFoundation/Hepta",
+          "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "whole_chain_native": false
+        },
+        "claims": {
+          "direct_machine_code": true,
+          "external_linker_used": true,
+          "fallback_used": false,
+          "python_emitter_used": false,
+          "self_hosted": true,
+          "whole_native_delivery_qualified": false
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compiler_wire_sha256": "38880682056faedb0f4bad373f0f9cf4ed5d60f806bd780812ac1e5cf3ae5b80",
+        "exports": [
+          "f0"
+        ],
+        "kind": "shared",
+        "object_sha256": "bc0de348b2c60dadc3fdc3e0d24b79fb23d01b4c0dd6a94f7d56424b88add88d",
+        "ok": true,
+        "output": "/tmp/trnm-hia-native-ceyjm7n9/module.so",
+        "output_profile_selection": "selfhost_elf",
+        "schema": "trnm.hia.selfhost-build.v1",
+        "status": "native_emitted_not_executed"
+      },
+      "sha256": "a48b93cb3c1c1437d758a45b5cf33aed4edc29dcf049ebc0bab6b77ccab96410"
+    },
+    "corpus": {
+      "checks": {
+        "histories": true,
+        "input_bytes": true,
+        "input_sha256": true,
+        "native_calls_count": true,
+        "native_reply_bytes_sha256": true,
+        "native_stdout_sha256": true,
+        "operations": true,
+        "sources_unchanged": true
+      },
+      "histories": 1220,
+      "input_bytes": 3614457,
+      "input_sha256": "709da25e9cbb09061167ecb9f9455341ddd15c8eda6db84d62de2ed9218e2676",
+      "native_reply_bytes_sha256": "408be2d6a7608c79fff02ee5768075f78820feb11cbf033110d659d6cd61de4a",
+      "native_stdout_sha256": "7d1a9b4a49acf506afa7709436a3973ec3b6da50c5593d0b5cb273a875210e02",
+      "operations": 16471
+    },
+    "errors": [],
+    "failures": [],
+    "finished_at": "2026-11-16T07:46:08.918416+00:00",
+    "native_calls": 16597,
+    "native_calls_class_counter": 16597,
+    "original_rust_executed_in_this_native_run": false,
+    "result": "PASS",
+    "seconds": 14.680926991997694,
+    "sources_after": {
+      "hia/components.json": {
+        "bytes": 19751,
+        "sha256": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0"
+      },
+      "hia/src/mempool/RAW_BINDINGS.md": {
+        "bytes": 7859,
+        "sha256": "9c9530f13cffc06dcdaf2e8917fb8cfc4abf32c00da0c3ff5fd241ad5445a23c"
+      },
+      "hia/src/mempool/raw_bindings_owner.hepta": {
+        "bytes": 34219,
+        "sha256": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/rust_raw_bindings_reference.rs": {
+        "bytes": 3422,
+        "sha256": "6b1e247206d6cb13ac3ffc785fdc335476d1e60ae2e510fbc62b7ab99461892d"
+      },
+      "hia/tests/test_mempool_owner.py": {
+        "bytes": 25487,
+        "sha256": "c82d276adfc3482a436e2377422d0b2f658d82b6d2b1b7632122260cb83e3786"
+      },
+      "hia/tests/test_raw_bindings_owner.py": {
+        "bytes": 18104,
+        "sha256": "f9dd616d50bf473f8786c935ea470cb208df72304621e243885c5dbdedd7eeb9"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+        "bytes": 37947,
+        "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": {
+        "bytes": 93605,
+        "sha256": "9fa3e45e78b637d75d0e1f21b3a93f2b0bf01d17eadde725274dfffd461ab62c"
+      }
+    },
+    "sources_before": {
+      "hia/components.json": {
+        "bytes": 19751,
+        "sha256": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0"
+      },
+      "hia/src/mempool/RAW_BINDINGS.md": {
+        "bytes": 7859,
+        "sha256": "9c9530f13cffc06dcdaf2e8917fb8cfc4abf32c00da0c3ff5fd241ad5445a23c"
+      },
+      "hia/src/mempool/raw_bindings_owner.hepta": {
+        "bytes": 34219,
+        "sha256": "86fa96749791a9f96c511a38a152297ef014b8051442f1ce48b3746144c6c8f2"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/rust_raw_bindings_reference.rs": {
+        "bytes": 3422,
+        "sha256": "6b1e247206d6cb13ac3ffc785fdc335476d1e60ae2e510fbc62b7ab99461892d"
+      },
+      "hia/tests/test_mempool_owner.py": {
+        "bytes": 25487,
+        "sha256": "c82d276adfc3482a436e2377422d0b2f658d82b6d2b1b7632122260cb83e3786"
+      },
+      "hia/tests/test_raw_bindings_owner.py": {
+        "bytes": 18104,
+        "sha256": "f9dd616d50bf473f8786c935ea470cb208df72304621e243885c5dbdedd7eeb9"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+        "bytes": 37947,
+        "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": {
+        "bytes": 93605,
+        "sha256": "9fa3e45e78b637d75d0e1f21b3a93f2b0bf01d17eadde725274dfffd461ab62c"
+      }
+    },
+    "started_at": "2026-11-16T07:45:54.235083+00:00",
+    "tests": [
+      "test_complete_binding_histories_exact_bytes_and_capacity",
+      "test_dirty_initial_arena_and_zero_capacity_maximum_stride",
+      "test_every_digest_and_body_byte_affects_exact_binding",
+      "test_exhaustive_short_histories_including_consumed_mismatch",
+      "test_frame_capacity_lifetime_refusals_are_unchanged",
+      "test_invalid_private_shape_refuses_without_mutation",
+      "test_private_body_bound_preserves_original_duplicate_and_full_priority"
+    ],
+    "tests_run": 7
+  },
+  "native_report_identity": {
+    "bytes": 7239,
+    "filename": "recovered-native-report.json",
+    "sha256": "80a4b76e0c0b53bd5191563e740e4ea59979e82492a735339b918ed5f2d80da2"
+  },
+  "old_stack_can_be_removed": false,
+  "original_rust_execution": {
+    "actual_reply_bytes_sha256": "408be2d6a7608c79fff02ee5768075f78820feb11cbf033110d659d6cd61de4a",
+    "actual_stdout_sha256": "7d1a9b4a49acf506afa7709436a3973ec3b6da50c5593d0b5cb273a875210e02",
+    "compile_returncode": 0,
+    "expected_reply_bytes_sha256": "408be2d6a7608c79fff02ee5768075f78820feb11cbf033110d659d6cd61de4a",
+    "expected_stdout_sha256": "7d1a9b4a49acf506afa7709436a3973ec3b6da50c5593d0b5cb273a875210e02",
+    "finished_utc": "2026-11-16T07:25:48.993067+00:00",
+    "input_bytes": 3614457,
+    "input_sha256": "709da25e9cbb09061167ecb9f9455341ddd15c8eda6db84d62de2ed9218e2676",
+    "operation_count": 16471,
+    "original_ensure_sha256": "cced6c9aa5560fc752646facc1f083c4bc262ebddb7a0adbc9e5d3e6883688f2",
+    "original_raw_bindings_sha256": "99eebe729750a324d43a6f629f29bea5d2d78583a590bae0f84f7eaa5e5cd8e8",
+    "process_observation": {
+      "at_unix_ms": 1794813949070,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1e33f6b52-392-3356",
+      "launch_nonce": "475429435db9a990a59aa163b95d75b8",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1452,
+          "stored": 1452
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "python_reference_model_executed": false,
+    "reference_source_sha256": "07d27129d13a11d3e6b779bc396ce48e4deedfb8ec389814bd50d0378f5f732a",
+    "rust_returncode": 0,
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "scenarios": 1220,
+    "schema": "trnm.hia.original-raw-bindings-desktop.v1",
+    "scope": "complete original RawBindings methods; shell aliases preserve the three error strings",
+    "started_utc": "2026-11-16T07:25:48.328797+00:00",
+    "status": "PASS",
+    "test_source_sha256": "f9dd616d50bf473f8786c935ea470cb208df72304621e243885c5dbdedd7eeb9"
+  },
+  "original_rust_report_identity": {
+    "bytes": 2199,
+    "filename": "raw-bindings-original-observed.json",
+    "sha256": "35ca8e524e7cd64b7d8433d1f3a16763d64f23bb6b132f97a9ae07a081b0f66e"
+  },
+  "preserved_failed_attempts_for_this_reconstruction": [],
+  "retirement_accepted": false,
+  "schema": "trnm.hia.recovered-native-original-binding.v2",
+  "scope": "Complete original RawBindings new/insert/consume/is_empty method behavior, private physical storage and clear/close lifecycle; not typed admission, pending nonce authority or durable local pool.",
+  "status": "PASS",
+  "temporary_source_loss": {
+    "description": "Cloud execution environment disconnected; the former /tmp worktree, author programs and native artifacts were absent after reconnection.",
+    "observed_date": "2026-11-16",
+    "old_native_evidence_used_to_qualify_current_source": false,
+    "recovery": "Repository source was reconstructed from the published candidate. Preserved original-Rust bundles restored test/reference bytes. Native HIA was rewritten as a new source version, then rebuilt and executed."
+  },
+  "whole_chain_native": false
+}

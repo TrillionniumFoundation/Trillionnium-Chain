@@ -1,0 +1,569 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_ml_dsa_poly
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  v0:usize = buffer.len(input)
+  v1:usize = buffer.len(output)
+  v2:usize = buffer.len(scratch)
+  v3:usize = const() {"value":1048576}
+  v4:usize = const() {"value":16}
+  v5:bool = compare.ge(v0,v4)
+  v6:bool = compare.le(v0,v3)
+  v7:usize = const() {"value":1024}
+  v8:bool = compare.ge(v1,v7)
+  v9:bool = compare.le(v1,v3)
+  v10:usize = const() {"value":2048}
+  v11:bool = compare.ge(v2,v10)
+  v12:bool = compare.le(v2,v3)
+  v13:bool = bool.and(v5,v6)
+  v14:bool = bool.and(v13,v8)
+  v15:bool = bool.and(v14,v9)
+  v16:bool = bool.and(v15,v11)
+  v17:bool = bool.and(v16,v12)
+  branch v17 header(input,output,scratch,v0) refuse()
+block header(h_input:readbuf,h_output:mutbuf,h_scratch:mutbuf,h_len:usize)
+  v18:usize = const() {"value":0}
+  v19:u8 = buffer.load(h_input,v18)
+  v20:u8 = const() {"value":84}
+  v21:bool = compare.eq(v19,v20)
+  v22:usize = const() {"value":1}
+  v23:u8 = buffer.load(h_input,v22)
+  v24:u8 = const() {"value":82}
+  v25:bool = compare.eq(v23,v24)
+  v26:usize = const() {"value":2}
+  v27:u8 = buffer.load(h_input,v26)
+  v28:u8 = const() {"value":78}
+  v29:bool = compare.eq(v27,v28)
+  v30:usize = const() {"value":3}
+  v31:u8 = buffer.load(h_input,v30)
+  v32:u8 = const() {"value":77}
+  v33:bool = compare.eq(v31,v32)
+  v34:usize = const() {"value":4}
+  v35:u8 = buffer.load(h_input,v34)
+  v36:u8 = const() {"value":68}
+  v37:bool = compare.eq(v35,v36)
+  v38:usize = const() {"value":5}
+  v39:u8 = buffer.load(h_input,v38)
+  v40:u8 = const() {"value":80}
+  v41:bool = compare.eq(v39,v40)
+  v42:usize = const() {"value":6}
+  v43:u8 = buffer.load(h_input,v42)
+  v44:u8 = const() {"value":81}
+  v45:bool = compare.eq(v43,v44)
+  v46:usize = const() {"value":7}
+  v47:u8 = buffer.load(h_input,v46)
+  v48:u8 = const() {"value":49}
+  v49:bool = compare.eq(v47,v48)
+  v50:usize = const() {"value":9}
+  v51:u8 = buffer.load(h_input,v50)
+  v52:u8 = const() {"value":0}
+  v53:bool = compare.eq(v51,v52)
+  v54:usize = const() {"value":10}
+  v55:u8 = buffer.load(h_input,v54)
+  v56:u8 = const() {"value":0}
+  v57:bool = compare.eq(v55,v56)
+  v58:usize = const() {"value":11}
+  v59:u8 = buffer.load(h_input,v58)
+  v60:u8 = const() {"value":0}
+  v61:bool = compare.eq(v59,v60)
+  v62:usize = const() {"value":12}
+  v63:u8 = buffer.load(h_input,v62)
+  v64:u8 = const() {"value":0}
+  v65:bool = compare.eq(v63,v64)
+  v66:usize = const() {"value":13}
+  v67:u8 = buffer.load(h_input,v66)
+  v68:u8 = const() {"value":0}
+  v69:bool = compare.eq(v67,v68)
+  v70:usize = const() {"value":14}
+  v71:u8 = buffer.load(h_input,v70)
+  v72:u8 = const() {"value":0}
+  v73:bool = compare.eq(v71,v72)
+  v74:usize = const() {"value":15}
+  v75:u8 = buffer.load(h_input,v74)
+  v76:u8 = const() {"value":0}
+  v77:bool = compare.eq(v75,v76)
+  v78:usize = const() {"value":8}
+  v79:u8 = buffer.load(h_input,v78)
+  v80:u8 = const() {"value":5}
+  v81:bool = compare.le(v79,v80)
+  v82:bool = bool.and(v21,v25)
+  v83:bool = bool.and(v82,v29)
+  v84:bool = bool.and(v83,v33)
+  v85:bool = bool.and(v84,v37)
+  v86:bool = bool.and(v85,v41)
+  v87:bool = bool.and(v86,v45)
+  v88:bool = bool.and(v87,v49)
+  v89:bool = bool.and(v88,v53)
+  v90:bool = bool.and(v89,v57)
+  v91:bool = bool.and(v90,v61)
+  v92:bool = bool.and(v91,v65)
+  v93:bool = bool.and(v92,v69)
+  v94:bool = bool.and(v93,v73)
+  v95:bool = bool.and(v94,v77)
+  v96:bool = bool.and(v95,v81)
+  branch v96 shape(h_input,h_output,h_scratch,h_len,v79) refuse()
+block shape(sh_input:readbuf,sh_output:mutbuf,sh_scratch:mutbuf,sh_len:usize,sh_op:u8)
+  v97:u8 = const() {"value":2}
+  v98:bool = compare.lt(sh_op,v97)
+  branch v98 shape_single(sh_input,sh_output,sh_scratch,sh_len,sh_op) shape_pair(sh_input,sh_output,sh_scratch,sh_len,sh_op)
+block shape_single(shape_single_input:readbuf,shape_single_output:mutbuf,shape_single_scratch:mutbuf,shape_single_len:usize,shape_single_op:u8)
+  v99:usize = const() {"value":1040}
+  v100:bool = compare.eq(shape_single_len,v99)
+  branch v100 validate(shape_single_input,shape_single_output,shape_single_scratch,shape_single_len,shape_single_op) refuse()
+block shape_pair(shape_pair_input:readbuf,shape_pair_output:mutbuf,shape_pair_scratch:mutbuf,shape_pair_len:usize,shape_pair_op:u8)
+  v101:usize = const() {"value":2064}
+  v102:bool = compare.eq(shape_pair_len,v101)
+  branch v102 validate(shape_pair_input,shape_pair_output,shape_pair_scratch,shape_pair_len,shape_pair_op) refuse()
+block validate(va_input:readbuf,va_output:mutbuf,va_scratch:mutbuf,va_len:usize,va_op:u8)
+  v103:u32 = call(va_input,va_len) {"function":"mp_validate"}
+  v104:u32 = const() {"value":0}
+  v105:bool = compare.eq(v103,v104)
+  branch v105 prepare(va_input,va_output,va_scratch,va_len,va_op) refuse()
+block prepare(p_input:readbuf,p_output:mutbuf,p_scratch:mutbuf,p_len:usize,p_op:u8)
+  v106:u32 = call(p_scratch) {"function":"mp_clear"}
+  v107:usize = const() {"value":16}
+  v108:usize = int.sub.checked(p_len,v107)
+  v109:u32 = call(p_input,p_scratch,v108) {"function":"mp_copy_input"}
+  jump dispatch0(p_output,p_scratch,p_op)
+block dispatch0(d0_output:mutbuf,d0_scratch:mutbuf,d0_op:u8)
+  v110:u8 = const() {"value":0}
+  v111:bool = compare.eq(d0_op,v110)
+  branch v111 operation0(d0_output,d0_scratch) dispatch1(d0_output,d0_scratch,d0_op)
+block operation0(o0_output:mutbuf,o0_scratch:mutbuf)
+  v112:usize = const() {"value":0}
+  v113:u32 = call(o0_scratch,v112) {"function":"mp_forward"}
+  jump finish(o0_output,o0_scratch)
+block dispatch1(d1_output:mutbuf,d1_scratch:mutbuf,d1_op:u8)
+  v114:u8 = const() {"value":1}
+  v115:bool = compare.eq(d1_op,v114)
+  branch v115 operation1(d1_output,d1_scratch) dispatch2(d1_output,d1_scratch,d1_op)
+block operation1(o1_output:mutbuf,o1_scratch:mutbuf)
+  v116:usize = const() {"value":0}
+  v117:u32 = call(o1_scratch,v116) {"function":"mp_inverse"}
+  jump finish(o1_output,o1_scratch)
+block dispatch2(d2_output:mutbuf,d2_scratch:mutbuf,d2_op:u8)
+  v118:u8 = const() {"value":5}
+  v119:bool = compare.eq(d2_op,v118)
+  branch v119 product(d2_output,d2_scratch) binary(d2_output,d2_scratch,d2_op)
+block binary(bi_output:mutbuf,bi_scratch:mutbuf,bi_op:u8)
+  v120:u32 = call(bi_scratch,bi_op) {"function":"mp_binary"}
+  jump finish(bi_output,bi_scratch)
+block product(pr_output:mutbuf,pr_scratch:mutbuf)
+  v121:usize = const() {"value":0}
+  v122:u32 = call(pr_scratch,v121) {"function":"mp_forward"}
+  v123:usize = const() {"value":1024}
+  v124:u32 = call(pr_scratch,v123) {"function":"mp_forward"}
+  v125:u8 = const() {"value":2}
+  v126:u32 = call(pr_scratch,v125) {"function":"mp_binary"}
+  v127:usize = const() {"value":0}
+  v128:u32 = call(pr_scratch,v127) {"function":"mp_inverse"}
+  jump finish(pr_output,pr_scratch)
+block finish(f_output:mutbuf,f_scratch:mutbuf)
+  v129:u32 = call(f_scratch,f_output) {"function":"mp_copy_output"}
+  v130:u32 = call(f_scratch) {"function":"mp_clear"}
+  v131:u32 = const() {"value":1024}
+  ret(v131)
+block refuse()
+  v132:u32 = const() {"value":4294967293}
+  ret(v132)
+end
+fn mp_load(buf:readbuf,offset:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(buf:readbuf,offset:usize)
+  v0:u64 = const() {"value":0}
+  v1:usize = const() {"value":0}
+  v2:usize = int.add.checked(offset,v1)
+  v3:u8 = buffer.load(buf,v2)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":0}
+  v6:u64 = int.shl.checked(v4,v5)
+  v7:u64 = bit.or(v0,v6)
+  v8:usize = const() {"value":1}
+  v9:usize = int.add.checked(offset,v8)
+  v10:u8 = buffer.load(buf,v9)
+  v11:u64 = int.cast(v10) {"mode":"wrap"}
+  v12:u64 = const() {"value":8}
+  v13:u64 = int.shl.checked(v11,v12)
+  v14:u64 = bit.or(v7,v13)
+  v15:usize = const() {"value":2}
+  v16:usize = int.add.checked(offset,v15)
+  v17:u8 = buffer.load(buf,v16)
+  v18:u64 = int.cast(v17) {"mode":"wrap"}
+  v19:u64 = const() {"value":16}
+  v20:u64 = int.shl.checked(v18,v19)
+  v21:u64 = bit.or(v14,v20)
+  v22:usize = const() {"value":3}
+  v23:usize = int.add.checked(offset,v22)
+  v24:u8 = buffer.load(buf,v23)
+  v25:u64 = int.cast(v24) {"mode":"wrap"}
+  v26:u64 = const() {"value":24}
+  v27:u64 = int.shl.checked(v25,v26)
+  v28:u64 = bit.or(v21,v27)
+  ret(v28)
+end
+fn mp_load_mut(buf:mutbuf,offset:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(buf:mutbuf,offset:usize)
+  v0:u64 = const() {"value":0}
+  v1:usize = const() {"value":0}
+  v2:usize = int.add.checked(offset,v1)
+  v3:u8 = buffer.load(buf,v2)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":0}
+  v6:u64 = int.shl.checked(v4,v5)
+  v7:u64 = bit.or(v0,v6)
+  v8:usize = const() {"value":1}
+  v9:usize = int.add.checked(offset,v8)
+  v10:u8 = buffer.load(buf,v9)
+  v11:u64 = int.cast(v10) {"mode":"wrap"}
+  v12:u64 = const() {"value":8}
+  v13:u64 = int.shl.checked(v11,v12)
+  v14:u64 = bit.or(v7,v13)
+  v15:usize = const() {"value":2}
+  v16:usize = int.add.checked(offset,v15)
+  v17:u8 = buffer.load(buf,v16)
+  v18:u64 = int.cast(v17) {"mode":"wrap"}
+  v19:u64 = const() {"value":16}
+  v20:u64 = int.shl.checked(v18,v19)
+  v21:u64 = bit.or(v14,v20)
+  v22:usize = const() {"value":3}
+  v23:usize = int.add.checked(offset,v22)
+  v24:u8 = buffer.load(buf,v23)
+  v25:u64 = int.cast(v24) {"mode":"wrap"}
+  v26:u64 = const() {"value":24}
+  v27:u64 = int.shl.checked(v25,v26)
+  v28:u64 = bit.or(v21,v27)
+  ret(v28)
+end
+fn mp_store(buf:mutbuf,offset:usize,value:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(buf:mutbuf,offset:usize,value:u64)
+  v0:u64 = const() {"value":0}
+  v1:u64 = int.shr.checked(value,v0)
+  v2:u8 = int.cast(v1) {"mode":"wrap"}
+  v3:usize = const() {"value":0}
+  v4:usize = int.add.checked(offset,v3)
+  _ = buffer.store(buf,v4,v2)
+  v5:u64 = const() {"value":8}
+  v6:u64 = int.shr.checked(value,v5)
+  v7:u8 = int.cast(v6) {"mode":"wrap"}
+  v8:usize = const() {"value":1}
+  v9:usize = int.add.checked(offset,v8)
+  _ = buffer.store(buf,v9,v7)
+  v10:u64 = const() {"value":16}
+  v11:u64 = int.shr.checked(value,v10)
+  v12:u8 = int.cast(v11) {"mode":"wrap"}
+  v13:usize = const() {"value":2}
+  v14:usize = int.add.checked(offset,v13)
+  _ = buffer.store(buf,v14,v12)
+  v15:u64 = const() {"value":24}
+  v16:u64 = int.shr.checked(value,v15)
+  v17:u8 = int.cast(v16) {"mode":"wrap"}
+  v18:usize = const() {"value":3}
+  v19:usize = int.add.checked(offset,v18)
+  _ = buffer.store(buf,v19,v17)
+  v20:u32 = const() {"value":0}
+  ret(v20)
+end
+fn mp_add(a:u64,b:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64,b:u64)
+  v0:u64 = const() {"value":8380417}
+  v1:u64 = int.add.checked(a,b)
+  v2:u64 = int.rem.checked(v1,v0)
+  ret(v2)
+end
+fn mp_mul(a:u64,b:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64,b:u64)
+  v0:u64 = const() {"value":8380417}
+  v1:u64 = int.mul.checked(a,b)
+  v2:u64 = int.rem.checked(v1,v0)
+  ret(v2)
+end
+fn mp_sub(a:u64,b:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64,b:u64)
+  v0:u64 = const() {"value":8380417}
+  v1:u64 = int.add.checked(a,v0)
+  v2:u64 = int.sub.checked(v1,b)
+  v3:u64 = int.rem.checked(v2,v0)
+  ret(v3)
+end
+fn mp_twiddle(index:usize) -> (u64) effects(trap) entry(entry)
+block entry(index:usize)
+  v0:u64 = int.cast(index) {"mode":"wrap"}
+  v1:u64 = const() {"value":0}
+  v2:u64 = const() {"value":0}
+  jump reverse(v0,v1,v2)
+block reverse(r_x:u64,r_value:u64,r_count:u64)
+  v3:u64 = const() {"value":8}
+  v4:bool = compare.lt(r_count,v3)
+  v5:u64 = const() {"value":1753}
+  v6:u64 = const() {"value":1}
+  branch v4 reverse_step(r_x,r_value,r_count) power(r_value,v5,v6)
+block reverse_step(rs_x:u64,rs_value:u64,rs_count:u64)
+  v7:u64 = const() {"value":1}
+  v8:u64 = int.shl.checked(rs_value,v7)
+  v9:u64 = const() {"value":1}
+  v10:u64 = bit.and(rs_x,v9)
+  v11:u64 = bit.or(v8,v10)
+  v12:u64 = const() {"value":1}
+  v13:u64 = int.shr.checked(rs_x,v12)
+  v14:u64 = const() {"value":1}
+  v15:u64 = int.add.checked(rs_count,v14)
+  jump reverse(v13,v11,v15)
+block power(p_exp:u64,p_base:u64,p_value:u64)
+  v16:u64 = const() {"value":0}
+  v17:bool = compare.eq(p_exp,v16)
+  branch v17 done(p_value) power_bit(p_exp,p_base,p_value)
+block power_bit(pb_exp:u64,pb_base:u64,pb_value:u64)
+  v18:u64 = const() {"value":1}
+  v19:u64 = bit.and(pb_exp,v18)
+  v20:u64 = const() {"value":1}
+  v21:bool = compare.eq(v19,v20)
+  branch v21 power_mul(pb_exp,pb_base,pb_value) power_next(pb_exp,pb_base,pb_value)
+block power_mul(pm_exp:u64,pm_base:u64,pm_value:u64)
+  v22:u64 = call(pm_base,pm_value) {"function":"mp_mul"}
+  jump power_next(pm_exp,pm_base,v22)
+block power_next(pn_exp:u64,pn_base:u64,pn_value:u64)
+  v23:u64 = const() {"value":1}
+  v24:u64 = int.shr.checked(pn_exp,v23)
+  v25:u64 = call(pn_base,pn_base) {"function":"mp_mul"}
+  jump power(v24,v25,pn_value)
+block done(done_value:u64)
+  ret(done_value)
+end
+fn mp_forward(buf:mutbuf,base:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(buf:mutbuf,base:usize)
+  v0:usize = const() {"value":128}
+  v1:usize = const() {"value":0}
+  jump stage(buf,base,v0,v1)
+block stage(s_buf:mutbuf,s_base:usize,s_len:usize,s_m:usize)
+  v2:usize = const() {"value":0}
+  v3:bool = compare.gt(s_len,v2)
+  v4:usize = const() {"value":0}
+  branch v3 group(s_buf,s_base,s_len,s_m,v4) done()
+block group(g_buf:mutbuf,g_base:usize,g_len:usize,g_m:usize,g_start:usize)
+  v5:usize = const() {"value":256}
+  v6:bool = compare.lt(g_start,v5)
+  branch v6 twiddle(g_buf,g_base,g_len,g_m,g_start) next_stage(g_buf,g_base,g_len,g_m)
+block twiddle(t_buf:mutbuf,t_base:usize,t_len:usize,t_m:usize,t_start:usize)
+  v7:usize = const() {"value":1}
+  v8:usize = int.add.checked(t_m,v7)
+  v9:u64 = call(v8) {"function":"mp_twiddle"}
+  jump butterfly(t_buf,t_base,t_len,v8,t_start,t_start,v9)
+block butterfly(b_buf:mutbuf,b_base:usize,b_len:usize,b_m:usize,b_start:usize,b_j:usize,b_z:u64)
+  v10:usize = int.add.checked(b_start,b_len)
+  v11:bool = compare.lt(b_j,v10)
+  branch v11 butterfly_step(b_buf,b_base,b_len,b_m,b_start,b_j,b_z) next_group(b_buf,b_base,b_len,b_m,b_start)
+block butterfly_step(bs_buf:mutbuf,bs_base:usize,bs_len:usize,bs_m:usize,bs_start:usize,bs_j:usize,bs_z:u64)
+  v12:usize = const() {"value":4}
+  v13:usize = int.mul.checked(bs_j,v12)
+  v14:usize = int.add.checked(bs_base,v13)
+  v15:usize = const() {"value":4}
+  v16:usize = int.mul.checked(bs_len,v15)
+  v17:usize = int.add.checked(v14,v16)
+  v18:u64 = call(bs_buf,v14) {"function":"mp_load_mut"}
+  v19:u64 = call(bs_buf,v17) {"function":"mp_load_mut"}
+  v20:u64 = call(bs_z,v19) {"function":"mp_mul"}
+  v21:u64 = call(v18,v20) {"function":"mp_add"}
+  v22:u64 = call(v18,v20) {"function":"mp_sub"}
+  v23:u32 = call(bs_buf,v14,v21) {"function":"mp_store"}
+  v24:u32 = call(bs_buf,v17,v22) {"function":"mp_store"}
+  v25:usize = const() {"value":1}
+  v26:usize = int.add.checked(bs_j,v25)
+  jump butterfly(bs_buf,bs_base,bs_len,bs_m,bs_start,v26,bs_z)
+block next_group(ng_buf:mutbuf,ng_base:usize,ng_len:usize,ng_m:usize,ng_start:usize)
+  v27:usize = const() {"value":2}
+  v28:usize = int.mul.checked(ng_len,v27)
+  v29:usize = int.add.checked(ng_start,v28)
+  jump group(ng_buf,ng_base,ng_len,ng_m,v29)
+block next_stage(ns_buf:mutbuf,ns_base:usize,ns_len:usize,ns_m:usize)
+  v30:usize = const() {"value":1}
+  v31:usize = int.shr.checked(ns_len,v30)
+  jump stage(ns_buf,ns_base,v31,ns_m)
+block done()
+  v32:u32 = const() {"value":0}
+  ret(v32)
+end
+fn mp_inverse(buf:mutbuf,base:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(buf:mutbuf,base:usize)
+  v0:usize = const() {"value":1}
+  v1:usize = const() {"value":256}
+  jump stage(buf,base,v0,v1)
+block stage(s_buf:mutbuf,s_base:usize,s_len:usize,s_m:usize)
+  v2:usize = const() {"value":256}
+  v3:bool = compare.lt(s_len,v2)
+  v4:usize = const() {"value":0}
+  v5:usize = const() {"value":0}
+  branch v3 group(s_buf,s_base,s_len,s_m,v4) scale(s_buf,s_base,v5)
+block group(g_buf:mutbuf,g_base:usize,g_len:usize,g_m:usize,g_start:usize)
+  v6:usize = const() {"value":256}
+  v7:bool = compare.lt(g_start,v6)
+  branch v7 twiddle(g_buf,g_base,g_len,g_m,g_start) next_stage(g_buf,g_base,g_len,g_m)
+block twiddle(t_buf:mutbuf,t_base:usize,t_len:usize,t_m:usize,t_start:usize)
+  v8:usize = const() {"value":1}
+  v9:usize = int.sub.checked(t_m,v8)
+  v10:u64 = call(v9) {"function":"mp_twiddle"}
+  v11:u64 = const() {"value":8380417}
+  v12:u64 = int.sub.checked(v11,v10)
+  jump butterfly(t_buf,t_base,t_len,v9,t_start,t_start,v12)
+block butterfly(b_buf:mutbuf,b_base:usize,b_len:usize,b_m:usize,b_start:usize,b_j:usize,b_z:u64)
+  v13:usize = int.add.checked(b_start,b_len)
+  v14:bool = compare.lt(b_j,v13)
+  branch v14 butterfly_step(b_buf,b_base,b_len,b_m,b_start,b_j,b_z) next_group(b_buf,b_base,b_len,b_m,b_start)
+block butterfly_step(bs_buf:mutbuf,bs_base:usize,bs_len:usize,bs_m:usize,bs_start:usize,bs_j:usize,bs_z:u64)
+  v15:usize = const() {"value":4}
+  v16:usize = int.mul.checked(bs_j,v15)
+  v17:usize = int.add.checked(bs_base,v16)
+  v18:usize = const() {"value":4}
+  v19:usize = int.mul.checked(bs_len,v18)
+  v20:usize = int.add.checked(v17,v19)
+  v21:u64 = call(bs_buf,v17) {"function":"mp_load_mut"}
+  v22:u64 = call(bs_buf,v20) {"function":"mp_load_mut"}
+  v23:u64 = call(v21,v22) {"function":"mp_add"}
+  v24:u64 = call(v21,v22) {"function":"mp_sub"}
+  v25:u64 = call(bs_z,v24) {"function":"mp_mul"}
+  v26:u32 = call(bs_buf,v17,v23) {"function":"mp_store"}
+  v27:u32 = call(bs_buf,v20,v25) {"function":"mp_store"}
+  v28:usize = const() {"value":1}
+  v29:usize = int.add.checked(bs_j,v28)
+  jump butterfly(bs_buf,bs_base,bs_len,bs_m,bs_start,v29,bs_z)
+block next_group(ng_buf:mutbuf,ng_base:usize,ng_len:usize,ng_m:usize,ng_start:usize)
+  v30:usize = const() {"value":2}
+  v31:usize = int.mul.checked(ng_len,v30)
+  v32:usize = int.add.checked(ng_start,v31)
+  jump group(ng_buf,ng_base,ng_len,ng_m,v32)
+block next_stage(ns_buf:mutbuf,ns_base:usize,ns_len:usize,ns_m:usize)
+  v33:usize = const() {"value":2}
+  v34:usize = int.mul.checked(ns_len,v33)
+  jump stage(ns_buf,ns_base,v34,ns_m)
+block scale(sc_buf:mutbuf,sc_base:usize,sc_i:usize)
+  v35:usize = const() {"value":256}
+  v36:bool = compare.lt(sc_i,v35)
+  branch v36 scale_step(sc_buf,sc_base,sc_i) done()
+block scale_step(ss_buf:mutbuf,ss_base:usize,ss_i:usize)
+  v37:usize = const() {"value":4}
+  v38:usize = int.mul.checked(ss_i,v37)
+  v39:usize = int.add.checked(ss_base,v38)
+  v40:u64 = call(ss_buf,v39) {"function":"mp_load_mut"}
+  v41:u64 = const() {"value":8347681}
+  v42:u64 = call(v40,v41) {"function":"mp_mul"}
+  v43:u32 = call(ss_buf,v39,v42) {"function":"mp_store"}
+  v44:usize = const() {"value":1}
+  v45:usize = int.add.checked(ss_i,v44)
+  jump scale(ss_buf,ss_base,v45)
+block done()
+  v46:u32 = const() {"value":0}
+  ret(v46)
+end
+fn mp_binary(buf:mutbuf,operation:u8) -> (u32) effects(read,write,trap) entry(entry)
+block entry(buf:mutbuf,operation:u8)
+  v0:usize = const() {"value":0}
+  jump loop(buf,operation,v0)
+block loop(l_buf:mutbuf,l_op:u8,l_i:usize)
+  v1:usize = const() {"value":256}
+  v2:bool = compare.lt(l_i,v1)
+  branch v2 read(l_buf,l_op,l_i) done()
+block read(rd_buf:mutbuf,rd_op:u8,rd_i:usize)
+  v3:usize = const() {"value":4}
+  v4:usize = int.mul.checked(rd_i,v3)
+  v5:u64 = call(rd_buf,v4) {"function":"mp_load_mut"}
+  v6:usize = const() {"value":1024}
+  v7:usize = int.add.checked(v4,v6)
+  v8:u64 = call(rd_buf,v7) {"function":"mp_load_mut"}
+  v9:u8 = const() {"value":2}
+  v10:bool = compare.eq(rd_op,v9)
+  branch v10 multiply(rd_buf,rd_op,rd_i,v4,v5,v8) select_add(rd_buf,rd_op,rd_i,v4,v5,v8)
+block multiply(multiply_buf:mutbuf,multiply_op:u8,multiply_i:usize,multiply_p:usize,multiply_a:u64,multiply_b:u64)
+  v11:u64 = call(multiply_a,multiply_b) {"function":"mp_mul"}
+  jump write(multiply_buf,multiply_op,multiply_i,multiply_p,v11)
+block add(add_buf:mutbuf,add_op:u8,add_i:usize,add_p:usize,add_a:u64,add_b:u64)
+  v12:u64 = call(add_a,add_b) {"function":"mp_add"}
+  jump write(add_buf,add_op,add_i,add_p,v12)
+block subtract(subtract_buf:mutbuf,subtract_op:u8,subtract_i:usize,subtract_p:usize,subtract_a:u64,subtract_b:u64)
+  v13:u64 = call(subtract_a,subtract_b) {"function":"mp_sub"}
+  jump write(subtract_buf,subtract_op,subtract_i,subtract_p,v13)
+block select_add(sa_buf:mutbuf,sa_op:u8,sa_i:usize,sa_p:usize,sa_a:u64,sa_b:u64)
+  v14:u8 = const() {"value":3}
+  v15:bool = compare.eq(sa_op,v14)
+  branch v15 add(sa_buf,sa_op,sa_i,sa_p,sa_a,sa_b) subtract(sa_buf,sa_op,sa_i,sa_p,sa_a,sa_b)
+block write(w_buf:mutbuf,w_op:u8,w_i:usize,w_p:usize,w_value:u64)
+  v16:u32 = call(w_buf,w_p,w_value) {"function":"mp_store"}
+  v17:usize = const() {"value":1}
+  v18:usize = int.add.checked(w_i,v17)
+  jump loop(w_buf,w_op,v18)
+block done()
+  v19:u32 = const() {"value":0}
+  ret(v19)
+end
+fn mp_validate(input:readbuf,end:usize) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,end:usize)
+  v0:usize = const() {"value":16}
+  jump loop(input,end,v0)
+block loop(l_input:readbuf,l_end:usize,l_i:usize)
+  v1:bool = compare.lt(l_i,l_end)
+  branch v1 read(l_input,l_end,l_i) done()
+block read(rd_input:readbuf,rd_end:usize,rd_i:usize)
+  v2:u64 = call(rd_input,rd_i) {"function":"mp_load"}
+  v3:u64 = const() {"value":8380417}
+  v4:bool = compare.lt(v2,v3)
+  v5:usize = const() {"value":4}
+  v6:usize = int.add.checked(rd_i,v5)
+  branch v4 loop(rd_input,rd_end,v6) refuse()
+block done()
+  v7:u32 = const() {"value":0}
+  ret(v7)
+block refuse()
+  v8:u32 = const() {"value":1}
+  ret(v8)
+end
+fn mp_clear(scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(scratch:mutbuf)
+  v0:usize = const() {"value":0}
+  jump loop(scratch,v0)
+block loop(l_scratch:mutbuf,l_i:usize)
+  v1:usize = const() {"value":2048}
+  v2:bool = compare.lt(l_i,v1)
+  branch v2 step(l_scratch,l_i) done()
+block step(s_scratch:mutbuf,s_i:usize)
+  v3:u8 = const() {"value":0}
+  _ = buffer.store(s_scratch,s_i,v3)
+  v4:usize = const() {"value":1}
+  v5:usize = int.add.checked(s_i,v4)
+  jump loop(s_scratch,v5)
+block done()
+  v6:u32 = const() {"value":0}
+  ret(v6)
+end
+fn mp_copy_input(input:readbuf,scratch:mutbuf,count:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,scratch:mutbuf,count:usize)
+  v0:usize = const() {"value":0}
+  jump loop(input,scratch,count,v0)
+block loop(l_input:readbuf,l_scratch:mutbuf,l_count:usize,l_i:usize)
+  v1:bool = compare.lt(l_i,l_count)
+  branch v1 step(l_input,l_scratch,l_count,l_i) done()
+block step(s_input:readbuf,s_scratch:mutbuf,s_count:usize,s_i:usize)
+  v2:usize = const() {"value":16}
+  v3:usize = int.add.checked(s_i,v2)
+  v4:u8 = buffer.load(s_input,v3)
+  _ = buffer.store(s_scratch,s_i,v4)
+  v5:usize = const() {"value":1}
+  v6:usize = int.add.checked(s_i,v5)
+  jump loop(s_input,s_scratch,s_count,v6)
+block done()
+  v7:u32 = const() {"value":0}
+  ret(v7)
+end
+fn mp_copy_output(scratch:mutbuf,output:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(scratch:mutbuf,output:mutbuf)
+  v0:usize = const() {"value":0}
+  jump loop(scratch,output,v0)
+block loop(l_scratch:mutbuf,l_output:mutbuf,l_i:usize)
+  v1:usize = const() {"value":1024}
+  v2:bool = compare.lt(l_i,v1)
+  branch v2 step(l_scratch,l_output,l_i) done()
+block step(s_scratch:mutbuf,s_output:mutbuf,s_i:usize)
+  v3:u8 = buffer.load(s_scratch,s_i)
+  _ = buffer.store(s_output,s_i,v3)
+  v4:usize = const() {"value":1}
+  v5:usize = int.add.checked(s_i,v4)
+  jump loop(s_scratch,s_output,v5)
+block done()
+  v6:u32 = const() {"value":0}
+  ret(v6)
+end

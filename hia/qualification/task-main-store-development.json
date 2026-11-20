@@ -1,0 +1,2789 @@
+{
+  "compiler": {
+    "bytes": 673903,
+    "hepta_commit": "f33d8da316de8fdf27b504371f1a5310997ff548",
+    "rust": "1.95.0",
+    "sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+  },
+  "complete_gate": {
+    "actual_public_abi_calls": 2290,
+    "allocation_internal_limit_seconds": 180,
+    "allocation_outer_limit_seconds": 240,
+    "checks": {
+      "actual_reader_rejections": 37,
+      "canonical_complete_readback": true,
+      "main_task_store": true,
+      "readback_checks": {
+        "allocator": {
+          "actual_failure_ordinals": 96,
+          "all_hia_objects_identical_to_public_build": true,
+          "exact_controls": 112,
+          "final_allocator": {
+            "bad_frees": 0,
+            "bytes": 0,
+            "calls": 9369,
+            "failures": 96,
+            "frees": 9273,
+            "live": 0
+          }
+        },
+        "original": {
+          "actual_cargo_artifacts": 152,
+          "actual_executable_artifacts": 4,
+          "exact_test_names": true,
+          "no_test_filters": true,
+          "original_modules_and_hooks": 4,
+          "retained_tests": 41,
+          "strict_clippy_and_format": true
+        },
+        "public": {
+          "complete_original_process_transcript": true,
+          "exact_cases": 445,
+          "independently_counted_getters": 1877,
+          "independently_counted_method_calls": 413
+        },
+        "public-native": {
+          "exact_compiler_stdin_stdout": true,
+          "exact_emitted_objects": true,
+          "exact_rename_emitter_and_final_link_graph": true,
+          "function_bindings": 1380,
+          "images": 31
+        },
+        "records": {
+          "exact_cases": 1390,
+          "native_original_full_values_and_database_bytes": true,
+          "raw_original_inputs_outputs": true
+        },
+        "records-native": {
+          "exact_compiler_stdin_stdout": true,
+          "exact_emitted_objects": true,
+          "exact_rename_emitter_and_final_link_graph": true,
+          "function_bindings": 1376,
+          "images": 30
+        }
+      }
+    },
+    "ci_stage_receipts": [
+      {
+        "completed": true,
+        "elapsed_ns": 32353492,
+        "exit_code": 0,
+        "name": "preflight",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 16015134,
+        "exit_code": 0,
+        "name": "version-rustc",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 16094773,
+        "exit_code": 0,
+        "name": "version-cargo",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 163960409,
+        "exit_code": 0,
+        "name": "locked-cargo-metadata",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 6374677189,
+        "exit_code": 0,
+        "name": "provider-build",
+        "timeout_seconds": 1200
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 159871392941,
+        "exit_code": 0,
+        "name": "store-complete",
+        "timeout_seconds": 1200
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 1567370462,
+        "exit_code": 0,
+        "name": "store-independent-readback",
+        "timeout_seconds": 180
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 3920893803,
+        "exit_code": 0,
+        "name": "store-reader-negative-controls",
+        "timeout_seconds": 180
+      }
+    ],
+    "cleanup_seconds": 3,
+    "elapsed_ns": 173946236164,
+    "original_roster": {
+      "archive_integration": 2,
+      "compile_fail_documentation": 2,
+      "total": 41,
+      "unit": 35,
+      "wire_integration": 2
+    },
+    "overall_limit_seconds": 1200,
+    "provider_operations": 29,
+    "provider_source_language": "C",
+    "public_and_private_comparison_limits_seconds": 180,
+    "public_exports": 51,
+    "reader_negative_controls": 37,
+    "record_scope": "Main TaskKernelStore only; retained original archive tests do not qualify native ArchiveStore",
+    "status": "PASS",
+    "store_stage_receipts": [
+      {
+        "completed": true,
+        "elapsed_ns": 27987137,
+        "exit_code": 0,
+        "name": "preflight",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 7880784,
+        "exit_code": 0,
+        "name": "version-rustc",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 12494913,
+        "exit_code": 0,
+        "name": "version-cargo",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 5158488,
+        "exit_code": 0,
+        "name": "version-clippy-driver",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 5502041,
+        "exit_code": 0,
+        "name": "version-rustfmt",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 2402719,
+        "exit_code": 0,
+        "name": "source-commit",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 1880611,
+        "exit_code": 0,
+        "name": "original-git-tree",
+        "timeout_seconds": 60
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 8964900631,
+        "exit_code": 0,
+        "name": "original-retained-tests",
+        "timeout_seconds": 600
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 1121759660,
+        "exit_code": 0,
+        "name": "compile-original-kernel-policy",
+        "timeout_seconds": 120
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 1496747536,
+        "exit_code": 0,
+        "name": "compile-original-store-audit",
+        "timeout_seconds": 120
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 2250075645,
+        "exit_code": 0,
+        "name": "compile-original-store-records",
+        "timeout_seconds": 120
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 1936580806,
+        "exit_code": 0,
+        "name": "compile-original-store-public",
+        "timeout_seconds": 120
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 9686185955,
+        "exit_code": 0,
+        "name": "records-native-build",
+        "timeout_seconds": 180
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 41827499526,
+        "exit_code": 0,
+        "name": "records-native-original",
+        "timeout_seconds": 180
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 10315216808,
+        "exit_code": 0,
+        "name": "public-native-build",
+        "timeout_seconds": 180
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 10070529070,
+        "exit_code": 0,
+        "name": "public-native-original",
+        "timeout_seconds": 180
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 68226261770,
+        "exit_code": 0,
+        "name": "public-allocation-lifecycle",
+        "timeout_seconds": 240
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 2994289879,
+        "exit_code": 0,
+        "name": "original-clippy",
+        "timeout_seconds": 600
+      },
+      {
+        "completed": true,
+        "elapsed_ns": 84216571,
+        "exit_code": 0,
+        "name": "original-format",
+        "timeout_seconds": 120
+      }
+    ]
+  },
+  "formal_report": {
+    "bytes": 861218,
+    "path": "/var/tmp/trnm-task-current3ad-full-v13-rog-lbgbtsqi/full-gate/report.json",
+    "sha256": "40abd34f238a18b1ed539892b63104899c6ca8054ff1d21fb8075c431947c7a6"
+  },
+  "full_raw_archive": {
+    "all_current_members_verified_on_both_endpoints": true,
+    "all_historical_runs_embedded": false,
+    "archive_readback_is_runtime_rerun": false,
+    "bytes": 307939052,
+    "desktop_archive": "/var/tmp/trnm-task-current3ad-v13-complete-seal-v1-a8qxp8yy/native-observations.tar.gz",
+    "desktop_readback": "/var/tmp/trnm-task-current3ad-v13-complete-seal-v1-a8qxp8yy/readback.json",
+    "logical_bytes": 1662598969,
+    "logical_paths": 14045,
+    "mac_archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-current3ad-v13-complete-seal-v1-a8qxp8yy/native-observations.tar.gz",
+    "mac_report": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-current3ad-v13-complete-seal-v1-a8qxp8yy/report.json",
+    "mac_report_identity": {
+      "bytes": 61255,
+      "sha256": "a81056131697f48011a6d665766fa7bbb686b927e0a7806d38bebf7f6f63de05"
+    },
+    "manifest": {
+      "bytes": 11811929,
+      "sha256": "1116a856f10fb9152e1e9ae6a005f4cd3a527652f58c6578aa078670c02f987d"
+    },
+    "members": 7519,
+    "objects": 7518,
+    "required_inputs": 10688,
+    "sha256": "5689bdabd90d2263fc198976222f00defb2a7a59f968432885be0db81c7770f5",
+    "unique_bytes": 966106007
+  },
+  "history": [
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "records_completed": 1275,
+      "status": "FAIL",
+      "version": "v4"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "records_completed": 1290,
+      "status": "FAIL",
+      "version": "v5"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "records_completed": 1318,
+      "status": "FAIL",
+      "version": "v6"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "records_completed": 1319,
+      "status": "FAIL",
+      "version": "v7"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "notes": "The separate dual-algorithm 719-case cold diagnostic stopped at 569 after 240s; retained actual reference bytes were used by a distinct fully bound 719-case candidate check. Suffix-only success was not merged into full-gate PASS.",
+      "records_completed": 1320,
+      "records_elapsed_ns": 180058486604,
+      "status": "FAIL",
+      "version": "v8"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "notes": "Ed98622 candidate, not dc252.",
+      "records_completed": 1320,
+      "records_elapsed_ns": 180131483084,
+      "status": "FAIL",
+      "version": "v9"
+    },
+    {
+      "host": "desktop",
+      "limit_seconds": 180,
+      "notes": "Public build rejected stale include closure before public runtime. Exact failure preserved.",
+      "records_completed": 1390,
+      "records_elapsed_ns": 179443781219,
+      "status": "FAIL_AFTER_RECORDS_PASS",
+      "version": "v10"
+    },
+    {
+      "host": "desktop",
+      "mutation_controls": 15,
+      "new_cpu_seconds": 7.096886262,
+      "notes": "No complete formal gate was run on this slower memoizer; it is absent from v12.",
+      "old_cpu_seconds": 5.35986561,
+      "serialized_report_prefixes_equal": 2928,
+      "status": "REJECTED_OBSERVER_CANDIDATE",
+      "version": "v11"
+    },
+    {
+      "host": "rog",
+      "limit_seconds": 180,
+      "notes": "Only public closure fixed relative to v10; actual environment differs from Desktop. Fresh original/Cargo and all complete native/public/allocation/reader stages ran on the ROG private source graph.",
+      "records_completed": 1390,
+      "records_elapsed_ns": 47291831096,
+      "status": "PASS_COMPLETE_PRIVATE_MAIN_STORE",
+      "version": "v12"
+    },
+    {
+      "allocation_controls": 112,
+      "allocation_elapsed_ns": 68226261770,
+      "host": "rog",
+      "note": "Fresh original/Cargo, all exact native/public/allocation methods, canonical reader and 37 negative controls ran. Both v12 and v13 executed on ROG; neither is hosted GitHub CI or the later Engine/global-includes integration.",
+      "original_tests": 41,
+      "public_cases": 445,
+      "public_elapsed_ns": 10070529070,
+      "records_completed": 1390,
+      "records_elapsed_ns": 41827499526,
+      "selected_source_inputs": 2285,
+      "status": "PASS_COMPLETE_PRIVATE_MAIN_STORE_ON_CURRENT3AD_INPUTS",
+      "version": "v13"
+    }
+  ],
+  "implementation": [
+    {
+      "area": "canonical SHA256",
+      "change": "Only tr_sha_compress: fixed four-byte reads, fixed-rotation arithmetic and eight hot word calls expanded in original load/store order. The canonical definition remains unique within this file; no new compression algorithm.",
+      "scope": "The helper ABI and all unchanged functions remain byte-identical."
+    },
+    {
+      "area": "canonical Ed25519",
+      "change": "Only audit_github's ed_fe_mul dc252: two hot word loads expanded; coefficient loop skips only iterations with no valid limb term. All 256 valid term operations retain order, overflow and partial-store behavior.",
+      "scope": "No independent competing field implementation."
+    },
+    {
+      "area": "Task SHA consumer",
+      "change": "Private work/read feed loops copy legal complete blocks; invalid ranges delegate to the original canonical helper. typed_values and ao_escrow consume the same private read helper.",
+      "scope": "Read/work buffers retain exclusive non-aliasing ABI assumptions; no new protocol size limit."
+    },
+    {
+      "area": "Task signature continuation",
+      "change": "A separate private image performs the public-A comb after the original strict A/R/S/challenge checks. Public-A table and raw A key are private to the current allocated work owner. Cache validity is published last.",
+      "scope": "No cached authorization or signature verdict; no public raw cache importer. Ordinary kernel-policy entry remains synchronous."
+    },
+    {
+      "area": "observer serialization",
+      "change": "store_records_observer.save uses compact JSON separators, retaining complete values and every original per-case write point.",
+      "scope": "This is observer overhead reduction, not claimed as native business speed. The v11 memoizer was slower in a real A/B and is excluded."
+    },
+    {
+      "area": "composition",
+      "change": "Explicit includes match actual selected calls; append image 27 signature_cache to the existing records/public dispatch chain. Extend canonical reader's exact unit roster; no reader guard removed.",
+      "scope": "Public exports remain 51 and platform provider operations remain 29."
+    }
+  ],
+  "independent_readback": {
+    "bytes": 2272191,
+    "checks": {
+      "allocator": {
+        "actual_failure_ordinals": 96,
+        "all_hia_objects_identical_to_public_build": true,
+        "exact_controls": 112,
+        "final_allocator": {
+          "bad_frees": 0,
+          "bytes": 0,
+          "calls": 9369,
+          "failures": 96,
+          "frees": 9273,
+          "live": 0
+        }
+      },
+      "original": {
+        "actual_cargo_artifacts": 152,
+        "actual_executable_artifacts": 4,
+        "exact_test_names": true,
+        "no_test_filters": true,
+        "original_modules_and_hooks": 4,
+        "retained_tests": 41,
+        "strict_clippy_and_format": true
+      },
+      "public": {
+        "complete_original_process_transcript": true,
+        "exact_cases": 445,
+        "independently_counted_getters": 1877,
+        "independently_counted_method_calls": 413
+      },
+      "public-native": {
+        "exact_compiler_stdin_stdout": true,
+        "exact_emitted_objects": true,
+        "exact_rename_emitter_and_final_link_graph": true,
+        "function_bindings": 1380,
+        "images": 31
+      },
+      "records": {
+        "exact_cases": 1390,
+        "native_original_full_values_and_database_bytes": true,
+        "raw_original_inputs_outputs": true
+      },
+      "records-native": {
+        "exact_compiler_stdin_stdout": true,
+        "exact_emitted_objects": true,
+        "exact_rename_emitter_and_final_link_graph": true,
+        "function_bindings": 1376,
+        "images": 30
+      }
+    },
+    "negative_controls": {
+      "actual_rejections": 37,
+      "bytes": 38181,
+      "sha256": "cb5777a81620fd67a3270b598cd133f111b0dfe389104a2db0e5492dcb56236a"
+    },
+    "path": "/var/tmp/trnm-task-current3ad-full-v13-rog-lbgbtsqi/full-gate/qualification/readback/report.json",
+    "sha256": "1b1fc2d32a8966e580b14f788b92e948b4c584c9a4d3b65f9b2182069b5698de"
+  },
+  "integration_actions": [
+    "Apply the reviewed runtime and registry packet only to the actual integration graph; this record adds evidence, not product behavior.",
+    "The private v13 current3ad graph precedes the separate Engine/global-components integration. Retain its exact source identity; run affected gates on the final integrated graph.",
+    "Keep complete original tests, strict Clippy/fmt, all 1390 private, 445 public and 112 allocation controls, canonical reader and 37 negative controls with their unchanged limits.",
+    "Keep both official current3ad allocation timeouts as FAIL. The ROG private v13 PASS is not a hosted CI result.",
+    "ArchiveStore, StateImport, the project-owned C platform boundary and complete Node runtime/whole-chain closure remain separate obligations."
+  ],
+  "integration_target": {
+    "commit": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+    "conflicts": [],
+    "paths_changed_since_base": [],
+    "tree": "61d7502c0491d20c42ec051b10d07ec12633c84f",
+    "whole_current_checkout_edited": false
+  },
+  "node_combined_actual_report": {
+    "build_elapsed_ns": 17422381341,
+    "bytes": 84165,
+    "changed_compressor_selected": false,
+    "compiler_inputs": 28,
+    "compiler_stages": 29,
+    "executable": {
+      "bytes": 9408769,
+      "sha256": "61f19cd2df9b8d4ec6aaeb9d13fe6e19256fd77e1e154bef649c0d154f0f4ceb"
+    },
+    "path": "/tmp/trnm-node-sha82-ed-dc252-combined-f2fvfv8n/report.json",
+    "reader": {
+      "bytes": 318,
+      "sha256": "2431d59ae2380d23fe5458bd0bd6981a84133e8a3a559cfc4abeb47a8bc4f40a"
+    },
+    "runtime_reexecuted": false,
+    "sha256": "cc958f212e76172e8ee90e45555b86eb8577ea57a21ce104c960381b0f6fc227",
+    "source_inputs": 223
+  },
+  "node_composition_review": {
+    "base": {
+      "bytes": 540216,
+      "commit": "10b2f5981c3aa742b16b32090260372f31091733",
+      "git_blob": "de249492704e9e38c2a95574d49dbb11da2d1fe0",
+      "git_mode": "100644",
+      "sha256": "5dcdd44cbd19e508c140f336cd0a47b53529747bdbfb5239eabaa346acb0ac70"
+    },
+    "candidate": {
+      "bytes": 540217,
+      "git_blob": "e3af05f146cfa2a4187833eb4cbb91071e87971d",
+      "git_mode": "100644",
+      "sha256": "e9e2ff3d4c3bd80f2d443873a1e7cbe3675eb4f3d6bcf1f92f3f9e8e05fa2556"
+    },
+    "current": {
+      "bytes": 540216,
+      "commit": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+      "git_blob": "de249492704e9e38c2a95574d49dbb11da2d1fe0",
+      "git_mode": "100644",
+      "sha256": "5dcdd44cbd19e508c140f336cd0a47b53529747bdbfb5239eabaa346acb0ac70"
+    },
+    "current_changed_since_base": false,
+    "merge_status": "apply-candidate-cleanly",
+    "node_runtime_reexecuted": false,
+    "path": "hia/platform/mempool_node/composition.json",
+    "qualification": {
+      "actual_compiler_stages": 29,
+      "affected_images": [
+        "ed"
+      ],
+      "executable": {
+        "bytes": 9408769,
+        "sha256": "61f19cd2df9b8d4ec6aaeb9d13fe6e19256fd77e1e154bef649c0d154f0f4ceb"
+      },
+      "max_functions": 114,
+      "max_ops": 7832,
+      "report": {
+        "bytes": 132551,
+        "path": "/tmp/trnm-node-ed-range-current492-admission-4rm8t0cf/report.json",
+        "sha256": "13154ec2f88ef4efd933d38be615053910a5bf0324f456f2b8a166b7d8089c60"
+      },
+      "source_before": {
+        "config/pon/devnet-v1.json": {
+          "bytes": 1964,
+          "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+        },
+        "config/pon/ledger-v1.json": {
+          "bytes": 7793,
+          "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+        },
+        "config/pon/model-family-v1.json": {
+          "bytes": 1383,
+          "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+        },
+        "config/pon/work-profile-v1.json": {
+          "bytes": 1596,
+          "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+        },
+        "hia/components.json": {
+          "bytes": 127813,
+          "sha256": "1be27a839fe4caf32400ea37ffdac301a8a47f6cb04dc66f9661f3c227cd3d08"
+        },
+        "hia/platform/README.md": {
+          "bytes": 11641,
+          "sha256": "eed25261624501964916eebeb45ddda462f7e0421eac93404fce521b8187bd16"
+        },
+        "hia/platform/abi.json": {
+          "bytes": 6864,
+          "sha256": "3e4a614ee276ede7dc35ee85a3b07cf444201be433619bf88bb6073347283b47"
+        },
+        "hia/platform/build.py": {
+          "bytes": 11808,
+          "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+        },
+        "hia/platform/execution_application/README.md": {
+          "bytes": 10274,
+          "sha256": "78458d73e846598b048915d411299cbff6916e24bf59d43662ea43ba4823a490"
+        },
+        "hia/platform/execution_application/abi.json": {
+          "bytes": 14637,
+          "sha256": "bab9a9e10d03259a1e718f5f0ef81447a7fcb7e0c107c8bb2dad49c2daa3f2f7"
+        },
+        "hia/platform/execution_application/build.py": {
+          "bytes": 4974,
+          "sha256": "0f3e825635f1b383e199a0b42154dc4a7693cfdf093eed8d5de5e57bc9e81695"
+        },
+        "hia/platform/execution_application/cases.py": {
+          "bytes": 22127,
+          "sha256": "cc619df12795a90e4c9ab13daa637a43170956e3823f18860168d6e794243476"
+        },
+        "hia/platform/execution_application/claim.hepta": {
+          "bytes": 100206,
+          "sha256": "715f9634053e398dc3c6220bd470b76de5cc7053ff2081c51037796e63c8e60c"
+        },
+        "hia/platform/execution_application/core.hepta": {
+          "bytes": 231235,
+          "sha256": "01436255aade23d5b649f34028c931141b2b7acdba73e647037fc63680cd023f"
+        },
+        "hia/platform/execution_application/includes.json": {
+          "bytes": 12196,
+          "sha256": "36d4a069ed03a2395659e44cc638949cd244dc2e9d2128e5c611044a00806b4a"
+        },
+        "hia/platform/execution_application/linux_emitter.hepta": {
+          "bytes": 74494,
+          "sha256": "6ef35abd8fd7098f75c12dd8eb18e301a169cab5663822a58bdd1f05b1cba9d3"
+        },
+        "hia/platform/execution_application/model.hepta": {
+          "bytes": 250054,
+          "sha256": "dc8348ee2962e22d5cb73d0a9a6b548efb048afce150c1c10f9b6b0ea832fbe0"
+        },
+        "hia/platform/execution_application/native_io.py": {
+          "bytes": 8984,
+          "sha256": "6b283b482d06be49c74ed3fc80401164a87305a922fe69ef52c3ca628aea8922"
+        },
+        "hia/platform/execution_application/physical.py": {
+          "bytes": 21044,
+          "sha256": "e0a2786947bb3e965515ce90a060746d02dd104bdab81102dade0b63c2fbd09c"
+        },
+        "hia/platform/execution_application/prepare_bridge.hepta": {
+          "bytes": 11788,
+          "sha256": "90a4f515b5f19ea81436fbd61bbfa0138a5d16d5aade77c8d15193ecdd323ebd"
+        },
+        "hia/platform/execution_application/qualify.py": {
+          "bytes": 9665,
+          "sha256": "36019c4b1a20ec7a2f60c91f9d874f9399577f723903c38d935171f81716d79f"
+        },
+        "hia/platform/execution_application/quota.hepta": {
+          "bytes": 190652,
+          "sha256": "0da4366cbfce5348948370c3fa6979e4ecb28cced8c0bd1118bb378e325bd292"
+        },
+        "hia/platform/execution_application/relation.hepta": {
+          "bytes": 160756,
+          "sha256": "ee862b12feececb99f88b017fb15f467d1fee351c432e6218553fa3a466f3e09"
+        },
+        "hia/platform/execution_application/release.hepta": {
+          "bytes": 239763,
+          "sha256": "0d1e226cd672ddb856f4f27b4d2f43f05dab1d46deb8ec1092c1db8df82d76bd"
+        },
+        "hia/platform/execution_application/rust_oracle.py": {
+          "bytes": 27034,
+          "sha256": "3bea463514d66c0647e57130f3ccc828017b987a103448b3ccc5a7c78772bd62"
+        },
+        "hia/platform/execution_application/rust_reference.rs": {
+          "bytes": 11482,
+          "sha256": "991decec4637b1fadfcb9baf1d767fab3055c6cd6d221241c4c04f89ddf0c83a"
+        },
+        "hia/platform/execution_application/source_graph.py": {
+          "bytes": 10302,
+          "sha256": "ed9e892197efd42e6eb6c9e9f4e5822d093785c7d8c2f8a55f4b3c8c173cb102"
+        },
+        "hia/platform/execution_application/support.hepta": {
+          "bytes": 167471,
+          "sha256": "358a004a5384d5c3bcffca6083d55665057d3c9361e4f9fb422d884be18e37c1"
+        },
+        "hia/platform/execution_application/task.hepta": {
+          "bytes": 198439,
+          "sha256": "f950aa1d27b18b805936d0bc5b8cb124e88ccb94d9fb5122e8a05c026d63fcfc"
+        },
+        "hia/platform/execution_application/test_integrity.py": {
+          "bytes": 15234,
+          "sha256": "9e364435aab3b57d1f46211f907238a751bd1e8c8633b2d7d6f27a4e2efb4d7c"
+        },
+        "hia/platform/execution_batch/README.md": {
+          "bytes": 9928,
+          "sha256": "ad37793d2eb143203a3f9d4dc75f1eb1e8d31ab48b6d78fd29d327b18097e859"
+        },
+        "hia/platform/execution_batch/abi.json": {
+          "bytes": 4996,
+          "sha256": "ad7dedddb6e87ed78f4c03b4e5f2389dfc26b13e720b9279f6e19a23065e1f2e"
+        },
+        "hia/platform/execution_batch/batch.hepta": {
+          "bytes": 131467,
+          "sha256": "172a1243f9f1aa15343f6e039ceb7877e13d17263cda00bd28242673cbd20859"
+        },
+        "hia/platform/execution_batch/batch_cases.json": {
+          "bytes": 284234,
+          "sha256": "7fc15a78c1eb493c481cfdc0de27ea9cf0e6d0104c958663efa10de7532cbc16"
+        },
+        "hia/platform/execution_batch/batch_emitter.hepta": {
+          "bytes": 113172,
+          "sha256": "f2c7a7f51f98cb7386f7e98cc4989d3070214b0de78d14a95997d07600e6b8cc"
+        },
+        "hia/platform/execution_batch/batch_mandatory_cleanup.hepta": {
+          "bytes": 36914,
+          "sha256": "b9b492769e9306b34a71145d428e24a2bb63be302b4ade424d0814e1f8486dfd"
+        },
+        "hia/platform/execution_batch/batch_mandatory_core.hepta": {
+          "bytes": 38577,
+          "sha256": "540d11a39890e888d55a9a6b570c7addf291e3bc8380503565b6810f0a5989d9"
+        },
+        "hia/platform/execution_batch/batch_mandatory_epilogue.hepta": {
+          "bytes": 38956,
+          "sha256": "18697545a7549ba0999f69347be3eaafc096f9d23e6e98ceda29d39899147475"
+        },
+        "hia/platform/execution_batch/batch_mandatory_expiry.hepta": {
+          "bytes": 36905,
+          "sha256": "265c375af524873f1f1c02265e22d6c6dfde00668f684850649b8bf51c1e99d3"
+        },
+        "hia/platform/execution_batch/batch_native_io.py": {
+          "bytes": 11673,
+          "sha256": "cdf634131235ba555490b96658b71e6909119b7a6acae97e9948206e1384040d"
+        },
+        "hia/platform/execution_batch/batch_observations.py": {
+          "bytes": 6998,
+          "sha256": "f2095c4b711c218aebe3ba2070b6b31877df3a380754c7c2749ac70e09c5ec99"
+        },
+        "hia/platform/execution_batch/batch_worker.hepta": {
+          "bytes": 24608,
+          "sha256": "206accd9b138c7bace4aa2eee22d93a4197e93eeff48f5d0d8b3e4227c48e327"
+        },
+        "hia/platform/execution_batch/build.py": {
+          "bytes": 5254,
+          "sha256": "1e68ac83646320a2f9d20cf61effa414a7cb7aae89ec2bb0de7d6d29775361eb"
+        },
+        "hia/platform/execution_batch/build_evidence.py": {
+          "bytes": 9522,
+          "sha256": "99583cb9a7dab676a6727fd24e5924df6f965fbd0a49957a47a0c3e3ef87c8b1"
+        },
+        "hia/platform/execution_batch/bundle.py": {
+          "bytes": 9493,
+          "sha256": "38313a371886e68d25fde5fb1bf3056c778e640c912527baef7b781784bdd800"
+        },
+        "hia/platform/execution_batch/cases.py": {
+          "bytes": 4400,
+          "sha256": "f226d5bdfb5184e1079761ae9031d9b04afb70969c0155227199be5b49be01d4"
+        },
+        "hia/platform/execution_batch/images.json": {
+          "bytes": 88838,
+          "sha256": "dbab9e7d05223e9eec669e85f51cba4ea2ab428a775875d0a4c7cdf30b0864f6"
+        },
+        "hia/platform/execution_batch/lifecycle.py": {
+          "bytes": 16275,
+          "sha256": "004eaf1eb3cba0895878fda3f27de267f6a562dab223a69823e80734a8791ae7"
+        },
+        "hia/platform/execution_batch/mandatory_cases.py": {
+          "bytes": 7538,
+          "sha256": "3f77d4331f9bb3597a99e25731ff2fd4094da80607177936a401a400a8aa2814"
+        },
+        "hia/platform/execution_batch/mandatory_cleanup.hepta": {
+          "bytes": 39513,
+          "sha256": "3cfbf2c555eae6c0f563d8aec7e027706b77551dfea60095bb61419d323fd0bd"
+        },
+        "hia/platform/execution_batch/mandatory_core.hepta": {
+          "bytes": 41276,
+          "sha256": "8a3df7c952786a7ab48a0c58642572a746cc34009d37be8e240b9f43c55f99b6"
+        },
+        "hia/platform/execution_batch/mandatory_epilogue.hepta": {
+          "bytes": 118024,
+          "sha256": "44b2630020a2c9ed31fd21518cdf0f8f58ee3cb164040f95bab1ee142db1f435"
+        },
+        "hia/platform/execution_batch/mandatory_expiry.hepta": {
+          "bytes": 39504,
+          "sha256": "4c8f5d057bea5c30156ae2849f2e73e8f2f32dbc2d9420b8b6adc29f3817b64c"
+        },
+        "hia/platform/execution_batch/physical.py": {
+          "bytes": 12415,
+          "sha256": "dde59a1eafa7924523200c432e18a4cbee200ab6dd63794344cf1f15884681c9"
+        },
+        "hia/platform/execution_batch/physical_evidence.py": {
+          "bytes": 15830,
+          "sha256": "8b912030a2958381474a3068b5f64ad151e274e045e5cfb64ec9da0febc79d1a"
+        },
+        "hia/platform/execution_batch/prefix.hepta": {
+          "bytes": 80635,
+          "sha256": "e9b945cc4210b0f6a234211f1c531d777c7c95b6bfd4cdd99c036ac7c217e7b3"
+        },
+        "hia/platform/execution_batch/prefix_cases.py": {
+          "bytes": 6910,
+          "sha256": "0b3feb40fdaf5fea6d86d62af9a30c3172fa0b147e5dc5f96b34edc7a39cc179"
+        },
+        "hia/platform/execution_batch/prefix_emitter.hepta": {
+          "bytes": 82334,
+          "sha256": "bc33e8b98716f91b192cce3828353a241729caf1bca013066e6c7a2e91956deb"
+        },
+        "hia/platform/execution_batch/prefix_native_io.py": {
+          "bytes": 9772,
+          "sha256": "bd8444dd9e8cdadb84f8b82c24642bc3118c81bc1ae3f0d70e16e624e000d7d1"
+        },
+        "hia/platform/execution_batch/prefix_observations.py": {
+          "bytes": 8308,
+          "sha256": "349145259acf3d02ebf3b1c5306c03f7db8c73e7f7be58fe55038421e8bdf793"
+        },
+        "hia/platform/execution_batch/process_evidence.py": {
+          "bytes": 10742,
+          "sha256": "95f7e64ed70cc32b8a666c870dbb39ca154ccc2e206fe9f1daee0fc674e9223c"
+        },
+        "hia/platform/execution_batch/qualification.py": {
+          "bytes": 8507,
+          "sha256": "9d00917abb730e925ec61e4137b55824285afd653f6cbaa90c865df83921769a"
+        },
+        "hia/platform/execution_batch/rust_batch_reference.rs": {
+          "bytes": 13703,
+          "sha256": "20c04f88322d1192f438ef41d7e22150eb1cfd4e4b88a0d8e608c224dba50d31"
+        },
+        "hia/platform/execution_batch/rust_oracle.py": {
+          "bytes": 20463,
+          "sha256": "724b9c1f4dce5a4326404f642968d548fb2f7325f3ecf328bd5990ed97870847"
+        },
+        "hia/platform/execution_batch/rust_prefix_reference.rs": {
+          "bytes": 14731,
+          "sha256": "1fcb58e86b69b7be6d6bca6f156bcfe5e3cbd639ac261dbf091edd144ca9461a"
+        },
+        "hia/platform/execution_batch/safe_io.py": {
+          "bytes": 4960,
+          "sha256": "efe0f902618295e9d26d2ef5b46b18e718be16a9584addd3c1bcccbd14f1f830"
+        },
+        "hia/platform/execution_batch/scoped_native_io.py": {
+          "bytes": 9883,
+          "sha256": "65964f9185058ebdc9b1e504eada4be33a87e4a820baa2b379bbd3cfac3d49f9"
+        },
+        "hia/platform/execution_batch/scoped_prefix.hepta": {
+          "bytes": 100252,
+          "sha256": "9d72c81093c91b52330edf86e81b06239070636932d61d3cd608080154081cb3"
+        },
+        "hia/platform/execution_batch/source_graph.py": {
+          "bytes": 9314,
+          "sha256": "3004097dc3e919dd6950d4cc029730f3fc44d04aa59459253932d1276bd57ccc"
+        },
+        "hia/platform/execution_batch/support.hepta": {
+          "bytes": 672577,
+          "sha256": "4743b473ae305440ef8dbd906a2eff10e4779a03b2dc88086436e2ece83fd75e"
+        },
+        "hia/platform/execution_batch/test_integrity.py": {
+          "bytes": 26486,
+          "sha256": "f1567d0786aede0b9afa100c4413b5f213955d01201f8cff5c082dbb993ac0ce"
+        },
+        "hia/platform/execution_batch/worker.hepta": {
+          "bytes": 4312,
+          "sha256": "48b65a5020b2297659071416615d2fd8fc570f6f4c3c0dbd9c71b1197574bf3f"
+        },
+        "hia/platform/execution_prepare/README.md": {
+          "bytes": 5382,
+          "sha256": "474bc0abadc11888e356d08e9ca274fbbdb9b8d0d8bc22e9293f2a849d8b612a"
+        },
+        "hia/platform/execution_prepare/abi.json": {
+          "bytes": 2320,
+          "sha256": "eb4fff9a7ee5c3ee66a30eec9085fcf3b72c795dbb96c0a6e413e0b190a6ebf7"
+        },
+        "hia/platform/execution_prepare/build.py": {
+          "bytes": 10263,
+          "sha256": "72393b2ca320de6e24fdc32d0c9402b0a223e3f3f34ab650e1f153e27ec5982f"
+        },
+        "hia/platform/execution_prepare/cases.py": {
+          "bytes": 6272,
+          "sha256": "1b2788a7cfb99c1764ee9095f82dfe7b2fe98b56b5edf5dc59bc083a2000ffd7"
+        },
+        "hia/platform/execution_prepare/linux_emitter.hepta": {
+          "bytes": 35117,
+          "sha256": "2aeaf7b91b942469b293d130379af222baa20278840e0c814ec08f80af89c318"
+        },
+        "hia/platform/execution_prepare/native_io.py": {
+          "bytes": 13877,
+          "sha256": "e01880321eed1677aa63e3039bab8430f79b407034ba0952b98df018c7d068ee"
+        },
+        "hia/platform/execution_prepare/owner_policy.hepta": {
+          "bytes": 105082,
+          "sha256": "afc7a2c3ba6b5151bfd431c72ae1986d699a130735ef97187fc222c2f7140276"
+        },
+        "hia/platform/execution_prepare/qualify.py": {
+          "bytes": 19792,
+          "sha256": "327e7e11aa2946c97faaccf1fa1f9899dc22a6f19f7f8030da1248663bdd1b95"
+        },
+        "hia/platform/execution_prepare/rust_oracle.py": {
+          "bytes": 55810,
+          "sha256": "8c113bf7bd26ae5045b60474bf25bf840210e521845537cb0feea86a3b397072"
+        },
+        "hia/platform/execution_prepare/rust_reference.rs": {
+          "bytes": 4296,
+          "sha256": "801932c9e4edc5d08aec7edb6894ddf4a496bef84eef4b212316e0598c9320c5"
+        },
+        "hia/platform/execution_prepare/source-inputs.json": {
+          "bytes": 225,
+          "sha256": "3457b71987144163a5ad46c0f393ce4f8410c69f949195d2b834916a9ad13afc"
+        },
+        "hia/platform/execution_prepare/test_integrity.py": {
+          "bytes": 23316,
+          "sha256": "e7042ed8486c3898e3f144efe5c0ff431e1f542e868a1bb6df4455ad390a5eac"
+        },
+        "hia/platform/execution_state/README.md": {
+          "bytes": 7996,
+          "sha256": "293dddfeb5db82cf088d624701c385a7d8ca453212a8bb8ddff0da13b024876d"
+        },
+        "hia/platform/execution_state/abi.json": {
+          "bytes": 2134,
+          "sha256": "50f04c2675b680adfccd910fd3dd6ff20adacaafc3ead91218045812b0559950"
+        },
+        "hia/platform/execution_state/build.py": {
+          "bytes": 9158,
+          "sha256": "c638c0d958a623717a1322fd7440308852dab0a735afc7e466915501be026055"
+        },
+        "hia/platform/execution_state/cases.py": {
+          "bytes": 13425,
+          "sha256": "4139cbfb1710d3652e8b0bd783798336ee9f6b5a146454dfb764dc1a92a17d5d"
+        },
+        "hia/platform/execution_state/includes.json": {
+          "bytes": 3941,
+          "sha256": "67e50f122288451a13fa95952e0ba13e17aaebf889cac2f4fe0adc4e9e65effc"
+        },
+        "hia/platform/execution_state/linux_emitter.hepta": {
+          "bytes": 33020,
+          "sha256": "a8c1f2a9c1a5aeed2dfd4982d43c100acfe314b055087ae5e00e7cf2fcfa46dd"
+        },
+        "hia/platform/execution_state/map.hepta": {
+          "bytes": 57270,
+          "sha256": "1905d74d1026970b1bcc322acc53ac4f575090e1707a7ecc99d1231de7119f8e"
+        },
+        "hia/platform/execution_state/native_io.py": {
+          "bytes": 9923,
+          "sha256": "42d7821aaf9a03ee6dd844da6f8d260475a95dd94b76be505e0516c0738b96e3"
+        },
+        "hia/platform/execution_state/owner.hepta": {
+          "bytes": 103769,
+          "sha256": "34f62a2f639a21fec3969e14ac5d8c251f94e7a0d4656016bb3073baf56e9e62"
+        },
+        "hia/platform/execution_state/physical.py": {
+          "bytes": 12896,
+          "sha256": "f6420091528e68ada5c0a9f914b14182179cc154f2ffc456bd26e6f78da8ad4d"
+        },
+        "hia/platform/execution_state/qualify.py": {
+          "bytes": 5280,
+          "sha256": "ba743dd027f886b3955a703e926d613b3f0bafcdf55208ed50b8c640d8fc3b80"
+        },
+        "hia/platform/execution_state/rust_oracle.py": {
+          "bytes": 59389,
+          "sha256": "da42801008feda71671adbcf87cd0e1297b6887c0a6d191d467f23f519fbed16"
+        },
+        "hia/platform/execution_state/rust_reference.rs": {
+          "bytes": 15076,
+          "sha256": "68ab329c7e4909ef4cf3f7ab2e924e0c3c16ce813f371a249c891a331dccd005"
+        },
+        "hia/platform/execution_state/test_integrity.py": {
+          "bytes": 18104,
+          "sha256": "00ceb74eaa225599c316eb633cda2238a954ed5ffe2ec0fed883df27b3627a9f"
+        },
+        "hia/platform/execution_state/value.hepta": {
+          "bytes": 82614,
+          "sha256": "1ffbded7c1676f51e57d932a816b91b12261589b3d833659339ccbf155711a3c"
+        },
+        "hia/platform/genesis_store/owner_policy.hepta": {
+          "bytes": 185994,
+          "sha256": "85acbc6cc2d27234db2b82eabd0b43f6d7349ddd4b48d24f6bb083055bd09a4f"
+        },
+        "hia/platform/host_resource/fixture_entry.hepta": {
+          "bytes": 308,
+          "sha256": "e48a9bfc877ac5e8f971813408c6888bcef31b54f1a3c61b5668c6341aa7c124"
+        },
+        "hia/platform/host_resource/resource_policy.hepta": {
+          "bytes": 78839,
+          "sha256": "9fa7440f953d6e2e1c1fb0f93c5bc96a2a8348f0a9d1a446e156dabeeac6cac8"
+        },
+        "hia/platform/linux_adapter_emitter.hepta": {
+          "bytes": 45152,
+          "sha256": "0bac9b42bd7dfcab47e3dcd89c2875ea5f17b2d86ad08903320c551d7a796b1f"
+        },
+        "hia/platform/mempool_node/README.md": {
+          "bytes": 6526,
+          "sha256": "a533b5c65bf95558db252aaa5fb6154d93104a70080b157cbfe027786ac3e8b5"
+        },
+        "hia/platform/mempool_node/abi.json": {
+          "bytes": 3877,
+          "sha256": "08164cfaa4214865a668ab4be54368820c95755fea8c376d50955e067253254c"
+        },
+        "hia/platform/mempool_node/build.py": {
+          "bytes": 12475,
+          "sha256": "fa5f9d7820f1d2170da14e7333cfe265447a17587e6375637332a28bd259da44"
+        },
+        "hia/platform/mempool_node/capacity_context.json": {
+          "bytes": 8475,
+          "sha256": "b0dac0bf942ab5fcba4229ce1cbc676f22d8d7bcdc13cb793c640df4a37283fa"
+        },
+        "hia/platform/mempool_node/capacity_fixture.json": {
+          "bytes": 104495,
+          "sha256": "54f67b8beaa3f1e7feebf171aff61b7b725c8d8806d3fb505c435fcecdfb0b50"
+        },
+        "hia/platform/mempool_node/case_roster.json": {
+          "bytes": 3888,
+          "sha256": "a23fc0b64027a6fc448b11b02a49b2bd8aedb0a04b3b5a415c46fd5324774263"
+        },
+        "hia/platform/mempool_node/composition.json": {
+          "bytes": 540217,
+          "sha256": "e9e2ff3d4c3bd80f2d443873a1e7cbe3675eb4f3d6bcf1f92f3f9e8e05fa2556"
+        },
+        "hia/platform/mempool_node/corpus.jsonl": {
+          "bytes": 456047,
+          "sha256": "f9470f0195eb81b0872c65756650fa1a39c11fc72cb52cc2b8526dbf3bc59267"
+        },
+        "hia/platform/mempool_node/cross_corpus.jsonl": {
+          "bytes": 2763,
+          "sha256": "ebbd5df6c0fef2513b14587e786206f85a2cc5621a89adfc4ad62a15aaacda19"
+        },
+        "hia/platform/mempool_node/cross_observations.py": {
+          "bytes": 14171,
+          "sha256": "d3efccabcc2c98478a772d5304ef77a6b657b17faeaca405c5a80cbd9a6dd56c"
+        },
+        "hia/platform/mempool_node/dependencies.json": {
+          "bytes": 7538,
+          "sha256": "99282461dea0b3f8a981c8be6f048eb385f4d0131ceadca3466db6d94a1fd981"
+        },
+        "hia/platform/mempool_node/evidence.py": {
+          "bytes": 10544,
+          "sha256": "4efbae4aabe49c138fb0189afc51701b5ba2e792d47db29e1ffa2d6f17e0604c"
+        },
+        "hia/platform/mempool_node/native_contract.py": {
+          "bytes": 7193,
+          "sha256": "e07f00ac22f6f65eaacda362d1eeefe7eab71ce1cfbd237eb85c0b730bc9bcb6"
+        },
+        "hia/platform/mempool_node/node_cases.py": {
+          "bytes": 1935,
+          "sha256": "7811c5ad9cf3d0b5924d89ee7b5e636e96d754b6da7694cfd9827fabc060faa4"
+        },
+        "hia/platform/mempool_node/node_corpus.jsonl": {
+          "bytes": 13466,
+          "sha256": "9c88f9f2f84cc0c1c9648b6ccf761b9748f1fca8c670fc536b9eb46c45a384fd"
+        },
+        "hia/platform/mempool_node/node_methods.hepta": {
+          "bytes": 98463,
+          "sha256": "7300f02f3bc8e75e468d95221b8b9821d4ac8c73d60c2b9cc611e3761e46bc9e"
+        },
+        "hia/platform/mempool_node/node_observations.py": {
+          "bytes": 7297,
+          "sha256": "532a58377e9e01e3f8e3b30f2c9e44c80302c1c90231293c5668a6941951221b"
+        },
+        "hia/platform/mempool_node/node_observers.py": {
+          "bytes": 19773,
+          "sha256": "37f6aa20d2316bc0faddd1b012820ad643bf292fcdf15408f3231c949ed5d593"
+        },
+        "hia/platform/mempool_node/observations.py": {
+          "bytes": 16291,
+          "sha256": "927c5b07da81c9a70a74388b2a7236f7f084617f7b92849b3d1ca80cd13ea42e"
+        },
+        "hia/platform/mempool_node/original_graph.py": {
+          "bytes": 4100,
+          "sha256": "f998c0d17d2df4c9062df050920e63526b4eba2c25d943ac1a54f2e4d5eb7419"
+        },
+        "hia/platform/mempool_node/owner.hepta": {
+          "bytes": 147325,
+          "sha256": "76e6a38d842ecc37fbc1d3e8662bdf5e5f8a0ce2aa1bbc99013a72c9be95e5bd"
+        },
+        "hia/platform/mempool_node/qualify.py": {
+          "bytes": 2398,
+          "sha256": "b03afc306d3951ede1c521c598a6aded8719ae1a979860ac258435756aa3d046"
+        },
+        "hia/platform/mempool_node/rust_node_reference.rs": {
+          "bytes": 18336,
+          "sha256": "77aab82d7bc90310992f692840a4405c88aa59bdf55f52a7cfda093c701239d9"
+        },
+        "hia/platform/mempool_node/rust_oracle.py": {
+          "bytes": 28328,
+          "sha256": "b290f72d737d9f82a6701458ee9c0242439593c7e5088bd5381ec9f5dc4d3f6d"
+        },
+        "hia/platform/mempool_node/rust_reference.rs": {
+          "bytes": 23918,
+          "sha256": "f6b074c2939c9aaac9fc5e6b720e71d3f8a7e40f3d845387f800c1ded240c3f7"
+        },
+        "hia/platform/mempool_node/safe.py": {
+          "bytes": 3295,
+          "sha256": "5295e3d440c1bfa68d6f44b84aa2b69285b31fcb36241dab33f50334977428aa"
+        },
+        "hia/platform/mempool_node/snapshot_capacity.hepta": {
+          "bytes": 13165,
+          "sha256": "6d881fe3805fcaefe8a569daf069076926adcd0e53b18d7db7b39445bd1287fb"
+        },
+        "hia/platform/mempool_node/suite_boundaries.py": {
+          "bytes": 20109,
+          "sha256": "2031bef7d4565e44591845f2b1b115389bb4959800b030d8353eab7fd8f48865"
+        },
+        "hia/platform/mempool_node/suite_capacity.py": {
+          "bytes": 15589,
+          "sha256": "ca438d49f4f8e868b9ac96d631fc7d520b5d23b23ad93f009f67a94f10b41d8e"
+        },
+        "hia/platform/mempool_node/suite_cross.py": {
+          "bytes": 5764,
+          "sha256": "5f7be0773ed0b2de571058848e03ad2fdea1bb77891aec4dd75b8ecc51608404"
+        },
+        "hia/platform/mempool_node/suite_node.py": {
+          "bytes": 7328,
+          "sha256": "aea733816374c3e63887ed67ce3582b1bbce8d048a584c8be3ef81421fac961e"
+        },
+        "hia/platform/mempool_node/suite_smoke.py": {
+          "bytes": 15302,
+          "sha256": "81523aa17b64ef29c6176522524bd2e30193d72f14e1878b55d8c3dd91bbe2ee"
+        },
+        "hia/platform/mempool_node/test_integrity.py": {
+          "bytes": 14838,
+          "sha256": "2079c62edfff30c6f21d93b46406f09c4516679ef98493f36f7b5776e693dcef"
+        },
+        "hia/platform/mempool_node/test_io_deadline.py": {
+          "bytes": 12477,
+          "sha256": "a426e4490a1ea0319322528b213ce795c1357f8a26ec6b07f96fa7526ec82a0a"
+        },
+        "hia/platform/mempool_typed/README.md": {
+          "bytes": 5915,
+          "sha256": "b88bb254c46115df69c78b647d18bccbcbf533ef4df8f4ef73388c98ee8db0d6"
+        },
+        "hia/platform/mempool_typed/abi.json": {
+          "bytes": 2077,
+          "sha256": "f62c2b64192e14717940f2352bd5906708cdbb23120b293259fc6e1159189371"
+        },
+        "hia/platform/mempool_typed/build.py": {
+          "bytes": 5540,
+          "sha256": "99535ccf95f8ce8ee038e641ba7727c4fec44e78595193159dd3d1c8699612e4"
+        },
+        "hia/platform/mempool_typed/cases.py": {
+          "bytes": 7818,
+          "sha256": "b362a58d4cce1f8e099cc78d5473d1c796b8ba2b213b82453cd5756727bdb968"
+        },
+        "hia/platform/mempool_typed/contract.py": {
+          "bytes": 7824,
+          "sha256": "58c622ba68818752cabab96e26e596feb8cf3752dc3a9704f6d9dbcfce1250e0"
+        },
+        "hia/platform/mempool_typed/guarded.py": {
+          "bytes": 16551,
+          "sha256": "8a6105da48c94e5e67b89530c1f77c7b7d10982daccb6e6d4f35320b0595f26b"
+        },
+        "hia/platform/mempool_typed/linux_emitter.hepta": {
+          "bytes": 39470,
+          "sha256": "f5b8eaf2612e53caad3a028f17f85a24f354ac9f155fd7e8bb869b9288d79de3"
+        },
+        "hia/platform/mempool_typed/native_io.py": {
+          "bytes": 2855,
+          "sha256": "0160ecce83fca85b2c674f5671499e8a344317948c90cea02bff104cd21d9fd3"
+        },
+        "hia/platform/mempool_typed/physical.py": {
+          "bytes": 31186,
+          "sha256": "da724024b293edb5dad5289d99dd6ec2d56c3186f8a471536ad2234fd340e524"
+        },
+        "hia/platform/mempool_typed/qualify.py": {
+          "bytes": 11590,
+          "sha256": "fe27a99629c97dcf90d64db4711292965de430ce0ea92d1ca4b0635e3febdd14"
+        },
+        "hia/platform/mempool_typed/runtime.py": {
+          "bytes": 3005,
+          "sha256": "79f94c3850d0193a8586a664cccc77a1fb6678ac7ae8ee26a36c911b72f0e8ac"
+        },
+        "hia/platform/mempool_typed/rust_oracle.py": {
+          "bytes": 15466,
+          "sha256": "5de5fc82c309527bc607ea9020e7abb85a9ece45e24c357dff1a136d00a98c01"
+        },
+        "hia/platform/mempool_typed/rust_reference.rs": {
+          "bytes": 14594,
+          "sha256": "b9844452cc6ac1dc489c17d81168384af791c5bf27d7f7c06834fd84c5a81442"
+        },
+        "hia/platform/mempool_typed/test_integrity.py": {
+          "bytes": 22716,
+          "sha256": "07d98b6dcd4945920d7e31c85295909f315e3b4a7beceb3dd8f760536ae616b9"
+        },
+        "hia/platform/mempool_typed/typed_fixture.hepta": {
+          "bytes": 113474,
+          "sha256": "61b809ed0de04b914f9bde237a9dffcf0ba8b12080b5aa04344da7292965067a"
+        },
+        "hia/platform/node_commitment/README.md": {
+          "bytes": 6198,
+          "sha256": "c85f42958f30ebedcc42e493b0e7f4307286eed7b791ea0009e0b9b42e38fba3"
+        },
+        "hia/platform/node_commitment/bounded.py": {
+          "bytes": 2595,
+          "sha256": "c3a20fd7004350be2a77c2f47182e9b02ea98af37f280eaf25e2083f7464aaf7"
+        },
+        "hia/platform/node_commitment/checked.hepta": {
+          "bytes": 75232,
+          "sha256": "4d0997586daee63eee3180187ee3e6b35f2058a4d289e80d0e490c5e63ba8507"
+        },
+        "hia/platform/node_commitment/checked_entry.hepta": {
+          "bytes": 10271,
+          "sha256": "b1af8c4309d6bc4b45efb26eb2d7624558fea497c6c98c95a93a22271e1098e4"
+        },
+        "hia/platform/node_commitment/hash_qualification_entry.hepta": {
+          "bytes": 2185,
+          "sha256": "30e0342319b23278f8304a3d1c22fb6d139e4c748ef5ff165abab881e684dd3d"
+        },
+        "hia/platform/node_commitment/owner.hepta": {
+          "bytes": 206929,
+          "sha256": "fdd4e885de890589e22195fcbe206e82d205f0e61abef7c963b888b9264e8c55"
+        },
+        "hia/platform/node_commitment/qualify_delta.py": {
+          "bytes": 15116,
+          "sha256": "7c59ea6b6ec60bd1438d4261ff20344767256c5ed3cbbc0eb0277daef1ff8037"
+        },
+        "hia/platform/node_commitment/qualify_hash.py": {
+          "bytes": 3889,
+          "sha256": "fa0def8e6bd71a67e900e4025257eabc4e61e7c2b9f414f7ddfa082c55a47345"
+        },
+        "hia/platform/node_commitment/qualify_snapshot.py": {
+          "bytes": 45583,
+          "sha256": "92bbe1193f734d40d431349a07887edb50c9342515087d77e0a6b57638a0ce54"
+        },
+        "hia/platform/node_commitment/rust_checked_reference.rs": {
+          "bytes": 33937,
+          "sha256": "b6b5b67d89688830172d9ace32d0f1a79b2a50f082143062903dfb24e1979d0c"
+        },
+        "hia/platform/node_commitment/rust_delta_reference.rs": {
+          "bytes": 6662,
+          "sha256": "d39b4b22d4880b6366f56edb0434f1640145d88810ab017ac83c1e0ec690662e"
+        },
+        "hia/platform/node_commitment/rust_oracle.py": {
+          "bytes": 13137,
+          "sha256": "ee35c6b320050c42b4516cfbd649330fad72be7aa9b40f889c3e0888e5e15eb6"
+        },
+        "hia/platform/node_commitment/rust_some_reference.rs": {
+          "bytes": 22717,
+          "sha256": "92a758d80cab7ccfc0cad613af4b2c20ed3240b5bb213182e29a9f7e00e4f55f"
+        },
+        "hia/platform/node_commitment/sha256.hepta": {
+          "bytes": 78326,
+          "sha256": "1232e17fe4c3c77fb2ab16d99f5267db72b35625bb944ba68a35120c59e9b14a"
+        },
+        "hia/platform/node_commitment/sha256_fork.hepta": {
+          "bytes": 156032,
+          "sha256": "cc6751733d459eae18d7cee5228ac0bb5534e660e9a6f000be9f1c54f6b82abe"
+        },
+        "hia/platform/node_commitment/snapshot.hepta": {
+          "bytes": 163431,
+          "sha256": "f2eabfd0c3a068610d2dac3565db29a13547fbdcadb345abf3709a05f95c30de"
+        },
+        "hia/platform/node_commitment/snapshot_entry.hepta": {
+          "bytes": 19377,
+          "sha256": "c188f8974b9c03b8325533c86d69a527d61cc18c1955decf8db993aad66beba6"
+        },
+        "hia/platform/node_commitment/tree.hepta": {
+          "bytes": 104119,
+          "sha256": "85cf5b591a4e37163c8a01d9963ffd2cffd74abaf6bcf2ed3eeeab08a0de1916"
+        },
+        "hia/platform/node_commitment/tree_entry.hepta": {
+          "bytes": 1673,
+          "sha256": "528b53f9095f6b0bd6a339712123add18e9f23d3f5f3a36d328a71a4cb56636f"
+        },
+        "hia/platform/node_delta/delta_fixture.hepta": {
+          "bytes": 25930,
+          "sha256": "ab766a2f5e2804962850c9ac89c197ea295c822957544cf55b52c2043a5c44c1"
+        },
+        "hia/platform/node_delta/delta_owner.hepta": {
+          "bytes": 45415,
+          "sha256": "c540ab0e2c17926a4f20b813b89f0645a47275d3fe09b43ce38affaaef119473"
+        },
+        "hia/platform/node_owner/context.hepta": {
+          "bytes": 12059,
+          "sha256": "eced5ca80fd9151a7240b447339bb2d041c6fcfc0791c709a885eb266c33ddd6"
+        },
+        "hia/platform/node_owner/disk_bridge.hepta": {
+          "bytes": 12098,
+          "sha256": "0131f281a2f98708f93e913d15832ac651b330c8c57bb7ca44e5d82aaf1c479a"
+        },
+        "hia/platform/node_owner/json_value.hepta": {
+          "bytes": 34148,
+          "sha256": "de1f6333452fe768520580caff91225f3797037e5b606a271ad1b0c170298e7d"
+        },
+        "hia/platform/node_owner/linux_emitter.hepta": {
+          "bytes": 239028,
+          "sha256": "4d387ac724f074ca92dea1c96518f166fee231f140f8f1880ddfd82627ed4341"
+        },
+        "hia/platform/node_owner/prefix_bridge.hepta": {
+          "bytes": 113469,
+          "sha256": "6cabdbd3959b8126dcecc4b8d7130eb27d66b6683412b3d6d56c142037b81195"
+        },
+        "hia/platform/node_owner/producer.hepta": {
+          "bytes": 204920,
+          "sha256": "4ebfec471ab60eb8fbdf8b471d1f93e7a41b3e6f2ec04b4648ed1798141113e9"
+        },
+        "hia/platform/node_owner/snapshot.hepta": {
+          "bytes": 96282,
+          "sha256": "d20e89a464d5e0560b4e10ba207fb3130a73c1a219c8c6e51515d24db5def201"
+        },
+        "hia/platform/probe_policy.hepta": {
+          "bytes": 38621,
+          "sha256": "0a0cc69d2a6a981dbc886a27c1680f0ec69d3966e48dbe542ef169675d9f7f27"
+        },
+        "hia/platform/typed_store/root_finalize.hepta": {
+          "bytes": 6116,
+          "sha256": "23d2b99ab7e311e189da17d7fa0acaaeeef8e9c4be648aab5ba4ee6df6b07ee4"
+        },
+        "hia/platform/typed_store/stage_policy.hepta": {
+          "bytes": 206730,
+          "sha256": "5f2365a958e1acfda95d5ac0a89fb96c05d81e2e6241655ddcf3aacbd8c8b1f8"
+        },
+        "hia/qualification/compiler-binding.json": {
+          "bytes": 878,
+          "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+        },
+        "hia/qualification/compiler-cold-full.json.xz": {
+          "bytes": 838544,
+          "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+        },
+        "hia/qualification/compiler-cold.json": {
+          "bytes": 108675,
+          "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+        },
+        "hia/src/audit/event.hepta": {
+          "bytes": 41492,
+          "sha256": "539b42b1db02cca184f94302ce1ac373bcf175acac7c380dce7944427b99f7c9"
+        },
+        "hia/src/checkpoint/value_v2.hepta": {
+          "bytes": 37010,
+          "sha256": "b9da5875c99f8388886aca7cf1f6f8b3ae337da065e6210211ca096d0e79701e"
+        },
+        "hia/src/codec/json_number.hepta": {
+          "bytes": 66485,
+          "sha256": "c02560bebfabee74def99d26b2308f044b0598c9a3e07ac85c9a709e5cd3e0dd"
+        },
+        "hia/src/codec/json_primitives.hepta": {
+          "bytes": 8258,
+          "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+        },
+        "hia/src/codec/json_value_encode.hepta": {
+          "bytes": 33335,
+          "sha256": "c5bbfa3378698e689dedab8c14618b56c3b3f67b9b0d929285c0fd4209eef8fd"
+        },
+        "hia/src/codec/json_value_wire.hepta": {
+          "bytes": 39174,
+          "sha256": "d4ed727df55c1261b50d58fb48134acef59365cc6bccf9ce52fd63dc6cc9f7f7"
+        },
+        "hia/src/crypto/ed25519_group.hepta": {
+          "bytes": 80448,
+          "sha256": "dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc"
+        },
+        "hia/src/crypto/ed25519_sign.hepta": {
+          "bytes": 33639,
+          "sha256": "0833bb9b6d2661fc49ccc794eb1410e787a51cec2eb0a079bff05b1861dc32e1"
+        },
+        "hia/src/crypto/ed25519_verify.hepta": {
+          "bytes": 7203,
+          "sha256": "1b0e53c94ced4b72b63ec5f4aecaccd3111ca88d87049b558f6e09905f160200"
+        },
+        "hia/src/crypto/ed25519_verify_joint.hepta": {
+          "bytes": 10547,
+          "sha256": "89c46086d971eaa7578e3b29f00012d4e8ceb5c569dddb8cb83550db4fe8db41"
+        },
+        "hia/src/crypto/pon_hash.hepta": {
+          "bytes": 7576,
+          "sha256": "1812a7c38d5ef049eb84e43a8b23f7cd83dcec3c087fc19274e63c0e415d2f7d"
+        },
+        "hia/src/crypto/sha256.hepta": {
+          "bytes": 24447,
+          "sha256": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff"
+        },
+        "hia/src/crypto/sha256_arena.hepta": {
+          "bytes": 28919,
+          "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+        },
+        "hia/src/crypto/sha256_stream.hepta": {
+          "bytes": 47688,
+          "sha256": "1b1b24af00eed7bdb6df3cebad16ac252e9fe708a0304fa7cfee5efcb85a6d88"
+        },
+        "hia/src/crypto/sha512_arena.hepta": {
+          "bytes": 33204,
+          "sha256": "ca215a8059b0c3d459f852e8c9e5e86924a7a051b2d27595580097be51677e02"
+        },
+        "hia/src/executor/schedule.hepta": {
+          "bytes": 116824,
+          "sha256": "4d330d485cb3736ecb79a855c547c268568477b4160972c73221db99c6df7de7"
+        },
+        "hia/src/math/binary64.hepta": {
+          "bytes": 21416,
+          "sha256": "c88559a356bf721ed4a124d9c88f232ef11a12d1a9669f0eb77b6f83022dd8e0"
+        },
+        "hia/src/mempool/lane_owner.hepta": {
+          "bytes": 29932,
+          "sha256": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da"
+        },
+        "hia/src/node/settings_development.hepta": {
+          "bytes": 179998,
+          "sha256": "cc4665532c22d8574bfc2bb66f42632d676eb3fa5b33f348df272c6d997aac3f"
+        },
+        "hia/src/protocol/ilf2.hepta": {
+          "bytes": 4482,
+          "sha256": "49ce3b638a5a3377547542712c50ef8e77350b791584e22be434879f65a08727"
+        },
+        "hia/src/protocol/ilf3.hepta": {
+          "bytes": 7290,
+          "sha256": "2fcd0b8a53ab356731e029f1772a61a579132c753fa9c6cc5a4409d232c6d26b"
+        },
+        "hia/src/protocol/pnx1.hepta": {
+          "bytes": 20202,
+          "sha256": "c2e617916fb5ecb65f66d4bb35d778c06f46d6b2e66bb5e7aded12e3cdd6f4aa"
+        },
+        "hia/src/protocol/state_root.hepta": {
+          "bytes": 221073,
+          "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+        },
+        "hia/src/protocol/state_root_compact.hepta": {
+          "bytes": 35045,
+          "sha256": "156debf2b4d940fc66a305bb06705606b46c9af8a9660968b24e48ad6feeb057"
+        },
+        "hia/src/state/json_string.hepta": {
+          "bytes": 22061,
+          "sha256": "cfc6dc4302db90b8e183532f7e46ee757850a719f194dbd08ce4581d5f835fbd"
+        },
+        "hia/src/state/json_value.hepta": {
+          "bytes": 48938,
+          "sha256": "8bd1366dbc5e83461b12c1e1c6387356bf31ef5792268381993dc70aa3e668aa"
+        },
+        "hia/src/transport/authenticated_request.hepta": {
+          "bytes": 205301,
+          "sha256": "230c616627c6ae6a5e4fced813bfb484a37c1bb5f2275d60c7a97ae4c5a985bc"
+        },
+        "hia/src/transport/authenticated_response.hepta": {
+          "bytes": 59636,
+          "sha256": "439c4fd51200decb810f180e8c52162dbc0c802e00158add0635cbd4e9c3d5e0"
+        },
+        "hia/src/transport/signed_response.hepta": {
+          "bytes": 25551,
+          "sha256": "ff5e4304e3d62213cca3e15d143885179fb78552b289f772993f38c34ff0a876"
+        },
+        "hia/src/work/verify.hepta": {
+          "bytes": 37302,
+          "sha256": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1"
+        },
+        "hia/storage/owner_policy.hepta": {
+          "bytes": 198342,
+          "sha256": "fe9b18eea0b19ae40db8b831fcdc0d485690d562b7b2b73fe1223884a31f64b6"
+        },
+        "hia/storage/sha256_framing.hepta": {
+          "bytes": 10424,
+          "sha256": "81296bb7b0cda34a374dbbb1d269a7d56cd196aba3eca7585e610f79c9d15eb4"
+        },
+        "hia/tests/native_support.py": {
+          "bytes": 10626,
+          "sha256": "2994f6ef96b121d424a42d3bd56b3a692f4338fe211059aeb432799970408803"
+        },
+        "hia/tests/test_platform_cleanup.py": {
+          "bytes": 9301,
+          "sha256": "5e7e73748dd58a7aac1baeb2f55dad47481b1b1f4a22f80c04cd4bb739478cbe"
+        },
+        "hia/toolchain.lock.json": {
+          "bytes": 221,
+          "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+        },
+        "hia/tools/qualify_platform.py": {
+          "bytes": 30419,
+          "sha256": "e2c30b3f1d6576b36a66288cd8803f89415960a5c6983c4365ce5dcbf0cec27e"
+        },
+        "hia/tools/toolchain.py": {
+          "bytes": 14157,
+          "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+        }
+      }
+    },
+    "source_qualification_base": "492ee6f451e9e582adde52434807ffb5c01bdcea",
+    "source_qualification_tree": "b24496da18a7cb441897a62f3841b8ce138a71ba"
+  },
+  "official_ci": [
+    {
+      "artifact": 14587670971,
+      "bytes": 356459796,
+      "elapsed_ns": 180116954522,
+      "head": "fc867d207644a1288980553b8f4c32bc062152c9",
+      "mac_report": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-fc867-official-dual-readback-v1-h09oc89z/report.json",
+      "records_completed": 1289,
+      "result": "FAIL_RECORDS_180",
+      "sha256": "77f77c6f0184e2504593e407b30744f1c67d32273bc21b95e40f0ab045fe3283"
+    },
+    {
+      "allocation_controls_completed": 93,
+      "allocation_internal_limit_seconds": 180,
+      "allocation_stage_elapsed_ns": 180630196515,
+      "artifact": 14596855495,
+      "both_endpoints_all_members_verified": true,
+      "bytes": 393956887,
+      "desktop_complete_readback": "/tmp/trnm-task-3ad-push-official-dual-readback-v2-y6ghobuf/readback.json",
+      "final_allocator_live_zero_observed": false,
+      "head": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+      "job": 136041700414,
+      "last_failure_ordinal": 70,
+      "mac_complete_readback": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-3ad-push-official-dual-readback-v2-y6ghobuf/report.json",
+      "original_retained_tests": 41,
+      "public_cases": 445,
+      "public_elapsed_ns": 30068393588,
+      "records_completed": 1390,
+      "records_elapsed_ns": 138994925974,
+      "result": "FAIL_PUBLIC_ALLOCATION_INTERNAL_180",
+      "run": 44661848867,
+      "sha256": "cc8acb26b7e55c39498a32d837bf081c352b211aae98af47a1e2673941d49cbe",
+      "side": "push"
+    },
+    {
+      "allocation_controls_completed": 80,
+      "allocation_internal_limit_seconds": 180,
+      "allocation_stage_elapsed_ns": 180756911739,
+      "artifact": 14596546863,
+      "both_endpoints_all_members_verified": true,
+      "bytes": 393935366,
+      "desktop_complete_readback": "/tmp/trnm-task-3ad-pr-official-dual-readback-v2-v52cx8v2/readback.json",
+      "final_allocator_live_zero_observed": false,
+      "head": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+      "job": 136041771847,
+      "last_failure_ordinal": 57,
+      "mac_complete_readback": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-3ad-pr-official-dual-readback-v2-v52cx8v2/report.json",
+      "public_cases": 445,
+      "public_elapsed_ns": 37938741911,
+      "records_completed": 1390,
+      "records_elapsed_ns": 167596377240,
+      "result": "FAIL_PUBLIC_ALLOCATION_INTERNAL_180",
+      "run": 44661872560,
+      "sha256": "d37fb7cc250c2dbff7aee51336c8dd29f61f9a88ea2fc18f5c2a09224a2ac4f8",
+      "side": "pr"
+    }
+  ],
+  "official_ci_complete_summary": {
+    "bytes": 16244,
+    "complete_byte_verification_does_not_change_failed_test_result": true,
+    "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-ci-3ad-two-complete-summary-v2-k5uhumwe/report.json",
+    "sha256": "32a4088ffeb637189d02020aa0fe3ba657706d4f83154d74e647f9d35507f7c8"
+  },
+  "official_ci_v12_observations_preserved": [
+    {
+      "artifact": 14587670971,
+      "bytes": 356459796,
+      "elapsed_ns": 180116954522,
+      "head": "fc867d207644a1288980553b8f4c32bc062152c9",
+      "mac_report": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-fc867-official-dual-readback-v1-h09oc89z/report.json",
+      "records_completed": 1289,
+      "result": "FAIL_RECORDS_180",
+      "sha256": "77f77c6f0184e2504593e407b30744f1c67d32273bc21b95e40f0ab045fe3283"
+    },
+    {
+      "allocation_stage_elapsed_ns": 180756911739,
+      "artifact": 14596546863,
+      "bytes": 393935366,
+      "diagnosis": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-ci-3ad-pr-inner-diagnosis-7eh1xj1l/summary.json",
+      "head": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+      "mac_complete_zip_verified": true,
+      "public_elapsed_ns": 37938741911,
+      "records_completed": 1390,
+      "records_elapsed_ns": 167596377240,
+      "result": "FAIL_PUBLIC_ALLOCATION_INTERNAL_180",
+      "second_endpoint_readback_pending": true,
+      "sha256": "d37fb7cc250c2dbff7aee51336c8dd29f61f9a88ea2fc18f5c2a09224a2ac4f8",
+      "side": "pr"
+    },
+    {
+      "artifact": 14596855495,
+      "bytes": 393956887,
+      "head": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+      "outer_store_complete_elapsed_ns": 409826727905,
+      "outer_store_complete_exit": 1,
+      "result": "INNER_PHASE_PENDING_COMPLETE_DOWNLOAD",
+      "sha256": "cc8acb26b7e55c39498a32d837bf081c352b211aae98af47a1e2673941d49cbe",
+      "side": "push"
+    }
+  ],
+  "previous_evidence_references": [
+    {
+      "archive": {
+        "bytes": 235835042,
+        "sha256": "1cd364d12002e76b272f1c5447c0d18fa7659092e1feda94af73b7189727539b"
+      },
+      "bytes": 9620,
+      "desktop_root": "/var/tmp/trnm-task-full-v4-failure-seal-v1-x8tkloj3",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v4-failure-seal-v1-x8tkloj3/report.json",
+      "readback": {
+        "logical_bytes": 1461368262,
+        "manifest": {
+          "bytes": 7116926,
+          "sha256": "9dfd6311932b5091d1d4a0ed060aed1e2fcd609f3bf624cd74267ae7be512f17"
+        },
+        "members": 6048,
+        "metadata_paths": 11126,
+        "objects": 6047,
+        "observations": {
+          "allocations_112_executed": false,
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "records_native_original_completed_equal_pairs": 1275,
+          "records_timeout_seconds": 180
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "96fb25b5112a940e8227b6741e61dba8b7271ace2890e16cbe563232e086d0a7",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": {
+        "bytes": 254153739,
+        "sha256": "b39e6ee2f3fdedef81c8d3218ce5f74eb825436a8cf50820e5459265761e444e"
+      },
+      "bytes": 10020,
+      "desktop_root": "/var/tmp/trnm-task-full-v5-failure-seal-v1-9x0yj933",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v5-failure-seal-v1-9x0yj933/report.json",
+      "readback": {
+        "logical_bytes": 1499826514,
+        "manifest": {
+          "bytes": 10857020,
+          "sha256": "e56a565bcdfdf1cedd2940c0feee0bb0a8ff048fc62493e36d2cd9dcefb8d34a"
+        },
+        "members": 7895,
+        "metadata_paths": 17360,
+        "objects": 7894,
+        "observations": {
+          "allocations_112_executed": false,
+          "observer_clock_is_formal_gate": false,
+          "observer_clock_pairs": 1318,
+          "observer_clock_status": "CLOCK_DIAGNOSTIC_FINISHED_TIMEOUT_PRESERVED",
+          "original_retained_tests": 41,
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "records_native_original_completed_equal_pairs": 1290,
+          "records_timeout_seconds": 180
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "d21b32aa27b9d74b2b6f00486e362bc1270dc9c8786ed1c6f39191fbd0dac012",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": null,
+      "bytes": 2769,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v6-failure-seal-v1-9d0yk2ps/report.json",
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "98db09380d59aa450437ca62b36e920349eb2d06fe193093110ed4bb15ee027a",
+      "status": "FAIL"
+    },
+    {
+      "archive": {
+        "bytes": 243890730,
+        "sha256": "b0a928b32dedc64f0c1b1749d375330130435642698c1c73115705840e8bd7e6"
+      },
+      "bytes": 10942,
+      "desktop_root": "/var/tmp/trnm-task-full-v6-failure-seal-v2-e2_ghdhw",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v6-failure-seal-v2-e2_ghdhw/report.json",
+      "readback": {
+        "logical_bytes": 1388927534,
+        "manifest": {
+          "bytes": 7941132,
+          "sha256": "fe970d690907262cb0fd29e61db972874dab0322ea5b996343bfea4672f48cc2"
+        },
+        "members": 6249,
+        "metadata_paths": 12034,
+        "objects": 6248,
+        "observations": {
+          "allocations_112_executed": false,
+          "inline_v1_format_rejection_preserved": true,
+          "inline_v2_native_calls": 4332,
+          "inline_v2_scope": "4332 mechanical compression controls, not Task full gate",
+          "native_step_clock_is_formal_gate": false,
+          "native_step_clock_status": "PASS_DIAGNOSTIC_ONLY",
+          "original_retained_tests": 41,
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "records_native_original_completed_equal_pairs": 1318,
+          "records_timeout_seconds": 180
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "93e3c8769d23116f5d6c8b2decb3c015e46db170e141dac878e6ea3a723d7526",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": null,
+      "bytes": 2752,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v7-failure-seal-v1-akbn4q3s/report.json",
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "cf181cff09e83f8677782a95a055a9b26d22a541b3c6ba502a4047e74bb1f8fb",
+      "status": "FAIL"
+    },
+    {
+      "archive": {
+        "bytes": 255600547,
+        "sha256": "2bc29c17661ad377ec35cf999d58c579d331cbfe59aa17e18e079c3e7eca2b07"
+      },
+      "bytes": 11733,
+      "desktop_root": "/var/tmp/trnm-task-full-v7-failure-seal-v2-n4mbhhcj",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v7-failure-seal-v2-n4mbhhcj/report.json",
+      "readback": {
+        "logical_bytes": 1688102163,
+        "manifest": {
+          "bytes": 8646118,
+          "sha256": "e74eaada5b4af78674526217bff912e7ec3153eb126066b6b4a6764be7adecf3"
+        },
+        "members": 6838,
+        "metadata_paths": 13477,
+        "objects": 6837,
+        "observations": {
+          "allocations_112_executed": false,
+          "helper_only_sources_covered": 3,
+          "initial_flat_profile_refusals_preserved": 7,
+          "node_28_compiler_inputs_unchanged": true,
+          "node_var_path_refusal_preserved": true,
+          "original_retained_tests": 41,
+          "preview32_clock_is_formal_gate": false,
+          "preview32_clock_status": "PASS_DIAGNOSTIC_ONLY",
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "records_native_original_completed_equal_pairs": 1319,
+          "records_timeout_seconds": 180,
+          "registered_flat_entry_compiles": 59,
+          "registered_owned_entry_compiles": 4
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "1a3d9acd222feb0df6ae4697bd09e81a1894e3f0cfe0f1ae5d638f7eadb2c3da",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": null,
+      "bytes": 2748,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v8-comb-seal-v1-9d1tn84i/report.json",
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "a7b095b94b3e49aa3db04d96ca64a043a89e21104a742d5c9f641e87c1a7b278",
+      "status": "FAIL"
+    },
+    {
+      "archive": {
+        "bytes": 266596281,
+        "sha256": "e882ced1866c6a75e5c3a5f1b4f2eb6af6addd258543717c2f0528ee7edd1ae4"
+      },
+      "bytes": 13509,
+      "desktop_root": "/var/tmp/trnm-task-full-v8-comb-seal-v2-lu0vz9z9",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-full-v8-comb-seal-v2-lu0vz9z9/report.json",
+      "readback": {
+        "logical_bytes": 2005645367,
+        "manifest": {
+          "bytes": 11607691,
+          "sha256": "c11c17e571cf855040ee1458d20761c7ea1b4422633f7328a4c5798000304bc3"
+        },
+        "members": 9958,
+        "metadata_paths": 17754,
+        "objects": 9957,
+        "observations": {
+          "allocations_112_executed": false,
+          "cold_719_status": "PASS_719_COLD_ACTUAL_REFERENCE_PAIRS",
+          "cold_dual_algorithm_240s_window_passed": false,
+          "cold_dual_algorithm_completed_pairs": 569,
+          "cold_old_algorithm_rerun_this_stage": false,
+          "cold_reference_was_retained_actual_bytes": true,
+          "cold_stage_actual_elapsed_ns": 240005284444,
+          "cold_worker_final_report_absent_after_timeout": true,
+          "initial_native_module_budget_refusal_preserved": true,
+          "last_completed_index": 1319,
+          "original_retained_tests": 41,
+          "pending_index": 1320,
+          "pending_name": "preview-32-operation-duplicate-near-end",
+          "preview32_clock_is_formal_gate": false,
+          "preview32_clock_status": "PASS_DIAGNOSTIC_ONLY",
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "records_declared_pairs": 1390,
+          "records_native_original_completed_equal_pairs": 1320,
+          "records_timeout_seconds": 180,
+          "retained_719_actual_pairs": 719,
+          "retained_719_status": "PASS",
+          "source_commit": "10b2f5981c3aa742b16b32090260372f31091733",
+          "source_tree": "d48690fd82dac337de639b0fca2ec30be9a2b3df",
+          "strict_controls": 4,
+          "strict_native_calls": 525,
+          "strict_original_calls": 525,
+          "suffix_diagnostic_is_complete_gate": false,
+          "suffix_diagnostic_pairs": 70,
+          "supervision_terminal_snapshots": 12
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "e45ad27a7fc7b4a8920f2f161892000b797f479e66b1954ce3712a470d893503",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": {
+        "bytes": 447178037,
+        "sha256": "9b9293681742408275cb011a771f1104437daba4823edccfc7718e27b8217236"
+      },
+      "bytes": 9524,
+      "desktop_root": "/var/tmp/trnm-task-old-archive-migration-v1-30wppn_j",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-old-archive-desktop-migration-v1-qbm7s4ea/report.json",
+      "readback": {
+        "manifest": {
+          "bytes": 6531903,
+          "sha256": "6e0c69ac346c203ed49995edce5e4a44c0a9779379b0772c420e5d169cc352a0"
+        }
+      },
+      "scope": null,
+      "sha256": "67e62526bf6fd1844a9a3c3cecdb33f2e4b7564e0dd4c02a86181af1946e918c",
+      "status": "PASS_ARCHIVE_MIGRATED_TO_MAC_AND_DESKTOP_ONLY_ROG_DUPLICATE_REMOVED"
+    },
+    {
+      "archive": {
+        "bytes": 46812471,
+        "sha256": "34355bcd8bc1eefe899f1cdef2483a911bcfed834b5469f9039b84891be290bc"
+      },
+      "bytes": 4982,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-private-candidates-cleanup-v1-e3debvmo/report.json",
+      "scope": null,
+      "sha256": "be5c992dcc289df820d645e3420c1241439ead8ca57423565a8b81dd187bfbc9",
+      "status": "VERIFIED_INACTIVE_DUPLICATE_CANDIDATE_TREES_REMOVED"
+    },
+    {
+      "archive": {
+        "bytes": 46812471,
+        "sha256": "34355bcd8bc1eefe899f1cdef2483a911bcfed834b5469f9039b84891be290bc"
+      },
+      "bytes": 15198,
+      "desktop_root": "/var/tmp/trnm-task-private-candidates-seal-v1-e1d6i1gw",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-private-candidates-seal-v1-e1d6i1gw/report.json",
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "62e198b81088605801c925959c07254efe6ae163333ea8b4bcd8da969ca77e4a",
+      "status": "PASS_BOTH_ARCHIVES_ALL_MEMBERS_ON_TWO_ENDPOINTS_WITH_DECLARED_PRIOR_DEPENDENCIES"
+    },
+    {
+      "archive": {
+        "bytes": 31520238,
+        "sha256": "15a730de75069eab21e7bba07294cac1340f5a754a4951b2ed151f957b402a96"
+      },
+      "bytes": 2624,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-private-public-cleanup-v2-neanwpuc/report.json",
+      "scope": null,
+      "sha256": "0faf2ce34607db6b1c71af4e75385a10e142b7ab8e1b5205a28eb66ef84eac95",
+      "status": "VERIFIED_INACTIVE_DUPLICATE_CANDIDATE_TREES_REMOVED"
+    },
+    {
+      "archive": {
+        "bytes": 31520238,
+        "sha256": "15a730de75069eab21e7bba07294cac1340f5a754a4951b2ed151f957b402a96"
+      },
+      "bytes": 15400,
+      "desktop_root": "/var/tmp/trnm-task-private-public-seal-v2-hjr35t2x",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-private-public-seal-v2-hjr35t2x/report.json",
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "c0ac77cfe649a40fa005fcc794f55422a0b05ff99004d99fc0af1be34c2510f3",
+      "status": "PASS_BOTH_ARCHIVES_ALL_MEMBERS_ON_TWO_ENDPOINTS_WITH_DECLARED_PRIOR_DEPENDENCIES"
+    },
+    {
+      "archive": {
+        "bytes": 65332640,
+        "sha256": "97fa9e9231c91ff14cee2166877dfdeb37cc09cc0f8aa454629922001ee8309d"
+      },
+      "bytes": 10694,
+      "desktop_root": "/var/tmp/trnm-task-read-feed-seal-v1-3a24_wo6",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-read-feed-seal-v1-3a24_wo6/report.json",
+      "readback": {
+        "logical_bytes": 568577532,
+        "manifest": {
+          "bytes": 5131855,
+          "sha256": "03e6bc13d762aaa1793f5a86994551b8ee1a1fee434e3dce6f83c43cb6383086"
+        },
+        "members": 5788,
+        "metadata_paths": 6959,
+        "objects": 5787,
+        "observations": {
+          "complete_task_store_gate_executed": false,
+          "hashlib_digests": 460,
+          "invalid_pairs": 64,
+          "native_witness_calls": 1902,
+          "policy_controls": 4,
+          "policy_pairs": 525,
+          "private_read_feed_arena_pairs": 918,
+          "records_original_pairs_each_side": 10,
+          "typed_controls": 2,
+          "typed_pairs": 2506,
+          "wire_controls": 4,
+          "wire_pairs": 966
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "b89bec761c9b2b430108c040ffece6cfb27e2714d10b6962fdd85f78846cca5a",
+      "status": "PASS_ALL_DIAGNOSTIC_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": null,
+      "bytes": 730534,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-store-ci-10b2-full-v1-ffdexq9t/report.json",
+      "scope": null,
+      "sha256": "98a33d64787cae7a423db05b6d8b935b809c8bc51d9fd463db2125b86d0d883c",
+      "status": "PASS"
+    },
+    {
+      "archive": null,
+      "bytes": 352956,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-store-ci-376-pr-full-v1-znmtjtol/report.json",
+      "scope": null,
+      "sha256": "a6c22b7a647ebaab6fb35c8e48a11c659a4941c0ee1e1cd87e465c5028a55a6d",
+      "status": "PASS"
+    },
+    {
+      "archive": null,
+      "bytes": 352726,
+      "desktop_root": null,
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-store-ci-fc867-push-full-v1-m1s69ih6/report.json",
+      "scope": null,
+      "sha256": "a48b6d81c9f2cd69e16e10feccbad1b4118a816a760700afaa4add57cadff9d0",
+      "status": "PASS"
+    },
+    {
+      "archive": {
+        "bytes": 303971331,
+        "sha256": "e964be28e81f85237844b8780477253c8d11e1b67e6efdda8c6b8ab4e5b0e413"
+      },
+      "bytes": 13440,
+      "desktop_root": "/var/tmp/trnm-task-v10-v12-node-dc252-seal-v1-ru2strqe",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-v10-v12-node-dc252-seal-v1-ru2strqe/report.json",
+      "readback": {
+        "logical_bytes": 1834656292,
+        "manifest": {
+          "bytes": 11336000,
+          "sha256": "eea05f5f88a7274abecc89f95a3e8f56a20da028ab0043750d628d590c83c0e3"
+        },
+        "members": 6741,
+        "metadata_paths": 18373,
+        "objects": 6740,
+        "observations": {
+          "allocations_112_executed": false,
+          "candidate_ed_group": {
+            "bytes": 80448,
+            "sha256": "dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc"
+          },
+          "next_public_build_exit_code": 1,
+          "next_public_build_failure": {
+            "bytes": 714,
+            "path": "/tmp/trnm-task-comb-ed-full-v10-g7r6am8j/full-gate/qualification/store/stages/public-native-build/stderr.raw",
+            "sha256": "b82fb18735c6cb433664fd39e3aeaa2f00dfdcb315de3e97ebe94a20f0237076"
+          },
+          "node_actual_compiler_stages": 29,
+          "node_affected_images": [
+            "ed"
+          ],
+          "node_independent_public_reader": "PASS",
+          "node_max_functions": 114,
+          "node_max_ops": 7832,
+          "node_runtime_executed": false,
+          "node_selected_inputs": 223,
+          "node_source_commit": "492ee6f451e9e582adde52434807ffb5c01bdcea",
+          "node_source_tree": "b24496da18a7cb441897a62f3841b8ce138a71ba",
+          "original_retained_tests": 41,
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "task_actual_stage_elapsed_ns": 179443781219,
+          "task_completed_equal_pairs": 1390,
+          "task_declared_pairs": 1390,
+          "task_limit_seconds": 180,
+          "task_source_commit": "10b2f5981c3aa742b16b32090260372f31091733",
+          "v11_candidate_cpu_ns": 7096886262,
+          "v11_mutation_controls": 15,
+          "v11_reference_cpu_ns": 5359865610,
+          "v11_report_serialization_equivalent_prefixes": 2928,
+          "v11_slower_candidate_adopted": false,
+          "v12_observer_unchanged_from_v10": true,
+          "v12_public_build_symbols": 51,
+          "v12_public_manifest_delta": {
+            "added": {
+              "tv_sha_copy_block": "hia/src/task_kernel/typed_values.hepta",
+              "tv_sha_update_blocks": "hia/src/task_kernel/typed_values.hepta"
+            },
+            "changed_owners": {},
+            "removed": {
+              "tr_sha_rotr": "hia/src/crypto/sha256_stream.hepta"
+            }
+          }
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "664ac3f91fd4902d39fa02224ecbed4a4160ba90bc25fad34c40b7cb610bb8f2",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": {
+        "bytes": 292906818,
+        "sha256": "85df30cb085956dae1c751d3a58735d55c0bb02cc87c173a48a28b73a7d16705"
+      },
+      "bytes": 58209,
+      "desktop_root": "/var/tmp/trnm-task-v12-rog-complete-seal-v1-ueeyqcgj",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-v12-rog-complete-seal-v1-ueeyqcgj/report.json",
+      "readback": {
+        "logical_bytes": 2161895001,
+        "manifest": {
+          "bytes": 11236910,
+          "sha256": "f02e582be01457836e41fd85db390b51e8cd34698b1cb8193db156dc6c582e3d"
+        },
+        "members": 7167,
+        "metadata_paths": 13659,
+        "objects": 7166,
+        "observations": {
+          "actual_clock_samples": 17,
+          "actual_failure_ordinals": 96,
+          "allocation_controls": 112,
+          "candidate_ed_group": {
+            "bytes": 80448,
+            "sha256": "dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc"
+          },
+          "candidate_owned_paths": 36,
+          "candidate_sha256_stream": {
+            "bytes": 86907,
+            "sha256": "82ecf6fef48e72cd56c8daffd449df1a27edcbd2c8c96abe464e1e5683ea2333"
+          },
+          "canonical_readback_checks": {
+            "allocator": {
+              "actual_failure_ordinals": 96,
+              "all_hia_objects_identical_to_public_build": true,
+              "exact_controls": 112,
+              "final_allocator": {
+                "bad_frees": 0,
+                "bytes": 0,
+                "calls": 9369,
+                "failures": 96,
+                "frees": 9273,
+                "live": 0
+              }
+            },
+            "original": {
+              "actual_cargo_artifacts": 152,
+              "actual_executable_artifacts": 4,
+              "exact_test_names": true,
+              "no_test_filters": true,
+              "original_modules_and_hooks": 4,
+              "retained_tests": 41,
+              "strict_clippy_and_format": true
+            },
+            "public": {
+              "complete_original_process_transcript": true,
+              "exact_cases": 445,
+              "independently_counted_getters": 1877,
+              "independently_counted_method_calls": 413
+            },
+            "public-native": {
+              "exact_compiler_stdin_stdout": true,
+              "exact_emitted_objects": true,
+              "exact_rename_emitter_and_final_link_graph": true,
+              "function_bindings": 1380,
+              "images": 31
+            },
+            "records": {
+              "exact_cases": 1390,
+              "native_original_full_values_and_database_bytes": true,
+              "raw_original_inputs_outputs": true
+            },
+            "records-native": {
+              "exact_compiler_stdin_stdout": true,
+              "exact_emitted_objects": true,
+              "exact_rename_emitter_and_final_link_graph": true,
+              "function_bindings": 1376,
+              "images": 30
+            }
+          },
+          "complete_ci_stage_receipts": [
+            {
+              "argv": [
+                "bash",
+                "scripts/project-preflight.sh",
+                "--audit"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 32286738,
+              "exit_code": 0,
+              "name": "preflight",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--version",
+                "--verbose"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 114383599,
+              "exit_code": 0,
+              "name": "version-rustc",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "--version",
+                "--verbose"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 16340894,
+              "exit_code": 0,
+              "name": "version-cargo",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "metadata",
+                "--locked",
+                "--offline",
+                "--manifest-path",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/trillionnium/Cargo.toml",
+                "--format-version",
+                "1",
+                "--filter-platform",
+                "x86_64-unknown-linux-gnu"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 164527167,
+              "exit_code": 0,
+              "name": "locked-cargo-metadata",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/build_provider.py",
+                "--dependency",
+                "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.39.1",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/provider"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 6926919876,
+              "exit_code": 0,
+              "name": "provider-build",
+              "timeout_seconds": 1200
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualify_task_store.py",
+                "--provider",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/provider",
+                "--rust-bin",
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 168404667862,
+              "exit_code": 0,
+              "name": "store-complete",
+              "timeout_seconds": 1200
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/readback_task_store.py",
+                "--evidence",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store",
+                "--repo",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+                "--roster",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualification/task_store_roster.json",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/readback"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 1567821874,
+              "exit_code": 0,
+              "name": "store-independent-readback",
+              "timeout_seconds": 180
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualification/readback_negative_controls.py",
+                "--reader",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/readback_task_store.py",
+                "--evidence",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store",
+                "--repo",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+                "--roster",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualification/task_store_roster.json",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/reader-controls"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 3870613739,
+              "exit_code": 0,
+              "name": "store-reader-negative-controls",
+              "timeout_seconds": 180
+            }
+          ],
+          "environment_initial_observer_failure_preserved": true,
+          "final_allocator": {
+            "bad_frees": 0,
+            "bytes": 0,
+            "calls": 9369,
+            "failures": 96,
+            "frees": 9273,
+            "live": 0
+          },
+          "formal_ci_elapsed_ns": 183091311034,
+          "original_native_stage_receipts": [
+            {
+              "argv": [
+                "bash",
+                "scripts/project-preflight.sh",
+                "--audit"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 30690984,
+              "exit_code": 0,
+              "name": "preflight",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--version",
+                "--verbose"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 8127041,
+              "exit_code": 0,
+              "name": "version-rustc",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "--version",
+                "--verbose"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 13885672,
+              "exit_code": 0,
+              "name": "version-cargo",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+                "--version"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 14287533,
+              "exit_code": 0,
+              "name": "version-clippy-driver",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+                "--version"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 9576071,
+              "exit_code": 0,
+              "name": "version-rustfmt",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "git",
+                "rev-parse",
+                "HEAD"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 2323486,
+              "exit_code": 0,
+              "name": "source-commit",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "git",
+                "ls-tree",
+                "-r",
+                "-z",
+                "HEAD",
+                "--",
+                "trillionnium/crates/trnm-task-kernel",
+                "trillionnium/Cargo.toml",
+                "trillionnium/Cargo.lock",
+                "trillionnium/rust-toolchain.toml",
+                "rust-toolchain.toml"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 3465131,
+              "exit_code": 0,
+              "name": "original-git-tree",
+              "timeout_seconds": 60
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "test",
+                "--manifest-path",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/trillionnium/Cargo.toml",
+                "--locked",
+                "--offline",
+                "-p",
+                "trnm-task-kernel",
+                "--target-dir",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target",
+                "--message-format=json"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 9417129076,
+              "exit_code": 0,
+              "name": "original-retained-tests",
+              "timeout_seconds": 600
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--edition=2021",
+                "-C",
+                "opt-level=2",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-kernel-policy/kernel-policy-original.rs",
+                "--extern",
+                "borsh=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f44df90382b04a30811c8ca679ab00380ea1631be0a5531605e6e6a1697f45b2/libborsh-befc9a2da209c367.rlib",
+                "--extern",
+                "ed25519_dalek=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/72d017ea79025947c540737b69599ffd544de736e3dfe9bab456b6103ce296f1/libed25519_dalek-253a8be50c680361.rlib",
+                "--extern",
+                "rusqlite=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f370dcf055bf5dda70cfff54d5879005a8fad9f55f2f7a2eb2bcb2d153d24433/librusqlite-c223a0ea5f677a01.rlib",
+                "--extern",
+                "sha2=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/c34a8a8a16653c4d750ff680076186d4424b484405f86d5d95b464f6203319bb/libsha2-15a05a0cfa4bff0d.rlib",
+                "-L",
+                "dependency=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target/debug/deps",
+                "-o",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-kernel-policy/kernel-policy-original"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 1189387621,
+              "exit_code": 0,
+              "name": "compile-original-kernel-policy",
+              "timeout_seconds": 120
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--edition=2021",
+                "-C",
+                "opt-level=2",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-audit/store-audit-original.rs",
+                "--extern",
+                "borsh=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f44df90382b04a30811c8ca679ab00380ea1631be0a5531605e6e6a1697f45b2/libborsh-befc9a2da209c367.rlib",
+                "--extern",
+                "ed25519_dalek=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/72d017ea79025947c540737b69599ffd544de736e3dfe9bab456b6103ce296f1/libed25519_dalek-253a8be50c680361.rlib",
+                "--extern",
+                "rusqlite=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f370dcf055bf5dda70cfff54d5879005a8fad9f55f2f7a2eb2bcb2d153d24433/librusqlite-c223a0ea5f677a01.rlib",
+                "--extern",
+                "sha2=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/c34a8a8a16653c4d750ff680076186d4424b484405f86d5d95b464f6203319bb/libsha2-15a05a0cfa4bff0d.rlib",
+                "-L",
+                "dependency=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target/debug/deps",
+                "-o",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-audit/store-audit-original"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 1576830318,
+              "exit_code": 0,
+              "name": "compile-original-store-audit",
+              "timeout_seconds": 120
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--edition=2021",
+                "-C",
+                "opt-level=2",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-records/store-records-original.rs",
+                "--extern",
+                "borsh=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f44df90382b04a30811c8ca679ab00380ea1631be0a5531605e6e6a1697f45b2/libborsh-befc9a2da209c367.rlib",
+                "--extern",
+                "ed25519_dalek=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/72d017ea79025947c540737b69599ffd544de736e3dfe9bab456b6103ce296f1/libed25519_dalek-253a8be50c680361.rlib",
+                "--extern",
+                "rusqlite=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f370dcf055bf5dda70cfff54d5879005a8fad9f55f2f7a2eb2bcb2d153d24433/librusqlite-c223a0ea5f677a01.rlib",
+                "--extern",
+                "sha2=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/c34a8a8a16653c4d750ff680076186d4424b484405f86d5d95b464f6203319bb/libsha2-15a05a0cfa4bff0d.rlib",
+                "-L",
+                "dependency=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target/debug/deps",
+                "-o",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-records/store-records-original"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 2418840926,
+              "exit_code": 0,
+              "name": "compile-original-store-records",
+              "timeout_seconds": 120
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+                "--edition=2021",
+                "-C",
+                "opt-level=2",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-public/store-public-original.rs",
+                "--extern",
+                "borsh=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f44df90382b04a30811c8ca679ab00380ea1631be0a5531605e6e6a1697f45b2/libborsh-befc9a2da209c367.rlib",
+                "--extern",
+                "ed25519_dalek=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/72d017ea79025947c540737b69599ffd544de736e3dfe9bab456b6103ce296f1/libed25519_dalek-253a8be50c680361.rlib",
+                "--extern",
+                "rusqlite=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/f370dcf055bf5dda70cfff54d5879005a8fad9f55f2f7a2eb2bcb2d153d24433/librusqlite-c223a0ea5f677a01.rlib",
+                "--extern",
+                "sha2=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/retained-original-artifacts/c34a8a8a16653c4d750ff680076186d4424b484405f86d5d95b464f6203319bb/libsha2-15a05a0cfa4bff0d.rlib",
+                "-L",
+                "dependency=/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target/debug/deps",
+                "-o",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-public/store-public-original"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 2092751763,
+              "exit_code": 0,
+              "name": "compile-original-store-public",
+              "timeout_seconds": 120
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/build_store_records.py",
+                "--provider",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/provider",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/records-native"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 10324917485,
+              "exit_code": 0,
+              "name": "records-native-build",
+              "timeout_seconds": 180
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualification/store_records_observer.py",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/records-native",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-records/store-records-original",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-audit/store-audit-original",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-kernel-policy/kernel-policy-original",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/records-qualification"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 47291831096,
+              "exit_code": 0,
+              "name": "records-native-original",
+              "timeout_seconds": 180
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/build_store_public.py",
+                "--provider",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/provider",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/public-native"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 10418302348,
+              "exit_code": 0,
+              "name": "public-native-build",
+              "timeout_seconds": 180
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualification/store_public_observer.py",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/public-native",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/original-store-public/store-public-original",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/records-qualification",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/public-qualification"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 10392117277,
+              "exit_code": 0,
+              "name": "public-native-original",
+              "timeout_seconds": 180
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/hia/platform/task_kernel/qualify_store_owned_allocations.py",
+                "--build",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/public-native",
+                "--records",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/records-qualification",
+                "--output",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/public-allocations"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 69199828432,
+              "exit_code": 0,
+              "name": "public-allocation-lifecycle",
+              "timeout_seconds": 240
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "clippy",
+                "--manifest-path",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/trillionnium/Cargo.toml",
+                "--locked",
+                "--offline",
+                "-p",
+                "trnm-task-kernel",
+                "--target-dir",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/full-gate/qualification/store/cargo-target",
+                "--all-targets",
+                "--all-features",
+                "--",
+                "-D",
+                "warnings"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 3013243397,
+              "exit_code": 0,
+              "name": "original-clippy",
+              "timeout_seconds": 600
+            },
+            {
+              "argv": [
+                "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+                "fmt",
+                "--manifest-path",
+                "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo/trillionnium/Cargo.toml",
+                "-p",
+                "trnm-task-kernel",
+                "--",
+                "--check"
+              ],
+              "cwd": "/var/tmp/trnm-task-full-v12-rog-btpiazow/repo",
+              "elapsed_ns": 109980882,
+              "exit_code": 0,
+              "name": "original-format",
+              "timeout_seconds": 120
+            }
+          ],
+          "original_retained_tests": 41,
+          "provider_operations_unchanged": 29,
+          "public_cases": 445,
+          "public_exports": 51,
+          "public_getters": 1877,
+          "public_method_drop_compare_calls": 413,
+          "public_total_abi_calls": 2290,
+          "reader_controls": 37,
+          "reader_original_command_controls": 27,
+          "reader_source_binding_controls": 10,
+          "records_completed_equal_pairs": 1390,
+          "selected_source_inputs": 1913,
+          "source_before_equals_after": true
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "a150b64ddd6563c29ff633ea78172548622ea6a46a54e82632d993a3d7ceb158",
+      "status": "PASS_ALL_MAIN_STORE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    },
+    {
+      "archive": {
+        "bytes": 249565046,
+        "sha256": "7b1688f493bd4405d1ee9dba5c8479bcda8f5629f78ad1d914481b2994c97544"
+      },
+      "bytes": 11352,
+      "desktop_root": "/var/tmp/trnm-task-v9-node-ed98622-seal-v1-2y4_9683",
+      "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-v9-node-ed98622-seal-v1-2y4_9683/report.json",
+      "readback": {
+        "logical_bytes": 1454072431,
+        "manifest": {
+          "bytes": 8194857,
+          "sha256": "5e7576600a2f5fd0d3be363f59dccda73a4575acadd1522020263b5c76807891"
+        },
+        "members": 6491,
+        "metadata_paths": 12360,
+        "objects": 6490,
+        "observations": {
+          "allocations_112_executed": false,
+          "candidate_ed_group": {
+            "bytes": 79725,
+            "sha256": "98622df64c6065720e2b8c20a89be0533476da375b462a83ebed8ada31619473"
+          },
+          "node_actual_compiler_stages": 29,
+          "node_affected_images": [
+            "ed"
+          ],
+          "node_independent_public_reader": "PASS",
+          "node_max_functions": 114,
+          "node_max_ops": 7832,
+          "node_runtime_executed": false,
+          "node_selected_inputs": 223,
+          "node_source_commit": "492ee6f451e9e582adde52434807ffb5c01bdcea",
+          "node_source_tree": "b24496da18a7cb441897a62f3841b8ce138a71ba",
+          "original_retained_tests": 41,
+          "public_445_executed": false,
+          "reader_37_executed": false,
+          "task_actual_stage_elapsed_ns": 180131483084,
+          "task_completed_equal_pairs": 1320,
+          "task_declared_pairs": 1390,
+          "task_source_commit": "10b2f5981c3aa742b16b32090260372f31091733",
+          "task_timeout_seconds": 180,
+          "v8_clock_is_same_scenarios_not_identical_absolute_path_input": true
+        }
+      },
+      "scope": {
+        "github_ci_pass": false,
+        "new_cargo_build": false,
+        "packaging_only": true,
+        "runtime_reexecuted": false,
+        "whole_chain_qualified": false,
+        "whole_task_qualified": false
+      },
+      "sha256": "a021fd5c9925ea9d93519c960259681eb033b0f0cf5ebb362fcdc3b52d033216",
+      "status": "PASS_ALL_FAILURE_ARCHIVE_MEMBERS_ON_TWO_ENDPOINTS"
+    }
+  ],
+  "prior_development_record": {
+    "bytes": 126978,
+    "original_path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/task-v12-final-integration-packet-s9e1hf33/packet/development-record.json",
+    "scope": "Actual v12 private 10b graph; preserved without relabelling",
+    "sha256": "7e5f1d0d768d8b0a6b1112b075aa3aeb73bae8095002cefed2005482f53b4fa3",
+    "unchanged_copy_in_proposal": "prior-v12-development-record.json"
+  },
+  "qualification_report": {
+    "bytes": 81698,
+    "path": "/var/tmp/trnm-task-current3ad-full-v13-rog-lbgbtsqi/full-gate/qualification/report.json",
+    "sha256": "94f3948e4af6265255dd3d0ec23346c25cca6c6504b071c05d118f01593542d1"
+  },
+  "qualified_graph": {
+    "base_commit": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+    "base_tree": "61d7502c0491d20c42ec051b10d07ec12633c84f",
+    "combined_changed_paths": 39,
+    "complete_tracked_checkout_claimed": false,
+    "current3ad_private_main_store_qualification": true,
+    "execution_host": "rog",
+    "final_integrated_graph_qualification": false,
+    "git_history_shallow": true,
+    "github_ci_pass": false,
+    "independent_git_objects": true,
+    "inventory_paths": 1,
+    "machine_change_from_v12": false,
+    "metadata_observer_paths": 1,
+    "node_composition_paths": 1,
+    "original_gate_reexecuted": true,
+    "root": "/var/tmp/trnm-task-current3ad-full-v13-rog-lbgbtsqi",
+    "selected_source_inputs": 2285,
+    "source_before_equals_after": true,
+    "source_preparation_host": "desktop",
+    "task_payload_paths": 36
+  },
+  "remaining": {
+    "all_consumer_runtime_gates_reexecuted": false,
+    "archive_store_public_owner_qualified": false,
+    "final_integrated_graph_qualified": false,
+    "github_ci_pass": false,
+    "legacy_retirement_authorized_by_this_record": false,
+    "node_full_runtime_requalified": false,
+    "project_owned_C_provider_replaced": false,
+    "pure_hia_sqlite": false,
+    "state_import_qualified": false,
+    "whole_chain_native": false,
+    "whole_task_kernel_qualified": false
+  },
+  "repository_proposal": {
+    "base_blob": null,
+    "base_commit": "3adfedb43371b2cff3658d6228cdd1493d89c9df",
+    "base_state": "absent_in_actual_3ad_git_tree",
+    "path": "hia/qualification/task-main-store-development.json",
+    "shared_checkout_modified": false
+  },
+  "retained_diagnostic_scope": [
+    "918 whole-arena read-feed pairs, 1902 native calls, 460 hashlib checks and 64 invalid controls are prior exact-source diagnostics, not a fresh v12 helper qualification.",
+    "719 scalar/cold mathematical checks, strict policy 525 plus four capacity cases, and finite cache isolation preview observations are retained with source/input/reference bytes in prior archives. They are not a formal proof of every possible external alias or every scratch write path.",
+    "Node combined SHA82/Ed dc252 admission is fresh build and independent reader only. Its 28 compiler inputs are equal to the dc252-only admission because the changed tr_sha_compress is not selected by Node; unchanged selected helpers from the same source file are still consumed.",
+    "Every original timeout, compiler/closure rejection, failed seal attempt and the environment probe's 20-versus-21-byte observer error is preserved rather than rewritten."
+  ],
+  "schema": "trnm.task-store-v13.current3ad-development-record.v1",
+  "source_pins": {
+    "hia/src/crypto/ed25519_group.hepta": {
+      "bytes": 80448,
+      "changed_functions": [
+        "ed_fe_mul"
+      ],
+      "sha256": "dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc",
+      "single_shared_candidate_owner": "audit_github"
+    },
+    "hia/src/crypto/ed25519_public_point_cache.hepta": {
+      "bytes": 38984,
+      "sha256": "3345ca7f0c27029eddb1d03bc008c9da8cff740320cb73f6b0633b0ff8ad21ac"
+    },
+    "hia/src/crypto/sha256_stream.hepta": {
+      "baseline_sha256": "1b1b24af00eed7bdb6df3cebad16ac252e9fe708a0304fa7cfee5efcb85a6d88",
+      "bytes": 86907,
+      "changed_functions": [
+        "tr_sha_compress"
+      ],
+      "sha256": "82ecf6fef48e72cd56c8daffd449df1a27edcbd2c8c96abe464e1e5683ea2333"
+    },
+    "hia/src/task_kernel/store_signature_cache.hepta": {
+      "bytes": 4798,
+      "sha256": "4d270a38ea137804c2268d0f389158aa542372acf5eb93b890fa798c7d42f09a"
+    }
+  },
+  "store_report": {
+    "bytes": 161443,
+    "path": "/var/tmp/trnm-task-current3ad-full-v13-rog-lbgbtsqi/full-gate/qualification/store/report.json",
+    "sha256": "643418724254eff02df857a2b64583f65a2e19134277c6e42ee3d536c09d07a9"
+  }
+}

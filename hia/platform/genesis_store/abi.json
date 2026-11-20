@@ -1,0 +1,207 @@
+{
+  "arena": {
+    "command": [
+      65536,
+      65536
+    ],
+    "constructor_and_root_scratch": [
+      327680,
+      1048576
+    ],
+    "event": [
+      0,
+      65536
+    ],
+    "owner": [
+      131072,
+      196608
+    ],
+    "total_bytes": 1376256
+  },
+  "bootstrap": {
+    "bytes": 64,
+    "gate_disabled": 18446744073709551615,
+    "magic": "NGBOOT01",
+    "modes": {
+      "0": "fresh, empty or owner-lock-only directory",
+      "1": "open complete exact genesis; full native validation then held-file fsync and directory fsync",
+      "2": "recover exact context-named pending prefix"
+    },
+    "timestamp_option": {
+      "0": "None, timestamp field must be zero",
+      "1": "Some(timestamp), original constructor validity applies"
+    },
+    "u64_fields": [
+      "dir_fd",
+      "mode",
+      "timestamp_option",
+      "timestamp",
+      "workers",
+      "diagnostic_write_fd",
+      "diagnostic_read_fd"
+    ],
+    "workers": [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  "cold_open_durability": {
+    "callback_between_validation_sync_and_opened": false,
+    "error_before_settlement": "71 without opened receipt",
+    "file_bytes_rewritten": false,
+    "sync_order": [
+      "retained final-file descriptor",
+      "retained directory descriptor"
+    ],
+    "uncertain_until_both_succeed": true,
+    "validation_before_sync": [
+      "complete stored bytes",
+      "actual State root",
+      "held/name inode",
+      "lock",
+      "directory"
+    ]
+  },
+  "commands": {
+    "1": "complete cold READ",
+    "2": "CLOSE",
+    "bytes": 16,
+    "magic": "NGCMD001"
+  },
+  "exit": {
+    "0": "closed successfully",
+    "64": "wire or private contract",
+    "65": "namespace/type/ownership/identity",
+    "66": "stored record differs from internally constructed genesis",
+    "67": "owner lock busy",
+    "68": "constructor or workers",
+    "70": "I/O outside publication uncertainty",
+    "71": "publication outcome uncertain; reopen",
+    "78": "native adapter profile refused",
+    "79": "mmap failed",
+    "82": "native root calculation refused",
+    "83": "actual catalog root mismatch"
+  },
+  "gate": {
+    "fields": [
+      "sequence",
+      "tag",
+      "published flag"
+    ],
+    "kind": "explicit diagnostic pause capability, not an authority or request cancellation callback",
+    "magic": "NGCUT001",
+    "record_bytes": 32,
+    "resume": "one exact byte 0x01",
+    "tags": {
+      "1": "held lock admitted; after resume repeat complete namespace and held-lock checks",
+      "10": "pending created; after resume recheck empty prefix, inode, name and lock before write",
+      "11": "pending fsync succeeded",
+      "12": "prior prefix validated; after resume reread exact same prefix and pin namespace before write",
+      "13": "pending verified; after resume repeat complete bytes/root and inode/name checks before rename",
+      "14": "rename succeeded; still uncertain, repeat complete root/name checks before directory fsync",
+      "15": "publication directory synced",
+      "20": "published file opened, before full cold read",
+      "30": "before explicit READ full cold validation"
+    }
+  },
+  "opened": {
+    "bytes": 256,
+    "durability": "settled finite genesis after required file and directory synchronization",
+    "fields": {
+      "128": "root32",
+      "16": "record bytes",
+      "160": "active tip32",
+      "192": "generation0",
+      "200": "slot0",
+      "208": "rows7",
+      "216": "State bytes",
+      "224": "timestamp",
+      "24": "workers",
+      "32": "network32",
+      "64": "parameters32",
+      "8": "mode",
+      "96": "genesis32"
+    },
+    "magic": "NGOPEN01"
+  },
+  "read": {
+    "16": "actual computed root32",
+    "8": "record bytes",
+    "header_bytes": 64,
+    "header_magic": "NGREAD01",
+    "payload": "exact complete stored record"
+  },
+  "record": {
+    "fields": {
+      "128": "expected State root32",
+      "160": "active tip32",
+      "192": "active generation0",
+      "200": "active slot0",
+      "208": "block count1",
+      "216": "height0",
+      "224": "parent absent",
+      "232": "packet absent",
+      "24": "format version 1",
+      "240": "64-byte zero work",
+      "304": "deltas0",
+      "312": "events0",
+      "32": "network32",
+      "320": "reorg absent",
+      "328": "steps0",
+      "336": "reorg lifecycle0",
+      "344": "snapshot count1",
+      "352": "local pool0",
+      "360": "replay0",
+      "368": "peer audit0",
+      "376": "outbox0",
+      "384": "State row count7",
+      "392": "State bytes",
+      "400": "Settings bytes",
+      "408": "ancestry jumps0",
+      "416": "actual State offset",
+      "424": "Settings offset512",
+      "432": "genesis timestamp",
+      "440": "reserved zero",
+      "64": "parameters32",
+      "8": "total bytes",
+      "96": "genesis32"
+    },
+    "header_bytes": 512,
+    "magic": "NGSTATE1",
+    "payload": "complete native SDO1 constructor result including actual SRV1 State"
+  },
+  "schema": "trnm.hia.default-genesis-owner-abi.v1",
+  "scope": {
+    "classic_capacity_reduced": false,
+    "continuous_hostile_same_uid_safety": false,
+    "controlled_pause_interleavings_only": true,
+    "external_witness": false,
+    "full_node": false,
+    "growth_capacity_reduced": false,
+    "physical_power_loss_qualified": false,
+    "successor_admission": false
+  },
+  "source_shape": {
+    "policy": "f0(readbuf65536,mutbuf65536,mutbuf196608)->u32",
+    "result0": "issue syscall or private native call",
+    "result1": "complete close",
+    "runtime_host_proxy": false
+  },
+  "stdio": {
+    "O_PATH": false,
+    "access_modes": [
+      "RDONLY",
+      "WRONLY",
+      "WRONLY"
+    ],
+    "error_fd": 2,
+    "failed_admission": "silent exit64; no diagnostic write",
+    "gate_aliases_standard_stream": false,
+    "input_fd": 0,
+    "output_fd": 1,
+    "required_types": "three distinct FIFO/pipe objects"
+  },
+  "target": "x86_64-linux-gnu"
+}

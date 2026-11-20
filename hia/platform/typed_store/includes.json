@@ -1,0 +1,115 @@
+{
+  "schema": "trnm.hia.typed-stage-includes.v1",
+  "includes": {
+    "stage_policy.hepta": [
+      {
+        "source": "src/codec/json_number.hepta",
+        "functions": [
+          "jf_fixup",
+          "jf_format64",
+          "jf_odd",
+          "jf_pow10_hi",
+          "jf_pow10_lo",
+          "jf_pow10_m",
+          "jf_power",
+          "jn_parse",
+          "jn_parts",
+          "jn_peek",
+          "jn_pow10"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_key_order",
+          "jv_literal",
+          "jv_parse",
+          "jv_scalar",
+          "jv_skip",
+          "jv_string"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low"
+        ]
+      }
+    ],
+    "root_finalize.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      },
+      {
+        "source": "src/protocol/state_root.hepta",
+        "functions": [
+          "state_compare",
+          "state_copy",
+          "state_empty",
+          "state_load32",
+          "state_load64",
+          "state_node",
+          "state_output_copy",
+          "state_sha_compress",
+          "state_sha_expand",
+          "state_sha_round_0",
+          "state_sha_round_1",
+          "state_sha_round_2",
+          "state_sha_round_3",
+          "state_sha_round_4",
+          "state_sha_round_5",
+          "state_sha_round_6",
+          "state_sha_round_7",
+          "state_sift",
+          "state_sort",
+          "state_store32",
+          "state_store64",
+          "state_swap",
+          "state_tree"
+        ]
+      }
+    ]
+  }
+}

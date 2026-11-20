@@ -1,0 +1,277 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_task_store_policy_v1
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":16}
+  v6:bool = compare.lt(v4,v5)
+  branch v6 b2(v0,v1,v2,v6) b1(v0,v1,v2)
+block b1(v7:readbuf,v8:mutbuf,v9:mutbuf)
+  v15:usize = buffer.len(v8)
+  v16:u64 = int.cast(v15) {"mode":"wrap"}
+  v17:u64 = const() {"value":65536}
+  v18:bool = compare.lt(v16,v17)
+  jump b2(v7,v8,v9,v18)
+block b2(v11:readbuf,v12:mutbuf,v13:mutbuf,v14:bool)
+  branch v14 b4(v11,v12,v13,v14) b3(v11,v12,v13)
+block b3(v19:readbuf,v20:mutbuf,v21:mutbuf)
+  v27:usize = buffer.len(v21)
+  v28:u64 = int.cast(v27) {"mode":"wrap"}
+  v29:u64 = const() {"value":262144}
+  v30:bool = compare.lt(v28,v29)
+  jump b4(v19,v20,v21,v30)
+block b4(v23:readbuf,v24:mutbuf,v25:mutbuf,v26:bool)
+  branch v26 b5(v23,v24,v25) b6(v23,v24,v25)
+block b5(v31:readbuf,v32:mutbuf,v33:mutbuf)
+  v37:u64 = const() {"value":104}
+  v38:u32 = int.cast(v37) {"mode":"wrap"}
+  ret(v38)
+block b6(v34:readbuf,v35:mutbuf,v36:mutbuf)
+  v39:u64 = call(v35) {"function":"so_frame"}
+  v40:u64 = const() {"value":0}
+  v41:bool = compare.eq(v39,v40)
+  branch v41 b8(v34,v35,v36,v39,v41) b7(v34,v35,v36,v39)
+block b7(v42:readbuf,v43:mutbuf,v44:mutbuf,v45:u64)
+  v52:u64 = const() {"value":8}
+  v53:u64 = int.add.wrap(v45,v52)
+  v54:u64 = call(v43,v53) {"function":"cp_get"}
+  v55:u64 = const() {"value":3}
+  v56:bool = compare.gt(v54,v55)
+  jump b8(v42,v43,v44,v45,v56)
+block b8(v47:readbuf,v48:mutbuf,v49:mutbuf,v50:u64,v51:bool)
+  branch v51 b9(v47,v48,v49) b10(v47,v48,v49,v50)
+block b9(v57:readbuf,v58:mutbuf,v59:mutbuf)
+  v65:u64 = const() {"value":104}
+  v66:u32 = int.cast(v65) {"mode":"wrap"}
+  ret(v66)
+block b10(v61:readbuf,v62:mutbuf,v63:mutbuf,v64:u64)
+  v67:u64 = const() {"value":8}
+  v68:u64 = int.add.wrap(v64,v67)
+  v69:u64 = call(v62,v68) {"function":"cp_get"}
+  v70:u64 = call(v62,v64) {"function":"cp_get"}
+  v71:u64 = const() {"value":0}
+  v72:bool = compare.eq(v70,v71)
+  branch v72 b11(v61,v62,v63,v64,v69) b12(v61,v62,v63,v64,v69,v70)
+block b11(v73:readbuf,v74:mutbuf,v75:mutbuf,v76:u64,v77:u64)
+  v85:u64 = const() {"value":54152}
+  v86:u64 = call(v74,v85) {"function":"cp_get"}
+  v87:u64 = const() {"value":54160}
+  v88:u64 = call(v74,v87) {"function":"cp_get"}
+  v89:u64 = int.add.wrap(v86,v88)
+  v90:u64 = const() {"value":0}
+  v91:bool = compare.ne(v77,v90)
+  branch v91 b13(v73,v74,v75,v76,v86,v89) b15(v73,v74,v75,v86,v89)
+block b12(v79:readbuf,v80:mutbuf,v81:mutbuf,v82:u64,v83:u64,v84:u64)
+  v130:u64 = const() {"value":1}
+  v131:bool = compare.eq(v84,v130)
+  branch v131 b16(v79,v80,v81,v82,v83) b17(v79,v80,v81,v84)
+block b13(v92:readbuf,v93:mutbuf,v94:mutbuf,v95:u64,v98:u64,v99:u64)
+  v108:u64 = const() {"value":16}
+  v109:u64 = int.add.wrap(v95,v108)
+  v110:u64 = call(v93,v109) {"function":"cp_get"}
+  v111:bool = compare.lt(v110,v98)
+  v112:u64 = select(v111,v110,v98)
+  v113:u64 = const() {"value":24}
+  v114:u64 = int.add.wrap(v95,v113)
+  v115:u64 = call(v93,v114) {"function":"cp_get"}
+  v116:u64 = int.add.wrap(v110,v115)
+  v117:bool = compare.gt(v116,v99)
+  v118:u64 = select(v117,v116,v99)
+  jump b15(v92,v93,v94,v112,v118)
+block b15(v119:readbuf,v120:mutbuf,v121:mutbuf,v125:u64,v126:u64)
+  v127:u64 = int.sub.wrap(v126,v125)
+  v128:u64 = const() {"value":1}
+  v129:u32 = call(v120,v125,v127,v128) {"function":"so_snapshot"}
+  ret(v129)
+block b16(v132:readbuf,v133:mutbuf,v134:mutbuf,v135:u64,v136:u64)
+  v144:u64 = call(v134) {"function":"tk_metadata"}
+  v145:u64 = call(v134) {"function":"tv_literals"}
+  v146:u64 = call(v134) {"function":"kp_literals"}
+  v147:u64 = const() {"value":46000}
+  v148:u64 = const() {"value":0}
+  v149:u64 = call(v134,v147,v148) {"function":"cp_put"}
+  v150:u64 = const() {"value":46008}
+  v151:u64 = call(v134,v150,v148) {"function":"cp_put"}
+  v152:u64 = const() {"value":54152}
+  v153:u64 = call(v133,v152) {"function":"cp_get"}
+  v154:u64 = call(v132,v133,v153) {"function":"so_view"}
+  v155:u64 = const() {"value":54160}
+  v156:u64 = call(v133,v155) {"function":"cp_get"}
+  v157:u64 = int.add.wrap(v154,v156)
+  v158:u64 = call(v132,v154,v157,v134) {"function":"kp_bundle_offsets"}
+  v159:bool = compare.eq(v136,v148)
+  branch v159 b18(v132,v133,v134) b19(v132,v133,v134,v135,v136)
+block b17(v138:readbuf,v139:mutbuf,v140:mutbuf,v143:u64)
+  v307:u64 = const() {"value":2}
+  v308:bool = compare.eq(v143,v307)
+  branch v308 b31(v138,v139,v140) b32(v138,v139,v140)
+block b18(v160:readbuf,v161:mutbuf,v162:mutbuf)
+  v176:u64 = call(v160,v162) {"function":"kp_trust"}
+  jump b26(v160,v161,v162,v176)
+block b19(v168:readbuf,v169:mutbuf,v170:mutbuf,v171:u64,v172:u64)
+  v177:u64 = const() {"value":16}
+  v178:u64 = int.add.wrap(v171,v177)
+  v179:u64 = call(v169,v178) {"function":"cp_get"}
+  v180:u64 = call(v168,v169,v179) {"function":"so_view"}
+  v181:u64 = const() {"value":24}
+  v182:u64 = int.add.wrap(v171,v181)
+  v183:u64 = call(v169,v182) {"function":"cp_get"}
+  v184:u64 = const() {"value":1}
+  v185:bool = compare.eq(v172,v184)
+  branch v185 b20(v168,v169,v170,v180,v183) b21(v168,v169,v170,v171,v172,v180,v183)
+block b20(v186:readbuf,v187:mutbuf,v188:mutbuf,v194:u64,v195:u64)
+  v206:u64 = int.add.wrap(v194,v195)
+  v207:u64 = call(v186,v194,v206,v188) {"function":"kp_execution"}
+  jump b26(v186,v187,v188,v207)
+block b21(v196:readbuf,v197:mutbuf,v198:mutbuf,v199:u64,v200:u64,v204:u64,v205:u64)
+  v208:u64 = call(v196,v204,v205,v198) {"function":"aw_offsets"}
+  v209:u64 = const() {"value":2}
+  v210:bool = compare.eq(v200,v209)
+  branch v210 b22(v196,v197,v198,v199,v204,v205) b23(v196,v197,v198,v204,v205)
+block b22(v211:readbuf,v212:mutbuf,v213:mutbuf,v214:u64,v219:u64,v220:u64)
+  v231:u64 = const() {"value":32}
+  v232:u64 = int.add.wrap(v214,v231)
+  v233:u64 = call(v212,v232) {"function":"cp_get"}
+  v234:u64 = call(v211,v219,v220,v233,v213) {"function":"sp_envelope_prepare"}
+  jump b26(v211,v212,v213,v234)
+block b23(v221:readbuf,v222:mutbuf,v223:mutbuf,v229:u64,v230:u64)
+  v235:u64 = call(v221,v229,v230,v223) {"function":"sp_signature_prepare"}
+  jump b26(v221,v222,v223,v235)
+block b26(v256:readbuf,v257:mutbuf,v258:mutbuf,v263:u64)
+  v264:u64 = const() {"value":104}
+  v265:bool = compare.eq(v263,v264)
+  branch v265 b27(v256,v257,v258) b28(v256,v257,v258,v263)
+block b27(v266:readbuf,v267:mutbuf,v268:mutbuf)
+  v282:u64 = const() {"value":104}
+  v283:u32 = int.cast(v282) {"mode":"wrap"}
+  ret(v283)
+block b28(v274:readbuf,v275:mutbuf,v276:mutbuf,v281:u64)
+  v284:u64 = const() {"value":2}
+  v285:bool = compare.eq(v281,v284)
+  branch v285 b29(v274,v275,v276) b30(v274,v275,v276)
+block b29(v286:readbuf,v287:mutbuf,v288:mutbuf)
+  v302:u64 = const() {"value":27}
+  v303:u64 = const() {"value":0}
+  v304:u64 = const() {"value":2}
+  v305:u32 = call(v287,v302,v303,v303,v303,v303,v303,v304) {"function":"so_call"}
+  ret(v305)
+block b30(v294:readbuf,v295:mutbuf,v296:mutbuf)
+  v306:u32 = call(v295,v296) {"function":"sp_complete"}
+  ret(v306)
+block b31(v309:readbuf,v310:mutbuf,v311:mutbuf)
+  v321:u32 = call(v310,v311) {"function":"sp_complete"}
+  ret(v321)
+block b32(v315:readbuf,v316:mutbuf,v317:mutbuf)
+  v322:u64 = const() {"value":104}
+  v323:u32 = int.cast(v322) {"mode":"wrap"}
+  ret(v323)
+end
+fn sp_complete(v0:mutbuf,v1:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:mutbuf)
+  v2:u64 = call(v0,v1) {"function":"so_from_work"}
+  v3:u64 = const() {"value":0}
+  v4:bool = compare.eq(v2,v3)
+  branch v4 b1(v0,v1) b2(v0,v1)
+block b1(v5:mutbuf,v6:mutbuf)
+  v9:u64 = const() {"value":240}
+  v10:u32 = int.cast(v9) {"mode":"wrap"}
+  ret(v10)
+block b2(v7:mutbuf,v8:mutbuf)
+  v11:u32 = call(v7) {"function":"so_return"}
+  ret(v11)
+end
+fn sp_signature_prepare(input:readbuf,start:u64,length:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(prepare)
+block prepare(input:readbuf,start:u64,length:u64,work:mutbuf)
+  prepared:u64 = call(input,start,length,work) {"function":"kp_signature_prepare_key"}
+  ready:u64 = const() {"value":2}
+  ok:bool = compare.eq(prepared,ready)
+  branch ok decode(input,work) failed(prepared)
+block decode(input_d:readbuf,work_d:mutbuf)
+  valid:u64 = call(work_d) {"function":"sp_public_key"}
+  result:u64 = call(input_d,work_d,valid) {"function":"kp_signature_prepare_finish"}
+  ret(result)
+block failed(error:u64)
+  ret(error)
+end
+fn sp_envelope_prepare(input:readbuf,start:u64,length:u64,height:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(prepare)
+block prepare(input:readbuf,start:u64,length:u64,height:u64,work:mutbuf)
+  checked:u64 = call(input,start,length,height,work) {"function":"kp_envelope_validate"}
+  ready:u64 = const() {"value":2}
+  ok:bool = compare.eq(checked,ready)
+  branch ok signature(input,start,length,work) failed(checked)
+block signature(input_s:readbuf,start_s:u64,length_s:u64,work_s:mutbuf)
+  result:u64 = call(input_s,start_s,length_s,work_s) {"function":"sp_signature_prepare"}
+  ret(result)
+block failed(error:u64)
+  ret(error)
+end
+fn sp_public_key(work:mutbuf) -> (u64) effects(read,write,trap) entry(search_start)
+block search_start(work:mutbuf)
+  first:u64 = const() {"value":0}
+  jump search(work,first)
+block search(work_s:mutbuf,slot:u64)
+  count:u64 = const() {"value":4}
+  more:bool = compare.lt(slot,count)
+  branch more tagged(work_s,slot) decode(work_s)
+block tagged(work_t:mutbuf,slot_t:u64)
+  base:u64 = const() {"value":147456}
+  stride:u64 = const() {"value":552}
+  offset:u64 = int.mul.wrap(slot_t,stride)
+  metadata:u64 = int.add.wrap(base,offset)
+  marker:u64 = call(work_t,metadata) {"function":"cp_get"}
+  expected:u64 = const() {"value":3551735579062913868}
+  valid:bool = compare.eq(marker,expected)
+  branch valid compare_key(work_t,slot_t,metadata) next(work_t,slot_t)
+block compare_key(work_k:mutbuf,slot_k:u64,metadata_k:u64)
+  eight:u64 = const() {"value":8}
+  key:u64 = int.add.wrap(metadata_k,eight)
+  equal:bool = call(work_k,key) {"function":"tk_cache_key_equal"}
+  branch equal hit(work_k,metadata_k) next(work_k,slot_k)
+block next(work_n:mutbuf,slot_n:u64)
+  one:u64 = const() {"value":1}
+  following:u64 = int.add.wrap(slot_n,one)
+  jump search(work_n,following)
+block hit(work_h:mutbuf,metadata_h:u64)
+  forty:u64 = const() {"value":40}
+  cached_point:u64 = int.add.wrap(metadata_h,forty)
+  point:u64 = const() {"value":134400}
+  width:u64 = const() {"value":512}
+  copied:u64 = call(work_h,cached_point,point,width) {"function":"cp_wcopy"}
+  success:u64 = const() {"value":1}
+  ret(success)
+block decode(work_d:mutbuf)
+  decoded:u64 = call(work_d) {"function":"kp_public_key"}
+  zero:u64 = const() {"value":0}
+  invalid:bool = compare.eq(decoded,zero)
+  branch invalid failed(decoded) remember(work_d,decoded)
+block failed(error:u64)
+  ret(error)
+block remember(work_r:mutbuf,result:u64)
+  cursor:u64 = const() {"value":149664}
+  slot_r:u64 = call(work_r,cursor) {"function":"cp_get"}
+  base_r:u64 = const() {"value":147456}
+  stride_r:u64 = const() {"value":552}
+  offset_r:u64 = int.mul.wrap(slot_r,stride_r)
+  metadata_r:u64 = int.add.wrap(base_r,offset_r)
+  zero_r:u64 = const() {"value":0}
+  cleared:u64 = call(work_r,metadata_r,zero_r) {"function":"cp_put"}
+  eight_r:u64 = const() {"value":8}
+  key_r:u64 = int.add.wrap(metadata_r,eight_r)
+  current_key:u64 = const() {"value":140160}
+  key_width:u64 = const() {"value":32}
+  key_copied:u64 = call(work_r,current_key,key_r,key_width) {"function":"cp_wcopy"}
+  forty_r:u64 = const() {"value":40}
+  cached_point_r:u64 = int.add.wrap(metadata_r,forty_r)
+  point_r:u64 = const() {"value":134400}
+  point_width:u64 = const() {"value":512}
+  point_copied:u64 = call(work_r,point_r,cached_point_r,point_width) {"function":"cp_wcopy"}
+  marker_r:u64 = const() {"value":3551735579062913868}
+  marked:u64 = call(work_r,metadata_r,marker_r) {"function":"cp_put"}
+  one_r:u64 = const() {"value":1}
+  next_slot:u64 = int.add.wrap(slot_r,one_r)
+  count_r:u64 = const() {"value":4}
+  wrapped:bool = compare.eq(next_slot,count_r)
+  next_cursor:u64 = select(wrapped,zero_r,next_slot)
+  advanced:u64 = call(work_r,cursor,next_cursor) {"function":"cp_put"}
+  ret(result)
+end

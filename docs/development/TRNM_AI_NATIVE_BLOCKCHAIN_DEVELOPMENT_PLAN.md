@@ -1,3 +1,1234 @@
+## 2026-11-20 — Research 状态内核、Bench 完整报告与结算原预算修复
+
+从已发布 `76381079bfc121a3a178dab8dab71e5290289169` 继续。当前 **83 kernels /30 native foundations /316 HIA sources**，26 原包仍 22 部分迁移、4 未迁移、0 退役，9 项全项目门 OPEN。新增 5 个 Research 状态内核、2 个 Bench 输出内核；共享 SHA-256 修复保留原 ABI、完整 backing bytes 和所有预算。完整 Cargo 图、lock、原源码及测试仍保留，根 README 仍为空。每个新文件只登记一个正式所有者。
+
+763 的 PR HIA run 44746117952 整体成功；push 的 6 组件分区及独立 reader 成功。7 个官方 ZIP 全部下载校验，并以真实 job 元数据、本提交/source-set 重新运行 strict reader，711 方法完整不重叠 PASS；读回不是原生重新执行。push Settlement 真实在 240.108 秒达到原 240 秒门，233/320 fixtures 已完成且清理成功；同源 PR 通过不抹去该失败。修复后的全 native phase 在原门下 206.720 秒完成 320 fixtures/2636 operations/169 fee calls，独立读回 23140 records/16066 native calls/1754 height；162 allocator 控制含 136 真失败、8 threads/256 owners，零泄漏。75 个实际动态编译/123 labels 全通过，最高 8188/8192 ops；最终合并提交仍须 fresh 原 Cargo/tests/Clippy/fmt 与原完整 CI。
+
+Research raw state value 5 方法 3309 调用；graph 6 方法 1095 调用；transition 6 方法 811 调用；query 3 方法 773 调用，分别通过 465/463/151/422 原生与原实现配对。保留原 raw encoding 与 state admission 区别、完整错误顺序、historical/current refs、四种 resolution、nonce/replay 及原状态不变性。native candidate 实际供下一步调用；未来 owner 必须先本地原生验签并私有持有 index/fingerprint，再原子发布。首次 graph recorder 的旧标签错误及首次 transition 两项 fixture 失败均不改写；当前共同 oracle 已扩展，须在合并源重验。
+
+Bench text/report 7 方法 2572 调用通过，包括 42 次真正原 main、21 次 native profile→report 链、1896 integer、365 calendar、167 metric 与 7 真实文件对照。CLI、OS env、两种时钟、文件与进程生命周期继续实现。正式 discovery 当前 738：general523/crypto95/state7/oracle22/ML37/research54；仍 68 jobs/56 bootstrap/50 admission 与原 20 分钟。新状态/报告观察在成功和失败时均归档。
+
+W1 原 head/merge 在原 4 秒/16 workers 与 0.25 CPU/2 GiB/zero-swap/256 PID 服务边界均真实失败，baseline 确认 1、pressure 确认 0，fresh 原测试真 panic；两个 57-member 官方包完整下载核查。该缺口不能由组件通过或保持 invariant 替代。后续持续完成 Research 私有 owner/Serde/handoff、StateImport 全 71 API/事务/资源故障及独立读回、Bench 主进程、ReleaseBundle/Worker/SQLite 边界、Node COMMIT/reorg/replay/outbox/ACK、剩余 crypto/TLS/TUF、跨目标、模型/研究/经济与原服务门。全部替代及原验收真实闭合后才退役旧栈并清理过程版本。
+
+## 2026-11-20 — Signed Research、Authority、Bench profile、Recovery ACK 与六分区验收
+
+从已发布 `99bcfc11c00c393b7d48ac0f6352b9afe33e913f` 继续。当前 **76 kernels /30 native foundations /309 HIA sources**，26原包仍22部分迁移、4未迁移、0退役，9项全项目门OPEN。新增6个纯内核各只有一份正式源码；ACK归入 `hia/src/peer_lease/recovery_ack.hepta`，目录归属检查保持不变。原Rust源码、Cargo图、lock、原测试、编译预算与服务门均保留，根README仍0字节。
+
+99bcfc1的[HIA push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44738516036)全部67作业成功，包括Task Store、Settlement、source/archive、五组件分区、Work/typed-store依赖门及独立读回。682方法实际完整不重叠覆盖；36227B官方读回ZIP已完整独立核验，SHA256 `80f39df9eff6de59e2219db0ef259a8a09f797c43136fb4e375ce6ca4f8aaa7b`。同源本地Task全门PASS289.648秒，112 allocator控制/96真实失败在原180秒内55.803秒完成，41原测试、strictClippy/fmt与37 reader反证通过。上述结果不转授新提交。
+
+Research新增完整SignedResearchCommandV1与Authority value core。签名8方法PASS203.408秒：5045原/native配对、87 ABI、154独立hash、5132真实调用、118函数7858操作935blocks。保留dalek非规范Y与原错误顺序，独立审查发现的提前失败seed暂存问题已修复，39真实控制检查签名所有可暂存路径的整段私有scratch清零。Authority5方法PASS43.759秒：590原/native配对+180 ABI=770调用，50函数2882操作356blocks，保持原public raw未验证集合的binary_search行为。首次14方法run因测试选择错误JSON字段失败的223.280秒原记录保留；generic Serde、State/Snapshot/Handoff与Node继续实现。
+
+Bench新增ln/profile/format_value三份HIA。7方法PASS42.368秒，4实际编译、14745录制调用、3另存真实overflow traps；6560有限MPFR对照、17原Rust特殊值、317完整profile的16167字段及格式字符串一致。6559有限案例保存400bit区间，6553在128bit收敛、6在256bit，ln(1)单列；数学范围与实现假设在唯一LOGARITHM.md说明。84 profile来自42次实际scheduler，20组保持原high-water修复差异。错误测试字段导致的前次失败不改写。CLI/OS时钟/完整报告/持久化继续推进。
+
+Recovery ACK5方法PASS17.787秒：2编译3858调用，3175原Rust配对、1313独立hash、673 ABI，并独立读回3848 ACK+10既有native value观察；完整ACK journal/recovery、Body最大规模及Peer/Node接线仍开放。首轮observer优化级别错误保持原记录。
+
+原general实际759秒、整job992秒，故将全部 `hia.tests.test_research_*` 动态划为独立第六组，保持原20分钟。当前实际discover711：general516/crypto95/state7/oracle22/ML37/research34。68展开jobs/56bootstrap/50admission；33控制PASS，含六ZIP和missing/overlap/duplicate/failed Research拒绝、10 SHA reader控制及4×50=200实际bootstrap子进程。strict general60成员不变，Bench profile与ACK各自always归档。两macOS清理job未获得runner、无steps的NOT_RUN证据保留，重试不改变源或预算。
+
+后续按唯一计划继续Research State/Snapshot、Bench完整进程owner、State Import原71公开API/事务/故障资格及独立reader，再推进Node单一COMMIT/reorg/replay/outbox/ACK、Body、剩余crypto/TLS/TUF、原4秒16worker服务门、跨目标和真实模型/研究/经济闭环。全部替代及原验收闭合后才执行旧栈退役和最终清理。
+
+## 2026-11-20 — 七类 Research 载荷、Bench 配置与动态编译预算修复
+
+从已发布 `267989537b255f168ac132edfbe317aba6c0e34a` 继续。本次最终目录新增4个内核，为 **70 kernels /30 native foundations /303 HIA sources**；26原包仍22部分迁移、4未迁移、0退役，9项整项目门OPEN。原Rust源码、Cargo图和lock未改变，根README仍0字节。当前审计页合并重复过程叙述，完整旧观察与失败保留在不可变Git历史和原资格证据中。
+
+Research唯一 `payload.hepta` 实现7类ResearchCommandV1及嵌套类型的canonical编码、严格解码/全字节round-trip、原校验顺序/错误、贡献工作量checked sum、精确10000份额、reference排序、command_type和primary_object_ref。7方法真实通过6968组原公开Rust/native对照与20个ABI控制，72.254秒；51函数/3226操作/522块满足原限制。独立只读复核检查了typed不校验编码、u16/枚举/UTF8形状、decode错误次序、scratch溢出及output原子容量拒绝，无阻断。签名信封、通用Serde、state与Hepta handoff继续实现，不把载荷替换当整包退役。
+
+Bench新增decimal、environment、format_fixed三份HIA，覆盖12项配置的文本解析/默认值、精确binary64转换与四位小数格式化。7方法经正式未改录制闭包完成6次实际编译、2110次native调用：457原数值转换、398完整配置、744原格式对照与各自拒绝控制，6配置×3工作量×7策略的126组完整profile/调度比较，另54原生内部重复。74组与原实现完全一致，52组保留既有reader-high-water安全修复的明确差异并由修复参考及冲突图独立验证。CLI、OS环境/时钟/持久化、ln派生profile及完整输出继续推进。
+
+267完整Task原运行144.481秒在records-policy固定编译器exit2失败；真实stdin SHA为490bbe42fa45f5c01abfe02b111f2dd89deff5e61429e45311d36eb67173c2b5。完整动态图审计实际123命名入口/75不同输入，原3输入失败：StorePolicy8525操作、KernelPolicy8547超过原8192。仅修改tk_metadata复用原tk_write返回游标，648次相同顺序写保持；函数1414→816操作，实际StorePolicy7927、KernelPolicy7949。修改后75输入全由固定native compiler通过，6项原结构限制不变。新1方法5220全内存/逐写字节截断/unaligned case、10440原新native调用及实际SIGILL/部分写入对照通过，19.926秒。整合clean候选仍须完整Task原41、provider、cache、1390records、445public、112allocator/原180秒和37reader控制，不以编译通过代替runtime。
+
+267 general实际执行498方法，Bench setUpClass的原locked/offline Cargo build退出101，8方法未执行。原60成员官方包未保留该stderr，原具体诊断保持不可知；按官方日志85个下载归档构造的独立cache加明确local index副本真实复现缺anstream1.0.0。工作流在offline前fetch未改lock精确图；测试真实保留构建/原测试/adapter的命令、状态、stdout和stderr。global sources补入原Bench main与契约，独立reader拒绝漏源/改源/旧source map。8方法再次实际通过13build/1558shared+8raw调用与11原测试；15partition、3source-map、4真实process、4bootstrap控制通过。新diagnostics独立artifact，不混入原60成员general包；新增Task metadata原始证据也独立上传。全general/readback仍须新head实际通过。
+
+267的[Settlement hosted完整job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44733380774/job/136278536658)中完整component+independent reader、每个committed源复查、head/run绑定、全regular archive reread四步都成功。阶段内部raw重定向到689199037字节artifact14627533250，SHA04737e1abe8889f7a1af018e45239621f78f2343a481755b0fbf1d9b19b94884；当前工具536870912字节上限使本地尚未取回完整包，不能虚报逐成员独立读取或臆测native阶段时长。独立本地尝试在原UnixListener测试EPERM，135/136测试完成后失败，native未进入；其失败与hosted成功分别保留。267 Task Boundary/source archive已通过，Task/general/readback原失败不改标。
+
+完整发现682方法，互斥521/95/7/22/37；67作业、55bootstrap和49源准入块不变。执行本候选的完整Task及全hosted门；并行继续StateImport原生owner与真实SQLite/handoff、Bench完整runtime、Research签名/state，以及Archive、Body/recovery/ACK、剩余crypto/TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK、同请求Paid/Host、跨目标和模型/研究经济门。原服务0.25CPU/2GiB/零swap/256PID/4秒/16worker、20分钟CI、原native240/180秒/唯一3秒清理、编译器128函数/8192操作/1536块/每函数256块均保持。全量等价替换、原验收和外部依赖处置闭合后，才退役旧整套并执行最终仓库清理。本文件仍为唯一计划。
+
+## 2026-11-20 — HIA Task provider、ExternalKey、Bench 与正式资格续接
+
+本轮从已发布 `25d0e733c54fc1186dac791ef88aacb79347691b` 继续，当前 **66 kernels /30 native foundations /299 HIA sources**，26原包为22部分迁移、4未迁移、0退役，九项整项目门仍OPEN。原Cargo图、Cargo.lock和测试保留；根README保持0字节。本计划仍为唯一开发计划，不将组件数量当作完成百分比。
+
+项目自有Task provider的6个生命周期入口和全部29操作由 `provider_native.hepta` 实际生成机器码，15464字节provider.o为 `07022f3e9db25cec3667f4349b41200d476fbf7ebc5aca320e8ee6d9559516b6`。另一个HIA emitter按每次真实C ABI探针结果生成runtime witness；生产链接为外部SQLite对象、native provider/witness对象及系统库，不含原项目C provider/witness实现。原 `provider.c` 只作显式独立fence的原版oracle，SQLite仍为外部C依赖，不宣称pure-HIA SQLite或全仓闭合。
+
+冻结provider图通过1182对原/native调用、143对真实分配失败、256并发调用、123 witness控制、12 emitter控制、8构建拒绝；独立reader逐1161实际文件核全部编译阶段、源/产物闭包、机器指令和PLT调用、真实ABI及原C provenance；46语义负控全部拒绝，包括重算外层hash的伪造。两个正式消费者完整PASS：Task Store432.236秒、Boundary61.936秒，150源前后完全一致。Store保留原41测试/strictClippy/fmt、1390 records、445 public、112 allocator控制及96实际失败，最终live/bytes/bad_free为0；缓存124对照/257调用/9交错及原37 reader负控全部实际通过。这些属于冻结开发图，最终整合clean提交必须重跑自己的全门及hosted CI。
+
+Research新增ExternalKey：6方法通过5463次原公开crate/native对照、732独立hash和24 ABI控制，保留namespace、严格小写UUID、visible ASCII、raw32、hex/Display与canonical CBOR的原语义及错误优先级。与既有canonical/hash和共享crypto整合后17方法73.962秒全PASS。commands、其余types、state、contribution accounting、Hepta handoff及通用Serde仍开放。
+
+Bench新增唯一workload/digests/repeat实现：8方法通过1566次native调用、307原工作量对照、64次真实原CLI执行、1148次HIA内部重复调度、8比较器及8大规模unaligned控制，原11测试/strictClippy/fmt通过。repeat=1000在HIA内部执行并比较完整ordered membership与SHA；3项原调度high-water错误保持明确语义修复与独立无冲突检查。正式构建改用标准实际编译收据，真实qualification原始三个闭包回归记录13次build、1558 shared调用及另外8 raw ABI调用；不能把这个有限回归当作general全分区执行。完整CLI/env解析、ln/profile、格式化和持久化继续实现。
+
+共享Ed25519 field与SHA-256采用满足原语义的窄字路径，保留原wide fallback、alias、真实trap前部分写入。159 field与200 SHA/alias案例对应318/400次原版/新版native调用通过；PeerLease最大受影响单元8184操作，原8192限制不变。Node29实际编译/emitter阶段、28镜像及独立进程readback通过，更新必要组合身份，完整Node ELF为 `89f0c914b0a654bd714c55a6e6a97b92734992638594603e2fd0357ac47623c3`。这些不代替Node事务全语义门。
+
+优化后Settlement完整native阶段在原240秒内233.636秒完成320 fixtures、2636 operations、16066 calls，最终live owner为0。该记录只闭合本次native阶段；完整原验收、162 allocator、68完整性控制、独立reader和hosted仍须实际运行，原失败不改标。
+
+已发布25d0e73的 [HIA push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44727120287) 中Metadata全门真实PASS481.005秒：原121外层测试/2 child重执行、12分组、45完整性控制、2827 allocator ABI/840真实失败及独立reader，49069个归档regular成员全部独立重hash。原观察器问题已在该hosted源闭合，但Body/wholePeer/原4秒service资格仍false。同一25源Task在原180秒allocator只完成93/112控制，Settlement在240.083秒完成233 fixtures后超时；其完整官方归档和原失败均保留，不用后来本地成功抵消。
+
+当前发现667方法，互斥506 general /95 crypto-types /7 State-root /22 Oracle /37 ML-DSA。新增22方法全部进入原自动发现；67作业、55 bootstrap与49准入块、20分钟job、240/180秒native及唯一3秒清理不变。整合后重跑完整Task/Settlement、原组件/全部hosted验收，继续完整Bench与StateImport，同时推进Archive、Body/recovery/ACK、剩余crypto/TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK、同请求Paid/Host、跨目标及模型/研究经济义务。只有全量替代、原验收和外部依赖最终处置都闭合，才移除旧整套和清理最终仓库。
+
+## 2026-11-20 — Research CBOR 原生实现、Task 验签缓存与 Metadata 真实线程资源
+
+本轮以 `62b4108946dead0688327c61aaa2afcb76bd0413` 为精确起点，核对其41494个tracked路径、26个原包和291个HIA源的唯一归属；新增两个Research Protocol内核后为 **62 kernels /30 native foundations /293 HIA sources**，26原包为21部分迁移、5未迁移、0退役，九项整项目门仍OPEN。所有现有包、原Cargo图、Cargo.lock和原测试保持；本计划和既有迁移清单继续作为唯一执行来源。
+
+Research的 `canonical.hepta` 保留原CBOR最短编码、UTF-8、cursor推进、错误优先级和拒绝时不部分发布，`hash.hepta` 使用现有流式SHA-256及原域/长度 framing。8项新原生测试实际通过：29821次原Rust/native CBOR对照、45次原hash对照、45次独立hashlib复核和53项ABI/容量拒绝；原crate的53项active测试通过，原1个ignored保持，strict Clippy与fmt通过。两个编译单元分别647/1640操作，原8192操作限制不变。Research commands/types/state/contribution accounting/Hepta handoff与整包退役继续实现，不能以基础层代替消费者。
+
+Task只在私有scratch中缓存精确32字节公钥的成功解码结果和comb预计算表；每条命令仍执行消息散列、R/S规范性、小阶点拒绝及最终群方程。正式入口增加缓存命中、轮换、淘汰、无效key和消息/签名变更的独立回归，原1390 records、445公开案例、112分配控制和180秒分配期限均保留。该来源图的完整fresh原验收、原生运行和独立读回必须在冻结后执行。
+
+`f87d18646c727a9e573ea16e3f6c8e31becc57df` 的完整Task运行在records index1138实际trap：此前index268大于2MiB对象哈希复用 `[131072,196608)`，覆盖了147456起的私有缓存。现将哈希临时搬运限定为 `[131072,147456)` 的16KiB分块，对象总长度和原262144字节allocation不变。新增交错控制修前在16385字节真实失败；修后9组边界至2MiB+1对象哈希、完整缓存字节保留及后续验签均通过，共124次签名差分、257次实际native调用并经独立reader复核。原完整失败保留，新冻结源仍须重跑完整owner门。
+
+Metadata已定位前一“1MiB栈”修复的真实错误：随后的无参 `threading.stack_size()` 恢复了默认栈，8个实际pthread仍各为8MiB。现在只显式设置一次，并对每个真实worker读取/校验1MiB栈；同时将观察进程glibc arenas限为2，保持512MiB地址空间、240秒、8线程/256并发调用、2827次ABI及840次实际分配失败。使用相同原失败artifact与全部案例的独立四因子诊断中，旧观察器VmPeak为505408KiB，双修为178580KiB；四组本地均PASS，此诊断不能提前宣称hosted失败已闭合。独立reader新增4个资源篡改拒绝，完整控制由41增至45。
+
+Metadata在36d7196的完整本地运行先拒绝Research原版对照产生的源码目录Cargo target；对照驱动改用私有临时target后，8项Research测试再过且原源码目录0额外/0缺失。f87d186完整Metadata运行随后在未修改原Unix socket测试收到环境EPERM，原失败保留，不跳过测试。单独执行的新分配观察器完成全部2827调用、840真实失败、8线程实测1MiB，完整门继续交由新提交自身hosted CI。实际源码发现为645方法（484/95/7/22/37），工作流67作业、55次bootstrap，旧57/45和三分区描述已明确归属历史。
+
+62b410的24个工作流已结束，18成功、6失败；HIA PR为66/67，push为64/67。Task原180秒分配超时、Metadata线程创建失败、Settlement原240秒超时及原服务/协议成本失败均保留为原运行失败。新提交需自己的clean head/tree和完整CI。PR972的六文件上传方案已由fc867d2的60成员完整读回取代；PR973全量Metadata归属已在3adfedb正式登记；4e1c1ad优化存储是整合分支的确切祖先，无需再复制这些实现。
+
+继续唯一Node的COMMIT/reorg/replay/outbox/ACK、Archive/StateImport、Body最大规模与恢复、SQLite及项目C provider、剩余crypto/TLS/TUF、原0.25CPU/2GiB/零swap/256PID/4秒/16worker服务门、跨目标和模型/研究/共识经济验收。完整HIA替代、全部原验收和依赖处置闭合后执行旧栈退役和最终清理；目标保持全套原生实现。
+
+## 2026-11-20 UTC — Task 主存储、Metadata 线程资源和 Settlement Engine 的冻结组合图
+
+本轮从已发布 `3adfedb43371b2cff3658d6228cdd1493d89c9df`（tree `61d7502c0491d20c42ec051b10d07ec12633c84f`）继续。曾缺失的74份历史归档已全部按原Git blob、长度和SHA256恢复；41442个原tracked条目逐一核验，非本轮声明路径的原字节与模式不变。恢复的是当前提交已有的证据文件，不是重新引入已退役的业务代码。完整工作树的未限定路径 `git diff --check` 已通过；原Cargo图、Cargo.lock、Rust源码、测试、fmt和strict Clippy要求继续保留。
+
+### 已实际完成的有限运行结果
+
+- Task Main Store 的独立current3ad开发图使用2285个固定输入，完整qualification与独立reader在173.946236164秒内通过。保留1390个records对照、445个公开场景、2290次公开ABI调用/51个exports、112个分配场景（96个实际失败序号）、8线程各32次调用、原41个测试、fmt、strict Clippy及37个reader拒绝控制。分配门仍为原180秒，外围240秒及唯一3秒清理不变。该图的完整实际归档SHA256为 `5689bdabd90d2263fc198976222f00defb2a7a59f968432885be0db81c7770f5`，Mac与Desktop均逐成员读回。Archive、StateImport、原项目C SQLite provider和Node全运行不在这项通过范围内。
+- 共享SHA256只展开原compressor的操作顺序，文件SHA256为 `82ecf6fef48e72cd56c8daffd449df1a27edcbd2c8c96abe464e1e5683ea2333`；Ed25519只在原有效limb乘法次序内消除无效循环迭代，文件为 `dc25219d5f3c8955ffe58f32ee4563b9ab560611732cb720ab5d44b46c00c2fc`。公共点缓存只保存已解码公开点，仍验证严格A/R/S、弱点拒绝和原公钥字节散列；唯一公共源为 `3345ca7f0c27029eddb1d03bc008c9da8cff740320cb73f6b0633b0ff8ad21ac`。Node组合构建和既有reader通过，但其选入函数不执行本次改动的SHA compressor，不能据此宣称Node全运行或新compressor已由Node验证。
+- Metadata在3ad的push/PR实际失败均发生于8线程池启动，原错误为 `RuntimeError("can't start new thread")`；此前2571次顺序ABI及840个实际分配失败对照完成。观察器现在为这8个Python观察线程明确配置1MiB栈并在finally恢复原设置，保留512MiB地址空间、8线程/256并行调用和全部业务输入。此前3ad加这一处观察器改动的完整独立运行通过：原121个外层测试及2次child执行、12个分组、41个控制和独立reader合计842.171825617秒，qualification本身725.493356650秒。该结果属于旧共享SHA输入图；V1—V4原始记录、失败和实际依赖完整归档 `4b7ff765bbbc35ccf5fba9ce9d345b5bc65b2e487f05fbf4f47910f2d20e1dfd` 已双端读回，不替代本节冻结组合图的再次验收。
+- Settlement Engine的16份runtime/ABI源码及components新增依赖已冻结；13份为新HIA源。8个原生单元和公开库构建通过，最大单元7515操作，仍低于8192上限。当前3ad原生运行完整通过320/320输入、2636/2636操作、16066次native调用，并记录1754次实际传入FFI的height；用时199.912351260秒，原240秒及唯一3秒清理不变。此项只证明该原生运行门，完整fresh original、allocator、独立reader和仓内公开重建入口分别收口，不以旧419开发图的结果替换当前输入。Store/SQLite、Node与整crate退役仍开放。
+
+### 已确认的当前提交失败
+
+3ad的Metadata与Task push/PR官方失败ZIP均保留完整原始内容并在Mac/Desktop逐成员读回。Task两路在records1390与public445完成后，分别停于allocation 80/112和93/112；它们不能和其他运行的尾段拼成通过。
+
+[PoN priority运行44661872490](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44661872490)的六份当前失败官方ZIP已双端完整校验。x64/arm、head/prospective四路from-zero原版执行的named tests通过，但16-worker压力阶段在原4秒内独立确认数为0，正式失败为 `CONFIRMATION_TARGET`。x64两路长历史同步实际报告 `IO: Connection refused (os error 111)`，原进程、测试及完成条件随之拒绝。host的 `failure:null` 不表示业务验收通过；这里路径中的“native”也不是HIA整链资格。历史artifact11531476198仍不可取得，保留UNKNOWN，不能用当前错误或诊断包替代它。
+
+W1当前压力确认与fresh challenge仍未达到原4秒/6深度门；Task boundary push取消发生在apt-get update阶段，未进入原生编译和资格运行。这些失败没有据此归因于未经观测的CPU、磁盘或网络根因。原0.25CPU、2GiB、无swap、256PID、4秒、16workers与CI20分钟门槛均保持原值。
+
+### 本轮组合与剩余工作
+
+本节先冻结实现字节、依赖声明和验收范围；这份组合图的Metadata完整qualification及独立reader结果写入[既有Metadata资格记录](../../hia/qualification/payload-metadata-development.json)，不以修改本节来反向配合测试结果。正式发布前仍须完成Engine源码归属及公开重建/资格入口登记，运行未修改的完整迁移检查和原五个清单控制；提交后必须在该提交自己的clean head/tree上通过原CI，开发图通过不能提前转换成提交资格。
+
+Task Archive七个公开API和StateImport继续在独立源码图实现。StateImport已完成的canonical/namespace/row/Merkle与raw delta对照仅证明相应有限范围；VerifiedExport、VerifiedContext、FinalizedSourceBinding、SQLite/Handoff与生产root owner仍需实际原生实现和原版对照。Body此前有限codec/WAL及owner结果保留，最大宽索引仍有两个原240秒超时，尚无新的最大规模通过结果。
+
+当前仍为0个原包退役；整链HIA原生、旧栈可删除、生产激活和原4秒服务资格保持false。唯一Node COMMIT/reorg/replay/outbox/ACK、剩余crypto/TLS/TUF、跨目标、模型训练/评估/采用/恢复、共识与研究经济义务继续开放。只有全部等价替代、原验收和依赖处置完成，才退役旧栈并清理过程副本；不能靠删测试、换输入、提高时限或保留隐藏业务回退取得闭合。根README继续0字节，本文件仍为唯一开发计划。
+
+## 2026-11-20 UTC — 修复 Metadata 全量源码登记遗漏并保留真实 CI 失败
+
+已发布 `492ee6f451e9e582adde52434807ffb5c01bdcea` 的 [push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653573047) 与 [PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44653593128) 各66作业，均为51失败、15跳过。两路实际提交身份检查通过，逐一核对41442个tracked条目及3377461072字节；随后原迁移检查明确拒绝：`HIA source inventory differs from the complete HIA tree`。这不是原生运行资格通过，也不是已观察到的源码字节篡改。
+
+根整合遗漏了新14份Metadata HIA文件在 `config/hia-migration-v1.json` 中的foundation登记。上一条“28 native foundations登记不变”对应这个真实缺口，本条予以纠正。现在精确登记唯一 `platform/peer-payload-metadata` owner及原验收入口；原完整源码集合检查不改，当前清单为 **60 kernels /29 native foundations /276 HIA sources**。26原包仍19部分、7未迁移，**0退役、9全项目门OPEN**；Node整合、整包退役、全链原生与生产激活均保持false，根README仍0字节。
+
+原检查在本地修复前准确复现同一拒绝，修复后完整迁移检查通过，原5个源码清单测试全部通过，包括未登记、重复、别名、越界路径及提前退役拒绝。四个改动文件仅为该清单、[现有Metadata精确记录](../../hia/qualification/payload-metadata-development.json)、本计划及本计划的当前Git blob pin；所有HIA/Rust业务源码、原Cargo图和锁、检查器、测试、CI工作流及全部历史pins不变。这里的源码恢复根仍缺74份历史大归档，未宣称完整clean工作树或当前提交运行资格；原两路CI完整tracked身份记录与这一本地有限恢复状态分别保留。
+
+两路失败的原日志、精确source身份和原迁移stderr均保留，四个官方ZIP已完整逐成员校验。376开发图的完整原/native/reader资格仍只归属它的冻结输入，不提升为492或本修复提交的验收。必须在新提交自己的clean head/tree上执行全部原CI、完整Payload Metadata原121测试与2次child重执行、12分组/41控制及独立reader；20分钟、240秒与唯一3秒清理不变。
+
+Body最大256MiB大正文两模式已在原240秒内与原版完整返回一致，645277条记录的宽索引两模式仍超时；它们是私有候选的实际结果，本修复不带入这些改动。Task180秒完整门与Settlement240秒完整门继续按原输入和门限推进。Body/recovery/ACK、Archive/StateImport、项目C provider、唯一Node COMMIT/reorg/replay/outbox/ACK、剩余crypto/TLS/TUF、跨目标、模型与研究经济门继续开放。只有全部等价替代、原验收和依赖处置完成后才退役旧栈及最终清理；本文件仍为唯一计划。
+
+## 2026-11-20 UTC — Payload Metadata 持久化 owner、完整原验收与提交级 CI
+
+从已发布 `fc867d207644a1288980553b8f4c32bc062152c9` 继续。本轮整合42份最终Metadata文件（14份HIA），HIA源码总数为276；原60 kernels /28 native foundations登记不变。26原包仍为19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README保持0字节。[本轮精确记录](../../hia/qualification/payload-metadata-development.json)分别绑定实际开发图、原失败、根整合重建和待执行的新提交CI。
+
+Metadata原生进程拥有私有状态、journal/lock描述符、namespace、已发布head身份和四套完整重放索引，覆盖原`PayloadReplayStoreV1`的12个公开方法。保留wire多错优先级、getter缓存语义、完整live WAL/head核验、幂等与replay、poison边界、commit ambiguity及提交后身份栅栏；Python/Rust仅作验收观察器，生产ELF不调用它们。
+
+真实376+精确42文件overlay的1937输入图完整通过原121外层测试与2次原child重执行、fmt/strictClippy、12个native分组、41个完整性控制及独立reader；qualification与reader连续808.911215322秒，仍在同一1200秒绝对期限内。4472 codec+8 wire优先级+840 replay配对；10640 runtime配对调用、857分配形状/2827 ABI/840真实失败、8线程256次调用；48公开历史492配对、61 syscall历史488配对、14崩溃历史28次真实成功syscall后的切断、32边界历史201配对全部完成。最大176602条记录的重放和四索引读取分别执行，仍是原23 native/13 Rust大日志调用的精确不重复全集，各自240秒和唯一3秒清理未提高。
+
+最终生产ELF为944563字节/`d211b58289e8ca70b50a087d346154b3f699d23a793b80d96d24bce3abccf619`；根整合用固定原生编译器重新构建7个模块和emitter，完整ELF逐字节复现。完整1013900751字节归档在Desktop和Mac各逐146347成员读取，包含4218029515逻辑字节、原四次失败、原测试与ELF、所有raw和独立读取来源。原失败不改写为成功，也不把376 dirty开发图改称当前clean提交的fresh验收。
+
+Mandatory owner matrix新增独立`payload-metadata`入口；展开作业66个、编译器准入块49个，每作业仍20分钟。入口要求当前clean head/tree、完整原/native/独立reader、12实名分组、41控制、全部实际计数和同一生产报告，拒绝旧图、scope提升和零退出替换证据。根整合25个CI控制及49×4=196次准入检查通过。完整发现仍637方法（476/95/7/22/37），公共来源为1536输入；新提交必须执行自己的全部CI，发现、旧报告和相同ELF均不能替代。
+
+Body私有持久化owner已生成独立ELF并完成6组真实文件历史/290次原版与HIA公开调用及完整文件字节对照；此前256MiB最大日志的四个HIA操作全部在240秒超时，原版四个完成，完整失败已两端封存。新的两跨度送块优化完成2336整arena配对、2082独立hashlib校验、31组真实SIGILL与部分写入检查；与共享SHA候选的组合仍须重新完成所有Body原验收和容量门，本提交不包含这部分私有改动。Task完整180秒门、Settlement完整240秒门仍开放；环境空间耗尽造成的截断终态与业务超时分别记录，不用未完成场景关闭整门。
+
+继续Body/recovery/ACK、Archive/StateImport、项目C provider、完整结算、唯一Node COMMIT/reorg/replay/outbox/ACK与同请求Paid/Host、剩余crypto/TLS/TUF、跨目标及模型研究经济门。原0.25 CPU/2 GiB/零swap/256 PID/4秒/16worker、编译器30+3秒/128函数/8192操作/1536块/每函数256块均不提高。全部等价替代、原验收与依赖最终处置闭合后，再退役旧整套并清理最终仓库；本文件仍为唯一计划。
+
+## 2026-11-19 UTC — 当前组件证据汇总修复与真实预算失败续接
+
+从已发布 `376267d54ba5f0d740c1e190b773d9f86c1e90c0` 继续。当前仍为 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。[本轮精确记录](../../hia/qualification/component-evidence-reader-development.json)保留实际源、原CI失败、独立读取及完整归档身份，不把读取旧产物当作新提交运行。
+
+376的[push运行](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44630932140)最终65作业中64成功、1失败；[PR运行](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44630957654)最终65作业中63成功、2失败。两路组件汇总器都仍按旧六文件名单拒绝general已真实归档的54份SHA边界证据。五个组件producer成功不能代替汇总读回；原失败和原ZIP完整保留。
+
+本次general固定为六份通用文件加三个实名标签各18份，共60份；其它四分区仍精确六份。新独立reader核当前源、原生编译器与机械重构的编译输入、三次实际build回执、完整ELF身份、440个实际返回/trap/部分写入、两次真实超时与唯一3秒回收，并从raw重新解析所有状态后交叉核对qualification.log。未知文件、空目录、缺件、链接、重新计算manifest后的来源/ELF/raw/监督篡改仍拒绝。读取不需要Hepta checkout，也不重新执行或代理业务。
+
+真实376官方833440B ZIP被旧reader准确拒绝，修复reader完整读取成功；127个真实产物变异全部拒绝。25个unit控制与四种bootstrap的196次实际入口调用通过；根整合重新执行25控制和196次准入也通过。1850476B完整档两端逐215成员、嵌套原ZIP60成员和164个精确变异对象读回，保留原拒绝及两次诊断脚本失败。原627方法一个未删，新增10个general reader方法，完整发现637（476/95/7/22/37）；原1495公共输入一个未删，新增两份Python为1497。此处尚无新637方法整套运行，必须由新提交自己的CI完成。
+
+PR Task Store实际在原180秒记录门于180.115685432秒超时，1290个已完成配对全部相等；累计native约158.953秒，大上下文创建约50.338秒。同head的push Task通过不能抵消该失败。原41测试、完整原执行产物和失败raw保留。私有compact观察输出轮仍在180秒失败，1318个已完成配对相等；继续按实际HIA哈希热点优化，原1390完整接受组、180/240秒和单3秒清理均不放宽。Settlement最后宽状态场景同样仍在240秒失败，不借局部PASS关闭整门。
+
+Body私有新版codec重新完成4377组原实现比较，新增日志重放完成2806组比较、13个容量/报文控制及三种1024键插入顺序的完整位置索引比较。它们仅属各自冻结开发图；最大256MiB、持久化owner、recovery、ACK及完整Payload原包仍开放。继续完整Node事务/COMMIT/reorg/replay/outbox/ACK、Archive/StateImport、C provider、结算和剩余crypto/TLS/TUF，以及跨目标、模型和研究经济门。原0.25CPU/2GiB/零swap/256PID/4秒/16worker、20分钟CI、编译器30+3秒及128函数/8192操作/1536块/每函数256块保持。全部等价替代及原验收闭合后才退役旧栈和最终清理；本文件仍为唯一计划。
+
+## 2026-11-19 UTC — 当前 Candidate owner、Checkpoint 镜像及运行验收修复
+
+从已发布 `10b2f5981c3aa742b16b32090260372f31091733` 继续。当前 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README仍0字节。[本轮精确记录](../../hia/qualification/candidate-runtime-ci-development.json)绑定实际当前开发图、独立读回及双端完整档案；发现、重新编译或相同ELF不替代新提交自己的CI。
+
+Candidate 18份最终文件（2份HIA）提供原12显式方法和25导出。真实10b2+精确overlay的311输入图完整通过343原测试+2 doctest、894原/native配对、14680 ABI、186分配控制含109真实失败、992生命周期调用/8线程/132个owner销毁后独立值、59 reader拒绝及8真实进程控制。全门与独立读回连续381.196秒。646955824B档两端逐6131成员读回；旧419档及身份另存，不重标。合入后301872B native库逐字节复现。常数时间、foreign任意指针、栈/寄存器擦除、完整crypto/TLS/TUF和Node仍开放；nonce极限的原panic与native显式错误差异保留。
+
+SHA只修观察器：真实trap child关闭core dump，避免host piped crash reporter占用原2秒门。生产SHA代码、1秒CPU、30秒外层和单3秒清理不变；440边界、真实child/observer超时及完整30秒独立控制均实测，原失败保留。Peer完整121原外层+2原child重执行、fmt/strictClippy、7组运行、18控制及独立读回连续293.035秒PASS。原18组daemon场景全部保留，新增6组预置幂等容量与实际fsync探测/延迟共26组；原6个fresh-append容量场景在250ms连接和2秒caller期限内自然通过，不改产品fsync或期限。初始和独立reader仍做完整Core准入，中间每阶段重新核全部源字节、成员、链接及原Git blob。296653049B完整档两端逐23735成员读回。
+
+Checkpoint重建准确manifest和两份4252304B executable，在当前106输入图重新通过77原测试、fmt/strictClippy、792观察与31拒绝控制；全门90.748秒、独立reader15.093秒。235209127B档两端逐8373成员全读，原失败准备过程均保留。只回收已封存的可重建重复件，32原ELF和全部声明live输入不动，清理后独立回读再次PASS。
+
+mandatory owner matrix加入Candidate，展开65作业、49编译器准入块，每作业20分钟不变；Candidate要求新提交完整原始/native/独立reader、clean head/tree、所有计数和同一生产报告，明确拒绝旧dirty开发图。Peer summary要求18控制并拒绝旧14。完整发现627方法，互斥466/95/7/22/37；公共来源1495输入。待本提交实际CI执行，不能继承父提交或开发轮PASS。
+
+Task私有续接在原180秒records门实际180.121秒超时，已有1275配对相等；原41测试完成，后续public/allocator/reader没有执行，19文件尚未按全门PASS合入。Settlement私有完整门在240.096秒超时，319/320场景相等但最后宽状态场景未完成；新单场景及分配控制不能补作完整门。继续按实际CPU与核级时钟优化唯一规范哈希及消费层，原180/240/3门不提高。
+
+继续完整Payload metadata当前源码资格、body/recovery/ACK、Archive/StateImport及项目C provider、结算Engine/Store、剩余crypto与TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK和同请求Paid/Host。原0.25CPU/2GiB/零swap/256PID/4秒/16worker，跨目标、独立模型学习、共识与经济门均保持。全部替代、原验收和依赖处置闭合之后再退役旧包及最终清理。本文件是唯一计划。
+
+## 2026-11-19 UTC — PQ 公开原生 owner、共享 SHA 与提交级 CI 修复续接
+
+从已发布 `ae23b0a745186262eb8c987f714b5e9b7231e737` 继续。当前 **60 kernels /27 native foundations /260 HIA sources**；26 原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。新增实现各保留唯一正式目录；全量替代和原验收通过前不删除原栈。
+
+[本轮精确记录](../../hia/qualification/shared-sha-pq-peer-development.json)区分冻结开发图、重新构建、真实原验收和待运行的提交级CI。PQ公开owner的26份文件包含5份HIA，提供55个原生接口；冻结212输入图完整通过原343测试+2 doctest、1609原生/原实现配对、24671 ABI、190 allocator控制（125真实NULL）、1329生命周期调用/8并发reader、49 reader反例和8项真实进程控制。6个native分区保持240秒+单一3秒清理；完整资格及独立读回连续687.442秒。185690816B档两端逐884成员读回，34原测试ELF及direct rlib完整保留；仅可重建target目录省略。合入后原生库重新构建仍966824B/`c5a3926113fb1d902b1b322c250d94290709aa80532f917b19a5b9bfb01e1b35`。常数时间、任意foreign指针、全部crypto/provider/TLS/TUF与Node资格未闭合。
+
+共享SHA仅将tr_get/tr_put原8次顺序访问展开，其余16函数不变，保留wrap、checked shift、越界trap及trap前部分写入；25组实际新旧/hashlib比较和440原生边界案例通过。新图Task完整资格通过1390私有调用、445公开案例/2290 ABI、112分配控制、41原测试/fmt/strictClippy和37 reader拒绝；原180秒测试控制器不变，records配对65.505秒、large-context14.564秒。447178037B Task完整档与21839628B本地编译/440边界档均两端全读。
+
+Node固定composition依据真实27内核+emitter重建：223输入图`c5fa82b43509ddb6d24561b90691259dc36504cb0fd4774fdcb1439e526723f1`，9405367B原生ELF`26d3abd4d81a050f2251ae3bf44afa201a9ea0ea4f34a475e720b0449d7a8e58`，最大114函数/7832操作。379完整性与10CLI控制、五native分组、Hash78、Some82、Checked94及65536/65537两实际容量门通过。fresh原Node4 histories/96methods+3原测试，M05 11histories/122methods/58validation+Node24methods+6原测试，Commitment82/94/2配对+36原测试均通过；6个原ignored未新增，logical owners终值0。初始缺失include、错误CLI和真实/tmp配额失败留存，成功重跑使用/var/tmp、相同源码和原门限。
+
+前驱ae23的push44562193934和PR44562227818中，8个Work作业成功，Task Store两边在原180秒测试控制器失败，Peer Unix两边在原HIA/Rust响应相等后因inode复用断言失败。Peer fixture现以O_PATH|O_NOFOLLOW|O_CLOEXEC保留旧pathname inode直到重新bind，reader从真实path/dev/ino/mode重算绑定并检查6份raw响应；没有修改Peer业务HIA或原Rust。fresh完整121原测试、7分组、14控制及独立读回通过；264851620B完整更正档两端逐19556成员核验，原两份hosted失败也完整保留。payload metadata/body/recovery/ACK整套owner仍OPEN。
+
+mandatory owner matrix新增pq-auth，展开64作业、49编译器准入块，每作业仍20分钟。reader前后绑定同一生产报告，拒绝零退出替换证据；PQ强制完整原测试、全部计数、当前实际源码图和240+3回收，Peer强制14控制和7组实名。根66项整合与49×4=196准入检查实际通过。完整发现625项互斥分组464/95/7/22/37、公共图1481输入；发现、打包或相同ELF均不替代当前提交的fresh CI。SHA边界完整编译输入/ELF/raw随CI归档。
+
+继续Archive/StateImport与项目C provider、完整Peer持久化owner、Candidate及剩余crypto、结算Engine/Store和唯一Node COMMIT/reorg/replay/outbox/ACK及同请求Paid/Host。原服务/W1与跨目标、模型研究经济门保持原资格；0.25CPU/2GiB/零swap/256PID/4秒/16worker，以及编译器30+3秒、128函数/8192操作/1536块/每函数256块均不提高。完成全部替代、原验收与依赖最终处置后再退役旧包和最终清理；本文件仍为唯一计划。
+
+## 2026-11-19 UTC — Task 主 Store 与 Peer Unix 整合、完整读回及当前 CI 续接
+
+从已发布 `83c8c076550ee620f63a889d5f6f14f9a3192a07` 继续。当前 **60 kernels /26 native foundations /255 HIA sources**；26 原包19部分迁移、7未迁移、**0退役、9全项目门OPEN**。根README仍为0字节。新增实现各只有一个正式目录，开发过程副本不进入仓库；完整替代和原验收均成功之前保留原栈。
+
+[本轮精确记录](../../hia/qualification/additional-owners-development.json)分别绑定实际执行、原始失败和双端档案。Peer Unix 的34份owned files包含14份HIA，最终冻结1898源图上fresh native/original和独立读回全部通过：原121外层测试及2次原内部重执行、fmt/strictClippy、4755 codec案例及40 ABI控制、299 client案例、每实现1782 owner调用、37 CLI案例、18组daemon/476次交换、9文件系统及30 syscall案例，13项完整性控制全部拒绝篡改。真实修复只改变故障观察器的终止方式：通过绑定身份的pidfd停止tracee，让strace实际回收，再由既有owned collector核验完整进程族；原3秒绝对清理期限不续期。旧umask与整组SIGKILL失败全部保留。444098788B完整档已两端逐28224成员读回，不能据此声称完整主机依赖或payload/Core/Node已闭合。
+
+Task主Store整合131份owned files、48份HIA。source44完整fresh执行通过1390私有调用/143夹具、445公开案例、413方法/Drop/相等调用和1877 getter调用；112 allocator控制含96次真实calloc失败，9369次分配=9273次free+96次拒绝，最终live及非法free均为0。原35 unit、2 wire、2 archive及2 doctest共41项，以及格式、严格Clippy通过。独立reader现拒绝37种篡改，包含实际发现的4类源/reader遗漏或foreign owner错误接受；旧失败留存。三个完整档案的现行引用全部闭合，两份历史缺失rlib仍如实列明，未用后来产物替代。当前12个只读资格入口改用原`--audit`，须新提交重跑；29操作的项目自有C provider、ArchiveStore、StateImport和Node接线继续开放。
+
+新增Peer Unix、Task Store和Task机械边界三个mandatory CI入口，使展开作业数为63、编译器准入块49；每作业仍20分钟，编译器30+3秒、原生子进程240+3秒及编译器128函数/8192操作限制均不提高。入口执行原始/native/独立reader、全Git来源前后检查、实际工具与输入捕获；成功和失败均归档普通字节及特殊inode元数据。外层意图与阶段回执提前留存，但不保证runner硬终止后的完整归档。49块共196次准入正反检查实际通过。完整发现624项：general463、crypto/types95、State-root7、Oracle22、ML-DSA37；公共图1460输入，发现和打包都不替代执行。
+
+83提交的push HIA运行44528099321已60/60成功；PR运行44528128761因Work original整作业达到20分钟取消，原运行和完整产物保留。Work现只在original打包阶段捕获必须live读取的5类身份，明确标为CAPTURED；后继独立资格仍必须完整执行原全部语义审查、5份SQLite见证和48阶段检查，68条旧原审查语句保留原顺序。92项控制零skip实际通过，但新打包耗时和新提交的hosted通过尚待实测。ML-DSA两边私有及37项公共结果已独立读回，实际控制数始终21；此处仅把stdout过期的20改为报告真实计数。
+
+83预算运行44528128471四入口成功，完整四ZIP经两端逐成员核验后再读actual raw：fixed21控制+10整合通过；pool-before为2通过/5预期失败，budget-before为1通过/6预期失败，pool-scan两项预期失败。reader没有重跑native，不把控制组件通过转成服务门通过。原服务/W1压力下仍CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE，原0.25CPU/2GiB/零swap/256PID/4秒/16worker保持；无runner的macOS作业仍为cancelled/NOT_RUN。
+
+继续原生payload metadata/body/recovery ACK owner、Archive/StateImport、PQ公开owner和完整结算，再接唯一Node的COMMIT/reorg/replay/outbox/ACK与同请求Paid/Host；跨目标、独立模型学习及研究经济门也须原验收。只有全部替代、完整验收和依赖最终处置结束后，才退役旧包并完成仓库最终清理。本文件仍是唯一开发计划，历史运行不重命名为当前通过。
+
+## 2026-11-19 UTC — detached 提交预检与当前 Cargo 图反例修正
+
+从候选 `cab5d8c30ce97983938dd6b575a391f2baf566b4` 继续。当前仍为 **60 kernels /24 native foundations /193 HIA sources**；26 原包18部分迁移、8未迁移、0退役，9全项目门OPEN，根README保持0字节。旧栈只有在完整替代和原验收均成功后才可删除。
+
+本提交修正 ML-DSA 资格在固定SHA的detached HEAD上错误调用开发预检的问题。[push原失败](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44512019556/job/135518389516)和[PR原失败](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44512046673/job/135518484618)均在preflight exit2终止，未运行其后的原Rust/native门；两份完整artifact及raw日志保留。下游五分片reader因ML-DSA未成功而拒绝，属于正确拒绝。现在资格调用原有只读`--audit`，开发/推送限制、foreign origin和activation拒绝不变。21项完整性控制包括真实临时Git提交、detached checkout以及删除audit/来源的拒绝；执行门与reader使用同一固定roster。修复开发轮漏改旧20数量判断的实际失败同样保留，不重标为通过。
+
+修复后的完整私有门与独立读回已在187源图`9ae60514ed8bee1e3d8d10df8158ac0f3d2d4ee273d7309f5a38fbf9afc274b8`实际通过：原343测试+2doctest、79阶段、34原ELF、16 native方法和21完整性控制；运行358.529242秒、独立读回7.921353秒。该观察只属于其冻结开发源图，不转移为新提交通过。完整发现为601项：440 general、95 crypto/types、7 State-root、22 Oracle、37 ML-DSA。公共来源图补齐预检真正读取的16项既存输入，共1331项；发现和来源绑定不是业务执行。所有五分片仍各20分钟，提交级CI必须执行本提交自己的完整原始/native门、真实完成名单与独立读回，不能继承父提交或其它源图的通过身份。
+
+预算反例继续保持当前Cargo、lock、toolchain及原测试。`pool-before-v3`为`e6c530ccd3edd035892870315877ae9adfff7e23`，`pool-scan-before-v2`为`d84b9e0af0943c1f779b432589e31ca58db3364f`。新的`budget-before-v3`为`270eb51919d9b02e3962ffab5140ccffbbbb1470`，明确是保留当前completion API和测试、恢复两种历史错误机制的受控反例，并非旧89历史源码。其独立开发观察在未改的7项原测试中有6项真实失败及1项等价性通过，完整原ELF和raw保留；正式完整source guard仍须自己的执行。三个subject仅创建不可变Git对象，没有额外refs或产品分支改动，不能合入生产运行路径。
+
+父提交两项macOS cleanup均未取得托管runner，steps为空、runner_id为0，状态仍为cancelled/NOT_RUN；不能将容量排队当作源码通过。W1两个真实运行的source、release build和固定Host lease均通过，但retained-pressure观察的`finite_target_met=false`被reader正确拒绝；fresh challenge真实exit101，断言未达到原四秒、六层确认业务目标，不能给窗口外成功记分。两份完整artifact逐成员读回并保留，业务门仍OPEN。原0.25CPU、2GiB、零swap、256PID、4秒和16worker条件一律保持。Peer Unix、Task持久owner与PQ授权的隔离原生开发继续推进；这些工作尚未改变上述正式清单或退役结论。
+
+## 2026-11-19 UTC — 完整有限 ML-DSA、Host 实际修复与不放宽期限的 CI 分片
+
+从已发布 `88f610df3717b26f3c20e6455992da9004c144db` 继续。当前 **60 kernels /24 native foundations /193 HIA sources**；26 原包仍为18部分迁移、8未迁移、0退役，9全项目门OPEN。根 README 保持0字节；全链、旧栈退役和激活标记仍为false。以下开发运行各自保留实际 source graph，当前集成须其自己的资格及提交级CI。
+
+ML-DSA 的11份最终owned files和4项显式依赖已合入。完整 Pure 65/87 verify/keygen/sign以及Candidate私有owner均由HIA执行；冻结159源正式轮实际完成500官方数学检查、669原API比较、1213 shared native调用、96真实私有allocation生命周期和12容量拒绝；16 native方法、20完整性控制、原343测试+2doctest、fmt/Clippy全通过。545408860B完整档SHA `6d05d1f4353927848104f1654a1c0fb9a6004bd49a4e39dabe7a1365e32d090d` 在两端逐1432成员读回。原12个alias探测失败、provider下载/系统OpenSSL失败和早期失败快照继续保留；私有f0没有foreign alias guard，不把caller前置条件改称内存安全或自动Drop，constant-time、44/prehash、授权/TLS仍开放。详情见 [ML-DSA契约](../../hia/src/crypto/ML_DSA.md)及[最终开发记录](../../hia/qualification/ml-dsa-development.json)。
+
+Host/Work/Paid 最终17源修复已合入。production worker使用与原trusted-local一致的standalone初始credit；不靠等待充值或放宽reserve获得通过。实际v7全轮177 primitives、61 native histories/27843progress、57 original histories/27841progress、44原保留测试及完整CLOCK/Paid故障、24握手控制均通过，141 runtime/4368 original源前后一致。v8仅更新7-reader图，真实独立review和archive readback通过；保留v7执行身份，不虚构重复原运行。旧20/18的transfer reader改为实际32/30，并新增跨模块和旧值拒绝。唯一canonical握手包替换为255432B /76成员 /SHA `bec8554a436aac64b3ef6fd60ed4fba30e93fdf5a48db7c6cdf06e9edce90ed9`，旧包在不可变Git历史，工作树不并列过程版。fixed-parent production、同请求Node权限及原0.25CPU/2GiB/0swap/256PID/4s/16worker验收仍开放。详情见 [Host开发记录](../../hia/qualification/host-standalone-development.json)。
+
+88f的push/PR HIA实际失败；两边Checkpoint、PeerStore和source/archive通过不等于整轮通过。PR general被原20分钟限制取消，Work original已运行完但旧计数reader拒绝；原失败及完整CI档保留。Oracle22方法已拆为独立job，fresh两原Cargo图和全部原保留profile实际通过，22方法零skip，21,164成员完整档双端读回。新增独立ML-DSA job先完整原始资格，再用同一live adapter和SHA实际执行36组件方法。当前完整发现600项：440general、95crypto-types、7State-root、22Oracle、36ML-DSA；五方consumer必须同source/run/attempt且全部方法真实完成。60jobs/48独立bootstrap均保留20分钟，不删测试或扩大预算来消除失败。
+
+Peer Unix 在隔离树继续：真实客户端299组与原API完整逐输出差分、daemon37组CLI及真实socket/持久化联调通过，原Rust全部121外层测试、fmt/strictClippy通过，1759源码前后一致；完整541184471B档两端逐10408普通内容成员读回。新增真实daemon容量、慢客户端、碎片/异常帧和重启验证已发现并修复超大poll timeout的错误种类差异；其实际失败继续保留，尚未整合或宣称完整Unix owner闭合。Task继续真实SQLite事务、PQ auth继续64MiB流式SHA384及TPQ1原行为，均不混入本次已冻结交付。随后完成唯一Node owner的持久COMMIT、reorg、recovery/outbox/ACK及同请求Paid/Host、跨目标、独立模型学习与共识经济资格。只有实际全替代及原验收闭合后才删除旧栈及最终冗余清理。
+
+## 2026-11-19 UTC — 托管工作流上下文错误的实际重现与修复
+
+`cef50843e990bae58c1abf2fd74c8cf2859b7132` 已通过既定 Mac 身份发布精确65文件树，但HIA push run `44485504325` 实际在工作流验证阶段失败，check suite `120416802471` 没有任何已启动job。原YAML把三个 `runner.temp` 表达式放在job级env；该位置不允许runner context。保留原提交、API回执及完整原YAML，不把未启动的58jobs记作运行成功。
+
+本次只将三个路径移到checkout前的运行器步骤，由真实 `$RUNNER_TEMP` 写入 `$GITHUB_ENV`；该步骤显式在已存在的workspace运行。实际校验已验证官方release校验和的actionlint1.7.12：原工作流exit1且准确报三处context错误；修复后的完整工作流exit0。58jobs、46独立bootstrap、20分钟以及全部原original/native/negative/readback步骤不变。Shell语法、环境文件实际写入和bootstrap拒绝控制另行核验；此处静态验证不是托管runtime PASS。精确记录见 [Checkpoint开发记录](../../hia/qualification/checkpoint-store-development.json)。新提交仍须自己完整CI；Work/Paid新constructor修复继续独立资格，不夹带入本次配置修复。全链、旧栈退役、生产激活仍为false。
+
+## 2026-11-19 UTC — Checkpoint 原生权威、完整方法与真实 CI 故障修复
+
+从已发布 `41948f98b7b9fcb24a6ba7d638d5391a88e26de6` 继续。当前 **56 kernels /24 native foundations /189 HIA sources**；26 原包中18部分迁移、8未迁移，**0退役、9全项目门OPEN**。此处是实际源码覆盖，不是完成率。根 README 仍为0字节；唯一正式实现及资格入口仍在 `hia/`，不加入作者脚本或平行过程版本。
+
+Checkpoint 的48份最终owned files与28条依赖声明已整合，其中29份HIA负责原六CLI命令、完整公开API、Unix client/daemon、journal权威及独立commit ledger。原Rust1.95完整77项保留测试、零filtered/ignored、严格Clippy、Cargo fmt与adapter rustfmt均真实通过；最终运行792组，675次API和31次CLI对照，10个真实daemon，23个durability切点分别施于两实现，31个篡改控制均拒绝。完整16,102,424B档在Desktop和Mac逐1453成员读回。SIGKILL/EIO只证明实际已观察的进程和I/O边界，不能改称断电实验。开发运行保留自己的180+overlay源图c1d65794，不冒称419运行。
+
+当前106输入图940c84f6已重新实际编译29阶段并独立读回；两份最终4,221,936B executable与已资格版本完全一致。相同字节不转移旧792组运行身份。新增mandatory checkpoint CI每次对自身event head重新做fresh original+native+792+31+readback，并核before/after完整Git来源和全部source blobs。工作流现58jobs/46独立bootstrap，每个原20分钟不变；完整components发现557项（455general、95crypto-types、7State-root），发现不等于执行。49项整合控制及四组bootstrap共184次实际入口调用通过。
+
+419 PeerStore job在全方法及预期拒绝完成后，因为证据归档器把测试/Cargo合法硬链接当作非法bundle而失败。新的runtime归档器对每个普通路径独立复制实字节，保留原device/inode/nlink等元数据，并只记录socket/FIFO/symlink的lstat。六项真实硬链接、源变动、归档损坏和不覆盖控制通过；原source/executable `object_inventory`严格规则不改。成功打包不推导runtime PASS。
+
+419 macOS prospective清理作业的EPERM已保留原55126B完整日志；十次真实重现证明killpg拒绝时waitid还没公布退出，稍后退出和完整singleton census均可证实。修复仅在Darwin EPERM后最多观察50ms，保持原exchange期限、仅signal本owner创建的组和reap前PID保护；live/foreign/extra/empty/error一律不放行。Linux55、Mac55及2000次真实EPERM分别通过；完整87项扩大检查最初因本scratch缺/usr/bin/time产生13个error，保留失败后在有真实GNU time的ROG按相同10源重新执行，87/87、零skip通过。新head/prospective托管结果仍须自己的CI，不能继承本地结果。
+
+Work宿主419的exit70也已定位：production Paid入口误选cold构造，与原trusted-local standalone的初始credit语义不同。继续在相同原预算下修复、比较两个实际native constructor，更新严格primitive reader并从最终源重编必须保留的handshake negative fixture；不得通过等待充值、放宽reserve或删除拒绝控制取得通过。原4秒/16worker/0.25CPU/2GiB/0swap/256PID确认目标失败仍开放。
+
+继续完整Peer Unix服务（SO_PEERCRED、64连接公平调度和共享deadline），完成ML-DSA 65/87全verify/keygen/sign与秘密owner，Task/StateImport真实SQLite持有者和service-settlement完整原生方法。随后接唯一Node owner的COMMIT/reorg/recovery/outbox/ACK、同请求Paid/Host、跨目标、独立模型学习与共识经济资格。仅当全部替代及原验收闭合后才退役旧包和最终清理；当前三个whole-chain/retirement/activation标记继续false。详细边界及原始事实见[当前审计](../../hia/AUDIT.md)、[Checkpoint记录](../../hia/qualification/checkpoint-store-development.json)与[退出竞态记录](../../hia/qualification/cleanup-exit-race-development.json)。
+
+## 2026-11-18 — 私有快照、持久租约、Work/Paid 与 PQ 基础的原生续接
+
+本轮从已发布 `180c642b4ad723118038b31639afc0d922f474b7` 恢复并继续。当前 **56 kernels /23 native foundations /160 HIA sources**；26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。唯一正式实现仍在 `hia/`，根 README 保持0字节。本文件仍是唯一开发计划；当前覆盖和缺口见 [完整审计](../../hia/AUDIT.md)，不同运行只认各自实际源图与原始记录。
+
+Some/CheckedApply 已进入私有 Node snapshot/tree 路径，冻结开发图223源的五个原生分区、必需trace、379项build控制及30项实际deadline控制通过；Some82、Checked94显式方法和65536/65537变化边界均有真实原生执行与原始Rust对照。此处不是持久Node.db事务闭合。Node仍有两套局部SHA256压缩路径；改为普通路径的真实候选虽过78个hash和94个Checked方法，但两个容量子进程均超过原240秒界限并被回收，未合入。准确README修正有新源身份；未将原0a934图的PASS改名为新图结果。继续完成同一owner的COMMIT、reorg、rollback floor、replay/outbox/ACK及同请求Paid/Host权限。
+
+PeerLeaseStore 的最终Linux私有owner用真实FD/flock/fsync持有journal/head、完整replay与单调last-observation；原18项全清单、618次对照、12个真实SIGKILL切点和I/O故障控制已运行，partial与注入failure均真实exit1。保持TPLR/TPLH字节契约、原256MiB边界和编译器128函数/8192指令限制。完整归档已两地逐SHA保存。下一步实现原Unix连接服务、SO_PEERCRED、64连接有界公平调度及共享绝对期限，再连接Core认证、payload stores和Node；私有journal不能代替这些权限。
+
+Work/Paid37份冻结源码已恢复；61个native histories、175个primitives、三条实际trace、57个原始histories、44原保留测试、18个CLOCK故障及15个Paid故障有完整双边运行。原默认layout和新的work-paid-v2各24个硬件断点握手控制通过；独立private development readback通过。完整原始阶段实际1113.410679秒，其中fresh Cargo325.848503秒，20分钟CI余量仍须由当前提交验证，不提高deadline或省略方法。新76成员negative fixture按实际原件重封为c982fb8a…，旧64成员137c4a0b…只由不可变Git历史解析；旧PASS不重绑新archive。
+
+Keccak-f[1600]、四种SHA3与两种SHAKE的增量生命周期，以及FIPS204多项式NTT/逆NTT/逐点与负循环乘法均为HIA原生基础。官方fixture含3442个完整选定byte vectors，保留两个原ZIP和八个成员身份。完整ML-DSA签名/验签、采样/编码、秘密键持有、constant-time与TLS/identity仍需实现和独立资格。移除无法验证的errata文字，不改算法行为。新增两模块进入完整crypto-types95项；不使用旧环境中已不可访问的95项完整raw档代替新执行。
+
+工作流现在57jobs/45独立bootstrap；新增commitment与peer-store mandatory作业，各保留原20分钟、原生子进程240秒与3秒回收。完整component发现551项（449 general、95 crypto-types、7 State-root），发现不等于执行。c98与180各两轮HIA工作流55/55成功；180的独立required-baseline已经观察到protocol、prospective protocol及两架构cost失败，其他长任务仍以最终GitHub状态为准。原0.25CPU/2GiB/0swap/256PID/4s/16条件及模型/研究门均不放宽。
+
+共享临时executor重建后，已发布Git源及Mac/Desktop/ROG封存原件为恢复依据。完整full530、Some两档、Peer、Work/Paid及support仍可逐字复核；仅在旧临时目录的170MB Some/core档、17MB失败SHA候选档及未传完31MB PQ档当前无已确认完整副本，保留实际摘要与明确缺口，不重造旧原始观察。以后每批源码和实际执行先在远端封存再整合；只发布最终源码、必需回归fixture和精确索引，避免把额外过程副本加入正式树。
+
+继续并行完成checkpoint-store全Linux公开接口/Unix/持久恢复的最终源绑定，Task/StateImport的真实SQLite/provider owner和service-settlement的原生私有owner；之后覆盖其余原包、跨目标、真实独立训练评测/Adopt-NoUpdate/下一任务/冷恢复、共识与经济资格。只有全套实际替代、原验收通过且工具依赖已有明确最终处置，才删除旧栈和无用过程文件。三项whole-chain、retirement、activation标记继续false。
+
+## 2026-11-18 — 全树复核、原生交易与 Transcript 方法、共享哈希及完整分片
+
+本轮从 `56c6e560dd3192f89cca40542286166b8284cb4b` 继续，先发布 Oracle detached checkout 修复 `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`。当前 **54 kernels /22 native foundations /143 HIA sources**，26 原 Rust 包中17部分迁移、9未迁移，**0退役、9全项目门OPEN**。这些数量描述实际覆盖，不作为整链完成率；三项全栈、退役与生产激活标记继续 false。本文件保持唯一开发计划，当前完整审计集中在 [hia/AUDIT.md](../../hia/AUDIT.md)，旧审计流水留在精确 Git 历史中。
+
+本轮 HIA 方法包括 RequestStatus 全7状态/49有序转换/Unicode解析与Display、TransferTx 原签名消息/地址/签名/严格验签，以及 Transcript 全9显式API、完整segment收集、实际Merkle层、单/批proof和任意typed proof验证。完整u64/u128域、原signed domain、错误先后及原u64饱和边界均保持。三个模块使用实际未改的 trnm-types 对照，不截取原函数改写算法充当独立实现；generic Serde、relay认证和live Node消费仍继续。原trnm-types完整all-targets实际283项、20个binary、零ignored/filtered通过。
+
+增量SHA-512复用原arena的唯一canonical压缩函数，支持128位消息计数、真实未对齐4MiB+257字节输入；SHA-256完整域助手复用原压缩，保留transport 2,098,176字节上限和原错误顺序。Transfer最大十进制字段少2字节scratch及非法hex `@`/反引号触发trap的真实缺陷均已修复。后者保留匹配的失败源与实际trap输出；最初scratch失败没有确认仍在的完整旧源码/原stdout，明确此历史字节缺口，不重造失败。制造的近2^61上下文只验证计数算术，不声称执行exabyte消息。共享函数改变后的固定平台清单和编译器128函数/8192指令边界必须在真实consumer重新编译；不复制哈希算法或提高编译器限制。
+
+Oracle只读audit修复保留dev/push分支和repo身份拒绝。其精确push [44442681639](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442681639) 已54/54 SUCCESS；独立PR [44442705474](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442705474) 的general472项零skip实际通过，但job在20分06秒结论CANCELLED，consumer正确失败；原log未明确取消原因，不改写为SUCCESS。
+
+新增后首次完整本地511项实际结束，1735.968秒、1 failure/5 errors，源前后一致。4项Unix socket创建被环境EPERM拒绝，原peer-lease完整保留suite也在实际socket操作失败；另1项暴露临时SHA256边界fixture被误当repo路径的报告器错误。完整FAIL保留，不能由后续修复覆盖。生成fixture现显式绑定test owner、完整实际UTF8输入/receipt、canonical依赖并拒绝symlink/traversal/重绑定，不能冒作production kernel。根合并后43项composition/migration/provenance/partition控制全部通过，临时fixture实际64次selfhost调用与删除临时目录后回读也通过。
+
+工作流现在55jobs/43独立bootstrap，四组共172次实际调用通过；各job仍20分钟，child仍原240秒/3秒清理。完整发现530项精确分为general449、crypto-types74、State-root7，发现不是执行。consumer要求三份同head/run/attempt/source map、所有实际开始/完成roster、零失败零skip及三个真实job SUCCESS；没有省略测试或借用其它提交结果。原4秒、16请求、0.25CPU/2GiB/0swap/256PID业务验收及CONFIRMATION_TARGET失败保持。
+
+继续把真实Some/CheckedApply私有snapshot和PendingPreview接入唯一Node，完成同一请求的Paid/Host期限与持久Node.db COMMIT、reorg、replay、outbox/ACK。原26包、PQ/TLS、跨目标、真实独立训练评测/Adopt-NoUpdate/冷恢复与研究门逐项保留。旧栈只有实际全替代及原验收成功后才能删除；冗余过程文件须先证明不再承担源、证据或验收依赖。
+
+## 2026-11-18 — Oracle 全公开值与实际 JSON 配置的原生闭合
+
+本轮父提交 `d49083115e977f9c1947f92b9c10d93870e1b752`。当前 **50 kernels /22 native foundations /139 HIA sources**，逐源唯一归属；26原Rust包中16部分迁移、10未迁移，**0退役、9全项目门OPEN**。本轮只整合冻结的Oracle两内核、独立原库对照、CI接线及完整证据；真实持久Peer store、service settlement与task-kernel在独立工作树继续，并发Node/TCM1/Paid源不覆盖。
+
+[Oracle最终记录](../../hia/qualification/oracle-development.json)覆盖实际inline lib.rs全部22个显式公开方法/函数和6种公开类型的具体serde_json 1.0.149编解码。默认与workspace arbitrary_precision分别使用实际Cargo依赖图；每种各有release wrapping/checked arithmetic原库构建，完整原118保留测试执行四次共472次。未引用的相邻snapshot/validation/test文件不算进实际module图；不截取原函数改写算法当oracle。完整i128/u128、u32溢出、Unicode、原hash无namespace framing、原错误先后与JSON IgnoredAny/known String区别保持。实际checked panic对应真实native child trap，不转换成业务error或假成功。
+
+根在整合源上19/19实际PASS、154.159985047秒；10272 native calls、10259完整差分、64真实panic/trap对、50大source场景。独立reader核24源身份、26实际artifact、672进程、94267内容引用及19016不同root blob，0孤立；19726完整文件/1659551284B全部保留。最终报告同时要求完整method roster、源前后一致及class teardown产物核验成功，真实timeout、缺失executable、class setup及class teardown失败控制不会报PASS。
+
+审查修复初版source排序/重复检测/cardinality的O(n²)行为，以heap sort和二分查找形成O(n log n) String比较，同时保持原input顺序的第一错误且不加source-count上限。完整旧新source、实际compiler流、binary、输入输出及24次真实执行留档；观测4096逆序constructor CPU约6.31秒降至0.17秒，all-repeated约0.057秒变为0.261秒，退化同样公开保留。这些开发时序不是生产4秒业务验收。
+
+首轮依赖feature不符的setup FAIL完整保留；早期adapter/newtype失败有已覆盖字节的真实历史缺口，明确不冒称可复现；旧v2/v3报告器class-final不足的限制保留。正式目录只有最终两内核及单一完整证据，20,046普通成员/1,819,725,918逻辑字节压缩为15,485,716B，逐成员与完整XZ/tar尾核验后按≤6MiB三卷保存。重复成功开发目录不再进入正式仓库。
+
+整合migration/composition/partition33项及四组bootstrap共168次实际调用PASS。组件完整发现476项（469general+7State-root），发现不是运行。CI仍54jobs/42bootstrap，各20分钟；general先独立构建两套Oracle依赖，STEP env绑定其实际路径，完整native/original原始产物单独always上传，严格六文件consumer保持。新增源码须自身提交级hosted结果，不继承d490或更早的绿灯。
+
+另修正peer-values README中反写的方向名：原实现始终为1 Outbound、2 Inbound；本次仅文档改正，保留old/new字节与SHA，不回填旧peer资格source snapshot，也不据此新增runtime PASS。
+
+本地stateless数据可接受性不授予认证源、source-chain finality、bridge replay或settlement权限；generic Serde provider、外部诊断文本、live Node消费与持久owner仍有明确边界。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE与0.25CPU/2GiB/0swap/256PID/4s/16预算不变。继续真实租约store、双边签名守恒结算、task-kernel原SQLite/schema/事务所有权，并接唯一Node的Some/CheckedApply/COMMIT/reorg/recovery与同请求Paid/Host。仅全部替代与原验收成功后清除旧栈。本文件仍是唯一开发计划，仅更新实际改变的计划pin，三项全栈/退役/激活flag保持false。
+
+## 2026-11-18 — 治理、签名计划守卫、租约值与 Work 并发修复
+
+本轮父提交 `88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4`。当前 **48 kernels /22 native foundations /137 HIA sources**，每份源码唯一归属；26原Rust包中15部分迁移、11未迁移，**0退役、9全项目门OPEN**。数量描述已经实现的范围，不换算整链完成率。本轮只合入冻结的治理、控制守卫、租约值及四份Work修复源；Oracle、真实持久租约store、service settlement在独立最小工作树继续，其他会话的Node/TCM1/Paid修改不覆盖。
+
+[治理最终记录](../../hia/qualification/governance-development.json)：10/10实际PASS，94完整原Rust对照，6185公开操作及193固定private boundary fixture操作；原governance45和audit3保留测试全部PASS。角色、提案、暂停、参数、权限/错误先后、raw/normalized审计及Clone隔离均由HIA持有。固定fixture无外部状态输入。12个实际allocator进程覆盖11处真实OOM，零泄漏/非法free；最终harness实际执行timeout、spawn不存在、class setup失败与native child timeout。有限session仍不等于live Node持久治理owner。
+
+[LocalPlanGuard最终记录](../../hia/qualification/control-guard-development.json)：14/14实际PASS，1367 native calls、1361原实现逐字对照、462 evaluate，原5项保留测试PASS。原crate没有生产signature provider，因此真实HIA Ed25519接入使用明确的新local profile，signer/signature/plan message均有新domain；原plan/action/receipt摘要和原policy顺序保持。不能沿用既有signed schema假称同一授权身份，也不声称PQ。evaluate仍不可变，不凭空增加重放账本或代次变化。真实3处OOM正确释放，live认证plan application继续OPEN。
+
+[Peer Lease最终记录](../../hia/qualification/peer-lease-development.json)：13/13实际PASS，53完整对照、8095操作；私有scope/token/namespace/frame、完整recovery值、Clone/Drop、数值排序、projection解析、run hash及8MiB body保持原语义。projection自洽不等于Core认证。本地完整原suite曾因Unix socket权限失败，未过滤该测试或改报PASS；配置ROG真实执行未改crate全部121外层测试（97lib+7bin+17integration），两个原内部child test不重复计数。根逐原件读取16份实际binary/rlib共231382068B、完整1700份源。local adapter build与远端original test使用各自实际compiler身份。历史v1未留全旧test/README源码字节，明确source-byte incompleteness；最终源与partial/failure负控有完整匹配快照，旧FAIL不继承新PASS。
+
+[Work最终记录](../../hia/qualification/work-handshake-development.json)：5a hosted clock-EIO-2199实际exit88故障来自ready/go循环的两次共享字读取。另一线程在两次读取间正常0→1会被错判非法；两个HIA emitter改为每轮一个load，再用该snapshot判断，地址/段长不变。24个真实硬件断点调度用例复现4旧race、通过4新race及16明确非法状态拒绝；正常race不改指令、通用寄存器、syscall结果、clock或private state。新race真实经历futex EAGAIN、clear_tid及worker exit后join。完整新native回归175 primitives/9489calls、61 histories/27843progress、3trace、27trace+14signal负控、18CLOCK全部PASS。旧新clock-EIO-2199输入49348B逐字相同，新按原Host错误语义在1099progress后返回并join。此轮不是新original Rust execution，不代替fixed-parent生产authority、live Node/Paid或4s/16业务门。
+
+第一轮合并测试遭实际ENOSPC，原失败和未完成记录保留；纠正环境后在同一冻结manifest上重新完整执行三套，共37项PASS。清理仅针对逐字SHA匹配的自有重复checkout及未引用单链接Cargo incremental缓存，多链接共享文件、原源码、执行产物和失败证据不删。正式仓库只引入最终实现和单一完整证据传输；必要历史负控封装在最终档，所有分卷均≤6MiB并完整重组核验。
+
+最终migration/composition/partition33项及四组bootstrap共168次实际调用PASS；首次整合driver漏HIA_TOOLCHAIN_ROOT的setup错误按原观察保留，正确绑定工具链后重跑全清单。组件完整发现457项（450general+7State-root），发现不是运行。54jobs/42独立bootstrap、各20分钟及原六文件consumer保持；新三模块与Work握手完整raw各自上传。当前新增源须自己的提交级CI，不能继承88dd或5a通过身份。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE失败继续保留，0.25CPU/2GiB/0swap/256PID/4s/16条件不放宽。
+
+继续实现Oracle完整类型/Serde与实际feature/overflow profile，Peer Lease真实fd/flock/journal/fsync/recovery owner，以及双边签名/usage/rollup/challenge/守恒结算的私有原生owner。之后接唯一Node的Some/CheckedApply/COMMIT/reorg/recovery、同请求Paid/Host及剩余所有原包、PQ/TLS、跨平台、模型和研究门。只有实际全替代和原验收全部成功才删除旧栈。本文件仍是唯一开发计划；只更新实际改变的计划source pin，不把开发PASS写成whole_chain_native、old_stack_can_be_removed或production_activation。
+
+## 2026-11-18 — 控制面与托管的私有 HIA owner、完整原始对照及证据闭合
+
+本轮父提交 `5a71deab1f254fff3297b482a96d86fbc8965b89`，基线跟踪树40,931项。当前 **45 kernels /21 native foundations /133 HIA sources**，逐源唯一归属；26原Rust包中13部分迁移、13未迁移，**0退役、9全项目门OPEN**。独立工作树保留其它会话的TCM1、Node与Work/Paid开发，不覆盖并发修改。
+
+[控制面记录](../../hia/qualification/control-plane-development.json)覆盖全部公开值操作、原始domain/part framing与私有ObserverRegistry。最终run6完整15/15 PASS、2577实际native calls、2564原Rust逐字对照、1542 registry commands、原5/5 retained tests。原capability顺序、代际替换、measurement保留、全i128与未校验digest域均保持。三处实际calloc拒绝及容量/格式控制不泄漏、不发布部分结果。发现tearDown错误取success的假PASS风险后改读最终TestResult，7种实际报告器结果负控通过；发现漏存临时allocator observer后二次完整执行并留存原binary，旧run3/run5限制按自身来源保留。根独立读回3904文件及33554引用，实际工具链、native/original/observer产物全部在最终档中。
+
+[托管记录](../../hia/qualification/escrow-vault-development.json)覆盖完整SettlementVault公开方法、多个私有owner及Clone/Drop。最终7/7 PASS、194会话、19877公开操作逐字等原实现；原vault36/36与audit3/3 retained tests通过。完整u128、原错误优先级、Unicode White_Space、零余额、终态request永久占用、完整raw/normalized审计与原子拒绝均保留。13处真实分配失败全部释放且无非法free，56格式/UTF-8/容量控制通过；单测1/7运行虽然unittest返回0，报告仍为INCOMPLETE，不冒充全套通过。真实rustup shim选择缺陷已修复并有回归控制。
+
+两份最终压缩档共5399普通成员，根已逐文件完整解压、核size/SHA及单一XZ/tar尾部；正式目录各只保留一个实现。报告与历史失败是可重放证据，不能当垃圾删除。活跃HIA未发现同blob重复，基线跟踪树无target/node_modules/pycache/对象或临时垃圾；尚需原实现和验收依赖的文件保留。
+
+整合33项migration/composition/partition与四组bootstrap共168次真实调用PASS，原42独立bootstrap门不改；组件完整发现420项（413general+7State-root），发现不等于已执行。CI仍54jobs、各20分钟；新完整二进制与raw证据单独上传，原六文件consumer保持严格。C资格源加入before/after。Cargo metadata原图通过；本地额外offline参考构建因缓存缺rand_core0.10.1失败，未伪报全workspace/test/Clippy通过。
+
+父提交CodeQL分页修复的[export44300744975](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44300744975)真实SUCCESS，仍需原期限内两份新的完整相等快照，不以去重代替稳定性。前驱1fb两套HIA真实54/54通过；当前新增源须自己的提交级CI。原CONFIRMATION_TARGET/PUBLIC_REQUEST_DEADLINE继续FAIL，0.25CPU/2GiB/0swap/256PID/4s/16attacker均不放宽。
+
+继续并行完成governance guard、peer lease与LocalPlanGuard实际provider边界；托管有限session不能冒充live Node持久owner，值校验不能冒充签名授权。持续接真实Some/CheckedApply/COMMIT/reorg/recovery及同请求Paid/Host，推进剩余包、PQ/TLS、跨平台、模型与研究门，原验收实际通过后才退役。本文仍是唯一开发计划，只更新实际变化的source pin，不把开发PASS提升为whole_chain_native、old_stack_can_be_removed或production_activation。
+
+## 2026-11-18 UTC — 全树复核、原生 RS46 与 Node 写入期限闭合
+
+本轮基线为 `337fe8df54a5af59e10a1aea129022702b40b89d`，完整 Git 树40,920文件。当前增量为 **42 kernels /21 native foundations /130 HIA sources**，逐源单一归属；26原Rust包中11个部分迁移、15个未迁移，**0退役、9全项目门OPEN**。storage候选已完全包含在基线，无重复合并；根README保持既有零字节约束。旧运行栈只有在完整替代与原验收成功后才能退役。
+
+### 已实际执行的 RS(6,4) 全尺寸字节内核
+
+`hia/src/data_availability/rs46.hepta` 实现原GF(256)/0x11d、系统生成矩阵、CRS1编码、全部4/5/6片恢复。完整保持1..4,194,304B源范围与0..16383索引；独立选定pin、严格顺序、所有header、零padding、源SHA以及额外parity全部验证后才发布输出。复用canonical SHA init/compress，不扩大原transport stream helper的边界，不用Python/Rust算法替代native运行。
+
+15/15原生测试实际PASS37.407s，覆盖65,536乘法输入、255逆元、22可恢复子集、完整4MiB及MAX-1、逐字节损坏与边界。最大6,292,022B六片输入实际恢复4MiB；仅破坏第六片最后字节返回10，完整输出canary不变。完整原Rust crate独立编译后12/12保留测试PASS，929/929差分PASS（33编码、896恢复/拒绝；738接受、191拒绝）。原始完整4,414源与27显式pin、实际执行的原binary及native库均核验；首次漏root include_str fixture的失败保留，完整复制root tests后重新执行，不改原production源码。
+
+[唯一开发记录](../../hia/qualification/rs46-development.json)与紧凑归档保存完整对照输入/输出、原始日志及失败，原154,360,792B可执行文件明确为档外原件。新增独立CI job上传实际执行原binary和native库。该内核仍要求可信的selected chunk pins；TCM1解析/context绑定、provider/retention、持久化与Node采纳继续实现，不能把字节内核记作整包退役。
+
+### 写入期限修复与原失败保持
+
+实际复现boundaries/capacity两个阻塞writer跨过外部watchdog；两者改为复用smoke的非阻塞绝对期限实现。三driver共30项真实pipe/短写/EINTR/EAGAIN/期限/退出控制PASS。原240秒进程、3秒清理预算不变。source控制6组/361项/8真实CLI PASS有独立执行图；RS46注册后203源图为 `959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685`。
+
+完整boundaries新构建PASS，ELF7,795,933B；当前执行host在第一owner frame前拒绝strace PTRACE_TRACEME/PTRACE_SETOPTIONS，runtime FAIL、0控制计入。capacity已启动构建后中断，无完整runtime结果。没有去掉必需追踪或重新标注PASS；[deadline记录](../../hia/qualification/node-stdin-deadline.json)保留全部事实，由新提交的hosted分区与readers执行真实闭环。
+
+基线两套HIA run44262237229/44262261854均真实53/53成功；required run44262261731的protocol、prospective protocol和两架构cost仍确认目标失败。完整三ZIP的GitHub摘要核验通过。原4s/16worker压力下7次提交ACK成功，独立history replay只完成x64/protocol的3/4尝试、arm64的5/6尝试，未达所需7页；错误PUBLIC_REQUEST_DEADLINE。无压力成功、五native前提测试成功、Host无final error都不能替代业务确认。原0.25CPU/2GiB/zero swap/256PID/4s/16条件全部保留。
+
+### 后续执行与清理边界
+
+本候选54jobs/42独立native bootstrap，各20分钟；四既有bootstrap组168次实际调用PASS。组件398项完整发现分391 general与7 State-root，保持独立完整consumer。立即发布本增量并检查自己的全CI；并行继续TCM1完整校验、原context/manifest pin与selected chunk绑定，再接实际HIA RS46。其后推进唯一Node owner的Some/CheckedApply、COMMIT/reorg/recovery及同请求Paid/Host，继续所有未迁移包。
+
+只有证实为重复且不承担源码、证据或验收依赖的过程文件才可删除；失败证据与必需原oracle保留到退役条件满足。本文件仍是唯一开发计划，不建立竞争计划或把未执行项记作闭合。
+
+## 单一磁盘 Node/M05 集成与实际资格修复
+
+父提交 `af044d854f6e0baa6d085822adbd692944c8a883`。本增量整合已存在的唯一 Node/M05 owner，而非另造竞争实现；当前 41 kernels /21 native foundations /129 HIA，26 Rust 包保留、0退役、9整项目门 OPEN。原 canonical 工作树保留；独立副本先后核对全部48份未提交源的SHA后续接。
+
+Node 从实际持有的磁盘目录及完整字节构造私有 State；真实 PNX1/SHA/Ed25519 和 nonce 检查进入 typed admission、Ready消费及相同 Parent/Prefix。仍是 None prior；Some/CheckedApply、successor admission、Node.db COMMIT、reorg/replay/outbox/local-pool 和同请求 Paid/Host 尚须继续接线。
+
+本次正面修复两项实测缺陷：原 Session.write 会在不读输入的进程上跨过绝对期限；原公开 reader 会接受重绑report SHA后的错误schema和越界scope。现在非阻塞写、可写等待与短写重试共用原deadline，原240s/3s不变；五分区报告必须满足精确字段、schema、scope和类型。10项I/O控制及361项source控制已实际通过。旧阻塞、四种完整reader错误接受和首次入口导入失败全部保留，纠正结果不改写旧运行身份。
+
+工作流53jobs/41bootstrap，原四组覆盖164个入口负/正控；新增Node smoke期限控制，实际Work inline 22组及新增10项均执行通过。五个native分区和两份原Rust对照使用新完整源图重新运行；源码控制、独立读回和真实runtime结果分别记录，不能继承旧图绿灯。
+
+父提交的push44048146851与PR44048170791已实际46/46成功；同head required protocol的16-worker压力仍CONFIRMATION_TARGET。无压力1/1、2.789328866s；压力0/1。未改变原0.25CPU/2GiB/zero swap/256PID/4s/16条件、保护分支或旧失败状态。全量HIA原生替代和退役条件仍由原九门约束。
+
+## 2026-11-17 UTC — bd620 实测结果与 Work 工具链前置修复
+
+父提交 `bd6201646f92a37edc641b2ab0ae8032507b5784`，tree `8a273894649be8393e2b1dc493d7482b2a07d6c0`。仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。本轮运行定义只修改 Work native 和 original 两个 job 的工具链安装与路径选择；46 jobs、36 bootstrap、全部测试与20分钟期限保持原值。
+
+[push 44041831642](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041831642) 和 [PR 44041858435](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041858435) 的 general、State root 和独立 components consumer 均已真实 SUCCESS。根完整读取 push 三份原ZIP及全部成员，用当前公开读取器独立复核 **376+7=383** 项的发现、实际开始/完成清单、零skip、来源和日志；重算报告与 hosted consumer 完整相同，producer/consumer 均绑定 bd620/tree8a273。该读证不重跑业务，也不重新验证原 Rust build event chain。
+
+Work native 的 push job133897989699 在65项强制控制中64通过、1错误：实际编译器/std来源不符合锁定1.95契约。其 native业务尚未执行；original、qualification和readback三个后继真实SKIPPED。PR的Work native也在强制来源控制入口失败，其完整日志单独保留。原运行继续记录FAILURE，不能由修复后的本地控制覆盖。
+
+修复在两个live阶段安装1.95.0及rust-src，并将 `rustup which --toolchain 1.95.0-x86_64-unknown-linux-gnu rustc` 的实际bin目录写入GITHUB_PATH，同时显式设置RUSTUP_TOOLCHAIN。仅设置环境选择器不能覆盖PATH中直接命中的另一真实rustc。完整本地负控实际使用1.99.1，重现64通过/1错误；正确选择后同65项全部通过、零skip。hosted原默认编译器版本未被捕获，不能据本地负控推断。qualification/readback只读封存的依赖，无新增本地std要求。
+
+[完整跟进记录](../../hia/qualification/work-owner-toolchain-ci.json)及单一完整归档保留两次失败job观察、组件三个原ZIP、来源、全部控制原始流和精确补丁。133 native图仍为ded1230a，6 reader图仍为106c29ee；只有计划pin随本文变化，Rust代码、Cargo图和锁文件未变。新提交仍须重新运行四阶段，当前不预记hosted PASS。
+
+继续统一C新版父状态/Prepared/Node与M05 op8，接真实Some、CheckedApply、COMMIT及Host/Paid原请求deadline；固定parent正向、4秒16请求及所有整链门仍待真实验收。原失败、UNKNOWN和NOT_RUN都保持其来源，旧26包不能提前删除。本文件仍是唯一开发计划。
+
+## 2026-11-17 UTC — Work/Host 全原始观察、CLOCK 对照与 CI 分阶段
+
+父提交 `c3901ff19c26815205d9cdd6975fc24ecc51ae88`，tree `b51997025da0c61e6a9e516b1950efa3d709df3b`。当前仍为 **41 kernels /20 foundations /119 HIA；26 Rust 包保留 /0退役 /9全项目门 OPEN**。这轮只整合 Work/Host 最终 30 份语义源和 5 份 CI 源、完整测试分片、共享证据类型修复及必要原始观察；新 Node 联合 owner 仍在独立实现，不能冒称已合入。工作流变为 **46 jobs /36 bootstrap**，每个 job 仍为 20 分钟。
+
+### 已发布 c390 的实际结论
+
+[push 44019939486](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019939486) 真实 42/42 SUCCESS。[PR 44019959997](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44019959997) 真实 41 SUCCESS /1 CANCELLED；components job `133826819393` 在 20 分钟取消，339 行 ok 不等于完整完成。完整日志与所有原 job 状态保留，push PASS 不替代 PR 取消。
+
+根对该提交的 9 份 Batch/Prefix、M05、Application 与 Work/Host 完整包逐原件及语义读回，包含全部原 ELF、原始流、source fence 和实际 producer/consumer 来源。Prefix 的 1,011 条计划方法中 936 实际执行、75 是未走到的夹具路径，不计 PASS、不伪称原 Rust skip。旧 Host 的 175 raw arena 缺失及 controlled original CLOCK OPEN 仍属于旧源，不能借新结果填补。
+
+### 证据门的实际反例与修复
+
+旧 foundation helper 的 11 个合成负控实际被接受：659.0/572.0 计数、bool/float attempt、NaN/Infinity/溢出浮点数、archive/source 浮点 bytes。新精确递归类型比较、有限数解析、成员元数据验证实际拒绝这些输入。Foundation/Execution/Genesis 33 组、2 次实际 `-O/-OO` 入口拒绝 PASS。首次 driver cwd 错误导致 Genesis 子进程找不到模块的 FAIL 保留；修正运行目录后跑同一完整清单，未删测试。这些反例只证明 helper 边界，不冒称真实 hosted exploit。
+
+components 完整发现 383 项后固定分 general376 /State root7；独立 consumer 要求同 head/run/attempt、两真实成功前继、完整 started/completed 清单、零 skip、原 Rust adapter 和全部 6 个原始产物文件。初私有 reader 未核 consumer 实际 tree 的合成反例保留，修后明确比对实际 HEAD/tree。20 分钟和全部测试不变。
+
+### 新 Work/Host 的实际开发资格
+
+133 源 `ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c` 真实重跑 native380.505s、original791.353s。native61 histories/27843progress、175 primitives/9489calls/538buffers/7800完整 snapshots/6010134406 logical bytes、3traces/27trace controls/14signals/18CLOCK；实际原57histories+44retained、2CLOCK positives+18controlled faults、20raw-reader controls 全 PASS。正常 vDSO fault 行为不由私有故障注入推导。
+
+旧 c248 两个 coherent public false accept 保留；修后完整 public bundle 1positive/14negative 实际 PASS。完整 private review+pack352.407s、独立 full readback240.630s PASS，仍是 PRIVATE/NOT_BOUND，不是 hosted 资格。30语义源/5CI源单一归属，133图逐字等实际 ded；共享 foundation helper 不在这133图，只改变独立6-reader图为 `106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca`。最终原4368图随当前 inventory/计划 pin 变化，必须新提交实际执行。
+
+native→original→完整 qualification/pack→独立 readback 四 job 各20分钟。实际 native+original 已1171.858s，还未计 bootstrap/pack，不能塞进同一20分钟并声称可过；四阶段都保留完整前继、原 ELF 和所有 raw。新 hosted 时长和结果未观测，不预填 PASS。
+
+### 单一证据视图和下一执行
+
+当前 Work/Host 开发视图50018340B/`b91bcd33a2cfa683cb158b2a98a43c56d06deddb85ce3cc3703bb1984455c325`、8连续卷；20178 CAS、4004真实Git对象对应4675逻辑引用，25677完整主成员+194补充。原574468200B/`d7c7757bdb6409067f5be594c54b230f9ed30bae2d15664e1d1dce526059a2c4` 为显式外部原件；完整261160948B/`c651437b0b7666987a4cddedd038508ff3dfe8f84ce1cb72de1db7cff5e9375f`包仍保全。根用不受 replace refs 影响的最终读器实际重读全部视图和外部 binary。旧5卷/record逐字等c390 Git原件后才被当前8卷替换；历史索引可完整恢复，不重写Git历史。
+
+根另逐全归档证明后清理30509个重复解包文件/2976163272B；原ZIP、完整archive、唯一report及所有FAIL不删。[整合记录](../../hia/qualification/work-host-integration.json)和1947276B完整控制归档保留这些观察。合并实际80组0skip PASS；383完整test IDs、46jobs/36bootstrap、357Bash/50Python语法全部通过；这些源码控制不代替新native执行。
+
+下一步执行本提交全部强制CI并逐完整结果读回；持续把C新版父状态、Prepared和双输出移交作为唯一 Node 基底，接M05 op8、真实Some/CheckedApply及持久化COMMIT，再推进全部26包。固定parent生产正向、Node/Paid嵌入、4秒16请求、跨平台/模型/研究及其他整链门仍OPEN。仅更新实际变化的计划 source pin，保留全部1177个原证据pin及任何HOLD/false资格。本文件仍是唯一开发计划。
+
+## 2026-11-17 UTC — Batch/Prefix 最终实现整合、M05 类型修复及876完整CI
+
+当前候选 **41 kernels /20 native foundations /119 HIA sources；26原Rust包保留 /0退役 /9全项目门OPEN**。父提交 `876eb577dac61854c535a91ab1480f312d1d6173`，tree `f810a503f6283b0a8484f1b18ba1f823c57d1078`，其 [HIA run44000856130](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44000856130) 已真实33/33 SUCCESS。本次只合入Batch的42份最终owned文件，其中16份HIA；工作流42jobs/35独立native bootstrap。新工作树仍须自己的提交级CI，不继承父源或开发源的执行。
+
+### Batch/Prefix真实执行和转移
+
+[Batch owner](../../hia/platform/execution_batch/README.md)冻结native146源 `408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d`、original4363源 `b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e`。三profile/19images及emitter实际全编译。Batch102methods/2133progress；Prefix186histories/936实际methods/4419progress；计划1011中的75未执行，不计PASS，也不是原tests被skip。physical30实际syscall controls；scoped6processes/69methods/26full base reads/74progress。实际原Batch102+9retained、原Prefix186+6retained均PASS。baseline10组/173controls/18CLI，有效Prefix11/191/27CLI、Batch11/187/25CLI均保留完整实际raw。
+
+整合native151源 `63576c082aa16d4768ab0bc461eb604ded5905e77334b4e0655123a592e7849f`：只多既有components图与五份Work/Host输入，60个完整组合运行输入逐字相同。完整source graph改变，仍须新CI。original的inventory与唯一计划pin按最终字节绑定。[开发记录](../../hia/qualification/execution-batch-development.json)保留executed/integrated图和fresh-hosted NOT_RUN，不把旧PASS换源。
+
+最终证据107152632B/`2446b6d527a21e935be2bda8e4907feeabef28386f1ad16243deb9f05392d4ef`；46445logical entries、40320regular logical files、8566objects。root独立全读8567members/510590392B、单XZ与tar全padding，全18卷实际拼回。两个原binary92641816B/`2261248bfb5def531489f788a30bf10700bc9cc7b2a32d7c4bd42f40a569a1f6`及92196768B/`f055dd9d5ee08aafc312178d817ee050cc7bb33561204339cc889df824ff065a`完整外部保全，不冒充嵌入档。旧101/102panic、observer、空原source map/stream-range false accept、TOCTOU、V1入口、serde/outerfilename和scope修复前失败均保留。作者树/中间build不入当前实现。
+
+### M05四个实际public CLI false accept及修复
+
+旧876完整实际包的scalar int→bool、nested int→bool、callback int→float、index int→bool在stdout/receipt/summary同时自洽改写后均被public CLI exit0接纳。完整原件及四份overlay保留。递归exact type和index exact int修后，26-input源从 `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b`变为 `455c7e43897744cc6f22cf88f859f6f0e96d8bd6d4836e4aee379ba97b65fef7`。实际native323/9332、actual original323/9332+153retained、physical38/guarded26、21source/5byte/12witness/22actualCLI完整重跑PASS。179254B ELF不变不免对照。实际CI summary helper曾接受21.0/5.0/22.0计数，exact-int修后全拒绝；这三项不是public CLI。
+
+[M05记录](../../hia/qualification/mempool-typed-development.json)绑定24888160B/`d58b3cf105271e7d76f332a59a9b95969c23d8e1b7d2edfd99c9981172db7ee0`四分卷，旧对象/失败raw/876ZIP/新完整运行全部保留。四套冗余mutant仅逐文件核同基线+overlay后删除。共享Cargo incremental因nlink2前置拒绝，0删除，FAIL不改。
+
+### CI检查不可由skipped代替
+
+初Batch proposal无original时skip三组却报告PASS。最终强制transport/original scope；七native job精确六组，二original job必须原实际包且精确九组，完整started/通过roster与0skip。实际transport6/70、Prefix9/102、Batch9/102全PASS、skip0，四实际scope CLI拒绝、52argv parser与88新增Bash检查PASS。首次root YAML序列化漏计七bootstrap的FAIL保留；仅修多行literal/缩进，解析语义不变，四既有guard组实际覆盖35门。root实际89CI/evidence tests、六transport及Batch10/173/18CLI均PASS。原20分钟job、240秒process/3秒cleanup不改。无runtime执行的读证不计native/original资格。
+
+### 876完整Application与Work/Host
+
+[Application](../../hia/qualification/execution-application-ci.json) job133764250003/artifact14292661841；完整ZIP36267396B/`d7330ce1b5ef8127fcbfd9e50ae69f909b2c743c7542674ad58ec80e69c5bce1`。109native/b4f1121b、4363original/1e6fd3f4均实际对876Git blobs。328histories/335tx/8784State、32physical、186integrity/16CLI、原8retained全部raw严格再读，91371888B原binary完整。最终70656656B/`5720f3fd66aee750bf0b212c8ff6dd915e7dd6ad60a85c376e589506f7de3354`十二卷含c61与876完整ZIP，执行身份各保留。
+
+[Host CI](../../hia/qualification/work-owner-ci.json) producer133764250135/artifact14291569629、consumer133768696196/artifact14292951966。producerZIP247580107B/`705552d8c9bc158fcb7fc176856349795ff1f0d5a6c3746b08e4de6b68271a28`；inner242689024B/`9e6267f2f0aab1b1d174088a37ce55417fb63d379e16bd419cc6e4dcf464bdc3`共6159members/992297375B独立全读，包括611199752B原binary/`8c04c58e6178becfc531ede1c4cb16a50948d17ac29f36caefe2eb14feec499e`。126native/e56d、4368original/329094、三reader、package/binding/consumer/lineage均核。hosted独立consumer真实全语义读证，root只完整档/源核验，不假报再执行。最终243515800B/`16c37259be4b1e0003d0569d2f96e28531bb4e2c1e77c152412f51576f1d2cd6`39卷含完整两ZIP/log/API/HTTP403失败。旧175primitive仍缺fullraw，原CLOCK controlled faults仍OPEN，私有133新图不转记给876。
+
+[统一分卷恢复](../../hia/qualification/ARCHIVES.md)只列五套最终档。README收敛当前概览，历史“当前”保留在唯一计划/AUDIT历史段，原README由父Git与证据保全。
+
+### 继续生产闭合及旧栈退役条件
+
+Batch只覆盖DefaultConfig、AccountPointAccess=None及workers1/2/4/8；256tx24.3928s、最大Prefix140.676s不是原4s服务成功。私有Node OutputState/CanonicalDelta/Prepared/真实Node.db事务、Host原CLOCK与fullraw、M05实际PNX/signature/State nonce/Ready调用继续独立推进，尚未入此root。原Node本无生产pending-token authority，不用fixture或模拟lease虚报原语义。
+
+继续全Config/PQ/growth、共享Paid/Host与原request deadline、auth/expected-root/COMMIT、crash/reorg/rollback/replay/outbox/ACK、网络/TLS、跨平台、真实模型和研究验收。原0.25CPU/2GiB/0swap/256PID/4s/16attacker/1800s不放宽，FAIL/UNKNOWN/NOT_RUN不升格。Python构建读证与Rust oracle仍在，当前不是最终仅HIA整套。26包只有完整替代和原验收真实通过后才退役；whole_chain_native、old_stack_can_be_removed、production_activation仍false。
+
+以下为此前唯一计划的完整历史后缀；历史“当前”只指记录当时源。
+
+## 2026-11-17 UTC — 同 worker Work/Host 整合、M05 detached 修复与真实 Application CI
+
+当前候选 **41 kernels /19 native foundations /103 HIA sources；26 原 Rust 包保留 /0 退役 /9 全项目门 OPEN**。已发布前驱为 `c61ce2cea44a1bc1ef0f7a716abb3113af86cd03`，tree `d36973260e841c8bae223ba0f30fd427abd66bfc`。本次新增 Work/Host 的23份最终owned源（8 HIA）及2份CI reader文件，修复M05内部预检模式；每个组件只有一个实现目录。工作流33 jobs /28独立native bootstrap；新提交必须取得自己的真实CI，不能继承c61或326的结果。
+
+### 实际源、运行结果与剩余边界
+
+| owner | 已真实执行的精确来源 | 尚须完成 |
+| --- | --- | --- |
+| Work/Host，23 owned /126 inputs /8 HIA | `e56d53654a6168df96cddf23c5f079f2a0ea188d45dd55d9f15f71015c823a91`；61 native histories/27843 progress、175 primitive、3实际trace、27 trace和14 signal controls、18 native CLOCK1故障；原57 histories/27841 progress/56真实joined workers及44 retained | 原请求更早deadline、共享Paid账户/checkpoint、真实固定parent positive、原Rust controlled CLOCK1差分、Node/batch生命周期与原服务门 |
+| 默认Application，22 owned /104 inputs /10 HIA | c61源 `05bc59407cb4b8da2bb23350a88397594418801652150019b95afc3d9ccfe2d1`；真实CI native/原Rust各328历史，335 PNX1 transactions/8784 State commands/9 native processes，32 physical、181 integrity含16真实CLI，原8 retained | 完整batch、全部Config/PQ、block认证/expected-root、私有AdmissionPersistence与持久Node COMMIT |
+| Typed M05，15 owned /26 inputs /2 HIA | 新源 `7461a680b29d4d36a7a8b9770281eb9ead681fe7d29f4cb48a8d051592c4724b` 在真实detached重跑323 native processes/9332 commands、整个原库323/9332及153 retained，38 physical/50commands/8traces、26 guarded、18 source/5 byte/8 witness/18 CLI | 生产PNX/签名/Node nonce lease、持久local pool/恢复与原服务预算 |
+
+Work/Host使用实际worker的TID与fresh membership，对同一份初始boot/parent inode/owner/五项limit快照执行全部W1 checkpoint；成功关系保留1099 progress与1101 worker Host检查。聚合资源读持有真实校验过的parent FD，CPU/memory/PID三次read全部完成后才解析，关闭该FD后再fresh Host检查；主线程真实clear-TID join后才after-sampling或输出。cancel、deadline、ordinary Host error与CLOCK panic的次序分别保留，启动新有限owner不能续期原Node请求预算。该组件不授予Paid许可或block COMMIT。
+
+M05仍是显式test-trait owner。PNX生产签名、nonce/lease和persistent pool未闭合；不能将外供成功位变成权限。其179254B ELF SHA `c3146c28c3102c7d5b3afde6f357319bb5e09a69b9ce7e86a1d878f87e58c85c` 未改变。Ready耗尽在队列变化前拒绝，旧handle不能复活；唯一private fixture为offset96的8字节计数器。原HashMap销毁只在op20/21/22作multiset比较，所有其他字段和顺序逐字比较，双侧raw仍保留。
+
+### 真实失败、修复与完整证据
+
+c61 push43983845998的M05 job133706836672在内部默认development preflight拒绝detached HEAD，实际stderr为 `project boundary failed: not an allowed development branch`，组件native/original/physical/guarded尚未执行。这不是HIA运行时失败，也不能由旧Desktop PASS抵消。原ZIP2142981B/`4254e5c4906d7a13caea973f0480228882d7930804724b5320c05bddc3de4680` 与完整67成员、原job日志和精确失败全部保留。
+
+修复只在显式请求时把 `--audit` 传入已有只读boundary；默认仍 `--dev`，真实origin、activation=false、26包workspace等检查不变，readback拒绝执行模式选项。真实Git检出分别证明开发分支通过、detached默认拒绝、detached显式audit通过、错误origin及activation改动仍拒绝。新7461源重跑全部native、原Rust、physical、guarded、source与公共反例，独立全字节回读/完整原binary封包均PASS；开发pack仍NOT_BOUND。64项CI测试通过，Host整合后89项也真实通过。
+
+以前M05八个自洽witness错误接受、V4修复、V5冗余EOF修正及错误compiler路径、最初原链接cc缺失均保留原状态；并非旧native结果失败。旧Cloud输出和49561终态仍UNAVAILABLE/UNKNOWN，未伪造恢复。新[M05记录](../../hia/qualification/mempool-typed-development.json)绑定原档13481848B/`b6e7094c222029bd7aab426af8528720d35b288f8960675ef021341cd800750c`：14389逻辑文件、3993regular members，包含完整7630840B原binary及全部可读历史。
+
+Work/Host旧V4 reader把真实原stdout中domain 0改false、progress 1改true、main_tid整数改字符串的自洽伪造都误收。V5严格重查JSON每字段类型/范围和完整行形状，三项实际反例全部拒绝；完整240423952B包、611226784B独立原binary全字节回读PASS，保留为开发NOT_BOUND。25组reader/source tests、四archive实际反例、真实detached build和14实际workflow入口控制均通过。175个旧primitive guard的完整原arena没有留存，明确不可重放；18个native CLOCK1故障不能替代尚缺的原Rust controlled故障差分。
+
+[Work/Host记录](../../hia/qualification/work-owner-development.json)绑定26328788B语义归档（SHA `b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db`），以及4748140B的[CI修复证据](../../hia/qualification/work-owner-ci-development.tar.xz)（SHA `b6f11bd920db880705e231bfbd2c210c4b6ebd92f7fb027284780a956ae26ac4`；389逻辑文件/257成员）。较大的原binary和两代完整CI开发包在精确索引位置另存，不伪称已嵌入26MB语义档。
+
+### 精确c61 Application与新提交验证
+
+c61 [push43983845998](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43983845998) 的Application job133706836939真实SUCCESS。[独立记录](../../hia/qualification/execution-application-ci.json)绑定artifact14283854229，完整原ZIP36198231B SHA `29e74d4133b99beb5690fb669fcbfda2fb3e2ab5cf788d82ea01d0352ead33bc`，完整原binary91371888B SHA `dbbea2de963d09d1e94f5069066db28541359b6dc3f44e68c8df6b0f5078b0ba`。全部archive成员、104 native/4363 original source、完整14-image ELF/编译流、native stdin/stdout、32 physical与private journals、181完整性控制/16 CLI及原328+8实际stdout均独立核对。原runner工具路径只保留其CI fence；没有在Desktop伪造同名目录或重标原执行。首离线reader因原argv绝对路径与提取路径不同拒绝，其失败保留；只分离这两个路径含义后，其余判据不变，全量回读PASS。
+
+当前5项Work/Host generic include映射与冻结build的8个完整HIA程序逐字相同、实际Core检查通过；126 Host源不变。Application gate也绑定每个实际检查的common component key文件，因此本次为改动components.json并新增5份检入源，完整输入从104增至109；整合后native source-set为 `b4f1121ba5545bbdf1fccc317e9bc8be21918b1215a83518cfb7be411432bb70`，必须新CI重跑。原c61的 `05bc...`/`a986...` 与开发 `b439...` 原图各自保留；inventory和最终计划pin变化也须新original执行。[开发Application记录](../../hia/qualification/execution-application-development.json)单列这些transition，不给旧PASS换源身份。
+
+新的Host producer保留controls/native/原57+44、sourcebefore-after、binding、完整封包写后回读及失败原件上传；独立consumer只取同head/run/attempt且qualification=PASS的全量包，再完整读证并检查自己的sourcebefore-after。开发NOT_BOUND与PRIVATE_DEVELOPMENT_READBACK_PASS不能满足consumer。各job仍20分钟。实测原串行阶段合计约985.38s（部分为PTY壁钟，不是全部单调精确值，且未含hosted checkout/rustup变化），拆作producer约817.68s与consumer约167.70s；不把这一估计说成hosted已合格。
+
+[整合CI开发记录](../../hia/qualification/application-mempool-ci-development.json)保留真实89组检查、bootstrap/完整workflow语法、原99项PQ source suite实际995.273877865s PASS及此前210s observer timeout；未捕获的partial raw仍不可用。最终计划仅刷新真正变更的source blob pin，不改历史测量，也不以source checker代替原运行。
+
+大档按[最终连续卷索引与恢复说明](../../hia/qualification/ARCHIVES.md)保存：M05三卷、Application CI六卷、Work/Host五卷，每卷≤6MiB。每组均实际拼回完整原档并核全部bytes/SHA；原归档内部对象、原CI ZIP、完整binary和失败没有改变。这些卷是同一最终档的组成部分，不是中间版本。root冗余整档仅在完整重组相等且外部原件仍在后移除；归档不新增任何native执行。
+
+### 原始门与继续闭合
+
+326 push43938876560/PR43939229249的29/29只属于326；c61单组件Application成功也不等于整workflow或全项目通过。此前四from-zero和两protocol真实五native全部PASS、无攻击baseline各确认1，原4秒/16worker压力确认0/未确认1/unknown0、CONFIRMATION_TARGET仍FAIL。两x64 history实际1800s正常结束后RPC111；3297/3973 returned imports不能当durable COMMIT。三budget门因真实lock/tests/profile输入不兼容，在0native拒绝；缺失artifact11531476198不能用52成员404诊断包代替。见[326诊断](../../hia/qualification/ci-326-observed-failures.json)与[protocol补充](../../hia/qualification/ci-326-protocol-contract-failures.json)。不盲repin、skip、放宽0.25CPU/2GiB/0swap/256PID/4s/16attackers/1800s，UNKNOWN仍UNKNOWN。
+
+继续完整TransactionPrefix/CheckedPrefix、batch/scoped workers/mandatory/reward/funds/root，将实际持锁磁盘和私有State/Prepared/ParentObservation接入Node的一个真实持久事务域；完成M05生产签名/nonce/local pool、Paid共享账户与原请求预算，再闭合reorg/rollback/replay/outbox/ACK、网络/PQ/TLS、所有目标、全部26包和真实模型/安全研究验收。迁移期Rust oracle和Python构建/读证工具不算“最终仅HIA”已经完成。只有旧包全功能替代与原验收真正通过后才退役；whole_chain_native、old_stack_can_be_removed、production_activation仍false，九门仍OPEN。
+
+以下为326提交中唯一计划的完整原字节后缀；历史“当前”只指当时记录。
+
+## 2026-11-16 UTC — PaidCPU、State/View/Patch 与 private Prepare 最终源整合；原始服务失败定位
+
+当前候选为 **41 kernels / 16 native foundations / 83 HIA sources；26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。父提交 `5c3d7089f24271a0ba6dbcc9d924fe505a361a3c`、tree `5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33`。新增47份最终owned源，其中10份HIA；每个组件只保留一个当前实现目录。新工作流为29 jobs /25个独立native bootstrap门，仍须本提交自己的真实CI，不能借用父提交结果。
+
+### 已实际运行并冻结的三套原生 owner
+
+| owner | 最终开发源与真实结果 | 尚需连通 |
+| --- | --- | --- |
+| PaidCPU（20 owned /58 inputs /4 HIA） | 源9ba64e6369f2fae3c5d8ee879d2639f8993b1b0a98c9eeaab2d6ca09a744304f；native6 histories、实测83 budget operations、67 arithmetic、13 fault、40 protocol及10 trace拒绝；actual original83 calls/67 boundaries/5 scoped profiles/13 faults/23 retained加mandatory Linux positive，323.659s | 完整paid账户/请求/执行器与原服务门 |
+| State/View/Patch（15 owned /33 inputs /4 HIA） | 源5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8；native与actual original各68 histories/1075 observations，原5 retained；physical9组/97 calls；13组141完整性controls和8 actual-bundle CLI拒绝 | 全应用、M06 batch/replay、mandatory/reward/funds、expected-root与持久COMMIT |
+| private Prepare（12 owned /47 inputs /2 HIA） | 源77df26a897da5437f0d0ba2191558e49c615dc17966a793c241ea15e731a147b；723 semantic，52 physical/52实际进程，原723 comparisons/3 retained，13组164 controls含34实际CLI拒绝 | 全batch/apply、所有Config/PQ、完整block输出、Node私有准入 |
+
+Paid采用真实CPU clocks、mutex/futex与scoped child；i128预算方法逐完整native event与真实原调用对照。83是这次真实观察，不是跨调度恒定的CI门限。锁定Rust1.95.0完整version、绝对rustc/Cargo、14份真实std源与2份compiled std；13fault重新核对实际任务出生/终态/回收、argv、auxv私有改动、role marker和全部raw。最终原report SHA fe7f3727a37aab6f1e70de0563085984e96f41880af7a7bd7218f6a8cbad3ab9；独立612093040B原binary完整保留。
+
+State真实拥有typed Value/State/View/Patch、首读/写和完整prefix snapshots、Value语义相等、current及消耗式apply、native完整root。三份private journals逐条保存65536B heap前后与输入输出：53+5+2直接调用，另37过程commands；counter注入明确为private fixture，不冒充生产输入。实际moving mremap与syscall-level ENOMEM注入的原生拒绝独立保留，不声称真实Host内存耗尽。原对照12完整stage绑定rustc/Cargo/rustdoc实际字节、serde1.0.149、原production prefix与唯一test hook。
+
+Prepare在原生ELF内部完成legacy PNX1、native SHA256/strict Ed25519、default installed Config、attempt/callback/cancel和private Prepared生命周期。原对照10完整stage、实际compiler与独立serde库、全部8份before/after源/产物栅栏均通过；Prepared外部观察接口不获得block COMMIT或Node准入权。最终原report SHA c6f22c5bcffc4783338948cff6a8903392b69a937c72916a83b39869aa4ebe20。
+
+### 真实失败与恢复按各自源身份保留
+
+State最终V5首次actual original明确发生stdout ENOSPC panic、exit101、部分输出和0B总report，不能升格为PASS。只读确认旧wrapper/test及相关目标所有进程已不存在后，在同冻结源码的新original-retry1完整重跑68+5，实际70.026s PASS；新report SHA7b1280e4e8ae5b3f2b828eec1d0734f954d4c698d5a4d3b17d7a2392a34f61b9，独立92584200B binary SHA68001b2763576e404036cf6d289c7f0aeda21c87407388a0f9fd35019746e5e6。
+
+Prepare physical-v2保留45份实际process receipt、0B总report和丢失终态，保持INCOMPLETE。确认旧controller/owner和固定native可执行身份无存活后，同77df源新physical-v3实际52/52、52process、229.615810839s PASS。此前13bb/7b28的52结果不转记新源。Paid旧缺struct导入、原adapter编译与错误账目断言等失败都保留，未改原Rust生产函数。
+
+磁盘恢复只清空已全SHA一致、version绑定的603755968B Genesis PR提取二进制重复件；push全件和两完整GitHub ZIP仍完整。记录未知启动身份并先观察目标/进程，未把通信错误认作运行结果，未重启或修改HeptaRuntime配置。只读和新create-only资格输出保持独立身份。
+
+### 精确源CI和原始证据
+
+新增Paid、State combined、Prepare semantic/physical/original五job。每job全tracked before/after检查后才binding；Prepare原比较只取同head/run/attempt真实semantic前驱。保留20分钟job与原children/cleanup界限；所有失败都执行证据打包，包含完整独立原binary，特殊文件只记metadata。State/Prepare明确选择Rust1.95.0；Paid另强制rust-src。
+
+新CI reader独立重读完整实际证据：State全部native build/97物理/三journals/12原阶段，Prepare723 semantic/52physical/10原阶段均PASS；没有因此新增native执行次数。Paid admission12组含32负控/9正控及实际13fault+2baseline离线重验；execution reader11组覆盖绝对toolchain、原始bytes、source/run/attempt、private heap和fixture边界。整合后46组测试实际通过；189 Bash片段、37 Python heredoc、25bootstrap门的4组tests及完整唯一键YAML/29job结构均通过，staged whitespace检查0。
+
+开发原比较保留整合前4361或4363源身份。新inventory与唯一计划pin属于整合元数据变化；新提交CI必须重新捕获并执行当前完整源。组件HIA及冻结owned源不靠重新标注旧PASS获得资格。
+
+[Paid记录](../../hia/qualification/paid-cpu-development.json)、[State记录](../../hia/qualification/execution-state-development.json)、[Prepare记录](../../hia/qualification/execution-prepare-development.json)和[CI复核记录](../../hia/qualification/execution-ci-development.json)绑定完整raw。State81,599,124B原交付经内容对象去重、逐字Git blob证明成为5,235,712B归档；4381份已存在的5c3d源用commit/path/blob/bytes/SHA显式引用，6,666逻辑成员完整可复原。Prepare两包1,581逻辑成员合成3,180,156B单一档，所有raw重读；Paid4,763,040B包全部1,753声明成员及manifest逐SHA核。开发大原binary单列完整路径/身份，CI全量保留；不删原观察，不恢复特殊文件。
+
+### 父提交真实CI与全项目尚存失败
+
+5c3d push43907395835与PR43907690872均24/24 SUCCESS。14完整原ZIP全SHA核、每成员独立读，10个Genesis native、2原对照与2Thread完整证据通过。每Genesis lineage254controls/356process、原30+3及必要ignored child；Thread65histories/724native ops/74physical/12trace+4signal、原518方法calls/36retained与mandatory clock。归属5c3d，见[Genesis CI](../../hia/qualification/genesis-ci.json)和[Thread CI](../../hia/qualification/thread-cpu-ci.json)，不替代本提交29job。
+
+[全项目CI记录](../../hia/qualification/whole-project-ci-findings.json)保留before-budget三旧subject在0controls即source compatibility拒绝、W1实际确认/期限失败、CodeQL export未稳定及取消根因未明等。priority43907690822两x64 history服务实际到1800s lifetime_expired后正常退出，下一RPC connection refused；3281/3305是成功返回的import次数，不等durable commits。三from-zero服务五个命名测试都exit0但CONFIRMATION_TARGET仍FAIL；x64基线确认0且第7import deadline，两ARM基线确认1、压力确认0，三压力最终都PUBLIC_REQUEST_DEADLINE。
+
+完整33page Host/W1原观察无Host拒绝或计量失败；密集fresh Host成本是具体优化对象。各调用线程累计CPU、仅caller CPU、嵌套wall口径不同，不机械加减或把service观察冒充history直接因果占比。0.25CPU/2GiB/0swap/256PIDs/4s/0与16攻击worker/1800s lifetime及全部fresh authority checks保持原约束。完整诊断与原packet/database ZIP身份见[priority记录](../../hia/qualification/priority-ci-diagnostic.json)。
+
+### 连续推进次序和退役条件
+
+继续真实application1..12及全部account/nonce/fee语义，再连原接受workers域1/2/4/8的实际scoped batch、mutex保护State、全部join、panic/cancel优先级、canonical BeforeApply消费Prepared错误、stale/Err恰一次replay、mandatory/reward/funds/root。Host/resource/W1需同真实worker私有continuation，保留每个原checkpoint与资源freshchecks。然后接private AdmissionPersistence、单一durable Node事务、重组/rollback/replay/outbox/ACK、网络/PQ/TLS、完整跨目标、真实模型产品闭环与全部研究义务。
+
+最终删除旧26包必须以完整等价替代和原验收真实通过为前提。当前保留唯一最终组件源和必要审计证据；作者脚本、中间checkout/build在仓库外。不得扩大期限、缩小语料、移除fresh检查、用外供成功位或stub制造闭合。
+
+以下为5c3d唯一计划的完整原字节后缀。
+## 2026-11-16 UTC — 原生 Genesis 持久 owner、完整原 Rust 对照与线程终态观测修复
+
+当前候选 **41 kernels / 13 native foundations / 73 HIA sources；26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。直接前驱为 `535ce9865d6764de8184aab04204459f6f05001b`（tree `a506c358cdff588cb8c6cc0a2bed7c58e7e8e091`）。本增量须自己的 **24 jobs / 21 native bootstrap gates** 精确提交 CI，不继承前驱绿灯。
+
+### Genesis 的真实执行、源身份和范围
+
+新增两份 HIA 源，在真实原生 ELF 内构造完整 default Settings、genesis catalog、active selector、slot0 与七行 State；持有 private directory 与排他 flock，实际持久初始化、完整读取、native M06 root、冷恢复与 CLOSE。不接收外部成功位。执行文件 753794 B / SHA256 `304dfb77e6c4909d703995fafb523419dfb2f09ee432c2cf6a95a9956af17f85`；literal ISA 适配层仍为独立可信边界，非 HIA 指令语义证明。
+
+旧45源 `a0fa6c27d48779ae04a7c69cb175b92e00d714e5c443e46a49483c217b870046` 的五组真正通过：semantic30/62process、crash25/64、prefix29/59、namespace104/105、corruption66/66，合计254controls/356process。旧交错测试失败、冷恢复边界、全部 raw 与18项特殊文件元数据保留。FD 定向 seccomp EIO/SIGKILL 不等于物理断电，未声称清空 page cache。
+
+第一次 actual original 在 Cargo 前错误要求 registry 源存在 vendor 的 .cargo-checksum.json，因此真实 FAIL，0 cases/0 retained tests；该失败原样保全。修复仅核对锁定 .crate 的真实 checksum、archive 内88源文件与实际 registry89文件（唯一额外 .cargo-ok），不改 registry、缓存、锁文件或生产 Rust。新45源 `a0c3d62591815a2c86df1a77d243b79999f9cbe5238bca230fd15a4243dd3d8b` 真正重跑 native30/62，并实际通过 original30/30与全部3个retained tests及必要ignored child。完整8个原执行阶段、before/after源与binary、真实SQLite fixtures与stdout全部保留。原binary611585296B / `08f636b9ec96829698f80856f27221b5155de7f4d8956fdb5a8ef5929788038d` 已独立核验。10完整性组140controls及8CLI、CI证据控制器10组133controls及4真实CLI通过；它们不额外计作native语义。
+
+新旧源码只有 verifier 与 integrity test 两项变化；9个 runtime artifacts逐字相同。旧四组physical结果不改标为新源执行，新提交五组CI均须实际运行。初次整合45源与a0c3实测件逐字匹配。随后staged whitespace门真实拒绝rust_oracle.py和test_integrity.py末尾各一条空行；只移除各最后1个LF，两Python AST与其余43项输入逐字/结构相同，未修改HIA、adapter或原生产Rust。最终45源为 `032dacb01fc1df493017348f719f8e81eda293eef8f2542a71c3af8e4486c305`。a0c3实测保留原身份，最终格式源须新提交CI实际重跑五native组与actualoriginal，不借用旧PASS。components.json保持25346B原件，不为注册owner改compose include图。
+
+整合时严格4361源比较真实拒绝：仅 config/hia-migration-v1.json 与 config/pon/pq-cross-branch-corpus-v1.json 两项资格/计划元数据不同，其余4359原始输入逐字相同。旧actual original保持自己的完整4361源身份；新记录明确转换差异，最终CI须重新捕获并执行完整当前源，不能把元数据核对写成新原Rust实测。
+
+当前记录 hia/qualification/genesis-development.json 绑定三份必要证据：当前native/original archive 2902896B/SHA695b12c467056dc2f9d6280f18d58ac51ac741351b017ae9fcc166a95f22acce；旧native档8150988B/SHAc17aa5f11f10544c8a2ff3762f1700abc0c243220ca99ab42c3be6a0adc40506；首次原失败档1577608B/SHA8bcf545b68da2d061f3863b60ed72d56997247eac8e29cdb2463bb8955d4dbef。所有成员重读/hash，特殊文件只保留metadata而不open/restore。
+
+Genesis 目前只覆盖可信私有目录/cooperative flock和default配置。successor M06执行、private AdmissionPersistence、expected-root、任意COMMIT、重组/回放/outbox/ACK、PQ/GSC2、全部Config与原服务预算仍OPEN，不能删除原Node。
+
+### 第二个 hosted Thread CPU 控制器缺陷
+
+535ce push43895143250/job133396542521与PR43895921099/job133399336863均真实完成65 histories/724operations/74physical，然后在12项trace negative controls之前FAIL；原Rust未运行。根因为negative builder仍以单空格查找 exit_group，而实际TID2625/2633后是双空格。两个完整ZIP、job log、各998members/848regular、原535ce全部38源和实际before/after均已独立核对，失败不改写。
+
+修复采用已有 complete_calls 的task/syscall与精确start/end行号，终态插入和child exit移除均不依赖显示空格；trace auditor、原HIA/adapter/生产Rust不变。10完整性组包含完整155行真实hosted trace与stdin/stdout，五种空格/TAB形式各12负例，以及错误TID/歧义终态拒绝。
+
+最终38源 `5fb10436e16e013927fb92437284ab999806005bd05e11b50bcb2786445d0805` 真正通过65native/724ops/74physical+12trace+4signal negatives，继而actual original65/65、518原方法调用、36retained tests和mandatory Linux positive。源码、锁定rustix、独立原binary before/after一致；两个125683B ELF与前驱逐字相同。完整新执行和两次新hosted失败保存在单一当前thread-cpu-development档。旧已发布archive在535ce Git历史中完整保留并绑定blob/SHA，当前档只去掉该精确重复嵌套件，未删除任何新执行或失败成员；首次过大上传被connector拒绝也记录，未改ref/tree。
+
+### 强制当前源码 CI 与下一步
+
+新增五个独立genesis native任务与一个依赖semantic的actual original任务；同head/run/attempt、完整Git HEAD blobs、before→执行→after→binding、真实输出重解析、完整archive与失败下载保全均强制。五个native任务各自bootstrap，原20分钟job/240秒child/3秒cleanup不放宽。新增六个chain checkout使用depth1并以真实浅克隆测试验证完整当前tracked bytes；既有18任务和full-history archive审计保持原义。
+
+继续实际 State/View/Patch、PNX1签名与prepare、nonce/fee/M06应用、mandatory/reward/funds/root、私有准入与单一事务，以及并发paid i128账户、scoped worker、请求截止/清理与原服务门。所有原Rust/formal/portability生产实现保留；只有完整等价替代和原验收真实通过后才退役。作者脚本、中间源码树和构建在仓库外，最终组件保持单一当前实现，必要原始失败按精确来源保存。
+
+以下为535ce唯一计划的完整原字节后缀。
+
+## 2026-11-16 UTC — 修复云端线程信号观测；最终源码连续性三段资格通过
+
+当前仍为 **41 kernels / 12 native foundations / 71 HIA sources；26原Rust包保留 / 0退役 / 9全项目门OPEN**。公开前驱为 `44b3c6e622d009b6b92b270b4e1f5c82fc844b81`（tree `63ac94db48912564acae652ce6c771513d3f70dd`）。本修复候选仍须自己的18-job exact-head CI。
+
+44b3 push43884564137/job133359090163与PR43884851140/job133360095846的线程资格均真实FAIL。65 semantic histories已完成，首个physical signal control的live wait随后失败，原Rust未运行。原trace实际记录TID2882/2895的SIGUSR1→rt_sigreturn=-1 EINTR；云端strace在四位TID后填两个空格，而旧正则只接受一个。两个原ZIP、完整job log、各560members/483regular及38原提交源已独立复核；原FAIL不改写。
+
+仅修改thread_cpu/qualify.py与test_integrity.py：live wait接受水平空格/TAB且不跨行，完整信号配对审计不变；错误TID、数字前后缀、跨行、其他syscall、缺失/错误返回均有负例。9组完整性测试通过。其余36输入不变，最终38源SHA256为 `e5a21a599c42fdfb57d2ae1a785071631306909c70fefad0a378676ec6d0317b`。
+
+同一新源真正重跑 **65 native histories /724operations /74physical**，7.735951695秒；actual original真正通过 **65/65 histories /724operations /518原方法调用 /36retained tests及mandatory Linux positive**，274.251040508秒。源、锁定rustix依赖和独立原binary前后MATCH。HIA policy、adapter及原Rust没有变化；两个125683B ELF与前驱逐字相同，生产SHA6ceba842c367c943b5304a6cc91aa1d255ba40355b538572de4c810973462edd，fixtureSHA312079df9435006fb0b87c80a59277d046abc18af8c70dc667e731111b18e7f7。
+
+新native report1069111B/SHAa8fe006a739699734379e61858aa69151fdef4c8ec6a799b24e2b76a0b0ffa3c；original report1076870B/SHAbb35e8c0e86f6c4b35751abe70a4b36c7fde8731a77a18dda668e0e43fb10bbc。最新单一thread-cpu-development.json与tar.xz保留本次完整实测、两次云端FAIL和旧V7/更早失败的原身份。archive7793524B/SHAba4f0bf57ad3c3a6d3a2fc52ebb6ca7c57a67a2455c27c3bb3c338791ef1eb94，1488members/1217regular/20642315regular bytes，内置member-manifest；可重建Cargo副本与612MB原binary不重复加入仓库。首包装调用的错误编译器路径另列为native/Rust均未运行，不能冒充资格失败或成功。
+
+44b3两条流程的continuity-native/original/capacity六个作业均实际SUCCESS，每条完整执行659native、572actual-original+4retained、7capacity，全部使用最终62源 `a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`。格式后的源码现在有真实CI执行，格式前8711开发结果仍保留原身份。两份native artifact各4151members/3454regular全hash验证；依赖链核对同head/run/attempt、完整下载与原始源闭包。容量不缩：1065536rows/1000000accounts/65536working；cold消费上一步实际完整36837812B stream，SHA716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702。不能据此声称原Rust最大规模、物理掉电、GSC2或Node COMMIT资格。44b3线程任务失败，因此整条workflow不是全绿。
+
+继续实现真正genesis/State/fresh namespace持久初始化与cold reopen、并发paid i128 CPU账户、实际锁序/live debit/残额结算，再接完整M06、expected-root、单一Node事务、reorg/replay/outbox/ACK及剩余所有包。原服务预算、跨目标、模型和研究门不放宽；旧栈只能在完整等价替代及原验收真实通过后退役。作者脚本与中间构建留仓库外，最终目录只保留当前实现与必要验证证据。
+
+以下为44b3中唯一计划的完整原字节后缀。
+
+## 2026-11-16 UTC — 连续性与线程 CPU 原生 owner、完整原 Rust 对照及固定父级生产实测
+
+本候选为 **41 kernels / 12 native foundations / 71 HIA sources**；全部 **26 原 Rust 包保留 / 0 退役 / 9 全项目门 OPEN**。当前新增的是实际执行的连续性与线程 CPU owner 及其强制资格链，不据此声明整个 Node、原始服务预算、PQ 或完整配置域已闭合。
+
+### 已发布精确源的生产结果
+
+已发布 head `2e3e5dcaa6f899e4f42f2b390fb869255364824d`、tree `266035460dde623358ce5e9ab0124d9453b8d5ce` 的 push `43863320729` 与 PR `43863349518` 均实际完成 **14/14 SUCCESS，attempt 1**。每个 Host 作业均在其自己的成功 Host 生产之后运行固定父级资源生产；三次采样、四条 receipt、1/3/5/7 全检查、实际 TID/ELF 与不变 seal 均通过。Root 独立核对两个 ZIP 的 API digest、各 514 个常规文件及完整 raw trace，52 个源输入与生产 ELF 完整绑定。此复查不是新执行；完整 bytes、原始 job log、run/job/artifact 身份进入 hia/qualification/host-resource-production-ci-success.json。既有 typed-State produce→cold→bounds 两套链也全通过。这些结果归属 2e3 精确源，不转借给新提交。
+
+### 连续性 owner 与完整 State
+
+四份新 HIA 源真实构造四个 installed Config，上接冻结 typed Store 的 Delta 与完整 State materialization，实际读 staged FD 完成 maintenance、各 liability、精确 account 查询、reward due 集合、recipient 排序去重和 classic/growth capacity，再按原 fast-activation 前缀顺序执行 callback 与可选 classical root。不接收外供 membership/reward count/成功位。四个配置全部使用原 Node::open(..., 1)/StateBackend::Legacy；growth-reference task 不等于 PermanentAccountGrowthV2。其他合法 Config、disabled profile、可变网络/参数/成熟期、PQ 私有 anchor/retained rewards 和 GSC2 仍需继续移植。growth 不接受 classical root 替代。
+
+最终格式整理前 current62 源闭包 `8711a557c1b3ecc42e0d95ff980324dcba7176a735dddce0206b33263799c9d4` 已真正重跑 **659 native controls（572 semantic + 13 context ABI + 74 physical）**，309.141244876 秒通过，源前后全匹配。4 个 HIA images、emitter、prefix 与最终 ELF 均绑定最终构建。native report 3,696,506 B / SHA256 `a97ab3912f175d1da5bfce6b1c137b339f6c3e0864fe20392e352bc4bd895f21`。
+同一格式整理前 current62 V6 的实际原 Rust 阶段亦通过 **572/572 semantic 与全部4个retained tests**；isolated wrapper348.060553935秒退出0，无采证错误。完整918,196B source-before/after同SHA256 `988bd741317a5f29db26bff65a48da278236adaba39c496991f93149977be803`。实际原report944,940B / `b523d694a14bf84fdec647e7a6f26ca5b306770ba8daf14722f249d181d5a52b`，执行后二进制独立保全610,970,008B / `87f0594efd7870f282f583eb70b0b4c6339475976b26f158bc591e0f4265c374`。保留完整original stages/context/corpus/source fences，原生产Rust字节不变；这是该源的真实开发执行，不代替新exact-commit CI。
+
+提交前staged格式门发现rust_reference.rs末尾一条空行，现只删最后1个LF（11,758→11,757B，SHA `08a49425a1b61d18b93a44eae6988571fc3fac68e7089c9b06e5a90d7d430f2a`），其余61输入逐字不变。最终62闭包为 `a25df9cd4b5b107d56d69ba2f2da1ff13f39e895973ba38e3061432b373cbff0`；source admission与18.802374730秒actual Build通过，4images/emitter/prefix/ELF与已执行前身逐字相同。659与572+4仍绑定格式前8711源，不冒称格式后新执行；最终exact-commit CI必须真正重跑。staged空行拒绝和完整格式前后证明亦保全。
+
+完整容量的既有 7 个实际阶段仍按其原源身份保留：1,065,536 行、1,000,000 account、65,536 working、65,515 精确 recipient；全 stream 36,837,812 B / SHA256 `716e8d4a9a117782596a727c4a300d4e7a1a62ff436885fbc81a7abbf384a702`。七阶段总 649.249914634 秒，各原 240 秒 child 限额不变；新精确提交必须重跑完整七阶段。最大行/index资格不等于每行最大 value 同时占满，也不等于 cache flush、power loss、GSC2 或 COMMIT。保留 V2 exit137 原因 UNKNOWN/原 raw 未恢复，V3 retained-test 名称拒绝和 V5 四原测试通过后 constructor2 GROWTH_PROFILE panic，不能把这些旧失败改成 PASS。
+
+### 线程 CPU 的实际差异修正
+
+HIA main/one-worker 原生 owner 实现真实 CLOCK_THREAD_CPUTIME_ID、private generation、独立 clone、checkpoint、先消费再 finish 以及 value drop；actual clone、guarded stack、private futex handoff 与 shared clear-TID join 由真实 native adapter 执行。64 live stamp 与 one-worker 是该入口的显式有限 profile，不冒充完整 Node worker/account。
+
+V6 native-only 53 histories/676 operations/74 physical 曾通过，但实际原 Rust 对照只有 **44/53 PASS、9 FAIL**。EINTR/ENOSYS/EIO 在 start/checkpoint/finish 的差异源于锁定 rustix1.1.6 linux_raw backend：首成功直接返回，首 EINVAL 立即失败，其他首错恰再 syscall 一次，之后才由 ThreadCpuStamp .ok() 处理。独立核对全部332依赖源与锁定 crate、实际 linux_raw/time cfg 与 ELF64。HIA phase22已实现同一分支；原53输入62803B前缀逐字不变，新增12 persistent-error履历。完整源闭包扩到38，绑定 Cargo.lock/两个 Cargo 清单及 exact rustix 后端。新 native 已通过 **65 histories / 724 operations / 74 physical**，实际时钟21组、受控语义44组，8 source-integrity测试通过。
+V7 的实际原 Rust 随后真正通过 **65/65 histories、724 protocol operations、518 original-method calls**，全部36个原retained tests和mandatory Linux positive通过。44个受控clock履历全部完成，其余21组使用实际clock；所有original/native38源、执行后独立binary和locked rustix332源before/after均MATCH。最终source-set `5d77c85bb1978f502d7b09b59a36263b69f204515f1d85ef9df372675ea6aead`；原report1,070,635B / `b0ab0a403f22e84c31a6b7463b9bae849533d49f42dc13100249fde7358733ff`，独立binary612,166,040B / `ae232c3378e8a0e0486c0497b262b1d6a374beecf2670494124f96fcd3f4cc24`。原生产源码未改，V6原44/53失败不改写；最终仍须新exact-commit CI。
+
+原 V6 44/9、ptrace注释解析拒绝、有符号 timespec 表示差异、生命周期 before-birth/after-exit 审查修复和 actual signal/SIGKILL 结果均保留。受控 same-numeric-TID 只验证 private generation ABA，不宣称内核实际重用 TID。完整 paid i128 epoch、reservation/live debit/residual settlement、Unknown-on-drop、poisoning、scoped-worker spawn/join/panic、Node 实际工作嵌入和原4秒/16攻击者门继续OPEN。
+
+### 强制 CI、源身份与后续工作
+
+CI 增至 **18 jobs / 16 独立 native bootstrap gates**；新增 continuity-native、actual-original、full-capacity、thread-cpu。每个 dependent artifact绑定同 head/run/attempt，全 native/original source逐实际 Git HEAD blob核对，完整 canonical corpus重新构造，archive每项metadata和bytes校验，只向新目录 materialize regular files，不open FIFO或激活links。original-only job无HIA工具链依赖已独立核实。完整capacity cold必须消费上一步实际全output且绑定同一ELF/全源。
+
+审查发现并修复 upload-artifact sibling log 改变公共根目录的真实缺陷，改为单目录上传、always把packaging log复制入内；failed unpack也保留完整实际下载根、binding和transfer receipt。8 transfer/source测试组、4 bootstrap测试组覆盖16片段、18job YAML布局实际通过。CI控制器检查不算native语义执行。全部新任务仍须新exact-commit实际运行，不继承2e3绿灯。
+
+下一条运行时主线是 HIA 自己构造 genesis/catalog/active/State、fresh namespace 独占锁、真实持久初始化与全量 cold reopen/root 检查；随后接完整 M06 private admitted output、expected-root、单一Node事务域、reorg/replay/outbox/ACK，以及剩余所有包。当前仅保留一套当前组件源；作者脚本、临时patch、构建与中间源码树在仓库外。必要失败/原始实测证据不当作冗余丢弃。未改变原 Rust/formal/portability 实现、资源限额和服务验收；旧包只能在完整替代和原资格真实通过之后退休。
+
+以下既有唯一计划字节完整保留。
+
+## 2026-11-16 UTC — 实际 Host 生产通过，接入同作业资源生产采样
+
+已发布 HIA head `34ecf1bd11264bb78df19836e0eb4b6665ed2cec`（tree `6e21f6fe51fad0a7e89fbbe6042c175bb5cba246`）的 push `43848902425` 与 PR `43849236024` 均实际完成 **14/14 SUCCESS**。完整 typed-State produce → 独立进程 cold restore → bounds 两套链路全部通过；实际固定父级 Host 生产检查、资源真实 syscall trace 和原始 Rust 比较亦通过。旧失败原样保留；这不代表整链、原始服务预算或任何旧包退役验收。
+
+本增量把资源生产控制器接入同一个 native-host CI 作业。控制器在加锁前核对前一实际 Host 报告、完整源码/镜像绑定、八字段 before/after、原始 seal creator 与旧 current service；新服务只能改变自身 current identity。它复用同作业已验证父级，不提供计数器、Host 成功结论或 fixture 退路。三次实际采样对应四条 receipt 和 1/3/5/7 完整检查；每样本 counter_reads 固定 3，独立 trace 审计真实 EOF、同一个 parent FD、关闭顺序和剩余完整 Host calls。完整资源 source closure 扩为 52 inputs；18 组生产控制器拒绝测试在任何父级配置之前运行。所有原始资源限制、20 分钟资格时限和源码前后复核不变。
+
+完整生产开发记录保留真实 fixture 首次失败、修复后实际执行和最终 pre-lock guard 的准确源身份，不能提升为新源码生产 PASS。新源码需要自己的原生、原始 Rust 与实际固定父级 CI。连续性测试旧轮 exit 137 的 566 个已完成控制和缺失终态报告保留，退出原因仍 UNKNOWN；有界日志控制器、完整连续性原生/原始比较与真实线程 CPU owner 继续推进。
+
+当前仍为 **41 kernels / 10 foundations / 64 HIA files**；**26 Rust packages retained / 0 retirement accepted / 9 gates OPEN**。未删除未被等价替代的实现，未改原始 Rust/formal/portability ownership，未放宽服务门槛。完成整链替代、各目标资格和原始验收之后，再执行最终旧栈退役与仓库清理。以下既有唯一计划字节完整保留。
+
+## 2026-11-16 UTC — HIA 完整 State staging、Host 资源采样和实际生产轨迹修复
+
+本轮候选覆盖41内核、10个native foundations、全部64份HIA源文件；26原Rust包保留、0退役、9个全项目门继续OPEN。新增的是实际原生有限owner及强制资格链，完整Node、PQ身份、服务预算、模型与研究验收尚未完成，不据此删除旧栈。
+
+- Typed Store的HIA ELF真实执行sealed输入/独占输出FD检查、32KiB流式Delta归并、完整stored State读取和可选classical root；私有arena 4,587,520B，输入memfd/tmpfs另占操作系统存储，不能当作零成本。原生603控制、实际原Rust392差分及3个原State测试通过；首次374案例中空key的SQL projection差异实际暴露后修复，同时保留empty value、dimensions→callback→key/value conversion→JSON顺序和删除/修复无效旧行，原374全部保留并加18例。
+- 全量65,536行×160B键×4,096B值的typed stream为279,969,808B，SHA256 cc4eaec0976403b6399b6233faa453524d6d306dc0425de8707de353b7b966b3。produce/cold/bounds三个实际阶段分别644.13996704、621.776575668、71.819485816秒通过，原生及独立全量root一致f39d0e6c087d523385cebb2eaeda1f4115b5c116fd1de6d07a416c5039b45702。cold新进程恢复全部原字节并重新计算root；末字节损坏和classical count+1均真实拒绝且输出归零，growth dimension+1通过不计GSC2 root。保留原每阶段20分钟资格限额，不放宽4秒服务门。冷进程恢复不等于cache flush、power loss或COMMIT。
+- Typed Store原开发证据仍绑定453326b overlay/13 owned/27 native inputs，native_source_inputs_match_git_head=false，不移植旧PASS到新提交。新bundle入口在Rust工具发现前独立重建owned+explicit+recursive canonical source闭包、完整source摘要和source-defined392语料，拒绝缺项/假hash/路径别名/伪reexport/截断或尾随XZ。整合后14 owned/28 native inputs，9组81个实际控制及11次CLI通过；这是hosted admission资格，不新增native运行计数。完整State之后的continuity、expected-root准入、namespace、Node COMMIT/replay/outbox/ACK仍OPEN。
+- Host resource两个HIA源复用原35个Host helpers和同一只读adapter；两条显式include图已独立Core核验，与原builder的48函数程序完全一致。每次CPU/memory/PID计数都在第一次fresh check所得同一parent FD读取，完整EOF/UTF-8后按原序解析，先close再第二次fresh check；private baseline保存和四项checked subtraction不接受host输入计数或成功位。重新实际183 native控制、172原Rust histories/180 operations及44原Host tests通过；148 histories调用完整原sample_counters，23为原reader/parser私有阶段fixture，1为新baseline协议。原ignored child probe保持原状态。3组source tests与7个实际坏bundle在Cargo前拒绝，独立真实trace通过；本地ptrace拒绝仍UNKNOWN。固定parent生产计数positive、同worker嵌入、per-thread paid CPU、wait4和原服务门未完成。
+- 8690b8b的PR43839178104实际9 jobs终态为8成功/Host失败；native-components为270 tests/0 skipped/92,509 shared calls，698.99216432秒，source_set 7f175b52ecfecda209f2c705321a65f711568768ad6686ffd7d7e7725014cbf5。push43838900349与PR的Host实际HIA进程均exit0、4次真实TID/运行ELF/cgroup观察、22次完整检查；但原独立trace checker在Unexpected metadata path处失败，原job保持FAIL。本轮从完整artifact定位escaped read字符串造成旧quote regex跨行配对，仅对anchored openat/newfstatat的完整path token归一化，未知路径及read payload原字节不改。完整原push 54,038B/888syscall轨迹离线重审22×37 core/EOF/fence/FD close通过，15个Host测试通过；不计新生产执行，必须新source再次真实CI。
+- 强制CI现14 jobs、13个独立compiler bootstrap gate；完整保留原步骤与20分钟单job限制。Typed native/actualRust→produce→cold→bounds四段同head/run/attempt链，每段前后全仓逐字source核验，完整snapshot/receipt SHA连续绑定。独立resource job只执行一次183，再要求actual trace PASS并将同bundle交实际原Rust；保存direct receipts/build/原编译测试日志，避免递归故意不可读的fixture目录。新增代码只有最终组件、合同、测试和必要失败/来源证据，作者生成器、候选补丁与临时构建均在仓库之外。
+
+继续实现实际State→continuity全关联→M06 root→record root admission→原生持久事务的原顺序，并补完整私有Config/PQ anchor、Node生命周期和其他全项目门。不能把TSRESULT或独立Host sidecar作为另一个owner/worker的准入授权。原453 W1仍保留0.25CPU/2GiB/0swap/256pid/4秒/16攻击者下两压力0confirmed失败，无压2.374779837/2.308299376秒。全量HIA替换和原门真实闭合前不退休旧包。
+
+此前计划以下方原字节后缀完整保留。
+
+## 2026-11-16 UTC — 保留首次 Host 生产路径失败，修复资格证据收集
+
+已发布dcd72f7的push43835950065和PR43835980615都实际通过独立Host syscall trace与145原Rust对照；production服务随后退出失败。完整外层job日志保留在hia/qualification/host-production-ci-failure.json。上传工具又因原native fixture故意设为search-only的目录产生真实EACCES，内部systemd-run/child详细报告未能取回；因此不推断或编造内部失败原因，不计production正向。
+
+本次把artifact输入改为显式report/build/实际trace/原Rust分阶段日志位置，避免递归遍历故意不可读的物理fixture和原Cargo副本。production控制器还把实际失败报告及子日志的有界末尾以JSON转义打印到job日志，保留原始失败优先级。新增实际70000字节文件控制核对65536字节上限、offset、精确SHA和workflow命令文本转义；Host相关13测试及8个compiler gate的4项优化Python控制通过。
+
+原HIA policy/emitter/fixture三份源、原Rust实现和原资源限制均未修改。本次是证据收集修复，必须在新exact source再次执行生产路径，不能借作runtime修复或整体资格。候选仍41内核/8 foundations/59 HIA，26 Rust包保留、0退役、9总门OPEN。typed Store的603控制、392实际原Rust对照与完整容量produce已通过，cold仍在执行；不包含在这次修复源码中。
+
+此前计划以下方原字节后缀完整保留。
+
+## 2026-11-16 UTC — HIA Host 完整新鲜检查、实际原 Rust 对照及生产路径资格
+
+本批新增 Host 原生基础组件，候选合计 41 内核、8 foundations、59 HIA 源文件。26 原 Rust 包保留、0 退役、9 全项目门 OPEN。
+
+- HIA 独立静态 ELF 实际执行固定 parent 获取以及每次完整 boot、调用线程 cgroup、parent inode/UID 和五个资源限制检查；不缓存文件、FD 或成功判定。新重建源码重新通过151物理控制和26恶意adapter控制，4个CLI/证据测试通过，最终ELF SHA256 b4b410d1b45cf7cea9100b68a9f9ba20113ecce97d16b2593d28614f2241a714。
+- 完整1,791字节adapter独立反汇编复查：command/state范围、只读syscall profiles、私有mremap地址/原尺寸/翻倍溢出约束及真实event传递；Core结构检查不冒充ISA语义证明。
+- 145真实文件案例实际匹配原Rust私有实现和fixture检查序列；44原Host测试通过，原默认ignored的child probe仍由parent显式执行。完整生产host_kernel_parent.rs保持原字节，仅原test-only include末尾追加测试child。首次adapter E0753编译失败保留；未宣称原生产fixed-path owner或resource sampler完成。
+- 本地strace实际PTRACE_TRACEME EPERM，trace为UNKNOWN；实际--require-trace在同177控制后退出失败。独立native-host托管job强制真实trace、实际原Rust对照和production fixed-parent正向；保留各job原20分钟限制及原platform全部步骤。新增后共9 jobs、8个独立compiler bootstrap gates，4项优化Python检查覆盖每一gate。
+- 生产controller只允许精确source的ephemeral GitHub-hosted job创建之前不存在的原fixed parent；实际UID/GID、root-owned lease、sealed production ELF、TID membership和22次新鲜检查的实际trace必须一致。8个拒绝/证据测试通过；真实进程先退出的调度条件下复现丢失283字节stderr，修复后全量保留，primary/cleanup失败分开记录。两次native观察仍正确FAIL，不计production正向；真实托管执行尚待完成。
+- 453326b的push43828760883与PR43828945597均8/8SUCCESS、257 tests/0 skipped/92,509 shared native calls，source_set 58336866b3ce1a61c142d98283f938e3c20636e0f4e83f3844bba34ebda77fbb；Audit11、Raw8均含实际原Rust运行。相同head的W1 job133169304908真实FAIL，原4秒/16攻击者两压力阶段均0confirmed，无压分别2.374779837/2.308299376秒各1confirmed；原资源限额未改。这是保留的原Rust Node结果，未计为HIA完整Node实测。
+- 当前development报告按各自原source manifest保留，不把旧PASS重标给新增build/README/CI绑定；新提交强制重新资格。同worker线程嵌入、resource sampler、完整Node与原服务门继续推进。独立typed Store候选不混入本批，所有过程作者/临时构建留在仓库外。
+
+此前计划以下方原字节后缀完整保留。
+
+## 2026-11-16 UTC — HIA AuditEvent 与 RawBindings 完整有限单元，故障恢复后重新资格
+
+本批候选为 41 内核、7 native foundation、56 HIA 源文件。26 原 Rust 包均保留、0 退役、9 全项目门 OPEN。
+
+- AuditEvent 实现完整公开 new、六个 consuming builder、Clone/Eq，精确保留 optional presence、逐字段 UTF-8 和全部 u128 位。新源码 10 native tests/2,847 实际调用通过；不变原 Rust crate 的 3 原单测及 1,849 cases 实际通过。原 Rust adapter 的首次类型编译失败和新 native Core 的 bool/int cast 拒绝均保留，实际修正后重新执行，没有弱化 verifier。
+- RawBindings 的新原生私有上下文真实保存摘要与完整正文，保留先消费摘要再拒绝正文不符的原序。7 native tests/16,597 调用通过；1,220 histories/16,471 operations 的实际 native 输出与实际原 Rust 逐字 hash 一致。完整签名、nonce、durable local_pool 与 Node 集成仍 OPEN。
+- 本地 compiler 保留证据检查两次 exit137 后 Cloud 断连，临时卷重建，未发布源码不可恢复；原因未证实。已逐字恢复远端1550620的 Git tree 8e8d83eb12a3b4b9da4ce2317f244aef53e87daa，并在 workspace 保全唯一源码/作者文件，两个组件重建并重新实际资格。旧 native PASS 不复用到新源。Host 与 typed Store 的未完成候选不包含在本批交付中。
+- 已发布1550620的push43821794104和PR43821814743均8/8SUCCESS：238 tests/0 skipped/87,813 shared native calls，52 storage真实tracePASS、197恢复PASS。原4秒/16攻击者W1压力两路线仍0confirmed，baseline为2.829236646/2.851075077秒各1confirmed。历史budget-before三组在native启动前因Cargo.lock不一致拒绝；保持原约束，不伪称测试通过。
+- 新提交仍必须跑 exact-source actual-Rust/native CI。只保留最终组件源、必要测试、合同和来源绑定证据；作者生成器/中间构建在仓库外，不进入产品树。完整Node、服务预算和研究门未闭合前不删除旧实现。
+
+此前计划以下方原字节后缀完整保留。
+
+## M05 native lane owner and original public-operation comparison — 2026-11-16 UTC
+
+The native LaneAdmissionGate owner now retains actual normal/critical ring
+contents and fairness in one private allocation across calls. Duplicate checks,
+slot insertion/removal, exact dequeue IDs, clear and complete close erasure run
+in emitted HIA machine code, using the canonical existing lane policy. The
+local owner controls passed 41,365 native calls plus 2,042 scalar-policy
+regression calls. A separate real Rust 1.95 build of the complete unchanged
+original crate matched the same 41,248 public operations in 1,862 histories;
+source, adapter, input and reply digests are bound in the development record.
+The mandatory hosted test performs a direct original/native comparison and
+cannot skip Rust. Allocation denial and malformed calls preserve owner/output
+bytes; close still erases its full extent without allocating.
+
+This is a genuine in-process public queue owner. Node PendingPreview constructs
+a TypedAdmissionGate over its durable local_pool records and drains that view;
+its full signed-body, signer nonce, replay and durable handoff ownership is still
+being ported. The inventory now has 39 kernels, seven foundations and 54 HIA
+sources. All 26 original packages and all nine full migration gates remain
+accounted for and OPEN. The complete prior plan follows unchanged.
+
+## HIA complete M02 arithmetic and native genesis recovery — 2026-11-16 UTC
+
+The candidate now includes the entire pure original consensus.rs closure in
+HIA: checked 512-bit Work arithmetic, target conversion/work credit, retarget,
+parent-window selection and median-time policy. Local emitted-machine tests
+passed 6,308 calls; a separate real Rust 1.95 compiler built the unchanged
+original module and passed the same 5,344 semantic cases. Source/adapter/input/
+output hashes and artifacts are retained. The mandatory hosted test still runs
+its direct original/native comparison on the new exact source.
+
+Native StoreOwner mode 3 validates one unique context-bound genesis and the
+exact existing FORMAT prefix before completing durable initialization. It then
+physically reopens and reads complete HEAD/FORMAT bytes before an opened
+receipt. The final same-source run passed all 197 recovery controls, all 52
+original physical storage controls (including 279,445,512-byte State and 4,105
+transactions), and eight native/CLI tests. Local syscall tracing is UNKNOWN
+because ptrace returned EPERM; hosted tracing is still required. A reproduced
+prefix-replacement false acknowledgement and one test-controller gate timeout
+remain recorded, alongside the corrected native readback refusals.
+
+The exact earlier CI-split commit 85b0b85c completed both push run
+43817777731 and PR run 43817996123 with all eight jobs successful. Each ran
+224 component tests, zero skips and 76,161 native calls. Concurrent compiler-
+bootstrap hardening from 2f6556e7 is retained. Running its unmodified new test
+exposed seven successful-control failures: the expected environment text used
+literal backslash-n characters instead of actual newlines. Correcting the two
+expected literals passed all four tests and 28 controls; the workflow's actual
+rejection and accepted-output logic are unchanged. This observation does not
+qualify the newly combined source until its hosted execution completes.
+
+Inventory is 38 kernels, seven foundations and 53 HIA source files. Every
+original Rust package remains accounted for. The nine full migration gates,
+including typed Node/reorg/replay/outbox, service pressure, PQ and retirement,
+remain OPEN. New-source eight-job qualification is pending until its actual
+execution. Active M05 queue-owner and fresh Host-checkpoint work is separate
+from this frozen increment. The complete prior plan follows unchanged.
+
+## HIA bootstrap and original Rust oracle fail-closed CI — 2026-11-16 UTC
+
+The exact-source HIA migration workflow now uses explicit, optimization-independent
+rejection at each of its seven compiler-bootstrap gates, requiring status PASS,
+the pinned SHA-256 87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54, and a nonempty compiler path before exporting
+the compiler into the runner environment. The Rust serde_json reference link
+also refuses wrong package identity/features or missing/ambiguous rlib without
+using optimizable Python assertions. The source-and-archive job executes
+adversarial optimized Python (-O/-OO/PYTHONOPTIMIZE=2) regression controls for
+all seven compiler-bootstrap snippets, checking reject-with-no-environment-write
+and exact accepted output. This is CI qualification integrity, not a new HIA
+native runtime component, Node owner, original budget closure or PQ acceptance.
+The exact published-head workflow must pass before any PASS is attributed to it.
+
+## HIA exact-source qualification job separation — 2026-11-16 UTC
+
+The exact `4e1c1ada` source completed all 224 component tests with zero skips
+and 76,161 shared native calls in push run `43813295781`; physical StoreOwner
+qualification also passed 52 controls. The combined job then reached its
+20-minute limit while starting the independent original executor comparison.
+Both push and PR HIA workflows are CANCELLED, not complete qualifications.
+
+The workflow now runs the unchanged component corpus, physical platform/stream/
+storage controls, and full original executor comparison as three independent
+jobs. Every original command and evidence path is retained. Each job still
+has its 20-minute limit, frozen source checks, compiler binding and failure
+artifacts. No original four-second service or hostile-client budget is changed.
+The resulting exact-source eight-job workflow must complete before it is PASS.
+
+The independent W1 service run `43813498834` still fails the 16-attacker,
+four-second confirmation requirement despite passing its no-attacker baseline.
+Three historical budget controls refuse nonidentical lockfile/manifest inputs
+before any native child starts. These failed observations are preserved.
+All 26 original packages and nine migration gates remain open; original stack
+removal awaits full functional replacements and accepted integration evidence.
+
+## HIA StoreOwner optimized-interpreter qualification refusal — 2026-11-16 UTC
+
+The external physical qualification driver relied on Python `assert` checks
+for independent disk-chain, process-result, crash-cut and readback oracles.
+Under `python -O` / `-OO` or `PYTHONOPTIMIZE`, those assertions disappear.
+The driver now refuses those execution modes before importing the native
+builder or starting an owner. Its independent CLI regression requires three
+real optimized interpreter refusals. The normal byte-for-byte native HIA
+storage implementation, original service budgets and fixed compiler are
+unchanged.
+
+Local isolated observations: changed Python files compile; `-O`, `-OO`,
+and `PYTHONOPTIMIZE=2` actually fail closed with the intended diagnostic.
+Exact new-source hosted CI, full native storage and PQ source negative tests
+remain pending until executed on the resulting Git commit. This is qualifier
+integrity repair, not a new Node transaction owner or retirement witness.
+All 26 original Rust packages and nine migration gates remain OPEN, and PQ
+remains HOLD_NO_GO. No protected or deployed state is changed.
+
+## HIA M05 one-call QoS snapshot proposal — 2026-11-16 UTC — exact-source qualification pending
+
+The HIA native LQV1 implementation now includes opcode 24, which returns
+five original M05 QoS fields in one 40-byte output from a 56-byte immutable
+caller-owned snapshot. It shares the already implemented scalar headroom and
+admissibility predicates; the fused result cannot mix different invocation
+inputs. The mandatory test runs the actual original Rust `LaneAdmissionGate`
+and obtains one `qos_snapshot` after each of 792 real admission/dequeue
+scenarios, then calls the emitted HIA machine code with matching queue lengths.
+It also exercises all 64-bit extremes and short-output refusal. This is
+not a queue owner, a database transaction, real admission, reorg/outbox/ACK,
+a PQ witness, a private key owner, or evidence of original service latency.
+
+The immediately preceding `03c84d28` exact-source run
+`43802991240` completed six HIA CI jobs SUCCESS. It qualifies only the
+preceding opcode-23 source, not this changed source. New native and original
+Rust execution remain NOT_RUN until new exact-head CI reports them.
+The 26 original Rust packages remain retained, all nine migration/retirement
+gates remain OPEN, and PQ remains HOLD_NO_GO. The historic plan text below
+is intentionally preserved byte-for-byte as the complete suffix.
+
+---
+
+## HIA M05 single-invocation post-pop projection — 2026-11-16 UTC — exact-head qualification pending
+
+The LQV1 native HIA kernel adds opcode **23**: one 56-byte immutable
+caller-supplied request returns five 64-bit words in one 40-byte output:
+selected lane, post-pop normal/critical counts, post-pop fairness and
+popped flag. Unlike multiple scalar calls, this is one input snapshot
+per emitted machine-code invocation. A short output buffer is rejected
+without partial writes; surplus output canaries and scratch are preserved.
+A mandatory unchanged original Rust public pop_ready fixture supplies
+actual lane/count/popped outcomes; the original fairness module is also
+differentially executed. These are *pure projections only*, not queue
+ownership, an atomic operation on shared queues, persisted Node state,
+reorg/replay/outbox integration, a private-key fix, or service admission.
+
+Exact new-source native, original-Rust and negative PQ CI are NOT_RUN
+until their actual job observations. The immediately preceding ba57ac83
+HIA run 43797925014 completed all six jobs SUCCESS; the distinct
+concurrent run 43797908905 was CANCELLED and must not be counted PASS.
+The previously failed budget and W1-security jobs remain separate
+historical failures. 26 original packages remain; all nine migration
+gates OPEN; PQ HOLD_NO_GO. Do not remove the Rust implementation or
+change old service limits. All text below this preface is unchanged.
+
+## HIA M05 post-pop queue projections — 2026-11-16 UTC — exact-source CI pending
+
+The previous exact-source commit `5524ce8b` has completed
+[all six HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43791117254)
+SUCCESS: native-components 222 tests, 70,998 shared machine-code calls, zero
+skips, including the fixed original Rust idle-poll oracle; standalone executor
+5,274 original/native cases retains PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT.
+Typed Delta executed 8,551 native controls and actual original Rust comparison,
+while Settings, response, transport and source/archive jobs also succeeded.
+The earlier `ac0d7b78` 5/6 failure is historical and remains a failure.
+
+This candidate extends M05 HIA LQV1 with opcodes 20, 21, 22 for exact normal
+and critical queue lengths after one selected dequeue, and dequeue presence,
+composed from existing opcode 18. Native outputs are pure proposals, never
+authoritative queue ownership. The unchanged full original Rust
+`LaneAdmissionGate::pop_ready` now supplies actual observed after-counts and
+popped presence; finite/64-bit cases and malformed-frame refusals are extended.
+New emitted-native/original Rust exact-source results are NOT_RUN until the new
+commit's CI finishes. No change to 26 Rust package retention, nine OPEN gates,
+PQ HOLD_NO_GO, unknown Node transaction owner, original four-second service
+limit, main, production or signed/storage namespaces.
+
+---
+## HIA M05 original idle-poll fairness oracle correction — 2026-11-16 UTC — exact-head CI not yet run
+
+The prior `ac0d7b78` native-components CI is a real FAILURE
+([run 43786960479](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43786960479)):
+five of six HIA jobs succeeded, but `test_actual_original_lane_modules`
+mismatched at record 4,126 (empty normal and critical queues, nonzero stale
+fairness streak). The original public `LaneAdmissionGate::pop_ready` calls
+`reset_idle_state(true)` for idle polls, clearing fairness even when the
+zero-capacity exception preserves duplicate metadata. The separate narrow
+Rust differential adapter had omitted that reset on its no-pop path. The
+adapter now reproduces the original idle reset and adds explicit boundary
+regressions and row-index diagnostics; no change to the unchanged original
+crate or the emitted HIA opcode 19 is claimed. A local arithmetic-model check
+of 40,000 combinations was consistent with the corrected adapter model,
+but this is not Rust execution or native CI. Requalification is NOT_RUN for
+the new source until an exact-head six-job run records it.
+
+The unique prior plan text below remains an exact byte-preserved suffix.
+Twenty-six Rust packages remain; all nine gates OPEN; PQ HOLD_NO_GO.
+Node SQLite ownership, durable reorg/replay/outbox, whole-key zeroization,
+constant-time ISA and service budgets remain unqualified.
+
+## HIA M05 full-drain-aware post-pop fairness — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+M05 LQV1 opcode 19 adds the original post-pop critical fairness streak as a
+pure HIA native-machine result from caller-owned pre-pop counts. It selects
+the original next lane (opcode 18), decrements that queue in its logical
+decision, invokes the original fairness transition, and cold-resets at full
+drain. This is deliberately distinct from calling the fairness predicate
+without the original public dequeue/reset lifecycle.
+
+The unchanged original lane_fairness.rs is actually executed by the
+independent Rust adapter with physical bounded queues, and the required
+native CI includes full 64-bit streak/burst cases. A separate 98,784-case
+arithmetic-model consistency check preceded publication, but does not
+qualify the emitted code or original-Rust oracle. Exact-head CI is NOT_RUN
+until observed. No queue, nonce, local-pool, persistent Node state, PQ
+identity, network, deployment or release owner is replaced here.
+All 26 original packages and nine migration gates remain OPEN. The
+previous unique development plan follows as an exact byte-preserved suffix.
+
+## HIA M05 original dequeue-side selection — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+The LQV1 pure native HIA M05 policy adds opcode 18 to select the original
+`LaneAdmissionGate::pop_ready` queue from caller-owned normal/critical counts
+and the current fairness streak: 0=idle, 1=normal, 2=critical. This extends
+the existing original quota, fairness and five QoS snapshot selectors without
+modifying their input/output ABI or original Rust source.
+
+A new independent original Rust adapter compiles the unchanged full
+`trnm-mempool` crate, performs actual classed admissions and real
+`pop_ready` calls, then checks the side dequeued using before/after original
+QoS counts across 693 bounded scenarios. The native test binds its actual
+answers to emitted HIA code, full-u64 arithmetic edges and malformed-frame
+refusals. There is **no local pinned compiler/Rust qualification claim** for
+this new exact source; the mandatory CI must execute before promotion.
+
+The preceding exact `54a3f02b` HIA native-components job is SUCCESS:
+221 tests / 69,767 shared-runner machine-code calls / zero skips,
+including actual original Rust M05 QoS snapshots. Its transport, Settings,
+Delta and response jobs are also SUCCESS; its historical source/archive
+job was still in progress when this new candidate was prepared. A result
+for one source revision is never transplanted to its successor.
+
+The 26 original Rust packages remain, all nine gates stay OPEN, the
+real Node SQLite owner/reorg/replay/outbox and complete key/constant-time
+lifecycle remain absent, and PQ stays HOLD_NO_GO. The new pure choice
+does not dequeue, mutate/repair queues or commit to persistent storage.
+Historical plan text is preserved byte-for-byte as an unchanged suffix.
+No service-budget, public-network or production admission is claimed.
+
+---
+
+## HIA M05 actual original QoS-snapshot native candidate — 2026-11-16 UTC — PENDING EXACT-HEAD CI
+
+The native M05 `LQV1` kernel now implements five additional original
+`LaneAdmissionGate::qos_snapshot()` outputs (opcodes 13–17):
+total, normal and critical headroom plus fresh normal and critical admission
+eligibility, including reserve clamps, global capacity and both cross-lane
+spillover guards. This is deterministic pure policy on caller-supplied counts,
+not a real queue, duplicate cache, nonce reservation or Node transaction owner.
+The existing 13 opcodes and 56-byte ABI remain unchanged.
+
+The mandatory differential test additionally compiles the **actual unchanged
+original `trnm-mempool/src/lib.rs`** (with its typed admission module), performs
+792 deterministic scenarios of real original normal/critical admission and
+dequeue, then checks five original QoS fields in each snapshot against the
+HIA-emitted machine-code results: **3,960 new original-Rust/HIA comparisons**.
+The independent original quota/fairness adapter still executes its 6,695
+small/full-width cases. The 65,762 native calls / 220 tests / zero skips
+and six successful [HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43772265993)
+belong strictly to the **preceding `ddcd5791`** source. New-source native
+Core admission, original comparison, artifact/source identity and negative
+controls are **NOT_RUN** until its exact-head CI actually finishes.
+
+The original M05 `lib.rs`, `typed_admission.rs`, `Cargo.toml`, quota and
+fairness modules are now all explicitly included in the qualifying source
+digest. No old package or historical evidence is removed, no deployed keys
+or services touched. All 26 original packages remain, all nine migration
+gates stay OPEN, PQ stays HOLD_NO_GO, the original service limits and empty
+root README remain unchanged. The complete previous sole-plan bytes are
+preserved below this prefix without alteration.
+
+## HIA M05 full-width original-Rust differential expansion — 2026-11-15 UTC — PENDING EXACT-HEAD CI
+
+This continuation adds 2,600 distinct finite cases to the *actual original*
+`trnm-mempool` Rust-module differential, in addition to the existing 4,095
+small-capacity original comparisons. All 13 quota/fairness operation codes
+are exercised at `usize::MAX`, `MAX - 1`, over-reserved clamps,
+zero and saturated thresholds, with physically allocated original queue
+lengths at 0, 1 and 32. Every new row must be executed both through the
+unmodified original Rust methods and through the emitted HIA machine-code
+kernel, not merely checked against a Python model. Source selection and
+missing-Rust failure behavior remain unchanged.
+
+The 2,600 added comparisons have **NOT_RUN** status on this new source until
+the exact new commit's mandatory native CI finishes. Previously published
+results remain bound to their own commits. This improves differential
+qualification only: M05 queue mutation/deduplication, durable handoff, Node
+integration, service budget, secret-key lifecycle, all 26 Rust-package
+retirements, and all nine migration gates remain OPEN; PQ remains HOLD_NO_GO.
+No original service budget, production policy, toolchain pin, root README or
+historical-plan bytes are modified.
+
+## HIA M05 normal-arrival fairness warm-up candidate — 2026-11-15 UTC
+
+The current integration candidate extends the real M05 native HIA quota
+kernel with all six explicit outcomes of the original
+lane_fairness::maybe_warm_normal_fairness transition, after an admission
+attempt. Opcodes 7–12 distinguish Accepted, Duplicate and Backpressured
+and the original normal_was_empty bit. Only Accepted with an initially
+empty normal queue, a positive dedicated-normal capacity and both
+post-admission queues nonempty warms the streak to burst_limit.
+All other cases preserve streak, including u64 extremes. Earlier opcodes
+0–6, their byte framing, capacity arithmetic and refusal behavior stay
+unchanged. The original Rust functions are compiled unchanged through
+the source-bound reference adapter.
+
+On a separate clean, pinned Hepta f33d8da checkout, official Core
+admitted all three functions. An explicitly selected direct machine-code
+backend executed 1,917 full-width finite cases, malformed/refusal
+controls and 4,095 new actual-original-Rust comparison cases without
+a reported mismatch. Separately, 6,552 actual original-Rust queries
+matched the algebraic reference, and 279,936 finite warm-up boundary
+tuples satisfied the u64 result bound. These are local development
+observations; the fixed self-hosted compiler's emitted machine code
+and exact committed CI are NOT_RUN for this candidate, and the prior
+4cc/b0d exact-head results are not transplanted to a changed source.
+
+No persistent queue/nonce owner, external witness commit, reorganization
+or full Node state transaction is implemented by these pure kernels.
+All 26 original Rust packages remain, all nine migration gates OPEN,
+PQ HOLD_NO_GO, and production activation forbidden. The original
+service limits, root README and failed observations are unchanged.
+The existing development-plan text following this section is preserved
+byte-for-byte.
+
+---
+
+## HIA M05 queue admission quota/fairness candidate — 2026-11-15 UTC
+
+The sole integration lane has an independent **M05 pure native HIA candidate**
+at `hia/src/mempool/lane_quota.hepta`, with documented caller descriptor,
+original-Rust source adapter and strict differential suite. It implements
+five original `trnm-mempool` capacity, reserve/borrow and readiness-fairness
+decisions, not a queue/state/nonce owner or the complete M05 package.
+`hia/tests/rust_mempool_quota_reference.rs` imports both original
+`lane_quota.rs` and `lane_fairness.rs` verbatim through Rust's `#[path]`
+module mechanism. The native candidate and original-source/runner tests are
+included in the next exact-head HIA qualification.
+
+A separate, isolated local `rustc` run of the original methods succeeded
+and matched 1,345 independent caller-model queries with no mismatch.
+**The HIA native-code execution remains NOT_RUN until actual exact-head CI
+qualification.** No previous head's results are carried forward to this new
+source; a CI failure, UNKNOWN, or NOT_RUN is retained verbatim.
+
+This integration adds one kernel to the 36-kernel/7-foundation checkpoint
+(37 candidate kernels, 7 foundations, 52 HIA files), but no original package
+retirement. All 26 Rust packages remain; all nine migration gates remain OPEN,
+including persistent Node, cryptography/private-key owner, full request/response
+and model/consensus/service budgets. Runtime branch/reorg, State transaction
+owner, native PQ and the secret-stack boundary remain independent active work.
+The earlier M05 package's cached-dedup recovery, admission queue mutation,
+nonce reservation, cold handoff and full Node integration are still missing.
+
+The existing development-plan history below is retained byte-for-byte.
+
+---
+
+## HIA native rewrite, 2026-11-15 UTC — IN PROGRESS
+
+The owner requires a complete HIA-native Trillionnium-Chain and retirement of
+the previous implementation after equivalent replacement. The consolidated
+baseline is `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. All 26 retained packages
+remain accounted for in the [HIA migration inventory](../../config/hia-migration-v1.json).
+The [native guide](../../hia/README.md) and [audit](../../hia/AUDIT.md) bind actual
+coverage and failures. This is the sole plan; its historical suffix is unchanged.
+
+The sixth candidate contains 36 kernel units and seven native foundations,
+accounting for all 51 HIA source files. They cover exact protocol grammars,
+SHA-256/SHA-512, strict classical Ed25519, the non-cancelling W1 relation, replay
+proposals, evaluator decisions, PNX1, checkpoint V2, state roots, binary64,
+conflict scheduling, shared JSON/Value codecs, complete classical request and
+response kernels, and actual default Settings/genesis construction. Native
+foundations implement finite OS fixtures, connected-stream readiness, streaming
+transaction persistence, typed Delta behavior, guarded private stacks and native
+request/response qualification callers. This is not a complete Node. No original
+package has an accepted retirement witness; all nine replacement gates remain OPEN.
+
+The pinned Hepta revision is `f33d8da316de8fdf27b504371f1a5310997ff548`.
+Compiler SHA-256 is `87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54`.
+Its original 180-second cold gate passed in 154.807339324 seconds with the original
+three-second cleanup allowance. Preserve the fixed native profile (128 functions,
+1,536 blocks, 8,192 operations and 2,048 SSA values per function). Whole-program
+composition independently verifies each declared component, including unselected
+functions, selects only its own named functions, requires explicit flat helper
+closure, and rechecks every captured input. It never raises compiler limits or
+silently falls back to a hosted implementation.
+
+### Exact published evidence and current additions
+
+The fifth repaired head `4cc0464ff9632f2a493cb76d5b8b51eaad332dac` passed
+[all three HIA CI jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144):
+189 tests, 56,884 shared-runner calls, zero skips/errors/failures and all five
+actual original Rust adapters. OS 25/25, reactor 49/49 plus 13 native contracts,
+and storage 48/48 plus 14 contracts passed with real traces. Complete request
+passed 178 controls, 14 stream-hash controls, 170 original-Node comparisons and
+six original tests. Source checks passed the historical readers and all 113 PQ
+negative controls; PQ remains HOLD_NO_GO.
+
+The original executor actually ran 5,274 cases. Its retained report records
+131 unsafe original schedules, 181 intentional differences and 27 expected
+version-skew panics. HIA retains the maximum reader-group dependency and passes
+the independent conflict graph. These actual results are distinct from earlier
+source-model observations (122 differences, 88 unsafe). The earlier `d82dfe0`
+E0463 linking failure remains FAIL; exact Cargo-event library search paths and
+12 controls enabled the actual repaired run. This executor is outside the
+ordinary Node dependency closure and does not establish Node execution.
+
+Current sixth-source observations are separate from that published CI:
+
+* Complete response: 11,420 native controls, including full default-serde number
+  and Unicode Value behavior, response encoding, signing and verification. The
+  guarded complete producer actually stopped with exit 70 and zero stdout when
+  seccomp denied `munmap` after signing. Original Rust for the 10,990 response
+  comparisons and six original tests is locally NOT_RUN and mandatory in CI.
+* Private stack: 11 observations preserve the actual bare signer failure (secret
+  byte spills remained on the caller stack after the work arena was zeroed).
+  The HIA-emitted wrapper uses two guard pages, wipes the whole 1 MiB private
+  stack on ordinary return, unmaps it and reports cleanup failures. The input
+  seed, trap/async termination, whole key lifecycle and machine-code constant-time
+  proof remain separate obligations. Conservative SSA checks are not that proof.
+* Settings: 16 integrated tests, 102 shared-runner and 14 raw-pointer calls passed.
+  Four development keys, seven genesis rows and all roots are computed in native
+  HIA. None versus Some(1800000000), original config ordering and u64 bounds are
+  explicit. Two rejected compiler attempts remain recorded. The 30 actual
+  original-Rust cases are mandatory in CI and locally NOT_RUN.
+* Typed Delta: 8,551 controls passed, including the actual 65,536-row State and
+  131,072-key union. Typed collection, Option/byte equality, key ordering and
+  progress/write failure semantics are implemented. Constructor validation
+  precedes progress; physical SQL row materialization and durable Node commit
+  have not been claimed. The 423 original-Rust comparisons remain mandatory.
+* Storage v2: 52 physical controls and 170 native function controls plus two fresh
+  CLI starts passed. Actual commit/close/reopen/readback handled 279,445,512 bytes
+  and 4,105 real retained transactions. The exact parent rebuild reproduces ELF
+  `b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445`.
+  The new format removes the artificial 16 MiB/4,096 limits, checks actual off_t
+  addressing and u64 sequence exhaustion, and rejects old-v1 namespaces unchanged.
+  The initial slow hash run timed out; the shared compression repair passed the
+  unchanged 180-second test controller. Current local trace is UNKNOWN after
+  ptrace refusal. Typed State and original service latency remain OPEN.
+
+The original full-count state-root execution remains bound to exact `96a0846`
+CI: 65,536 rows, 86 raw calls, 299.705821145 seconds; preserve the earlier
+353.568397442-second local run. Those cases used short values. The later named
+state_root entry extraction passed 165 native calls with the original body and
+helpers unchanged; the old maximum-count run is not relabelled as a new-source
+performance pass. The original four-second service acceptance remains unchanged.
+
+### Remaining owner integration
+
+Follow actual Node dependencies. `Node.db` directly owns `rusqlite::Connection`
+in store.rs; `TransactionScope` observes operations, and the optional wrapper is
+not the Node owner. Implement one typed StoredState/branch/Delta/ancestry owner,
+reorg staging, exact recovery, authenticated replay begin/dispatch/finish and
+durable exact response outbox. Preserve original stored-row dimension checks
+before SQL conversion, every-256-row progress, complete collection before staged
+mutation, continuity before M06 grammar, then wire/root limits. Full stored
+State and Delta union must stream through bounded pages and private FD locators.
+A missing COMMIT ACK is uncertain even after durable success; reopen and compare
+HEAD. Do not infer rollback from EPIPE, cleanup refusal or process death.
+
+Complete original M06 transaction semantics, including every optional evaluation,
+lifecycle, factor/evolution and model-source path. Shared Value/query/update
+kernels must retain Unicode, missing versus null, original Number equality and
+all untouched fields. Source-level parsing alone cannot retire execution.
+
+Complete private classical key/Settings/connection/replay ownership. Actual
+O_NOFOLLOW file checks and strict seed decoding, real verification, native
+signing, original loopback admission, absolute deadlines, cancellation and
+multichunk full-frame transfer must belong to one private event chain. Neither
+wire data nor a test harness may provide authorization, terminality or invented
+syscall completion. Local operation/revocation history must not rewind with
+chain reorganization. PQ identity, account/install authorization and secrecy
+remain distinct and retain their existing acceptance state.
+
+Use one shared native multi-image dispatcher to compose the fixed-size compiled
+HIA modules. HIA reducers own business sequencing. The native boundary checks
+fixed module identities, private arena ownership and explicit borrows, overflow,
+disjointness, generation and outstanding call sequence, then invokes the actual
+captured machine code. Child I/O must resume through the real OS event chain.
+Do not create a second copied helper tree or host-language business dispatcher.
+This integration is ongoing, not an implemented capability claimed by this batch.
+
+The original service resource/deadline profile, cross-target behavior, complete
+model workflows, work-cost, STARK/QROM and consensus-economic obligations remain
+open. Ordinary-file/fsync hard deadlines are not established by epoll or a clock
+check after a blocking return. All new stored/signed formats require fresh
+namespaces. Deployed data, keys, services and other repositories are out of scope.
+
+### Cleanup and final qualification
+
+Eight exact historical-reader cleanups now remove 1,622 duplicate payload copies,
+totaling 1,628,294,407 original bytes: 607 checkout preparations, 14 sealed CI ZIPs,
+13 joint-resource archives, four PQ triage streams, 885 public-readiness payloads,
+32 hosted-cost containers/shards, eight D26 compressed SQLite snapshots and 59
+W1 complete-work containers. The last two groups remove 315,347,561 bytes. W1
+moves 91 smaller records byte-for-byte, including ten explicitly tracked logs.
+Original semantic readers, negative controls, exact Git identities and actual
+FAIL/HOLD conclusions remain. No archive rewrite certifies service, model or PQ
+readiness. Git history is the recovery source; do not rewrite or force-push it.
+
+Refresh only the current sole-plan blob pin for this increment. Preserve all
+other 2,612 source pins, all 1,177 evidence pins and all false/HOLD fields. Keep
+the original source checker, distributed inventory, repository links, cleanup
+readers and PQ negative suite. Six exact-source CI jobs cover source/archive,
+components/platform/storage, original request, original Delta, complete response
+and original Settings. All actual Rust comparisons are required; missing tools
+are a refusal, not a pass. Preserve earlier ignored-log, direct-import, receipt-
+overwrite, compiler-capacity, signer-erasure and deadline failures with their
+exact scopes. Full retirement requires actual complete replacement and accepted
+original behavior on the final source; it remains unauthorized by the current
+migration evidence.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 

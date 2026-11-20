@@ -1,0 +1,17 @@
+{
+  "schema": "trnm.hia.native-owner-ci-context-failure.v1",
+  "failed_commit": "c266cc2848cf4adc69ab7ea53f874ad253991e8d",
+  "run_id": 44306136069,
+  "run_status": "completed",
+  "run_conclusion": "failure",
+  "created_at": "2026-11-18T12:40:16Z",
+  "updated_at": "2026-11-18T12:40:16Z",
+  "scope": "Workflow validation; no HIA runtime qualification on this run",
+  "cause": "runner context is unavailable in jobs.<job_id>.env",
+  "reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts",
+  "correction": "Move the identical two output variables into the actual native qualification step env",
+  "original_failure_promoted_to_pass": false,
+  "followup_hosted_execution": "NOT_RUN at preparation",
+  "whole_chain_native": false,
+  "old_stack_can_be_removed": false
+}

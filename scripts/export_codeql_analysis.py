@@ -31,6 +31,14 @@ class ExportError(Exception):
     pass
 
 
+class UnstableSnapshot(ExportError):
+    """A complete pagination attempt changed while its pages were read."""
+
+    def __init__(self, prefix):
+        super().__init__("Duplicate IDs across API pages; snapshot was not stable")
+        self.prefix = prefix
+
+
 def require(condition, message):
     if not condition:
         raise ExportError(message)
@@ -168,9 +176,8 @@ class API:
             require(isinstance(batch, list), "Expected a paginated GitHub array")
             rows.extend(batch)
             if len(batch) < 100:
-                if unique_ids:
-                    require(len({row["id"] for row in rows}) == len(rows),
-                            "Duplicate IDs across API pages; snapshot was not stable")
+                if unique_ids and len({row["id"] for row in rows}) != len(rows):
+                    raise UnstableSnapshot(prefix)
                 return rows
         raise ExportError("API pagination exceeded bound; refusing an incomplete export")
 
@@ -394,19 +401,34 @@ def main():
         attempt = 0
         while True:
             attempt += 1
-            ready, state = snapshot(api, target, f"poll-{attempt:03d}")
-            result["last_checks"] = [{"id": row["id"], "head_sha": row["head_sha"],
-                                      "status": row["status"], "conclusion": row["conclusion"]}
-                                     for row in state["checks"]]
-            if ready and state == previous:
-                result["analyses"] = export_analyses(api, target, state)
-                result["check_annotations"] = export_check_annotations(
-                    api, target, state, f"poll-{attempt:03d}-annotations")
-                final_ready, final_state = snapshot(api, target, f"poll-{attempt:03d}-after-export")
-                if final_ready and final_state == state:
-                    result["complete"] = True
-                    break
-            previous = state if ready else None
+            try:
+                ready, state = snapshot(api, target, f"poll-{attempt:03d}")
+                result["last_checks"] = [{"id": row["id"], "head_sha": row["head_sha"],
+                                          "status": row["status"], "conclusion": row["conclusion"]}
+                                         for row in state["checks"]]
+                if ready and state == previous:
+                    result["analyses"] = export_analyses(api, target, state)
+                    result["check_annotations"] = export_check_annotations(
+                        api, target, state, f"poll-{attempt:03d}-annotations")
+                    final_ready, final_state = snapshot(api, target, f"poll-{attempt:03d}-after-export")
+                    if final_ready and final_state == state:
+                        result["complete"] = True
+                        break
+                previous = state if ready else None
+            except UnstableSnapshot as error:
+                # Offset pagination can shift when GitHub adds an analysis.
+                # Retain every returned page and restart a complete snapshot;
+                # deduplicating would conceal entries missed at a page boundary.
+                # Two new matching snapshots and the post-export check are still
+                # required within the original absolute deadline. Other source,
+                # permission, response and metadata errors remain fatal.
+                previous = None
+                relative = f"poll-{attempt:03d}/unstable-pagination.json"
+                api.save_json(relative, {"reason": str(error),
+                                        "raw_pages_prefix": error.prefix,
+                                        "snapshot_accepted": False,
+                                        "security_gate_changed": False})
+                result.setdefault("unstable_pagination", []).append(relative)
             remaining = api.deadline - time.monotonic()
             require(remaining > args.poll_seconds, "CodeQL analyses/checks did not complete and stabilize before the deadline")
             print(f"Waiting for exact-source CodeQL analyses/checks (poll {attempt})", flush=True)

@@ -1,0 +1,85 @@
+{
+  "archive": {
+    "bytes": 70656656,
+    "sha256": "5720f3fd66aee750bf0b212c8ff6dd915e7dd6ad60a85c376e589506f7de3354"
+  },
+  "chunk_bytes": 6291456,
+  "logical_name": "execution-application-ci.tar.xz",
+  "parts": [
+    {
+      "bytes": 6291456,
+      "offset": 0,
+      "path": "part-000",
+      "sha256": "2661a8b6cddf65196a477702d3c9fa9c347b4fe8ae25a14d9586bc336c2f51ba"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 6291456,
+      "path": "part-001",
+      "sha256": "58738c69ca38abbbb7cd42a882de68a058ed2f611ba2ae37873a16203aa7071b"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 12582912,
+      "path": "part-002",
+      "sha256": "0f87dbd5493d15528d0e7c948ae34d4da825d666cb68748ba9c0534bba809c66"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 18874368,
+      "path": "part-003",
+      "sha256": "9f399aeb372084aede3e3337a374d482dc4206ac3803af95de8046f67801c74d"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 25165824,
+      "path": "part-004",
+      "sha256": "300adcb2a4299817dcedddd9e5ac9a7019acc226f7b8e7b1869e7a98e077c5e9"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 31457280,
+      "path": "part-005",
+      "sha256": "0a3ad8fc1f1f829fd5d4459189a233a662572a6ced9de0c05a74c396e7a8ce6d"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 37748736,
+      "path": "part-006",
+      "sha256": "393ddc19e4ba4f81cfdf38418f337878ef13e1b40ad275a0eaccaf5ca0449e10"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 44040192,
+      "path": "part-007",
+      "sha256": "3983aa2392ab5d84b63ea51bf236d6d203081ff9d7a57cb568ba8129ef21aea2"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 50331648,
+      "path": "part-008",
+      "sha256": "995366035e9724cb9a0e0bb06ef54b17a6610e892ca19883a49f4a0540e2f857"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 56623104,
+      "path": "part-009",
+      "sha256": "4ed5474493a719f1e1dc984d054cef8d9ff951e6458336d4133298c60ca0df71"
+    },
+    {
+      "bytes": 6291456,
+      "offset": 62914560,
+      "path": "part-010",
+      "sha256": "8d67ee9df861daa628826e6d995d7de1e15f7288a3c17d07c4f08fa75c71c1e9"
+    },
+    {
+      "bytes": 1450640,
+      "offset": 69206016,
+      "path": "part-011",
+      "sha256": "7ff840a48b3ae31cb0370f170946b0a2cce8ac3698abad9b6573175e51d92720"
+    }
+  ],
+  "qualification_is_not_changed_by_storage": true,
+  "reassembly": "Concatenate the regular files in the declared order, verify each part identity and the full archive identity before opening it.",
+  "schema": "trnm.hia.contiguous-archive.v1"
+}

@@ -1,0 +1,156 @@
+{
+  "archive": {
+    "all_declared_members_read_completely": true,
+    "bytes": 4366140,
+    "logical_bytes": 102577588,
+    "member_index": "MANIFEST.json",
+    "member_index_sha256": "6a126fa20e8243c149124fbf111e81aa664ba02211af9d7396347a746d90159c",
+    "path": "escrow-development.tar.xz",
+    "readback": "PASS",
+    "regular_members": 1466,
+    "sha256": "b3814f90f74e1f75991e3583cddf2617ef482e78a0ed4b7ef63b21a98e3b2356",
+    "single_xz_stream": true,
+    "tar_tail_all_zero": true
+  },
+  "base_commit": "5a71deab1f254fff3297b482a96d86fbc8965b89",
+  "final_execution": {
+    "actual_calloc_failure_points": 13,
+    "all_original_native_streams_equal": true,
+    "allocator_invalid_frees": 0,
+    "allocator_live_after_each_case": 0,
+    "complete_report_member": "qualification-v3/report.json",
+    "complete_report_sha256": "3706ea8630077548d176175748790ff0e92e30292008ed61982b4a0281ec0fe9",
+    "complete_sessions": 194,
+    "finalized": true,
+    "malformed_utf8_capacity_controls": 56,
+    "original_audit_retained_tests": 3,
+    "original_vault_retained_tests": 36,
+    "public_operations": 19877,
+    "run": "qualification-v3",
+    "source_inputs": {
+      "hia/components.json": {
+        "bytes": 41756,
+        "sha256": "511ccc428f71ee22b0626fd0d95af3a975cd6f109b0b24a86c0d6d3543e338b2"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/escrow/README.md": {
+        "bytes": 9762,
+        "sha256": "02f60a116af9e57eb38f24ab5d46ad97579471e1e1e86ae9e86d55b825cae5a9"
+      },
+      "hia/src/escrow/vault.hepta": {
+        "bytes": 102628,
+        "sha256": "71abae6d2a374763d225a93d85111babce026f3693cf8968934777b024e36b5a"
+      },
+      "hia/tests/escrow_native.py": {
+        "bytes": 10073,
+        "sha256": "33b90416fe1d9e5bb7f41e3dad05d1ee36dacd4cf8ee33de0bc6e251db1cd523"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/rust_escrow_reference.rs": {
+        "bytes": 7571,
+        "sha256": "add0666e31379756f8537cf2f069333ed9cc955c2e00167bc98c08cb7243de33"
+      },
+      "hia/tests/test_escrow.py": {
+        "bytes": 24923,
+        "sha256": "09d8d2c4d7134f1ff7bcd3669ca5703d9c77442ca3f1b90e2169de006a5286e2"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "trillionnium/crates/trnm-audit-events/Cargo.toml": {
+        "bytes": 273,
+        "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+      },
+      "trillionnium/crates/trnm-audit-events/src/lib.rs": {
+        "bytes": 3026,
+        "sha256": "ef8f10252e5e585a278b384aa5cb2ecb20965e0216eea698d58a90df3afcf556"
+      },
+      "trillionnium/crates/trnm-escrow-vault/Cargo.toml": {
+        "bytes": 347,
+        "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+      },
+      "trillionnium/crates/trnm-escrow-vault/src/lib.rs": {
+        "bytes": 55085,
+        "sha256": "b5e821227b96854fc89231fc4118cba2617e81b78872830d06395d3eb837b3ea"
+      }
+    },
+    "source_unchanged": true,
+    "status": "PASS",
+    "test_methods": 7,
+    "wall_seconds": 34.618
+  },
+  "hosted_execution": "NOT_RUN for this source increment at preparation",
+  "independent_readback": {
+    "all_194_complete_original_native_streams_read": true,
+    "all_declared_run_files_read": true,
+    "record_member": "escrow-final-readback.json",
+    "runtime_reexecuted": false,
+    "status": "PASS"
+  },
+  "native_and_original_artifacts": {
+    "allocator-fault.so": {
+      "bytes": 16000,
+      "sha256": "cb8f18178e1af989cc25d1978eae098d49d3aca954a19f1d98f37d5299a35a1b"
+    },
+    "audit-original-tests": {
+      "bytes": 6884264,
+      "sha256": "8d09dfb74da055e590caf17c3dced7c77a3f263e308fe06e671039cc3d2095ae"
+    },
+    "vault-native.so": {
+      "bytes": 132432,
+      "sha256": "aaa951de1b977b5bc28e08853ac6458c73278fa0de696f7a249fc66fd59e7223"
+    },
+    "vault-original-reference": {
+      "bytes": 4421160,
+      "sha256": "1b5b205be7f9ccd111fd5f4d1ffaa2447dad971f3d7f0787fc07ebd1c5612d28"
+    },
+    "vault-original-tests": {
+      "bytes": 7064544,
+      "sha256": "5b90ffda61dfc05c565b72d5f19d7019b244fafa5ec9f84272b077c87c8eefca"
+    }
+  },
+  "old_stack_can_be_removed": false,
+  "partial_execution_negative_control": {
+    "complete_directory_retained": true,
+    "methods_started_and_completed": 1,
+    "promoted_to_full_pass": false,
+    "required_methods": 7,
+    "run": "qualification-partial-control",
+    "status": "INCOMPLETE",
+    "unittest_exit_code": 0
+  },
+  "production_activation": false,
+  "remaining": [
+    "Live authenticated streaming Node owner and durable settlement state",
+    "Crash recovery and original service/architecture acceptance",
+    "Whole package and whole-chain retirement"
+  ],
+  "retirement_accepted": false,
+  "schema": "trnm.hia.escrow-vault-development.v1",
+  "scope": "Complete SettlementVault public operations, multiple private owners and Clone/Drop within an owned native session; live streaming lifetime and durable Node settlement remain open",
+  "semantic_controls": [
+    "Full u128 balances, carry/borrow, input width and atomic overflow refusal",
+    "Exact original Unicode White_Space and opaque UTF-8 identities",
+    "Self-transfer, zero-balance tombstones and permanent finalized request IDs",
+    "Full ordered raw and normalized audit fields and presence bits",
+    "Multi-owner/Clone isolation, consume/drop and private allocation cleanup",
+    "Rustup argv[0] selector regression and actual selected rustc version/hash"
+  ],
+  "source_profile": "Pinned HIA self-host compiler; Linux x86_64 shared-library target, external linker and calloc/free; private state never supplied by caller",
+  "whole_chain_native": false
+}

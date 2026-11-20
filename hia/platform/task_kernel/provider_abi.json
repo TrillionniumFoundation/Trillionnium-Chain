@@ -1,0 +1,222 @@
+{
+  "schema": "trnm.hia.task-kernel.sqlite-provider-abi.v1",
+  "build_fence": "trnm-hia-task-kernel-sqlite-3.54.1-hia-provider-x86_64-v2",
+  "target": "x86_64-unknown-linux-gnu",
+  "foreign_boundary": "Native HIA provider and native HIA ABI witness; pinned external SQLite C plus libc filesystem, allocation and pthread synchronization; no business policy",
+  "entry": "uint64_t trnm_task_provider(void *opaque, uint64_t op, const unsigned char *request, uint64_t size, unsigned char *output, uint64_t capacity)",
+  "lifetime": {
+    "new": "void *trnm_task_provider_new(void); null on real allocation or mutex construction failure",
+    "enter": "int trnm_task_provider_enter(void *opaque); real pthread_mutex_lock result",
+    "leave": "int trnm_task_provider_leave(void *opaque); real pthread_mutex_unlock result",
+    "reset": "uint64_t trnm_task_provider_reset(void *opaque); finalize every retained statement, then close_v2 each retained database and close each retained descriptor; returns actual resource count",
+    "free": "void trnm_task_provider_free(void *opaque); accepts null, resets resources and destroys mutex",
+    "assumptions": [
+      "Opaque capability was returned by new and is still live.",
+      "Callers serialize use by enter/leave or equivalent exclusive typed ownership.",
+      "Input/output point to distinct live correctly sized buffers; output does not alias retained SQLite data.",
+      "HIA alone decides SQL, transaction order, error mapping, connection flags and resource lifetime; no validation booleans are consumed.",
+      "File descriptors returned by op17 belong to this exact live context; op18, op19 and op29 reject unretained, cross-context, and already-closed descriptors.",
+      "Production owners in one process must share one exact SQLite provider image; independently linked qualification executables/libraries run in separate processes."
+    ]
+  },
+  "wire": {
+    "byte_order": "little-endian",
+    "scalar_response": "24 bytes: u64 code; u64 first; u64 second",
+    "value_response": "24-byte header: u64 zero; u64 SQLite type; u64 byte length; followed by raw bytes",
+    "types": {
+      "1": "INTEGER, signed i64 bits in eight bytes",
+      "2": "FLOAT, eight IEEE754 binary64 bits",
+      "3": "TEXT, exact raw SQLite text bytes",
+      "4": "BLOB, exact bytes including empty",
+      "5": "NULL, zero bytes"
+    },
+    "function_return": "Required output byte length; UINT64_MAX rejects invalid framing/capability; UINT64_MAX-1 reports private bridge allocation failure. Neither sentinel is any original SQLite, OS, or business error.",
+    "insufficient_capacity": "Mutating calls check capacity>=24 before effects; variable results only inspect retained objects and may be retried after growth.",
+    "limits": "Only actual SQLite/int ABI widths and allocation/OS bounds. No task count, path byte count, record count or database capacity is invented."
+  },
+  "operations": [
+    {
+      "op": 1,
+      "primitive": "identity",
+      "request": "u64 selector; u64 index",
+      "response": "selector 0: version/threadsafe; 1: runtime sourceID; 2: runtime compile option; 3: witness version/layout index; 4: witness sourceID; 5: witness compile option"
+    },
+    {
+      "op": 2,
+      "primitive": "sqlite3_open_v2",
+      "request": "u64 flags; u64 path_bytes; raw NUL-free path",
+      "response": "code; retained database capability; zero"
+    },
+    {
+      "op": 3,
+      "primitive": "sqlite3_close",
+      "request": "u64 database",
+      "response": "code; zero; zero; releases capability only on SQLITE_OK"
+    },
+    {
+      "op": 4,
+      "primitive": "sqlite3_busy_timeout",
+      "request": "u64 database; u64 milliseconds",
+      "response": "code; zero; zero"
+    },
+    {
+      "op": 5,
+      "primitive": "sqlite3_prepare_v3",
+      "request": "u64 database; u64 sql_bytes; raw SQL bytes",
+      "response": "code; retained statement capability; raw tail byte offset; prepFlags exactly zero"
+    },
+    {
+      "op": 6,
+      "primitive": "sqlite3_bind",
+      "request": "u64 statement; u64 one_based_index; u64 SQLite type; raw value",
+      "response": "code; zero; zero; INTEGER and FLOAT require eight bytes, NULL empty; TEXT/BLOB copied with SQLITE_TRANSIENT"
+    },
+    {
+      "op": 7,
+      "primitive": "sqlite3_step",
+      "request": "u64 statement",
+      "response": "actual SQLite result code; zero; zero"
+    },
+    {
+      "op": 8,
+      "primitive": "sqlite3_column",
+      "request": "u64 statement; u64 zero_based_index",
+      "response": "typed value response; no additional step"
+    },
+    {
+      "op": 9,
+      "primitive": "sqlite3_finalize",
+      "request": "u64 statement",
+      "response": "actual SQLite result code; zero; zero; releases statement even when error returned"
+    },
+    {
+      "op": 10,
+      "primitive": "sqlite3_changes64",
+      "request": "u64 database",
+      "response": "zero; actual changes; zero"
+    },
+    {
+      "op": 11,
+      "primitive": "sqlite3_errmsg",
+      "request": "u64 database or zero",
+      "response": "TEXT response"
+    },
+    {
+      "op": 12,
+      "primitive": "sqlite3_extended_errcode",
+      "request": "u64 database or zero",
+      "response": "zero; actual extended result code; zero"
+    },
+    {
+      "op": 13,
+      "primitive": "sqlite3_column_count",
+      "request": "u64 statement",
+      "response": "zero; actual column count; zero"
+    },
+    {
+      "op": 14,
+      "primitive": "sqlite3_column_name",
+      "request": "u64 statement; u64 zero_based_index",
+      "response": "TEXT response"
+    },
+    {
+      "op": 15,
+      "primitive": "stat/lstat",
+      "request": "u64 follow_mode; u64 unused; u64 path_bytes; raw NUL-free path",
+      "response": "errno; st_mode; st_size; follow_mode 0=lstat, 1=stat"
+    },
+    {
+      "op": 16,
+      "primitive": "mkdir",
+      "request": "u64 mode; u64 unused; u64 path_bytes; raw NUL-free path",
+      "response": "errno; zero; zero"
+    },
+    {
+      "op": 17,
+      "primitive": "open",
+      "request": "u64 flags; u64 mode; u64 path_bytes; raw NUL-free path",
+      "response": "errno; retained signed descriptor bits; zero; retention allocation failure closes the just-opened descriptor and returns UINT64_MAX-1"
+    },
+    {
+      "op": 18,
+      "primitive": "close",
+      "request": "u64 descriptor",
+      "response": "errno; zero; zero; consumes only a descriptor retained by this context; Linux close is never retried"
+    },
+    {
+      "op": 19,
+      "primitive": "fsync",
+      "request": "u64 descriptor",
+      "response": "errno; zero; zero; only a descriptor retained by this context"
+    },
+    {
+      "op": 20,
+      "primitive": "link",
+      "request": "u64 unused; u64 unused; u64 source_bytes; raw source; raw target; either path may be empty and actual link errno is returned; both must be NUL-free",
+      "response": "errno; zero; zero"
+    },
+    {
+      "op": 21,
+      "primitive": "unlink",
+      "request": "u64 unused; u64 unused; u64 path_bytes; raw NUL-free path",
+      "response": "errno; zero; zero"
+    },
+    {
+      "op": 22,
+      "primitive": "clock_gettime",
+      "request": "empty",
+      "response": "errno; signed CLOCK_REALTIME seconds bits; nanoseconds"
+    },
+    {
+      "op": 23,
+      "primitive": "getpid",
+      "request": "empty",
+      "response": "zero; pid; zero"
+    },
+    {
+      "op": 24,
+      "primitive": "strerror",
+      "request": "u64 errno",
+      "response": "TEXT response"
+    },
+    {
+      "op": 25,
+      "primitive": "sqlite3_error_offset",
+      "request": "u64 database",
+      "response": "zero; signed error offset bits; zero"
+    },
+    {
+      "op": 26,
+      "primitive": "sqlite3_bind_parameter_count",
+      "request": "u64 statement",
+      "response": "zero; actual parameter count; zero"
+    },
+    {
+      "op": 27,
+      "primitive": "sqlite3_errcode",
+      "request": "u64 database",
+      "response": "zero; actual primary result code; zero"
+    },
+    {
+      "op": 28,
+      "primitive": "sqlite3_errstr",
+      "request": "u64 result code",
+      "response": "TEXT response"
+    },
+    {
+      "op": 29,
+      "primitive": "read",
+      "request": "u64 descriptor; u64 requested byte count",
+      "response": "errno; actual byte count; zero; followed by exactly that many bytes. Only this context's retained descriptor. With header capacity present, capacity<24+requested returns 24+requested before calling read. Short reads, EOF zero and EINTR are returned unchanged; HIA owns retry/read_exact policy. No pread substitution, implicit seek, or extra request-size cap."
+    }
+  ],
+  "claims": {
+    "project_provider_runtime_hia": true,
+    "project_witness_runtime_hia": true,
+    "original_project_c_in_production_link": false,
+    "sqlite_is_hia": false,
+    "task_kernel_business_implemented_by_c": false,
+    "node_consumer_qualified": false,
+    "legacy_retirement_qualified": false
+  }
+}

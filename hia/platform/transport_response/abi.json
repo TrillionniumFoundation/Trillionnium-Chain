@@ -1,0 +1,181 @@
+{
+  "JVT2": {
+    "depth": "at most 127 minus outer array/object nodes",
+    "header": "ASCII JVT2 || outer:u8 0 or 1",
+    "node_header": "tag:u8 || payload_length:u32le",
+    "object_order": "strictly increasing decoded UTF8 byte keys, no duplicate; corresponds exactly to a serde Map container",
+    "tags": {
+      "0": "null, empty",
+      "1": "false, empty",
+      "2": "true, empty",
+      "3": "u64 LE, 8 bytes",
+      "4": "i64 LE bit representation, 8 bytes",
+      "5": "finite binary64 LE bits, 8 bytes",
+      "6": "valid UTF8 string bytes",
+      "7": "count:u32le then exact child nodes",
+      "8": "count:u32le then (key_length:u32le, raw UTF8 key, child node)"
+    }
+  },
+  "authority": {
+    "hash": "SHA256(TRNM-PON1\\0 || tag_length:u16le || tag || part_length:u32le || canonical ResponseAuthority JSON)",
+    "schema": "trnm-authenticated-response-v1",
+    "signature": "normal RFC8032 Ed25519 over the 32-byte authority digest, not Ed25519ph",
+    "tag": "native-authenticated-response-sign-v1"
+  },
+  "byte_order": "local scalar fields little endian; original wire frame length u32 big endian",
+  "common_preconditions": [
+    "input, output, work are valid disjoint regions",
+    "work and output are exclusively owned for the duration of a call",
+    "helpers are private and do not admit arbitrary offsets or overlapping caller buffers"
+  ],
+  "components": {
+    "encode": {
+      "input": "TRNMAS01 owner context280 || terminal:u8 || outcome:u8 0 success/1 error || zero6 || seed32 || JVT2(outer1) or full UTF8 Error::to_string text",
+      "output": "complete 4-byte BE framed original authenticated response",
+      "return": "frame length 5..2097156; errors FFFFFFE0 context shape, E1 invalid Value/UTF8, E2 depth, E3 frame/tape limit, E4 capacity, E5 seed/server mismatch, E6 internal invariant",
+      "source": "src/transport/signed_response.hepta",
+      "work_min": 2359300
+    },
+    "number": {
+      "input": "0:u8 || exact JSON numeric token; or 1:u8 || power_exponent:u64le in 0..308",
+      "number_output": "u64 numeric bits/value, u64 kind(0 U64/1 I64 bits/2 F64 bits), u64 exact canonical flag, u64 canonical text length, 24 bytes NUL-padded text",
+      "output_min": 64,
+      "power_output": "u64 rounded binary64 bits",
+      "return": {
+        "0": "success",
+        "100": "capacity",
+        "101": "input shape",
+        "102": "numeric syntax/range"
+      },
+      "source": "src/codec/json_number.hepta",
+      "work_min": 160
+    },
+    "sign": {
+      "input": "32-byte seed || 32-byte message",
+      "output": "public key A32 || R32 || S32",
+      "output_min": 96,
+      "return": {
+        "0": "success",
+        "100": "input length",
+        "101": "capacity",
+        "102": "internal invariant"
+      },
+      "source": "src/crypto/ed25519_sign.hepta",
+      "wipe": "es_wipe clears exactly work[0,141568), not work tail, readbuf input, native stack or registers",
+      "work_min": 141568
+    },
+    "value_encode": {
+      "input": "JVT2 typed finite serde Value container",
+      "output": "exact serialized JSON, no terminator",
+      "return": "serialized byte length 1..2097152; errors FFFFFFF0 invalid tape, FFFFFFF1 depth, FFFFFFF2 frame/tape limit, FFFFFFF3 capacity",
+      "source": "src/codec/json_value_encode.hepta",
+      "work_min": 2359296
+    },
+    "value_wire": {
+      "helper": "jv_parse(a,start,end,w,outer)->u64 next or U64_MAX; w[64..72] canonical flag",
+      "input": "outer:u8 0/1 || full JSON bytes (1..2097152)",
+      "output": "always unchanged",
+      "return": {
+        "0": "canonical",
+        "1": "valid noncanonical",
+        "100": "work capacity",
+        "101": "input shape",
+        "2": "syntax/range/depth"
+      },
+      "source": "src/codec/json_value_wire.hepta",
+      "work_min": 8192
+    },
+    "verify": {
+      "input": "TRNMAR01 owner context 280 bytes || framed original response || optional subsequent frame",
+      "output": "five u64: consumed frame, Value offset from frame prefix, Value bytes, terminal, ok; authority digest32; three u64 nonce,generation,reserved0",
+      "output_min": 96,
+      "return": {
+        "0": "success",
+        "1": "NeedMore finite capture, corresponding original FRAME_EOF",
+        "100": "output/work capacity",
+        "101": "context short",
+        "102": "context magic",
+        "2": "FRAME_LIMIT",
+        "3": "typed serde syntax/range/depth",
+        "4": "AUTH_RESPONSE_NONCANONICAL",
+        "5": "AUTH_RESPONSE_CONTEXT",
+        "6": "AUTH_RESPONSE_SIGNATURE family"
+      },
+      "source": "src/transport/authenticated_response.hepta",
+      "work_min": 204800
+    }
+  },
+  "context_offsets": {
+    "generation_u64": [
+      8,
+      16
+    ],
+    "genesis": [
+      80,
+      112
+    ],
+    "magic": [
+      0,
+      8
+    ],
+    "network": [
+      16,
+      48
+    ],
+    "nonce_u64": [
+      240,
+      248
+    ],
+    "parameters": [
+      48,
+      80
+    ],
+    "peer_public": [
+      144,
+      176
+    ],
+    "profile": [
+      112,
+      144
+    ],
+    "request_digest": [
+      248,
+      280
+    ],
+    "server_public": [
+      176,
+      208
+    ],
+    "session": [
+      208,
+      240
+    ]
+  },
+  "export": "f0(readbuf,mutbuf,mutbuf)->u32",
+  "nonclaims": [
+    "trusted context is supplied by a real owner, not authentication booleans",
+    "terminal byte is wire data, not durable commit or retry authority",
+    "no PQ route selection or PQ key ownership",
+    "finite fixture has no production streaming/deadline/socket owner",
+    "stack secret erasure has a retained actual FAIL for raw signing kernel",
+    "constant time ISA proof and full key custody remain OPEN"
+  ],
+  "producer_private_stack": {
+    "async_abort_cleanup_qualified": false,
+    "caller_seed_lifetime_owned": false,
+    "cleanup_error_families": [
+      "0x80001000 | errno",
+      "0x80002000 | errno",
+      "0x80003000 | errno"
+    ],
+    "default_build": "native HIA guarded 1 MiB private stack, unchanged producer image",
+    "guard_page_bytes_per_side": 4096,
+    "publication_rule": "all private-stack OS errors must cause exit 70 with no published response bytes",
+    "raw_mathematical_signer_fixture": "unwrapped diagnostic; actual residual failure retained"
+  },
+  "schema": "trnm.hia.response-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "typed_tape_input_limit": 16777221,
+  "wire_body_limit": 2097152,
+  "wire_prefix_bytes": 4
+}

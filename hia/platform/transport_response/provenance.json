@@ -1,0 +1,68 @@
+{
+  "algorithm_attribution": "The HIA finite-binary64 formatter and compressed power tables are derived from David Tolnay's zmij 1.0.21; the exact upstream MIT notice is retained verbatim in LICENSE-MIT.zmij.",
+  "cargo_lock_checksum": "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa",
+  "commit": "6531ba31ccf5d14b604ca41f6e2414a8dd779af0",
+  "files": {
+    "zmij-1.0.21-Cargo.toml": {
+      "bytes": 963,
+      "git_blob_sha1": "c6de6389f5886953455835494431558ac8a1a878",
+      "sha256": "aa6108916aec21d92abc7c77510c9ee056f3265b910d34edaa1f52237eb08f30"
+    },
+    "zmij-1.0.21-LICENSE-MIT": {
+      "bytes": 1023,
+      "git_blob_sha1": "31aa79387f27e730e33d871925e152e35e428031",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    "zmij-1.0.21-src-lib.rs": {
+      "bytes": 47412,
+      "git_blob_sha1": "ec6f8cac1e40f1255c17e3f5e78655cd046f4da9",
+      "sha256": "d843c3c1c8a41a8cdaead2ee3a223a204bf2ed047c3f2892719248a0f10d9bef"
+    }
+  },
+  "immutable_license_url": "https://github.com/dtolnay/zmij/blob/6531ba31ccf5d14b604ca41f6e2414a8dd779af0/LICENSE-MIT",
+  "immutable_source_url": "https://github.com/dtolnay/zmij/blob/6531ba31ccf5d14b604ca41f6e2414a8dd779af0/src/lib.rs",
+  "license": "MIT",
+  "license_verified_from": "LICENSE-MIT",
+  "local_reference_normalization": "Removed exactly one tool-save-added final newline only after the resulting Git blob SHA matched the upstream immutable commit tree.",
+  "original_node_sources": {
+    "observed_source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "scope": "scratch response codec/signing primitives; private-key/connection/replay owner separate",
+    "source_inputs": {
+      "hia/src/crypto/ed25519_group.hepta": {
+        "bytes": 73381,
+        "sha256": "802a1646c885970110ebe918b90ba0eaea6f4fa7f63f3d131dbfcb18933c9972"
+      },
+      "hia/src/crypto/sha512_arena.hepta": {
+        "bytes": 32447,
+        "sha256": "74a1d18793e48785ab81e06bec15c22740326143f27b39fdf36a041592075777"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 42127,
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      },
+      "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": {
+        "bytes": 2171,
+        "sha256": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d"
+      },
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs": {
+        "bytes": 221433,
+        "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+      }
+    },
+    "upstream_json_profile": {
+      "ordinary_features": [
+        "default",
+        "std"
+      ],
+      "serde": "1.0.229",
+      "serde_json": "1.0.149",
+      "zmij": "1.0.21"
+    }
+  },
+  "repository": "dtolnay/zmij",
+  "tag_observed": "1.0.21"
+}

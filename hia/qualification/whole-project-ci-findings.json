@@ -1,0 +1,533 @@
+{
+  "additional_cancellations": [
+    {
+      "jobs": [
+        133440839339,
+        133440839381
+      ],
+      "observed": "macOS cleanup jobs were cancelled; Linux x64/arm64 and aggregate controls succeeded",
+      "run": 43907690485,
+      "underlying_cancellation_cause": "not established"
+    },
+    {
+      "job": 133440842590,
+      "observed": "campaign-reader head checkout was cancelled; subsequent source check failed because checkout had not supplied its script",
+      "run": 43907690584,
+      "underlying_cancellation_cause": "not established"
+    }
+  ],
+  "evidence": {
+    "bytes": 4970704,
+    "full_regular_bytes_verified": 60671164,
+    "members": 434,
+    "path": "hia/qualification/whole-project-ci-findings.tar.xz",
+    "sha256": "5b7fe8bd69ca3e55c405efd7d3b2d0ef2c69ec60e92e1290c9ff05254601ba06",
+    "unique_objects": 103
+  },
+  "failures": [
+    {
+      "api_zip": {
+        "bytes": 7124,
+        "sha256": "9675080e8dddd74530065c869f563fe187e240fecf9008e481adf352b7a1716a"
+      },
+      "artifact": 14245818718,
+      "attempt": 1,
+      "driver_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "expected_failures_not_observed": 6,
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "historical_subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "interpretation": "Source compatibility check refused before original compilation and execution; this is not an observed expected-before failure.",
+      "job": 133440840725,
+      "label": "pr",
+      "native_control_processes_started": 0,
+      "result": "FAIL",
+      "run": 43907690589,
+      "stage": "budget-before-v2"
+    },
+    {
+      "api_zip": {
+        "bytes": 6927,
+        "sha256": "11a1862469a86e59740e1d87a569ca3fc5284b03b8cb6a479821a5e0e050452f"
+      },
+      "artifact": 14247015666,
+      "attempt": 1,
+      "driver_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "expected_failures_not_observed": 2,
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "historical_subject": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "interpretation": "Source compatibility check refused before original compilation and execution; this is not an observed expected-before failure.",
+      "job": 133440840936,
+      "label": "pr",
+      "native_control_processes_started": 0,
+      "result": "FAIL",
+      "run": 43907690589,
+      "stage": "pool-scan-before"
+    },
+    {
+      "api_zip": {
+        "bytes": 7064,
+        "sha256": "7d22ef3f4096c04a1c69d7ace0d8ed9676802d9a50d34bd3ce04d1d54ba85f9a"
+      },
+      "artifact": 14244778741,
+      "attempt": 1,
+      "driver_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "errors": [
+        "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+      ],
+      "expected_failures_not_observed": 5,
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "historical_subject": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "interpretation": "Source compatibility check refused before original compilation and execution; this is not an observed expected-before failure.",
+      "job": 133440841089,
+      "label": "pr",
+      "native_control_processes_started": 0,
+      "result": "FAIL",
+      "run": 43907690589,
+      "stage": "pool-before-v2"
+    },
+    {
+      "all_named_tests_passed": false,
+      "api_zip": {
+        "bytes": 6592571,
+        "sha256": "19b18b391d3975bafd9c864a1001cd3246de46c713bad34431eb9376394f1afc"
+      },
+      "artifact": 14244874780,
+      "attempt": 1,
+      "execution_finished": true,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+      ],
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "host_final_errors": [],
+      "interpretation": "Actual original service tests failed under the unchanged original Host budget; finite HIA component results do not qualify this service gate.",
+      "job": 133440841501,
+      "label": "head",
+      "native_binary_preparation_completed": true,
+      "native_child_exit": 1,
+      "original_host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "passed": false,
+      "run": 43907690632,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        {
+          "failure": "FRESH_NATIVE_TEST_FAILED",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        }
+      ],
+      "stage": "w1-fresh-service"
+    },
+    {
+      "all_named_tests_passed": false,
+      "api_zip": {
+        "bytes": 6553739,
+        "sha256": "4aa1ec1b7ee546d66af9c0500842d670de46d283c2bfb41e3a64be4ca8a2cf6b"
+      },
+      "artifact": 14245079845,
+      "attempt": 1,
+      "execution_finished": true,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_TEST_FAILED"
+      ],
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "host_final_errors": [],
+      "interpretation": "Actual original service tests failed under the unchanged original Host budget; finite HIA component results do not qualify this service gate.",
+      "job": 133440842103,
+      "label": "merge",
+      "native_binary_preparation_completed": true,
+      "native_child_exit": 1,
+      "original_host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "passed": false,
+      "run": 43907690632,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        },
+        {
+          "failure": "FRESH_NATIVE_TEST_FAILED",
+          "replay_error": "PUBLIC_REQUEST_DEADLINE"
+        }
+      ],
+      "stage": "w1-fresh-service"
+    },
+    {
+      "api_zip": {
+        "bytes": 786887,
+        "sha256": "2db646c2bd43a20fdea4d311f663ba91dc920990c887dca7963f6f82e162e8ff"
+      },
+      "artifact": 14248451785,
+      "attempt": 1,
+      "complete": false,
+      "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+      "head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "interpretation": "Exact-source export did not complete before its deadline; no security gate verdict was manufactured.",
+      "job": 133440842086,
+      "label": "pr",
+      "run": 43907690953,
+      "security_gate_changed": false,
+      "stage": "codeql-export",
+      "target_pr_gate_verdict": null
+    }
+  ],
+  "hia_workflows": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "id": 43907395835,
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 133439797288,
+          "name": "native-response",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797571,
+          "name": "native-platform",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797591,
+          "name": "source-and-archive",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797600,
+          "name": "native-thread-cpu",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797647,
+          "name": "native-executor",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797648,
+          "name": "native-components",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797697,
+          "name": "native-node-delta",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797717,
+          "name": "native-host",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797906,
+          "name": "native-genesis-prefix",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439797986,
+          "name": "native-typed-store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798081,
+          "name": "native-genesis-namespace",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798090,
+          "name": "native-genesis-crash",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798171,
+          "name": "native-host-resource",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798172,
+          "name": "native-node-settings",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798193,
+          "name": "native-genesis-semantic",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798236,
+          "name": "native-continuity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798262,
+          "name": "native-genesis-corruption",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133439798311,
+          "name": "native-transport",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133443374700,
+          "name": "native-genesis-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444963245,
+          "name": "native-typed-store-produce",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445137944,
+          "name": "native-continuity-capacity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445138064,
+          "name": "native-continuity-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133455124945,
+          "name": "native-typed-store-cold",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133459581563,
+          "name": "native-typed-store-bounds",
+          "status": "completed"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907395835"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "pull_request",
+      "id": 43907690872,
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 133440843772,
+          "name": "native-transport",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844207,
+          "name": "native-host",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844330,
+          "name": "native-genesis-prefix",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844360,
+          "name": "source-and-archive",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844366,
+          "name": "native-components",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844632,
+          "name": "native-platform",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844637,
+          "name": "native-genesis-namespace",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844656,
+          "name": "native-thread-cpu",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844666,
+          "name": "native-executor",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844667,
+          "name": "native-node-delta",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844669,
+          "name": "native-host-resource",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844731,
+          "name": "native-genesis-corruption",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844811,
+          "name": "native-genesis-crash",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844822,
+          "name": "native-response",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844981,
+          "name": "native-genesis-semantic",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844985,
+          "name": "native-node-settings",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440844997,
+          "name": "native-typed-store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133440845001,
+          "name": "native-continuity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444211499,
+          "name": "native-genesis-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444325440,
+          "name": "native-continuity-original",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133444325488,
+          "name": "native-continuity-capacity",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133445971016,
+          "name": "native-typed-store-produce",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133453042868,
+          "name": "native-typed-store-cold",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 133463626614,
+          "name": "native-typed-store-bounds",
+          "status": "completed"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43907690872"
+    }
+  ],
+  "observed_utc": "2026-11-16T17:19:12.087631+00:00",
+  "original_service_budget_qualified": false,
+  "other_workflow_results_not_relabelled": true,
+  "package_retirement_accepted": false,
+  "priority_campaign": {
+    "actual_failed_jobs": [
+      133441830671,
+      133441831973,
+      133441832466,
+      133441831853,
+      133441831656,
+      133441831936
+    ],
+    "all_failures_preserved": true,
+    "direct_history_cause": "Original 1800-second lifetime reached; service exited normally before the next RPC.",
+    "record": {
+      "bytes": 31470,
+      "path": "hia/qualification/priority-ci-diagnostic.json",
+      "sha256": "e41147cfaad1b73fff348ac2cfb83787aaad5bb8bff8f2598698995143ef196f"
+    },
+    "run_id": 43907690822,
+    "service_outcome": "All three pressure phases confirmed zero. x64 baseline confirmed zero; both ARM64 baselines confirmed one. CONFIRMATION_TARGET remains FAIL."
+  },
+  "schema": "trnm.hia.whole-project-ci-observation.v1",
+  "scope": "Exact observations for the published 5c3d source, separate from later candidates and from whole-project closure.",
+  "tested_commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+  "tested_tree": "5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33",
+  "whole_repository_ci_success": false
+}

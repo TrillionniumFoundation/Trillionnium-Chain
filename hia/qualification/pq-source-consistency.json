@@ -1,0 +1,109 @@
+{
+  "all_evidence_pins_unchanged": 1177,
+  "all_other_manifest_fields_unchanged": true,
+  "all_other_pins_unchanged": 2611,
+  "changed_pins": [
+    {
+      "new_blob": "87463cebf6bec23a4e431d674d624e36971d3cfb",
+      "old_blob": "a80c2c3157f6c55e7e9583d4f71ae7b5abe72432",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "new_blob": "e9e69fe28cc8b9f2856f68b13546a1378e8b8a0c",
+      "old_blob": "2fcc8124549bc94a237f4d84194b5e44d28a0182",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    }
+  ],
+  "checker_unchanged": true,
+  "fourth_batch_current_source_refresh": {
+    "base_head": "79fc1d4c970f8ecb414f011605e0a6fbcf7332e8",
+    "changed_pins": [
+      {
+        "new": "eb8cf28bb2cdaac41b05d2b4b9cc95e3331d765c",
+        "old": "26181e65cea6fbb728f887522a0eefa57176aaab",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      },
+      {
+        "new": "bf35f8a1ca128b1e6d4cf315f37d0be02405110f",
+        "old": "7684557b73d8cf7884133fbe55c8b35a9481a0a6",
+        "path": "scripts/ci/check_public_readiness_evidence.py"
+      }
+    ],
+    "evidence_pins_unchanged": 1177,
+    "native_pq_qualification_granted": false,
+    "negative_suite_reexecuted_locally_on_fourth_source": false,
+    "negative_suite_required_in_exact_head_ci": true,
+    "observed_at": "2026-11-15T18:14:09.021528+00:00",
+    "original_checker_and_negative_suite_sources_unchanged": true,
+    "original_checker_exit": 0,
+    "original_checker_report": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "other_manifest_fields_unchanged": true,
+    "production_activation": false,
+    "source_inputs_sha256": {
+      "config/pon/pq-cross-branch-corpus-v1.json": "51fad3ff78e9ecdd406400ef0effebc598b0e83602f0351e9d04080a58996ba9",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "01817c4752d510a9084ef87a98cebc82cff5694014e00e855198cb7534dfff24",
+      "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+      "scripts/ci/check_public_readiness_evidence.py": "321c9402a6f69bb0b3585699479e8a51e7e12b378315823792f4cd7945a0cd88",
+      "scripts/ci/test_pq_research_integration.py": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0"
+    },
+    "unrelated_pins_unchanged": 2611
+  },
+  "introduced_by_this_migration": true,
+  "metadata_refresh_after_negative_suite": {
+    "checker_and_negative_suite_sources_unchanged": true,
+    "current_inputs_sha256": {
+      "config/pon/pq-cross-branch-corpus-v1.json": "71cc6fef6ccf328670f9567146724aa66bcbca6dfa8759915abc4e5be90cdcef",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "a62bb1d6b198e7b27f4c9b1e4ef8a89cf0db537c41d73b7f8b9d73ea26696066"
+    },
+    "negative_suite_inputs_above_preserved": true,
+    "negative_suite_not_rerun_after_prose_change": true,
+    "new_blob": "26181e65cea6fbb728f887522a0eefa57176aaab",
+    "observed_at": "2026-11-15T17:29:39.448502+00:00",
+    "original_checker_rerun_exit": 0,
+    "original_checker_rerun_status": "HOLD_NO_GO",
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "previous_blob": "87463cebf6bec23a4e431d674d624e36971d3cfb",
+    "production_activation": false,
+    "reason": "Correct the owner inventory: Node.db directly owns rusqlite::Connection; TransactionScope observes operations, and OwnedConnection is an optional separate wrapper."
+  },
+  "native_pq_qualification_granted": false,
+  "negative_suite": {
+    "command": "python3 -B -m unittest discover -s scripts/ci -p test_pq_research_integration.py -v",
+    "errors": 0,
+    "failures": 0,
+    "full_log_sha256": "d9ab718ad24f1af121f14c35f57fc896b87d11a8719eb93f84959b05e997c2ee",
+    "seconds": 272.718,
+    "skips": 0,
+    "tests": 113
+  },
+  "observed_at": "2026-11-15T17:22:03.516475+00:00",
+  "original_checker_exit": 0,
+  "original_checker_status": "HOLD_NO_GO",
+  "production_activation": false,
+  "schema": "trnm.hia.pq-source-consistency-repair.v1",
+  "source_commit_observed": "1dfc9669172acbae4276b4fd941f2d426480f8e8",
+  "source_consistency_repaired": true,
+  "source_inputs_sha256": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "023ba3d941f9089c5cbd658bdf5c51c48a880e0df63e5a55a1dfaef107a2ec9c",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "2a7a0182029e378749f153da62754cf231e45da2341ef42da88de57bb8882330",
+    "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+    "scripts/ci/test_pq_research_integration.py": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "661b026348a97fc072446e547ad7b1cfa2e99f78625c7b9dad86c27de605585e"
+  },
+  "working_tree_dirty": true
+}

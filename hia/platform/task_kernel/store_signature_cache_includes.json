@@ -1,0 +1,33 @@
+{
+  "schema": "trnm.hia.task-store-signature-cache-includes.v1",
+  "source": "hia/src/task_kernel/store_signature_cache.hepta",
+  "functions": {
+    "cp_get": "hia/src/control_plane/core.hepta",
+    "cp_put": "hia/src/control_plane/core.hepta",
+    "cp_wcopy": "hia/src/control_plane/core.hepta",
+    "cs_move": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "ed_compare": "hia/src/crypto/ed25519_group.hepta",
+    "ed_copy": "hia/src/crypto/ed25519_group.hepta",
+    "ed_fe_add": "hia/src/crypto/ed25519_group.hepta",
+    "ed_fe_mul": "hia/src/crypto/ed25519_group.hepta",
+    "ed_fe_sub": "hia/src/crypto/ed25519_group.hepta",
+    "ed_init": "hia/src/crypto/ed25519_group.hepta",
+    "ed_load64": "hia/src/crypto/ed25519_group.hepta",
+    "ed_normalize": "hia/src/crypto/ed25519_group.hepta",
+    "ed_point_add": "hia/src/crypto/ed25519_group.hepta",
+    "ed_point_equal": "hia/src/crypto/ed25519_group.hepta",
+    "ed_point_identity": "hia/src/crypto/ed25519_group.hepta",
+    "ed_store64": "hia/src/crypto/ed25519_group.hepta",
+    "ed_zero": "hia/src/crypto/ed25519_group.hepta",
+    "kp_signature_result": "hia/src/task_kernel/kernel_policy.hepta",
+    "sc_base_columns": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "sc_digit": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "sc_make": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "sc_make_from": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "sc_verify": "hia/src/crypto/ed25519_public_point_cache.hepta",
+    "so_frame": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_return": "hia/src/task_kernel/store_owner_common.hepta",
+    "st_switch": "hia/src/task_kernel/store_common.hepta",
+    "tk_error": "hia/src/task_kernel/codec.hepta"
+  }
+}

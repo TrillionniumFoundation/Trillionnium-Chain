@@ -1,0 +1,305 @@
+{
+  "actual_serde": {
+    "compiled_features": [
+      "default",
+      "std"
+    ],
+    "compiled_library_target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "serde_json",
+      "src_path": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149/src/lib.rs",
+      "test": true
+    },
+    "crate_source_files": 89,
+    "crate_source_set_sha256": "a098ddfb9f8a226a1bfd37ee6b46c7efa62ddab7e3ef6e4d84b5e9b33ce7bab7",
+    "package": {
+      "checksum": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+      "dependencies": [
+        "itoa",
+        "memchr",
+        "serde",
+        "serde_core",
+        "zmij"
+      ],
+      "name": "serde_json",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.0.149"
+    },
+    "registry_archive": {
+      "bytes": 155994,
+      "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.149.crate",
+      "sha256": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86"
+    }
+  },
+  "arbitrary_commit": false,
+  "archive_scope": "Complete final4396 source union; all captured native/physical/original raw stages, full private journals and historical evidence; real amended module/hook and actual locked serde source/archive. Reconstructible source/Cargo copies omitted; independent original binaries retained separately in full.",
+  "complete_node": false,
+  "development_archive_binary_deduplication": true,
+  "evidence": {
+    "all_final_objects_reopened_and_verified": true,
+    "all_original_members_independently_verified": true,
+    "bytes": 5235712,
+    "format": "trnm.hia.content-addressed-development-evidence.v1",
+    "git_backed_members": 4853,
+    "git_source": {
+      "commit": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+      "tree": "5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33",
+      "verified_bytes": 160363305,
+      "verified_files": 4381
+    },
+    "original_logical_members": 6666,
+    "path": "hia/qualification/execution-state-development.tar.xz",
+    "sha256": "216f17d81a559b0b6b86445b42ffb90ed3a1a4d51830235b5d6a28822b144292",
+    "source_archive": {
+      "bytes": 81599124,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/final-v5-evidence.tar.xz",
+      "sha256": "9adaff4d7a5f78519c415b143a482f67deafe0988e6c63eea9e8ed564c8504b4"
+    },
+    "unique_archive_objects": 835,
+    "verified_archive_object_bytes": 131182066
+  },
+  "excluded_complete_binary_files": [
+    {
+      "bytes": 92561616,
+      "link_count": 1,
+      "mode": 320,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v3/original/original-test-binary",
+      "sha256": "2984dcd8b9209119d7e38c638161515b9eff9d8d312fdc04959d1f6ea95d2698"
+    },
+    {
+      "bytes": 92584200,
+      "link_count": 1,
+      "mode": 320,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/original-retry1/original-test-binary",
+      "sha256": "68001b2763576e404036cf6d289c7f0aeda21c87407388a0f9fd35019746e5e6"
+    },
+    {
+      "bytes": 92584128,
+      "link_count": 1,
+      "mode": 320,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/original/original-test-binary",
+      "sha256": "15753206a4e47b5db07b47816502d2523b8bbafea90dd7948ae4e730e237e43d"
+    }
+  ],
+  "github_ci_artifact_must_include_complete_independent_binary": true,
+  "history": {
+    "cloud_physical": "Actual PTRACE_TRACEME denial after 7 groups / 88 calls; historical FAIL remains FAIL.",
+    "current_v2_materialization": "Source test fixture incorrectly read undeclared AGENTS.md; source admission failed before native/original.",
+    "current_v3": {
+      "source_set_sha256": "09b41c14f04773c4d8effa75e00bb94eca4ea32ca648f07b70d3a67c684b5cd9",
+      "status": "Actual native68/1075, physical9/97, original68/1075 plus5 retained PASS; prior hosted controls not relabelled final."
+    },
+    "current_v4": "Source admission only. Self-review found Cargo Path shadowed by source copy stream. Only local variable renamed before V5 runtime/original.",
+    "current_v5_original_first": {
+      "cause": "Actual std stdout panic ENOSPC, corpus process exit101; final source-after/report/wrapper files are zero bytes and original PTY owner became unreachable. No complete final PASS inferred.",
+      "corpus_stage_receipt": {
+        "bytes": 954,
+        "sha256": "3ac222fffc1a5dcc09266b5150e9ea3dc1288e9827f72f03bc70216aa167ee32"
+      },
+      "preserved_directory": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/original",
+      "status": "FAIL",
+      "stderr": {
+        "bytes": 310,
+        "sha256": "e190e5664c1d5add764093b73b34fe27e73f239e4bc052078c3740eb99f28353"
+      }
+    },
+    "earliest_native_only": {
+      "elf": {
+        "bytes": 431419,
+        "sha256": "3f45bfc9f918e1e781aef2878a9f9dcb5fd2a8b0b9c6168941d82e2fd3de40e9"
+      },
+      "source_set_sha256": "27e9df7f6131671fb965f46b4e003286effb58fa132cabacd16b8b385e0fa9b0"
+    },
+    "final_original_retry": "Same frozen V5 source and native bundle, fresh output original-retry1; prior processes confirmed absent, full68+5 actually rerun.",
+    "old453_native_source_set_sha256": "250ce2dcfced19d27d3c4471568579256092b1d42b495edcf968c4d4c87423e1",
+    "old453_original": "Actual Cargo failed at missing include_str fixture; zero histories and retained tests ran.",
+    "runtime_transition": "Earliest431419-byte image differs from later432149-byte image by explicit sequence exhaustion refusal. Later V2/V3/V5 runtime bytes equal; final native/original tests were actually rerun."
+  },
+  "independent_ci_reader": {
+    "actual_native_or_original_execution_performed_by_review": false,
+    "native_build": "../execution-ci-integration-proposal-v3/state-read-v1/review.json",
+    "original": "../execution-ci-integration-proposal-v3/state-original-read-v1/review.json",
+    "status": "PASS"
+  },
+  "independent_original_binary": {
+    "bytes": 92584200,
+    "link_count": 1,
+    "mode": 320,
+    "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/original-retry1/original-test-binary",
+    "sha256": "68001b2763576e404036cf6d289c7f0aeda21c87407388a0f9fd35019746e5e6"
+  },
+  "integrated_original_source_metadata_changes_require_new_ci": true,
+  "integration_source_transition": {
+    "changed_original_inputs": [
+      {
+        "development": {
+          "bytes": 35965,
+          "sha256": "c6d8999f2bca297903f44d85cac24d8880071ab7b30d35d5aa5324e08a535937"
+        },
+        "integration": {
+          "bytes": 39375,
+          "sha256": "9e5ad5890a2f437d801e1af637c0eec72f8ae3dd9364d6c7ed7b79999f496580"
+        },
+        "path": "config/hia-migration-v1.json"
+      },
+      {
+        "development": {
+          "bytes": 525351,
+          "sha256": "547fd79699f1968c6b2496131ed301ddfd304585032a59c140c7fa91cdd30732"
+        },
+        "integration": {
+          "bytes": 525351,
+          "sha256": "6e31c859d9c5d39e44c8fc89c5eed10a2b916904315d282354e164fb67649eee"
+        },
+        "path": "config/pon/pq-cross-branch-corpus-v1.json"
+      }
+    ],
+    "development_original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
+    "integration_original_source_set_sha256": "c7e250686889c07aafa2124d2d4e0a7f7bf8b1bd4ba22d103c55f6a86ec8b5b7",
+    "native_source_files": 33,
+    "native_source_inputs_unchanged": true,
+    "native_source_set_sha256": "5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8",
+    "new_committed_source_original_execution_required": true,
+    "original_source_files": 4363,
+    "unchanged_original_inputs": 4361
+  },
+  "native": {
+    "commands": 1075,
+    "histories": 68,
+    "report": {
+      "bytes": 965172,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/native/report.json",
+      "sha256": "a9b86968b7150ecd0865aa6ac225203010107969d7e17605abb8bc90b68cb1c7"
+    }
+  },
+  "native_source_files": 33,
+  "original": {
+    "actual_method_calls": {
+      "Patch field move from original View": 54,
+      "Patch::apply": 9,
+      "Patch::clone": 15,
+      "Patch::current": 61,
+      "State::clear": 1,
+      "State::clone": 35,
+      "State::get.cloned": 3,
+      "State::insert": 201,
+      "State::new": 66,
+      "State::remove": 3,
+      "Value::eq": 17,
+      "View::get": 38,
+      "View::new": 54,
+      "View::put": 12,
+      "View::scan": 55,
+      "drop(Patch)": 2,
+      "drop(State)": 1,
+      "drop(all original owner values)": 68,
+      "pon_executor::root": 29,
+      "prefix_rows.cloned.collect": 11,
+      "serde_json::Value construction": 219
+    },
+    "actual_rust_tools": {
+      "cargo": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "rustc": {
+        "bytes": 644784,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+      },
+      "rustdoc": {
+        "bytes": 13303096,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "sha256": "e5144902aed6cf94280eae3ad7708da5bdd3819b5281728af432d0e70231439c"
+      }
+    },
+    "histories": 68,
+    "observations": 1075,
+    "report": {
+      "bytes": 1216366,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/original-retry1/report.json",
+      "sha256": "7b1280e4e8ae5b3f2b828eec1d0734f954d4c698d5a4d3b17d7a2392a34f61b9"
+    },
+    "retained_tests": [
+      "pon_executor::prefix_scan_tests::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries",
+      "pon_executor::prefix_scan_tests::prefix_scan_overlays_writes_and_retains_the_original_snapshot",
+      "pon_executor::prefix_scan_tests::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts",
+      "pon_executor::prefix_scan_tests::prefix_scan_does_not_replace_point_read_or_write_conflict_checks",
+      "pon_executor::prefix_scan_tests::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets"
+    ],
+    "stages": 12
+  },
+  "original_source_files": 4363,
+  "original_source_set_sha256": "b439295fb9ba6b23143229054573724a99b22852f3bf05dfa119427811162b5e",
+  "owned_source_files": 15,
+  "physical": {
+    "actual_native_calls": 97,
+    "groups": 9,
+    "private_call_journals": [
+      {
+        "bytes": 21091712,
+        "completed_native_calls": 53,
+        "file": "private-abi-calls.jsonl",
+        "full_input_output_and_private_heap_bytes": true,
+        "private_fixture_writes": 0,
+        "records": 106,
+        "sha256": "66d9eb5722a752efabedc83e92847d1825d483c7113bd0a97fb9993364a7b82f"
+      },
+      {
+        "bytes": 2250659,
+        "completed_native_calls": 5,
+        "file": "private-serial-calls.jsonl",
+        "full_input_output_and_private_heap_bytes": true,
+        "private_fixture_writes": 1,
+        "records": 11,
+        "sha256": "5b396a3ff2703f7deb5e612868e9bcf5c4cc43c2ba72b92d147112ad3262de45"
+      },
+      {
+        "bytes": 1057694,
+        "completed_native_calls": 2,
+        "file": "private-sequence-calls.jsonl",
+        "full_input_output_and_private_heap_bytes": true,
+        "private_fixture_writes": 1,
+        "records": 5,
+        "sha256": "34fb6dd46959ca14aa4e8047d6411c1c3259a70142c6ad8d7b7a4969e2ba0277"
+      }
+    ],
+    "report": {
+      "bytes": 962796,
+      "path": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/physical/report.json",
+      "sha256": "57f4901ddf4b348ab5b6cad0cdd0dd437a8cc91bb6c9ff0662769075a0eaf8c1"
+    }
+  },
+  "runtime_executable": {
+    "bytes": 432149,
+    "sha256": "87560da3c30f7f4c3f27bef087f7f203da3f436fe5b41ae7ef6a3922d961aeaa"
+  },
+  "schema": "trnm.execution-state-final-development-observation.v5",
+  "source_controls": {
+    "controls": 141,
+    "groups": 13,
+    "raw_process": "/tmp/trnm-execution-state-original-20261116-516mq2oe/current-v5/source-integrity"
+  },
+  "source_origin_git_head": "5c3d7089f24271a0ba6dbcc9d924fe505a361a3c",
+  "source_origin_git_tree": "5d36c3fd2bc75e2d36d649d96f4ee544b5a2cd33",
+  "source_set_sha256": "5b7e3afd86ca50047c4bb26eb63e7b631983d63754206458f21a0cc29af56bb8",
+  "status": "PASS",
+  "successor_admission": false,
+  "valid_bundle_public_negative_controls": {
+    "controls": 8,
+    "report": {
+      "bytes": 11016,
+      "sha256": "fda10bed9d9fd1bbcf4907d743b2ac2c7f3eca3cba8d16f32e8b05c21da98a5a"
+    }
+  },
+  "whole_migration_complete": false
+}
