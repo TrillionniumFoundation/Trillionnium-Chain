@@ -1,0 +1,809 @@
+{
+  "schema": "chain-w1-delay-continuation-summary-v1",
+  "original_source_parent": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "evidence_parent": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+  "runtime_source_under_native_test": {
+    "source_patch_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+    "work_rejection_sha256": "c05f3e90050d97ee1ff82760e805742153e3ed75928985f31d70832d25f9a45e",
+    "lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+  },
+  "mixed_service": {
+    "path": "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/validation-1/mixed-service-campaign/report.json",
+    "bytes": 2537559,
+    "sha256": "0994bbe649bf174f55b4f5ef3e59a8dfd34696ab6e523a4783a4668b1eaa22e5",
+    "attempts": 130,
+    "finite_target_met": true,
+    "gap_ns": 414915622
+  },
+  "native_and_source_checks": {
+    "schema": "chain-w1-delay-final-source-validation-v1",
+    "source": "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/source",
+    "head": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+    "complete": true,
+    "commands": [
+      {
+        "name": "preflight",
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.3302167318761349,
+        "child_user_cpu_seconds": 0.024905999999999998,
+        "child_system_cpu_seconds": 0.017481,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "old-production-negative",
+        "argv": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::public_v3::work_rejection::tests::only_new_native_math_refusal_arms_another_body_delay",
+          "--",
+          "--exact",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 101,
+        "expected_exit_code": 101,
+        "wall_seconds": 85.68466048687696,
+        "child_user_cpu_seconds": 390.187741,
+        "child_system_cpu_seconds": 7.202068,
+        "libtest_summaries": [
+          "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1624 filtered out; finished in 0.00s"
+        ],
+        "accepted_result": true
+      },
+      {
+        "name": "w1-rejection",
+        "argv": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::public_v3::work_rejection::tests::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 83.42351650213823,
+        "child_user_cpu_seconds": 384.435024,
+        "child_system_cpu_seconds": 6.969365,
+        "libtest_summaries": [
+          "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1619 filtered out; finished in 0.54s"
+        ],
+        "accepted_result": true
+      },
+      {
+        "name": "body-refusal",
+        "argv": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::public_v3::body_refusal::tests::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.07430938072502613,
+        "child_user_cpu_seconds": 0.04686800000001767,
+        "child_system_cpu_seconds": 0.025453999999999866,
+        "libtest_summaries": [
+          "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1622 filtered out; finished in 0.00s"
+        ],
+        "accepted_result": true
+      },
+      {
+        "name": "native-root-delay",
+        "argv": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "ingress::public_v3::native_root_delay_tests::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.670585815794766,
+        "child_user_cpu_seconds": 0.11208499999997912,
+        "child_system_cpu_seconds": 0.045531999999999684,
+        "libtest_summaries": [
+          "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1621 filtered out; finished in 0.60s"
+        ],
+        "accepted_result": true
+      },
+      {
+        "name": "clippy",
+        "argv": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 30.843568894080818,
+        "child_user_cpu_seconds": 76.55438100000003,
+        "child_system_cpu_seconds": 8.284105000000002,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "fmt",
+        "argv": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 7.3537618378177285,
+        "child_user_cpu_seconds": 7.217735999999945,
+        "child_system_cpu_seconds": 0.08930699999999803,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "cargo-tree-linux",
+        "argv": [
+          "cargo",
+          "tree",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--target",
+          "x86_64-unknown-linux-gnu",
+          "-p",
+          "trnm-pon-node"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.07212167885154486,
+        "child_user_cpu_seconds": 0.04071399999997993,
+        "child_system_cpu_seconds": 0.03251500000000007,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "cargo-metadata-linux",
+        "argv": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--filter-platform",
+          "x86_64-unknown-linux-gnu",
+          "--format-version",
+          "1"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.06204310804605484,
+        "child_user_cpu_seconds": 0.031269000000065716,
+        "child_system_cpu_seconds": 0.02412299999999945,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "inventory-check",
+        "argv": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.08833492128178477,
+        "child_user_cpu_seconds": 0.0391580000000431,
+        "child_system_cpu_seconds": 0.02058800000000005,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "roster-controls",
+        "argv": [
+          "python3",
+          "scripts/ci/test_six_workpackage_native_rosters.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 1.5857241312041879,
+        "child_user_cpu_seconds": 1.2849879999999985,
+        "child_system_cpu_seconds": 0.2915150000000004,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "joint-hold-check",
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.05088279629126191,
+        "child_user_cpu_seconds": 0.03379599999993843,
+        "child_system_cpu_seconds": 0.011587000000002234,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "joint-negative-controls",
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.18213996710255742,
+        "child_user_cpu_seconds": 0.13531499999999141,
+        "child_system_cpu_seconds": 0.04610799999999671,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "joint-require-qualified",
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+          "--require-qualified"
+        ],
+        "exit_code": 3,
+        "expected_exit_code": 3,
+        "wall_seconds": 0.037630139384418726,
+        "child_user_cpu_seconds": 0.027256999999963227,
+        "child_system_cpu_seconds": 0.010095000000003296,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "source-integrity",
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 1.9432154665701091,
+        "child_user_cpu_seconds": 0.5247530000000324,
+        "child_system_cpu_seconds": 0.42603099999999827,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "ci-contract-controls",
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 50.06911872001365,
+        "child_user_cpu_seconds": 44.178413999999975,
+        "child_system_cpu_seconds": 4.4883130000000016,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "ci-contract",
+        "argv": [
+          "python3",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "wall_seconds": 0.07527638599276543,
+        "child_user_cpu_seconds": 0.06578200000001289,
+        "child_system_cpu_seconds": 0.009108999999998701,
+        "libtest_summaries": [],
+        "accepted_result": true
+      },
+      {
+        "name": "original-repository-truth",
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "repository-truth"
+        ],
+        "exit_code": 1,
+        "expected_exit_code": 0,
+        "wall_seconds": 236.34505490306765,
+        "child_user_cpu_seconds": 184.08759099999997,
+        "child_system_cpu_seconds": 19.448666999999997,
+        "libtest_summaries": [],
+        "accepted_result": false
+      }
+    ],
+    "original_f0_repeated": false,
+    "full_physical_cost": null,
+    "monetary_cost": null,
+    "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+    "lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+    "candidate_work_rejection_sha256": "c05f3e90050d97ee1ff82760e805742153e3ed75928985f31d70832d25f9a45e",
+    "negative_original_work_rejection_sha256": "cc3a1d36a90ee2fa3bbb342b0b0bdea37551d426fddeec573f9f63c849cf882b",
+    "candidate_restored": true,
+    "lock_unchanged": true,
+    "candidate_source_unchanged": true,
+    "all_expected_checks_passed": false
+  },
+  "source_tail_attempts": {
+    "repository-tail-continuation-1/RESULT.json": {
+      "schema": "chain-original-repository-input-continuation-v1",
+      "complete": true,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.02390534896403551,
+          "child_user_cpu_seconds": 0.018791,
+          "child_system_cpu_seconds": 0.00497
+        },
+        {
+          "name": "original-suffix",
+          "argv": [
+            "bash",
+            "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/repository-tail-continuation-1/original-suffix.sh"
+          ],
+          "exit_code": 1,
+          "wall_seconds": 12.858362460043281,
+          "child_user_cpu_seconds": 2.8747009999999995,
+          "child_system_cpu_seconds": 0.7687609999999999
+        }
+      ],
+      "source_sha": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+      "runtime_source_unchanged": true,
+      "f0_repeated": false,
+      "original_suffix_sha256": "228e3f7db5815873ec3e7b9fe7df97ed2563dc7ded1475188cdd6acb29862b53",
+      "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+      "passed": false,
+      "error": "RuntimeError('original-suffix failed')"
+    },
+    "repository-tail-continuation-2/RESULT.json": {
+      "schema": "chain-original-repository-input-continuation-v1",
+      "complete": true,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.02441402291879058,
+          "child_user_cpu_seconds": 0.0184,
+          "child_system_cpu_seconds": 0.005912
+        },
+        {
+          "name": "original-suffix",
+          "argv": [
+            "bash",
+            "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/repository-tail-continuation-2/original-suffix.sh"
+          ],
+          "exit_code": 1,
+          "wall_seconds": 20.68146385718137,
+          "child_user_cpu_seconds": 7.953174000000001,
+          "child_system_cpu_seconds": 1.7139149999999999
+        }
+      ],
+      "source_sha": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+      "runtime_source_unchanged": true,
+      "f0_repeated": false,
+      "original_suffix_sha256": "228e3f7db5815873ec3e7b9fe7df97ed2563dc7ded1475188cdd6acb29862b53",
+      "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+      "passed": false,
+      "error": "RuntimeError('original-suffix failed')"
+    },
+    "repository-tail-diagnostic-3/RESULT.json": {
+      "schema": "chain-original-repository-input-continuation-v1",
+      "complete": true,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.023962573148310184,
+          "child_user_cpu_seconds": 0.018152,
+          "child_system_cpu_seconds": 0.005679
+        },
+        {
+          "name": "original-suffix",
+          "argv": [
+            "bash",
+            "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/repository-tail-diagnostic-3/original-suffix.sh"
+          ],
+          "exit_code": 1,
+          "wall_seconds": 13.402726111933589,
+          "child_user_cpu_seconds": 12.334226,
+          "child_system_cpu_seconds": 1.080935
+        }
+      ],
+      "source_sha": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+      "runtime_source_unchanged": true,
+      "f0_repeated": false,
+      "original_suffix_sha256": "3bc80c2617c487fc8e82597f78b3ef4924180ade835ecf34fcae6a62e8096011",
+      "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+      "remaining_suffix_passed": false,
+      "error": "RuntimeError('original-suffix failed')"
+    },
+    "repository-tail-diagnostic-4/RESULT.json": {
+      "schema": "chain-original-repository-input-continuation-v1",
+      "complete": true,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.02483546221628785,
+          "child_user_cpu_seconds": 0.019572,
+          "child_system_cpu_seconds": 0.005154
+        },
+        {
+          "name": "original-suffix",
+          "argv": [
+            "bash",
+            "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/repository-tail-diagnostic-4/original-suffix.sh"
+          ],
+          "exit_code": 1,
+          "wall_seconds": 14.67183462670073,
+          "child_user_cpu_seconds": 13.699558,
+          "child_system_cpu_seconds": 0.863965
+        }
+      ],
+      "source_sha": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+      "runtime_source_unchanged": true,
+      "f0_repeated": false,
+      "original_suffix_sha256": "94cafc4cd34b740da0c9b5ded6a363ac7e8e7a720444c698194cd50ae3434826",
+      "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+      "remaining_suffix_passed": false,
+      "error": "RuntimeError('original-suffix failed')"
+    },
+    "repository-tail-diagnostic-5/RESULT.json": {
+      "schema": "chain-original-repository-input-continuation-v1",
+      "complete": true,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.023942256812006235,
+          "child_user_cpu_seconds": 0.014031,
+          "child_system_cpu_seconds": 0.00977
+        },
+        {
+          "name": "original-suffix",
+          "argv": [
+            "bash",
+            "/home/qq/work/chain-native-first-graph-host-20261119-2e9b/resume-20261120-e9e051/repository-tail-diagnostic-5/original-suffix.sh"
+          ],
+          "exit_code": 1,
+          "wall_seconds": 32.325672143138945,
+          "child_user_cpu_seconds": 31.357973,
+          "child_system_cpu_seconds": 0.876377
+        }
+      ],
+      "source_sha": "ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da",
+      "runtime_source_unchanged": true,
+      "f0_repeated": false,
+      "temporary_filesystem_matches_source": true,
+      "original_suffix_sha256": "521cf4425b34fb5e1135c6e2b0ee8476fab48151565994104a1f005d4625a8dd",
+      "source_diff_sha256": "70862b5cf27c6b5181978e20bb2792c45a07311a89bf1a73f96ba6a14f51d305",
+      "remaining_suffix_passed": false,
+      "error": "RuntimeError('original-suffix failed')"
+    },
+    "repository-tail-diagnostic-6/RESULT.json": {
+      "schema": "chain-original-final-tail-diagnostic-v1",
+      "complete": true,
+      "complete_repository_truth_passed": false,
+      "prior_failures_preserved": true,
+      "f0_repeated": false,
+      "commands": [
+        {
+          "name": "preflight",
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.025676995050162077,
+          "child_user_cpu_seconds": 0.020732999999999998,
+          "child_system_cpu_seconds": 0.004813,
+          "python_test_summaries": []
+        },
+        {
+          "name": "00-pq_lifetime_composition.py",
+          "argv": [
+            "python3",
+            "scripts/ci/pq_lifetime_composition.py"
+          ],
+          "exit_code": 2,
+          "wall_seconds": 0.03498176019638777,
+          "child_user_cpu_seconds": 0.026556,
+          "child_system_cpu_seconds": 0.008171,
+          "python_test_summaries": []
+        },
+        {
+          "name": "01-test_pq_content_chain_review.py",
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_content_chain_review.py"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.15201717289164662,
+          "child_user_cpu_seconds": 0.126328,
+          "child_system_cpu_seconds": 0.025272,
+          "python_test_summaries": [
+            "Ran 20 tests in 0.110s",
+            "OK"
+          ]
+        },
+        {
+          "name": "02-pq_content_chain_review.py",
+          "argv": [
+            "python3",
+            "scripts/ci/pq_content_chain_review.py"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.034447779413312674,
+          "child_user_cpu_seconds": 0.029793999999999987,
+          "child_system_cpu_seconds": 0.003972999999999997,
+          "python_test_summaries": []
+        },
+        {
+          "name": "03--v",
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_fixed_success_query_frontier.py",
+            "-v"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.4839312359690666,
+          "child_user_cpu_seconds": 0.4375359999999999,
+          "child_system_cpu_seconds": 0.036812000000000004,
+          "python_test_summaries": [
+            "Ran 20 tests in 0.421s",
+            "OK"
+          ]
+        },
+        {
+          "name": "04---check",
+          "argv": [
+            "python3",
+            "formal/pon-nakamoto-v1/fixed_success_query_frontier.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.032939232885837555,
+          "child_user_cpu_seconds": 0.02672400000000008,
+          "child_system_cpu_seconds": 0.005939,
+          "python_test_summaries": []
+        },
+        {
+          "name": "05--v",
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_cost_tail_transfer.py",
+            "-v"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.15211899019777775,
+          "child_user_cpu_seconds": 0.13949499999999992,
+          "child_system_cpu_seconds": 0.012126999999999999,
+          "python_test_summaries": [
+            "Ran 18 tests in 0.098s",
+            "OK"
+          ]
+        },
+        {
+          "name": "06---check",
+          "argv": [
+            "python3",
+            "formal/pon-nakamoto-v1/cost_tail_transfer.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.031110628973692656,
+          "child_user_cpu_seconds": 0.02362900000000001,
+          "child_system_cpu_seconds": 0.006890999999999994,
+          "python_test_summaries": []
+        },
+        {
+          "name": "07--v",
+          "argv": [
+            "python3",
+            "formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py",
+            "-v"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 0.07800225866958499,
+          "child_user_cpu_seconds": 0.07031699999999996,
+          "child_system_cpu_seconds": 0.007031999999999997,
+          "python_test_summaries": [
+            "Ran 13 tests in 0.035s",
+            "OK"
+          ]
+        },
+        {
+          "name": "08-test_retained_research_ci.py",
+          "argv": [
+            "python3",
+            "scripts/ci/test_retained_research_ci.py"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 1.510428047273308,
+          "child_user_cpu_seconds": 1.500559,
+          "child_system_cpu_seconds": 0.008997000000000005,
+          "python_test_summaries": [
+            "Ran 3 tests in 1.473s",
+            "OK"
+          ]
+        },
+        {
+          "name": "09-test_qualification_runtime.py",
+          "argv": [
+            "python3",
+            "scripts/test_qualification_runtime.py"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 3.006745456252247,
+          "child_user_cpu_seconds": 0.33730899999999986,
+          "child_system_cpu_seconds": 0.105771,
+          "python_test_summaries": [
+            "Ran 32 tests in 2.963s",
+            "OK"
+          ]
+        }
+      ],
+      "suffix_sha256": "3b0bcc1af3c911ab783a32ed2ed9cd763d255e2625610a4ff5547af45a7e8084",
+      "remaining_commands_attempted": 10,
+      "failed_commands": [
+        "00-pq_lifetime_composition.py"
+      ]
+    }
+  },
+  "legacy_source_guard_diagnosis": {
+    "schema": "legacy-control-source-identity-diagnosis-v1",
+    "original_guard_unchanged": true,
+    "historical_base_digest": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c",
+    "current_source_sha256": "cb063dff4cde5d2f0c60f123cd91cc4e7041964c790a05c1e2e75de6b88b2ec9",
+    "prior_source_sha256": "ea4944732da95f2fbbe6d718360be520ec007aaef0e9a6383730d3f8963a75f1",
+    "prior_original_control_passes": false,
+    "current_original_control_passes": false,
+    "erased_digests_in_call_order": [
+      "0f48cb4a84368154cb462be5acccc04d7c0f4ca38f019287290bc1ff2a26d370",
+      "9912a8d6a960cb2f79108b8152503bb840643d495c1f34618ca0cf553df90d35"
+    ],
+    "source_revision": "333fe8cd89f0ec855e7b856e99e40f48f56c2137",
+    "qualification": false
+  },
+  "original_source_gate_passed": false,
+  "remaining_source_failures": [
+    {
+      "gate": "legacy activation observer erasure",
+      "result": "1 failure in 9 tests",
+      "detail": "Current inherited store.rs does not reduce to the unchanged historical BASE; production storage additions cannot be erased as observer plumbing."
+    },
+    {
+      "gate": "public V3 policy current source identity",
+      "result": "1 failure in 7 tests",
+      "detail": "Independent current revision/vector reader remains r21 while inherited Rust contract is r22."
+    },
+    {
+      "gate": "PQ lifetime composition correspondence",
+      "result": "60 tests: 1 failure and 2 errors; original CLI exits 2",
+      "detail": "Reviewed composition correspondence SHA f7ffe7a99de743bc79d4c5af3db9571c791f8a58b404786bec1880a024982c13 differs from current map 03e7cd3c8d8c72c8ad2a85ea354826b588af6b9e0b84949a5eb35e0dafb6ce63."
+    }
+  ],
+  "environment_failures_retained": {
+    "sparse_retained_input_failures": true,
+    "restored_disposition_files": 5,
+    "verified_disposition_inputs": 13,
+    "coordinator_original_input_restored": true,
+    "cross_device_hardlink_failure_retained": true,
+    "same_filesystem_tmpdir_used_for_final_reader": true
+  },
+  "original_f0": {
+    "run_id": 44465153982,
+    "repeated": false,
+    "thirty_second_goals": {
+      "met": 1,
+      "total": 6
+    },
+    "four_second_goals": {
+      "met": 0,
+      "total": 6
+    },
+    "timely_acks": {
+      "met": 21,
+      "total": 42
+    },
+    "passed": false,
+    "original_512_attempt_depletion_passed": false
+  },
+  "leaf_membership_proposal": {
+    "disposition": "NoUpdate",
+    "cpu_change_percent_68_accounts": 0.849298916,
+    "cpu_change_percent_1028_accounts": 3.119705238,
+    "original_graph_source_restored": true
+  },
+  "cost_scope": {
+    "local_command_wall_and_child_cpu": "Retained per command, including compilation where it occurred. Nested service/Host intervals must not be added.",
+    "complete_physical_cost": null,
+    "physical_network_bytes": null,
+    "energy": null,
+    "monetary_cost": null
+  },
+  "production_activation": false,
+  "whole_chain_qualification": false
+}

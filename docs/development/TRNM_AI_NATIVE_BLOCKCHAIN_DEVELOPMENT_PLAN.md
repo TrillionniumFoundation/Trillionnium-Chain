@@ -16845,3 +16845,46 @@ Current native validation: authenticated 133/133 with original include-ignored a
 Historical F0 44451798839 remains failed (30-second goals 1/6 and four-second goals 0/6); the new original F0 is pending. Current exact 133/55 registration uses actual logs in evidence/chain-native-owned-append-20261119-2e9b/controls. Historical 97 and previous 127 fixtures remain byte-identical and cannot qualify this candidate. Full workspace, public service liveness, complete cost, owner adoption and cryptographic qualification are not inferred from these local controls.
 
 The original repository-truth gate also exposed a stale hash-use source map: only store.rs differed across its 31 actual parent/current sources. The old 394623-byte 9d79fd3c identity is retained as a rejection control; the current 397703-byte cb063dff identity matches the unchanged parent source. The new literal map lock is 39224fce7b4411ae387e252c3440b4ae5e871921a33e8efe9e3f70ff56a6a73f. All 19 uses, 31 paths, exact semantic digest 29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b, historical e4abb172 review anchor and HOLD_NO_GO/unknown security qualifications remain unchanged. Original repository-truth failures and the original reader refusal remain retained.
+
+## 2026-11-20 continuation: completed W1 refusals do not renew body delay
+
+Continue original source e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975 and its
+complete failed F0 evidence successor ea356c57bc8ae8e69bc48fe6d7e1496afca3e3da.
+An exact retained mathematical-refusal lookup must keep its callback and paid
+request path, but must not renew the 500 ms scheduling delay. Only this
+invocation's newly completed native rejection publication can arm the hint.
+This implements the existing signed contract's no-lookup-refresh rule; original
+resource revision, CPU ownership, bounds, deadlines and verification stay intact.
+
+The new original native control first failed compilation because unwrap_err
+required Debug on WorkCheckedPacket. Its assertion now uses err().unwrap();
+the original exit-101 stderr remains retained. After repair, the original W1,
+body-refusal and native-ROOT-delay groups passed 6/6, 3/3 and 4/4. One unchanged
+130-attempt mixed-service campaign passed its original finite target with all
+attempts retained and honest-probe maximum gap 414915622 ns. This loopback
+observation does not qualify the separate fixed-Host ROOT campaign.
+
+The recent-batch workflow now retains campaign output under its existing
+always-upload directory. The old deleted per-attempt TempDir records are not
+reconstructed. Current source-map and six-file inventory repairs preserve their
+original guard logic. Historical b173 registration failure uses its actual
+retained selector and registry, while current 55-control selection uses the
+retained owned-append registry; ten registration controls pass without changing
+the current 55 gate or the original ZIP.
+
+Original F0 44465153982 remains 1/6 within 30 seconds, 0/6 within four seconds and
+21/42 timely ACKs. The unchanged 512-attempt depletion failure remains failed.
+The rejected leaf-membership optimization and all observed regressions remain
+NoUpdate. This W1 change does not improve the valid-W1 ROOT branch by itself,
+so it supplies no reason to redispatch the old F0. Full physical and monetary
+costs remain unknown. [Source-specific observations and retained originals](../../evidence/chain-w1-delay-controls-20261120-e9e051/README.md)
+record the exact execution and composition boundaries. This remains the sole
+development plan.
+
+### 2026-11-20 completed W1 controls and retained original source gates
+
+The same continuation completed a real old-production negative: compilation succeeded and the new exact-repeat regression failed its intended scheduling-hint assertion. After restoration of the candidate bytes, the original 6/3/4 native groups, strict release all-target Clippy, formatting, locked graph/metadata and source-integrity/CI-contract/inventory controls passed. The original 130-attempt report remains the single completed mixed-service observation; its records include refusals, not 130 successful calls.
+
+The whole original repository-truth run failed on an absent retained input. Exact Git restorations and diagnostic continuations reached every remaining original command. Three original source gates remain unqualified: legacy observer erasure against the inherited production store; independent current r21 policy vectors versus inherited Rust r22; and PQ lifetime composition versus its current correspondence map. Their original guards and failures are retained. Cross-device historical-reader failure was also retained, followed by unchanged controls with a source-filesystem TMPDIR. No separate tail successes are relabeled as a whole repository pass.
+
+All 82 original owner stage directories (659 files), the isolated continuation's raw records, the full 130-attempt report/databases and all 59 failed original CI job logs are archived under `evidence/chain-w1-delay-controls-20261120-e9e051`. Original e8 CI is terminal at 28 runs/213 jobs/59 failures/146 successes/8 skips. Original F0 44465153982 remains 1/6 at 30s, 0/6 at 4s and 21/42 timely ACKs; it was not redispatched. The 512-attempt numerical failure and rejected leaf-membership NoUpdate remain. Complete physical/network/energy/monetary costs are unknown.

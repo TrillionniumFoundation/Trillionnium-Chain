@@ -1,0 +1,12 @@
+{
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "source_path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+  "source_git_blob": "548bc418038b5d3e5ad6e732c858108930a794eb",
+  "extraction": "literal PYREGISTRY heredoc with its eight-space YAML indentation removed; source bytes otherwise unchanged",
+  "selector_sha256": "50ea5c0f3fa312e084ec695107f468fee64ebc121816624b59cc019e84aeb73b",
+  "historical_postwrite_count": 23,
+  "historical_actual_postwrite_registry_count": 25,
+  "current_postwrite_count": 55,
+  "qualification": "registration-only; no native execution or liveness qualification"
+}

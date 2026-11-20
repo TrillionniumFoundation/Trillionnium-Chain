@@ -416,3 +416,76 @@ fn scheduling_hint_requires_a_completed_math_refusal_not_success_or_cancellation
         "a found mathematical fact is insufficient until it returns"
     );
 }
+
+#[test]
+fn only_new_native_math_refusal_arms_another_body_delay() {
+    let directory = tempfile::tempdir().unwrap();
+    let clock = crate::ingress::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let source = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let valid = source
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            clock - 50,
+            4096,
+        )
+        .unwrap();
+    let mut bad = valid.clone();
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+    bad.proof[offset..offset + 4].copy_from_slice(&u32::from(word == 0).to_le_bytes());
+    let mut distinct = bad.clone();
+    let offset = offset + 4;
+    let word = u32::from_le_bytes(distinct.proof[offset..offset + 4].try_into().unwrap());
+    distinct.proof[offset..offset + 4].copy_from_slice(&u32::from(word == 0).to_le_bytes());
+    let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+
+    // A different complete proof owes a new native replay. An exact retained
+    // refusal still checks the original callback, but cannot renew a delay.
+    for (packet, expected_tiles, expected_hint) in [
+        (bad.clone(), 512, true),
+        (bad.clone(), 0, false),
+        (bad.clone(), 0, false),
+        (distinct, 512, true),
+    ] {
+        let hint = Cell::new(false);
+        let mut points = Vec::new();
+        let outcome = verify(
+            packet,
+            &cache,
+            &mut |point| {
+                points.push(point);
+                Ok(())
+            },
+            None,
+            Some(&hint),
+        );
+        assert_eq!(outcome.err().unwrap().to_string(), "WORK:Product");
+        assert_eq!(hint.get(), expected_hint);
+        assert_eq!(
+            points
+                .iter()
+                .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+                .count(),
+            expected_tiles
+        );
+        if expected_tiles == 0 {
+            assert_eq!(points, vec![VerificationProgress::BeforeReplay]);
+        }
+    }
+
+    let hint = Cell::new(false);
+    let cancelled = verify(
+        bad,
+        &cache,
+        &mut |_| Err("PUBLIC_REQUEST_CANCELLED".into()),
+        None,
+        Some(&hint),
+    );
+    assert!(matches!(cancelled, Err(error) if error.is(crate::ErrorCode::PublicRequestCancelled)));
+    assert!(!hint.get());
+    assert!(verify(valid, &cache, &mut |_| Ok(()), None, Some(&hint)).is_ok());
+    assert!(!hint.get());
+}

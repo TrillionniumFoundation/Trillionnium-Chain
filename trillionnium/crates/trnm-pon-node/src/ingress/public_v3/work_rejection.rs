@@ -128,10 +128,10 @@ pub(super) fn verify(
         progress,
         &mut actual,
     );
-    if result.is_err()
-        && (actual.cached_rejection_returned
-            || actual.publication == RejectionPublication::Retained)
-    {
+    // Only this invocation's newly completed native replay can arm another
+    // scheduling delay. A retained lookup is still checked and charged, but
+    // must not turn each exact repeat into a renewed 500 ms wait.
+    if result.is_err() && actual.publication == RejectionPublication::Retained {
         if let Some(flag) = immutable_body_refusal {
             flag.set(true);
         }

@@ -36,6 +36,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/authenticated-current-roster-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/authenticated-current-roster-v1.json"
+        )),
+    ),
+    (
         "config/pon/binary-diverse60-training-v3.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5685,6 +5692,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_append.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_apply_reader_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6259,6 +6273,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/native_root_delay_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/native_root_delay_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6298,6 +6319,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation_snapshot_tests.rs"
         )),
     ),
     (
@@ -7904,6 +7932,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/append_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7957,6 +7992,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_root_refusal.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_root_refusal.rs"
         )),
     ),
     (

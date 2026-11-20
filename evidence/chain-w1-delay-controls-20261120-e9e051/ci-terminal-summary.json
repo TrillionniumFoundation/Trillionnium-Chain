@@ -1,0 +1,18 @@
+{
+  "schema": "chain-original-e8-terminal-ci-v1",
+  "source_sha": "e8b0ec93ab6a6a1ff5e36cfcf9d1179e030a5975",
+  "observed_at_utc": "2026-11-20T04:36:00Z",
+  "workflow_runs": 28,
+  "jobs": 213,
+  "failed": 59,
+  "success": 146,
+  "skipped": 8,
+  "pending": 0,
+  "failed_logs_retained": 59,
+  "failed_log_bytes": 17497038,
+  "archive": "original-e8-terminal-ci.tar.gz",
+  "archive_bytes": 2666130,
+  "archive_sha256": "8b685d13ba4c4d5b610718478e067d5ee65960154697b9ee884bd3e5c1bb0e9d",
+  "old_nonterminal_snapshot_preserved": true,
+  "new_candidate_ci_qualification": false
+}
