@@ -1600,6 +1600,35 @@
         "hia/platform/pq_candidate/qualification/allocations.py",
         "hia/platform/pq_candidate/qualification/lifetimes.py"
       ]
+    },
+    {
+      "id": "platform/peer-payload-metadata",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native HIA owner of the original PayloadReplayStoreV1 metadata persistence and replay API, with original and independent readback qualification. Payload body and recovery, full Node integration, service budget qualification and original-stack retirement remain OPEN.",
+      "sources": [
+        "hia/platform/peer_payload/commands.hepta",
+        "hia/platform/peer_payload/file_policy.hepta",
+        "hia/platform/peer_payload/filesystem.hepta",
+        "hia/platform/peer_payload/linux_emitter.hepta",
+        "hia/platform/peer_payload/metadata_codec.hepta",
+        "hia/platform/peer_payload/metadata_log.hepta",
+        "hia/platform/peer_payload/metadata_runtime.hepta",
+        "hia/platform/peer_payload/open.hepta",
+        "hia/platform/peer_payload/owner.hepta",
+        "hia/platform/peer_payload/parent_bridge.hepta",
+        "hia/platform/peer_payload/publication.hepta",
+        "hia/platform/peer_payload/runtime_queries.hepta",
+        "hia/platform/peer_payload/snapshot_policy.hepta",
+        "hia/platform/peer_payload/view_fixture.hepta"
+      ],
+      "tests": [
+        "hia/platform/peer_payload/qualify.py",
+        "hia/platform/peer_payload/readback.py",
+        "hia/platform/peer_payload/test_qualification.py",
+        "hia/platform/peer_payload/control_readback.py",
+        "hia/platform/peer_payload/readback_observations.py"
+      ]
     }
   ],
   "old_stack_can_be_removed": false,
