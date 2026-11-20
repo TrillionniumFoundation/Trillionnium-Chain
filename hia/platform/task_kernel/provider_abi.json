@@ -1,8 +1,8 @@
 {
   "schema": "trnm.hia.task-kernel.sqlite-provider-abi.v1",
-  "build_fence": "trnm-hia-task-kernel-sqlite-3.54.1-native-x86_64-v1",
+  "build_fence": "trnm-hia-task-kernel-sqlite-3.54.1-hia-provider-x86_64-v2",
   "target": "x86_64-unknown-linux-gnu",
-  "foreign_boundary": "Pinned external SQLite C plus mechanical libc filesystem, allocation and pthread synchronization; no business policy",
+  "foreign_boundary": "Native HIA provider and native HIA ABI witness; pinned external SQLite C plus libc filesystem, allocation and pthread synchronization; no business policy",
   "entry": "uint64_t trnm_task_provider(void *opaque, uint64_t op, const unsigned char *request, uint64_t size, unsigned char *output, uint64_t capacity)",
   "lifetime": {
     "new": "void *trnm_task_provider_new(void); null on real allocation or mutex construction failure",
@@ -211,6 +211,9 @@
     }
   ],
   "claims": {
+    "project_provider_runtime_hia": true,
+    "project_witness_runtime_hia": true,
+    "original_project_c_in_production_link": false,
     "sqlite_is_hia": false,
     "task_kernel_business_implemented_by_c": false,
     "node_consumer_qualified": false,

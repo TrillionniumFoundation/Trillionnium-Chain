@@ -59,7 +59,7 @@ try:
            result_dir=output / "modified-header")
     abi_copy = output / "modified-abi-source"
     abi_copy.mkdir()
-    for name in ("provider.c", "provider_abi.json"):
+    for name in ("provider_native.hepta", "witness_emitter.hepta", "build_witness.py", "provider_abi.json"):
         shutil.copyfile(BUILDER.parent / name, abi_copy / name)
     abi = json.loads((abi_copy / "provider_abi.json").read_text())
     abi["build_fence"] += "-wrong"

@@ -1111,7 +1111,135 @@ block finish(finish_a:mutbuf,finish_o:usize)
   v32:u32 = const() {"value":0}
   ret(v32)
 end
-fn ed_fe_mul(a:mutbuf,out:usize,x:usize,y:usize) -> (u32) effects(read,write,trap) entry(entry)
+fn ed_fe_mul(guard_a:mutbuf,guard_o:usize,guard_x:usize,guard_y:usize) -> (u32) effects(read,write,trap) entry(guard)
+block guard(guard_a:mutbuf,guard_o:usize,guard_x:usize,guard_y:usize)
+  guard_len:usize = buffer.len(guard_a)
+  guard_width:usize = const() {"value":128}
+  guard_acc:usize = const() {"value":139648}
+  guard_end:usize = const() {"value":139776}
+  guard_full:bool = compare.le(guard_end,guard_len)
+  guard_x_le:bool = compare.le(guard_x,guard_len)
+  guard_y_le:bool = compare.le(guard_y,guard_len)
+  guard_o_le:bool = compare.le(guard_o,guard_len)
+  guard_x_left:usize = int.sub.wrap(guard_len,guard_x)
+  guard_y_left:usize = int.sub.wrap(guard_len,guard_y)
+  guard_o_left:usize = int.sub.wrap(guard_len,guard_o)
+  guard_x_room:bool = compare.le(guard_width,guard_x_left)
+  guard_y_room:bool = compare.le(guard_width,guard_y_left)
+  guard_o_room:bool = compare.le(guard_width,guard_o_left)
+  guard_x_end:usize = int.add.wrap(guard_x,guard_width)
+  guard_y_end:usize = int.add.wrap(guard_y,guard_width)
+  guard_x_before:bool = compare.le(guard_x_end,guard_acc)
+  guard_y_before:bool = compare.le(guard_y_end,guard_acc)
+  guard_x_after:bool = compare.le(guard_end,guard_x)
+  guard_y_after:bool = compare.le(guard_end,guard_y)
+  guard_x_apart:bool = bool.or(guard_x_before,guard_x_after)
+  guard_y_apart:bool = bool.or(guard_y_before,guard_y_after)
+  guard_a1:bool = bool.and(guard_full,guard_x_le)
+  guard_a2:bool = bool.and(guard_a1,guard_y_le)
+  guard_a3:bool = bool.and(guard_a2,guard_o_le)
+  guard_a4:bool = bool.and(guard_a3,guard_x_room)
+  guard_a5:bool = bool.and(guard_a4,guard_y_room)
+  guard_a6:bool = bool.and(guard_a5,guard_o_room)
+  guard_a7:bool = bool.and(guard_a6,guard_x_apart)
+  guard_ok:bool = bool.and(guard_a7,guard_y_apart)
+  guard_zero:usize = const() {"value":0}
+  branch guard_ok scan(guard_a,guard_o,guard_x,guard_y,guard_zero) entry(guard_a,guard_o,guard_x,guard_y)
+block scan(scan_a:mutbuf,scan_o:usize,scan_x:usize,scan_y:usize,scan_i:usize)
+  scan_count:usize = const() {"value":16}
+  scan_more:bool = compare.lt(scan_i,scan_count)
+  branch scan_more limb(scan_a,scan_o,scan_x,scan_y,scan_i) n_entry(scan_a,scan_o,scan_x,scan_y)
+block limb(limb_a:mutbuf,limb_o:usize,limb_x:usize,limb_y:usize,limb_i:usize)
+  limb_stride:usize = const() {"value":8}
+  limb_offset:usize = int.mul.checked(limb_i,limb_stride)
+  limb_px:usize = int.add.checked(limb_x,limb_offset)
+  limb_py:usize = int.add.checked(limb_y,limb_offset)
+  limb_vx:u64 = call(limb_a,limb_px) {"function":"ed_load64"}
+  limb_vy:u64 = call(limb_a,limb_py) {"function":"ed_load64"}
+  limb_max:u64 = const() {"value":65535}
+  limb_x_small:bool = compare.le(limb_vx,limb_max)
+  limb_y_small:bool = compare.le(limb_vy,limb_max)
+  limb_small:bool = bool.and(limb_x_small,limb_y_small)
+  limb_one:usize = const() {"value":1}
+  limb_next:usize = int.add.checked(limb_i,limb_one)
+  branch limb_small scan(limb_a,limb_o,limb_x,limb_y,limb_next) entry(limb_a,limb_o,limb_x,limb_y)
+block n_entry(n_a:mutbuf,n_o:usize,n_x:usize,n_y:usize)
+  n_acc:usize = const() {"value":139648}
+  n_width:usize = const() {"value":128}
+  n_zeroed:u32 = call(n_a,n_acc,n_width) {"function":"ed_zero"}
+  n_zero:usize = const() {"value":0}
+  jump n_outer(n_a,n_o,n_x,n_y,n_zero)
+block n_outer(no_a:mutbuf,no_o:usize,no_x:usize,no_y:usize,no_k:usize)
+  no_count:usize = const() {"value":31}
+  no_more:bool = compare.lt(no_k,no_count)
+  branch no_more n_start(no_a,no_o,no_x,no_y,no_k) n_finish(no_a,no_o)
+block n_start(ns_a:mutbuf,ns_o:usize,ns_x:usize,ns_y:usize,ns_k:usize)
+  ns_count:usize = const() {"value":16}
+  ns_low:bool = compare.lt(ns_k,ns_count)
+  ns_fifteen:usize = const() {"value":15}
+  ns_high_start:usize = int.sub.wrap(ns_k,ns_fifteen)
+  ns_zero:usize = const() {"value":0}
+  ns_start:usize = select(ns_low,ns_zero,ns_high_start)
+  ns_one:usize = const() {"value":1}
+  ns_low_end:usize = int.add.wrap(ns_k,ns_one)
+  ns_end:usize = select(ns_low,ns_low_end,ns_count)
+  ns_sum:u64 = const() {"value":0}
+  jump n_inner(ns_a,ns_o,ns_x,ns_y,ns_k,ns_start,ns_end,ns_sum)
+block n_inner(ni_a:mutbuf,ni_o:usize,ni_x:usize,ni_y:usize,ni_k:usize,ni_i:usize,ni_end:usize,ni_sum:u64)
+  ni_more:bool = compare.lt(ni_i,ni_end)
+  branch ni_more n_term(ni_a,ni_o,ni_x,ni_y,ni_k,ni_i,ni_end,ni_sum) n_commit(ni_a,ni_o,ni_x,ni_y,ni_k,ni_sum)
+block n_term(nt_a:mutbuf,nt_o:usize,nt_x:usize,nt_y:usize,nt_k:usize,nt_i:usize,nt_end:usize,nt_sum:u64)
+  nt_j:usize = int.sub.wrap(nt_k,nt_i)
+  nt_stride:usize = const() {"value":8}
+  nt_dx:usize = int.mul.wrap(nt_i,nt_stride)
+  nt_dy:usize = int.mul.wrap(nt_j,nt_stride)
+  nt_px:usize = int.add.wrap(nt_x,nt_dx)
+  nt_py:usize = int.add.wrap(nt_y,nt_dy)
+  nt_one:usize = const() {"value":1}
+  nt_px1:usize = int.add.wrap(nt_px,nt_one)
+  nt_py1:usize = int.add.wrap(nt_py,nt_one)
+  nt_x0:u8 = buffer.load(nt_a,nt_px)
+  nt_x1:u8 = buffer.load(nt_a,nt_px1)
+  nt_y0:u8 = buffer.load(nt_a,nt_py)
+  nt_y1:u8 = buffer.load(nt_a,nt_py1)
+  nt_xlow:u64 = int.cast(nt_x0) {"mode":"wrap"}
+  nt_xhigh:u64 = int.cast(nt_x1) {"mode":"wrap"}
+  nt_ylow:u64 = int.cast(nt_y0) {"mode":"wrap"}
+  nt_yhigh:u64 = int.cast(nt_y1) {"mode":"wrap"}
+  nt_shift:u64 = const() {"value":8}
+  nt_xupper:u64 = int.shl.checked(nt_xhigh,nt_shift)
+  nt_yupper:u64 = int.shl.checked(nt_yhigh,nt_shift)
+  nt_vx:u64 = bit.or(nt_xlow,nt_xupper)
+  nt_vy:u64 = bit.or(nt_ylow,nt_yupper)
+  nt_product:u64 = int.mul.wrap(nt_vx,nt_vy)
+  nt_total:u64 = int.add.wrap(nt_sum,nt_product)
+  nt_next:usize = int.add.wrap(nt_i,nt_one)
+  jump n_inner(nt_a,nt_o,nt_x,nt_y,nt_k,nt_next,nt_end,nt_total)
+block n_commit(nc_a:mutbuf,nc_o:usize,nc_x:usize,nc_y:usize,nc_k:usize,nc_sum:u64)
+  nc_count:usize = const() {"value":16}
+  nc_low:bool = compare.lt(nc_k,nc_count)
+  nc_fold_index:usize = int.sub.wrap(nc_k,nc_count)
+  nc_index:usize = select(nc_low,nc_k,nc_fold_index)
+  nc_thirtyeight:u64 = const() {"value":38}
+  nc_fold_sum:u64 = int.mul.wrap(nc_sum,nc_thirtyeight)
+  nc_value:u64 = select(nc_low,nc_sum,nc_fold_sum)
+  nc_acc:usize = const() {"value":139648}
+  nc_stride:usize = const() {"value":8}
+  nc_offset:usize = int.mul.wrap(nc_index,nc_stride)
+  nc_at:usize = int.add.wrap(nc_acc,nc_offset)
+  nc_previous:u64 = call(nc_a,nc_at) {"function":"ed_load64"}
+  nc_total:u64 = int.add.wrap(nc_previous,nc_value)
+  nc_stored:u32 = call(nc_a,nc_at,nc_total) {"function":"ed_store64"}
+  nc_one:usize = const() {"value":1}
+  nc_next:usize = int.add.wrap(nc_k,nc_one)
+  jump n_outer(nc_a,nc_o,nc_x,nc_y,nc_next)
+block n_finish(nf_a:mutbuf,nf_o:usize)
+  nf_acc:usize = const() {"value":139648}
+  nf_normalized:u32 = call(nf_a,nf_acc) {"function":"ed_normalize"}
+  nf_width:usize = const() {"value":128}
+  nf_copied:u32 = call(nf_a,nf_o,nf_acc,nf_width) {"function":"ed_copy"}
+  nf_zero:u32 = const() {"value":0}
+  ret(nf_zero)
 block entry(a:mutbuf,out:usize,x:usize,y:usize)
   v0:usize = const() {"value":139648}
   v1:usize = const() {"value":128}

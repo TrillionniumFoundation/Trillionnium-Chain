@@ -14,9 +14,39 @@ separately built and qualified shared Task provider. The provider retains its
 29-operation mechanical ABI. The gate refuses an existing output directory and
 does not modify the original Rust sources.
 
-The shared `provider.c` is still a project-owned C system boundary. Native HIA
-Task business and owned values do not retire that residual platform code or
-establish completion of the full repository rewrite.
+The production provider is emitted by `provider_native.hepta`; it implements
+all six public lifecycle entries and 29 operations. `witness_emitter.hepta`
+creates the runtime witness from a fresh build-time C ABI probe. The production
+link includes those two native objects, the pinned external SQLite object and
+system libraries. `provider.c` remains only an explicit `--original-oracle`
+comparison with a separate fence. External SQLite is still C; Archive,
+StateImport and full Node integration remain separate obligations.
+
+The formal CI entry point first builds the native provider, executes its full
+original/native qualification, independently reads it back and runs all 46
+provider-reader negative controls. Both consumers require all four stages
+before their own tests. Use this entry point for complete source-bound evidence:
+
+```sh
+python3 hia/tools/qualify_task_ci.py \
+  --component task-store \
+  --rust-bin /absolute/rust-1.95.0/bin \
+  --output /absolute/fresh-task-ci-evidence
+
+python3 hia/tools/qualify_task_ci.py \
+  --component task-boundary \
+  --rust-bin /absolute/rust-1.95.0/bin \
+  --output /absolute/fresh-boundary-ci-evidence
+```
+
+The provider gate retains 1,182 original/native comparisons, 143 actual paired
+allocation failures, 256 concurrent calls, 123 witness controls, 12 emitter
+controls and eight build refusals. Its independent reader validates complete
+source and artifact graphs, actual compiler argv/cwd, emitted instructions and
+PLT targets, original C translation-unit provenance, ABI probe observations,
+real failure ordinals and final resource counts. The same qualified provider
+can also be supplied to the lower-level Store commands below; those commands
+do not replace the formal consumer's mandatory provider stages.
 
 ```sh
 python3 hia/platform/task_kernel/qualify_task_store.py \
@@ -99,7 +129,9 @@ actual HIA-emitted linker objects, symbol renaming and the complete final link
 graph. It parses the public ELF symbol table independently and requires the
 51 declared public exports. The native observers must reference those exact
 builds and original executables. The provider source, compiled library and
-29-operation ABI are part of the same relationship.
+29-operation ABI are part of the same relationship. Store readback also invokes
+the independent provider verifier; a C-oracle library, foreign reader, missing
+emission stage or merely matching summary cannot satisfy the native source graph.
 Each image's function owners are independently derived from its canonical HIA
 source and include declaration. Every owner must be in that build's source
 fence; copying identical function bytes to a foreign file does not establish

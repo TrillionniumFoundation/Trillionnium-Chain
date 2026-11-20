@@ -3507,6 +3507,133 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/bench/digests.hepta": [
+      {
+        "functions": [
+          "bench_get",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sch_frame",
+          "sch_read"
+        ],
+        "source": "src/executor/schedule.hepta"
+      }
+    ],
+    "src/bench/repeat.hepta": [
+      {
+        "functions": [
+          "bench_copy_digest",
+          "bench_hash_groups_work",
+          "bench_hash_input_raw",
+          "bench_hash_word"
+        ],
+        "source": "src/bench/digests.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sch_adaptive",
+          "sch_adaptive_b",
+          "sch_adaptive_hist_count",
+          "sch_adaptive_result",
+          "sch_adaptive_seed",
+          "sch_aggressive_one",
+          "sch_append",
+          "sch_bucket_hint",
+          "sch_bucket_merge",
+          "sch_candidate",
+          "sch_domain_summary",
+          "sch_emit",
+          "sch_emit_groups",
+          "sch_fill",
+          "sch_frame",
+          "sch_get",
+          "sch_group_intersects",
+          "sch_hot_reorder",
+          "sch_inc",
+          "sch_key_find",
+          "sch_key_map",
+          "sch_max",
+          "sch_min",
+          "sch_normal_one",
+          "sch_normalize",
+          "sch_place",
+          "sch_profile",
+          "sch_put",
+          "sch_query",
+          "sch_read",
+          "sch_record_less",
+          "sch_remember",
+          "sch_reorder",
+          "sch_required",
+          "sch_sat_mul",
+          "sch_setup",
+          "sch_sift",
+          "sch_sort",
+          "sch_sparse_start",
+          "sch_stage_pair",
+          "sch_swap"
+        ],
+        "source": "src/executor/schedule.hepta"
+      },
+      {
+        "functions": [
+          "fp64_add",
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low",
+          "fp64_ratio",
+          "fp64_valid"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/workload.hepta": [],
     "src/checkpoint/value_v2.hepta": [
       {
         "functions": [
@@ -4918,6 +5045,36 @@
           "sha256_work_store64"
         ],
         "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
+    "src/research_protocol/external_key.hepta": [
+      {
+        "functions": [
+          "research_hash_integer"
+        ],
+        "source": "src/research_protocol/hash.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       }
     ],
     "src/research_protocol/hash.hepta": [

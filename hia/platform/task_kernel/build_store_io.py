@@ -34,7 +34,8 @@ class StoreIoBuild(SourceBuild):
             from hepta.hia_agent_assembly import assemble_program
             self.assemble=assemble_program
             for path in PINNED_INPUTS:self.capture(ROOT/'hia'/path)
-            for path in [Path(__file__),HERE/'build_boundary.py',HERE/'build_provider.py',HERE/'provider_abi.json',HERE/'provider.c',
+            for path in [Path(__file__),HERE/'build_boundary.py',HERE/'build_provider.py',HERE/'provider_abi.json',HERE/'provider_native.hepta',
+                         HERE/'build_witness.py',HERE/'witness_emitter.hepta',HERE/'readback_provider.py',
                          HERE/'store_open_includes.json',HERE/'qualification/store_io_hook.rs',
                          HERE/'qualification/store_io_original.rs',HERE/'qualification/store_io_observer.py',
                          HERE/'qualification/emit_observer.py',ROOT/'scripts/project-preflight.sh',
@@ -49,6 +50,7 @@ class StoreIoBuild(SourceBuild):
                 self.capture(Path(p));need(identity(p)==expected,'Provider source changed')
             for name,expected in provider['artifacts'].items():
                 self.capture(self.provider/name);need(identity(self.provider/name)==expected,'Provider artifact changed')
+            self.verify_provider(self.provider)
             self.capture(Path(provider['compiler']['path']));self.capture(self.pinned.compiler_path)
             self.report['function_sources']={}
             images=[('root',HERE/'qualification/store_io_fixture.hepta',0),

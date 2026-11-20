@@ -7,7 +7,9 @@ functions. Both build with the pinned HIA self-hosted compiler and expose the
 existing private borrowed-buffer `f0` ABI. Python and Rust are test drivers;
 neither supplies a decision to the native implementation.
 
-This is the M10 research protocol's encoding layer. Its command/type encodings,
+`external_key.hepta` also implements the original public `ExternalKey` derivation,
+byte access, hexadecimal/display output and canonical CBOR encoding. These native
+components are part of M10's research protocol. Its remaining command/type encodings,
 state transitions, contribution accounting, Hepta handoff, full consumer
 integration and original-package retirement still require implementation and
 acceptance. The core error variants for protocol versions, enum discriminants and
@@ -81,6 +83,45 @@ domain, insufficient borrowed extents and an invalid request shape respectively.
 The shared test ABI retains its existing 1 MiB per-buffer maximum; this is a
 bounded component interface, not retirement of every original generic caller.
 
+## External keys
+
+The `REK1` byte interface has an eight-byte header: magic, an operation byte, a
+zero reserved byte, and a little-endian u16 namespace length. The namespace and
+identifier follow. Operation 1 derives from a canonical lowercase UUID, operation
+2 derives from an external ASCII identifier, and operation 3 accepts exactly
+32 key bytes with an empty namespace.
+
+Successful calls write 130 bytes: the 32 key bytes, their 64 lowercase hexadecimal
+characters, and the 34-byte canonical CBOR byte string. The hex output is also
+the original Display output. Raw zero keys remain valid for `from_bytes` and
+rendering, as in the original public type; payload-specific nonzero validation
+is a separate consumer obligation.
+
+Derivation preserves the exact original domain and framing:
+
+`TRNM_RESEARCH_EXTERNAL_KEY_V1\0 || u16_be(namespace.len) || namespace || kind || u16_be(id.len) || id`.
+
+UUIDs contribute their 16 decoded bytes with kind 1. External identifiers
+contribute their original bytes with kind 2. Namespace validation precedes
+identifier validation. The namespace admits only 1–64 lowercase ASCII letters,
+digits, `.`, `-`, `_` and `:`. External IDs admit 1–256 visible ASCII bytes excluding
+backslash. UUID parsing requires all 36 bytes of the lowercase 8-4-4-4-12 form;
+no normalization is performed.
+
+Return codes 1, 2 and 3 correspond to the original invalid-namespace, invalid-UUID
+and invalid-external-ID variants. The borrowed ABI adds 64 for insufficient
+output/scratch and 65 for malformed framing. At least 130 output and 1,208 scratch
+bytes are required; refusals preserve both complete buffers. Successful calls
+preserve output beyond byte 130 and scratch beyond byte 1,208.
+
+Six tests execute 5,463 comparisons with the actual retained public Rust crate,
+732 independent hashlib checks and 24 ABI/capacity controls. They cover every
+ASCII byte in every UUID position, namespace and identifier alphabets and bounds,
+Unicode rejection, multi-error precedence, every bit of raw keys, domain/kind
+separation and untouched canaries. The Rust adapter calls the original methods;
+it does not copy the derivation algorithm. This finite type implementation does
+not qualify generic Serde, research commands/state, handoff or Node integration.
+
 ## Reproduction
 
 With the pinned compiler and toolchain environment used by the existing HIA
@@ -88,6 +129,7 @@ workflow, run:
 
 ```sh
 python3 -m unittest hia.tests.test_research_canonical -v
+python3 -m unittest hia.tests.test_research_external_key -v
 ```
 
 The suite builds the original locked workspace dependency graph in offline mode

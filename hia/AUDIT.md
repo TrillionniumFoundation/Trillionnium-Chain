@@ -3,29 +3,29 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**62 kernel components, 30 native foundations and 293 HIA source files**. All
-26 original Rust packages remain: 21 are partially ported and 5 are not ported.
+**66 kernel components, 30 native foundations and 299 HIA source files**. All
+26 original Rust packages remain: 22 are partially ported and 4 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
 
 This audit accounts for all 41,494 paths in the baseline Git tree and every
 original package and registered HIA source. The baseline has 291 HIA sources,
-with no omitted or duplicate source owners; this continuation adds two research
-kernels. All kernel and foundation Node-integration flags remain false. Of the
-62 kernels, 61 are implemented finite units and `mempool/lane_quota` remains a
+with no omitted or duplicate source owners. The current graph adds three research
+kernels, three Bench kernels and the two Task provider/witness sources. All kernel and foundation Node-integration flags remain false. Of the
+66 kernels, 65 are implemented finite units and `mempool/lane_quota` remains a
 candidate awaiting its separate qualification. The baseline original Rust source
 and the retained package graph are unchanged.
 
 The audited continuation parent is
-`62b4108946dead0688327c61aaa2afcb76bd0413`, with original `main` baseline
+`25d0e733c54fc1186dac791ef88aacb79347691b`, with original `main` baseline
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. Test observations below retain their
 actual source identity; successful development checks do not assign a hosted
 result to a later commit.
 
-Current component discovery contains **645 methods** in five disjoint groups:
-484 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. General
-includes all eight Research canonical/hash methods. The workflow expands to
+Current component discovery contains **667 methods** in five disjoint groups:
+506 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. General
+includes the new Research, Bench, field/SHA and provider-CI methods. The workflow expands to
 67 jobs and 55 native compiler bootstrap invocations from 49 source admission
 blocks. Discovery and workflow enumeration do not establish successful execution.
 
@@ -39,7 +39,77 @@ failures and source identities, remains in
 
 ## Findings addressed in this continuation
 
-### Current research encoding, Task validation and Metadata observation
+### Native provider, ExternalKey, Bench and exact hosted findings
+
+The new Task provider source is
+`6b7fd1245688abdff19d2d833569f9a655d579684f9af5a1239ee60e13b4733d`.
+Its HIA emitter produces the 15,464-byte provider object
+`07022f3e9db25cec3667f4349b41200d476fbf7ebc5aca320e8ee6d9559516b6`.
+All six public lifecycle entries and 29 operations are native. A second HIA
+emitter produces the runtime witness from the actual build-time C ABI probe.
+No old project C provider or C witness object enters the production link;
+external SQLite and system libraries still do. The original C implementation
+is retained solely in the separately fenced oracle construction.
+
+The frozen development provider passed 1,182 original/native pairs, 143 paired
+actual allocation failures, 256 concurrent calls, 123 witness controls,
+12 emitter controls and eight build refusals. Its independent reader checked
+1,161 actual files, complete compiler stages and emitted code/call targets;
+all 46 semantic tamper controls were rejected, including mutations with
+recomputed outer hashes. The formal Task Store and Boundary consumers passed
+in 432.236 and 61.936 seconds with 150 unchanged inputs. Store preserved the
+41 original tests, strict Clippy/fmt, 1,390 records, 445 public cases, all 112
+allocator controls/96 actual failures, 124 cache comparisons/257 calls/nine
+hash interleavings, and 37 original Store-reader negative controls. The final
+combined commit must still execute its own gates; these development results
+are not assigned a later source identity.
+
+ExternalKey's six new methods passed 5,463 actual original-public-crate
+comparisons, 732 independent hashes and 24 ABI controls. They cover namespace
+and identifier error order, lowercase UUIDs, visible ASCII, raw 32-byte keys,
+hex/display and canonical CBOR. No new algorithm was substituted for the
+original Rust oracle. Research command/state/accounting/handoff remains open.
+
+Bench's eight methods passed 1,566 native calls, 307 original workload cases,
+64 original CLI executions, 1,148 native internal replay executions, eight
+comparator controls and eight large unaligned cases. The original 11 tests,
+strict Clippy and formatting passed. Full ordered membership and SHA are
+compared on each repeat. Three original scheduler high-water errors remain
+explicit intentional differences with independent conflict-safety checks.
+Standard compiler receipts and the actual qualification recording closures
+were exercised in a bounded 13-build/1,558-shared-call regression; eight raw
+ABI calls complete the same 1,566-call set. CLI/env parsing, logarithmic profile
+calculation, presentation and persistence remain unported.
+
+The shared field/SHA paths preserve their original wide-word fallbacks and
+trap/partial-write semantics. The 159 field and 200 SHA/alias cases passed
+318 and 400 original/new native calls. The affected PeerLease unit contains
+8,184 operations under the unchanged 8,192 limit. All 29 Node compiler/emitter
+stages, 28 module images and independent composition readback passed; the new
+complete Node ELF is
+`89f0c914b0a654bd714c55a6e6a97b92734992638594603e2fd0357ac47623c3`.
+The integrated Research/ExternalKey/crypto regression passed 17 methods in
+73.962 seconds. This rebuild does not certify complete Node business behavior.
+
+The optimized Settlement native stage completed 320 fixtures, 2,636 operations
+and 16,066 calls in 233.636 seconds with no live owners under the original
+240-second limit. Only that stage has this new observation; the full original,
+allocator, integrity and independent-reader gate and hosted execution remain
+required. Previous failed runs are retained.
+
+Published `25d0e73` has a source-specific hosted Metadata PASS in
+[run 44727120287](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44727120287):
+121 original outer tests, two child reexecutions, 12 groups, 45 integrity
+controls, 2,827 allocator ABI calls/840 actual failures and independent
+readback completed in 481.005 seconds. All 49,069 regular archived members
+were independently rehashed. Metadata does not grant Body, whole-Peer or
+original four-second-service qualification. On the same source, Task still
+failed after 93/112 allocator controls within its original 180 seconds, and
+Settlement failed after 233 native fixtures at 240.083 seconds. Their raw
+archives also passed complete member verification; neither timeout is hidden
+by a later development PASS.
+
+### Prior research encoding, Task validation and Metadata observation
 
 The new research CBOR/hash primitives passed eight native test methods, 29,821
 original/native CBOR comparisons, 45 original/native hash comparisons, 45
@@ -142,9 +212,9 @@ adds one final 48-source Task implementation and one final 14-source Peer Unix
 implementation. Each development PASS retains its exact source identity,
 complete original tests, native outputs, failed observations and independent
 readback. The integrated audit-preflight and documentation changes require
-fresh committed CI. Task's 29-operation project C provider, ArchiveStore,
-StateImport, Peer payload/recovery ownership and live Node integration remain
-open. No original package is eligible for retirement.
+fresh committed CI. At that earlier checkpoint, Task's 29-operation project C
+provider, ArchiveStore, StateImport, Peer payload/recovery ownership and live Node
+integration remained open. No original package is eligible for retirement.
 
 The frozen Peer Unix gate passed 121 outer original tests, seven runtime groups
 and 13 integrity controls. The corrected fault observer stops only the pinned
@@ -488,11 +558,11 @@ The exact component-to-source mapping is machine checked in the migration invent
 | --- | --- | --- | --- |
 | [trnm-types](../trillionnium/crates/trnm-types) | M00 | Partial: `types/request-status`, `types/transfer`, `types/transcript` | Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls. |
 | [trnm-executor](../trillionnium/crates/trnm-executor) | M06 | Partial: `executor/schedule`, `math/binary64` | Deterministic conflict scheduling independent of consensus. |
-| [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Not ported: — | Retained executor microbenchmark; not ledger throughput. |
+| [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Partial: `bench/workload`, `bench/digests`, `bench/repeat` | Native workloads, digests and repeated scheduling; complete CLI/profile/persistence remains open. |
 | [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota`, `mempool/lane_owner` | Typed signed admission, nonce reservations and durable local-pool/Node handoff independent of BFT. |
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Not ported: — | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Partial: `oracle/values`, `oracle/serde-json` | Application evidence aggregation, not ledger quorum or voting. |
-| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Partial: `research-protocol/canonical`, `research-protocol/hash` | Contribution/evaluation/lineage contracts independent of ledger consensus. |
+| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Partial: `research-protocol/canonical`, `research-protocol/hash`, `research-protocol/external-key` | Contribution/evaluation/lineage contracts independent of ledger consensus. |
 | [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root`, `protocol/state-root-compact` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
 | [trnm-peer-lease](../trillionnium/crates/trnm-peer-lease) | M04 | Partial: `peer-lease/values` | Cross-process scope/generation fencing, append-only replay and bounded Unix transport. |
 | [trnm-data-availability](../trillionnium/crates/trnm-data-availability) | M09 | Partial: `data-availability/rs46` | Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. |

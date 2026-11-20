@@ -702,6 +702,53 @@
         "hia/tests/test_research_canonical.py",
         "hia/tests/rust_research_canonical_reference.rs"
       ]
+    },
+    {
+      "id": "research-protocol/external-key",
+      "node_integration_complete": false,
+      "scope": "Original public ExternalKey UUID/external-ID derivation, namespace and identifier validation order, byte access, lowercase hex/Display and canonical CBOR through native SHA-256; complete payload consumers, generic Serde and Node integration remain open.",
+      "source": "hia/src/research_protocol/external_key.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_external_key.py",
+        "hia/tests/rust_research_external_key_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/workload",
+      "node_integration_complete": false,
+      "scope": "Native Classic/Mixed/HotStreak synthetic transactions with exact wrapping arithmetic and workload input contracts; CLI/environment, full profile output and persistence remain open.",
+      "source": "hia/src/bench/workload.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
+    },
+    {
+      "id": "bench/digests",
+      "node_integration_complete": false,
+      "scope": "Native original domain-separated input/group SHA-256 over full ordered transactions and indices, including unaligned inputs beyond two MiB; not a replacement for complete Bench execution.",
+      "source": "hia/src/bench/digests.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
+    },
+    {
+      "id": "bench/repeat",
+      "node_integration_complete": false,
+      "scope": "Native first schedule and up to 1000 bounded re-schedules, exact ordered-membership and group-digest verification through all seven existing strategies; retains explicit high-water safety corrections. Whole CLI/profile/entropy/persistence remains open.",
+      "source": "hia/src/bench/repeat.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_native.py",
+        "hia/tests/rust_bench_reference.rs",
+        "hia/platform/bench/build.py"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -732,12 +779,16 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "bench/workload",
+        "bench/digests",
+        "bench/repeat"
+      ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
       "package": "trnm-bench",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
@@ -772,7 +823,8 @@
     {
       "components": [
         "research-protocol/canonical",
-        "research-protocol/hash"
+        "research-protocol/hash",
+        "research-protocol/external-key"
       ],
       "legacy_path": "trillionnium/crates/trnm-research-protocol",
       "module": "M10",
@@ -1499,11 +1551,12 @@
       "id": "platform/task-kernel-main-store",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Native HIA Task Store six main transitions, durable database audits, preview/commit and public opaque owner methods with unchanged original comparisons, allocation failures and independent source-bound readback. Archive, StateImport, removal of the project-owned C provider, live Node integration and whole-package retirement remain OPEN.",
+      "scope": "Native HIA Task Store six main transitions, durable audits, preview/commit and opaque owner methods, plus the complete 29-operation HIA provider and four dynamic HIA witness exports. Original C is an explicitly isolated qualification oracle; third-party SQLite and build-time ABI probes remain. Archive, StateImport, live Node integration and whole-package retirement remain OPEN.",
       "sources": [
         "hia/platform/task_kernel/audit_dispatch.hepta",
         "hia/platform/task_kernel/native_dispatch.hepta",
         "hia/platform/task_kernel/native_driver.hepta",
+        "hia/platform/task_kernel/provider_native.hepta",
         "hia/platform/task_kernel/qualification/fd_fixture.hepta",
         "hia/platform/task_kernel/qualification/filesystem_fixture.hepta",
         "hia/platform/task_kernel/qualification/path_fixture.hepta",
@@ -1513,6 +1566,7 @@
         "hia/platform/task_kernel/records_dispatch.hepta",
         "hia/platform/task_kernel/store_dispatch.hepta",
         "hia/platform/task_kernel/store_owned.hepta",
+        "hia/platform/task_kernel/witness_emitter.hepta",
         "hia/src/crypto/ed25519_public_point_cache.hepta",
         "hia/src/task_kernel/agent_transaction_wire.hepta",
         "hia/src/task_kernel/codec.hepta",
@@ -1557,7 +1611,11 @@
         "hia/platform/task_kernel/qualify_boundary.py",
         "hia/platform/task_kernel/qualify_task_store.py",
         "hia/platform/task_kernel/readback_task_store.py",
-        "hia/platform/task_kernel/qualification/readback_negative_controls.py"
+        "hia/platform/task_kernel/qualification/readback_negative_controls.py",
+        "hia/platform/task_kernel/build_witness.py",
+        "hia/platform/task_kernel/qualify_provider_native.py",
+        "hia/platform/task_kernel/readback_provider.py",
+        "hia/platform/task_kernel/qualification/provider_readback_controls.py"
       ]
     },
     {

@@ -1,4 +1,9 @@
-"""Independent exact-source SQLite C provider build; never runs task policy."""
+"""Build a native HIA provider and ABI witness around exact external SQLite.
+
+Only the pinned third-party amalgamation is C in the production link. The old
+project provider is available solely through --original-oracle for independent
+qualification; its distinct fence is never admitted by production consumers.
+"""
 from __future__ import annotations
 
 import argparse
@@ -15,10 +20,12 @@ import struct
 import subprocess
 import sys
 import time
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
-FENCE = "trnm-hia-task-kernel-sqlite-3.54.1-native-x86_64-v1"
+FENCE = "trnm-hia-task-kernel-sqlite-3.54.1-hia-provider-x86_64-v2"
+ORACLE_FENCE = "trnm-hia-task-kernel-sqlite-3.54.1-c-oracle-x86_64-v1"
 AMALGAMATION = "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52"
 UPSTREAM_BUILD = "769b31370a41aa722e1d5a530012432c985bb142eab34d095481ffd1a3436e1b"
 SOURCE_ID = "2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76"
@@ -47,6 +54,24 @@ FLAGS = (
     "SQLITE_SOUNDEX", "SQLITE_THREADSAFE=1", "SQLITE_USE_URI", "HAVE_USLEEP=1",
     "HAVE_ISNAN", "_POSIX_THREAD_SAFE_FUNCTIONS", "HAVE_LOCALTIME_R",
 )
+
+NATIVE_EXPORTS = sorted("trnm_task_provider trnm_task_provider_new trnm_task_provider_enter "
+                        "trnm_task_provider_leave trnm_task_provider_reset trnm_task_provider_free".split())
+NATIVE_IMPORTS = sorted("""__errno_location calloc clock_gettime close free fsync getpid link lstat malloc
+memchr memcpy mkdir open pthread_mutex_destroy pthread_mutex_init pthread_mutex_lock pthread_mutex_unlock read
+sqlite3_bind_blob64 sqlite3_bind_double sqlite3_bind_int64 sqlite3_bind_null sqlite3_bind_parameter_count
+sqlite3_bind_text64 sqlite3_busy_timeout sqlite3_changes64 sqlite3_close sqlite3_close_v2 sqlite3_column_blob
+sqlite3_column_bytes sqlite3_column_count sqlite3_column_double sqlite3_column_int64 sqlite3_column_name
+sqlite3_column_text sqlite3_column_type sqlite3_compileoption_get sqlite3_db_handle sqlite3_errcode sqlite3_errmsg
+sqlite3_error_offset sqlite3_errstr sqlite3_extended_errcode sqlite3_finalize sqlite3_libversion_number
+sqlite3_open_v2 sqlite3_prepare_v3 sqlite3_sourceid sqlite3_step sqlite3_threadsafe stat strerror strlen
+trnm_io_witness_compileoption trnm_io_witness_layout trnm_io_witness_source_id trnm_io_witness_version unlink""".split())
+NATIVE_ABI = {"pointer_bytes": 8, "size_t_bytes": 8, "int_bytes": 4, "long_bytes": 8,
+              "ssize_t_bytes": 8, "mode_t_bytes": 4, "mutex_bytes": 40, "mutex_alignment": 8,
+              "owner_bytes": 48, "owner_lock_offset": 8, "stat_bytes": 144,
+              "stat_mode_offset": 24, "stat_mode_bytes": 4, "stat_size_offset": 48,
+              "stat_size_bytes": 8, "timespec_bytes": 16, "timespec_seconds_offset": 0,
+              "timespec_nanoseconds_offset": 8, "clock_realtime": 0}
 
 
 def need(condition, message):
@@ -91,12 +116,15 @@ def environment_fence(env):
 
 
 class ProviderBuild:
-    def __init__(self, dependency, output, target=TARGET):
+    def __init__(self, dependency, output, target=TARGET, *, original_oracle=False):
         self.output = Path(output).absolute()
         need(self.output.resolve() == self.output and not self.output.exists(), "Fresh canonical output required")
         need(self.output != ROOT and ROOT not in self.output.parents, "Evidence must be outside the checkout")
         self.output.mkdir(parents=True, mode=0o700)
-        self.report = {"schema": "trnm.hia.task-kernel.sqlite-provider.v1", "fence": FENCE,
+        self.original_oracle = bool(original_oracle)
+        self.report = {"schema": "trnm.hia.task-kernel.sqlite-provider.v2",
+                       "fence": ORACLE_FENCE if self.original_oracle else FENCE,
+                       "qualification_only_original_oracle": self.original_oracle,
                        "started": True, "finalized": False, "status": "FAIL", "stages": []}
         self.target = target
         self.write()
@@ -145,20 +173,39 @@ class ProviderBuild:
                  struct.calcsize("P") == 8 and sys.byteorder == "little" and platform.libc_ver()[0] == "glibc",
                  "Unsupported native target")
             environment_fence(os.environ)
+            preflight_paths = [ROOT / name for name in (
+                "scripts/project-preflight.sh", "scripts/ci/project_boundary.py", "PROJECT_BOUNDARY.json",
+                "PROJECT_ID", "config/portability-inventory-v1.json", "trillionnium/Cargo.toml")]
+            members = tomllib.loads((ROOT / "trillionnium/Cargo.toml").read_text())["workspace"]["members"]
+            preflight_paths += [ROOT / "trillionnium" / member / "Cargo.toml" for member in members]
+            preflight_before = {str(path): identity(path) for path in preflight_paths}
             self.stage("preflight", ["bash", str(ROOT / "scripts/project-preflight.sh"), "--audit"], 60)
+            need(preflight_before == {str(path): identity(path) for path in preflight_paths},
+                 "Preflight inputs changed during execution")
             need(self.dependency.name == "libsqlite3-sys-0.39.1", "Exact bundled dependency required")
             include = self.dependency / "sqlite3"
             amalgamation = include / "sqlite3.c"
             upstream = self.dependency / "build.rs"
             witness = ROOT / "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c"
-            sources = [amalgamation, include / "sqlite3.h", upstream, self.dependency / "Cargo.toml", witness,
-                       HERE / "provider.c", HERE / "provider_abi.json", Path(__file__).resolve()]
-            before = {str(p): identity(p) for p in sources}
             abi = json.loads((HERE / "provider_abi.json").read_text())
             need(abi.get("schema") == "trnm.hia.task-kernel.sqlite-provider-abi.v1" and
                  abi.get("build_fence") == FENCE and abi.get("target") == TARGET and
                  [row.get("op") for row in abi.get("operations", [])] == list(range(1, 30)),
                  "Provider ABI identity differs")
+            sources = [amalgamation, include / "sqlite3.h", upstream, self.dependency / "Cargo.toml", witness,
+                       HERE / ("provider.c" if self.original_oracle else "provider_native.hepta"),
+                       HERE / "provider_abi.json", Path(__file__).resolve(), *preflight_paths]
+            if not self.original_oracle:
+                sys.path.insert(0, str(ROOT))
+                from hia.platform.build import INPUTS as PINNED_INPUTS
+                sources += [HERE / "build_witness.py", HERE / "witness_emitter.hepta",
+                            HERE / "readback_provider.py",
+                            HERE / "qualification/provider_abi_probe.c", ROOT / "hia/tools/toolchain.py",
+                            *[ROOT / "hia" / name for name in PINNED_INPUTS]]
+            sources = list(dict.fromkeys(sources))
+            before = {str(p): identity(p) for p in sources}
+            need(all(before[path] == value for path, value in preflight_before.items()),
+                 "Preflight source changed before capture")
             need(before[str(amalgamation)] == {"bytes": 9582521, "sha256": AMALGAMATION}, "Amalgamation identity differs")
             need(before[str(upstream)] == {"bytes": 35413, "sha256": UPSTREAM_BUILD}, "Upstream build identity differs")
             need(before[str(include / "sqlite3.h")] == {"bytes": 695729, "sha256": HEADER}, "SQLite public C header differs")
@@ -182,15 +229,19 @@ class ProviderBuild:
             common = [str(compiler), "-std=c11", "-O0", "-fPIC", "-fno-common", "-fno-strict-aliasing",
                       "-ffunction-sections", "-fdata-sections",
                       "-I", str(include), *["-D" + item for item in FLAGS]]
-            for name, source, extra in [
-                ("sqlite", amalgamation, []),
-                ("witness", witness, ['-DTRNM_SQLITE_AMALGAMATION="' + str(amalgamation) + '"']),
-                ("provider", HERE / "provider.c", ["-Wall", "-Wextra", "-Werror"]),
-            ]:
+            translations = [("sqlite", amalgamation, [])]
+            if self.original_oracle:
+                translations += [
+                    ("witness", witness, ['-DTRNM_SQLITE_AMALGAMATION="' + str(amalgamation) + '"']),
+                    ("provider", HERE / "provider.c", ["-Wall", "-Wextra", "-Werror"])]
+            for name, source, extra in translations:
                 need(not any(c in str(amalgamation) for c in '\\"\n\r'), "Amalgamation include path cannot be quoted")
                 self.stage("compile-" + name, common + extra + ["-c", str(source), "-o", str(self.output / (name + ".o"))])
                 environment_fence(os.environ)
                 need({str(p): identity(p) for p in sources} == before, "Source changed during native compile")
+            native_artifacts = []
+            if not self.original_oracle:
+                native_artifacts = self.native_objects(compiler)
             library = self.output / "provider.so"
             self.stage("link", [str(compiler), "-shared", "-Wl,-z,defs,-z,relro,-z,now,-z,noexecstack,--build-id=none,--gc-sections",
                                 *[str(self.output / (name + ".o")) for name in ("sqlite", "witness", "provider")],
@@ -213,7 +264,7 @@ class ProviderBuild:
             while True:
                 a = lib.sqlite3_compileoption_get(i)
                 b = lib.trnm_io_witness_compileoption(i)
-                need(a == b, "Runtime compile options differ from independent C witness")
+                need(a == b, "Runtime compile options differ from independently observed HIA ABI witness")
                 if a is None:
                     break
                 options.append(a.decode())
@@ -237,9 +288,14 @@ class ProviderBuild:
             self.report["source_after"] = {str(p): identity(p) for p in sources}
             need(self.report["source_after"] == before, "Source changed before finalization")
             need(identity(compiler) == {k: v for k, v in self.report["compiler"].items() if k != "path"}, "Compiler changed")
-            self.report["artifacts"] = {name: identity(self.output / name) for name in ("sqlite.o", "witness.o", "provider.o", "provider.so", "observed-identity.json")}
+            self.report["artifacts"] = {name: identity(self.output / name) for name in
+                ("sqlite.o", "witness.o", "provider.o", "provider.so", "observed-identity.json", *native_artifacts)}
             self.report.update(finalized=True, status="PASS", target=TARGET,
                                claims={"independent_c_build_identity": True, "task_kernel_store_behavior": False,
+                                       "project_provider_runtime_hia": not self.original_oracle,
+                                       "project_witness_runtime_hia": not self.original_oracle,
+                                       "original_project_c_linked": self.original_oracle,
+                                       "third_party_sqlite_c_linked": True,
                                        "pure_hia_sqlite": False, "whole_chain_native": False})
             self.write()
             return library
@@ -248,15 +304,93 @@ class ProviderBuild:
             self.write()
             raise
 
+    def native_objects(self, compiler):
+        # Imports are local: WitnessBuild independently imports the exact shared
+        # dependency constraints above, without introducing a module cycle.
+        from hia.platform.task_kernel.build_witness import WitnessBuild
+        from hia.platform.build import Build
+        from hia.tools.toolchain import pinned_toolchain
+        probe = HERE / "qualification/provider_abi_probe.c"
+        self.stage("compile-provider-abi-probe", [compiler, "-std=c11", "-O0", "-Wall", "-Wextra", "-Werror",
+                   probe, "-o", self.output / "provider-abi-probe"], 60)
+        result = self.stage("observe-provider-abi", [self.output / "provider-abi-probe"], 30)
+        actual = json.loads(result.stdout)
+        need(actual == NATIVE_ABI, "Current libc/pthread native provider ABI differs")
+        write_json(self.output / "provider-abi.json", actual)
+        self.report["native_provider_abi"] = actual
+        witness_object = WitnessBuild(self.dependency, self.output / "native-witness").run()
+        shutil.copyfile(witness_object, self.output / "witness.o")
+        witness_report = json.loads((witness_object.parent / "build.json").read_text())
+        need(witness_report["status"] == "PASS" and witness_report["finalized"] and
+             witness_report["source_before"] == witness_report["source_after"], "Native witness source fence differs")
+        need(all(self.report["source_before"].get(path) == value
+                 for path, value in witness_report["source_before"].items()),
+             "Native witness has unfenced source inputs")
+        self.report["native_witness_build"] = str(witness_object.parent / "build.json")
+        pinned_toolchain()
+        from hepta.hia_agent_assembly import assemble_program
+        source = (HERE / "provider_native.hepta").read_bytes()
+        checked = assemble_program(source).as_dict()
+        compiled = b"hia-asm.v1 hepta.hia.program.v8 selfhost_elf\n" + source.split(b"\n", 1)[1]
+        assemble_program(compiled)
+        (self.output / "provider-emitter.hepta").write_bytes(compiled)
+        native = Build(self.output / "pinned-native")
+        object_bytes = native.stage(native.compiler, compiled, "compile-provider-emitter")
+        (self.output / "provider-emitter.o").write_bytes(object_bytes)
+        self.stage("link-provider-emitter", ["ld", "-shared", "-z", "defs", "-z", "noexecstack", "--build-id=none",
+                   self.output / "provider-emitter.o", "-o", self.output / "provider-emitter.so"], 60)
+        emitter = ctypes.CDLL(str(self.output / "provider-emitter.so"))
+        function = emitter.f0
+        function.argtypes = [ctypes.c_void_p, ctypes.c_uint64] * 3
+        function.restype = ctypes.c_uint32
+        request = b"TKPROV01"
+        (self.output / "provider-emitter-input.bin").write_bytes(request)
+        incoming = ctypes.create_string_buffer(request)
+        outgoing = ctypes.create_string_buffer(bytes([0xA5]) * 65536, 65536)
+        scratch = ctypes.create_string_buffer(1)
+        code = function(incoming, len(request), outgoing, len(outgoing), scratch, 0)
+        need(code == 0 and incoming.raw[:-1] == request, "Native provider emitter refused or changed input")
+        length = struct.unpack_from("<Q", outgoing.raw)[0]
+        need(0 < length <= len(outgoing) - 8 and
+             outgoing.raw[8 + length:] == bytes([0xA5]) * (len(outgoing) - length - 8),
+             "Native provider emitter wrote outside its declared output")
+        emitted = outgoing.raw[:8 + length]
+        (self.output / "provider-emitter-output.bin").write_bytes(emitted)
+        (self.output / "provider.o").write_bytes(emitted[8:])
+        symbols = self.stage("provider-native-exports", ["nm", "-g", "--defined-only", self.output / "provider.o"], 30)
+        imports = self.stage("provider-native-imports", ["nm", "-u", self.output / "provider.o"], 30)
+        exports = sorted(line.split()[-1] for line in symbols.stdout.decode().splitlines() if line.strip())
+        undefined = sorted(line.split()[-1] for line in imports.stdout.decode().splitlines() if line.strip())
+        need(exports == NATIVE_EXPORTS and undefined == NATIVE_IMPORTS,
+             "Native provider public ABI or foreign primitive roster differs")
+        self.report["native_provider"] = {
+            "compiler": {"path": str(native.compiler_path), **identity(native.compiler_path)},
+            "compiler_stages": native.stages, "emission_status": code,
+            "input": identity(self.output / "provider-emitter-input.bin"),
+            "output": identity(self.output / "provider-emitter-output.bin"),
+            "object": identity(self.output / "provider.o"), "exports": exports, "imports": undefined,
+            "functions": len(checked["functions"]),
+            "operations": sum(len(block["ops"]) for fn in checked["functions"] for block in fn["blocks"]),
+            "source_from_original_c_object": False,
+        }
+        native.check_pin()
+        environment_fence(os.environ)
+        return ["provider-abi-probe", "provider-abi.json", "provider-emitter.hepta", "provider-emitter.o",
+                "provider-emitter.so", "provider-emitter-input.bin", "provider-emitter-output.bin",
+                "native-witness/build.json", *["native-witness/" + name for name in witness_report["artifacts"]]]
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dependency", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--target", default=TARGET)
+    parser.add_argument("--original-oracle", action="store_true",
+                        help="Build the retained C comparison image; production consumers refuse its fence")
     args = parser.parse_args()
-    path = ProviderBuild(args.dependency, args.output, args.target).run()
-    print(json.dumps({"status": "PASS", "provider": str(path), "fence": FENCE}))
+    builder = ProviderBuild(args.dependency, args.output, args.target, original_oracle=args.original_oracle)
+    path = builder.run()
+    print(json.dumps({"status": "PASS", "provider": str(path), "fence": builder.report["fence"]}))
 
 
 if __name__ == "__main__":

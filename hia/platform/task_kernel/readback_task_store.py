@@ -238,7 +238,15 @@ class Readback:
                     "--build-id=none", str(directory / (emitter + "-emitter.o")), "-lc", "-o", str(directory / (emitter + "-emitter.so"))],
                     "Actual HIA emitter link differs")
         provider = self.passed(Path(build["provider_build"]))
-        require(provider["fence"] == "trnm-hia-task-kernel-sqlite-3.54.1-native-x86_64-v1", "Provider fence differs")
+        provider_reader = self.repo / "hia/platform/task_kernel/readback_provider.py"
+        require(str(provider_reader) in build["source_before"], "Native provider reader is not source-fenced")
+        self.read(provider_reader, build["source_before"][str(provider_reader)])
+        sys.path.insert(0, str(self.repo))
+        from hia.platform.task_kernel import readback_provider
+        require(Path(readback_provider.__file__).resolve() == provider_reader, "Foreign provider reader module")
+        checked_provider = readback_provider.check_provider(self.read, Path(build["provider_build"]).parent, self.repo)
+        require(build.get("provider_native_readback") == checked_provider, "Native provider source/code/link binding differs")
+        self.report["checks"]["native_provider"] = checked_provider
         self.read(directory / "provider.so", provider["artifacts"]["provider.so"])
         abi = self.json(self.repo / "hia/platform/task_kernel/provider_abi.json")
         require([row["op"] for row in abi["operations"]] == list(range(1, 30)), "Shared provider operation roster differs")

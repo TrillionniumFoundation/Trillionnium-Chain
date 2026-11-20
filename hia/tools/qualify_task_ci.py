@@ -30,6 +30,25 @@ PROVIDER_NEGATIVES = (
     "unsupported-target", "environment-override", "missing-dependency", "existing-output",
     "modified-header", "modified-abi", "real-timeout", "missing-executable",
 )
+PROVIDER_READER_NEGATIVES = (
+    'oracle-fence', 'runtime-c-claim', 'production-artifact-omission',
+    'provider-source-omission', 'provider-abi-source-omission', 'witness-source-omission',
+    'probe-source-omission', 'reader-source-substitution', 'foreign-source-extra',
+    'original-c-as-production-image', 'linked-call-retargeting',
+    'provider-instruction-rehashed', 'provider-export-rehashed', 'provider-import-rehashed',
+    'production-link-probe', 'compiler-input-rehashed', 'compiler-output-foreign-abi',
+    'witness-source-closure-omission', 'witness-artifact-omission',
+    'witness-layout-rehashed', 'witness-option-string-rehashed', 'witness-pointer-table-rehashed',
+    'witness-code-count-rehashed', 'witness-function-instruction-rehashed',
+    'witness-input-layout-rehashed', 'abi-probe-rehashed',
+    'original-provider-source-omission', 'original-provider-object-substitution',
+    'original-compile-graph', 'qualification-source-omission', 'qualification-stage-argv',
+    'fault-ordinal-omission', 'fault-ordinal-duplicate', 'failure-not-hit', 'failure-leak',
+    'masked-column-nomem', 'actual-return-normalized-away', 'missing-observation',
+    'observed-image-substitution', 'caller-pair-claim', 'fd-case-omission',
+    'actual-eintr-not-observed', 'foreign-reader-identical-copy',
+    'symlinked-provider-directory', 'symlinked-qualification-directory', 'symlinked-artifact',
+)
 READER_NEGATIVES = (
     "original-retained-tests-executable", "original-retained-tests-manifest", "original-retained-tests-package",
     "original-clippy-executable", "original-clippy-manifest", "original-clippy-package",
@@ -304,7 +323,12 @@ class Qualification:
                                             "failure": repr(error)})
 
     def capture_all(self):
-        reports = [(self.output / "provider/build.json", "provider-build")]
+        reports = [(self.output / "provider/build.json", "provider-build"),
+                   (self.output / "provider/native-witness/build.json", "provider-build"),
+                   (self.output / "provider-native-qualification/report.json", "provider-native-original"),
+                   (self.output / "provider-native-qualification/original/build.json", "provider-native-original"),
+                   (self.output / "provider-readback/report.json", "provider-independent-readback"),
+                   (self.output / "provider-reader-controls/report.json", "provider-reader-negative-controls")]
         if self.component == "task-store":
             reports += [(self.output / "store/report.json", "store-complete"),
                         (self.output / "readback/report.json", "store-independent-readback"),
@@ -497,6 +521,35 @@ class Qualification:
             self.stage("provider-build", [sys.executable, TASK / "build_provider.py", "--dependency", dependency,
                        "--output", self.output / "provider"], 1200)
             self.passed(self.output / "provider/build.json")
+            self.stage("provider-native-original", [sys.executable, TASK / "qualify_provider_native.py",
+                       "--provider", self.output / "provider", "--output", self.output / "provider-native-qualification"], 600)
+            provider_gate = self.passed(self.output / "provider-native-qualification/report.json")
+            require(provider_gate["actual_original_native_pairs"] == 1182 and
+                    provider_gate["actual_allocation_failure_pairs"] == 143 and
+                    provider_gate["actual_constructor_failure_pairs"] == provider_gate["actual_close_error_pairs"] == 2 and
+                    provider_gate["concurrent_provider_calls"] == 256 and
+                    provider_gate["operation_coverage"] == list(range(1, 30)),
+                    "Complete native provider differential/resource gate differs")
+            self.stage("provider-independent-readback", [sys.executable, TASK / "readback_provider.py",
+                       "--provider", self.output / "provider", "--qualification", self.output / "provider-native-qualification",
+                       "--repo", ROOT, "--output", self.output / "provider-readback"], 120)
+            provider_reader = self.passed(self.output / "provider-readback/report.json")
+            self.stage("provider-reader-negative-controls", [sys.executable, Q / "provider_readback_controls.py",
+                       "--provider", self.output / "provider", "--qualification", self.output / "provider-native-qualification",
+                       "--output", self.output / "provider-reader-controls"], 120)
+            provider_controls = self.passed(self.output / "provider-reader-controls/report.json")
+            require(provider_controls["negative_controls"] == len(PROVIDER_READER_NEGATIVES) == 46 and
+                    tuple(row["name"] for row in provider_controls["cases"]) == PROVIDER_READER_NEGATIVES and
+                    all(row["status"] == "PASS" for row in provider_controls["cases"]) and
+                    provider_controls["positive_source_unchanged"] and
+                    provider_controls["source_before"] == provider_controls["source_after"] and
+                    provider_controls["reader"] == file_identity(TASK / "readback_provider.py") and
+                    provider_controls["harness"] == file_identity(Q / "provider_readback_controls.py"),
+                    "Canonical provider reader did not reject the complete semantic/path mutation roster")
+            self.report["native_provider"] = {"qualification": provider_gate["schema"],
+                "original_native_pairs": 1182, "allocation_failure_pairs": 143,
+                "reader_refusal_controls": 46, "readback": provider_reader["build"],
+                "project_c_in_production_link": False}
             if self.component == "task-store":
                 self.store()
             else:

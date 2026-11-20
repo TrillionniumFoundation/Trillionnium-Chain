@@ -74,6 +74,20 @@ class SourceBuild:
              "Boundary source or provider object changed")
         self.pinned.check_pin()
 
+    def verify_provider(self, directory):
+        """Bind every actual native provider/witness compiler stream and link."""
+        from hia.platform.task_kernel.readback_provider import check_provider
+        self.capture(HERE / "readback_provider.py")
+        def read(path, expected=None):
+            path = Path(path).absolute()
+            self.capture(path)
+            need(expected is None or identity(path) == {key: expected[key] for key in ("bytes", "sha256")},
+                 "Provider readback content differs")
+            raw = path.read_bytes()
+            need(identity(path) == self.sources[str(path)], "Provider readback input changed")
+            return raw
+        self.report["provider_native_readback"] = check_provider(read, directory, ROOT)
+
     def stage(self, name, argv, timeout=60):
         row = {"name": name, "argv": list(map(str, argv)), "cwd": str(ROOT),
                "started": True, "completed": False, "timeout_seconds": timeout}
@@ -149,7 +163,8 @@ class BoundaryBuild(SourceBuild):
             for relative in PINNED_INPUTS:
                 self.capture(ROOT / "hia" / relative)
             for p in [Path(__file__), HERE / "provider_abi.json", HERE / "build_provider.py",
-                      HERE / "provider.c", ROOT / "hia/tools/toolchain.py",
+                      HERE / "provider_native.hepta", HERE / "build_witness.py", HERE / "witness_emitter.hepta",
+                      HERE / "readback_provider.py", ROOT / "hia/tools/toolchain.py",
                       ROOT / "scripts/project-preflight.sh", ROOT / "scripts/ci/project_boundary.py"]:
                 self.capture(p)
             for p in sorted(QUALIFICATION.iterdir()):
@@ -168,6 +183,7 @@ class BoundaryBuild(SourceBuild):
             for name, expected in build["artifacts"].items():
                 self.capture(self.provider / name)
                 need(identity(self.provider / name) == expected, "Provider artifact changed")
+            self.verify_provider(self.provider)
             self.capture(Path(build["compiler"]["path"]))
             self.capture(self.pinned.compiler_path)
             (self.output / "native-compiler").write_bytes(self.pinned.compiler)

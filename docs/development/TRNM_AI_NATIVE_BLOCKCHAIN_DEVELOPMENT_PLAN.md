@@ -1,3 +1,23 @@
+## 2026-11-20 — HIA Task provider、ExternalKey、Bench 与正式资格续接
+
+本轮从已发布 `25d0e733c54fc1186dac791ef88aacb79347691b` 继续，当前 **66 kernels /30 native foundations /299 HIA sources**，26原包为22部分迁移、4未迁移、0退役，九项整项目门仍OPEN。原Cargo图、Cargo.lock和测试保留；根README保持0字节。本计划仍为唯一开发计划，不将组件数量当作完成百分比。
+
+项目自有Task provider的6个生命周期入口和全部29操作由 `provider_native.hepta` 实际生成机器码，15464字节provider.o为 `07022f3e9db25cec3667f4349b41200d476fbf7ebc5aca320e8ee6d9559516b6`。另一个HIA emitter按每次真实C ABI探针结果生成runtime witness；生产链接为外部SQLite对象、native provider/witness对象及系统库，不含原项目C provider/witness实现。原 `provider.c` 只作显式独立fence的原版oracle，SQLite仍为外部C依赖，不宣称pure-HIA SQLite或全仓闭合。
+
+冻结provider图通过1182对原/native调用、143对真实分配失败、256并发调用、123 witness控制、12 emitter控制、8构建拒绝；独立reader逐1161实际文件核全部编译阶段、源/产物闭包、机器指令和PLT调用、真实ABI及原C provenance；46语义负控全部拒绝，包括重算外层hash的伪造。两个正式消费者完整PASS：Task Store432.236秒、Boundary61.936秒，150源前后完全一致。Store保留原41测试/strictClippy/fmt、1390 records、445 public、112 allocator控制及96实际失败，最终live/bytes/bad_free为0；缓存124对照/257调用/9交错及原37 reader负控全部实际通过。这些属于冻结开发图，最终整合clean提交必须重跑自己的全门及hosted CI。
+
+Research新增ExternalKey：6方法通过5463次原公开crate/native对照、732独立hash和24 ABI控制，保留namespace、严格小写UUID、visible ASCII、raw32、hex/Display与canonical CBOR的原语义及错误优先级。与既有canonical/hash和共享crypto整合后17方法73.962秒全PASS。commands、其余types、state、contribution accounting、Hepta handoff及通用Serde仍开放。
+
+Bench新增唯一workload/digests/repeat实现：8方法通过1566次native调用、307原工作量对照、64次真实原CLI执行、1148次HIA内部重复调度、8比较器及8大规模unaligned控制，原11测试/strictClippy/fmt通过。repeat=1000在HIA内部执行并比较完整ordered membership与SHA；3项原调度high-water错误保持明确语义修复与独立无冲突检查。正式构建改用标准实际编译收据，真实qualification原始三个闭包回归记录13次build、1558 shared调用及另外8 raw ABI调用；不能把这个有限回归当作general全分区执行。完整CLI/env解析、ln/profile、格式化和持久化继续实现。
+
+共享Ed25519 field与SHA-256采用满足原语义的窄字路径，保留原wide fallback、alias、真实trap前部分写入。159 field与200 SHA/alias案例对应318/400次原版/新版native调用通过；PeerLease最大受影响单元8184操作，原8192限制不变。Node29实际编译/emitter阶段、28镜像及独立进程readback通过，更新必要组合身份，完整Node ELF为 `89f0c914b0a654bd714c55a6e6a97b92734992638594603e2fd0357ac47623c3`。这些不代替Node事务全语义门。
+
+优化后Settlement完整native阶段在原240秒内233.636秒完成320 fixtures、2636 operations、16066 calls，最终live owner为0。该记录只闭合本次native阶段；完整原验收、162 allocator、68完整性控制、独立reader和hosted仍须实际运行，原失败不改标。
+
+已发布25d0e73的 [HIA push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44727120287) 中Metadata全门真实PASS481.005秒：原121外层测试/2 child重执行、12分组、45完整性控制、2827 allocator ABI/840真实失败及独立reader，49069个归档regular成员全部独立重hash。原观察器问题已在该hosted源闭合，但Body/wholePeer/原4秒service资格仍false。同一25源Task在原180秒allocator只完成93/112控制，Settlement在240.083秒完成233 fixtures后超时；其完整官方归档和原失败均保留，不用后来本地成功抵消。
+
+当前发现667方法，互斥506 general /95 crypto-types /7 State-root /22 Oracle /37 ML-DSA。新增22方法全部进入原自动发现；67作业、55 bootstrap与49准入块、20分钟job、240/180秒native及唯一3秒清理不变。整合后重跑完整Task/Settlement、原组件/全部hosted验收，继续完整Bench与StateImport，同时推进Archive、Body/recovery/ACK、剩余crypto/TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK、同请求Paid/Host、跨目标及模型/研究经济义务。只有全量替代、原验收和外部依赖最终处置都闭合，才移除旧整套和清理最终仓库。
+
 ## 2026-11-20 — Research CBOR 原生实现、Task 验签缓存与 Metadata 真实线程资源
 
 本轮以 `62b4108946dead0688327c61aaa2afcb76bd0413` 为精确起点，核对其41494个tracked路径、26个原包和291个HIA源的唯一归属；新增两个Research Protocol内核后为 **62 kernels /30 native foundations /293 HIA sources**，26原包为21部分迁移、5未迁移、0退役，九项整项目门仍OPEN。所有现有包、原Cargo图、Cargo.lock和原测试保持；本计划和既有迁移清单继续作为唯一执行来源。

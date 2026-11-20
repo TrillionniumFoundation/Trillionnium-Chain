@@ -48,7 +48,8 @@ class StoreAuditBuild(SourceBuild):
             from hepta.hia_agent_assembly import assemble_program
             self.assemble=assemble_program
             for path in PINNED_INPUTS:self.capture(ROOT/'hia'/path)
-            for path in [Path(__file__),HERE/self.builder_name,HERE/'build_boundary.py',HERE/'build_provider.py',HERE/'provider_abi.json',HERE/'provider.c',
+            for path in [Path(__file__),HERE/self.builder_name,HERE/'build_boundary.py',HERE/'build_provider.py',HERE/'provider_abi.json',HERE/'provider_native.hepta',
+                         HERE/'build_witness.py',HERE/'witness_emitter.hepta',HERE/'readback_provider.py',
                          HERE/'qualification/borsh_fixture.py',HERE/'qualification/type_layout.json',HERE/('qualification/'+self.qualification_prefix+'_hook.rs'),
                          HERE/('qualification/'+self.qualification_prefix+'_original.rs'),HERE/('qualification/'+self.qualification_prefix+'_observer.py'),
                          HERE/'qualification/emit_observer.py',ROOT/'scripts/project-preflight.sh',
@@ -66,6 +67,7 @@ class StoreAuditBuild(SourceBuild):
                 self.capture(Path(p));need(identity(p)==expected,'Provider source changed')
             for name,expected in provider['artifacts'].items():
                 self.capture(self.provider/name);need(identity(self.provider/name)==expected,'Provider artifact changed')
+            self.verify_provider(self.provider)
             self.capture(Path(provider['compiler']['path']));self.capture(self.pinned.compiler_path)
             self.report['function_sources']={}
             images=[('root',self.root_source or HERE/('qualification/'+self.qualification_prefix+'_fixture.hepta'),0),
