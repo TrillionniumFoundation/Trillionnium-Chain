@@ -546,7 +546,7 @@ def control_roster():
     classes = [node for node in parsed.body if isinstance(node, ast.ClassDef) and node.name == "QualificationControls"]
     need(len(classes) == 1, "Qualification control class missing")
     names = sorted(node.name for node in classes[0].body if isinstance(node, ast.FunctionDef) and node.name.startswith("test_"))
-    need(len(names) == len(set(names)) and len(names) == 41, "Complete integrity control roster changed")
+    need(len(names) == len(set(names)) and len(names) == 45, "Complete integrity control roster changed")
     return names
 
 

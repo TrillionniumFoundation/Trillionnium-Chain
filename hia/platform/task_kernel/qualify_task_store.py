@@ -265,6 +265,14 @@ class Qualification:
                     if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc":
                         self.capture(path)
             self.original_build()
+            cache = self.output / "signature-cache"
+            self.stage("signature-cache-regression", [sys.executable, Q / "store_signature_cache_observer.py",
+                       "--output", cache], 180)
+            cache_result = json.loads((cache / "report.json").read_text())
+            if (cache_result["status"] != "PASS" or not cache_result["finalized"] or
+                    cache_result["cases"] != 115 or cache_result["native_calls"] != 230 or
+                    cache_result["source_before"] != cache_result["source_after"]):
+                raise ValueError("Private signature cache differential did not pass")
             policy = self.adapter("kernel-policy")
             auditor = self.adapter("store-audit")
             records = self.adapter("store-records")
@@ -305,6 +313,7 @@ class Qualification:
             self.stage("original-format", [self.rust_bin / "cargo", "fmt", "--manifest-path", ROOT / "trillionnium/Cargo.toml",
                        "-p", "trnm-task-kernel", "--", "--check"], 120)
             self.report["qualifications"] = {str(p.relative_to(self.output)): identity(p) for p in (
+                cache / "report.json",
                 private_build / "build.json", private / "report.json", public_build / "build.json", observed / "report.json",
                 allocations / "build.json", allocations / "run.json", allocations / "qualification/report.json")}
             self.report["source_after"] = self.fence()

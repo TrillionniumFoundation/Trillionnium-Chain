@@ -195,6 +195,23 @@ class QualificationControls(unittest.TestCase):
         path, value = self.group("allocations"); value["parallel_threads"] = 7
         self.reject(lambda: observed.allocations(path, value, {}), "Allocation/lifetime coverage", inputs=value)
 
+    def test_observer_memory_limits_cannot_be_omitted(self):
+        path, value = self.group("allocations"); del value["observer_memory_limits"]
+        self.reject(lambda: observed.allocations(path, value, {}), "Observer memory/allocator bounds", inputs=value)
+
+    def test_observer_address_space_limit_cannot_grow(self):
+        path, value = self.group("allocations")
+        value["observer_memory_limits"]["address_space_bytes"] = [1024 << 20, 1024 << 20]
+        self.reject(lambda: observed.allocations(path, value, {}), "Observer memory/allocator bounds", inputs=value)
+
+    def test_observer_allocator_arena_bound_is_required(self):
+        path, value = self.group("allocations"); value["observer_memory_limits"]["allocator_arenas"] = 8
+        self.reject(lambda: observed.allocations(path, value, {}), "Observer memory/allocator bounds", inputs=value)
+
+    def test_observer_thread_stack_bound_cannot_grow(self):
+        path, value = self.group("allocations"); value["parallel_thread_stack_bytes"] = 8 << 20
+        self.reject(lambda: observed.allocations(path, value, {}), "Observer memory/allocator bounds", inputs=value)
+
     def test_public_history_names_cannot_be_substituted(self):
         path, value = self.group("public"); value["cases"][0]["name"] = "unexecuted-history"
         self.reject(lambda: observed.public_histories(path, value, "public", self.output / "original/public-reference.elf", self.native),

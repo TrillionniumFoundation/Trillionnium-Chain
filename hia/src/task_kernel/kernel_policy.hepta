@@ -770,7 +770,19 @@ block b12(v170:readbuf,v173:mutbuf)
   v184:u64 = const() {"value":0}
   ret(v184)
 end
-fn kp_envelope_prepare(v0:readbuf,v1:u64,v2:u64,v3:u64,v4:mutbuf) -> (u64) effects(read,write,trap) entry(b0)
+fn kp_envelope_prepare(input:readbuf,start:u64,length:u64,height:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(prepare)
+block prepare(input:readbuf,start:u64,length:u64,height:u64,work:mutbuf)
+  checked:u64 = call(input,start,length,height,work) {"function":"kp_envelope_validate"}
+  ready:u64 = const() {"value":2}
+  ok:bool = compare.eq(checked,ready)
+  branch ok signature(input,start,length,work) failed(checked)
+block signature(input_s:readbuf,start_s:u64,length_s:u64,work_s:mutbuf)
+  result:u64 = call(input_s,start_s,length_s,work_s) {"function":"kp_signature_prepare"}
+  ret(result)
+block failed(error:u64)
+  ret(error)
+end
+fn kp_envelope_validate(v0:readbuf,v1:u64,v2:u64,v3:u64,v4:mutbuf) -> (u64) effects(read,write,trap) entry(b0)
 block b0(v0:readbuf,v1:u64,v2:u64,v3:u64,v4:mutbuf)
   v5:u64 = const() {"value":43000}
   v6:u64 = call(v4,v5) {"function":"cp_get"}
@@ -879,10 +891,23 @@ block b15(v194:readbuf,v198:mutbuf)
   v213:u64 = const() {"value":1}
   ret(v213)
 block b16(v202:readbuf,v203:u64,v204:u64,v206:mutbuf)
-  v214:u64 = call(v202,v203,v204,v206) {"function":"kp_signature_prepare"}
-  ret(v214)
+  envelope_ready:u64 = const() {"value":2}
+  ret(envelope_ready)
 end
-fn kp_signature_prepare(v0:readbuf,v1:u64,v2:u64,v3:mutbuf) -> (u64) effects(read,write,trap) entry(b0)
+fn kp_signature_prepare(input:readbuf,start:u64,length:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(prepare)
+block prepare(input:readbuf,start:u64,length:u64,work:mutbuf)
+  prepared:u64 = call(input,start,length,work) {"function":"kp_signature_prepare_key"}
+  ready:u64 = const() {"value":2}
+  ok:bool = compare.eq(prepared,ready)
+  branch ok decode(input,work) failed(prepared)
+block decode(input_d:readbuf,work_d:mutbuf)
+  valid:u64 = call(work_d) {"function":"kp_public_key"}
+  result:u64 = call(input_d,work_d,valid) {"function":"kp_signature_prepare_finish"}
+  ret(result)
+block failed(error:u64)
+  ret(error)
+end
+fn kp_signature_prepare_key(v0:readbuf,v1:u64,v2:u64,v3:mutbuf) -> (u64) effects(read,write,trap) entry(b0)
 block b0(v0:readbuf,v1:u64,v2:u64,v3:mutbuf)
   v4:u64 = const() {"value":43040}
   v5:u64 = call(v3,v4) {"function":"cp_get"}
@@ -954,10 +979,14 @@ block b9(v106:readbuf,v109:mutbuf,v112:u64)
   v117:u64 = const() {"value":140160}
   v118:u64 = call(v106,v116,v109,v117,v115) {"function":"cp_copy"}
   v119:u32 = call(v109) {"function":"ed_init"}
-  v120:u64 = call(v109) {"function":"kp_public_key"}
-  v121:u64 = const() {"value":0}
-  v122:bool = compare.eq(v120,v121)
-  branch v122 b10(v106,v109) b11(v106,v109)
+  key_ready:u64 = const() {"value":2}
+  ret(key_ready)
+end
+fn kp_signature_prepare_finish(input:readbuf,work:mutbuf,key_valid:u64) -> (u64) effects(read,write,trap) entry(key_entry)
+block key_entry(input:readbuf,work:mutbuf,key_valid:u64)
+  key_zero:u64 = const() {"value":0}
+  key_failed:bool = compare.eq(key_valid,key_zero)
+  branch key_failed b10(input,work) b11(input,work)
 block b10(v123:readbuf,v126:mutbuf)
   v139:u64 = const() {"value":5}
   v140:u64 = const() {"value":2013}

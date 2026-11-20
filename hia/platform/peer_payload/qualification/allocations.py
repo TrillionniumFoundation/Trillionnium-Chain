@@ -20,6 +20,48 @@ resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 resource.setrlimit(resource.RLIMIT_AS, (512 << 20, 512 << 20))
 resource.setrlimit(resource.RLIMIT_CPU, (240, 240))
 
+# glibc can reserve a separate heap arena as each observer worker starts.
+# Bound those reservations before creating workers, within the original
+# address-space limit. This changes only this disposable observer process;
+# the production/observed objects and every allocation failure remain exact.
+allocator = ctypes.CDLL(None)
+mallopt = allocator.mallopt
+mallopt.argtypes = [ctypes.c_int, ctypes.c_int]
+mallopt.restype = ctypes.c_int
+observer_allocator_arenas = 2
+if mallopt(-8, observer_allocator_arenas) != 1:  # glibc M_ARENA_MAX
+    raise RuntimeError('The observer allocator arena bound was refused')
+observer_memory_limits = {
+    'address_space_bytes': list(resource.getrlimit(resource.RLIMIT_AS)),
+    'cpu_seconds': list(resource.getrlimit(resource.RLIMIT_CPU)),
+    'allocator_arenas': observer_allocator_arenas,
+}
+
+allocator.pthread_self.argtypes = []
+allocator.pthread_self.restype = ctypes.c_ulong
+allocator.pthread_getattr_np.argtypes = [ctypes.c_ulong, ctypes.c_void_p]
+allocator.pthread_getattr_np.restype = ctypes.c_int
+allocator.pthread_attr_getstacksize.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
+allocator.pthread_attr_getstacksize.restype = ctypes.c_int
+allocator.pthread_attr_destroy.argtypes = [ctypes.c_void_p]
+allocator.pthread_attr_destroy.restype = ctypes.c_int
+
+
+def actual_thread_stack_bytes():
+    # The pinned Linux/glibc x86-64 target has a 56-byte pthread_attr_t with
+    # unsigned-long alignment. Reserve extra aligned storage for this query.
+    attributes = (ctypes.c_ulong * 16)()
+    if allocator.pthread_getattr_np(allocator.pthread_self(), attributes) != 0:
+        raise RuntimeError('Cannot observe the actual worker stack')
+    try:
+        size = ctypes.c_size_t()
+        if allocator.pthread_attr_getstacksize(attributes, ctypes.byref(size)) != 0:
+            raise RuntimeError('Cannot read the actual worker stack size')
+        return size.value
+    finally:
+        if allocator.pthread_attr_destroy(attributes) != 0:
+            raise RuntimeError('Cannot release the worker stack attributes')
+
 def identity(path):
     raw = Path(path).read_bytes()
     return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
@@ -164,6 +206,8 @@ try:
 
     def thread(number):
         results = []
+        stack_bytes = actual_thread_stack_bytes()
+        assert stack_bytes == parallel_thread_stack_bytes
         barrier.wait(timeout=10)
         for index in range(32):
             case = selected[(index + number) % len(selected)]
@@ -172,13 +216,14 @@ try:
             expected = baseline[case['name']]
             assert (result['return'], result['output_hex']) == (expected['return'], expected['output_hex'])
             results.append({'name': case['name'], **result})
-        return {'thread': number, 'calls': results}
+        return {'thread': number, 'stack_bytes': stack_bytes, 'calls': results}
 
     # Bound observer worker stacks independently of the platform default.
-    previous_thread_stack_bytes = threading.stack_size(1 << 20)
+    parallel_thread_stack_bytes = 1 << 20
+    previous_thread_stack_bytes = threading.stack_size(parallel_thread_stack_bytes)
     try:
-        parallel_thread_stack_bytes = threading.stack_size()
-        assert parallel_thread_stack_bytes == 1 << 20
+        # An omitted size resets the default to zero. Observe each live
+        # pthread instead of calling stack_size() without its size argument.
         with ThreadPoolExecutor(max_workers=8) as executor:
             parallel = list(executor.map(thread, range(8)))
     finally:
@@ -194,6 +239,7 @@ try:
               'zero_allocation_refusals': no_allocations, 'sequential_native_calls': sequential_calls,
               'parallel_threads': 8, 'parallel_native_calls': 256, 'allocation_counters': final,
               'parallel_thread_stack_bytes': parallel_thread_stack_bytes,
+              'observer_memory_limits': observer_memory_limits,
               'production_object_unchanged': True, 'test_observer_supplies_business_logic': False,
               'whole_payload_owner_qualified': False, 'original_service_budget_qualified': False,
               'original_tests_rerun_by_this_control': False}

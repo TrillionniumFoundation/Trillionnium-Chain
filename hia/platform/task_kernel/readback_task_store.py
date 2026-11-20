@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -264,7 +265,7 @@ class Readback:
     def original(self, final, roster):
         names = self.normal_stages(self.evidence, final["stages"], nested=True)
         expected = ["preflight", "version-rustc", "version-cargo", "version-clippy-driver", "version-rustfmt", "source-commit",
-                    "original-git-tree", "original-retained-tests", "compile-original-kernel-policy", "compile-original-store-audit",
+                    "original-git-tree", "original-retained-tests", "signature-cache-regression", "compile-original-kernel-policy", "compile-original-store-audit",
                     "compile-original-store-records", "compile-original-store-public", "records-native-build", "records-native-original",
                     "public-native-build", "public-native-original", "public-allocation-lifecycle", "original-clippy", "original-format"]
         require(names == expected, "Complete qualification stage roster differs")
@@ -297,6 +298,8 @@ class Readback:
             "source-commit": (["git", "rev-parse", "HEAD"], 60),
             "original-git-tree": (["git", "ls-tree", "-r", "-z", "HEAD", "--", *original_paths], 60),
             "original-retained-tests": ([str(rust_bin / "cargo"), "test", *common, "--message-format=json"], 600),
+            "signature-cache-regression": ([python, str(here / "qualification/store_signature_cache_observer.py"),
+                "--output", str(self.evidence / "signature-cache")], 180),
             "records-native-build": ([python, str(here / "build_store_records.py"), "--provider",
                 stages["records-native-build"]["argv"][3], "--output", str(self.evidence / "records-native")], 180),
             "records-native-original": ([python, str(here / "qualification/store_records_observer.py"), str(self.evidence / "records-native"),
@@ -555,6 +558,111 @@ class Readback:
         self.report["checks"]["allocator"] = {"exact_controls": 112, "actual_failure_ordinals": 96,
                                                "all_hia_objects_identical_to_public_build": True, "final_allocator": final}
 
+    def signature_cache(self):
+        directory = self.evidence / "signature-cache"
+        report = self.passed(directory / "report.json")
+        require(report["schema"] == "trnm.hia.task-store.signature-cache-qualification.v1" and
+                report["cases"] == 115 and report["native_calls"] == 230 and len(report["controls"]) == 115,
+                "Private cache regression roster differs")
+        ranges = {"private_work_bytes": 262144, "public_key_cache_slots": 4, "comb_cache_slots": 3,
+                  "point_cache_range": [147456, 149664], "point_cursor_range": [149664, 149672],
+                  "comb_metadata_range": [149696, 149816], "comb_cursor_range": [149816, 149824],
+                  "comb_tables_range": [163840, 262144]}
+        require(all(report.get(key) == value for key, value in ranges.items()), "Private cache arena layout differs")
+        for path, expected in report["source_before"].items():
+            source = Path(path)
+            relative = (source.relative_to(self.repo) if source.is_relative_to(self.repo) else
+                        Path("external") / hashlib.sha256(path.encode()).hexdigest() / source.name)
+            self.read(directory / "compose/source-snapshots" / relative, expected)
+        for filename, expected in report["artifacts"].items():
+            self.read(directory / filename, expected)
+        observer = self.repo / "hia/platform/task_kernel/qualification/store_signature_cache_observer.py"
+        declarations = ast.parse(self.read(observer))
+        harness = [node.value.value for node in declarations.body if isinstance(node, ast.Assign) and
+                   any(isinstance(target, ast.Name) and target.id == "HARNESS" for target in node.targets) and
+                   isinstance(node.value, ast.Constant)]
+        require(len(harness) == 1 and self.read(directory / "cache-harness.hepta") == harness[0].encode(),
+                "Cache harness differs from canonical observer")
+        compiled = self.read(directory / "composed.hepta")
+        functions = self.parse_functions(compiled)
+        require(set(functions) == set(report["function_sources"]), "Cache regression function closure differs")
+        for name, declaration in report["function_sources"].items():
+            source = declaration["source"]
+            require(source in report["source_before"], "Cache function owner is not fenced")
+            body = self.parse_functions(self.read(source, report["source_before"][source]))[name]
+            require(functions[name] == body.rstrip() + b"\n" and
+                    hashlib.sha256(body).hexdigest() == declaration["sha256"], "Cache native function source differs")
+        receipts = report["native_compiler_stages"]
+        require(len(receipts) == 1, "Cache native compiler roster differs")
+        receipt = receipts[0]
+        require(receipt["stage"] == "cache-harness" and receipt["exit_code"] == 0 and not receipt["timed_out"] and
+                receipt["stderr_hex"] == "" and receipt["wall_limit_seconds"] == 30 and
+                receipt["cleanup_limit_seconds"] == 3 and receipt["executable_sha256"] == COMPILER,
+                "Cache native compiler receipt differs")
+        require(self.json(directory / "compiler/cache-harness/receipt.json") == receipt and
+                self.read(directory / "compiler/cache-harness/stdin.raw") == compiled and
+                self.read(directory / "compiler/cache-harness/stdout.raw") == self.read(directory / "cache-harness.o"),
+                "Cache compiler input or output differs")
+        require(self.normal_stages(directory / "compose", report["link_stages"]) == ["link-cache-harness"],
+                "Cache link roster differs")
+        link = report["link_stages"][0]
+        require(link["argv"] == ["ld", "-shared", "-z", "defs", "-z", "noexecstack", "--build-id=none",
+                str(directory / "cache-harness.o"), "-lc", "-o", str(directory / "cache-harness.so")] and
+                link["timeout_seconds"] == 60 and link["cwd"] == str(self.repo), "Cache native link differs")
+        expected = (["public-key"] * 15 + [name for _ in range(7) for name in ("boundary-key", "boundary-key-repeat")] +
+                    ["changed-key-byte"] * 32 + [name for _ in range(15) for name in ("valid", "changed-s", "changed-h")] +
+                    ["prepared-valid", "prepared-message-changed", "prepared-r-changed", "prepared-s-changed",
+                     "prepared-s-order", "prepared-s-malleable", "prepared-r-weak", "prepared-key-weak", "prepared-valid-recovery"])
+        require([row["name"] for row in report["controls"]] == expected, "Cache control sequence differs")
+        vectors = self.json(self.repo / "hia/platform/task_kernel/qualification/store_signature_cache_vectors.json")["vectors"]
+        keys = {row["key"]: bytes.fromhex(row["public_key"]) for row in vectors}
+        inputs = []
+        for index, vector in enumerate(vectors):
+            inputs.append((index, 3, 2, keys[vector["key"]] + bytes(96)))
+        boundary = [bytes(32), (1).to_bytes(32, "little"), (2).to_bytes(32, "little"),
+                    (2**255 - 19).to_bytes(32, "little"), (2**255 - 18).to_bytes(32, "little"),
+                    ((1 << 255) + 1).to_bytes(32, "little"), bytes([255]) * 32]
+        for index, key in enumerate(boundary):
+            inputs.extend([(index, 3, 2, key + bytes(96))] * 2)
+        for index in range(32):
+            key = bytearray(keys[0]); key[index] ^= 1
+            inputs.append((index, 3, 2, bytes(key) + bytes(96)))
+        modulus = 2**252 + 27742317777372353535851937790883648493
+        for index, vector in enumerate(vectors):
+            key, sig, message = (bytes.fromhex(vector[field]) for field in ("public_key", "signature", "message"))
+            challenge = (int.from_bytes(hashlib.sha512(sig[:32] + key + message).digest(), "little") % modulus).to_bytes(32, "little")
+            for scalar, h in ((sig[32:], challenge), ((int.from_bytes(sig[32:], "little") ^ 1).to_bytes(32, "little"), challenge),
+                              (sig[32:], (int.from_bytes(challenge, "little") ^ 1).to_bytes(32, "little"))):
+                inputs.append((index, 0, 1, key + sig[:32] + scalar + h))
+        variants = [(key, sig, message), (key, sig, bytes([message[0] ^ 1]) + message[1:]),
+                    (key, bytes.fromhex(vectors[0]["signature"])[:32] + sig[32:], message),
+                    (key, sig[:32] + (int.from_bytes(sig[32:], "little") ^ 1).to_bytes(32, "little"), message),
+                    (key, sig[:32] + modulus.to_bytes(32, "little"), message),
+                    (key, sig[:32] + (int.from_bytes(sig[32:], "little") + modulus).to_bytes(32, "little"), message),
+                    (key, (1).to_bytes(32, "little") + sig[32:], message),
+                    ((1).to_bytes(32, "little"), sig, message), (key, sig, message)]
+        for index, (public, signature, msg) in enumerate(variants):
+            inputs.append((index, 4, 5, public + struct.pack("<I", 64) + signature + msg))
+        require([(row["index"], row["original_mode"], row["cached_mode"], bytes.fromhex(row["input_hex"]))
+                 for row in report["controls"]] == inputs, "Exact cache native input roster differs")
+        failed_decodes = 0
+        for row in report["controls"]:
+            require(row["arena_guards"] is True and row["original_result"] == row["cached_result"] and
+                    row["original_result"] in (0, 1), "Cache native differential failed")
+            if row["original_result"]:
+                require(row["original_output_hex"] == row["cached_output_hex"], "Cache decoded point differs")
+            if "point_cache_hit" in row:
+                if row["point_cache_hit"] or not row["cached_result"]:
+                    require(row["point_state_before"] == row["point_state_after"], "Cache hit or failed decode changed cache")
+                failed_decodes += not row["cached_result"]
+            else:
+                accepted = row["name"] in ("valid", "prepared-valid", "prepared-valid-recovery")
+                require(row["cached_result"] == accepted, "Warm cache accepted changed signature or message")
+        require(failed_decodes > 0, "No failed decoding cache control")
+        self.report["checks"]["signature_cache"] = {"exact_controls": 115, "native_calls": 230,
+            "native_original_differential": True, "every_key_byte_exercised": True,
+            "message_r_s_and_scalar_canonicality_retained": True, "guarded_private_arena": True}
+
     def run(self):
         try:
             require(__debug__, "Optimized readback refused")
@@ -587,6 +695,7 @@ class Readback:
             for path, value in final["qualifications"].items():
                 self.read(self.evidence / path, value)
             self.original(final, roster)
+            self.signature_cache()
             self.native_build("records-native", False)
             public_build = self.native_build("public-native", True)
             self.records(roster)

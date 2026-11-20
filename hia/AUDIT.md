@@ -3,24 +3,25 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**60 kernel components, 28 native foundations and 262 HIA source files**. All
-26 original Rust packages remain: 19 are partially ported and 7 are not ported.
+**62 kernel components, 30 native foundations and 293 HIA source files**. All
+26 original Rust packages remain: 21 are partially ported and 5 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
 
-This audit covers the complete tracked-path and package ownership inventory,
-all registered native implementation boundaries, the current CI wiring and
-source-specific semantic tests of implemented units. It does not claim a manual
-line-by-line review of all 702,001 original Rust lines, or successful execution
-of every historical experiment. The original baseline is
-`59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; the branch inspected for this continuation
-was `56c6e560dd3192f89cca40542286166b8284cb4b`. The detached-Oracle correction
-was published as `2601aa95250d888cafe9bb4fdfe04a8aad0b7626`. The private-owner/PQ continuation was published as
-`41948f98b7b9fcb24a6ba7d638d5391a88e26de6`. Later checkpoint, Task and Peer additions
-were published through `10b2f5981c3aa742b16b32090260372f31091733`; this continuation
-extends that exact parent with the frozen source increments below. Every observation
-retains its actual working-source hash and does not inherit another commit's CI result.
+This audit accounts for all 41,494 paths in the baseline Git tree and every
+original package and registered HIA source. The baseline has 291 HIA sources,
+with no omitted or duplicate source owners; this continuation adds two research
+kernels. All kernel and foundation Node-integration flags remain false. Of the
+62 kernels, 61 are implemented finite units and `mempool/lane_quota` remains a
+candidate awaiting its separate qualification. The baseline original Rust source
+and the retained package graph are unchanged.
+
+The audited continuation parent is
+`62b4108946dead0688327c61aaa2afcb76bd0413`, with original `main` baseline
+`59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. Test observations below retain their
+actual source identity; successful development checks do not assign a hosted
+result to a later commit.
 
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
 [migration inventory](../config/hia-migration-v1.json),
@@ -32,61 +33,46 @@ failures and source identities, remains in
 
 ## Findings addressed in this continuation
 
-### Current Candidate ownership and runtime CI corrections
+### Current research encoding, Task validation and Metadata observation
 
-The [current record](qualification/candidate-runtime-ci-development.json) extends
-the exact published 10b2 base. Candidate adds two HIA sources and one native
-foundation. Its current-base 311-input development graph completed all 343
-retained original tests and two doctests, 894 original/native pairs, 14,680 ABI
-calls, 186 allocator controls with 109 real failures, 992 lifetime calls across
-eight threads, 132 post-owner values, 59 reader refusals and eight real process
-controls. The full qualification and independent reader ran continuously for
-381.196 seconds. The complete 646,955,824-byte archive passed all-member
-readback on both retained hosts. The integrated native library has the exact
-qualified 301,872-byte image; a rebuild does not establish committed CI.
+The new research CBOR/hash primitives passed eight native test methods, 29,821
+original/native CBOR comparisons, 45 original/native hash comparisons, 45
+independent hash checks and 53 ABI/refusal controls. The unchanged original
+research package passed all 53 active tests; its existing ignored test remains.
+Strict Clippy and formatting passed. A separate review checked cursor advancement,
+nonminimal/type-error precedence, UTF-8 boundaries, output capacity and exact
+hash framing. The canonical and composed hash modules use 647 and 1,640 operations
+under the original 8,192-operation compiler limit.
 
-The SHA boundary observer preserves all 440 cases and its original 1-second
-CPU, 2-second child and 30-second outer limits. Disabling child core dumping
-removes the observed host crash-reporter delay without changing production SHA.
-Actual child and observer stalls still fail and are fully reaped under the
-single 3-second cleanup window; the real 30-second demonstration and old
-failure remain retained.
+Task's validation cache is confined to private scratch and keyed by all 32
+public-key bytes. It reuses decoded points and three comb tables while retaining
+per-command message/R/S checks and the final group equation. The independent
+cache regression and the original 1,390 records, 445 public cases and 112
+allocation controls must complete on the current graph; the 180-second allocation
+phase is unchanged.
 
-Peer Unix's fresh complete current-base gate passed 121 outer original tests,
-two original child re-executions, strict Clippy/formatting, seven runtime
-groups and all 18 controls in 293.035 seconds including independent readback.
-The full 18-history daemon roster remains; eight additional histories bind
-seeded capacity and actual delayed fsync behavior. All original fresh-append
-capacity cases passed with unchanged deadlines. Full Core composition still
-occurs at initial admission and independent readback. Each intermediate fence
-rereads every input byte, membership, link policy and original Git blob.
-The complete 296,653,049-byte archive includes old failures and was reread on
-both hosts. The shared CI summary now rejects the previous 14-control report.
+Metadata's previous stack-size read reset the configured stack to the platform
+default. The corrected observer records each actual 1 MiB pthread stack and
+bounds glibc arena reservation to two within 512 MiB. Independent diagnostics
+using the same baseline native images and cases measured VmPeak of 505,408 KiB
+for the original observer and 178,580 KiB with both changes. Both local runs
+passed; this is a measured explanation of the reservation pressure, not a
+substitute for the failed hosted run. Every original native call, allocation
+failure and concurrent owner remains required. Forty-five integrity controls
+retain the original 41 and add four memory/stack report mutations.
 
-Checkpoint regenerated its exact native-image manifest and repeated all 77
-original tests, strict Clippy/formatting, 792 runtime observations, 31 integrity
-controls and independent readback on its current-base source graph. The full
-235,209,127-byte archive preserves original executables and failed preparations.
-Only independently archived duplicate/cache bytes were reclaimed; all 32
-retained ELFs and declared live inputs survived, and post-cleanup independent
-verification passed.
+The exact baseline has 24 completed workflows: 18 success and six failure.
+Its HIA PR run is 66/67 and HIA push run is 64/67. The baseline failures include
+Task's original allocation deadline, Metadata thread creation, Settlement's
+native deadline and the original service/protocol cost gates. They remain
+failures in their original runs.
 
-The current inventory is 60 kernels, 28 foundations and 262 HIA sources.
-Discovery is 627 methods over disjoint 466/95/7/22/37 groups, and the public
-qualification closure contains 1,495 inputs. Candidate joins the mandatory
-owner matrix: 65 expanded jobs, 49 compiler admission blocks and 20 minutes
-per job. Its CI requires fresh originals, native execution and a separate
-reader on the exact clean current commit; a dirty development PASS is refused.
-None of the old source graphs is renamed as the new committed result.
-
-The current private Task successor still times out at 180.121 seconds under
-its original 180-second record controller, after 1,275 matching pairs.
-Settlement's private successor still times out under 240 seconds after 319
-of 320 matching fixtures. Those failures are retained and neither incomplete
-success is imported as a complete owner. Payload metadata's new private
-runtime is undergoing its own complete current-source qualification.
-Archive/StateImport, full payload/body/recovery, persistent Node integration,
-service, cross-target, model/research/economics and retirement remain open.
+PRs #972 and #973 have no missing functional increment: `fc867d2` incorporated
+the complete 60-member SHA diagnostic readback, and `3adfedb` incorporated every
+Payload Metadata source and control. Reapplying #972's older six-file upload
+would break the current exact-member reader. The optimized-storage branch
+`4e1c1ad` is an exact ancestor of the current integration branch. All these
+histories remain reachable; no old implementation is removed without replacement.
 
 ### Prior shared SHA, native PQ owner and observed CI failures
 
@@ -476,13 +462,13 @@ The exact component-to-source mapping is machine checked in the migration invent
 | [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota`, `mempool/lane_owner` | Typed signed admission, nonce reservations and durable local-pool/Node handoff independent of BFT. |
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Not ported: — | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Partial: `oracle/values`, `oracle/serde-json` | Application evidence aggregation, not ledger quorum or voting. |
-| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Not ported: — | Contribution/evaluation/lineage contracts independent of ledger consensus. |
+| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Partial: `research-protocol/canonical`, `research-protocol/hash` | Contribution/evaluation/lineage contracts independent of ledger consensus. |
 | [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root`, `protocol/state-root-compact` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
 | [trnm-peer-lease](../trillionnium/crates/trnm-peer-lease) | M04 | Partial: `peer-lease/values` | Cross-process scope/generation fencing, append-only replay and bounded Unix transport. |
 | [trnm-data-availability](../trillionnium/crates/trnm-data-availability) | M09 | Partial: `data-availability/rs46` | Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. |
-| [trnm-task-kernel](../trillionnium/crates/trnm-task-kernel) | M10 | Not ported: — | Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality. |
+| [trnm-task-kernel](../trillionnium/crates/trnm-task-kernel) | M10 | Partial: `platform/task-kernel-main-store` | Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality. |
 | [trnm-mvcc-fee](../trillionnium/crates/trnm-mvcc-fee) | M06 | Partial: `state/json_string`, `state/json_value`, `codec/json_primitives`, `codec/json-number`, `codec/json-value-wire`, `codec/json-value-encode` | Deterministic ordered execution, fee deltas, checked derived commitments, explicit revision12 mandatory-capacity continuity, revision13 native model evidence, revision14 composition and revision16 bounded base/router/expert/mask updates with optional owner-pinned pre-genesis task windows; State publication remains with the Node owner. |
-| [trnm-service-settlement](../trillionnium/crates/trnm-service-settlement) | M12 | Not ported: — | Bilateral usage/escrow conservation; no consumption-derived voting power. |
+| [trnm-service-settlement](../trillionnium/crates/trnm-service-settlement) | M12 | Partial: `platform/service-settlement-engine` | Bilateral usage/escrow conservation; no consumption-derived voting power. |
 | [trnm-control-plane](../trillionnium/crates/trnm-control-plane) | M16 | Partial: `control-plane/core`, `control-plane/registry`, `control-plane/local-guard` | Observer/planner/guard only; does not grant consensus authority. |
 | [trnm-state-import](../trillionnium/crates/trnm-state-import) | M13 | Not ported: — | Bounded independently admitted export/import and root checks; no old proof decoder. |
 | [trnm-release-bundle](../trillionnium/crates/trnm-release-bundle) | M15 | Not ported: — | Build/SBOM/provenance contracts independent of consensus. |

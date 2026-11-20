@@ -65,63 +65,97 @@ block b14(v88:readbuf,v89:mutbuf,v90:mutbuf)
   v96:u32 = call(v89) {"function":"so_return"}
   ret(v96)
 end
-fn kp_joint_cached(v0:mutbuf) -> (bool) effects(read,write,trap) entry(b0)
-block b0(v0:mutbuf)
-  v1:u64 = const() {"value":0}
-  v2:u64 = const() {"value":229408}
-  v3:u64 = call(v0,v2) {"function":"cp_get"}
-  v4:u64 = const() {"value":3551735579062913867}
-  v5:bool = compare.ne(v3,v4)
-  branch v5 b1(v0) b2(v0,v1)
-block b1(v6:mutbuf)
-  v10:u64 = const() {"value":1}
-  jump b6(v6,v10)
-block b2(v8:mutbuf,v9:u64)
-  v11:u64 = const() {"value":0}
-  jump b3(v8,v9,v11)
-block b3(v12:mutbuf,v13:u64,v14:u64)
-  v15:u64 = const() {"value":32}
-  v16:bool = compare.lt(v14,v15)
-  branch v16 b4(v12,v13,v14) b6(v12,v13)
-block b4(v17:mutbuf,v18:u64,v19:u64)
-  v23:u64 = const() {"value":140160}
-  v24:u64 = int.add.wrap(v23,v19)
-  v25:usize = int.cast(v24) {"mode":"wrap"}
-  v26:u8 = buffer.load(v17,v25)
-  v27:u64 = int.cast(v26) {"mode":"wrap"}
-  v28:u64 = const() {"value":229376}
-  v29:u64 = int.add.wrap(v28,v19)
-  v30:usize = int.cast(v29) {"mode":"wrap"}
-  v31:u8 = buffer.load(v17,v30)
-  v32:u64 = int.cast(v31) {"mode":"wrap"}
-  v33:bool = compare.ne(v27,v32)
-  v34:u64 = const() {"value":1}
-  v35:u64 = select(v33,v34,v18)
-  v36:u64 = int.add.wrap(v19,v34)
-  jump b3(v17,v35,v36)
-block b6(v37:mutbuf,v38:u64)
-  v39:u64 = const() {"value":1}
-  v40:bool = compare.eq(v38,v39)
-  branch v40 b7(v37) b9(v37)
-block b7(v41:mutbuf)
-  v45:u64 = const() {"value":134400}
-  v46:u64 = const() {"value":196608}
-  v47:u64 = call(v41,v45,v46) {"function":"sc_make"}
-  v48:u64 = const() {"value":229376}
-  v49:u64 = const() {"value":140160}
-  v50:u64 = const() {"value":32}
-  v51:usize = int.cast(v48) {"mode":"wrap"}
-  v52:usize = int.cast(v49) {"mode":"wrap"}
-  v53:usize = int.cast(v50) {"mode":"wrap"}
-  v54:u32 = call(v41,v51,v52,v53) {"function":"ed_copy"}
-  v55:u64 = const() {"value":229408}
-  v56:u64 = const() {"value":3551735579062913867}
-  v57:u64 = call(v41,v55,v56) {"function":"cp_put"}
-  jump b9(v41)
-block b9(v58:mutbuf)
-  v60:u64 = const() {"value":196608}
-  v61:u64 = call(v58,v60) {"function":"sc_verify"}
-  v62:u64 = const() {"value":0}
-  v63:bool = compare.ne(v61,v62)
-  ret(v63)
+fn kp_joint_cached(work:mutbuf) -> (bool) effects(read,write,trap) entry(search_start)
+block search_start(work:mutbuf)
+  first:u64 = const() {"value":0}
+  jump search(work,first)
+block search(work_s:mutbuf,slot:u64)
+  count:u64 = const() {"value":3}
+  more:bool = compare.lt(slot,count)
+  branch more tagged(work_s,slot) miss(work_s)
+block tagged(work_t:mutbuf,slot_t:u64)
+  base:u64 = const() {"value":149696}
+  stride:u64 = const() {"value":40}
+  offset:u64 = int.mul.wrap(slot_t,stride)
+  metadata:u64 = int.add.wrap(base,offset)
+  marker:u64 = call(work_t,metadata) {"function":"cp_get"}
+  expected:u64 = const() {"value":3551735579062913867}
+  valid:bool = compare.eq(marker,expected)
+  branch valid compare_key(work_t,slot_t,metadata) next(work_t,slot_t)
+block compare_key(work_k:mutbuf,slot_k:u64,metadata_k:u64)
+  eight:u64 = const() {"value":8}
+  key:u64 = int.add.wrap(metadata_k,eight)
+  equal:bool = call(work_k,key) {"function":"tk_cache_key_equal"}
+  branch equal verify(work_k,slot_k) next(work_k,slot_k)
+block next(work_n:mutbuf,slot_n:u64)
+  one:u64 = const() {"value":1}
+  following:u64 = int.add.wrap(slot_n,one)
+  jump search(work_n,following)
+block miss(work_m:mutbuf)
+  cursor:u64 = const() {"value":149816}
+  slot_m:u64 = call(work_m,cursor) {"function":"cp_get"}
+  metadata_base:u64 = const() {"value":149696}
+  stride_m:u64 = const() {"value":40}
+  metadata_offset:u64 = int.mul.wrap(slot_m,stride_m)
+  metadata_m:u64 = int.add.wrap(metadata_base,metadata_offset)
+  zero:u64 = const() {"value":0}
+  cleared:u64 = call(work_m,metadata_m,zero) {"function":"cp_put"}
+  table_base:u64 = const() {"value":163840}
+  table_width:u64 = const() {"value":32768}
+  table_offset:u64 = int.mul.wrap(slot_m,table_width)
+  table:u64 = int.add.wrap(table_base,table_offset)
+  point:u64 = const() {"value":134400}
+  made:u64 = call(work_m,point,table) {"function":"sc_make"}
+  eight_m:u64 = const() {"value":8}
+  key_m:u64 = int.add.wrap(metadata_m,eight_m)
+  current_key:u64 = const() {"value":140160}
+  key_width:u64 = const() {"value":32}
+  copied:u64 = call(work_m,current_key,key_m,key_width) {"function":"cp_wcopy"}
+  marker_m:u64 = const() {"value":3551735579062913867}
+  marked:u64 = call(work_m,metadata_m,marker_m) {"function":"cp_put"}
+  one_m:u64 = const() {"value":1}
+  following_m:u64 = int.add.wrap(slot_m,one_m)
+  count_m:u64 = const() {"value":3}
+  wrapped:bool = compare.eq(following_m,count_m)
+  next_cursor:u64 = select(wrapped,zero,following_m)
+  advanced:u64 = call(work_m,cursor,next_cursor) {"function":"cp_put"}
+  jump verify(work_m,slot_m)
+block verify(work_v:mutbuf,slot_v:u64)
+  table_base_v:u64 = const() {"value":163840}
+  table_width_v:u64 = const() {"value":32768}
+  table_offset_v:u64 = int.mul.wrap(slot_v,table_width_v)
+  table_v:u64 = int.add.wrap(table_base_v,table_offset_v)
+  checked:u64 = call(work_v,table_v) {"function":"sc_verify"}
+  zero_v:u64 = const() {"value":0}
+  accepted:bool = compare.ne(checked,zero_v)
+  ret(accepted)
+end
+fn tk_cache_key_equal(work:mutbuf,key:u64) -> (bool) effects(read,write,trap) entry(start)
+block start(work:mutbuf,key:u64)
+  first:u64 = const() {"value":0}
+  jump compare(work,key,first)
+block compare(work_c:mutbuf,key_c:u64,index:u64)
+  width:u64 = const() {"value":32}
+  more:bool = compare.lt(index,width)
+  branch more byte(work_c,key_c,index) equal()
+block byte(work_b:mutbuf,key_b:u64,index_b:u64)
+  current:u64 = const() {"value":140160}
+  left:u64 = int.add.wrap(current,index_b)
+  right:u64 = int.add.wrap(key_b,index_b)
+  left_at:usize = int.cast(left) {"mode":"wrap"}
+  right_at:usize = int.cast(right) {"mode":"wrap"}
+  left_value:u8 = buffer.load(work_b,left_at)
+  right_value:u8 = buffer.load(work_b,right_at)
+  same:bool = compare.eq(left_value,right_value)
+  branch same next(work_b,key_b,index_b) different()
+block next(work_n:mutbuf,key_n:u64,index_n:u64)
+  one:u64 = const() {"value":1}
+  following:u64 = int.add.wrap(index_n,one)
+  jump compare(work_n,key_n,following)
+block equal()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block different()
+  no:bool = const() {"value":false}
+  ret(no)
 end

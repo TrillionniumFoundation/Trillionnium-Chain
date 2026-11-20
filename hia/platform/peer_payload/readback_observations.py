@@ -194,6 +194,15 @@ def allocations(output, report, expected):
          and report.get("production_object_unchanged") is True
          and report.get("test_observer_supplies_business_logic") is False
          and report.get("failure") is None, "Allocation/lifetime coverage changed")
+    memory = report.get("observer_memory_limits")
+    need(type(memory) is dict and memory == {
+             "address_space_bytes": [512 << 20, 512 << 20],
+             "cpu_seconds": [240, 240], "allocator_arenas": 2}
+         and type(memory["allocator_arenas"]) is int
+         and all(type(value) is int for key in ("address_space_bytes", "cpu_seconds") for value in memory[key])
+         and type(report.get("parallel_thread_stack_bytes")) is int
+         and report.get("parallel_thread_stack_bytes") == 1 << 20,
+         "Observer memory/allocator bounds changed")
     calls = document(output / "calls.json")
     need(set(calls) == {"sequential", "parallel"} and len(calls["sequential"]) == 857
          and len(calls["parallel"]) == 8, "Allocation observation roster is partial")
@@ -276,7 +285,9 @@ def allocations(output, report, expected):
                 {"genesis-only", "first-frame", "distinct-keys-31", "interleaved-18-keys"}]
     expected_events = Counter()
     for number_, row in enumerate(calls["parallel"]):
-        need(row["thread"] == number_ and len(row["calls"]) == 32, "Eight concurrent lifetimes were not retained")
+        need(row["thread"] == number_ and len(row["calls"]) == 32
+             and type(row.get("stack_bytes")) is int and row["stack_bytes"] == 1 << 20,
+             "Eight concurrent lifetimes and their actual stack bounds were not retained")
         for i, call in enumerate(row["calls"]):
             case = selected[(i + number_) % 4]
             need(call["name"] == case["name"] and call["return"] == baseline[case["name"]]["return"]

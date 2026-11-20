@@ -4,6 +4,7 @@
   "functions": {
     "cp_get": "hia/src/control_plane/core.hepta",
     "cp_put": "hia/src/control_plane/core.hepta",
+    "cp_wcopy": "hia/src/control_plane/core.hepta",
     "cs_move": "hia/src/crypto/ed25519_public_point_cache.hepta",
     "ed_compare": "hia/src/crypto/ed25519_group.hepta",
     "ed_copy": "hia/src/crypto/ed25519_group.hepta",

@@ -1,3 +1,17 @@
+## 2026-11-20 — Research CBOR 原生实现、Task 验签缓存与 Metadata 真实线程资源
+
+本轮以 `62b4108946dead0688327c61aaa2afcb76bd0413` 为精确起点，核对其41494个tracked路径、26个原包和291个HIA源的唯一归属；新增两个Research Protocol内核后为 **62 kernels /30 native foundations /293 HIA sources**，26原包为21部分迁移、5未迁移、0退役，九项整项目门仍OPEN。所有现有包、原Cargo图、Cargo.lock和原测试保持；本计划和既有迁移清单继续作为唯一执行来源。
+
+Research的 `canonical.hepta` 保留原CBOR最短编码、UTF-8、cursor推进、错误优先级和拒绝时不部分发布，`hash.hepta` 使用现有流式SHA-256及原域/长度 framing。8项新原生测试实际通过：29821次原Rust/native CBOR对照、45次原hash对照、45次独立hashlib复核和53项ABI/容量拒绝；原crate的53项active测试通过，原1个ignored保持，strict Clippy与fmt通过。两个编译单元分别647/1640操作，原8192操作限制不变。Research commands/types/state/contribution accounting/Hepta handoff与整包退役继续实现，不能以基础层代替消费者。
+
+Task只在私有scratch中缓存精确32字节公钥的成功解码结果和comb预计算表；每条命令仍执行消息散列、R/S规范性、小阶点拒绝及最终群方程。正式入口增加缓存命中、轮换、淘汰、无效key和消息/签名变更的独立回归，原1390 records、445公开案例、112分配控制和180秒分配期限均保留。该来源图的完整fresh原验收、原生运行和独立读回必须在冻结后执行。
+
+Metadata已定位前一“1MiB栈”修复的真实错误：随后的无参 `threading.stack_size()` 恢复了默认栈，8个实际pthread仍各为8MiB。现在只显式设置一次，并对每个真实worker读取/校验1MiB栈；同时将观察进程glibc arenas限为2，保持512MiB地址空间、240秒、8线程/256并发调用、2827次ABI及840次实际分配失败。使用相同原失败artifact与全部案例的独立四因子诊断中，旧观察器VmPeak为505408KiB，双修为178580KiB；四组本地均PASS，此诊断不能提前宣称hosted失败已闭合。独立reader新增4个资源篡改拒绝，完整控制由41增至45。
+
+62b410的24个工作流已结束，18成功、6失败；HIA PR为66/67，push为64/67。Task原180秒分配超时、Metadata线程创建失败、Settlement原240秒超时及原服务/协议成本失败均保留为原运行失败。新提交需自己的clean head/tree和完整CI。PR972的六文件上传方案已由fc867d2的60成员完整读回取代；PR973全量Metadata归属已在3adfedb正式登记；4e1c1ad优化存储是整合分支的确切祖先，无需再复制这些实现。
+
+继续唯一Node的COMMIT/reorg/replay/outbox/ACK、Archive/StateImport、Body最大规模与恢复、SQLite及项目C provider、剩余crypto/TLS/TUF、原0.25CPU/2GiB/零swap/256PID/4秒/16worker服务门、跨目标和模型/研究/共识经济验收。完整HIA替代、全部原验收和依赖处置闭合后执行旧栈退役和最终清理；目标保持全套原生实现。
+
 ## 2026-11-20 UTC — Task 主存储、Metadata 线程资源和 Settlement Engine 的冻结组合图
 
 本轮从已发布 `3adfedb43371b2cff3658d6228cdd1493d89c9df`（tree `61d7502c0491d20c42ec051b10d07ec12633c84f`）继续。曾缺失的74份历史归档已全部按原Git blob、长度和SHA256恢复；41442个原tracked条目逐一核验，非本轮声明路径的原字节与模式不变。恢复的是当前提交已有的证据文件，不是重新引入已退役的业务代码。完整工作树的未限定路径 `git diff --check` 已通过；原Cargo图、Cargo.lock、Rust源码、测试、fmt和strict Clippy要求继续保留。

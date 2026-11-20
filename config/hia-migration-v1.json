@@ -680,6 +680,28 @@
         "hia/tests/test_ml_dsa_qualification.py",
         "hia/tools/qualify_ml_dsa.py"
       ]
+    },
+    {
+      "id": "research-protocol/canonical",
+      "node_integration_complete": false,
+      "scope": "Canonical CBOR primitive encoding and strict decoding with original cursor advancement, error precedence, UTF-8 validation and output bounds; complete command/type consumers and Node integration remain open.",
+      "source": "hia/src/research_protocol/canonical.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_canonical.py",
+        "hia/tests/rust_research_canonical_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/hash",
+      "node_integration_complete": false,
+      "scope": "Original research-protocol domain-separated canonical hashing through native streaming SHA-256, with explicit domain/message length framing; complete research state and handoff consumers remain open.",
+      "source": "hia/src/research_protocol/hash.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_canonical.py",
+        "hia/tests/rust_research_canonical_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -748,12 +770,15 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "research-protocol/canonical",
+        "research-protocol/hash"
+      ],
       "legacy_path": "trillionnium/crates/trnm-research-protocol",
       "module": "M10",
       "package": "trnm-research-protocol",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [

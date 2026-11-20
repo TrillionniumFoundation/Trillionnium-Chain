@@ -12,7 +12,8 @@ class StoreRecordsBuild(StoreAuditBuild):
     dispatch_name='records_dispatch.hepta'
     library_name='store-records-native.so'
     additional_units=(('records',10),('progress',11),('bootstrap',12),('verified',13),('policy',14),('grants',15),('budget',16),('task_create',17),('bid',18),('lease',19),('provider_accept',20),('authorize',21),('scope',22),('consume',23),('execution',24),('empty',25),('preview',26),('signature_cache',27))
-    image_dependencies={'signature_cache':(ROOT/'hia/src/crypto/ed25519_public_point_cache.hepta',),
+    image_dependencies={'policy':(ROOT/'hia/src/task_kernel/store_signature_cache.hepta',),
+                        'signature_cache':(ROOT/'hia/src/crypto/ed25519_public_point_cache.hepta',),
                         'progress':(ROOT/'hia/src/task_kernel/store_records.hepta',ROOT/'hia/src/task_kernel/store_markers.hepta'),
                         'bootstrap':(ROOT/'hia/src/task_kernel/store_schema.hepta',),
                         'verified':(ROOT/'hia/src/task_kernel/store_records.hepta',),

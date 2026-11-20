@@ -82,7 +82,7 @@ def sources():
                  "trnm-crypto-primitives",
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
                  "trnm-control-plane", "trnm-escrow-vault", "trnm-governance-guard",
-                 "trnm-peer-lease", "trnm-oracle"):
+                 "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths += sorted((crate / "tests").rglob("*.rs"))

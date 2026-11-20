@@ -83,6 +83,10 @@ PAYLOAD_CONTROL_METHODS = (
     'test_native_group_command_substitution_is_refused',
     'test_native_primitive_pair_count_cannot_shrink',
     'test_new_owned_source_member_is_refused',
+    'test_observer_address_space_limit_cannot_grow',
+    'test_observer_allocator_arena_bound_is_required',
+    'test_observer_memory_limits_cannot_be_omitted',
+    'test_observer_thread_stack_bound_cannot_grow',
     'test_original_dependency_profile_mutation_is_refused',
     'test_original_diagnostic_event_addition_is_refused',
     'test_original_diagnostic_event_deletion_is_refused',
@@ -356,11 +360,11 @@ def payload_summary(report, independent, head, tree):
     need(type(controls) is dict, "Missing Payload metadata integrity controls")
     actual = controls.get("actual", {})
     need(controls.get("status") == "PASS" and type(controls.get("tests")) is int
-         and controls["tests"] == 41 and controls.get("methods") == list(PAYLOAD_CONTROL_METHODS)
+         and controls["tests"] == 45 and controls.get("methods") == list(PAYLOAD_CONTROL_METHODS)
          and type(actual) is dict
          and set(actual) == {"normal", "descendant", "deadline", "native-blocked", "public-close", "ptrace-cleanup"}
          and all(type(row) is dict and row.get("family_reaped") is True for row in actual.values()),
-         "Payload metadata requires all 41 controls and six actual process lifetimes")
+         "Payload metadata requires all 45 controls and six actual process lifetimes")
     sources = report.get("source_inputs")
     need(type(sources) is dict and sources and all(type(name) is str and name and name != "."
          and not Path(name).is_absolute() and ".." not in Path(name).parts and Path(name).as_posix() == name

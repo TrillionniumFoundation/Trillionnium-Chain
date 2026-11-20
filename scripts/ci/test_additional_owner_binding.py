@@ -348,7 +348,7 @@ class PayloadMetadataBinding(unittest.TestCase):
                 "public_methods": list(binding.PAYLOAD_METHODS), "prior_execution_reused": False,
                 "same_round_maximum_replay_index_original": True, **binding.PAYLOAD_COUNTS,
                 **dict.fromkeys(binding.PAYLOAD_FALSE_SCOPES, False)},
-            "integrity_controls": {"status": "PASS", "tests": 41, "methods": list(binding.PAYLOAD_CONTROL_METHODS),
+            "integrity_controls": {"status": "PASS", "tests": 45, "methods": list(binding.PAYLOAD_CONTROL_METHODS),
                 "actual": {name: {"family_reaped": True} for name in
                     ("normal", "descendant", "deadline", "native-blocked", "public-close", "ptrace-cleanup")}},
             "source_inputs": sources, **dict.fromkeys(binding.PAYLOAD_FALSE_SCOPES, False)}
@@ -418,7 +418,7 @@ class PayloadMetadataBinding(unittest.TestCase):
             report["production_readback"]["public_methods"] = methods
             with self.subTest(methods=methods), self.assertRaises(ValueError):
                 self.check(report=report)
-        for value in (35, 40, 42, "41", True, None):
+        for value in (35, 40, 41, 42, 44, 46, "45", True, None):
             report = copy.deepcopy(self.report)
             report["integrity_controls"]["tests"] = value
             with self.subTest(controls=value), self.assertRaises(ValueError):

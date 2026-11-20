@@ -1,9 +1,9 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **60 kernel units, 28 native foundations and 262 HIA source
+inventory contains **62 kernel units, 30 native foundations and 293 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (19 partially ported and 7 not ported), zero retirements are accepted, and all nine whole-project
+packages remain** (21 partially ported and 5 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
@@ -13,124 +13,48 @@ retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
 
-The [Candidate and runtime CI record](qualification/candidate-runtime-ci-development.json)
-extends published `10b2f5981c3aa742b16b32090260372f31091733`. It binds the current
-Candidate owner, the SHA boundary observer, Peer Unix controls and the rebuilt
-Checkpoint images to their actual source graphs and retained original results.
-All 26 original packages remain until complete replacement and original acceptance.
+This continuation extends `62b4108946dead0688327c61aaa2afcb76bd0413`.
+The [research canonical layer](src/research_protocol/README.md) adds native CBOR
+primitives and the original domain-separated hash. Eight tests compare 29,821
+CBOR results (including decoder cursors) and 45 hashes with the untouched Rust
+module, add 45 independent hash checks, and exercise 53 ABI/capacity refusals.
+All passed. The retained research package passed 53 original tests with its one
+existing ignored test preserved, strict Clippy and formatting. Research commands,
+types, state transitions and Hepta handoff remain separate migration work.
 
-The [Candidate owner](platform/pq_candidate/README.md) provides all twelve explicit
-original methods through 25 native exports. Its actual current-base development
-gate passed 343 original tests and two doc tests, 894 original/native pairs,
-14,680 ABI calls, 186 allocation controls including 109 actual allocation
-failures, 992 lifetime calls with eight threads, 132 independent values after
-their owners were destroyed, 59 reader refusals and eight real process controls.
-The complete gate and independent readback took 381.196 seconds. Both retained
-hosts reread every member of the 646,955,824-byte archive. The integrated
-301,872-byte library reproduces that production image. Constant-time execution,
-arbitrary foreign pointers, register/stack erasure and complete crypto/TLS/TUF
-ownership remain open. The documented native nonce-exhaustion error is not
-relabeled as the original dependency's panic edge.
+Task Store now reuses successfully decoded Ed25519 public points and fixed-base
+comb tables in its private scratch arena. Exact key bytes select cache entries;
+message hashing, R/S validation, small-order rejection and the signature equation
+still execute for every command. The original allocation-failure roster and
+180-second deadline remain required. The official Task qualification also runs
+the independent cache regression before the existing full owner observations.
 
-The SHA boundary observer disables core dumping in its actual trap children so
-a host's piped crash reporter cannot consume the unchanged two-second deadline.
-The production SHA implementation is unchanged. All 440 boundary cases and the
-real child/observer timeout controls passed; the independent full 30-second
-timeout retained its one three-second cleanup window. Earlier failures remain
-in the complete archive.
+Metadata's allocator observer now sets a real 1 MiB worker stack and reads each
+live pthread's actual stack size. The previous no-argument `stack_size()` call
+reset the default after setting it. Limiting this observer's glibc heap arenas
+to two bounds address-space reservation under its original 512 MiB limit.
+The original 840 allocation failures, 2,827 ABI calls, eight workers and 256
+concurrent calls remain; four added reader controls enforce the recorded memory
+and stack limits, for 45 total controls. Both fixes affect the observation
+process; production HIA objects are unchanged.
 
-The [Peer Unix owner](platform/peer_lease_unix/README.md) passed a fresh full
-121-test original suite plus its two existing child re-executions, strict
-Clippy/formatting, all seven runtime groups and 18 integrity controls. All
-18 original daemon histories remain mandatory; six seeded capacity histories,
-a measured fsync probe and a delayed-commit case bring the roster to 26.
-The six original fresh-append capacity cases passed with their original
-250 ms connection and two-second caller bounds. Qualification plus independent
-readback took 293.035 seconds. Neither production deadlines nor fsync behavior
-changed. Initial full Core admission and independent reader composition remain;
-intermediate checks reread every admitted byte and complete membership.
-Both hosts reread the complete 296,653,049-byte archive, including prior failures.
+The exact baseline HIA [PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44693652443)
+completed 66 of 67 jobs successfully, with Task Store's allocator phase timing
+out. Its [push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44693631662)
+also retained Metadata thread creation and Settlement Engine deadline failures.
+These observations belong to the baseline commit; this continuation requires
+its own complete source-bound qualification and hosted execution.
 
-Five mandatory current-head jobs now repeat Peer Unix, Task Store, Task
-mechanical boundaries, PQ public ownership and Candidate ownership. The workflow
-expands to 65 jobs with the same 20-minute limits and 49 compiler admission
-blocks. Candidate binding requires every original/native/control count, the
-exact clean committed head and tree, actual production image and the unchanged
-producer report before and after independent readback. Peer binding rejects the
-obsolete 14-control summary and requires all 18 current controls.
-
-The [earlier PQ/SHA/Node record](qualification/shared-sha-pq-peer-development.json)
-retains the public PQ owner's 55 exports, its source-specific full qualification,
-the shared word-access implementation and the regenerated Node composition.
-Those actual prior observations are not reassigned to this commit. Task's new
-private continuation still fails its original 180-second complete record gate;
-its 1,275 completed comparisons do not replace the full required roster.
-Task Archive/StateImport, the project C provider and complete Node remain open.
-
-The [Work/Paid correction](qualification/host-standalone-development.json)
-selects the original trusted-local standalone constructor at the production
-worker boundary. Its frozen development runtime passed 177 primitives, all 61
-native histories and 57 original histories, retained tests, CLOCK/Paid controls
-and 24 actual handshake schedules. The transfer reader now requires the actual
-32/30 original CLOCK counts. A separate reader-only rerun retained the runtime
-and original artifacts' identities. Fixed-parent production qualification and
-the original four-second service acceptance remain open.
-
-The complete component discovery is now 627 methods split disjointly into
-466 general, 95 crypto/types, seven State-root, 22 Oracle and 37 ML-DSA methods.
-The source manifest binds all 1,495 current qualification inputs, including the
-project boundary implementation, configuration and every workspace manifest.
-All five jobs keep their 20-minute limit. The consumer requires every same-head,
-same-run and same-attempt job to succeed and every discovered method to have
-actually completed; discovery and successful packaging do not imply execution.
-
-The [checkpoint authority and commit ledger](platform/checkpoint_store/README.md)
-now implements all six original CLI commands, private API methods, Unix client
-and daemon, journal recovery and the separate commit ledger in native HIA.
-Its [development record](qualification/checkpoint-store-development.json) binds
-77 retained original tests, strict Clippy/formatting, 792 runtime observations,
-31 refusal controls and independent complete readback. A fresh current-base
-run repeated all 77 originals and 792 observations after regenerating the two
-4,252,304-byte images and their manifest. The full runtime gate took 90.748
-seconds and its independent reader 15.093 seconds. The complete 235,209,127-byte
-archive was reread on both retained hosts; post-cleanup readback also passed
-with the original executables and all required live inputs preserved.
-The mandatory CI job must still qualify each event's own commit.
-Live Node.db integration, cross-target qualification and package retirement
-remain open.
-
-The [Darwin cleanup correction](qualification/cleanup-exit-race-development.json)
-handles the observed interval between kernel exit and WNOWAIT visibility.
-A maximum 50 ms read-only cleanup observation still requires actual exit and a
-complete singleton process-group census. Real live permission failures remain
-failures. The current archive helper also preserves legitimate hard-linked
-runtime observations as separate regular byte copies with original inode
-metadata; the stricter source/binary admission rules are unchanged.
-
-The [prior private-owner and PQ execution record](qualification/continuation-development.json)
-binds private Some/CheckedApply snapshots, the persistent PeerLeaseStore owner,
-the combined Work/Paid owner and the restored PQ arithmetic foundations.
-All original package ownership and whole-project acceptance obligations remain
-explicit. This record distinguishes source recovery, actual development tests,
-hosted results and historical raw-evidence gaps.
-
-[Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) supplies native streaming hashing and
-XOF lifecycle with 3,442 selected official byte vectors.
-[ML-DSA polynomial arithmetic](src/crypto/ML_DSA_POLY.md) supplies native NTT,
-inverse, pointwise and negacyclic operations. The four additional
-[ML-DSA modules](src/crypto/ML_DSA.md) implement complete Pure ML-DSA-65/87
-verification, seed key generation, signing and the Candidate's private verifier
-and signer lifecycle. The frozen development gate executed 500 selected official
-mathematical cases, 669 original method comparisons, 16 native methods, 20
-integrity controls, all 343 retained original tests and both doc tests. The
-private entry requires disjoint live caller allocations; automatic ownership,
-foreign ABI guards, timing qualification, PQ authorization and TLS remain open.
-The new independent ML-DSA CI job repeats the complete original/native gate and
-all 37 assigned component methods against each event's own exact source. The crypto-types shard now has
-95 methods, all required by the same independent complete-roster consumer. The
-fresh exact-source run passed all 95 with zero failures, errors or skips, 17
-native builds and 21,210 shared-runner calls in 515.760 seconds. The complete
-collected source/raw archive was independently rehashed on both retained hosts.
+The [Task](qualification/task-main-store-development.json),
+[Metadata](qualification/payload-metadata-development.json),
+[Settlement Engine](qualification/service-settlement-engine-development.json),
+[Candidate](qualification/candidate-runtime-ci-development.json) and
+[Checkpoint](qualification/checkpoint-store-development.json) records retain
+prior source identities and actual failures. Their implementation directories
+remain the canonical owners. Full Node transactions, reorganization, replay,
+outbox/ACK, Archive/StateImport, Body persistence, SQLite, the project C provider,
+remaining crypto/TLS/TUF, original service budgets and cross-target acceptance
+still govern package retirement.
 
 ## Transfer, request state, transcripts and continuous SHA-512
 

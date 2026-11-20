@@ -145,7 +145,7 @@ jobs:
           rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
           rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
           "$RUNNER_TEMP/trnm-rust-original-tests"
-          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee -p trnm-types --target-dir "$RUNNER_TEMP/original-rust-values" --message-format=json | tee "$RUNNER_TEMP/original-rust-build.jsonl"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee -p trnm-types -p trnm-research-protocol --target-dir "$RUNNER_TEMP/original-rust-values" --message-format=json | tee "$RUNNER_TEMP/original-rust-build.jsonl"
           python3 - "$RUNNER_TEMP/original-rust-build.jsonl" "$RUNNER_TEMP" <<'PYCODE'
           import json, os, pathlib, subprocess, sys
           events = [json.loads(line) for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.startswith('{')]
