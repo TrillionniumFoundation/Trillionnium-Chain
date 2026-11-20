@@ -270,7 +270,9 @@ class Qualification:
                        "--output", cache], 180)
             cache_result = json.loads((cache / "report.json").read_text())
             if (cache_result["status"] != "PASS" or not cache_result["finalized"] or
-                    cache_result["cases"] != 115 or cache_result["native_calls"] != 230 or
+                    cache_result["schema"] != "trnm.hia.task-store.signature-cache-qualification.v2" or
+                    cache_result["cases"] != 124 or cache_result["native_calls"] != 257 or
+                    len(cache_result["payload_interleaving"]) != 9 or
                     cache_result["source_before"] != cache_result["source_after"]):
                 raise ValueError("Private signature cache differential did not pass")
             policy = self.adapter("kernel-policy")
