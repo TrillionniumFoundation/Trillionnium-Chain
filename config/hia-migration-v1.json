@@ -706,7 +706,7 @@
     {
       "id": "research-protocol/external-key",
       "node_integration_complete": false,
-      "scope": "Original public ExternalKey UUID/external-ID derivation, namespace and identifier validation order, byte access, lowercase hex/Display and canonical CBOR through native SHA-256; complete payload consumers, generic Serde and Node integration remain open.",
+      "scope": "Original public ExternalKey UUID/external-ID derivation, namespace and identifier validation order, byte access, lowercase hex/Display and canonical CBOR through native SHA-256; signed/state consumers, generic Serde and Node integration remain open.",
       "source": "hia/src/research_protocol/external_key.hepta",
       "state": "native-kernel-implemented",
       "tests": [
@@ -749,6 +749,50 @@
         "hia/tests/rust_bench_reference.rs",
         "hia/platform/bench/build.py"
       ]
+    },
+    {
+      "id": "research-protocol/payload",
+      "node_integration_complete": false,
+      "scope": "All seven ResearchCommandV1 payloads: canonical encoding, strict decoding/round-trip, validation/error order, checked contributor accounting, exact shares, command type and primary object reference. Signed envelopes, Serde, state, handoff, Node integration and retirement remain open.",
+      "source": "hia/src/research_protocol/payload.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_payload.py",
+        "hia/tests/rust_research_payload_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/decimal",
+      "node_integration_complete": false,
+      "scope": "Native decimal text to binary64 with exact rounding, bounded significand/sticky handling and original Rust parsing/error behavior. Full CLI/OS environment owner, profile and retirement remain open.",
+      "source": "hia/src/bench/decimal.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/environment",
+      "node_integration_complete": false,
+      "scope": "Native parsing/defaults/precedence of all 12 Bench environment values, exact adaptive policy fields and configured workloads/schedules. Actual OS environment acquisition and full Bench owner remain open.",
+      "source": "hia/src/bench/environment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/format-fixed",
+      "node_integration_complete": false,
+      "scope": "Native four-decimal binary64 formatting including original finite, nonfinite and signed-zero forms, with exact ties-to-even. Remaining complete profile/CLI presentation and persistence remain open.",
+      "source": "hia/src/bench/format_fixed.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_environment.py",
+        "hia/tests/rust_bench_environment_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -782,7 +826,10 @@
       "components": [
         "bench/workload",
         "bench/digests",
-        "bench/repeat"
+        "bench/repeat",
+        "bench/decimal",
+        "bench/environment",
+        "bench/format-fixed"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
@@ -824,7 +871,8 @@
       "components": [
         "research-protocol/canonical",
         "research-protocol/hash",
-        "research-protocol/external-key"
+        "research-protocol/external-key",
+        "research-protocol/payload"
       ],
       "legacy_path": "trillionnium/crates/trnm-research-protocol",
       "module": "M10",
@@ -1615,7 +1663,8 @@
         "hia/platform/task_kernel/build_witness.py",
         "hia/platform/task_kernel/qualify_provider_native.py",
         "hia/platform/task_kernel/readback_provider.py",
-        "hia/platform/task_kernel/qualification/provider_readback_controls.py"
+        "hia/platform/task_kernel/qualification/provider_readback_controls.py",
+        "hia/tests/test_task_metadata_initializer.py"
       ]
     },
     {

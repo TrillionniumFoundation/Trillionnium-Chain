@@ -3,7 +3,7 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**66 kernel components, 30 native foundations and 299 HIA source files**. All
+**70 kernel components, 30 native foundations and 303 HIA source files**. All
 26 original Rust packages remain: 22 are partially ported and 4 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
@@ -11,21 +11,21 @@ remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 
 This audit accounts for all 41,494 paths in the baseline Git tree and every
 original package and registered HIA source. The baseline has 291 HIA sources,
-with no omitted or duplicate source owners. The current graph adds three research
-kernels, three Bench kernels and the two Task provider/witness sources. All kernel and foundation Node-integration flags remain false. Of the
-66 kernels, 65 are implemented finite units and `mempool/lane_quota` remains a
+with no omitted or duplicate source owners. The current graph adds four research
+kernels, six Bench kernels and the two Task provider/witness sources. All kernel and foundation Node-integration flags remain false. Of the
+70 kernels, 69 are implemented finite units and `mempool/lane_quota` remains a
 candidate awaiting its separate qualification. The baseline original Rust source
 and the retained package graph are unchanged.
 
 The audited continuation parent is
-`25d0e733c54fc1186dac791ef88aacb79347691b`, with original `main` baseline
+`267989537b255f168ac132edfbe317aba6c0e34a`, with original `main` baseline
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. Test observations below retain their
 actual source identity; successful development checks do not assign a hosted
 result to a later commit.
 
-Current component discovery contains **667 methods** in five disjoint groups:
-506 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. General
-includes the new Research, Bench, field/SHA and provider-CI methods. The workflow expands to
+Current component discovery contains **682 methods** in five disjoint groups:
+521 general, 95 crypto-types, seven State-root, 22 Oracle and 37 ML-DSA. General
+includes the new Research payload, Bench environment and metadata-boundary methods. The workflow expands to
 67 jobs and 55 native compiler bootstrap invocations from 49 source admission
 blocks. Discovery and workflow enumeration do not establish successful execution.
 
@@ -37,516 +37,127 @@ not another development plan. The full chronological audit, including prior
 failures and source identities, remains in
 [immutable Git history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2601aa95250d888cafe9bb4fdfe04a8aad0b7626/hia/AUDIT.md).
 
-## Findings addressed in this continuation
-
-### Native provider, ExternalKey, Bench and exact hosted findings
-
-The new Task provider source is
-`6b7fd1245688abdff19d2d833569f9a655d579684f9af5a1239ee60e13b4733d`.
-Its HIA emitter produces the 15,464-byte provider object
-`07022f3e9db25cec3667f4349b41200d476fbf7ebc5aca320e8ee6d9559516b6`.
-All six public lifecycle entries and 29 operations are native. A second HIA
-emitter produces the runtime witness from the actual build-time C ABI probe.
-No old project C provider or C witness object enters the production link;
-external SQLite and system libraries still do. The original C implementation
-is retained solely in the separately fenced oracle construction.
-
-The frozen development provider passed 1,182 original/native pairs, 143 paired
-actual allocation failures, 256 concurrent calls, 123 witness controls,
-12 emitter controls and eight build refusals. Its independent reader checked
-1,161 actual files, complete compiler stages and emitted code/call targets;
-all 46 semantic tamper controls were rejected, including mutations with
-recomputed outer hashes. The formal Task Store and Boundary consumers passed
-in 432.236 and 61.936 seconds with 150 unchanged inputs. Store preserved the
-41 original tests, strict Clippy/fmt, 1,390 records, 445 public cases, all 112
-allocator controls/96 actual failures, 124 cache comparisons/257 calls/nine
-hash interleavings, and 37 original Store-reader negative controls. The final
-combined commit must still execute its own gates; these development results
-are not assigned a later source identity.
-
-ExternalKey's six new methods passed 5,463 actual original-public-crate
-comparisons, 732 independent hashes and 24 ABI controls. They cover namespace
-and identifier error order, lowercase UUIDs, visible ASCII, raw 32-byte keys,
-hex/display and canonical CBOR. No new algorithm was substituted for the
-original Rust oracle. Research command/state/accounting/handoff remains open.
-
-Bench's eight methods passed 1,566 native calls, 307 original workload cases,
-64 original CLI executions, 1,148 native internal replay executions, eight
-comparator controls and eight large unaligned cases. The original 11 tests,
-strict Clippy and formatting passed. Full ordered membership and SHA are
-compared on each repeat. Three original scheduler high-water errors remain
-explicit intentional differences with independent conflict-safety checks.
-Standard compiler receipts and the actual qualification recording closures
-were exercised in a bounded 13-build/1,558-shared-call regression; eight raw
-ABI calls complete the same 1,566-call set. CLI/env parsing, logarithmic profile
-calculation, presentation and persistence remain unported.
-
-The shared field/SHA paths preserve their original wide-word fallbacks and
-trap/partial-write semantics. The 159 field and 200 SHA/alias cases passed
-318 and 400 original/new native calls. The affected PeerLease unit contains
-8,184 operations under the unchanged 8,192 limit. All 29 Node compiler/emitter
-stages, 28 module images and independent composition readback passed; the new
-complete Node ELF is
-`89f0c914b0a654bd714c55a6e6a97b92734992638594603e2fd0357ac47623c3`.
-The integrated Research/ExternalKey/crypto regression passed 17 methods in
-73.962 seconds. This rebuild does not certify complete Node business behavior.
-
-The optimized Settlement native stage completed 320 fixtures, 2,636 operations
-and 16,066 calls in 233.636 seconds with no live owners under the original
-240-second limit. Only that stage has this new observation; the full original,
-allocator, integrity and independent-reader gate and hosted execution remain
-required. Previous failed runs are retained.
-
-Published `25d0e73` has a source-specific hosted Metadata PASS in
-[run 44727120287](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44727120287):
-121 original outer tests, two child reexecutions, 12 groups, 45 integrity
-controls, 2,827 allocator ABI calls/840 actual failures and independent
-readback completed in 481.005 seconds. All 49,069 regular archived members
-were independently rehashed. Metadata does not grant Body, whole-Peer or
-original four-second-service qualification. On the same source, Task still
-failed after 93/112 allocator controls within its original 180 seconds, and
-Settlement failed after 233 native fixtures at 240.083 seconds. Their raw
-archives also passed complete member verification; neither timeout is hidden
-by a later development PASS.
-
-### Prior research encoding, Task validation and Metadata observation
-
-The new research CBOR/hash primitives passed eight native test methods, 29,821
-original/native CBOR comparisons, 45 original/native hash comparisons, 45
-independent hash checks and 53 ABI/refusal controls. The unchanged original
-research package passed all 53 active tests; its existing ignored test remains.
-Strict Clippy and formatting passed. A separate review checked cursor advancement,
-nonminimal/type-error precedence, UTF-8 boundaries, output capacity and exact
-hash framing. The canonical and composed hash modules use 647 and 1,640 operations
-under the original 8,192-operation compiler limit.
-
-Task's validation cache is confined to private scratch and keyed by all 32
-public-key bytes. It reuses decoded points and three comb tables while retaining
-per-command message/R/S checks and the final group equation. The independent
-cache regression and the original 1,390 records, 445 public cases and 112
-allocation controls must complete on the current graph; the 180-second allocation
-phase is unchanged.
-
-The complete `f87d18646c727a9e573ea16e3f6c8e31becc57df` Task run failed at
-records index 1138 with an actual native trap. The earlier object larger than
-2 MiB at index 268 had reused `[131072,196608)` for SHA staging and overwritten
-the private caches. Staging now uses `[131072,147456)` in 16 KiB chunks; it does
-not impose an object-size limit or change the 262,144-byte owner allocation.
-The new interleaving control actually failed before the repair at 16,385 bytes.
-After repair, all nine sizes through 2 MiB + 1 preserved the entire cache region,
-matched independent SHA-256, and retained correct subsequent signatures. All
-124 signature comparisons and 257 actual native calls passed independent
-readback. The failed complete run remains failed; a fresh complete owner run is required.
-
-Metadata's previous stack-size read reset the configured stack to the platform
-default. The corrected observer records each actual 1 MiB pthread stack and
-bounds glibc arena reservation to two within 512 MiB. Independent diagnostics
-using the same baseline native images and cases measured VmPeak of 505,408 KiB
-for the original observer and 178,580 KiB with both changes. Both local runs
-passed; this is a measured explanation of the reservation pressure, not a
-substitute for the failed hosted run. Every original native call, allocation
-failure and concurrent owner remains required. Forty-five integrity controls
-retain the original 41 and add four memory/stack report mutations.
-
-The complete local Metadata `36d7196` attempt rejected generated Cargo output
-inside the original source namespace. The Research oracle now uses its own
-temporary target directory; its eight tests passed again in 62.556 seconds,
-with zero extra or missing original source files. The complete `f87d186`
-Metadata attempt then stopped on retained original Unix socket tests returning
-`EPERM` in this environment. Its separately executed allocation observation
-passed all 2,827 actual calls, 840 actual allocation failures and all eight
-measured 1 MiB worker stacks. Neither failed complete attempt is relabelled as
-successful or substituted for the required hosted run.
-
-The exact baseline has 24 completed workflows: 18 success and six failure.
-Its HIA PR run is 66/67 and HIA push run is 64/67. The baseline failures include
-Task's original allocation deadline, Metadata thread creation, Settlement's
-native deadline and the original service/protocol cost gates. They remain
-failures in their original runs.
-
-PRs #972 and #973 have no missing functional increment: `fc867d2` incorporated
-the complete 60-member SHA diagnostic readback, and `3adfedb` incorporated every
-Payload Metadata source and control. Reapplying #972's older six-file upload
-would break the current exact-member reader. The optimized-storage branch
-`4e1c1ad` is an exact ancestor of the current integration branch. All these
-histories remain reachable; no old implementation is removed without replacement.
-
-### Prior shared SHA, native PQ owner and observed CI failures
-
-The [prior continuation record](qualification/shared-sha-pq-peer-development.json)
-extends published `ae23b0a745186262eb8c987f714b5e9b7231e737`. Five additional
-native HIA files bring the inventory to 260 sources and 27 foundations. The
-public PQ owner passed all 343 original tests and two doc tests, 1,609 paired
-cases, 24,671 ABI calls, 190 allocation controls, 1,329 lifetime calls, 49 reader
-refusals and eight actual process controls on its frozen graph. All 34 original
-test executables and required direct rlibs remain in its complete archive.
-The integrated 966,824-byte native library reproduces the frozen image exactly.
-This build is distinct from complete current-commit original/native CI.
-
-The shared SHA change preserves all 440 observed word-boundary, wrapped-offset
-and partial-write/trap outcomes. Its Task gate, regenerated Node composition,
-all native Node groups and fresh Node/M05/Commitment originals passed. Actual
-quota failures remain failed records; the successful repeats used another
-temporary filesystem with unchanged source, compiler and limits.
-
-The preceding push and PR each failed Task's unchanged 180-second test
-controller and Peer Unix's inode-reuse fixture assertion. Peer product Rust and
-HIA replies agreed before the assertion. The corrected fixture keeps both old
-and rebound pathname inodes live and independently rechecks all raw bindings.
-The complete corrected run passed 121 original tests, seven runtime groups and
-14 integrity controls. Both predecessor CI archives and all corrective runs
-were fully rehashed on two retained hosts. No original failure is relabelled.
-
-At that frozen increment, discovery contained 625 methods over disjoint
-464/95/7/22/37 groups, and the public qualification graph contained 1,481 inputs.
-Its workflow expanded to 64 jobs, including mandatory PQ qualification. All 66
-root integration controls and 196 bootstrap cases passed on that source graph;
-its committed native execution remained a separate requirement.
-The reader cannot replace the producer's report, even with a zero exit code.
-All previous source-specific records below remain historical observations.
-
-### Prior Task Store, Peer Unix and source-specific CI binding
-
-The [current owner record](qualification/additional-owners-development.json)
-adds one final 48-source Task implementation and one final 14-source Peer Unix
-implementation. Each development PASS retains its exact source identity,
-complete original tests, native outputs, failed observations and independent
-readback. The integrated audit-preflight and documentation changes require
-fresh committed CI. At that earlier checkpoint, Task's 29-operation project C
-provider, ArchiveStore, StateImport, Peer payload/recovery ownership and live Node
-integration remained open. No original package is eligible for retirement.
-
-The frozen Peer Unix gate passed 121 outer original tests, seven runtime groups
-and 13 integrity controls. The corrected fault observer stops only the pinned
-tracee and lets strace reap it; earlier whole-group termination failures remain
-in the complete 444,098,788-byte archive. Task source44 passed all 41 original
-tests, full private/public Store observations, 112 allocator controls and 37
-reader refusals. Four previously accepted evidence mutations now fail. Two
-unavailable historical rlibs remain explicitly unavailable; all current final
-archive references were resolved and checked.
-
-The previous exact-head push passed 60 jobs. Its PR Work original job exceeded
-the unchanged total 20-minute budget after actual runtime completion. The new
-capture step preserves live-only observations and leaves full semantic review
-to its mandatory successor; 92 controls passed, but the new hosted wall time is
-unmeasured in that record. Its discovery was 624 methods and 1,460 source inputs. Three new
-mandatory jobs expand the workflow to 63 jobs, all still limited to 20 minutes.
-The four original compiler-admission cases passed for all 49 blocks. These
-source/control checks do not certify the new commit's native execution.
-
-Exact-head ML-DSA private and generic results were independently read back on
-both push and PR. All four budget-control archives were also reread from
-actual ELF identities and raw process observations. Original service and W1
-confirmation under 0.25 CPU, 2 GiB, no swap, 256 live PIDs, four seconds and
-16 workers remains unsuccessful. Cancelled macOS jobs without a runner remain
-NOT_RUN. Whole-chain, cross-target, model/research and retirement gates stay open.
-
-### Complete bounded ML-DSA and actual Host/CI corrections
-
-The [ML-DSA contract](src/crypto/ML_DSA.md) and
-[execution record](qualification/ml-dsa-development.json) add four HIA sources
-for Pure ML-DSA-65/87 verify, keygen, sign and private Candidate ownership.
-The 159-input frozen development gate passed 500 official mathematical checks,
-669 comparisons with the unchanged original API, 1,213 shared native calls,
-96 actual private allocation lifecycles and 12 capacity refusals. All 343
-retained Rust tests, two doc tests, formatting and strict Clippy passed. Every
-one of the 16 native methods and 20 evidence-integrity controls executed.
-The 545,408,860-byte complete development archive was independently read back
-on both retained hosts, including every one of its 1,432 members.
-
-The original 12 overlapping-pointer probes remain explicit failed,
-out-of-contract observations: the private legacy entry has no general foreign
-ABI alias guard. The new source does not claim such a guard, automatic Drop,
-constant-time behavior, ML-DSA-44, prehash support, PQ authorization or TLS.
-The current integrated source has its own fresh qualification; earlier source
-identities and results are not renamed as that run.
-
-The [Work/Paid record](qualification/host-standalone-development.json) binds the
-actual standalone constructor correction, complete 177-primitive/61-history
-native run, 57-history original run, 44 retained tests, actual CLOCK/Paid faults
-and 24 handshake schedules. Trace observations now correctly distinguish the
-worker's real terminal and join phases. The reader-only follow-up changes the
-stale original CLOCK count from 20/18 to its actual 32/30 and rejects old or
-cross-module values; it does not claim another runtime execution. Fixed-parent
-production acceptance and the original service budgets remain open.
-
-On published source `88f610df3717b26f3c20e6455992da9004c144db`, both HIA
-workflows failed despite successful Checkpoint, PeerLeaseStore and source/archive
-jobs. The pull-request general component job reached its 20-minute limit;
-Work original execution completed but the stale count reader rejected packaging.
-The Oracle corpus and its preflight controls now have their own 22-method job.
-A fresh isolated Oracle run actually passed all 22 methods, with both original
-Cargo profiles and unchanged full retained original tests. Its old-source
-archive has 21,164 complete content members and is independently verified on
-both hosts. The new ML-DSA job executes its full original gate and all 36 native
-component/integrity methods. The final consumer requires the exact five-way
-600-method roster (440/95/7/22/36), each actual producer's success and one shared
-source/run/attempt. All 60 jobs retain the original 20-minute limit.
-
-### Native checkpoint authority and actual CI failures
-
-The [checkpoint record](qualification/checkpoint-store-development.json) covers
-29 HIA sources and all 48 owned implementation/qualification files. A fresh
-original Rust 1.95 build passed all 77 retained tests with zero filtered or
-ignored, strict Clippy and both format gates. Native execution completed 792
-observation groups, 675 API and 31 CLI comparisons, ten actual daemon processes
-and 23 durability cuts applied to both implementations. All 31 integrity
-controls refused the altered evidence. This measures process termination and
-injected I/O faults; it does not certify power-loss behavior.
-
-The complete frozen development run belongs to 180 plus its exact owned overlay
-(`c1d65794…`), not the current integration commit. The current integrated
-106-input source set (`940c84f6…`) was actually rebuilt and independently read
-back. Both 4,221,936-byte executables are identical to the qualified development
-artifacts. No current runtime result is inferred from binary equality. The new
-58th HIA CI job repeats the full original/native/readback sequence on its own
-head. At that checkpoint increment there were 46 independent native bootstrap gates
-and 557 discovered methods. The current five-partition roster is stated above.
-
-The 419 PeerLeaseStore CI finished its complete tests and deliberate refusal
-controls, then its archive step rejected a legitimate hard link. Runtime
-observation packaging now copies each regular pathname's actual bytes into an
-independent regular member and retains device/inode/link metadata. Six controls
-cover real hard links, symlinks, FIFOs, source mutation, archive corruption and
-refusal to overwrite an archive. The generic executable/source-bundle
-`object_inventory` remains strict.
-
-The [Darwin exit-race record](qualification/cleanup-exit-race-development.json)
-preserves the failed prospective CI job and ten real reproductions: killpg
-returned EPERM while immediate WNOWAIT had no exit result, followed by actual
-exit and complete singleton census evidence. The correction allows at most
-50 ms of read-only cleanup observation, then still requires both positive
-checks. Linux and macOS each passed the 55 cleanup methods; 2,000 actual Darwin
-EPERM cases retained the original output-cap failures after cleanup. Empty,
-foreign, extra, unavailable or live process observations cannot authorize success.
-The complete four-suite Linux attempt initially failed with 13 actual missing
-GNU time errors. A fresh run of the same ten source inputs on ROG with the real
-GNU time observer then passed all 87 methods with zero skips. Both observations
-remain separate, and neither supplies a new hosted result.
-
-### Current private owners and PQ foundations
-
-The [current evidence record](qualification/continuation-development.json)
-separates each actual execution from current-source admission and archival
-availability. The restored source tree has one implementation per component;
-the larger execution archives remain in verified operator copies. Complete raw
-CI artifacts are still required after success or failure.
-
-| Increment | Actual observed development result | Boundary still open |
-| --- | --- | --- |
-| [Some/CheckedApply](platform/node_commitment/README.md) | Five native Node partitions; 82 Some and 94 Checked methods; both 65,536/65,537 delta boundaries; original method comparisons | Durable Node.db COMMIT, reorg, recovery/outbox/ACK and the same request's Paid/Host authority |
-| [PeerLeaseStore](platform/peer_lease_store/README.md) | 18 complete tests, 618 original comparisons, actual journal/head/lock/fsync and crash controls; partial and injected-failure runs both reject | Unix authority, Core authentication, payload custody, cross-target support and Node integration |
-| [Work/Paid](platform/work_owner/README.md) | 61 native and 57 original histories, 177 primitives, 44 retained original tests, complete clock/Paid faults and independent private readback | Fixed-parent production positive, shared public admission, durable Node use and original service acceptance |
-| [Keccak/SHA3/SHAKE](src/crypto/KECCAK.md) and [ML-DSA polynomials](src/crypto/ML_DSA_POLY.md) | Fresh complete 95-test crypto/types PASS, 17 native builds, 21,210 shared calls and 3,442 selected official byte vectors | Native ML-DSA now has a separate bounded gate; automatic secret ownership, timing qualification, authenticated identity and TLS remain open |
-
-The published 419 private-owner/PQ 1,244-file component source map is
-`36bf44bca1949b0c02ffcab9912e78635819fdf32472e43e24f83dc91aa2a0c5`.
-Its complete discovery was 551 tests: 449 general, 95 crypto-types and seven
-State-root. Discovery alone is not execution. The fresh crypto-types run passed
-95/95, with zero failures, errors or skips in 515.760 seconds, and the complete
-1,244-input graph was unchanged before and after execution. Its 38,816,692-byte
-archive contains 1,366 logical files and 1,326 unique content objects; both
-retained hosts independently reopened and hashed every object. This run does
-not relabel the earlier 530-test result as execution of all current 551 tests.
-
-Some's qualified 223-source graph is `0a934b54…`; the current graph differs in
-the Peer composition registry entry and the corrected commitment README. Its
-old results are not relabeled as current-graph qualification. The original
-65,536-change native child completed in 201.143 seconds with no full-root pass;
-65,537 completed in 178.247 seconds with one DeltaBudget fallback. Both retain
-the original 240-second child and three-second cleanup bounds.
-
-Review found duplicated SHA-256 compression in the Node's general and 94-byte
-fork paths, additionally separate from the crypto arena/stream core. The old
-README incorrectly called them a single shared compression implementation.
-That statement is corrected. A real consolidation candidate passed all 78 hash
-cases and 94 Checked methods, then timed out in both capacity cases at about
-240.023 seconds; both children were killed and reaped. It was not integrated.
-Host load was not recorded, so this failure does not prove deduplication is
-fundamentally impossible. A new controlled implementation and capacity
-comparison remain necessary.
-
-Work/Paid's current 141 runtime inputs are byte-identical to the fully executed
-development source. Its original 4,368-file snapshot is still the frozen c98
-overlay and does not absorb later plan/config edits. The original stage took
-1,113.411 seconds, including 325.849 seconds of fresh Cargo work. This leaves
-little margin in the existing 20-minute CI job; no deadline or required method
-was relaxed. Both old and Work/Paid handshake layouts have 24 actual controlled
-cases. The new regression archive is a new compressed object containing the
-same 76 verified original-build files; historical old-layout evidence resolves
-through its immutable commit.
-
-### Recovery and evidence availability
-
-The temporary execution host was replaced during development. GitHub's exact
-published source and the retained Mac/Desktop/ROG files supplied recovery.
-Full530, both listed Some Node archives, PeerLeaseStore and Work/Paid archives
-were independently rehashed in their surviving copies. This did not restore
-three local-only archives: the Some/core direct-method archive, the failed SHA
-consolidation archive and the old 95-test PQ archive whose transfer was incomplete.
-Their previously observed identities and results remain explicit, but a complete
-raw copy is currently unconfirmed. The fresh PQ execution has its own verified
-source and raw archive; it does not recover the old run. Neither reconstructed
-prose nor a partial upload is called a recovered original artifact.
-
-### Oracle exact-SHA checkout
-
-The initial branch's general-component jobs invoked the development-only project
-preflight while GitHub Actions used a detached exact-SHA checkout. The failure
-occurred in Oracle class setup, before any Oracle test method ran. The test now
-explicitly requests read-only `--audit`. Nineteen project-boundary and Oracle
-setup regression tests pass, including foreign-origin and incorrect-project
-refusal. Development/staged/push branch restrictions are unchanged. The original
-[failed job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44338859559/job/134972635408)
-remains a failure; its dependent readback correctly rejected incomplete evidence.
-
-### Complete explicit RequestStatus, TransferTx and Transcript methods
-
-[RequestStatus](src/types/request_status.md) implements all seven states, all
-49 ordered transitions, terminal classification, exact Unicode trimming, ASCII
-case/separator normalization, both Display methods and stable error codes.
-The unknown-state payload retains the original trimmed bytes. The unchanged
-original `trnm-types` crate supplies the independent comparison and all seven
-original RequestStatus tests execute. Generic Serde consumers and the rest of
-the types crate remain outside this completed method surface.
-
-[TransferTx](src/types/transfer.md) implements the original signing-message,
-address derivation, signing and strict-verification methods. It preserves the
-existing signed domain, complete u128 amount/fee and u64 nonce, Unicode handling
-and original error precedence. HIA executes the cryptography; Rust and Python
-are independent test/build tools. Actual unaligned address inputs larger than
-2 MiB and 4 MiB compare with the unchanged original crate and independent SHA-256.
-
-Independent review found two real pre-final defects: two missing scratch bytes
-at maximum decimal field widths, and checked arithmetic that trapped for
-invalid hexadecimal `@`/backtick input instead of returning the original error.
-The final minimum scratch includes the complete 144-byte fixed/numeric overhead;
-all 106 non-hex ASCII characters are checked in private-key, public-key and
-signature positions (318 original comparisons). The matching failed source
-and actual trap observation are preserved in the development evidence, not in
-a second active implementation. The earliest scratch failure has no confirmed
-remaining complete source/stdout snapshot; that historical byte gap is explicit.
-The initial Transcript borrow-check refusal similarly has a retained diagnostic,
-not a complete snapshot of the superseded source.
-
-[Transcript](src/types/transcript.md) implements all nine explicit original APIs,
-including complete segment collection, materialized Merkle layers, repeated and
-ordered proof targets, arbitrary typed proof verification and the exact envelope
-hash field order. Its frozen development run passed nine tests with 1,309 original
-comparisons, 1,512 shared-runner native calls and three separately bounded,
-unaligned inputs above 2 MiB. All eight original module tests passed. Generic
-Serde, relay authentication and durable Node ownership remain open.
-
-### Shared crypto cores and the remaining Node SHA duplication
-
-[Incremental SHA-512](src/crypto/SHA512_STREAM.md) shares its canonical
-initialization/compression/load/store functions with the retained arena ABI.
-It supplies checked 128-bit message counts and incremental hashing for Transfer
-without the old message-window ceiling. Regressions cover padding boundaries,
-chunk boundaries, lifecycle refusal, count carry/overflow, unaligned native
-calls and real messages through 4 MiB + 257 bytes, plus the earlier SHA-512 and
-Ed25519 tests. No second compression implementation was introduced.
-
-The SHA-256 arena/stream family likewise has one compression implementation.
-The separate Node general/fork implementations described above remain an open
-deduplication obligation. Its original
-transport entry still enforces 2,098,176 bytes; the internal full-message helpers
-allow at most 2^61−1 bytes, so the encoded 64-bit bit count cannot overflow.
-The original transport cap, error order and refusal-without-mutation are tested
-independently of the new larger address inputs. Manufactured near-limit contexts
-validate arithmetic boundaries only; they are not huge-message performance evidence.
-
-### Fixed consumers and compiler limits
-
-The same shared-crypto change required explicit updates to the Node's fixed
-Ed25519/settings function graph and the authenticated-request helper roster.
-The request image initially exceeded the pinned compiler's 128-function limit.
-Seven tiny literal-return helpers were folded into the existing literal dispatch;
-5,676 original/merged input pairs, comprising 11,352 real native calls, matched.
-The compiler limits and transport wire, cap and error order remain unchanged.
-
-The final custom-consumer development source passed the Node's public build and
-nine integrity groups with 379 controls and ten real CLI calls. On the configured
-Linux host, the unchanged public transport qualifier passed 178 request controls,
-14 SHA-256 controls and 170 comparisons against the actual original Rust crate
-in 384.694 seconds. Those records bind that checkout and the frozen consumer
-sources; subsequent committed-head CI remains separate.
-
-### CI and provenance
-
-The crypto-types job builds the unchanged `trnm-types` library with the locked
-workspace graph and exports its exact rlib. It requires the real original
-comparisons and always uploads Transfer's and Transcript's native libraries, original
-adapters and executables, comparison observations and identities. Qualification binds all new
-sources, tests, adapters and contracts. At that historical increment, discovery
-was partitioned into disjoint general, crypto-types and State-root rosters;
-incomplete setup, skipped tests or missing actual executions could not satisfy
-the independent readback. Each job retained the original 20-minute limit. That
-partition moved complete cryptographic and types suites into their own job and
-removed no cases. The current five-partition roster is stated above.
-
-The Oracle correction's exact
-[push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442681639)
-completed all 54 jobs successfully. Its separate
-[PR run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44442705474)
-completed all 472 general tests without failures or skips, but the job's actual
-conclusion was CANCELLED after 20 minutes 6 seconds. Its dependent readback
-correctly failed. The log does not contain an explicit cancellation cause; no
-successful test summary is promoted to a successful job conclusion.
-
-The initial combined development execution completed all 511 selected tests in
-1,735.968 seconds, with one failure and five errors and unchanged source bytes.
-Four evidence controls received `EPERM` when creating Unix sockets in this
-execution environment; the complete original peer-lease suite also failed on
-socket operations. The fifth error exposed a real reporting defect: a generated
-near-limit SHA-256 fixture was incorrectly treated as a repository source path.
-Those actual failures are retained. Later fixes and host executions have their
-own source identities and cannot rewrite this result.
-
-After the fixture and fixed-consumer corrections, the complete 74-test
-crypto-types partition passed with zero failures, errors or skips in 273.387
-seconds. The run made 10,792 self-hosted and 11 direct-backend shared-runner
-calls, in addition to its bounded raw-pointer probes. Independent readback
-rehashes all 15 actual build artifacts and all 1,200 source inputs, including the
-single explicitly generated fixture. The sole plan's Git-blob pin was later
-updated to document historical evidence gaps; that exact non-runtime delta is
-retained separately. This development execution is not a whole-project or
-future committed-head CI pass.
-
-The implementation was published as
-[`c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c98fcbf7b2a0528ab1e87bdb8cb172f663331dd4).
-The [development record](qualification/types-development.json) and
-[30-volume archive](qualification/types-development.parts/manifest.json) now
-retain 27,110 logical files as 15,539 unique objects. The 182,921,280-byte archive
-was fully decompressed, every regular member rehashed, then physically
-reassembled from its published volumes. The exact original transport executable
-is retained as an 86,524,208-byte XZ object; every one of its 610,853,352 decoded
-bytes was independently checked against the executed binary's identity. The
-consumer evidence remains bound to its actual 2601-plus-overlay source snapshot.
-The initial failed full-run owner-specific raw stores remain at the explicit
-external path in the record; their inclusion is not claimed. The two historical
-source gaps above remain explicit. These archive operations do not change any
-runtime qualification result.
-
-The unchanged c98 source also completed the full 530-test component run in
-2,249.150 seconds with zero failures, errors or skips. Its 1,200-input source
-map matches the later 180 runtime map exactly. This was a controlled source
-export with 6,061 materialized tracked files and explicitly absent historical
-evidence paths; it was not a full tracked-checkout CI guard.
-
-Both c98 HIA runs ([push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44455017015),
-[PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44455036414))
-and both 180 HIA runs ([push](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457316952),
-[PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457335753))
-finished 55/55 jobs successfully. The c98 required baseline was cancelled.
-The [180 required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44457335906)
-has actual failures in both protocol lanes and both architecture cost lanes;
-its remaining long jobs had not finished at this record's last observation.
-Those independent failures are not masked by the HIA workflow's green result.
-The candidate described at that historical checkpoint had 57 jobs and 45
-independent compiler bootstraps, including complete commitment and private
-peer-store jobs. It still required its own exact-commit hosted execution; these
-historical workflow counts do not describe the current candidate.
+## Current implementation and observed failures
+
+### Task dynamic compiler regression
+
+The complete local `2679895` Task gate failed after 144.481 seconds in its
+records-policy build. The fixed compiler exited 2 on the actual retained input;
+there was no timeout or missing successful output to infer. The provider and
+original test stages had already passed. A complete dynamic-build audit found
+123 named entries and 75 distinct native compiler inputs. The baseline compiler
+accepted 72 inputs and rejected three: the StorePolicy family had 8,525
+operations and KernelPolicy had 8,547, exceeding the unchanged 8,192 limit.
+Static registered-kernel admission alone had not covered these dynamic units.
+
+The fix only changes the canonical `tk_metadata` initializer to reuse the
+existing eight-byte writer's returned cursor. All 648 writes retain their values
+and order. Its body shrinks from 1,414 to 816 operations; StorePolicy now has
+7,927 and KernelPolicy 7,949. Three explicit include maps add that existing
+writer. All 75 distinct actual inputs now pass the same pinned native compiler
+and all six original structural limits. A separate actual-native comparator
+checks 5,220 complete/truncated/unaligned cases, 10,440 calls, every modified
+backing byte and the original SIGILL/partial-write behavior. A second reviewer
+found no blocking difference. The complete Task runtime, original 180-second
+allocation phase and independent reader remain required on the new candidate.
+
+### Research payloads
+
+The new native payload component implements all seven `ResearchCommandV1`
+variants from the retained public Rust crate. It handles exact canonical bytes,
+strict decoding and round-trip comparison, validation order and typed errors,
+checked contributor work totals, exact ownership shares, reference ordering,
+command types and primary object references. Its 51-function composition has
+3,226 operations and 522 blocks. Seven actual tests passed 6,968 original/native
+comparisons and 20 ABI controls in 72.254 seconds, including every fixture
+truncation, all first bytes, collection and numeric limits, deterministic CBOR
+mutations and multi-error precedence. Signed envelopes, generic Serde, protocol
+state, handoff and Node integration are separate remaining work.
+
+The existing canonical/hash and ExternalKey observations remain source-specific:
+29,821 canonical comparisons, 45 original hash comparisons and 5,463 public-key
+value comparisons. The original Research crate's 53 active tests and strict
+Clippy/fmt passed; its existing ignored test was preserved. Full primitive and
+payload contracts are in the [Research guide](src/research_protocol/README.md).
+
+### Bench environment, decimal conversion and fixed formatting
+
+Three new HIA sources implement all 12 environment-value parsers and defaults,
+decimal-to-binary64 conversion, and four-decimal formatting. Seven methods passed
+2,110 actual native calls under the unmodified formal recording hooks, including
+457 original decimal comparisons, 398 complete configuration comparisons, 744
+original formatting comparisons and their separate refusal controls. Six actual
+native builds and their exact provenance were recorded. Six configurations over
+three workloads and seven strategies produced 126 complete scheduler/profile
+comparisons. All 74 unchanged-original results matched; the 52 cases affected
+by the already documented reader-high-water corrections matched the repaired
+independent model and conflict graph. Another 54 native repeats matched complete
+ordered membership and digests. These corrections remain explicit differences.
+
+The previous eight Bench methods retain their 1,566 native calls, 307 workload
+comparisons, 64 actual original CLI executions, 1,148 internal scheduling
+executions and 11 retained Rust tests. Full CLI, process environment acquisition,
+clock/persistence ownership, logarithmic derived profiles and complete report
+presentation remain open. See the [Bench contract](src/bench/README.md),
+[environment ABI](src/bench/ENVIRONMENT.md) and
+[fixed-format ABI](src/bench/FORMATTING.md).
+
+### CI dependency and provenance correction
+
+The `2679895` general job completed 498 tests and failed while setting up the
+eight Bench methods: the original `cargo build --locked --offline -p trnm-bench`
+exited 101. The original job and its 60-member artifact did not retain Cargo's
+stderr, so the exact original diagnostic is unavailable. A controlled isolated
+cache containing only the 85 crate archives explicitly downloaded by that job
+reproduced exit 101 with missing `anstream v1.0.0`; its index copy is explicitly
+local, not an asserted replica of the entire hosted filesystem.
+
+The general workflow now fetches the unchanged locked workspace graph before
+the offline reference tests. Bench retains actual process commands, statuses,
+stdout and stderr for both success and failure. The global qualification source
+map now includes the original Bench Rust implementation and its contracts, and
+independent readback rejects missing, changed or stale maps. The repaired eight
+methods passed their actual recorder regression again: 13 builds, 1,558 shared
+calls and eight raw calls. Fifteen existing partition controls, three source-map
+rejections, four actual process diagnostics and four bootstrap controls passed.
+Fresh full general execution and readback must still succeed on the new head.
+
+### Exact hosted and local Settlement findings
+
+On published `267989537b255f168ac132edfbe317aba6c0e34a`, the
+[hosted Settlement job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44733380774/job/136278536658)
+completed its complete component and independent-reader step, full committed
+source recheck, head/run binding, and complete observation-archive reread. All
+four steps report success. The internally redirected raw phase counters and
+individual native timing are not printed in the job log and are not inferred
+from the total step duration.
+
+Its official artifact 14627533250 is 689,199,037 bytes with SHA-256
+`04737e1abe8889f7a1af018e45239621f78f2343a481755b0fbf1d9b19b94884`.
+The current artifact retrieval tool rejects files above 536,870,912 bytes, so
+local complete-member verification of this particular archive is not yet
+claimed. The separately attempted local whole gate failed an unchanged Unix
+socket test with `EPERM` after 135 of 136 tests passed; its native phase never
+started. This local failure remains distinct from the hosted success.
+
+On the same published source, Task Boundary and source/archive admission passed;
+Task Store and general/readback failed for the recorded reasons above. These
+source-specific results do not qualify the newly integrated source graph.
+Published `25d0e73` Metadata retains its complete 481.005-second hosted PASS and
+49,069 independently verified regular archive members. Its Body/whole-Peer and
+four-second-service obligations remain open.
+
+### Retained earlier evidence
+
+The native Task provider's six lifecycle entries and 29 operations, the shared
+field/SHA changes, Node composition, earlier current owners and failed runs are
+preserved in the
+[preceding immutable audit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/267989537b255f168ac132edfbe317aba6c0e34a/hia/AUDIT.md)
+and their existing qualification records. The production provider and witness
+are HIA-emitted machine objects; external SQLite/system libraries remain. No
+whole-package or pure-HIA SQLite claim follows from provider replacement.
+Historical failures and actually executed evidence are retained; repeated
+running commentary is consolidated into this current audit and Git history.
 
 ## Original package coverage
 
@@ -558,11 +169,11 @@ The exact component-to-source mapping is machine checked in the migration invent
 | --- | --- | --- | --- |
 | [trnm-types](../trillionnium/crates/trnm-types) | M00 | Partial: `types/request-status`, `types/transfer`, `types/transcript` | Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls. |
 | [trnm-executor](../trillionnium/crates/trnm-executor) | M06 | Partial: `executor/schedule`, `math/binary64` | Deterministic conflict scheduling independent of consensus. |
-| [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Partial: `bench/workload`, `bench/digests`, `bench/repeat` | Native workloads, digests and repeated scheduling; complete CLI/profile/persistence remains open. |
+| [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Partial: `bench/workload`, `bench/digests`, `bench/repeat`, `bench/decimal`, `bench/environment`, `bench/format-fixed` | Native workload, scheduling, configuration and exact text/numeric primitives; complete CLI/profile/persistence remains open. |
 | [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota`, `mempool/lane_owner` | Typed signed admission, nonce reservations and durable local-pool/Node handoff independent of BFT. |
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Not ported: — | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Partial: `oracle/values`, `oracle/serde-json` | Application evidence aggregation, not ledger quorum or voting. |
-| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Partial: `research-protocol/canonical`, `research-protocol/hash`, `research-protocol/external-key` | Contribution/evaluation/lineage contracts independent of ledger consensus. |
+| [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Partial: `research-protocol/canonical`, `research-protocol/hash`, `research-protocol/external-key`, `research-protocol/payload` | Contribution/evaluation/lineage contracts independent of ledger consensus. |
 | [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root`, `protocol/state-root-compact` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
 | [trnm-peer-lease](../trillionnium/crates/trnm-peer-lease) | M04 | Partial: `peer-lease/values` | Cross-process scope/generation fencing, append-only replay and bounded Unix transport. |
 | [trnm-data-availability](../trillionnium/crates/trnm-data-availability) | M09 | Partial: `data-availability/rs46` | Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. |

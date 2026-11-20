@@ -1,3 +1,19 @@
+## 2026-11-20 — 七类 Research 载荷、Bench 配置与动态编译预算修复
+
+从已发布 `267989537b255f168ac132edfbe317aba6c0e34a` 继续。本次最终目录新增4个内核，为 **70 kernels /30 native foundations /303 HIA sources**；26原包仍22部分迁移、4未迁移、0退役，9项整项目门OPEN。原Rust源码、Cargo图和lock未改变，根README仍0字节。当前审计页合并重复过程叙述，完整旧观察与失败保留在不可变Git历史和原资格证据中。
+
+Research唯一 `payload.hepta` 实现7类ResearchCommandV1及嵌套类型的canonical编码、严格解码/全字节round-trip、原校验顺序/错误、贡献工作量checked sum、精确10000份额、reference排序、command_type和primary_object_ref。7方法真实通过6968组原公开Rust/native对照与20个ABI控制，72.254秒；51函数/3226操作/522块满足原限制。独立只读复核检查了typed不校验编码、u16/枚举/UTF8形状、decode错误次序、scratch溢出及output原子容量拒绝，无阻断。签名信封、通用Serde、state与Hepta handoff继续实现，不把载荷替换当整包退役。
+
+Bench新增decimal、environment、format_fixed三份HIA，覆盖12项配置的文本解析/默认值、精确binary64转换与四位小数格式化。7方法经正式未改录制闭包完成6次实际编译、2110次native调用：457原数值转换、398完整配置、744原格式对照与各自拒绝控制，6配置×3工作量×7策略的126组完整profile/调度比较，另54原生内部重复。74组与原实现完全一致，52组保留既有reader-high-water安全修复的明确差异并由修复参考及冲突图独立验证。CLI、OS环境/时钟/持久化、ln派生profile及完整输出继续推进。
+
+267完整Task原运行144.481秒在records-policy固定编译器exit2失败；真实stdin SHA为490bbe42fa45f5c01abfe02b111f2dd89deff5e61429e45311d36eb67173c2b5。完整动态图审计实际123命名入口/75不同输入，原3输入失败：StorePolicy8525操作、KernelPolicy8547超过原8192。仅修改tk_metadata复用原tk_write返回游标，648次相同顺序写保持；函数1414→816操作，实际StorePolicy7927、KernelPolicy7949。修改后75输入全由固定native compiler通过，6项原结构限制不变。新1方法5220全内存/逐写字节截断/unaligned case、10440原新native调用及实际SIGILL/部分写入对照通过，19.926秒。整合clean候选仍须完整Task原41、provider、cache、1390records、445public、112allocator/原180秒和37reader控制，不以编译通过代替runtime。
+
+267 general实际执行498方法，Bench setUpClass的原locked/offline Cargo build退出101，8方法未执行。原60成员官方包未保留该stderr，原具体诊断保持不可知；按官方日志85个下载归档构造的独立cache加明确local index副本真实复现缺anstream1.0.0。工作流在offline前fetch未改lock精确图；测试真实保留构建/原测试/adapter的命令、状态、stdout和stderr。global sources补入原Bench main与契约，独立reader拒绝漏源/改源/旧source map。8方法再次实际通过13build/1558shared+8raw调用与11原测试；15partition、3source-map、4真实process、4bootstrap控制通过。新diagnostics独立artifact，不混入原60成员general包；新增Task metadata原始证据也独立上传。全general/readback仍须新head实际通过。
+
+267的[Settlement hosted完整job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44733380774/job/136278536658)中完整component+independent reader、每个committed源复查、head/run绑定、全regular archive reread四步都成功。阶段内部raw重定向到689199037字节artifact14627533250，SHA04737e1abe8889f7a1af018e45239621f78f2343a481755b0fbf1d9b19b94884；当前工具536870912字节上限使本地尚未取回完整包，不能虚报逐成员独立读取或臆测native阶段时长。独立本地尝试在原UnixListener测试EPERM，135/136测试完成后失败，native未进入；其失败与hosted成功分别保留。267 Task Boundary/source archive已通过，Task/general/readback原失败不改标。
+
+完整发现682方法，互斥521/95/7/22/37；67作业、55bootstrap和49源准入块不变。执行本候选的完整Task及全hosted门；并行继续StateImport原生owner与真实SQLite/handoff、Bench完整runtime、Research签名/state，以及Archive、Body/recovery/ACK、剩余crypto/TLS/TUF、唯一Node COMMIT/reorg/replay/outbox/ACK、同请求Paid/Host、跨目标和模型/研究经济门。原服务0.25CPU/2GiB/零swap/256PID/4秒/16worker、20分钟CI、原native240/180秒/唯一3秒清理、编译器128函数/8192操作/1536块/每函数256块均保持。全量等价替换、原验收和外部依赖处置闭合后，才退役旧整套并执行最终仓库清理。本文件仍为唯一计划。
+
 ## 2026-11-20 — HIA Task provider、ExternalKey、Bench 与正式资格续接
 
 本轮从已发布 `25d0e733c54fc1186dac791ef88aacb79347691b` 继续，当前 **66 kernels /30 native foundations /299 HIA sources**，26原包为22部分迁移、4未迁移、0退役，九项整项目门仍OPEN。原Cargo图、Cargo.lock和测试保留；根README保持0字节。本计划仍为唯一开发计划，不将组件数量当作完成百分比。

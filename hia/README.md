@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **66 kernel units, 30 native foundations and 299 HIA source
+inventory contains **70 kernel units, 30 native foundations and 303 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (22 partially ported and 4 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -14,105 +14,47 @@ retains source-specific findings, failures and remaining obligations.
 ## Current continuation
 
 This continuation extends published
-`25d0e733c54fc1186dac791ef88aacb79347691b`. Every observation below belongs
-to its stated source graph; the newly integrated graph requires its own complete
-qualification and hosted CI. No original package is retired.
+`267989537b255f168ac132edfbe317aba6c0e34a`. The exact implementation, limits,
+source-specific successful observations and failures are maintained in the
+[current audit](AUDIT.md); the next clean source graph requires its own full CI.
 
-### Research and Bench native execution
+The [Research implementation](src/research_protocol/README.md) contains canonical
+CBOR, domain-separated hashing, ExternalKey construction, and all seven typed
+command payloads. The payload layer passed 6,968 actual original/native pairs
+and 20 ABI controls across seven methods. It preserves canonical round trips,
+validation precedence, reference ordering, contributor totals and exact shares.
+Signed envelopes, generic serialization, protocol state and Hepta handoff remain.
 
-The [research implementation](src/research_protocol/README.md) now includes
-canonical CBOR, protocol hashing and ExternalKey construction. The original
-canonical/hash eight tests passed 29,821 original/native CBOR comparisons,
-45 original/native hashes, 45 independent hashes and 53 ABI/refusal controls.
-The original crate passed 53 active tests, its existing ignored test remains,
-and strict Clippy and formatting passed. The six new ExternalKey methods passed
-5,463 comparisons with the actual original public crate, 732 independent hashes
-and 24 ABI controls, including exact UUID grammar, namespace validation,
-visible-ASCII identifiers, raw key bytes, hexadecimal display and CBOR.
-Research commands, remaining types, state transitions, contribution accounting
-and Hepta handoff remain open.
+The [Bench implementation](src/bench/README.md) contains native workload
+generation, SHA-256 digests, repeated execution of all seven scheduling
+strategies, [environment-value parsing](src/bench/ENVIRONMENT.md), exact decimal
+conversion and [four-decimal formatting](src/bench/FORMATTING.md). Its new seven
+methods recorded six builds and 2,110 native calls; the existing eight methods
+retain 1,566 calls and all 11 original tests. Full ordered members and digests are
+compared, and the intentional scheduler safety corrections are explicit.
+Complete CLI, OS environment/clock/persistence ownership, logarithmic profile
+calculation and report presentation are still being implemented.
 
-The [Bench implementation](src/bench/README.md) adds native workload generation,
-canonical workload/group digests and repeat execution of the existing native
-seven-strategy scheduler. Eight methods passed 1,566 actual native calls,
-307 original workload comparisons, 64 actual original CLI executions, 1,148
-native internal schedule executions, eight comparator controls and eight large
-unaligned cases. All 11 original tests, strict Clippy and formatting passed.
-The repeat module itself reruns scheduling, including repeat=1,000; Python does
-not implement that runtime loop. Three retained scheduler high-water corrections
-intentionally differ from the old unsafe grouping; independent conflict checks
-still pass. Complete CLI/environment parsing, logarithmic profile calculation,
-formatting and persistence are separate remaining work.
+Task's canonical metadata writer now reuses its original returned cursor, saving
+598 operations while preserving all 648 writes and their partial traps. All
+123 actual dynamic entries, representing 75 distinct compiler inputs, fit the
+original limits after this change. The two formerly oversized policy units now
+have 7,927 and 7,949 operations; the limit remains 8,192. A native old/new
+comparator completed 5,220 memory/trap cases and 10,440 calls. The
+[complete Task gate](platform/task_kernel/QUALIFICATION.md), including original
+41 tests, 1,390 records, 445 public cases, 112 allocator controls and independent
+readback, must run on the frozen candidate.
 
-Bench builds now use the standard source-bound compiler API and real receipts.
-A bounded regression executed the three unmodified qualification recorder
-closures: 13 actual builds, 1,558 shared-runner calls and eight additional raw
-ABI calls. Generated comparator provenance names its real fixture owner.
-This prevents a missing-receipt failure in the formal general partition;
-it does not stand in for execution of that entire partition.
-
-### Native Task provider and complete local consumers
-
-The Task provider's six public lifecycle entry points and all 29 operations
-are now emitted by `provider_native.hepta`. The separate HIA witness emitter
-uses a fresh build-time C ABI probe. Production links the HIA-emitted provider
-and witness objects with the pinned external SQLite object and system libraries.
-The old project `provider.c` is only an explicit original oracle with a distinct
-source fence. External SQLite remains C; this is not a pure-HIA SQLite claim.
-
-The frozen provider graph passed 1,182 original/native pairs, 143 actual paired
-allocation failures, 256 concurrent calls, 123 witness controls, 12 emitter
-controls, eight build refusals and 46 independent-reader negative controls.
-The independent reader checked 1,161 actual inputs, code and call targets,
-compiler stages, original C provenance and the complete fault observations.
-Both formal consumers then passed: Task Store in 432.236 seconds and Task
-Boundary in 61.936 seconds, with all 150 source inputs unchanged. Store retained
-41 original tests, strict Clippy, formatting, 1,390 records, 445 public cases,
-112 allocator controls with 96 actual failures and zero final live allocations,
-the 124/257/9 signature-cache regression and 37 Store-reader refusals.
-These are frozen development-graph results; the final integrated commit must
-repeat its own qualification. See the [complete gate](platform/task_kernel/QUALIFICATION.md).
-
-The private signature cache retains per-command message/R/S checks and the
-signature equation. Object hash staging uses 16 KiB in `[131072,147456)`,
-disjoint from the caches. The earlier `f87d186` trap and its failed run remain
-recorded. The original 180-second allocation phase is unchanged.
-
-### Shared crypto, Node identity and actual hosted results
-
-The field multiply and SHA-256 compressor now use bounded narrow-word paths
-when the original wide-word semantics permit them; their full fallback bodies
-remain. Complete memory and trap comparisons passed 159 field cases and 200
-SHA compression/alias cases (318 and 400 actual paired calls). The integrated
-Research, ExternalKey and crypto regression passed all 17 methods in 73.962
-seconds. The largest affected PeerLease unit remains within the original
-compiler bound at 8,184 operations. The rebuilt Node composition, all 29 actual
-compiler/emitter stages and its separate-process reader passed; only the
-necessary source/image identities changed.
-
-The frozen optimized Settlement native stage completed all 320 fixtures,
-2,636 operations and 16,066 calls in 233.636 seconds under the original
-240-second limit, with zero live owners. This is a native-stage result;
-complete original, allocator, integrity and independent-reader qualification,
-and the final commit's hosted run, remain required.
-
-Published `25d0e73` has a real hosted Metadata PASS in the
-[HIA push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44727120287).
-The complete 481.005-second qualification retained 121 outer original tests,
-two child reexecutions, all 12 native groups, 45 integrity controls, 2,827
-allocator ABI calls, 840 real allocation failures and independent readback.
-Every one of its 49,069 archived regular members was rehashed. The observer
-uses eight measured 1 MiB pthread stacks and two glibc arenas within the original
-512 MiB limit. Earlier local `EPERM` and hosted thread-creation failures remain
-failed observations. Body persistence and whole-Peer retirement are still open.
-
-That same published source still failed Task's 180-second allocation phase
-after 93 of 112 controls and Settlement's 240-second native phase after 233
-fixtures. Those failures are not relabelled by later local success. Complete
-Node COMMIT/reorganization/replay/outbox/ACK, Archive/StateImport, Body ownership,
-external SQLite, remaining crypto/TLS/TUF, original service budgets, model and
-research-economic obligations and cross-target acceptance still govern removal
-of the original stack.
+The Task provider's six lifecycle entries and all 29 operations are HIA-emitted.
+Its separate runtime witness uses an actual build-time ABI probe. External
+SQLite and system libraries remain; the old project C provider is only the
+explicitly fenced test oracle. Published `2679895` passed hosted Task Boundary
+and complete Settlement qualification/readback. Its Task compiler regression
+and Bench offline dependency failure are preserved and corrected by this
+continuation. The general workflow retains exact offline/lock semantics and
+actual failed Cargo diagnostics, with all original Bench sources included in
+the global source fence. Component discovery is 682 methods in five disjoint
+groups (521/95/7/22/37); enumeration is not execution.
 
 ## Transfer, request state, transcripts and continuous SHA-512
 

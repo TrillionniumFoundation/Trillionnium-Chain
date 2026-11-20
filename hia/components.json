@@ -3507,6 +3507,15 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/bench/decimal.hepta": [
+      {
+        "functions": [
+          "bench_get",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
     "src/bench/digests.hepta": [
       {
         "functions": [
@@ -3535,6 +3544,66 @@
           "sch_read"
         ],
         "source": "src/executor/schedule.hepta"
+      }
+    ],
+    "src/bench/environment.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_compare",
+          "benv_big_copy",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_quotient",
+          "benv_big_right_one",
+          "benv_big_sub",
+          "benv_decimal",
+          "benv_decimal_convert"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_pack"
+        ],
+        "source": "src/math/binary64.hepta"
+      },
+      {
+        "functions": [
+          "research_utf8"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/bench/format_fixed.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
       }
     ],
     "src/bench/repeat.hepta": [
@@ -5105,6 +5174,22 @@
           "tr_read"
         ],
         "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "src/research_protocol/payload.hepta": [
+      {
+        "functions": [
+          "research_read",
+          "research_get",
+          "research_put",
+          "research_utf8",
+          "research_head_size",
+          "research_write_head",
+          "research_head",
+          "research_take",
+          "research_decode"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
       }
     ],
     "src/service_settlement/arithmetic.hepta": [

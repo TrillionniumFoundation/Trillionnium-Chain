@@ -1,4 +1,4 @@
-# Bench native workload, digest and repeat primitives
+# Bench native components
 
 This directory is the partial HIA migration of the retained
 [`trnm-bench` executable](../../../trillionnium/crates/trnm-bench/src/main.rs).
@@ -12,6 +12,12 @@ initial native grouping and every requested replay, comparing both the digest an
 the complete ordered membership. All production algorithms in these modules are
 HIA instructions executed through the pinned native compiler. The Python builder
 and tests transport buffers, build artifacts and observe results.
+
+The [environment-value implementation](ENVIRONMENT.md) adds all 12 original
+parsers/defaults and exact decimal conversion; [fixed formatting](FORMATTING.md)
+adds native four-decimal output. These value layers preserve the same existing
+scheduler contract. OS environment acquisition, the complete CLI, derived
+logarithmic profiles, clock measurement and persistence remain separate owners.
 
 ## Original observable contract
 
@@ -60,7 +66,7 @@ fanout and write stride when constructing transactions, but the original report
 still prints the normalized configured values. Its effective profile values are
 one read and write ratio 1.0.
 
-### Scheduler and environment — kernel reused; environment text remains OPEN
+### Scheduler and environment — native configuration values implemented
 
 The seven strategies are `original`, `footprint-desc`, `write-first`, `write-last`,
 `hot-bucket-interleave`, `auto-adaptive` and `aggressive-greedy`. Printed names are
@@ -131,7 +137,7 @@ initial call. Each replay must match both the SHA-256 digest and every ordered
 member vector. A digest alone is insufficient. The HIA owner executes this loop
 itself; Python test loops are not the implementation.
 
-### Timing, profiles and formatting — OPEN
+### Timing and complete profiles — OPEN; fixed formatting implemented
 
 The original captures SystemTime after workload construction. It times only the
 first scheduler call with Instant. Digest generation, all deterministic replays,

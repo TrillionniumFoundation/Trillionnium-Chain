@@ -82,7 +82,7 @@ def sources():
                  "trnm-crypto-primitives",
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
                  "trnm-control-plane", "trnm-escrow-vault", "trnm-governance-guard",
-                 "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol"):
+                 "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol", "trnm-bench"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths += sorted((crate / "tests").rglob("*.rs"))
@@ -125,7 +125,9 @@ def sources():
         "trillionnium/crates/trnm-pon-node/src/lib.rs",
         "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md",
         "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
-        "hia/src/escrow/README.md", "hia/src/governance/README.md",
+        "hia/src/escrow/README.md", "hia/src/governance/README.md", "hia/src/bench/README.md",
+        "hia/src/bench/ENVIRONMENT.md", "hia/src/bench/FORMATTING.md",
+        "hia/src/research_protocol/README.md",
         "hia/src/control_plane/LOCAL_GUARD.md", "hia/src/peer_lease/README.md",
         "hia/src/oracle/README.md", "hia/src/types/request_status.md",
         "hia/src/types/transfer.md", "hia/src/types/transcript.md",

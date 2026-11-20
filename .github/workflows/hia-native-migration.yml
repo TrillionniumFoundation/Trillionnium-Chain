@@ -187,8 +187,25 @@ jobs:
           printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Fetch the unchanged locked dependencies for every offline general reference
+        run: |
+          set -euo pipefail
+          # Building the policies above does not download Bench's Clap graph.
+          # Keep offline mode in the reference tests; prepare the exact existing
+          # lockfile here, with both successful and failed fetch streams retained.
+          mkdir -p "$RUNNER_TEMP/hia-bench-observations"
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml \
+            >"$RUNNER_TEMP/hia-bench-observations/general-cargo-fetch.stdout.raw" \
+            2>"$RUNNER_TEMP/hia-bench-observations/general-cargo-fetch.stderr.raw" || {
+              cat "$RUNNER_TEMP/hia-bench-observations/general-cargo-fetch.stdout.raw"
+              cat "$RUNNER_TEMP/hia-bench-observations/general-cargo-fetch.stderr.raw" >&2
+              exit 1
+            }
       - name: Execute every assigned native HIA and independent reference case
         env:
+          HIA_BENCH_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/primitives
+          HIA_BENCH_ENV_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/environment
+          TRNM_HIA_TASK_METADATA_ARTIFACT_DIR: ${{ runner.temp }}/hia-task-metadata-boundaries
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
           TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original
           TRNM_HIA_GOVERNANCE_OUTPUT: ${{ runner.temp }}/hia-governance-original
@@ -210,6 +227,22 @@ jobs:
             ${{ runner.temp }}/hia-observations/
             ${{ runner.temp }}/hia-bootstrap/bootstrap.json
             ${{ runner.temp }}/original-rust-build.jsonl
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete Bench dependency and native observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-bench-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-bench-observations/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain complete Task metadata boundary observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-task-metadata-boundaries-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-task-metadata-boundaries/
           if-no-files-found: error
           retention-days: 30
       - name: Retain complete original and HIA control-plane observations

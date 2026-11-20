@@ -1,4 +1,4 @@
-# Research protocol canonical encoding
+# Research protocol native components
 
 `canonical.hepta` implements the encoder and decoder primitives from the retained
 `trnm-research-protocol/src/canonical.rs` in HIA. `hash.hepta` implements its
@@ -9,12 +9,13 @@ neither supplies a decision to the native implementation.
 
 `external_key.hepta` also implements the original public `ExternalKey` derivation,
 byte access, hexadecimal/display output and canonical CBOR encoding. These native
-components are part of M10's research protocol. Its remaining command/type encodings,
-state transitions, contribution accounting, Hepta handoff, full consumer
-integration and original-package retirement still require implementation and
-acceptance. The core error variants for protocol versions, enum discriminants and
-round-trip checks belong to those consumers; the primitive decoder does not
-manufacture them.
+components are part of M10's research protocol. `payload.hepta` implements all
+seven `ResearchCommandV1` payloads, including their canonical encoding, strict
+decoding, validation, command type and primary object reference. Signed envelopes,
+protocol state transitions, Hepta handoff, full consumer integration and
+original-package retirement still require implementation and acceptance. The
+primitive decoder leaves protocol versions, enum discriminants and round-trip
+checks to the typed consumer; the payload implementation performs those checks.
 
 ## Canonical byte interface
 
@@ -122,6 +123,90 @@ separation and untouched canaries. The Rust adapter calls the original methods;
 it does not copy the derivation algorithm. This finite type implementation does
 not qualify generic Serde, research commands/state, handoff or Node integration.
 
+## Seven typed command payloads
+
+`payload.hepta` implements the seven public command variants from the unchanged
+`trnm-research-protocol/src/types.rs`. It preserves each nested struct's array
+length and version, the outer command tag, exact field order and shortest CBOR
+heads. Decoding rejects unsupported versions, unknown enum discriminants,
+nonminimal lengths, invalid UTF-8, truncated bodies and trailing bytes before
+performing the original round-trip and semantic validation in their original
+order. No host callback supplies a decoded value or validation result.
+
+| Kind | Public payload | Command type | Primary object |
+| --- | --- | --- | --- |
+| 1 | `MatchEvidenceCommitmentV1` | `match_evidence_commitment_v1` | match evidence |
+| 2 | `EvaluationCommitmentV1` | `evaluation_commitment_v1` | evaluation commitment |
+| 3 | `IssueWorkloadReceiptV1` | `issue_workload_receipt_v1` | workload receipt |
+| 4 | `CreateResearchClaimV1` | `create_research_claim_v1` | research claim |
+| 5 | `DeclareLicenseV1` | `declare_license_v1` | license declaration |
+| 6 | `ChallengeResearchClaimV1` | `challenge_research_claim_v1` | claim challenge |
+| 7 | `ClaimResolutionV1` | `resolve_research_claim_v1` | claim resolution |
+
+The private borrowed-buffer entry takes a 24-byte `RTP1` header: magic at bytes
+0–3, operation at byte 4, three zero bytes, a little-endian u64 kind at byte 8,
+and eight zero bytes. The rest is the payload. Operation 1 encodes a typed value
+without semantic validation, matching `CanonicalCbor`; operation 2 also calls
+the original-equivalent validation; operation 3 decodes canonical bytes,
+re-encodes and compares the complete input, then validates. Operation 3 requires
+kind zero because the CBOR command contains its actual kind.
+
+The typed representation follows each Rust struct's field order. All integers,
+enum tags, booleans, collection counts and option flags occupy little-endian u64
+words; keys and digests occupy 32 raw bytes. An object reference consists of kind,
+key and version. A contribution consists of key, role, accepted work units and
+contribution hash. A claim share consists of key and basis points. Collections
+start with their count, optional digests start with 0 or 1, and strings start with
+their UTF-8 byte count. Typed booleans, enums and u16 fields must fit their actual
+public type even when semantic validation is disabled. The adapter is private;
+this layout does not alter the public canonical encoding or stored schema.
+
+The output has a 128-byte fixed prefix. Its first eight u64 words are canonical
+byte length, typed byte length, command kind, command-type byte length, error
+name index, two error details, and primary object version. Bytes 64–95 are the
+primary object key; bytes 96–127 are the zero-padded command type. Canonical bytes
+and typed bytes follow consecutively. The key, kind and version are independently
+compared with the original `primary_object_ref().canonical_bytes()` result.
+Output after these bytes remains untouched.
+
+Return codes 1–11 represent `CanonicalDecodeError` variants, including original
+expected/actual lengths, unsupported version and unknown discriminant. Codes
+101–115 represent, in declaration order, the original payload errors from
+`ZeroExternalKey` through `UnexpectedAmendedClaimants`. The exact stable field
+name indexes and detail mapping are recorded in `test_research_payload.py` and
+its Rust observation adapter. A protocol error zeroes the fixed output prefix
+except for the name and two details; it preserves the remainder. Native traps,
+signals and incomplete batches are never translated into protocol refusals.
+
+Semantic checks include strict contributor/key ordering, full object-reference
+tuple ordering, every nonzero requirement, exact reference kinds, original
+collection bounds, checked u64 work-unit addition, exact declared totals, exact
+10,000 basis-point ownership, optional digest rules, evaluation consistency,
+resolution-specific amended shares and the original restricted SPDX expression
+grammar. Validation order is observable: a multi-error input returns the same
+first error as the original public method.
+
+The borrowed interface requires at least 128 output bytes and
+`2560 + 16 * payload_byte_length` scratch bytes, with checked arithmetic before
+allocation or pointer arithmetic. The scratch allowance covers the complete
+normalized typed representation and canonical re-encoding. Return 64 indicates
+insufficient output or scratch; 65 indicates malformed borrowed framing or a
+typed representation that cannot exist in the original type. These refusals
+leave the complete output untouched. The input is read-only, and the scratch
+canary beyond the declared bound remains unchanged. The existing native test
+runner's 1 MiB per-buffer bound still applies; this finite interface does not
+qualify every unbounded generic or Serde consumer.
+
+Seven tests completed 6,968 actual original/native comparisons and 20 ABI
+controls. They include all seven encode/validate/decode paths, every truncation
+of valid fixtures, all 256 first bytes, canonical scalar and collection
+boundaries, full-width numeric mutations, overflow, incorrect ordering,
+multi-error precedence, optional values, 512 deterministic CBOR mutations and
+128 full-width typed mutations. Expected results come from the retained public
+Rust crate, not a copied Python implementation. This acceptance covers the
+payload component; it does not certify signed commands, state or package
+retirement.
+
 ## Reproduction
 
 With the pinned compiler and toolchain environment used by the existing HIA
@@ -130,6 +215,7 @@ workflow, run:
 ```sh
 python3 -m unittest hia.tests.test_research_canonical -v
 python3 -m unittest hia.tests.test_research_external_key -v
+python3 -m unittest hia.tests.test_research_payload -v
 ```
 
 The suite builds the original locked workspace dependency graph in offline mode

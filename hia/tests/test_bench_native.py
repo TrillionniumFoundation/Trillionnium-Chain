@@ -90,6 +90,42 @@ class BuiltModule(NativeModule):
             raise
 
 
+def run_original_command(directory, prefix, command, env, timeout):
+    """Keep the actual streams even when setup fails before any test starts."""
+    started = time.monotonic()
+    error = None
+    try:
+        result = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, timeout=timeout)
+        stdout, stderr, returncode = result.stdout, result.stderr, result.returncode
+    except subprocess.TimeoutExpired as caught:
+        error = caught
+        stdout, stderr, returncode = caught.stdout or b"", caught.stderr or b"", None
+    except OSError as caught:
+        error = caught
+        stdout, stderr, returncode = b"", b"", None
+    streams = {}
+    for name, raw in (("stdout", stdout), ("stderr", stderr)):
+        path = directory / (prefix + "." + name + ".raw")
+        path.write_bytes(raw)
+        streams[name] = {"path": str(path), "bytes": len(raw),
+                         "sha256": hashlib.sha256(raw).hexdigest()}
+    record = {"argv": command, "cwd": str(ROOT), "timeout_seconds": timeout,
+              "seconds": time.monotonic() - started, "exit_code": returncode,
+              "timed_out": isinstance(error, subprocess.TimeoutExpired),
+              "launch_error": str(error) if isinstance(error, OSError) else None,
+              "streams_complete": error is None, **streams}
+    (directory / (prefix + ".process.json")).write_text(json.dumps(record, indent=2) + "\n")
+    if error is not None or returncode:
+        # CalledProcessError's default message omits these captured streams.
+        # Include every captured byte in the CI traceback, as well as retaining
+        # the exact raw files and their process receipt for the always artifact.
+        detail = ("Original process failed: " + json.dumps(record, sort_keys=True)
+                  + "\nstdout:\n" + stdout.decode("utf-8", errors="backslashreplace")
+                  + "\nstderr:\n" + stderr.decode("utf-8", errors="backslashreplace"))
+        raise RuntimeError(detail) from error
+    return result
+
+
 def build_original(directory):
     before = ORIGINAL.read_bytes()
     env = clean_environment()
@@ -97,10 +133,7 @@ def build_original(directory):
     target = directory / "original-target"
     command = ["cargo", "build", "--manifest-path", str(manifest), "--target-dir", str(target),
                "--locked", "--offline", "-p", "trnm-bench", "--message-format=json"]
-    result = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, timeout=240)
-    (directory / "original-build.stdout.raw").write_bytes(result.stdout)
-    (directory / "original-build.stderr.raw").write_bytes(result.stderr)
-    result.check_returncode()
+    result = run_original_command(directory, "original-build", command, env, 240)
     dependencies = {}
     executables = []
     wanted = {"sha2", "clap", "trnm_executor", "trnm_types"}
@@ -131,10 +164,7 @@ def build_original(directory):
     for path in sorted({p.parent for p in dependencies.values()}):
         command.extend(["-L", "dependency=" + str(path)])
     env.update(TRNM_BENCH_SOURCE=str(ORIGINAL), CARGO_MANIFEST_DIR=str(ORIGINAL.parent.parent))
-    result = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, timeout=90)
-    (directory / "original-adapter.stdout.raw").write_bytes(result.stdout)
-    (directory / "original-adapter.stderr.raw").write_bytes(result.stderr)
-    result.check_returncode()
+    run_original_command(directory, "original-adapter", command, env, 90)
     if before != ORIGINAL.read_bytes():
         raise AssertionError("original Bench source changed during include! build")
     return output, {"source_sha256": hashlib.sha256(before).hexdigest(),
@@ -554,13 +584,23 @@ class BenchNativeTests(unittest.TestCase):
         self.counts["native_comparator_controls"] = len(cases)
 
     def test_retained_original_tests(self):
-        result = subprocess.run(["cargo", "test", "--manifest-path", str(ROOT / "trillionnium/Cargo.toml"),
+        # The shared general-shard recorder and its independent reader must
+        # bind the Rust include! body and every local dependency source, not
+        # only this suite's own report of their identities.
+        from hia.tools.qualify import sources
+        bound = sources()
+        required = [ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock",
+                    ROOT / "hia/src/bench/README.md"]
+        for package in ("trnm-bench", "trnm-executor", "trnm-types"):
+            crate = ROOT / "trillionnium/crates" / package
+            required.extend(crate.rglob("*.rs"))
+            required.append(crate / "Cargo.toml")
+        for path in required:
+            self.assertEqual(bound.get(path.relative_to(ROOT).as_posix()), digest(path), str(path))
+        result = run_original_command(self.directory, "retained-original",
+            ["cargo", "test", "--manifest-path", str(ROOT / "trillionnium/Cargo.toml"),
             "--target-dir", str(self.directory / "original-target"), "--locked", "--offline",
-            "-p", "trnm-bench", "--all-targets", "--all-features"], cwd=ROOT,
-            env=clean_environment(), capture_output=True, timeout=240)
-        (self.directory / "retained-original.stdout.raw").write_bytes(result.stdout)
-        (self.directory / "retained-original.stderr.raw").write_bytes(result.stderr)
-        self.assertEqual(result.returncode, 0, result.stderr.decode(errors="replace")[-4000:])
+            "-p", "trnm-bench", "--all-targets", "--all-features"], clean_environment(), 240)
         self.assertIn(b"11 passed; 0 failed", result.stdout)
 
 
