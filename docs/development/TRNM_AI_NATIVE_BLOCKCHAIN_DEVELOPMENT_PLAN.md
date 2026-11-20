@@ -1,3 +1,15 @@
+## 2026-11-20 — Research 状态内核、Bench 完整报告与结算原预算修复
+
+从已发布 `76381079bfc121a3a178dab8dab71e5290289169` 继续。当前 **83 kernels /30 native foundations /316 HIA sources**，26 原包仍 22 部分迁移、4 未迁移、0 退役，9 项全项目门 OPEN。新增 5 个 Research 状态内核、2 个 Bench 输出内核；共享 SHA-256 修复保留原 ABI、完整 backing bytes 和所有预算。完整 Cargo 图、lock、原源码及测试仍保留，根 README 仍为空。每个新文件只登记一个正式所有者。
+
+763 的 PR HIA run 44746117952 整体成功；push 的 6 组件分区及独立 reader 成功。7 个官方 ZIP 全部下载校验，并以真实 job 元数据、本提交/source-set 重新运行 strict reader，711 方法完整不重叠 PASS；读回不是原生重新执行。push Settlement 真实在 240.108 秒达到原 240 秒门，233/320 fixtures 已完成且清理成功；同源 PR 通过不抹去该失败。修复后的全 native phase 在原门下 206.720 秒完成 320 fixtures/2636 operations/169 fee calls，独立读回 23140 records/16066 native calls/1754 height；162 allocator 控制含 136 真失败、8 threads/256 owners，零泄漏。75 个实际动态编译/123 labels 全通过，最高 8188/8192 ops；最终合并提交仍须 fresh 原 Cargo/tests/Clippy/fmt 与原完整 CI。
+
+Research raw state value 5 方法 3309 调用；graph 6 方法 1095 调用；transition 6 方法 811 调用；query 3 方法 773 调用，分别通过 465/463/151/422 原生与原实现配对。保留原 raw encoding 与 state admission 区别、完整错误顺序、historical/current refs、四种 resolution、nonce/replay 及原状态不变性。native candidate 实际供下一步调用；未来 owner 必须先本地原生验签并私有持有 index/fingerprint，再原子发布。首次 graph recorder 的旧标签错误及首次 transition 两项 fixture 失败均不改写；当前共同 oracle 已扩展，须在合并源重验。
+
+Bench text/report 7 方法 2572 调用通过，包括 42 次真正原 main、21 次 native profile→report 链、1896 integer、365 calendar、167 metric 与 7 真实文件对照。CLI、OS env、两种时钟、文件与进程生命周期继续实现。正式 discovery 当前 738：general523/crypto95/state7/oracle22/ML37/research54；仍 68 jobs/56 bootstrap/50 admission 与原 20 分钟。新状态/报告观察在成功和失败时均归档。
+
+W1 原 head/merge 在原 4 秒/16 workers 与 0.25 CPU/2 GiB/zero-swap/256 PID 服务边界均真实失败，baseline 确认 1、pressure 确认 0，fresh 原测试真 panic；两个 57-member 官方包完整下载核查。该缺口不能由组件通过或保持 invariant 替代。后续持续完成 Research 私有 owner/Serde/handoff、StateImport 全 71 API/事务/资源故障及独立读回、Bench 主进程、ReleaseBundle/Worker/SQLite 边界、Node COMMIT/reorg/replay/outbox/ACK、剩余 crypto/TLS/TUF、跨目标、模型/研究/经济与原服务门。全部替代及原验收真实闭合后才退役旧栈并清理过程版本。
+
 ## 2026-11-20 — Signed Research、Authority、Bench profile、Recovery ACK 与六分区验收
 
 从已发布 `99bcfc11c00c393b7d48ac0f6352b9afe33e913f` 继续。当前 **76 kernels /30 native foundations /309 HIA sources**，26原包仍22部分迁移、4未迁移、0退役，9项全项目门OPEN。新增6个纯内核各只有一份正式源码；ACK归入 `hia/src/peer_lease/recovery_ack.hepta`，目录归属检查保持不变。原Rust源码、Cargo图、lock、原测试、编译预算与服务门均保留，根README仍0字节。

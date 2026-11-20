@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **76 kernel units, 30 native foundations and 309 HIA source
+inventory contains **83 kernel units, 30 native foundations and 316 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (22 partially ported and 4 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
@@ -13,44 +13,43 @@ retains source-specific findings, failures and remaining obligations.
 
 ## Current continuation
 
-This continuation extends published `99bcfc11c00c393b7d48ac0f6352b9afe33e913f`.
-All 67 predecessor HIA workflow jobs and its independent 682-method component
-readback passed. The complete exact-source local Task gate passed in 289.648
-seconds, including all 112 allocator controls within the unchanged 180-second
-phase, original tests, strict Clippy/fmt and independent tamper controls.
-The [current audit](AUDIT.md) distinguishes these source-specific results from
-the new graph, which requires its own clean committed qualification.
+This continuation extends published `76381079bfc121a3a178dab8dab71e5290289169`.
+Its PR HIA workflow completed successfully. All six push component partitions
+and their independent 711-method reader also passed; all seven official ZIPs
+were downloaded, verified and reread locally against the exact head and sources.
+The push Settlement phase genuinely exceeded its original 240-second limit.
+The current shared SHA-256 optimization completed that complete native phase in
+206.720 seconds under the same limit, with independent native and allocation
+readback. The new combined source requires its own committed qualification.
+The [audit](AUDIT.md) retains the failure and its exact source-specific scope.
 
-The [Research implementation](src/research_protocol/README.md) now contains
-canonical CBOR, hashing, ExternalKey, all seven typed payloads, complete signed
-commands and [Authority identity/set values](src/research_protocol/AUTHORITY.md).
-The payload layer retains 6,968 original/native pairs and 20 ABI controls.
-Eight signed methods passed 5,045 pairs and 87 ABI controls; five Authority
-methods passed 590 pairs and 180 ABI controls. Native signing preserves exact
-original validation and signature behavior and clears private scratch on all
-admitted signing exits. Generic Serde, the full state/snapshot owner, Hepta
-handoff and Node integration remain open.
+The [Research implementation](src/research_protocol/README.md) now adds
+[raw state values](src/research_protocol/STATE_VALUES.md),
+[indexing and graph admission](src/research_protocol/STATE_GRAPH.md),
+[all seven state transitions](src/research_protocol/STATE_TRANSITION.md) and
+[all seven getters, references and normalized export](src/research_protocol/STATE_QUERY.md)
+to its existing signed-command and authority kernels. Actual state transitions
+feed their native candidate into the next native step, with exact original
+outcomes, canonical bytes and hashes checked throughout. The private continuations
+require native signature validation and exclusive owner custody. The complete
+opaque state owner, generic Serde, Hepta handoff and Node integration remain open.
 
-The [Bench implementation](src/bench/README.md) adds native
-[logarithms](src/bench/LOGARITHM.md), [all 51 derived profile fields](src/bench/PROFILE.md)
-and complete formatted field values to existing workload, scheduling, repeat,
-digest and environment/decimal implementations. Seven new methods passed 317
-complete profiles and 6,560 finite MPFR logarithm comparisons. Existing scheduler
-safety differences remain explicit. Full CLI, OS acquisition, clock, ordered
-report and persistence ownership remain under development.
+The [Bench implementation](src/bench/README.md) adds
+[integer/calendar text](src/bench/TEXT.md) and the
+[complete ordered report and persisted bytes](src/bench/REPORT.md) to its native
+workload, scheduler, environment and 51-field profile layers. Seven report methods
+passed 2,572 native calls, including 42 real original-main runs, 21 complete
+native profile/report chains, exact output bytes and real file-failure controls.
+CLI parsing, OS environment/clock acquisition and file/process ownership remain
+under implementation; prior scheduler safety differences remain explicit.
 
-The [Recovery ACK codec](platform/peer_payload_recovery/README.md) passed 3,175
-actual Rust pairs, 1,313 independent hashes and 673 ABI controls, with all actual
-captures independently reread. ACK journal/recovery and wide Body remain open.
-
-Fresh component discovery has 711 methods in six disjoint groups:
-516 general, 95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 34 Research.
-Research now has an independent job under the same 20-minute limit. The combined
-reader requires every actual method and all six successful strict bundles.
-All 33 partition/reader/bootstrap controls passed; enumeration alone is not
-execution. The workflow expands to 68 jobs, 56 bootstraps and 50 source-admission
-blocks. Original compiler limits, service budget, failed observations and
-retirement conditions remain unchanged.
+Fresh discovery has 738 methods in six disjoint groups: 523 general,
+95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 54 Research.
+The workflow retains its 68 jobs, 56 bootstraps, 50 source-admission blocks and
+original 20-minute job limits. New Research state and Bench report observations
+are retained on both success and failure. Enumeration does not establish a pass.
+The exact published W1 service run still failed under the original four-second,
+sixteen-worker limits; all nine whole-project gates remain OPEN.
 
 ## Transfer, request state, transcripts and continuous SHA-512
 

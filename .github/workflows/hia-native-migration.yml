@@ -206,6 +206,7 @@ jobs:
           HIA_BENCH_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/primitives
           HIA_BENCH_ENV_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/environment
           HIA_BENCH_PROFILE_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/profile
+          HIA_BENCH_REPORT_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/report
           TRNM_HIA_TASK_METADATA_ARTIFACT_DIR: ${{ runner.temp }}/hia-task-metadata-boundaries
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
           TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original
@@ -963,6 +964,11 @@ jobs:
               exit 1
             }
       - name: Execute every assigned native HIA and independent reference case
+        env:
+          HIA_RESEARCH_STATE_VALUES_OBSERVATIONS: ${{ runner.temp }}/hia-research-state-observations/values
+          HIA_RESEARCH_STATE_GRAPH_OBSERVATIONS: ${{ runner.temp }}/hia-research-state-observations/graph
+          HIA_RESEARCH_STATE_TRANSITION_OBSERVATIONS: ${{ runner.temp }}/hia-research-state-observations/transition
+          HIA_RESEARCH_STATE_QUERY_OBSERVATIONS: ${{ runner.temp }}/hia-research-state-observations/query
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify.py --require-rust-oracle --shard research --output "$RUNNER_TEMP/hia-observations/qualification.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/qualification.log"
@@ -980,12 +986,14 @@ jobs:
             ${{ runner.temp }}/original-rust-build.jsonl
           if-no-files-found: error
           retention-days: 30
-      - name: Retain complete Research dependency preparation streams
+      - name: Retain complete Research dependency and state observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: hia-research-dependencies-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/hia-research-dependencies/
+          path: |
+            ${{ runner.temp }}/hia-research-dependencies/
+            ${{ runner.temp }}/hia-research-state-observations/
           if-no-files-found: error
           retention-days: 30
   native-components-readback:

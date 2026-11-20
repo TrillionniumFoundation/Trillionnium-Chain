@@ -7,6 +7,16 @@ zero upper halves. Arbitrary u64 K words contribute through addition modulo
 incoming states execute the unchanged original blocks, including partial
 writes and traps. The baseline is a test entry assembled from those blocks;
 its whole function digest must match the original production source exactly.
+
+The fast schedule keeps the previous sixteen words in eight u64 parameters.
+At expansion index i, packed slot j has W[i-16+2*j] in its low half and
+W[i-15+2*j] in its high half. Each iteration shifts that window by one word
+and appends the newly computed u32. Initialization performs the same shifts
+from an all-zero window; after sixteen inputs the invariant holds at i=16.
+The original eight-byte W slots are still written in order, including their
+zero upper halves. The existing complete-context guard makes the narrower
+stores and their four-byte zero fills in bounds; all failing-context paths
+continue through the exact unchanged fallback.
 """
 from __future__ import annotations
 
@@ -153,6 +163,18 @@ def compression_cases():
         backing[1240] = 1
         rows.append({"label": f"hashlib-{len(message)}", "views": [[1240,1],[1272,0],[0,1208]],
                      "backing": base64.b64encode(backing).decode(), "digest": hashlib.sha256(message).hexdigest()})
+    for seed in range(32):
+        # Distinct neighboring halves exercise all sixteen window positions;
+        # stale W slots and arbitrary upper K halves remain observable too.
+        work = bytearray(rng.randrange(256) for _ in range(1208))
+        for i in range(8):
+            struct.pack_into("<Q", work, 1024 + 8*i, rng.randrange(1 << 32))
+        for i in range(16):
+            word = ((i + 1) * 0x01020305 ^ (1 << seed) ^ 0xA598C367) & 0xFFFFFFFF
+            struct.pack_into(">I", work, 1104 + 4*i, word)
+        rows.append({"label": f"packed-window-bit-{seed}",
+                     "views": [[1240,1],[1272,0],[0,1208]],
+                     "backing": base64.b64encode(work + bytes(128)).decode(), "digest": None})
     return rows
 
 

@@ -821,12 +821,13 @@ block fast_scan_word(check_w:mutbuf,check_i:u64)
   branch fast_v12 fast_scan(check_w,fast_v14) b0(check_w)
 block fast_start(start_w:mutbuf)
   fast_v15:usize = const() {"value":0}
-  jump fast_words(start_w,fast_v15)
-block fast_words(words_w:mutbuf,words_i:usize)
+  ring_initial:u64 = const() {"value":0}
+  jump fast_words(start_w,fast_v15,ring_initial,ring_initial,ring_initial,ring_initial,ring_initial,ring_initial,ring_initial,ring_initial)
+block fast_words(words_w:mutbuf,words_i:usize,words_ring0:u64,words_ring1:u64,words_ring2:u64,words_ring3:u64,words_ring4:u64,words_ring5:u64,words_ring6:u64,words_ring7:u64)
   fast_v16:usize = const() {"value":16}
   fast_v17:bool = compare.lt(words_i,fast_v16)
-  branch fast_v17 fast_input_word(words_w,words_i) fast_expand(words_w,words_i)
-block fast_input_word(input_w:mutbuf,input_i:usize)
+  branch fast_v17 fast_input_word(words_w,words_i,words_ring0,words_ring1,words_ring2,words_ring3,words_ring4,words_ring5,words_ring6,words_ring7) fast_expand(words_w,words_i,words_ring0,words_ring1,words_ring2,words_ring3,words_ring4,words_ring5,words_ring6,words_ring7)
+block fast_input_word(input_w:mutbuf,input_i:usize,input_ring0:u64,input_ring1:u64,input_ring2:u64,input_ring3:u64,input_ring4:u64,input_ring5:u64,input_ring6:u64,input_ring7:u64)
   fast_v18:usize = const() {"value":1104}
   fast_v19:usize = const() {"value":4}
   fast_v20:usize = int.mul.wrap(input_i,fast_v19)
@@ -858,107 +859,73 @@ block fast_input_word(input_w:mutbuf,input_i:usize)
   fast_v46:usize = const() {"value":8}
   fast_v47:usize = int.mul.wrap(input_i,fast_v46)
   fast_v48:usize = int.add.wrap(fast_v45,fast_v47)
-  fast_store_input_at:u64 = int.cast(fast_v48) {"mode":"wrap"}
-  fast_store_input_value:u64 = int.cast(fast_v44) {"mode":"wrap"}
-  fast_store_input_result:u64 = call(input_w,fast_store_input_at,fast_store_input_value) {"function":"tr_put"}
+  input_store_b0:u8 = int.cast(fast_v44) {"mode":"wrap"}
+  _ = buffer.store(input_w,fast_v48,input_store_b0)
+  input_store_i1:usize = const() {"value":1}
+  input_store_p1:usize = int.add.wrap(fast_v48,input_store_i1)
+  input_store_s1:u32 = const() {"value":8}
+  input_store_w1:u32 = int.shr.checked(fast_v44,input_store_s1)
+  input_store_b1:u8 = int.cast(input_store_w1) {"mode":"wrap"}
+  _ = buffer.store(input_w,input_store_p1,input_store_b1)
+  input_store_i2:usize = const() {"value":2}
+  input_store_p2:usize = int.add.wrap(fast_v48,input_store_i2)
+  input_store_s2:u32 = const() {"value":16}
+  input_store_w2:u32 = int.shr.checked(fast_v44,input_store_s2)
+  input_store_b2:u8 = int.cast(input_store_w2) {"mode":"wrap"}
+  _ = buffer.store(input_w,input_store_p2,input_store_b2)
+  input_store_i3:usize = const() {"value":3}
+  input_store_p3:usize = int.add.wrap(fast_v48,input_store_i3)
+  input_store_s3:u32 = const() {"value":24}
+  input_store_w3:u32 = int.shr.checked(fast_v44,input_store_s3)
+  input_store_b3:u8 = int.cast(input_store_w3) {"mode":"wrap"}
+  _ = buffer.store(input_w,input_store_p3,input_store_b3)
+  input_store_four:usize = const() {"value":4}
+  input_store_upper:usize = int.add.wrap(fast_v48,input_store_four)
+  input_store_zero:u8 = const() {"value":0}
+  _ = buffer.fill_range(input_w,input_store_upper,input_store_four,input_store_zero)
   fast_v70:usize = int.add.wrap(input_i,fast_v26)
-  jump fast_words(input_w,fast_v70)
-block fast_expand(expand_w:mutbuf,expand_i:usize)
+  input_ringshift:u64 = const() {"value":32}
+  input_ringnew:u64 = int.cast(fast_v44) {"mode":"wrap"}
+  input_ringlo0:u64 = int.shr.checked(input_ring0,input_ringshift)
+  input_ringhi0:u64 = int.shl.checked(input_ring1,input_ringshift)
+  input_ringout0:u64 = bit.or(input_ringlo0,input_ringhi0)
+  input_ringlo1:u64 = int.shr.checked(input_ring1,input_ringshift)
+  input_ringhi1:u64 = int.shl.checked(input_ring2,input_ringshift)
+  input_ringout1:u64 = bit.or(input_ringlo1,input_ringhi1)
+  input_ringlo2:u64 = int.shr.checked(input_ring2,input_ringshift)
+  input_ringhi2:u64 = int.shl.checked(input_ring3,input_ringshift)
+  input_ringout2:u64 = bit.or(input_ringlo2,input_ringhi2)
+  input_ringlo3:u64 = int.shr.checked(input_ring3,input_ringshift)
+  input_ringhi3:u64 = int.shl.checked(input_ring4,input_ringshift)
+  input_ringout3:u64 = bit.or(input_ringlo3,input_ringhi3)
+  input_ringlo4:u64 = int.shr.checked(input_ring4,input_ringshift)
+  input_ringhi4:u64 = int.shl.checked(input_ring5,input_ringshift)
+  input_ringout4:u64 = bit.or(input_ringlo4,input_ringhi4)
+  input_ringlo5:u64 = int.shr.checked(input_ring5,input_ringshift)
+  input_ringhi5:u64 = int.shl.checked(input_ring6,input_ringshift)
+  input_ringout5:u64 = bit.or(input_ringlo5,input_ringhi5)
+  input_ringlo6:u64 = int.shr.checked(input_ring6,input_ringshift)
+  input_ringhi6:u64 = int.shl.checked(input_ring7,input_ringshift)
+  input_ringout6:u64 = bit.or(input_ringlo6,input_ringhi6)
+  input_ringlo7:u64 = int.shr.checked(input_ring7,input_ringshift)
+  input_ringhi7:u64 = int.shl.checked(input_ringnew,input_ringshift)
+  input_ringout7:u64 = bit.or(input_ringlo7,input_ringhi7)
+  jump fast_words(input_w,fast_v70,input_ringout0,input_ringout1,input_ringout2,input_ringout3,input_ringout4,input_ringout5,input_ringout6,input_ringout7)
+block fast_expand(expand_w:mutbuf,expand_i:usize,expand_ring0:u64,expand_ring1:u64,expand_ring2:u64,expand_ring3:u64,expand_ring4:u64,expand_ring5:u64,expand_ring6:u64,expand_ring7:u64)
   fast_v71:usize = const() {"value":64}
   fast_v72:bool = compare.lt(expand_i,fast_v71)
-  branch fast_v72 fast_schedule_word(expand_w,expand_i) fast_state(expand_w)
-block fast_schedule_word(schedule_w:mutbuf,schedule_i:usize)
-  fast_v73:usize = const() {"value":15}
-  fast_v74:usize = int.sub.wrap(schedule_i,fast_v73)
+  branch fast_v72 fast_schedule_word(expand_w,expand_i,expand_ring0,expand_ring1,expand_ring2,expand_ring3,expand_ring4,expand_ring5,expand_ring6,expand_ring7) fast_state(expand_w)
+block fast_schedule_word(schedule_w:mutbuf,schedule_i:usize,schedule_ring0:u64,schedule_ring1:u64,schedule_ring2:u64,schedule_ring3:u64,schedule_ring4:u64,schedule_ring5:u64,schedule_ring6:u64,schedule_ring7:u64)
+  ring_half:u64 = const() {"value":32}
+  ring_first_high:u64 = int.shr.checked(schedule_ring0,ring_half)
+  fast_v101:u32 = int.cast(ring_first_high) {"mode":"wrap"}
+  fast_v130:u32 = int.cast(schedule_ring7) {"mode":"wrap"}
+  fast_v159:u32 = int.cast(schedule_ring0) {"mode":"wrap"}
+  ring_fourth_high:u64 = int.shr.checked(schedule_ring4,ring_half)
+  fast_v188:u32 = int.cast(ring_fourth_high) {"mode":"wrap"}
   fast_v75:usize = const() {"value":512}
   fast_v76:usize = const() {"value":8}
-  fast_v77:usize = int.mul.wrap(fast_v74,fast_v76)
-  fast_v78:usize = int.add.wrap(fast_v75,fast_v77)
-  fast_v79:u8 = buffer.load(schedule_w,fast_v78)
-  fast_v80:u32 = int.cast(fast_v79) {"mode":"wrap"}
   fast_v81:usize = const() {"value":1}
-  fast_v82:usize = int.add.wrap(fast_v78,fast_v81)
-  fast_v83:u8 = buffer.load(schedule_w,fast_v82)
-  fast_v84:u32 = int.cast(fast_v83) {"mode":"wrap"}
-  fast_v85:u32 = const() {"value":8}
-  fast_v86:u32 = int.shl.checked(fast_v84,fast_v85)
-  fast_v87:u32 = bit.or(fast_v80,fast_v86)
-  fast_v88:usize = const() {"value":2}
-  fast_v89:usize = int.add.wrap(fast_v78,fast_v88)
-  fast_v90:u8 = buffer.load(schedule_w,fast_v89)
-  fast_v91:u32 = int.cast(fast_v90) {"mode":"wrap"}
-  fast_v92:u32 = const() {"value":16}
-  fast_v93:u32 = int.shl.checked(fast_v91,fast_v92)
-  fast_v94:u32 = bit.or(fast_v87,fast_v93)
-  fast_v95:usize = const() {"value":3}
-  fast_v96:usize = int.add.wrap(fast_v78,fast_v95)
-  fast_v97:u8 = buffer.load(schedule_w,fast_v96)
-  fast_v98:u32 = int.cast(fast_v97) {"mode":"wrap"}
-  fast_v99:u32 = const() {"value":24}
-  fast_v100:u32 = int.shl.checked(fast_v98,fast_v99)
-  fast_v101:u32 = bit.or(fast_v94,fast_v100)
-  fast_v103:usize = int.sub.wrap(schedule_i,fast_v88)
-  fast_v106:usize = int.mul.wrap(fast_v103,fast_v76)
-  fast_v107:usize = int.add.wrap(fast_v75,fast_v106)
-  fast_v108:u8 = buffer.load(schedule_w,fast_v107)
-  fast_v109:u32 = int.cast(fast_v108) {"mode":"wrap"}
-  fast_v111:usize = int.add.wrap(fast_v107,fast_v81)
-  fast_v112:u8 = buffer.load(schedule_w,fast_v111)
-  fast_v113:u32 = int.cast(fast_v112) {"mode":"wrap"}
-  fast_v115:u32 = int.shl.checked(fast_v113,fast_v85)
-  fast_v116:u32 = bit.or(fast_v109,fast_v115)
-  fast_v118:usize = int.add.wrap(fast_v107,fast_v88)
-  fast_v119:u8 = buffer.load(schedule_w,fast_v118)
-  fast_v120:u32 = int.cast(fast_v119) {"mode":"wrap"}
-  fast_v122:u32 = int.shl.checked(fast_v120,fast_v92)
-  fast_v123:u32 = bit.or(fast_v116,fast_v122)
-  fast_v125:usize = int.add.wrap(fast_v107,fast_v95)
-  fast_v126:u8 = buffer.load(schedule_w,fast_v125)
-  fast_v127:u32 = int.cast(fast_v126) {"mode":"wrap"}
-  fast_v129:u32 = int.shl.checked(fast_v127,fast_v99)
-  fast_v130:u32 = bit.or(fast_v123,fast_v129)
-  fast_v131:usize = const() {"value":16}
-  fast_v132:usize = int.sub.wrap(schedule_i,fast_v131)
-  fast_v135:usize = int.mul.wrap(fast_v132,fast_v76)
-  fast_v136:usize = int.add.wrap(fast_v75,fast_v135)
-  fast_v137:u8 = buffer.load(schedule_w,fast_v136)
-  fast_v138:u32 = int.cast(fast_v137) {"mode":"wrap"}
-  fast_v140:usize = int.add.wrap(fast_v136,fast_v81)
-  fast_v141:u8 = buffer.load(schedule_w,fast_v140)
-  fast_v142:u32 = int.cast(fast_v141) {"mode":"wrap"}
-  fast_v144:u32 = int.shl.checked(fast_v142,fast_v85)
-  fast_v145:u32 = bit.or(fast_v138,fast_v144)
-  fast_v147:usize = int.add.wrap(fast_v136,fast_v88)
-  fast_v148:u8 = buffer.load(schedule_w,fast_v147)
-  fast_v149:u32 = int.cast(fast_v148) {"mode":"wrap"}
-  fast_v151:u32 = int.shl.checked(fast_v149,fast_v92)
-  fast_v152:u32 = bit.or(fast_v145,fast_v151)
-  fast_v154:usize = int.add.wrap(fast_v136,fast_v95)
-  fast_v155:u8 = buffer.load(schedule_w,fast_v154)
-  fast_v156:u32 = int.cast(fast_v155) {"mode":"wrap"}
-  fast_v158:u32 = int.shl.checked(fast_v156,fast_v99)
-  fast_v159:u32 = bit.or(fast_v152,fast_v158)
-  fast_v160:usize = const() {"value":7}
-  fast_v161:usize = int.sub.wrap(schedule_i,fast_v160)
-  fast_v164:usize = int.mul.wrap(fast_v161,fast_v76)
-  fast_v165:usize = int.add.wrap(fast_v75,fast_v164)
-  fast_v166:u8 = buffer.load(schedule_w,fast_v165)
-  fast_v167:u32 = int.cast(fast_v166) {"mode":"wrap"}
-  fast_v169:usize = int.add.wrap(fast_v165,fast_v81)
-  fast_v170:u8 = buffer.load(schedule_w,fast_v169)
-  fast_v171:u32 = int.cast(fast_v170) {"mode":"wrap"}
-  fast_v173:u32 = int.shl.checked(fast_v171,fast_v85)
-  fast_v174:u32 = bit.or(fast_v167,fast_v173)
-  fast_v176:usize = int.add.wrap(fast_v165,fast_v88)
-  fast_v177:u8 = buffer.load(schedule_w,fast_v176)
-  fast_v178:u32 = int.cast(fast_v177) {"mode":"wrap"}
-  fast_v180:u32 = int.shl.checked(fast_v178,fast_v92)
-  fast_v181:u32 = bit.or(fast_v174,fast_v180)
-  fast_v183:usize = int.add.wrap(fast_v165,fast_v95)
-  fast_v184:u8 = buffer.load(schedule_w,fast_v183)
-  fast_v185:u32 = int.cast(fast_v184) {"mode":"wrap"}
-  fast_v187:u32 = int.shl.checked(fast_v185,fast_v99)
-  fast_v188:u32 = bit.or(fast_v181,fast_v187)
   fast_v189:u32 = const() {"value":7}
   fast_v190:u32 = int.shr.checked(fast_v101,fast_v189)
   fast_v191:u32 = const() {"value":25}
@@ -992,11 +959,58 @@ block fast_schedule_word(schedule_w:mutbuf,schedule_i:usize)
   fast_v219:u32 = int.add.wrap(fast_v218,fast_v216)
   fast_v222:usize = int.mul.wrap(schedule_i,fast_v76)
   fast_v223:usize = int.add.wrap(fast_v75,fast_v222)
-  fast_store_schedule_at:u64 = int.cast(fast_v223) {"mode":"wrap"}
-  fast_store_schedule_value:u64 = int.cast(fast_v219) {"mode":"wrap"}
-  fast_store_schedule_result:u64 = call(schedule_w,fast_store_schedule_at,fast_store_schedule_value) {"function":"tr_put"}
+  schedule_store_b0:u8 = int.cast(fast_v219) {"mode":"wrap"}
+  _ = buffer.store(schedule_w,fast_v223,schedule_store_b0)
+  schedule_store_i1:usize = const() {"value":1}
+  schedule_store_p1:usize = int.add.wrap(fast_v223,schedule_store_i1)
+  schedule_store_s1:u32 = const() {"value":8}
+  schedule_store_w1:u32 = int.shr.checked(fast_v219,schedule_store_s1)
+  schedule_store_b1:u8 = int.cast(schedule_store_w1) {"mode":"wrap"}
+  _ = buffer.store(schedule_w,schedule_store_p1,schedule_store_b1)
+  schedule_store_i2:usize = const() {"value":2}
+  schedule_store_p2:usize = int.add.wrap(fast_v223,schedule_store_i2)
+  schedule_store_s2:u32 = const() {"value":16}
+  schedule_store_w2:u32 = int.shr.checked(fast_v219,schedule_store_s2)
+  schedule_store_b2:u8 = int.cast(schedule_store_w2) {"mode":"wrap"}
+  _ = buffer.store(schedule_w,schedule_store_p2,schedule_store_b2)
+  schedule_store_i3:usize = const() {"value":3}
+  schedule_store_p3:usize = int.add.wrap(fast_v223,schedule_store_i3)
+  schedule_store_s3:u32 = const() {"value":24}
+  schedule_store_w3:u32 = int.shr.checked(fast_v219,schedule_store_s3)
+  schedule_store_b3:u8 = int.cast(schedule_store_w3) {"mode":"wrap"}
+  _ = buffer.store(schedule_w,schedule_store_p3,schedule_store_b3)
+  schedule_store_four:usize = const() {"value":4}
+  schedule_store_upper:usize = int.add.wrap(fast_v223,schedule_store_four)
+  schedule_store_zero:u8 = const() {"value":0}
+  _ = buffer.fill_range(schedule_w,schedule_store_upper,schedule_store_four,schedule_store_zero)
   fast_v245:usize = int.add.wrap(schedule_i,fast_v81)
-  jump fast_expand(schedule_w,fast_v245)
+  schedule_ringshift:u64 = const() {"value":32}
+  schedule_ringnew:u64 = int.cast(fast_v219) {"mode":"wrap"}
+  schedule_ringlo0:u64 = int.shr.checked(schedule_ring0,schedule_ringshift)
+  schedule_ringhi0:u64 = int.shl.checked(schedule_ring1,schedule_ringshift)
+  schedule_ringout0:u64 = bit.or(schedule_ringlo0,schedule_ringhi0)
+  schedule_ringlo1:u64 = int.shr.checked(schedule_ring1,schedule_ringshift)
+  schedule_ringhi1:u64 = int.shl.checked(schedule_ring2,schedule_ringshift)
+  schedule_ringout1:u64 = bit.or(schedule_ringlo1,schedule_ringhi1)
+  schedule_ringlo2:u64 = int.shr.checked(schedule_ring2,schedule_ringshift)
+  schedule_ringhi2:u64 = int.shl.checked(schedule_ring3,schedule_ringshift)
+  schedule_ringout2:u64 = bit.or(schedule_ringlo2,schedule_ringhi2)
+  schedule_ringlo3:u64 = int.shr.checked(schedule_ring3,schedule_ringshift)
+  schedule_ringhi3:u64 = int.shl.checked(schedule_ring4,schedule_ringshift)
+  schedule_ringout3:u64 = bit.or(schedule_ringlo3,schedule_ringhi3)
+  schedule_ringlo4:u64 = int.shr.checked(schedule_ring4,schedule_ringshift)
+  schedule_ringhi4:u64 = int.shl.checked(schedule_ring5,schedule_ringshift)
+  schedule_ringout4:u64 = bit.or(schedule_ringlo4,schedule_ringhi4)
+  schedule_ringlo5:u64 = int.shr.checked(schedule_ring5,schedule_ringshift)
+  schedule_ringhi5:u64 = int.shl.checked(schedule_ring6,schedule_ringshift)
+  schedule_ringout5:u64 = bit.or(schedule_ringlo5,schedule_ringhi5)
+  schedule_ringlo6:u64 = int.shr.checked(schedule_ring6,schedule_ringshift)
+  schedule_ringhi6:u64 = int.shl.checked(schedule_ring7,schedule_ringshift)
+  schedule_ringout6:u64 = bit.or(schedule_ringlo6,schedule_ringhi6)
+  schedule_ringlo7:u64 = int.shr.checked(schedule_ring7,schedule_ringshift)
+  schedule_ringhi7:u64 = int.shl.checked(schedule_ringnew,schedule_ringshift)
+  schedule_ringout7:u64 = bit.or(schedule_ringlo7,schedule_ringhi7)
+  jump fast_expand(schedule_w,fast_v245,schedule_ringout0,schedule_ringout1,schedule_ringout2,schedule_ringout3,schedule_ringout4,schedule_ringout5,schedule_ringout6,schedule_ringout7)
 block fast_state(state_w:mutbuf)
   fast_v246:u64 = const() {"value":1024}
   fast_v247:u64 = call(state_w,fast_v246) {"function":"tr_get"}
@@ -1969,15 +1983,9 @@ block b12(v139:mutbuf,v141:u64,v142:u64,v143:u64,v144:u64,v145:u64,v146:u64,v147
 end
 fn tr_get(w:mutbuf,p:u64) -> (u64) effects(read,write,trap) entry(b0)
 block b0(w:mutbuf,p:u64)
-  zero:u64 = const() {"value":0}
-  index0:u64 = const() {"value":0}
-  position0:u64 = int.add.wrap(p,index0)
-  at0:usize = int.cast(position0) {"mode":"wrap"}
+  at0:usize = int.cast(p) {"mode":"wrap"}
   byte0:u8 = buffer.load(w,at0)
-  word0:u64 = int.cast(byte0) {"mode":"wrap"}
-  shift0:u64 = const() {"value":0}
-  shifted0:u64 = int.shl.checked(word0,shift0)
-  word0combined:u64 = bit.or(zero,shifted0)
+  word0combined:u64 = int.cast(byte0) {"mode":"wrap"}
   index1:u64 = const() {"value":1}
   position1:u64 = int.add.wrap(p,index1)
   at1:usize = int.cast(position1) {"mode":"wrap"}
@@ -2039,12 +2047,8 @@ end
 fn tr_put(w:mutbuf,p:u64,value:u64) -> (u64) effects(read,write,trap) entry(b0)
 block b0(w:mutbuf,p:u64,value:u64)
   zero:u64 = const() {"value":0}
-  index0:u64 = const() {"value":0}
-  position0:u64 = int.add.wrap(p,index0)
-  shift0:u64 = const() {"value":0}
-  shifted0:u64 = int.shr.checked(value,shift0)
-  at0:usize = int.cast(position0) {"mode":"wrap"}
-  byte0:u8 = int.cast(shifted0) {"mode":"wrap"}
+  at0:usize = int.cast(p) {"mode":"wrap"}
+  byte0:u8 = int.cast(value) {"mode":"wrap"}
   _ = buffer.store(w,at0,byte0)
   index1:u64 = const() {"value":1}
   position1:u64 = int.add.wrap(p,index1)

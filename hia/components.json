@@ -3795,6 +3795,78 @@
         "source": "src/math/binary64.hepta"
       }
     ],
+    "src/bench/report.hepta": [
+      {
+        "functions": [
+          "benv_big_bits",
+          "benv_big_left",
+          "benv_big_mul",
+          "benv_big_right_one"
+        ],
+        "source": "src/bench/decimal.hepta"
+      },
+      {
+        "functions": [
+          "bench_big_div10",
+          "bench_fixed4"
+        ],
+        "source": "src/bench/format_fixed.hepta"
+      },
+      {
+        "functions": [
+          "bench_float4"
+        ],
+        "source": "src/bench/format_value.hepta"
+      },
+      {
+        "functions": [
+          "bt_div_euclid",
+          "bt_i64",
+          "bt_iso",
+          "bt_u128",
+          "bt_u64"
+        ],
+        "source": "src/bench/text.hepta"
+      },
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
+        ],
+        "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "fp64_div",
+          "fp64_exponent",
+          "fp64_from_u64",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_mul",
+          "fp64_pack",
+          "fp64_product_high",
+          "fp64_product_low",
+          "fp64_ratio"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/bench/text.hepta": [
+      {
+        "functions": [
+          "bench_read",
+          "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
     "src/bench/workload.hepta": [],
     "src/checkpoint/value_v2.hepta": [
       {
@@ -5510,6 +5582,322 @@
           "research_decode"
         ],
         "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_graph.hepta": [
+      {
+        "functions": [
+          "rsi_identity_compare",
+          "rsi_text_compare"
+        ],
+        "source": "src/research_protocol/state_index.hepta"
+      },
+      {
+        "functions": [
+          "ra_compare",
+          "ra_identity_valid"
+        ],
+        "source": "src/research_protocol/authority.hepta"
+      },
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_token",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_compare",
+          "rt_error",
+          "rt_nonzero",
+          "rt_positive",
+          "rt_validate_challenge",
+          "rt_validate_claim",
+          "rt_validate_claimants",
+          "rt_validate_contributors",
+          "rt_validate_evaluation",
+          "rt_validate_evidence",
+          "rt_validate_license",
+          "rt_validate_match",
+          "rt_validate_payload",
+          "rt_validate_ref",
+          "rt_validate_resolution",
+          "rt_validate_spdx",
+          "rt_validate_workload"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_get",
+          "research_put"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      }
+    ],
+    "src/research_protocol/state_index.hepta": [
+      {
+        "functions": [
+          "rsv_authorities",
+          "rsv_identity",
+          "rsv_optional_ref"
+        ],
+        "source": "src/research_protocol/state_values.hepta"
+      },
+      {
+        "functions": [
+          "rc_copy",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_query.hepta": [
+      {
+        "functions": [
+          "rsg_error",
+          "rsg_find_ref",
+          "rsg_first",
+          "rsg_require"
+        ],
+        "source": "src/research_protocol/state_graph.hepta"
+      },
+      {
+        "functions": [
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_compare"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_get",
+          "research_put"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_transition.hepta": [
+      {
+        "functions": [
+          "rsg_error",
+          "rsg_find_ref",
+          "rsg_first",
+          "rsg_require"
+        ],
+        "source": "src/research_protocol/state_graph.hepta"
+      },
+      {
+        "functions": [
+          "rsi_identity_compare",
+          "rsi_text_compare"
+        ],
+        "source": "src/research_protocol/state_index.hepta"
+      },
+      {
+        "functions": [
+          "ra_compare",
+          "ra_find"
+        ],
+        "source": "src/research_protocol/authority.hepta"
+      },
+      {
+        "functions": [
+          "rc_codec",
+          "rc_copy",
+          "rc_encoding",
+          "rc_signature",
+          "rc_text",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_compare",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      }
+    ],
+    "src/research_protocol/state_values.hepta": [
+      {
+        "functions": [
+          "rc_copy",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "rt_append",
+          "rt_array",
+          "rt_codec_challenge",
+          "rt_codec_claim",
+          "rt_codec_contributor",
+          "rt_codec_evaluation",
+          "rt_codec_license",
+          "rt_codec_match",
+          "rt_codec_payload",
+          "rt_codec_ref",
+          "rt_codec_resolution",
+          "rt_codec_share",
+          "rt_codec_workload",
+          "rt_copy_flat",
+          "rt_copy_input",
+          "rt_decode",
+          "rt_digest",
+          "rt_error",
+          "rt_head",
+          "rt_option",
+          "rt_raw_byte",
+          "rt_read_word",
+          "rt_scalar",
+          "rt_struct",
+          "rt_text"
+        ],
+        "source": "src/research_protocol/payload.hepta"
+      },
+      {
+        "functions": [
+          "research_decode",
+          "research_get",
+          "research_head",
+          "research_head_size",
+          "research_put",
+          "research_take",
+          "research_utf8",
+          "research_write_head"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "research_hash_integer"
+        ],
+        "source": "src/research_protocol/hash.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       }
     ],
     "src/service_settlement/arithmetic.hepta": [

@@ -18,8 +18,10 @@ parsers/defaults and exact decimal conversion; [fixed formatting](FORMATTING.md)
 adds native four-decimal output. These value layers preserve the same existing
 scheduler contract. [Native logarithms](LOGARITHM.md),
 [all 51 derived profile fields](PROFILE.md) and complete field formatting are
-also implemented. OS environment acquisition, the complete CLI, clock measurement,
-ordered report assembly and persistence remain separate owners.
+also implemented. [Integer/calendar text](TEXT.md) and the [complete ordered
+report and persisted bytes](REPORT.md) now have native kernels and actual original
+main comparisons. OS environment acquisition, complete CLI parsing, clock
+measurement, file/process ownership and whole-package qualification remain open.
 
 ## Original observable contract
 

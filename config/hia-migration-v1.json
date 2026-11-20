@@ -860,6 +860,84 @@
         "hia/tests/test_research_authority.py",
         "hia/tests/rust_research_authority_reference.rs"
       ]
+    },
+    {
+      "id": "research-protocol/state-values",
+      "node_integration_complete": false,
+      "scope": "Original raw seven state objects, applied records and snapshot canonical encodings and hash domains, preserving public vector order and unvalidated typed values. These values do not admit a state graph. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_values.py",
+        "hia/tests/rust_research_state_values_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-index",
+      "node_integration_complete": false,
+      "scope": "Private typed snapshot index preserving input-order first errors, complete keys and nonce identities with separate sorted pointer indexes; only a native owner may retain and admit this arena. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_index.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_graph.py",
+        "hia/tests/rust_research_state_reference.rs",
+        "hia/tests/rust_research_state_values_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-graph",
+      "node_integration_complete": false,
+      "scope": "Original bound/unbound snapshot admission, authority/journal/nonce/object checks, strict and historical references, claim/challenge/resolution graph and exact error precedence. Private continuation; whole state ownership remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_graph.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_graph.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-transition",
+      "node_integration_complete": false,
+      "scope": "All seven original apply transitions, four resolution decisions, replay/nonce/authorization/error ordering, atomic candidate snapshots and exact changed references. Requires native signed verification and owner custody before this private continuation; publication remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_transition.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_transition.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "research-protocol/state-query",
+      "node_integration_complete": false,
+      "scope": "Native normalized snapshot export, sorted current references, seven keyed getters and strict object lookup, composed with native canonical/hash values; private index custody and complete state owner remain open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/research_protocol/state_query.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_state_query.py",
+        "hia/tests/rust_research_state_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/text",
+      "node_integration_complete": false,
+      "scope": "Original integer and UTC calendar text formatting, including full-width signed/unsigned fields and SystemTime range behavior; pure text does not replace process ownership. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/bench/text.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_report.py",
+        "hia/tests/rust_bench_report_reference.rs"
+      ]
+    },
+    {
+      "id": "bench/report",
+      "node_integration_complete": false,
+      "scope": "Complete ordered original main report and persisted result bytes from native profile fields, with original formatting and failure ordering; real CLI/environment/clock/file owner remains open. Full Node integration and original-package retirement remain open.",
+      "source": "hia/src/bench/report.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_report.py",
+        "hia/tests/rust_bench_report_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -899,7 +977,9 @@
         "bench/format-fixed",
         "bench/logarithm",
         "bench/profile",
-        "bench/format-value"
+        "bench/format-value",
+        "bench/text",
+        "bench/report"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
@@ -944,7 +1024,12 @@
         "research-protocol/external-key",
         "research-protocol/payload",
         "research-protocol/command",
-        "research-protocol/authority"
+        "research-protocol/authority",
+        "research-protocol/state-values",
+        "research-protocol/state-index",
+        "research-protocol/state-graph",
+        "research-protocol/state-transition",
+        "research-protocol/state-query"
       ],
       "legacy_path": "trillionnium/crates/trnm-research-protocol",
       "module": "M10",

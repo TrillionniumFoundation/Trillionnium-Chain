@@ -13,8 +13,10 @@ components are part of M10's research protocol. `payload.hepta` implements all
 seven `ResearchCommandV1` payloads, including their canonical encoding, strict
 decoding, validation, command type and primary object reference. `command.hepta`
 also implements signed envelopes, signing, strict verification and both command
-hashes. Protocol state transitions, generic Serde ingestion, Hepta handoff, full
-consumer integration and original-package retirement still require acceptance. The
+hashes. The [state value codecs](STATE_VALUES.md), [private graph admission](STATE_GRAPH.md),
+[seven transitions](STATE_TRANSITION.md) and [queries/export](STATE_QUERY.md) are
+also implemented in HIA. The opaque state owner, generic Serde ingestion, Hepta
+handoff, full consumer integration and original-package retirement still require acceptance. The
 primitive decoder leaves protocol versions, enum discriminants and round-trip
 checks to the typed consumer; the payload implementation performs those checks.
 

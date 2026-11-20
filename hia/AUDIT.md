@@ -3,23 +3,23 @@
 ## Decision and scope
 
 The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**76 kernel components, 30 native foundations and 309 HIA source files**. All
+**83 kernel components, 30 native foundations and 316 HIA source files**. All
 26 original Rust packages remain: 22 are partially ported and 4 are not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
 
 This continuation extends published
-`99bcfc11c00c393b7d48ac0f6352b9afe33e913f`, whose tree is
-`566be40d4778211758c83994f35035ae9a1eb7e2`. The original main baseline remains
+`76381079bfc121a3a178dab8dab71e5290289169`, whose tree is
+`d5fb52d1f22bf6e002abb53da69b727db06013a8`. The original main baseline remains
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. The complete original package graph,
 Cargo lock, Rust implementations and tests remain. Every HIA source has one
 registered owner; all kernel/foundation Node-integration flags remain false.
-Of the 76 kernels, 75 are implemented finite units and `mempool/lane_quota`
+Of the 83 kernels, 82 are implemented finite units and `mempool/lane_quota`
 remains a candidate awaiting its separate qualification.
 
-Fresh discovery finds **711 methods** in six disjoint groups: 516 general,
-95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 34 Research.
+Fresh discovery finds **738 methods** in six disjoint groups: 523 general,
+95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 54 Research.
 The workflow expands to 68 jobs and 56 compiler bootstrap invocations from
 50 source-admission blocks. Counts establish inventory, not successful execution.
 
@@ -28,12 +28,116 @@ Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DE
 [original ownership inventory](../config/portability-inventory-v1.json) and
 [implementation guide](README.md) together. This is the current audit, not a
 second plan. Complete previous findings and failures remain in the
-[immutable predecessor audit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/99bcfc11c00c393b7d48ac0f6352b9afe33e913f/hia/AUDIT.md)
+[immutable predecessor audit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/76381079bfc121a3a178dab8dab71e5290289169/hia/AUDIT.md)
 and the actual retained qualification records.
 
 ## Current implementation and observed failures
 
-### Frozen combined development regression
+### Current combined development regression
+
+All 30 selected merged State, Bench-report and shared-SHA methods passed in
+376.938 seconds. The unchanged formal recording hooks observed 20 actual native
+builds and 8,560 returned calls, with no missing starts/completions, skips or
+provenance errors. The complete qualification source map was unchanged across
+execution. The SHA-specific subprocess observers separately retain their full
+backing-byte and trap comparisons; they are not falsely added to the shared
+NativeModule call counter. The exact combined report SHA-256 is
+`74ea821099f798d98a4dbc753f2787735cbb45a7302b67901732c677001713a8`.
+All 33 partition, strict reader and workflow-bootstrap controls passed in
+25.390 seconds. These finite development observations do not substitute for
+the new committed-source hosted gates or complete state ownership.
+
+An earlier local selection attempt was refused before any execution: the
+schedule module contains two tests, while its third partial-word control lives
+in the separate word-access module. The expected 30-method roster assertion
+rejected the incomplete selection. The corrected explicit roster includes that
+actual word-access method. The initial log is preserved as a pre-execution
+selection refusal, with zero native calls, rather than a native test failure.
+
+### Published 7638107: six component bundles and actual remaining failures
+
+The [PR HIA run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44746117952)
+completed successfully. In the [push run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44746090818),
+all six component partitions and their combined reader passed. All seven official
+ZIPs were downloaded and every member verified. An actual local rerun of the
+strict combined reader accepted all 711 methods with disjoint complete coverage,
+actual successful-job metadata, exact head/tree and unchanged source bindings.
+The official reader ZIP is 38,048 bytes, SHA-256
+`720eb566c4428255bdf2d4f6487397acec80e5b4197615af260b81478416f160`.
+Its source-set digest is
+`82d62e9a812569e0f5628630e2faf67b5b97433ab0f260c1126d0a5ef1ee4d79`.
+This readback checks retained evidence; it does not reexecute runtime or
+revalidate the original Rust build-event chain.
+
+The push Settlement job reached the actual 240-second deadline at 240.108
+seconds after 233 of 320 fixtures. Cleanup completed without errors; source
+fences passed. The contemporaneous PR Settlement job passed. The larger 99bcfc1
+and PR successful archives exceeded the download tool's size limit and were not
+locally reread; their job success is not an independently verified native timing.
+The downloaded push failure remains an actual failure, not a runner-acquisition
+issue or a successful retry.
+
+Both W1 head and prospective-merge service runs also actually failed. Their
+original Cargo preparation succeeded and the same original ELF was executed.
+Under the unchanged 0.25 CPU / 2 GiB / zero swap / 256 PID / four-second /
+sixteen-worker contract, baseline confirmed one transaction and pressure
+confirmed zero; the fresh test actually panicked. Both official 57-member
+artifacts were downloaded and independently inspected. Invariants remaining
+true do not satisfy the confirmation target. No service success, production
+activation, package retirement or whole-project completion is claimed.
+
+### Shared SHA-256 schedule and exact Settlement budget
+
+The existing compressor now retains its sixteen-word rolling schedule in eight
+packed native u64 values while writing the same complete backing schedule in the
+same order. Short/alias-sensitive guarded cases retain the exact original
+fallback body. Three formal methods passed 904 actual observations, comparing
+complete backing bytes and traps, including partial stores and alias controls.
+All 75 distinct dynamic compiler inputs covering 123 entries were admitted under
+the unchanged limits. The largest composition is 8,188 of 8,192 operations.
+
+The complete native Settlement phase passed in 206.720 seconds under the
+original 240-second limit: 320 fixtures, 2,636 operations, 169 fee calls and zero
+live owners. Independent readback checked 23,140 records, 16,066 native calls and
+1,754 height observations. All 162 allocator controls, including 136 real
+allocation failures and 256 owners across eight threads, passed with no leak or
+invalid free; the independent allocator reader checked 2,058 calls and 1,922
+frees. The exact new ELF is
+`7e431f63e744c946a67edcc21540e78d7c783572c4b1f7cd19a90928e236f824`.
+These focused results do not replace the final combined source's fresh original
+Cargo/tests/strict Clippy/fmt and hosted whole-engine gates.
+
+### Research state kernels and complete Bench report
+
+Five state kernels now cover raw canonical values/hashes, sorted private indexes,
+original snapshot graph admission, all seven command transitions, four resolution
+decisions, normalized exports, references and seven getters. The raw value codec
+does not invent admission checks. Restore retains the original distinction from
+apply-time temporal/evidence validation. The transition continuation requires the
+native signed-command verifier's actual result, preserves the old snapshot and
+stages a candidate for the future opaque owner to publish atomically.
+
+The latest separate formal observations passed five value methods (3,309 calls),
+six graph methods (1,095 calls), six transition methods (811 calls) and three query
+methods (773 calls). They include 465/463/151/422 respective original/native
+comparisons and 2,844/167/49/252 respective ABI controls. Graph's first recorder
+has stale schema/scope labels despite its correct six-method actual roster; the
+raw record is retained and that defect is explicitly documented. The new merged
+graph run uses the correct graph schema and complete six-method roster. The first
+transition run failed on two test-fixture errors, both preserved and corrected
+without changing production semantics. The current 30-method merged regression
+binds the extended original adapter and changed shared SHA implementation.
+
+Bench adds two finite kernels for integer/calendar text and complete ordered
+stdout/persistence bytes. Seven methods passed 2,572 calls, 1,896 original integer
+comparisons, 365 calendar comparisons, 167 metric comparisons, 42 original-main
+runs, 21 native profile/report chains and seven actual persistence comparisons.
+The original CLI/environment/clock/file/process boundaries are still being
+implemented. State ownership, generic Serde, handoff and full Node integration
+likewise remain open. No original package can be removed at this stage.
+
+
+### Previous 7638107 combined development regression
 
 The merged payload, signed-command, Authority, Bench-profile and relocated ACK
 graph passed all 32 selected methods in 358.681 seconds. The unchanged formal
