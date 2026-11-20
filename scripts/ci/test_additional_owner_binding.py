@@ -332,5 +332,218 @@ root=pathlib.Path(a.report)
         self.fixture_run(True)
 
 
+class PayloadMetadataBinding(unittest.TestCase):
+    def setUp(self):
+        self.head, self.tree = "a" * 40, "b" * 40
+        sources = {"hia/platform/peer_payload/qualify.py": {"bytes": 17, "sha256": "c" * 64}}
+        self.report = {"schema": "trnm.hia.payload-metadata-qualification.v1", "status": "PASS",
+            "source_inputs_stable": True, "complete_original_tests_preserved": True,
+            "original_tests_rerun_in_this_qualification": True, "public_observer_links_unchanged_original": True,
+            "private_observer_append_only_test_hook": True, "metadata_owner_public_methods_qualified": 12,
+            "failure": None, "traceback": None, "elapsed_ns": 800_000_000_000, "retained_entries": 100,
+            "lineage": {"head": self.head, "tree": self.tree, "dirty": False},
+            "limits": copy.deepcopy(binding.PAYLOAD_LIMITS), "groups": dict.fromkeys(binding.PAYLOAD_GROUPS, {}),
+            "retained_tests": {"outer_tests": 121, "child_reexecutions": 2},
+            "production_readback": {"schema": "trnm.hia.payload-metadata-production-readback.v1", "status": "PASS",
+                "public_methods": list(binding.PAYLOAD_METHODS), "prior_execution_reused": False,
+                "same_round_maximum_replay_index_original": True, **binding.PAYLOAD_COUNTS,
+                **dict.fromkeys(binding.PAYLOAD_FALSE_SCOPES, False)},
+            "integrity_controls": {"status": "PASS", "tests": 41, "methods": list(binding.PAYLOAD_CONTROL_METHODS),
+                "actual": {name: {"family_reaped": True} for name in
+                    ("normal", "descendant", "deadline", "native-blocked", "public-close", "ptrace-cleanup")}},
+            "source_inputs": sources, **dict.fromkeys(binding.PAYLOAD_FALSE_SCOPES, False)}
+        self.refresh_digest()
+        self.reader = {key: self.report[key] for key in ("schema", "status", "elapsed_ns", "retained_entries")}
+
+    def refresh_digest(self):
+        self.report["source_set_sha256"] = hashlib.sha256((json.dumps(self.report["source_inputs"],
+            sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n").encode()).hexdigest()
+
+    def check(self, report=None, reader=None):
+        binding.payload_summary(self.report if report is None else report,
+                                self.reader if reader is None else reader, self.head, self.tree)
+
+    def test_complete_payload_metadata_summary_keeps_source_and_evidence_counts_dynamic(self):
+        self.check()
+        self.report["source_inputs"]["hia/platform/peer_payload/readback.py"] = {"bytes": 31, "sha256": "d" * 64}
+        self.report["retained_entries"] = self.reader["retained_entries"] = 103
+        self.refresh_digest()
+        self.check()
+
+    def test_payload_metadata_refuses_every_changed_or_missing_actual_count(self):
+        for name, count in binding.PAYLOAD_COUNTS.items():
+            for value in (None, count - 1, count + 1, str(count), True):
+                report = copy.deepcopy(self.report)
+                report["production_readback"][name] = value
+                with self.subTest(field=name, value=value), self.assertRaises(ValueError):
+                    self.check(report=report)
+            report = copy.deepcopy(self.report)
+            del report["production_readback"][name]
+            with self.subTest(missing=name), self.assertRaises(ValueError):
+                self.check(report=report)
+        for name, count in (("outer_tests", 121), ("child_reexecutions", 2)):
+            for value in (None, count - 1, count + 1, str(count), True):
+                report = copy.deepcopy(self.report)
+                report["retained_tests"][name] = value
+                with self.subTest(retained=name, value=value), self.assertRaises(ValueError):
+                    self.check(report=report)
+
+    def test_payload_metadata_refuses_scope_promotion_deadline_changes_and_old_head(self):
+        for key in binding.PAYLOAD_FALSE_SCOPES:
+            for nested in (False, True):
+                report = copy.deepcopy(self.report)
+                (report["production_readback"] if nested else report)[key] = True
+                with self.subTest(scope=key, nested=nested), self.assertRaises(ValueError):
+                    self.check(report=report)
+        for name, count in binding.PAYLOAD_LIMITS.items():
+            for value in (None, count - 1, count + 1, str(count), True):
+                report = copy.deepcopy(self.report)
+                report["limits"][name] = value
+                with self.subTest(limit=name, value=value), self.assertRaises(ValueError):
+                    self.check(report=report)
+        for name, value in (("head", "0" * 40), ("tree", "0" * 40), ("dirty", True), ("dirty", 0)):
+            report = copy.deepcopy(self.report)
+            report["lineage"][name] = value
+            with self.subTest(lineage=name, value=value), self.assertRaises(ValueError):
+                self.check(report=report)
+
+    def test_payload_metadata_refuses_groups_methods_controls_and_missing_process_family(self):
+        for name in binding.PAYLOAD_GROUPS:
+            report = copy.deepcopy(self.report)
+            report["groups"]["replacement"] = report["groups"].pop(name)
+            with self.subTest(group=name), self.assertRaises(ValueError):
+                self.check(report=report)
+        for methods in ([], list(reversed(binding.PAYLOAD_METHODS)), list(binding.PAYLOAD_METHODS)[:-1]):
+            report = copy.deepcopy(self.report)
+            report["production_readback"]["public_methods"] = methods
+            with self.subTest(methods=methods), self.assertRaises(ValueError):
+                self.check(report=report)
+        for value in (35, 40, 42, "41", True, None):
+            report = copy.deepcopy(self.report)
+            report["integrity_controls"]["tests"] = value
+            with self.subTest(controls=value), self.assertRaises(ValueError):
+                self.check(report=report)
+        for methods in ([], list(reversed(binding.PAYLOAD_CONTROL_METHODS)), list(binding.PAYLOAD_CONTROL_METHODS)[:-1]):
+            report = copy.deepcopy(self.report)
+            report["integrity_controls"]["methods"] = methods
+            with self.subTest(controls=methods), self.assertRaises(ValueError):
+                self.check(report=report)
+        for name in self.report["integrity_controls"]["actual"]:
+            for omit in (True, False):
+                report = copy.deepcopy(self.report)
+                if omit:
+                    del report["integrity_controls"]["actual"][name]
+                else:
+                    report["integrity_controls"]["actual"][name]["family_reaped"] = False
+                with self.subTest(process=name, omit=omit), self.assertRaises(ValueError):
+                    self.check(report=report)
+
+    def test_payload_metadata_refuses_partial_or_stale_independent_readback(self):
+        for name, values in (("status", ("FAIL", "EXECUTED", None)),
+                             ("schema", ("other", None)),
+                             ("elapsed_ns", (None, True, 0, 1_200_000_000_001, 1, float("inf"))),
+                             ("retained_entries", (None, True, 0, 99, "100"))):
+            for value in values:
+                reader = copy.deepcopy(self.reader)
+                reader[name] = value
+                with self.subTest(field=name, value=value), self.assertRaises(ValueError):
+                    self.check(reader=reader)
+        for value in (0, 1_200_000_000_001, float("inf"), True, "800000000000"):
+            report, reader = copy.deepcopy(self.report), copy.deepcopy(self.reader)
+            report["elapsed_ns"] = reader["elapsed_ns"] = value
+            with self.subTest(total=value), self.assertRaises(ValueError):
+                self.check(report=report, reader=reader)
+        reader = copy.deepcopy(self.reader)
+        reader["borrowed_source_commit"] = "0" * 40
+        with self.assertRaises(ValueError):
+            self.check(reader=reader)
+
+    def test_payload_metadata_refuses_reused_or_partial_execution(self):
+        for name in ("source_inputs_stable", "complete_original_tests_preserved", "original_tests_rerun_in_this_qualification",
+                     "public_observer_links_unchanged_original", "private_observer_append_only_test_hook"):
+            report = copy.deepcopy(self.report)
+            report[name] = False
+            with self.subTest(flag=name), self.assertRaises(ValueError):
+                self.check(report=report)
+        for name, value in (("status", "FAIL"), ("metadata_owner_public_methods_qualified", 11),
+                            ("metadata_owner_public_methods_qualified", True), ("failure", "actual failure"),
+                            ("traceback", "actual traceback")):
+            report = copy.deepcopy(self.report)
+            report[name] = value
+            with self.subTest(field=name), self.assertRaises(ValueError):
+                self.check(report=report)
+        for name, value in (("status", "FAIL"), ("prior_execution_reused", True),
+                            ("same_round_maximum_replay_index_original", False)):
+            report = copy.deepcopy(self.report)
+            report["production_readback"][name] = value
+            with self.subTest(production=name), self.assertRaises(ValueError):
+                self.check(report=report)
+
+    def test_payload_metadata_refuses_source_substitution_and_noncanonical_paths(self):
+        for name in ("../private", "/private", "hia//program", "hia/../private", "hia\\program", "", ".", "hia/\0program"):
+            report = copy.deepcopy(self.report)
+            report["source_inputs"] = {name: {"bytes": 17, "sha256": "c" * 64}}
+            with self.subTest(path=name), self.assertRaises(ValueError):
+                self.check(report=report)
+        for value in ({}, [], None, {"hia/program": {"bytes": True, "sha256": "c" * 64}},
+                      {"hia/program": {"bytes": -1, "sha256": "c" * 64}},
+                      {"hia/program": {"bytes": 1, "sha256": "INVALID"}},
+                      {"hia/program": {"bytes": 1, "sha256": "c" * 64, "extra": True}}):
+            report = copy.deepcopy(self.report)
+            report["source_inputs"] = value
+            with self.subTest(sources=value), self.assertRaises(ValueError):
+                self.check(report=report)
+        report = copy.deepcopy(self.report)
+        report["source_set_sha256"] = "0" * 64
+        with self.assertRaises(ValueError):
+            self.check(report=report)
+
+    def fixture_run(self, mutate):
+        with tempfile.TemporaryDirectory(prefix="hia-payload-metadata-ci-command-control-") as temporary:
+            base = Path(temporary)
+            repository, output = base / "repository", base / "output"
+            module = repository / "hia/platform/peer_payload/qualify.py"
+            module.parent.mkdir(parents=True)
+            (output / "observations").mkdir(parents=True)
+            # Actual wrapper children test command/report binding only. They do
+            # not claim native metadata execution or the original Cargo gate.
+            module.write_text('''import argparse,json,pathlib
+p=argparse.ArgumentParser();p.add_argument('phase');p.add_argument('--output');p.add_argument('--input')
+a=p.parse_args();root=pathlib.Path(a.output or a.input)
+if a.phase=='run':
+ root.mkdir();(root/'report.json').write_text('{"status":"WRAPPER_TEST_FIXTURE","version":1}\\n')
+''' + ('''else:
+ (root/'report.json').write_text('{"status":"WRAPPER_TEST_FIXTURE","version":2}\\n')
+''' if mutate else "") + "print(json.dumps({'qualification':False}))\n")
+            with patch.object(binding, "ROOT", repository):
+                if mutate:
+                    with self.assertRaisesRegex(ValueError, "changed during independent readback"):
+                        binding.run("payload-metadata", output, None)
+                else:
+                    binding.run("payload-metadata", output, None)
+            process = binding.read(output / "observations/process.json")
+            self.assertEqual([row["name"] for row in process["stages"]], ["qualification", "readback"])
+            self.assertEqual([row["argv"] for row in process["stages"]], [
+                [sys.executable, "-B", "-m", "hia.platform.peer_payload.qualify", "run", "--output", str(output / "q")],
+                [sys.executable, "-B", "-m", "hia.platform.peer_payload.qualify", "readback", "--input", str(output / "q")]])
+            for row in process["stages"]:
+                self.assertEqual(row["cwd"], str(repository))
+                self.assertTrue(row["started"])
+                self.assertEqual(row["exit_code"], 0)
+                self.assertEqual(binding.read(output / "observations" / (row["name"] + ".receipt.json")), row)
+                for stream in ("stdout", "stderr"):
+                    self.assertEqual(binding.identity(output / "observations" / (row["name"] + "." + stream + ".raw")), row[stream])
+            self.assertEqual(process["status"], "FAIL" if mutate else "PASS")
+            self.assertEqual(process["stages"][-1]["qualification_report_before"] ==
+                             process["stages"][-1]["qualification_report_after"], not mutate)
+            self.assertEqual(binding.read(output / "q/report.json")["status"], "WRAPPER_TEST_FIXTURE")
+
+    def test_actual_payload_wrapper_keeps_both_commands_and_complete_streams(self):
+        self.fixture_run(False)
+
+    def test_zero_exit_payload_reader_cannot_replace_the_executed_report(self):
+        self.fixture_run(True)
+
+
 if __name__ == "__main__":
     unittest.main()

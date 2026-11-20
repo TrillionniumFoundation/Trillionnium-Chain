@@ -1,3 +1,19 @@
+## 2026-11-20 UTC — Payload Metadata 持久化 owner、完整原验收与提交级 CI
+
+从已发布 `fc867d207644a1288980553b8f4c32bc062152c9` 继续。本轮整合42份最终Metadata文件（14份HIA），HIA源码总数为276；原60 kernels /28 native foundations登记不变。26原包仍为19部分迁移、7未迁移，**0退役、9全项目门OPEN**。根README保持0字节。[本轮精确记录](../../hia/qualification/payload-metadata-development.json)分别绑定实际开发图、原失败、根整合重建和待执行的新提交CI。
+
+Metadata原生进程拥有私有状态、journal/lock描述符、namespace、已发布head身份和四套完整重放索引，覆盖原`PayloadReplayStoreV1`的12个公开方法。保留wire多错优先级、getter缓存语义、完整live WAL/head核验、幂等与replay、poison边界、commit ambiguity及提交后身份栅栏；Python/Rust仅作验收观察器，生产ELF不调用它们。
+
+真实376+精确42文件overlay的1937输入图完整通过原121外层测试与2次原child重执行、fmt/strictClippy、12个native分组、41个完整性控制及独立reader；qualification与reader连续808.911215322秒，仍在同一1200秒绝对期限内。4472 codec+8 wire优先级+840 replay配对；10640 runtime配对调用、857分配形状/2827 ABI/840真实失败、8线程256次调用；48公开历史492配对、61 syscall历史488配对、14崩溃历史28次真实成功syscall后的切断、32边界历史201配对全部完成。最大176602条记录的重放和四索引读取分别执行，仍是原23 native/13 Rust大日志调用的精确不重复全集，各自240秒和唯一3秒清理未提高。
+
+最终生产ELF为944563字节/`d211b58289e8ca70b50a087d346154b3f699d23a793b80d96d24bce3abccf619`；根整合用固定原生编译器重新构建7个模块和emitter，完整ELF逐字节复现。完整1013900751字节归档在Desktop和Mac各逐146347成员读取，包含4218029515逻辑字节、原四次失败、原测试与ELF、所有raw和独立读取来源。原失败不改写为成功，也不把376 dirty开发图改称当前clean提交的fresh验收。
+
+Mandatory owner matrix新增独立`payload-metadata`入口；展开作业66个、编译器准入块49个，每作业仍20分钟。入口要求当前clean head/tree、完整原/native/独立reader、12实名分组、41控制、全部实际计数和同一生产报告，拒绝旧图、scope提升和零退出替换证据。根整合25个CI控制及49×4=196次准入检查通过。完整发现仍637方法（476/95/7/22/37），公共来源为1536输入；新提交必须执行自己的全部CI，发现、旧报告和相同ELF均不能替代。
+
+Body私有持久化owner已生成独立ELF并完成6组真实文件历史/290次原版与HIA公开调用及完整文件字节对照；此前256MiB最大日志的四个HIA操作全部在240秒超时，原版四个完成，完整失败已两端封存。新的两跨度送块优化完成2336整arena配对、2082独立hashlib校验、31组真实SIGILL与部分写入检查；与共享SHA候选的组合仍须重新完成所有Body原验收和容量门，本提交不包含这部分私有改动。Task完整180秒门、Settlement完整240秒门仍开放；环境空间耗尽造成的截断终态与业务超时分别记录，不用未完成场景关闭整门。
+
+继续Body/recovery/ACK、Archive/StateImport、项目C provider、完整结算、唯一Node COMMIT/reorg/replay/outbox/ACK与同请求Paid/Host、剩余crypto/TLS/TUF、跨目标及模型研究经济门。原0.25 CPU/2 GiB/零swap/256 PID/4秒/16worker、编译器30+3秒/128函数/8192操作/1536块/每函数256块均不提高。全部等价替代、原验收与依赖最终处置闭合后，再退役旧整套并清理最终仓库；本文件仍为唯一计划。
+
 ## 2026-11-19 UTC — 当前组件证据汇总修复与真实预算失败续接
 
 从已发布 `376267d54ba5f0d740c1e190b773d9f86c1e90c0` 继续。当前仍为 **60 kernels /28 native foundations /262 HIA sources**；26原包19部分迁移、7未迁移，**0退役、9全项目门OPEN**，根README保持0字节。[本轮精确记录](../../hia/qualification/component-evidence-reader-development.json)保留实际源、原CI失败、独立读取及完整归档身份，不把读取旧产物当作新提交运行。

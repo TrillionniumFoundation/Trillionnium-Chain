@@ -1,0 +1,153 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_payload_private_metadata_runtime_v1
+fn f0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,c:mutbuf,s:mutbuf)
+  v0:usize = buffer.len(e)
+  v1:u64 = int.cast(v0) {"mode":"wrap"}
+  v2:u64 = const() {"value":64}
+  v3:bool = compare.lt(v1,v2)
+  branch v3 bad1() good1(e,c,s)
+block bad1()
+  v4:u32 = const() {"value":206}
+  ret(v4)
+block good1(good1_e:readbuf,good1_c:mutbuf,good1_s:mutbuf)
+  v5:usize = buffer.len(good1_c)
+  v6:u64 = int.cast(v5) {"mode":"wrap"}
+  v7:u64 = const() {"value":192}
+  v8:bool = compare.lt(v6,v7)
+  branch v8 bad2() good2(good1_e,good1_c,good1_s)
+block bad2()
+  v9:u32 = const() {"value":206}
+  ret(v9)
+block good2(good2_e:readbuf,good2_c:mutbuf,good2_s:mutbuf)
+  v10:usize = buffer.len(good2_s)
+  v11:u64 = int.cast(v10) {"mode":"wrap"}
+  v12:u64 = const() {"value":89722008}
+  v13:bool = compare.lt(v11,v12)
+  branch v13 bad3() good3(good2_e,good2_c,good2_s)
+block bad3()
+  v14:u32 = const() {"value":206}
+  ret(v14)
+block good3(good3_e:readbuf,good3_c:mutbuf,good3_s:mutbuf)
+  v15:u64 = const() {"value":152}
+  v16:u64 = call(good3_c,v15) {"function":"pl_get"}
+  v17:u64 = const() {"value":0}
+  v18:bool = compare.eq(v16,v17)
+  branch v18 replay(good3_e,good3_c,good3_s) codec_check(good3_e,good3_c,good3_s)
+block replay(replay_e:readbuf,replay_c:mutbuf,replay_s:mutbuf)
+  v19:u64 = const() {"value":160}
+  v20:u64 = call(replay_c,v19) {"function":"pl_get"}
+  v21:u64 = call(replay_s,v20) {"function":"prr_validate"}
+  v22:u64 = const() {"value":184}
+  v23:u64 = call(replay_c,v22,v21) {"function":"pl_put"}
+  v24:u64 = const() {"value":144}
+  v25:u64 = const() {"value":0}
+  v26:u64 = call(replay_c,v24,v25) {"function":"pl_put"}
+  v27:u32 = const() {"value":2}
+  ret(v27)
+block codec_check(codec_check_e:readbuf,codec_check_c:mutbuf,codec_check_s:mutbuf)
+  v28:u64 = const() {"value":152}
+  v29:u64 = call(codec_check_c,v28) {"function":"pl_get"}
+  v30:u64 = const() {"value":1}
+  v31:bool = compare.eq(v29,v30)
+  branch v31 codec(codec_check_e,codec_check_c,codec_check_s) query(codec_check_e,codec_check_c,codec_check_s)
+block codec(codec_e:readbuf,codec_c:mutbuf,codec_s:mutbuf)
+  v32:u64 = const() {"value":160}
+  v33:u64 = call(codec_c,v32) {"function":"pl_get"}
+  v34:u64 = const() {"value":176}
+  v35:u64 = call(codec_c,v34) {"function":"pl_get"}
+  v36:u64 = call(codec_s,v33,v35) {"function":"pr_dispatch"}
+  v37:u64 = const() {"value":184}
+  v38:u64 = call(codec_c,v37,v36) {"function":"pl_put"}
+  v39:u64 = const() {"value":144}
+  v40:u64 = const() {"value":0}
+  v41:u64 = call(codec_c,v39,v40) {"function":"pl_put"}
+  v42:u32 = const() {"value":2}
+  ret(v42)
+block query(query_e:readbuf,query_c:mutbuf,query_s:mutbuf)
+  v43:u64 = const() {"value":152}
+  v44:u64 = call(query_c,v43) {"function":"pl_get"}
+  v45:u64 = const() {"value":2}
+  v46:bool = compare.ne(v44,v45)
+  branch v46 bad4() good4(query_e,query_c,query_s)
+block bad4()
+  v47:u32 = const() {"value":206}
+  ret(v47)
+block good4(good4_e:readbuf,good4_c:mutbuf,good4_s:mutbuf)
+  v48:u64 = const() {"value":160}
+  v49:u64 = call(good4_c,v48) {"function":"pl_get"}
+  v50:u64 = const() {"value":176}
+  v51:u64 = call(good4_c,v50) {"function":"pl_get"}
+  v52:u64 = call(good4_s,v49,v51) {"function":"prq_dispatch"}
+  v53:u64 = const() {"value":184}
+  v54:u64 = call(good4_c,v53,v52) {"function":"pl_put"}
+  v55:u64 = const() {"value":144}
+  v56:u64 = const() {"value":0}
+  v57:u64 = call(good4_c,v55,v56) {"function":"pl_put"}
+  v58:u32 = const() {"value":2}
+  ret(v58)
+end
+fn prr_validate(s:mutbuf,length:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(s:mutbuf,length:u64)
+  v0:u64 = const() {"value":2048}
+  v1:u64 = call(s,v0) {"function":"pr_namespace_valid"}
+  v2:u64 = const() {"value":0}
+  v3:bool = compare.ne(v1,v2)
+  branch v3 namespace_error(v1) namespace_ok(s,length)
+block namespace_error(code:u64)
+  ret(code)
+block namespace_ok(namespace_ok_s:mutbuf,namespace_ok_length:u64)
+  v4:u64 = const() {"value":0}
+  v5:bool = compare.eq(namespace_ok_length,v4)
+  branch v5 bad1() good1(namespace_ok_s,namespace_ok_length)
+block bad1()
+  v6:u64 = const() {"value":2}
+  ret(v6)
+block good1(good1_s:mutbuf,good1_length:u64)
+  v7:u64 = const() {"value":67108864}
+  v8:bool = compare.gt(good1_length,v7)
+  branch v8 bad2() good2(good1_s,good1_length)
+block bad2()
+  v9:u64 = const() {"value":8}
+  ret(v9)
+block good2(good2_s:mutbuf,good2_length:u64)
+  v10:u64 = const() {"value":380}
+  v11:u64 = int.rem.checked(good2_length,v10)
+  v12:u64 = const() {"value":0}
+  v13:bool = compare.ne(v11,v12)
+  branch v13 bad3() good3(good2_s,good2_length)
+block bad3()
+  v14:u64 = const() {"value":2}
+  ret(v14)
+block good3(good3_s:mutbuf,good3_length:u64)
+  v15:usize = const() {"value":1536}
+  v16:usize = const() {"value":256}
+  v17:u8 = const() {"value":0}
+  _ = buffer.fill_range(good3_s,v15,v16,v17)
+  v18:usize = const() {"value":2240}
+  v19:usize = const() {"value":32}
+  v20:u8 = const() {"value":0}
+  _ = buffer.fill_range(good3_s,v18,v19,v20)
+  v21:usize = const() {"value":67116952}
+  v22:usize = const() {"value":22605056}
+  v23:u8 = const() {"value":0}
+  _ = buffer.fill_range(good3_s,v21,v22,v23)
+  v24:u64 = const() {"value":1544}
+  v25:u64 = const() {"value":176602}
+  v26:u64 = call(good3_s,v24,v25) {"function":"pl_put"}
+  v27:u64 = const() {"value":1552}
+  v28:u64 = const() {"value":67116952}
+  v29:u64 = call(good3_s,v27,v28) {"function":"pl_put"}
+  v30:u64 = const() {"value":1560}
+  v31:u64 = const() {"value":72768216}
+  v32:u64 = call(good3_s,v30,v31) {"function":"pl_put"}
+  v33:u64 = const() {"value":1568}
+  v34:u64 = const() {"value":78419480}
+  v35:u64 = call(good3_s,v33,v34) {"function":"pl_put"}
+  v36:u64 = const() {"value":1576}
+  v37:u64 = const() {"value":84070744}
+  v38:u64 = call(good3_s,v36,v37) {"function":"pl_put"}
+  v39:u64 = const() {"value":380}
+  v40:u64 = int.div.checked(good3_length,v39)
+  v41:u64 = call(good3_s,v40) {"function":"pw_validate"}
+  ret(v41)
+end

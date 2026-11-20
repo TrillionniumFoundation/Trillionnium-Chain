@@ -1,4 +1,4 @@
-"""Bind actual Peer Unix, Task, PQ and Candidate execution to one exact CI source."""
+"""Bind actual Peer, Payload metadata, Task and PQ execution to one exact CI source."""
 from __future__ import annotations
 
 import argparse
@@ -13,7 +13,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPONENTS = ("peer-unix", "task-store", "task-boundary", "pq-auth", "pq-candidate")
+COMPONENTS = ("peer-unix", "payload-metadata", "task-store", "task-boundary", "pq-auth", "pq-candidate")
 FALSE_SCOPES = ("whole_chain_native", "whole_package_retired", "node_integration_complete",
                 "original_service_budget_qualified", "cross_target_qualified", "production_activation")
 PQ_COUNTS = {"original_retained": 343, "original_doctests": 2, "native_original_pairs": 1609,
@@ -38,6 +38,69 @@ CANDIDATE_METHODS = ("CandidateAlgorithm.name", "CandidateAlgorithm.public_key_b
                      "CandidateSigningKey.public_key", "CandidateSigningKey.sign",
                      "CandidateVerifier.from_pinned_raw", "CandidateVerifier.algorithm",
                      "CandidateVerifier.public_key", "CandidateVerifier.verify")
+
+
+PAYLOAD_COUNTS = {"retained_outer_tests": 121, "retained_nested_executions": 2,
+                  "codec_pairs": 4472, "wire_priority_pairs": 8, "replay_pairs": 840,
+                  "primitive_native_calls": 5320, "runtime_paired_native_calls": 10640,
+                  "runtime_boundary_calls": 21, "readonly_queries": 48, "incremental_histories": 8,
+                  "allocator_shapes": 857, "allocator_abi_calls": 2827, "actual_allocation_failures": 840,
+                  "allocator_threads": 8, "parallel_abi_calls": 256, "loader_views": 8,
+                  "public_histories": 48, "public_paired_calls": 492, "syscall_histories": 61,
+                  "syscall_paired_calls": 488, "crash_histories": 14, "real_successful_syscall_cuts": 28,
+                  "boundary_histories": 32, "boundary_paired_calls": 201, "small_wal_cases": 11,
+                  "small_wal_native_calls": 18, "small_wal_original_cases": 9,
+                  "large_wal_cases": 15, "large_wal_native_calls": 23, "large_wal_original_cases": 13,
+                  "maximum_authenticated_records": 176602}
+PAYLOAD_GROUPS = ("primitives", "runtime", "allocations", "views", "public", "syscalls", "crash", "boundaries",
+                  "wal-small", "wal-large", "wal-maximum-replay", "wal-maximum-index")
+PAYLOAD_METHODS = ("open", "path", "head_path", "namespace", "last_hash", "record_count", "accepted_frame_count",
+                   "contains_session", "latest_generation", "verify_bound_endpoint_identity", "admit", "lookup_exact_v1")
+PAYLOAD_FALSE_SCOPES = ('whole_payload_owner_qualified', 'payload_body_store_qualified', 'external_recovery_owner_qualified', 'whole_peer_package_retired', 'whole_chain_native', 'production_activation', 'original_service_budget_qualified', 'foreign_pointer_ownership_or_concurrent_arena_qualified', 'runtime_host_proxy', 'rust_or_interpreter_fallback', 'full_host_dependency_closure_claimed')
+PAYLOAD_LIMITS = {'compiler_seconds': 30, 'compiler_functions': 128, 'compiler_blocks': 1536, 'compiler_ops': 8192, 'compiler_blocks_per_function': 256, 'native_seconds': 240, 'cleanup_seconds': 3, 'cleanup_windows': 1, 'process_observations': 4096, 'original_service_seconds': 4}
+PAYLOAD_CONTROL_METHODS = (
+    'test_actual_escaped_descendant_is_reaped',
+    'test_actual_escaped_descendant_times_out',
+    'test_actual_native_owner_times_out',
+    'test_actual_normal_owned_child',
+    'test_actual_public_close_has_one_cleanup_window',
+    'test_actual_stopped_trace_child_cleanup',
+    'test_allocation_failure_cannot_be_faked_by_count',
+    'test_compiler_profile_cannot_exceed_8192_ops',
+    'test_complete_source_byte_mutation_is_refused',
+    'test_crash_cut_cannot_claim_power_failure',
+    'test_crash_cut_cannot_substitute_an_injected_action',
+    'test_duplicate_json_status_is_refused',
+    'test_eight_thread_roster_cannot_shrink',
+    'test_failed_report_cannot_be_promoted',
+    'test_infinite_elapsed_time_is_refused',
+    'test_injected_syscall_roster_cannot_shrink',
+    'test_linked_ancestor_is_refused',
+    'test_maximum_index_cannot_borrow_another_round',
+    'test_missing_evidence_member_is_refused',
+    'test_missing_native_group_is_refused',
+    'test_modified_evidence_bytes_are_refused',
+    'test_native_group_command_substitution_is_refused',
+    'test_native_primitive_pair_count_cannot_shrink',
+    'test_new_owned_source_member_is_refused',
+    'test_original_dependency_profile_mutation_is_refused',
+    'test_original_diagnostic_event_addition_is_refused',
+    'test_original_diagnostic_event_deletion_is_refused',
+    'test_original_diagnostic_event_reordering_is_refused',
+    'test_original_diagnostic_response_code_substitution_is_refused',
+    'test_original_git_blob_mutation_is_refused',
+    'test_public_history_names_cannot_be_substituted',
+    'test_published_head_read_cannot_target_a_temporary_file',
+    'test_retained_path_traversal_is_refused',
+    'test_retained_symlink_is_refused',
+    'test_runtime_guard_failure_is_refused',
+    'test_service_four_second_overclaim_is_refused',
+    'test_single_cleanup_budget_cannot_be_renewed',
+    'test_unchanged_240_second_limit_is_enforced',
+    'test_wal_corrupt_history_cannot_be_reported_as_replay',
+    'test_wal_partitions_cannot_duplicate_a_native_call',
+    'test_wal_partitions_cannot_omit_maximum_index',
+)
 
 
 def need(value, message):
@@ -163,16 +226,81 @@ def candidate_summary(report, independent, head, tree):
          "Candidate reader and execution used different production images")
 
 
+
+def payload_summary(report, independent, head, tree):
+    schema = "trnm.hia.payload-metadata-qualification.v1"
+    need(report.get("schema") == schema and report.get("status") == "PASS"
+         and report.get("source_inputs_stable") is True
+         and report.get("complete_original_tests_preserved") is True
+         and report.get("original_tests_rerun_in_this_qualification") is True
+         and report.get("public_observer_links_unchanged_original") is True
+         and report.get("private_observer_append_only_test_hook") is True
+         and type(report.get("metadata_owner_public_methods_qualified")) is int
+         and report["metadata_owner_public_methods_qualified"] == 12
+         and report.get("failure") is None and report.get("traceback") is None,
+         "Incomplete actual Payload metadata qualification")
+    need(set(independent) == {"schema", "status", "elapsed_ns", "retained_entries"}
+         and independent.get("schema") == schema and independent.get("status") == "PASS"
+         and type(report.get("elapsed_ns")) is int and 0 < report["elapsed_ns"] <= 1_200_000_000_000
+         and type(report.get("retained_entries")) is int and report["retained_entries"] > 0
+         and all(type(independent.get(name)) is int and independent[name] == report[name]
+                 for name in ("elapsed_ns", "retained_entries")),
+         "Payload independent reader did not complete this exact retained report")
+    need(report.get("lineage") == {"head": head, "tree": tree, "dirty": False}
+         and report["lineage"]["dirty"] is False,
+         "Payload metadata evidence is not from this clean committed head")
+    limits = report.get("limits")
+    need(type(limits) is dict and limits == PAYLOAD_LIMITS
+         and all(type(value) is int for value in limits.values())
+         and all(report.get(name) is False for name in PAYLOAD_FALSE_SCOPES),
+         "Payload metadata deadlines or unqualified scope changed")
+    need(type(report.get("groups")) is dict and set(report["groups"]) == set(PAYLOAD_GROUPS),
+         "Incomplete or substituted Payload metadata native groups")
+    retained = report.get("retained_tests", {})
+    need(type(retained) is dict and all(type(retained.get(name)) is int and retained[name] == count
+             for name, count in (("outer_tests", 121), ("child_reexecutions", 2))),
+         "Complete unchanged original Peer tests were not retained")
+    production = report.get("production_readback", {})
+    need(type(production) is dict and production.get("schema") == "trnm.hia.payload-metadata-production-readback.v1"
+         and production.get("status") == "PASS" and production.get("public_methods") == list(PAYLOAD_METHODS)
+         and production.get("prior_execution_reused") is False
+         and production.get("same_round_maximum_replay_index_original") is True
+         and all(production.get(name) is False for name in PAYLOAD_FALSE_SCOPES)
+         and all(type(production.get(name)) is int and production[name] == count
+                 for name, count in PAYLOAD_COUNTS.items()),
+         "Payload metadata original/native/lifetime/WAL roster is incomplete or overstated")
+    controls = report.get("integrity_controls", {})
+    need(type(controls) is dict, "Missing Payload metadata integrity controls")
+    actual = controls.get("actual", {})
+    need(controls.get("status") == "PASS" and type(controls.get("tests")) is int
+         and controls["tests"] == 41 and controls.get("methods") == list(PAYLOAD_CONTROL_METHODS)
+         and type(actual) is dict
+         and set(actual) == {"normal", "descendant", "deadline", "native-blocked", "public-close", "ptrace-cleanup"}
+         and all(type(row) is dict and row.get("family_reaped") is True for row in actual.values()),
+         "Payload metadata requires all 41 controls and six actual process lifetimes")
+    sources = report.get("source_inputs")
+    need(type(sources) is dict and sources and all(type(name) is str and name and name != "."
+         and not Path(name).is_absolute() and ".." not in Path(name).parts and Path(name).as_posix() == name
+         and "\\" not in name and "\0" not in name and type(value) is dict
+         and set(value) == {"bytes", "sha256"} and type(value.get("bytes")) is int and value["bytes"] >= 0
+         and type(value.get("sha256")) is str and re.fullmatch(r"[0-9a-f]{64}", value["sha256"])
+         for name, value in sources.items()), "Missing or malformed Payload metadata source closure")
+    digest = hashlib.sha256((json.dumps(sources, sort_keys=True, separators=(",", ":"),
+                                      ensure_ascii=True) + "\n").encode()).hexdigest()
+    need(report.get("source_set_sha256") == digest, "Payload metadata source graph was substituted")
+
+
 def run(component, root, rust_bin):
     root = directory(root)
     observation = root / "observations"
     need(observation.is_dir(), "Missing independently initialized observation directory")
-    qualified = root / ("q" if component == "peer-unix" else "qualification")
+    qualified = root / ("q" if component in ("peer-unix", "payload-metadata") else "qualification")
     need(not qualified.exists(), "A fresh component output is required")
-    if component == "peer-unix":
+    if component in ("peer-unix", "payload-metadata"):
+        platform = {"peer-unix": "peer_lease_unix", "payload-metadata": "peer_payload"}[component]
         commands = [("qualification", [sys.executable, "-B", "-m",
-                     "hia.platform.peer_lease_unix.qualify", "run", "--output", str(qualified)]),
-                    ("readback", [sys.executable, "-B", "-m", "hia.platform.peer_lease_unix.qualify",
+                     "hia.platform." + platform + ".qualify", "run", "--output", str(qualified)]),
+                    ("readback", [sys.executable, "-B", "-m", "hia.platform." + platform + ".qualify",
                      "readback", "--input", str(qualified)])]
     elif component in ("pq-auth", "pq-candidate"):
         need(rust_bin is not None and rust_bin.resolve(strict=True) == rust_bin,
@@ -257,17 +385,18 @@ def bind(component, root, rust_bin):
          and before["tested_tree"] == tree and before["tracked_worktree_verified"] is True,
          "Whole committed source before/after qualification differs")
     process = read(observation / "process.json")
-    stages = ["qualification", "readback"] if component in ("peer-unix", "pq-auth", "pq-candidate") else ["qualification"]
+    stages = ["qualification", "readback"] if component in ("peer-unix", "payload-metadata", "pq-auth", "pq-candidate") else ["qualification"]
     need(process["schema"] == "trnm.hia.additional-owner-process.v1"
          and process["component"] == component and process["status"] == "PASS"
          and [row["name"] for row in process["stages"]] == stages
          and all(process.get(name) is False for name in FALSE_SCOPES), "Failed or foreign execution")
-    qualified_path = root / ("q" if component == "peer-unix" else "qualification")
-    if component == "peer-unix":
+    qualified_path = root / ("q" if component in ("peer-unix", "payload-metadata") else "qualification")
+    if component in ("peer-unix", "payload-metadata"):
+        platform = {"peer-unix": "peer_lease_unix", "payload-metadata": "peer_payload"}[component]
         expected_commands = {
-            "qualification": [sys.executable, "-B", "-m", "hia.platform.peer_lease_unix.qualify",
+            "qualification": [sys.executable, "-B", "-m", "hia.platform." + platform + ".qualify",
                               "run", "--output", str(qualified_path)],
-            "readback": [sys.executable, "-B", "-m", "hia.platform.peer_lease_unix.qualify",
+            "readback": [sys.executable, "-B", "-m", "hia.platform." + platform + ".qualify",
                          "readback", "--input", str(qualified_path)],
         }
     elif component in ("pq-auth", "pq-candidate"):
@@ -313,6 +442,10 @@ def bind(component, root, rust_bin):
         independent = read(observation / "readback.stdout.raw")
         peer_summary(report, independent)
         inputs = {str(ROOT / name): row for name, row in report["source_inputs"].items()}
+    elif component == "payload-metadata":
+        independent = read(observation / "readback.stdout.raw")
+        payload_summary(report, independent, head, tree)
+        inputs = {str(ROOT / name): row for name, row in report["source_inputs"].items()}
     elif component in ("pq-auth", "pq-candidate"):
         independent = read(observation / "readback.stdout.raw")
         (pq_summary if component == "pq-auth" else candidate_summary)(report, independent, head, tree)
@@ -343,6 +476,13 @@ def bind(component, root, rust_bin):
                 "scripts/ci/verify_ci_source.py", "scripts/project-preflight.sh"]
     if component in ("task-store", "task-boundary"):
         required.append("hia/tools/qualify_task_ci.py")
+    elif component == "payload-metadata":
+        required.extend(("hia/platform/peer_payload/qualify.py", "hia/platform/peer_payload/readback.py",
+                         "hia/platform/peer_payload/contract.py", "hia/platform/peer_payload/build.py",
+                         "hia/platform/peer_payload/original.py", "hia/platform/peer_payload/readback_observations.py",
+                         "hia/platform/peer_payload/control_readback.py", "hia/platform/peer_payload/test_qualification.py",
+                         "hia/platform/peer_lease_unix/process.py", "hia/platform/peer_lease_unix/original_build.py",
+                         "hia/platform/peer_lease_unix/readback.py", "scripts/w1_owned_process_collector_v1.py"))
     elif component == "pq-auth":
         required.extend(("hia/platform/pq_auth/qualify.py", "hia/platform/pq_auth/readback.py",
                          "hia/platform/pq_auth/qualification/contract.py",
@@ -367,6 +507,8 @@ def bind(component, root, rust_bin):
     tools = [row["interpreter"] for row in process["stages"]]
     if component == "peer-unix":
         tools.extend(read(qualification / "original/build.json")["tools"].values())
+    elif component == "payload-metadata":
+        tools.extend(read(qualification / "original/complete/build.json")["tools"].values())
     elif component in ("pq-auth", "pq-candidate"):
         tools.extend(report["tools"].values())
     captured = root / "ci-inputs"

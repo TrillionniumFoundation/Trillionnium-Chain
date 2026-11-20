@@ -2655,6 +2655,521 @@
         "source": "platform/peer_lease_unix/common.hepta"
       }
     ],
+    "platform/peer_payload/commands.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_eq",
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "px_find",
+          "px_snapshot_equal"
+        ],
+        "source": "platform/peer_payload/snapshot_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      }
+    ],
+    "platform/peer_payload/file_policy.hepta": [
+      {
+        "functions": [
+          "pl_get",
+          "pl_put",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_utf8"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "platform/peer_payload/filesystem.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_private_file",
+          "pf_private_parent",
+          "pf_same_identity",
+          "pf_canonical_form",
+          "pf_prepare_directory"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/linux_emitter.hepta": [
+      {
+        "functions": [
+          "em_header",
+          "em_read",
+          "em_put",
+          "em_zero"
+        ],
+        "source": "platform/checkpoint_store/linux_emitter.hepta"
+      },
+      {
+        "functions": [
+          "up_em_word"
+        ],
+        "source": "platform/peer_lease_unix/linux_emitter.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_codec.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_log.hepta": [
+      {
+        "functions": [
+          "pr_namespace_hash",
+          "pr_record_check",
+          "pr_record_hash"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/metadata_runtime.hepta": [
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key",
+          "pw_height",
+          "pw_refresh",
+          "pw_rotate_left",
+          "pw_rotate_right",
+          "pw_balance",
+          "pw_slot",
+          "pw_record_context",
+          "pw_genesis",
+          "pw_frame",
+          "pw_transition",
+          "pw_insert",
+          "pw_validate"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      },
+      {
+        "functions": [
+          "pr_fill",
+          "pr_namespace_valid",
+          "pr_frame_valid",
+          "pr_wire_frame_valid",
+          "pr_namespace_hash",
+          "pr_record_hash",
+          "pr_head_hash",
+          "pr_record_encode",
+          "pr_record_check",
+          "pr_record_decode",
+          "pr_head_encode",
+          "pr_head_decode",
+          "pr_preview",
+          "pr_dispatch"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "prq_find",
+          "prq_key",
+          "prq_context",
+          "prq_preview",
+          "prq_lookup",
+          "prq_commit",
+          "prq_dispatch"
+        ],
+        "source": "platform/peer_payload/runtime_queries.hepta"
+      },
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_be",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_hash",
+          "pl_beread"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_zero",
+          "ps_eq",
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/open.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul",
+          "ps_eq",
+          "ps_utf8"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "up_command",
+          "up_cstrlen"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_path_parts",
+          "pf_make_sidecars",
+          "pf_private_file",
+          "pf_private_parent",
+          "pf_canonical_form",
+          "pf_prepare_directory"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/owner.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_payload/parent_bridge.hepta": [
+      {
+        "functions": [
+          "ps_ancestry",
+          "ps_at",
+          "ps_directory",
+          "ps_error",
+          "ps_ioerror",
+          "ps_lstat",
+          "ps_next_component",
+          "ps_nul",
+          "ps_parent_length",
+          "ps_sys"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pl_copy",
+          "pl_get",
+          "pl_put",
+          "pl_read",
+          "pl_wcopy",
+          "pl_wout"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "up_store_bounds"
+        ],
+        "source": "platform/peer_lease_unix/store_bridge.hepta"
+      },
+      {
+        "functions": [
+          "up_cstrlen"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      }
+    ],
+    "platform/peer_payload/publication.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_nul"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "pf_private_file",
+          "pf_same_identity",
+          "pf_head_temp",
+          "pf_decimal"
+        ],
+        "source": "platform/peer_payload/file_policy.hepta"
+      }
+    ],
+    "platform/peer_payload/runtime_queries.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put",
+          "pl_copy",
+          "pl_wcopy",
+          "pl_be",
+          "pl_beread",
+          "pl_hash"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_set",
+          "ps_zero",
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_part",
+          "pw_compare_key",
+          "pw_record_context",
+          "pw_insert",
+          "pw_slot",
+          "pw_frame",
+          "pw_transition",
+          "pw_height",
+          "pw_refresh",
+          "pw_rotate_left",
+          "pw_rotate_right",
+          "pw_balance"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      },
+      {
+        "functions": [
+          "pr_frame_valid",
+          "pr_wire_frame_valid",
+          "pr_preview",
+          "pr_record_check",
+          "pr_record_hash"
+        ],
+        "source": "platform/peer_payload/metadata_codec.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_compress",
+          "tr_sha_rotr",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/peer_payload/snapshot_policy.hepta": [
+      {
+        "functions": [
+          "pl_get"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "ps_eq"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      },
+      {
+        "functions": [
+          "pw_compare_key",
+          "pw_compare_part"
+        ],
+        "source": "platform/peer_payload/metadata_log.hepta"
+      }
+    ],
+    "platform/peer_payload/view_fixture.hepta": [
+      {
+        "functions": [
+          "pl_read",
+          "pl_get",
+          "pl_put"
+        ],
+        "source": "src/peer_lease/values.hepta"
+      },
+      {
+        "functions": [
+          "up_command"
+        ],
+        "source": "platform/peer_lease_unix/common.hepta"
+      },
+      {
+        "functions": [
+          "ps_set"
+        ],
+        "source": "platform/peer_lease_store/owner_policy.hepta"
+      }
+    ],
     "platform/typed_store/root_finalize.hepta": [
       {
         "functions": [

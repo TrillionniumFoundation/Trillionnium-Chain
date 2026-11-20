@@ -1,0 +1,1564 @@
+{
+  "current_commit_ci_required": {
+    "clean_head_and_tree_required": true,
+    "component": "payload-metadata",
+    "groups": 12,
+    "integrity_controls": 41,
+    "job_minutes": 20,
+    "native_seconds": 240,
+    "old_development_report_accepted_as_new_head": false,
+    "original_nested_executions": 2,
+    "original_retained_outer_tests": 121,
+    "single_cleanup_seconds": 3
+  },
+  "external_recovery_owner_qualified": false,
+  "formal_qualification": {
+    "archive": {
+      "bytes": 1013900751,
+      "sha256": "38aae91b2a96e91628951633c1e04531c3a12578dea2334200e2ef867937939c"
+    },
+    "archive_readback": {
+      "archive": {
+        "bytes": 1013900751,
+        "sha256": "38aae91b2a96e91628951633c1e04531c3a12578dea2334200e2ef867937939c"
+      },
+      "archive_members_including_manifest": 146347,
+      "manifest": {
+        "bytes": 73166234,
+        "sha256": "aa8747467587a6d530e159cbab78855a56c7a9dd4e55795d2e31fa9b29c578fa"
+      },
+      "metadata_entries": 151377,
+      "original_hardlinked_paths": 64,
+      "regular_content_members": 146346,
+      "regular_logical_bytes": 4218029515,
+      "runtime_qualification_inferred_from_packaging": false,
+      "special_objects_are_metadata_only": true,
+      "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+    },
+    "complete_original_report": {
+      "bytes": 390250,
+      "sha256": "7f7b3f08926831e711b78fd6102ccd12537b77f8de04cba1ee0079bb8ee79d62"
+    },
+    "continuous_gate_elapsed_ns": 808911215322,
+    "desktop": {
+      "archive": "/tmp/trnm-payload-metadata-final376-v5-a0mikfnr/archive/complete-observations.tar.gz",
+      "directory": "/tmp/trnm-payload-metadata-final376-v5-a0mikfnr",
+      "job_id": "1a1f662bedc-ffbe-14ac",
+      "readback": "/tmp/trnm-payload-metadata-final376-v5-a0mikfnr/desktop-readback.json",
+      "readback_identity": {
+        "bytes": 888,
+        "sha256": "ff48bff556b431b4f3eeaf998db7ddbe1e585aa7122f705e093d1da82e1bad61"
+      }
+    },
+    "frozen_shared_sha256_stream": {
+      "bytes": 47688,
+      "sha256": "1b1b24af00eed7bdb6df3cebad16ac252e9fe708a0304fa7cfee5efcb85a6d88"
+    },
+    "groups": {
+      "allocations": {
+        "directory": "cases/allocations",
+        "report": {
+          "bytes": 649,
+          "sha256": "7449154694198cc585d4e2ad1d9958c45fd7f4368051fa99adf03c03fffa7ec7"
+        }
+      },
+      "boundaries": {
+        "directory": "cases/boundaries",
+        "report": {
+          "bytes": 4007,
+          "sha256": "1bed63f6bd5c377b7619eaa0b777ebba7817ef7364ddbdd3fd501f9ab5000d22"
+        }
+      },
+      "crash": {
+        "directory": "cases/crash",
+        "report": {
+          "bytes": 102558,
+          "sha256": "916f977d6db7d20ba0f1dc779061c7acdadd34e4805d7f27a438b43baa8adb99"
+        }
+      },
+      "primitives": {
+        "directory": "cases/primitives",
+        "report": {
+          "bytes": 4158,
+          "sha256": "784af2601fd82ba06de9873f8db80bfc0411b8c6ac52376085dfbb5cea65ebd2"
+        }
+      },
+      "public": {
+        "directory": "cases/public",
+        "report": {
+          "bytes": 5208,
+          "sha256": "1f3995849c22c8ee7fb11c99533d8a59e8b9f281dfa4f93e4ee1f06368d72b56"
+        }
+      },
+      "runtime": {
+        "directory": "cases/runtime",
+        "report": {
+          "bytes": 24144,
+          "sha256": "4acf654628a3f9b5335aab75fc66200dca37ed628de5ee7057356d4576f4a399"
+        }
+      },
+      "syscalls": {
+        "directory": "cases/syscalls",
+        "report": {
+          "bytes": 417318,
+          "sha256": "75fc0847f7acdcf2c574ed7d81fffc5489ba997afbb238db8359c2669aae132f"
+        }
+      },
+      "views": {
+        "directory": "cases/views",
+        "report": {
+          "bytes": 8835,
+          "sha256": "8c8b80163932dd785b10b8f5992702265453d340ab78feeb4d77f929b98552b9"
+        }
+      },
+      "wal-large": {
+        "directory": "cases/wal-large",
+        "report": {
+          "bytes": 44688,
+          "sha256": "b6d16e0857170d13929aff6d33f1892dbd729ba1994daade198c4e4c9fe32ad8"
+        }
+      },
+      "wal-maximum-index": {
+        "directory": "cases/wal-maximum-index",
+        "report": {
+          "bytes": 4439,
+          "sha256": "3d276881c04ad748c732b176a7ad1baebafeeb2b47db8c928cfdc79e81975855"
+        }
+      },
+      "wal-maximum-replay": {
+        "directory": "cases/wal-maximum-replay",
+        "report": {
+          "bytes": 3920,
+          "sha256": "1edc46397202209bbfad303348cc34a38b26a8d65684641a65af25f8d93d8552"
+        }
+      },
+      "wal-small": {
+        "directory": "cases/wal-small",
+        "report": {
+          "bytes": 38780,
+          "sha256": "da6393d97c075af5454ce516bf508231a6e67aeecdb089a78461ee75deda05f6"
+        }
+      }
+    },
+    "include_count": 14,
+    "integrity_controls": {
+      "actual": {
+        "deadline": {
+          "actual_status": "EXPECTED_TIMEOUT_PENDING",
+          "elapsed_ns": 1330656203,
+          "family_reaped": true,
+          "observer_injection": null,
+          "receipt": {
+            "bytes": 10053,
+            "sha256": "b0041b4a1d59cb7b0003a64c9f1908d0c37f9afad594e0615232b7f09fd06395"
+          },
+          "timed_out": true,
+          "wall_limit_seconds": 1
+        },
+        "descendant": {
+          "actual_status": "PASS_PARENT_EXIT_BEFORE_DESCENDANT",
+          "elapsed_ns": 981763574,
+          "family_reaped": true,
+          "observer_injection": null,
+          "receipt": {
+            "bytes": 9927,
+            "sha256": "9aab66666e8b1671f356dced3a3cc8e7ed333a87857908109c1df7a434c2b15a"
+          },
+          "timed_out": false,
+          "wall_limit_seconds": 10
+        },
+        "native-blocked": {
+          "actual_status": "EXPECTED_TIMEOUT_PENDING",
+          "elapsed_ns": 1206912517,
+          "family_reaped": true,
+          "observer_injection": "hold-open-input-without-a-request",
+          "receipt": {
+            "bytes": 10002,
+            "sha256": "0cf0b18f142623b37e6571ac908c0625d4e74b22e5c7b05a371ea5c0cad06b7c"
+          },
+          "timed_out": true,
+          "wall_limit_seconds": 1
+        },
+        "normal": {
+          "actual_status": "PASS_ACTUAL_NORMAL",
+          "elapsed_ns": 704408524,
+          "family_reaped": true,
+          "observer_injection": null,
+          "receipt": {
+            "bytes": 8909,
+            "sha256": "c849d6ce901ffc88f6dde33c8389f2b7a6dc0d4cdc79b337f6b2fb3c318e4439"
+          },
+          "timed_out": false,
+          "wall_limit_seconds": 10
+        },
+        "ptrace-cleanup": {
+          "actual_status": "PASS_ACTUAL_STOPPED_CHILD_CLEANUP",
+          "elapsed_ns": 826587996,
+          "family_reaped": true,
+          "observer_injection": "after-actual-TRACEME-stop-before-PTRACE_SETOPTIONS",
+          "receipt": {
+            "bytes": 8921,
+            "sha256": "f2d31acb1fe7db57f94b49c07fe4ac39ecbd7a5b6f32bd3a7410e5c38c3a853c"
+          },
+          "timed_out": false,
+          "wall_limit_seconds": 10
+        },
+        "public-close": {
+          "actual_status": "PASS_ACTUAL_OBSERVER_FAILURE_RETAINED",
+          "elapsed_ns": 3784136067,
+          "family_reaped": true,
+          "observer_injection": "suppress-stdin-EOF-before-public-close",
+          "receipt": {
+            "bytes": 9368,
+            "sha256": "bc57db39b247deabf708cac68b17d700fe1f593979be3d52f743bf9f0752eff6"
+          },
+          "timed_out": false,
+          "wall_limit_seconds": 10
+        }
+      },
+      "methods": [
+        "test_actual_escaped_descendant_is_reaped",
+        "test_actual_escaped_descendant_times_out",
+        "test_actual_native_owner_times_out",
+        "test_actual_normal_owned_child",
+        "test_actual_public_close_has_one_cleanup_window",
+        "test_actual_stopped_trace_child_cleanup",
+        "test_allocation_failure_cannot_be_faked_by_count",
+        "test_compiler_profile_cannot_exceed_8192_ops",
+        "test_complete_source_byte_mutation_is_refused",
+        "test_crash_cut_cannot_claim_power_failure",
+        "test_crash_cut_cannot_substitute_an_injected_action",
+        "test_duplicate_json_status_is_refused",
+        "test_eight_thread_roster_cannot_shrink",
+        "test_failed_report_cannot_be_promoted",
+        "test_infinite_elapsed_time_is_refused",
+        "test_injected_syscall_roster_cannot_shrink",
+        "test_linked_ancestor_is_refused",
+        "test_maximum_index_cannot_borrow_another_round",
+        "test_missing_evidence_member_is_refused",
+        "test_missing_native_group_is_refused",
+        "test_modified_evidence_bytes_are_refused",
+        "test_native_group_command_substitution_is_refused",
+        "test_native_primitive_pair_count_cannot_shrink",
+        "test_new_owned_source_member_is_refused",
+        "test_original_dependency_profile_mutation_is_refused",
+        "test_original_diagnostic_event_addition_is_refused",
+        "test_original_diagnostic_event_deletion_is_refused",
+        "test_original_diagnostic_event_reordering_is_refused",
+        "test_original_diagnostic_response_code_substitution_is_refused",
+        "test_original_git_blob_mutation_is_refused",
+        "test_public_history_names_cannot_be_substituted",
+        "test_published_head_read_cannot_target_a_temporary_file",
+        "test_retained_path_traversal_is_refused",
+        "test_retained_symlink_is_refused",
+        "test_runtime_guard_failure_is_refused",
+        "test_service_four_second_overclaim_is_refused",
+        "test_single_cleanup_budget_cannot_be_renewed",
+        "test_unchanged_240_second_limit_is_enforced",
+        "test_wal_corrupt_history_cannot_be_reported_as_replay",
+        "test_wal_partitions_cannot_duplicate_a_native_call",
+        "test_wal_partitions_cannot_omit_maximum_index"
+      ],
+      "status": "PASS",
+      "stderr": {
+        "bytes": 6846,
+        "sha256": "a0ac60211d1668a32d88bc0e3e07a06860b0172d25d4cdaf8b1a4db6df8b6449"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": 41
+    },
+    "limits": {
+      "cleanup_seconds": 3,
+      "cleanup_windows": 1,
+      "compiler_blocks": 1536,
+      "compiler_blocks_per_function": 256,
+      "compiler_functions": 128,
+      "compiler_ops": 8192,
+      "compiler_seconds": 30,
+      "native_seconds": 240,
+      "original_service_seconds": 4,
+      "process_observations": 4096
+    },
+    "mac": {
+      "archive": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/payload-metadata-current376-final-v5-fy93r12a/complete-observations.tar.gz",
+      "directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/payload-metadata-current376-final-v5-fy93r12a",
+      "job_id": "1a1f6702123-ffbe-14ba",
+      "readback": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/payload-metadata-current376-final-v5-fy93r12a/mac-readback.json",
+      "readback_identity": {
+        "bytes": 9162,
+        "sha256": "56f44f0ae0516d7e032555cdbf7c8a399a0b50c07745b7196d67b287a3be1981"
+      }
+    },
+    "native_executables": {
+      "metadata-index": {
+        "bytes": 95080,
+        "path": "metadata-index.so",
+        "sha256": "0b741f50be6f39b1ad77c8a350697d76e5b1d9c75cef82c1a899e8e8fbe1654f",
+        "test_only": true
+      },
+      "metadata-observed": {
+        "bytes": 108976,
+        "path": "metadata-observed.so",
+        "sha256": "064b322cc4619cfa2f5b51cd59a2e84a319bb954446160e8e72a940f8c5df1fb",
+        "test_only": true
+      },
+      "metadata_codec": {
+        "bytes": 95568,
+        "path": "metadata_codec.so",
+        "sha256": "09a336f8dc6cbf62062a31108ceb6c3e6f582aefc839bb75bc52b95b100ff966",
+        "test_only": true
+      },
+      "metadata_log": {
+        "bytes": 103760,
+        "path": "metadata_log.so",
+        "sha256": "d5d32a7dc5b304a448c171dcbcf54e18494df156e7c032ffe51251c6183e0302",
+        "test_only": true
+      },
+      "metadata_runtime": {
+        "bytes": 160616,
+        "path": "metadata_runtime.so",
+        "sha256": "9461819a4aa633f4cc19e659aa43b798658429d914c6e1a68dbeb4128c14d9b9",
+        "test_only": true
+      },
+      "payload-owner": {
+        "bytes": 944563,
+        "elf": {
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        },
+        "module_order": [
+          "owner",
+          "metadata_runtime",
+          "filesystem",
+          "parent_bridge",
+          "publication",
+          "open",
+          "commands"
+        ],
+        "path": "payload-owner.elf",
+        "sha256": "d211b58289e8ca70b50a087d346154b3f699d23a793b80d96d24bce3abccf619",
+        "test_only": false
+      },
+      "view-fixture": {
+        "bytes": 208719,
+        "elf": {
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        },
+        "module_order": [
+          "view_fixture",
+          "metadata_runtime"
+        ],
+        "path": "view-fixture.elf",
+        "sha256": "91c52f6e7fe0eefdf56c57ee611f44226101265d0099893e2480ed5ae4eb62ae",
+        "test_only": true
+      }
+    },
+    "owned_count": 42,
+    "preparation_and_gate_elapsed_ns": 812719701865,
+    "prior_failures": {
+      "failed_development_v1": {
+        "completed_native_groups": [],
+        "elapsed_ns": 156001111597,
+        "failure": "ValueError('Original dependency/profile not unique: sha2')",
+        "lineage": {
+          "dirty": true,
+          "head": "10b2f5981c3aa742b16b32090260372f31091733",
+          "tree": "d48690fd82dac337de639b0fca2ec30be9a2b3df"
+        },
+        "path": "/tmp/trnm-payload-formal-dev1-20261119-gkjgbfwm/q",
+        "report": {
+          "bytes": 371644,
+          "sha256": "6f42f164289f777a9070be4f048dc7976fdea7da29321f561e9fc719eaa47ee4"
+        },
+        "status": "FAIL"
+      },
+      "failed_development_v2": {
+        "completed_native_groups": [
+          "allocations",
+          "boundaries",
+          "crash",
+          "primitives",
+          "public",
+          "runtime",
+          "syscalls",
+          "views",
+          "wal-small"
+        ],
+        "elapsed_ns": 533386528925,
+        "failure": "ValueError('The actual owned command family exceeded its original deadline')",
+        "lineage": {
+          "dirty": true,
+          "head": "10b2f5981c3aa742b16b32090260372f31091733",
+          "tree": "d48690fd82dac337de639b0fca2ec30be9a2b3df"
+        },
+        "path": "/tmp/trnm-payload-formal-dev2-20261119-dwa6mm78/q",
+        "report": {
+          "bytes": 673663,
+          "sha256": "cfef2064607b372af658ba5a133999079ed18268c28037495bdb0fe1456cbc19"
+        },
+        "status": "FAIL"
+      },
+      "failed_formal_v4": {
+        "completed_native_groups": [
+          "allocations",
+          "boundaries",
+          "crash",
+          "primitives",
+          "public",
+          "runtime",
+          "syscalls",
+          "views",
+          "wal-large",
+          "wal-maximum-index",
+          "wal-maximum-replay",
+          "wal-small"
+        ],
+        "elapsed_ns": 627690293001,
+        "failure": "ValueError('Stage path escapes')",
+        "lineage": {
+          "dirty": true,
+          "head": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+          "tree": "f93def3a68af358ece75245ddbffcc91bc4e3acd"
+        },
+        "path": "/tmp/trnm-payload-formal-current376-v4-szhfa8ki/q",
+        "report": {
+          "bytes": 699552,
+          "sha256": "a8bb50564e36476c5b3643c9531ad08a0356d6616f1e3adbd374a4c9df4887e2"
+        },
+        "status": "FAIL"
+      },
+      "failed_preparation_v3": {
+        "failure": "AssertionError(('fetch-bundle', 128, \"fatal: 拒绝获取于 '/tmp/trnm-payload-formal-current376-v3-at1gjhil/repo' 检出的分支 'refs/heads/feature/chain-hia-native-payload-formal'\\n\"))",
+        "fresh_qualification_started": false,
+        "path": "/tmp/trnm-payload-formal-current376-v3-at1gjhil",
+        "report": {
+          "bytes": 4279,
+          "sha256": "c27298c059debc70bea19719a4711d6a33208d9ae644bf3d5a490f8ab4ae13a9"
+        },
+        "status": "FAIL"
+      }
+    },
+    "prior_failures_relabelled": false,
+    "production_readback": {
+      "actual_allocation_failures": 840,
+      "allocator_abi_calls": 2827,
+      "allocator_shapes": 857,
+      "allocator_threads": 8,
+      "boundary_histories": 32,
+      "boundary_paired_calls": 201,
+      "codec_pairs": 4472,
+      "crash_histories": 14,
+      "external_recovery_owner_qualified": false,
+      "foreign_pointer_ownership_or_concurrent_arena_qualified": false,
+      "full_host_dependency_closure_claimed": false,
+      "incremental_histories": 8,
+      "large_wal_cases": 15,
+      "large_wal_native_calls": 23,
+      "large_wal_original_cases": 13,
+      "loader_views": 8,
+      "maximum_authenticated_records": 176602,
+      "original_service_budget_qualified": false,
+      "parallel_abi_calls": 256,
+      "payload_body_store_qualified": false,
+      "primitive_native_calls": 5320,
+      "prior_execution_reused": false,
+      "production_activation": false,
+      "public_histories": 48,
+      "public_methods": [
+        "open",
+        "path",
+        "head_path",
+        "namespace",
+        "last_hash",
+        "record_count",
+        "accepted_frame_count",
+        "contains_session",
+        "latest_generation",
+        "verify_bound_endpoint_identity",
+        "admit",
+        "lookup_exact_v1"
+      ],
+      "public_paired_calls": 492,
+      "readonly_queries": 48,
+      "real_successful_syscall_cuts": 28,
+      "replay_pairs": 840,
+      "retained_nested_executions": 2,
+      "retained_outer_tests": 121,
+      "runtime_boundary_calls": 21,
+      "runtime_host_proxy": false,
+      "runtime_paired_native_calls": 10640,
+      "rust_or_interpreter_fallback": false,
+      "same_round_maximum_replay_index_original": true,
+      "schema": "trnm.hia.payload-metadata-production-readback.v1",
+      "small_wal_cases": 11,
+      "small_wal_native_calls": 18,
+      "small_wal_original_cases": 9,
+      "status": "PASS",
+      "syscall_histories": 61,
+      "syscall_paired_calls": 488,
+      "whole_chain_native": false,
+      "whole_payload_owner_qualified": false,
+      "whole_peer_package_retired": false,
+      "wire_priority_pairs": 8
+    },
+    "qualification": {
+      "bytes": 731385,
+      "sha256": "23f463795caae3cc8bc4b33b27abcc19db1e8e36c445c7b5fa72c6fd8647aa36"
+    },
+    "qualification_lineage": {
+      "dirty": true,
+      "head": "376267d54ba5f0d740c1e190b773d9f86c1e90c0",
+      "tree": "f93def3a68af358ece75245ddbffcc91bc4e3acd"
+    },
+    "qualification_source_inputs": 1937,
+    "qualification_source_logical_bytes": 41868704,
+    "qualification_source_set_sha256": "6450aa23c4b11c7830fcc29c769ea07d2a13eefeda9c50c4f91b29b244b8ab63",
+    "retained_original_tests": {
+      "child_reexecutions": 2,
+      "doctests": 0,
+      "outer_tests": 121,
+      "summaries": [
+        [
+          97,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          6,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "unfiltered_cargo_command": true
+    }
+  },
+  "handoff": {
+    "bytes": 47235,
+    "sha256": "81d73b41943fe228735f707e2721ab7e4958e3da0de61ccf9f4fe30012836d7c"
+  },
+  "integration_parent": "fc867d207644a1288980553b8f4c32bc062152c9",
+  "old_stack_can_be_removed": false,
+  "original_service_budget_qualified": false,
+  "owned_final_files": {
+    ".github/workflows/hia-native-migration.yml": {
+      "bytes": 437535,
+      "sha256": "53f17ff552cb3ab88ec370a0476721da0e79f1ac0536f29723279e2988962906"
+    },
+    "hia/components.json": {
+      "bytes": 127813,
+      "sha256": "1be27a839fe4caf32400ea37ffdac301a8a47f6cb04dc66f9661f3c227cd3d08"
+    },
+    "hia/platform/peer_payload/README.md": {
+      "bytes": 8564,
+      "sha256": "35991eee84004f1da467fde3c5961a039be225d4d2f34c9f45e9aafb360e5607"
+    },
+    "hia/platform/peer_payload/build.py": {
+      "bytes": 10280,
+      "sha256": "06b262a70f2eb18ae8bc23e942f9c6356fe78005657e5f631816fa58169fde24"
+    },
+    "hia/platform/peer_payload/commands.hepta": {
+      "bytes": 67771,
+      "sha256": "2362f5f1e957e56c35ca80900ea5e0933ec9e25e5ca9c9068aa3723c5d0cadf7"
+    },
+    "hia/platform/peer_payload/contract.py": {
+      "bytes": 12825,
+      "sha256": "3883b57e39dd938eda0c1cba1df4415e18e5ab09d07d40579f13fb5c321131aa"
+    },
+    "hia/platform/peer_payload/control_readback.py": {
+      "bytes": 9156,
+      "sha256": "19f07244397bd925a49b5c1b36e833c79ef79bb319961fdf6a8521dad31d0f8c"
+    },
+    "hia/platform/peer_payload/file_policy.hepta": {
+      "bytes": 39986,
+      "sha256": "9182f741d901edc01b6f0b650a6c8e4e0b3fc279076462397006ef02cc5e990c"
+    },
+    "hia/platform/peer_payload/filesystem.hepta": {
+      "bytes": 140412,
+      "sha256": "b6509a201764004214df5e24873b2eb6ae36cbbbf6495ae5a0ac95ff897ba025"
+    },
+    "hia/platform/peer_payload/linux_emitter.hepta": {
+      "bytes": 22361,
+      "sha256": "2ac7ef354a009448bdabcdb571b79ee73764b9df1938ba85a085f82570d79b2a"
+    },
+    "hia/platform/peer_payload/metadata_codec.hepta": {
+      "bytes": 47901,
+      "sha256": "90fc7d1b20f4cca4cabb8a171bbd6e4e6ad77398bc437f177915749643c8102f"
+    },
+    "hia/platform/peer_payload/metadata_log.hepta": {
+      "bytes": 52087,
+      "sha256": "57d5d82a3249c5f0f1e24e745f05dde07b9e174fc7b99ae6de86a2fa085adb08"
+    },
+    "hia/platform/peer_payload/metadata_reference.rs": {
+      "bytes": 1987,
+      "sha256": "9624618db48603a849325ef695fa046a4b3c84bb541f7d37c2a9c1442aa533f5"
+    },
+    "hia/platform/peer_payload/metadata_reference_hook.rs": {
+      "bytes": 8429,
+      "sha256": "ced02103161a83e320296217bd72dc4f8749005c2f4edacf659aad36fa8a2440"
+    },
+    "hia/platform/peer_payload/metadata_runtime.hepta": {
+      "bytes": 6001,
+      "sha256": "8c4b306b2ff73d8ff180700f445c50cfc32bc9902cb301fb360dbb9a16e2be0b"
+    },
+    "hia/platform/peer_payload/open.hepta": {
+      "bytes": 182578,
+      "sha256": "c192948d6194ead4527a4fbd85477e557d15d2009af76e5a6701f5ebc9fe32cf"
+    },
+    "hia/platform/peer_payload/original.py": {
+      "bytes": 6733,
+      "sha256": "945c172a9bbddc6d985be33a1b9868f962fbe3e131f6de459bd6f2488b9d5e6b"
+    },
+    "hia/platform/peer_payload/owner.hepta": {
+      "bytes": 111428,
+      "sha256": "874e8455f1048851be32779d7ff44ea08c331650de39a3b10a41971a6ef9b49f"
+    },
+    "hia/platform/peer_payload/parent_bridge.hepta": {
+      "bytes": 9484,
+      "sha256": "5a227c6b6234ca32ad3bb11484c1d0ca8c420b934b2d65971cfbb74d1429f0c2"
+    },
+    "hia/platform/peer_payload/public_reference.rs": {
+      "bytes": 10384,
+      "sha256": "4af3c1e63d4417ab12b8b443d1a058cd59959471de40048e45859dbd5b632909"
+    },
+    "hia/platform/peer_payload/publication.hepta": {
+      "bytes": 43792,
+      "sha256": "cbb1d9a62a5432405b0021ed5ee452caf954caed078b5bf0de0b4e2508acf6e4"
+    },
+    "hia/platform/peer_payload/qualification/allocations.py": {
+      "bytes": 9245,
+      "sha256": "292b085d0dddb79887ecdd98c759793fd2ec59a21dc994642e0b9d40d8171504"
+    },
+    "hia/platform/peer_payload/qualification/boundaries.py": {
+      "bytes": 20591,
+      "sha256": "84e9ebc3c4d810a63d3591130ad8b984be435a4db278a0f20f4f9e14b0de2a29"
+    },
+    "hia/platform/peer_payload/qualification/codec-cases.json.xz": {
+      "bytes": 34664,
+      "sha256": "fa2c87cf957643acac7f02585d57bd9273932a6e38c2d3301c68f6b6cec76a32"
+    },
+    "hia/platform/peer_payload/qualification/control_worker.py": {
+      "bytes": 5928,
+      "sha256": "1049d7b5f43f8a9aaf04344d21c86fb6ece80326cdb95aac3d4936c99b6c03c6"
+    },
+    "hia/platform/peer_payload/qualification/crash.py": {
+      "bytes": 13557,
+      "sha256": "53ca9df34e37c9429ae11107cad73cd73ac15ac82883f17902c0aebef75cf674"
+    },
+    "hia/platform/peer_payload/qualification/owned_trace.py": {
+      "bytes": 12621,
+      "sha256": "007e65061e0fa9d27d57d89379f1bf66713d204dcae7e96e90443cd9cc02b070"
+    },
+    "hia/platform/peer_payload/qualification/primitives.py": {
+      "bytes": 7802,
+      "sha256": "bf153dcae1245adc5e141d3e66ad33430155d9fcf7c930fcecd9e2bd17f4f023"
+    },
+    "hia/platform/peer_payload/qualification/public.py": {
+      "bytes": 19707,
+      "sha256": "4f38356e5cb666c6c1091058bf6b1f2a69c9428d6f6e1d1574ffa92a05d276d7"
+    },
+    "hia/platform/peer_payload/qualification/replay-cases.json.xz": {
+      "bytes": 67296,
+      "sha256": "7c5218b9594285683b95d2dea8909c11d965da5d3f215664639a925fc26f1b1f"
+    },
+    "hia/platform/peer_payload/qualification/runtime.py": {
+      "bytes": 14181,
+      "sha256": "90b44c1e7e27b26abadf976c0bdc734df8137d6da9b9889a0d813651aff86fd0"
+    },
+    "hia/platform/peer_payload/qualification/syscalls.py": {
+      "bytes": 17353,
+      "sha256": "c55832e7f673164ea0137a385424273f236e3b37b739af7aad08eb0e889a0b0e"
+    },
+    "hia/platform/peer_payload/qualification/views.py": {
+      "bytes": 1712,
+      "sha256": "80fb79cda0407aa17b8e60cd3c86d9240033278e31213e641b7cbd7f507f4917"
+    },
+    "hia/platform/peer_payload/qualification/wal-scope-history.json.xz": {
+      "bytes": 119884,
+      "sha256": "4e266fca7cc07009b4a0c2fbdc457b1e67fb6be4e89200663861bb60911c8056"
+    },
+    "hia/platform/peer_payload/qualification/wal.py": {
+      "bytes": 9538,
+      "sha256": "3134656779a3fd875a40dfaef5b343b7d3cdeb1fcc64816c5fa37d9cac618234"
+    },
+    "hia/platform/peer_payload/qualification/wal_fixtures.py": {
+      "bytes": 7284,
+      "sha256": "8c1e4f56925f0f6f73ae5b537ac4b83d1a385ffd325062ea6470e6a9c7947a96"
+    },
+    "hia/platform/peer_payload/qualification/wal_worker.py": {
+      "bytes": 6978,
+      "sha256": "b300aab0449c65a4f5225e4bdb4ac8a0f8b53bf46ff7f8509168c5b83c33a3bc"
+    },
+    "hia/platform/peer_payload/qualify.py": {
+      "bytes": 9941,
+      "sha256": "246dbc3e6e46c2f5a3e921ab70a6532dd3b482c094b3e3b2939b39d8bd9682c5"
+    },
+    "hia/platform/peer_payload/readback.py": {
+      "bytes": 39601,
+      "sha256": "a4f2df71a8206999778073993cdf7f2a8e96fe6cebd5827c2bcd71c2c9ca240b"
+    },
+    "hia/platform/peer_payload/readback_observations.py": {
+      "bytes": 70559,
+      "sha256": "d9f808ea545d85709aa5608b6a5dfa8d1af70b4a685355fee8f42ee0025711e7"
+    },
+    "hia/platform/peer_payload/runtime_queries.hepta": {
+      "bytes": 21681,
+      "sha256": "317a01706ad6985f058c4b9815f11b6e23ff27f6407e681066b1c5ce625e1654"
+    },
+    "hia/platform/peer_payload/snapshot_policy.hepta": {
+      "bytes": 14911,
+      "sha256": "5e1448c5ffee837a01fe2cd02b7d4967261b960c55c0a59804cbddc3bb912256"
+    },
+    "hia/platform/peer_payload/test_qualification.py": {
+      "bytes": 16736,
+      "sha256": "2c7fcab179118cfdc8839cc7f01596fd1dfda599b8b2c12a736144c4aef9d004"
+    },
+    "hia/platform/peer_payload/view_fixture.hepta": {
+      "bytes": 46731,
+      "sha256": "22e25f49a1a6e97a696d3369e1f500f8209941e12d51995a318b9f299846c5ae"
+    },
+    "hia/tools/qualify_additional_owner_ci.py": {
+      "bytes": 35871,
+      "sha256": "c8fbc9cf39425f797654591738bd6161b79003d9aee8cce3821159a150b4fb4d"
+    },
+    "scripts/ci/test_additional_owner_binding.py": {
+      "bytes": 34592,
+      "sha256": "d8c2d406444bf74019f3a7c18c46361d1e355458721d8746a8bfd6b2b540f82e"
+    }
+  },
+  "payload_body_store_qualified": false,
+  "predecessor_ci_observation": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "focus_jobs": [
+        {
+          "completed_at": "2026-11-20T00:02:56Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973045304",
+          "id": 135973045304,
+          "name": "native-components-crypto-types",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:02:35Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973045488",
+          "id": 135973045488,
+          "name": "native-components-ml-dsa",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-19T23:58:20Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973045499",
+          "id": 135973045499,
+          "name": "native-components-oracle",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:01:10Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973045530",
+          "id": 135973045530,
+          "name": "native-components-state-root",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:05:02Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973045590",
+          "id": 135973045590,
+          "name": "native-components",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:02:10Z",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973046237",
+          "id": 135973046237,
+          "name": "native-task-store",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-19T23:57:47Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135973046351",
+          "id": 135973046351,
+          "name": "native-task-boundary",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:53:44Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:15:55Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200/job/135978270342",
+          "id": 135978270342,
+          "name": "native-components-readback",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:13:55Z",
+          "status": "completed"
+        }
+      ],
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641392200",
+      "job_counts": {
+        "failure": 1,
+        "in_progress": 4,
+        "success": 56
+      },
+      "jobs_count": 61,
+      "run_id": 44641392200,
+      "status": "in_progress",
+      "strict_component_artifact": [
+        {
+          "created_at": "2026-11-20T00:15:53Z",
+          "digest": "sha256:f0a3b4b78b956935022ccc2cb0f0e6f77badc87d3f3a0a47ab65b2419a961a7f",
+          "expired": false,
+          "id": 14587913116,
+          "name": "hia-components-readback-fc867d207644a1288980553b8f4c32bc062152c9-44641392200-1",
+          "size_in_bytes": 34236,
+          "updated_at": "2026-11-20T00:15:53Z"
+        }
+      ]
+    },
+    {
+      "conclusion": null,
+      "event": "pull_request",
+      "focus_jobs": [
+        {
+          "completed_at": "2026-11-20T00:02:33Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973131120",
+          "id": 135973131120,
+          "name": "native-components-oracle",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:58:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:08:16Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973131336",
+          "id": 135973131336,
+          "name": "native-components-crypto-types",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:58:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:15:06Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973131403",
+          "id": 135973131403,
+          "name": "native-components",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:03:34Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:12:52Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973131565",
+          "id": 135973131565,
+          "name": "native-components-state-root",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:05:14Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:17:56Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973131570",
+          "id": 135973131570,
+          "name": "native-components-ml-dsa",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:07:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:03:45Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973132118",
+          "id": 135973132118,
+          "name": "native-task-store",
+          "run_attempt": 1,
+          "started_at": "2026-11-19T23:57:01Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:11:38Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135973132270",
+          "id": 135973132270,
+          "name": "native-task-boundary",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:08:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-20T00:20:08Z",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280/job/135984275887",
+          "id": 135984275887,
+          "name": "native-components-readback",
+          "run_attempt": 1,
+          "started_at": "2026-11-20T00:17:58Z",
+          "status": "completed"
+        }
+      ],
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44641416280",
+      "job_counts": {
+        "in_progress": 4,
+        "success": 57
+      },
+      "jobs_count": 61,
+      "run_id": 44641416280,
+      "status": "in_progress",
+      "strict_component_artifact": [
+        {
+          "created_at": "2026-11-20T00:20:06Z",
+          "digest": "sha256:090af5018ea59bea8c9dfc226501fa5834a39014def41eb0943fc35d648abd68",
+          "expired": false,
+          "id": 14587848853,
+          "name": "hia-components-readback-fc867d207644a1288980553b8f4c32bc062152c9-44641416280-1",
+          "size_in_bytes": 34229,
+          "updated_at": "2026-11-20T00:20:06Z"
+        }
+      ]
+    }
+  ],
+  "production_activation": false,
+  "root_integration": {
+    "actual_native_reproduction": {
+      "elapsed_ns": 34563632444,
+      "executable": {
+        "bytes": 944563,
+        "elf": {
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        },
+        "sha256": "d211b58289e8ca70b50a087d346154b3f699d23a793b80d96d24bce3abccf619"
+      },
+      "images": {
+        "commands": {
+          "core": {
+            "blocks": 218,
+            "functions": 37,
+            "max_blocks": 49,
+            "ops": 1625
+          },
+          "image": {
+            "bytes": 101227,
+            "sha256": "28124c65be7b271eb885dae1e2ede50473738be36ba59b3ebe887aff2708824c"
+          },
+          "wire": {
+            "bytes": 93516,
+            "sha256": "780b5839c0d42e9ad1106b0b20237236e267153cdf31cb6f67069243ff1f78fe"
+          }
+        },
+        "filesystem": {
+          "core": {
+            "blocks": 358,
+            "functions": 53,
+            "max_blocks": 79,
+            "ops": 2531
+          },
+          "image": {
+            "bytes": 173677,
+            "sha256": "c0a7db7b3a1424b8f15826d4a14d8ed8e8ad8f0e3fe4da1d5e89745097a248fa"
+          },
+          "wire": {
+            "bytes": 159139,
+            "sha256": "1c4b4fdf6e8ce8a61c8825a7fe164430adc1f318375d541d865dba915853a048"
+          }
+        },
+        "linux_emitter": {
+          "core": {
+            "blocks": 20,
+            "functions": 6,
+            "max_blocks": 9,
+            "ops": 2140
+          },
+          "image": {
+            "bytes": 79054,
+            "sha256": "2aaae6ab4b304f5ac9c7d49e45e33e119920125032b01069559443375ff31a5c"
+          },
+          "wire": {
+            "bytes": 96842,
+            "sha256": "7d840647a6a4bb7efb41dbbbb1b9e52288587791b49b8ffc843bfeda57797041"
+          }
+        },
+        "metadata_runtime": {
+          "core": {
+            "blocks": 497,
+            "functions": 53,
+            "max_blocks": 51,
+            "ops": 2796
+          },
+          "image": {
+            "bytes": 149998,
+            "sha256": "8f7c2e94e58127a66a5357483d448a1464975055b42e135013608723c0ddbd10"
+          },
+          "wire": {
+            "bytes": 152685,
+            "sha256": "b706015dddae014cd180ed8a985b9dd697fbd806f25b0f60245b7945e3297946"
+          }
+        },
+        "open": {
+          "core": {
+            "blocks": 483,
+            "functions": 72,
+            "max_blocks": 107,
+            "ops": 3613
+          },
+          "image": {
+            "bytes": 239388,
+            "sha256": "8adcb9307c41e4373c2e68860ab0ad8817f237641e31c72649811341005a2513"
+          },
+          "wire": {
+            "bytes": 222543,
+            "sha256": "04d5b51eb37a03679630da02cb153dc69cdca420d60713c302b66b2e7c9861a1"
+          }
+        },
+        "owner": {
+          "core": {
+            "blocks": 279,
+            "functions": 50,
+            "max_blocks": 85,
+            "ops": 2025
+          },
+          "image": {
+            "bytes": 134866,
+            "sha256": "f5057ac74308a8fe8b9159f182b8b1999220ddbe046e5c902c30dff89d1f80ed"
+          },
+          "wire": {
+            "bytes": 116936,
+            "sha256": "9f0e19f6c6aa75aaecabd5496d30cded6b1ee854e021cc59aa96ee7082e7e70b"
+          }
+        },
+        "parent_bridge": {
+          "core": {
+            "blocks": 227,
+            "functions": 19,
+            "max_blocks": 78,
+            "ops": 970
+          },
+          "image": {
+            "bytes": 72277,
+            "sha256": "1eee91166470e9cdd8352fdcaf3ba00d0fcb99dd943ce26fcbf40b59810a1837"
+          },
+          "wire": {
+            "bytes": 56904,
+            "sha256": "f71ca15687d706a93bb45d5a08595b0103deef1c4826d39d533ebddcb0f1eaf7"
+          }
+        },
+        "publication": {
+          "core": {
+            "blocks": 150,
+            "functions": 24,
+            "max_blocks": 23,
+            "ops": 1038
+          },
+          "image": {
+            "bytes": 68010,
+            "sha256": "77a26b5ac3a21e0ecfe39d9a9428d7d76e7ab9d437764c168600e634718bbc80"
+          },
+          "wire": {
+            "bytes": 65177,
+            "sha256": "b1f193b2f50a54504d1713a786ebc729d83c362bcb4af9b8bf9403277565e962"
+          }
+        }
+      },
+      "module_order": [
+        "owner",
+        "metadata_runtime",
+        "filesystem",
+        "parent_bridge",
+        "publication",
+        "open",
+        "commands"
+      ],
+      "original_compiler_limits_preserved": true,
+      "source_inputs_stable": true,
+      "status": "PASS_ACTUAL_HIA_COMPILE_AND_EMIT"
+    },
+    "bootstrap": {
+      "actual_entry_calls": 196,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_hia_workflow_bootstrap.py",
+        "-v"
+      ],
+      "elapsed_ns": 28192754917,
+      "exit_code": 0,
+      "methods": 4,
+      "native_runtime_qualification_claimed": false,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 721,
+        "sha256": "d2c1a5989472d24bdd5bc2f081a4c9ea54155f70eeed5e37f45b27e35db6157f"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "current_committed_native_runtime_tests_executed": false,
+    "discovery": {
+      "executed": false,
+      "hia_sources": 276,
+      "partitions": {
+        "crypto-types": 95,
+        "general": 476,
+        "ml-dsa": 37,
+        "oracle": 22,
+        "state-root": 7
+      },
+      "source_count": 1536,
+      "tests": 637
+    },
+    "original_rust_cargo_lock_and_tests_unchanged": true,
+    "shared_sha256_stream_unchanged": true,
+    "source_admission": {
+      "base": "fc867d207644a1288980553b8f4c32bc062152c9",
+      "ci": 3,
+      "formal_qualification_relabelled": false,
+      "hia": 14,
+      "mutated_paths": 46,
+      "original_rust_cargo_and_tests_unchanged": true,
+      "owned": 42,
+      "shared_sha_unchanged": true,
+      "status": "PASS_EXACT_42_OWNED_14_INCLUDES_AND_THREE_CI_INPUTS"
+    },
+    "unit": {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_additional_owner_binding.py",
+        "-v"
+      ],
+      "elapsed_ns": 2050918622,
+      "exit_code": 0,
+      "native_qualification_claimed": false,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 4942,
+        "sha256": "09d47c07758c168dd4a893224ed60a0f64aae00852fb44fe132b6fdd655cac52"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": 25
+    }
+  },
+  "schema": "trnm.hia.payload-metadata-development.v1",
+  "status": "QUALIFIED_FROZEN_METADATA_OWNER_INTEGRATED_PENDING_NEW_HEAD_CI",
+  "whole_chain_native": false,
+  "whole_peer_package_retired": false,
+  "work_in_progress": {
+    "body_hash_blocks": {
+      "canonical_compressor_changed": false,
+      "complete_body_owner_qualified": false,
+      "elapsed_ns": 4342696614,
+      "files": {
+        "after.raw.gz": {
+          "bytes": 1671318,
+          "sha256": "ebd82840fe61c8a2615aaa212c6eab766e99f97479f53cfb7099732c298ca702"
+        },
+        "before.raw.gz": {
+          "bytes": 1671319,
+          "sha256": "29f485d94a3def4f64c2bb942c39223956345f3d362ddca6e28c517839171269"
+        },
+        "events.jsonl": {
+          "bytes": 1391983,
+          "sha256": "8d8767bb3ee56352808dd947aade5d0a425bccd8c712ad91a74b1a200a12c8d2"
+        },
+        "inputs.raw.gz": {
+          "bytes": 1286516,
+          "sha256": "9dfd71c6441151115b7997657129a9822936115afaa9dd5c1588c43e265723d7"
+        }
+      },
+      "hashlib_checks": 2082,
+      "native_calls": 4672,
+      "partial_writes_and_sigill_observed": true,
+      "returning_boundary_pairs": 4,
+      "status": "PASS_ACTUAL_BODY_HASH_FULL_ARENA_EQUIVALENCE",
+      "stream_logical_bytes": {
+        "after": 21148888,
+        "before": 21148888,
+        "inputs": 21242328
+      },
+      "timings": [
+        {
+          "after_ns": 29991059,
+          "before_ns": 26254647,
+          "bytes": 65536
+        },
+        {
+          "after_ns": 1108220730,
+          "before_ns": 1575729703,
+          "bytes": 2097152
+        }
+      ],
+      "trap_pairs": 31,
+      "whole_arena_pairs": 2336
+    },
+    "body_maximum_failures": {
+      "desktop": {
+        "archive": {
+          "archive": {
+            "bytes": 121068432,
+            "sha256": "edd0a965f6bafbb2a502b7352a43f67bb239e0a007d4129cc27be80a227ff430"
+          },
+          "archive_members_including_manifest": 148,
+          "manifest": {
+            "bytes": 83401,
+            "sha256": "8c253f1501b6cf2f48c796ff86b27baf2d67d0d67325e007739aabc717fc10e2"
+          },
+          "metadata_entries": 181,
+          "original_hardlinked_paths": 0,
+          "regular_content_members": 147,
+          "regular_logical_bytes": 1849059195,
+          "runtime_qualification_inferred_from_packaging": false,
+          "special_objects_are_metadata_only": true,
+          "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+        },
+        "desktop": "/var/tmp/trnm-body-max-failures-seal-v1-hmalyk2j",
+        "readback": {
+          "actual_240_second_native_timeouts": [
+            "maximum-bytes-mode-1-native",
+            "maximum-bytes-mode-2-native",
+            "maximum-wide-index-mode-1-native",
+            "maximum-wide-index-mode-2-native"
+          ],
+          "actual_original_maximum_controls": 4,
+          "actual_report": {
+            "bytes": 659663,
+            "sha256": "eb78d43380b306b072654d1344535db4ada960c3cc5b0db4ddcfc955c7c59e13"
+          },
+          "bound_source_compiler_native_and_original_archive_dependency": {
+            "archive": {
+              "bytes": 126148577,
+              "sha256": "77a67addcc140ff1a87dca7070cba849e89e3301b4f83ddfeaa85fd2acb13fce"
+            },
+            "archive_members_including_manifest": 5516,
+            "manifest": {
+              "bytes": 2760214,
+              "sha256": "eff7f289395a73fa2a7aaca23083f63bc5b1af28c6b2a02c19442fd121337785"
+            },
+            "metadata_entries": 5650,
+            "original_hardlinked_paths": 0,
+            "regular_content_members": 5515,
+            "regular_logical_bytes": 741639154,
+            "runtime_qualification_inferred_from_packaging": false,
+            "special_objects_are_metadata_only": true,
+            "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+          },
+          "complete_owned_families_reaped": 9,
+          "fresh_original_tests_in_this_job": false,
+          "maximum_native_operations_passed": 0,
+          "maximum_wal_bytes": 268435456,
+          "maximum_wide_records": 645277,
+          "old_stack_can_be_removed": false,
+          "qualification_status": "FAIL",
+          "source_inputs_stable": true,
+          "source_is_explicit_capsule_not_clean_committed_graph": true,
+          "status": "PASS_INDEPENDENT_READBACK_OF_RETAINED_FAILURES",
+          "whole_chain_native": false,
+          "whole_payload_body_owner_qualified": false
+        },
+        "status": "COMPLETE_MAXIMUM_FAILURE_EVIDENCE_ARCHIVED"
+      },
+      "desktop_reader": "/var/tmp/trnm-body-max-reader-v1-f_hjbjwb/reader.py",
+      "mac": {
+        "archive": {
+          "bytes": 121068432,
+          "sha256": "edd0a965f6bafbb2a502b7352a43f67bb239e0a007d4129cc27be80a227ff430"
+        },
+        "archive_members_including_manifest": 148,
+        "manifest": {
+          "bytes": 83401,
+          "sha256": "8c253f1501b6cf2f48c796ff86b27baf2d67d0d67325e007739aabc717fc10e2"
+        },
+        "metadata_entries": 181,
+        "original_hardlinked_paths": 0,
+        "regular_content_members": 147,
+        "regular_logical_bytes": 1849059195,
+        "runtime_qualification_inferred_from_packaging": false,
+        "special_objects_are_metadata_only": true,
+        "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+      },
+      "mac_dependency": {
+        "archive": {
+          "bytes": 126148577,
+          "sha256": "77a67addcc140ff1a87dca7070cba849e89e3301b4f83ddfeaa85fd2acb13fce"
+        },
+        "archive_members_including_manifest": 5516,
+        "manifest": {
+          "bytes": 2760214,
+          "sha256": "eff7f289395a73fa2a7aaca23083f63bc5b1af28c6b2a02c19442fd121337785"
+        },
+        "metadata_entries": 5650,
+        "original_hardlinked_paths": 0,
+        "regular_content_members": 5515,
+        "regular_logical_bytes": 741639154,
+        "runtime_qualification_inferred_from_packaging": false,
+        "special_objects_are_metadata_only": true,
+        "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+      },
+      "old_stack_can_be_removed": false,
+      "qualification_status": "FAIL",
+      "status": "DUAL_HOST_COMPLETE_MAXIMUM_FAILURE_AND_SOURCE_EVIDENCE_READBACK_PASS"
+    },
+    "body_owner_public": {
+      "desktop_report": {
+        "bytes": 1091873,
+        "sha256": "fc58a7e6f08e1c9d1b0944aeb23beba6a2405cb4404b44dfaa881a779c75e7cf"
+      },
+      "desktop_root": "/tmp/trnm-body-owner-public-v1-7p_lkjka",
+      "desktop_summary": {
+        "elapsed_ns": 18203342134,
+        "fresh_original_cargo_tests_in_this_job": false,
+        "fresh_original_private_observer": true,
+        "instrumentation": {
+          "body_original_prefix": {
+            "bytes": 55937,
+            "sha256": "c2185035cdd2c5836d986a50dfa6a5bd3560f973ad719a46ccc95548f2e9a384"
+          },
+          "body_with_hook": {
+            "bytes": 56367,
+            "sha256": "35ce1f84698962212d58c891272f2c5be8c16ea042b5a778ac27ec9dffa8e63f"
+          },
+          "business_decisions_in_observer": false,
+          "hook": {
+            "bytes": 429,
+            "sha256": "72ac9cc957cb65cf78f6668f0dbdb0dbc2b0e6f8736da1eabadc04e672f47bee"
+          },
+          "lib_original_prefix": {
+            "bytes": 6164,
+            "sha256": "3e012fd8044480e9d4c45553309fbadb9689e1b24b896a65e9d17ef540de7b4d"
+          },
+          "lib_with_export": {
+            "bytes": 6226,
+            "sha256": "4e7623218d23c05e13739e87298462dd56706decaa9c032526d77b3384988f5a"
+          },
+          "original_functions_replaced": false
+        },
+        "original_executable": {
+          "bytes": 12019728,
+          "sha256": "8e3049a88c55008d4cb73a171a0f4291d45157df661c92f49e09d1f371aca1b5"
+        },
+        "original_library": {
+          "bytes": 22641904,
+          "sha256": "65bca224d5f8cefa949ec96326ddd0a626487a7b6bdd195eec59eaf6298f3437"
+        },
+        "producer_project_python_import_closure_fenced": true,
+        "public_observations": {
+          "actual_original_compared": true,
+          "calls": 290,
+          "cases": [
+            {
+              "actual_original_compared": true,
+              "calls": 21,
+              "name": "basic",
+              "status": "PASS"
+            },
+            {
+              "actual_original_compared": true,
+              "calls": 52,
+              "name": "frames",
+              "status": "PASS"
+            },
+            {
+              "actual_original_compared": true,
+              "calls": 150,
+              "name": "many",
+              "status": "PASS"
+            },
+            {
+              "actual_original_compared": true,
+              "calls": 44,
+              "name": "lengths",
+              "status": "PASS"
+            },
+            {
+              "actual_original_compared": true,
+              "calls": 13,
+              "name": "poison",
+              "status": "PASS"
+            },
+            {
+              "actual_original_compared": true,
+              "calls": 10,
+              "name": "missing-head",
+              "status": "PASS"
+            }
+          ],
+          "elapsed_ns": 8385603802,
+          "fresh_cargo_tests_in_this_job": false,
+          "native_wall_limit_seconds": 240,
+          "original_service_budget_qualified": false,
+          "poison_checked_through_subsequent_public_calls": true,
+          "single_cleanup_seconds": 3,
+          "status": "PASS_ACTUAL_BODY_PUBLIC_PAIRS",
+          "whole_payload_body_owner_qualified": false
+        },
+        "qualified_original_build": {
+          "bytes": 386492,
+          "sha256": "bcaf620010ca8e67021075c495b9a837e947bfac6e6ee7f2bd71c0373828190c"
+        },
+        "source_inputs_stable": true,
+        "source_is_explicit_capsule_not_clean_committed_graph": true,
+        "status": "PASS_FRESH_BODY_PUBLIC_PAIRS",
+        "whole_chain_native": false,
+        "whole_payload_body_owner_qualified": false
+      },
+      "old_stack_can_be_removed": false,
+      "status": "PASS_FRESH_BODY_PUBLIC_PAIRS",
+      "whole_payload_body_owner_qualified": false
+    },
+    "private_body_source_included_in_this_commit": false,
+    "settlement_original_240_second_full_gate_closed": false,
+    "shared_sha82_candidate_included_in_this_commit": false,
+    "task_original_180_second_full_gate_closed": false
+  }
+}

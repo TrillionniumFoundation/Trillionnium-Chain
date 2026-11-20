@@ -7086,7 +7086,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        component: [peer-unix, task-store, task-boundary, pq-auth, pq-candidate]
+        component: [peer-unix, payload-metadata, task-store, task-boundary, pq-auth, pq-candidate]
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONOPTIMIZE: ''
