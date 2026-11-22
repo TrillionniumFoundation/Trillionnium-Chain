@@ -396,7 +396,7 @@ jobs:
           bash scripts/project-preflight.sh --audit | tee "$TRNM_CI_RECEIPT_DIR/audit-after.json"
       - name: Preserve controls, compiler artifacts, formatter differences and all failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pon-legacy-reorg-controls-arm64-head-${{ github.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/legacy-reorg-controls/
@@ -476,7 +476,7 @@ jobs:
           bash scripts/project-preflight.sh --audit | tee "$TRNM_CI_RECEIPT_DIR/audit-after.json"
       - name: Retain the original diagnostic outcome and complete native failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: legacy-reorg-priority-ubuntu-24.04-arm-head-history-${{ github.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/priority-observations/

@@ -51,7 +51,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/integration-push-source/source-after-controls.json"
       - name: Preserve resolved and failed push context
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: integration-push-source-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/integration-push-source/
@@ -366,7 +366,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain successes, failures and unqualified external boundaries
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: priority-${{ matrix.runner }}-${{ matrix.source }}-${{ matrix.campaign }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/priority-observations/

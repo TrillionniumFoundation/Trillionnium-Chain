@@ -86,7 +86,7 @@ jobs:
             python3 scripts/ci/check_cpq1_parameter_observation.py "$out/cpq1.log"
       - name: Retain complete CPQ1 records including failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: cpq1-parameters-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/cpq1-parameter-observations/
@@ -274,7 +274,7 @@ jobs:
           PY
       - name: Retain independent primitive results including failures
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: mldsa-independent-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/mldsa-interoperability/
@@ -345,7 +345,7 @@ jobs:
             --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" --report "$out/differential.json"
       - name: Retain SDK interoperability including failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: tuf-sdk-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/tuf-sdk-interoperability/
@@ -779,7 +779,7 @@ jobs:
             --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)" --rustup "$(command -v rustup)"
       - name: Preserve native control records before the complete regression
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pq-system-controls-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pq-system-records/
@@ -826,7 +826,7 @@ jobs:
           test "$failed" = 0
       - name: Preserve complete records including failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pq-system-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pq-system-records/

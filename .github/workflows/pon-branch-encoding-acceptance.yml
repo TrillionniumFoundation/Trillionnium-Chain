@@ -197,7 +197,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
           sha256sum "$OUT"/*.log > "$OUT/logs.sha256"
           printf 'Exact account-branch byte encoding and retained native checks only. Ignored original whole-capacity and long-cost experiments remain separate; original priority/full baseline still required. No work-proof qualification, whole-node speed, Sybil fairness, real model adoption, physical power loss, independent operators or WAN TPS claimed. Full ancestry/state traversal remains.\n' > "$OUT/SCOPE.txt"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: branch-exact-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}

@@ -64,7 +64,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/integration-push-source/source-after-controls.json"
       - name: Preserve resolved and failed push context
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: integration-push-source-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/integration-push-source/
@@ -204,7 +204,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain costs, binaries and all failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-false-trace-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-security-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
@@ -316,7 +316,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain costs, binaries and all failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ${{ env.LEGAL_ARTIFACT_PREFIX }}-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/${{ env.LEGAL_CAPTURE_PREFIX }}-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
@@ -442,7 +442,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain costs, binaries and all failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-legal-factorial-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-legal-factorial-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
@@ -530,7 +530,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain both service outcomes and original Host evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-fresh-service-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-fresh-service-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
@@ -647,7 +647,7 @@ jobs:
           cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain every cost, binary and failed attempt
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-rank-batch-v5-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-rank-batch-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
