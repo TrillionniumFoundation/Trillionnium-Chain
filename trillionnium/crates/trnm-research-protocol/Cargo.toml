@@ -10,7 +10,7 @@ ed25519-dalek = "3"
 hex = "0.4"
 serde = { version = "1", features = ["derive"] }
 sha2 = "0.10"
-thiserror = "1"
+thiserror = "2"
 trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 
