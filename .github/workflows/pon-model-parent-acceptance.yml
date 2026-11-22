@@ -71,7 +71,7 @@ jobs:
           cmp "$RUNNER_TEMP/parent-evidence/source.json" "$RUNNER_TEMP/parent-evidence/source-after.json"
           git archive HEAD formal/pon-nakamoto-v1 config > "$RUNNER_TEMP/parent-evidence/reference-source.tar"
           (cd "$RUNNER_TEMP/parent-evidence" && sha256sum *.log *.json reference-source.tar > sha256sums.txt)
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: parent-evidence-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}

@@ -171,7 +171,7 @@ jobs:
           PY
       - name: Retain exact observations including failures
         if: always() && steps.observations.outcome == 'success'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-qrom-historical-closure-fixed-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ env.W1_CLOSURE_OUT }}/
@@ -368,7 +368,7 @@ jobs:
           PY
       - name: Retain exact observations including failures
         if: always() && steps.observations.outcome == 'success'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-qrom-current-closure-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ env.W1_CLOSURE_OUT }}/

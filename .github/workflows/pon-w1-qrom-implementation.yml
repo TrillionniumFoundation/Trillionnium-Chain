@@ -675,7 +675,7 @@ jobs:
           PY
       - name: Retain source identities reports logs and every failure
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-qrom-historical-v1-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pon-w1-qrom-historical-v1-head-x64-${{ github.run_id }}-${{ github.run_attempt }}/
@@ -1173,7 +1173,7 @@ jobs:
           python3 scripts/ci/w1_qrom_current_ci.py verify --repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" --kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" --expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" 2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"
       - name: Retain complete current-source observations and failures
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: w1-qrom-current-v2-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pon-w1-qrom-current-v2-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/

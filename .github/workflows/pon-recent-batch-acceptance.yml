@@ -435,7 +435,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/read_native_cache_observation.py "$OUT/cached_delta_complete_call_observation_keeps_checks_and_results.log" --source "$OUT/source.json" --source-after "$OUT/source-after.json" "${args[@]}" --output "$OUT/native-statement-cache-readback.json"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: recent-exact-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
