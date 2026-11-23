@@ -2,26 +2,21 @@
 
 ## Decision and scope
 
-The complete HIA-native replacement is **IN PROGRESS**. The current inventory has
-**83 kernel components, 30 native foundations and 316 HIA source files**. All
-26 original Rust packages remain: 22 are partially ported and 4 are not ported.
+The complete HIA-native replacement is **IN PROGRESS**. Run
+`python3 -B hia/tools/check_migration.py` for the checked-out source counts. At the
+audited head `2035751dd175ff05d7c693aa027cc26201373b51`, the inventory had 92
+kernel components, 30 native foundations and 325 HIA source files. All 26 original
+Rust packages remained: 23 partially ported and three not ported.
 No package has an accepted retirement witness. All nine whole-project gates
 remain OPEN; `whole_chain_native`, `old_stack_can_be_removed` and
 `production_activation` remain false. Component counts are not a completion percentage.
 
-This continuation extends published
-`76381079bfc121a3a178dab8dab71e5290289169`, whose tree is
-`d5fb52d1f22bf6e002abb53da69b727db06013a8`. The original main baseline remains
+The original main baseline remains
 `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. The complete original package graph,
 Cargo lock, Rust implementations and tests remain. Every HIA source has one
 registered owner; all kernel/foundation Node-integration flags remain false.
-Of the 83 kernels, 82 are implemented finite units and `mempool/lane_quota`
-remains a candidate awaiting its separate qualification.
-
-Fresh discovery finds **738 methods** in six disjoint groups: 523 general,
-95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 54 Research.
-The workflow expands to 68 jobs and 56 compiler bootstrap invocations from
-50 source-admission blocks. Counts establish inventory, not successful execution.
+At the audited head, 91 kernels were implemented finite units;
+`mempool/lane_quota` remained a candidate awaiting its separate qualification.
 
 Use the [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
 [migration inventory](../config/hia-migration-v1.json),
@@ -33,7 +28,31 @@ and the actual retained qualification records.
 
 ## Current implementation and observed failures
 
-### Current combined development regression
+### Published `2035751d`: NodePool passed; push Settlement and W1 remain open
+
+The [PR HIA run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45169657081)
+passed all 68 jobs. The [push HIA run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45169625877)
+passed 67 of 68. Both passed all five native NodePool/replay lanes after the
+seven affected images were rebound to the shared SHA source; independent
+transport readback accepted all seven recorded groups on both events. This is a
+scoped pass, not live Node integration or package retirement.
+
+The [push Settlement job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45169625877/job/137675438589)
+hit the unchanged 240-second native deadline at 240.097 seconds and reaped the
+child. Its [retained failure archive](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45169625877/artifacts/14816368325)
+contains 233 completed fixture rows out of 320; `receipt-chain-128` was the last
+completed row. The next active fixture was not identified by this evidence.
+The independent native reader did not run on this push. The same-head PR
+Settlement job passed; its archive exceeded the download limit for independent
+readback. That PR result does not supersede the push timeout.
+
+The exact [W1 service run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45169656827)
+recorded confirmation in all four no-pressure suites and none of the four
+pressure suites across the retained head and merge observations. Honest Submit
+and issued History network reads succeeded; local work import did not meet the
+original four-second confirmation gate. No production or retirement claim follows.
+
+### Development regression before the `d5cba2bf` publication
 
 All 30 selected merged State, Bench-report and shared-SHA methods passed in
 376.938 seconds. The unchanged formal recording hooks observed 20 actual native
