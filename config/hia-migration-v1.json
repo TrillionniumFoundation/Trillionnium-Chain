@@ -991,6 +991,17 @@
         "hia/tests/test_worker_audit_report.py",
         "hia/tests/rust_worker_audit_text_reference.rs"
       ]
+    },
+    {
+      "id": "executor/env-toggle",
+      "node_integration_complete": false,
+      "scope": "Bounded native value decision for active Executor env_toggle_enabled and all three boolean defaults, including Unicode whitespace, matched single-layer quotes, ASCII false tokens, and explicit missing or invalid UTF-8 defaults. Environment ownership, production invocation, complete Executor integration and retirement remain open.",
+      "source": "hia/src/executor/env_toggle.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_executor_env_toggle.py",
+        "hia/tests/rust_executor_env_toggle_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -1014,7 +1025,8 @@
       "components": [
         "executor/schedule",
         "executor/config-grouped-u64",
-        "math/binary64"
+        "math/binary64",
+        "executor/env-toggle"
       ],
       "legacy_path": "trillionnium/crates/trnm-executor",
       "module": "M06",
