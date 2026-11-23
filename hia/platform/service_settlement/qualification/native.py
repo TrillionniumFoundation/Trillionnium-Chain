@@ -19,6 +19,55 @@ HERE = Path(__file__).resolve().parent
 from hia.platform.service_settlement.qualification.common import CODES, identity, save
 
 
+class Progress:
+    """Best-effort journal; a terminated qualifier leaves a readable prefix."""
+    MAX_ROWS = 4096  # 3 stage markers + 4 per fixture + 2636 operations = 3919.
+    MAX_ROW_BYTES = 512
+
+    def __init__(self, path):
+        self.wall_start = time.monotonic_ns()
+        self.cpu_start = time.thread_time_ns()
+        self.rows = 0
+        try:
+            self.stream = path.open('xb', buffering=0)
+        except OSError:
+            self.stream = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        if self.stream is not None:
+            try:
+                self.stream.close()
+            except OSError:
+                pass
+            self.stream = None
+
+    def record(self, phase, report=None, capture=None, **position):
+        if self.stream is None or self.rows >= self.MAX_ROWS:
+            return
+        row = {'phase': phase, 'wall_ns': time.monotonic_ns() - self.wall_start,
+               'thread_cpu_ns': time.thread_time_ns() - self.cpu_start, **position}
+        if report is not None:
+            row.update(completed_fixtures=report['fixtures'],
+                       completed_operations=report['fixture_operations'],
+                       capture_records=capture.calls,
+                       public_dispatch_wall_ns=capture.public_dispatch_wall_ns)
+        raw = (json.dumps(row, separators=(',', ':')) + '\n').encode('ascii')
+        if len(raw) > self.MAX_ROW_BYTES:
+            self.__exit__()
+            return
+        try:
+            if self.stream.write(raw) != len(raw):
+                self.__exit__()
+                return
+        except OSError:
+            self.__exit__()
+            return
+        self.rows += 1
+
+
 class Capture:
     def __init__(self, root):
         self.root = root
@@ -29,6 +78,7 @@ class Capture:
         self.offset = 0
         self.calls = 0
         self.native_calls = 0
+        self.public_dispatch_wall_ns = 0
         self._last_exact_blob = None
 
     def blob(self, data):
@@ -145,7 +195,9 @@ class PublicEngine:
             record['request'] = self.capture.blob(request)
         start = time.monotonic_ns()
         status = self.functions[name](*args)
-        record.update(status=status, elapsed_ns=time.monotonic_ns() - start)
+        elapsed = time.monotonic_ns() - start
+        self.capture.public_dispatch_wall_ns += elapsed
+        record.update(status=status, elapsed_ns=elapsed)
         after = {owner: self.snapshot(owner) for owner in owners}
         record['after'] = [self.capture.blob(after[x]) for x in owners]
         if result is not None:
@@ -254,6 +306,12 @@ def main():
     parser.add_argument('--fee-build', type=Path, required=True)
     args = parser.parse_args()
     out = args.output.resolve(); out.mkdir(mode=0o700)
+    with Progress(out / 'fixture-progress.jsonl') as progress:
+        return qualify(args, out, progress)
+
+
+def qualify(args, out, progress):
+    progress.record('stage_start')
     (out / 'executed-qualifier.py').write_bytes(Path(__file__).read_bytes())
     report = {'status': 'INCOMPLETE', 'public_owned_api_tested': True,
               'fresh_original_executed_here': False, 'whole_engine_or_store_closed': False,
@@ -273,13 +331,17 @@ def main():
         packed = (HERE / 'fixtures.json.xz').read_bytes()
         assert identity(packed)['sha256'] == 'bf417e6b3d4086767b0614c9de0094d8794945100a8e6e149823d84869decc26'
         fixtures = json.loads(lzma.decompress(packed))['fixtures']
-        for case in fixtures:
+        for fixture_ordinal, case in enumerate(fixtures, 1):
+            position = {'fixture_ordinal': fixture_ordinal}
+            progress.record('fixture_start', report, capture, **position)
             slots = [None, None]
             request, expected = map(bytes.fromhex, (case['input'], case['expected']))
             p = 16; count = struct.unpack_from('<Q', request, 8)[0]
             actual = bytearray(b'SSR10001' + struct.pack('<3Q', count, 0, 0))
             for ordinal in range(count):
                 op, slot, height, n = struct.unpack_from('<4Q', request, p)
+                progress.record('operation_start', report, capture, **position,
+                                operation_ordinal=ordinal + 1, opcode=op)
                 p += 32; data = request[p:p+n]; p += n
                 code, body = 0, b''
                 result = None
@@ -361,17 +423,20 @@ def main():
                         assert public.view('engine_trust', slots[slot]) == data
                 actual.extend(struct.pack('<4Q', op, slot, code, len(body)) + body)
                 report['fixture_operations'] += 1
+            progress.record('fixture_result', report, capture, **position)
             assert p == len(request)
             struct.pack_into('<Q', actual, 16, len(actual))
             row = {'name': case['name'], 'input': capture.blob(request), 'expected': capture.blob(expected),
                    'actual': capture.blob(bytes(actual)), 'equal': actual == expected}
             results.append(row); save(out / 'fixture-results.json', results)
             assert actual == expected, (case['name'], identity(actual), identity(expected))
+            progress.record('fixture_cleanup', report, capture, **position)
             for owner in slots:
                 if owner is not None: public.drop(owner)
             slots = [None, None]
             report['fixtures'] += 1
             assert not public.live
+            progress.record('fixture_done', report, capture, **position)
             if report['fixtures'] % 20 == 0:
                 print(json.dumps({'fixtures': report['fixtures'], 'operations': report['fixture_operations'], 'calls': capture.calls}), flush=True)
         report.update(status='PASS', complete_fixture_bytes_equal=True, live_owners=0,
@@ -381,9 +446,11 @@ def main():
     except BaseException:
         report.update(status='FAIL', exception=traceback.format_exc(), live_owners=len(public.live))
     finally:
+        progress.record('capture_finalize', report, capture)
         report['capture'] = capture.close()
         save(out / 'report.json', report)
         print(json.dumps({k: report.get(k) for k in ('status', 'fixtures', 'fixture_operations', 'fee_private_calls', 'live_owners', 'exception')}), flush=True)
+        progress.record('stage_done', report, capture)
     return 0 if report['status'] == 'PASS' else 1
 
 
