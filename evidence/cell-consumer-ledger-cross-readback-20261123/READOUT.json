@@ -1,0 +1,117 @@
+{
+  "actual_external_payment_amount": null,
+  "checked_development_evaluation": {
+    "development_units": 2000,
+    "future_gain": 0,
+    "payment_operation": "26ecbc8936fafdc44ea65e33bf573c348b339c514c165b4b302ae4712397d028",
+    "payment_subject": "bdda1991528b32cc4c3c426f739901cd9adc040c6dd60df7e8477aaf3ad854f7",
+    "payment_subject_schema": "trnm-isolated-plain-paired-evaluation-delivery-v1",
+    "release_sha256": "ffafe1803eae4de802b46ca3e97e424ab4478228b789bb837b18c87046301b19",
+    "task": "abf694c4cd0d799cd0ee3b13414e23d8f51954c2ee487285ebb8a6c0f2ec78a6",
+    "verified_evaluation_files": 12
+  },
+  "common_release_fields": {
+    "admission_sha256": {
+      "chain_evaluation": "510ab2c3fd431548104f3e668fa9cb31a44196a9aa3dd9cb6dbda7e16cfe5f03",
+      "equal": false,
+      "hepta_consumer": "31bc974f7c724c67eddd87722a17857a377dedb6e2cdfed42fc3b38021e24b73"
+    },
+    "candidate_sha256": {
+      "chain_evaluation": "6a094252772cd5bf440ecf9b8ef0009adf6b17ec8b3f7ac44fed11d3c67ab7ba",
+      "equal": false,
+      "hepta_consumer": "46438f807d441a5c6ccd9732848deb5a6370d9ef27fc6f112a7b96c771c1edba"
+    },
+    "freeze_sha256": {
+      "chain_evaluation": "447ace5cc8bc031cc772e63ccb90380f16fc81404003bc04057ec4f8b7470ef6",
+      "equal": false,
+      "hepta_consumer": "57c67abb3bffe0cf319a4c6024d1a6dec7786d9a57eb23fa1eeef1b49e1abab6"
+    },
+    "request_sha256": {
+      "chain_evaluation": "f06b71caec78ab5d1e1c247b183a83f9086d75ebb489fdc72084de1ec9f2b039",
+      "equal": false,
+      "hepta_consumer": "615efa689b966d4499b2f7409c73837e506ba0cae5e276196b9c0989d906902c"
+    },
+    "scope": {
+      "chain_evaluation": "engineering_fixture",
+      "equal": true,
+      "hepta_consumer": "engineering_fixture"
+    },
+    "study_sha256": {
+      "chain_evaluation": "00e43fc72bb1cc2545d6f1d13fa67c448f413343c5e0c3ce1fdd9de91086f5fa",
+      "equal": false,
+      "hepta_consumer": "9ecfa0fb17e106c326ac767f40b645cf7ae68d173019fe70bd0ed61ea4ca6f42"
+    }
+  },
+  "consensus_credit": "UNVERIFIED",
+  "external_payer_and_settlement": "UNVERIFIED",
+  "hepta_commit": "60347d4d1687147ddf7c1e12350711583dac5918",
+  "hepta_originals_sha256": "db8549ee2f08810072571f2aa3892ff518277fa371f1029566d78a11b7e89360",
+  "improvement_reward": "UNVERIFIED",
+  "independently_verified_business_effect": "UNVERIFIED",
+  "legacy_operations": [
+    {
+      "case": "adopt-v1",
+      "checkpoint_codec": "HEPLCP02",
+      "decision": "Selection",
+      "improvement_reward": {
+        "actual_external_amount": null,
+        "amount_authorized_by_reader": 0,
+        "evidence_required": "independent-prefrozen-paid-cost-benefit",
+        "no_update_eligible": false
+      },
+      "independent_consumer_gate": {
+        "status": "MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT",
+        "verified": false
+      },
+      "operation": "learning-d9fb-native-adopt-v1",
+      "original_actor_relation": "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY",
+      "original_funded_mapping_observed": false,
+      "original_settlement_verified": false,
+      "selected_bundle_digest": "8c650b9ad74f5b8ec152d700ce184b30bf3cdf008a6b27b2eacbd0805d30f308"
+    },
+    {
+      "case": "no-update-v9",
+      "checkpoint_codec": "HEPLCP02",
+      "decision": "NoUpdate",
+      "improvement_reward": {
+        "actual_external_amount": null,
+        "amount_authorized_by_reader": 0,
+        "evidence_required": "independent-prefrozen-paid-cost-benefit",
+        "no_update_eligible": false
+      },
+      "independent_consumer_gate": {
+        "status": "MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT",
+        "verified": false
+      },
+      "operation": "learning-d9fb-native-no-update-v9",
+      "original_actor_relation": "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY",
+      "original_funded_mapping_observed": false,
+      "original_settlement_verified": false,
+      "selected_bundle_digest": "8097a0859cb95fc0674f77975086e46e547f3238021b2548c6fa85c98535fd3d"
+    }
+  ],
+  "real_independent_consumer_use": "UNVERIFIED",
+  "same_released_pair": false,
+  "schema": "trnm.archived-consumer-ledger-cross-readback.v1",
+  "settlement_authorized": false,
+  "subsequent_fixture_uses": [
+    {
+      "operation": "e1736527cc1e1b48fa3cbe9fd4d717436364ad0a10726aa99eacd1b2b497042a",
+      "outcome": "accepted",
+      "outcome_receipt_sha256": "85c6770365af0ce32995d8a716e8067ac9979e28399a5f59ff7583c78ab28f1f",
+      "output_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "participant_effect_sha256": "874ea0c88743355ccf324d158adbfcf0e9d8393eeb74dbbb6c490d19726906ce",
+      "run_receipt_sha256": "14c46c6df6432560cd62a677659124629c16279d41fcdda6ed90d7b3e2a88630",
+      "task_sha256": "289b87da4dec4648c37aaa91c405bc0b01b8bb607ae16e7e2bf470e4454a79fa"
+    },
+    {
+      "operation": "ccd3170bbd76b7772acb1be3284a7b0c8ed960307c583a97c2945bd1e5bc9d51",
+      "outcome": "rejected",
+      "outcome_receipt_sha256": "702e416d0eb0c280cabede780c65722f7e7e331e8bd04f16bed9062d68209158",
+      "output_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "participant_effect_sha256": "7a771ecd0a4c883b0bad5b62aebca71007eb3a6d99707f994bcb627468f9631a",
+      "run_receipt_sha256": "786f9b90ca5d1713cb73e3f16d21946e1a97f303a343635b1ec74654641aaa9f",
+      "task_sha256": "b44b2a0dea1f729778eda8cf6ffd48ef34a88cf1557fa3bf2ebec6e4ee5eceba"
+    }
+  ]
+}
