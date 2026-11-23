@@ -982,6 +982,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-active-table-tokens",
+      "node_integration_complete": false,
+      "scope": "Active 18-column Worker audit Markdown header, divider, row delimiters and unsigned decimal task token only. Complete row/report emission, CLI/file ownership, production dispatch and Rust package retirement remain open.",
+      "source": "hia/src/worker_agent/audit_active_table_tokens.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_active_table_tokens.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-cell-fragment",
       "node_integration_complete": false,
       "scope": "Bounded first/present, absent and continuation Markdown cell byte emission against the active Rust cell helper. Supports split oversized valid UTF-8 cells; full 18-column report, CLI linkage, file publication and Node integration remain open.",
@@ -1090,6 +1100,7 @@
     {
       "components": [
         "worker-agent/audit-text",
+        "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
         "worker-agent/audit-report"
       ],

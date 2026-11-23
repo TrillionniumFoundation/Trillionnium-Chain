@@ -1,0 +1,197 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_active_table_tokens_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  one:usize = const() {"value":1}
+  nonempty:bool = compare.ge(size,one)
+  branch nonempty dispatch(input,output,size) malformed()
+block dispatch(di:readbuf,do:mutbuf,ds:usize)
+  origin:usize = const() {"value":0}
+  tag:u8 = buffer.load(di,origin)
+  task_tag:u8 = const() {"value":4}
+  is_task:bool = compare.eq(tag,task_tag)
+  branch is_task task_frame(di,do,ds) fixed_frame(do,ds,tag)
+block task_frame(ti:readbuf,to:mutbuf,ts:usize)
+  nine:usize = const() {"value":9}
+  task_exact:bool = compare.eq(ts,nine)
+  branch task_exact measure_task(ti,to) malformed()
+block measure_task(mi:readbuf,mo:mutbuf)
+  value_offset:u64 = const() {"value":1}
+  value_extent:u64 = const() {"value":8}
+  value:u64 = call(mi,value_offset,value_extent) {"function":"wa_read"}
+  measure_start:u64 = const() {"value":0}
+  no_emit:bool = const() {"value":false}
+  needed:u64 = call(mo,measure_start,value,no_emit) {"function":"wa_decimal"}
+  task_cap_native:usize = buffer.len(mo)
+  task_cap:u64 = int.cast(task_cap_native) {"mode":"wrap"}
+  task_fits:bool = compare.ge(task_cap,needed)
+  branch task_fits write_task(mo,value) undersize()
+block write_task(wo:mutbuf,wv:u64)
+  task_start:u64 = const() {"value":0}
+  task_emit:bool = const() {"value":true}
+  task_end:u64 = call(wo,task_start,wv,task_emit) {"function":"wa_decimal"}
+  task_count:u32 = int.cast(task_end) {"mode":"wrap"}
+  ret(task_count)
+block fixed_frame(fo:mutbuf,fs:usize,ft:u8)
+  fixed_one:usize = const() {"value":1}
+  fixed_last:u8 = const() {"value":3}
+  fixed_size:bool = compare.eq(fs,fixed_one)
+  known_tag:bool = compare.le(ft,fixed_last)
+  fixed_valid:bool = bool.and(fixed_size,known_tag)
+  branch fixed_valid fixed_kind(fo,ft) malformed()
+block fixed_kind(ko:mutbuf,kt:u8)
+  header_tag:u8 = const() {"value":0}
+  is_header:bool = compare.eq(kt,header_tag)
+  branch is_header header_cap(ko) open_kind(ko,kt)
+block header_cap(ho:mutbuf)
+  header_size:usize = buffer.len(ho)
+  header_bytes:usize = const() {"value":446}
+  header_fits:bool = compare.ge(header_size,header_bytes)
+  branch header_fits write_header(ho) undersize()
+block write_header(hwo:mutbuf)
+  header_end:u64 = call(hwo) {"function":"wa_active_header"}
+  header_count:u32 = int.cast(header_end) {"mode":"wrap"}
+  ret(header_count)
+block open_kind(oo:mutbuf,ot:u8)
+  open_tag:u8 = const() {"value":1}
+  is_open:bool = compare.eq(ot,open_tag)
+  branch is_open open_row(oo) separator_kind(oo,ot)
+block open_row(oro:mutbuf)
+  open_token:u64 = const() {"value":8316}
+  open_size:u64 = const() {"value":2}
+  jump fixed_cap(oro,open_token,open_size)
+block separator_kind(so:mutbuf,st:u8)
+  separator_tag:u8 = const() {"value":2}
+  is_separator:bool = compare.eq(st,separator_tag)
+  branch is_separator separator_row(so) end_row(so)
+block separator_row(sro:mutbuf)
+  separator_token:u64 = const() {"value":2128928}
+  separator_size:u64 = const() {"value":3}
+  jump fixed_cap(sro,separator_token,separator_size)
+block end_row(ero:mutbuf)
+  end_token:u64 = const() {"value":687136}
+  end_size:u64 = const() {"value":3}
+  jump fixed_cap(ero,end_token,end_size)
+block fixed_cap(fco:mutbuf,fcv:u64,fcn:u64)
+  fixed_native:usize = buffer.len(fco)
+  fixed_capacity:u64 = int.cast(fixed_native) {"mode":"wrap"}
+  fixed_fits:bool = compare.ge(fixed_capacity,fcn)
+  branch fixed_fits write_fixed(fco,fcv,fcn) undersize()
+block write_fixed(wfo:mutbuf,wfv:u64,wfn:u64)
+  fixed_start:u64 = const() {"value":0}
+  fixed_emit:bool = const() {"value":true}
+  fixed_end:u64 = call(wfo,fixed_start,wfv,wfn,fixed_emit) {"function":"wa_word"}
+  fixed_count:u32 = int.cast(fixed_end) {"mode":"wrap"}
+  ret(fixed_count)
+block malformed()
+  malformed_out:u32 = const() {"value":4294967295}
+  ret(malformed_out)
+block undersize()
+  undersize_out:u32 = const() {"value":4294967294}
+  ret(undersize_out)
+end
+fn wa_active_header(output:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(output:mutbuf)
+  off0:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  emit:bool = const() {"value":true}
+  chunk0:u64 = const() {"value":8315181416903221372}
+  off1:u64 = call(output,off0,chunk0,eight,emit) {"function":"wa_word"}
+  chunk1:u64 = const() {"value":8367824586219806580}
+  off2:u64 = call(output,off1,chunk1,eight,emit) {"function":"wa_word"}
+  chunk2:u64 = const() {"value":8944259263693026145}
+  off3:u64 = call(output,off2,chunk2,eight,emit) {"function":"wa_word"}
+  chunk3:u64 = const() {"value":2338341774247097120}
+  off4:u64 = call(output,off3,chunk3,eight,emit) {"function":"wa_word"}
+  chunk4:u64 = const() {"value":7235444497380810876}
+  off5:u64 = call(output,off4,chunk4,eight,emit) {"function":"wa_word"}
+  chunk5:u64 = const() {"value":7310874250630361701}
+  off6:u64 = call(output,off5,chunk5,eight,emit) {"function":"wa_word"}
+  chunk6:u64 = const() {"value":2340781521962497139}
+  off7:u64 = call(output,off6,chunk6,eight,emit) {"function":"wa_word"}
+  chunk7:u64 = const() {"value":7953759798970774128}
+  off8:u64 = call(output,off7,chunk7,eight,emit) {"function":"wa_word"}
+  chunk8:u64 = const() {"value":7882821499128604003}
+  off9:u64 = call(output,off8,chunk8,eight,emit) {"function":"wa_word"}
+  chunk9:u64 = const() {"value":8028074745930342241}
+  off10:u64 = call(output,off9,chunk9,eight,emit) {"function":"wa_word"}
+  chunk10:u64 = const() {"value":8534165644797288558}
+  off11:u64 = call(output,off10,chunk10,eight,emit) {"function":"wa_word"}
+  chunk11:u64 = const() {"value":7376726192384208485}
+  off12:u64 = call(output,off11,chunk11,eight,emit) {"function":"wa_word"}
+  chunk12:u64 = const() {"value":7598259157957308009}
+  off13:u64 = call(output,off12,chunk12,eight,emit) {"function":"wa_word"}
+  chunk13:u64 = const() {"value":8030604370378781806}
+  off14:u64 = call(output,off13,chunk13,eight,emit) {"function":"wa_word"}
+  chunk14:u64 = const() {"value":2340781582025255286}
+  off15:u64 = call(output,off14,chunk14,eight,emit) {"function":"wa_word"}
+  chunk15:u64 = const() {"value":2340781556255453037}
+  off16:u64 = call(output,off15,chunk15,eight,emit) {"function":"wa_word"}
+  chunk16:u64 = const() {"value":2338042707334751329}
+  off17:u64 = call(output,off16,chunk16,eight,emit) {"function":"wa_word"}
+  chunk17:u64 = const() {"value":6878243912706760828}
+  off18:u64 = call(output,off17,chunk17,eight,emit) {"function":"wa_word"}
+  chunk18:u64 = const() {"value":7813573208857080432}
+  off19:u64 = call(output,off18,chunk18,eight,emit) {"function":"wa_word"}
+  chunk19:u64 = const() {"value":7813865678659681312}
+  off20:u64 = call(output,off19,chunk19,eight,emit) {"function":"wa_word"}
+  chunk20:u64 = const() {"value":8246195806779892073}
+  off21:u64 = call(output,off20,chunk20,eight,emit) {"function":"wa_word"}
+  chunk21:u64 = const() {"value":2340781526308447855}
+  off22:u64 = call(output,off21,chunk21,eight,emit) {"function":"wa_word"}
+  chunk22:u64 = const() {"value":7598805624095270258}
+  off23:u64 = call(output,off22,chunk22,eight,emit) {"function":"wa_word"}
+  chunk23:u64 = const() {"value":7810757299313536623}
+  off24:u64 = call(output,off23,chunk23,eight,emit) {"function":"wa_word"}
+  chunk24:u64 = const() {"value":8391737061683526688}
+  off25:u64 = call(output,off24,chunk24,eight,emit) {"function":"wa_word"}
+  chunk25:u64 = const() {"value":7306069423422010465}
+  off26:u64 = call(output,off25,chunk25,eight,emit) {"function":"wa_word"}
+  chunk26:u64 = const() {"value":7309940862667027564}
+  off27:u64 = call(output,off26,chunk26,eight,emit) {"function":"wa_word"}
+  chunk27:u64 = const() {"value":7957695015159100784}
+  off28:u64 = call(output,off27,chunk27,eight,emit) {"function":"wa_word"}
+  chunk28:u64 = const() {"value":2340781582025585759}
+  off29:u64 = call(output,off28,chunk28,eight,emit) {"function":"wa_word"}
+  chunk29:u64 = const() {"value":7598805624095270258}
+  off30:u64 = call(output,off29,chunk29,eight,emit) {"function":"wa_word"}
+  chunk30:u64 = const() {"value":7523097587061059183}
+  off31:u64 = call(output,off30,chunk30,eight,emit) {"function":"wa_word"}
+  chunk31:u64 = const() {"value":2340781586504638324}
+  off32:u64 = call(output,off31,chunk31,eight,emit) {"function":"wa_word"}
+  chunk32:u64 = const() {"value":7598805624095270258}
+  off33:u64 = call(output,off32,chunk32,eight,emit) {"function":"wa_word"}
+  chunk33:u64 = const() {"value":7310027618103815791}
+  off34:u64 = call(output,off33,chunk33,eight,emit) {"function":"wa_word"}
+  chunk34:u64 = const() {"value":8223709398396068447}
+  off35:u64 = call(output,off34,chunk34,eight,emit) {"function":"wa_word"}
+  chunk35:u64 = const() {"value":8028075772679123045}
+  off36:u64 = call(output,off35,chunk35,eight,emit) {"function":"wa_word"}
+  chunk36:u64 = const() {"value":8025251182822973294}
+  off37:u64 = call(output,off36,chunk36,eight,emit) {"function":"wa_word"}
+  chunk37:u64 = const() {"value":8944268025677833330}
+  off38:u64 = call(output,off37,chunk37,eight,emit) {"function":"wa_word"}
+  chunk38:u64 = const() {"value":8386112028886266400}
+  off39:u64 = call(output,off38,chunk38,eight,emit) {"function":"wa_word"}
+  chunk39:u64 = const() {"value":6877103727605346153}
+  off40:u64 = call(output,off39,chunk39,eight,emit) {"function":"wa_word"}
+  chunk40:u64 = const() {"value":7885647256562659426}
+  off41:u64 = call(output,off40,chunk40,eight,emit) {"function":"wa_word"}
+  chunk41:u64 = const() {"value":755514522015720031}
+  off42:u64 = call(output,off41,chunk41,eight,emit) {"function":"wa_word"}
+  eighteen:u64 = const() {"value":18}
+  jump divider(output,off42,eighteen,emit)
+block divider(dvo:mutbuf,dvc:u64,dvr:u64,dve:bool)
+  divider_cell:u64 = const() {"value":35378403549308}
+  six:u64 = const() {"value":6}
+  after_cell:u64 = call(dvo,dvc,divider_cell,six,dve) {"function":"wa_word"}
+  last_one:u64 = const() {"value":1}
+  remaining:u64 = int.sub.wrap(dvr,last_one)
+  divider_last:bool = compare.eq(dvr,last_one)
+  branch divider_last tail(dvo,after_cell,dve) divider(dvo,after_cell,remaining,dve)
+block tail(tlo:mutbuf,tlc:u64,tle:bool)
+  divider_tail:u64 = const() {"value":2684}
+  divider_tail_size:u64 = const() {"value":2}
+  entire:u64 = call(tlo,tlc,divider_tail,divider_tail_size,tle) {"function":"wa_word"}
+  ret(entire)
+end

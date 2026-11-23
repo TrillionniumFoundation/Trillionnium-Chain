@@ -7491,6 +7491,16 @@
         "source": "src/protocol/state_root.hepta"
       }
     ],
+    "src/worker_agent/audit_active_table_tokens.hepta": [
+      {
+        "source": "src/worker_agent/audit_report.hepta",
+        "functions": [
+          "wa_decimal",
+          "wa_read",
+          "wa_word"
+        ]
+      }
+    ],
     "src/worker_agent/audit_cell_fragment.hepta": [
       {
         "source": "src/worker_agent/audit_report.hepta",

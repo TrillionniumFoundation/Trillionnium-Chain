@@ -89,3 +89,8 @@ compiles the exact active rendering functions and the typed record body,
 checking missing values and signed/unsigned decimal extremes. The 18-column
 format and unbounded report materialization are separate cutover
 requirements. Neither is covered by the WAR1 differential.
+
+The [active table tokens](audit_active_table_tokens.md) provide the exact
+18-column header and divider plus row delimiters and unsigned decimal task
+IDs. This bounded building block does not take ownership of row composition,
+output files, CLI dispatch or the Rust package.
