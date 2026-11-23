@@ -71,6 +71,11 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
     plain_model = intake is not None or inspect_only
     request_path = request_path or materials / "paired.json"
     frozen_path = frozen_path or materials / "FROZEN.json"
+    retention_pin = None
+    if intake is not None and plain.requires_retention(intake, read(frozen_path)["candidate"]):
+        retention_pin = intake["source_retention_sha256"]
+        source_report = Path(os.environ.get("TRNM_DEV_SOURCE_RETENTION_FILE", frozen_path.with_name("RETENTION.json")))
+        record(job / "SOURCE_RETENTION.json", plain.original_retention(source_report, retention_pin))
     request = check_inputs(materials, pins, request_path=request_path, frozen_path=frozen_path, circuit=not plain_model)
     if plain_model:
         require(len(request["future"]) == 1, "single release requires one future record")
@@ -93,7 +98,7 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
     source_hash = record(job / "SOURCE.json", listing)
     if plain_model:
         plain.check_catalog(job, listing["catalog"], pins["freeze"])
-        plain.preflight(job, materials, pins["request"])
+        plain.preflight(job, materials, pins["request"], retention_pin)
     if inspect_only:
         result = dict(schema="trnm-plain-evaluation-input-preflight-v1", pins=pins,
                       source_listing_sha256=source_hash, catalog=listing["catalog"])
@@ -110,6 +115,8 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
     if intake is not None:
         terms.update(schema=plain.ADMISSION, output_schema=plain.DELIVERY, job_id=intake["admission_sha256"],
                      intake_release=intake, intake_release_sha256=digest(intake))
+        if retention_pin is not None:
+            terms["source_retention_sha256"] = retention_pin
     record(job / "ADMISSION.json", terms)
 
 
@@ -136,7 +143,7 @@ def execute(job, materials):
     listing = read(job / "SOURCE.json")
     if plain_model:
         require(sha(request_path.read_bytes()) == terms["request_file_sha256"], "original paired request bytes differ")
-        plain.check_release(terms["intake_release"], terms["intake_release_sha256"], terms["pins"])
+        plain.check_retention_record(job, terms)
         plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
     snapshot = job / "runtime" / "cell_experiments"
     before = source_files(snapshot)
@@ -201,7 +208,7 @@ def verify(job, *, expected_release=None):
         retained = job / "PAIRED_INPUT.json"
         require(sha(retained.read_bytes()) == a["request_file_sha256"] and
                 digest(read(retained)) == a["pins"]["request"], "original paired request bytes differ")
-        plain.check_release(a["intake_release"], a["intake_release_sha256"], a["pins"])
+        plain.check_retention_record(job, a)
         plain.check_catalog(job, read(job / "SOURCE.json")["catalog"], a["pins"]["freeze"])
         plain.check_plain_result(read(job / "evaluation/RESULT.json"), a)
     elif historical:

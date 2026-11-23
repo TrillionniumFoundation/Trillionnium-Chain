@@ -26,21 +26,22 @@ class ReleasedEvaluationTests(unittest.TestCase):
         admission = common.read(CAPTURE / "ADMISSION.json")
         release = admission["intake_release"]
         pins = admission["pins"]
+        candidate = common.read(CAPTURE / "FROZEN.json")["candidate"]
         with self.assertRaisesRegex(ValueError, "retained reference"):
-            plain.check_release(release, "b" * 64, pins)
+            plain.check_release(release, "b" * 64, pins, candidate)
         for key in ("candidate_sha256", "study_sha256", "freeze_sha256", "request_sha256"):
             changed = dict(release, **{key: "b" * 64})
             with self.subTest(field=key), self.assertRaisesRegex(ValueError, "retained reference"):
-                plain.check_release(changed, common.digest(changed), pins)
+                plain.check_release(changed, common.digest(changed), pins, candidate)
         changed = dict(release, scope="owner_intake")
         with self.assertRaisesRegex(ValueError, "retained reference"):
-            plain.check_release(changed, admission["intake_release_sha256"], pins)
+            plain.check_release(changed, admission["intake_release_sha256"], pins, candidate)
         changed = dict(release, scope="external_customer")
         with self.assertRaisesRegex(ValueError, "unknown intake scope"):
-            plain.check_release(changed, common.digest(changed), pins)
+            plain.check_release(changed, common.digest(changed), pins, candidate)
         changed = dict(release, real_human=True)
         with self.assertRaisesRegex(ValueError, "release shape"):
-            plain.check_release(changed, common.digest(changed), pins)
+            plain.check_release(changed, common.digest(changed), pins, candidate)
 
     def test_mutated_scope_catalog_or_exact_request_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -98,6 +99,37 @@ class CandidateManifestExposureTests(unittest.TestCase):
                 plain.catalog_snapshot(job, job, freeze)
             with self.assertRaisesRegex(ValueError, "unbound manifest exposure"):
                 plain.check_catalog(job, {"manifest_exposure_sha256": "a" * 64}, freeze)
+
+
+class OriginalOwnerRetentionTests(unittest.TestCase):
+    def test_only_new_owner_release_requires_the_witnessed_qualification_digest(self):
+        admission = common.read(CAPTURE / "ADMISSION.json")
+        old = dict(admission["intake_release"], scope="owner_intake")
+        candidate = {"paired_source_exposure": {"schema": "hepta.paired-learning.source-exposure.v1"}}
+        with self.assertRaisesRegex(ValueError, "lacks pre-arrival retention"):
+            plain.check_release(old, common.digest(old), admission["pins"], candidate)
+        report = {"scope": "owner_intake", "decision": "eligible_for_prospective_evaluation"}
+        new = dict(old, source_retention_sha256=common.digest(report))
+        plain.check_release(new, common.digest(new), admission["pins"], candidate)
+        with self.assertRaisesRegex(ValueError, "retained reference"):
+            plain.check_release(new, common.digest(old), admission["pins"], candidate)
+        with self.assertRaisesRegex(ValueError, "release shape"):
+            plain.check_release(new, common.digest(new), admission["pins"], {})
+        fixture = admission["intake_release"]
+        plain.check_release(fixture, common.digest(fixture), admission["pins"], candidate)
+
+    def test_no_update_and_changed_original_report_cannot_authorize_paid_work(self):
+        with tempfile.TemporaryDirectory() as name:
+            path = Path(name) / "RETENTION.json"
+            report = dict(scope="owner_intake", decision="no_update_retention_regressed")
+            common.record(path, report)
+            old_pin = common.digest(report)
+            with self.assertRaisesRegex(ValueError, "did not authorize prospective"):
+                plain.original_retention(path, old_pin)
+            report["decision"] = "eligible_for_prospective_evaluation"
+            path.write_bytes(common.canonical(report))
+            with self.assertRaisesRegex(ValueError, "differs from original release"):
+                plain.original_retention(path, old_pin)
 
 
 if __name__ == "__main__":

@@ -14,17 +14,46 @@ STUDY = "00e43fc72bb1cc2545d6f1d13fa67c448f413343c5e0c3ce1fdd9de91086f5fa"
 FIELDS = {"study_sha256", "freeze_sha256", "candidate_sha256", "request_sha256", "admission_sha256"}
 
 
-def check_release(release, commitment, pins):
-    require(isinstance(release, dict) and set(release) == FIELDS | {"schema", "scope"} and
-            release["schema"] == "hepta.paired-intake.release.v1", "unexpected intake release shape")
-    require(release["scope"] in {"engineering_fixture", "owner_intake"}, "unknown intake scope")
-    for key in FIELDS:
+def requires_retention(release, candidate):
+    return release["scope"] == "owner_intake" and "paired_source_exposure" in candidate
+
+
+def check_release(release, commitment, pins, candidate):
+    require(isinstance(release, dict) and release.get("schema") == "hepta.paired-intake.release.v1",
+            "unexpected intake release shape")
+    require(release.get("scope") in {"engineering_fixture", "owner_intake"}, "unknown intake scope")
+    fields = FIELDS
+    if requires_retention(release, candidate):
+        require("source_retention_sha256" in release, "source owner release lacks pre-arrival retention")
+        fields = fields | {"source_retention_sha256"}
+    require(set(release) == fields | {"schema", "scope"}, "unexpected intake release shape")
+    for key in fields:
         value = release[key]
         require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) and value != "0" * 64,
                 "invalid intake release digest")
     require(digest(release) == commitment and release["study_sha256"] == STUDY and
             all(release[key + "_sha256"] == pins[key] for key in ("request", "candidate", "freeze")),
             "release differs from retained reference, study, or paired input")
+
+
+def original_retention(report_path, retention_pin):
+    report = read(report_path)
+    require(digest(report) == retention_pin, "owner retention differs from original release")
+    require(report["decision"] == "eligible_for_prospective_evaluation" and report["scope"] == "owner_intake",
+            "original source qualification did not authorize prospective work")
+    return report
+
+
+def check_retention_record(job, terms):
+    release = terms["intake_release"]
+    candidate = read(job / "FROZEN.json")["candidate"]
+    check_release(release, terms["intake_release_sha256"], terms["pins"], candidate)
+    if requires_retention(release, candidate):
+        pin = release["source_retention_sha256"]
+        require(terms.get("source_retention_sha256") == pin, "signed retention differs from owner release")
+        original_retention(job / "SOURCE_RETENTION.json", pin)
+    else:
+        require("source_retention_sha256" not in terms, "unexpected signed source retention")
 
 
 def manifest_exposure(candidate):
@@ -98,11 +127,12 @@ def check_plain_result(result, terms):
             "paired receipt differs from reservation")
 
 
-def preflight(job, materials, request):
+def preflight(job, materials, request, retention_pin=None):
     env = dict(os.environ, PYTHONPATH=str(job / "runtime"), PYTHONDONTWRITEBYTECODE="1",
                HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
     subprocess.run(["unshare", "-Urn", "--", sys.executable, "-B", __file__,
-                    "preflight", str(job), str(materials), request], cwd=job, env=env, check=True)
+                    "preflight", str(job), str(materials), request, *([retention_pin] if retention_pin else [])],
+                   cwd=job, env=env, check=True)
 
 
 if __name__ == "__main__":
@@ -114,7 +144,14 @@ if __name__ == "__main__":
     if mode == "preflight":
         from cell_experiments import paired_cold
 
-        (request_digest,) = args
+        require(len(args) in (1, 2), "expected a request and optional owner retention digest")
+        request_digest = args[0]
+        if len(args) == 2:
+            from cell_experiments import paired_source_dispatch
+
+            actual = paired_source_dispatch.authorize(read(job / "FROZEN.json"),
+                {"source_retention_sha256": args[1]}, job / "SOURCE_RETENTION.json")
+            require(actual == args[1], "source authority retention digest differs")
         req = paired_cold.checked_request(job / "PAIRED_INPUT.json", request_digest)
         embedded = manifest_exposure(req["candidate"])
         if embedded is not None:
@@ -131,15 +168,19 @@ if __name__ == "__main__":
     elif mode in ("inspect-source", "prepare"):
         source_path, freeze, request, candidate = args
         pins = dict(freeze=freeze, request=request, candidate=candidate)
+        frozen_file = Path(os.environ.get("TRNM_DEV_FROZEN_FILE", materials / "FROZEN.json")).resolve(strict=True)
+        frozen = read(frozen_file)
+        require(digest(frozen) == pins["freeze"] and digest(frozen["candidate"]) == pins["candidate"],
+                "retained freeze or candidate differs before dispatch")
         release = None
         inspect_only = mode == "inspect-source"
         if not inspect_only:
             release = read(Path(os.environ["TRNM_DEV_INTAKE_RELEASE"]))
             commitment = os.environ["TRNM_DEV_INTAKE_RELEASE_SHA256"]
-            check_release(release, commitment, pins)
+            check_release(release, commitment, pins, frozen["candidate"])
         result = prepare(job, materials, Path(source_path).resolve(strict=True), pins, intake=release,
                          request_path=Path(os.environ["TRNM_DEV_PAIRED_REQUEST_FILE"]).resolve(strict=True),
-                         frozen_path=Path(os.environ.get("TRNM_DEV_FROZEN_FILE", materials / "FROZEN.json")).resolve(strict=True),
+                         frozen_path=frozen_file,
                          inspect_only=inspect_only)
         if inspect_only:
             print(json.dumps(result, sort_keys=True))
