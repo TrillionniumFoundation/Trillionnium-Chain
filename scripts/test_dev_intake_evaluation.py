@@ -63,5 +63,42 @@ class ReleasedEvaluationTests(unittest.TestCase):
             plain.check_plain_result(changed, admission)
 
 
+class CandidateManifestExposureTests(unittest.TestCase):
+    def test_private_inline_commitment_is_verified_without_exporting_training_records(self):
+        exposure = dict(schema="hepta.paired-learning.source-exposure.v1", registered_catalogs=[],
+                        record_digests=["a" * 64], known_prompt_hashes=["b" * 64],
+                        input_ids_sha256=["c" * 64], source_keys=["d" * 64])
+        frozen = dict(candidate={"paired_source_exposure": exposure})
+        with tempfile.TemporaryDirectory() as name:
+            job = Path(name)
+            local = job / "FROZEN.json"
+            common.record(local, frozen)
+            first = common.digest(frozen)
+            entry = plain.catalog_snapshot(job, job, first)
+            self.assertEqual(entry, {"manifest_exposure_sha256": common.digest(exposure)})
+            plain.check_catalog(job, entry, first)
+            with self.assertRaisesRegex(ValueError, "exposure commitment differs"):
+                plain.check_catalog(job, {"manifest_exposure_sha256": "e" * 64}, first)
+            with self.assertRaisesRegex(ValueError, "exposure commitment differs"):
+                plain.check_catalog(job, {}, first)
+            exposure["known_prompt_hashes"] = ["f" * 64]
+            local.write_bytes(common.canonical(frozen))
+            with self.assertRaisesRegex(ValueError, "immutable source freeze"):
+                plain.check_catalog(job, entry, first)
+            with self.assertRaisesRegex(ValueError, "exposure commitment differs"):
+                plain.check_catalog(job, entry, common.digest(frozen))
+
+    def test_missing_or_unbound_exposure_refuses(self):
+        with tempfile.TemporaryDirectory() as name:
+            job = Path(name)
+            frozen = {"candidate": {}}
+            common.record(job / "FROZEN.json", frozen)
+            freeze = common.digest(frozen)
+            with self.assertRaisesRegex(ValueError, "missing or ambiguous exposure"):
+                plain.catalog_snapshot(job, job, freeze)
+            with self.assertRaisesRegex(ValueError, "unbound manifest exposure"):
+                plain.check_catalog(job, {"manifest_exposure_sha256": "a" * 64}, freeze)
+
+
 if __name__ == "__main__":
     unittest.main()

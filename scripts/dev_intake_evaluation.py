@@ -1,4 +1,5 @@
 """Bind a released ordinary paired request to one isolated native development evaluation."""
+import json
 import os
 import re
 import subprocess
@@ -26,21 +27,55 @@ def check_release(release, commitment, pins):
             "release differs from retained reference, study, or paired input")
 
 
+def manifest_exposure(candidate):
+    exposure = candidate.get("paired_source_exposure")
+    if exposure is not None:
+        require(isinstance(exposure, dict) and exposure.get("schema") == "hepta.paired-learning.source-exposure.v1",
+                "unsupported candidate exposure encoding")
+        for key in ("record_digests", "known_prompt_hashes", "input_ids_sha256", "source_keys"):
+            values = exposure.get(key)
+            require(isinstance(values, list) and values and all(
+                isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+                for value in values), "missing bound source exposure digests")
+        require(isinstance(exposure.get("registered_catalogs"), list), "missing inherited source protections")
+    return exposure
+
+
 def catalog_snapshot(job, source, freeze):
+    candidate = read(job / "FROZEN.json")["candidate"]
+    embedded = manifest_exposure(candidate)
     matches = [path for path in (source / "qualification").glob("*/prospective-exposures.json")
                if path.is_file() and not path.is_symlink() and read(path).get("freeze_sha256") == freeze]
-    require(len(matches) == 1, "expected one exposure catalog for the issued freeze")
-    original = matches[0]
-    relative = original.relative_to(source)
-    target = job / relative
-    target.parent.mkdir(parents=True, exist_ok=True)
-    raw = original.read_bytes()
-    with target.open("xb") as handle:
-        handle.write(raw)
-    return {"path": relative.as_posix(), "sha256": sha(raw)}
+    require(len(matches) <= 1 and (matches or embedded is not None), "missing or ambiguous exposure catalog")
+    entry = {}
+    if matches:
+        original = matches[0]
+        relative = original.relative_to(source)
+        target = job / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        raw = original.read_bytes()
+        with target.open("xb") as handle:
+            handle.write(raw)
+        entry.update(path=relative.as_posix(), sha256=sha(raw))
+    if embedded is not None:
+        entry["manifest_exposure_sha256"] = digest(embedded)
+    return entry
 
 
 def check_catalog(job, entry, freeze):
+    frozen = read(job / "FROZEN.json")
+    require(digest(frozen) == freeze, "immutable source freeze differs")
+    embedded = manifest_exposure(frozen["candidate"])
+    if embedded is not None:
+        require(entry.get("manifest_exposure_sha256") == digest(embedded),
+                "candidate manifest exposure commitment differs")
+    else:
+        require("manifest_exposure_sha256" not in entry, "unbound manifest exposure")
+    if not ({"path", "sha256"} & entry.keys()):
+        require(embedded is not None and set(entry) == {"manifest_exposure_sha256"}, "missing registered catalog")
+        return
+    require(set(entry) == ({"path", "sha256", "manifest_exposure_sha256"} if embedded is not None
+                           else {"path", "sha256"}), "unexpected exposure commitments")
     path = Path(entry["path"])
     require(len(path.parts) == 3 and path.parts[0] == "qualification" and path.parts[1] not in {".", ".."}
             and path.parts[2] == "prospective-exposures.json", "invalid catalog path")
@@ -72,6 +107,8 @@ def preflight(job, materials, request):
 
 if __name__ == "__main__":
     mode, directory, materials_path, *args = sys.argv[1:]
+    if mode == "inspect-source":
+        Path(directory).mkdir(mode=0o700, parents=False, exist_ok=False)
     job = Path(directory).resolve(strict=True)
     materials = Path(materials_path).resolve(strict=True)
     if mode == "preflight":
@@ -79,17 +116,33 @@ if __name__ == "__main__":
 
         (request_digest,) = args
         req = paired_cold.checked_request(job / "PAIRED_INPUT.json", request_digest)
+        embedded = manifest_exposure(req["candidate"])
+        if embedded is not None:
+            from cell_experiments import paired_source
+
+            paired_source.check_future(req)
         for arm in paired_cold.ARMS:
             require(paired_cold.verify_materials(req[arm], materials) == digest(req[arm]), "material pin differs")
-            paired_cold.token_inputs(req, req[arm], materials)
-    elif mode == "prepare":
+            encoded = paired_cold.token_inputs(req, req[arm], materials)
+            if embedded is not None:
+                known = set(embedded["input_ids_sha256"])
+                require(all(encoded[row["task_id"]] not in known for row in req["future"]),
+                        "request repeats a trained source input")
+    elif mode in ("inspect-source", "prepare"):
         source_path, freeze, request, candidate = args
         pins = dict(freeze=freeze, request=request, candidate=candidate)
-        release = read(Path(os.environ["TRNM_DEV_INTAKE_RELEASE"]))
-        commitment = os.environ["TRNM_DEV_INTAKE_RELEASE_SHA256"]
-        check_release(release, commitment, pins)
-        prepare(job, materials, Path(source_path).resolve(strict=True), pins, intake=release,
-                request_path=Path(os.environ["TRNM_DEV_PAIRED_REQUEST_FILE"]).resolve(strict=True))
+        release = None
+        inspect_only = mode == "inspect-source"
+        if not inspect_only:
+            release = read(Path(os.environ["TRNM_DEV_INTAKE_RELEASE"]))
+            commitment = os.environ["TRNM_DEV_INTAKE_RELEASE_SHA256"]
+            check_release(release, commitment, pins)
+        result = prepare(job, materials, Path(source_path).resolve(strict=True), pins, intake=release,
+                         request_path=Path(os.environ["TRNM_DEV_PAIRED_REQUEST_FILE"]).resolve(strict=True),
+                         frozen_path=Path(os.environ.get("TRNM_DEV_FROZEN_FILE", materials / "FROZEN.json")).resolve(strict=True),
+                         inspect_only=inspect_only)
+        if inspect_only:
+            print(json.dumps(result, sort_keys=True))
     elif mode == "execute" and not args:
         execute(job, materials)
     else:
