@@ -66,7 +66,8 @@ def sources():
         paths += sorted(directory.rglob("*.rs"))
         paths += sorted(directory.rglob("abi.json"))
         paths += sorted(directory.rglob("README.md"))
-    paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json",
+    paths += [ROOT / "config/hia-migration-v1.json", ROOT / "rust-toolchain.toml",
+              ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json",
               ROOT / "hia/state-value-abi.json", ROOT / "hia/STATE_VALUE.md"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / "hia/src/crypto/ML_DSA.md",
@@ -81,7 +82,8 @@ def sources():
     for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-checkpoint-store",
                  "trnm-crypto-primitives",
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
-                 "trnm-control-plane", "trnm-escrow-vault", "trnm-governance-guard",
+                 "trnm-worker-agent", "trnm-control-plane", "trnm-escrow-vault",
+                 "trnm-governance-guard",
                  "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol", "trnm-bench"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))

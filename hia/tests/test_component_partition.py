@@ -77,6 +77,20 @@ def log_for(value):
 
 
 class ComponentPartitions(unittest.TestCase):
+    def test_finite_worker_cache_and_executor_oracles_bind_exact_original_sources(self):
+        sources = ci.qualify.sources()
+        for name in (
+            "config/hia-migration-v1.json",
+            "rust-toolchain.toml",
+            "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell.rs",
+            "trillionnium/crates/trnm-executor/src/env_config.rs",
+        ):
+            with self.subTest(name=name):
+                expected = hashlib.sha256((ci.qualify.ROOT / name).read_bytes()).hexdigest()
+                self.assertEqual(sources.get(name), expected)
+
     def test_all_partitions_execute_every_fixture_exactly_once(self):
         observed = []
         for group in part.GROUPS:
