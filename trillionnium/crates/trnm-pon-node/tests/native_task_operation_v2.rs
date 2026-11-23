@@ -958,6 +958,7 @@ fn settle_dev_output(
     bind: &NativeTaskOperationBindingV2,
     reserved: Hash,
     output: Hash,
+    evidence: Hash,
 ) -> SignedSettlement {
     let cfg = node.settings().clone();
     let task = bind.task;
@@ -970,7 +971,7 @@ fn settle_dev_output(
         task,
         contract_digest: bind.contract_digest,
         output,
-        evidence: [74; 32],
+        evidence,
         verdict: FundedServiceVerdictV1::PayProvider,
     };
     let original_payment = signed(&cfg, 2, 1, 5, decision.encode().unwrap());
@@ -1054,7 +1055,7 @@ fn current_paid_branch_scenario(backend: Backend, branch_case: &str) {
         decision,
         original_payment,
         payment_operation,
-    } = settle_dev_output(&mut node, &mut store, &bind, reserved, output);
+    } = settle_dev_output(&mut node, &mut store, &bind, reserved, output, [74; 32]);
     let historical = store.snapshot(CLAIM).unwrap();
     let original = node
         .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
@@ -1243,3 +1244,6 @@ fn current_paid_observation_rechecks_original_receipts_and_settlement_on_both_ba
 
 #[path = "native_task_operation_v2/learning_contract.rs"]
 mod learning_contract;
+
+#[path = "native_task_operation_v2/circuit_evaluation.rs"]
+mod circuit_evaluation;
