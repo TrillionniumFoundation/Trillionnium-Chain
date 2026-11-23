@@ -490,6 +490,16 @@
       ]
     },
     {
+      "id": "data-availability/cache-capacity",
+      "node_integration_complete": false,
+      "scope": "Pure CellCacheConfigV4 conservative SQLite WAL and shared-memory byte estimates, with full original numeric configuration validation; legacy cache callers, SQL, storage custody and admission remain unchanged",
+      "source": "hia/src/data_availability/cache_capacity.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cache_capacity.py"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1082,7 +1092,8 @@
     },
     {
       "components": [
-        "data-availability/rs46"
+        "data-availability/rs46",
+        "data-availability/cache-capacity"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",

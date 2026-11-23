@@ -1,7 +1,7 @@
 # HIA native implementation
 
 This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **84 kernel units, 30 native foundations and 317 HIA source
+inventory contains **85 kernel units, 30 native foundations and 318 HIA source
 files**. Each component has one implementation directory. All **26 original Rust
 packages remain** (23 partially ported and 3 not ported), zero retirements are accepted, and all nine whole-project
 gates remain OPEN.
