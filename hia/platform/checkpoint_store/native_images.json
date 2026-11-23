@@ -1,9 +1,9 @@
 {
   "artifacts": {
     "checkpoint-store-api": {
-      "bytes": 4252304,
+      "bytes": 4246558,
       "profile": 2,
-      "sha256": "1908e16ed6b95b6d0272f12aff6974a45892fe27b9e094d167ba12e39c911b92",
+      "sha256": "9177bef739c26d23d4c792505d66d45518f43e7598087eac8fb041d5688af7e7",
       "structure": {
         "dynamic_linker": false,
         "entry": 4194480,
@@ -17,9 +17,9 @@
       }
     },
     "trnm-external-node-checkpoint-v2": {
-      "bytes": 4252304,
+      "bytes": 4246558,
       "profile": 1,
-      "sha256": "b2a514d3e6d5b39710b9648c1aecb7c978b8d9e7ece4820d1f78154fb73da772",
+      "sha256": "eb533313b1f19e3ce19599ec9c764cdb8a2f773af2b23434514695a38233a0c4",
       "structure": {
         "dynamic_linker": false,
         "entry": 4194480,
@@ -39,115 +39,115 @@
       "blocks": 221,
       "functions": 44,
       "maximum_function_blocks": 26,
-      "ops": 2040
+      "ops": 2030
     },
     "api_methods": {
       "blocks": 369,
       "functions": 67,
       "maximum_function_blocks": 72,
-      "ops": 2443
+      "ops": 2433
     },
     "api_objects": {
       "blocks": 485,
       "functions": 78,
       "maximum_function_blocks": 94,
-      "ops": 3257
+      "ops": 3247
     },
     "authority_fence": {
       "blocks": 272,
       "functions": 51,
       "maximum_function_blocks": 40,
-      "ops": 2132
+      "ops": 2122
     },
     "authority_head": {
       "blocks": 334,
       "functions": 69,
       "maximum_function_blocks": 76,
-      "ops": 2682
+      "ops": 2672
     },
     "authority_open": {
       "blocks": 381,
       "functions": 72,
       "maximum_function_blocks": 82,
-      "ops": 2757
+      "ops": 2747
     },
     "authority_operations": {
       "blocks": 336,
       "functions": 61,
       "maximum_function_blocks": 60,
-      "ops": 2340
+      "ops": 2330
     },
     "checkpoint_files": {
       "blocks": 320,
       "functions": 67,
       "maximum_function_blocks": 72,
-      "ops": 2632
+      "ops": 2622
     },
     "errno_text": {
       "blocks": 457,
       "functions": 38,
       "maximum_function_blocks": 74,
-      "ops": 5855
+      "ops": 5845
     },
     "error_formatter": {
       "blocks": 203,
       "functions": 42,
       "maximum_function_blocks": 22,
-      "ops": 1882
+      "ops": 1872
     },
     "error_text_a": {
       "blocks": 387,
       "functions": 37,
       "maximum_function_blocks": 74,
-      "ops": 6694
+      "ops": 6684
     },
     "error_text_b": {
       "blocks": 413,
       "functions": 38,
       "maximum_function_blocks": 74,
-      "ops": 6888
+      "ops": 6878
     },
     "filesystem": {
       "blocks": 372,
       "functions": 71,
       "maximum_function_blocks": 80,
-      "ops": 3430
+      "ops": 3420
     },
     "io": {
       "blocks": 229,
       "functions": 42,
       "maximum_function_blocks": 22,
-      "ops": 2165
+      "ops": 2155
     },
     "ledger_files": {
       "blocks": 448,
       "functions": 95,
       "maximum_function_blocks": 128,
-      "ops": 3453
+      "ops": 3443
     },
     "ledger_inventory": {
       "blocks": 316,
       "functions": 61,
       "maximum_function_blocks": 60,
-      "ops": 3221
+      "ops": 3211
     },
     "ledger_open": {
       "blocks": 406,
       "functions": 79,
       "maximum_function_blocks": 96,
-      "ops": 3054
+      "ops": 3044
     },
     "ledger_operations": {
       "blocks": 252,
       "functions": 49,
       "maximum_function_blocks": 36,
-      "ops": 2042
+      "ops": 2032
     },
     "ledger_recovery": {
       "blocks": 333,
       "functions": 64,
       "maximum_function_blocks": 66,
-      "ops": 2371
+      "ops": 2361
     },
     "linux_emitter": {
       "blocks": 38,
@@ -159,43 +159,43 @@
       "blocks": 313,
       "functions": 67,
       "maximum_function_blocks": 72,
-      "ops": 3595
+      "ops": 3585
     },
     "socket_owner": {
       "blocks": 445,
       "functions": 86,
       "maximum_function_blocks": 110,
-      "ops": 3251
+      "ops": 3241
     },
     "socket_path": {
       "blocks": 239,
       "functions": 46,
       "maximum_function_blocks": 30,
-      "ops": 2134
+      "ops": 2124
     },
     "transport_frame": {
       "blocks": 236,
       "functions": 44,
       "maximum_function_blocks": 22,
-      "ops": 2106
+      "ops": 2096
     },
     "unix_client": {
       "blocks": 282,
       "functions": 59,
       "maximum_function_blocks": 56,
-      "ops": 2290
+      "ops": 2280
     },
     "unix_daemon": {
       "blocks": 280,
       "functions": 57,
       "maximum_function_blocks": 52,
-      "ops": 2374
+      "ops": 2364
     },
     "value_bridge": {
       "blocks": 523,
       "functions": 88,
       "maximum_function_blocks": 46,
-      "ops": 5371
+      "ops": 5361
     }
   },
   "image_order": [
@@ -228,122 +228,122 @@
   ],
   "images": {
     "api_driver": {
-      "bytes": 102266,
-      "sha256": "5b64ca3977489d221b989f7273e872d706ff6f09504a42d3e1c20b4d574486b2"
+      "bytes": 102045,
+      "sha256": "b8da496e5d69cd00aa1eee85db258143b302076c0d9ac1cf4991651d3fa5d763"
     },
     "api_methods": {
-      "bytes": 150547,
-      "sha256": "36c86681a20b33487efeca347308a688bcc209f706789c7fae150bc5185c7474"
+      "bytes": 150326,
+      "sha256": "9d01c7eeb7e5072f6268b161f793ffb1af0d78d15dcd187447bf394d910794b0"
     },
     "api_objects": {
-      "bytes": 205908,
-      "sha256": "9a4b68b0353476c8fa6c6c94b73c6c0c72d708e2434912788b8a17a1dfeba8ba"
+      "bytes": 205687,
+      "sha256": "ca69727208be6561ac79eae64c51f0239f5251916c85f8e73295fb09fc2eb142"
     },
     "authority_fence": {
-      "bytes": 117560,
-      "sha256": "4cb6544e8a19c0acdffa2c6e637d163d734d02220a8fdc3d9a60f8645e5c26a5"
+      "bytes": 117339,
+      "sha256": "1a32ee594a9caa1ae84d282a3bc52f5e2a3dde57c4ead1561bfb87d4964cdec5"
     },
     "authority_head": {
-      "bytes": 152614,
-      "sha256": "083604ec17e1e3d029ca5e70fd6a66e9724a8666d4525b470490381d01457fba"
+      "bytes": 152393,
+      "sha256": "b06a14b7ab0ba89b315daf5f1ca0a5c341a613b5d96a1efe9138aa940d248020"
     },
     "authority_open": {
-      "bytes": 163869,
-      "sha256": "1460538ec5f3d41357a26d7d032c69e7457a202a9f419913d1e5d374a3933459"
+      "bytes": 163648,
+      "sha256": "5b2f563edcba685f2e3aaf16e8422afabbae3815dfa47bbf4849482945443aa1"
     },
     "authority_operations": {
-      "bytes": 138576,
-      "sha256": "06511db4bba720f3f2c20ef5622b950dba8af8712b13f0ad8b75bd0e00d30968"
+      "bytes": 138355,
+      "sha256": "39e082b14152f12fb4e986204066adedb7526b8067d9274d20fa3cbd0fa57305"
     },
     "checkpoint_files": {
-      "bytes": 148402,
-      "sha256": "da379572fd9fd76a896a883ad67058f23b9e0b7a0b6c7a174b76a085296c2b04"
+      "bytes": 148181,
+      "sha256": "1c0d4123ae43628c688aa8e1e22cd2d8d5478bbf7a6f2731218d8fa24f4adff0"
     },
     "errno_text": {
-      "bytes": 232761,
-      "sha256": "4e95edad8a10f4c236f50a246321a3bf9ca55fd62e7070eb8f0f5c290708e4a1"
+      "bytes": 232540,
+      "sha256": "a65b16857bcc9f0479ba198ad1db6225eb25b4ac4d0ad2ac71eceb3772641774"
     },
     "error_formatter": {
-      "bytes": 92726,
-      "sha256": "8a374c67155446bbcbd8fe4b62312043480e032bdcc885de93526c5288cda359"
+      "bytes": 92505,
+      "sha256": "5904e2532c2e6469dbf9ee962e93f4de16176fdc2f7c9e97ca2ac871802f8738"
     },
     "error_text_a": {
-      "bytes": 265899,
-      "sha256": "71d4867b638c52822f9daf3348ec662bd7dd1074de02af7c092ff64b928ee4aa"
+      "bytes": 265678,
+      "sha256": "07e2230d2318ad44cb8c5c9c8a108bf0dc8332b3b47f5eb3dadb1eb49bbcdc71"
     },
     "error_text_b": {
-      "bytes": 272771,
-      "sha256": "dea2322d21673dcf3eb398064a5a8fbb81493c76bdda11102d0a771812a49eaf"
+      "bytes": 272550,
+      "sha256": "77ede25ef7f11970662d033352a7decdd5996b0cd431e5fbef60f4e61547434c"
     },
     "filesystem": {
-      "bytes": 191616,
-      "sha256": "76af9bac6fa7b4738d8ceea8688600ceebbb980459eef761e7af67a7e5903aa2"
+      "bytes": 191395,
+      "sha256": "ab352b4c023b0152686021dc37babf63acdd87d3e5c19b3c80b75e85140e02fa"
     },
     "io": {
-      "bytes": 112820,
-      "sha256": "4f65b67515c9aced6371d0b331c388855d000f6c9395dd601475888204070e00"
+      "bytes": 112599,
+      "sha256": "330585f70f1a3e259b0202c51a504b73bb7a4e1d29b1ed6aabc90bdda104d95a"
     },
     "ledger_files": {
-      "bytes": 208140,
-      "sha256": "f88fc6f1a04f6a98075960e348bead518585f72470830dd7aa05af8ceb143367"
+      "bytes": 207919,
+      "sha256": "92034b5ef8fca8e6399629a6056db2cb31461573e00347f5fdf0179ef09ec8b8"
     },
     "ledger_inventory": {
-      "bytes": 161695,
-      "sha256": "aa84d3edefc1e1a667a499ba10eae199bb850ccda29956c00e53bb26b9cfb0f6"
+      "bytes": 161474,
+      "sha256": "4412cf138683c7ea25fb9da11ccef8d4b885584ce514d16b264c8f7ef57ef6a8"
     },
     "ledger_open": {
-      "bytes": 181199,
-      "sha256": "b00b732cde126237fd20f4a8edc3a77085fee67f155587e38bb7efc74c112871"
+      "bytes": 180978,
+      "sha256": "dbd1125b023896c7bf8751528c0379a33affb53f45d4f85892dfc45bdd9a8cfb"
     },
     "ledger_operations": {
-      "bytes": 109443,
-      "sha256": "f874187d981506b82c5c9890b144cfee6e80a2b2f90fd534074fdde45c6eeb9a"
+      "bytes": 109222,
+      "sha256": "856ade75d761a988f394696892a73e6f34ea9ad943ba8dfe7c7feeee70bb7566"
     },
     "ledger_recovery": {
-      "bytes": 137876,
-      "sha256": "d5e5699a364e023315a332c5c165325056d7498f6e1732da5316fb1bd6835a63"
+      "bytes": 137655,
+      "sha256": "2f40f1053f0d0decdbf40fdf2ff46177c631859a5c52f6939fbb6f4ca987564f"
     },
     "linux_emitter": {
       "bytes": 123826,
       "sha256": "a730919001554150714e7c07e8a87dc3e1d001a0b4cc3517ebb1cf33c470b79e"
     },
     "main": {
-      "bytes": 171007,
-      "sha256": "63ace7e90bd7acdabcb2d619b3ac583e866c7b4b64fa4e8c6cbc8ecb9768c9da"
+      "bytes": 170786,
+      "sha256": "e717b8503622c8b62eaf41ce5287c20b101f8b3d061f849d840b5907e025654b"
     },
     "socket_owner": {
-      "bytes": 196225,
-      "sha256": "9ed9a5113e51c462855c84681c6a642f50315e5d6d16911262441b918d17e4c6"
+      "bytes": 196004,
+      "sha256": "c30b48f8c5b78ab59b4ba48633adfa0f55c68b9cc2ea777d2694cb8638ae3116"
     },
     "socket_path": {
-      "bytes": 111710,
-      "sha256": "92ccecee06a152d02ff9e9796180eba4a89dddef192674f298c8fa29302ca677"
+      "bytes": 111489,
+      "sha256": "d6731d072194db9c404d9cf472eba307fa34e512f191dffb6d14205076685570"
     },
     "transport_frame": {
-      "bytes": 108303,
-      "sha256": "ec902b08432f812f20f7bcd12db9c43e99035beef65d2eaf2b4cf15126092d55"
+      "bytes": 108082,
+      "sha256": "4d7b6c428e7299f3cdd0ca8589285b8ba23995008a05b7ce868ccc3439fefda3"
     },
     "unix_client": {
-      "bytes": 127332,
-      "sha256": "15be7df6eb923e9e666f6502f1d6d3edbe5ea18edd3215e380c0eb00b5d69098"
+      "bytes": 127111,
+      "sha256": "276840651a5bce90f630fd6d6b7aa39c2973c49814474d2dbbbf1d180a95b88d"
     },
     "unix_daemon": {
-      "bytes": 127535,
-      "sha256": "06c27490218aca1f5bcab04bb886509d7e55e7694996de39fba1c5c50566721e"
+      "bytes": 127314,
+      "sha256": "ca982b0ded03912da5044301ec74c7e6af280772a994c9cea46d65d8820bfec1"
     },
     "value_bridge": {
-      "bytes": 258384,
-      "sha256": "7bfa6a36a0ca56b4e0b6c0a4be474dc2763ac024663b26351591678eb67d5d08"
+      "bytes": 258163,
+      "sha256": "eecb8991f8a07aa54d72d20f649d72b75cd708ffe45cdf2ec2a9ade2c2c15b23"
     }
   },
   "prefixes": {
     "checkpoint-store-api": {
       "bytes": 5120,
-      "sha256": "029e89cb3c2e519ff643f90925fba1eeeff2c612129a8f084879d75d4116628e"
+      "sha256": "3c7cbe48ec0d6d167ce3722966384fc336df53e54bcf7c7a6f9d046718627cc4"
     },
     "trnm-external-node-checkpoint-v2": {
       "bytes": 5120,
-      "sha256": "687a0e1e839b8ec228c27ee22f06a110c94a369a92e5e0e476779f5a94bc12cf"
+      "sha256": "fda2bf1c2a2fc601ef4710f3c611d62610778bc3a5b22da13ed74b4d6cc053cf"
     }
   },
   "profiles": {
@@ -354,192 +354,192 @@
   "sources": {
     "api_driver": {
       "compiler_input": {
-        "bytes": 108171,
-        "sha256": "9eddd8d3e45e1ba49d6937642e4799d36c02516f92586904d1f034d306c60a64"
+        "bytes": 107767,
+        "sha256": "820b0c5d8d6d76a09ed96e0d32d91989b2c808f6d54d7aeb89f5cc7228357427"
       },
       "composed": {
-        "bytes": 108171,
-        "sha256": "9eddd8d3e45e1ba49d6937642e4799d36c02516f92586904d1f034d306c60a64"
+        "bytes": 107767,
+        "sha256": "820b0c5d8d6d76a09ed96e0d32d91989b2c808f6d54d7aeb89f5cc7228357427"
       }
     },
     "api_methods": {
       "compiler_input": {
-        "bytes": 146146,
-        "sha256": "2eea8deb5873706bbcbe2bc2eacce84e550d61e16605f749275e57765f4e7483"
+        "bytes": 145742,
+        "sha256": "901ff8da0cd8eb71b5aca865697dd49dab6905f6fe246f07b89dc2cdeb3eb555"
       },
       "composed": {
-        "bytes": 146146,
-        "sha256": "2eea8deb5873706bbcbe2bc2eacce84e550d61e16605f749275e57765f4e7483"
+        "bytes": 145742,
+        "sha256": "901ff8da0cd8eb71b5aca865697dd49dab6905f6fe246f07b89dc2cdeb3eb555"
       }
     },
     "api_objects": {
       "compiler_input": {
-        "bytes": 195742,
-        "sha256": "f413c8a66ed117e13e75f15fd3e96238c4efeca6fbfa9ea216be289d23b4d4e4"
+        "bytes": 195338,
+        "sha256": "5a7358a3cf81ad86982697328fa095fbf90bf813aff7c4887ef155dc025e0263"
       },
       "composed": {
-        "bytes": 195742,
-        "sha256": "f413c8a66ed117e13e75f15fd3e96238c4efeca6fbfa9ea216be289d23b4d4e4"
+        "bytes": 195338,
+        "sha256": "5a7358a3cf81ad86982697328fa095fbf90bf813aff7c4887ef155dc025e0263"
       }
     },
     "authority_fence": {
       "compiler_input": {
-        "bytes": 120209,
-        "sha256": "b981ea7b6c968097834d4288ccf23941e7c222f0f99c61ad758aedadb835ab5f"
+        "bytes": 119805,
+        "sha256": "dc1af0ac15bd53c0297e45b8ecac8ad9370618256023fa9a1010b01a3ca05e73"
       },
       "composed": {
-        "bytes": 120209,
-        "sha256": "b981ea7b6c968097834d4288ccf23941e7c222f0f99c61ad758aedadb835ab5f"
+        "bytes": 119805,
+        "sha256": "dc1af0ac15bd53c0297e45b8ecac8ad9370618256023fa9a1010b01a3ca05e73"
       }
     },
     "authority_head": {
       "compiler_input": {
-        "bytes": 150753,
-        "sha256": "322118311d80cc34b8e8d9312c709beab0af1e7592336a7b2db43460da2f8d7c"
+        "bytes": 150349,
+        "sha256": "8d3d1b7a5ef45f2b6d4fd8a336750e13f0105a03ce4c2a537ed5e95b5e916ffe"
       },
       "composed": {
-        "bytes": 150753,
-        "sha256": "322118311d80cc34b8e8d9312c709beab0af1e7592336a7b2db43460da2f8d7c"
+        "bytes": 150349,
+        "sha256": "8d3d1b7a5ef45f2b6d4fd8a336750e13f0105a03ce4c2a537ed5e95b5e916ffe"
       }
     },
     "authority_open": {
       "compiler_input": {
-        "bytes": 159802,
-        "sha256": "9e6495cfd325aebb2c5307d896dc519b3507137eb123568e236a058acf9b02bb"
+        "bytes": 159398,
+        "sha256": "0366b31afe6bccff68ddcb80fd1de817e285856d4f7e424d13c41dd9e22a0525"
       },
       "composed": {
-        "bytes": 159802,
-        "sha256": "9e6495cfd325aebb2c5307d896dc519b3507137eb123568e236a058acf9b02bb"
+        "bytes": 159398,
+        "sha256": "0366b31afe6bccff68ddcb80fd1de817e285856d4f7e424d13c41dd9e22a0525"
       }
     },
     "authority_operations": {
       "compiler_input": {
-        "bytes": 137314,
-        "sha256": "dcd1f20dfa85ee25e8773008584a69f5ae2afb611f411c8204fc96ea1d6e8f2d"
+        "bytes": 136910,
+        "sha256": "9ecee62bee40262d76edc884381fae39a0d5563ed6202fa31476bad6df2f476b"
       },
       "composed": {
-        "bytes": 137314,
-        "sha256": "dcd1f20dfa85ee25e8773008584a69f5ae2afb611f411c8204fc96ea1d6e8f2d"
+        "bytes": 136910,
+        "sha256": "9ecee62bee40262d76edc884381fae39a0d5563ed6202fa31476bad6df2f476b"
       }
     },
     "checkpoint_files": {
       "compiler_input": {
-        "bytes": 147622,
-        "sha256": "75a03cdbda7351cfe83f2f60a7cf7aab9843c1d3cd8659cc8f21683a70092dc1"
+        "bytes": 147218,
+        "sha256": "5020774c894fbf847552aa37272808f7415ae18a60638458cbe2af12fafe5512"
       },
       "composed": {
-        "bytes": 147622,
-        "sha256": "75a03cdbda7351cfe83f2f60a7cf7aab9843c1d3cd8659cc8f21683a70092dc1"
+        "bytes": 147218,
+        "sha256": "5020774c894fbf847552aa37272808f7415ae18a60638458cbe2af12fafe5512"
       }
     },
     "errno_text": {
       "compiler_input": {
-        "bytes": 300709,
-        "sha256": "783f1932783e065d9a56b3da7ff8c159037ea95fe3e4d5ce836be64eb6ef04c7"
+        "bytes": 300305,
+        "sha256": "a27bb595a746ba35fa2163eba4202b6d416d4893b2e7ebef4f56d4aee55f71a1"
       },
       "composed": {
-        "bytes": 300709,
-        "sha256": "783f1932783e065d9a56b3da7ff8c159037ea95fe3e4d5ce836be64eb6ef04c7"
+        "bytes": 300305,
+        "sha256": "a27bb595a746ba35fa2163eba4202b6d416d4893b2e7ebef4f56d4aee55f71a1"
       }
     },
     "error_formatter": {
       "compiler_input": {
-        "bytes": 99938,
-        "sha256": "f3566d80ab06e50d6804633bfa2e77cc67765bbc8838ecfd2917d56bff618591"
+        "bytes": 99534,
+        "sha256": "274667a848561c2ed6cc4f38c10833c0ba9a79e812f33e4fca9dd6f579f7c188"
       },
       "composed": {
-        "bytes": 99938,
-        "sha256": "f3566d80ab06e50d6804633bfa2e77cc67765bbc8838ecfd2917d56bff618591"
+        "bytes": 99534,
+        "sha256": "274667a848561c2ed6cc4f38c10833c0ba9a79e812f33e4fca9dd6f579f7c188"
       }
     },
     "error_text_a": {
       "compiler_input": {
-        "bytes": 342732,
-        "sha256": "72ec167d5b2a0cd90a7ca332b9960f18d9db90ab210543854bc16e22e7f51eb2"
+        "bytes": 342328,
+        "sha256": "ebc9976a7c314d75e19b7986926d09ed273909dd2db636e194d606bc12733be3"
       },
       "composed": {
-        "bytes": 342732,
-        "sha256": "72ec167d5b2a0cd90a7ca332b9960f18d9db90ab210543854bc16e22e7f51eb2"
+        "bytes": 342328,
+        "sha256": "ebc9976a7c314d75e19b7986926d09ed273909dd2db636e194d606bc12733be3"
       }
     },
     "error_text_b": {
       "compiler_input": {
-        "bytes": 352080,
-        "sha256": "3e882fb27ee4a754855ee95f09a232a66ff812e19e5cf6c13e1b1c2fddc22baa"
+        "bytes": 351676,
+        "sha256": "7ad7571fa460fdc06203534201917b8c37055c3e39aad8285c46ec6aabe42274"
       },
       "composed": {
-        "bytes": 352080,
-        "sha256": "3e882fb27ee4a754855ee95f09a232a66ff812e19e5cf6c13e1b1c2fddc22baa"
+        "bytes": 351676,
+        "sha256": "7ad7571fa460fdc06203534201917b8c37055c3e39aad8285c46ec6aabe42274"
       }
     },
     "filesystem": {
       "compiler_input": {
-        "bytes": 187793,
-        "sha256": "df07bde5410e553dc612b95578a84eef72f916618023d3cde30cc258f059177d"
+        "bytes": 187389,
+        "sha256": "ae7349a680bc0e1122362f8df941f8291a0a03d493f9b3d1875f054ee601b0d2"
       },
       "composed": {
-        "bytes": 187793,
-        "sha256": "df07bde5410e553dc612b95578a84eef72f916618023d3cde30cc258f059177d"
+        "bytes": 187389,
+        "sha256": "ae7349a680bc0e1122362f8df941f8291a0a03d493f9b3d1875f054ee601b0d2"
       }
     },
     "io": {
       "compiler_input": {
-        "bytes": 115712,
-        "sha256": "3ee58b405866c9823718530a5f13a1c5982d91acb73c372771fa6a6840d7dbd5"
+        "bytes": 115308,
+        "sha256": "9daa09979e95b39bf0f71e224d1e4079a1708caaaf8eff55de86b42d23e136a5"
       },
       "composed": {
-        "bytes": 115712,
-        "sha256": "3ee58b405866c9823718530a5f13a1c5982d91acb73c372771fa6a6840d7dbd5"
+        "bytes": 115308,
+        "sha256": "9daa09979e95b39bf0f71e224d1e4079a1708caaaf8eff55de86b42d23e136a5"
       }
     },
     "ledger_files": {
       "compiler_input": {
-        "bytes": 198700,
-        "sha256": "8b2a3dd876aeffb080a03c5cdd84f1bd664d9c97f60b74d299b2be0d08e2fbbf"
+        "bytes": 198296,
+        "sha256": "73e049a3f5987ab7c6213b38660c753d71fc3e37d871462b42957c213f9c1b4c"
       },
       "composed": {
-        "bytes": 198700,
-        "sha256": "8b2a3dd876aeffb080a03c5cdd84f1bd664d9c97f60b74d299b2be0d08e2fbbf"
+        "bytes": 198296,
+        "sha256": "73e049a3f5987ab7c6213b38660c753d71fc3e37d871462b42957c213f9c1b4c"
       }
     },
     "ledger_inventory": {
       "compiler_input": {
-        "bytes": 166718,
-        "sha256": "7c8ea6dec6f59a940181d4cc10f5d7a033df7a7f37cec90030588532794e895b"
+        "bytes": 166314,
+        "sha256": "a680355e9d723e494a594fd8c2624a079654e1745e26904f90566af0d1eada9e"
       },
       "composed": {
-        "bytes": 166718,
-        "sha256": "7c8ea6dec6f59a940181d4cc10f5d7a033df7a7f37cec90030588532794e895b"
+        "bytes": 166314,
+        "sha256": "a680355e9d723e494a594fd8c2624a079654e1745e26904f90566af0d1eada9e"
       }
     },
     "ledger_open": {
       "compiler_input": {
-        "bytes": 176466,
-        "sha256": "604702680184ae68fb93e1907d22332e5b777e00a460c333336195a164be9f61"
+        "bytes": 176062,
+        "sha256": "e26439b2d068799ff96772c6c26dc15af284f54e0b48a8aeb5226cff9edb9d70"
       },
       "composed": {
-        "bytes": 176466,
-        "sha256": "604702680184ae68fb93e1907d22332e5b777e00a460c333336195a164be9f61"
+        "bytes": 176062,
+        "sha256": "e26439b2d068799ff96772c6c26dc15af284f54e0b48a8aeb5226cff9edb9d70"
       }
     },
     "ledger_operations": {
       "compiler_input": {
-        "bytes": 113681,
-        "sha256": "e1d0be15843878269fb4cd10949f145135ec3d626d2022b49eb1f9dbdab66e82"
+        "bytes": 113277,
+        "sha256": "c6d129eea2d6c3d161aeb485c2ac0d0c9f9eda4940733b90f2d7ca198c1318d9"
       },
       "composed": {
-        "bytes": 113681,
-        "sha256": "e1d0be15843878269fb4cd10949f145135ec3d626d2022b49eb1f9dbdab66e82"
+        "bytes": 113277,
+        "sha256": "c6d129eea2d6c3d161aeb485c2ac0d0c9f9eda4940733b90f2d7ca198c1318d9"
       }
     },
     "ledger_recovery": {
       "compiler_input": {
-        "bytes": 137951,
-        "sha256": "a9def8a572e995de992f276d4ab0012c48e85710f76043133814a52b43bffc07"
+        "bytes": 137547,
+        "sha256": "fb0ed7b49a49c1c0b800ec631f4b54d5f64548b66022d24879bf4765f55a1325"
       },
       "composed": {
-        "bytes": 137951,
-        "sha256": "a9def8a572e995de992f276d4ab0012c48e85710f76043133814a52b43bffc07"
+        "bytes": 137547,
+        "sha256": "fb0ed7b49a49c1c0b800ec631f4b54d5f64548b66022d24879bf4765f55a1325"
       }
     },
     "linux_emitter": {
@@ -554,72 +554,72 @@
     },
     "main": {
       "compiler_input": {
-        "bytes": 180908,
-        "sha256": "db1e7e2fa06262c62fc0b8893e80d1d2286a6216423ccc78c15f1fd3a8a6c84e"
+        "bytes": 180504,
+        "sha256": "2963399bab0c878fad3fdfea26696fdcdf84fa39f0d8d7da66304c489e1fa3a6"
       },
       "composed": {
-        "bytes": 180908,
-        "sha256": "db1e7e2fa06262c62fc0b8893e80d1d2286a6216423ccc78c15f1fd3a8a6c84e"
+        "bytes": 180504,
+        "sha256": "2963399bab0c878fad3fdfea26696fdcdf84fa39f0d8d7da66304c489e1fa3a6"
       }
     },
     "socket_owner": {
       "compiler_input": {
-        "bytes": 190137,
-        "sha256": "ed367d24d1e2bfabc8dbf4bd1d4dab086d9cd954e37b1709c0750b26872348b5"
+        "bytes": 189733,
+        "sha256": "b65b3979dcaf20714710a8e07838848a45a8694803f08f44453787913d544a1a"
       },
       "composed": {
-        "bytes": 190137,
-        "sha256": "ed367d24d1e2bfabc8dbf4bd1d4dab086d9cd954e37b1709c0750b26872348b5"
+        "bytes": 189733,
+        "sha256": "b65b3979dcaf20714710a8e07838848a45a8694803f08f44453787913d544a1a"
       }
     },
     "socket_path": {
       "compiler_input": {
-        "bytes": 116431,
-        "sha256": "890957732042a246cbd47a97f02d5cbbacb283b393a6c6719f26cda2b4d44af5"
+        "bytes": 116027,
+        "sha256": "9f41a8f45f66f07f49c2e5ea3416b3e393ee61d0d4c9a6f82df3f8d7acf81802"
       },
       "composed": {
-        "bytes": 116431,
-        "sha256": "890957732042a246cbd47a97f02d5cbbacb283b393a6c6719f26cda2b4d44af5"
+        "bytes": 116027,
+        "sha256": "9f41a8f45f66f07f49c2e5ea3416b3e393ee61d0d4c9a6f82df3f8d7acf81802"
       }
     },
     "transport_frame": {
       "compiler_input": {
-        "bytes": 114116,
-        "sha256": "da1ee525bd8c7e5655aaae74172f62b5ab37ad6c96feeb92dd87c4f88493f754"
+        "bytes": 113712,
+        "sha256": "f0a8c4ca3b4501530f6a86ec07e3c4f331895e35c5ab3cc7916a52e4f017d91e"
       },
       "composed": {
-        "bytes": 114116,
-        "sha256": "da1ee525bd8c7e5655aaae74172f62b5ab37ad6c96feeb92dd87c4f88493f754"
+        "bytes": 113712,
+        "sha256": "f0a8c4ca3b4501530f6a86ec07e3c4f331895e35c5ab3cc7916a52e4f017d91e"
       }
     },
     "unix_client": {
       "compiler_input": {
-        "bytes": 127547,
-        "sha256": "42740f06e4f31d3ab1e71bc4932a5c4a77d23e66f2953f8e34c3147ce0b94504"
+        "bytes": 127143,
+        "sha256": "d1ac2cff41a73c1fd5dfa78bacf75975fbb8b4c634ca8d6d3b41cbcd8796f141"
       },
       "composed": {
-        "bytes": 127547,
-        "sha256": "42740f06e4f31d3ab1e71bc4932a5c4a77d23e66f2953f8e34c3147ce0b94504"
+        "bytes": 127143,
+        "sha256": "d1ac2cff41a73c1fd5dfa78bacf75975fbb8b4c634ca8d6d3b41cbcd8796f141"
       }
     },
     "unix_daemon": {
       "compiler_input": {
-        "bytes": 129361,
-        "sha256": "c58009b91b9657c091dea69f121aa6eb810c85f3831720b6a43f791b2a4d4afa"
+        "bytes": 128957,
+        "sha256": "3bffa8c2a40f2a77af615ebad6d33ce486cb61f8842b847c1e590221f4ee68b8"
       },
       "composed": {
-        "bytes": 129361,
-        "sha256": "c58009b91b9657c091dea69f121aa6eb810c85f3831720b6a43f791b2a4d4afa"
+        "bytes": 128957,
+        "sha256": "3bffa8c2a40f2a77af615ebad6d33ce486cb61f8842b847c1e590221f4ee68b8"
       }
     },
     "value_bridge": {
       "compiler_input": {
-        "bytes": 274139,
-        "sha256": "5430b96f166db9c7d2f9f35d839c8e0bbdf1db280940373c0427165061bcce4a"
+        "bytes": 273735,
+        "sha256": "5041fd7df74bd9ec15b2a34d68bf661e0c7f112b2f3fd3368316e8f0e54e4725"
       },
       "composed": {
-        "bytes": 274139,
-        "sha256": "5430b96f166db9c7d2f9f35d839c8e0bbdf1db280940373c0427165061bcce4a"
+        "bytes": 273735,
+        "sha256": "5041fd7df74bd9ec15b2a34d68bf661e0c7f112b2f3fd3368316e8f0e54e4725"
       }
     }
   }
