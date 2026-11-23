@@ -232,12 +232,19 @@ jobs:
             ${{ runner.temp }}/original-rust-build.jsonl
           if-no-files-found: error
           retention-days: 30
+      - name: Package complete Bench observations without renaming evidence
+        if: always()
+        run: |
+          python3 -B hia/tools/archive_ci_evidence.py \
+            "$RUNNER_TEMP/hia-bench-observations" \
+            "$RUNNER_TEMP/hia-bench-carrier/bench-observations.tar"
+          python3 -B -m unittest scripts.ci.test_archive_ci_evidence -v
       - name: Retain complete Bench dependency and native observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: hia-bench-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/hia-bench-observations/
+          path: ${{ runner.temp }}/hia-bench-carrier/bench-observations.tar
           if-no-files-found: error
           retention-days: 30
       - name: Retain complete Task metadata boundary observations
