@@ -104,6 +104,17 @@ Two new application-level SHA-256 domains define an opt-in contract mapping:
   completed learning head, Selection/NoUpdate, selected complete bundle, next
   task/input, original committed-step receipt and cost-source digest.
 
+Before dispatch, the payer can calculate the existing `terms.request` from the
+original admission checkpoint. For the inputs, run
+`python3 scripts/cell_learning_business_join.py prepare-request --help`.
+Provide the independently retained SHA-256 of the
+initial checkpoint, expected operation ID, invocation ID and the Chain and Hepta
+commit/tree pairs. The command checks the initial checkpoint, requires zero
+recorded stages, and prints one lowercase request digest. Record the inputs and
+use this digest when the authorized payer reserves the contract. The existing
+completion reader recomputes the same digest after Selection or NoUpdate. This
+offline computation alone creates no contract, timestamp, authorization or payment.
+
 Canonical JSON is ASCII, sorted by key, uses compact separators and rejects
 non-finite values. These are new application mapping namespaces; no existing
 signed native domain, stored schema, authority or owner is changed.

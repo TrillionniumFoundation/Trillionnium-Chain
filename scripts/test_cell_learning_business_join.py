@@ -90,6 +90,38 @@ def attach(bindings, report, expected):
 
 
 class BusinessJoinTests(unittest.TestCase):
+    def test_prepared_funded_request_matches_both_original_terminal_paths(self):
+        for phase in ("adopt-v1", "no-update-v9"):
+            with self.subTest(phase=phase):
+                materials, bindings = original_case(phase)
+                initial = RECORDED / phase / "initial.bin"
+                source = bindings["source_pair"]
+                result = subprocess.run([
+                    sys.executable, str(ROOT / "scripts/cell_learning_business_join.py"),
+                    "prepare-request", "--initial", str(initial),
+                    "--initial-sha256", native.sha(initial.read_bytes()),
+                    "--operation-id", bindings["operation_id"],
+                    "--invocation-id", bindings["invocation_id"],
+                    "--chain-commit", source["chain"]["commit"], "--chain-tree", source["chain"]["tree"],
+                    "--hepta-commit", source["hepta"]["commit"], "--hepta-tree", source["hepta"]["tree"],
+                ], check=True, capture_output=True, text=True)
+                self.assertEqual(result.stdout, run_review(materials, bindings)["funded_request_digest"] + "\n")
+
+    def test_preparation_binds_original_initial_checkpoint_and_operation(self):
+        materials, bindings = original_case()
+        initial = (RECORDED / "adopt-v1" / "initial.bin").read_bytes()
+        params = dict(expected_initial_sha256=native.sha(initial), operation_id=bindings["operation_id"],
+                      invocation_id=bindings["invocation_id"], source_pair=bindings["source_pair"])
+        cases = [(initial, dict(expected_initial_sha256="1" * 64), "BUSINESS_INITIAL_CHECKPOINT_PIN"),
+                 (initial, dict(operation_id="other-operation"), "BUSINESS_OPERATION"),
+                 (initial, dict(source_pair={}), "BUSINESS_SOURCE_PAIR_FIELDS")]
+        for name in ("selection", "completed"):
+            raw = materials[name]
+            cases.append((raw, dict(expected_initial_sha256=native.sha(raw)), "LEARNING_FREEZE_NOT_INITIAL"))
+        for raw, replacement, error in cases:
+            with self.subTest(error=error), self.assertRaisesRegex(ValueError, error):
+                business.prepare_funded_request(raw, **(params | replacement))
+
     def test_archived_adopt_and_no_update_are_replayed_without_promoting_qualification(self):
         for phase, decision, count in (("adopt-v1", "Selection", 7), ("no-update-v9", "NoUpdate", 6)):
             with self.subTest(phase=phase):
