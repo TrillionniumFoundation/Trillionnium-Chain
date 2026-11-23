@@ -19,16 +19,26 @@ def source_inventory(inventory, root=ROOT):
     ids = [row["id"] for row in records]
     if any(not isinstance(value, str) for value in ids) or len(set(ids)) != len(ids):
         raise ValueError("Duplicate or invalid HIA component identity")
+    if any(row.get("node_integration_complete") is not False for row in components):
+        raise ValueError("Unwitnessed kernel node integration")
     declared = [row["source"] for row in components]
-    references = [name for row in components for name in [row["source"], *row["tests"]]]
+    tests = []
+    for row in records:
+        roster = row.get("tests")
+        if (not isinstance(roster, list) or not roster
+                or any(not isinstance(name, str) for name in roster)
+                or len(set(roster)) != len(roster)):
+            raise ValueError("Invalid migration test roster: " + row["id"])
+        tests.extend(roster)
     for row in foundations:
         if (not isinstance(row["sources"], list) or not row["sources"]
-                or not isinstance(row["tests"], list) or not row["tests"]
                 or row["node_integration_complete"] is not False
                 or row["retirement_accepted"] is not False):
             raise ValueError("Unwitnessed runtime owner integration or retirement")
         declared.extend(row["sources"])
-        references.extend(row["sources"] + row["tests"])
+    if set(tests) & {name for name in declared if isinstance(name, str)}:
+        raise ValueError("A native source cannot substitute for a migration test caller")
+    references = declared + tests
     for name in references:
         if not isinstance(name, str):
             raise ValueError("Invalid migration source/test path")

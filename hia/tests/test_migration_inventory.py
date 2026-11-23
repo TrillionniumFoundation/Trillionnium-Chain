@@ -17,7 +17,8 @@ class CompleteSourceInventory(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("source inventory fixture\n")
         self.inventory = {
-            "components": [{"id": "kernel", "source": "hia/src/kernel.hepta", "tests": ["hia/tests/test_kernel.py"]}],
+            "components": [{"id": "kernel", "source": "hia/src/kernel.hepta", "tests": ["hia/tests/test_kernel.py"],
+                            "node_integration_complete": False}],
             "native_foundations": [{"id": "owner", "sources": ["hia/storage/owner.hepta", "hia/platform/fixture.hepta"],
                                     "tests": ["hia/tools/qualify_storage.py"],
                                     "node_integration_complete": False, "retirement_accepted": False}],
@@ -62,6 +63,33 @@ class CompleteSourceInventory(unittest.TestCase):
             value["native_foundations"][0]["sources"][0] = bad
             with self.subTest(path=bad), self.assertRaises(ValueError):
                 source_inventory(value, self.root)
+
+    def test_finite_kernel_cannot_claim_node_integration(self):
+        for claim in (True, 0, "false", None):
+            value = deepcopy(self.inventory)
+            value["components"][0]["node_integration_complete"] = claim
+            with self.subTest(claim=claim), self.assertRaisesRegex(ValueError, "kernel node integration"):
+                source_inventory(value, self.root)
+
+    def test_each_owner_requires_a_nonempty_distinct_test_roster(self):
+        for table in ("components", "native_foundations"):
+            for roster in ([], "hia/tests/test_kernel.py", [None],
+                           ["hia/tests/test_kernel.py"] * 2):
+                value = deepcopy(self.inventory)
+                value[table][0]["tests"] = roster
+                with self.subTest(table=table, roster=roster), self.assertRaisesRegex(ValueError, "test roster"):
+                    source_inventory(value, self.root)
+
+    def test_hia_source_cannot_substitute_for_a_test_caller(self):
+        value = deepcopy(self.inventory)
+        value["components"][0]["tests"] = ["hia/storage/owner.hepta"]
+        with self.assertRaisesRegex(ValueError, "test caller"):
+            source_inventory(value, self.root)
+
+    def test_distinct_owners_may_share_a_real_test_caller(self):
+        value = deepcopy(self.inventory)
+        value["native_foundations"][0]["tests"] = ["hia/tests/test_kernel.py"]
+        self.assertEqual(source_inventory(value, self.root), (1, 1, 3))
 
     def test_finite_foundation_cannot_claim_node_integration_or_retirement(self):
         for field in ("node_integration_complete", "retirement_accepted"):
