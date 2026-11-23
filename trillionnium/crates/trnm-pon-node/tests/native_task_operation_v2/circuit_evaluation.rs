@@ -53,6 +53,14 @@ const HISTORY: EvaluationCase = EvaluationCase {
     work: b"retrospective historical A and authored retention",
     delivered_input: "retrospective_request",
 };
+const PAIRED: EvaluationCase = EvaluationCase {
+    test_script: "dev_intake_evaluation.py",
+    input_environment: "TRNM_DEV_PAIRED_REQUEST_SHA256",
+    model_environment: "TRNM_DEV_PAIRED_MODEL_SHA256",
+    namespace: "dev-plain-paired-intake-evaluation",
+    work: b"one released plain-model request and frozen retention",
+    delivered_input: "paired_request",
+};
 impl EvaluationCase {
     fn commitment(&self, suffix: &str, parts: &[&[u8]]) -> Hash {
         hash(format!("{}-{suffix}", self.namespace).as_bytes(), parts)
@@ -119,10 +127,28 @@ fn funded_historical_a_replay_reopens_paid_native_operation() {
     funded_evaluation(&HISTORY);
 }
 
+#[test]
+#[ignore = "requires a released paired request, local frozen weights and an offline Linux Python environment"]
+fn funded_plain_paired_intake_reopens_paid_native_operation() {
+    funded_evaluation(&PAIRED);
+}
+
 fn funded_evaluation(case: &EvaluationCase) {
     let job = PathBuf::from(var("TRNM_DEV_EVAL_JOB"));
     assert!(job.is_absolute(), "supply a fresh absolute output path");
-    fs::create_dir(&job).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::DirBuilderExt;
+        fs::DirBuilder::new().mode(0o700).create(&job).unwrap();
+    }
+    #[cfg(not(unix))]
+    {
+        assert_ne!(
+            case.namespace, PAIRED.namespace,
+            "private paired evaluation requires Linux"
+        );
+        fs::create_dir(&job).unwrap();
+    }
     let materials = fs::canonicalize(var("TRNM_DEV_HEPTA_MATERIALS")).unwrap();
     execute_service(
         case,
@@ -280,6 +306,11 @@ fn retained_evaluation_reopens_the_same_native_payment_from_copied_stores() {
 #[test]
 fn retained_historical_a_reopens_the_same_native_payment_from_copied_stores() {
     reobserve(&HISTORY, "cell-historical-funded-evaluation-20261123");
+}
+
+#[test]
+fn retained_plain_paired_intake_reopens_the_same_payment_from_copied_stores() {
+    reobserve(&PAIRED, "cell-released-pair-funded-evaluation-20261123");
 }
 
 fn reobserve(case: &EvaluationCase, directory_name: &str) {
