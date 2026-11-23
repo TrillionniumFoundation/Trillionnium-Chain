@@ -1002,6 +1002,16 @@
       ]
     },
     {
+      "id": "release-bundle/raw-artifact-sha256",
+      "node_integration_complete": false,
+      "scope": "Raw ReleaseArtifact legacy-locator SHA-256 over an explicitly sized, in-process byte stream using the full shared incremental helpers. A matching digest is not content commitment, EOF, file custody or release authority; production linkage and retirement remain open.",
+      "source": "hia/src/release_bundle/raw_artifact_sha256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_raw_artifact_sha256.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-text",
       "node_integration_complete": false,
       "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
@@ -1268,7 +1278,8 @@
     {
       "components": [
         "release-bundle/artifact-header",
-        "release-bundle/content-claim-frame"
+        "release-bundle/content-claim-frame",
+        "release-bundle/raw-artifact-sha256"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
       "module": "M15",

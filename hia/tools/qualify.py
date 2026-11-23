@@ -140,6 +140,14 @@ def sources():
         "hia/src/crypto/SHA512_STREAM.md", "hia/src/crypto/KECCAK.md",
         "hia/src/crypto/ML_DSA_POLY.md",
         "scripts/ci/ci_job.sh")]
+    # ReleaseBundle finite tests compile these original Rust method bodies
+    # and their release-size policy; bind them independently of the adapters.
+    paths += [ROOT / name for name in (
+        "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+        "hia/src/release_bundle/ARTIFACT_HEADER.md",
+        "hia/src/release_bundle/CONTENT_CLAIM_FRAME.md",
+        "hia/src/release_bundle/RAW_ARTIFACT_SHA256.md")]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",

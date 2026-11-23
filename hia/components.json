@@ -5518,6 +5518,24 @@
         ]
       }
     ],
+    "src/release_bundle/raw_artifact_sha256.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/research_protocol/external_key.hepta": [
       {
         "functions": [
