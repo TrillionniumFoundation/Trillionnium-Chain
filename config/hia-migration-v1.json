@@ -992,6 +992,16 @@
       ]
     },
     {
+      "id": "release-bundle/content-claim-frame",
+      "node_integration_complete": false,
+      "scope": "ReleaseArtifact CCH1 context header and supplied-digest claim encoding only. Exact candidate profile binding, content/EOF observation, cryptography, I/O and signed admission remain outside this finite component.",
+      "source": "hia/src/release_bundle/content_claim_frame.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_content_claim_frame.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-text",
       "node_integration_complete": false,
       "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
@@ -1257,7 +1267,8 @@
     },
     {
       "components": [
-        "release-bundle/artifact-header"
+        "release-bundle/artifact-header",
+        "release-bundle/content-claim-frame"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
       "module": "M15",
