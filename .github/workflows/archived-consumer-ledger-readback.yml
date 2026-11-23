@@ -17,6 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          sparse-checkout: |
+            scripts
+            evidence/cell-consumer-ledger-cross-readback-20261123
+            evidence/cell-learning-business-readback-20261109/bindings
+            evidence/hepta-real-native-adoption-20261108/chain-reader
+            evidence/cell-released-pair-funded-evaluation-20261123
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
