@@ -1012,6 +1012,17 @@
       ]
     },
     {
+      "id": "release-bundle/sha512-transcript-bootstrap",
+      "node_integration_complete": false,
+      "scope": "Native SHA-512 release transcript bootstrap over exact CCH1 and RAC1 bytes with the original fixed domain. A test-only in-memory owner composes native raw SHA-256, SHA-512 and claim bytes and compares the exact Rust observer control flow; production budget, I/O, custody, and authority remain unchanged and unported.",
+      "source": "hia/src/release_bundle/sha512_transcript_bootstrap.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_transcript_composition.py",
+        "hia/tests/rust_release_transcript_reference.rs"
+      ]
+    },
+    {
       "id": "worker-agent/audit-text",
       "node_integration_complete": false,
       "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
@@ -1279,7 +1290,8 @@
       "components": [
         "release-bundle/artifact-header",
         "release-bundle/content-claim-frame",
-        "release-bundle/raw-artifact-sha256"
+        "release-bundle/raw-artifact-sha256",
+        "release-bundle/sha512-transcript-bootstrap"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
       "module": "M15",

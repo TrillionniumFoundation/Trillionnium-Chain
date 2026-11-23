@@ -1,0 +1,92 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_full_content_bootstrap
+fn f0(input:readbuf,unused:mutbuf,state:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,state:mutbuf)
+  size:usize = buffer.len(input)
+  low:usize = const() {"value":276}
+  high:usize = const() {"value":1042}
+  low_ok:bool = compare.ge(size,low)
+  high_ok:bool = compare.le(size,high)
+  frame_ok:bool = bool.and(low_ok,high_ok)
+  branch frame_ok validate_tag(input,state,size) bad()
+block validate_tag(src:readbuf,arena:mutbuf,extent:usize)
+  zero:u64 = const() {"value":0}
+  cch_extent:u64 = const() {"value":149}
+  four:u64 = const() {"value":4}
+  cch:u64 = call(src,zero,four) {"function":"rac_read_le"}
+  rac:u64 = call(src,cch_extent,four) {"function":"rac_read_le"}
+  correct_cch:u64 = const() {"value":826819395}
+  correct_rac:u64 = const() {"value":826491218}
+  cch_ok:bool = compare.eq(cch,correct_cch)
+  rac_ok:bool = compare.eq(rac,correct_rac)
+  kind_at:usize = const() {"value":68}
+  kind:u8 = buffer.load(src,kind_at)
+  release:u8 = const() {"value":2}
+  release_ok:bool = compare.eq(kind,release)
+  tags_ok:bool = bool.and(cch_ok,rac_ok)
+  valid:bool = bool.and(tags_ok,release_ok)
+  branch valid validate_sizes(src,arena,extent) bad()
+block validate_sizes(frames:readbuf,work:mutbuf,bytes:usize)
+  cch_len:usize = const() {"value":149}
+  artifact_suffix:usize = const() {"value":105}
+  raw_size_at:usize = int.sub.wrap(bytes,artifact_suffix)
+  raw_size:u64 = call(frames,raw_size_at) {"function":"cp_be64"}
+  rac_len:usize = int.sub.wrap(bytes,cch_len)
+  rac64:u64 = int.cast(rac_len) {"mode":"wrap"}
+  declared_at:usize = const() {"value":141}
+  declared:u64 = call(frames,declared_at) {"function":"cp_be64"}
+  lower:u64 = const() {"value":1}
+  upper:u64 = const() {"value":137438953472}
+  raw_nonzero:bool = compare.ge(raw_size,lower)
+  raw_fits:bool = compare.le(raw_size,upper)
+  raw_ok:bool = bool.and(raw_nonzero,raw_fits)
+  branch raw_ok match_sizes(frames,work,bytes,raw_size,rac64,declared) bad()
+block match_sizes(checked:readbuf,checked_state:mutbuf,checked_size:usize,raw:u64,header:u64,cch_size:u64)
+  sum:u64 = int.add.checked(raw,header)
+  sizes_match:bool = compare.eq(sum,cch_size)
+  branch sizes_match capacity(checked,checked_state,checked_size) bad()
+block capacity(valid_input:readbuf,valid_state:mutbuf,valid_size:usize)
+  extent_s:usize = buffer.len(valid_state)
+  minimum:usize = const() {"value":131232}
+  enough:bool = compare.ge(extent_s,minimum)
+  branch enough init(valid_input,valid_state,valid_size) short()
+block init(headers:readbuf,hash_state:mutbuf,headers_size:usize)
+  zero_state:u64 = const() {"value":0}
+  initialized:u64 = call(hash_state) {"function":"s512_init"}
+  init_ok:bool = compare.eq(initialized,zero_state)
+  branch init_ok domain(headers,hash_state,headers_size) internal()
+block domain(data:readbuf,hash:mutbuf,data_size:usize)
+  base:u64 = const() {"value":0}
+  domain_at:u64 = const() {"value":1512}
+  at_8:u64 = const() {"value":1520}
+  at_16:u64 = const() {"value":1528}
+  at_24:u64 = const() {"value":1536}
+  trnm_cpq:u64 = const() {"value":5859256985648517716}
+  one_full:u64 = const() {"value":8017370974729416497}
+  ntent_sh:u64 = const() {"value":5211561370912650350}
+  a512_v1_nul:u64 = const() {"value":13922218936448321}
+  _first:u64 = call(hash,base,domain_at,trnm_cpq) {"function":"sha512_store64"}
+  _second:u64 = call(hash,base,at_8,one_full) {"function":"sha512_store64"}
+  _third:u64 = call(hash,base,at_16,ntent_sh) {"function":"sha512_store64"}
+  _last:u64 = call(hash,base,at_24,a512_v1_nul) {"function":"sha512_store64"}
+  count:u64 = const() {"value":32}
+  domain_added:u64 = call(hash,domain_at,count) {"function":"s512_update_work"}
+  domain_ok:bool = compare.eq(domain_added,base)
+  branch domain_ok add_headers(data,hash,data_size,base) internal()
+block add_headers(header_bytes:readbuf,header_state:mutbuf,header_size:usize,zero_off:u64)
+  wide:u64 = int.cast(header_size) {"mode":"wrap"}
+  fed:u64 = call(header_bytes,zero_off,wide,header_state) {"function":"s512_update"}
+  header_ok:bool = compare.eq(fed,zero_off)
+  branch header_ok done() internal()
+block done()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block bad()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  insufficient:u32 = const() {"value":101}
+  ret(insufficient)
+block internal()
+  hash_failure:u32 = const() {"value":102}
+  ret(hash_failure)
+end
