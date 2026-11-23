@@ -1,10 +1,10 @@
 # HIA native implementation
 
-This is the in-progress native HIA replacement of Trillionnium-Chain. The current
-inventory contains **88 kernel units, 30 native foundations and 321 HIA source
-files**. Each component has one implementation directory. All **26 original Rust
-packages remain** (23 partially ported and 3 not ported), zero retirements are accepted, and all nine whole-project
-gates remain OPEN.
+This is the in-progress native HIA replacement of Trillionnium-Chain.
+Run `python3 -B hia/tools/check_migration.py` from the repository root for the
+current kernel, foundation, source and original-package counts. Each component
+has one implementation directory. All **26 original Rust packages remain**,
+zero retirements are accepted, and all nine whole-project gates remain open.
 
 The [sole development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 sets the migration sequence. The [migration inventory](../config/hia-migration-v1.json)
