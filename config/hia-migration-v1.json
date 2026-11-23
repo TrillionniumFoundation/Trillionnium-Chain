@@ -982,6 +982,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-cell-fragment",
+      "node_integration_complete": false,
+      "scope": "Bounded first/present, absent and continuation Markdown cell byte emission against the active Rust cell helper. Supports split oversized valid UTF-8 cells; full 18-column report, CLI linkage, file publication and Node integration remain open.",
+      "source": "hia/src/worker_agent/audit_cell_fragment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_cell_fragment.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
@@ -1069,6 +1079,7 @@
     {
       "components": [
         "worker-agent/audit-text",
+        "worker-agent/audit-cell-fragment",
         "worker-agent/audit-report"
       ],
       "legacy_path": "trillionnium/crates/trnm-worker-agent",

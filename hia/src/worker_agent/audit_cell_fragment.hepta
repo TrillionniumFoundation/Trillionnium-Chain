@@ -1,0 +1,65 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_cell_fragment_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  input_size:usize = buffer.len(input)
+  size:u64 = int.cast(input_size) {"mode":"wrap"}
+  zero:u64 = const() {"value":0}
+  max_input:u64 = const() {"value":524289}
+  has_tag:bool = compare.gt(size,zero)
+  within_bound:bool = compare.le(size,max_input)
+  valid_size:bool = bool.and(has_tag,within_bound)
+  branch valid_size tag(input,output,size) invalid()
+block tag(tag_input:readbuf,tag_output:mutbuf,tag_size:u64)
+  first_index:usize = const() {"value":0}
+  value:u8 = buffer.load(tag_input,first_index)
+  missing:u8 = const() {"value":0}
+  is_missing:bool = compare.eq(value,missing)
+  branch is_missing absent_frame(tag_output,tag_size) text_frame(tag_input,tag_output,tag_size,value)
+block absent_frame(missing_output:mutbuf,missing_size:u64)
+  missing_one:u64 = const() {"value":1}
+  missing_alone:bool = compare.eq(missing_size,missing_one)
+  branch missing_alone absent_capacity(missing_output) invalid()
+block absent_capacity(absent_output:mutbuf)
+  absent_size:usize = buffer.len(absent_output)
+  absent_one:usize = const() {"value":1}
+  absent_fits:bool = compare.ge(absent_size,absent_one)
+  branch absent_fits emit_missing(absent_output) short()
+block emit_missing(emit_output:mutbuf)
+  missing_index:usize = const() {"value":0}
+  dash:u8 = const() {"value":45}
+  _ = buffer.store(emit_output,missing_index,dash)
+  missing_return:u32 = const() {"value":1}
+  ret(missing_return)
+block text_frame(text_input:readbuf,text_output:mutbuf,text_size:u64,text_tag:u8)
+  first_tag:u8 = const() {"value":1}
+  after_tag:u8 = const() {"value":2}
+  tag_octets:u64 = const() {"value":1}
+  is_first:bool = compare.eq(text_tag,first_tag)
+  is_after:bool = compare.eq(text_tag,after_tag)
+  has_data:bool = compare.gt(text_size,tag_octets)
+  valid_after:bool = bool.and(is_after,has_data)
+  text_valid:bool = bool.or(is_first,valid_after)
+  branch text_valid measure(text_input,text_output,text_size) invalid()
+block measure(measure_input:readbuf,measure_output:mutbuf,measure_end:u64)
+  measure_start:u64 = const() {"value":1}
+  measure_base:u64 = const() {"value":0}
+  measure_write:bool = const() {"value":false}
+  needed:u64 = call(measure_input,measure_output,measure_start,measure_end,measure_base,measure_write) {"function":"wa_cell"}
+  output_size:usize = buffer.len(measure_output)
+  output_cap:u64 = int.cast(output_size) {"mode":"wrap"}
+  fits:bool = compare.le(needed,output_cap)
+  branch fits write(measure_input,measure_output,measure_end) short()
+block write(write_input:readbuf,write_output:mutbuf,write_end:u64)
+  write_start:u64 = const() {"value":1}
+  write_base:u64 = const() {"value":0}
+  write_active:bool = const() {"value":true}
+  written:u64 = call(write_input,write_output,write_start,write_end,write_base,write_active) {"function":"wa_cell"}
+  written32:u32 = int.cast(written) {"mode":"wrap"}
+  ret(written32)
+block invalid()
+  invalid_frame:u32 = const() {"value":4294967295}
+  ret(invalid_frame)
+block short()
+  short_capacity:u32 = const() {"value":4294967294}
+  ret(short_capacity)
+end
