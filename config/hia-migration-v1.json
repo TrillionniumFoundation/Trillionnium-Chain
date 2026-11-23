@@ -295,6 +295,17 @@
       ]
     },
     {
+      "id": "executor/config-grouped-u64",
+      "node_integration_complete": false,
+      "scope": "Original executor grouped unsigned settings value parsing on 64-bit targets, including Rust trimming, quoting and overflow behavior; no environment access, caller defaults or integration.",
+      "source": "hia/src/executor/config_grouped_u64.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_executor_config_grouped_u64.py",
+        "hia/tests/rust_executor_config_grouped_u64_reference.rs"
+      ]
+    },
+    {
       "id": "state/json_string",
       "node_integration_complete": false,
       "scope": "Complete ASCII Value::String canonical codec within the explicit 1 MiB borrowed profile; strict inverse is not a general JSON parser",
@@ -980,6 +991,7 @@
     {
       "components": [
         "executor/schedule",
+        "executor/config-grouped-u64",
         "math/binary64"
       ],
       "legacy_path": "trillionnium/crates/trnm-executor",
