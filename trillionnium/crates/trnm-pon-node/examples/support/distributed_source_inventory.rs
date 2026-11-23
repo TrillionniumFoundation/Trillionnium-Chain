@@ -8723,6 +8723,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2/circuit_evaluation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2/circuit_evaluation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2/learning_contract.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2/learning_contract.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

@@ -188,6 +188,88 @@ def execute(job, materials):
         cost_sha256=cost_hash, raw_evaluation_files=files))
 
 
+def score_receipt(task, prediction, outcome, source_hashes):
+    from cell_adoption_readback import decode
+
+    spec = task["task"]["verifier"]
+    name = [spec["name"], spec["version"]]
+    answer = prediction["answer"].encode()
+    success = outcome["result"]["success"]
+    receipt = {key: value for key, value in outcome.items() if key not in ("success", "receipt_sha256")}
+    require(outcome["schema"] == "hepta.cell-experiments.semantic-receipt.v1"
+            and outcome["record_id"] == task["record_id"] and outcome["verifier"] == name
+            and outcome["verifier_source_sha256"] in source_hashes
+            and outcome["parameters_sha256"] == digest(spec["parameters"])
+            and outcome["input_sha256"] == prediction["input_sha256"] == sha(task["task"]["input"].encode())
+            and outcome["answer_sha256"] == sha(answer) and outcome["receipt_sha256"] == digest(receipt)
+            and type(success) is bool and outcome["success"] is success, "semantic receipt differs from original task")
+    if name != ["json_artifact", "1"]:
+        return success, False
+    require(set(spec["parameters"]) == {"expected"} and len(answer) <= 65536, "invalid JSON task or answer")
+    try:
+        matched = canonical(decode(answer, 65536)) == canonical(spec["parameters"]["expected"])
+        reason = "structure_equal" if matched else "structure_mismatch"
+    except (ValueError, TypeError):
+        matched, reason = False, "invalid_json"
+    require(outcome["result"] == {"success": matched, "reason": reason}, "semantic answer replay differs")
+    return success, True
+
+
+def paired_performance(job, admission, request, result):
+    panels = ("future", "retention")
+    arms = ("parent", "candidate")
+    models = dict(parent=admission["parent"], candidate=admission["pins"]["candidate"])
+    output = job / "evaluation"
+    listing = read(job / "SOURCE.json")
+    source_hashes = {entry["sha256"] for entry in (listing if isinstance(listing, list) else listing["package"])}
+    tasks = [(panel, task) for panel in panels for task in request[panel]]
+    receipts = [read(output / arm / "END.json") for arm in arms]
+    require(result["schema"] == "hepta.paired-cold.result.v1" and result["evaluation_order"] == list(panels)
+            and result["circuit_loaded"] is (request["parent"]["schema"] == "hepta.frozen-circuit-bundle.v1")
+            and result["external_teacher_calls_by_runner"] == 0
+            and all(result[field] is False for field in ("authenticated_users_established",
+                    "prospective_arrival_authenticated", "production_adoption", "settlement"))
+            and result["request_sha256"] == admission["pins"]["request"]
+            and receipts == result["cold_receipts"] and receipts[0]["pid"] != receipts[1]["pid"]
+            and 2 * len(tasks) == admission["evaluated_examples"], "paired evaluation scope or cold processes differ")
+    for arm, receipt in zip(arms, receipts):
+        require(receipt["arm"] == arm and receipt["model_digest"] == models[arm]
+                and receipt["request_sha256"] == result["request_sha256"]
+                and len(receipt["row_hashes"]) == len(tasks), "cold arm or row count differs")
+
+    categories = {(False, False): "neither", (True, False): "parent_only",
+                  (False, True): "candidate_only", (True, True): "both"}
+    counts = {panel: dict.fromkeys(categories.values(), 0) for panel in panels}
+    rows = []
+    for index, (panel, task) in enumerate(tasks):
+        task_hash = digest(task)
+        inputs, scores, replayed = [], [], []
+        for arm, receipt in zip(arms, receipts):
+            row = read(output / arm / f"{index:04d}.json")
+            prediction = row["prediction"]
+            require(row["panel"] == panel and row["task_id"] == task["task_id"] and row["task_sha256"] == task_hash
+                    and prediction["pid"] == receipt["pid"] and prediction["loaded_model_digest"] == models[arm]
+                    and digest(row) == receipt["row_hashes"][index], "cold row differs from model, task, or receipt")
+            inputs.append((row["input_ids_sha256"], prediction["rendered_input_sha256"], prediction["input_tokens"]))
+            score, independent = score_receipt(task, prediction, row["outcome"], source_hashes)
+            scores.append(score)
+            replayed.append(independent)
+        require(inputs[0] == inputs[1], "paired effective inputs differ")
+        category = categories[tuple(scores)]
+        counts[panel][category] += 1
+        rows.append(dict(panel=panel, task_sha256=task_hash, outcome=category, answers_regraded=all(replayed)))
+    delta = counts["future"]["candidate_only"] - counts["future"]["parent_only"]
+    retained = counts["retention"]["both"] > 0 and counts["retention"]["parent_only"] == 0
+    require(canonical(counts) == canonical(result["counts"]) and type(result["future_success_count_delta"]) is int
+            and delta == result["future_success_count_delta"] and retained is result["old_parent_successes_preserved"],
+            "paired aggregate differs from cold rows")
+    return dict(parent_sha256=models["parent"], candidate_sha256=models["candidate"],
+                request_sha256=result["request_sha256"], rows=rows, counts=counts,
+                future_success_count_delta=delta, old_parent_successes_preserved=retained,
+                prospective_arrival_authenticated=False, actual_consumer_use_verified=False,
+                production_adoption=False, learning_improvement_bonus=False)
+
+
 def verify(job, *, expected_release=None):
     """Read the retained byte and operation commitments without modifying the capture."""
     import cell_learning_business_economics as economics
@@ -265,9 +347,12 @@ def verify(job, *, expected_release=None):
             r["reserved_units"] == r["terms"]["budget"] == payment["beneficiary_credit"] == payment["gross_escrow_debit"]
             and n["actual_consumer_use_verified"] is False and n["learning_improvement_bonus"] is False and
             n["chainwork_awarded"] == 0, "native development fee or scope mismatch")
-    return dict(task=n["task"], output=output, result=evidence, measurement_receipt=charge,
-                payment_operation=payment["operation"], development_units=payment["beneficiary_credit"],
-                checked_evaluation_files=len(files))
+    verified = dict(task=n["task"], output=output, result=evidence, measurement_receipt=charge,
+                    payment_operation=payment["operation"], development_units=payment["beneficiary_credit"],
+                    checked_evaluation_files=len(files))
+    if not historical:
+        verified["paired_performance"] = paired_performance(job, a, submitted, read(job / "evaluation/RESULT.json"))
+    return verified
 
 
 if __name__ == "__main__":
