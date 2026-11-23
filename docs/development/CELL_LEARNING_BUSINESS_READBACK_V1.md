@@ -259,3 +259,8 @@ reserved a native development fee before executing the frozen two-arm Circuit.
 Its contract binds the candidate manifest, evaluation request, newly produced
 results and measured CPU. This commission uses the native service owner directly
 and preserves the scope of the historical training receipts above.
+
+The [funded public historical A evaluation](../../evidence/cell-historical-funded-evaluation-20261123/README.md)
+uses a distinct native service request for one seen training task and an authored
+retention item. It retains the original retrospective task labels and its own
+signed reservation, measured costs, cold outputs and development fee.

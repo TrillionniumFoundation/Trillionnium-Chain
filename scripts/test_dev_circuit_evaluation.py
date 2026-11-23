@@ -33,3 +33,25 @@ class DevelopmentEvaluationTests(unittest.TestCase):
             target.write_bytes(evaluation.canonical(payments))
             with self.assertRaisesRegex(ValueError, "signed operation differs"):
                 evaluation.verify(path)
+
+
+class HistoricalServiceTests(unittest.TestCase):
+    capture = CAPTURE.parent / "cell-historical-funded-evaluation-20261123"
+
+    def test_historical_fee_replays_with_zero_future_users(self):
+        result = evaluation.verify(self.capture)
+        self.assertEqual((result["development_units"], result["checked_evaluation_files"]), (2000, 4))
+        observed = evaluation.read(self.capture / "evaluation/RESULT.json")
+        self.assertEqual(observed["future_records"], 0)
+        self.assertTrue(observed["arms"]["candidate"]["outcomes"]["historical_training_A"])
+
+    def test_seen_task_cannot_be_relabelled_future(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw)
+            shutil.copytree(self.capture, path, ignore=shutil.ignore_patterns("node", "*.sqlite"), dirs_exist_ok=True)
+            target = path / "evaluation/RESULT.json"
+            history = evaluation.read(target)
+            history["future_records"] = 1
+            target.write_bytes(evaluation.canonical(history))
+            with self.assertRaisesRegex(ValueError, "historical replay scope"):
+                evaluation.verify(path)

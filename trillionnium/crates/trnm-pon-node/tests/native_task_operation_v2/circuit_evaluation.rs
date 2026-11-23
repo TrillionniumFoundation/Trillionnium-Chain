@@ -29,9 +29,45 @@ fn digest(value: &Value) -> Hash {
 fn var(name: &str) -> String {
     env::var(name).unwrap_or_else(|_| panic!("missing {name}"))
 }
-fn execute_service(mode: &str, job: &Path, materials: &Path, extra: &[String]) {
-    let tool =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../scripts/dev_circuit_evaluation.py");
+struct EvaluationCase {
+    test_script: &'static str,
+    input_environment: &'static str,
+    model_environment: &'static str,
+    namespace: &'static str,
+    work: &'static [u8],
+    delivered_input: &'static str,
+}
+const CIRCUIT: EvaluationCase = EvaluationCase {
+    test_script: "dev_circuit_evaluation.py",
+    input_environment: "TRNM_DEV_PAIRED_REQUEST_SHA256",
+    model_environment: "TRNM_DEV_CIRCUIT_SHA256",
+    namespace: "dev-circuit-evaluation",
+    work: b"paired offline inference",
+    delivered_input: "paired_request",
+};
+const HISTORY: EvaluationCase = EvaluationCase {
+    test_script: "dev_historical_evaluation.py",
+    input_environment: "TRNM_DEV_PUBLIC_PARQUET_SHA256",
+    model_environment: "TRNM_DEV_HISTORICAL_MODEL_SHA256",
+    namespace: "dev-historical-evaluation",
+    work: b"retrospective historical A and authored retention",
+    delivered_input: "retrospective_request",
+};
+impl EvaluationCase {
+    fn commitment(&self, suffix: &str, parts: &[&[u8]]) -> Hash {
+        hash(format!("{}-{suffix}", self.namespace).as_bytes(), parts)
+    }
+}
+fn execute_service(
+    case: &EvaluationCase,
+    mode: &str,
+    job: &Path,
+    materials: &Path,
+    extra: &[String],
+) {
+    let tool = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../scripts")
+        .join(case.test_script);
     let s = Command::new(var("TRNM_DEV_HEPTA_PYTHON"))
         .arg("-B")
         .arg(tool)
@@ -45,6 +81,7 @@ fn execute_service(mode: &str, job: &Path, materials: &Path, extra: &[String]) {
 }
 
 fn evaluation_binding(
+    case: &EvaluationCase,
     cfg: &Settings,
     terms: &FundedServiceContractV1,
     admission: &Value,
@@ -52,8 +89,8 @@ fn evaluation_binding(
     let request = terms.request;
     let task = terms.task_id(cfg.network(), cfg.parameters(), public(0), 1);
     let contract_digest = terms.digest(cfg.network(), cfg.parameters(), public(0));
-    let claim = hash(b"dev-circuit-evaluation-claim", &[&task]);
-    let operation = hash(b"dev-circuit-evaluation-operation", &[&task, &request]);
+    let claim = case.commitment("claim", &[&task]);
+    let operation = case.commitment("operation", &[&task, &request]);
     let cpu_cap = admission["cpu_limit_ns"].as_u64().unwrap();
     let examples = admission["evaluated_examples"].as_u64().unwrap();
     NativeTaskOperationBindingV2 {
@@ -73,19 +110,30 @@ fn evaluation_binding(
 #[test]
 #[ignore = "requires pinned local Hepta materials, Linux user/network namespaces and an offline Python environment"]
 fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
+    funded_evaluation(&CIRCUIT);
+}
+
+#[test]
+#[ignore = "requires pinned public historical materials and an offline Python environment"]
+fn funded_historical_a_replay_reopens_paid_native_operation() {
+    funded_evaluation(&HISTORY);
+}
+
+fn funded_evaluation(case: &EvaluationCase) {
     let job = PathBuf::from(var("TRNM_DEV_EVAL_JOB"));
     assert!(job.is_absolute(), "supply a fresh absolute output path");
     fs::create_dir(&job).unwrap();
     let materials = fs::canonicalize(var("TRNM_DEV_HEPTA_MATERIALS")).unwrap();
     execute_service(
+        case,
         "prepare",
         &job,
         &materials,
         &[
             var("TRNM_DEV_HEPTA_SOURCE"),
             var("TRNM_DEV_FREEZE_SHA256"),
-            var("TRNM_DEV_PAIRED_REQUEST_SHA256"),
-            var("TRNM_DEV_CIRCUIT_SHA256"),
+            var(case.input_environment),
+            var(case.model_environment),
         ],
     );
     let admission_path = job.join("ADMISSION.json");
@@ -96,23 +144,17 @@ fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
         request,
         model: digest(&admission["pins"]["candidate"]),
         input: digest(&admission["pins"]["request"]),
-        output_spec: hash(
-            b"dev-circuit-evaluation-output-spec",
+        output_spec: case.commitment(
+            "output-spec",
             &[admission["output_schema"].as_str().unwrap().as_bytes()],
         ),
-        qualified_work: hash(
-            b"dev-circuit-evaluation-service",
-            &[b"paired offline inference"],
-        ),
+        qualified_work: case.commitment("service", &[case.work]),
         evaluation_protocol: digest(&admission["source_listing_sha256"]),
-        fee_schedule: hash(b"dev-circuit-evaluation-flat-fee", &[&AMOUNT.to_le_bytes()]),
-        dispute_policy: hash(
-            b"dev-circuit-evaluation-verdict",
-            &[b"development arbitrator"],
-        ),
+        fee_schedule: case.commitment("flat-fee", &[&AMOUNT.to_le_bytes()]),
+        dispute_policy: case.commitment("verdict", &[b"development arbitrator"]),
         ..contract(1).0
     };
-    let bind = evaluation_binding(&cfg, &terms, &admission);
+    let bind = evaluation_binding(case, &cfg, &terms, &admission);
     let task = bind.task;
     let claim = bind.claim;
     let operation = bind.operation;
@@ -153,7 +195,7 @@ fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
         "signed_reservation":hex::encode(reserve),"m12_after_begin":{"sequence":checkpoint.sequence,"root":hex::encode(checkpoint.root)}}),
     );
     assert!(!job.join("evaluation").exists());
-    execute_service("execute", &job, &materials, &[]);
+    execute_service(case, "execute", &job, &materials, &[]);
     let delivery_path = job.join("DELIVERY.json");
     let delivered = read(&delivery_path);
     let output = file_digest(&delivery_path);
@@ -162,7 +204,7 @@ fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
     assert_eq!(digest(&delivered["task"]), task);
     assert_eq!(digest(&delivered["request"]), request);
     assert_eq!(digest(&delivered["model"]), terms.model);
-    assert_eq!(digest(&delivered["paired_request"]), terms.input);
+    assert_eq!(digest(&delivered[case.delivered_input]), terms.input);
     assert_eq!(digest(&delivered["result_sha256"]), result);
     assert_eq!(digest(&delivered["cost_sha256"]), cost);
     let metered = read(&job.join("COST.json"));
@@ -182,7 +224,7 @@ fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
                 evaluation_units: used,
                 storage_units: 0,
                 serving_units: 0,
-                unit: hash(b"dev-circuit-evaluation-cpu-unit", &[b"nanosecond"]),
+                unit: case.commitment("cpu-unit", &[b"nanosecond"]),
                 measurement_receipt: cost,
             },
         )
@@ -232,8 +274,18 @@ fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
 
 #[test]
 fn retained_evaluation_reopens_the_same_native_payment_from_copied_stores() {
+    reobserve(&CIRCUIT, "cell-circuit-funded-evaluation-20261123");
+}
+
+#[test]
+fn retained_historical_a_reopens_the_same_native_payment_from_copied_stores() {
+    reobserve(&HISTORY, "cell-historical-funded-evaluation-20261123");
+}
+
+fn reobserve(case: &EvaluationCase, directory_name: &str) {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../evidence/cell-circuit-funded-evaluation-20261123");
+        .join("../../../evidence")
+        .join(directory_name);
     let verifier =
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../scripts/dev_circuit_evaluation.py");
     let status = Command::new("python3")
@@ -250,7 +302,7 @@ fn retained_evaluation_reopens_the_same_native_payment_from_copied_stores() {
         serde_json::from_value(reservation["terms"].clone()).unwrap();
     assert_eq!(terms.request, file_digest(&root.join("ADMISSION.json")));
     let cfg = settings();
-    let bind = evaluation_binding(&cfg, &terms, &admission);
+    let bind = evaluation_binding(case, &cfg, &terms, &admission);
     let directory = tempfile::tempdir().unwrap();
     let node_path = directory.path().join("node");
     fs::create_dir(&node_path).unwrap();

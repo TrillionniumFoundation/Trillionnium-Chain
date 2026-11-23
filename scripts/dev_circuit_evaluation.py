@@ -89,6 +89,16 @@ def prepare(job, materials, source, pins):
     record(job / "ADMISSION.json", terms)
 
 
+def measure(job, command, env):
+    cpu0, start = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic_ns()
+    with (job / "evaluation.stdout").open("xb") as stdout, (job / "evaluation.stderr").open("xb") as stderr:
+        subprocess.run(command, check=True, cwd=job, env=env, stdout=stdout, stderr=stderr)
+    wall_ns = time.monotonic_ns() - start
+    cpu1 = resource.getrusage(resource.RUSAGE_CHILDREN)
+    cpu_ns = round(((cpu1.ru_utime - cpu0.ru_utime) + (cpu1.ru_stime - cpu0.ru_stime)) * 1_000_000_000)
+    return cpu_ns, wall_ns
+
+
 def execute(job, materials):
     terms = read(job / "ADMISSION.json")
     reservation = read(job / "RESERVATION.json")
@@ -104,12 +114,7 @@ def execute(job, materials):
                HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
     command = ["unshare", "-Urn", "--", sys.executable, "-B", "-m", "cell_experiments.paired_cold",
                str(materials / "paired.json"), terms["pins"]["request"], str(materials), str(output)]
-    cpu0, start = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic_ns()
-    with (job / "evaluation.stdout").open("xb") as stdout, (job / "evaluation.stderr").open("xb") as stderr:
-        subprocess.run(command, check=True, cwd=job, env=env, stdout=stdout, stderr=stderr)
-    wall_ns = time.monotonic_ns() - start
-    cpu1 = resource.getrusage(resource.RUSAGE_CHILDREN)
-    cpu_ns = round(((cpu1.ru_utime - cpu0.ru_utime) + (cpu1.ru_stime - cpu0.ru_stime)) * 1_000_000_000)
+    cpu_ns, wall_ns = measure(job, command, env)
     require(0 < cpu_ns <= terms["cpu_limit_ns"] and source_files(snapshot) == before, "CPU cap or evaluator changed")
     require(check_inputs(materials, terms["pins"]) == request, "input changed after execution")
     result = read(output / "RESULT.json")
@@ -144,19 +149,43 @@ def verify(job):
     output = sha((job / "DELIVERY.json").read_bytes())
     evidence = sha((job / "evaluation/RESULT.json").read_bytes())
     charge = sha((job / "COST.json").read_bytes())
-    require(a["schema"] == "trnm-isolated-circuit-evaluation-request-v1" and
-            d["schema"] == a["output_schema"] == "trnm-isolated-circuit-evaluation-delivery-v1" and
-            n["schema"] == "pon-native-task-operation-current-v3", "wrong capture schema")
+    historical = a["schema"] == "trnm-isolated-historical-evaluation-request-v1"
+    if historical:
+        scope = "retrospective_historical_A_and_authored_retention"
+        spec = "trnm-isolated-historical-evaluation-delivery-v1"
+        input_key = "retrospective_request"
+    else:
+        require(a["schema"] == "trnm-isolated-circuit-evaluation-request-v1", "wrong admission schema")
+        spec = "trnm-isolated-circuit-evaluation-delivery-v1"
+        input_key = "paired_request"
+    require(d["schema"] == a["output_schema"] == spec and n["schema"] == "pon-native-task-operation-current-v3",
+            "wrong capture schema")
     require(sha((job / "SOURCE.json").read_bytes()) == a["source_listing_sha256"], "source pin mismatch")
+    frozen = read(job / "FROZEN.json")
     require(sha((job / "FROZEN.json").read_bytes()) == a["freeze_file_sha256"] and
-            digest(read(job / "FROZEN.json")) == a["pins"]["freeze"], "freeze pin mismatch")
+            digest(frozen) == a["pins"]["freeze"] and digest(frozen["parent"]) == a["parent"]
+            and digest(frozen["candidate"]) == a["pins"]["candidate"], "freeze pin mismatch")
     submitted = read(job / "evaluation/REQUEST.json")
-    require(digest(submitted) == a["pins"]["request"] and digest(submitted["candidate"]) == a["pins"]["candidate"]
-            and digest(submitted["parent"]) == a["parent"], "paired input mismatch")
+    require(digest(submitted) == a["pins"]["request"], "evaluation request differs")
+    if historical:
+        history = read(job / "evaluation/RESULT.json")
+        require(submitted == a["historical_work"] and history["scope"] == submitted["scope"] == scope
+                and history["future_records"] == history["prospective_arrivals"] == history["certified_hepta_users"] == 0
+                and history["request_sha256"] == a["pins"]["request"] and history["external_teachers_used"] == 0
+                and history["weight_updates"] == 0 and history["adoption"] is False and
+                history["arms"]["parent"]["model_sha256"] == a["parent"] and
+                history["arms"]["candidate"]["model_sha256"] == a["pins"]["candidate"] and
+                all(set(history["arms"][arm]["outcomes"]) == {"historical_training_A", "old_capability"}
+                    and sha((job / "evaluation" / (arm + "-cold.json")).read_bytes()) ==
+                    history["arms"][arm]["raw_file_sha256"] for arm in ("parent", "candidate")),
+                "historical replay scope differs")
+    else:
+        require(digest(submitted["candidate"]) == a["pins"]["candidate"] and
+                digest(submitted["parent"]) == a["parent"], "paired input mismatch")
     require(r["terms"] == n["original_full_contract"]["terms"] and
             r["request"] == request == d["request"] == bytes(r["terms"]["request"]).hex() and
             bytes(r["terms"]["model"]).hex() == a["pins"]["candidate"] == d["model"] and
-            bytes(r["terms"]["input"]).hex() == a["pins"]["request"] == d["paired_request"], "funded terms mismatch")
+            bytes(r["terms"]["input"]).hex() == a["pins"]["request"] == d[input_key], "funded terms mismatch")
     require(d["reservation_sha256"] == sha((job / "RESERVATION.json").read_bytes()) and
             r["task"] == d["task"] == n["task"] and n["output"] == output and
             evidence == d["result_sha256"] == n["target_receipt_commitment"] and
