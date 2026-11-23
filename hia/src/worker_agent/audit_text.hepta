@@ -60,13 +60,7 @@ block emit(v78:readbuf,v79:mutbuf,v80:usize,v81:usize,v82:usize,v83:usize)
   branch v84 emit_byte(v78,v79,v80,v81,v82,v83) done(v83)
 block emit_byte(v85:readbuf,v86:mutbuf,v87:usize,v88:usize,v89:usize,v90:usize)
   v91:u8 = buffer.load(v85,v88)
-  v92:u8 = const() {"value":13}
-  v93:u8 = const() {"value":10}
-  v94:bool = compare.eq(v91,v92)
-  v95:bool = compare.eq(v91,v93)
-  v96:bool = bool.or(v94,v95)
-  v97:u8 = const() {"value":32}
-  v98:u8 = select(v96,v97,v91)
+  v98:u8 = call(v91) {"function":"wa_visible_byte"}
   v99:u8 = const() {"value":124}
   v100:bool = compare.eq(v98,v99)
   branch v100 slash(v85,v86,v87,v88,v89,v90,v98) write(v85,v86,v87,v88,v89,v90,v98)
@@ -91,4 +85,15 @@ block invalid()
 block capacity()
   v124:u32 = const() {"value":4294967294}
   ret(v124)
+end
+fn wa_visible_byte(v0:u8) -> (u8) effects(read,write,trap) entry(entry)
+block entry(v0:u8)
+  v1:u8 = const() {"value":13}
+  v2:u8 = const() {"value":10}
+  v3:u8 = const() {"value":32}
+  v4:bool = compare.eq(v0,v1)
+  v5:bool = compare.eq(v0,v2)
+  v6:bool = bool.or(v4,v5)
+  v7:u8 = select(v6,v3,v0)
+  ret(v7)
 end

@@ -1,4 +1,4 @@
-# Worker Agent: audit Markdown cell text
+# Worker Agent: audit Markdown
 
 `audit_text.hepta` implements the cell-text formatter from
 `trillionnium/crates/trnm-worker-agent/src/audit_render.rs`. Missing values
@@ -22,8 +22,57 @@ After the repository preflight and pinned compiler bootstrap, run:
 python3 -B -m unittest -v hia.tests.test_worker_audit_text
 ```
 
-The differential test uses the unchanged original Rust source and pinned Rust
-version. The stand-alone harness supplies fixtures only. This candidate does
-not replace the actual CLI path, the entire table renderer, file/JSON handling,
-or any audit, authorization or trust decision. No fallback, production use,
-or old-path retirement is implied.
+## Complete report
+
+`audit_report.hepta` emits the full report from the admitted record slice,
+including the complete heading and separator even for zero records. Table
+fields, order, spaces, final newlines, decimal `u64` task IDs and Unicode match
+the original renderer. The cell and report implementations share the character
+mapping for CR and LF.
+
+This private fixture ABI uses the same three borrowed buffers and returns as
+the cell ABI. Buffer 0 begins with ASCII `WAR1` and then zero or more records,
+with no count or padding. Each record has a little-endian `u64` task ID
+followed by ten length-prefixed cells in this order:
+
+1. request ID
+2. status
+3. provider request ID
+4. provenance schema version
+5. provenance fingerprint
+6. provider
+7. model
+8. adapter
+9. agent protocol
+10. compliance profile
+
+Each cell starts with a little-endian `u32` byte length, followed immediately
+by that many UTF-8 bytes; `0xffffffff` indicates absence with no payload.
+Only the eight optional cells allow absence. Empty present fields are
+distinct from absent fields. UTF-8 validity remains a caller contract.
+The input frame must be at most 1 MiB. An output is at most
+`244 + 2 * (input_bytes - 4)` bytes (2,097,388 bytes at the limit): the
+header is 244 bytes, ≤63 report bytes per row are not supplied by cell
+payloads, each row spends at least 48 wire bytes on framing, and escaping can
+at most double cell payload bytes. The first pass validates the entire
+frame and measures the exact output extent; the second writes only after all
+framing and capacity checks pass. This keeps output and scratch unchanged even
+when a malformed later record follows valid rows. Input and output must be
+separate borrowed regions, as in the standard native invocation harness.
+The pinned compiler requires the external borrowed entry name `f0`; it is
+only a wrapper over `wa_audit_report`. The committed `.hepta` source is
+compiled directly; no generator is part of the build.
+
+```sh
+python3 -B -m unittest -v hia.tests.test_worker_audit_report hia.tests.test_worker_audit_text
+```
+
+The differential tests use the unchanged original Rust rendering module with
+the pinned Rust compiler. The Rust fixture constructs typed records and adds
+only framing, not formatting. Initial development Core rejected unsupported
+`int.shl.wrap`; the final code uses the supported checked shift for bounded
+byte positions.
+
+The reports do not perform record selection, audit validation, authorization,
+CLI dispatch, file/JSON handling or production publication. No fallback,
+runtime integration or old-path retirement is implied.

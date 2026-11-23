@@ -970,6 +970,17 @@
         "hia/tests/test_worker_audit_text.py",
         "hia/tests/rust_worker_audit_text_reference.rs"
       ]
+    },
+    {
+      "id": "worker-agent/audit-report",
+      "node_integration_complete": false,
+      "scope": "Full human-readable Worker Agent Markdown report output for admitted typed records, including exact header, row order, decimal task IDs and all optional cells. CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
+      "source": "hia/src/worker_agent/audit_report.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_report.py",
+        "hia/tests/rust_worker_audit_text_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -1033,7 +1044,8 @@
     },
     {
       "components": [
-        "worker-agent/audit-text"
+        "worker-agent/audit-text",
+        "worker-agent/audit-report"
       ],
       "legacy_path": "trillionnium/crates/trnm-worker-agent",
       "module": "M10",

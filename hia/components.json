@@ -7490,6 +7490,14 @@
         ],
         "source": "src/protocol/state_root.hepta"
       }
+    ],
+    "src/worker_agent/audit_report.hepta": [
+      {
+        "source": "src/worker_agent/audit_text.hepta",
+        "functions": [
+          "wa_visible_byte"
+        ]
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"
