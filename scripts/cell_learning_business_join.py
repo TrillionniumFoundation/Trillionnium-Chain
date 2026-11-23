@@ -11,6 +11,7 @@ import argparse
 import json
 from pathlib import Path
 import re
+import sys
 
 import cell_adoption_readback as native
 import cell_learning_completion_join as completion
@@ -73,6 +74,23 @@ def funded_request_digest(bindings, initial):
         source_task_receipt=request["completed_task_receipt"],
         evaluation_profile=request["evaluation_profile"],
         baseline_bundle=iteration.bundle_digest(request["selected_bundle"]))))
+
+
+def prepare_funded_request(initial_raw, *, expected_initial_sha256, operation_id,
+                           invocation_id, source_pair):
+    """Compute the existing contract terms.request from an admission checkpoint."""
+    native.require(type(initial_raw) is bytes and len(initial_raw) <= iteration.MAX_CHECKPOINT,
+                   "BUSINESS_INITIAL_CHECKPOINT_LIMIT")
+    native.require(native.sha(initial_raw) == _digest(expected_initial_sha256),
+                   "BUSINESS_INITIAL_CHECKPOINT_PIN")
+    native.stable_id(operation_id)
+    native.stable_id(invocation_id)
+    _source_pair(source_pair)
+    frozen = iteration.frozen_expectations_from_initial_checkpoint(initial_raw)
+    native.require(frozen["request"]["operation_id"] == operation_id, "BUSINESS_OPERATION")
+    bindings = dict(operation_id=operation_id, invocation_id=invocation_id,
+                    source_pair=source_pair, learning=dict(initial_head=frozen["initial_head"]))
+    return funded_request_digest(bindings, frozen)
 
 
 def funded_result_digest(request_digest, review):
@@ -317,8 +335,34 @@ def review_business_iteration(materials, *, bindings_raw, expected_bindings_sha2
     return result
 
 
+def _prepare_request_cli(argv):
+    parser = argparse.ArgumentParser(description=(
+        "Print a funded service terms.request digest from the original initial learning "
+        "checkpoint. The caller supplies the separately retained checkpoint pin, operation, "
+        "invocation and source identities. This command performs no ledger operation."))
+    parser.add_argument("--initial", type=Path, required=True)
+    parser.add_argument("--initial-sha256", required=True)
+    parser.add_argument("--operation-id", required=True)
+    parser.add_argument("--invocation-id", required=True)
+    for name in ("chain", "hepta"):
+        parser.add_argument("--" + name + "-commit", required=True)
+        parser.add_argument("--" + name + "-tree", required=True)
+    args = parser.parse_args(argv)
+    source_pair = dict(chain=dict(commit=args.chain_commit, tree=args.chain_tree),
+                       hepta=dict(commit=args.hepta_commit, tree=args.hepta_tree))
+    print(prepare_funded_request(native.read_bounded(args.initial, iteration.MAX_CHECKPOINT),
+                                 expected_initial_sha256=args.initial_sha256,
+                                 operation_id=args.operation_id, invocation_id=args.invocation_id,
+                                 source_pair=source_pair))
+
+
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    if sys.argv[1:2] == ["prepare-request"]:
+        _prepare_request_cli(sys.argv[2:])
+        return
+    parser = argparse.ArgumentParser(description=__doc__, epilog=(
+        "Before training, use the prepare-request subcommand to compute the same terms.request "
+        "from the initial checkpoint. Use prepare-request --help for its inputs."))
     parser.add_argument("--bindings", type=Path, required=True)
     parser.add_argument("--bindings-sha256", required=True)
     for name in MATERIAL_NAMES:
