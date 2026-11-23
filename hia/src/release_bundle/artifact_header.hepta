@@ -1,0 +1,208 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_rac1_header
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  extent64:u64 = int.cast(extent) {"mode":"wrap"}
+  min:u64 = const() {"value":111}
+  max:u64 = const() {"value":877}
+  lower:bool = compare.ge(extent64,min)
+  upper:bool = compare.le(extent64,max)
+  inside:bool = bool.and(lower,upper)
+  branch inside lengths(input,output,extent64) invalid()
+block lengths(len_input:readbuf,len_output:mutbuf,len_extent:u64)
+  name_offset:u64 = const() {"value":0}
+  media_offset:u64 = const() {"value":2}
+  len_count:u64 = const() {"value":2}
+  name_length:u64 = call(len_input,name_offset,len_count) {"function":"rac_read_le"}
+  media_length:u64 = call(len_input,media_offset,len_count) {"function":"rac_read_le"}
+  name_cap:u64 = const() {"value":512}
+  media_cap:u64 = const() {"value":256}
+  empty:u64 = const() {"value":0}
+  name_present:bool = compare.gt(name_length,empty)
+  media_present:bool = compare.gt(media_length,empty)
+  names_present:bool = bool.and(name_present,media_present)
+  name_fits:bool = compare.le(name_length,name_cap)
+  media_fits:bool = compare.le(media_length,media_cap)
+  names_fit:bool = bool.and(name_fits,media_fits)
+  fixed:u64 = const() {"value":109}
+  text_extent:u64 = int.add.wrap(name_length,media_length)
+  all_extent:u64 = int.add.wrap(fixed,text_extent)
+  exact:bool = compare.eq(all_extent,len_extent)
+  counts_ok:bool = bool.and(names_fit,names_present)
+  framing_ok:bool = bool.and(counts_ok,exact)
+  branch framing_ok values(len_input,len_output,name_length,media_length,len_extent) invalid()
+block values(val_input:readbuf,val_output:mutbuf,val_name:u64,val_media:u64,val_extent:u64)
+  size_offset:u64 = const() {"value":4}
+  size_count:u64 = const() {"value":8}
+  size:u64 = call(val_input,size_offset,size_count) {"function":"rac_read_le"}
+  cap:u64 = const() {"value":137438953472}
+  val_zero:u64 = const() {"value":0}
+  size_nonzero:bool = compare.gt(size,val_zero)
+  size_bounded:bool = compare.le(size,cap)
+  size_valid:bool = bool.and(size_nonzero,size_bounded)
+  exec_offset:usize = const() {"value":12}
+  executable:u8 = buffer.load(val_input,exec_offset)
+  exec_cap:u8 = const() {"value":1}
+  exec_valid:bool = compare.le(executable,exec_cap)
+  fields_valid:bool = bool.and(size_valid,exec_valid)
+  branch fields_valid scan(val_input,val_output,val_name,val_media,val_extent,size,executable) invalid()
+block scan(scan_input:readbuf,scan_output:mutbuf,scan_name:u64,scan_media:u64,scan_extent:u64,scan_size:u64,scan_exec:u8)
+  content_offset:u64 = const() {"value":13}
+  platform_offset:u64 = const() {"value":45}
+  source_offset:u64 = const() {"value":77}
+  text_offset:u64 = const() {"value":109}
+  content:bool = call(scan_input,content_offset) {"function":"rac_nonzero_digest"}
+  platform:bool = call(scan_input,platform_offset) {"function":"rac_nonzero_digest"}
+  src:bool = call(scan_input,source_offset) {"function":"rac_nonzero_digest"}
+  printable:bool = call(scan_input,text_offset,scan_extent) {"function":"rac_printable"}
+  aliases_one:bool = bool.and(content,platform)
+  aliases_two:bool = bool.and(aliases_one,src)
+  valid:bool = bool.and(aliases_two,printable)
+  branch valid capacity(scan_input,scan_output,scan_name,scan_media,scan_size,scan_exec) invalid()
+block capacity(cap_input:readbuf,cap_output:mutbuf,cap_name:u64,cap_media:u64,cap_size:u64,cap_exec:u8)
+  prefix:u64 = const() {"value":125}
+  need_name:u64 = int.add.wrap(prefix,cap_name)
+  need:u64 = int.add.wrap(need_name,cap_media)
+  space:usize = buffer.len(cap_output)
+  wide_space:u64 = int.cast(space) {"mode":"wrap"}
+  fit:bool = compare.le(need,wide_space)
+  branch fit emit(cap_input,cap_output,cap_name,cap_media,cap_size,cap_exec) short()
+block emit(emit_input:readbuf,emit_output:mutbuf,emit_name:u64,emit_media:u64,emit_size:u64,emit_exec:u8)
+  begin:u64 = const() {"value":0}
+  tag:u64 = const() {"value":1380008753}
+  tag_size:u64 = const() {"value":4}
+  offset_after_magic:u64 = call(emit_output,begin,tag,tag_size) {"function":"rac_write_be"}
+  eight:u64 = const() {"value":8}
+  name_start:u64 = call(emit_output,offset_after_magic,emit_name,eight) {"function":"rac_write_be"}
+  text_start:u64 = const() {"value":109}
+  after_name:u64 = call(emit_input,emit_output,text_start,name_start,emit_name) {"function":"rac_copy"}
+  media_start:u64 = call(emit_output,after_name,emit_media,eight) {"function":"rac_write_be"}
+  media_in:u64 = int.add.wrap(text_start,emit_name)
+  after_media:u64 = call(emit_input,emit_output,media_in,media_start,emit_media) {"function":"rac_copy"}
+  after_size:u64 = call(emit_output,after_media,emit_size,eight) {"function":"rac_write_be"}
+  exec_index:usize = int.cast(after_size) {"mode":"wrap"}
+  _ = buffer.store(emit_output,exec_index,emit_exec)
+  one:u64 = const() {"value":1}
+  after_exec:u64 = int.add.wrap(after_size,one)
+  aliases_start:u64 = const() {"value":13}
+  aliases_count:u64 = const() {"value":96}
+  end:u64 = call(emit_input,emit_output,aliases_start,after_exec,aliases_count) {"function":"rac_copy"}
+  written:u32 = int.cast(end) {"mode":"wrap"}
+  ret(written)
+block invalid()
+  invalid_status:u32 = const() {"value":4294967295}
+  ret(invalid_status)
+block short()
+  short_status:u32 = const() {"value":4294967294}
+  ret(short_status)
+end
+
+fn rac_read_le(input:readbuf,offset:u64,count:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,offset:u64,count:u64)
+  start:u64 = const() {"value":0}
+  jump read(input,offset,count,start,start)
+block read(rd_input:readbuf,rd_pos:u64,rd_left:u64,rd_shift:u64,rd_accum:u64)
+  index:usize = int.cast(rd_pos) {"mode":"wrap"}
+  octet:u8 = buffer.load(rd_input,index)
+  octet64:u64 = int.cast(octet) {"mode":"wrap"}
+  shifted:u64 = int.shl.checked(octet64,rd_shift)
+  value:u64 = bit.or(rd_accum,shifted)
+  rd_one:u64 = const() {"value":1}
+  rd_eight:u64 = const() {"value":8}
+  rd_zero:u64 = const() {"value":0}
+  remaining:u64 = int.sub.wrap(rd_left,rd_one)
+  next_shift:u64 = int.add.wrap(rd_shift,rd_eight)
+  next_pos:u64 = int.add.wrap(rd_pos,rd_one)
+  finished:bool = compare.eq(remaining,rd_zero)
+  branch finished done(value) read(rd_input,next_pos,remaining,next_shift,value)
+block done(result:u64)
+  ret(result)
+end
+
+fn rac_write_be(output:mutbuf,offset:u64,value:u64,count:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(output:mutbuf,offset:u64,value:u64,count:u64)
+  jump write(output,offset,value,count)
+block write(w_output:mutbuf,w_pos:u64,w_value:u64,w_left:u64)
+  one:u64 = const() {"value":1}
+  eight:u64 = const() {"value":8}
+  zero:u64 = const() {"value":0}
+  left:u64 = int.sub.wrap(w_left,one)
+  shift:u64 = int.mul.wrap(left,eight)
+  lowered:u64 = int.shr.checked(w_value,shift)
+  byte:u8 = int.cast(lowered) {"mode":"wrap"}
+  index:usize = int.cast(w_pos) {"mode":"wrap"}
+  _ = buffer.store(w_output,index,byte)
+  next:u64 = int.add.wrap(w_pos,one)
+  finished:bool = compare.eq(left,zero)
+  branch finished done(next) write(w_output,next,w_value,left)
+block done(result:u64)
+  ret(result)
+end
+
+fn rac_copy(input:readbuf,output:mutbuf,start:u64,target:u64,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,start:u64,target:u64,count:u64)
+  jump copy(input,output,start,target,count)
+block copy(c_input:readbuf,c_output:mutbuf,c_in:u64,c_out:u64,c_left:u64)
+  c_a:usize = int.cast(c_in) {"mode":"wrap"}
+  c_b:usize = int.cast(c_out) {"mode":"wrap"}
+  c_byte:u8 = buffer.load(c_input,c_a)
+  _ = buffer.store(c_output,c_b,c_byte)
+  c_one:u64 = const() {"value":1}
+  c_zero:u64 = const() {"value":0}
+  c_remaining:u64 = int.sub.wrap(c_left,c_one)
+  c_next_in:u64 = int.add.wrap(c_in,c_one)
+  c_next_out:u64 = int.add.wrap(c_out,c_one)
+  c_done:bool = compare.eq(c_remaining,c_zero)
+  branch c_done done(c_next_out) copy(c_input,c_output,c_next_in,c_next_out,c_remaining)
+block done(result:u64)
+  ret(result)
+end
+
+fn rac_nonzero_digest(input:readbuf,start:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64)
+  size:u64 = const() {"value":32}
+  stop:u64 = int.add.wrap(start,size)
+  jump read(input,start,stop)
+block read(rd_input:readbuf,rd_pos:u64,rd_stop:u64)
+  index:usize = int.cast(rd_pos) {"mode":"wrap"}
+  value:u8 = buffer.load(rd_input,index)
+  zero:u8 = const() {"value":0}
+  nonzero:bool = compare.ne(value,zero)
+  branch nonzero yes() advance(rd_input,rd_pos,rd_stop)
+block advance(a_input:readbuf,a_pos:u64,a_stop:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(a_pos,one)
+  finished:bool = compare.eq(next,a_stop)
+  branch finished no() read(a_input,next,a_stop)
+block yes()
+  present:bool = const() {"value":true}
+  ret(present)
+block no()
+  absent:bool = const() {"value":false}
+  ret(absent)
+end
+
+fn rac_printable(input:readbuf,start:u64,stop:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64,stop:u64)
+  jump read(input,start,stop)
+block read(rd_input:readbuf,rd_pos:u64,rd_stop:u64)
+  index:usize = int.cast(rd_pos) {"mode":"wrap"}
+  value:u8 = buffer.load(rd_input,index)
+  lower:u8 = const() {"value":32}
+  upper:u8 = const() {"value":126}
+  above:bool = compare.ge(value,lower)
+  below:bool = compare.le(value,upper)
+  range:bool = bool.and(above,below)
+  branch range advance(rd_input,rd_pos,rd_stop) no()
+block advance(a_input:readbuf,a_pos:u64,a_stop:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(a_pos,one)
+  finished:bool = compare.eq(next,a_stop)
+  branch finished yes() read(a_input,next,a_stop)
+block yes()
+  valid:bool = const() {"value":true}
+  ret(valid)
+block no()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end

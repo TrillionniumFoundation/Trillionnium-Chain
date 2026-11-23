@@ -971,6 +971,16 @@
       ]
     },
     {
+      "id": "release-bundle/artifact-header",
+      "node_integration_complete": false,
+      "scope": "Exact RAC1 metadata header and original ArtifactEntryV0 metadata predicate over a private borrowed ABI. No hashing, raw artifact I/O, signature, release authorization or Node integration.",
+      "source": "hia/src/release_bundle/artifact_header.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_artifact_header.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-text",
       "node_integration_complete": false,
       "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
@@ -1234,12 +1244,14 @@
       "state": "not-ported"
     },
     {
-      "components": [],
+      "components": [
+        "release-bundle/artifact-header"
+      ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
       "module": "M15",
       "package": "trnm-release-bundle",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [],
