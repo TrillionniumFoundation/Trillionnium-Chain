@@ -50,22 +50,31 @@ def source_files(root):
     return entries
 
 
-def check_inputs(materials, pins):
+def check_inputs(materials, pins, *, request_path=None, circuit=True):
     frozen = read(materials / "FROZEN.json")
-    request = read(materials / "paired.json")
+    request = read(request_path or materials / "paired.json")
     require(frozen["schema"] == "hepta.paired-cold.freeze.v1" and
             request["schema"] == "hepta.paired-cold.request.v1", "incorrect evaluation schema")
     for key in ("candidate", "parent", "retention", "timeout_seconds"):
         require(frozen[key] == request[key], "frozen evaluation fields changed")
     actual = dict(freeze=digest(frozen), request=digest(request), candidate=digest(request["candidate"]))
     require(actual == pins, "evaluation admission pins differ")
-    require(request["candidate"]["schema"] == "hepta.frozen-circuit-bundle.v1" and
-            len(request["future"]) > 0 and len(request["retention"]) > 0, "non-Circuit or empty evaluation")
+    schema = "hepta.frozen-circuit-bundle.v1" if circuit else "hepta.experimental-model.v1"
+    require(all(request[arm]["schema"] == schema for arm in ("parent", "candidate")) and
+            request["future"] and request["retention"], "unsupported model or empty evaluation")
     return request
 
 
-def prepare(job, materials, source, pins):
-    request = check_inputs(materials, pins)
+def prepare(job, materials, source, pins, *, intake=None, request_path=None):
+    import dev_intake_evaluation as plain
+
+    request_path = request_path or materials / "paired.json"
+    request = check_inputs(materials, pins, request_path=request_path, circuit=intake is None)
+    if intake is not None:
+        require(len(request["future"]) == 1, "single release requires one future record")
+        retained = job / "PAIRED_INPUT.json"
+        record(retained, request)
+        request_path = retained
     with (job / "FROZEN.json").open("xb") as handle:
         handle.write((materials / "FROZEN.json").read_bytes())
     # A private copy fixes the Python source used by both workers, even if the source checkout changes.
@@ -77,15 +86,20 @@ def prepare(job, materials, source, pins):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(original / entry["path"], target)
     require(entries == source_files(snapshot), "source snapshot changed while copying")
-    source_hash = record(job / "SOURCE.json", entries)
+    listing = entries if intake is None else dict(package=entries, catalog=plain.catalog_snapshot(job, source, pins["freeze"]))
+    source_hash = record(job / "SOURCE.json", listing)
     terms = dict(schema="trnm-isolated-circuit-evaluation-request-v1", job_id=secrets.token_hex(16),
                  pins=pins, parent=digest(request["parent"]), source_listing_sha256=source_hash,
                  freeze_file_sha256=sha((materials / "FROZEN.json").read_bytes()),
-                 request_file_sha256=sha((materials / "paired.json").read_bytes()),
+                 request_file_sha256=sha(request_path.read_bytes()),
                  runtime=dict(python=sys.version.split()[0],
                               packages={n: importlib.metadata.version(n) for n in ("torch", "transformers", "peft")}),
                  cpu_limit_ns=1_000_000_000_000, evaluated_examples=2 * (len(request["future"]) + len(request["retention"])),
                  output_schema="trnm-isolated-circuit-evaluation-delivery-v1")
+    if intake is not None:
+        plain.preflight(job, materials, pins["request"])
+        terms.update(schema=plain.ADMISSION, output_schema=plain.DELIVERY, job_id=intake["admission_sha256"],
+                     intake_release=intake, intake_release_sha256=digest(intake))
     record(job / "ADMISSION.json", terms)
 
 
@@ -100,25 +114,37 @@ def measure(job, command, env):
 
 
 def execute(job, materials):
+    import dev_intake_evaluation as plain
+
     terms = read(job / "ADMISSION.json")
     reservation = read(job / "RESERVATION.json")
     require(reservation["request"] == sha((job / "ADMISSION.json").read_bytes()), "reservation request mismatch")
-    request = check_inputs(materials, terms["pins"])
+    plain_model = terms["schema"] == plain.ADMISSION
+    request_path = job / "PAIRED_INPUT.json" if plain_model else materials / "paired.json"
+    request = check_inputs(materials, terms["pins"], request_path=request_path, circuit=not plain_model)
+    listing = read(job / "SOURCE.json")
+    if plain_model:
+        require(sha(request_path.read_bytes()) == terms["request_file_sha256"], "original paired request bytes differ")
+        plain.check_release(terms["intake_release"], terms["intake_release_sha256"], terms["pins"])
+        plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
     snapshot = job / "runtime" / "cell_experiments"
     before = source_files(snapshot)
     require(sha((job / "SOURCE.json").read_bytes()) == terms["source_listing_sha256"]
-            and before == read(job / "SOURCE.json"), "evaluator snapshot mismatch")
+            and before == (listing["package"] if plain_model else listing), "evaluator snapshot mismatch")
     output = job / "evaluation"
     require(not output.exists(), "evaluation output exists")
     env = dict(os.environ, PYTHONPATH=str(snapshot.parent), PYTHONDONTWRITEBYTECODE="1",
                HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
     command = ["unshare", "-Urn", "--", sys.executable, "-B", "-m", "cell_experiments.paired_cold",
-               str(materials / "paired.json"), terms["pins"]["request"], str(materials), str(output)]
+               str(request_path), terms["pins"]["request"], str(materials), str(output)]
     cpu_ns, wall_ns = measure(job, command, env)
     require(0 < cpu_ns <= terms["cpu_limit_ns"] and source_files(snapshot) == before, "CPU cap or evaluator changed")
-    require(check_inputs(materials, terms["pins"]) == request, "input changed after execution")
+    require(check_inputs(materials, terms["pins"], request_path=request_path, circuit=not plain_model) == request, "input changed after execution")
     result = read(output / "RESULT.json")
-    require(result["schema"] == "hepta.paired-cold.result.v1" and result["circuit_loaded"] is True
+    if plain_model:
+        plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
+        plain.check_plain_result(result, terms)
+    require(result["schema"] == "hepta.paired-cold.result.v1" and result["circuit_loaded"] is (not plain_model)
             and result["external_teacher_calls_by_runner"] == 0 and result["request_sha256"] == terms["pins"]["request"],
             "wrong cold result")
     receipts = result["cold_receipts"]
@@ -130,7 +156,11 @@ def execute(job, materials):
     require(evaluated == terms["evaluated_examples"], "incomplete paired rows")
     cost = dict(schema="trnm-isolated-circuit-evaluation-cost-v1", evaluated_examples=evaluated,
                 cpu_ns=cpu_ns, cpu_scope="getrusage waited child process group and reaped descendants",
-                wall_ns=wall_ns, circuit_work=result["measured_circuit_work"])
+                wall_ns=wall_ns)
+    if plain_model:
+        cost.update(schema="trnm-isolated-plain-paired-evaluation-cost-v1")
+    else:
+        cost["circuit_work"] = result["measured_circuit_work"]
     cost_hash = record(job / "COST.json", cost)
     files = {p.relative_to(output).as_posix(): sha(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file()}
     record(job / "DELIVERY.json", dict(schema=terms["output_schema"], request=reservation["request"],
@@ -139,9 +169,10 @@ def execute(job, materials):
         cost_sha256=cost_hash, raw_evaluation_files=files))
 
 
-def verify(job):
+def verify(job, *, expected_release=None):
     """Read the retained byte and operation commitments without modifying the capture."""
     import cell_learning_business_economics as economics
+    import dev_intake_evaluation as plain
 
     a, r, c, d, n = (read(job / (name + ".json")) for name in
                       ("ADMISSION", "RESERVATION", "COST", "DELIVERY", "CURRENT"))
@@ -150,7 +181,18 @@ def verify(job):
     evidence = sha((job / "evaluation/RESULT.json").read_bytes())
     charge = sha((job / "COST.json").read_bytes())
     historical = a["schema"] == "trnm-isolated-historical-evaluation-request-v1"
-    if historical:
+    if expected_release is not None:
+        require(a["schema"] == plain.ADMISSION and a["intake_release_sha256"] == expected_release,
+                "independently retained release differs")
+    if a["schema"] == plain.ADMISSION:
+        spec, input_key = plain.DELIVERY, "paired_request"
+        retained = job / "PAIRED_INPUT.json"
+        require(sha(retained.read_bytes()) == a["request_file_sha256"] and
+                digest(read(retained)) == a["pins"]["request"], "original paired request bytes differ")
+        plain.check_release(a["intake_release"], a["intake_release_sha256"], a["pins"])
+        plain.check_catalog(job, read(job / "SOURCE.json")["catalog"], a["pins"]["freeze"])
+        plain.check_plain_result(read(job / "evaluation/RESULT.json"), a)
+    elif historical:
         scope = "retrospective_historical_A_and_authored_retention"
         spec = "trnm-isolated-historical-evaluation-delivery-v1"
         input_key = "retrospective_request"
@@ -210,8 +252,9 @@ def verify(job):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "verify":
-        print(json.dumps(verify(Path(sys.argv[2]).resolve(strict=True)), sort_keys=True))
+    if len(sys.argv) in (3, 4) and sys.argv[1] == "verify":
+        expected = sys.argv[3] if len(sys.argv) == 4 else None
+        print(json.dumps(verify(Path(sys.argv[2]).resolve(strict=True), expected_release=expected), sort_keys=True))
         sys.exit(0)
     mode, job_path, material_path, *extra = sys.argv[1:]
     job, materials = Path(job_path).resolve(strict=True), Path(material_path).resolve(strict=True)
