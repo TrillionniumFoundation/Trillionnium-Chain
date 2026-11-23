@@ -77,8 +77,8 @@ def funded_request_digest(bindings, initial):
 
 
 def prepare_funded_request(initial_raw, *, expected_initial_sha256, operation_id,
-                           invocation_id, source_pair):
-    """Compute the existing contract terms.request from an admission checkpoint."""
+                           invocation_id, source_pair, contract_fields=False):
+    """Derive the request and optionally its model, input and evaluation terms."""
     native.require(type(initial_raw) is bytes and len(initial_raw) <= iteration.MAX_CHECKPOINT,
                    "BUSINESS_INITIAL_CHECKPOINT_LIMIT")
     native.require(native.sha(initial_raw) == _digest(expected_initial_sha256),
@@ -90,7 +90,12 @@ def prepare_funded_request(initial_raw, *, expected_initial_sha256, operation_id
     native.require(frozen["request"]["operation_id"] == operation_id, "BUSINESS_OPERATION")
     bindings = dict(operation_id=operation_id, invocation_id=invocation_id,
                     source_pair=source_pair, learning=dict(initial_head=frozen["initial_head"]))
-    return funded_request_digest(bindings, frozen)
+    digest = funded_request_digest(bindings, frozen)
+    if not contract_fields:
+        return digest
+    request = frozen["request"]
+    return dict(request=digest, model=iteration.bundle_digest(request["selected_bundle"]),
+                input=request["completed_task_receipt"], evaluation_protocol=request["evaluation_profile"])
 
 
 def funded_result_digest(request_digest, review):
@@ -340,6 +345,8 @@ def _prepare_request_cli(argv):
         "Print a funded service terms.request digest from the original initial learning "
         "checkpoint. The caller supplies the separately retained checkpoint pin, operation, "
         "invocation and source identities. This command performs no ledger operation."))
+    parser.add_argument("--contract-fields", action="store_true",
+                        help="Print the four application funding fields derived from this checkpoint as JSON.")
     parser.add_argument("--initial", type=Path, required=True)
     parser.add_argument("--initial-sha256", required=True)
     parser.add_argument("--operation-id", required=True)
@@ -350,10 +357,11 @@ def _prepare_request_cli(argv):
     args = parser.parse_args(argv)
     source_pair = dict(chain=dict(commit=args.chain_commit, tree=args.chain_tree),
                        hepta=dict(commit=args.hepta_commit, tree=args.hepta_tree))
-    print(prepare_funded_request(native.read_bounded(args.initial, iteration.MAX_CHECKPOINT),
-                                 expected_initial_sha256=args.initial_sha256,
-                                 operation_id=args.operation_id, invocation_id=args.invocation_id,
-                                 source_pair=source_pair))
+    result = prepare_funded_request(native.read_bounded(args.initial, iteration.MAX_CHECKPOINT),
+                                    expected_initial_sha256=args.initial_sha256,
+                                    operation_id=args.operation_id, invocation_id=args.invocation_id,
+                                    source_pair=source_pair, contract_fields=args.contract_fields)
+    print(_json(result).decode("ascii") if args.contract_fields else result)
 
 
 def main():
