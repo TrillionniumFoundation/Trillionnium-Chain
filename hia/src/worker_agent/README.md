@@ -22,9 +22,9 @@ After the repository preflight and pinned compiler bootstrap, run:
 python3 -B -m unittest -v hia.tests.test_worker_audit_text
 ```
 
-## Complete report
+## Retained 11-column report
 
-`audit_report.hepta` emits the full report from the admitted record slice,
+`audit_report.hepta` emits the retained 11-column report from the admitted record slice,
 including the complete heading and separator even for zero records. Table
 fields, order, spaces, final newlines, decimal `u64` task IDs and Unicode match
 the original renderer. The cell and report implementations share the character
@@ -72,7 +72,7 @@ compiled directly; no generator is part of the build.
 python3 -B -m unittest -v hia.tests.test_worker_audit_report hia.tests.test_worker_audit_text
 ```
 
-The differential tests use the unchanged original Rust rendering module with
+The differential tests use the unchanged retained Rust rendering module with
 the pinned Rust compiler. The Rust fixture constructs typed records and adds
 only framing, not formatting. Initial development Core rejected unsupported
 `int.shl.wrap`; the final code uses the supported checked shift for bounded
@@ -81,3 +81,11 @@ byte positions.
 The reports do not perform record selection, audit validation, authorization,
 CLI dispatch, file/JSON handling or production publication. No fallback,
 runtime integration or old-path retirement is implied.
+
+The active [Worker Markdown CLI renderer](../../../trillionnium/crates/trnm-worker-agent/src/audit.rs)
+has 18 columns: the original 11 plus reputation label, delta, tier, weight,
+score, rank and gap. The [active scope test](../../tests/test_worker_audit_active_scope.py)
+compiles the exact active rendering functions and the typed record body,
+checking missing values and signed/unsigned decimal extremes. The 18-column
+format and unbounded report materialization are separate cutover
+requirements. Neither is covered by the WAR1 differential.

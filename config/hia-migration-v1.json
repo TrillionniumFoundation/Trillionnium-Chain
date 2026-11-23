@@ -984,11 +984,12 @@
     {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
-      "scope": "Full human-readable Worker Agent Markdown report output for admitted typed records, including exact header, row order, decimal task IDs and all optional cells. CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
+      "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
       "source": "hia/src/worker_agent/audit_report.hepta",
       "state": "native-kernel-implemented",
       "tests": [
         "hia/tests/test_worker_audit_report.py",
+        "hia/tests/test_worker_audit_active_scope.py",
         "hia/tests/rust_worker_audit_text_reference.rs"
       ]
     },

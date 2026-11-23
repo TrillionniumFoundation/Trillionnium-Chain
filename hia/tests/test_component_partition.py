@@ -83,6 +83,8 @@ class ComponentPartitions(unittest.TestCase):
             "config/hia-migration-v1.json",
             "rust-toolchain.toml",
             "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+            "trillionnium/crates/trnm-worker-agent/src/audit.rs",
+            "trillionnium/crates/trnm-worker-agent/src/main.rs",
             "trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs",
             "trillionnium/crates/trnm-data-availability/src/cell.rs",
             "trillionnium/crates/trnm-executor/src/env_config.rs",
@@ -168,10 +170,13 @@ class ComponentPartitions(unittest.TestCase):
         general = set(part.descriptor(identifiers, "general")["selected_tests"])
         for identity in (
             "test_cache_capacity.CacheCapacityTests.test_deterministic_full_width_differential",
+            "test_executor_env_toggle.ExecutorEnvToggle.test_exact_active_and_retained_environment_and_all_three_callers",
             "test_executor_config_grouped_u64.ExecutorGroupedU64Tests.test_deterministic_differential_corpus",
             "test_executor_config_grouped_u64.ExecutorGroupedU64SourceTests.test_retains_exact_active_bytes_and_refuses_ambiguous_source",
+            "test_market_reputation.MarketReputationTests.test_every_u16_tier_including_out_of_range",
             "test_worker_audit_text.WorkerAuditText.test_exact_compiled_rust_original",
             "test_worker_audit_report.WorkerAuditReport.test_exact_original_full_report",
+            "test_worker_audit_active_scope.WorkerAuditActiveScope.test_active_markdown_has_seven_typed_columns_beyond_war1",
         ):
             self.assertIn("hia.tests." + identity, general)
 
