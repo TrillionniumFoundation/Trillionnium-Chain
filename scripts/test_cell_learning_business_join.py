@@ -96,7 +96,7 @@ class BusinessJoinTests(unittest.TestCase):
                 materials, bindings = original_case(phase)
                 initial = RECORDED / phase / "initial.bin"
                 source = bindings["source_pair"]
-                result = subprocess.run([
+                command = [
                     sys.executable, str(ROOT / "scripts/cell_learning_business_join.py"),
                     "prepare-request", "--initial", str(initial),
                     "--initial-sha256", native.sha(initial.read_bytes()),
@@ -104,8 +104,16 @@ class BusinessJoinTests(unittest.TestCase):
                     "--invocation-id", bindings["invocation_id"],
                     "--chain-commit", source["chain"]["commit"], "--chain-tree", source["chain"]["tree"],
                     "--hepta-commit", source["hepta"]["commit"], "--hepta-tree", source["hepta"]["tree"],
-                ], check=True, capture_output=True, text=True)
-                self.assertEqual(result.stdout, run_review(materials, bindings)["funded_request_digest"] + "\n")
+                ]
+                result = subprocess.run(command, check=True, capture_output=True, text=True)
+                digest = run_review(materials, bindings)["funded_request_digest"]
+                self.assertEqual(result.stdout, digest + "\n")
+                fields = subprocess.run(command + ["--contract-fields"], check=True,
+                                        capture_output=True, text=True)
+                frozen = json.loads(materials["freeze"])["request"]
+                self.assertEqual(json.loads(fields.stdout), dict(request=digest,
+                    model=bindings["learning"]["baseline_bundle"], input=frozen["completed_task_receipt"],
+                    evaluation_protocol=bindings["learning"]["evaluation_profile"]))
 
     def test_preparation_binds_original_initial_checkpoint_and_operation(self):
         materials, bindings = original_case()
