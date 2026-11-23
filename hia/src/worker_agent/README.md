@@ -90,6 +90,15 @@ checking missing values and signed/unsigned decimal extremes. The 18-column
 format and unbounded report materialization are separate cutover
 requirements. Neither is covered by the WAR1 differential.
 
+The [active composition test](../../tests/test_worker_audit_active_composition.py)
+separately assembles the native table tokens, streaming text cell fragments
+and six numeric reputation columns. Both machine-code backends match the
+active Rust renderer byte-for-byte for missing and populated reputation,
+and for a report over 2 MiB with a single cell crossing the borrowed-buffer
+boundary. The fixture orders typed fields and joins returned prefixes; all
+output bytes come from HIA. Production record selection, the assembler
+caller, filesystem ordering and the CLI path remain unchanged and unqualified.
+
 The [active table tokens](audit_active_table_tokens.md) provide the exact
 18-column header and divider plus row delimiters and unsigned decimal task
 IDs. This bounded building block does not take ownership of row composition,

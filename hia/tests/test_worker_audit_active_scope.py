@@ -68,24 +68,35 @@ fn main() {
     record.reputation_score_bps = Some(i32::MAX);
     record.reputation_rank_ordinal = Some(0);
     record.reputation_gap_bps_from_best = Some(-1);
+    if std::env::args().nth(1).as_deref() == Some("--large") {
+        record.request_id = "|".repeat((1 << 20) - 1) + "\r\n鏈😀|";
+        print!("{}", render_enterprise_audit_markdown(&[record]));
+        return;
+    }
     let populated = render_enterprise_audit_markdown(&[record]);
     print!("{missing}{populated}");
 }
 '''.encode()
 
 
+def compile_active(directory):
+    rustc = os.environ.get("RUSTC", "rustc")
+    version = subprocess.run([rustc, "--version"], check=True, capture_output=True,
+                             text=True, timeout=15).stdout.split()
+    if version[:2] != ["rustc", "1.95.0"]:
+        raise ValueError("The pinned Rust 1.95.0 toolchain is required")
+    source = directory / "audit.rs"
+    source.write_bytes(active_fixture())
+    binary = directory / "active"
+    subprocess.run([rustc, "--edition=2021", "-Dwarnings", str(source), "-o", str(binary)],
+                   check=True, capture_output=True, timeout=30)
+    return binary
+
+
 class WorkerAuditActiveScope(unittest.TestCase):
     def test_active_markdown_has_seven_typed_columns_beyond_war1(self):
-        rustc = os.environ.get("RUSTC", "rustc")
-        version = subprocess.run([rustc, "--version"], check=True, capture_output=True,
-                                 text=True, timeout=15).stdout.split()
-        self.assertEqual(version[:2], ["rustc", "1.95.0"])
         with tempfile.TemporaryDirectory(prefix="trnm-worker-active-audit-") as tmp:
-            source = Path(tmp) / "audit.rs"
-            source.write_bytes(active_fixture())
-            binary = Path(tmp) / "active"
-            subprocess.run([rustc, "--edition=2021", "-Dwarnings", str(source), "-o", str(binary)],
-                           check=True, capture_output=True, timeout=30)
+            binary = compile_active(Path(tmp))
             active = subprocess.run([str(binary)], check=True, capture_output=True, timeout=30)
         self.assertEqual(active.stderr, b"")
         original = expected_report([(2**64 - 1, ("request|鏈", "ready\r\n", None, "",

@@ -177,6 +177,7 @@ class ComponentPartitions(unittest.TestCase):
             "test_worker_audit_text.WorkerAuditText.test_exact_compiled_rust_original",
             "test_worker_audit_report.WorkerAuditReport.test_exact_original_full_report",
             "test_worker_audit_active_scope.WorkerAuditActiveScope.test_active_markdown_has_seven_typed_columns_beyond_war1",
+            "test_worker_audit_active_composition.WorkerAuditActiveComposition.test_native_pieces_reconstruct_active_reports_including_oversized_cell",
         ):
             self.assertIn("hia.tests." + identity, general)
 
