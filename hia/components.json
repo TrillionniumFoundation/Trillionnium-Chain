@@ -7506,6 +7506,17 @@
         ]
       }
     ],
+    "src/worker_agent/audit_reputation_fragment.hepta": [
+      {
+        "source": "src/worker_agent/audit_report.hepta",
+        "functions": [
+          "wa_decimal",
+          "wa_read",
+          "wa_separator",
+          "wa_word"
+        ]
+      }
+    ],
     "src/worker_agent/audit_report.hepta": [
       {
         "source": "src/worker_agent/audit_text.hepta",

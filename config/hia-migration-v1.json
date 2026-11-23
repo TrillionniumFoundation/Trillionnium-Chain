@@ -992,6 +992,17 @@
       ]
     },
     {
+      "id": "worker-agent/audit-reputation-fragment",
+      "node_integration_complete": false,
+      "scope": "Active Worker Markdown row's six typed optional numeric reputation cells, including leading separators and exact Rust decimal bytes, measured and emitted atomically from a bounded private frame. Label, header and remaining row assembly, CLI, publication and retirement stay open.",
+      "source": "hia/src/worker_agent/audit_reputation_fragment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_reputation_fragment.py",
+        "hia/tests/test_worker_audit_active_scope.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
