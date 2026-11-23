@@ -86,6 +86,7 @@ class ComponentPartitions(unittest.TestCase):
             "trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs",
             "trillionnium/crates/trnm-data-availability/src/cell.rs",
             "trillionnium/crates/trnm-executor/src/env_config.rs",
+            "trillionnium/crates/trnm-executor/src/lib.rs",
         ):
             with self.subTest(name=name):
                 expected = hashlib.sha256((ci.qualify.ROOT / name).read_bytes()).hexdigest()
@@ -158,6 +159,21 @@ class ComponentPartitions(unittest.TestCase):
             observed.extend(selected)
         self.assertEqual(sorted(observed), sorted(identifiers))
         self.assertEqual(len(observed), len(set(observed)))
+
+    def test_general_discovery_keeps_new_finite_differentials(self):
+        root = Path(__file__).resolve().parents[2]
+        suite = unittest.defaultTestLoader.discover(str(root / "hia/tests"),
+                    pattern="test_*.py", top_level_dir=str(root))
+        identifiers = [case.id() for case in part.flatten(suite)]
+        general = set(part.descriptor(identifiers, "general")["selected_tests"])
+        for identity in (
+            "test_cache_capacity.CacheCapacityTests.test_deterministic_full_width_differential",
+            "test_executor_config_grouped_u64.ExecutorGroupedU64Tests.test_deterministic_differential_corpus",
+            "test_executor_config_grouped_u64.ExecutorGroupedU64SourceTests.test_retains_exact_active_bytes_and_refuses_ambiguous_source",
+            "test_worker_audit_text.WorkerAuditText.test_exact_compiled_rust_original",
+            "test_worker_audit_report.WorkerAuditReport.test_exact_original_full_report",
+        ):
+            self.assertIn("hia.tests." + identity, general)
 
     def test_workflow_wires_six_exact_jobs_with_unchanged_deadlines(self):
         root = Path(__file__).resolve().parents[2]

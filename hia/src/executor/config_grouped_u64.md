@@ -1,8 +1,10 @@
 # Grouped unsigned executor settings
 
 [`config_grouped_u64.hepta`](config_grouped_u64.hepta) ports the value parser
-in [`trnm-executor/src/env_config.rs`](../../../trillionnium/crates/trnm-executor/src/env_config.rs)
-for the supported 64-bit target. The Rust function currently supplies
+in [`trnm-executor/src/lib.rs`](../../../trillionnium/crates/trnm-executor/src/lib.rs)
+and the retained copy in
+[`trnm-executor/src/env_config.rs`](../../../trillionnium/crates/trnm-executor/src/env_config.rs)
+for the supported 64-bit target. The active Rust function currently supplies
 `TRNM_AGGR_SCAN_WINDOW`, `TRNM_AGGR_SCAN_RR_SEED`, `TRNM_AUTO_MIN_BATCH_LEN`,
 and `TRNM_AUTO_SAMPLE_LEN`. This kernel does not read the environment, apply
 the callers' defaults or bounds, or replace any scheduler call site.
@@ -33,6 +35,10 @@ Hepta checkout, pinned self-host compiler and Rust 1.95.0:
 python3 -B -m unittest hia.tests.test_executor_config_grouped_u64
 ```
 
-The reference compiles the original `env_config.rs` unchanged and calls
-the real Rust parser, setting an isolated key in one reference process.
-The test does not build the full executor crate or run a production node.
+The reference compiles the retained `env_config.rs` unchanged and the exact
+top-level implementation extracted from the active `lib.rs`. It sets an
+isolated key in one reference process, checks both original functions agree
+on every input, and uses that result to compare both HIA backends. This
+binds the differential result to the active parser without exposing a new
+public Rust entry point. It does not build the full executor crate or run a
+production node.

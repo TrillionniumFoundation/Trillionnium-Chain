@@ -5,6 +5,7 @@ import itertools
 import os
 from pathlib import Path
 import random
+import re
 import subprocess
 import tempfile
 import unittest
@@ -13,6 +14,7 @@ from hia.tests.native_support import NativeModule
 
 ROOT = Path(__file__).resolve().parents[2]
 ORIGINAL = ROOT / "trillionnium/crates/trnm-executor/src/env_config.rs"
+ACTIVE = ORIGINAL.with_name("lib.rs")
 REFERENCE = ROOT / "hia/tests/rust_executor_config_grouped_u64_reference.rs"
 NATIVE = ROOT / "hia/src/executor/config_grouped_u64.hepta"
 MAX_U64 = 2**64 - 1
@@ -39,6 +41,26 @@ FIXED = {
 }
 
 
+def active_function(source):
+    """Copy the exact production function, without exposing it on the crate ABI."""
+    signature = rb"^fn parse_grouped_env_usize\(name: &str\) -> Option<usize> \{\n"
+    blocks = re.findall(signature + rb".*?^\}\n", source, re.MULTILINE | re.DOTALL)
+    if len(blocks) != 1 or len(re.findall(rb"^fn parse_grouped_env_usize\b", source,
+                                        re.MULTILINE)) != 1:
+        raise ValueError("Expected one unchanged-signature top-level executor parser")
+    return blocks[0]
+
+
+class ExecutorGroupedU64SourceTests(unittest.TestCase):
+    def test_retains_exact_active_bytes_and_refuses_ambiguous_source(self):
+        active = active_function(ACTIVE.read_bytes())
+        self.assertEqual(active_function(b"// prefix\n" + active + b"// suffix\n"), active)
+        for source in (b"", active + active, active.replace(b"&str", b"&String", 1)):
+            with self.subTest(source=source[:65]):
+                with self.assertRaisesRegex(ValueError, "one unchanged-signature"):
+                    active_function(source)
+
+
 class ExecutorGroupedU64Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -50,10 +72,13 @@ class ExecutorGroupedU64Tests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory(prefix="trnm-grouped-u64-reference-")
         cls.addClassCleanup(temp.cleanup)
         cls.reference = Path(temp.name) / "reference"
+        active = Path(temp.name) / "active.rs"
+        active.write_bytes(active_function(ACTIVE.read_bytes()))
         build = subprocess.run(
             ["rustc", "--edition=2021", "-C", "overflow-checks=yes", "-A", "dead_code",
              str(REFERENCE), "-o", str(cls.reference)],
-            env={**os.environ, "TRNM_ORIGINAL_EXECUTOR_ENV_CONFIG": str(ORIGINAL)},
+            env={**os.environ, "TRNM_ORIGINAL_EXECUTOR_ENV_CONFIG": str(ORIGINAL),
+                 "TRNM_ACTIVE_EXECUTOR_GROUPED_FUNCTION": str(active)},
             capture_output=True, text=True, timeout=30,
         )
         if build.returncode:
