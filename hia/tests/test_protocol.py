@@ -253,5 +253,95 @@ class ProtocolNativeTests(unittest.TestCase):
         self.cases("ilf3", cases)
 
 
+class Pnh1EncoderNativeTests(unittest.TestCase):
+    """A byte-producing component, independent of the PNH1 grammar checker."""
+
+    @classmethod
+    def setUpClass(cls):
+        from contextlib import ExitStack
+        cls.stack = ExitStack()
+        cls.addClassCleanup(cls.stack.close)
+        cls.modules = {
+            backend: cls.stack.enter_context(NativeModule(
+                SOURCES / "pnh1_encode.hepta", byte_exports=("f0",), backend=backend))
+            for backend in ("direct", "selfhost")
+        }
+        cls.golden = (VECTORS / "header.bin").read_bytes()
+        path = ROOT / "formal/pon-nakamoto-v1/contract_wire.py"
+        spec = importlib.util.spec_from_file_location("trnm_hia_independent_pnh1_encoder", path)
+        cls.oracle = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.oracle)
+
+    @classmethod
+    def descriptor(cls, fields):
+        hashes = ("network", "parameters", "parent", "target", "miner",
+                  "transactions", "state", "receipts", "work_task")
+        return (b"".join(fields[name] for name in hashes)
+                + struct.pack("<QQQ", fields["height"], fields["timestamp"], fields["nonce"]))
+
+    @classmethod
+    def accepted(cls):
+        base = cls.oracle.header_decode(cls.golden)
+        yield "historical", base, cls.golden
+        # Test independently addressed fields rather than passing preencoded wire.
+        for index in range(6, len(cls.golden)):
+            raw = changed(cls.golden, index, cls.golden[index] ^ 0xA5)
+            yield f"field-byte-{index}", cls.oracle.header_decode(raw), raw
+        for value in (0, 1, (1 << 32) - 1, 1 << 63, (1 << 64) - 1):
+            fields = dict(base, height=value, timestamp=value ^ (1 << 63),
+                          nonce=value ^ ((1 << 64) - 1))
+            yield f"scalar-{value}", fields, cls.oracle.header_encode(fields)
+
+    def check_native(self, cases):
+        cases = list(cases)
+        scratch = b"\x5a" * 13
+        for backend, module in self.modules.items():
+            for start in range(0, len(cases), 128):
+                batch = cases[start:start + 128]
+                results = module.call_many([("f0", [source, output, scratch])
+                                            for _, source, output, _, _ in batch])
+                self.assertEqual(len(batch), len(results))
+                for case, result in zip(batch, results):
+                    name, source, _, code, output = case
+                    with self.subTest(backend=backend, case=name):
+                        result = result.require_returned()
+                        self.assertEqual(result.value, code)
+                        self.assertEqual(result.arguments, [source, output, scratch])
+
+    def test_exact_bytes_and_output_tail(self):
+        cases = []
+        for index, (name, fields, raw) in enumerate(self.accepted()):
+            tail = b"\xa5" * (0 if index % 2 else 17)
+            cases.append((name, self.descriptor(fields), b"\xa5" * 318 + tail, OK, raw + tail))
+        self.check_native(cases)
+
+    def test_wrong_extent_never_writes(self):
+        cases = []
+        source = self.descriptor(self.oracle.header_decode(self.golden))
+        for n in (*range(312), 313, 318, 1024):
+            sentinel = b"\x6a" * 335
+            cases.append((f"input-{n}", source[:n].ljust(n, b"\0"), sentinel, LENGTH, sentinel))
+        for n in range(318):
+            sentinel = b"\x6a" * n
+            cases.append((f"output-{n}", source, sentinel, LENGTH, sentinel))
+        self.check_native(cases)
+
+    def test_original_rust_encoder(self):
+        import os
+        import subprocess
+        configured = os.environ.get("TRNM_HIA_RUST_PROTOCOL_REFERENCE")
+        if not configured:
+            self.skipTest("NOT_RUN: configure the compiled original Rust protocol reference")
+        reference = Path(configured).resolve(strict=True)
+        self.assertTrue(reference.is_file() and os.access(reference, os.X_OK))
+        operands = [(self.descriptor(fields), f"0 {raw.hex()}")
+                    for _, fields, raw in self.accepted()]
+        operands += [(b"\0" * n, f"{LENGTH} -") for n in (0, 1, 311, 313, 318, 1024)]
+        result = subprocess.run([str(reference)],
+                                input="".join(f"H {raw.hex() or '-'}\n" for raw, _ in operands),
+                                check=True, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.stdout.splitlines(), [reply for _, reply in operands])
+
+
 if __name__ == "__main__":
     unittest.main()

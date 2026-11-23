@@ -90,6 +90,17 @@
       ]
     },
     {
+      "id": "protocol/pnh1-encode",
+      "node_integration_complete": false,
+      "scope": "Candidate-only exact 318-byte legacy Header::encode from 312 byte fields; no digest, wire validation or Node caller replacement",
+      "source": "hia/src/protocol/pnh1_encode.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py",
+        "hia/tests/rust_protocol_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pgh2",
       "node_integration_complete": false,
       "scope": "PGH2 fixed header validation",
@@ -1156,6 +1167,7 @@
         "protocol/id",
         "protocol/hash",
         "protocol/pnh1",
+        "protocol/pnh1-encode",
         "protocol/pgh2",
         "protocol/ilf2",
         "protocol/ilf3",
