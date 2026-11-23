@@ -252,3 +252,10 @@ that checks the actual model components and commits to that manifest. The native
 next-use receipt here belongs to the source principal. Identifying a subsequent
 consumer requires their own authorization and receipt bound to the same model,
 task and output.
+
+
+A [separate general funded evaluation](../../evidence/cell-circuit-funded-evaluation-20261123/README.md)
+reserved a native development fee before executing the frozen two-arm Circuit.
+Its contract binds the candidate manifest, evaluation request, newly produced
+results and measured CPU. This commission uses the native service owner directly
+and preserves the scope of the historical training receipts above.

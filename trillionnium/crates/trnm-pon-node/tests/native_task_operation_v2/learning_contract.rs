@@ -179,7 +179,7 @@ fn replay(label: &str, input_path: &Path) -> String {
     store
         .complete(CLAIM, OPERATION, output, completed_head)
         .unwrap();
-    let settlement = settle_dev_output(&mut node, &mut store, &bind, reserved, output);
+    let settlement = settle_dev_output(&mut node, &mut store, &bind, reserved, output, [74; 32]);
     drop(store);
     drop(node);
 

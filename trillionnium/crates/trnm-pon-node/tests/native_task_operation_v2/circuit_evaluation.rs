@@ -1,0 +1,277 @@
+//! Run a new offline Hepta evaluation after a funded local development reservation.
+use super::*;
+use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
+use std::{env, fs, io::Write, path::PathBuf, process::Command};
+
+fn read(path: &Path) -> Value {
+    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+}
+fn write(path: &Path, value: Value) {
+    let mut f = fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)
+        .unwrap();
+    serde_json::to_writer(&mut f, &value).unwrap();
+    f.write_all(b"\n").unwrap();
+    f.sync_all().unwrap();
+}
+fn file_digest(path: &Path) -> Hash {
+    Sha256::digest(fs::read(path).unwrap()).into()
+}
+fn digest(value: &Value) -> Hash {
+    hex::decode(value.as_str().unwrap())
+        .unwrap()
+        .try_into()
+        .unwrap()
+}
+fn var(name: &str) -> String {
+    env::var(name).unwrap_or_else(|_| panic!("missing {name}"))
+}
+fn execute_service(mode: &str, job: &Path, materials: &Path, extra: &[String]) {
+    let tool =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../scripts/dev_circuit_evaluation.py");
+    let s = Command::new(var("TRNM_DEV_HEPTA_PYTHON"))
+        .arg("-B")
+        .arg(tool)
+        .arg(mode)
+        .arg(job)
+        .arg(materials)
+        .args(extra)
+        .status()
+        .unwrap();
+    assert!(s.success(), "paired evaluation {mode} failed");
+}
+
+fn evaluation_binding(
+    cfg: &Settings,
+    terms: &FundedServiceContractV1,
+    admission: &Value,
+) -> NativeTaskOperationBindingV2 {
+    let request = terms.request;
+    let task = terms.task_id(cfg.network(), cfg.parameters(), public(0), 1);
+    let contract_digest = terms.digest(cfg.network(), cfg.parameters(), public(0));
+    let claim = hash(b"dev-circuit-evaluation-claim", &[&task]);
+    let operation = hash(b"dev-circuit-evaluation-operation", &[&task, &request]);
+    let cpu_cap = admission["cpu_limit_ns"].as_u64().unwrap();
+    let examples = admission["evaluated_examples"].as_u64().unwrap();
+    NativeTaskOperationBindingV2 {
+        claim,
+        task,
+        contract_digest,
+        operation,
+        beneficiary: public(1),
+        target_scope: terms.evaluation_protocol,
+        resource_cap: NativeBudgetResourcesV1::Evaluation {
+            evaluation_cpu_ns: cpu_cap,
+            evaluated_examples: examples,
+        },
+    }
+}
+
+#[test]
+#[ignore = "requires pinned local Hepta materials, Linux user/network namespaces and an offline Python environment"]
+fn funded_offline_circuit_evaluation_reopens_paid_native_operation() {
+    let job = PathBuf::from(var("TRNM_DEV_EVAL_JOB"));
+    assert!(job.is_absolute(), "supply a fresh absolute output path");
+    fs::create_dir(&job).unwrap();
+    let materials = fs::canonicalize(var("TRNM_DEV_HEPTA_MATERIALS")).unwrap();
+    execute_service(
+        "prepare",
+        &job,
+        &materials,
+        &[
+            var("TRNM_DEV_HEPTA_SOURCE"),
+            var("TRNM_DEV_FREEZE_SHA256"),
+            var("TRNM_DEV_PAIRED_REQUEST_SHA256"),
+            var("TRNM_DEV_CIRCUIT_SHA256"),
+        ],
+    );
+    let admission_path = job.join("ADMISSION.json");
+    let admission = read(&admission_path);
+    let request = file_digest(&admission_path);
+    let cfg = settings();
+    let terms = FundedServiceContractV1 {
+        request,
+        model: digest(&admission["pins"]["candidate"]),
+        input: digest(&admission["pins"]["request"]),
+        output_spec: hash(
+            b"dev-circuit-evaluation-output-spec",
+            &[admission["output_schema"].as_str().unwrap().as_bytes()],
+        ),
+        qualified_work: hash(
+            b"dev-circuit-evaluation-service",
+            &[b"paired offline inference"],
+        ),
+        evaluation_protocol: digest(&admission["source_listing_sha256"]),
+        fee_schedule: hash(b"dev-circuit-evaluation-flat-fee", &[&AMOUNT.to_le_bytes()]),
+        dispute_policy: hash(
+            b"dev-circuit-evaluation-verdict",
+            &[b"development arbitrator"],
+        ),
+        ..contract(1).0
+    };
+    let bind = evaluation_binding(&cfg, &terms, &admission);
+    let task = bind.task;
+    let claim = bind.claim;
+    let operation = bind.operation;
+    let cpu_cap = admission["cpu_limit_ns"].as_u64().unwrap();
+    let examples = admission["evaluated_examples"].as_u64().unwrap();
+    let node_path = job.join("node");
+    let journal = job.join("operation.sqlite");
+    let mut node = open(&node_path, Backend::Authenticated).unwrap();
+    let mut store = NativeTaskOperationStoreV2::open(&journal, configuration(&cfg)).unwrap();
+    let reserve = signed(
+        &cfg,
+        0,
+        1,
+        2,
+        FundedServiceReservationV1 {
+            task,
+            contract: terms.clone(),
+        }
+        .encode()
+        .unwrap(),
+    );
+    let reservation_block = mine(&mut node, cfg.genesis(), vec![reserve.clone()]);
+    store.reserve(&mut node, bind.clone()).unwrap();
+    let reserved_state = store.snapshot(claim).unwrap().reserved;
+    assert_eq!(reserved_state.output, None);
+    assert_eq!(reserved_state.remaining, AMOUNT);
+    assert_eq!(
+        store.begin(&mut node, claim).unwrap(),
+        NativeBudgetReplayV1::New
+    );
+    let checkpoint = store.checkpoint().unwrap();
+    write(
+        &job.join("RESERVATION.json"),
+        json!({
+        "schema":"trnm-isolated-circuit-evaluation-reservation-v1",
+        "request":hex::encode(request),"task":hex::encode(task),"claim":hex::encode(claim),"operation":hex::encode(operation),
+        "terms":terms,"reserved_units":reserved_state.remaining,"reservation_block":hex::encode(reservation_block),
+        "signed_reservation":hex::encode(reserve),"m12_after_begin":{"sequence":checkpoint.sequence,"root":hex::encode(checkpoint.root)}}),
+    );
+    assert!(!job.join("evaluation").exists());
+    execute_service("execute", &job, &materials, &[]);
+    let delivery_path = job.join("DELIVERY.json");
+    let delivered = read(&delivery_path);
+    let output = file_digest(&delivery_path);
+    let result = file_digest(&job.join("evaluation/RESULT.json"));
+    let cost = file_digest(&job.join("COST.json"));
+    assert_eq!(digest(&delivered["task"]), task);
+    assert_eq!(digest(&delivered["request"]), request);
+    assert_eq!(digest(&delivered["model"]), terms.model);
+    assert_eq!(digest(&delivered["paired_request"]), terms.input);
+    assert_eq!(digest(&delivered["result_sha256"]), result);
+    assert_eq!(digest(&delivered["cost_sha256"]), cost);
+    let metered = read(&job.join("COST.json"));
+    let used = metered["cpu_ns"].as_u64().unwrap();
+    assert!((1..=cpu_cap).contains(&used));
+    assert_eq!(metered["evaluated_examples"], examples);
+    store
+        .record_costs(
+            claim,
+            NativeResourceOutcomeV1::NoGain,
+            NativeBudgetResourcesV1::Evaluation {
+                evaluation_cpu_ns: used,
+                evaluated_examples: examples,
+            },
+            NativeTaskCostBreakdownV2 {
+                training_units: 0,
+                evaluation_units: used,
+                storage_units: 0,
+                serving_units: 0,
+                unit: hash(b"dev-circuit-evaluation-cpu-unit", &[b"nanosecond"]),
+                measurement_receipt: cost,
+            },
+        )
+        .unwrap();
+    store.complete(claim, operation, output, result).unwrap();
+    let settlement = settle_dev_output(
+        &mut node,
+        &mut store,
+        &bind,
+        reservation_block,
+        output,
+        result,
+    );
+    write(
+        &job.join("SIGNED_EFFECTS.json"),
+        json!({"signed_delivery":hex::encode(&settlement.original_receipt),
+        "signed_arbitration":hex::encode(&settlement.original_payment)}),
+    );
+    drop(store);
+    drop(node);
+    let node = open(&node_path, Backend::Authenticated).unwrap();
+    let store = NativeTaskOperationStoreV2::open(&journal, configuration(&cfg)).unwrap();
+    let paid = node
+        .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+        .unwrap();
+    assert_eq!(paid["native_status"], "settled");
+    assert_eq!(paid["output"], hex::encode(output));
+    assert_eq!(paid["target_receipt_commitment"], hex::encode(result));
+    assert_eq!(paid["original_full_contract"]["terms"], json!(terms));
+    assert_eq!(
+        paid["current_payment"]["operation"],
+        hex::encode(settlement.payment_operation)
+    );
+    assert_eq!(paid["current_payment"]["gross_escrow_debit"], AMOUNT);
+    assert_eq!(paid["current_payment"]["beneficiary_credit"], AMOUNT);
+    assert_eq!(paid["remaining_native_escrow"], 0);
+    assert_eq!(
+        paid["declared_costs"]["measurement_receipt"],
+        hex::encode(cost)
+    );
+    assert_eq!(paid["declared_costs"]["evaluation_units"], used);
+    assert_eq!(paid["actual_consumer_use_verified"], false);
+    assert_eq!(paid["learning_improvement_bonus"], false);
+    assert_eq!(paid["chainwork_awarded"], 0);
+    write(&job.join("CURRENT.json"), paid);
+}
+
+#[test]
+fn retained_evaluation_reopens_the_same_native_payment_from_copied_stores() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../evidence/cell-circuit-funded-evaluation-20261123");
+    let verifier =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../scripts/dev_circuit_evaluation.py");
+    let status = Command::new("python3")
+        .arg("-B")
+        .arg(verifier)
+        .arg("verify")
+        .arg(&root)
+        .status()
+        .unwrap();
+    assert!(status.success());
+    let admission = read(&root.join("ADMISSION.json"));
+    let reservation = read(&root.join("RESERVATION.json"));
+    let terms: FundedServiceContractV1 =
+        serde_json::from_value(reservation["terms"].clone()).unwrap();
+    assert_eq!(terms.request, file_digest(&root.join("ADMISSION.json")));
+    let cfg = settings();
+    let bind = evaluation_binding(&cfg, &terms, &admission);
+    let directory = tempfile::tempdir().unwrap();
+    let node_path = directory.path().join("node");
+    fs::create_dir(&node_path).unwrap();
+    fs::copy(
+        root.join("node/native.sqlite"),
+        node_path.join("native.sqlite"),
+    )
+    .unwrap();
+    let journal = directory.path().join("operation.sqlite");
+    fs::copy(root.join("operation.sqlite"), &journal).unwrap();
+    let node = open(&node_path, Backend::Authenticated).unwrap();
+    let store = NativeTaskOperationStoreV2::open(&journal, configuration(&cfg)).unwrap();
+    let current = node
+        .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+        .unwrap();
+    assert_eq!(current, read(&root.join("CURRENT.json")));
+    let wrong = FundedServiceContractV1 {
+        model: terms.input,
+        ..terms
+    };
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &wrong, 23)
+        .is_err());
+}
