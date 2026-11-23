@@ -938,6 +938,17 @@
         "hia/tests/test_bench_report.py",
         "hia/tests/rust_bench_report_reference.rs"
       ]
+    },
+    {
+      "id": "worker-agent/audit-text",
+      "node_integration_complete": false,
+      "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
+      "source": "hia/src/worker_agent/audit_text.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_text.py",
+        "hia/tests/rust_worker_audit_text_reference.rs"
+      ]
     }
   ],
   "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
@@ -999,12 +1010,14 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "worker-agent/audit-text"
+      ],
       "legacy_path": "trillionnium/crates/trnm-worker-agent",
       "module": "M10",
       "package": "trnm-worker-agent",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
