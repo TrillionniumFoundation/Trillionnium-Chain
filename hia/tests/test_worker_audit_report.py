@@ -11,7 +11,7 @@ import tempfile
 import tomllib
 import unittest
 
-from hia.tests.native_support import NativeModule
+from hia.tests.native_support import MAX_EXTENT, NativeModule
 from hia.tests.test_worker_audit_text import (
     ADAPTER, INVALID, ORIGINAL, ORIGINAL_SHA256, ROOT, SCRATCH, SENTINEL, SHORT,
     golden, wire,
@@ -143,6 +143,23 @@ class WorkerAuditReport(unittest.TestCase):
         raw = report([(2**64 - 1, ("|" * payload_bytes, "", *(None,) * 8))])
         self.assertEqual(len(raw), maximum)
         self.check_native([(raw, 17, SHORT, b"")])
+
+    def test_foreign_output_extent_exact_fit_and_atomic_rejection(self):
+        task = 2**64 - 1
+        cells = ("", "", *(None,) * 8)
+        overhead = len(expected_report([(task, cells)]))
+        pipes, single = divmod(MAX_EXTENT - overhead, 2)
+        largest = "|" * pipes + "a" * single
+        at_limit = [(task, (largest, *cells[1:]))]
+        above_limit = [(task, (largest + "a", *cells[1:]))]
+        raw, expected = report(at_limit), expected_report(at_limit)
+        self.assertEqual(len(expected), MAX_EXTENT)
+        self.assertEqual(len(expected_report(above_limit)), MAX_EXTENT + 1)
+        self.check_native([
+            (raw, MAX_EXTENT, MAX_EXTENT, expected),
+            (raw, MAX_EXTENT - 1, SHORT, b""),
+            (report(above_limit), MAX_EXTENT, SHORT, b""),
+        ])
 
 
 if __name__ == "__main__":

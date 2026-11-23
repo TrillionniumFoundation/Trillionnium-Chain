@@ -59,6 +59,11 @@ frame and measures the exact output extent; the second writes only after all
 framing and capacity checks pass. This keeps output and scratch unchanged even
 when a malformed later record follows valid rows. Input and output must be
 separate borrowed regions, as in the standard native invocation harness.
+The current foreign-call qualification profile admits at most 1 MiB per
+buffer. An otherwise valid frame whose report exceeds that output extent
+returns insufficient capacity without publishing a partial report through
+this profile. A CLI cutover must support these reports explicitly rather than
+truncate them, weaken the bound, or silently fall back to Rust.
 The pinned compiler requires the external borrowed entry name `f0`; it is
 only a wrapper over `wa_audit_report`. The committed `.hepta` source is
 compiled directly; no generator is part of the build.
