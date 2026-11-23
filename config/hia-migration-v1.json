@@ -602,6 +602,16 @@
       ]
     },
     {
+      "id": "types/market-reputation",
+      "node_integration_complete": false,
+      "scope": "Pure M2 public basis-point score and tier classification over the original u16 domain. No legacy API replacement, production callers, Serde wire changes or routing integration.",
+      "source": "hia/src/types/market_reputation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_market_reputation.py"
+      ]
+    },
+    {
       "id": "types/request-status",
       "node_integration_complete": false,
       "scope": "Every explicit RequestStatus and RequestStateError public value operation: seven states, complete transition matrix, exact Rust Unicode trimming and ASCII normalization, original error codes and display. Queue authority, generic Serde providers, the remaining type modules and durable Node use remain separate.",
@@ -989,6 +999,7 @@
   "legacy_packages": [
     {
       "components": [
+        "types/market-reputation",
         "types/request-status",
         "types/transfer",
         "types/transcript"
