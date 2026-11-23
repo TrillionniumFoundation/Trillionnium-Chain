@@ -38,6 +38,8 @@ jobs:
         run: python3 -m unittest discover -s scripts/ci -p 'test_hia_workflow_bootstrap.py' -v
       - name: Refuse incomplete or stale additional-owner CI evidence
         run: python3 -m unittest discover -s scripts/ci -p 'test_additional_owner_binding.py' -v
+      - name: Verify the bounded Settlement evidence companion
+        run: python3 -B -m unittest discover -s scripts/ci -p 'test_settlement_companion.py' -v
       - name: Prepare the original scientific conformance environment
         run: |
           set -euo pipefail
@@ -7371,19 +7373,49 @@ jobs:
               stream.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
       - name: Execute the complete component and its independent reader
+        id: owner_execute
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify_additional_owner_ci.py run --component '${{ matrix.component }}' --root "$OWNER_ROOT" --rust-bin "$OWNER_RUST_BIN" >"$OWNER_ROOT/observations/driver.stdout.raw" 2>"$OWNER_ROOT/observations/driver.stderr.raw"
       - name: Recheck every committed source byte after success or failure
+        id: owner_source_after
         if: always()
         run: |
           set -euo pipefail
           mkdir -p "$OWNER_ROOT/observations"
           python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OWNER_ROOT/observations/source-after.json" >"$OWNER_ROOT/observations/source-after.stdout.raw" 2>"$OWNER_ROOT/observations/source-after.stderr.raw"
       - name: Bind actual execution and source closure to this head and run
+        id: owner_bind
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify_additional_owner_ci.py bind --component '${{ matrix.component }}' --root "$OWNER_ROOT" --rust-bin "$OWNER_RUST_BIN" >"$OWNER_ROOT/observations/binding.stdout.raw" 2>"$OWNER_ROOT/observations/binding.stderr.raw"
+      - name: Collect compact Settlement CI evidence without replacing the full archive
+        id: settlement_companion
+        if: always() && matrix.component == 'settlement-engine'
+        continue-on-error: true
+        env:
+          SETTLEMENT_EXECUTION_OUTCOME: ${{ steps.owner_execute.outcome }}
+          SETTLEMENT_SOURCE_AFTER_OUTCOME: ${{ steps.owner_source_after.outcome }}
+          SETTLEMENT_BINDING_OUTCOME: ${{ steps.owner_bind.outcome }}
+          SETTLEMENT_JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -m 700 -- "$RUNNER_TEMP/settlement-compact"
+          python3 -B hia/tools/settlement_companion.py \
+            --root "${OWNER_ROOT:-$RUNNER_TEMP/settlement-unavailable}" \
+            --output-dir "$RUNNER_TEMP/settlement-compact" \
+            --head "$TRNM_EXPECTED_SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --execution-outcome "$SETTLEMENT_EXECUTION_OUTCOME" --source-after-outcome "$SETTLEMENT_SOURCE_AFTER_OUTCOME" \
+            --binding-outcome "$SETTLEMENT_BINDING_OUTCOME" --job-status "$SETTLEMENT_JOB_STATUS"
+      - name: Upload the allowlisted Settlement companion separately
+        if: always() && matrix.component == 'settlement-engine' && steps.settlement_companion.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-settlement-compact-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/settlement-compact/summary.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Retain and reread complete regular observations even on failure
         if: always()
         run: |
