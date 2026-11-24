@@ -11,26 +11,19 @@ import tomllib
 import unittest
 
 from hia.tests.native_support import NativeModule
+from hia.platform.release_file_shadow.owner import (
+    BLOCK, BOOT, CCH_LEN, SENTINEL, SHA512_STATE, STREAM, WORK,
+    Budget, Candidate, _stream,
+)
 from hia.tests.test_release_artifact_header import (
-    ALIASES, BAD, NATIVE as RAC1, RUST as RELEASE, frame as rac1_request, unique,
+    ALIASES, NATIVE as RAC1, RUST as RELEASE, unique,
 )
 from hia.tests.test_release_content_claim_frame import (
     INSTANCE, PROFILE, PROTOCOL, ROOT, SOURCE as CCH1, packet as cch1_request,
 )
-from hia.tests.test_release_raw_artifact_sha256 import (
-    SOURCE as SHA256, STATE_SIZE as SHA256_STATE, FINISH as SHA256_FINAL,
-    chunk as sha256_update, start as sha256_init, sample,
-)
+from hia.tests.test_release_raw_artifact_sha256 import sample
 
-BOOT = RAC1.with_name("sha512_transcript_bootstrap.hepta")
-SHA512 = ROOT / "hia/src/crypto/sha512_stream.hepta"
 ORIGINAL_FIXTURE = Path(__file__).with_name("rust_release_transcript_reference.rs")
-SHA512_STATE = 131232
-DOMAIN = b"TRNM/CPQ1/FullContent/SHA512/v1\0"
-BLOCK = 8192
-CCH_LEN = 149
-SENTINEL = b"\xa5"
-WORK = b"\xc7"
 ZERO_DIGEST = b"\0" * 32
 
 
@@ -129,9 +122,12 @@ class Case:
     fault_at: int = 0xFFFF
     fault_mode: int = 0
 
+    def candidate(self):
+        return Candidate(self.size, self.locator, self.name, self.media, *ALIASES[1:],
+                         self.profile, self.instance, self.generation, self.kind)
+
     def metadata(self):
-        return rac1_request(name=self.name, media=self.media, size=self.size,
-                            aliases=(self.locator, *ALIASES[1:]))
+        return self.candidate().rac1_request()
 
     def original_input(self):
         return (self.profile + self.instance
@@ -151,7 +147,7 @@ class ReleaseTranscriptComposition(unittest.TestCase):
         for backend in ("direct", "selfhost"):
             cls.modules[backend] = {source: cls.enterClassContext(
                 NativeModule(source, backend=backend, byte_exports=("f0",)))
-                for source in (RAC1, CCH1, BOOT, SHA256, SHA512)}
+                for source in STREAM}
 
     def call(self, modules, source, frame, output, state, status=0):
         answer = modules[source].call("f0", [frame, output, state]).require_returned()
@@ -165,89 +161,26 @@ class ReleaseTranscriptComposition(unittest.TestCase):
         self.assertEqual(report.stderr, b"")
         return report.stdout
 
-    def observed(self, modules, case, reader=None):
-        """Read budget, reader, EOF, and comparison here are the test owner."""
-        calls = []
-        if reader is None:
-            reader = io.BytesIO(case.data)
-        reads = int(case.precharge != 0)
-        used = case.precharge + reads
-        exhausted = False
+    def observed(self, modules, case):
+        """Run fault/short-read fixtures through the shared streaming owner."""
+        reader = io.BytesIO(case.data)
+        budget = Budget(case.max_reads, case.max_bytes)
+        if case.precharge:
+            self.assertTrue(budget.reserve(case.precharge))
+        index = 0
 
-        def encoded(status, claim=b""):
-            return (struct.pack("<BBQQQH", status, exhausted, reads, used, reader.tell(), len(calls))
-                    + b"".join(struct.pack("<H", x) for x in calls) + claim)
+        def read(width):
+            nonlocal index
+            i, index = index, index + 1
+            if case.fault_at == i:
+                if case.fault_mode == 2:
+                    return bytes(width + 1)
+                raise OSError("synthetic original-reader failure")
+            return reader.read(min(width, case.step))
 
-        if case.kind != 2:
-            return encoded(1)
-        meta = case.metadata()
-        output, scratch = SENTINEL * 900, WORK * 9
-        result = modules[RAC1].call("f0", [meta, output, scratch]).require_returned()
-        self.assertEqual(result.arguments[0], meta)
-        self.assertEqual(result.arguments[2], scratch)
-        if result.value == BAD:
-            self.assertEqual(result.arguments[1], output)
-            return encoded(1)
-        length = result.value
-        self.assertTrue(127 <= length <= 893)
-        self.assertEqual(result.arguments[1][length:], output[length:])
-        rac = result.arguments[1][:length]
-
-        charge = length + case.size + 1
-        if reads + 1 > case.max_reads or used + charge > case.max_bytes:
-            reads, used, exhausted = case.max_reads, case.max_bytes, True
-            return encoded(2)
-        reads += 1
-        used += charge
-
-        context = dict(profile=case.profile, instance=case.instance, generation=case.generation,
-                       raw_size=case.size, header_size=length)
-        cch, still = self.call(modules, CCH1, cch1_request(**context), SENTINEL * CCH_LEN,
-                               scratch, status=CCH_LEN)
-        self.assertEqual(still, scratch)
-        out, sha512_state = self.call(modules, BOOT, cch + rac, b"", WORK * SHA512_STATE)
-        self.assertEqual(out, b"")
-        out, sha256_state = self.call(modules, SHA256, sha256_init(case.size), b"",
-                                      WORK * SHA256_STATE)
-        self.assertEqual(out, b"")
-        feed = bytearray()
-        remaining = case.size
-        while True:
-            wanted = min(remaining, BLOCK) if remaining else 1
-            fault = len(calls) == case.fault_at
-            calls.append(wanted)
-            # Deliberate invalid count is an I/O error in the LegacyHashReader
-            # before generic observe_reader could classify it as Encoding.
-            if fault:
-                return encoded(4)
-            part = reader.read(min(wanted, case.step))
-            if not remaining:
-                if part:
-                    return encoded(5)
-                break
-            if not part:
-                return encoded(3)
-            feed.extend(part)
-            remaining -= len(part)
-            out, sha512_state = self.call(modules, SHA512,
-                struct.pack("<QQQ", 2, 24, len(part)) + part, SENTINEL * 64, sha512_state)
-            self.assertEqual(out, SENTINEL * 64)
-            out, sha256_state = self.call(modules, SHA256, sha256_update(part), b"", sha256_state)
-            self.assertEqual(out, b"")
-        # Only actual one-byte EOF probe completion makes these digest outputs
-        # eligible. A trailing byte is never supplied to the claim computation.
-        digest, _ = self.call(modules, SHA512, struct.pack("<Q", 4),
-                              SENTINEL * 64, sha512_state)
-        locator, _ = self.call(modules, SHA256, SHA256_FINAL, SENTINEL * 32, sha256_state)
-        self.assertEqual(locator, hashlib.sha256(feed).digest())
-        self.assertEqual(digest, hashlib.sha512(DOMAIN + cch + rac + feed).digest())
-        if locator != case.locator:
-            return encoded(6)
-        claim, still = self.call(modules, CCH1, cch1_request(digest, **context),
-                                 SENTINEL * 213, scratch, status=213)
-        self.assertEqual(still, scratch)
-        self.assertEqual(claim, cch + digest)
-        return encoded(0, claim)
+        result = _stream(modules, case.candidate(), budget, read)
+        self.assertEqual(result.consumed, reader.tell())
+        return result.transcript_record()
 
     def case(self, data):
         return Case(data, len(data), hashlib.sha256(data).digest())

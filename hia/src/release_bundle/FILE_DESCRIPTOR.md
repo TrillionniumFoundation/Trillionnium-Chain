@@ -40,7 +40,8 @@ renames completed before the first sample, refused nonregular/offset/size
 inputs, legacy mismatch, and each stat field independently.
 
 HIA's currently pinned borrowed-buffer ABI neither acquires the descriptor nor
-performs stat/read/seek. Python owns the strictly synthetic host IO boundary
-here. Matching observations do not prove an immutable snapshot or fresh
-pathname/root custody, and this is not a production reader or a release
-authorization. The Rust boundary remains authoritative.
+performs stat/read/seek. The [bounded streaming shadow](../../platform/release_file_shadow/README.md)
+owns a private read-only duplicate for the full test call and returns no claim
+until the final native metadata comparison. Matching observations do not prove
+an immutable snapshot or fresh pathname/root custody, and this is not a
+production reader or a release authorization. The Rust boundary remains authoritative.

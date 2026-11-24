@@ -4,35 +4,20 @@ from dataclasses import replace
 import hashlib
 import os
 from pathlib import Path
-import stat
 import struct
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from hia.tests.native_support import NativeModule
 from hia.tests.test_release_artifact_header import ALIASES
 from hia.tests import test_release_transcript_composition as transcript
 
-SOURCE = transcript.RAC1.with_name("file_descriptor.hepta")
-HEAD = b"RFD1"
-RULES = {"ok": 0, "wire": 100, "identity": 101}
-STAT = struct.Struct("<QQI4xQqqqq")
-
-
-def record(info):
-    secs, nanos = divmod(info.st_mtime_ns, 1_000_000_000)
-    changed, changed_nanos = divmod(info.st_ctime_ns, 1_000_000_000)
-    return STAT.pack(info.st_dev, info.st_ino, info.st_mode, info.st_size,
-                     secs, nanos, changed, changed_nanos)
-
-
-def before_frame(expected, position, snap):
-    return HEAD + struct.pack("<IQQ", 1, expected, position) + snap
-
-
-def after_frame(before, after):
-    return HEAD + struct.pack("<I", 2) + before + after
+from hia.platform.release_file_shadow.owner import (
+    DESCRIPTOR as SOURCE, FILE_IDENTITY, LIMIT, SPENT, STREAM, Budget,
+    HeldReleaseOwner, after_frame, before_frame,
+)
 
 
 def rust_input(case, scenario):
@@ -74,7 +59,7 @@ class ReleaseFileDescriptor(unittest.TestCase):
     def setUpClass(cls):
         temporary = Path(cls.enterClassContext(tempfile.TemporaryDirectory(prefix="trnm-held-rust-oracle-")))
         cls.rust = transcript.original_reference(temporary, held_file=True)
-        sources = (SOURCE, transcript.RAC1, transcript.CCH1, transcript.BOOT, transcript.SHA256, transcript.SHA512)
+        sources = (SOURCE, *STREAM)
         cls.modules = {backend: {source: cls.enterClassContext(
             NativeModule(source, backend=backend, byte_exports=("f0",))) for source in sources}
             for backend in ("direct", "selfhost")}
@@ -90,26 +75,18 @@ class ReleaseFileDescriptor(unittest.TestCase):
         self.assertIn(len(data), (162, 162 + 213))
         return struct.unpack_from("<BBQQQQ", data), data[34:98], data[98:162], data[162:]
 
-    def observe_native(self, modules, case, scenario, head_expect, status_expect):
-        with held_fixture(case, scenario) as (fd, file):
-            meta = os.fstat(fd)
-            before = record(meta)
-            start = file.tell() if file is not None and stat.S_ISREG(meta.st_mode) and meta.st_size == case.size else 0
-            pre = before_frame(case.size, start, before)
-            self.assert_checked(modules[SOURCE], pre, head_expect)
-            if head_expect != 0:
-                return (head_expect, 0, start, start, 0, 0), b""
-
-            result = transcript.ReleaseTranscriptComposition.observed(self, modules, case, reader=file)
-            code, full, reads, charge, consumed, calls = struct.unpack_from("<BBQQQH", result)
-            self.assertEqual(code, status_expect)
-            self.assertEqual(file.tell(), consumed)
-            claim = result[28 + 2 * calls:]
-            if not code:
-                self.assert_checked(modules[SOURCE], after_frame(before, record(os.fstat(fd))), 0)
-            else:
-                self.assertEqual(claim, b"")
-            return (code, full, start, consumed, reads, charge), claim
+    def observe_native(self, modules, case, scenario, _, status_expect):
+        with held_fixture(case, scenario) as (fd, file), HeldReleaseOwner(fd) as owner:
+            budget = Budget(case.max_reads, case.max_bytes)
+            result = owner.observe(modules, case.candidate(), budget)
+            self.assertEqual(result.status, status_expect)
+            self.assertIsNone(owner._fd)
+            if file is not None:
+                self.assertEqual(file.tell(), result.consumed)
+            if result.status:
+                self.assertEqual(result.claim, b"")
+            return ((result.status, result.exhausted, result.initial_offset, result.consumed,
+                     result.reads_reserved, result.bytes_reserved), result.claim)
 
     def assert_checked(self, native, frame, status):
         canaries = [frame, b"unchanged-proposal", b"unchanged-scratch"]
@@ -145,6 +122,74 @@ class ReleaseFileDescriptor(unittest.TestCase):
                         self.assertEqual(before, after)
                         self.assert_checked(modules[SOURCE], after_frame(before, after), 0)
                     self.assertEqual(self.observe_native(modules, *row), (status, claim))
+
+    def test_held_owner_is_single_use_and_bounded_without_partial_claim(self):
+        data = transcript.sample(transcript.BLOCK + 9)
+        item = transcript.Case(data, len(data), hashlib.sha256(data).digest(), name=b"node")
+        for backend, modules in self.modules.items():
+            with self.subTest(backend=backend), held_fixture(item, 0) as (fd, file), HeldReleaseOwner(fd) as owned:
+                ledger = Budget(1, 1 << 20)
+                owned_fd = owned._fd
+                result = owned.observe(modules, item.candidate(), ledger, max_calls=1)
+                self.assertEqual((result.status, result.requested, result.claim),
+                                 (LIMIT, (transcript.BLOCK,), b""))
+                self.assertEqual(file.tell(), result.consumed)
+                self.assertEqual(result.consumed, transcript.BLOCK)
+                self.assertEqual(ledger.counts[1], 1)
+                with self.assertRaises(OSError):
+                    os.fstat(owned_fd)
+                spent = owned.observe(modules, item.candidate(), ledger)
+                self.assertEqual((spent.status, spent.requested, spent.claim), (SPENT, (), b""))
+                self.assertEqual(ledger.counts[1], 1)
+
+            # The same ledger is sticky across independently held descriptors.
+            for _ in range(2):
+                with held_fixture(item, 0) as (fd, file), HeldReleaseOwner(fd) as owned:
+                    refused = owned.observe(modules, item.candidate(), ledger)
+                    self.assertEqual((refused.status, refused.exhausted, refused.requested, refused.claim),
+                                     (2, True, (), b""))
+                    self.assertEqual(file.tell(), 0)
+
+            with held_fixture(item, 0) as (fd, file), HeldReleaseOwner(fd) as owned:
+                elapsed = owned.observe(modules, item.candidate(), Budget(1, 1 << 20), allowance=1e-12)
+                self.assertEqual((elapsed.status, elapsed.requested, elapsed.claim), (LIMIT, (), b""))
+                self.assertEqual(file.tell(), 0)
+
+            with tempfile.TemporaryFile(mode="w+b") as file, HeldReleaseOwner(file.fileno()) as owned:
+                file.write(data)
+                file.seek(0)
+                refused = owned.observe(modules, item.candidate(), Budget(1, 1 << 20))
+                self.assertEqual((refused.status, refused.requested, refused.claim), (FILE_IDENTITY, (), b""))
+                self.assertEqual(file.tell(), 0)
+
+    def test_changed_post_record_discards_completed_claim(self):
+        data = b"short held release fixture"
+        item = transcript.Case(data, len(data), hashlib.sha256(data).digest(), name=b"node")
+        for backend, modules in self.modules.items():
+            with self.subTest(backend=backend), held_fixture(item, 0) as (fd, file), \
+                    held_fixture(item, 0) as (other_fd, _), HeldReleaseOwner(fd) as owned:
+                probe = os.fstat
+                private_fd = owned._fd
+                existing, other = probe(fd), probe(other_fd)
+                self.assertNotEqual((existing.st_dev, existing.st_ino), (other.st_dev, other.st_ino))
+                observed_count = 0
+
+                def mismatch(descriptor):
+                    nonlocal observed_count
+                    if descriptor != private_fd:
+                        return probe(descriptor)
+                    observed_count += 1
+                    # Boundary test double: a real record from another synthetic fd,
+                    # not an actual race or a replacement during the genuine read.
+                    return other if observed_count == 2 else probe(descriptor)
+
+                with patch("hia.platform.release_file_shadow.owner.os.fstat", side_effect=mismatch):
+                    result = owned.observe(modules, item.candidate(), Budget(1, 1 << 20))
+                self.assertEqual(observed_count, 2)
+                self.assertEqual(result.consumed, len(data))
+                self.assertEqual(file.tell(), len(data))
+                self.assertEqual((result.status, result.requested, result.claim),
+                                 (FILE_IDENTITY, (len(data), 1), b""))
 
     def test_each_typed_metadata_field_and_exact_extent(self):
         data = b"disposable metadata fixture"
