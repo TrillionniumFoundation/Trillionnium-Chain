@@ -2188,6 +2188,18 @@
       ]
     },
     {
+      "id": "worker-agent/owned-sealed-audit-query-fixture",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Static selfhost-only Linux x86-64 offline fixture holds two original benign raw audit artifacts in the same bounded sealed stdin and calls exact WID1 and WER1 then unchanged WTQ2 without host field parsing. Original locked Rust full stdout oracle through original anonymous pipe only; no native named paths, credentials, policy, services or production activation.",
+      "sources": [
+        "hia/platform/worker_audit_sealed_query/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_worker_audit_sealed_query.py"
+      ]
+    },
+    {
       "id": "platform/os-fixture",
       "node_integration_complete": false,
       "retirement_accepted": false,

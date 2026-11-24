@@ -1,0 +1,287 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_sealed_task_query_v1
+fn f0(kernel:readbuf,image:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(kernel:readbuf,image:mutbuf,scratch:mutbuf)
+  input_n:usize = buffer.len(kernel)
+  image_cap:usize = buffer.len(image)
+  pinned_n:usize = const() {"value":293543}
+  required:usize = const() {"value":294847}
+  exact:bool = compare.eq(input_n,pinned_n)
+  fits:bool = compare.ge(image_cap,required)
+  ready:bool = bool.and(exact,fits)
+  branch ready pack(kernel,image,input_n) refuse()
+block pack(src:readbuf,out:mutbuf,n:usize)
+  start:usize = const() {"value":0}
+  stop:usize = const() {"value":1304}
+  nul:u8 = const() {"value":0}
+  _ = buffer.fill_range(out,start,stop,nul)
+  _elf_header:u64 = call(out) {"function":"elf_header"}
+  _fd_checks:u64 = call(out) {"function":"fd_checks"}
+  _anonymous_buffers:u64 = call(out) {"function":"anonymous_buffers"}
+  _read_exact:u64 = call(out) {"function":"read_exact"}
+  _eof_and_call:u64 = call(out) {"function":"eof_and_call"}
+  _stdout:u64 = call(out) {"function":"stdout"}
+  _retry_and_exit:u64 = call(out) {"function":"retry_and_exit"}
+  _thunk_0:u64 = call(out) {"function":"query_thunk_0"}
+  _thunk_1:u64 = call(out) {"function":"query_thunk_1"}
+  _thunk_2:u64 = call(out) {"function":"query_thunk_2"}
+  _thunk_3:u64 = call(out) {"function":"query_thunk_3"}
+  from0:usize = const() {"value":0}
+  to_prefix:usize = const() {"value":1304}
+  jump copy(src,out,n,from0,to_prefix)
+block copy(c_src:readbuf,c_out:mutbuf,c_n:usize,c_at:usize,c_dst:usize)
+  done:bool = compare.eq(c_at,c_n)
+  branch done success() byte(c_src,c_out,c_n,c_at,c_dst)
+block byte(b_src:readbuf,b_out:mutbuf,b_n:usize,b_at:usize,b_dst:usize)
+  value:u8 = buffer.load(b_src,b_at)
+  _ = buffer.store(b_out,b_dst,value)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(b_at,one)
+  dst_next:usize = int.add.wrap(b_dst,one)
+  jump copy(b_src,b_out,b_n,next,dst_next)
+block success()
+  image_n:u32 = const() {"value":294847}
+  ret(image_n)
+block refuse()
+  invalid:u32 = const() {"value":4294967294}
+  ret(invalid)
+end
+
+fn elf_header(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  offset_0:u64 = const() {"value":0}
+  word_0:u64 = const() {"value":282584257676671}
+  _at_0:u64 = call(out,offset_0,word_0) {"function":"put_le64"}
+  offset_16:u64 = const() {"value":16}
+  word_16:u64 = const() {"value":4299030530}
+  _at_16:u64 = call(out,offset_16,word_16) {"function":"put_le64"}
+  offset_24:u64 = const() {"value":24}
+  word_24:u64 = const() {"value":4194480}
+  _at_24:u64 = call(out,offset_24,word_24) {"function":"put_le64"}
+  offset_32:u64 = const() {"value":32}
+  word_32:u64 = const() {"value":64}
+  _at_32:u64 = call(out,offset_32,word_32) {"function":"put_le64"}
+  offset_48:u64 = const() {"value":48}
+  word_48:u64 = const() {"value":15762873573703680}
+  _at_48:u64 = call(out,offset_48,word_48) {"function":"put_le64"}
+  offset_56:u64 = const() {"value":56}
+  word_56:u64 = const() {"value":2}
+  _at_56:u64 = call(out,offset_56,word_56) {"function":"put_le64"}
+  offset_64:u64 = const() {"value":64}
+  word_64:u64 = const() {"value":21474836481}
+  _at_64:u64 = call(out,offset_64,word_64) {"function":"put_le64"}
+  offset_80:u64 = const() {"value":80}
+  word_80:u64 = const() {"value":4194304}
+  _at_80:u64 = call(out,offset_80,word_80) {"function":"put_le64"}
+  offset_88:u64 = const() {"value":88}
+  word_88:u64 = const() {"value":4194304}
+  _at_88:u64 = call(out,offset_88,word_88) {"function":"put_le64"}
+  offset_96:u64 = const() {"value":96}
+  word_96:u64 = const() {"value":294847}
+  _at_96:u64 = call(out,offset_96,word_96) {"function":"put_le64"}
+  offset_104:u64 = const() {"value":104}
+  word_104:u64 = const() {"value":294847}
+  _at_104:u64 = call(out,offset_104,word_104) {"function":"put_le64"}
+  offset_112:u64 = const() {"value":112}
+  word_112:u64 = const() {"value":4096}
+  _at_112:u64 = call(out,offset_112,word_112) {"function":"put_le64"}
+  offset_120:u64 = const() {"value":120}
+  word_120:u64 = const() {"value":27455186257}
+  _at_120:u64 = call(out,offset_120,word_120) {"function":"put_le64"}
+  offset_168:u64 = const() {"value":168}
+  word_168:u64 = const() {"value":16}
+  _at_168:u64 = call(out,offset_168,word_168) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
+
+fn query_thunk_0(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  at_856:u64 = const() {"value":856}
+  bytes_856:u64 = const() {"value":6287401393389130817}
+  _store_856:u64 = call(out,at_856,bytes_856) {"function":"put_le64"}
+  at_864:u64 = const() {"value":864}
+  bytes_864:u64 = const() {"value":70229416393605960}
+  _store_864:u64 = call(out,at_864,bytes_864) {"function":"put_le64"}
+  at_872:u64 = const() {"value":872}
+  bytes_872:u64 = const() {"value":444774179934208}
+  _store_872:u64 = call(out,at_872,bytes_872) {"function":"put_le64"}
+  at_880:u64 = const() {"value":880}
+  bytes_880:u64 = const() {"value":439808837110016}
+  _store_880:u64 = call(out,at_880,bytes_880) {"function":"put_le64"}
+  at_888:u64 = const() {"value":888}
+  bytes_888:u64 = const() {"value":9459811017317385487}
+  _store_888:u64 = call(out,at_888,bytes_888) {"function":"put_le64"}
+  at_896:u64 = const() {"value":896}
+  bytes_896:u64 = const() {"value":1638564567294}
+  _store_896:u64 = call(out,at_896,bytes_896) {"function":"put_le64"}
+  at_904:u64 = const() {"value":904}
+  bytes_904:u64 = const() {"value":1080865010097226056}
+  _store_904:u64 = call(out,at_904,bytes_904) {"function":"put_le64"}
+  at_912:u64 = const() {"value":912}
+  bytes_912:u64 = const() {"value":18197156033716121735}
+  _store_912:u64 = call(out,at_912,bytes_912) {"function":"put_le64"}
+  at_920:u64 = const() {"value":920}
+  bytes_920:u64 = const() {"value":9892656349514664265}
+  _store_920:u64 = call(out,at_920,bytes_920) {"function":"put_le64"}
+  at_928:u64 = const() {"value":928}
+  bytes_928:u64 = const() {"value":6003675591407124983}
+  _store_928:u64 = call(out,at_928,bytes_928) {"function":"put_le64"}
+  at_936:u64 = const() {"value":936}
+  bytes_936:u64 = const() {"value":4683743618211843889}
+  _store_936:u64 = call(out,at_936,bytes_936) {"function":"put_le64"}
+  at_944:u64 = const() {"value":944}
+  bytes_944:u64 = const() {"value":5369714623587318915}
+  _store_944:u64 = call(out,at_944,bytes_944) {"function":"put_le64"}
+  at_952:u64 = const() {"value":952}
+  bytes_952:u64 = const() {"value":298438840194957313}
+  _store_952:u64 = call(out,at_952,bytes_952) {"function":"put_le64"}
+  at_960:u64 = const() {"value":960}
+  bytes_960:u64 = const() {"value":348004274468995}
+  _store_960:u64 = call(out,at_960,bytes_960) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
+
+fn query_thunk_1(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  at_968:u64 = const() {"value":968}
+  bytes_968:u64 = const() {"value":9892165533649551616}
+  _store_968:u64 = call(out,at_968,bytes_968) {"function":"put_le64"}
+  at_976:u64 = const() {"value":976}
+  bytes_976:u64 = const() {"value":1163147552364176452}
+  _store_976:u64 = call(out,at_976,bytes_976) {"function":"put_le64"}
+  at_984:u64 = const() {"value":984}
+  bytes_984:u64 = const() {"value":5267171434304635208}
+  _store_984:u64 = call(out,at_984,bytes_984) {"function":"put_le64"}
+  at_992:u64 = const() {"value":992}
+  bytes_992:u64 = const() {"value":1226298083129}
+  _store_992:u64 = call(out,at_992,bytes_992) {"function":"put_le64"}
+  at_1000:u64 = const() {"value":1000}
+  bytes_1000:u64 = const() {"value":326871682126220105}
+  _store_1000:u64 = call(out,at_1000,bytes_1000) {"function":"put_le64"}
+  at_1008:u64 = const() {"value":1008}
+  bytes_1008:u64 = const() {"value":10036298314582673700}
+  _store_1008:u64 = call(out,at_1008,bytes_1008) {"function":"put_le64"}
+  at_1016:u64 = const() {"value":1016}
+  bytes_1016:u64 = const() {"value":164434048197748}
+  _store_1016:u64 = call(out,at_1016,bytes_1016) {"function":"put_le64"}
+  at_1024:u64 = const() {"value":1024}
+  bytes_1024:u64 = const() {"value":5548435239819870209}
+  _store_1024:u64 = call(out,at_1024,bytes_1024) {"function":"put_le64"}
+  at_1032:u64 = const() {"value":1032}
+  bytes_1032:u64 = const() {"value":439807759216777}
+  _store_1032:u64 = call(out,at_1032,bytes_1032) {"function":"put_le64"}
+  at_1040:u64 = const() {"value":1040}
+  bytes_1040:u64 = const() {"value":2952253591784217832}
+  _store_1040:u64 = call(out,at_1040,bytes_1040) {"function":"put_le64"}
+  at_1048:u64 = const() {"value":1048}
+  bytes_1048:u64 = const() {"value":2899473735111639567}
+  _store_1048:u64 = call(out,at_1048,bytes_1048) {"function":"put_le64"}
+  at_1056:u64 = const() {"value":1056}
+  bytes_1056:u64 = const() {"value":242472630354036}
+  _store_1056:u64 = call(out,at_1056,bytes_1056) {"function":"put_le64"}
+  at_1064:u64 = const() {"value":1064}
+  bytes_1064:u64 = const() {"value":281478156075264}
+  _store_1064:u64 = call(out,at_1064,bytes_1064) {"function":"put_le64"}
+  at_1072:u64 = const() {"value":1072}
+  bytes_1072:u64 = const() {"value":57285720571136343}
+  _store_1072:u64 = call(out,at_1072,bytes_1072) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
+
+fn query_thunk_2(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  at_1080:u64 = const() {"value":1080}
+  bytes_1080:u64 = const() {"value":2613364629342584832}
+  _store_1080:u64 = call(out,at_1080,bytes_1080) {"function":"put_le64"}
+  at_1088:u64 = const() {"value":1088}
+  bytes_1088:u64 = const() {"value":236465525424474392}
+  _store_1088:u64 = call(out,at_1088,bytes_1088) {"function":"put_le64"}
+  at_1096:u64 = const() {"value":1096}
+  bytes_1096:u64 = const() {"value":1163182745326199932}
+  _store_1096:u64 = call(out,at_1096,bytes_1096) {"function":"put_le64"}
+  at_1104:u64 = const() {"value":1104}
+  bytes_1104:u64 = const() {"value":281478095866188}
+  _store_1104:u64 = call(out,at_1104,bytes_1104) {"function":"put_le64"}
+  at_1112:u64 = const() {"value":1112}
+  bytes_1112:u64 = const() {"value":112590786359494989}
+  _store_1112:u64 = call(out,at_1112,bytes_1112) {"function":"put_le64"}
+  at_1120:u64 = const() {"value":1120}
+  bytes_1120:u64 = const() {"value":17907156543366948864}
+  _store_1120:u64 = call(out,at_1120,bytes_1120) {"function":"put_le64"}
+  at_1128:u64 = const() {"value":1128}
+  bytes_1128:u64 = const() {"value":4395513238838710024}
+  _store_1128:u64 = call(out,at_1128,bytes_1128) {"function":"put_le64"}
+  at_1136:u64 = const() {"value":1136}
+  bytes_1136:u64 = const() {"value":39273520257105920}
+  _store_1136:u64 = call(out,at_1136,bytes_1136) {"function":"put_le64"}
+  at_1144:u64 = const() {"value":1144}
+  bytes_1144:u64 = const() {"value":4708232474478575616}
+  _store_1144:u64 = call(out,at_1144,bytes_1144) {"function":"put_le64"}
+  at_1152:u64 = const() {"value":1152}
+  bytes_1152:u64 = const() {"value":539103277396}
+  _store_1152:u64 = call(out,at_1152,bytes_1152) {"function":"put_le64"}
+  at_1160:u64 = const() {"value":1160}
+  bytes_1160:u64 = const() {"value":5197193846765174921}
+  _store_1160:u64 = call(out,at_1160,bytes_1160) {"function":"put_le64"}
+  at_1168:u64 = const() {"value":1168}
+  bytes_1168:u64 = const() {"value":918878669649495043}
+  _store_1168:u64 = call(out,at_1168,bytes_1168) {"function":"put_le64"}
+  at_1176:u64 = const() {"value":1176}
+  bytes_1176:u64 = const() {"value":9731997324065914184}
+  _store_1176:u64 = call(out,at_1176,bytes_1176) {"function":"put_le64"}
+  at_1184:u64 = const() {"value":1184}
+  bytes_1184:u64 = const() {"value":2613364626112381025}
+  _store_1184:u64 = call(out,at_1184,bytes_1184) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
+
+fn query_thunk_3(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  at_1192:u64 = const() {"value":1192}
+  bytes_1192:u64 = const() {"value":72058373797444648}
+  _store_1192:u64 = call(out,at_1192,bytes_1192) {"function":"put_le64"}
+  at_1200:u64 = const() {"value":1200}
+  bytes_1200:u64 = const() {"value":2615618628833856512}
+  _store_1200:u64 = call(out,at_1200,bytes_1200) {"function":"put_le64"}
+  at_1208:u64 = const() {"value":1208}
+  bytes_1208:u64 = const() {"value":5860404706041721624}
+  _store_1208:u64 = call(out,at_1208,bytes_1208) {"function":"put_le64"}
+  at_1216:u64 = const() {"value":1216}
+  bytes_1216:u64 = const() {"value":5154730568034502706}
+  _store_1216:u64 = call(out,at_1216,bytes_1216) {"function":"put_le64"}
+  at_1224:u64 = const() {"value":1224}
+  bytes_1224:u64 = const() {"value":8470506793389475844}
+  _store_1224:u64 = call(out,at_1224,bytes_1224) {"function":"put_le64"}
+  at_1232:u64 = const() {"value":1232}
+  bytes_1232:u64 = const() {"value":9459846357566834692}
+  _store_1232:u64 = call(out,at_1232,bytes_1232) {"function":"put_le64"}
+  at_1240:u64 = const() {"value":1240}
+  bytes_1240:u64 = const() {"value":1739590722630386921}
+  _store_1240:u64 = call(out,at_1240,bytes_1240) {"function":"put_le64"}
+  at_1248:u64 = const() {"value":1248}
+  bytes_1248:u64 = const() {"value":8397886089440528265}
+  _store_1248:u64 = call(out,at_1248,bytes_1248) {"function":"put_le64"}
+  at_1256:u64 = const() {"value":1256}
+  bytes_1256:u64 = const() {"value":204416976955428}
+  _store_1256:u64 = call(out,at_1256,bytes_1256) {"function":"put_le64"}
+  at_1264:u64 = const() {"value":1264}
+  bytes_1264:u64 = const() {"value":52145372042952720}
+  _store_1264:u64 = call(out,at_1264,bytes_1264) {"function":"put_le64"}
+  at_1272:u64 = const() {"value":1272}
+  bytes_1272:u64 = const() {"value":679497783312784}
+  _store_1272:u64 = call(out,at_1272,bytes_1272) {"function":"put_le64"}
+  at_1280:u64 = const() {"value":1280}
+  bytes_1280:u64 = const() {"value":18446664908872353257}
+  _store_1280:u64 = call(out,at_1280,bytes_1280) {"function":"put_le64"}
+  at_1288:u64 = const() {"value":1288}
+  bytes_1288:u64 = const() {"value":6863829723756691455}
+  _store_1288:u64 = call(out,at_1288,bytes_1288) {"function":"put_le64"}
+  at_1296:u64 = const() {"value":1296}
+  bytes_1296:u64 = const() {"value":10431282597727395393}
+  _store_1296:u64 = call(out,at_1296,bytes_1296) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
