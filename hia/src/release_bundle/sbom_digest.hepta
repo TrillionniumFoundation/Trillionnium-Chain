@@ -1,0 +1,370 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_sbom_digest_v0
+fn f0(input:readbuf,digest:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,digest:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  header:usize = const() {"value":2}
+  has_header:bool = compare.ge(size,header)
+  branch has_header extent(input,digest,scratch,size) malformed()
+block extent(ei:readbuf,eo:mutbuf,ew:mutbuf,es:usize)
+  start:usize = const() {"value":0}
+  count:u64 = call(ei,start) {"function":"rb_le16"}
+  maximum:u64 = const() {"value":64}
+  bounded:bool = compare.le(count,maximum)
+  row_bytes:u64 = const() {"value":1351}
+  slot_bytes:u64 = int.mul.wrap(count,row_bytes)
+  overhead:u64 = const() {"value":2}
+  expected:u64 = int.add.wrap(slot_bytes,overhead)
+  given:u64 = int.cast(es) {"mode":"wrap"}
+  exact:bool = compare.eq(expected,given)
+  admissible:bool = bool.and(exact,bounded)
+  branch admissible check_row(ei,eo,ew,count,overhead,expected) malformed()
+block check_row(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64,crow:u64,climit:u64)
+  at_end:bool = compare.eq(crow,climit)
+  branch at_end capacity(ci,co,cw,cn) validate_row(ci,co,cw,cn,crow,climit)
+block validate_row(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vrow:u64,vlimit:u64)
+  valid:bool = call(vi,vrow) {"function":"sb_well_formed"}
+  width:u64 = const() {"value":1351}
+  next_row:u64 = int.add.wrap(vrow,width)
+  branch valid check_row(vi,vo,vw,vn,next_row,vlimit) malformed()
+block capacity(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
+  output_size:usize = buffer.len(po)
+  work_size:usize = buffer.len(pw)
+  need_output:usize = const() {"value":32}
+  need_work:usize = const() {"value":4868}
+  output_fits:bool = compare.ge(output_size,need_output)
+  scratch_fits:bool = compare.ge(work_size,need_work)
+  fits:bool = bool.and(output_fits,scratch_fits)
+  branch fits init(pi,po,pw,pn) short()
+block init(ii:readbuf,io:mutbuf,iw:mutbuf,in_rows:u64)
+  d0:u64 = const() {"value":7810774672474010228}
+  d1:u64 = const() {"value":8026104129035395429}
+  d2:u64 = const() {"value":813051501}
+  p0:u64 = const() {"value":2800}
+  p1:u64 = const() {"value":2808}
+  p2:u64 = const() {"value":2816}
+  _w0:u64 = call(iw,p0,d0) {"function":"tr_put"}
+  _w1:u64 = call(iw,p1,d1) {"function":"tr_put"}
+  _w2:u64 = call(iw,p2,d2) {"function":"tr_put"}
+  beginning:u64 = const() {"value":2820}
+  zero:u64 = const() {"value":0}
+  jump choose(ii,io,iw,in_rows,zero,zero,beginning)
+block choose(si:readbuf,so:mutbuf,sw:mutbuf,sn:u64,done:u64,used:u64,aggregate_end:u64)
+  complete:bool = compare.eq(done,sn)
+  branch complete hash_set(so,sw,aggregate_end) select_row(si,so,sw,sn,done,used,aggregate_end)
+block select_row(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rd:u64,ru:u64,re:u64)
+  idx:u64 = call(ri,rn,ru) {"function":"sb_select"}
+  found:bool = compare.lt(idx,rn)
+  branch found hash_row(ri,ro,rw,rn,rd,ru,re,idx) hash_error()
+block hash_row(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64,hd:u64,hu:u64,he:u64,hidx:u64)
+  row:u64 = call(hidx) {"function":"sb_row"}
+  member_result:u64 = call(hi,hw,row) {"function":"sb_digest_member"}
+  ok_zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(member_result,ok_zero)
+  branch hashed append(hi,ho,hw,hn,hd,hu,he,hidx) hash_error()
+block append(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ad:u64,au:u64,ae:u64,aidx:u64)
+  after:u64 = call(aw,ae) {"function":"sb_append_digest"}
+  one:u64 = const() {"value":1}
+  next_done:u64 = int.add.wrap(ad,one)
+  bit:u64 = int.shl.checked(one,aidx)
+  next_used:u64 = bit.or(au,bit)
+  jump choose(ai,ao,aw,an,next_done,next_used,after)
+block hash_set(to:mutbuf,tw:mutbuf,te:u64)
+  at:u64 = const() {"value":2800}
+  length:u64 = int.sub.wrap(te,at)
+  initialized:u64 = call(tw) {"function":"tr_sha_init"}
+  seed_zero:u64 = const() {"value":0}
+  seeded:bool = compare.eq(initialized,seed_zero)
+  branch seeded hash_transcript(to,tw,at,length) hash_error()
+block hash_transcript(so2:mutbuf,sw2:mutbuf,sat:u64,sl:u64)
+  result:u64 = call(sw2,sat,sl) {"function":"sb_hash_transcript"}
+  digest_zero:u64 = const() {"value":0}
+  digested:bool = compare.eq(result,digest_zero)
+  branch digested publish(so2,sw2,digest_zero) hash_error()
+block publish(pout:mutbuf,pwork:mutbuf,pzero:u64)
+  _copied:u64 = call(pwork,pout,pzero) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block malformed()
+  format_error:u32 = const() {"value":100}
+  ret(format_error)
+block short()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+block hash_error()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
+end
+
+fn sb_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  width:u64 = const() {"value":1351}
+  header:u64 = const() {"value":2}
+  rows:u64 = int.mul.wrap(index,width)
+  begin:u64 = int.add.wrap(rows,header)
+  ret(begin)
+end
+
+fn sb_width(input:readbuf,row:u64,relative:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64,relative:u64)
+  raw:u64 = int.add.wrap(row,relative)
+  pos:usize = int.cast(raw) {"mode":"wrap"}
+  width:u64 = call(input,pos) {"function":"rb_le16"}
+  ret(width)
+end
+
+fn sb_well_formed(input:readbuf,row:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  zero:u64 = const() {"value":0}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  six:u64 = const() {"value":6}
+  n:u64 = call(input,row,zero) {"function":"sb_width"}
+  v:u64 = call(input,row,two) {"function":"sb_width"}
+  l:u64 = call(input,row,four) {"function":"sb_width"}
+  name_limit:u64 = const() {"value":512}
+  version_limit:u64 = const() {"value":256}
+  license_limit:u64 = const() {"value":512}
+  n_ok:bool = compare.le(n,name_limit)
+  v_ok:bool = compare.le(v,version_limit)
+  l_ok:bool = compare.le(l,license_limit)
+  nv_ok:bool = bool.and(n_ok,v_ok)
+  text_fits:bool = bool.and(nv_ok,l_ok)
+  flag_at:u64 = int.add.wrap(row,six)
+  flag_idx:usize = int.cast(flag_at) {"mode":"wrap"}
+  flag:u8 = buffer.load(input,flag_idx)
+  max_flag:u8 = const() {"value":1}
+  flag_ok:bool = compare.le(flag,max_flag)
+  valid:bool = bool.and(flag_ok,text_fits)
+  ret(valid)
+end
+
+fn sb_select(input:readbuf,count:u64,used:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,used:u64)
+  start:u64 = const() {"value":0}
+  jump scan(input,count,used,start,count)
+block scan(si:readbuf,sn:u64,su:u64,idx:u64,best:u64)
+  end:bool = compare.eq(idx,sn)
+  branch end finish(best) available(si,sn,su,idx,best)
+block available(ai:readbuf,an:u64,au:u64,aidx:u64,abest:u64)
+  one:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one,aidx)
+  bit_set:u64 = bit.and(au,bit)
+  zero:u64 = const() {"value":0}
+  skip:bool = compare.ne(bit_set,zero)
+  branch skip advance(ai,an,au,aidx,abest) inspect(ai,an,au,aidx,abest)
+block inspect(ii:readbuf,in_rows:u64,iu:u64,iidx:u64,ibest:u64)
+  no_best:bool = compare.eq(ibest,in_rows)
+  branch no_best advance(ii,in_rows,iu,iidx,iidx) compare_rows(ii,in_rows,iu,iidx,ibest)
+block compare_rows(ci:readbuf,cn:u64,cu:u64,cidx:u64,cbest:u64)
+  left:u64 = call(cidx) {"function":"sb_row"}
+  right:u64 = call(cbest) {"function":"sb_row"}
+  order:u64 = call(ci,left,right) {"function":"sb_ord"}
+  less:u64 = const() {"value":0}
+  earlier:bool = compare.eq(order,less)
+  chosen:u64 = select(earlier,cidx,cbest)
+  jump advance(ci,cn,cu,cidx,chosen)
+block advance(ni:readbuf,nn:u64,nu:u64,nidx:u64,nbest:u64)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(nidx,step)
+  jump scan(ni,nn,nu,next,nbest)
+block finish(answer:u64)
+  ret(answer)
+end
+
+fn sb_compare(input:readbuf,left:u64,right:u64,left_len:u64,right_len:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64,left_len:u64,right_len:u64)
+  left_short:bool = compare.lt(left_len,right_len)
+  bytes:u64 = select(left_short,left_len,right_len)
+  zero:u64 = const() {"value":0}
+  jump check(input,left,right,zero,bytes,left_len,right_len)
+block check(ci:readbuf,cl:u64,cr:u64,index:u64,common:u64,clen:u64,crlen:u64)
+  prefix_equal:bool = compare.eq(index,common)
+  branch prefix_equal order_lengths(clen,crlen) octets(ci,cl,cr,index,common,clen,crlen)
+block octets(oi:readbuf,ol:u64,or_:u64,pos:u64,olimit:u64,ollen:u64,orlen:u64)
+  left_pos:u64 = int.add.wrap(ol,pos)
+  right_pos:u64 = int.add.wrap(or_,pos)
+  lx:usize = int.cast(left_pos) {"mode":"wrap"}
+  rx:usize = int.cast(right_pos) {"mode":"wrap"}
+  a:u8 = buffer.load(oi,lx)
+  b:u8 = buffer.load(oi,rx)
+  equal:bool = compare.eq(a,b)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(pos,one)
+  branch equal check(oi,ol,or_,next,olimit,ollen,orlen) order_octets(a,b)
+block order_octets(o1:u8,o2:u8)
+  less:bool = compare.lt(o1,o2)
+  low:u64 = const() {"value":0}
+  high:u64 = const() {"value":2}
+  byte_order:u64 = select(less,low,high)
+  ret(byte_order)
+block order_lengths(a_len:u64,b_len:u64)
+  shorter:bool = compare.lt(a_len,b_len)
+  same:bool = compare.eq(a_len,b_len)
+  lo:u64 = const() {"value":0}
+  eq:u64 = const() {"value":1}
+  hi:u64 = const() {"value":2}
+  non_equal_order:u64 = select(shorter,lo,hi)
+  length_order:u64 = select(same,eq,non_equal_order)
+  ret(length_order)
+end
+
+fn sb_compare_field(input:readbuf,left:u64,right:u64,offset:u64,left_len:u64,right_len:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64,offset:u64,left_len:u64,right_len:u64)
+  a:u64 = int.add.wrap(left,offset)
+  b:u64 = int.add.wrap(right,offset)
+  order:u64 = call(input,a,b,left_len,right_len) {"function":"sb_compare"}
+  ret(order)
+end
+
+fn sb_hash_transcript(work:mutbuf,start:u64,size:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,start:u64,size:u64)
+  status:u64 = call(work,start,size) {"function":"tr_sha_update_work"}
+  zero:u64 = const() {"value":0}
+  written:bool = compare.eq(status,zero)
+  branch written finish(work) refused(status)
+block finish(state:mutbuf)
+  done:u64 = call(state) {"function":"tr_sha_final"}
+  ret(done)
+block refused(error:u64)
+  ret(error)
+end
+
+fn sb_copy_digest(work:mutbuf,target:mutbuf,destination:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,target:mutbuf,destination:u64)
+  begin:u64 = const() {"value":1168}
+  jump copy(work,target,begin,destination)
+block copy(w:mutbuf,t:mutbuf,src:u64,dst:u64)
+  bytes:u64 = call(w,src) {"function":"tr_get"}
+  _written:u64 = call(t,dst,bytes) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_source:u64 = int.add.wrap(src,eight)
+  next_target:u64 = int.add.wrap(dst,eight)
+  end:u64 = const() {"value":1200}
+  done:bool = compare.eq(next_source,end)
+  branch done finish(next_target) copy(w,t,next_source,next_target)
+block finish(after:u64)
+  ret(after)
+end
+
+fn sb_append_digest(work:mutbuf,destination:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,destination:u64)
+  begin:u64 = const() {"value":1168}
+  jump copy(work,begin,destination)
+block copy(w:mutbuf,src:u64,dst:u64)
+  bytes:u64 = call(w,src) {"function":"tr_get"}
+  _written:u64 = call(w,dst,bytes) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_source:u64 = int.add.wrap(src,eight)
+  next_target:u64 = int.add.wrap(dst,eight)
+  end:u64 = const() {"value":1200}
+  done:bool = compare.eq(next_source,end)
+  branch done finish(next_target) copy(w,next_source,next_target)
+block finish(after:u64)
+  ret(after)
+end
+
+fn sb_ord(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(name)
+block name(input:readbuf,left:u64,right:u64)
+  name_pos:u64 = const() {"value":71}
+  name_width_at:u64 = const() {"value":0}
+  name_n1:u64 = call(input,left,name_width_at) {"function":"sb_width"}
+  name_n2:u64 = call(input,right,name_width_at) {"function":"sb_width"}
+  name_order:u64 = call(input,left,right,name_pos,name_n1,name_n2) {"function":"sb_compare_field"}
+  name_eq:u64 = const() {"value":1}
+  name_tie:bool = compare.eq(name_order,name_eq)
+  branch name_tie version(input,left,right) done(name_order)
+block version(version_in:readbuf,version_left:u64,version_right:u64)
+  version_pos:u64 = const() {"value":583}
+  version_width_at:u64 = const() {"value":2}
+  version_n1:u64 = call(version_in,version_left,version_width_at) {"function":"sb_width"}
+  version_n2:u64 = call(version_in,version_right,version_width_at) {"function":"sb_width"}
+  version_order:u64 = call(version_in,version_left,version_right,version_pos,version_n1,version_n2) {"function":"sb_compare_field"}
+  version_eq:u64 = const() {"value":1}
+  version_tie:bool = compare.eq(version_order,version_eq)
+  branch version_tie source(version_in,version_left,version_right) done(version_order)
+block source(source_in:readbuf,source_left:u64,source_right:u64)
+  source_pos:u64 = const() {"value":7}
+  source_size:u64 = const() {"value":32}
+  source_order:u64 = call(source_in,source_left,source_right,source_pos,source_size,source_size) {"function":"sb_compare_field"}
+  source_eq:u64 = const() {"value":1}
+  source_tie:bool = compare.eq(source_order,source_eq)
+  branch source_tie checksum(source_in,source_left,source_right) done(source_order)
+block checksum(checksum_in:readbuf,checksum_left:u64,checksum_right:u64)
+  checksum_pos:u64 = const() {"value":39}
+  checksum_size:u64 = const() {"value":32}
+  checksum_order:u64 = call(checksum_in,checksum_left,checksum_right,checksum_pos,checksum_size,checksum_size) {"function":"sb_compare_field"}
+  checksum_eq:u64 = const() {"value":1}
+  checksum_tie:bool = compare.eq(checksum_order,checksum_eq)
+  branch checksum_tie license(checksum_in,checksum_left,checksum_right) done(checksum_order)
+block license(license_in:readbuf,license_left:u64,license_right:u64)
+  license_pos:u64 = const() {"value":839}
+  license_width_at:u64 = const() {"value":4}
+  license_n1:u64 = call(license_in,license_left,license_width_at) {"function":"sb_width"}
+  license_n2:u64 = call(license_in,license_right,license_width_at) {"function":"sb_width"}
+  license_order:u64 = call(license_in,license_left,license_right,license_pos,license_n1,license_n2) {"function":"sb_compare_field"}
+  license_eq:u64 = const() {"value":1}
+  license_tie:bool = compare.eq(license_order,license_eq)
+  branch license_tie direct(license_in,license_left,license_right) done(license_order)
+block direct(direct_in:readbuf,direct_left:u64,direct_right:u64)
+  direct_pos:u64 = const() {"value":6}
+  direct_size:u64 = const() {"value":1}
+  direct_order:u64 = call(direct_in,direct_left,direct_right,direct_pos,direct_size,direct_size) {"function":"sb_compare_field"}
+  ret(direct_order)
+block done(order:u64)
+  ret(order)
+end
+
+fn sb_digest_member(input:readbuf,work:mutbuf,row:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,row:u64)
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(initialized,zero)
+  branch ready transcript(input,work,row) refused(initialized)
+block transcript(ti:readbuf,tw:mutbuf,tr:u64)
+  start:u64 = const() {"value":1208}
+  domain_len:u64 = const() {"value":2017612633061982208}
+  _len:u64 = call(tw,start,domain_len) {"function":"tr_put"}
+  p0:u64 = const() {"value":1216}
+  p1:u64 = const() {"value":1224}
+  p2:u64 = const() {"value":1232}
+  p3:u64 = const() {"value":1240}
+  d0:u64 = const() {"value":7810774672474010228}
+  d1:u64 = const() {"value":8026104129035395429}
+  d2:u64 = const() {"value":7449353333228186989}
+  d3:u64 = const() {"value":813051493}
+  _d0:u64 = call(tw,p0,d0) {"function":"tr_put"}
+  _d1:u64 = call(tw,p1,d1) {"function":"tr_put"}
+  _d2:u64 = call(tw,p2,d2) {"function":"tr_put"}
+  _d3:u64 = call(tw,p3,d3) {"function":"tr_put"}
+  zero2:u64 = const() {"value":0}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  flag_at:u64 = const() {"value":6}
+  src_at:u64 = const() {"value":7}
+  checksum_at:u64 = const() {"value":39}
+  name_at:u64 = const() {"value":71}
+  version_at:u64 = const() {"value":583}
+  license_at:u64 = const() {"value":839}
+  name_pos:u64 = int.add.wrap(tr,name_at)
+  version_pos:u64 = int.add.wrap(tr,version_at)
+  src_pos:u64 = int.add.wrap(tr,src_at)
+  checksum_pos:u64 = int.add.wrap(tr,checksum_at)
+  license_pos:u64 = int.add.wrap(tr,license_at)
+  flag_pos:u64 = int.add.wrap(tr,flag_at)
+  n:u64 = call(ti,tr,zero2) {"function":"sb_width"}
+  v:u64 = call(ti,tr,two) {"function":"sb_width"}
+  l:u64 = call(ti,tr,four) {"function":"sb_width"}
+  first:u64 = const() {"value":1244}
+  name_end:u64 = call(ti,tw,name_pos,first,n) {"function":"rb_text"}
+  version_end:u64 = call(ti,tw,version_pos,name_end,v) {"function":"rb_text"}
+  src_end:u64 = call(ti,tw,src_pos,version_end) {"function":"rb_part"}
+  checksum_end:u64 = call(ti,tw,checksum_pos,src_end) {"function":"rb_part"}
+  license_end:u64 = call(ti,tw,license_pos,checksum_end,l) {"function":"rb_text"}
+  one:u64 = const() {"value":1}
+  finish:u64 = call(ti,tw,flag_pos,license_end,one) {"function":"rb_text"}
+  width:u64 = int.sub.wrap(finish,start)
+  outcome:u64 = call(tw,start,width) {"function":"sb_hash_transcript"}
+  ret(outcome)
+block refused(error:u64)
+  ret(error)
+end

@@ -5591,6 +5591,32 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/release_bundle/sbom_digest.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": ["es_copy_field"],
+        "source": "src/release_bundle/exact_source.hepta"
+      },
+      {
+        "functions": ["rb_le16", "rb_part", "rb_text"],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      }
+    ],
     "src/release_bundle/sha512_transcript_bootstrap.hepta": [
       {
         "functions": ["rac_read_le"],

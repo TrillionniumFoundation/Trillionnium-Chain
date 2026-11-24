@@ -1045,6 +1045,17 @@
       ]
     },
     {
+      "id": "release-bundle/sbom-digest",
+      "node_integration_complete": false,
+      "scope": "Native V0 SBOM member and aggregate digests over a bounded borrowed roster. Sorts all original typed fields and hashes every member, including repeats, in Rust-derived order. Arithmetic only; complete SBOM membership, field validation, original maximum cardinality and production integration remain outside this slice.",
+      "source": "hia/src/release_bundle/sbom_digest.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_sbom_digest.py",
+        "hia/tests/rust_release_sbom_digest_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/sha512-transcript-bootstrap",
       "node_integration_complete": false,
       "scope": "Native SHA-512 release transcript bootstrap over exact CCH1 and RAC1 bytes with the original fixed domain. A test-only in-memory owner composes native raw SHA-256, SHA-512 and claim bytes and compares the exact Rust observer control flow; production budget, I/O, custody, and authority remain unchanged and unported.",
@@ -1327,6 +1338,7 @@
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
         "release-bundle/raw-artifact-sha256",
+        "release-bundle/sbom-digest",
         "release-bundle/sha512-transcript-bootstrap"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
