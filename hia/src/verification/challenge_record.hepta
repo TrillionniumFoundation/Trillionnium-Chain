@@ -43,17 +43,8 @@ block capacity(ci:readbuf,co:mutbuf,cw:mutbuf,cop:u64,result:u64)
   enough:bool = bool.and(enough_out,enough_work)
   branch enough prepare(ci,co,cw,cop,result) insufficient()
 block prepare(pi:readbuf,po:mutbuf,pw:mutbuf,pop:u64,pr:u64)
-  appeal_op:u64 = const() {"value":5}
-  appeals:bool = compare.eq(pop,appeal_op)
-  arg_at:u64 = const() {"value":16}
-  old_dec_at:u64 = const() {"value":144}
-  old_app_at:u64 = const() {"value":152}
-  width:u64 = const() {"value":8}
-  new_deadline:u64 = call(pi,arg_at,width) {"function":"rac_read_le"}
-  old_dec:u64 = call(pi,old_dec_at,width) {"function":"rac_read_le"}
-  old_app:u64 = call(pi,old_app_at,width) {"function":"rac_read_le"}
-  ddeadline:u64 = select(appeals,new_deadline,old_dec)
-  adeadline:u64 = select(appeals,new_deadline,old_app)
+  record_at:u64 = const() {"value":24}
+  ddeadline:u64,adeadline:u64 = call(pi,record_at,pop) {"function":"cx_deadlines"}
   hash_status:u64 = call(pi,pw,pr,ddeadline,adeadline) {"function":"cx_hash"}
   no_hash_error:u64 = const() {"value":0}
   complete:bool = compare.eq(hash_status,no_hash_error)
@@ -159,28 +150,35 @@ block open(oi:readbuf)
   opened:u64 = call(oi) {"function":"cx_open"}
   ret(opened)
 block dispatch(di:readbuf,dop:u64)
+  at:u64 = const() {"value":24}
+  answer:u64 = call(di,dop,at) {"function":"cx_step_at"}
+  ret(answer)
+end
+
+fn cx_step_at(input:readbuf,op:u64,record:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64,record:u64)
   three:u64 = const() {"value":3}
-  ordinary:bool = compare.le(dop,three)
-  branch ordinary progress(di,dop) others(di,dop)
-block progress(pi:readbuf,pop:u64)
-  progressed:u64 = call(pi,pop) {"function":"cx_progress"}
+  ordinary:bool = compare.le(op,three)
+  branch ordinary progress(input,op,record) others(input,op,record)
+block progress(pi:readbuf,pop:u64,pr:u64)
+  progressed:u64 = call(pi,pop,pr) {"function":"cx_progress"}
   ret(progressed)
-block others(ri:readbuf,rop:u64)
+block others(ri:readbuf,rop:u64,rr:u64)
   four:u64 = const() {"value":4}
   is_decide:bool = compare.eq(rop,four)
-  branch is_decide decide(ri) after_decide(ri,rop)
-block decide(ai:readbuf)
-  decided:u64 = call(ai) {"function":"cx_decide"}
+  branch is_decide decide(ri,rr) after_decide(ri,rop,rr)
+block decide(ai:readbuf,ar:u64)
+  decided:u64 = call(ai,ar) {"function":"cx_decide"}
   ret(decided)
-block after_decide(bi:readbuf,bop:u64)
+block after_decide(bi:readbuf,bop:u64,br:u64)
   five:u64 = const() {"value":5}
   is_appeal:bool = compare.eq(bop,five)
-  branch is_appeal appeal(bi) after_appeal(bi,bop)
-block appeal(ei:readbuf)
-  appealed:u64 = call(ei) {"function":"cx_appeal"}
+  branch is_appeal appeal(bi,br) after_appeal(bi,bop,br)
+block appeal(ei:readbuf,er:u64)
+  appealed:u64 = call(ei,er) {"function":"cx_appeal"}
   ret(appealed)
-block after_appeal(ki:readbuf,kop:u64)
-  terminal:u64 = call(ki,kop) {"function":"cx_terminal"}
+block after_appeal(ki:readbuf,kop:u64,kr:u64)
+  terminal:u64 = call(ki,kop,kr) {"function":"cx_terminal"}
   ret(terminal)
 end
 fn cx_open(input:readbuf) -> (u64) effects(read,trap) entry(entry)
@@ -228,22 +226,27 @@ block late()
   failure_late:u64 = const() {"value":18}
   ret(failure_late)
 end
-fn cx_progress(input:readbuf,op:u64) -> (u64) effects(read,trap) entry(entry)
-block entry(input:readbuf,op:u64)
+fn cx_progress(input:readbuf,op:u64,record:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64,record:u64)
   eight:u64 = const() {"value":8}
   one:u64 = const() {"value":1}
   three:u64 = const() {"value":3}
   height_at:u64 = const() {"value":8}
   height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
-  evidence_at:u64 = const() {"value":128}
+  evidence_offset:u64 = const() {"value":104}
+  evidence_at:u64 = int.add.wrap(record,evidence_offset)
   evidence:u64 = call(input,evidence_at,eight) {"function":"rac_read_le"}
-  response_at:u64 = const() {"value":136}
+  response_offset:u64 = const() {"value":112}
+  response_at:u64 = int.add.wrap(record,response_offset)
   response:u64 = call(input,response_at,eight) {"function":"rac_read_le"}
-  phase_at:u64 = const() {"value":160}
+  phase_offset:u64 = const() {"value":136}
+  phase_at:u64 = int.add.wrap(record,phase_offset)
   phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
-  used_at:u64 = const() {"value":161}
+  used_offset:u64 = const() {"value":137}
+  used_at:u64 = int.add.wrap(record,used_offset)
   used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
-  outcome_at:u64 = const() {"value":162}
+  outcome_offset:u64 = const() {"value":138}
+  outcome_at:u64 = int.add.wrap(record,outcome_offset)
   outcome:u64 = call(input,outcome_at,one) {"function":"rac_read_le"}
   before:u64 = int.sub.wrap(op,one)
   on_phase:bool = compare.eq(phase,before)
@@ -263,8 +266,8 @@ block late()
   failure_late:u64 = const() {"value":18}
   ret(failure_late)
 end
-fn cx_decide(input:readbuf) -> (u64) effects(read,trap) entry(entry)
-block entry(input:readbuf)
+fn cx_decide(input:readbuf,record:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,record:u64)
   eight:u64 = const() {"value":8}
   one:u64 = const() {"value":1}
   two:u64 = const() {"value":2}
@@ -274,11 +277,14 @@ block entry(input:readbuf)
   six:u64 = const() {"value":6}
   height_at:u64 = const() {"value":8}
   height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
-  deadline_at:u64 = const() {"value":144}
+  deadline_offset:u64 = const() {"value":120}
+  deadline_at:u64 = int.add.wrap(record,deadline_offset)
   deadline:u64 = call(input,deadline_at,eight) {"function":"rac_read_le"}
-  phase_at:u64 = const() {"value":160}
+  phase_offset:u64 = const() {"value":136}
+  phase_at:u64 = int.add.wrap(record,phase_offset)
   phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
-  used_at:u64 = const() {"value":161}
+  used_offset:u64 = const() {"value":137}
+  used_at:u64 = int.add.wrap(record,used_offset)
   used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
   choice_at:u64 = const() {"value":5}
   choice:u64 = call(input,choice_at,one) {"function":"rac_read_le"}
@@ -304,8 +310,8 @@ block late()
   failure_late:u64 = const() {"value":18}
   ret(failure_late)
 end
-fn cx_appeal(input:readbuf) -> (u64) effects(read,trap) entry(entry)
-block entry(input:readbuf)
+fn cx_appeal(input:readbuf,record:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,record:u64)
   zero:u64 = const() {"value":0}
   eight:u64 = const() {"value":8}
   one:u64 = const() {"value":1}
@@ -316,11 +322,14 @@ block entry(input:readbuf)
   height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
   offered_at:u64 = const() {"value":16}
   offered:u64 = call(input,offered_at,eight) {"function":"rac_read_le"}
-  deadline_at:u64 = const() {"value":152}
+  deadline_offset:u64 = const() {"value":128}
+  deadline_at:u64 = int.add.wrap(record,deadline_offset)
   deadline:u64 = call(input,deadline_at,eight) {"function":"rac_read_le"}
-  phase_at:u64 = const() {"value":160}
+  phase_offset:u64 = const() {"value":136}
+  phase_at:u64 = int.add.wrap(record,phase_offset)
   phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
-  used_at:u64 = const() {"value":161}
+  used_offset:u64 = const() {"value":137}
+  used_at:u64 = int.add.wrap(record,used_offset)
   used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
   first_appeal:bool = compare.eq(used,zero)
   upheld:bool = compare.eq(phase,four)
@@ -347,8 +356,8 @@ block late()
   failure_late:u64 = const() {"value":18}
   ret(failure_late)
 end
-fn cx_terminal(input:readbuf,op:u64) -> (u64) effects(read,trap) entry(entry)
-block entry(input:readbuf,op:u64)
+fn cx_terminal(input:readbuf,op:u64,record:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64,record:u64)
   eight:u64 = const() {"value":8}
   one:u64 = const() {"value":1}
   two:u64 = const() {"value":2}
@@ -359,19 +368,26 @@ block entry(input:readbuf,op:u64)
   seven:u64 = const() {"value":7}
   height_at:u64 = const() {"value":8}
   height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
-  evidence_at:u64 = const() {"value":128}
+  evidence_offset:u64 = const() {"value":104}
+  evidence_at:u64 = int.add.wrap(record,evidence_offset)
   evidence:u64 = call(input,evidence_at,eight) {"function":"rac_read_le"}
-  response_at:u64 = const() {"value":136}
+  response_offset:u64 = const() {"value":112}
+  response_at:u64 = int.add.wrap(record,response_offset)
   response:u64 = call(input,response_at,eight) {"function":"rac_read_le"}
-  decision_at:u64 = const() {"value":144}
+  decision_offset:u64 = const() {"value":120}
+  decision_at:u64 = int.add.wrap(record,decision_offset)
   decision:u64 = call(input,decision_at,eight) {"function":"rac_read_le"}
-  appeal_at:u64 = const() {"value":152}
+  appeal_offset:u64 = const() {"value":128}
+  appeal_at:u64 = int.add.wrap(record,appeal_offset)
   appeal:u64 = call(input,appeal_at,eight) {"function":"rac_read_le"}
-  phase_at:u64 = const() {"value":160}
+  phase_offset:u64 = const() {"value":136}
+  phase_at:u64 = int.add.wrap(record,phase_offset)
   phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
-  used_at:u64 = const() {"value":161}
+  used_offset:u64 = const() {"value":137}
+  used_at:u64 = int.add.wrap(record,used_offset)
   used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
-  outcome_at:u64 = const() {"value":162}
+  outcome_offset:u64 = const() {"value":138}
+  outcome_at:u64 = int.add.wrap(record,outcome_offset)
   outcome:u64 = call(input,outcome_at,one) {"function":"rac_read_le"}
   open_group:bool = compare.le(phase,one)
   responds:bool = compare.eq(phase,two)
@@ -415,6 +431,25 @@ block late()
   failure_late:u64 = const() {"value":18}
   ret(failure_late)
 end
+
+fn cx_deadlines(input:readbuf,record:u64,action:u64) -> (u64,u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,record:u64,action:u64)
+  appeal_op:u64 = const() {"value":5}
+  rewrites:bool = compare.eq(action,appeal_op)
+  argument_at:u64 = const() {"value":16}
+  dec_offset:u64 = const() {"value":120}
+  app_offset:u64 = const() {"value":128}
+  dec_at:u64 = int.add.wrap(record,dec_offset)
+  app_at:u64 = int.add.wrap(record,app_offset)
+  width:u64 = const() {"value":8}
+  next:u64 = call(input,argument_at,width) {"function":"rac_read_le"}
+  old_dec:u64 = call(input,dec_at,width) {"function":"rac_read_le"}
+  old_app:u64 = call(input,app_at,width) {"function":"rac_read_le"}
+  dec:u64 = select(rewrites,next,old_dec)
+  app:u64 = select(rewrites,next,old_app)
+  ret(dec,app)
+end
+
 fn cx_pack(phase:u64,used:u64,outcome:u64) -> (u64) effects(trap) entry(entry)
 block entry(phase:u64,used:u64,outcome:u64)
   phase_shift:u64 = const() {"value":8}

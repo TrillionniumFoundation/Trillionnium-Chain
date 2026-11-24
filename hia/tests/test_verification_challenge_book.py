@@ -22,6 +22,11 @@ def query(result, *, height=0):
     return metadata[:8] + struct.pack("<Q", height) + metadata[16:]
 
 
+def apply(result, operation, *, height=0, argument=0, choice=0):
+    return challenge.frame(operation, bytes(32) + result + bytes(109),
+                           height=height, argument=argument, choice=choice)
+
+
 def book_frame(metadata, operation, records=b""):
     assert len(metadata) == 197 and len(records) % REC == 0
     return metadata + struct.pack("<4sBBH", b"VCB1", operation, len(records) // REC, 0) + records
@@ -115,16 +120,16 @@ class VerificationChallengeBook(unittest.TestCase):
             for i, ((op, meta), row) in enumerate(zip(requests, expected, strict=True)):
                 with self.subTest(backend=backend, i=i):
                     code, payload = row
-                    if op == 2:
-                        self.assertEqual(code, 0)
-                        # Record transition is the already-qualified per-record owner, not this API.
-                        roster = payload[8:-REC]
-                        continue
                     n = len(payload) + 11 if not code else 173
                     result = self.command(module, book_frame(meta, op, roster), row, n, WORK + 13)
                     if not code:
                         if op == 1:
                             self.assertEqual(result[8:-REC], roster)
+                        elif op == 2:
+                            slot = result[1] * REC
+                            self.assertEqual(result[8:8 + slot], roster[:slot])
+                            self.assertEqual(result[8 + slot + REC:-REC], roster[slot + REC:])
+                            self.assertEqual(result[8 + slot:8 + slot + REC], result[-REC:])
                         roster = result[8:-REC]
         return expected
 
@@ -140,12 +145,64 @@ class VerificationChallengeBook(unittest.TestCase):
             (0, opening(word(10), identifier=ZERO, times=(6, 0, 0, 0, 0))),
             (0, opening(word(11), times=(6, 0, 0, 0, 0))),
             (1, query(lower)), (1, query(mid)), (1, query(high)),
-            (1, query(word(10))), (2, query(low, height=11)), (1, query(low)),
+            (1, query(word(10))), (2, apply(low, challenge.EVIDENCE, height=11)), (1, query(low)),
         ]
         initial = self.trajectory(rows)
         self.assertEqual([c for c, _ in initial], [21,0,0,0,0,0,20,1,18,0,0,0,21,0,0])
         self.assertEqual(initial[14][1][-REC:][136], 1)
         self.assertEqual(initial[5][1][-REC:][136], 0)
+
+    def test_one_call_transition_keeps_independent_book_members(self):
+        a, b, c, d = word(16), word(19), word(17), word(15)
+        open_a, open_b, open_c, open_d = [(0, opening(k)) for k in (a, b, c, d)]
+        act = lambda result, operation, **kw: (2, apply(result, operation, **kw))
+        rows = [
+            open_a, open_b, open_c, open_d,
+            act(ZERO, challenge.RESPONSE, height=HI),
+            act(a, challenge.RESPONSE, height=HI),
+            act(c, challenge.EVIDENCE, height=12),
+            act(a, challenge.EVIDENCE, height=11),
+            act(a, challenge.BEGIN, height=17),
+            act(b, challenge.WITHDRAW),
+            act(c, challenge.EXPIRE, height=11),
+            act(c, challenge.EXPIRE, height=12),
+            act(a, challenge.RESPONSE, height=17),
+            act(a, challenge.DECIDE, height=HI, choice=3),
+            act(a, challenge.DECIDE, height=23, choice=2),
+            act(a, challenge.FINALIZE, height=29),
+            (1, query(c)),
+            act(a, challenge.APPEAL, height=29, argument=28),
+            act(a, challenge.APPEAL, height=29, argument=31),
+            act(a, challenge.APPEAL, height=HI, argument=1),
+            act(a, challenge.DECIDE, height=31, choice=1),
+            act(a, challenge.FINALIZE, height=32),
+            act(d, challenge.EVIDENCE, height=0),
+            (1, query(b)), (1, query(c)), (1, query(a)), (1, query(d)),
+        ]
+        expected = self.trajectory(rows)
+        self.assertEqual([x[0] for x in expected],
+                         [0,0,0,0,21,17,18,0,0,0,18,0,0,17,0,17,0,18,0,19,0,0,0,0,0,0,0])
+        self.assertEqual([x[1][-REC:][136:139] for x in expected[-4:]],
+                         [bytes([7,0,3]), bytes([7,0,4]), bytes([7,1,1]), bytes([1,0,0])])
+        prior = expected[11][1][8:-REC]
+        good = apply(a, challenge.RESPONSE, height=17)
+        raw = book_frame(good, 2, prior)
+        patch = lambda at,n: raw[:at] + bytes([n]) + raw[at+1:]
+        n = len(expected[12][1])
+        controls = [
+            (raw, (102, b""), n-1, WORK), (raw, (102, b""), n, WORK-1),
+            (patch(4, 0), (100, b""), n, WORK), (patch(4, 9), (100, b""), n, WORK),
+            (patch(5, 3), (100, b""), n, WORK), (patch(7, 1), (100, b""), n, WORK),
+            (patch(16, 1), (100, b""), n, WORK), (patch(24, 1), (100, b""), n, WORK),
+            (patch(88, 1), (100, b""), n, WORK), (patch(196, 1), (100, b""), n, WORK),
+            (book_frame(good, 1, prior), (100, b""), n, WORK),
+            (book_frame(good, 3, prior), (100, b""), n, WORK),
+            (patch(205 + 172, 1 ^ raw[205 + 172]), (101, b""), n, WORK),
+            (raw, expected[12], n, WORK),
+        ]
+        for module in self.modules.values():
+            for wire, row, output, scratch in controls:
+                self.command(module, wire, row, output, scratch)
 
     def test_all_private_maximum_rows_and_exact_bounded_capacity(self):
         rng = random.Random(7490)

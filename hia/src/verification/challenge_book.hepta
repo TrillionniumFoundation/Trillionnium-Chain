@@ -21,8 +21,8 @@ block framing(fi:readbuf,fo:mutbuf,fw:mutbuf,size_f:usize)
   magic_ok:bool = compare.eq(magic,want)
   op_at:u64 = const() {"value":201}
   op:u64 = call(fi,op_at,one_f) {"function":"rac_read_le"}
-  operation_ok:bool = compare.le(op,one_f)
-  opens:bool = compare.eq(op,zero_f)
+  operation_ok:bool = compare.le(op,two_f)
+  applies:bool = compare.eq(op,two_f)
   count_at:u64 = const() {"value":202}
   count:u64 = call(fi,count_at,one_f) {"function":"rac_read_le"}
   maximum:u64 = const() {"value":32}
@@ -33,28 +33,70 @@ block framing(fi:readbuf,fo:mutbuf,fw:mutbuf,size_f:usize)
   end_input:u64 = call(count) {"function":"cb_row"}
   measured:u64 = int.cast(size_f) {"mode":"wrap"}
   exact:bool = compare.eq(end_input,measured)
-  shape_ids:bool = call(fi,zero_f) {"function":"cx_shape"}
-  a:bool = bool.and(first_ok,prefix_open)
   b:bool = bool.and(magic_ok,operation_ok)
   c:bool = bool.and(limit,cleared)
-  d:bool = bool.and(exact,shape_ids)
-  e:bool = bool.and(a,b)
-  g:bool = bool.and(c,d)
-  valid:bool = bool.and(e,g)
-  branch valid scratch_room(fi,fo,fw,opens,count) malformed()
-block scratch_room(si:readbuf,so:mutbuf,sw:mutbuf,opening_s:bool,n_s:u64)
+  d:bool = bool.and(exact,first_ok)
+  e:bool = bool.and(c,d)
+  valid:bool = bool.and(e,b)
+  branch valid request_kind(fi,fo,fw,op,count,applies,prefix_open) malformed()
+block request_kind(ki_:readbuf,ko_:mutbuf,kw_:mutbuf,kop:u64,kn:u64,is_apply:bool,is_old_prefix:bool)
+  branch is_apply apply_shape(ki_,ko_,kw_,kop,kn) old_shape(ki_,ko_,kw_,kop,kn,is_old_prefix)
+block apply_shape(agi:readbuf,ago:mutbuf,agw:mutbuf,agop:u64,agn:u64)
+  shape_a:bool = call(agi) {"function":"cb_action_shape"}
+  branch shape_a scratch_room(agi,ago,agw,agop,agn) malformed()
+block old_shape(ogi:readbuf,ogo:mutbuf,ogw:mutbuf,ogop:u64,ogn:u64,valid_prefix:bool)
+  zero_old:u64 = const() {"value":0}
+  shape_ids:bool = call(ogi,zero_old) {"function":"cx_shape"}
+  valid_old:bool = bool.and(shape_ids,valid_prefix)
+  branch valid_old scratch_room(ogi,ogo,ogw,ogop,ogn) malformed()
+block scratch_room(si:readbuf,so:mutbuf,sw:mutbuf,opening_s:u64,n_s:u64)
   scratch_size:usize = buffer.len(sw)
   scratch_bound:usize = const() {"value":1472}
   available:bool = compare.ge(scratch_size,scratch_bound)
   branch available validate(si,so,sw,opening_s,n_s) insufficient()
-block validate(vi:readbuf,vo:mutbuf,vw:mutbuf,opening_v:bool,n_v:u64)
+block validate(vi:readbuf,vo:mutbuf,vw:mutbuf,opening_v:u64,n_v:u64)
   valid_book:bool = call(vi,vw,n_v) {"function":"cb_valid_snapshot"}
   branch valid_book seek(vi,vo,vw,opening_v,n_v) snapshot_bad()
-block seek(ki:readbuf,ko:mutbuf,kw:mutbuf,opening_k:bool,n_k:u64)
+block seek(ki:readbuf,ko:mutbuf,kw:mutbuf,opening_k:u64,n_k:u64)
   index:u64,found:bool = call(ki,n_k) {"function":"cb_seek"}
-  branch opening_k attempt_open(ki,ko,kw,n_k,index,found) lookup(ki,ko,n_k,index,found)
-block lookup(li:readbuf,lo:mutbuf,n_l:u64,index_l:u64,found_l:bool)
-  branch found_l lookup_room(li,lo,n_l,index_l) missing()
+  zero_dispatch:u64 = const() {"value":0}
+  opens_here:bool = compare.eq(opening_k,zero_dispatch)
+  branch opens_here attempt_open(ki,ko,kw,n_k,index,found) after_find(ki,ko,kw,opening_k,n_k,index,found)
+block after_find(qi:readbuf,qo:mutbuf,qw:mutbuf,qop:u64,qn:u64,qx:u64,qfound:bool)
+  branch qfound found_result(qi,qo,qw,qop,qn,qx) missing()
+block found_result(yi:readbuf,yo:mutbuf,yw:mutbuf,yop:u64,yn:u64,yx:u64)
+  lookup_mode:u64 = const() {"value":1}
+  is_lookup:bool = compare.eq(yop,lookup_mode)
+  branch is_lookup lookup_room(yi,yo,yn,yx) transition(yi,yo,yw,yn,yx)
+block transition(ti:readbuf,to:mutbuf,tw:mutbuf,tn:u64,tx:u64)
+  record_t:u64 = call(tx) {"function":"cb_row"}
+  action_at:u64 = const() {"value":4}
+  action_width:u64 = const() {"value":1}
+  action:u64 = call(ti,action_at,action_width) {"function":"rac_read_le"}
+  proposal:u64 = call(ti,action,record_t) {"function":"cx_step_at"}
+  mask_t:u64 = const() {"value":255}
+  status_t:u64 = bit.and(proposal,mask_t)
+  no_error_t:u64 = const() {"value":0}
+  accepted_t:bool = compare.eq(status_t,no_error_t)
+  status_code:u32 = int.cast(status_t) {"mode":"wrap"}
+  branch accepted_t apply_room(ti,to,tw,tn,tx,record_t,action,proposal) refused(status_code)
+block apply_room(ari:readbuf,aro:mutbuf,arw:mutbuf,arn:u64,arx:u64,arr:u64,ara:u64,arv:u64)
+  enough_apply:bool = call(aro,arn) {"function":"cb_output_room"}
+  branch enough_apply hash_apply(ari,aro,arw,arn,arx,arr,ara,arv) insufficient()
+block hash_apply(adi:readbuf,ado:mutbuf,adw:mutbuf,adn:u64,adx:u64,adr:u64,ada:u64,adv:u64)
+  decision_h:u64,appeal_h:u64 = call(adi,adr,ada) {"function":"cx_deadlines"}
+  computed:u64 = call(adi,adw,adv,decision_h,appeal_h,adr) {"function":"cx_hash_at"}
+  zero_apply:u64 = const() {"value":0}
+  complete_apply:bool = compare.eq(computed,zero_apply)
+  branch complete_apply publish_apply(adi,ado,adw,adn,adx,adv,decision_h,appeal_h) internal()
+block publish_apply(pai:readbuf,pao:mutbuf,paw:mutbuf,pan:u64,pax:u64,pap:u64,pad:u64,paa:u64)
+  _complete_copy:u64 = call(pai,pao,pan,pax) {"function":"cb_lookup_output"}
+  member_at:u64 = call(pax) {"function":"cb_out_at"}
+  selected_at:u64 = call(pan) {"function":"cb_out_at"}
+  _write_members:u64 = call(pao,paw,member_at,pap,pad,paa) {"function":"cb_update_record"}
+  _write_selected:u64 = call(pao,paw,selected_at,pap,pad,paa) {"function":"cb_update_record"}
+  success_a:u32 = const() {"value":0}
+  ret(success_a)
 block lookup_room(ri:readbuf,ro:mutbuf,n_r:u64,index_r:u64)
   fits_l:bool = call(ro,n_r) {"function":"cb_output_room"}
   branch fits_l publish_lookup(ri,ro,n_r,index_r) insufficient()
@@ -360,5 +402,71 @@ block entry(input:readbuf,output:mutbuf,work:mutbuf,at:u64)
   after_fields:u64 = call(input,output,metadata,at,typed_fields) {"function":"rac_copy"}
   after_flags:u64 = call(output,after_fields,zero,width) {"function":"rac_write_be"}
   end:u64 = call(work,output,after_flags) {"function":"sb_copy_digest"}
+  ret(end)
+end
+
+fn cb_action_shape(input:readbuf) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf)
+  op_at:u64 = const() {"value":4}
+  one:u64 = const() {"value":1}
+  op:u64 = call(input,op_at,one) {"function":"rac_read_le"}
+  max:u64 = const() {"value":8}
+  positive:bool = compare.ge(op,one)
+  known:bool = compare.le(op,max)
+  typed:bool = bool.and(positive,known)
+  reserve_at:u64 = const() {"value":6}
+  two:u64 = const() {"value":2}
+  reserved:u64 = call(input,reserve_at,two) {"function":"rac_read_le"}
+  zero:u64 = const() {"value":0}
+  clean:bool = compare.eq(reserved,zero)
+  prior_a:u64 = const() {"value":24}
+  prior_b:u64 = const() {"value":56}
+  prior_c:u64 = const() {"value":88}
+  prior_d:u64 = const() {"value":197}
+  clean_a:bool = call(input,prior_a,prior_b) {"function":"cb_zero_range"}
+  clean_b:bool = call(input,prior_c,prior_d) {"function":"cb_zero_range"}
+  clean_source:bool = bool.and(clean_a,clean_b)
+  clean_all:bool = bool.and(clean,clean_source)
+  shaped:bool = call(input,op) {"function":"cx_shape"}
+  proper:bool = bool.and(typed,shaped)
+  accepted:bool = bool.and(proper,clean_all)
+  ret(accepted)
+end
+
+fn cb_zero_range(input:readbuf,start:u64,end_at:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64,end_at:u64)
+  jump loop(input,start,end_at)
+block loop(li:readbuf,lpos:u64,lstop:u64)
+  width:u64 = const() {"value":1}
+  val:u64 = call(li,lpos,width) {"function":"rac_read_le"}
+  zero:u64 = const() {"value":0}
+  empty:bool = compare.eq(val,zero)
+  after:u64 = int.add.wrap(lpos,width)
+  branch empty next(li,after,lstop) no()
+block next(ni:readbuf,at:u64,nstop:u64)
+  done:bool = compare.eq(at,nstop)
+  branch done yes() loop(ni,at,nstop)
+block yes()
+  affirmative:bool = const() {"value":true}
+  ret(affirmative)
+block no()
+  negative:bool = const() {"value":false}
+  ret(negative)
+end
+
+fn cb_update_record(output:mutbuf,work:mutbuf,at:u64,proposal:u64,decision:u64,appeal:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(output:mutbuf,work:mutbuf,at:u64,proposal:u64,decision:u64,appeal:u64)
+  old_fields:u64 = const() {"value":120}
+  decision_at:u64 = int.add.wrap(at,old_fields)
+  eight:u64 = const() {"value":8}
+  small:u64 = int.shr.checked(proposal,eight)
+  three:u64 = const() {"value":3}
+  two:u64 = const() {"value":2}
+  zero:u64 = const() {"value":0}
+  next_at:u64 = call(output,decision_at,decision,eight) {"function":"cx_write_le"}
+  small_at:u64 = call(output,next_at,appeal,eight) {"function":"cx_write_le"}
+  flags_at:u64 = call(output,small_at,small,three) {"function":"cx_write_le"}
+  digest_at:u64 = call(output,flags_at,zero,two) {"function":"rac_write_be"}
+  end:u64 = call(work,output,digest_at) {"function":"sb_copy_digest"}
   ret(end)
 end

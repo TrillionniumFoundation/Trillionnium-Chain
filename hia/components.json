@@ -38,6 +38,13 @@
         "functions": [
           "cx_shape",
           "cx_open",
+          "cx_step_at",
+          "cx_progress",
+          "cx_decide",
+          "cx_appeal",
+          "cx_terminal",
+          "cx_deadlines",
+          "cx_write_le",
           "cx_pack",
           "cx_hash",
           "cx_hash_at",

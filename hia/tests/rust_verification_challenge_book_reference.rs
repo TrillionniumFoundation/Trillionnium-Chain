@@ -20,10 +20,31 @@ fn execute(book: &mut ChallengeBookV1, request: &[u8]) -> VerificationProfileRes
         1 => {
             book.get_mut(&result_id)?;
         }
-        // Test-only way to obtain a real previously advanced record.
-        2 => book
-            .get_mut(&result_id)?
-            .submit_evidence(number(request, 8))?,
+        2 => {
+            let record = book.get_mut(&result_id)?;
+            let height = number(request, 8);
+            match request[4] {
+                1 => record.submit_evidence(height),
+                2 => record.begin_response(height),
+                3 => record.submit_response(height),
+                4 => {
+                    use ChallengeFinalOutcomeV1::*;
+                    let category = match request[5] {
+                        1 => Upheld,
+                        2 => Rejected,
+                        3 => Withdrawn,
+                        4 => Expired,
+                        _ => panic!("untyped decision choice"),
+                    };
+                    record.decide(height, category)
+                }
+                5 => record.appeal(height, number(request, 16)),
+                6 => record.finalize(height),
+                7 => record.withdraw(),
+                8 => record.expire(height),
+                _ => panic!("untyped record action"),
+            }?;
+        }
         _ => panic!("invalid oracle operation"),
     }
     Ok(result_id)
@@ -66,6 +87,7 @@ fn main() -> io::Result<()> {
                     InvalidChallengePhase => 17,
                     ChallengeDeadlineMissed => 18,
                     DuplicateChallenge => 20,
+                    AppealAlreadyUsed => 19,
                     ChallengeNotFound => 21,
                     _ => panic!("unexpected book error: {err}"),
                 };
