@@ -36,7 +36,7 @@ STAMP = b"schedule_semantics=reader-high-water-v1\n"
 CORRECTED_BASENAME = "executor-profile-summary-reader-high-water-v1-"
 LIMIT = 16 << 20
 WORKLOADS = {0: "classic", 1: "mixed", 2: "hot-streak"}
-STRATEGIES = {0: "original", 2: "write-first", 4: "hot-bucket-interleave"}
+STRATEGIES = {0: "original", 1: "footprint-desc", 2: "write-first", 4: "hot-bucket-interleave"}
 OUTSIDE = b"Bench native candidate: invocation outside admitted Bench scope\n"
 
 
@@ -211,10 +211,11 @@ class IndependentAccessGraphTests(unittest.TestCase):
                 independent_access_graph(frame, groups)
 
 
-class BenchReaderHighWater(unittest.TestCase):
+class BenchReaderHighWaterFixture:
+    observation_env = "HIA_BENCH_READER_HIGH_WATER_OBSERVATIONS"
     @classmethod
     def setUpClass(cls):
-        configured = os.environ.get("HIA_BENCH_READER_HIGH_WATER_OBSERVATIONS")
+        configured = os.environ.get(cls.observation_env)
         cls.persist_native_requests = bool(configured)
         cls.root = (new_output(Path(configured)) if configured else Path(cls.enterClassContext(
             tempfile.TemporaryDirectory(prefix="trnm-bench-reader-high-water-"))))
@@ -265,15 +266,6 @@ class BenchReaderHighWater(unittest.TestCase):
                             "output_bytes": output, "scratch_bytes": scratch, "status": status,
                             "unaligned_pointer_residues": [1, 3, 5]})
         return response[8:]
-
-    def test_native_defaults_match_corrected_rust_graph_profile_and_replay(self):
-        rows = ((0, 32, 7, 3, 1, 0), (1, 20000, 2000, 3, 1, 0),
-                (2, 20000, 2000, 3, 1, 0), (2, 20000, 2000, 3, 1, 4),
-                (1, 20000, 1, 8, 1, 0),
-                (1, 20000, 2000, 3, 1, 2), (2, 20000, 2000, 3, 1, 2))
-        for row_index, row in enumerate(rows):
-            with self.subTest(row=row):
-                self.compare_cohort(row_index, row)
 
     def compare_cohort(self, row_index, row):
         w, n, k, fan, stride, strategy = row
@@ -346,6 +338,7 @@ class BenchReaderHighWater(unittest.TestCase):
                              "independent_accesses":edges,"conflicts":0,"members":n,
                              "input_sha256":input_hex.decode(),"group_sha256":groups_hex.decode(),
                              "profile_sha256":sha(persisted),"native_schedule_invocations_in_replay":3})
+        return refs, result
 
     def standalone_process(self, label, args, *, image=None, env=None):
         fd = sealed_executable(self.image if image is None else image, label)
@@ -406,6 +399,17 @@ class BenchReaderHighWater(unittest.TestCase):
                                 "native_profile_sha256": sha(persisted), "original_profile_sha256": sha(rust_file),
                                 "native_profile_basename": candidate.name, "workload_frame_bytes": work_bytes,
                                 "scheduler_scratch_required": scratch_bytes, "separate_profile_namespace": True})
+
+
+class BenchReaderHighWater(BenchReaderHighWaterFixture, unittest.TestCase):
+    def test_native_defaults_match_corrected_rust_graph_profile_and_replay(self):
+        rows = ((0, 32, 7, 3, 1, 0), (1, 20000, 2000, 3, 1, 0),
+                (2, 20000, 2000, 3, 1, 0), (2, 20000, 2000, 3, 1, 4),
+                (1, 20000, 1, 8, 1, 0),
+                (1, 20000, 2000, 3, 1, 2), (2, 20000, 2000, 3, 1, 2))
+        for row_index, row in enumerate(rows):
+            with self.subTest(row=row):
+                self.compare_cohort(row_index, row)
 
     def test_corrected_mode_scope_and_native_replay_clock_bound(self):
         args = [MODE, "--workload=mixed", "--txs", "3", "--keys", "1"]

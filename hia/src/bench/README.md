@@ -79,7 +79,8 @@ acquisition, or the full Bench startup/process path.
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
-process. It reads real argv at `_start` and, only for HotBucketInterleave,
+process and explicitly corrected Mixed FootprintDesc. It reads real argv at
+`_start` and, only for HotBucketInterleave,
 admits the [single-variable startup policy](#hot-bucket-startup-environment)
 below. This is an isolated candidate, not an activated general replacement
 for `trnm-bench`.
@@ -188,6 +189,18 @@ HotBucketInterleave (HotStreak only).
 Existing already-admitted Mixed/HotStreak shapes can also be explicitly
 marked; no Classic, arbitrary new multiwriter shape, or nonempty environment
 is admitted by this flag. Workload and replay limits are unchanged.
+
+The explicit mode also admits `--strategy footprint-desc` on exactly the
+same 20,000/2,000/fanout-3/stride-1 **Mixed** shape with an empty environment.
+FootprintDesc orders the union of read and write object domains by descending
+unique width, then transaction ID. This fixture has 19,960 width-four
+transactions and 40 width-three transactions. Both the locked corrected Rust
+oracle and the native ELF produce a different ordered grouping from Original
+and WriteFirst for the same workload digest. The [whole process
+differential](../../tests/test_bench_footprint.py) checks the independent graph,
+profile bytes and real file effects, separate clocks, replay, and refusal of
+all unmarked, nonexact, and nonempty-environment FootprintDesc invocations.
+This is not support for ordinary FootprintDesc or its other workload shapes.
 
 The same ELF takes real clocks, runs the real native scheduler and replay,
 renders `schedule_semantics=reader-high-water-v1` in stdout and the
