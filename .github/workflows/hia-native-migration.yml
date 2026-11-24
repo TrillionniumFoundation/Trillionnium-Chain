@@ -1007,6 +1007,87 @@ jobs:
             ${{ runner.temp }}/hia-research-state-observations/
           if-no-files-found: error
           retention-days: 30
+  # Release PQ's standalone actual-original qualifiers do not enter unittest discovery.
+  native-release-pq:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    env:
+      PYTHONOPTIMIZE: ""
+      LC_ALL: C
+    steps:
+      - name: Initialize bounded Release PQ evidence
+        working-directory: ${{ github.workspace }}
+        run: mkdir -m 700 "$RUNNER_TEMP/hia-release-pq-artifact"
+      - name: Checkout exact Release PQ candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Verify exact Release PQ source and evidence negative controls
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-release-pq-artifact/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          python3 -B hia/tools/check_migration.py
+          python3 -B -m unittest discover -s scripts/ci -p 'test_release_pq_hosted_evidence.py' -v
+      - name: Bootstrap actual pinned HIA compiler for Release PQ
+        run: |
+          set -euo pipefail
+          export HIA_TOOLCHAIN_ROOT="$GITHUB_WORKSPACE/hia-toolchain"
+          printf 'HIA_TOOLCHAIN_ROOT=%s\n' "$HIA_TOOLCHAIN_ROOT" >> "$GITHUB_ENV"
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-release-pq-bootstrap"
+          python3 -I -S -B hia/tools/qualify_release_pq_ci.py bootstrap --bootstrap "$RUNNER_TEMP/hia-release-pq-bootstrap/bootstrap.json" --github-env "$GITHUB_ENV" --output "$RUNNER_TEMP/hia-release-pq-artifact"
+      - name: Fetch original locked Release PQ dependencies
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rust_bin="$(dirname "$(rustup which --toolchain 1.95.0 rustc)")"
+          printf 'HIA_RELEASE_RUST_BIN=%s\n' "$rust_bin" >> "$GITHUB_ENV"
+          export PATH="$rust_bin:/usr/bin:/bin"
+          export CARGO_HOME="$RUNNER_TEMP/hia-release-pq-cargo-home"
+          printf 'CARGO_HOME=%s\n' "$CARGO_HOME" >> "$GITHUB_ENV"
+          cargo fetch --locked --manifest-path trillionnium/Cargo.toml
+      - name: Run real original and native Release PQ observation quorum and callback
+        run: |
+          set -euo pipefail
+          export PATH="$HIA_RELEASE_RUST_BIN:/usr/bin:/bin"
+          python3 -I -S -B hia/tools/qualify_release_pq_ci.py run --work "$RUNNER_TEMP/hia-release-pq-work" --output "$RUNNER_TEMP/hia-release-pq-artifact"
+      - name: Verify Release PQ candidate source remained unchanged
+        if: always()
+        run: python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-release-pq-artifact/source-after.json"
+      - name: Read back exact actual Release PQ outcomes and provenance
+        if: always()
+        run: python3 -I -S -B hia/tools/qualify_release_pq_ci.py verify --output "$RUNNER_TEMP/hia-release-pq-artifact"
+      - name: Retain bounded success and failure Release PQ receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-release-pq-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-release-pq-artifact/
+          if-no-files-found: error
+          retention-days: 30
+
   native-components-readback:
     needs: [native-components, native-components-crypto-types, native-components-state-root, native-components-oracle, native-components-ml-dsa, native-components-research]
     if: ${{ always() }}

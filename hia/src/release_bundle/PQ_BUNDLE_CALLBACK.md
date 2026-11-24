@@ -60,3 +60,17 @@ transition remain unported/unclaimed.
 python3 -I -S -B hia/tests/qualify_release_pq_callback.py \
   --output /tmp/new-release-pq-callback
 ```
+
+
+## Hosted evidence
+
+The [dedicated read-only workflow job](../../../.github/workflows/hia-native-migration.yml)
+runs all three genuine Release PQ qualifiers against the exact PR or push source.
+It leaves the General/component matrix and existing deadlines unchanged. The
+[hosted evidence driver](../../tools/qualify_release_pq_ci.py) retains bounded
+source receipts on both sides, each actual process's output and terminal result,
+locked Rust compiler events and named native/Rust cases. Its strict readback
+rejects missing cases, stale head/tree/attempt, copied generic PASS markers,
+noncanonical or linked files, and fallback images. The upload excludes
+compiled binaries, target directories, signing input, and process environments.
+A hosted success is still only scoped shadow qualification, not authorization.
