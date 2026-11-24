@@ -1319,38 +1319,7 @@ jobs:
       - name: Require all production Work controller rejection groups
         run: |
           set -euo pipefail
-          python3 -B - "$RUNNER_TEMP/hia-observations/work-production-controller.json" <<'PY' 2>&1 | tee "$RUNNER_TEMP/hia-observations/work-production-controller.log"
-          import json, sys, unittest
-          from pathlib import Path
-          from hia.platform.work_owner import test_production as module
-          if not __debug__:
-              raise SystemExit("Optimized Python is not admitted")
-          suite = unittest.defaultTestLoader.loadTestsFromModule(module)
-          def names(value):
-              if isinstance(value, unittest.TestSuite):
-                  return [name for child in value for name in names(child)]
-              return [value.id()]
-          required = names(suite)
-          if len(required) != 22 or len(set(required)) != 22:
-              raise SystemExit("Complete production controller discovery is required")
-          started = []
-          class Result(unittest.TextTestResult):
-              def startTest(self, test):
-                  started.append(test.id())
-                  super().startTest(test)
-          actual = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
-          passed = (actual.wasSuccessful() and actual.testsRun == 22
-                    and not actual.skipped and started == required)
-          report = {"schema": "trnm.production-work-controller-ci.v1",
-                    "status": "PASS" if passed else "FAIL",
-                    "required": required, "started": started,
-                    "executed": actual.testsRun, "skipped": len(actual.skipped),
-                    "failures": len(actual.failures), "errors": len(actual.errors),
-                    "actual_production_positive": False}
-          Path(sys.argv[1]).write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
-          if not passed:
-              raise SystemExit("A production controller group failed or was omitted")
-          PY
+          python3 -B -m scripts.ci.check_work_production_controller "$RUNNER_TEMP/hia-observations/work-production-controller.json" 2>&1 | tee "$RUNNER_TEMP/hia-observations/work-production-controller.log"
       - name: Execute fresh native Host checkpoints with independent syscall tracing
         run: python3 -B -m hia.platform.host_checkpoint.qualify --require-trace --output "$RUNNER_TEMP/hia-native-host-checkpoint"
       - name: Compare native Host sequences with actual retained original Rust
