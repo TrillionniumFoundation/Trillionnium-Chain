@@ -1,6 +1,6 @@
 # Read-only TCM1 cell manifest
 
-The two private HIA entries implement a pure subset of
+These private HIA entries implement a pure subset of
 [`CellManifestV1`](../../../trillionnium/crates/trnm-data-availability/src/cell/manifest.rs).
 The original cache validates and hashes a TCM1 before use
 ([store](../../../trillionnium/crates/trnm-data-availability/src/cell/store.rs)).
@@ -15,7 +15,8 @@ The entries have no storage, provider or payload access and no live wiring.
   and the selected declaration's 32-byte source digest (72 bytes total).
 
 These are deterministic content and metadata observations. The projection
-does not fetch bytes, compare an expected manifest ID/context, check provider
+does not fetch bytes or compare an expected manifest ID/context. Neither
+entry checks provider
 identity, construct an authoritative Rust binding, or run the RS46 recovery
 component. The owner must still supply authenticated state and dependency pins
 before using the declaration. No retention, production admission, model
@@ -40,6 +41,38 @@ index prefix. Each requires 1,232 scratch bytes and sufficient output
 capacity (102); 103 is reserved for internal hash errors. Input is immutable;
 output stays wholly untouched on refusal and on success only the required
 prefix is written. Callers supply disjoint borrowed buffers.
+
+## Optional equality check in the same call
+
+`cell_manifest_binding.hepta` reads a separate private `TCB1` frame:
+ASCII magic, u32 little-endian index, 32-byte expected manifest ID, then
+u8 expected family length, those exact UTF-8 bytes, and the five expected
+opaque context digests in their TCM1 order. The remainder is the original
+TCM1 wire. The expected family may be empty or contain non-ASCII UTF-8: it
+is a caller observation and is only compared to the valid manifest family.
+Invalid expected UTF-8 or a truncated private prefix is status 100.
+
+A single call fully decodes the TCM1, compares all six context fields,
+computes and compares the actual TCM1 content ID, and finally checks the
+selected index. The ordering matches the unchanged
+`CellRs46ManifestBindingV1::new(...).chunk(index)` after original
+`CellManifestV1::decode`. After successful input validation a duplicate
+Rust geometry pass would be equivalent, since the input is immutable.
+The scratch and 72-byte observation layout are the same as the unbound
+projection. Declared context mismatch is 14, content-ID mismatch is 15,
+and missing chunk is 13. Scratch capacity is checked before hashing and
+output capacity before publication. Input and the output suffix stay
+unchanged; late refusal may modify only bounded scratch.
+
+These equalities do not confer any authority: the caller is responsible
+for where its expected context, expected content ID and TCM1 came from.
+This adds no production caller, RS46 payload path, storage or access.
+The [binding differential](../../tests/test_cell_manifest_binding.py)
+isolates the original Rust binding structs and methods from
+[erasure.rs](../../../trillionnium/crates/trnm-data-availability/src/cell/erasure.rs),
+not the recovery implementation.
+
+## Verification
 
 The [native tests](../../tests/test_cell_manifest.py) run both pinned
 emitters against ordinary synthetic manifests. The separately reported

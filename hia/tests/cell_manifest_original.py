@@ -11,8 +11,17 @@ from hia.tests.test_verification_profile_registry import ROOT, pick
 
 CELL = ROOT / "trillionnium/crates/trnm-data-availability/src/cell"
 CODEC = CELL / "manifest.rs"
+ERASURE = CELL / "erasure.rs"
 ADAPTER = Path(__file__).with_name("rust_cell_manifest_reference.rs")
+BINDING_ADAPTER = Path(__file__).with_name("rust_cell_binding_reference.rs")
 ENV = "HIA_M09_SHA2_RLIB"
+
+
+def binding_source():
+    original = ERASURE.read_bytes()
+    start = original.index(b"/// Exact original chunk identity")
+    end = original.index(b"impl CellRs46ChunkBindingV1 {",start)
+    return original[start:end]
 
 
 def source():
@@ -27,8 +36,14 @@ def source():
     conversion = pick(boundary, rb"^impl From<io::Error> for CellErrorV1 \{\n.*?^}\n")
     shell = (b"use std::io::{self, Read, Write};\n#[derive(Debug)]\npub enum CellErrorV1 {\n" +
              variants + b"}\n" + conversion)
+    isolated = b"""#[allow(dead_code)]
+mod binding {
+    use super::{require, CellDigestV1, CellErrorV1, CellResultV1};
+    use super::manifest::{CellChunkV1, CellContextV1, CellManifestV1};
+"""
     return (shell + digest + result + check + b"#[allow(dead_code)]\nmod manifest {\n" +
-            wire + b"\n}\n" + ADAPTER.read_bytes())
+            wire + b"\n}\n" + isolated + binding_source() +
+            b'include!("binding_observation.rs");\n}\n' + ADAPTER.read_bytes())
 
 
 def regular(path):
@@ -123,6 +138,8 @@ def build(work):
     source_path, binary = work / "original.rs", work / "original"
     raw = source()
     source_path.write_bytes(raw)
+    observe = BINDING_ADAPTER.read_bytes()
+    (work / "binding_observation.rs").write_bytes(observe)
     subprocess.run(["rustc", "--edition=2024", "-Dwarnings", "-L", f"dependency={path.parent}",
                     "--extern", f"sha2={path}", source_path, "-o", binary],
                    check=True, timeout=45, capture_output=True)
@@ -130,5 +147,7 @@ def build(work):
         raise ValueError("locked oracle library changed during linking")
     return binary, {"mode": "verified-prebuilt-original-sha2", "cargo_lock_sha256": sha(LOCK.read_bytes()),
                     "original_manifest_source_sha256": sha(CODEC.read_bytes()),
+                    "original_binding_source_sha256": sha(binding_source()),
+                    "oracle_binding_observer_sha256": sha(observe),
                     "oracle_source_sha256": sha(raw), "oracle_sha256": sha(binary.read_bytes()),
                     "rustc": rust, "locked_graph": graph}

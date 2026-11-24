@@ -32,20 +32,7 @@ block hash(hi:readbuf,ho:mutbuf,hs:mutbuf,hd:u64,hn:u64,hr:u64,hx:u64)
   hash_ok:bool = compare.eq(code,zero_h)
   branch hash_ok publish(hi,ho,hs,hr,hx) internal()
 block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pr:u64,px:u64)
-  stride:u64 = const() {"value":36}
-  within:u64 = int.mul.wrap(px,stride)
-  at:u64 = int.add.wrap(pr,within)
-  four_p:u64 = const() {"value":4}
-  chunk_bytes:u64 = call(pi,at,four_p) {"function":"ca_read_be"}
-  hash_at:u64 = int.add.wrap(at,four_p)
-  half:u64 = const() {"value":32}
-  size_high:u64 = int.shl.checked(chunk_bytes,half)
-  index_size:u64 = bit.or(size_high,px)
-  zero_p:u64 = const() {"value":0}
-  pair_at:u64 = call(ps,po,zero_p) {"function":"sb_copy_digest"}
-  _w:u64 = call(po,pair_at,index_size) {"function":"tr_put"}
-  chunk_at:u64 = const() {"value":40}
-  _end:u64 = call(pi,po,hash_at,chunk_at,half) {"function":"rac_copy"}
+  _projected:u64 = call(pi,po,ps,pr,px) {"function":"cm_publish_selected"}
   success:u32 = const() {"value":0}
   ret(success)
 block failure(value:u32)
@@ -62,4 +49,23 @@ block capacity()
 block internal()
   internal_code:u32 = const() {"value":103}
   ret(internal_code)
+end
+
+fn cm_publish_selected(input:readbuf,output:mutbuf,work:mutbuf,rows:u64,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf,rows:u64,index:u64)
+  stride:u64 = const() {"value":36}
+  within:u64 = int.mul.wrap(index,stride)
+  at:u64 = int.add.wrap(rows,within)
+  four_p:u64 = const() {"value":4}
+  chunk_bytes:u64 = call(input,at,four_p) {"function":"ca_read_be"}
+  hash_at:u64 = int.add.wrap(at,four_p)
+  half:u64 = const() {"value":32}
+  size_high:u64 = int.shl.checked(chunk_bytes,half)
+  index_size:u64 = bit.or(size_high,index)
+  zero_p:u64 = const() {"value":0}
+  pair_at:u64 = call(work,output,zero_p) {"function":"sb_copy_digest"}
+  _w:u64 = call(output,pair_at,index_size) {"function":"tr_put"}
+  chunk_at:u64 = const() {"value":40}
+  final_at:u64 = call(input,output,hash_at,chunk_at,half) {"function":"rac_copy"}
+  ret(final_at)
 end
