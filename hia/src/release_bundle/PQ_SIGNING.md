@@ -1,10 +1,11 @@
-# Release PQ V1 signing bytes and V0 bridge locator
+# Release PQ V1 transcript, V0 bridge locators and public verification
 
-These two HIA entries implement the exact message preparation and
-signature-set locator from the
+These private HIA entries implement the exact message preparation,
+stable signer identity and signature-set locator from the
 [original V1 release owner](../../../trillionnium/crates/trnm-release-bundle/src/pq_release.rs).
-Neither one verifies a signature, selects a trusted public key, advances
-a checkpoint, publishes, signs, or admits a release.
+None selects trusted keys, advances a checkpoint, publishes, signs or
+admits a release. A separate qualification hands the exact HIA message
+to the existing HIA-owned public ML-DSA verifier.
 
 ## Exact V1 metadata signing bytes
 
@@ -81,8 +82,51 @@ File custody is independent: the
 requires a retained Unix descriptor, matching size and zero starting
 position, and compares before/after identity metadata. This still does
 not prove immutable custody or an atomic snapshot of a writable file.
-Neither HIA entry reads files or changes its custody/permissions.
+None of these HIA entries reads files or changes custody or permissions.
 
 ```sh
 python3 -B -m unittest -v hia.tests.test_release_pq_signing
+```
+
+## Stable bundle signer identity and genuine public verification
+
+[`pq_role_identity.hepta`](pq_role_identity.hepta) accepts exactly 33
+bytes: the independently supplied root network ID (32) and one typed
+role (1–4). Its 32-byte output is SHA-256 of
+`TRNM/Release/PQ/ML-DSA-65/v1\0bundle-role\0 || root_network || role`.
+It uses the same borrowed ABI, with 32 bytes of output and 1,256 bytes of
+private scratch. Invalid framing/role (`100`) and short capacity
+(`102`) leave the output and scratch unchanged. Internal hash failure
+(`103`) never publishes a digest. This is identity derivation only; it
+does not assert that the caller possesses authentic root state. The
+metadata's asserted network ID does not stand in for the root network.
+
+[`qualify_release_pq_observation.py`](../../tests/qualify_release_pq_observation.py)
+builds the existing [HIA-owned PQ library](../../platform/pq_auth/README.md)
+and the unchanged original locked Rust release/cryptography crates,
+offline. An isolated fixture process draws test-only randomness, uses
+the original Rust signer and verifier, and returns only public values.
+It does not take, print, or preserve a private input or key. The harness
+uses each actual HIA-emitted metadata transcript, not the Python/Rust
+oracle bytes, in the existing HIA library's strict pinned-SPKI and Pure
+ML-DSA-65 empty-context verification calls. It compares the real returned
+public observations and rejection statuses with the original Rust
+verifier. Reusing one immutable verifier across failure and later success
+does not reuse an authenticated observation. Both direct and self-host
+emitters produce and exercise the identity and transcript; the already
+qualified owned verifier is built using its normal self-host driver.
+
+This is a per-signature mathematical observation in qualification, not a
+native current-role map, all-supplied-signature quorum, V0 callback,
+authority/custody transition, or deployment. The stable bundle-role digest
+is not a signer key pin; production must obtain its pins from the current
+authoritative role and must preserve the original preflight and checkpoint
+ordering.
+
+With the pinned HIA compiler environment, Rust 1.95 on `PATH`, and a
+populated offline Cargo cache:
+
+```sh
+python3 -I -S -B hia/tests/qualify_release_pq_observation.py \
+  --output /tmp/new-release-pq-observation
 ```

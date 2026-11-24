@@ -1078,6 +1078,17 @@
       ]
     },
     {
+      "id": "release-bundle/pq-role-identity",
+      "node_integration_complete": false,
+      "scope": "Exact stable V1 release bundle signer identity from the independently supplied root network and typed role. Mathematical signer observation qualification remains separate from role membership and release authority.",
+      "source": "hia/src/release_bundle/pq_role_identity.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/qualify_release_pq_observation.py",
+        "hia/tests/rust_release_pq_observation_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/pq-signing-message",
       "node_integration_complete": false,
       "scope": "Exact V1 typed PqReleaseMetadataV1 signing bytes with the original role, Boolean fields, big-endian numbers and checkpoint/profile domain. This is message preparation, not a signature, mathematical verification, quorum or authorization.",
@@ -1439,6 +1450,7 @@
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
+        "release-bundle/pq-role-identity",
         "release-bundle/pq-signing-message",
         "release-bundle/pq-signature-set",
         "release-bundle/raw-artifact-sha256",

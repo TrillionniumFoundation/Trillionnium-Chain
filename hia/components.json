@@ -5672,6 +5672,31 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/release_bundle/pq_role_identity.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sb_copy_digest"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      }
+    ],
     "src/release_bundle/pq_signing_message.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
