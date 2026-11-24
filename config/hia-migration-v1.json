@@ -686,6 +686,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-closure-manifest-relation",
+      "node_integration_complete": false,
+      "scope": "Pure one-call TCD1 and TCM1 canonical metadata decode, actual original computed TCM identity lookup and declared context/digest/size equality over one immutable frame. No I/O, authentication, pin policy, authority, loader activation, payload, network, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_closure_manifest_relation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_closure_manifest_relation.py",
+        "hia/tests/test_cell_dependency_closure.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_closure_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1819,7 +1832,8 @@
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
         "data-availability/cell-release-manifest",
-        "data-availability/cell-dependency-closure"
+        "data-availability/cell-dependency-closure",
+        "data-availability/cell-closure-manifest-relation"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",
