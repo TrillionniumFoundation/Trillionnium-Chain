@@ -1,5 +1,54 @@
 {
   "includes": {
+    "src/verification/statement_preflight.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "rac_copy",
+          "rac_nonzero_digest",
+          "rac_read_le",
+          "rac_write_be"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "sb_compare",
+          "sb_copy_digest"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      },
+      {
+        "functions": [
+          "vr_registry",
+          "vr_lookup",
+          "vr_row",
+          "vr_read",
+          "vr_compare",
+          "vr_validate",
+          "vr_prior_identity",
+          "vr_find",
+          "vr_resolve"
+        ],
+        "source": "src/verification/profile_registry.hepta"
+      }
+    ],
     "src/verification/profile_registry.hepta": [
       {
         "functions": [

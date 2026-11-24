@@ -232,6 +232,17 @@
       ]
     },
     {
+      "id": "verification/statement-preflight",
+      "node_integration_complete": false,
+      "scope": "Original VerificationStatementV1 constructor/digest and verify_statement_v1 pre-provider sequence. Shares native closed registry and exact lookup; validates typed evidence and current height window. Returns only computed statement digest and selected profile, with no provider flag, decision, economic or reorganization authority.",
+      "source": "hia/src/verification/statement_preflight.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verification_statement_preflight.py",
+        "hia/tests/rust_verification_statement_preflight_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1607,7 +1618,8 @@
     {
       "components": [
         "verification/closed_round",
-        "verification/profile-registry"
+        "verification/profile-registry",
+        "verification/statement-preflight"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",
