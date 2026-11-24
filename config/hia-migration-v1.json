@@ -1372,6 +1372,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-export-transaction",
+      "node_integration_complete": false,
+      "scope": "One atomic dry HIA call validates a single bounded ordered selected WJL1 snapshot, derives all eight index maps and emits complete JSONL, eighteen-column Markdown and index JSON using shared renderers. Both emitters compare exact locked original CLI files. Rust retains source conversion, selection, authority, filesystem, query and production routing.",
+      "source": "hia/src/worker_agent/audit_export_transaction.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_export_transaction.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-index-group",
       "node_integration_complete": false,
       "scope": "One native invocation constructs all eight lexically ordered audit index maps from at most 64 ordered already-selected typed export rows and emits exact pretty JSON through shared WIX1. Both emitters match an independent actual locked CLI index; raw selection/conversion, provenance normalization, filesystem, query and production dispatch remain original.",

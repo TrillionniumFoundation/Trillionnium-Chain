@@ -1,0 +1,281 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_export_transaction_wat1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  native:usize = buffer.len(input)
+  extent:u64 = int.cast(native) {"mode":"wrap"}
+  minimum:u64 = const() {"value":8}
+  maximum:u64 = const() {"value":65536}
+  has_header:bool = compare.ge(extent,minimum)
+  within_input:bool = compare.le(extent,maximum)
+  size_ok:bool = bool.and(has_header,within_input)
+  branch size_ok header(input,output,scratch,extent) malformed()
+block header(hi:readbuf,ho:mutbuf,hs:mutbuf,he:u64)
+  zero:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  magic:u64 = call(hi,zero,four) {"function":"wa_read"}
+  wat1:u64 = const() {"value":827605335}
+  is_wat:bool = compare.eq(magic,wat1)
+  count:u64 = call(hi,four,four) {"function":"wa_read"}
+  limit:u64 = const() {"value":64}
+  allowed:bool = compare.le(count,limit)
+  shape:bool = bool.and(is_wat,allowed)
+  branch shape workspace(hi,ho,hs,he,count) malformed()
+block workspace(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64)
+  bytes:usize = buffer.len(ws)
+  minimum_scratch:usize = const() {"value":102400}
+  enough:bool = compare.ge(bytes,minimum_scratch)
+  branch enough measure(wi,wo,ws,we,wc) capacity()
+block measure(mi:readbuf,mo:mutbuf,ms:mutbuf,me:u64,mc:u64)
+  json_bytes:u64,markdown_bytes:u64 = call(mi,mo,ms,me,mc) {"function":"wt_measure"}
+  invalid:u64 = const() {"value":0}
+  rows_ok:bool = compare.ne(markdown_bytes,invalid)
+  branch rows_ok index(mi,mo,ms,me,mc,json_bytes,markdown_bytes) malformed()
+block index(ii:readbuf,io:mutbuf,is:mutbuf,ie:u64,ic:u64,ij:u64,im:u64)
+  wire_extent:u64 = call(is,ic) {"function":"wg_stage"}
+  staged:readbuf = borrow.read(is)
+  no:bool = const() {"value":false}
+  index_bytes:u64 = call(staged,io,wire_extent,ic,no) {"function":"wx_index"}
+  _ = loan.end(staged)
+  bad_size:u64 = const() {"value":0}
+  staged_valid:bool = compare.ne(index_bytes,bad_size)
+  branch staged_valid fit(ii,io,is,ie,ic,ij,im,wire_extent,index_bytes) malformed()
+block fit(fi:readbuf,fo:mutbuf,fs:mutbuf,fe:u64,fc:u64,fj:u64,fm:u64,fw:u64,fx:u64)
+  header_len:u64 = const() {"value":16}
+  markdown_at:u64 = int.add.wrap(header_len,fj)
+  index_at:u64 = int.add.wrap(markdown_at,fm)
+  needed:u64 = int.add.wrap(index_at,fx)
+  maximum_result:u64 = const() {"value":1048576}
+  max_ok:bool = compare.le(needed,maximum_result)
+  capacity_native:usize = buffer.len(fo)
+  size:u64 = int.cast(capacity_native) {"mode":"wrap"}
+  capacity_ok:bool = compare.le(needed,size)
+  ready:bool = bool.and(max_ok,capacity_ok)
+  branch ready publish(fi,fo,fs,fe,fc,fj,fm,fw,fx,needed) capacity()
+block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pe:u64,pc:u64,pj:u64,pm:u64,pw:u64,px:u64,pn:u64)
+  _ = call(pi,po,ps,pe,pc,pj,pm,pw,px) {"function":"wt_emit"}
+  length:u32 = int.cast(pn) {"mode":"wrap"}
+  ret(length)
+block malformed()
+  invalid_input:u32 = const() {"value":4294967295}
+  ret(invalid_input)
+block capacity()
+  insufficient:u32 = const() {"value":4294967294}
+  ret(insufficient)
+end
+fn wt_descriptor(input:readbuf,extent:u64,at:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,extent:u64,at:u64)
+  remaining:u64 = int.sub.wrap(extent,at)
+  four:u64 = const() {"value":4}
+  has_length:bool = compare.ge(remaining,four)
+  branch has_length geometry(input,at,remaining,four) invalid()
+block geometry(gi:readbuf,ga:u64,gr:u64,gw:u64)
+  row_size:u64 = call(gi,ga,gw) {"function":"wa_read"}
+  available:u64 = int.sub.wrap(gr,gw)
+  row_at:u64 = int.add.wrap(ga,gw)
+  minimum:u64 = const() {"value":108}
+  has_row:bool = compare.ge(row_size,minimum)
+  fits:bool = compare.le(row_size,available)
+  in_bounds:bool = bool.and(has_row,fits)
+  branch in_bounds kind(gi,row_at,row_size,gw) invalid()
+block kind(ki:readbuf,ka:u64,kn:u64,kw:u64)
+  magic:u64 = call(ki,ka,kw) {"function":"wa_read"}
+  wjl1:u64 = const() {"value":827083351}
+  valid_magic:bool = compare.eq(magic,wjl1)
+  mask_at:u64 = int.add.wrap(ka,kw)
+  mask:u64 = call(ki,mask_at,kw) {"function":"wa_read"}
+  full_mask:u64 = const() {"value":32767}
+  valid_mask:bool = compare.le(mask,full_mask)
+  accepted:bool = bool.and(valid_magic,valid_mask)
+  end_at:u64 = int.add.wrap(ka,kn)
+  shift:u64 = const() {"value":32}
+  offset_word:u64 = int.shl.checked(ka,shift)
+  bounds:u64 = bit.or(offset_word,end_at)
+  branch accepted success(bounds,mask) invalid()
+block success(geometry_word:u64,presence:u64)
+  ret(geometry_word,presence)
+block invalid()
+  none:u64 = const() {"value":0}
+  ret(none,none)
+end
+fn wt_measure(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64)
+  first:u64 = const() {"value":8}
+  zero:u64 = const() {"value":0}
+  markdown_header:u64 = const() {"value":446}
+  jump rows(input,output,scratch,extent,count,zero,first,zero,markdown_header)
+block rows(ri:readbuf,ro:mutbuf,rs:mutbuf,re:u64,rc:u64,row:u64,at:u64,json_at:u64,md_at:u64)
+  more:bool = compare.lt(row,rc)
+  branch more describe(ri,ro,rs,re,rc,row,at,json_at,md_at) finish(re,at,json_at,md_at)
+block describe(di:readbuf,do:mutbuf,ds:mutbuf,de:u64,dc:u64,dr:u64,da:u64,dj:u64,dm:u64)
+  bounds:u64,mask:u64 = call(di,de,da) {"function":"wt_descriptor"}
+  empty:u64 = const() {"value":0}
+  valid:bool = compare.ne(bounds,empty)
+  branch valid typed(di,do,ds,de,dc,dr,dj,dm,bounds,mask) failure()
+block typed(ti:readbuf,to:mutbuf,ts:mutbuf,te:u64,tc:u64,tr:u64,tj:u64,tm:u64,tb:u64,tp:u64)
+  dry:bool = const() {"value":false}
+  json_next:u64 = call(ti,to,tb,tp,dry,tj) {"function":"wj_row"}
+  bad:u64 = const() {"value":0}
+  valid_row:bool = compare.ne(json_next,bad)
+  branch valid_row key_slots(ti,to,ts,te,tc,tr,json_next,tm,tb,tp) failure()
+block key_slots(ki:readbuf,ko:mutbuf,ks:mutbuf,ke:u64,kc:u64,kr:u64,kj:u64,km:u64,kb:u64,kp:u64)
+  admitted:bool = call(ki,ks,kb,kr) {"function":"wt_index_row"}
+  branch admitted render(ki,ko,ks,ke,kc,kr,kj,km,kb,kp) failure()
+block render(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64,wr:u64,wj:u64,wm:u64,wb:u64,wp:u64)
+  no:bool = const() {"value":false}
+  md_next:u64 = call(wi,wo,wb,wp,wm,no) {"function":"wm_row"}
+  low_word:u64 = const() {"value":4294967295}
+  next_input:u64 = bit.and(wb,low_word)
+  one:u64 = const() {"value":1}
+  next_row:u64 = int.add.wrap(wr,one)
+  jump rows(wi,wo,ws,we,wc,next_row,next_input,wj,md_next)
+block finish(expected:u64,seen:u64,json_end:u64,markdown_end:u64)
+  exact:bool = compare.eq(seen,expected)
+  branch exact good(json_end,markdown_end) failure()
+block good(json_bytes:u64,md_bytes:u64)
+  ret(json_bytes,md_bytes)
+block failure()
+  reject:u64 = const() {"value":0}
+  ret(reject,reject)
+end
+fn wt_index_row(input:readbuf,scratch:mutbuf,bounds:u64,row:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,scratch:mutbuf,bounds:u64,row:u64)
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  task_id:u64 = call(input,bounds,eight,eight) {"function":"wj_read_slot"}
+  id_slot:u64 = call(zero,row) {"function":"wg_cell"}
+  id_at:u64 = int.add.wrap(id_slot,one)
+  id_width:u64 = call(scratch,id_at,task_id,zero) {"function":"value_integer_write"}
+  yes:bool = const() {"value":true}
+  id_written:u64 = call(scratch,id_slot,id_width,one,yes) {"function":"wa_word"}
+  shift:u64 = const() {"value":32}
+  origin:u64 = int.shr.checked(bounds,shift)
+  header:u64 = const() {"value":108}
+  payload:u64 = int.add.wrap(origin,header)
+  jump fields(input,scratch,bounds,row,payload,zero)
+block fields(fi:readbuf,fs:mutbuf,fb:u64,fr:u64,fa:u64,field:u64)
+  last:u64 = const() {"value":10}
+  more:bool = compare.lt(field,last)
+  branch more field_geometry(fi,fs,fb,fr,fa,field) good()
+block field_geometry(gi:readbuf,gs:mutbuf,gb:u64,gr:u64,ga:u64,gf:u64)
+  four:u64 = const() {"value":4}
+  start_lengths:u64 = const() {"value":64}
+  slot_delta:u64 = int.mul.wrap(gf,four)
+  slot_offset:u64 = int.add.wrap(start_lengths,slot_delta)
+  length:u64 = call(gi,gb,slot_offset,four) {"function":"wj_read_slot"}
+  maps:u64 = const() {"value":433862410256}
+  map_shift:u64 = int.mul.wrap(gf,four)
+  shifted:u64 = int.shr.checked(maps,map_shift)
+  mask4:u64 = const() {"value":15}
+  map:u64 = bit.and(shifted,mask4)
+  zero2:u64 = const() {"value":0}
+  indexed:bool = compare.ne(map,zero2)
+  branch indexed bounded(gi,gs,gb,gr,ga,gf,length,map) advance(gi,gs,gb,gr,ga,gf,length)
+block bounded(bi:readbuf,bs:mutbuf,bb:u64,br:u64,ba:u64,bf:u64,bn:u64,bm:u64)
+  widths:u64 = const() {"value":4629704266301837568}
+  eight2:u64 = const() {"value":8}
+  octet_mask:u64 = const() {"value":255}
+  amount:u64 = int.mul.wrap(bm,eight2)
+  shifted_widths:u64 = int.shr.checked(widths,amount)
+  width:u64 = bit.and(shifted_widths,octet_mask)
+  fits:bool = compare.le(bn,width)
+  branch fits classify(bi,bs,bb,br,ba,bf,bn,bm) bad()
+block classify(ci:readbuf,cs:mutbuf,cb:u64,cr:u64,ca:u64,cf:u64,cn:u64,cm:u64)
+  one2:u64 = const() {"value":1}
+  is_status:bool = compare.eq(cm,one2)
+  branch is_status status(ci,cs,cb,cr,ca,cf,cn,cm) label(ci,cs,cb,cr,ca,cf,cn,cm)
+block status(si:readbuf,ss:mutbuf,sb:u64,sr:u64,sa:u64,sf:u64,sn:u64,sm:u64)
+  status_result:u8 = call(si,sa,sn) {"function":"ws_selected"}
+  selected:u8 = const() {"value":1}
+  status_ok:bool = compare.eq(status_result,selected)
+  branch status_ok phase(si,ss,sb,sr,sa,sf,sn,sm) bad()
+block phase(pi:readbuf,ps:mutbuf,pb:u64,pr:u64,pa:u64,pf:u64,pn:u64,pm:u64)
+  two:u64 = const() {"value":2}
+  one3:u64 = const() {"value":1}
+  six:u64 = const() {"value":6}
+  eight3:u64 = const() {"value":8}
+  rejected_word:u64 = const() {"value":7234316346692625778}
+  actual:u64 = call(pi,pa,eight3) {"function":"wa_read"}
+  is_rejected:bool = compare.eq(actual,rejected_word)
+  short:bool = compare.eq(pn,eight3)
+  terminal:bool = bool.and(is_rejected,short)
+  live:u64 = const() {"value":111559249781601}
+  terminal_word:u64 = const() {"value":7809644627923985780}
+  phase_word:u64 = select(terminal,terminal_word,live)
+  phase_length:u64 = select(terminal,eight3,six)
+  phase_slot:u64 = call(two,pr) {"function":"wg_cell"}
+  write:bool = const() {"value":true}
+  phase_body:u64 = call(ps,phase_slot,phase_length,one3,write) {"function":"wa_word"}
+  phase_end:u64 = call(ps,phase_body,phase_word,phase_length,write) {"function":"wa_word"}
+  jump save(pi,ps,pb,pr,pa,pf,pn,pm)
+block label(li:readbuf,ls:mutbuf,lb:u64,lr:u64,la:u64,lf:u64,ln:u64,lm:u64)
+  end_at:u64 = int.add.wrap(la,ln)
+  printable:bool = call(li,la,end_at) {"function":"wp_printable"}
+  branch printable save(li,ls,lb,lr,la,lf,ln,lm) bad()
+block save(si2:readbuf,ss2:mutbuf,sb2:u64,sr2:u64,sa2:u64,sf2:u64,sn2:u64,sm2:u64)
+  dest:u64 = call(sm2,sr2) {"function":"wg_cell"}
+  _ = call(si2,ss2,sa2,sn2,dest) {"function":"wg_copy_key"}
+  jump advance(si2,ss2,sb2,sr2,sa2,sf2,sn2)
+block advance(ai:readbuf,as:mutbuf,ab:u64,ar:u64,aa:u64,af:u64,an:u64)
+  step:u64 = const() {"value":1}
+  next_field:u64 = int.add.wrap(af,step)
+  next_text:u64 = int.add.wrap(aa,an)
+  jump fields(ai,as,ab,ar,next_text,next_field)
+block good()
+  valid:bool = const() {"value":true}
+  ret(valid)
+block bad()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end
+fn wt_emit(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64)
+  yes:bool = const() {"value":true}
+  staged:readbuf = borrow.read(scratch)
+  serialized:u64 = call(staged,output,wire_extent,count,yes) {"function":"wx_index"}
+  _ = loan.end(staged)
+  header_length:u64 = const() {"value":16}
+  markdown_at:u64 = int.add.wrap(header_length,json_length)
+  index_at:u64 = int.add.wrap(markdown_at,md_length)
+  zero:usize = const() {"value":0}
+  move_index_dest:usize = int.cast(index_at) {"mode":"wrap"}
+  move_index_count:usize = int.cast(index_length) {"mode":"wrap"}
+  _ = buffer.move_within(output,move_index_dest,zero,move_index_count)
+  header_written:u64 = call(scratch) {"function":"wa_active_header"}
+  header:readbuf = borrow.read(scratch)
+  md_pos:usize = int.cast(markdown_at) {"mode":"wrap"}
+  md_header_size:usize = int.cast(header_written) {"mode":"wrap"}
+  _ = buffer.copy_range(output,header,md_pos,zero,md_header_size)
+  _ = loan.end(header)
+  row_at:u64 = int.add.wrap(markdown_at,header_written)
+  _ = call(input,output,extent,count,header_length,row_at) {"function":"wt_emit_rows"}
+  marker:u64 = const() {"value":827277655}
+  start:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  magic_end:u64 = call(output,start,marker,four,yes) {"function":"wa_word"}
+  json_size_end:u64 = call(output,magic_end,json_length,four,yes) {"function":"wa_word"}
+  md_size_end:u64 = call(output,json_size_end,md_length,four,yes) {"function":"wa_word"}
+  envelope_end:u64 = call(output,md_size_end,index_length,four,yes) {"function":"wa_word"}
+  ret()
+end
+fn wt_emit_rows(input:readbuf,output:mutbuf,extent:u64,count:u64,json_at:u64,markdown_at:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,extent:u64,count:u64,json_at:u64,markdown_at:u64)
+  first:u64 = const() {"value":8}
+  jump rows(input,output,extent,count,json_at,markdown_at,first)
+block rows(ri:readbuf,ro:mutbuf,re:u64,rc:u64,rj:u64,rm:u64,ra:u64)
+  zero:u64 = const() {"value":0}
+  more:bool = compare.ne(rc,zero)
+  branch more render(ri,ro,re,rc,rj,rm,ra) finish()
+block render(ei:readbuf,eo:mutbuf,ee:u64,ec:u64,ej:u64,em:u64,ea:u64)
+  bounds:u64,mask:u64 = call(ei,ee,ea) {"function":"wt_descriptor"}
+  yes:bool = const() {"value":true}
+  next_json:u64 = call(ei,eo,bounds,mask,yes,ej) {"function":"wj_row"}
+  next_md:u64 = call(ei,eo,bounds,mask,em,yes) {"function":"wm_row"}
+  word:u64 = const() {"value":4294967295}
+  next_input:u64 = bit.and(bounds,word)
+  one:u64 = const() {"value":1}
+  remaining:u64 = int.sub.wrap(ec,one)
+  jump rows(ei,eo,ee,remaining,next_json,next_md,next_input)
+block finish()
+  ret()
+end
