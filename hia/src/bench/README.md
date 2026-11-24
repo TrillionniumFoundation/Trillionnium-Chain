@@ -78,16 +78,17 @@ acquisition, or the full Bench startup/process path.
 ## Linux no-profile executable
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
-x86-64 ELF for the **bounded Original-order** process. It reads real argv at
+x86-64 ELF for the **bounded Original / WriteLast** process. It reads real argv at
 `_start` and checks that the environment pointer list is empty without
 dereferencing environment strings. This is an isolated candidate, not an
 activated general replacement for `trnm-bench`.
 
 Its admitted invocation is no arguments (Classic, 20,000 transactions and
 2,000 keys), one each of `--txs`, `--keys`, `--read-fanout`, `--write-every`,
-`--workload`, `--strategy original` and `--determinism-repeats` in split
+`--workload`, `--strategy` and `--determinism-repeats` in split
 or equals form, plus one bare `--persist-profile` and, when privately bound,
-one bare `--profile`. Explicit persistence retains the original true default.
+one bare `--profile`. Strategy values are `original` (default) and
+`write-last`. Explicit persistence retains the original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
 values and malformed text. Zero numeric workload counts retain the original
@@ -112,8 +113,18 @@ not a rollback of the fix:
   The writer groups on that single key strictly increase, so the reader
   group cannot regress and replacing it with its high-water value is identical.
 - With write stride at least the batch size, only transaction zero writes.
-  There is no prior reader when it writes and there is no later write
-  that can observe the different reader table.
+  Under Original it writes first. Under WriteLast the earlier transactions
+  are read-only and all place in group zero before the only writer. Either
+  way there is no sequence of regressing reader groups before a write.
+
+The selected strategy ID reaches the existing native workload frame,
+scheduler, replay and report in the same ELF. Classic has equal one-write
+footprints and retains stable ordering. Under admitted single-key interleaved
+Mixed and HotStreak, WriteLast genuinely changes grouping: with 32 transactions,
+stride three and fanout eight, the locked Rust and HIA WriteLast results
+have 12 groups instead of 22 under Original on the same workload digest.
+The tests compare ordered-group digests, replay success and actual profile
+file bytes with the matching original strategy, not merely the printed name.
 
 The unmodified default multiwriter Mixed run is **not** admitted. A real
 locked Rust run and ungated HIA development run on default Mixed produced

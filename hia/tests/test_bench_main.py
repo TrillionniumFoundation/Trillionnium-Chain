@@ -448,6 +448,83 @@ class NativeBenchMain(unittest.TestCase):
         self.assertEqual(observed[0], observed[1])
         self.reset_profile_path()
 
+    def test_actual_write_last_dispatch_and_replay_against_locked_rust(self):
+        fixtures = (
+            # Same write footprint per transaction: stable tie order.
+            (b"classic", 32, 7, 1, 1, 1),
+            # Reordering is observable at the key and stride boundaries.
+            (b"mixed", 32, 1, 8, 3, 3),
+            (b"hot-streak", 32, 1, 8, 3, 3),
+            (b"mixed", 32, 7, 8, 32, 2),
+            (b"hot-streak", 32, 7, 8, 32, 2),
+            (b"classic", 20000, 2000, 2, 8, 0),
+        )
+        for index, (workload, n, keys, fanout, stride, repeats) in enumerate(fixtures):
+            args = (b"--workload=" + workload, f"--txs={n}".encode(), f"--keys={keys}".encode(),
+                    f"--read-fanout={fanout}".encode(), f"--write-every={stride}".encode(),
+                    f"--determinism-repeats={repeats}".encode())
+            strategy = (b"--strategy", b"write-last") if index % 2 else (b"--strategy=write-last",)
+            before, before_wall = self.actual(f"write-last-{index}-original", self.original, (*args, *strategy))
+            after, after_wall = self.actual(f"write-last-{index}-native", self.native, (*args, *strategy))
+            self.assertEqual((before.returncode, after.returncode, before.stderr, after.stderr),
+                             (0, 0, b"", b""))
+            before_ms, before_raw = stdout_observation(before.stdout, before_wall)
+            after_ms, after_raw = stdout_observation(after.stdout, after_wall)
+            self.events[-2]["observed_elapsed_ms"] = before_ms
+            self.events[-1]["observed_elapsed_ms"] = after_ms
+            self.assertEqual(before_raw, after_raw)
+            self.assertIn(b"\nstrategy=WriteLast\n", after_raw)
+            replay_state = b"true" if repeats else b"not-requested"
+            self.assertIn(b"\ndeterminism.replay_match=" + replay_state + b"\n", after_raw)
+            # A label-only implementation could pass on Classic. Require
+            # different original/native-verified grouping for both interleaved
+            # one-key workloads; compare the entire locked-Rust stdout above.
+            if index in (1, 2):
+                original_order, _ = self.actual(f"write-last-{index}-control", self.original, args)
+                self.assertEqual((original_order.returncode, original_order.stderr), (0, b""))
+                def fields(raw):
+                    return dict(line.split(b"=", 1) for line in raw.splitlines() if b"=" in line)
+
+                original_fields, write_last_fields = fields(original_order.stdout), fields(after_raw)
+                self.assertEqual(original_fields[b"determinism.input_sha256"],
+                                 write_last_fields[b"determinism.input_sha256"])
+                self.assertNotEqual(original_fields[b"determinism.groups_sha256"],
+                                    write_last_fields[b"determinism.groups_sha256"])
+                self.assertEqual((original_fields[b"groups"], write_last_fields[b"groups"]), (b"22", b"12"))
+            self.assertFalse(self.run_path.exists())
+
+    def test_actual_write_last_profile_and_unchanged_refusal(self):
+        for index, flags in enumerate((
+                (b"--workload=mixed", b"--keys=1", b"--write-every=3"),
+                (b"--workload=hot-streak", b"--keys=7", b"--write-every=32"))):
+            args = (*flags, b"--strategy=write-last", b"--profile", b"--txs=32",
+                    b"--read-fanout=8", b"--determinism-repeats=2")
+            results = []
+            for tag, image in (("original", self.original), ("native", self.native)):
+                self.reset_profile_path()
+                label = f"write-last-profile-{index}-{tag}"
+                report, _, _ = self.profile_comparable(*self.actual(label, image, args), "file")
+                self.assertIn(b"\nprofile.report.strategy=WriteLast\n", report)
+                results.append(report)
+            self.assertEqual(*results)
+        self.reset_profile_path()
+        over = (b"--profile", b"--workload=mixed", b"--strategy=write-last", b"--determinism-repeats=1001")
+        for tag, image in (("original", self.original), ("native", self.native)):
+            actual, _ = self.actual(f"write-last-replay-bound-{tag}", image, over)
+            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", REPEAT))
+            self.assertFalse(self.run_path.exists())
+        for index, flags in enumerate((
+                (b"--workload=mixed",), (b"--workload=hot-streak",),
+                (b"--workload=mixed", b"--txs=32", b"--keys=7", b"--write-every=31"),
+                (b"--workload=hot-streak", b"--txs=32", b"--keys=1", b"--read-fanout=9"),
+                (b"--workload=write-last",), (b"--strategy=write-laST",),
+                (b"--strategy=write-last-extra",))):
+            args = (b"--profile", *flags) if flags[0].startswith(b"--strategy") else (
+                b"--profile", b"--strategy=write-last", *flags)
+            actual, _ = self.actual(f"write-last-refused-{index}", self.native, args)
+            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+
     def test_actual_replay_count_and_independent_membership_digest_guards(self):
         # Test-only synthetic ELF links never become the supported Bench image.
         args = (b"--txs=4", b"--keys=4")
