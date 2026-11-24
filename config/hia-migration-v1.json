@@ -1327,6 +1327,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-select",
+      "node_integration_complete": false,
+      "scope": "Ordered native selection for the exact active Worker CLI audit export predicate over typed UTF-8 statuses. Actual unchanged locked Rust export-audit CLI observations check selected identities and exact native JSONL replay. Production selector wiring, journal and normalization, index and output ownership stay unchanged.",
+      "source": "hia/src/worker_agent/audit_select.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_select.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
@@ -1420,6 +1430,7 @@
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
         "worker-agent/audit-jsonl-row",
+        "worker-agent/audit-select",
         "worker-agent/audit-report"
       ],
       "legacy_path": "trillionnium/crates/trnm-worker-agent",

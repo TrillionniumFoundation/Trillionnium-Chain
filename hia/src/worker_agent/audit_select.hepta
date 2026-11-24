@@ -1,0 +1,159 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_select_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  input_extent:usize = buffer.len(input)
+  input_bytes:u64 = int.cast(input_extent) {"mode":"wrap"}
+  header_bytes:u64 = const() {"value":8}
+  header_present:bool = compare.ge(input_bytes,header_bytes)
+  branch header_present check_header(input,output,input_bytes) malformed()
+block check_header(hi:readbuf,ho:mutbuf,hs:u64)
+  header_start:u64 = const() {"value":0}
+  header_word:u64 = const() {"value":4}
+  magic:u64 = call(hi,header_start,header_word) {"function":"wa_read"}
+  expected:u64 = const() {"value":827542103}
+  magic_ok:bool = compare.eq(magic,expected)
+  count:u64 = call(hi,header_word,header_word) {"function":"wa_read"}
+  limit:u64 = const() {"value":100000}
+  count_ok:bool = compare.le(count,limit)
+  header_ok:bool = bool.and(magic_ok,count_ok)
+  branch header_ok measure(hi,ho,hs,count) malformed()
+block measure(mi:readbuf,mo:mutbuf,ms:u64,mcount:u64)
+  measure_only:bool = const() {"value":false}
+  measured:bool = call(mi,mo,ms,mcount,measure_only) {"function":"ws_pass"}
+  branch measured capacity(mi,mo,ms,mcount) malformed()
+block capacity(ci:readbuf,co:mutbuf,cs:u64,ccount:u64)
+  native_capacity:usize = buffer.len(co)
+  cap:u64 = int.cast(native_capacity) {"mode":"wrap"}
+  fits:bool = compare.le(ccount,cap)
+  branch fits write(ci,co,cs,ccount) insufficient()
+block write(wi:readbuf,wo:mutbuf,ws:u64,wcount:u64)
+  write_only:bool = const() {"value":true}
+  complete:bool = call(wi,wo,ws,wcount,write_only) {"function":"ws_pass"}
+  result:u32 = int.cast(wcount) {"mode":"wrap"}
+  ret(result)
+block malformed()
+  invalid:u32 = const() {"value":4294967295}
+  ret(invalid)
+block insufficient()
+  small:u32 = const() {"value":4294967294}
+  ret(small)
+end
+fn ws_pass(input:readbuf,output:mutbuf,total:u64,count:u64,emit:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,total:u64,count:u64,emit:bool)
+  first_at:u64 = const() {"value":8}
+  first_row:u64 = const() {"value":0}
+  jump row(input,output,total,count,emit,first_at,first_row)
+block row(ri:readbuf,ro:mutbuf,rs:u64,rc:u64,rw:bool,ra:u64,rr:u64)
+  more:bool = compare.lt(rr,rc)
+  branch more header(ri,ro,rs,rc,rw,ra,rr) finish(rs,ra)
+block finish(fs:u64,fa:u64)
+  exact:bool = compare.eq(fa,fs)
+  ret(exact)
+block header(hi:readbuf,ho:mutbuf,hs:u64,hc:u64,hw:bool,ha:u64,hr:u64)
+  remaining:u64 = int.sub.wrap(hs,ha)
+  length_bytes:u64 = const() {"value":4}
+  has_length:bool = compare.ge(remaining,length_bytes)
+  branch has_length extent(hi,ho,hs,hc,hw,ha,hr,length_bytes,remaining) fail()
+block extent(ei:readbuf,eo:mutbuf,es:u64,ec:u64,ew:bool,ea:u64,er:u64,ewidth:u64,eremaining:u64)
+  size:u64 = call(ei,ea,ewidth) {"function":"wa_read"}
+  room:u64 = int.sub.wrap(eremaining,ewidth)
+  text_start:u64 = int.add.wrap(ea,ewidth)
+  present:bool = compare.le(size,room)
+  branch present admit(ei,eo,es,ec,ew,text_start,er,size) fail()
+block admit(ai:readbuf,ao:mutbuf,as:u64,ac:u64,aw:bool,aa:u64,ar:u64,an:u64)
+  valid_utf8:u64 = call(ai,aa,an) {"function":"value_utf8"}
+  valid_code:u64 = const() {"value":1}
+  typed:bool = compare.eq(valid_utf8,valid_code)
+  branch typed dispatch(ai,ao,as,ac,aw,aa,ar,an) fail()
+block dispatch(di:readbuf,do:mutbuf,ds:u64,dc:u64,dw:bool,da:u64,dr:u64,dn:u64)
+  branch dw write(di,do,ds,dc,dw,da,dr,dn) advance(di,do,ds,dc,dw,da,dr,dn)
+block write(wi:readbuf,wo:mutbuf,ws:u64,wc:u64,ww:bool,wa:u64,wr:u64,wn:u64)
+  bit:u8 = call(wi,wa,wn) {"function":"ws_selected"}
+  index:usize = int.cast(wr) {"mode":"wrap"}
+  _ = buffer.store(wo,index,bit)
+  jump advance(wi,wo,ws,wc,ww,wa,wr,wn)
+block advance(xi:readbuf,xo:mutbuf,xs:u64,xc:u64,xw:bool,xa:u64,xr:u64,xn:u64)
+  next_at:u64 = int.add.wrap(xa,xn)
+  step:u64 = const() {"value":1}
+  next_row:u64 = int.add.wrap(xr,step)
+  jump row(xi,xo,xs,xc,xw,next_at,next_row)
+block fail()
+  failed:bool = const() {"value":false}
+  ret(failed)
+end
+fn ws_selected(input:readbuf,at:u64,length:u64) -> (u8) effects(read,write,trap) entry(check_rejected)
+block check_rejected(input:readbuf,at:u64,length:u64)
+  len_rejected:u64 = const() {"value":8}
+  len_ok_rejected:bool = compare.eq(length,len_rejected)
+  branch len_ok_rejected match_rejected(input,at) check_failed_adapter(input,at,length)
+block check_failed_adapter(i1:readbuf,a1:u64,n1:u64)
+  len_failed_adapter:u64 = const() {"value":14}
+  len_ok_failed_adapter:bool = compare.eq(n1,len_failed_adapter)
+  branch len_ok_failed_adapter match_failed_adapter(i1,a1) check_reveal_submitted(i1,a1,n1)
+block check_reveal_submitted(i2:readbuf,a2:u64,n2:u64)
+  len_reveal_submitted:u64 = const() {"value":16}
+  len_ok_reveal_submitted:bool = compare.eq(n2,len_reveal_submitted)
+  branch len_ok_reveal_submitted match_reveal_submitted(i2,a2) check_failed_submission(i2,a2,n2)
+block check_failed_submission(i3:readbuf,a3:u64,n3:u64)
+  len_failed_submission:u64 = const() {"value":17}
+  len_ok_failed_submission:bool = compare.eq(n3,len_failed_submission)
+  branch len_ok_failed_submission match_failed_submission(i3,a3) excluded()
+block match_rejected(mi0:readbuf,ma0:u64)
+  rejected_size_0:u64 = const() {"value":8}
+  rejected_expected_0:u64 = const() {"value":7234316346692625778}
+  rejected_actual_0:u64 = call(mi0,ma0,rejected_size_0) {"function":"wa_read"}
+  rejected_equal_0:bool = compare.eq(rejected_expected_0,rejected_actual_0)
+  branch rejected_equal_0 included() excluded()
+block match_failed_adapter(mi1:readbuf,ma1:u64)
+  failed_adapter_size_0:u64 = const() {"value":8}
+  failed_adapter_expected_0:u64 = const() {"value":7016437131239842150}
+  failed_adapter_actual_0:u64 = call(mi1,ma1,failed_adapter_size_0) {"function":"wa_read"}
+  failed_adapter_equal_0:bool = compare.eq(failed_adapter_expected_0,failed_adapter_actual_0)
+  failed_adapter_delta_1:u64 = const() {"value":8}
+  failed_adapter_at_1:u64 = int.add.wrap(ma1,failed_adapter_delta_1)
+  failed_adapter_size_1:u64 = const() {"value":6}
+  failed_adapter_expected_1:u64 = const() {"value":125780070785380}
+  failed_adapter_actual_1:u64 = call(mi1,failed_adapter_at_1,failed_adapter_size_1) {"function":"wa_read"}
+  failed_adapter_equal_1:bool = compare.eq(failed_adapter_expected_1,failed_adapter_actual_1)
+  failed_adapter_through_1:bool = bool.and(failed_adapter_equal_0,failed_adapter_equal_1)
+  branch failed_adapter_through_1 included() excluded()
+block match_reveal_submitted(mi2:readbuf,ma2:u64)
+  reveal_submitted_size_0:u64 = const() {"value":8}
+  reveal_submitted_expected_0:u64 = const() {"value":8313482602719110514}
+  reveal_submitted_actual_0:u64 = call(mi2,ma2,reveal_submitted_size_0) {"function":"wa_read"}
+  reveal_submitted_equal_0:bool = compare.eq(reveal_submitted_expected_0,reveal_submitted_actual_0)
+  reveal_submitted_delta_1:u64 = const() {"value":8}
+  reveal_submitted_at_1:u64 = int.add.wrap(ma2,reveal_submitted_delta_1)
+  reveal_submitted_size_1:u64 = const() {"value":8}
+  reveal_submitted_expected_1:u64 = const() {"value":7234316419774374517}
+  reveal_submitted_actual_1:u64 = call(mi2,reveal_submitted_at_1,reveal_submitted_size_1) {"function":"wa_read"}
+  reveal_submitted_equal_1:bool = compare.eq(reveal_submitted_expected_1,reveal_submitted_actual_1)
+  reveal_submitted_through_1:bool = bool.and(reveal_submitted_equal_0,reveal_submitted_equal_1)
+  branch reveal_submitted_through_1 included() excluded()
+block match_failed_submission(mi3:readbuf,ma3:u64)
+  failed_submission_size_0:u64 = const() {"value":8}
+  failed_submission_expected_0:u64 = const() {"value":8313473823922544998}
+  failed_submission_actual_0:u64 = call(mi3,ma3,failed_submission_size_0) {"function":"wa_read"}
+  failed_submission_equal_0:bool = compare.eq(failed_submission_expected_0,failed_submission_actual_0)
+  failed_submission_delta_1:u64 = const() {"value":8}
+  failed_submission_at_1:u64 = int.add.wrap(ma3,failed_submission_delta_1)
+  failed_submission_size_1:u64 = const() {"value":8}
+  failed_submission_expected_1:u64 = const() {"value":8028074750291829365}
+  failed_submission_actual_1:u64 = call(mi3,failed_submission_at_1,failed_submission_size_1) {"function":"wa_read"}
+  failed_submission_equal_1:bool = compare.eq(failed_submission_expected_1,failed_submission_actual_1)
+  failed_submission_through_1:bool = bool.and(failed_submission_equal_0,failed_submission_equal_1)
+  failed_submission_delta_2:u64 = const() {"value":16}
+  failed_submission_at_2:u64 = int.add.wrap(ma3,failed_submission_delta_2)
+  failed_submission_size_2:u64 = const() {"value":1}
+  failed_submission_expected_2:u64 = const() {"value":110}
+  failed_submission_actual_2:u64 = call(mi3,failed_submission_at_2,failed_submission_size_2) {"function":"wa_read"}
+  failed_submission_equal_2:bool = compare.eq(failed_submission_expected_2,failed_submission_actual_2)
+  failed_submission_through_2:bool = bool.and(failed_submission_through_1,failed_submission_equal_2)
+  branch failed_submission_through_2 included() excluded()
+block included()
+  yes:u8 = const() {"value":1}
+  ret(yes)
+block excluded()
+  no:u8 = const() {"value":0}
+  ret(no)
+end
