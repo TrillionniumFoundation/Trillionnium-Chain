@@ -5672,6 +5672,32 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/release_bundle/pq_bundle_state.hepta": [
+      {
+        "functions": [
+          "md_read64"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "rac_nonzero_digest"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "rb_le16"
+        ],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      },
+      {
+        "functions": [
+          "sb_compare"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      }
+    ],
     "src/release_bundle/pq_quorum.hepta": [
       {
         "functions": [

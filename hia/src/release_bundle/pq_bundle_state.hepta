@@ -1,0 +1,281 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_bundle_state_shadow_v1
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  actual:usize = buffer.len(input)
+  minimum:usize = const() {"value":334}
+  enough:bool = compare.ge(actual,minimum)
+  branch enough extent(input,actual) malformed()
+block extent(ei:readbuf,el:usize)
+  history_at:usize = const() {"value":332}
+  rows:u64 = call(ei,history_at) {"function":"rb_le16"}
+  cap:u64 = const() {"value":4096}
+  bounded:bool = compare.le(rows,cap)
+  width:u64 = const() {"value":33}
+  base:u64 = const() {"value":334}
+  payload:u64 = int.mul.wrap(rows,width)
+  expect:u64 = int.add.wrap(base,payload)
+  wide:u64 = int.cast(el) {"mode":"wrap"}
+  same:bool = compare.eq(wide,expect)
+  exact:bool = bool.and(bounded,same)
+  branch exact frame(ei,rows) malformed()
+block frame(fi:readbuf,frows:u64)
+  typed:bool = call(fi,frows) {"function":"rs_typed"}
+  branch typed anchored(fi,frows) malformed()
+block anchored(ai:readbuf,arows:u64)
+  trusted_tip:u64 = const() {"value":155}
+  owner_tip:u64 = const() {"value":235}
+  digest_width:u64 = const() {"value":32}
+  equal:u64 = const() {"value":1}
+  anchor_compare:u64 = call(ai,trusted_tip,owner_tip,digest_width,digest_width) {"function":"sb_compare"}
+  anchor_match:bool = compare.eq(anchor_compare,equal)
+  anchor_nonzero:bool = call(ai,trusted_tip) {"function":"rac_nonzero_digest"}
+  anchor_current:bool = bool.and(anchor_match,anchor_nonzero)
+  branch anchor_current events(ai,arows) stale_snapshot()
+block events(evi:readbuf,erows:u64)
+  seq_at:u64 = const() {"value":324}
+  count:u64 = call(evi,seq_at) {"function":"md_read64"}
+  maximum:u64 = const() {"value":8192}
+  full:bool = compare.ge(count,maximum)
+  branch full history_full() clock(evi,erows)
+block clock(ci:readbuf,crows:u64)
+  min_at:u64 = const() {"value":308}
+  now_at:u64 = const() {"value":316}
+  floor:u64 = call(ci,min_at) {"function":"md_read64"}
+  now:u64 = call(ci,now_at) {"function":"md_read64"}
+  rolled:bool = compare.lt(now,floor)
+  branch rolled clock_rollback() lifetime(ci,crows,now)
+block lifetime(li:readbuf,lrows:u64,lnow:u64)
+  root_exp_at:u64 = const() {"value":227}
+  metadata_exp_at:u64 = const() {"value":49}
+  root_exp:u64 = call(li,root_exp_at) {"function":"md_read64"}
+  meta_exp:u64 = call(li,metadata_exp_at) {"function":"md_read64"}
+  root_dead:bool = compare.le(root_exp,lnow)
+  meta_dead:bool = compare.le(meta_exp,lnow)
+  exceeds:bool = compare.gt(meta_exp,root_exp)
+  local_expiry:bool = bool.or(root_dead,meta_dead)
+  past:bool = bool.or(local_expiry,exceeds)
+  branch past expired() network(li,lrows)
+block network(ni:readbuf,nrows:u64)
+  meta_network:u64 = const() {"value":1}
+  root_network:u64 = const() {"value":187}
+  nw_width:u64 = const() {"value":32}
+  nw_equal:u64 = const() {"value":1}
+  nw_compare:u64 = call(ni,meta_network,root_network,nw_width,nw_width) {"function":"sb_compare"}
+  same_network:bool = compare.eq(nw_compare,nw_equal)
+  meta_gen_at:u64 = const() {"value":33}
+  root_gen_at:u64 = const() {"value":219}
+  meta_gen:u64 = call(ni,meta_gen_at) {"function":"md_read64"}
+  root_gen:u64 = call(ni,root_gen_at) {"function":"md_read64"}
+  same_generation:bool = compare.eq(meta_gen,root_gen)
+  same_authority:bool = bool.and(same_network,same_generation)
+  branch same_authority checkpoint(ni,nrows) wrong_authority()
+block checkpoint(pi:readbuf,prows:u64)
+  expected:u64 = const() {"value":57}
+  owner:u64 = const() {"value":235}
+  width_cp:u64 = const() {"value":32}
+  equal_cp:u64 = const() {"value":1}
+  prior_at:u64 = const() {"value":89}
+  current_at:u64 = const() {"value":267}
+  option_width:u64 = const() {"value":33}
+  cp_cmp:u64 = call(pi,expected,owner,width_cp,width_cp) {"function":"sb_compare"}
+  prev_cmp:u64 = call(pi,prior_at,current_at,option_width,option_width) {"function":"sb_compare"}
+  tip_matches:bool = compare.eq(cp_cmp,equal_cp)
+  prev_matches:bool = compare.eq(prev_cmp,equal_cp)
+  links_match:bool = bool.and(tip_matches,prev_matches)
+  branch links_match version(pi,prows) conflict()
+block version(vi:readbuf,vrows:u64)
+  current_version_at:u64 = const() {"value":300}
+  offered_version_at:u64 = const() {"value":41}
+  current_version:u64 = call(vi,current_version_at) {"function":"md_read64"}
+  offered_version:u64 = call(vi,offered_version_at) {"function":"md_read64"}
+  one_more:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(current_version,one_more)
+  vzero:u64 = const() {"value":0}
+  not_wrapped:bool = compare.ne(next,vzero)
+  next_matches:bool = compare.eq(next,offered_version)
+  permitted:bool = bool.and(not_wrapped,next_matches)
+  branch permitted content(vi,vrows) rollback_version()
+block content(di:readbuf,drows:u64)
+  content_at:u64 = const() {"value":122}
+  nonzero_content:bool = call(di,content_at) {"function":"rac_nonzero_digest"}
+  branch nonzero_content history(di,drows) invalid_content()
+block history(hi:readbuf,hrows:u64)
+  found:bool = call(hi,hrows) {"function":"rs_has_content"}
+  current_present_at:usize = const() {"value":267}
+  current_bytes:u64 = const() {"value":268}
+  offered:u64 = const() {"value":122}
+  bytes:u64 = const() {"value":32}
+  equal_hist:u64 = const() {"value":1}
+  one_hist:u8 = const() {"value":1}
+  present:u8 = buffer.load(hi,current_present_at)
+  current_cmp:u64 = call(hi,current_bytes,offered,bytes,bytes) {"function":"sb_compare"}
+  has_current:bool = compare.eq(present,one_hist)
+  same_digest:bool = compare.eq(current_cmp,equal_hist)
+  unchanged:bool = bool.and(has_current,same_digest)
+  changed:bool = bool.not(unchanged)
+  revisited:bool = bool.and(found,changed)
+  approval_at:usize = const() {"value":154}
+  raw_approval:u8 = buffer.load(hi,approval_at)
+  approved:bool = compare.eq(raw_approval,one_hist)
+  rollback_match:bool = compare.eq(approved,revisited)
+  branch rollback_match room(hrows,found) rollback_approval()
+block room(rrows:u64,rhas:bool)
+  cap_history:u64 = const() {"value":4096}
+  room_full:bool = compare.ge(rrows,cap_history)
+  novel:bool = bool.not(rhas)
+  forbidden_new:bool = bool.and(room_full,novel)
+  branch forbidden_new history_full() checked()
+block checked()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block stale_snapshot()
+  stale_code:u32 = const() {"value":111}
+  ret(stale_code)
+block history_full()
+  full_code:u32 = const() {"value":201}
+  ret(full_code)
+block clock_rollback()
+  clock_code:u32 = const() {"value":202}
+  ret(clock_code)
+block expired()
+  expires_code:u32 = const() {"value":203}
+  ret(expires_code)
+block wrong_authority()
+  root_code:u32 = const() {"value":204}
+  ret(root_code)
+block conflict()
+  conflict_code:u32 = const() {"value":205}
+  ret(conflict_code)
+block rollback_version()
+  version_code:u32 = const() {"value":206}
+  ret(version_code)
+block invalid_content()
+  content_code:u32 = const() {"value":207}
+  ret(content_code)
+block rollback_approval()
+  approval_code:u32 = const() {"value":208}
+  ret(approval_code)
+end
+
+fn rs_typed(input:readbuf,rows:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,rows:u64)
+  role_at:usize = const() {"value":0}
+  previous_at:usize = const() {"value":89}
+  approval_at:usize = const() {"value":154}
+  current_at:usize = const() {"value":267}
+  one:u8 = const() {"value":1}
+  role:u8 = buffer.load(input,role_at)
+  previous:u8 = buffer.load(input,previous_at)
+  approval:u8 = buffer.load(input,approval_at)
+  current:u8 = buffer.load(input,current_at)
+  node_role:bool = compare.eq(role,one)
+  typed_prev:bool = compare.le(previous,one)
+  typed_approve:bool = compare.le(approval,one)
+  typed_current:bool = compare.le(current,one)
+  tagged:bool = bool.and(node_role,typed_prev)
+  remaining:bool = bool.and(typed_approve,typed_current)
+  typed:bool = bool.and(tagged,remaining)
+  branch typed option(input,rows,previous,current) invalid()
+block option(oi:readbuf,orows:u64,oprev:u8,ocur:u8)
+  zero:u8 = const() {"value":0}
+  p_digest:u64 = const() {"value":90}
+  c_digest:u64 = const() {"value":268}
+  p_absent:bool = compare.eq(oprev,zero)
+  c_absent:bool = compare.eq(ocur,zero)
+  p_nonzero:bool = call(oi,p_digest) {"function":"rac_nonzero_digest"}
+  c_nonzero:bool = call(oi,c_digest) {"function":"rac_nonzero_digest"}
+  bad_previous:bool = bool.and(p_absent,p_nonzero)
+  bad_current:bool = bool.and(c_absent,c_nonzero)
+  malformed_option:bool = bool.or(bad_previous,bad_current)
+  branch malformed_option invalid() roster(oi,orows)
+block roster(ri:readbuf,rrows:u64)
+  answer:bool = call(ri,rrows) {"function":"rs_sorted_history"}
+  ret(answer)
+block invalid()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rs_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  start:u64 = const() {"value":334}
+  width:u64 = const() {"value":33}
+  off:u64 = int.mul.wrap(index,width)
+  at:u64 = int.add.wrap(start,off)
+  ret(at)
+end
+
+fn rs_sorted_history(input:readbuf,count:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(input,count,zero)
+block loop(li:readbuf,lc:u64,idx:u64)
+  done:bool = compare.eq(idx,lc)
+  branch done valid() role(li,lc,idx)
+block role(ri:readbuf,rc:u64,ridx:u64)
+  row:u64 = call(ridx) {"function":"rs_row"}
+  at:usize = int.cast(row) {"mode":"wrap"}
+  role:u8 = buffer.load(ri,at)
+  one:u8 = const() {"value":1}
+  four:u8 = const() {"value":4}
+  low:bool = compare.ge(role,one)
+  high:bool = compare.le(role,four)
+  role_typed:bool = bool.and(low,high)
+  branch role_typed prior(ri,rc,ridx,row) invalid()
+block prior(pi:readbuf,pc:u64,pidx:u64,prow:u64)
+  first:u64 = const() {"value":0}
+  one_step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(pidx,one_step)
+  is_first:bool = compare.eq(pidx,first)
+  branch is_first loop(pi,pc,next) compare_order(pi,pc,pidx,prow,next)
+block compare_order(ci:readbuf,cc:u64,cidx:u64,crow:u64,cnext:u64)
+  one_order:u64 = const() {"value":1}
+  previous:u64 = int.sub.wrap(cidx,one_order)
+  earlier:u64 = call(previous) {"function":"rs_row"}
+  length:u64 = const() {"value":33}
+  order:u64 = call(ci,earlier,crow,length,length) {"function":"sb_compare"}
+  less:u64 = const() {"value":0}
+  ordered:bool = compare.eq(order,less)
+  branch ordered loop(ci,cc,cnext) invalid()
+block valid()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block invalid()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rs_has_content(input:readbuf,count:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(input,count,zero)
+block loop(li:readbuf,lc:u64,idx:u64)
+  done:bool = compare.eq(idx,lc)
+  branch done absent() scan(li,lc,idx)
+block scan(si:readbuf,sc:u64,sidx:u64)
+  row:u64 = call(sidx) {"function":"rs_row"}
+  role_at:usize = int.cast(row) {"mode":"wrap"}
+  role:u8 = buffer.load(si,role_at)
+  node:u8 = const() {"value":1}
+  is_node:bool = compare.eq(role,node)
+  branch is_node compare_digest(si,sc,sidx,row) absent()
+block compare_digest(ci:readbuf,cc:u64,cidx:u64,crow:u64)
+  one:u64 = const() {"value":1}
+  content_at:u64 = const() {"value":122}
+  digest_at:u64 = int.add.wrap(crow,one)
+  bytes:u64 = const() {"value":32}
+  equal:u64 = const() {"value":1}
+  cmp:u64 = call(ci,digest_at,content_at,bytes,bytes) {"function":"sb_compare"}
+  same:bool = compare.eq(cmp,equal)
+  next:u64 = int.add.wrap(cidx,one)
+  branch same found() loop(ci,cc,next)
+block found()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block absent()
+  no:bool = const() {"value":false}
+  ret(no)
+end
