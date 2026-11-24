@@ -13,6 +13,7 @@ import shutil
 import signal
 import struct
 import subprocess
+import sys
 import tarfile
 import tempfile
 import time
@@ -27,6 +28,22 @@ ROOT = Path(__file__).resolve().parents[2]
 REPEAT = b"--determinism-repeats exceeds bounded maximum 1000\n"
 OUTSIDE = b"Bench native candidate: invocation outside admitted Bench scope\n"
 PROFILE_ARGS = (b"--profile", b"--txs=4", b"--keys=2")
+HOT_KEY = b"TRNM_HOT_BUCKETS="
+# Qualification-only transport. Its own env is empty and stdin is solely the
+# explicit synthetic vector. It passes array order and duplicate names across
+# actual Linux execve without the mapping/coalescing of subprocess's env arg.
+SYNTHETIC_EXECVE = r"""
+import ctypes, os, sys
+data = sys.stdin.buffer.read()
+assert not data or data.endswith(b"\0")
+entries = data[:-1].split(b"\0") if data else []
+args = [os.fsencode(s) for s in sys.argv[2:]]
+argv = (ctypes.c_char_p * (len(args) + 1))(*args, None)
+envp = (ctypes.c_char_p * (len(entries) + 1))(*entries, None)
+libc = ctypes.CDLL(None, use_errno=True)
+libc.execve(os.fsencode(sys.argv[1]), argv, envp)
+raise SystemExit("synthetic execve failed, errno " + str(ctypes.get_errno()))
+"""
 
 
 def digest(data):
@@ -127,17 +144,27 @@ class NativeBenchMain(unittest.TestCase):
                   "whole_bench_native_qualified": False, "production_activation": False}
         (cls.root / "observations.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
 
-    def actual(self, label, image, args=(), *, env=None, prepare=None):
+    def actual(self, label, image, args=(), *, env=None, env_entries=None, prepare=None):
         current = self.root / (label + ".cwd")
         current.mkdir(mode=0o700)
         fd = sealed_executable(image, label)
         start = time.monotonic_ns()
         start_realtime = time.time_ns()
         try:
-            result = subprocess.run([b"trnm-bench", *args], executable=f"/proc/self/fd/{fd}",
-                                    cwd=current, env={} if env is None else env, pass_fds=(fd,),
-                                    stdin=subprocess.DEVNULL, capture_output=True, timeout=25,
-                                    preexec_fn=prepare)
+            entry = f"/proc/self/fd/{fd}"
+            if env_entries is None:
+                result = subprocess.run([b"trnm-bench", *args], executable=entry,
+                                        cwd=current, env={} if env is None else env, pass_fds=(fd,),
+                                        stdin=subprocess.DEVNULL, capture_output=True, timeout=25,
+                                        preexec_fn=prepare)
+            else:
+                self.assertIsNone(env)
+                self.assertIsNone(prepare)
+                self.assertTrue(all(b"\0" not in entry for entry in env_entries))
+                result = subprocess.run([sys.executable, "-I", "-S", "-c", SYNTHETIC_EXECVE,
+                                         entry, b"trnm-bench", *args],
+                                        cwd=current, env={}, pass_fds=(fd,), capture_output=True, timeout=25,
+                                        input=b"".join(entry + b"\0" for entry in env_entries))
         finally:
             os.close(fd)
         end_realtime = time.time_ns()
@@ -523,6 +550,88 @@ class NativeBenchMain(unittest.TestCase):
                 b"--profile", b"--strategy=write-last", *flags)
             actual, _ = self.actual(f"write-last-refused-{index}", self.native, args)
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+
+    def test_actual_hot_bucket_environment_controls_order(self):
+        key = HOT_KEY
+        sentinel = b"synthetic fixture only not an integer"
+        maximum_value = b"0" * (131072 - len(key) - 3) + b"17"
+        common = (b"--txs=64", b"--keys=23", b"--read-fanout=8", b"--write-every=64",
+                  b"--determinism-repeats=2", b"--strategy=hot-bucket-interleave")
+        expectations = {
+            "absent": ((), 8),
+            "empty-first": ((key, key+b"17"), 8),
+            "invalid-utf8-first": ((key+b"\xff", key+b"17"), 8),
+            "invalid-first": ((key+sentinel, key+b"17"), 8),
+            "low-clamp": ((key+b"0",), 4),
+            "effective-4": ((key+b"4",), 4),
+            "default-literal": ((key+b"8",), 8),
+            "first-17": ((key+b"17", key+b"64"), 17),
+            "formatted-17": ((key+b" \xc2\xa0' +1_7 ' ",), 17),
+            "effective-64": ((key+b"64",), 64),
+            "high-clamp": ((key+b"18446744073709551615",), 64),
+            "overflow-default": ((key+b"18446744073709551616",), 8),
+            "full-linux-value": ((key+maximum_value,), 17),
+            "64-entries": ((key+b"17",)+(key+b"64",)*63, 17),
+        }
+        for workload in (b"classic", b"mixed", b"hot-streak"):
+            order, input_hashes = {}, set()
+            # Full parser/bounds matrix on Classic; the independent WAR
+            # admitted multi-key single-writer frames take all four values.
+            for name, (entries, bucket) in expectations.items():
+                if workload != b"classic" and name not in ("absent", "effective-4", "first-17", "effective-64"):
+                    continue
+                with self.subTest(workload=workload, case=name):
+                    args = (b"--workload=" + workload, *common)
+                    matches = []
+                    for kind, image in (("original",self.original),("native",self.native)):
+                        label = f"hot-env-{workload.decode()}-{name}-{kind}"
+                        result, wall = self.actual(label,image,args,env_entries=entries)
+                        self.assertEqual((result.returncode,result.stderr),(0,b""))
+                        elapsed, stdout = stdout_observation(result.stdout, wall)
+                        self.events[-1]["observed_elapsed_ms"] = elapsed
+                        self.assertNotIn(sentinel, stdout)
+                        self.assertIn(b"\nstrategy=HotBucketInterleave\n",stdout)
+                        self.assertIn(b"\ndeterminism.replay_match=true\n",stdout)
+                        matches.append(stdout)
+                    self.assertEqual(*matches)
+                    fields = dict(line.split(b"=",1) for line in matches[0].splitlines() if b"=" in line)
+                    input_hashes.add(fields[b"determinism.input_sha256"])
+                    group = fields[b"determinism.groups_sha256"]
+                    self.assertEqual(order.setdefault(bucket,group),group)
+                    self.assertFalse(self.run_path.exists())
+            self.assertEqual(len(input_hashes),1)
+            self.assertEqual(set(order),{4,8,17,64})
+            self.assertEqual(len(set(order.values())),4)
+
+    def test_actual_hot_bucket_environment_profile_and_refusals(self):
+        args = (b"--profile",b"--txs=64",b"--keys=23",b"--workload=hot-streak",
+                b"--write-every=64",b"--read-fanout=8",
+                b"--strategy",b"hot-bucket-interleave",b"--determinism-repeats=2")
+        results = []
+        for tag,image in (("original",self.original),("native",self.native)):
+            self.reset_profile_path()
+            result = self.actual("hot-env-profile-"+tag,image,args,env_entries=(HOT_KEY+b"17",))
+            report,_,raw = self.profile_comparable(*result,"file")
+            self.assertIn(b"\nprofile.report.strategy=HotBucketInterleave\n",report)
+            self.assertNotIn(HOT_KEY,raw)
+            results.append(report)
+        self.assertEqual(*results)
+        self.reset_profile_path()
+        rejected_entries = ((b"UNRELATED_FIXTURE=do not emit",), (b"TRNM_HOT_BUCKETS",),
+                            (b"TRNM_HOT_BUCKETS_EXTRA=17",), (b"trnm_hot_buckets=17",),
+                            (HOT_KEY+b"17", b"UNRELATED_FIXTURE=do not emit"),
+                            (HOT_KEY+b"17",)*65)
+        for i,entries in enumerate(rejected_entries):
+            result,_ = self.actual(f"hot-env-refusal-{i}",self.native,args,env_entries=entries)
+            self.assertEqual((result.returncode,result.stdout,result.stderr),(2,b"",OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+        for i,flags in enumerate(((b"--strategy=original",), (b"--strategy=write-last",),
+                                 (b"--strategy=hot-bucket-interleave", b"--workload=mixed"),
+                                 (b"--strategy=hot-bucket-interleave", b"--workload=hot-streak"))):
+            result,_ = self.actual(f"hot-env-workload-refusal-{i}",self.native,(b"--profile",*flags),
+                                   env_entries=(HOT_KEY+b"17",))
+            self.assertEqual((result.returncode,result.stdout,result.stderr),(2,b"",OUTSIDE))
             self.assertFalse(self.run_path.exists())
 
     def test_actual_replay_count_and_independent_membership_digest_guards(self):

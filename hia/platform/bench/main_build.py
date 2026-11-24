@@ -18,10 +18,11 @@ COMPONENTS = (
     "src/bench/digests.hepta",
     "src/bench/report.hepta",
     "src/bench/profile.hepta",
+    "src/bench/environment.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "c9b3285c64569d7f5d96186fca8819918797fac3e2a21295e1c4a5441846855b"
-PREFIX, BASE = 3648, 0x400000
+ADAPTER_SHA256 = "63a685240bc7642e23c47d81fa86f4ca475e3f6041b39bda24f94fc675e11f08"
+PREFIX, BASE = 3976, 0x400000
 
 
 def exact_native_text(data):
@@ -106,7 +107,8 @@ def build(output: Path, *, bind_profile_output=False):
     for raw in parts:
         addresses.append(position)
         position += len(raw)
-    payload = struct.pack("<8Q", *addresses, position if anchor else 0, len(anchor)) + b"".join(parts)
+    payload = struct.pack("<9Q", *addresses[:6], position if anchor else 0, len(anchor),
+                          addresses[6]) + b"".join(parts)
     if anchor:
         payload += anchor + b"\0"
     if len(payload) > 950272:
@@ -162,7 +164,7 @@ sys.stdout.buffer.write(out.raw[:n])
             if sha256((HIA_ROOT / relative).read_bytes()) != identity:
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
-    report = {"schema": "trnm.hia.bench-main.build.v2",
+    report = {"schema": "trnm.hia.bench-main.build.v3",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},

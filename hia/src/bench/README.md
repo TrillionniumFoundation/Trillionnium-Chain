@@ -78,17 +78,19 @@ acquisition, or the full Bench startup/process path.
 ## Linux no-profile executable
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
-x86-64 ELF for the **bounded Original / WriteLast** process. It reads real argv at
-`_start` and checks that the environment pointer list is empty without
-dereferencing environment strings. This is an isolated candidate, not an
-activated general replacement for `trnm-bench`.
+x86-64 ELF for the **bounded Original / WriteLast / HotBucketInterleave**
+process. It reads real argv at `_start` and, only for HotBucketInterleave,
+admits the [single-variable startup policy](#hot-bucket-startup-environment)
+below. This is an isolated candidate, not an activated general replacement
+for `trnm-bench`.
 
 Its admitted invocation is no arguments (Classic, 20,000 transactions and
 2,000 keys), one each of `--txs`, `--keys`, `--read-fanout`, `--write-every`,
 `--workload`, `--strategy` and `--determinism-repeats` in split
 or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
-`write-last`. Explicit persistence retains the original true default.
+`write-last` or `hot-bucket-interleave`. Explicit persistence retains the
+original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
 values and malformed text. Zero numeric workload counts retain the original
@@ -97,7 +99,7 @@ the original inclusive zero through 1,000 replays. A parsed count over 1,000
 renders the exact original diagnostic and exit 2 before workload or clock
 work, including with parsed values outside candidate bounds. Other unsupported
 invocations exit 2 with a distinct candidate diagnostic, **not** Clap
-diagnostic equivalence. Help, other strategies and nonempty environments
+diagnostic equivalence. Help, other strategies and general environments
 remain open and never fall back to the old executable.
 
 The three `--workload` values are `classic`, `mixed`, and `hot-streak`.
@@ -113,13 +115,13 @@ not a rollback of the fix:
   The writer groups on that single key strictly increase, so the reader
   group cannot regress and replacing it with its high-water value is identical.
 - With write stride at least the batch size, only transaction zero writes.
-  Under Original it writes first. Under WriteLast the earlier transactions
-  are read-only and all place in group zero before the only writer. Either
-  way there is no sequence of regressing reader groups before a write.
+  Under Original it writes first. Under either reordering strategy any
+  transactions before that writer are read-only and place in group zero.
+  There is no sequence of regressing reader groups before a write.
 
 The selected strategy ID reaches the existing native workload frame,
-scheduler, replay and report in the same ELF. Classic has equal one-write
-footprints and retains stable ordering. Under admitted single-key interleaved
+scheduler, replay and report in the same ELF. For WriteLast, Classic has
+equal one-write footprints and retains stable ordering. Under admitted single-key interleaved
 Mixed and HotStreak, WriteLast genuinely changes grouping: with 32 transactions,
 stride three and fanout eight, the locked Rust and HIA WriteLast results
 have 12 groups instead of 22 under Original on the same workload digest.
@@ -139,10 +141,10 @@ scheduler components keep their own contracts.
 The [native emitter](../../platform/bench/main_emitter.hepta) creates one RX
 load segment and an NX stack with no loader or runtime imports. The resolved
 argument code and the build-time packer use the pinned compiler's explicit
-object profile; native workload, schedule, digests, report and profile use the
-usual native flat profile. The build-time host transports bytes to the pinned
+object profile; native workload, schedule, digests, report, profile and
+environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 3,472-byte Linux adapter. It does not execute the
+the address table, and the 3,800-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 16 argument tokens in a private span and owns
@@ -159,6 +161,35 @@ creates directories or files. Original and native deterministic stdout/digests m
 on the default Classic, admitted default-sized single-writer workloads and
 admitted small inputs; independent elapsed observations
 are retained and are not compared as deterministic bytes.
+
+### Hot bucket startup environment
+
+Original and WriteLast still refuse nonempty environments on admitted
+invocations without dereferencing any entry. HotBucketInterleave admits an
+empty environment or at most 64 actual Linux environment entries, each
+beginning with the exact case-sensitive `TRNM_HOT_BUCKETS=` name. A missing
+equals sign, prefix collision, unrelated key, or extra entry fails before
+workload construction, clocks, or file creation. For an allowed duplicate
+name the first value wins, even when invalid UTF-8 or empty: later value
+bytes are not read. The selected entry may use the Linux x86-64 131,072-byte
+NUL-inclusive single-entry limit. The adapter checks names only up to the
+first mismatch; it does not copy or inspect unrelated values.
+
+Only the selected value enters a private one-field frame for the unchanged
+[native parser](environment.hepta). That parser preserves the original
+normalization, default of 8 and clamp to 4–64. The entry wipes the staging
+frame and parser scratch, then supplies the numeric result to the checked
+scheduler frame before any workload digest or timing. No raw environment
+is part of reports, profile files, or the test evidence. Every replay uses
+the same effective value. This does not implement general startup environment
+capture or the other 11 getters as process inputs.
+
+A synthetic actual-process differential against the locked Rust executable
+uses unchanged 64-transaction Classic and admitted single-writer Mixed and
+HotStreak workloads. Values 4, 8, 17 and 64 produce four distinct ordered
+group digests for each workload while its input digest stays the same.
+It also checks first-match/invalid/empty handling, a full-width environment
+entry, exact profile output, and refusal above the 64-entry bound.
 
 ### Replay ownership in the Linux process
 

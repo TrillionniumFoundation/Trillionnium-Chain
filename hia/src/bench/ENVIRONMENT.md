@@ -120,7 +120,9 @@ passes the native frame through the canonical parser to compare all ten
 effective words against the active executor's unmodified original getters.
 This tests the startup projection on Linux x86-64, not a replacement startup
 ELF, a platform-independent libc contract, or arbitrary environment capture.
-The native Bench CLI and acquisition boundary are still open.
+The [isolated Bench entry](README.md#hot-bucket-startup-environment)
+separately owns actual process acquisition for only `TRNM_HOT_BUCKETS`.
+It uses the canonical value parser but not this supplied-span projector.
 
 ## Preserved text rules
 
