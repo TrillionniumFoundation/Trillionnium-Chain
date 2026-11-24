@@ -76,7 +76,7 @@ try:
  p=Proxy(store);p.actuals[store.view['roots']['original']+'/cargo-target/debug/settlement-reference']={'bytes':1,'sha256':'0'*64};reject('actual_original_binary_bytes_changed',lambda:full(p))
  for text in ['{"x":1e999}','{"x":NaN}','{"x":Infinity}','{"x":1,"x":2}']:reject('strict_json_'+text,lambda text=text:readback.document(text))
  class Cap:
-  def __init__(self):self.records=[]
+  def __init__(self):self.records=[];self.public_dispatch_wall_ns=0
   def blob(self,b):return bytes(b)
   def record(self,r):self.records.append(copy.deepcopy(r))
  def height_case(name,h):
