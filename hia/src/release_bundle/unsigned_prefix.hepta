@@ -1,0 +1,210 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_unsigned_prefix_v0
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  wire_size:usize = buffer.len(input)
+  minimum:usize = const() {"value":1067}
+  header_fits:bool = compare.ge(wire_size,minimum)
+  branch header_fits layout(input,output,scratch,wire_size) malformed()
+block layout(li:readbuf,lo:mutbuf,lw:mutbuf,extent:usize)
+  n_at:usize = const() {"value":0}
+  v_at:usize = const() {"value":2}
+  a_at:usize = const() {"value":4}
+  p_at:usize = const() {"value":6}
+  r_at:usize = const() {"value":8}
+  name:u64 = call(li,n_at) {"function":"rb_le16"}
+  version:u64 = call(li,v_at) {"function":"rb_le16"}
+  art:u64 = call(li,a_at) {"function":"rb_le16"}
+  pkg:u64 = call(li,p_at) {"function":"rb_le16"}
+  req:u64 = call(li,r_at) {"function":"rb_le16"}
+  maximum_name:u64 = const() {"value":512}
+  maximum_version:u64 = const() {"value":256}
+  maximum_count:u64 = const() {"value":64}
+  name_fits:bool = compare.le(name,maximum_name)
+  version_fits:bool = compare.le(version,maximum_version)
+  art_fits:bool = compare.le(art,maximum_count)
+  pkg_fits:bool = compare.le(pkg,maximum_count)
+  req_fits:bool = compare.le(req,maximum_count)
+  texts_fit:bool = bool.and(name_fits,version_fits)
+  actual_fit:bool = bool.and(art_fits,pkg_fits)
+  counts_fit:bool = bool.and(actual_fit,req_fits)
+  fields_fit:bool = bool.and(texts_fit,counts_fit)
+  flag_at:usize = const() {"value":298}
+  dirty:u8 = buffer.load(li,flag_at)
+  max_flag:u8 = const() {"value":1}
+  bool_ok:bool = compare.le(dirty,max_flag)
+  header_ok:bool = bool.and(fields_fit,bool_ok)
+  branch header_ok extent_check(li,lo,lw,extent,name,version,art,pkg,req) malformed()
+block extent_check(ei:readbuf,eo:mutbuf,ew:mutbuf,el:usize,en:u64,ev:u64,ea:u64,ep:u64,er:u64)
+  artifact_begin:u64 = const() {"value":1067}
+  package_begin:u64 = call(ea,artifact_begin) {"function":"aset_row_at"}
+  key_begin:u64 = call(ep,package_begin) {"function":"sb_row_at"}
+  key_width:u64 = const() {"value":772}
+  key_bytes:u64 = int.mul.wrap(er,key_width)
+  expected:u64 = int.add.wrap(key_begin,key_bytes)
+  actual64:u64 = int.cast(el) {"mode":"wrap"}
+  exact:bool = compare.eq(expected,actual64)
+  branch exact wire(ei,eo,ew,en,ev,ea,ep,artifact_begin,package_begin,key_begin,expected) malformed()
+block wire(wi:readbuf,wo:mutbuf,ww:mutbuf,wn:u64,wv:u64,wa:u64,wp:u64,was:u64,wps:u64,wrs:u64,we:u64)
+  valid:bool = call(wi,was,wps,wrs,we) {"function":"up_wire"}
+  branch valid prelude(wi,wo,ww,wn,wv,wa,wp,was,wps,wrs,we) malformed()
+block prelude(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pv:u64,pa:u64,pp:u64,pas:u64,pps:u64,prs:u64,pe:u64)
+  header_valid:bool = call(pi,pn,pv,pa,pp) {"function":"up_header"}
+  branch header_valid source(pi,po,pw,pa,pp,pas,pps,prs,pe) invalid_bundle()
+block source(si:readbuf,so:mutbuf,sw:mutbuf,sa:u64,sp:u64,sas:u64,sps:u64,srs:u64,se:u64)
+  source_start:u64 = const() {"value":106}
+  source_status:u32 = call(si,source_start) {"function":"es_validate_at"}
+  zero:u32 = const() {"value":0}
+  valid_source:bool = compare.eq(source_status,zero)
+  branch valid_source artifact(si,so,sw,sa,sp,sas,sps,srs,se) refused(source_status)
+block artifact(ai:readbuf,ao:mutbuf,aw:mutbuf,aa:u64,ap:u64,aas:u64,aps:u64,ars:u64,ae:u64)
+  art_status:u32 = call(ai,aa,aas) {"function":"aset_membership_at"}
+  art_zero:u32 = const() {"value":0}
+  valid_artifact:bool = compare.eq(art_status,art_zero)
+  branch valid_artifact sbom(ai,ao,aw,aa,ap,aas,aps,ars,ae) refused(art_status)
+block sbom(bi:readbuf,bo:mutbuf,bw:mutbuf,ba:u64,bp:u64,bas:u64,bps:u64,brs:u64,be:u64)
+  sbom_status:u32 = call(bi,bp,bps) {"function":"sba_packages_at"}
+  sbom_zero:u32 = const() {"value":0}
+  valid_sbom:bool = compare.eq(sbom_status,sbom_zero)
+  branch valid_sbom coverage(bi,bo,bw,ba,bp,bas,bps,brs,be) sbom_error(sbom_status)
+block sbom_error(code:u32)
+  class_offset:u32 = const() {"value":10}
+  specific:u32 = int.add.wrap(code,class_offset)
+  ret(specific)
+block coverage(ci:readbuf,co:mutbuf,cw:mutbuf,ca:u64,cp:u64,cas:u64,cps:u64,crs:u64,ce:u64)
+  covered:bool = call(ci,cp,crs,ce,cps) {"function":"sba_coverage_at"}
+  branch covered capacity(ci,co,cw,ca,cp,cas,cps) incomplete()
+block capacity(fi:readbuf,fo:mutbuf,fw:mutbuf,fa:u64,fp:u64,fas:u64,fps:u64)
+  out_len:usize = buffer.len(fo)
+  work_len:usize = buffer.len(fw)
+  out_min:usize = const() {"value":96}
+  work_min:usize = const() {"value":5296}
+  out_ok:bool = compare.ge(out_len,out_min)
+  work_ok:bool = compare.ge(work_len,work_min)
+  sufficient:bool = bool.and(out_ok,work_ok)
+  branch sufficient derive_source(fi,fo,fw,fa,fp,fas,fps) short()
+block derive_source(di:readbuf,do_:mutbuf,dw:mutbuf,da:u64,dp:u64,das:u64,dps:u64)
+  start:u64 = const() {"value":106}
+  hashed:u64 = call(di,dw,start) {"function":"es_hash_at"}
+  hash_zero:u64 = const() {"value":0}
+  hash_ok:bool = compare.eq(hashed,hash_zero)
+  branch hash_ok retain_source(di,do_,dw,da,dp,das,dps) internal()
+block retain_source(ri:readbuf,ro:mutbuf,rw:mutbuf,ra:u64,rp:u64,ras:u64,rps:u64)
+  source_slot:u64 = const() {"value":5200}
+  _source_saved:u64 = call(rw,source_slot) {"function":"sb_append_digest"}
+  art_result:u32 = call(ri,rw,ra,ras) {"function":"aset_hash_at"}
+  art_ok_code:u32 = const() {"value":0}
+  art_hashed:bool = compare.eq(art_result,art_ok_code)
+  branch art_hashed retain_artifact(ri,ro,rw,rp,rps) internal()
+block retain_artifact(hi:readbuf,ho:mutbuf,hw:mutbuf,hp:u64,hps:u64)
+  artifact_slot:u64 = const() {"value":5232}
+  _artifact_saved:u64 = call(hw,artifact_slot) {"function":"sb_append_digest"}
+  sbom_result:u32 = call(hi,hw,hp,hps) {"function":"sb_hash_at"}
+  sbom_ok_code:u32 = const() {"value":0}
+  sbom_hashed:bool = compare.eq(sbom_result,sbom_ok_code)
+  branch sbom_hashed retain_sbom(ho,hw) internal()
+block retain_sbom(zo:mutbuf,zw:mutbuf)
+  sbom_slot:u64 = const() {"value":5264}
+  _sbom_saved:u64 = call(zw,sbom_slot) {"function":"sb_append_digest"}
+  first:u64 = const() {"value":0}
+  jump publish(zo,zw,first)
+block publish(pub_out:mutbuf,pub_work:mutbuf,idx:u64)
+  source_at:u64 = const() {"value":5200}
+  at:u64 = int.add.wrap(source_at,idx)
+  octets:u64 = call(pub_work,at) {"function":"tr_get"}
+  _published:u64 = call(pub_out,idx,octets) {"function":"tr_put"}
+  word:u64 = const() {"value":8}
+  next:u64 = int.add.wrap(idx,word)
+  digest_bytes:u64 = const() {"value":96}
+  complete:bool = compare.eq(next,digest_bytes)
+  branch complete done() publish(pub_out,pub_work,next)
+block done()
+  success:u32 = const() {"value":0}
+  ret(success)
+block malformed()
+  format_error:u32 = const() {"value":100}
+  ret(format_error)
+block short()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+block internal()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
+block invalid_bundle()
+  bundle_error:u32 = const() {"value":110}
+  ret(bundle_error)
+block incomplete()
+  missing_error:u32 = const() {"value":108}
+  ret(missing_error)
+block refused(error:u32)
+  ret(error)
+end
+
+fn up_wire(input:readbuf,artifact:u64,packages:u64,required:u64,end:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,artifact:u64,packages:u64,required:u64,end:u64)
+  jump artifact_scan(input,artifact,packages,required,end)
+block artifact_scan(ai:readbuf,at:u64,ae:u64,ar:u64,final_at:u64)
+  done:bool = compare.eq(at,ae)
+  branch done package_scan(ai,ae,ar,final_at) artifact_row(ai,at,ae,ar,final_at)
+block artifact_row(ri:readbuf,ra:u64,re:u64,rr:u64,rt:u64)
+  valid:bool = call(ri,ra) {"function":"aset_well_formed"}
+  art_width:u64 = const() {"value":877}
+  next:u64 = int.add.wrap(ra,art_width)
+  branch valid artifact_scan(ri,next,re,rr,rt) bad()
+block package_scan(pi:readbuf,pa:u64,pe:u64,pt:u64)
+  packages_done:bool = compare.eq(pa,pe)
+  branch packages_done required_scan(pi,pe,pt) package_row(pi,pa,pe,pt)
+block package_row(bi:readbuf,ba:u64,be:u64,bt:u64)
+  pkg_valid:bool = call(bi,ba) {"function":"sb_well_formed"}
+  pkg_width:u64 = const() {"value":1351}
+  pkg_next:u64 = int.add.wrap(ba,pkg_width)
+  branch pkg_valid package_scan(bi,pkg_next,be,bt) bad()
+block required_scan(ki:readbuf,ka:u64,kt:u64)
+  keys_done:bool = compare.eq(ka,kt)
+  branch keys_done yes() required_row(ki,ka,kt)
+block required_row(qi:readbuf,qa:u64,qt:u64)
+  req_valid:bool = call(qi,qa) {"function":"sba_key_wire"}
+  key_width:u64 = const() {"value":772}
+  key_next:u64 = int.add.wrap(qa,key_width)
+  branch req_valid required_scan(qi,key_next,qt) bad()
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+block yes()
+  ok:bool = const() {"value":true}
+  ret(ok)
+end
+
+fn up_header(input:readbuf,name:u64,version:u64,art:u64,pkg:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,name:u64,version:u64,art:u64,pkg:u64)
+  zero:u64 = const() {"value":0}
+  named:bool = compare.gt(name,zero)
+  versioned:bool = compare.gt(version,zero)
+  art_present:bool = compare.gt(art,zero)
+  sbom_present:bool = compare.gt(pkg,zero)
+  text:bool = bool.and(named,versioned)
+  rosters:bool = bool.and(art_present,sbom_present)
+  present:bool = bool.and(text,rosters)
+  branch present printable(input,name,version) invalid()
+block printable(pi:readbuf,pn:u64,pv:u64)
+  name_begin:u64 = const() {"value":299}
+  version_begin:u64 = const() {"value":811}
+  name_end:u64 = int.add.wrap(name_begin,pn)
+  version_end:u64 = int.add.wrap(version_begin,pv)
+  name_ok:bool = call(pi,name_begin,name_end) {"function":"rac_printable"}
+  version_ok:bool = call(pi,version_begin,version_end) {"function":"rac_printable"}
+  texts_ok:bool = bool.and(name_ok,version_ok)
+  branch texts_ok digests(pi) invalid()
+block digests(di:readbuf)
+  protocol_at:u64 = const() {"value":10}
+  signer_at:u64 = const() {"value":42}
+  signature_label_at:u64 = const() {"value":74}
+  protocol:bool = call(di,protocol_at) {"function":"rac_nonzero_digest"}
+  signer:bool = call(di,signer_at) {"function":"rac_nonzero_digest"}
+  signature_label:bool = call(di,signature_label_at) {"function":"rac_nonzero_digest"}
+  protocol_signer:bool = bool.and(protocol,signer)
+  structure_ok:bool = bool.and(protocol_signer,signature_label)
+  ret(structure_ok)
+block invalid()
+  no:bool = const() {"value":false}
+  ret(no)
+end

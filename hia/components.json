@@ -5635,8 +5635,10 @@
       {
         "functions": [
           "es_copy_field",
+          "es_hash_at",
           "es_hash_prefix",
           "es_nonzero",
+          "es_validate_at",
           "es_validate_prefix"
         ],
         "source": "src/release_bundle/exact_source.hepta"
@@ -5720,8 +5722,8 @@
       {
         "functions": [
           "sb_append_digest", "sb_compare", "sb_compare_field", "sb_copy_digest",
-          "sb_digest_member", "sb_hash_roster", "sb_hash_transcript", "sb_ord",
-          "sb_row", "sb_select", "sb_well_formed", "sb_width"
+          "sb_digest_member", "sb_hash_at", "sb_hash_roster", "sb_hash_transcript", "sb_ord",
+          "sb_row", "sb_row_at", "sb_select_at", "sb_well_formed", "sb_width"
         ],
         "source": "src/release_bundle/sbom_digest.hepta"
       }
@@ -5782,6 +5784,91 @@
           "s512_block"
         ],
         "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
+    "src/release_bundle/unsigned_prefix.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_printable",
+          "rac_read_le",
+          "rac_write_be"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "aset_cmp_size",
+          "aset_digest_member",
+          "aset_hash_at",
+          "aset_member_valid",
+          "aset_membership_at",
+          "aset_ord",
+          "aset_read_size",
+          "aset_row_at",
+          "aset_select_at",
+          "aset_well_formed"
+        ],
+        "source": "src/release_bundle/artifact_set_digest.hepta"
+      },
+      {
+        "functions": [
+          "rb_le16",
+          "rb_part",
+          "rb_text"
+        ],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      },
+      {
+        "functions": [
+          "es_copy_field",
+          "es_hash_at",
+          "es_nonzero",
+          "es_validate_at"
+        ],
+        "source": "src/release_bundle/exact_source.hepta"
+      },
+      {
+        "functions": [
+          "sba_coverage_at",
+          "sba_key_equal",
+          "sba_key_wire",
+          "sba_packages_at",
+          "sba_valid_package"
+        ],
+        "source": "src/release_bundle/sbom_admission.hepta"
+      },
+      {
+        "functions": [
+          "sb_append_digest",
+          "sb_compare",
+          "sb_compare_field",
+          "sb_digest_member",
+          "sb_hash_at",
+          "sb_hash_transcript",
+          "sb_ord",
+          "sb_row_at",
+          "sb_select_at",
+          "sb_well_formed",
+          "sb_width"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
     "src/research_protocol/external_key.hepta": [

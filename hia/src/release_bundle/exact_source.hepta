@@ -54,25 +54,41 @@ end
 
 fn es_validate_prefix(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf)
-  flag_at:usize = const() {"value":192}
+  section:u64 = const() {"value":0}
+  answer:u32 = call(input,section) {"function":"es_validate_at"}
+  ret(answer)
+end
+
+fn es_hash_prefix(input:readbuf,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf)
+  section:u64 = const() {"value":0}
+  answer:u64 = call(input,work,section) {"function":"es_hash_at"}
+  ret(answer)
+end
+
+fn es_validate_at(input:readbuf,section:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,section:u64)
+  offset:u64 = const() {"value":192}
+  raw_flag:u64 = int.add.wrap(section,offset)
+  flag_at:usize = int.cast(raw_flag) {"mode":"wrap"}
   dirty:u8 = buffer.load(input,flag_at)
   max_bool:u8 = const() {"value":1}
   noncanonical:bool = compare.gt(dirty,max_bool)
-  branch noncanonical malformed() check_clean(input,dirty)
-block check_clean(clean_input:readbuf,dirty_flag:u8)
+  branch noncanonical malformed() check_clean(input,dirty,section)
+block check_clean(clean_input:readbuf,dirty_flag:u8,section_check_clean:u64)
   clean_byte:u8 = const() {"value":0}
   clean:bool = compare.eq(dirty_flag,clean_byte)
-  first:u64 = const() {"value":0}
-  branch clean validate_field(clean_input,first) invalid()
-block validate_field(val_input:readbuf,val_at:u64)
+  branch clean validate_field(clean_input,section_check_clean,section_check_clean) invalid()
+block validate_field(val_input:readbuf,val_at:u64,section_validate_field:u64)
   nonzero:bool = call(val_input,val_at) {"function":"es_nonzero"}
-  branch nonzero continue_validation(val_input,val_at) invalid()
-block continue_validation(next_input:readbuf,prior_at:u64)
+  branch nonzero continue_validation(val_input,val_at,section_validate_field) invalid()
+block continue_validation(next_input:readbuf,prior_at:u64,section_continue_validation:u64)
   width:u64 = const() {"value":32}
-  end_of_digests:u64 = const() {"value":192}
+  digest_bytes:u64 = const() {"value":192}
+  end_of_digests:u64 = int.add.wrap(section_continue_validation,digest_bytes)
   next_at:u64 = int.add.wrap(prior_at,width)
   last:bool = compare.eq(next_at,end_of_digests)
-  branch last success() validate_field(next_input,next_at)
+  branch last success() validate_field(next_input,next_at,section_continue_validation)
 block success()
   code_ok:u32 = const() {"value":0}
   ret(code_ok)
@@ -84,13 +100,13 @@ block invalid()
   ret(code_invalid)
 end
 
-fn es_hash_prefix(input:readbuf,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,work:mutbuf)
+fn es_hash_at(input:readbuf,work:mutbuf,section:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,section:u64)
   init:u64 = call(work) {"function":"tr_sha_init"}
   zero:u64 = const() {"value":0}
   ready:bool = compare.eq(init,zero)
-  branch ready domain(input,work) hash_error()
-block domain(dom_input:readbuf,dom_work:mutbuf)
+  branch ready domain(input,work,section) hash_error()
+block domain(dom_input:readbuf,dom_work:mutbuf,section_domain:u64)
   start:u64 = const() {"value":1208}
   len_prefix:u64 = const() {"value":2017612633061982208}
   _length:u64 = call(dom_work,start,len_prefix) {"function":"tr_put"}
@@ -107,9 +123,8 @@ block domain(dom_input:readbuf,dom_work:mutbuf)
   word3:u64 = const() {"value":813051493}
   _domain3:u64 = call(dom_work,offset3,word3) {"function":"tr_put"}
   first_part:u64 = const() {"value":1244}
-  first_input:u64 = const() {"value":0}
-  jump write_field(dom_input,dom_work,first_input,first_part)
-block write_field(write_input:readbuf,write_work:mutbuf,src_at:u64,dst_at:u64)
+  jump write_field(dom_input,dom_work,section_domain,first_part,section_domain)
+block write_field(write_input:readbuf,write_work:mutbuf,src_at:u64,dst_at:u64,section_write_field:u64)
   len_field:u64 = const() {"value":2305843009213693952}
   _part_len:u64 = call(write_work,dst_at,len_field) {"function":"tr_put"}
   eight:u64 = const() {"value":8}
@@ -117,9 +132,10 @@ block write_field(write_input:readbuf,write_work:mutbuf,src_at:u64,dst_at:u64)
   next_output_at:u64 = call(write_input,write_work,src_at,payload_at) {"function":"es_copy_field"}
   width32:u64 = const() {"value":32}
   next_input_at:u64 = int.add.wrap(src_at,width32)
-  last_field_at:u64 = const() {"value":192}
+  all_field_bytes:u64 = const() {"value":192}
+  last_field_at:u64 = int.add.wrap(section_write_field,all_field_bytes)
   all_fields:bool = compare.eq(next_input_at,last_field_at)
-  branch all_fields append_flag(write_work,next_output_at) write_field(write_input,write_work,next_input_at,next_output_at)
+  branch all_fields append_flag(write_work,next_output_at) write_field(write_input,write_work,next_input_at,next_output_at,section_write_field)
 block append_flag(append_work:mutbuf,flag_prefix:u64)
   flag_len:u64 = const() {"value":72057594037927936}
   _flag_prefix:u64 = call(append_work,flag_prefix,flag_len) {"function":"tr_put"}

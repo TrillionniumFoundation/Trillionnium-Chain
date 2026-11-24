@@ -1121,6 +1121,17 @@
       ]
     },
     {
+      "id": "release-bundle/unsigned-prefix",
+      "node_integration_complete": false,
+      "scope": "Single bounded native unsigned V0 prefix owner over one borrowed frame. Checks top-level declarations, source, artifact membership, SBOM membership and required keys in original order, then atomically publishes three computed digests. No provenance/final binding in this entry, signature verification, custody, or production integration.",
+      "source": "hia/src/release_bundle/unsigned_prefix.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_unsigned_prefix.py",
+        "hia/tests/rust_release_unsigned_prefix_reference.rs"
+      ]
+    },
+    {
       "id": "worker-agent/audit-text",
       "node_integration_complete": false,
       "scope": "Original Worker Agent Markdown cell escaping only, with exact UTF-8 byte preservation and atomic output-capacity refusal. Table rendering, CLI integration and original-package retirement remain open.",
@@ -1398,7 +1409,8 @@
         "release-bundle/raw-artifact-sha256",
         "release-bundle/sbom-admission",
         "release-bundle/sbom-digest",
-        "release-bundle/sha512-transcript-bootstrap"
+        "release-bundle/sha512-transcript-bootstrap",
+        "release-bundle/unsigned-prefix"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
       "module": "M15",

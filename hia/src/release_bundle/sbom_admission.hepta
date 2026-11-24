@@ -50,12 +50,14 @@ block candidate(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,as_:u64,at_:u64)
   empty:bool = compare.eq(an,zero3)
   branch empty no_packages() packages_valid(ai,ao,aw,an,as_,at_)
 block packages_valid(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vs:u64,vt:u64)
-  status:u32 = call(vi,vn) {"function":"sba_packages"}
+  package_start:u64 = const() {"value":2}
+  status:u32 = call(vi,vn,package_start) {"function":"sba_packages_at"}
   ok:u32 = const() {"value":0}
   valid:bool = compare.eq(status,ok)
   branch valid coverage(vi,vo,vw,vn,vs,vt) refused(status)
 block coverage(gi:readbuf,go:mutbuf,gw:mutbuf,gn:u64,gs:u64,gt:u64)
-  covered:bool = call(gi,gn,gs,gt) {"function":"sba_coverage"}
+  coverage_start:u64 = const() {"value":2}
+  covered:bool = call(gi,gn,gs,gt,coverage_start) {"function":"sba_coverage_at"}
   branch covered capacity(gi,go,gw,gn) incomplete()
 block capacity(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_count:u64)
   out_size:usize = buffer.len(fo)
@@ -175,32 +177,32 @@ block different()
   ret(no)
 end
 
-fn sba_packages(input:readbuf,count:u64) -> (u32) effects(read,trap) entry(entry)
-block entry(input:readbuf,count:u64)
+fn sba_packages_at(input:readbuf,count:u64,section:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,section:u64)
   zero:u64 = const() {"value":0}
-  jump next(input,count,zero)
-block next(ni:readbuf,nc:u64,idx:u64)
+  jump next(input,count,zero,section)
+block next(ni:readbuf,nc:u64,idx:u64,section_next:u64)
   done:bool = compare.eq(idx,nc)
-  branch done accepted() validate(ni,nc,idx)
-block validate(vi:readbuf,vc:u64,vindex:u64)
-  row:u64 = call(vindex) {"function":"sb_row"}
+  branch done accepted() validate(ni,nc,idx,section_next)
+block validate(vi:readbuf,vc:u64,vindex:u64,section_validate:u64)
+  row:u64 = call(vindex,section_validate) {"function":"sb_row_at"}
   valid:bool = call(vi,row) {"function":"sba_valid_package"}
   prior_zero:u64 = const() {"value":0}
-  branch valid prior(vi,vc,vindex,row,prior_zero) invalid()
-block prior(pi:readbuf,pc:u64,pindex:u64,prow:u64,pprior:u64)
+  branch valid prior(vi,vc,vindex,row,prior_zero,section_validate) invalid()
+block prior(pi:readbuf,pc:u64,pindex:u64,prow:u64,pprior:u64,section_prior:u64)
   no_more:bool = compare.eq(pprior,pindex)
-  branch no_more advance(pi,pc,pindex) check_key(pi,pc,pindex,prow,pprior)
-block check_key(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64)
-  earlier:u64 = call(cprior) {"function":"sb_row"}
+  branch no_more advance(pi,pc,pindex,section_prior) check_key(pi,pc,pindex,prow,pprior,section_prior)
+block check_key(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64,section_check_key:u64)
+  earlier:u64 = call(cprior,section_check_key) {"function":"sb_row_at"}
   package_key:bool = const() {"value":false}
   repeated:bool = call(ci,crow,earlier,package_key) {"function":"sba_key_equal"}
   one:u64 = const() {"value":1}
   next_prior:u64 = int.add.wrap(cprior,one)
-  branch repeated duplicate() prior(ci,cc,cindex,crow,next_prior)
-block advance(ai:readbuf,ac:u64,aindex:u64)
+  branch repeated duplicate() prior(ci,cc,cindex,crow,next_prior,section_check_key)
+block advance(ai:readbuf,ac:u64,aindex:u64,section_advance:u64)
   step:u64 = const() {"value":1}
   next_index:u64 = int.add.wrap(aindex,step)
-  jump next(ai,ac,next_index)
+  jump next(ai,ac,next_index,section_advance)
 block accepted()
   okay:u32 = const() {"value":0}
   ret(okay)
@@ -212,25 +214,26 @@ block duplicate()
   ret(redundant)
 end
 
-fn sba_coverage(input:readbuf,count:u64,keys:u64,end:u64) -> (bool) effects(read,trap) entry(entry)
-block entry(input:readbuf,count:u64,keys:u64,end:u64)
-  jump next_key(input,count,keys,end)
-block next_key(ni:readbuf,nc:u64,nk:u64,ne:u64)
+
+fn sba_coverage_at(input:readbuf,count:u64,keys:u64,end:u64,section:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,keys:u64,end:u64,section:u64)
+  jump next_key(input,count,keys,end,section)
+block next_key(ni:readbuf,nc:u64,nk:u64,ne:u64,section_next_key:u64)
   done:bool = compare.eq(nk,ne)
   zero:u64 = const() {"value":0}
-  branch done covered() seek(ni,nc,nk,ne,zero)
-block seek(si:readbuf,sc:u64,sk:u64,se:u64,sidx:u64)
+  branch done covered() seek(ni,nc,nk,ne,zero,section_next_key)
+block seek(si:readbuf,sc:u64,sk:u64,se:u64,sidx:u64,section_seek:u64)
   absent:bool = compare.eq(sidx,sc)
-  branch absent missing() compare_pkg(si,sc,sk,se,sidx)
-block compare_pkg(ci:readbuf,cc:u64,ck:u64,ce:u64,cidx:u64)
-  row:u64 = call(cidx) {"function":"sb_row"}
+  branch absent missing() compare_pkg(si,sc,sk,se,sidx,section_seek)
+block compare_pkg(ci:readbuf,cc:u64,ck:u64,ce:u64,cidx:u64,section_compare_pkg:u64)
+  row:u64 = call(cidx,section_compare_pkg) {"function":"sb_row_at"}
   required:bool = const() {"value":true}
   found:bool = call(ci,row,ck,required) {"function":"sba_key_equal"}
   key_bytes:u64 = const() {"value":772}
   other_key:u64 = int.add.wrap(ck,key_bytes)
   one:u64 = const() {"value":1}
   next_pkg:u64 = int.add.wrap(cidx,one)
-  branch found next_key(ci,cc,other_key,ce) seek(ci,cc,ck,ce,next_pkg)
+  branch found next_key(ci,cc,other_key,ce,section_compare_pkg) seek(ci,cc,ck,ce,next_pkg,section_compare_pkg)
 block covered()
   yes:bool = const() {"value":true}
   ret(yes)

@@ -35,7 +35,8 @@ block validate_row(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vrow:u64,vlimit:u64,vmo
 block candidate(mi:readbuf,mo:mutbuf,mw:mutbuf,mn:u64,required:bool)
   branch required check_candidate(mi,mo,mw,mn) capacity(mi,mo,mw,mn)
 block check_candidate(ni:readbuf,no:mutbuf,nw:mutbuf,nn:u64)
-  rc:u32 = call(ni,nn) {"function":"aset_membership"}
+  section:u64 = const() {"value":3}
+  rc:u32 = call(ni,nn,section) {"function":"aset_membership_at"}
   accepted_code:u32 = const() {"value":0}
   accepted:bool = compare.eq(rc,accepted_code)
   branch accepted capacity(ni,no,nw,nn) refused(rc)
@@ -49,8 +50,36 @@ block capacity(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
   output_fits:bool = compare.ge(output_size,need_output)
   scratch_fits:bool = compare.ge(work_size,need_work)
   fits:bool = bool.and(output_fits,scratch_fits)
-  branch fits init(pi,po,pw,pn) short()
-block init(ii:readbuf,io:mutbuf,iw:mutbuf,in_rows:u64)
+  branch fits hash_section(pi,po,pw,pn) short()
+block hash_section(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  status:u32 = call(hi,ho,hw,hn) {"function":"aset_hash_roster"}
+  ret(status)
+block malformed()
+  format_error:u32 = const() {"value":100}
+  ret(format_error)
+block short()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+end
+
+fn aset_hash_roster(input:readbuf,out:mutbuf,work:mutbuf,count:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,work:mutbuf,count:u64)
+  section:u64 = const() {"value":3}
+  status:u32 = call(input,work,count,section) {"function":"aset_hash_at"}
+  zero:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,zero)
+  branch valid publish(out,work) refused(status)
+block publish(po:mutbuf,pw:mutbuf)
+  begin:u64 = const() {"value":0}
+  _copied:u64 = call(pw,po,begin) {"function":"sb_copy_digest"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block refused(code:u32)
+  ret(code)
+end
+
+fn aset_hash_at(ii:readbuf,iw:mutbuf,in_rows:u64,section:u64) -> (u32) effects(read,write,trap) entry(init)
+block init(ii:readbuf,iw:mutbuf,in_rows:u64,section:u64)
   d0:u64 = const() {"value":7810774672474010228}
   d1:u64 = const() {"value":8390875907643105637}
   d2:u64 = const() {"value":7310236598059230825}
@@ -65,95 +94,88 @@ block init(ii:readbuf,io:mutbuf,iw:mutbuf,in_rows:u64)
   _w3:u64 = call(iw,p3,d3) {"function":"tr_put"}
   beginning:u64 = const() {"value":2828}
   zero:u64 = const() {"value":0}
-  jump choose(ii,io,iw,in_rows,zero,zero,beginning)
-block choose(si:readbuf,so:mutbuf,sw:mutbuf,sn:u64,done:u64,used:u64,aggregate_end:u64)
+  jump choose(ii,iw,in_rows,zero,zero,beginning,section)
+block choose(si:readbuf,sw:mutbuf,sn:u64,done:u64,used:u64,aggregate_end:u64,section_choose:u64)
   complete:bool = compare.eq(done,sn)
-  branch complete hash_set(so,sw,aggregate_end) select_row(si,so,sw,sn,done,used,aggregate_end)
-block select_row(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rd:u64,ru:u64,re:u64)
-  idx:u64 = call(ri,rn,ru) {"function":"aset_select"}
+  branch complete hash_set(sw,aggregate_end) select_row(si,sw,sn,done,used,aggregate_end,section_choose)
+block select_row(ri:readbuf,rw:mutbuf,rn:u64,rd:u64,ru:u64,re:u64,section_select_row:u64)
+  idx:u64 = call(ri,rn,ru,section_select_row) {"function":"aset_select_at"}
   found:bool = compare.lt(idx,rn)
-  branch found hash_row(ri,ro,rw,rn,rd,ru,re,idx) hash_error()
-block hash_row(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64,hd:u64,hu:u64,he:u64,hidx:u64)
-  row:u64 = call(hidx) {"function":"aset_row"}
+  branch found hash_row(ri,rw,rn,rd,ru,re,idx,section_select_row) hash_error()
+block hash_row(hi:readbuf,hw:mutbuf,hn:u64,hd:u64,hu:u64,he:u64,hidx:u64,section_hash_row:u64)
+  row:u64 = call(hidx,section_hash_row) {"function":"aset_row_at"}
   member_result:u64 = call(hi,hw,row) {"function":"aset_digest_member"}
   ok_zero:u64 = const() {"value":0}
   hashed:bool = compare.eq(member_result,ok_zero)
-  branch hashed append(hi,ho,hw,hn,hd,hu,he,hidx) hash_error()
-block append(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ad:u64,au:u64,ae:u64,aidx:u64)
+  branch hashed append(hi,hw,hn,hd,hu,he,hidx,section_hash_row) hash_error()
+block append(ai:readbuf,aw:mutbuf,an:u64,ad:u64,au:u64,ae:u64,aidx:u64,section_append:u64)
   after:u64 = call(aw,ae) {"function":"sb_append_digest"}
   one:u64 = const() {"value":1}
   next_done:u64 = int.add.wrap(ad,one)
   bit:u64 = int.shl.checked(one,aidx)
   next_used:u64 = bit.or(au,bit)
-  jump choose(ai,ao,aw,an,next_done,next_used,after)
-block hash_set(to:mutbuf,tw:mutbuf,te:u64)
+  jump choose(ai,aw,an,next_done,next_used,after,section_append)
+block hash_set(tw:mutbuf,te:u64)
   at:u64 = const() {"value":2800}
   length:u64 = int.sub.wrap(te,at)
   initialized:u64 = call(tw) {"function":"tr_sha_init"}
   seed_zero:u64 = const() {"value":0}
   seeded:bool = compare.eq(initialized,seed_zero)
-  branch seeded hash_transcript(to,tw,at,length) hash_error()
-block hash_transcript(so2:mutbuf,sw2:mutbuf,sat:u64,sl:u64)
+  branch seeded hash_transcript(tw,at,length) hash_error()
+block hash_transcript(sw2:mutbuf,sat:u64,sl:u64)
   result:u64 = call(sw2,sat,sl) {"function":"sb_hash_transcript"}
   digest_zero:u64 = const() {"value":0}
   digested:bool = compare.eq(result,digest_zero)
-  branch digested publish(so2,sw2,digest_zero) hash_error()
-block publish(pout:mutbuf,pwork:mutbuf,pzero:u64)
-  _copied:u64 = call(pwork,pout,pzero) {"function":"sb_copy_digest"}
+  branch digested ready() hash_error()
+block ready()
   success:u32 = const() {"value":0}
   ret(success)
-block malformed()
-  format_error:u32 = const() {"value":100}
-  ret(format_error)
-block short()
-  capacity_error:u32 = const() {"value":102}
-  ret(capacity_error)
 block hash_error()
-  helper_error:u32 = const() {"value":103}
-  ret(helper_error)
+  error:u32 = const() {"value":103}
+  ret(error)
 end
 
-fn aset_row(index:u64) -> (u64) effects() entry(entry)
-block entry(index:u64)
+fn aset_row_at(index:u64,section:u64) -> (u64) effects() entry(entry)
+block entry(index:u64,section:u64)
   width:u64 = const() {"value":877}
-  header:u64 = const() {"value":3}
   rows:u64 = int.mul.wrap(index,width)
-  begin:u64 = int.add.wrap(rows,header)
+  begin:u64 = int.add.wrap(rows,section)
   ret(begin)
 end
 
-fn aset_select(input:readbuf,count:u64,used:u64) -> (u64) effects(read,trap) entry(entry)
-block entry(input:readbuf,count:u64,used:u64)
+fn aset_select_at(input:readbuf,count:u64,used:u64,section:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,used:u64,section:u64)
   start:u64 = const() {"value":0}
-  jump scan(input,count,used,start,count)
-block scan(si:readbuf,sn:u64,su:u64,idx:u64,best:u64)
+  jump scan(input,count,used,start,count,section)
+block scan(si:readbuf,sn:u64,su:u64,idx:u64,best:u64,section_scan:u64)
   end:bool = compare.eq(idx,sn)
-  branch end finish(best) available(si,sn,su,idx,best)
-block available(ai:readbuf,an:u64,au:u64,aidx:u64,abest:u64)
+  branch end finish(best) available(si,sn,su,idx,best,section_scan)
+block available(ai:readbuf,an:u64,au:u64,aidx:u64,abest:u64,section_available:u64)
   one:u64 = const() {"value":1}
   bit:u64 = int.shl.checked(one,aidx)
   bit_set:u64 = bit.and(au,bit)
   zero:u64 = const() {"value":0}
   skip:bool = compare.ne(bit_set,zero)
-  branch skip advance(ai,an,au,aidx,abest) inspect(ai,an,au,aidx,abest)
-block inspect(ii:readbuf,in_rows:u64,iu:u64,iidx:u64,ibest:u64)
+  branch skip advance(ai,an,au,aidx,abest,section_available) inspect(ai,an,au,aidx,abest,section_available)
+block inspect(ii:readbuf,in_rows:u64,iu:u64,iidx:u64,ibest:u64,section_inspect:u64)
   no_best:bool = compare.eq(ibest,in_rows)
-  branch no_best advance(ii,in_rows,iu,iidx,iidx) compare_rows(ii,in_rows,iu,iidx,ibest)
-block compare_rows(ci:readbuf,cn:u64,cu:u64,cidx:u64,cbest:u64)
-  left:u64 = call(cidx) {"function":"aset_row"}
-  right:u64 = call(cbest) {"function":"aset_row"}
+  branch no_best advance(ii,in_rows,iu,iidx,iidx,section_inspect) compare_rows(ii,in_rows,iu,iidx,ibest,section_inspect)
+block compare_rows(ci:readbuf,cn:u64,cu:u64,cidx:u64,cbest:u64,section_compare_rows:u64)
+  left:u64 = call(cidx,section_compare_rows) {"function":"aset_row_at"}
+  right:u64 = call(cbest,section_compare_rows) {"function":"aset_row_at"}
   order:u64 = call(ci,left,right) {"function":"aset_ord"}
   less:u64 = const() {"value":0}
   earlier:bool = compare.eq(order,less)
   chosen:u64 = select(earlier,cidx,cbest)
-  jump advance(ci,cn,cu,cidx,chosen)
-block advance(ni:readbuf,nn:u64,nu:u64,nidx:u64,nbest:u64)
+  jump advance(ci,cn,cu,cidx,chosen,section_compare_rows)
+block advance(ni:readbuf,nn:u64,nu:u64,nidx:u64,nbest:u64,section_advance:u64)
   step:u64 = const() {"value":1}
   next:u64 = int.add.wrap(nidx,step)
-  jump scan(ni,nn,nu,next,nbest)
+  jump scan(ni,nn,nu,next,nbest,section_advance)
 block finish(answer:u64)
   ret(answer)
 end
+
 
 fn aset_ord(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(name)
 block name(input:readbuf,left:u64,right:u64)
@@ -298,24 +320,24 @@ block invalid()
   ret(no)
 end
 
-fn aset_membership(input:readbuf,count:u64) -> (u32) effects(read,trap) entry(entry)
-block entry(input:readbuf,count:u64)
+fn aset_membership_at(input:readbuf,count:u64,section:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,section:u64)
   zero:u64 = const() {"value":0}
   empty:bool = compare.eq(count,zero)
-  branch empty no_members() restore_order(input,count,zero)
-block restore_order(ri:readbuf,rc:u64,index:u64)
+  branch empty no_members() restore_order(input,count,zero,section)
+block restore_order(ri:readbuf,rc:u64,index:u64,section_restore_order:u64)
   done:bool = compare.eq(index,rc)
-  branch done accepted() validate(ri,rc,index)
-block validate(vi:readbuf,vc:u64,vindex:u64)
-  row:u64 = call(vindex) {"function":"aset_row"}
+  branch done accepted() validate(ri,rc,index,section_restore_order)
+block validate(vi:readbuf,vc:u64,vindex:u64,section_validate:u64)
+  row:u64 = call(vindex,section_validate) {"function":"aset_row_at"}
   valid:bool = call(vi,row) {"function":"aset_member_valid"}
   zero_index:u64 = const() {"value":0}
-  branch valid prior_names(vi,vc,vindex,row,zero_index) invalid_member()
-block prior_names(pi:readbuf,pc:u64,pindex:u64,prow:u64,prior:u64)
+  branch valid prior_names(vi,vc,vindex,row,zero_index,section_validate) invalid_member()
+block prior_names(pi:readbuf,pc:u64,pindex:u64,prow:u64,prior:u64,section_prior_names:u64)
   none_left:bool = compare.eq(prior,pindex)
-  branch none_left advance_row(pi,pc,pindex) compare_name(pi,pc,pindex,prow,prior)
-block compare_name(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64)
-  earlier_row:u64 = call(cprior) {"function":"aset_row"}
+  branch none_left advance_row(pi,pc,pindex,section_prior_names) compare_name(pi,pc,pindex,prow,prior,section_prior_names)
+block compare_name(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64,section_compare_name:u64)
+  earlier_row:u64 = call(cprior,section_compare_name) {"function":"aset_row_at"}
   zero_length_at:u64 = const() {"value":0}
   name_at:u64 = const() {"value":109}
   current_length:u64 = call(ci,crow,zero_length_at) {"function":"sb_width"}
@@ -324,11 +346,11 @@ block compare_name(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64)
   same_code:u64 = const() {"value":1}
   same_name:bool = compare.eq(order,same_code)
   next_prior:u64 = int.add.wrap(cprior,same_code)
-  branch same_name duplicate() prior_names(ci,cc,cindex,crow,next_prior)
-block advance_row(ai:readbuf,ac:u64,aindex:u64)
+  branch same_name duplicate() prior_names(ci,cc,cindex,crow,next_prior,section_compare_name)
+block advance_row(ai:readbuf,ac:u64,aindex:u64,section_advance_row:u64)
   one:u64 = const() {"value":1}
   next:u64 = int.add.wrap(aindex,one)
-  jump restore_order(ai,ac,next)
+  jump restore_order(ai,ac,next,section_advance_row)
 block no_members()
   empty_result:u32 = const() {"value":105}
   ret(empty_result)
@@ -342,6 +364,7 @@ block accepted()
   okay:u32 = const() {"value":0}
   ret(okay)
 end
+
 
 fn aset_digest_member(input:readbuf,work:mutbuf,row:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,work:mutbuf,row:u64)
