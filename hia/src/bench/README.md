@@ -24,10 +24,10 @@ main comparisons. [Allowlisted environment selection](ENVIRONMENT.md#unix-startu
 projects a supplied ordered Unix startup span into the native parser. A separate
 [Linux startup observer](#linux-startup-observer) validates acquisition of the
 actual kernel argv bytes in synthetic processes. The real Bench CLI entry,
-OS environment acquisition, complete CLI parsing, profiling persistence and
-whole-package qualification remain open. The finite
-[no-profile executable](#linux-no-profile-executable) exercises the full default
-benchmark workload and real clocks from its isolated Linux entry.
+OS environment acquisition, complete CLI parsing and whole-package
+qualification remain open. The finite [Linux executable](#linux-no-profile-executable)
+runs the full default workload and real clocks, and has a bounded
+[isolated profile owner](#isolated-profile-persistence).
 
 ## Linux startup observer
 
@@ -77,57 +77,79 @@ acquisition, or the full Bench startup/process path.
 
 ## Linux no-profile executable
 
-The [native build](../../platform/bench/main_build.py) produces a static
-Linux x86-64 ELF implementing the **bounded no-profile Classic/Original**
-path. The process reads actual kernel argv at `_start`. It only verifies
-that the environment pointer list is empty; it never dereferences an
-environment string. This is an isolated candidate executable, not an
-activated or general replacement for `trnm-bench`.
+The [native build](../../platform/bench/main_build.py) produces a static Linux
+x86-64 ELF for the **bounded Classic/Original** process. It reads real argv at
+`_start` and checks that the environment pointer list is empty without
+dereferencing environment strings. This is an isolated candidate, not an
+activated general replacement for `trnm-bench`.
 
-Its admitted invocation is no arguments (the original 20,000 transactions and
-2,000 keys), or one each of `--txs`, `--keys` and
-`--determinism-repeats`, in split or equals form. The [HIA argument policy](main_cli.hepta)
-accepts unsigned ASCII decimal with one optional plus and rejects overflow,
-duplicates, missing values and malformed text. Zero transaction/key values
-retain the original normalization. The subset admits at most 20,000
-transactions and zero replays. A well-formed repeat count over 1,000 renders
-the original diagnostic and exit 2 before workload or clock work, even when
-a parsed transaction count is outside the candidate's capacity. Other
-invocations exit 2 with a distinct bounded-candidate diagnostic, **not** Clap
-diagnostic equivalence. In particular, `--profile`, help, nondefault
-strategies/workloads, nonempty env and nonzero valid replays are OPEN and
-never fall back to the old executable.
+Its admitted invocation is no arguments (20,000 transactions and 2,000 keys),
+or one each of `--txs`, `--keys` and `--determinism-repeats` in split or equals
+form. The [HIA argument policy](main_cli.hepta) parses unsigned ASCII decimal
+with one optional plus and rejects overflow, duplicates, missing values and
+malformed text. Zero transaction/key values retain original normalization.
+The subset admits at most 20,000 transactions and zero replays. A parsed repeat
+count over 1,000 renders the original exact diagnostic and exit 2 before
+workload or clock work, even when a parsed transaction count is outside the
+candidate's capacity. Other unsupported invocations exit 2 with a distinct
+candidate diagnostic, **not** Clap diagnostic equivalence. Help, other
+strategies/workloads, nonempty environments and nonzero valid replays remain
+open and never fall back to the old executable.
 
-The [native emitter](../../platform/bench/main_emitter.hepta) assembles
-the actual Linux boundary and five exact pinned component images. The
-argv policy's explicit object profile supplies import-free, relocation-free
-native `.text`; the other four components are the ordinary native flat
-images. The builder transports a checked address table and verifies exact
-images, an RX image, NX stack, absence of a dynamic loader and the literal
-1,168-byte adapter identity. It does not implement any Bench algorithms.
-The adapter never opens a file. It stages argv and owns disjoint regions
-for the workload (at most 1,280,136 bytes), scheduler result (at most
-320,264 bytes), scheduler arena (at most 6,244,096 bytes), and report.
-It invokes the real HIA workload, obtains actual realtime after workload
-construction, captures `CLOCK_MONOTONIC` immediately before and after the
-first scheduler call, and only then hashes/renders. It subtracts the times
-with nanosecond borrow and integer-millisecond truncation, retaining the
-unsigned 128-bit count. Clock error is a runtime refusal, not zero elapsed.
-The unchanged native renderer writes complete ordinary output bytes or the
-repeat-limit stderr, and the adapter publishes them to the exact output
-file descriptors using short-write and EINTR handling.
+The [native emitter](../../platform/bench/main_emitter.hepta) creates one RX
+load segment and an NX stack with no loader or runtime imports. The resolved
+argument code and the build-time packer use the pinned compiler's explicit
+object profile; native workload, schedule, digests, report and profile use the
+usual native flat profile. The build-time host transports bytes to the pinned
+HIA packer, records its request/output and independently checks the result,
+the address table, and the 3,168-byte Linux adapter. It does not execute the
+Bench algorithms or substitute their runtime behavior.
 
-[Qualification](../../tests/test_bench_main.py) independently builds the
-unaltered Rust CLI through the pinned **locked, offline Cargo graph** and runs
-both actual images in fresh isolated directories with explicit synthetic
-invocations. It compares all deterministic stdout bytes including both
-digests, the original exact repeat-limit diagnostic, exit behavior, and no
-created paths. Ordinary Clap invalid-input diagnostics remain visibly
-different. Only independently measured `elapsed_ms` is normalized in the
-comparator, and the original unmodified output streams are retained. This
-qualification does not cover profiled file publication or errors, a complete
-Clap-equivalent CLI, nonempty environment admission, whole-package retirement
-or production activation.
+The adapter stages argv and owns disjoint workload, scheduler, report and
+scratch regions. It acquires real realtime after workload construction and
+brackets only the first scheduler call with `CLOCK_MONOTONIC`. It handles
+nanosecond borrow and truncates to an unsigned 128-bit millisecond count;
+a clock failure never becomes a zero-duration success. Only after this call
+does it hash, render and publish. The ordinary no-profile path never creates
+directories or files. Original and native deterministic stdout/digests match
+on the default and admitted small inputs; independent elapsed observations
+are retained and are not compared as deterministic bytes.
+
+### Isolated profile persistence
+
+The same Linux entry additionally accepts one bare `--profile` only when
+the build binds a private `isolated-source/trillionnium` directory inside
+its output scope. With no binding, it rejects the flag before work. The
+runtime accepts no output path from argv, environment or stdin. The real
+anchor is compiled into the image; test setup verifies the exact locked
+Cargo sources by copying the tracked tree to that isolated anchor and
+compiling the unmodified original there. Both implementations use that
+anchor's `run/bench` and the original timestamp-derived basename.
+
+The native owner copies the first schedule's 17 raw profile words, calls the
+native 51-field profile and complete report components, and attempts real
+directory and file operations. Directory handles confine publication to
+the anchored directory. New files open with exclusive creation; before
+truncation the opened descriptor must be a single-link regular file.
+Native opens are nonblocking and do not follow symlinks. The private build
+root must remain under one owner's control with serialized writers and no
+concurrent pathname/link changes. Symlink, hardlink and FIFO refusals are
+**candidate-specific** confinement, not claimed Rust equivalence.
+Recognized Linux errors retain their observed output ordering. A directory failure appends only the error. A file-stage failure
+preserves path and basename first, then appends the error, with no false
+success claim for the created file. If some bytes were written before an
+error, the real partial file remains. Outside the recognized Linux error
+domain, the bounded owner refuses rather than inventing an error.
+
+The [differential](../../tests/test_bench_main.py) retains exact stdout,
+stderr, each observed file and the two independent clocks. It compares
+both actual processes' complete deterministic profile fields and validates
+every timestamp-dependent field before normalization. In particular it
+checks the same-second overwrite and truncation, file self-described line
+and byte fixed points, real ENOTDIR, EISDIR and short-output EFBIG under an
+isolated file-size limit. Ordinary Clap invalid-input diagnostics and
+unqualified OS/platform behavior remain distinct. No old package is
+retired; no live Bench output is touched.
 
 ## Original observable contract
 
@@ -299,7 +321,7 @@ natural logarithm and exact output formatting. Its separate contracts retain
 operation order, overflow behavior and numerical qualification; they do not
 substitute for actual OS time or complete report/persistence ownership.
 
-### Persistence — OPEN
+### Persistence — isolated candidate; general owner OPEN
 
 Persistence runs only when profiling and the persistence flag are true. Its
 default directory is the original compile-time Cargo manifest directory joined

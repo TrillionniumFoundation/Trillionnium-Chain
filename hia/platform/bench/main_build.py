@@ -1,10 +1,12 @@
-"""Source-bound build for the finite no-profile Bench process; no host runtime."""
+"""Source-bound build for the finite Bench Linux process; no host runtime."""
 from __future__ import annotations
 
 import json
 import os
 from pathlib import Path
 import struct
+import subprocess
+import sys
 
 from hia.platform.build import Build, inspect_executable, sha256
 from hia.tools.toolchain import HIA_ROOT, build_native, checked_source
@@ -15,10 +17,11 @@ COMPONENTS = (
     "src/executor/schedule.hepta",
     "src/bench/digests.hepta",
     "src/bench/report.hepta",
+    "src/bench/profile.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "aeae25e5824e5a3411369287bce13f3db8c5fb672d64c9024c5056915ee5aa2b"
-PREFIX, BASE = 1344, 0x400000
+ADAPTER_SHA256 = "945a40606ae80187e5f949e8f2ca2d87c113722852711d353448b8b57a455956"
+PREFIX, BASE = 3344, 0x400000
 
 
 def exact_native_text(data):
@@ -52,7 +55,22 @@ def exact_native_text(data):
     return data[txt[4]:txt[4] + txt[5]]
 
 
-def build(output: Path):
+def build(output: Path, *, bind_profile_output=False):
+    # The only eligible output authority is this build's private, repo-shaped
+    # original Cargo anchor. No path is supplied by any process argv or env.
+    root = output.parent / "isolated-source/trillionnium"
+    anchor = b""
+    if bind_profile_output:
+        root = root.absolute()
+        if (root != root.resolve(strict=True) or not root.is_dir()
+                or root.is_relative_to(HIA_ROOT.parent)
+                or (root / "Cargo.lock").read_bytes() != (HIA_ROOT.parent / "trillionnium/Cargo.lock").read_bytes()
+                or output.parent.lstat().st_mode & 0o077
+                or output.parent.lstat().st_uid != os.geteuid()):
+            raise ValueError("Expected private, exact, repo-shaped Bench profile anchor")
+        anchor = str(root).encode("utf-8")
+        if len(anchor) > 1024 or b"\0" in anchor or b"\n" in anchor:
+            raise ValueError("Bench profile anchor is not in the bounded display path domain")
     if not __debug__:
         raise RuntimeError("Optimized Python source qualification refused")
     pinned = Build(output)
@@ -84,16 +102,58 @@ def build(output: Path):
             raise ValueError("Empty native Bench component")
         parts.append(raw)
     addresses = []
-    position = BASE + PREFIX + len(parts) * 8
+    position = BASE + PREFIX + 8 * (len(parts) + 2)
     for raw in parts:
         addresses.append(position)
         position += len(raw)
-    payload = struct.pack("<5Q", *addresses) + b"".join(parts)
+    payload = struct.pack("<8Q", *addresses, position if anchor else 0, len(anchor)) + b"".join(parts)
+    if anchor:
+        payload += anchor + b"\0"
     if len(payload) > 950272:
         raise ValueError("Native Bench ELF exceeds original filter packing capacity")
-    emitter = pinned.stage(pinned.compiler, wires[EMITTER], "compile-bench-emitter")
-    inspect_executable(emitter)
-    image = pinned.stage(emitter, payload, "emit-bench-main")
+    # The larger machine prefix selects the pinned object profile explicitly.
+    # A disposable host process transports bytes to the emitted HIA emitter;
+    # the packed Bench executable has no loader or host runtime.
+    emitter_path = output / "emitter.so"
+    emitter_receipt, emitter_canonical = build_native(HIA_ROOT / EMITTER, emitter_path,
+        byte_exports=("f0",), kind="shared", backend="selfhost",
+        compiler=os.environ["HIA_NATIVE_COMPILER"],
+        compiler_sha256=os.environ["HIA_NATIVE_COMPILER_SHA256"])
+    emitter_case = output / "emit-bench-main"
+    emitter_case.mkdir(mode=0o700)
+    (emitter_case / "stdin.raw").write_bytes(payload)
+    from hepta.hia_agent_assembly import render_assembly
+    emitter_wire = emitter_canonical.copy()
+    emitter_wire["module"] = "selfhost_elf"
+    rendered = render_assembly(emitter_wire).encode()
+    if sha256(rendered) != emitter_receipt["compiler_wire_sha256"]:
+        raise ValueError("Emitter compiled request differs")
+    (emitter_case / "compiler-input.hepta").write_bytes(rendered)
+    runner = """import ctypes as c, sys
+library = c.CDLL(sys.argv[1])
+entry = library.f0
+entry.argtypes = [c.c_void_p,c.c_size_t] * 3
+entry.restype = c.c_uint32
+source = sys.stdin.buffer.read()
+raw = c.create_string_buffer(source)
+out = c.create_string_buffer(1 << 20)
+scratch = c.create_string_buffer(1)
+n = entry(raw,len(source),out,len(out),scratch,len(scratch))
+if not 0 < n <= len(out): raise SystemExit(2)
+sys.stdout.buffer.write(out.raw[:n])
+"""
+    result = subprocess.run([sys.executable,"-B","-c",runner,str(emitter_path)],
+        input=payload, capture_output=True, env={"PATH": ""}, timeout=30)
+    (emitter_case / "stdout.raw").write_bytes(result.stdout)
+    (emitter_case / "stderr.raw").write_bytes(result.stderr)
+    (emitter_case / "receipt.json").write_text(json.dumps({
+        "exit": result.returncode, "payload_sha256": sha256(payload),
+        "output_sha256": sha256(result.stdout), "stderr_sha256": sha256(result.stderr),
+        "emitter_sha256": sha256(emitter_path.read_bytes())}, indent=2) + "\n")
+    if (result.returncode or result.stderr
+            or sha256(emitter_path.read_bytes()) != emitter_receipt["artifact_sha256"]):
+        raise ValueError("The pinned HIA emitter refused or changed")
+    image = result.stdout
     elf = inspect_executable(image)
     if image[PREFIX:] != payload or sha256(image[176:PREFIX]) != ADAPTER_SHA256:
         raise ValueError("Unexpected machine adapter or component output")
@@ -102,17 +162,18 @@ def build(output: Path):
             if sha256((HIA_ROOT / relative).read_bytes()) != identity:
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
-    report = {"schema": "trnm.hia.bench-no-profile.build.v1",
+    report = {"schema": "trnm.hia.bench-main.build.v2",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},
               "adapter_sha256": ADAPTER_SHA256, "adapter_bytes": PREFIX - 176,
-              "argument_object": cli_receipt,
+              "argument_object": cli_receipt, "emitter_object": emitter_receipt,
               "contained_parts": [{"source": rel, "entry_address": addr, "sha256": sha256(raw),
                                    "bytes": len(raw)}
                                   for rel, addr, raw in zip(COMPONENTS, addresses, parts, strict=True)],
               "stages": pinned.stages, "whole_bench_native_qualified": False,
               "production_entrypoint_activated": False,
-              "runtime_rust_or_python_fallback": False}
+              "runtime_rust_or_python_fallback": False,
+              "compiled_profile_root": anchor.decode("utf-8") if anchor else None}
     (output / "build.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
     return image, report

@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v1
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v2
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -35,9 +35,30 @@ block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:
   equal_at:u64 = call(i_name,p_name,e_name) {"function":"bc_equal"}
   w_name:u64 = int.sub.wrap(equal_at,p_name)
   opt:u64 = call(i_name,p_name,w_name) {"function":"bc_option"}
-  max_field:u64 = const() {"value":2}
+  max_field:u64 = const() {"value":3}
   known:bool = compare.le(opt,max_field)
-  branch known sep(i_name,o_name,n_name,k_name,e_name,equal_at,opt) fail()
+  branch known flag_or_arg(i_name,o_name,n_name,k_name,e_name,equal_at,opt) fail()
+block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,fo_field:u64)
+  profile_field:u64 = const() {"value":3}
+  profile:bool = compare.eq(fo_field,profile_field)
+  branch profile profile_flag(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at) sep(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field)
+block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64)
+  bare:bool = compare.eq(pf_e,pf_at)
+  marks:u64 = const() {"value":24}
+  bitmap:u64 = call(pf_o,marks) {"function":"bench_get"}
+  flag:u64 = const() {"value":8}
+  already:u64 = bit.and(bitmap,flag)
+  zero_pf:u64 = const() {"value":0}
+  fresh_pf:bool = compare.eq(already,zero_pf)
+  valid_pf:bool = bool.and(bare,fresh_pf)
+  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag) fail()
+block keep_flag(kf_i:readbuf,kf_o:mutbuf,kf_n:u64,kf_k:u64,kf_e:u64,kf_at:u64,kf_bits:u64,kf_flag:u64)
+  with_profile:u64 = bit.or(kf_bits,kf_flag)
+  _profile:u64 = call(kf_o,kf_at,with_profile) {"function":"bench_put"}
+  one_kf:u64 = const() {"value":1}
+  after_kf:u64 = int.add.wrap(kf_e,one_kf)
+  left_kf:u64 = int.sub.wrap(kf_k,one_kf)
+  jump next(kf_i,kf_o,kf_n,after_kf,left_kf)
 block sep(i_sep:readbuf,o_sep:mutbuf,n_sep:u64,k_sep:u64,e_sep:u64,eq_sep:u64,f_sep:u64)
   embedded:bool = compare.lt(eq_sep,e_sep)
   one_sep:u64 = const() {"value":1}
@@ -229,7 +250,7 @@ block v1(vi1:readbuf,vp1:u64)
 block k2(ki2:readbuf,kp2:u64,kn2:u64)
   w2:u64 = const() {"value":21}
   same2:bool = compare.eq(kn2,w2)
-  branch same2 v2(ki2,kp2) absent()
+  branch same2 v2(ki2,kp2) k3(ki2,kp2,kn2)
 block v2(vi2:readbuf,vp2:u64)
   offset2_0:u64 = const() {"value":0}
   pos2_0:u64 = int.add.wrap(vp2,offset2_0)
@@ -253,9 +274,26 @@ block v2(vi2:readbuf,vp2:u64)
   all2_16:bool = bool.and(all2_8,match2_16)
   index2:u64 = const() {"value":2}
   branch all2_16 success(index2) absent()
+block k3(ki3:readbuf,kp3:u64,kn3:u64)
+  width3:u64 = const() {"value":9}
+  same3:bool = compare.eq(kn3,width3)
+  branch same3 v3(ki3,kp3) absent()
+block v3(vi3:readbuf,vp3:u64)
+  first8:u64 = const() {"value":8}
+  chunk3:u64 = call(vi3,vp3,first8) {"function":"bc_tail"}
+  expected3:u64 = const() {"value":7811887657498193197}
+  m3:bool = compare.eq(chunk3,expected3)
+  last_pos:u64 = int.add.wrap(vp3,first8)
+  last_idx:usize = int.cast(last_pos) {"mode":"wrap"}
+  last3:u8 = buffer.load(vi3,last_idx)
+  expected_last:u8 = const() {"value":101}
+  mlast:bool = compare.eq(last3,expected_last)
+  all3:bool = bool.and(m3,mlast)
+  index3:u64 = const() {"value":3}
+  branch all3 success(index3) absent()
 block success(result:u64)
   ret(result)
 block absent()
-  invalid:u64 = const() {"value":3}
+  invalid:u64 = const() {"value":4}
   ret(invalid)
 end

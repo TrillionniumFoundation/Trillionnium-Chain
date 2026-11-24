@@ -109,4 +109,6 @@ adapter, with an explicitly recorded temporary `CARGO_MANIFEST_DIR` so
 profile artifacts remain outside the checkout. Actual clocks are observed,
 then supplied unchanged to the native renderer for byte comparison. The
 original canonical Cargo CLI binary is separately retained. This does not
-qualify a native argv/clock/filesystem owner, which remains OPEN.
+by itself qualify a native argv/clock/filesystem owner. The separate
+[isolated Linux owner](README.md#isolated-profile-persistence) has its own
+actual bounded process and filesystem observations; wider ownership remains open.

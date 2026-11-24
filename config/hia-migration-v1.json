@@ -1006,7 +1006,7 @@
     {
       "id": "bench/no-profile-cli",
       "node_integration_complete": false,
-      "scope": "Finite full-width unsigned parsing of the three admitted original no-profile numeric arguments, no-arg defaults, and original repeat-limit decision. Other Clap syntax, diagnostics, strategy and profile remain out of scope.",
+      "scope": "Finite full-width unsigned parsing of three original numeric options and a single bare profile flag, no-arg defaults, and original repeat-limit decision. Complete Clap syntax, diagnostics, other strategies/workloads, and real environment admission remain open.",
       "source": "hia/src/bench/main_cli.hepta",
       "state": "native-kernel-implemented",
       "tests": [
@@ -1521,7 +1521,7 @@
       "id": "bench/linux-no-profile-main",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Standalone Linux x86-64 no-profile Classic/Original process with real kernel argv and clock, native workload/schedule/digests/report, and no file writes. Synthetic isolated qualification and locked Rust differential; not production activation or complete Bench.",
+      "scope": "Standalone Linux x86-64 bounded Classic/Original process with real kernel argv and clocks, native workload/schedule/digests/profile/report, and build-bound isolated profile persistence plus actual directory and file-write failures. No profile writes in ordinary invocation or unbound mode; synthetic isolated qualification and locked Rust differential only, not complete Bench or production activation.",
       "sources": [
         "hia/platform/bench/main_emitter.hepta"
       ],
