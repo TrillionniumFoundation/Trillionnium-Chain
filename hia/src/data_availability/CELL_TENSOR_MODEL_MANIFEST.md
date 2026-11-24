@@ -37,3 +37,33 @@ include that accepted record and over-loan refusals. The HIA source uses the
 original format maximum 2,097,717 bytes; native coverage above the old
 generic loan cap remains unqualified pending a distinct reviewed route.
 No generic test guard is relaxed.
+
+## Opt-in stock ABI diagnostic
+
+On Linux x86-64 with 4 KiB pages and the same pinned compiler and Rust
+dependencies, explicitly run
+`python3 -B -m hia.tests.qualify_cell_tensor_model_large` to reproduce the
+source-bound diagnostic. It is not part of default discovery or a CI gate.
+It accepts no caller data. The four synthetic records and both exact built
+ELF images must match their fixed identities. The isolated child calls only
+public `f0` with the actual loan extents, sealed input/image descriptors,
+guarded read-only input, bounded private results and scratch, and fixed
+process and IPC limits. It never retries through another ABI or code path.
+A timeout, trap, changed input or out-of-scope image is not evidence.
+
+The maximum constructible accepted record is 1,204,562 bytes:
+TCD1 contributes 155,421 bytes (including 256 paths of 255 bytes and the
+30,720 edges of 16 balanced longest-path ranks), TMR1 adds 553 bytes,
+TMT1 contributes exactly 1 MiB, and TMA1 adds 12 framing bytes. The
+original Rust and both stock TCD1 emitters independently accept that
+maximum TCD1 record. The original TMA1 Rust decoder independently accepts
+both 1,048,996 and 1,204,562 bytes and emits all three exact IDs.
+
+For both accepted Rust records the stock Direct public wrapper returns
+packed `0x0000000100000000` (`ABI_EXTENT` before Core), with untouched output.
+The exact stock selfhost public wrapper returns zero and the same 96 bytes
+as Rust. For the maximum record with a suffix byte and an input over the
+declared 2,097,717-byte format limit, selfhost returns 93 and 90 with no
+output; Direct still returns `ABI_EXTENT`. This is backend-specific
+diagnostic evidence, not dual qualification above 1 MiB, a new generic
+loan guarantee, or application activation.
