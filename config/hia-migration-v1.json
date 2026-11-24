@@ -1002,6 +1002,17 @@
       ]
     },
     {
+      "id": "release-bundle/exact-source",
+      "node_integration_complete": false,
+      "scope": "Pure ExactSourceV0 candidate validity and original length-framed SHA-256 digest over six supplied identifiers and clean flag. No checkout observation, signed verification, custody, or production integration.",
+      "source": "hia/src/release_bundle/exact_source.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_exact_source.py",
+        "hia/tests/rust_release_exact_source_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/raw-artifact-sha256",
       "node_integration_complete": false,
       "scope": "Raw ReleaseArtifact legacy-locator SHA-256 over an explicitly sized, in-process byte stream using the full shared incremental helpers. A matching digest is not content commitment, EOF, file custody or release authority; production linkage and retirement remain open.",
@@ -1290,6 +1301,7 @@
       "components": [
         "release-bundle/artifact-header",
         "release-bundle/content-claim-frame",
+        "release-bundle/exact-source",
         "release-bundle/raw-artifact-sha256",
         "release-bundle/sha512-transcript-bootstrap"
       ],
