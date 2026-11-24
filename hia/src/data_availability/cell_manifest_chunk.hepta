@@ -1,0 +1,65 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_manifest_tcm1_chunk_projection
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  total:usize = buffer.len(input)
+  all:u64 = int.cast(total) {"mode":"wrap"}
+  four:u64 = const() {"value":4}
+  framed:bool = compare.ge(all,four)
+  branch framed decode(input,output,scratch,all,four) private_frame()
+block decode(di:readbuf,doo:mutbuf,ds:mutbuf,da:u64,dd:u64)
+  length:u64 = int.sub.wrap(da,dd)
+  status:u32,rows:u64,count:u64 = call(di,dd,length) {"function":"cm_decode"}
+  zero_d:u32 = const() {"value":0}
+  okay:bool = compare.eq(status,zero_d)
+  branch okay select_row(di,doo,ds,dd,length,rows,count) failure(status)
+block select_row(si:readbuf,so:mutbuf,ss:mutbuf,sd:u64,sn:u64,sr:u64,sc:u64)
+  zero_s:u64 = const() {"value":0}
+  index:u64 = call(si,zero_s,sd) {"function":"rac_read_le"}
+  in_range:bool = compare.lt(index,sc)
+  branch in_range room(si,so,ss,sd,sn,sr,index) absent()
+block room(ri:readbuf,ro:mutbuf,rs:mutbuf,rd:u64,rn:u64,rr:u64,rx:u64)
+  output_n:usize = buffer.len(ro)
+  min_output:usize = const() {"value":72}
+  work_n:usize = buffer.len(rs)
+  min_work:usize = const() {"value":1232}
+  enough_o:bool = compare.ge(output_n,min_output)
+  enough_w:bool = compare.ge(work_n,min_work)
+  fits:bool = bool.and(enough_o,enough_w)
+  branch fits hash(ri,ro,rs,rd,rn,rr,rx) capacity()
+block hash(hi:readbuf,ho:mutbuf,hs:mutbuf,hd:u64,hn:u64,hr:u64,hx:u64)
+  code:u64 = call(hi,hd,hn,hs) {"function":"cm_hash"}
+  zero_h:u64 = const() {"value":0}
+  hash_ok:bool = compare.eq(code,zero_h)
+  branch hash_ok publish(hi,ho,hs,hr,hx) internal()
+block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pr:u64,px:u64)
+  stride:u64 = const() {"value":36}
+  within:u64 = int.mul.wrap(px,stride)
+  at:u64 = int.add.wrap(pr,within)
+  four_p:u64 = const() {"value":4}
+  chunk_bytes:u64 = call(pi,at,four_p) {"function":"ca_read_be"}
+  hash_at:u64 = int.add.wrap(at,four_p)
+  half:u64 = const() {"value":32}
+  size_high:u64 = int.shl.checked(chunk_bytes,half)
+  index_size:u64 = bit.or(size_high,px)
+  zero_p:u64 = const() {"value":0}
+  pair_at:u64 = call(ps,po,zero_p) {"function":"sb_copy_digest"}
+  _w:u64 = call(po,pair_at,index_size) {"function":"tr_put"}
+  chunk_at:u64 = const() {"value":40}
+  _end:u64 = call(pi,po,hash_at,chunk_at,half) {"function":"rac_copy"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block failure(value:u32)
+  ret(value)
+block absent()
+  out_of_range:u32 = const() {"value":13}
+  ret(out_of_range)
+block private_frame()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block capacity()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+block internal()
+  internal_code:u32 = const() {"value":103}
+  ret(internal_code)
+end

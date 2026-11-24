@@ -1,0 +1,304 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_manifest_tcm1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  length:u64 = int.cast(extent) {"mode":"wrap"}
+  zero:u64 = const() {"value":0}
+  code:u32,_rows:u64,_count:u64 = call(input,zero,length) {"function":"cm_decode"}
+  success:u32 = const() {"value":0}
+  valid:bool = compare.eq(code,success)
+  branch valid room(input,output,scratch,length) failure(code)
+block room(ri:readbuf,ro:mutbuf,rs:mutbuf,rn:u64)
+  work_size:usize = buffer.len(rs)
+  min_work:usize = const() {"value":1232}
+  enough_work:bool = compare.ge(work_size,min_work)
+  digest_bytes:u64 = const() {"value":32}
+  full:u64 = int.add.wrap(rn,digest_bytes)
+  needed:usize = int.cast(full) {"mode":"wrap"}
+  available:usize = buffer.len(ro)
+  enough_out:bool = compare.ge(available,needed)
+  fits:bool = bool.and(enough_work,enough_out)
+  branch fits hash(ri,ro,rs,rn) capacity()
+block hash(hi:readbuf,ho:mutbuf,hs:mutbuf,hn:u64)
+  origin:u64 = const() {"value":0}
+  code_h:u64 = call(hi,origin,hn,hs) {"function":"cm_hash"}
+  zero_h:u64 = const() {"value":0}
+  hashed:bool = compare.eq(code_h,zero_h)
+  branch hashed output_result(hi,ho,hs,hn) internal()
+block output_result(oi:readbuf,oo:mutbuf,os:mutbuf,on:u64)
+  start:u64 = const() {"value":0}
+  offset:u64 = call(os,oo,start) {"function":"sb_copy_digest"}
+  _written:u64 = call(oi,oo,start,offset,on) {"function":"rac_copy"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block capacity()
+  cap:u32 = const() {"value":102}
+  ret(cap)
+block internal()
+  err:u32 = const() {"value":103}
+  ret(err)
+block failure(value:u32)
+  ret(value)
+end
+
+fn cm_decode(input:readbuf,start:u64,length:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,length:u64)
+  max:u64 = const() {"value":1048576}
+  allowed:bool = compare.le(length,max)
+  branch allowed magic_extent(input,start,length) bad_length()
+block magic_extent(mi:readbuf,ms:u64,mn:u64)
+  four:u64 = const() {"value":4}
+  has_magic:bool = compare.ge(mn,four)
+  branch has_magic magic(mi,ms,mn,four) truncated()
+block magic(pi:readbuf,ps:u64,pn:u64,pw:u64)
+  have:u64 = call(pi,ps,pw) {"function":"rac_read_le"}
+  expected:u64 = const() {"value":827147092}
+  matches:bool = compare.eq(have,expected)
+  branch matches family_length_extent(pi,ps,pn,pw) bad_version()
+block family_length_extent(fi:readbuf,fs:u64,fn_:u64,fw:u64)
+  five:u64 = const() {"value":5}
+  has_length:bool = compare.ge(fn_,five)
+  branch has_length family_length(fi,fs,fn_,fw,five) truncated()
+block family_length(li:readbuf,ls:u64,ln:u64,lw:u64,lhead:u64)
+  len_at:u64 = int.add.wrap(ls,lw)
+  one_l:u64 = const() {"value":1}
+  family_n:u64 = call(li,len_at,one_l) {"function":"rac_read_le"}
+  cap_l:u64 = const() {"value":64}
+  fits_l:bool = compare.le(family_n,cap_l)
+  nonempty_l:bool = compare.ge(family_n,one_l)
+  okay_l:bool = bool.and(fits_l,nonempty_l)
+  branch okay_l family_extent(li,ls,ln,lhead,family_n) bad_family_length()
+block family_extent(ei:readbuf,es:u64,en:u64,eh:u64,ef:u64)
+  fam_end:u64 = int.add.wrap(eh,ef)
+  inside:bool = compare.le(fam_end,en)
+  branch inside encoding(ei,es,en,eh,ef,fam_end) truncated()
+block encoding(ui:readbuf,us:u64,un:u64,uh:u64,uf:u64,ue:u64)
+  family_at:u64 = int.add.wrap(us,uh)
+  utf8:u64 = call(ui,family_at,uf) {"function":"value_utf8"}
+  yes_utf8:u64 = const() {"value":1}
+  wellformed:bool = compare.eq(utf8,yes_utf8)
+  branch wellformed fixed_extent(ui,us,un,uf,ue,family_at) bad_family_encoding()
+block fixed_extent(xi:readbuf,xs:u64,xn:u64,xf:u64,xe:u64,xa:u64)
+  fixed:u64 = const() {"value":208}
+  header:u64 = int.add.wrap(xe,fixed)
+  present:bool = compare.le(header,xn)
+  branch present count(xi,xs,xn,xf,header,xa) truncated()
+block count(ci:readbuf,cs:u64,cn:u64,cf:u64,ch:u64,ca:u64)
+  four_c:u64 = const() {"value":4}
+  count_rel:u64 = int.sub.wrap(ch,four_c)
+  count_at:u64 = int.add.wrap(cs,count_rel)
+  nrows:u64 = call(ci,count_at,four_c) {"function":"ca_read_be"}
+  cap_c:u64 = const() {"value":16384}
+  max_count:bool = compare.le(nrows,cap_c)
+  zero_c:u64 = const() {"value":0}
+  nonempty_count:bool = compare.gt(nrows,zero_c)
+  count_valid:bool = bool.and(max_count,nonempty_count)
+  branch count_valid coverage(ci,cs,cn,cf,ch,ca,nrows) bad_count()
+block coverage(vi:readbuf,vs:u64,vn:u64,vf:u64,vh:u64,va:u64,vr:u64)
+  stride:u64 = const() {"value":36}
+  entries_n:u64 = int.mul.wrap(vr,stride)
+  body_n:u64 = int.sub.wrap(vn,vh)
+  exact:bool = compare.eq(entries_n,body_n)
+  branch exact family_chars(vi,vs,vf,vh,va,vr) bad_wire_coverage()
+block family_chars(ai:readbuf,as_:u64,af:u64,ah:u64,aa:u64,ar:u64)
+  family_valid:bool = call(ai,aa,af) {"function":"cm_family_chars"}
+  branch family_valid chunk_size(ai,as_,ah,ar) bad_family()
+block chunk_size(ki:readbuf,ks:u64,kh:u64,kr:u64)
+  eight_k:u64 = const() {"value":8}
+  size_rel:u64 = int.sub.wrap(kh,eight_k)
+  chunk_at:u64 = int.add.wrap(ks,size_rel)
+  four_k:u64 = const() {"value":4}
+  chunk_bytes:u64 = call(ki,chunk_at,four_k) {"function":"ca_read_be"}
+  min_k:u64 = const() {"value":16384}
+  max_k:u64 = const() {"value":4194304}
+  enough_k:bool = compare.ge(chunk_bytes,min_k)
+  bounded_k:bool = compare.le(chunk_bytes,max_k)
+  one_k:u64 = const() {"value":1}
+  below:u64 = int.sub.wrap(chunk_bytes,one_k)
+  bits:u64 = bit.and(below,chunk_bytes)
+  zero_k:u64 = const() {"value":0}
+  power:bool = compare.eq(bits,zero_k)
+  b:bool = bool.and(enough_k,bounded_k)
+  admissible:bool = bool.and(b,power)
+  branch admissible cell_size(ki,ks,kh,kr,chunk_bytes) bad_chunk_size()
+block cell_size(zi:readbuf,zs:u64,zh:u64,zr:u64,zk:u64)
+  relative:u64 = const() {"value":48}
+  size_offset:u64 = int.sub.wrap(zh,relative)
+  size_at:u64 = int.add.wrap(zs,size_offset)
+  size_width:u64 = const() {"value":8}
+  size:u64 = call(zi,size_at,size_width) {"function":"ca_read_be"}
+  min_z:u64 = const() {"value":1}
+  max_z:u64 = const() {"value":68719476736}
+  nonempty_z:bool = compare.ge(size,min_z)
+  bounded_z:bool = compare.le(size,max_z)
+  cell_valid:bool = bool.and(nonempty_z,bounded_z)
+  branch cell_valid geometry(zi,zs,zh,zr,zk,size) bad_cell_size()
+block geometry(gi:readbuf,gs:u64,gh:u64,gr:u64,gk:u64,gz:u64)
+  one_g:u64 = const() {"value":1}
+  decrement:u64 = int.sub.wrap(gk,one_g)
+  rounded:u64 = int.add.wrap(gz,decrement)
+  needs:u64 = int.div.checked(rounded,gk)
+  right_number:bool = compare.eq(needs,gr)
+  rows_at:u64 = int.add.wrap(gs,gh)
+  branch right_number rows(gi,rows_at,gr,gk,gz) bad_chunk_coverage()
+block rows(ti:readbuf,ta:u64,tr:u64,tk:u64,tz:u64)
+  good_rows:bool = call(ti,ta,tr,tk,tz) {"function":"cm_row_sizes"}
+  branch good_rows yes(ta,tr) bad_chunk_length()
+block yes(ok_at:u64,ok_count:u64)
+  ok:u32 = const() {"value":0}
+  ret(ok,ok_at,ok_count)
+block bad_length()
+  status_1:u32 = const() {"value":1}
+  none_1:u64 = const() {"value":0}
+  ret(status_1,none_1,none_1)
+block truncated()
+  status_2:u32 = const() {"value":2}
+  none_2:u64 = const() {"value":0}
+  ret(status_2,none_2,none_2)
+block bad_version()
+  status_3:u32 = const() {"value":3}
+  none_3:u64 = const() {"value":0}
+  ret(status_3,none_3,none_3)
+block bad_family_length()
+  status_4:u32 = const() {"value":4}
+  none_4:u64 = const() {"value":0}
+  ret(status_4,none_4,none_4)
+block bad_family_encoding()
+  status_5:u32 = const() {"value":5}
+  none_5:u64 = const() {"value":0}
+  ret(status_5,none_5,none_5)
+block bad_count()
+  status_6:u32 = const() {"value":6}
+  none_6:u64 = const() {"value":0}
+  ret(status_6,none_6,none_6)
+block bad_wire_coverage()
+  status_7:u32 = const() {"value":7}
+  none_7:u64 = const() {"value":0}
+  ret(status_7,none_7,none_7)
+block bad_family()
+  status_8:u32 = const() {"value":8}
+  none_8:u64 = const() {"value":0}
+  ret(status_8,none_8,none_8)
+block bad_chunk_size()
+  status_9:u32 = const() {"value":9}
+  none_9:u64 = const() {"value":0}
+  ret(status_9,none_9,none_9)
+block bad_cell_size()
+  status_10:u32 = const() {"value":10}
+  none_10:u64 = const() {"value":0}
+  ret(status_10,none_10,none_10)
+block bad_chunk_coverage()
+  status_11:u32 = const() {"value":11}
+  none_11:u64 = const() {"value":0}
+  ret(status_11,none_11,none_11)
+block bad_chunk_length()
+  status_12:u32 = const() {"value":12}
+  none_12:u64 = const() {"value":0}
+  ret(status_12,none_12,none_12)
+end
+
+fn cm_family_chars(input:readbuf,start:u64,length:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64,length:u64)
+  stop:u64 = int.add.wrap(start,length)
+  jump step(input,start,stop)
+block step(si:readbuf,sa:u64,se:u64)
+  a:usize = int.cast(sa) {"mode":"wrap"}
+  byte:u8 = buffer.load(si,a)
+  a_start:u8 = const() {"value":65}
+  a_end:u8 = const() {"value":90}
+  b_start:u8 = const() {"value":97}
+  b_end:u8 = const() {"value":122}
+  n_start:u8 = const() {"value":48}
+  n_end:u8 = const() {"value":57}
+  dot:u8 = const() {"value":46}
+  underscore:u8 = const() {"value":95}
+  dash:u8 = const() {"value":45}
+  a1:bool = compare.ge(byte,a_start)
+  a2:bool = compare.le(byte,a_end)
+  upper:bool = bool.and(a1,a2)
+  b1:bool = compare.ge(byte,b_start)
+  b2:bool = compare.le(byte,b_end)
+  lower:bool = bool.and(b1,b2)
+  n1:bool = compare.ge(byte,n_start)
+  n2:bool = compare.le(byte,n_end)
+  digit:bool = bool.and(n1,n2)
+  dot_b:bool = compare.eq(byte,dot)
+  under_b:bool = compare.eq(byte,underscore)
+  hyphen_b:bool = compare.eq(byte,dash)
+  p1:bool = bool.or(dot_b,under_b)
+  p2:bool = bool.or(p1,hyphen_b)
+  l1:bool = bool.or(upper,lower)
+  core:bool = bool.or(l1,digit)
+  valid:bool = bool.or(core,p2)
+  one:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(sa,one)
+  last:bool = compare.eq(after,se)
+  branch valid advance(si,after,se,last) no()
+block advance(ai:readbuf,aa:u64,ae:u64,done:bool)
+  branch done yes() step(ai,aa,ae)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+block no()
+  failed:bool = const() {"value":false}
+  ret(failed)
+end
+
+fn cm_row_sizes(input:readbuf,start:u64,count:u64,chunk_size:u64,size:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,count:u64,chunk_size:u64,size:u64)
+  jump step(input,start,count,chunk_size,size)
+block step(si:readbuf,sa:u64,sn:u64,sk:u64,sz:u64)
+  four:u64 = const() {"value":4}
+  row_size:u64 = call(si,sa,four) {"function":"ca_read_be"}
+  tail:bool = compare.le(sz,sk)
+  expected:u64 = select(tail,sz,sk)
+  okay:bool = compare.eq(row_size,expected)
+  one:u64 = const() {"value":1}
+  last:bool = compare.eq(sn,one)
+  stride:u64 = const() {"value":36}
+  after:u64 = int.add.wrap(sa,stride)
+  left_n:u64 = int.sub.wrap(sn,one)
+  left_bytes:u64 = int.sub.wrap(sz,expected)
+  branch okay advance(si,after,left_n,sk,left_bytes,last) no()
+block advance(ai:readbuf,aa:u64,an:u64,ak:u64,az:u64,done:bool)
+  branch done yes() step(ai,aa,an,ak,az)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn cm_hash(input:readbuf,start:u64,length:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,length:u64,work:mutbuf)
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(initialized,zero)
+  branch ready prefix(input,start,length,work) fail(initialized)
+block prefix(pi:readbuf,ps:u64,pn:u64,pw:mutbuf)
+  a:u64 = const() {"value":1208}
+  b:u64 = const() {"value":1216}
+  c:u64 = const() {"value":1224}
+  a_word:u64 = const() {"value":7810758179799593588}
+  b_word:u64 = const() {"value":7306643368257072492}
+  c_word:u64 = const() {"value":212436153459}
+  _a:u64 = call(pw,a,a_word) {"function":"tr_put"}
+  _b:u64 = call(pw,b,b_word) {"function":"tr_put"}
+  _c:u64 = call(pw,c,c_word) {"function":"tr_put"}
+  domain_len:u64 = const() {"value":22}
+  prefix_status:u64 = call(pw,a,domain_len) {"function":"tr_sha_update_work"}
+  zp:u64 = const() {"value":0}
+  prefix_ok:bool = compare.eq(prefix_status,zp)
+  branch prefix_ok feed(pi,ps,pn,pw) fail(prefix_status)
+block feed(fi:readbuf,fs:u64,fn_:u64,fw:mutbuf)
+  body_status:u64 = call(fi,fs,fn_,fw) {"function":"tr_sha_update"}
+  zf:u64 = const() {"value":0}
+  body_ok:bool = compare.eq(body_status,zf)
+  branch body_ok finish(fw) fail(body_status)
+block finish(ww:mutbuf)
+  finished:u64 = call(ww) {"function":"tr_sha_final"}
+  ret(finished)
+block fail(code:u64)
+  ret(code)
+end

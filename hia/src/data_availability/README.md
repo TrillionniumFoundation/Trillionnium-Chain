@@ -28,8 +28,10 @@ and source SHA-256. These values represent the result of the original
 them from its validated, retained TCM1 and context owner. Shard headers are always
 compared with those separate selected pins.
 
-This component returns byte-validation and recovery results. TCM1 parsing,
-context authorization, provider authentication, durable shard storage, retention,
+This component returns byte-validation and recovery results. The separate
+[read-only TCM1 codecs](CELL_MANIFEST.md) verify manifest bytes and expose
+indexed metadata without supplying owner pins. Live TCM1/context
+authorization, provider authentication, durable shard storage, retention,
 network serving and the Node's adoption transaction remain separate owners.
 The original data-availability package remains required for those behaviors.
 

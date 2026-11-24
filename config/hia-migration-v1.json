@@ -623,6 +623,30 @@
       ]
     },
     {
+      "id": "data-availability/cell-manifest",
+      "node_integration_complete": false,
+      "scope": "Pure original TCM1 CellManifestV1 immutable binary metadata decode and canonical byte projection, exact geometry and domain SHA-256, full original limits and Rust error order. No lookup, storage, release context authority, payload recovery or live integration.",
+      "source": "hia/src/data_availability/cell_manifest.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_manifest.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_manifest_reference.rs"
+      ]
+    },
+    {
+      "id": "data-availability/cell-manifest-chunk",
+      "node_integration_complete": false,
+      "scope": "Pure read-only indexed chunk metadata projection after complete original TCM1 validation and content ID. A matching typed chunk does not authenticate manifest/context pins or grant recovery, cache, provider, storage or adoption authority.",
+      "source": "hia/src/data_availability/cell_manifest_chunk.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_manifest.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_manifest_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1690,7 +1714,9 @@
     {
       "components": [
         "data-availability/rs46",
-        "data-availability/cache-capacity"
+        "data-availability/cache-capacity",
+        "data-availability/cell-manifest",
+        "data-availability/cell-manifest-chunk"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",
