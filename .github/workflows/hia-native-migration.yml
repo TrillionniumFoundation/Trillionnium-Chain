@@ -7493,3 +7493,26 @@ jobs:
             ${{ env.OWNER_ROOT }}/observations/
           if-no-files-found: error
           retention-days: 30
+      - name: Collect separate Settlement image identity after the full upload
+        id: settlement_image_identity
+        if: always() && matrix.component == 'settlement-engine'
+        continue-on-error: true
+        env:
+          SETTLEMENT_SOURCE_AFTER_OUTCOME: ${{ steps.owner_source_after.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -m 700 -- "$RUNNER_TEMP/settlement-image-identity"
+          python3 -B -m hia.tools.settlement_image_identity \
+            --root "${OWNER_ROOT:-$RUNNER_TEMP/settlement-unavailable}" \
+            --output-dir "$RUNNER_TEMP/settlement-image-identity" \
+            --head "$TRNM_EXPECTED_SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --source-after-outcome "$SETTLEMENT_SOURCE_AFTER_OUTCOME"
+      - name: Upload the separate Settlement image identity diagnostic
+        if: always() && matrix.component == 'settlement-engine' && steps.settlement_image_identity.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-settlement-image-identity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/settlement-image-identity/image-identity.json
+          if-no-files-found: error
+          retention-days: 30

@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 
 from hia.tools import settlement_companion as companion
@@ -353,7 +354,8 @@ class SettlementCompanionTests(unittest.TestCase):
         job = workflow.split("\n  native-additional-owners:", 1)[1]
         run = job.split("      - name: Collect compact", 1)[0]
         compact = job.split("      - name: Collect compact", 1)[1].split("      - name: Retain and reread", 1)[0]
-        full = job.split("      - name: Retain and reread", 1)[1]
+        full = job.split("      - name: Retain and reread", 1)[1].split(
+            "      - name: Collect separate Settlement image identity", 1)[0]
         self.assertIn("timeout-minutes: 20", run)
         for needle in ("qualify_additional_owner_ci.py run", "qualify_additional_owner_ci.py bind",
                        "source-before.json", "source-after.json"):
@@ -368,6 +370,57 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertIn("archive_runtime_observations.py --root \"component=$OWNER_ROOT\"", full)
         self.assertIn("${{ env.OWNER_ARTIFACT }}/", full)
         self.assertIn("${{ env.OWNER_ROOT }}/observations/", full)
+
+    def test_image_identity_is_separate_settlement_only_postlude(self):
+        workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
+        mark = "      - name: Collect separate Settlement image identity"
+        self.assertEqual(workflow.count(mark), 1)
+        original, postlude = workflow.split(mark, 1)
+        self.assertTrue(original.endswith("          retention-days: 30\n"))
+        self.assertTrue(original.rsplit("\n  native-additional-owners:", 1)[1].rfind(
+            "Upload complete current-source observations and diagnostics") > 0)
+        collect, upload = postlude.split("      - name: Upload the separate Settlement image identity diagnostic")
+        self.assertEqual(postlude.count("continue-on-error: true"), 2)
+        self.assertEqual(postlude.count("if: always() && matrix.component == 'settlement-engine'"), 2)
+        self.assertIn("id: settlement_image_identity", collect)
+        self.assertIn("SETTLEMENT_SOURCE_AFTER_OUTCOME: ${{ steps.owner_source_after.outcome }}", collect)
+        self.assertIn("&& steps.settlement_image_identity.outcome == 'success'", upload)
+        self.assertIn("name: hia-settlement-image-identity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}"
+                      "-${{ github.run_id }}-${{ github.run_attempt }}", upload)
+        self.assertIn("path: ${{ runner.temp }}/settlement-image-identity/image-identity.json", upload)
+        self.assertIn("retention-days: 30", upload)
+        self.assertNotIn("OWNER_ARTIFACT", postlude)
+        self.assertNotIn("settlement-compact", postlude)
+        self.assertNotIn("timeout-minutes:", postlude)
+        self.assertNotIn("permissions:", postlude)
+        self.assertNotIn("qualify_additional_owner_ci.py", postlude)
+
+        # Exercise the actual shell postlude on an ordinary incomplete owner;
+        # it must preserve v1 and emit a distinct non-qualifying missing result.
+        shell = textwrap.dedent(collect.split("        run: |\n", 1)[1])
+        self.invoke()
+        legacy = self.dest / "summary.json"
+        before = legacy.read_bytes()
+        pin = {"schema": "trnm-ci-source-v1", "kind": "head", "tested_commit": HEAD,
+               "candidate": HEAD, "tested_tree": TREE, "tracked_worktree_verified": True,
+               "tracked_entries": 800, "tracked_bytes": 1200}
+        for name in companion.PINS:
+            self.doc(name, pin)
+        result = subprocess.run(["bash", "-c", shell], cwd=ROOT, capture_output=True, text=True, timeout=10,
+                                env={"PATH": os.defpath, "RUNNER_TEMP": str(self.temp),
+                                     "OWNER_ROOT": str(self.source), "TRNM_EXPECTED_SOURCE_SHA": HEAD,
+                                     "GITHUB_RUN_ID": "12345", "GITHUB_RUN_ATTEMPT": "2",
+                                     "SETTLEMENT_SOURCE_AFTER_OUTCOME": "success"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        identity = self.temp / "settlement-image-identity"
+        self.assertEqual([p.name for p in identity.iterdir()], ["image-identity.json"])
+        actual = json.loads((identity / "image-identity.json").read_bytes())
+        self.assertEqual(actual["workflow"], {"head": HEAD, "tree": TREE, "run_id": "12345",
+                                              "run_attempt": "2", "original_binding": "missing"})
+        self.assertEqual(actual["linked"], {"availability": "missing"})
+        self.assertFalse(actual["qualifies_execution"])
+        self.assertFalse(actual["substitutes_full_original_archive"])
+        self.assertEqual(legacy.read_bytes(), before)
 
 
 if __name__ == "__main__":
