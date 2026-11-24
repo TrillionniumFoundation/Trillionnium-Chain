@@ -91,8 +91,8 @@ Its admitted invocation is no arguments (Classic, 20,000 transactions and
 or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
 `write-first`, `write-last` or `hot-bucket-interleave`; ordinary Classic with
-an empty environment also admits `auto-adaptive` and, without `--profile`,
-`aggressive-greedy`. Explicit persistence retains
+an empty environment also admits `auto-adaptive` and `aggressive-greedy`.
+Explicit persistence retains
 the original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
@@ -212,7 +212,8 @@ with AutoAdaptive are not admitted here.
 ### Ordinary Classic AggressiveGreedy fast path
 
 An unmarked Classic invocation may select `aggressive-greedy` when the process
-environment is empty and profiling is not requested. The workload emits the
+environment is empty. With a qualified private profile root, the same strategy
+can also request `--profile` through the existing file owner. The workload emits the
 existing executor strategy word 6 with the original effective defaults
 (flags 6, deep-scan bit clear); the process does not rewrite it as Original.
 The retained Rust fast path and the HIA scheduler take the same dependency
@@ -221,9 +222,13 @@ The locked original and HIA are compared on the full output excluding only
 independently checked elapsed time. A separate arithmetic model verifies both
 digest domains and ordered assignment across distinct workload dimensions.
 The existing zero-through-1,000 replay range and 20,000-transaction cap still
-apply. Deep scan and its tunables, profiles, nonempty environments, corrected
-mode, Mixed and HotStreak remain outside this candidate scope. There is no
-new file authority or fallback.
+apply. The actual profile runs retain the original AggressiveGreedy label,
+dependency checks/hits and zero deep-scan stage counters, with full stdout
+and the file extent fixed point checked against the locked original. The
+profile path, filename, clocks, file guards and write contract are unchanged;
+an unbound image still refuses profile execution. Deep scan and its tunables,
+nonempty environments, corrected mode, Mixed and HotStreak remain outside
+this candidate scope. There is no new file destination or fallback.
 
 ### Corrected workload qualification
 

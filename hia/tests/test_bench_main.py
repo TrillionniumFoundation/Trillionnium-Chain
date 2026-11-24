@@ -287,7 +287,7 @@ class NativeBenchMain(unittest.TestCase):
                                   (b"--reader-high-water-v1", b"--help"),
                                   (b"--reader-high-water-v1", b"--txs"),
                                   (b"--profile", b"--workload=mixed", b"--strategy=auto-adaptive"),
-                                  (b"--profile", b"--strategy=aggressive-greedy"))):
+                                  (b"--profile", b"--strategy=aggressive-greedy", b"--workload=hot-streak"))):
             actual, _ = self.actual(f"plain-cli-denied-{i}", self.native, args)
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
         for name, args in (("help", (b"--help",)), ("missing", (b"--txs",))):
@@ -865,7 +865,7 @@ class NativeBenchMain(unittest.TestCase):
             ((*classic, b"--workload=hot-streak", b"--keys=1"), {}),
             ((*classic, b"--reader-high-water-v1"), {}),
             ((*classic, b"--txs=20001"), {}),
-            ((b"--strategy=aggressive-greedy", b"--profile"), {}),
+            ((b"--strategy=aggressive-greedy", b"--profile", b"--reader-high-water-v1"), {}),
             (classic, {b"TRNM_AUTO_MIN_BATCH_LEN": b"64"}),
             (classic, {b"TRNM_HOT_BUCKETS": b"17"}),
             (classic, {b"HIA_BENCH_FIXTURE_UNRELATED": b"synthetic"}),
@@ -925,10 +925,58 @@ class NativeBenchMain(unittest.TestCase):
             r, _ = self.actual(f"classic-aggressive-over-replay-{owner}",image,over)
             self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",REPEAT))
 
+    def test_actual_classic_aggressive_greedy_profile_and_replay(self):
+        strategy = (b"--strategy=aggressive-greedy", b"--profile")
+        for index, (n, keys, repeats) in enumerate(((19, 3, 2), (1, 1, 1000), (17, 30, 0),
+                                                    (20_000, 2_000, 1))):
+            pair = []
+            args = (*strategy, f"--txs={n}".encode(), f"--keys={keys}".encode(),
+                    f"--determinism-repeats={repeats}".encode())
+            if index % 2:
+                args += (b"--persist-profile",)
+            dig_groups = group_digest([range(i, min(n, i+keys)) for i in range(0,n,keys)]).hex().encode()
+            for owner, image in (("rust",self.original),("native",self.native)):
+                self.reset_profile_path()
+                r, wall = self.actual(f"aggressive-profile-{index}-{owner}",image,args)
+                comparable, _, raw_file = self.profile_comparable(r,wall,"file")
+                fields = dict(line.split(b"=",1) for line in comparable.splitlines() if b"=" in line)
+                self.assertEqual(fields[b"profile.report.strategy"],b"AggressiveGreedy")
+                self.assertEqual(fields[b"determinism.groups_sha256"],dig_groups)
+                self.assertEqual(fields[b"determinism.replay_match"],b"true" if repeats else b"not-requested")
+                self.assertEqual(fields[b"profile.conflict_checks"],str(2*n).encode())
+                self.assertEqual(fields[b"profile.conflict_hits"],str(n-min(n,keys)).encode())
+                for metric in (b"candidate_groups_scanned", b"retry_fallback_new_groups",
+                               b"stage_ww_checks", b"stage_ww_hits", b"stage_wr_checks",
+                               b"stage_wr_hits", b"stage_rw_checks", b"stage_rw_hits"):
+                    self.assertEqual(fields[b"profile."+metric],b"0")
+                self.assertNotIn(b"profile.auto.",raw_file)
+                self.assertEqual(len(list(self.bench_path.iterdir())),1)
+                pair.append(comparable)
+            self.assertEqual(*pair)
+        self.reset_profile_path()
+        for owner,image in (("rust",self.original),("native",self.native)):
+            r,_ = self.actual(f"aggressive-profile-over-repeat-{owner}",image,
+                              (*strategy,b"--txs=19",b"--determinism-repeats=1001"))
+            self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",REPEAT))
+            self.assertFalse(self.run_path.exists())
+
+    def test_actual_classic_aggressive_greedy_unbound_file_refusal(self):
+        unbound, _ = build(self.root / "native-aggressive-unbound")
+        args = (b"--txs=19", b"--keys=3", b"--strategy=aggressive-greedy",
+                b"--determinism-repeats=2")
+        for i, variant in enumerate(((*args,b"--profile"),(*args,b"--profile",b"--persist-profile"))):
+            r,_=self.actual(f"aggressive-unbound-profile-{i}",unbound,variant)
+            self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+        r,wall=self.actual("aggressive-unbound-no-profile",unbound,args)
+        self.assertEqual((r.returncode,r.stderr),(0,b""))
+        self.assertIn(b"\nstrategy=AggressiveGreedy\n",stdout_observation(r.stdout,wall)[1])
+        self.assertFalse(self.run_path.exists())
+
     def test_classic_aggressive_greedy_preserves_scope_and_file_refusal(self):
         strategy = (b"--strategy", b"aggressive-greedy", b"--txs=4")
         rows = (
-            ((b"--profile",), ()), ((b"--profile", b"--persist-profile"), ()),
+            ((b"--profile",), (b"LANG=C",)), ((b"--profile", b"--persist-profile"), (b"TRNM_AGGR_DEEP_SCAN=1",)),
             ((b"--workload=mixed", b"--keys=1"), ()),
             ((b"--workload=hot-streak", b"--keys=1"), ()),
             ((b"--reader-high-water-v1",), ()), ((), (b"TRNM_AGGR_DEEP_SCAN=1",)),
