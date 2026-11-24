@@ -42,7 +42,31 @@ block next(i_next:readbuf,o_next:mutbuf,n_next:u64,p_next:u64,k_next:u64)
 block token(i_tok:readbuf,o_tok:mutbuf,n_tok:u64,p_tok:u64,k_tok:u64)
   end_tok:u64 = call(i_tok,p_tok,n_tok) {"function":"bc_end"}
   valid_tok:bool = compare.lt(end_tok,n_tok)
-  branch valid_tok name(i_tok,o_tok,n_tok,p_tok,k_tok,end_tok) fail()
+  branch valid_tok special(i_tok,o_tok,n_tok,p_tok,k_tok,end_tok) fail()
+block special(i_sp:readbuf,o_sp:mutbuf,n_sp:u64,p_sp:u64,k_sp:u64,e_sp:u64)
+  span_sp:u64 = int.sub.wrap(e_sp,p_sp)
+  token_sp:u64 = call(i_sp,p_sp,span_sp) {"function":"bc_special"}
+  help_sp:u64 = const() {"value":1}
+  displaying:bool = compare.eq(token_sp,help_sp)
+  branch displaying help(o_sp) special_end(i_sp,o_sp,n_sp,p_sp,k_sp,e_sp,token_sp)
+block special_end(i_se:readbuf,o_se:mutbuf,n_se:u64,p_se:u64,k_se:u64,e_se:u64,t_se:u64)
+  end_se:u64 = const() {"value":2}
+  ending:bool = compare.eq(t_se,end_se)
+  branch ending terminator(o_se,n_se,k_se,e_se) name(i_se,o_se,n_se,p_se,k_se,e_se)
+block terminator(o_te:mutbuf,n_te:u64,k_te:u64,e_te:u64)
+  one_te:u64 = const() {"value":1}
+  tail_te:bool = compare.eq(k_te,one_te)
+  past_te:u64 = int.add.wrap(e_te,one_te)
+  marked_te:bool = call(o_te) {"function":"bc_marked"}
+  ordinary_te:bool = bool.not(marked_te)
+  accepted_te:bool = bool.and(tail_te,ordinary_te)
+  branch accepted_te finish(o_te,n_te,past_te) fail()
+block help(o_he:mutbuf)
+  marked_he:bool = call(o_he) {"function":"bc_marked"}
+  branch marked_he fail() help_plain()
+block help_plain()
+  help_code:u32 = const() {"value":3}
+  ret(help_code)
 block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:u64)
   equal_at:u64 = call(i_name,p_name,e_name) {"function":"bc_equal"}
   w_name:u64 = int.sub.wrap(equal_at,p_name)
@@ -70,7 +94,12 @@ block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64
   zero_pf:u64 = const() {"value":0}
   fresh_pf:bool = compare.eq(already,zero_pf)
   valid_pf:bool = bool.and(bare,fresh_pf)
-  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag) fail()
+  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag) flag_reject(pf_o,pf_field,bare)
+block flag_reject(o_fr:mutbuf,f_fr:u64,bare_fr:bool)
+  corrected_fr:u64 = const() {"value":9}
+  normal_fr:bool = compare.lt(f_fr,corrected_fr)
+  dupe_fr:bool = bool.and(normal_fr,bare_fr)
+  branch dupe_fr duplicate(o_fr,f_fr) fail()
 block keep_flag(kf_i:readbuf,kf_o:mutbuf,kf_n:u64,kf_k:u64,kf_e:u64,kf_at:u64,kf_bits:u64,kf_flag:u64)
   with_profile:u64 = bit.or(kf_bits,kf_flag)
   _profile:u64 = call(kf_o,kf_at,with_profile) {"function":"bench_put"}
@@ -87,13 +116,67 @@ block sep(i_sep:readbuf,o_sep:mutbuf,n_sep:u64,k_sep:u64,e_sep:u64,eq_sep:u64,f_
 block detached(i_det:readbuf,o_det:mutbuf,n_det:u64,p_det:u64,k_det:u64,f_det:u64)
   zero_det:u64 = const() {"value":0}
   has_arg:bool = compare.gt(k_det,zero_det)
-  branch has_arg det_end(i_det,o_det,n_det,p_det,k_det,f_det) fail()
+  branch has_arg det_end(i_det,o_det,n_det,p_det,k_det,f_det) missing(o_det,f_det)
 block det_end(i_e:readbuf,o_e:mutbuf,n_e:u64,p_e:u64,k_e:u64,f_e:u64)
   end_e:u64 = call(i_e,p_e,n_e) {"function":"bc_end"}
   ok_e:bool = compare.lt(end_e,n_e)
   step_e:u64 = const() {"value":1}
   left_e:u64 = int.sub.wrap(k_e,step_e)
-  branch ok_e value(i_e,o_e,n_e,p_e,end_e,left_e,f_e) fail()
+  branch ok_e detached_kind(i_e,o_e,n_e,p_e,end_e,left_e,f_e) fail()
+block detached_kind(i_dk:readbuf,o_dk:mutbuf,n_dk:u64,p_dk:u64,e_dk:u64,k_dk:u64,f_dk:u64)
+  size_dk:u64 = int.sub.wrap(e_dk,p_dk)
+  one_dk:u64 = const() {"value":1}
+  compound_dk:bool = compare.gt(size_dk,one_dk)
+  branch compound_dk detached_nonempty(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk,size_dk) value(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk)
+block detached_nonempty(i_dn:readbuf,o_dn:mutbuf,n_dn:u64,p_dn:u64,e_dn:u64,k_dn:u64,f_dn:u64,s_dn:u64)
+  off_dn:usize = int.cast(p_dn) {"mode":"wrap"}
+  lead_dn:u8 = buffer.load(i_dn,off_dn)
+  dash_dn:u8 = const() {"value":45}
+  optional_dn:bool = compare.eq(lead_dn,dash_dn)
+  branch optional_dn pending(i_dn,o_dn,p_dn,e_dn,s_dn,k_dn,f_dn) value(i_dn,o_dn,n_dn,p_dn,e_dn,k_dn,f_dn)
+block pending(i_pe:readbuf,o_pe:mutbuf,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:u64,f_pe:u64)
+  special_pe:u64 = call(i_pe,p_pe,s_pe) {"function":"bc_special"}
+  zero_pe:u64 = const() {"value":0}
+  help_pe:u64 = const() {"value":1}
+  end_pe:u64 = const() {"value":2}
+  is_help_pe:bool = compare.eq(special_pe,help_pe)
+  is_end_pe:bool = compare.eq(special_pe,end_pe)
+  last_pe:bool = compare.eq(k_pe,zero_pe)
+  terminal_pe:bool = bool.and(last_pe,is_end_pe)
+  recognized_pe:bool = bool.or(terminal_pe,is_help_pe)
+  branch recognized_pe missing(o_pe,f_pe) pending_long(i_pe,o_pe,p_pe,e_pe,f_pe)
+block pending_long(i_plg:readbuf,o_plg:mutbuf,p_plg:u64,e_plg:u64,f_plg:u64)
+  equal_plg:u64 = call(i_plg,p_plg,e_plg) {"function":"bc_equal"}
+  size_plg:u64 = int.sub.wrap(equal_plg,p_plg)
+  option_plg:u64 = call(i_plg,p_plg,size_plg) {"function":"bc_option"}
+  corrected_plg:u64 = const() {"value":9}
+  profile_plg:u64 = const() {"value":3}
+  persist_plg:u64 = const() {"value":7}
+  known_plg:bool = compare.lt(option_plg,corrected_plg)
+  profile_flag_plg:bool = compare.eq(option_plg,profile_plg)
+  persist_flag_plg:bool = compare.eq(option_plg,persist_plg)
+  flag_plg:bool = bool.or(profile_flag_plg,persist_flag_plg)
+  grammar_eq_plg:bool = compare.ne(equal_plg,e_plg)
+  bad_plg:bool = bool.and(flag_plg,grammar_eq_plg)
+  safe_plg:bool = bool.not(bad_plg)
+  missing_plg:bool = bool.and(known_plg,safe_plg)
+  branch missing_plg missing(o_plg,f_plg) fail()
+block missing(o_mi:mutbuf,f_mi:u64)
+  marked_mi:bool = call(o_mi) {"function":"bc_marked"}
+  branch marked_mi fail() missing_plain(f_mi)
+block missing_plain(f_mp:u64)
+  start_mp:u64 = const() {"value":16}
+  id_mp:u64 = int.add.wrap(start_mp,f_mp)
+  code_mp:u32 = int.cast(id_mp) {"mode":"wrap"}
+  ret(code_mp)
+block duplicate(o_du:mutbuf,f_du:u64)
+  marked_du:bool = call(o_du) {"function":"bc_marked"}
+  branch marked_du fail() duplicate_plain(f_du)
+block duplicate_plain(f_dp:u64)
+  start_dp:u64 = const() {"value":32}
+  id_dp:u64 = int.add.wrap(start_dp,f_dp)
+  code_dp:u32 = int.cast(id_dp) {"mode":"wrap"}
+  ret(code_dp)
 block value(i_val:readbuf,o_val:mutbuf,n_val:u64,p_val:u64,e_val:u64,k_val:u64,f_val:u64)
   s_at:u64 = const() {"value":24}
   seen:u64 = call(o_val,s_at) {"function":"bench_get"}
@@ -102,7 +185,7 @@ block value(i_val:readbuf,o_val:mutbuf,n_val:u64,p_val:u64,e_val:u64,k_val:u64,f
   dup:u64 = bit.and(seen,bit_value)
   none_val:u64 = const() {"value":0}
   fresh:bool = compare.eq(dup,none_val)
-  branch fresh type_dispatch(i_val,o_val,n_val,p_val,e_val,k_val,f_val,seen,bit_value) fail()
+  branch fresh type_dispatch(i_val,o_val,n_val,p_val,e_val,k_val,f_val,seen,bit_value) duplicate(o_val,f_val)
 block type_dispatch(td_i:readbuf,td_o:mutbuf,td_n:u64,td_p:u64,td_e:u64,td_k:u64,td_f:u64,td_seen:u64,td_flag:u64)
   work_field:u64 = const() {"value":6}
   strat_field:u64 = const() {"value":8}
@@ -124,6 +207,10 @@ block enum_value(ev_i:readbuf,ev_o:mutbuf,ev_n:u64,ev_p:u64,ev_e:u64,ev_k:u64,ev
   write_first_wire:u64 = const() {"value":2}
   footprint_enum:u64 = const() {"value":7}
   footprint_wire:u64 = const() {"value":1}
+  auto_enum:u64 = const() {"value":8}
+  auto_wire:u64 = const() {"value":5}
+  greedy_enum:u64 = const() {"value":9}
+  greedy_wire:u64 = const() {"value":6}
   is_work_opt:bool = compare.eq(ev_f,work_opt)
   is_work_value:bool = compare.le(enum_index,last_work)
   clean_work:bool = bool.and(is_work_opt,is_work_value)
@@ -135,14 +222,20 @@ block enum_value(ev_i:readbuf,ev_o:mutbuf,ev_n:u64,ev_p:u64,ev_e:u64,ev_k:u64,ev
   is_write_first:bool = compare.eq(enum_index,write_first_enum)
   current_strategies:bool = bool.or(legacy_strategies,is_write_first)
   is_footprint:bool = compare.eq(enum_index,footprint_enum)
-  candidate_strategy:bool = bool.or(current_strategies,is_footprint)
+  native_strategy:bool = bool.or(current_strategies,is_footprint)
+  is_auto:bool = compare.eq(enum_index,auto_enum)
+  is_greedy:bool = compare.eq(enum_index,greedy_enum)
+  is_not_admitted:bool = bool.or(is_auto,is_greedy)
+  candidate_strategy:bool = bool.or(native_strategy,is_not_admitted)
   is_strat_opt:bool = bool.not(is_work_opt)
   clean_strategy:bool = bool.and(candidate_strategy,is_strat_opt)
   zero_enum:u64 = const() {"value":0}
   previous_wire:u64 = select(is_write_last,write_last_wire,zero_enum)
   old_strategy_wire:u64 = select(is_hot_bucket,hot_bucket_wire,previous_wire)
   current_wire:u64 = select(is_write_first,write_first_wire,old_strategy_wire)
-  strategy_wire:u64 = select(is_footprint,footprint_wire,current_wire)
+  native_wire:u64 = select(is_footprint,footprint_wire,current_wire)
+  optional_wire:u64 = select(is_auto,auto_wire,native_wire)
+  strategy_wire:u64 = select(is_greedy,greedy_wire,optional_wire)
   branch clean_work keep(ev_i,ev_o,ev_n,ev_e,ev_k,ev_f,ev_seen,ev_flag,enum_index) keep_strategy(ev_i,ev_o,ev_n,ev_e,ev_k,ev_f,ev_seen,ev_flag,strategy_wire,clean_strategy)
 block keep_strategy(ks_i:readbuf,ks_o:mutbuf,ks_n:u64,ks_e:u64,ks_k:u64,ks_f:u64,ks_seen:u64,ks_flag:u64,ks_value:u64,ks_valid:bool)
   branch ks_valid keep(ks_i,ks_o,ks_n,ks_e,ks_k,ks_f,ks_seen,ks_flag,ks_value) fail()
@@ -208,7 +301,10 @@ block strategy_semantics(o_ss:mutbuf)
   ss_unmarked:bool = compare.eq(ss_mode_bit,ss_zero)
   ss_uses_footprint:bool = compare.eq(ss_strategy,ss_footprint)
   ss_legacy_denied:bool = bool.and(ss_unmarked,ss_uses_footprint)
-  branch ss_legacy_denied fail() repeat_bound(o_ss)
+  ss_highest_admitted:u64 = const() {"value":4}
+  ss_other_denied:bool = compare.gt(ss_strategy,ss_highest_admitted)
+  ss_denied:bool = bool.or(ss_legacy_denied,ss_other_denied)
+  branch ss_denied fail() repeat_bound(o_ss)
 block repeat_bound(o_rep:mutbuf)
   at16_rep:u64 = const() {"value":16}
   repeats:u64 = call(o_rep,at16_rep) {"function":"bench_get"}
@@ -712,7 +808,7 @@ block v6(vi6:readbuf,vp6:u64)
 block k7(ki7:readbuf,kp7:u64,kn7:u64)
   w7:u64 = const() {"value":14}
   same7:bool = compare.eq(kn7,w7)
-  branch same7 v7(ki7,kp7) absent()
+  branch same7 v7(ki7,kp7) k8(ki7,kp7,kn7)
 block v7(vi7:readbuf,vp7:u64)
   width7_0:u64 = const() {"value":8}
   read7_0:u64 = call(vi7,vp7,width7_0) {"function":"bc_tail"}
@@ -726,9 +822,101 @@ block v7(vi7:readbuf,vp7:u64)
   all7:bool = bool.and(match7_0,match7_8)
   index7:u64 = const() {"value":7}
   branch all7 success(index7) absent()
+block k8(ki8:readbuf,kp8:u64,kn8:u64)
+  w8:u64 = const() {"value":13}
+  same8:bool = compare.eq(kn8,w8)
+  branch same8 v8(ki8,kp8) k9(ki8,kp8,kn8)
+block v8(vi8:readbuf,vp8:u64)
+  off8_0:u64 = const() {"value":0}
+  pos8_0:u64 = int.add.wrap(vp8,off8_0)
+  size8_0:u64 = const() {"value":8}
+  read8_0:u64 = call(vi8,pos8_0,size8_0) {"function":"bc_tail"}
+  target8_0:u64 = const() {"value":7017840967121401185}
+  match8_0:bool = compare.eq(read8_0,target8_0)
+  off8_8:u64 = const() {"value":8}
+  pos8_8:u64 = int.add.wrap(vp8,off8_8)
+  size8_8:u64 = const() {"value":5}
+  read8_8:u64 = call(vi8,pos8_8,size8_8) {"function":"bc_tail"}
+  target8_8:u64 = const() {"value":435778319472}
+  match8_8:bool = compare.eq(read8_8,target8_8)
+  all8:bool = bool.and(match8_0,match8_8)
+  index8:u64 = const() {"value":8}
+  branch all8 success(index8) absent()
+block k9(ki9:readbuf,kp9:u64,kn9:u64)
+  w9:u64 = const() {"value":17}
+  same9:bool = compare.eq(kn9,w9)
+  branch same9 v9(ki9,kp9) absent()
+block v9(vi9:readbuf,vp9:u64)
+  off9_0:u64 = const() {"value":0}
+  pos9_0:u64 = int.add.wrap(vp9,off9_0)
+  size9_0:u64 = const() {"value":8}
+  read9_0:u64 = call(vi9,pos9_0,size9_0) {"function":"bc_tail"}
+  target9_0:u64 = const() {"value":7598543875852429153}
+  match9_0:bool = compare.eq(read9_0,target9_0)
+  off9_8:u64 = const() {"value":8}
+  pos9_8:u64 = int.add.wrap(vp9,off9_8)
+  size9_8:u64 = const() {"value":8}
+  read9_8:u64 = call(vi9,pos9_8,size9_8) {"function":"bc_tail"}
+  target9_8:u64 = const() {"value":7234299918472275318}
+  match9_8:bool = compare.eq(read9_8,target9_8)
+  off9_16:u64 = const() {"value":16}
+  pos9_16:u64 = int.add.wrap(vp9,off9_16)
+  size9_16:u64 = const() {"value":1}
+  read9_16:u64 = call(vi9,pos9_16,size9_16) {"function":"bc_tail"}
+  target9_16:u64 = const() {"value":121}
+  match9_16:bool = compare.eq(read9_16,target9_16)
+  last9:bool = bool.and(match9_8,match9_16)
+  all9:bool = bool.and(match9_0,last9)
+  index9:u64 = const() {"value":9}
+  branch all9 success(index9) absent()
 block success(result:u64)
   ret(result)
 block absent()
-  invalid:u64 = const() {"value":8}
+  invalid:u64 = const() {"value":10}
   ret(invalid)
+end
+
+fn bc_marked(o:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf)
+  off:u64 = const() {"value":24}
+  bit:u64 = const() {"value":512}
+  none:u64 = const() {"value":0}
+  current:u64 = call(o,off) {"function":"bench_get"}
+  selected:u64 = bit.and(current,bit)
+  answer:bool = compare.ne(selected,none)
+  ret(answer)
+end
+
+fn bc_special(i:readbuf,p:u64,w:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,p:u64,w:u64)
+  two:u64 = const() {"value":2}
+  short:bool = compare.eq(w,two)
+  branch short short_token(i,p,w) long_width(i,p,w)
+block short_token(i_st:readbuf,p_st:u64,w_st:u64)
+  code_st:u64 = call(i_st,p_st,w_st) {"function":"bc_tail"}
+  short_help:u64 = const() {"value":26669}
+  short_end:u64 = const() {"value":11565}
+  short_he:bool = compare.eq(code_st,short_help)
+  short_en:bool = compare.eq(code_st,short_end)
+  end_st:u64 = const() {"value":2}
+  none_st:u64 = const() {"value":0}
+  select_st:u64 = select(short_en,end_st,none_st)
+  branch short_he yes_help() chosen(select_st)
+block long_width(i_lw:readbuf,p_lw:u64,w_lw:u64)
+  six_lw:u64 = const() {"value":6}
+  display_lw:bool = compare.eq(w_lw,six_lw)
+  branch display_lw long_token(i_lw,p_lw,w_lw) no_choice()
+block long_token(i_lt:readbuf,p_lt:u64,w_lt:u64)
+  code_lt:u64 = call(i_lt,p_lt,w_lt) {"function":"bc_tail"}
+  long_help:u64 = const() {"value":123610860105005}
+  display_lt:bool = compare.eq(code_lt,long_help)
+  branch display_lt yes_help() no_choice()
+block chosen(answer:u64)
+  ret(answer)
+block no_choice()
+  unknown:u64 = const() {"value":0}
+  ret(unknown)
+block yes_help()
+  yes:u64 = const() {"value":1}
+  ret(yes)
 end

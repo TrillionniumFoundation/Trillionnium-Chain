@@ -19,10 +19,11 @@ COMPONENTS = (
     "src/bench/report.hepta",
     "src/bench/profile.hepta",
     "src/bench/environment.hepta",
+    "src/bench/main_diagnostics.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "be08042ab2f9ef37e23fac8be58b2395b0a962b16a70e976d65462e06af6268a"
-PREFIX, BASE = 4088, 0x400000
+ADAPTER_SHA256 = "f8c2f97cb3c6e3a3b4b58c80319405ecc886fe3ce47c834177591b69aafa2b5a"
+PREFIX, BASE = 4280, 0x400000
 
 
 def exact_native_text(data):
@@ -80,7 +81,8 @@ def build(output: Path, *, bind_profile_output=False):
         _, wire, _, _, captured = checked_source(HIA_ROOT / rel)
         sources[rel] = {p.relative_to(HIA_ROOT).as_posix(): sha256(raw) for p, raw in captured}
         wires[rel] = wire
-    explicit_object = {"src/bench/main_cli.hepta": "cli", "src/bench/report.hepta": "report"}
+    explicit_object = {"src/bench/main_cli.hepta": "cli", "src/bench/report.hepta": "report",
+                       "src/bench/main_diagnostics.hepta": "diagnostics"}
     for rel in COMPONENTS:
         if rel in explicit_object:
             # The fixed-core flat profile refuses these CFGs. The self-host
@@ -110,8 +112,8 @@ def build(output: Path, *, bind_profile_output=False):
     for raw in parts:
         addresses.append(position)
         position += len(raw)
-    payload = struct.pack("<9Q", *addresses[:6], position if anchor else 0, len(anchor),
-                          addresses[6]) + b"".join(parts)
+    payload = struct.pack("<10Q", *addresses[:6], position if anchor else 0, len(anchor),
+                          *addresses[6:]) + b"".join(parts)
     if anchor:
         payload += anchor + b"\0"
     if len(payload) > 950272:
@@ -167,12 +169,13 @@ sys.stdout.buffer.write(out.raw[:n])
             if sha256((HIA_ROOT / relative).read_bytes()) != identity:
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
-    report = {"schema": "trnm.hia.bench-main.build.v4",
+    report = {"schema": "trnm.hia.bench-main.build.v5",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},
               "adapter_sha256": ADAPTER_SHA256, "adapter_bytes": PREFIX - 176,
               "argument_object": object_receipts["cli"], "report_object": object_receipts["report"],
+              "diagnostics_object": object_receipts["diagnostics"],
               "emitter_object": emitter_receipt,
               "contained_parts": [{"source": rel, "entry_address": addr, "sha256": sha256(raw),
                                    "bytes": len(raw)}

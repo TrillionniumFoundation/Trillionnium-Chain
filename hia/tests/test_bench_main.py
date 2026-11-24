@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import os
+import pty
 from pathlib import Path
 import re
 import resource
@@ -233,7 +234,78 @@ class NativeBenchMain(unittest.TestCase):
             new, _ = self.actual(f"invalid-{index}-native", self.native, args)
             self.assertEqual((old.returncode, old.stdout), (2, b""))
             self.assertTrue(old.stderr)
-            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE))
+            strict = (b"a value is required" in old.stderr or b"cannot be used multiple times" in old.stderr)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr if strict else OUTSIDE))
+
+    def test_actual_plain_cli_help_terminator_and_strict_grammar(self):
+        help_cases = ((b"-h",), (b"--help",), (b"--profile", b"--help"),
+                      (b"--help", b"--unknown"),
+                      (b"--strategy=auto-adaptive", b"--help"),
+                      (b"--strategy", b"aggressive-greedy", b"-h"),
+                      (b"--txs=99999", b"--determinism-repeats=1001", b"--help"))
+        for i, args in enumerate(help_cases):
+            old, _ = self.actual(f"plain-help-{i}-rust", self.original, args)
+            new, _ = self.actual(f"plain-help-{i}-hia", self.native, args)
+            self.assertEqual((old.returncode, old.stderr, len(old.stdout)), (0, b"", 1264))
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (0, old.stdout, b""))
+        # The duplicate category is independent of the spelling of its second
+        # supplied value; missing still takes priority for a pending value.
+        fields = ((b"txs", b"4"), (b"keys", b"2"), (b"determinism-repeats", b"0"),
+                  (b"profile", None), (b"read-fanout", b"3"), (b"write-every", b"1"),
+                  (b"workload", b"classic"), (b"persist-profile", None), (b"strategy", b"original"))
+        fail = []
+        for f, value in fields:
+            name = b"--" + f
+            if value is None:
+                fail.append(((name, name, b"--help"), b"cannot be used multiple times"))
+            else:
+                for tail in ((), (b"--help",), (b"--profile",), (b"--",)):
+                    fail.append(((name, *tail), b"a value is required"))
+                fail.extend((((name, value, name + b"=known-synthetic-garbage", b"--help"),
+                              b"cannot be used multiple times"),
+                             ((name + b"=" + value, name), b"a value is required")))
+        fail.extend((((b"--keys=4", b"--txs", b"--keys=5"), b"a value is required"),
+                     ((b"--profile", b"--txs", b"--profile"), b"a value is required"),
+                     ((b"--txs=2", b"--txs", b""), b"cannot be used multiple times")))
+        for i, (args, expected) in enumerate(fail):
+            old, _ = self.actual(f"strict-cli-{i}-rust", self.original, args)
+            new, _ = self.actual(f"strict-cli-{i}-hia", self.native, args)
+            self.assertEqual((old.returncode, old.stdout), (2, b""))
+            self.assertIn(expected, old.stderr)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr), args)
+        for i, args in enumerate(((b"--",), (b"--txs=4", b"--keys", b"2", b"--"))):
+            old, old_ns = self.actual(f"terminal-cli-{i}-rust", self.original, args)
+            new, new_ns = self.actual(f"terminal-cli-{i}-hia", self.native, args)
+            self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
+            self.assertEqual(stdout_observation(old.stdout, old_ns)[1], stdout_observation(new.stdout, new_ns)[1])
+        for i, args in enumerate(((b"--typo", b"--help"), (b"--txs=bad", b"--help"),
+                                  (b"--txs=1", b"--txs", b"-2"), (b"--txs", b"--", b"--profile"),
+                                  (b"--help=true",), (b"--", b"--help"),
+                                  (b"--reader-high-water-v1", b"--help"),
+                                  (b"--reader-high-water-v1", b"--txs"),
+                                  (b"--profile", b"--strategy=auto-adaptive"),
+                                  (b"--profile", b"--strategy=aggressive-greedy"))):
+            actual, _ = self.actual(f"plain-cli-denied-{i}", self.native, args)
+            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+        for name, args in (("help", (b"--help",)), ("missing", (b"--txs",))):
+            actual, _ = self.actual(f"plain-cli-env-denied-{name}", self.native, args,
+                                    env={b"HIA_BENCH_TEST_ONLY": b"synthetic-not-read"})
+            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_plain_cli_help_refuses_native_terminal_without_emitting_help(self):
+        master, slave = pty.openpty()
+        fd = sealed_executable(self.native, "plain-help-terminal")
+        try:
+            actual = subprocess.run([b"trnm-bench", b"-h"], executable=f"/proc/self/fd/{fd}", pass_fds=(fd,),
+                                    stdin=subprocess.DEVNULL, stdout=slave, stderr=subprocess.PIPE, env={},
+                                    cwd=self.root, timeout=25)
+        finally:
+            os.close(fd)
+            os.close(slave)
+            os.close(master)
+        self.assertEqual((actual.returncode, actual.stderr), (2, OUTSIDE))
+        self.assertFalse(self.run_path.exists())
 
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
         for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),

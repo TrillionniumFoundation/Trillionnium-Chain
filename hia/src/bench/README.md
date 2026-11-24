@@ -98,11 +98,21 @@ values and malformed text. Zero numeric workload counts retain the original
 one-minimum normalization. The subset admits at most 20,000 transactions and
 the original inclusive zero through 1,000 replays. A parsed count over 1,000
 renders the exact original diagnostic and exit 2 before workload or clock
-work, including with parsed values outside candidate bounds. Other unsupported
-invocations exit 2 with a distinct candidate diagnostic, **not** Clap
-diagnostic equivalence. Help, other strategies and general environments
-remain open and never fall back to the old executable. The optional bare
-`--reader-high-water-v1` explicitly selects the corrected scope below.
+work, including with parsed values outside candidate bounds. A terminal
+`--` also admits the same unmarked invocation and does not admit positionals.
+The optional bare `--reader-high-water-v1` explicitly selects the corrected
+scope below. Unsupported work stays closed and never falls back to Rust.
+
+With an empty environment and nonterminal output, the same native parser and
+[diagnostics renderer](main_diagnostics.hepta) reproduce the locked Rust CLI's
+plain `-h`/`--help` stdout and exit 0. Recognized missing values and duplicate
+options use its exact stderr and exit 2. Both are emitted before any scheduler,
+clock or profile I/O; none reflect supplied argument text. Help comes after a
+syntactically admitted prefix and takes precedence over later arguments.
+The remaining value/option diagnostics, suggestions, grammar outside the
+bounded parser, colors/terminal output, general environments and other work
+strategies remain open. The original help lists every strategy; it does not
+grant admission to any unimplemented strategy in this candidate.
 
 The three `--workload` values are `classic`, `mixed`, and `hot-streak`.
 Classic ignores fanout/stride for generation but still reports normalized
@@ -145,11 +155,11 @@ scheduler components keep their own contracts.
 
 The [native emitter](../../platform/bench/main_emitter.hepta) creates one RX
 load segment and an NX stack with no loader or runtime imports. The resolved
-argument and report code and the build-time packer use the pinned compiler's
+argument, diagnostics and report code and the build-time packer use the pinned compiler's
 explicit object profile; native workload, schedule, digests, profile and
 environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 3,912-byte Linux adapter. It does not execute the
+the address table, and the 4,104-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 17 argument tokens in a private span and owns
@@ -333,10 +343,11 @@ The original is a Clap-derived executable with the following long options:
 | `--persist-profile` | true | A SetTrue flag; no CLI false-valued counterpart |
 | `--determinism-repeats <usize>` | 0 | Reject values over 1000 before generating work |
 
-`-h` and `--help` return help. Clap owns unknown-option, invalid-value, missing-value,
-duplicate-option and enum-spelling diagnostics and its parse exit status. The
-native CLI must reproduce the admitted argument and error contracts; a binary
-request frame is not a substitute for this layer. In particular,
+The retained Clap front end defines help, strict options and all parse errors.
+The [native qualification](../../tests/test_bench_main.py) compares real stdout,
+stderr and exit status for plain help, terminal `--`, and the admitted strict
+missing-value/duplicate families against the unmodified, locked Cargo binary.
+A binary request frame is not a substitute for this layer. In particular,
 `--persist-profile=false` does not disable persistence in the retained CLI.
 
 The explicit repeat-limit error is
