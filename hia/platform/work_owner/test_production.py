@@ -5,6 +5,7 @@ stand for an actual fixed-parent, Node, Paid, or service qualification.
 """
 from __future__ import annotations
 import copy
+import errno
 import importlib.util
 import hashlib
 import json
@@ -14,6 +15,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 if not __debug__:
@@ -438,6 +440,74 @@ class ProductionControls(unittest.TestCase):
                     text=("{\"status\":\"PASS\","+text[1:]) if mutation=="duplicate-json" else text.replace('"elapsed_wall_ns": 1','"elapsed_wall_ns": NaN')
                     (directory/"native.json").write_text(text)
                 with self.assertRaises((ValueError,OSError)):self.capture_admit(directory,image,built)
+
+    def sample_tasks(self, observed, *, missing=None, gone=None, exit_code=None,
+                     bad_membership=False, bad_uid=False, bad_namespace=False):
+        """Ordinary deterministic procfs observations; no service is launched."""
+        image=b"owned native image"
+        base=Path("/proc")/str(self.pid)
+        tasks=[base/"task"/str(tid) for tid in (self.pid,self.worker)]
+        process=SimpleNamespace(pid=self.pid,poll=lambda:exit_code)
+
+        def read_bytes(path):
+            self.assertEqual(path,base/"exe")
+            if missing==path:raise gone
+            return image
+
+        def read_text(path):
+            self.assertIn(path.parent,tasks)
+            if missing==path:raise gone
+            if path.name=="cgroup":
+                return "0::/outside" if bad_membership and path.parent==tasks[1] else "0::/trnmponpublic.slice/"+self.service
+            self.assertEqual(path.name,"status")
+            return "Uid: 0 0 0 0" if bad_uid and path.parent==tasks[1] else "Uid: 1000 1000 1000 1000"
+
+        def namespace_at(tid):
+            return {**self.namespace,"mnt":"mnt:[456]"} if bad_namespace and tid==self.worker else self.namespace
+
+        with patch.object(Path,"read_bytes",read_bytes),patch.object(Path,"read_text",read_text), \
+             patch.object(Path,"iterdir",return_value=iter(tasks)), \
+             patch.object(subject,"namespace_identity",side_effect=namespace_at), \
+             patch.object(subject.os,"getuid",return_value=self.uid):
+            subject.observe_tasks(process,subject.digest(image),self.service,self.namespace,observed)
+        return subject.digest(image)
+
+    def test_23_disappearing_worker_never_supplies_missing_proof(self):
+        worker=Path("/proc")/str(self.pid)/"task"/str(self.worker)
+        for error in (OSError(errno.ESRCH,"exited thread"),OSError(errno.ENOENT,"exited thread")):
+            with self.subTest(errno=error.errno):
+                observed={}
+                image_hash=self.sample_tasks(observed,missing=worker/"cgroup",gone=error)
+                self.assertEqual(set(observed),{self.pid})
+                with self.assertRaisesRegex(ValueError,"BOTH_ACTUAL_NATIVE_THREADS_MUST_BE_OBSERVED"):
+                    self.admit(observations=observed,image_hash=image_hash)
+                self.sample_tasks(observed)
+                self.admit(observations=observed,image_hash=image_hash)
+                before=copy.deepcopy(observed)
+                self.sample_tasks(observed,missing=worker/"status",gone=error)
+                self.assertEqual(observed,before)
+
+    def test_24_observer_service_and_attribution_failures_remain_fatal(self):
+        base=Path("/proc")/str(self.pid)
+        leader=base/"task"/str(self.pid)
+        worker=base/"task"/str(self.worker)
+        for path,code,exit_code in ((base/"exe",errno.ESRCH,None),(leader/"cgroup",errno.ESRCH,None),
+                                    (worker/"cgroup",errno.ESRCH,1),(worker/"cgroup",errno.EACCES,None),
+                                    (worker/"status",errno.EIO,None)):
+            with self.subTest(path=path,errno=code,exit_code=exit_code):
+                observed={}
+                error=OSError(code,"procfs read failed")
+                with self.assertRaises(type(error)) as caught:
+                    self.sample_tasks(observed,missing=path,gone=error,exit_code=exit_code)
+                self.assertIs(caught.exception,error)
+                self.assertNotIn(self.worker,observed)
+        for kwargs,reason in (({"bad_membership":True},"ACTUAL_NATIVE_THREAD_OUTSIDE_OWNED_SERVICE"),
+                              ({"bad_namespace":True},"WORKER_CHANGED_AUTHORITY_NAMESPACE"),
+                              ({"bad_uid":True},"ACTUAL_NATIVE_THREAD_UID_DIFFERS")):
+            with self.subTest(kwargs=kwargs):
+                observed={}
+                with self.assertRaisesRegex(ValueError,reason):self.sample_tasks(observed,**kwargs)
+                self.assertNotIn(self.worker,observed)
 
 if __name__=="__main__":
     unittest.main()

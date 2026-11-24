@@ -101,6 +101,11 @@ def observe_tasks(process,image_hash,service,namespace,observations):
     membership=(task/"cgroup").read_text().strip();task_ns=namespace_identity(tid)
     status=(task/"status").read_text()
    except FileNotFoundError:continue
+   except ProcessLookupError:
+    # A procfs read can return ESRCH if this enumerated worker exits.
+    # Do not fabricate evidence or suppress loss of the session leader.
+    if tid==process.pid or process.poll() is not None:raise
+    continue
    require(membership==expected or membership.startswith(expected+"/"),"ACTUAL_NATIVE_THREAD_OUTSIDE_OWNED_SERVICE")
    require(task_ns==namespace,"WORKER_CHANGED_AUTHORITY_NAMESPACE")
    ids=re.search(r"(?m)^Uid:\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$",status)
