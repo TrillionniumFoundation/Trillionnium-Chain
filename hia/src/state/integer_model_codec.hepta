@@ -48,27 +48,16 @@ block decode_extent(di:readbuf,doo:mutbuf,dw:mutbuf,dn:usize,dv:bool,de:u64)
   exact:bool = compare.eq(ext,total)
   branch exact decode_version(di,doo,dw,dv,de) length()
 block decode_version(vi:readbuf,vo:mutbuf,vw:mutbuf,vv:bool,ve:u64)
-  version_at:u64 = const() {"value":40}
-  version_width:u64 = const() {"value":6}
-  declared:u64 = call(vi,version_at,version_width) {"function":"rac_read_le"}
-  two_magic:u64 = const() {"value":9433861193}
-  three_magic:u64 = const() {"value":13745605705}
-  want:u64 = select(vv,three_magic,two_magic)
-  matches:bool = compare.eq(declared,want)
-  branch matches decode_context(vi,vo,vw,vv,ve) version()
-block decode_context(ci:readbuf,co:mutbuf,cw:mutbuf,cv:bool,ce:u64)
-  bind:bool = call(ci,cv) {"function":"im_context"}
-  branch bind decode_graph(ci,co,cw,cv,ce) context()
-block decode_graph(gi:readbuf,go:mutbuf,gw:mutbuf,gv:bool,ge:u64)
-  active_model_at:u64 = const() {"value":86}
-  one_g:u64 = const() {"value":1}
-  given:u64 = call(gi,active_model_at,one_g) {"function":"rac_read_le"}
-  need_graph:bool = call(gv,given) {"function":"im_graph"}
+  body_offset:u64 = const() {"value":40}
+  family_offset:u64 = const() {"value":8}
+  status:u32 = call(vi,body_offset,vi,family_offset,vv) {"function":"im_decode_at"}
+  zero_status:u32 = const() {"value":0}
+  zero_field:u64 = const() {"value":0}
+  valid:bool = compare.eq(status,zero_status)
   true_d:bool = const() {"value":true}
-  v2_start:u64 = const() {"value":86}
-  v3_start:u64 = const() {"value":88}
-  coeff_start:u64 = select(gv,v3_start,v2_start)
-  branch need_graph validate_coeffs(gi,go,gw,gv,true_d,ge,given,coeff_start) graph()
+  branch valid room(vi,vo,vw,vv,true_d,ve,zero_field,zero_field) decoded_failure(status)
+block decoded_failure(failure:u32)
+  ret(failure)
 block encode_graph(ei:readbuf,eo:mutbuf,ew:mutbuf,en:usize,ev:bool,ee:u64,ea:u64)
   valid_graph:bool = call(ev,ea) {"function":"im_graph"}
   branch valid_graph encode_extent(ei,eo,ew,en,ev,ee,ea) graph()
@@ -104,12 +93,6 @@ block publish(po:mutbuf,pw:mutbuf,pe:u64)
 block length()
   length_error:u32 = const() {"value":1}
   ret(length_error)
-block version()
-  version_error:u32 = const() {"value":2}
-  ret(version_error)
-block context()
-  context_error:u32 = const() {"value":3}
-  ret(context_error)
 block graph()
   graph_error:u32 = const() {"value":4}
   ret(graph_error)
@@ -139,31 +122,88 @@ block entry(v3:bool,active:u64)
   ret(okay)
 end
 
-fn im_context(input:readbuf,v3:bool) -> (bool) effects(read,trap) entry(entry)
-block entry(input:readbuf,v3:bool)
-  family:u64 = const() {"value":8}
-  stored:u64 = const() {"value":46}
-  family_n:u64 = const() {"value":32}
-  matched:u64 = call(input,family,stored,family_n,family_n) {"function":"sb_compare"}
-  one:u64 = const() {"value":1}
-  same:bool = compare.eq(matched,one)
-  nums:u64 = const() {"value":78}
+fn im_decode_at(body:readbuf,offset:u64,family:readbuf,family_at:u64,v3:bool) -> (u32) effects(read,trap) entry(entry)
+block entry(body:readbuf,offset:u64,family:readbuf,family_at:u64,v3:bool)
+  version_width:u64 = const() {"value":6}
+  declared:u64 = call(body,offset,version_width) {"function":"rac_read_le"}
+  two_magic:u64 = const() {"value":9433861193}
+  three_magic:u64 = const() {"value":13745605705}
+  want:u64 = select(v3,three_magic,two_magic)
+  matches:bool = compare.eq(declared,want)
+  branch matches context(body,offset,family,family_at,v3) bad_version()
+block context(cb:readbuf,co:u64,cf:readbuf,ca:u64,cv:bool)
+  field_rel:u64 = const() {"value":38}
+  field_at:u64 = int.add.wrap(co,field_rel)
   bytes:u64 = const() {"value":8}
-  fields:u64 = call(input,nums,bytes) {"function":"rac_read_le"}
-  want:u64 = const() {"value":845528736924672}
-  dimensions:bool = compare.eq(fields,want)
-  context:bool = bool.and(same,dimensions)
-  branch v3 evolution(input,context) done(context)
-block evolution(ei:readbuf,valid:bool)
-  res:u64 = const() {"value":87}
-  width:u64 = const() {"value":1}
-  field:u64 = call(ei,res,width) {"function":"rac_read_le"}
-  zero:u64 = const() {"value":0}
-  reserved:bool = compare.eq(field,zero)
-  okay:bool = bool.and(valid,reserved)
-  ret(okay)
-block done(value:bool)
-  ret(value)
+  fields:u64 = call(cb,field_at,bytes) {"function":"rac_read_le"}
+  want_dims:u64 = const() {"value":845528736924672}
+  dimensions:bool = compare.eq(fields,want_dims)
+  six:u64 = const() {"value":6}
+  stored_family_at:u64 = int.add.wrap(co,six)
+  same:bool = call(cb,stored_family_at,cf,ca) {"function":"im_same_digest"}
+  bound:bool = bool.and(dimensions,same)
+  branch bound graph_select(cb,co,cv) bad_context()
+block graph_select(gb:readbuf,go:u64,gv:bool)
+  past_geometry:u64 = const() {"value":46}
+  first:u64 = int.add.wrap(go,past_geometry)
+  branch gv modern(gb,first,gv) coefficients(gb,first)
+block modern(mb:readbuf,mo:u64,mv:bool)
+  one_m:u64 = const() {"value":1}
+  res_at:u64 = int.add.wrap(mo,one_m)
+  res:u64 = call(mb,res_at,one_m) {"function":"rac_read_le"}
+  zero_m:u64 = const() {"value":0}
+  reserved:bool = compare.eq(res,zero_m)
+  branch reserved graph(mb,mo,mv) bad_context()
+block graph(ab:readbuf,ao:u64,av:bool)
+  one_a:u64 = const() {"value":1}
+  active:u64 = call(ab,ao,one_a) {"function":"rac_read_le"}
+  fits:bool = call(av,active) {"function":"im_graph"}
+  two:u64 = const() {"value":2}
+  start:u64 = int.add.wrap(ao,two)
+  branch fits coefficients(ab,start) bad_graph()
+block coefficients(kb:readbuf,ko:u64)
+  valid:bool = call(kb,ko) {"function":"im_coeffs"}
+  branch valid yes() bad_range()
+block yes()
+  success:u32 = const() {"value":0}
+  ret(success)
+block bad_version()
+  version_error:u32 = const() {"value":2}
+  ret(version_error)
+block bad_context()
+  context_error:u32 = const() {"value":3}
+  ret(context_error)
+block bad_graph()
+  graph_error:u32 = const() {"value":4}
+  ret(graph_error)
+block bad_range()
+  range_error:u32 = const() {"value":5}
+  ret(range_error)
+end
+
+fn im_same_digest(left:readbuf,left_at:u64,right:readbuf,right_at:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(left:readbuf,left_at:u64,right:readbuf,right_at:u64)
+  words:u64 = const() {"value":4}
+  jump compare_words(left,left_at,right,right_at,words)
+block compare_words(wl:readbuf,la:u64,wr:readbuf,ra:u64,remaining:u64)
+  eight:u64 = const() {"value":8}
+  a:u64 = call(wl,la,eight) {"function":"rac_read_le"}
+  b:u64 = call(wr,ra,eight) {"function":"rac_read_le"}
+  equal:bool = compare.eq(a,b)
+  next_left:u64 = int.add.wrap(la,eight)
+  next_right:u64 = int.add.wrap(ra,eight)
+  one:u64 = const() {"value":1}
+  next:u64 = int.sub.wrap(remaining,one)
+  done:bool = compare.eq(remaining,one)
+  branch equal advance(wl,next_left,wr,next_right,next,done) no()
+block advance(al:readbuf,alo:u64,ar:readbuf,aro:u64,an:u64,done_a:bool)
+  branch done_a yes() compare_words(al,alo,ar,aro,an)
+block yes()
+  match:bool = const() {"value":true}
+  ret(match)
+block no()
+  differs:bool = const() {"value":false}
+  ret(differs)
 end
 
 fn im_coeffs(input:readbuf,offset:u64) -> (bool) effects(read,trap) entry(entry)
@@ -207,12 +247,20 @@ block from_fields(fi:readbuf,fw:mutbuf,fv:bool,fe:u64,fa:u64,fs:u64)
   end_encode:u64 = call(fi,fw,fv,fa,fs) {"function":"im_encode"}
   jump hash(fw,end_encode)
 block hash(hw:mutbuf,end_at:u64)
+  result:u64 = call(hw,end_at) {"function":"im_hash_staged"}
+  ret(result)
+block fail(status:u64)
+  ret(status)
+end
+
+fn im_hash_staged(work:mutbuf,end_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,end_at:u64)
   start_hash:u64 = const() {"value":1208}
   coverage:u64 = int.sub.wrap(end_at,start_hash)
-  code:u64 = call(hw,start_hash,coverage) {"function":"tr_sha_update_work"}
+  code:u64 = call(work,start_hash,coverage) {"function":"tr_sha_update_work"}
   zero:u64 = const() {"value":0}
   good:bool = compare.eq(code,zero)
-  branch good finish(hw) fail(code)
+  branch good finish(work) fail(code)
 block finish(ww:mutbuf)
   ready:u64 = call(ww) {"function":"tr_sha_final"}
   ret(ready)

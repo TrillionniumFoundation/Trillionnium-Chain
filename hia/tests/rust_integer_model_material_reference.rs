@@ -42,6 +42,7 @@ fn main() -> io::Result<()> {
         match load_model(&mut fixture, id, family) {
             Ok(value) => {
                 output.write_all(&[0])?;
+                output.write_all(&value.id())?;
                 output.write_all(&value.encode())?;
             }
             Err(err) => {

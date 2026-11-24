@@ -177,9 +177,10 @@ class IntegerModelMaterial(unittest.TestCase):
         for c, expected, rust_code in rows:
             self.assertTrue(data)
             self.assertEqual(data[0],rust_code)
-            width = 0 if rust_code else 7758 if c["new"] else 7756
+            width = 0 if rust_code else 32 + (7758 if c["new"] else 7756)
             if not rust_code:
-                outcome = (0, data[1:1+width])
+                self.assertEqual(data[1:33], bytes.fromhex(c["id"]))
+                outcome = (0, data[33:1+width])
                 self.assertEqual(expected, outcome)
                 observed.append(outcome)
             elif rust_code <= 4:

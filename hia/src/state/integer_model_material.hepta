@@ -1,18 +1,44 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_integer_model_material_v1
 fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  magic:u64 = const() {"value":826559817}
+  extra:u64 = const() {"value":0}
+  status:u32,count:u64,tail:u64 = call(input,magic,extra) {"function":"imd_preflight"}
+  zero:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,zero)
+  branch valid room(input,output,count,tail) failed(status)
+block room(ri:readbuf,ro:mutbuf,rn:u64,rt:u64)
+  initial:u64 = const() {"value":7168}
+  result_extent:u64 = int.add.wrap(initial,rt)
+  need:usize = int.cast(result_extent) {"mode":"wrap"}
+  avail:usize = buffer.len(ro)
+  capacity_ok:bool = compare.ge(avail,need)
+  branch capacity_ok write(ri,ro,rn,rt) capacity()
+block write(wi:readbuf,wo:mutbuf,wn:u64,wt:u64)
+  origin:u64 = const() {"value":0}
+  _out:u64 = call(wi,wo,wn,wt,origin) {"function":"imd_emit_at"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block capacity()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+block failed(code:u32)
+  ret(code)
+end
+
+fn imd_preflight(input:readbuf,magic_expected:u64,extra_extent:u64) -> (u32,u64,u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,magic_expected:u64,extra_extent:u64)
   extent:usize = buffer.len(input)
   prefix:usize = const() {"value":40}
   enough:bool = compare.ge(extent,prefix)
-  branch enough framing(input,output,extent) malformed()
-block framing(fi:readbuf,fo:mutbuf,fn_:usize)
+  branch enough framing(input,magic_expected,extra_extent,extent) malformed()
+block framing(fi:readbuf,want_magic:u64,suffix_extent:u64,fn_:usize)
   zero_f:u64 = const() {"value":0}
   one_f:u64 = const() {"value":1}
   two_f:u64 = const() {"value":2}
   four_f:u64 = const() {"value":4}
   magic:u64 = call(fi,zero_f,four_f) {"function":"rac_read_le"}
-  expected:u64 = const() {"value":826559817}
-  valid_magic:bool = compare.eq(magic,expected)
+  valid_magic:bool = compare.eq(magic,want_magic)
   old:u64 = call(fi,four_f,one_f) {"function":"rac_read_le"}
   after_at:u64 = const() {"value":5}
   newer:u64 = call(fi,after_at,one_f) {"function":"rac_read_le"}
@@ -23,70 +49,65 @@ block framing(fi:readbuf,fo:mutbuf,fn_:usize)
   reserved:u64 = call(fi,reserved_at,two_f) {"function":"rac_read_le"}
   reserved_ok:bool = compare.eq(reserved,zero_f)
   n:u64 = int.add.wrap(old,newer)
-  stop:u64 = call(n) {"function":"imd_row"}
+  rows_stop:u64 = call(n) {"function":"imd_row"}
+  stop:u64 = int.add.wrap(rows_stop,suffix_extent)
   got:u64 = int.cast(fn_) {"mode":"wrap"}
   complete:bool = compare.eq(got,stop)
   a:bool = bool.and(valid_magic,reserved_ok)
   b:bool = bool.and(size_o,size_n)
   c:bool = bool.and(a,b)
   valid:bool = bool.and(c,complete)
-  branch valid namespaces(fi,fo,old,newer,n) malformed()
-block namespaces(ni:readbuf,no:mutbuf,old_n:u64,new_n:u64,total:u64)
+  branch valid namespaces(fi,old,newer,n) malformed()
+block namespaces(ni:readbuf,old_n:u64,new_n:u64,total:u64)
   zero:u64 = const() {"value":0}
   has_old:bool = compare.ne(old_n,zero)
   evolution:bool = compare.ne(new_n,zero)
   both:bool = bool.and(has_old,evolution)
-  branch both collision() ordered(ni,no,total,evolution)
-block ordered(oi:readbuf,oo:mutbuf,on:u64,ov:bool)
+  branch both collision() ordered(ni,total,evolution)
+block ordered(oi:readbuf,on:u64,ov:bool)
   sorted:bool = call(oi,on) {"function":"imd_sorted"}
-  branch sorted metadata(oi,oo,on,ov) malformed()
-block metadata(mi:readbuf,mo:mutbuf,mn:u64,mv:bool)
+  branch sorted metadata(oi,on,ov) malformed()
+block metadata(mi:readbuf,mn:u64,mv:bool)
   meta_key:u64 = const() {"value":1635018093}
   at:u64 = call(mi,mn,meta_key) {"function":"imd_find"}
   empty_meta:u64 = const() {"value":0}
   present:bool = compare.ne(at,empty_meta)
-  branch present validate(mi,mo,mn,mv,at) missing()
-block validate(vi:readbuf,vo:mutbuf,vn:u64,vv:bool,va:u64)
+  branch present validate(mi,mn,mv,at) missing()
+block validate(vi:readbuf,vn:u64,vv:bool,va:u64)
   rows_expected:u64 = const() {"value":9}
   rows:bool = compare.eq(vn,rows_expected)
   valid_meta:bool = call(vi,va,vv) {"function":"imd_meta"}
   valid_all:bool = bool.and(rows,valid_meta)
-  branch valid_all chunks(vi,vo,vn,vv) bad_meta()
-block chunks(ci:readbuf,co:mutbuf,cn:u64,cv:bool)
+  branch valid_all chunks(vi,vn,vv) bad_meta()
+block chunks(ci:readbuf,cn:u64,cv:bool)
   v2_tail:u64 = const() {"value":588}
   v3_tail:u64 = const() {"value":590}
   tail:u64 = select(cv,v3_tail,v2_tail)
   total_valid:bool = call(ci,cn,tail) {"function":"imd_chunks"}
-  branch total_valid room(ci,co,cn,tail) bad_chunk()
-block room(ri:readbuf,ro:mutbuf,rn:u64,rt:u64)
-  initial:u64 = const() {"value":7168}
-  result_extent:u64 = int.add.wrap(initial,rt)
-  need:usize = int.cast(result_extent) {"mode":"wrap"}
-  avail:usize = buffer.len(ro)
-  capacity_ok:bool = compare.ge(avail,need)
-  branch capacity_ok write(ri,ro,rn,rt) capacity()
-block write(wi:readbuf,wo:mutbuf,wn:u64,wt:u64)
-  _out:u64 = call(wi,wo,wn,wt) {"function":"imd_emit"}
+  branch total_valid yes(cn,tail) bad_chunk()
+block yes(ok_count:u64,ok_tail:u64)
   success:u32 = const() {"value":0}
-  ret(success)
+  ret(success,ok_count,ok_tail)
 block collision()
   collision_code:u32 = const() {"value":1}
-  ret(collision_code)
+  none_0:u64 = const() {"value":0}
+  ret(collision_code,none_0,none_0)
 block missing()
   missing_code:u32 = const() {"value":2}
-  ret(missing_code)
+  none_1:u64 = const() {"value":0}
+  ret(missing_code,none_1,none_1)
 block bad_meta()
   metadata_code:u32 = const() {"value":3}
-  ret(metadata_code)
+  none_2:u64 = const() {"value":0}
+  ret(metadata_code,none_2,none_2)
 block bad_chunk()
   chunk_code:u32 = const() {"value":4}
-  ret(chunk_code)
+  none_3:u64 = const() {"value":0}
+  ret(chunk_code,none_3,none_3)
 block malformed()
   local_frame:u32 = const() {"value":100}
-  ret(local_frame)
-block capacity()
-  insufficient:u32 = const() {"value":102}
-  ret(insufficient)
+  none_4:u64 = const() {"value":0}
+  ret(local_frame,none_4,none_4)
 end
 
 fn imd_row(index:u64) -> (u64) effects() entry(entry)
@@ -378,10 +399,10 @@ block no()
   ret(bad)
 end
 
-fn imd_emit(input:readbuf,output:mutbuf,count:u64,tail:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,count:u64,tail:u64)
+fn imd_emit_at(input:readbuf,output:mutbuf,count:u64,tail:u64,destination:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,count:u64,tail:u64,destination:u64)
   zero:u64 = const() {"value":0}
-  jump each(input,output,count,tail,zero,zero)
+  jump each(input,output,count,tail,zero,destination)
 block each(ei:readbuf,eo:mutbuf,en:u64,et:u64,ex:u64,ep:u64)
   row:u64 = call(ei,en,ex) {"function":"imd_chunk_at"}
   rel:u64 = const() {"value":16}

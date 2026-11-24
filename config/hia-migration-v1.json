@@ -299,6 +299,18 @@
       ]
     },
     {
+      "id": "state/integer-model-load",
+      "node_integration_complete": false,
+      "scope": "Private one-call bounded original load_model over typed immutable snapshots: exact namespace and chunks, shared ILM2/3 geometry and model values, computed versioned digest and expected-ID comparison before atomic output. No host intermediate replay, live lookup, model execution, proof, authenticity, custody, storage mutation, admission or production authority.",
+      "source": "hia/src/state/integer_model_load.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_model_load.py",
+        "hia/tests/integer_model_material_original.py",
+        "hia/tests/rust_integer_model_material_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1693,7 +1705,8 @@
         "codec/json-value-wire",
         "codec/json-value-encode",
         "state/integer-model-codec",
-        "state/integer-model-material"
+        "state/integer-model-material",
+        "state/integer-model-load"
       ],
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
       "module": "M06",

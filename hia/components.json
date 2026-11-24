@@ -108,6 +108,76 @@
         ]
       }
     ],
+    "src/state/integer_model_load.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare",
+          "sb_copy_digest"
+        ]
+      },
+      {
+        "source": "src/verification/integer_linear_context.hepta",
+        "functions": [
+          "il_unhex"
+        ]
+      },
+      {
+        "source": "src/state/integer_model_material.hepta",
+        "functions": [
+          "imd_preflight",
+          "imd_row",
+          "imd_sorted",
+          "imd_find",
+          "imd_meta",
+          "imd_number",
+          "imd_text",
+          "imd_schema",
+          "imd_family",
+          "imd_pair",
+          "imd_chunk_at",
+          "imd_chunks",
+          "imd_digits",
+          "imd_emit_at",
+          "imd_write_hex"
+        ]
+      },
+      {
+        "source": "src/state/integer_model_codec.hepta",
+        "functions": [
+          "im_decode_at",
+          "im_graph",
+          "im_coeffs",
+          "im_same_digest",
+          "im_prefix",
+          "im_hash_staged",
+          "im_publish"
+        ]
+      }
+    ],
     "src/state/integer_model_codec.hepta": [
       {
         "functions": [
@@ -137,7 +207,6 @@
       {
         "source": "src/release_bundle/sbom_digest.hepta",
         "functions": [
-          "sb_compare",
           "sb_copy_digest"
         ]
       }
