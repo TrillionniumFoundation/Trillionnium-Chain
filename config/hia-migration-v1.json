@@ -736,6 +736,20 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-model-manifest",
+      "node_integration_complete": false,
+      "scope": "Pure original TMA1 one-call canonical TMR1/TMT1 and declared root ID, positional member size plus 10, and Base/Adapter coverage. Both emitters through the 1 MiB shared loan cap; larger valid original envelope observed in Rust only. No tensor/weight/payload IO, owner pin, trust, loader, authentication, network, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_tensor_model_manifest.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_tensor_model_manifest.py",
+        "hia/tests/test_cell_model_release_root.py",
+        "hia/tests/test_cell_tensor_contract.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_tensor_model_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1913,7 +1927,8 @@
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
         "data-availability/cell-model-release-root",
-        "data-availability/cell-tensor-contract"
+        "data-availability/cell-tensor-contract",
+        "data-availability/cell-tensor-model-manifest"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",

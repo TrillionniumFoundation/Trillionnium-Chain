@@ -27,7 +27,7 @@ def binding_source():
     return original[start:end]
 
 
-def tensor_contract_source():
+def tensor_contract_source(with_model_manifest=False):
     original = TENSOR_CONTRACT.read_bytes()
     names = (b"MAX_CELL_TENSOR_CONTRACT_BYTES_V1", b"HASH_PROFILE_SHA256_V1",
              b"CODEC_SAFETENSORS_DENSE_V1", b"MAX_TENSORS", b"MAX_TENSOR_NAME_BYTES", b"MAX_RANK")
@@ -41,10 +41,19 @@ def tensor_contract_source():
     c = original.index(b"    pub fn encode(", b)
     d = original.index(b"    /// Re-read one complete real container", c)
     helpers = original[original.index(b"fn valid_name("):original.index(b"fn read_section<")]
-    return sizes + declaration + original[a:b] + original[c:d] + b"}\n" + helpers
+    contract = sizes + declaration + original[a:b]
+    if with_model_manifest:
+        contract += original[b:c]
+    contract += original[c:d] + b"}\n"
+    if with_model_manifest:
+        contract += (pick(original, rb"^pub const MAX_CELL_TENSOR_MODEL_MANIFEST_BYTES_V1:[^;]+;\n") +
+                     original[original.index(b"/// TMA1 is a self-contained"):original.index(b"fn valid_name(")])
+        helpers += original[original.index(b"fn read_section<"):original.index(b"fn check_deadline(")]
+    return contract + helpers
 
 
-def source(with_closure=False, with_model_root=False, with_tensor_contract=False):
+def source(with_closure=False, with_model_root=False, with_tensor_contract=False,
+           with_tensor_model_manifest=False):
     boundary = CELL.with_suffix(".rs").read_bytes()
     digest = pick(boundary, rb"^pub type CellDigestV1 = [^\n]+;\n")
     result = pick(boundary, rb"^pub type CellResultV1<T> = [^\n]+;\n")
@@ -70,10 +79,30 @@ mod binding {
     use super::manifest::{CellChunkV1, CellContextV1, CellManifestV1};
 """
     base = shell + digest + result + check + b"#[allow(dead_code)]\nmod manifest {\n" + wire + b"\n}\n"
-    if with_closure or with_model_root:
+    if with_closure or with_model_root or with_tensor_model_manifest:
         base = (base +
                 b"use manifest::{CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES};\n"
                 b"#[allow(dead_code)]\nmod closure {\n" + CLOSURE.read_bytes() + b"\n}\n")
+        if with_tensor_model_manifest:
+            return (base +
+                    b"use closure::{CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1, "
+                    b"MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1};\n"
+                    b"#[allow(dead_code)]\nmod model_root {\n" + MODEL_ROOT.read_bytes() + b"\n}\n"
+                    b"#[allow(dead_code)]\nmod tensor_contract {\nuse super::{require,CellDigestV1,CellErrorV1,"
+                    b"CellResultV1,MAX_CELL_BYTES,MAX_CELL_CLOSURE_FILES_V1,CellModelReleaseRootV1,"
+                    b"CellFileRoleV1,MAX_MODEL_RELEASE_ROOT_BYTES_V1};\n"
+                    b"use std::io::{Cursor,Read}; use sha2::{Digest,Sha256};\n" +
+                    tensor_contract_source(with_model_manifest=True) + b"}\n"
+                    b"use model_root::{CellModelReleaseRootV1,MAX_MODEL_RELEASE_ROOT_BYTES_V1};\n"
+                    b"#[allow(dead_code)]\nmod closure_observer {\nuse super::*;\n"
+                    b'include!("closure_observation.rs");\n}\n'
+                    b"#[allow(dead_code)]\nmod root_observer {\nuse super::*;\n"
+                    b'include!("model_root_observation.rs");\n'
+                    b"pub(crate) fn diag(e: CellErrorV1) -> u8 { model_root_status(e) }\n}\n"
+                    b"#[allow(dead_code)]\nmod contract_observer {\nuse super::*;\n"
+                    b'include!("tensor_contract_observation.rs");\n'
+                    b"pub(crate) fn diag(e: CellErrorV1) -> u8 { contract_error(e) }\n}\n"
+                    b'include!("tensor_model_observation.rs");\n')
         if with_model_root:
             return (base +
                     b"use closure::{CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1, MAX_CELL_CLOSURE_BYTES_V1};\n"
@@ -171,17 +200,29 @@ def dependency_graph(artifact):
     return rust, details, bound
 
 
-def build(work, *, with_closure=False, with_model_root=False, with_tensor_contract=False):
+def build(work, *, with_closure=False, with_model_root=False, with_tensor_contract=False,
+          with_tensor_model_manifest=False):
     path = Path(os.environ[ENV]).absolute()
     rust, graph, bound = dependency_graph(path)
     source_path, binary = work / "original.rs", work / "original"
     raw = source(with_closure=with_closure, with_model_root=with_model_root,
-                 with_tensor_contract=with_tensor_contract)
+                 with_tensor_contract=with_tensor_contract,
+                 with_tensor_model_manifest=with_tensor_model_manifest)
     source_path.write_bytes(raw)
     observe = BINDING_ADAPTER.read_bytes()
     (work / "binding_observation.rs").write_bytes(observe)
     extra_proof = {}
-    if with_tensor_contract:
+    if with_tensor_model_manifest:
+        for name, target in (("closure", "closure"), ("model_root", "model_root"),
+                             ("tensor_contract", "tensor_contract"), ("tensor_model", "tensor_model")):
+            observer = Path(__file__).with_name(f"rust_cell_{name}_reference.rs").read_bytes()
+            (work / f"{target}_observation.rs").write_bytes(observer)
+            extra_proof[f"oracle_{name}_observer_sha256"] = sha(observer)
+        extra_proof.update(original_closure_source_sha256=sha(CLOSURE.read_bytes()),
+                           original_model_root_source_sha256=sha(MODEL_ROOT.read_bytes()),
+                           original_tensor_model_source_sha256=sha(TENSOR_CONTRACT.read_bytes()),
+                           original_tensor_model_pure_extract_sha256=sha(tensor_contract_source(with_model_manifest=True)))
+    elif with_tensor_contract:
         observer = Path(__file__).with_name("rust_cell_tensor_contract_reference.rs").read_bytes()
         (work / "tensor_contract_observation.rs").write_bytes(observer)
         extra_proof = {"original_tensor_contract_source_sha256": sha(TENSOR_CONTRACT.read_bytes()),
