@@ -8529,6 +8529,15 @@
         "source": "src/worker_agent/audit_report.hepta"
       }
     ],
+    "src/worker_agent/audit_reputation_projection.hepta": [
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      }
+    ],
     "src/worker_agent/audit_report.hepta": [
       {
         "source": "src/worker_agent/audit_text.hepta",

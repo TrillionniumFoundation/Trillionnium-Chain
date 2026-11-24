@@ -1347,6 +1347,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-reputation-projection",
+      "node_integration_complete": false,
+      "scope": "Audit-only native seven-field projection of an optional ingress reputation delta using the four active Rust outcomes, original rounding and absent/null semantics. Actual unchanged locked Worker export-audit observations compare native projections and composed WJL bytes. Other conversion, journal/index/file ownership and production dispatch remain original.",
+      "source": "hia/src/worker_agent/audit_reputation_projection.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_reputation_projection.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
@@ -1441,6 +1451,7 @@
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
         "worker-agent/audit-jsonl-row",
+        "worker-agent/audit-reputation-projection",
         "worker-agent/audit-select",
         "worker-agent/audit-report"
       ],
