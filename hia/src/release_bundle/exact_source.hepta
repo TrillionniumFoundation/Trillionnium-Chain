@@ -4,27 +4,12 @@ block entry(input:readbuf,digest:mutbuf,scratch:mutbuf)
   extent:usize = buffer.len(input)
   expected:usize = const() {"value":193}
   exact:bool = compare.eq(extent,expected)
-  branch exact check_flag(input,digest,scratch) malformed()
-block check_flag(flag_input:readbuf,flag_out:mutbuf,flag_work:mutbuf)
-  flag_at:usize = const() {"value":192}
-  dirty:u8 = buffer.load(flag_input,flag_at)
-  max_bool:u8 = const() {"value":1}
-  noncanonical:bool = compare.gt(dirty,max_bool)
-  branch noncanonical malformed() check_clean(flag_input,flag_out,flag_work,dirty)
-block check_clean(clean_input:readbuf,clean_out:mutbuf,clean_work:mutbuf,dirty_flag:u8)
-  clean_byte:u8 = const() {"value":0}
-  clean:bool = compare.eq(dirty_flag,clean_byte)
-  first:u64 = const() {"value":0}
-  branch clean validate_field(clean_input,clean_out,clean_work,first) invalid()
-block validate_field(val_input:readbuf,val_out:mutbuf,val_work:mutbuf,val_at:u64)
-  nonzero:bool = call(val_input,val_at) {"function":"es_nonzero"}
-  branch nonzero continue_validation(val_input,val_out,val_work,val_at) invalid()
-block continue_validation(next_input:readbuf,next_out:mutbuf,next_work:mutbuf,prior_at:u64)
-  width:u64 = const() {"value":32}
-  end_of_digests:u64 = const() {"value":192}
-  next_at:u64 = int.add.wrap(prior_at,width)
-  last:bool = compare.eq(next_at,end_of_digests)
-  branch last capacity(next_input,next_out,next_work) validate_field(next_input,next_out,next_work,next_at)
+  branch exact validate(input,digest,scratch) malformed()
+block validate(candidate:readbuf,out:mutbuf,work:mutbuf)
+  status:u32 = call(candidate) {"function":"es_validate_prefix"}
+  ok:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,ok)
+  branch valid capacity(candidate,out,work) refused(status)
 block capacity(cap_input:readbuf,cap_out:mutbuf,cap_work:mutbuf)
   out_size:usize = buffer.len(cap_out)
   work_size:usize = buffer.len(cap_work)
@@ -33,59 +18,14 @@ block capacity(cap_input:readbuf,cap_out:mutbuf,cap_work:mutbuf)
   enough_out:bool = compare.ge(out_size,digest_bytes)
   enough_work:bool = compare.ge(work_size,scratch_bytes)
   enough:bool = bool.and(enough_out,enough_work)
-  branch enough init(cap_input,cap_out,cap_work) capacity_error()
-block init(init_input:readbuf,init_out:mutbuf,init_work:mutbuf)
-  init_result:u64 = call(init_work) {"function":"tr_sha_init"}
-  zero_status:u64 = const() {"value":0}
-  init_ok:bool = compare.eq(init_result,zero_status)
-  branch init_ok domain(init_input,init_out,init_work) hash_error()
-block domain(dom_input:readbuf,dom_out:mutbuf,dom_work:mutbuf)
-  start:u64 = const() {"value":1208}
-  len_prefix:u64 = const() {"value":2017612633061982208}
-  _length:u64 = call(dom_work,start,len_prefix) {"function":"tr_put"}
-  offset0:u64 = const() {"value":1216}
-  word0:u64 = const() {"value":7810774672474010228}
-  _domain0:u64 = call(dom_work,offset0,word0) {"function":"tr_put"}
-  offset1:u64 = const() {"value":1224}
-  word1:u64 = const() {"value":7023474868829249893}
-  _domain1:u64 = call(dom_work,offset1,word1) {"function":"tr_put"}
-  offset2:u64 = const() {"value":1232}
-  word2:u64 = const() {"value":7165919078634058851}
-  _domain2:u64 = call(dom_work,offset2,word2) {"function":"tr_put"}
-  offset3:u64 = const() {"value":1240}
-  word3:u64 = const() {"value":813051493}
-  _domain3:u64 = call(dom_work,offset3,word3) {"function":"tr_put"}
-  first_part:u64 = const() {"value":1244}
-  first_input:u64 = const() {"value":0}
-  jump write_field(dom_input,dom_out,dom_work,first_input,first_part)
-block write_field(write_input:readbuf,write_out:mutbuf,write_work:mutbuf,src_at:u64,dst_at:u64)
-  len_field:u64 = const() {"value":2305843009213693952}
-  _part_len:u64 = call(write_work,dst_at,len_field) {"function":"tr_put"}
-  eight:u64 = const() {"value":8}
-  payload_at:u64 = int.add.wrap(dst_at,eight)
-  next_output_at:u64 = call(write_input,write_work,src_at,payload_at) {"function":"es_copy_field"}
-  width32:u64 = const() {"value":32}
-  next_input_at:u64 = int.add.wrap(src_at,width32)
-  last_field_at:u64 = const() {"value":192}
-  all_fields:bool = compare.eq(next_input_at,last_field_at)
-  branch all_fields append_flag(write_out,write_work,next_output_at) write_field(write_input,write_out,write_work,next_input_at,next_output_at)
-block append_flag(append_out:mutbuf,append_work:mutbuf,flag_prefix:u64)
-  flag_len:u64 = const() {"value":72057594037927936}
-  _flag_prefix:u64 = call(append_work,flag_prefix,flag_len) {"function":"tr_put"}
-  flag_pos:usize = const() {"value":1492}
-  flag_zero:u8 = const() {"value":0}
-  _ = buffer.store(append_work,flag_pos,flag_zero)
-  hash_start:u64 = const() {"value":1208}
-  hash_bytes:u64 = const() {"value":285}
-  update:u64 = call(append_work,hash_start,hash_bytes) {"function":"tr_sha_update_work"}
-  update_zero:u64 = const() {"value":0}
-  updated:bool = compare.eq(update,update_zero)
-  branch updated finish(append_out,append_work) hash_error()
-block finish(fin_out:mutbuf,fin_work:mutbuf)
-  observed:u64 = call(fin_work) {"function":"tr_sha_final"}
-  fin_zero:u64 = const() {"value":0}
-  finished:bool = compare.eq(observed,fin_zero)
-  branch finished publish(fin_out,fin_work,fin_zero) hash_error()
+  branch enough hash(cap_input,cap_out,cap_work) capacity_error()
+block hash(hash_input:readbuf,hash_out:mutbuf,hash_work:mutbuf)
+  result:u64 = call(hash_input,hash_work) {"function":"es_hash_prefix"}
+  zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(result,zero)
+  branch hashed publish(hash_out,hash_work,zero) hash_error()
+block refused(code:u32)
+  ret(code)
 block publish(pub_out:mutbuf,pub_work:mutbuf,idx:u64)
   state_digest:u64 = const() {"value":1168}
   source_pos:u64 = int.add.wrap(state_digest,idx)
@@ -104,14 +44,99 @@ block success()
 block malformed()
   frame_code:u32 = const() {"value":100}
   ret(frame_code)
-block invalid()
-  invalid_code:u32 = const() {"value":101}
-  ret(invalid_code)
 block capacity_error()
   capacity_code:u32 = const() {"value":102}
   ret(capacity_code)
 block hash_error()
   hash_code:u32 = const() {"value":103}
+  ret(hash_code)
+end
+
+fn es_validate_prefix(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf)
+  flag_at:usize = const() {"value":192}
+  dirty:u8 = buffer.load(input,flag_at)
+  max_bool:u8 = const() {"value":1}
+  noncanonical:bool = compare.gt(dirty,max_bool)
+  branch noncanonical malformed() check_clean(input,dirty)
+block check_clean(clean_input:readbuf,dirty_flag:u8)
+  clean_byte:u8 = const() {"value":0}
+  clean:bool = compare.eq(dirty_flag,clean_byte)
+  first:u64 = const() {"value":0}
+  branch clean validate_field(clean_input,first) invalid()
+block validate_field(val_input:readbuf,val_at:u64)
+  nonzero:bool = call(val_input,val_at) {"function":"es_nonzero"}
+  branch nonzero continue_validation(val_input,val_at) invalid()
+block continue_validation(next_input:readbuf,prior_at:u64)
+  width:u64 = const() {"value":32}
+  end_of_digests:u64 = const() {"value":192}
+  next_at:u64 = int.add.wrap(prior_at,width)
+  last:bool = compare.eq(next_at,end_of_digests)
+  branch last success() validate_field(next_input,next_at)
+block success()
+  code_ok:u32 = const() {"value":0}
+  ret(code_ok)
+block malformed()
+  code_format:u32 = const() {"value":100}
+  ret(code_format)
+block invalid()
+  code_invalid:u32 = const() {"value":101}
+  ret(code_invalid)
+end
+
+fn es_hash_prefix(input:readbuf,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf)
+  init:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(init,zero)
+  branch ready domain(input,work) hash_error()
+block domain(dom_input:readbuf,dom_work:mutbuf)
+  start:u64 = const() {"value":1208}
+  len_prefix:u64 = const() {"value":2017612633061982208}
+  _length:u64 = call(dom_work,start,len_prefix) {"function":"tr_put"}
+  offset0:u64 = const() {"value":1216}
+  word0:u64 = const() {"value":7810774672474010228}
+  _domain0:u64 = call(dom_work,offset0,word0) {"function":"tr_put"}
+  offset1:u64 = const() {"value":1224}
+  word1:u64 = const() {"value":7023474868829249893}
+  _domain1:u64 = call(dom_work,offset1,word1) {"function":"tr_put"}
+  offset2:u64 = const() {"value":1232}
+  word2:u64 = const() {"value":7165919078634058851}
+  _domain2:u64 = call(dom_work,offset2,word2) {"function":"tr_put"}
+  offset3:u64 = const() {"value":1240}
+  word3:u64 = const() {"value":813051493}
+  _domain3:u64 = call(dom_work,offset3,word3) {"function":"tr_put"}
+  first_part:u64 = const() {"value":1244}
+  first_input:u64 = const() {"value":0}
+  jump write_field(dom_input,dom_work,first_input,first_part)
+block write_field(write_input:readbuf,write_work:mutbuf,src_at:u64,dst_at:u64)
+  len_field:u64 = const() {"value":2305843009213693952}
+  _part_len:u64 = call(write_work,dst_at,len_field) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  payload_at:u64 = int.add.wrap(dst_at,eight)
+  next_output_at:u64 = call(write_input,write_work,src_at,payload_at) {"function":"es_copy_field"}
+  width32:u64 = const() {"value":32}
+  next_input_at:u64 = int.add.wrap(src_at,width32)
+  last_field_at:u64 = const() {"value":192}
+  all_fields:bool = compare.eq(next_input_at,last_field_at)
+  branch all_fields append_flag(write_work,next_output_at) write_field(write_input,write_work,next_input_at,next_output_at)
+block append_flag(append_work:mutbuf,flag_prefix:u64)
+  flag_len:u64 = const() {"value":72057594037927936}
+  _flag_prefix:u64 = call(append_work,flag_prefix,flag_len) {"function":"tr_put"}
+  flag_pos:usize = const() {"value":1492}
+  flag_zero:u8 = const() {"value":0}
+  _ = buffer.store(append_work,flag_pos,flag_zero)
+  hash_start:u64 = const() {"value":1208}
+  hash_bytes:u64 = const() {"value":285}
+  update:u64 = call(append_work,hash_start,hash_bytes) {"function":"tr_sha_update_work"}
+  update_zero:u64 = const() {"value":0}
+  updated:bool = compare.eq(update,update_zero)
+  branch updated finish(append_work) hash_error()
+block finish(fin_work:mutbuf)
+  observed:u64 = call(fin_work) {"function":"tr_sha_final"}
+  ret(observed)
+block hash_error()
+  hash_code:u64 = const() {"value":103}
   ret(hash_code)
 end
 

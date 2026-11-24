@@ -992,6 +992,17 @@
       ]
     },
     {
+      "id": "release-bundle/bundle-binding",
+      "node_integration_complete": false,
+      "scope": "Pure V0 release binding: derives and validates the native ExactSourceV0 prefix, compares the three provenance links, hashes the original length-framed ReleaseBundleV0 digest, and compares the declaration. External artifact-set, SBOM and provenance digests are explicitly supplied; this does not verify their memberships, provenance contents, signatures, custody, or production admission.",
+      "source": "hia/src/release_bundle/bundle_binding.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_bundle_binding.py",
+        "hia/tests/rust_release_bundle_binding_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/content-claim-frame",
       "node_integration_complete": false,
       "scope": "ReleaseArtifact CCH1 context header and supplied-digest claim encoding only. Exact candidate profile binding, content/EOF observation, cryptography, I/O and signed admission remain outside this finite component.",
@@ -1300,6 +1311,7 @@
     {
       "components": [
         "release-bundle/artifact-header",
+        "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
         "release-bundle/raw-artifact-sha256",

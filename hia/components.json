@@ -5508,6 +5508,33 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/release_bundle/bundle_binding.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "es_copy_field",
+          "es_hash_prefix",
+          "es_nonzero",
+          "es_validate_prefix"
+        ],
+        "source": "src/release_bundle/exact_source.hepta"
+      }
+    ],
     "src/release_bundle/content_claim_frame.hepta": [
       {
         "source": "src/release_bundle/artifact_header.hepta",
