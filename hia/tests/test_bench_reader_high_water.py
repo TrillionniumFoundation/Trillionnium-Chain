@@ -36,7 +36,7 @@ STAMP = b"schedule_semantics=reader-high-water-v1\n"
 CORRECTED_BASENAME = "executor-profile-summary-reader-high-water-v1-"
 LIMIT = 16 << 20
 WORKLOADS = {0: "classic", 1: "mixed", 2: "hot-streak"}
-STRATEGIES = {0: "original", 4: "hot-bucket-interleave"}
+STRATEGIES = {0: "original", 2: "write-first", 4: "hot-bucket-interleave"}
 OUTSIDE = b"Bench native candidate: invocation outside admitted Bench scope\n"
 
 
@@ -266,7 +266,8 @@ class BenchReaderHighWater(unittest.TestCase):
     def test_native_defaults_match_corrected_rust_graph_profile_and_replay(self):
         rows = ((0, 32, 7, 3, 1, 0), (1, 20000, 2000, 3, 1, 0),
                 (2, 20000, 2000, 3, 1, 0), (2, 20000, 2000, 3, 1, 4),
-                (1, 20000, 1, 8, 1, 0))
+                (1, 20000, 1, 8, 1, 0),
+                (1, 20000, 2000, 3, 1, 2), (2, 20000, 2000, 3, 1, 2))
         for row_index, row in enumerate(rows):
             with self.subTest(row=row):
                 self.compare_cohort(row_index, row)
@@ -408,6 +409,7 @@ class BenchReaderHighWater(unittest.TestCase):
         cases = ([MODE, "--workload=classic"], [MODE, "--workload=mixed", "--keys=1999"],
                  [MODE, "--workload=hot-streak", "--txs=19999"],
                  [MODE, "--workload=mixed", "--strategy=write-last"],
+                 [MODE, "--workload=mixed", "--strategy=write-first", "--keys=1999"],
                  [MODE, "--workload=hot-streak", "--read-fanout=9"],
                  [MODE, "--workload=hot-streak", "--txs=20001"],
                  [MODE, MODE, "--workload=hot-streak"],

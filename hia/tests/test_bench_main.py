@@ -237,7 +237,7 @@ class NativeBenchMain(unittest.TestCase):
 
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
         for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),
-                                      (b"--workload=hot-streak",), (b"--strategy=write-first",),
+                                      (b"--workload=hot-streak",), (b"--strategy=footprint-desc",),
                                       (b"--txs=20001",),
                                       (b"--workload=mixed", b"--txs=32", b"--keys=2", b"--write-every=31"),
                                       (b"--workload=hot-streak", b"--txs=32", b"--keys=2", b"--write-every=31"),
@@ -474,6 +474,60 @@ class NativeBenchMain(unittest.TestCase):
             observed.append(row)
         self.assertEqual(observed[0], observed[1])
         self.reset_profile_path()
+
+    def test_actual_write_first_reorders_both_workload_families(self):
+        for workload in (b"mixed", b"hot-streak"):
+            args = (b"--workload="+workload, b"--txs=32", b"--keys=1",
+                    b"--read-fanout=8", b"--write-every=3", b"--determinism-repeats=2")
+            prefix = "write-first-" + workload.decode()
+            observed = {}
+            for strategy in (b"original", b"write-last", b"write-first"):
+                flag = (b"--strategy", strategy)
+                before, bt = self.actual(prefix+"-"+strategy.decode()+"-rust", self.original, (*args, *flag))
+                after, at = self.actual(prefix+"-"+strategy.decode()+"-native", self.native, (*args, *flag))
+                self.assertEqual((before.returncode, before.stderr, after.returncode, after.stderr), (0, b"", 0, b""))
+                base_ms, base = stdout_observation(before.stdout, bt)
+                after_ms, changed = stdout_observation(after.stdout, at)
+                self.events[-2]["observed_elapsed_ms"] = base_ms
+                self.events[-1]["observed_elapsed_ms"] = after_ms
+                self.assertEqual(base, changed)
+                fields = dict(row.split(b"=",1) for row in base.splitlines() if b"=" in row)
+                self.assertEqual(fields[b"determinism.replay_match"], b"true")
+                self.assertNotIn(b"schedule_semantics", fields)
+                observed[strategy] = fields
+            first = observed[b"write-first"]
+            self.assertEqual(first[b"strategy"], b"WriteFirst")
+            self.assertEqual([observed[k][b"groups"] for k in (b"original",b"write-first",b"write-last")],
+                             [b"22", b"12", b"12"])
+            self.assertEqual(len({v[b"determinism.input_sha256"] for v in observed.values()}), 1)
+            self.assertEqual(len({v[b"determinism.groups_sha256"] for v in observed.values()}), 3)
+            self.assertFalse(self.run_path.exists())
+
+    def test_actual_write_first_profile_and_existing_fences(self):
+        # Split/equals are both used. At this workload boundary only the
+        # initial transaction writes, so old and repaired contracts agree.
+        args = (b"--profile", b"--txs=32", b"--keys=7", b"--read-fanout=8",
+                b"--write-every=32", b"--determinism-repeats=2", b"--workload=hot-streak",
+                b"--strategy=write-first")
+        paired = []
+        for kind, image in (("rust", self.original), ("hia", self.native)):
+            self.reset_profile_path()
+            raw, _, persisted = self.profile_comparable(*self.actual("write-first-profile-"+kind,image,args), "file")
+            self.assertIn(b"\nprofile.report.strategy=WriteFirst\n", raw)
+            self.assertNotIn(b"schedule_semantics=", persisted)
+            paired.append(raw)
+        self.assertEqual(*paired)
+        self.reset_profile_path()
+        for idx, flags in enumerate(((b"--workload=mixed",), (b"--workload=hot-streak",),
+                (b"--workload=mixed", b"--txs=32", b"--keys=7", b"--write-every=31"),
+                (b"--workload=hot-streak", b"--keys=1", b"--read-fanout=9"))):
+            denied, _ = self.actual(f"write-first-unsupported-{idx}", self.native,
+                                     (b"--strategy=write-first", b"--profile", *flags))
+            self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        denied, _ = self.actual("write-first-env-denied", self.native,
+                       (b"--strategy=write-first", b"--txs=2"), env={b"TRNM_HOT_BUCKETS":b"8"})
+        self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
 
     def test_actual_write_last_dispatch_and_replay_against_locked_rust(self):
         fixtures = (

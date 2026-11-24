@@ -1006,7 +1006,7 @@
     {
       "id": "bench/no-profile-cli",
       "node_integration_complete": false,
-      "scope": "Finite full-width unsigned parsing, workload selector/fanout/stride, bare profile/persist flags, bounded Original, WriteLast and HotBucketInterleave strategies and original inclusive 0–1000 replay admission. Unmarked Mixed/HotStreak preserve their proved compatibility fence; explicit reader-high-water-v1 admits the separately proved corrected defaults. Complete CLI, diagnostics, other strategies and general environment remain open.",
+      "scope": "Finite full-width unsigned parsing, workload selector/fanout/stride, bare profile/persist flags, bounded Original, WriteFirst, WriteLast and HotBucketInterleave strategies and original inclusive 0–1000 replay admission. Unmarked Mixed/HotStreak preserve their proved compatibility fence; explicit reader-high-water-v1 admits the separately proved corrected defaults. Complete CLI, diagnostics, other strategies and general environment remain open.",
       "source": "hia/src/bench/main_cli.hepta",
       "state": "native-kernel-implemented",
       "tests": [
@@ -1605,7 +1605,7 @@
       "id": "bench/linux-no-profile-main",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Standalone Linux x86-64 bounded Original, WriteLast and HotBucketInterleave Bench for Classic and admitted single-domain or single-writer Mixed/HotStreak. Real argv, exact single-key TRNM_HOT_BUCKETS startup selection through the native normalizer, first-call-only clocks, native post-clock schedule replays with independent digest/ordered-membership checks, report/profile and isolated persistence/errors. No profile writes in ordinary invocation or unbound mode. Explicit reader-high-water-v1 admits only qualified Mixed/Hot default shapes and preserves unmarked refusal, with independently corrected locked Rust/graph comparison, versioned reports and actual isolated profile files. Not complete Bench or production activation.",
+      "scope": "Standalone Linux x86-64 bounded Original, WriteFirst, WriteLast and HotBucketInterleave Bench for Classic and admitted single-domain or single-writer Mixed/HotStreak. Real argv, exact single-key TRNM_HOT_BUCKETS startup selection through the native normalizer, first-call-only clocks, native post-clock schedule replays with independent digest/ordered-membership checks, report/profile and isolated persistence/errors. No profile writes in ordinary invocation or unbound mode. Explicit reader-high-water-v1 admits only qualified Mixed/Hot default shapes and preserves unmarked refusal, with independently corrected locked Rust/graph comparison, versioned reports and actual isolated profile files. Not complete Bench or production activation.",
       "sources": [
         "hia/platform/bench/main_emitter.hepta"
       ],

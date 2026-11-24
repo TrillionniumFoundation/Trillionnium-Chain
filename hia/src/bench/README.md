@@ -78,7 +78,7 @@ acquisition, or the full Bench startup/process path.
 ## Linux no-profile executable
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
-x86-64 ELF for the **bounded Original / WriteLast / HotBucketInterleave**
+x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
 process. It reads real argv at `_start` and, only for HotBucketInterleave,
 admits the [single-variable startup policy](#hot-bucket-startup-environment)
 below. This is an isolated candidate, not an activated general replacement
@@ -89,7 +89,7 @@ Its admitted invocation is no arguments (Classic, 20,000 transactions and
 `--workload`, `--strategy` and `--determinism-repeats` in split
 or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
-`write-last` or `hot-bucket-interleave`. Explicit persistence retains the
+`write-first`, `write-last` or `hot-bucket-interleave`. Explicit persistence retains the
 original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
@@ -126,8 +126,10 @@ equal one-write footprints and retains stable ordering. Under admitted single-ke
 Mixed and HotStreak, WriteLast genuinely changes grouping: with 32 transactions,
 stride three and fanout eight, the locked Rust and HIA WriteLast results
 have 12 groups instead of 22 under Original on the same workload digest.
-The tests compare ordered-group digests, replay success and actual profile
-file bytes with the matching original strategy, not merely the printed name.
+WriteFirst on the same workloads also has 12 groups, but its ordered
+group digest differs from both Original and WriteLast. The tests compare
+ordered-group digests, replay success and actual profile file bytes with the
+matching original strategy, not merely its name or aggregate group count.
 
 Without the corrected flag the default multiwriter Mixed run is **not** admitted. A real
 locked Rust run and ungated HIA development run on default Mixed produced
@@ -181,7 +183,8 @@ and path fields; the separate standalone comparison below checks the native
 clocks and file behavior directly. The standalone ELF admits these exact multiwriter
 defaults only with an explicit bare `--reader-high-water-v1` and an empty
 environment: 20,000 transactions, 2,000 keys, fanout 3, write every 1, and
-Original order (Mixed or HotStreak) or HotBucketInterleave (HotStreak only).
+Original or WriteFirst order (Mixed or HotStreak), or
+HotBucketInterleave (HotStreak only).
 Existing already-admitted Mixed/HotStreak shapes can also be explicitly
 marked; no Classic, arbitrary new multiwriter shape, or nonempty environment
 is admitted by this flag. Workload and replay limits are unchanged.
@@ -203,7 +206,7 @@ pinned HIA toolchain and cached original locked Cargo dependencies.
 
 ### Hot bucket startup environment
 
-Original and WriteLast still refuse nonempty environments on admitted
+Original, WriteFirst and WriteLast still refuse nonempty environments on admitted
 invocations without dereferencing any entry. HotBucketInterleave admits an
 empty environment or at most 64 actual Linux environment entries, each
 beginning with the exact case-sensitive `TRNM_HOT_BUCKETS=` name. A missing
