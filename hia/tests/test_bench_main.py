@@ -880,6 +880,55 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", REPEAT))
             self.assertFalse(self.run_path.exists())
 
+    def test_actual_classic_original_ignores_only_passive_launcher_values(self):
+        # All values are constructed here, not inherited or printed. Include
+        # duplicates and Linux's longest single NUL-inclusive environment entry.
+        roster = (b"PATH=/fixture/bin", b"HOME=/fixture/home", b"LANG=C.UTF-8", b"LC_ALL=C",
+                  b"LC_CTYPE=C", b"TERM=dumb", b"TMPDIR=/fixture/tmp")
+        secret_free_synthetic = b"opaque-synthetic-not-report-data"
+        longest = b"PATH=" + b"x" * (131_071 - len(b"PATH="))
+        cases = (((), roster),
+                 ((b"--workload=classic", b"--strategy=original", b"--txs=32", b"--keys=7"),
+                  (b"PATH=first", b"PATH=second", b"HOME=\xff", b"TERM=", b"TMPDIR=" + secret_free_synthetic)),
+                 ((b"--txs=4", b"--keys=2", b"--determinism-repeats=0", b"--persist-profile"),
+                  tuple(b"LANG=C" for _ in range(64))),
+                 ((b"--txs=2",), (longest,)),
+                 ((b"--txs=0", b"--keys=0"), (b"HOME==equals-is-part-of-value",)))
+        for i, (args, entries) in enumerate(cases):
+            before, before_wall = self.actual(f"launcher-names-{i}-empty-rust", self.original, args)
+            rust, rust_wall = self.actual(f"launcher-names-{i}-rust", self.original, args, env_entries=entries)
+            native, native_wall = self.actual(f"launcher-names-{i}-native", self.native, args, env_entries=entries)
+            for result in (before, rust, native):
+                self.assertEqual((result.returncode, result.stderr), (0, b""))
+                self.assertNotIn(secret_free_synthetic, result.stdout)
+                self.assertNotIn(b"profile.report.", result.stdout)
+            self.assertEqual(stdout_observation(before.stdout, before_wall)[1],
+                             stdout_observation(rust.stdout, rust_wall)[1])
+            self.assertEqual(stdout_observation(rust.stdout, rust_wall)[1],
+                             stdout_observation(native.stdout, native_wall)[1])
+            self.assertFalse(self.run_path.exists())
+
+    def test_passive_launcher_scope_does_not_admit_other_calls(self):
+        rows = (((), (b"UNKNOWN_FIXTURE=value",)), ((), (b"path=x",)),
+                ((), (b"LC_CTYPE_MORE=x",)), ((), (b"HOME",)),
+                ((), (b"=no-name",)), ((), (b"L\xffNG=x",)),
+                ((), tuple(b"LANG=C" for _ in range(65))),
+                ((), (b"PATH=/fixture", b"TRNM_HOT_BUCKETS=17")),
+                ((b"--profile", b"--txs=3"), (b"PATH=/fixture",)),
+                ((b"--txs=4", b"--determinism-repeats=1"), (b"HOME=/fixture",)),
+                ((b"--strategy=write-first",), (b"LANG=C",)),
+                ((b"--strategy=write-last",), (b"LANG=C",)),
+                ((b"--strategy=auto-adaptive",), (b"LANG=C",)),
+                ((b"--strategy=hot-bucket-interleave",), (b"HOME=/fixture",)),
+                ((b"--workload=mixed", b"--keys=1"), (b"LANG=C",)),
+                ((b"--reader-high-water-v1", b"--workload=mixed", b"--keys=1"), (b"LANG=C",)),
+                ((b"--help",), (b"TERM=dumb",)),
+                ((b"--txs",), (b"HOME=/fixture",)))
+        for i, (args, entries) in enumerate(rows):
+            new, _ = self.actual(f"launcher-names-denied-{i}", self.native, args, env_entries=entries)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+
     def test_actual_hot_bucket_environment_controls_order(self):
         key = HOT_KEY
         sentinel = b"synthetic fixture only not an integer"

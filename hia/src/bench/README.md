@@ -80,9 +80,9 @@ acquisition, or the full Bench startup/process path.
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
 process, ordinary Classic AutoAdaptive, and explicitly corrected Mixed FootprintDesc. It reads real argv at
-`_start` and, only for HotBucketInterleave,
-admits the [single-variable startup policy](#hot-bucket-startup-environment)
-below. This is an isolated candidate, not an activated general replacement
+`_start`. Startup accepts either the [passive launcher names](#passive-classic-launcher-environment)
+for ordinary no-profile Classic Original, or the separate HotBucketInterleave
+[single-variable startup policy](#hot-bucket-startup-environment). This is an isolated candidate, not an activated general replacement
 for `trnm-bench`.
 
 Its admitted invocation is no arguments (Classic, 20,000 transactions and
@@ -173,7 +173,7 @@ argument, diagnostics and report code and the build-time packer use the pinned c
 explicit object profile; native workload, schedule, digests, profile and
 environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 4,240-byte Linux adapter. It does not execute the
+the address table, and the 4,480-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 17 argument tokens in a private span and owns
@@ -268,10 +268,24 @@ and checks ZIP CRC on read. Ambient environment data, build directories and
 private compiler binaries are not retained. A local focused receipt does not
 substitute for a hosted run or General qualification.
 
+### Passive Classic launcher environment
+
+The default Classic Original executable can run with a finite set of passive
+launcher names without stripping them. It accepts at most 64 entries named
+exactly `PATH`, `HOME`, `LANG`, `LC_ALL`, `LC_CTYPE`, `TERM` or `TMPDIR`, only
+when unmarked, without profiling and with zero requested replays. The adapter
+stops each entry at its first equals sign, so values are neither read nor
+copied, even when empty, duplicated or non-UTF-8. Only zero-padded name words
+reach the HIA admission check. Output and no-file effects match the locked Rust
+entry under this finite environment; there is no general loader/environment
+compatibility claim. Other names fail closed before workload or file work.
+
 ### Hot bucket startup environment
 
-Original, WriteFirst and WriteLast still refuse nonempty environments on admitted
-invocations without dereferencing any entry. HotBucketInterleave admits an
+WriteFirst, WriteLast, AutoAdaptive, and Original outside the passive slice
+continue to refuse nonempty environments without dereferencing their values.
+The corrected mode and plain diagnostics keep their existing empty-environment
+fences. HotBucketInterleave admits an
 empty environment or at most 64 actual Linux environment entries, each
 beginning with the exact case-sensitive `TRNM_HOT_BUCKETS=` name. A missing
 equals sign, prefix collision, unrelated key, or extra entry fails before

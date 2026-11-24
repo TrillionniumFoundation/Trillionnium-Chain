@@ -1047,6 +1047,16 @@
       ]
     },
     {
+      "id": "bench/passive-launcher-names",
+      "node_integration_complete": false,
+      "scope": "Bounded name-only admission of seven exact passive launcher variables in ordinary no-profile, zero-replay Classic Original. Values are neither read, copied, nor printed. Separate from the existing HotBucket value policy; no general environment, loader or production claim.",
+      "source": "hia/src/bench/launcher_env.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_main.py"
+      ]
+    },
+    {
       "id": "bench/plain-cli-diagnostics",
       "node_integration_complete": false,
       "scope": "Plain locked Clap help, admitted missing/duplicate and printable numeric/enum error bytes from the bounded HIA parser in the original Linux Bench ELF path before work or I/O. Includes original ordered enum roster and native binary64-equivalent Jaro suggestions. Source-bound table and existing argv limits; no general option diagnostics, environment widening, terminal styling, or production activation.",
@@ -1405,7 +1415,8 @@
         "bench/report",
         "bench/envp",
         "bench/argv-observer",
-        "bench/no-profile-cli"
+        "bench/no-profile-cli",
+        "bench/passive-launcher-names"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",

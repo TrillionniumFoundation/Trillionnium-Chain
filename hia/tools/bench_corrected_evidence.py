@@ -29,6 +29,7 @@ BOUND_INPUTS = (
     "hia/src/bench/report.hepta", "hia/src/bench/profile.hepta", "hia/src/bench/repeat.hepta",
     "hia/src/bench/digests.hepta", "hia/src/bench/environment.hepta",
     "hia/src/bench/main_diagnostics.hepta", "hia/src/bench/main_diagnostics.json",
+    "hia/src/bench/launcher_env.hepta",
     "hia/qualification/compiler-binding.json",
     "trillionnium/Cargo.lock",
     "trillionnium/crates/trnm-bench/src/main.rs", "trillionnium/crates/trnm-executor/src/lib.rs")

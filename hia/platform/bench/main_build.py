@@ -20,11 +20,12 @@ COMPONENTS = (
     "src/bench/profile.hepta",
     "src/bench/environment.hepta",
     "src/bench/main_diagnostics.hepta",
+    "src/bench/launcher_env.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
 DIAGNOSTIC_SOURCE = "src/bench/main_diagnostics.json"
-ADAPTER_SHA256 = "b5601cee0bbd312bccd2b68d81652893c00ba25c81a95ec8fc18569ac47c9b37"
-PREFIX, BASE = 4416, 0x400000
+ADAPTER_SHA256 = "9ef5ba70dbc52a3a294a60a81ff0fe3cb79a406ac101c27f21c28dd94180f0ce"
+PREFIX, BASE = 4656, 0x400000
 
 
 def exact_native_text(data):
@@ -132,7 +133,8 @@ def build(output: Path, *, bind_profile_output=False):
         sources[rel] = {p.relative_to(HIA_ROOT).as_posix(): sha256(raw) for p, raw in captured}
         wires[rel] = wire
     explicit_object = {"src/bench/main_cli.hepta": "cli", "src/bench/report.hepta": "report",
-                       "src/bench/main_diagnostics.hepta": "diagnostics"}
+                       "src/bench/main_diagnostics.hepta": "diagnostics",
+                       "src/bench/launcher_env.hepta": "launcher_env"}
     for rel in COMPONENTS:
         if rel in explicit_object:
             # The fixed-core flat profile refuses these CFGs. The self-host
@@ -165,8 +167,8 @@ def build(output: Path, *, bind_profile_output=False):
     for raw in parts:
         addresses.append(position)
         position += len(raw)
-    payload = struct.pack("<12Q", *addresses[:6], position + len(catalog) if anchor else 0, len(anchor),
-                          *addresses[6:], position, len(catalog)) + b"".join(parts) + catalog
+    payload = struct.pack("<13Q", *addresses[:6], position + len(catalog) if anchor else 0, len(anchor),
+                          *addresses[6:8], position, len(catalog), addresses[8]) + b"".join(parts) + catalog
     if anchor:
         payload += anchor + b"\0"
     if len(payload) > 950272:
@@ -223,13 +225,14 @@ sys.stdout.buffer.write(out.raw[:n])
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
     report = {"diagnostics_catalog": {"sha256": sha256(catalog), "bytes": len(catalog)},
-              "schema": "trnm.hia.bench-main.build.v8",
+              "schema": "trnm.hia.bench-main.build.v9",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},
               "adapter_sha256": ADAPTER_SHA256, "adapter_bytes": PREFIX - 176,
               "argument_object": object_receipts["cli"], "report_object": object_receipts["report"],
               "diagnostics_object": object_receipts["diagnostics"],
+              "launcher_environment_object": object_receipts["launcher_env"],
               "emitter_object": emitter_receipt,
               "contained_parts": [{"source": rel, "entry_address": addr, "sha256": sha256(raw),
                                    "bytes": len(raw)}
