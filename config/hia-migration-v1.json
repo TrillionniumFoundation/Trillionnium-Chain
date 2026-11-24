@@ -472,6 +472,17 @@
       ]
     },
     {
+      "id": "mempool/local-pool-policy",
+      "node_integration_complete": false,
+      "scope": "Bounded pure Node local-pool PoolLimits validation, exact Rust struct JSON and context digest over supplied network/parameters/genesis; no SQLite, owner permit, transaction, cold readback or retirement authority",
+      "source": "hia/src/mempool/local_pool_policy.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_m05_local_pool_policy.py",
+        "hia/tests/rust_m05_local_pool_policy_reference.rs"
+      ]
+    },
+    {
       "id": "consensus/work",
       "node_integration_complete": false,
       "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
@@ -1607,7 +1618,8 @@
         "transport/signed-response",
         "node/settings-development",
         "consensus/work",
-        "mempool/raw-bindings-owner"
+        "mempool/raw-bindings-owner",
+        "mempool/local-pool-policy"
       ],
       "legacy_path": "trillionnium/crates/trnm-pon-node",
       "module": "M15",

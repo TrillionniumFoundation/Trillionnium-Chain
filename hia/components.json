@@ -5990,6 +5990,32 @@
         ]
       }
     ],
+    "src/mempool/local_pool_policy.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
     "src/release_bundle/raw_artifact_sha256.hepta": [
       {
         "functions": [

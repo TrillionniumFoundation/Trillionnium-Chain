@@ -126,6 +126,7 @@ def sources():
         "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
         "trillionnium/crates/trnm-pon-node/src/lib.rs",
         "hia/src/audit/README.md", "hia/src/mempool/RAW_BINDINGS.md",
+        "hia/src/mempool/LOCAL_POOL_POLICY.md", "hia/src/mempool/local_pool_policy_abi.json",
         "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
         "hia/src/escrow/README.md", "hia/src/governance/README.md", "hia/src/bench/README.md",
         "hia/src/bench/ENVIRONMENT.md", "hia/src/bench/FORMATTING.md",
