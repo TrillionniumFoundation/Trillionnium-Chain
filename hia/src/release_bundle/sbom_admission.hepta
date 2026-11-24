@@ -1,0 +1,240 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_sbom_admission_v0
+fn f0(input:readbuf,digest:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,digest:mutbuf,scratch:mutbuf)
+  actual:usize = buffer.len(input)
+  minimum:usize = const() {"value":4}
+  fits:bool = compare.ge(actual,minimum)
+  branch fits package_extent(input,digest,scratch,actual) malformed()
+block package_extent(pi:readbuf,po:mutbuf,pw:mutbuf,plen:usize)
+  zero:usize = const() {"value":0}
+  packages:u64 = call(pi,zero) {"function":"rb_le16"}
+  maximum:u64 = const() {"value":64}
+  bounded:bool = compare.le(packages,maximum)
+  package_end:u64 = call(packages) {"function":"sb_row"}
+  two:u64 = const() {"value":2}
+  required_start:u64 = int.add.wrap(package_end,two)
+  total:u64 = int.cast(plen) {"mode":"wrap"}
+  prefix_fits:bool = compare.le(required_start,total)
+  prefix_ok:bool = bool.and(prefix_fits,bounded)
+  branch prefix_ok required_extent(pi,po,pw,packages,required_start,package_end,total) malformed()
+block required_extent(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rs:u64,rc:u64,rt:u64)
+  at:usize = int.cast(rc) {"mode":"wrap"}
+  required:u64 = call(ri,at) {"function":"rb_le16"}
+  max_required:u64 = const() {"value":64}
+  key_width:u64 = const() {"value":772}
+  key_bytes:u64 = int.mul.wrap(required,key_width)
+  expected:u64 = int.add.wrap(rs,key_bytes)
+  required_fits:bool = compare.le(required,max_required)
+  exact:bool = compare.eq(expected,rt)
+  frame_ok:bool = bool.and(required_fits,exact)
+  two2:u64 = const() {"value":2}
+  branch frame_ok check_package_wire(ri,ro,rw,rn,two2,rc,rs,expected) malformed()
+block check_package_wire(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64,cp:u64,ce:u64,cs:u64,ct:u64)
+  done:bool = compare.eq(cp,ce)
+  branch done check_required_wire(ci,co,cw,cn,cs,cs,ct) package_wire(ci,co,cw,cn,cp,ce,cs,ct)
+block package_wire(wi:readbuf,wo:mutbuf,ww:mutbuf,wn:u64,wp:u64,we:u64,ws:u64,wt:u64)
+  package_ok:bool = call(wi,wp) {"function":"sb_well_formed"}
+  package_width:u64 = const() {"value":1351}
+  next_package:u64 = int.add.wrap(wp,package_width)
+  branch package_ok check_package_wire(wi,wo,ww,wn,next_package,we,ws,wt) malformed()
+block check_required_wire(ki:readbuf,ko:mutbuf,kw:mutbuf,kn:u64,ks:u64,kr:u64,kt:u64)
+  all_keys:bool = compare.eq(kr,kt)
+  branch all_keys candidate(ki,ko,kw,kn,ks,kt) required_wire(ki,ko,kw,kn,ks,kr,kt)
+block required_wire(wi2:readbuf,wo2:mutbuf,ww2:mutbuf,wn2:u64,ws2:u64,wr2:u64,wt2:u64)
+  key_ok:bool = call(wi2,wr2) {"function":"sba_key_wire"}
+  required_width:u64 = const() {"value":772}
+  next_key:u64 = int.add.wrap(wr2,required_width)
+  branch key_ok check_required_wire(wi2,wo2,ww2,wn2,ws2,next_key,wt2) malformed()
+block candidate(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,as_:u64,at_:u64)
+  zero3:u64 = const() {"value":0}
+  empty:bool = compare.eq(an,zero3)
+  branch empty no_packages() packages_valid(ai,ao,aw,an,as_,at_)
+block packages_valid(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vs:u64,vt:u64)
+  status:u32 = call(vi,vn) {"function":"sba_packages"}
+  ok:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,ok)
+  branch valid coverage(vi,vo,vw,vn,vs,vt) refused(status)
+block coverage(gi:readbuf,go:mutbuf,gw:mutbuf,gn:u64,gs:u64,gt:u64)
+  covered:bool = call(gi,gn,gs,gt) {"function":"sba_coverage"}
+  branch covered capacity(gi,go,gw,gn) incomplete()
+block capacity(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_count:u64)
+  out_size:usize = buffer.len(fo)
+  scratch_size:usize = buffer.len(fw)
+  min_out:usize = const() {"value":32}
+  min_scratch:usize = const() {"value":4868}
+  out_ok:bool = compare.ge(out_size,min_out)
+  scratch_ok:bool = compare.ge(scratch_size,min_scratch)
+  capacity_ok:bool = bool.and(out_ok,scratch_ok)
+  branch capacity_ok digest_checked(fi,fo,fw,fn_count) short()
+block digest_checked(di:readbuf,do_:mutbuf,dw:mutbuf,dn:u64)
+  result:u32 = call(di,do_,dw,dn) {"function":"sb_hash_roster"}
+  ret(result)
+block malformed()
+  wire_error:u32 = const() {"value":100}
+  ret(wire_error)
+block refused(error:u32)
+  ret(error)
+block short()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+block no_packages()
+  empty_code:u32 = const() {"value":105}
+  ret(empty_code)
+block incomplete()
+  incomplete_code:u32 = const() {"value":108}
+  ret(incomplete_code)
+end
+
+fn sba_key_wire(input:readbuf,row:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  zero:u64 = const() {"value":0}
+  two:u64 = const() {"value":2}
+  name:u64 = call(input,row,zero) {"function":"sb_width"}
+  version:u64 = call(input,row,two) {"function":"sb_width"}
+  name_max:u64 = const() {"value":512}
+  version_max:u64 = const() {"value":256}
+  fit_name:bool = compare.le(name,name_max)
+  fit_version:bool = compare.le(version,version_max)
+  fit:bool = bool.and(fit_name,fit_version)
+  ret(fit)
+end
+
+fn sba_valid_package(input:readbuf,row:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  zero:u64 = const() {"value":0}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  name:u64 = call(input,row,zero) {"function":"sb_width"}
+  version:u64 = call(input,row,two) {"function":"sb_width"}
+  license:u64 = call(input,row,four) {"function":"sb_width"}
+  name_used:bool = compare.gt(name,zero)
+  version_used:bool = compare.gt(version,zero)
+  license_used:bool = compare.gt(license,zero)
+  nv:bool = bool.and(name_used,version_used)
+  nonempty:bool = bool.and(nv,license_used)
+  branch nonempty texts(input,row,name,version,license) invalid()
+block texts(ti:readbuf,tr:u64,tn:u64,tv:u64,tl:u64)
+  name_off:u64 = const() {"value":71}
+  version_off:u64 = const() {"value":583}
+  license_off:u64 = const() {"value":839}
+  n_start:u64 = int.add.wrap(tr,name_off)
+  n_end:u64 = int.add.wrap(n_start,tn)
+  v_start:u64 = int.add.wrap(tr,version_off)
+  v_end:u64 = int.add.wrap(v_start,tv)
+  l_start:u64 = int.add.wrap(tr,license_off)
+  l_end:u64 = int.add.wrap(l_start,tl)
+  n_ok:bool = call(ti,n_start,n_end) {"function":"rac_printable"}
+  v_ok:bool = call(ti,v_start,v_end) {"function":"rac_printable"}
+  l_ok:bool = call(ti,l_start,l_end) {"function":"rac_printable"}
+  nv_ok:bool = bool.and(n_ok,v_ok)
+  all_readable:bool = bool.and(nv_ok,l_ok)
+  branch all_readable digests(ti,tr) invalid()
+block digests(di:readbuf,dr:u64)
+  first:u64 = const() {"value":7}
+  second:u64 = const() {"value":39}
+  source_at:u64 = int.add.wrap(dr,first)
+  checksum_at:u64 = int.add.wrap(dr,second)
+  source_ok:bool = call(di,source_at) {"function":"rac_nonzero_digest"}
+  checksum_ok:bool = call(di,checksum_at) {"function":"rac_nonzero_digest"}
+  valid:bool = bool.and(source_ok,checksum_ok)
+  ret(valid)
+block invalid()
+  fail:bool = const() {"value":false}
+  ret(fail)
+end
+
+fn sba_key_equal(input:readbuf,pkg:u64,other:u64,required:bool) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,pkg:u64,other:u64,required:bool)
+  name_at:u64 = const() {"value":71}
+  key_name_at:u64 = const() {"value":4}
+  other_name_at:u64 = select(required,key_name_at,name_at)
+  zero:u64 = const() {"value":0}
+  left:u64 = int.add.wrap(pkg,name_at)
+  right:u64 = int.add.wrap(other,other_name_at)
+  n:u64 = call(input,pkg,zero) {"function":"sb_width"}
+  m:u64 = call(input,other,zero) {"function":"sb_width"}
+  names:u64 = call(input,left,right,n,m) {"function":"sb_compare"}
+  same:u64 = const() {"value":1}
+  name_equal:bool = compare.eq(names,same)
+  branch name_equal versions(input,pkg,other,required) different()
+block versions(vi:readbuf,vp:u64,vo:u64,vreq:bool)
+  version_at:u64 = const() {"value":583}
+  key_version_at:u64 = const() {"value":516}
+  other_version_at:u64 = select(vreq,key_version_at,version_at)
+  two:u64 = const() {"value":2}
+  v_left:u64 = int.add.wrap(vp,version_at)
+  v_right:u64 = int.add.wrap(vo,other_version_at)
+  v_n:u64 = call(vi,vp,two) {"function":"sb_width"}
+  v_m:u64 = call(vi,vo,two) {"function":"sb_width"}
+  version_order:u64 = call(vi,v_left,v_right,v_n,v_m) {"function":"sb_compare"}
+  equal_code:u64 = const() {"value":1}
+  equal:bool = compare.eq(version_order,equal_code)
+  ret(equal)
+block different()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn sba_packages(input:readbuf,count:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  jump next(input,count,zero)
+block next(ni:readbuf,nc:u64,idx:u64)
+  done:bool = compare.eq(idx,nc)
+  branch done accepted() validate(ni,nc,idx)
+block validate(vi:readbuf,vc:u64,vindex:u64)
+  row:u64 = call(vindex) {"function":"sb_row"}
+  valid:bool = call(vi,row) {"function":"sba_valid_package"}
+  prior_zero:u64 = const() {"value":0}
+  branch valid prior(vi,vc,vindex,row,prior_zero) invalid()
+block prior(pi:readbuf,pc:u64,pindex:u64,prow:u64,pprior:u64)
+  no_more:bool = compare.eq(pprior,pindex)
+  branch no_more advance(pi,pc,pindex) check_key(pi,pc,pindex,prow,pprior)
+block check_key(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64)
+  earlier:u64 = call(cprior) {"function":"sb_row"}
+  package_key:bool = const() {"value":false}
+  repeated:bool = call(ci,crow,earlier,package_key) {"function":"sba_key_equal"}
+  one:u64 = const() {"value":1}
+  next_prior:u64 = int.add.wrap(cprior,one)
+  branch repeated duplicate() prior(ci,cc,cindex,crow,next_prior)
+block advance(ai:readbuf,ac:u64,aindex:u64)
+  step:u64 = const() {"value":1}
+  next_index:u64 = int.add.wrap(aindex,step)
+  jump next(ai,ac,next_index)
+block accepted()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block invalid()
+  bad_package:u32 = const() {"value":106}
+  ret(bad_package)
+block duplicate()
+  redundant:u32 = const() {"value":107}
+  ret(redundant)
+end
+
+fn sba_coverage(input:readbuf,count:u64,keys:u64,end:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,keys:u64,end:u64)
+  jump next_key(input,count,keys,end)
+block next_key(ni:readbuf,nc:u64,nk:u64,ne:u64)
+  done:bool = compare.eq(nk,ne)
+  zero:u64 = const() {"value":0}
+  branch done covered() seek(ni,nc,nk,ne,zero)
+block seek(si:readbuf,sc:u64,sk:u64,se:u64,sidx:u64)
+  absent:bool = compare.eq(sidx,sc)
+  branch absent missing() compare_pkg(si,sc,sk,se,sidx)
+block compare_pkg(ci:readbuf,cc:u64,ck:u64,ce:u64,cidx:u64)
+  row:u64 = call(cidx) {"function":"sb_row"}
+  required:bool = const() {"value":true}
+  found:bool = call(ci,row,ck,required) {"function":"sba_key_equal"}
+  key_bytes:u64 = const() {"value":772}
+  other_key:u64 = int.add.wrap(ck,key_bytes)
+  one:u64 = const() {"value":1}
+  next_pkg:u64 = int.add.wrap(cidx,one)
+  branch found next_key(ci,cc,other_key,ce) seek(ci,cc,ck,ce,next_pkg)
+block covered()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block missing()
+  no:bool = const() {"value":false}
+  ret(no)
+end

@@ -34,7 +34,19 @@ block capacity(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
   output_fits:bool = compare.ge(output_size,need_output)
   scratch_fits:bool = compare.ge(work_size,need_work)
   fits:bool = bool.and(output_fits,scratch_fits)
-  branch fits init(pi,po,pw,pn) short()
+  branch fits hash_checked(pi,po,pw,pn) short()
+block hash_checked(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  digest_code:u32 = call(hi,ho,hw,hn) {"function":"sb_hash_roster"}
+  ret(digest_code)
+block malformed()
+  format_error:u32 = const() {"value":100}
+  ret(format_error)
+block short()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+end
+
+fn sb_hash_roster(ii:readbuf,io:mutbuf,iw:mutbuf,in_rows:u64) -> (u32) effects(read,write,trap) entry(init)
 block init(ii:readbuf,io:mutbuf,iw:mutbuf,in_rows:u64)
   d0:u64 = const() {"value":7810774672474010228}
   d1:u64 = const() {"value":8026104129035395429}
@@ -84,12 +96,6 @@ block publish(pout:mutbuf,pwork:mutbuf,pzero:u64)
   _copied:u64 = call(pwork,pout,pzero) {"function":"sb_copy_digest"}
   success:u32 = const() {"value":0}
   ret(success)
-block malformed()
-  format_error:u32 = const() {"value":100}
-  ret(format_error)
-block short()
-  capacity_error:u32 = const() {"value":102}
-  ret(capacity_error)
 block hash_error()
   helper_error:u32 = const() {"value":103}
   ret(helper_error)

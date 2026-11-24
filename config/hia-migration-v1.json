@@ -1088,6 +1088,17 @@
       ]
     },
     {
+      "id": "release-bundle/sbom-admission",
+      "node_integration_complete": false,
+      "scope": "Bounded original package validity, duplicate name/version, and caller-supplied required key coverage in original order, plus actual native V0 digest over checked typed rows. No independently derived requirement, signing, broader admission, custody, or production integration.",
+      "source": "hia/src/release_bundle/sbom_admission.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_sbom_admission.py",
+        "hia/tests/rust_release_sbom_admission_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/sbom-digest",
       "node_integration_complete": false,
       "scope": "Native V0 SBOM member and aggregate digests over a bounded borrowed roster. Sorts all original typed fields and hashes every member, including repeats, in Rust-derived order. Arithmetic only; complete SBOM membership, field validation, original maximum cardinality and production integration remain outside this slice.",
@@ -1385,6 +1396,7 @@
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
         "release-bundle/raw-artifact-sha256",
+        "release-bundle/sbom-admission",
         "release-bundle/sbom-digest",
         "release-bundle/sha512-transcript-bootstrap"
       ],
