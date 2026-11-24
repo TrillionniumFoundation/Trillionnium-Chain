@@ -62,6 +62,13 @@ static int same_digest(const uint8_t *a, const uint8_t *b) {
     return difference == 0;
 }
 
+/* Both callers own disjoint spans and check the dynamic extent before reaching
+ * this copy. Keep these two dynamic tails expressed as the bounded byte
+ * transfer, independent of the platform's fortified libc import spelling. */
+static void copy_owned_bytes(uint8_t *dst, const uint8_t *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dst[i] = src[i];
+}
+
 static uint64_t run(struct workspace *w, size_t extent) {
     const uint8_t *header = w->owned;
     const size_t state_n = le(header + 4, 4), bundle_n = le(header + 8, 4);
@@ -109,10 +116,13 @@ static uint64_t run(struct workspace *w, size_t extent) {
     memcpy(q + 8, state + 187, 40);  // checked root network and root generation
     code = trnm_release_shadow_message(state, 155, q + 48, 184, w->native, 0);
     if (code) return tagged(2, QUORUM, code);
+    const size_t sig_bytes = packed_n - 2;
+    const size_t tail = sizeof(w->quorum) - QUORUM_HEAD;
+    if (pins_n > tail || sig_bytes > tail - pins_n) return tagged(250, INTERNAL, 0);
     memcpy(q + QUORUM_HEAD, pins, pins_n);
-    memcpy(q + QUORUM_HEAD + pins_n, packed + 2, packed_n - 2);
+    copy_owned_bytes(q + QUORUM_HEAD + pins_n, packed + 2, sig_bytes);
     // This result comes only from linked callback-phase math, and stays on this stack.
-    code = trnm_release_shadow_quorum(q, QUORUM_HEAD + pins_n + packed_n - 2, w->digest, 0, w->native, WORK);
+    code = trnm_release_shadow_quorum(q, QUORUM_HEAD + pins_n + sig_bytes, w->digest, 0, w->native, WORK);
     if (code) return tagged(2, QUORUM, code);
     // Same owned metadata and state: state order is after actual callback verification.
     code = trnm_release_shadow_state(state, state_n, w->proposal, OUTPUT, w->native, 1504);
@@ -127,7 +137,9 @@ uint64_t trnm_release_shadow_v1(const uint8_t *input, uint64_t extent, uint8_t *
     if (!disjoint(input, (size_t)extent, output, OUTPUT)) return tagged(100, WIRE, 100);
     struct workspace *work = calloc(1, sizeof(*work) + (size_t)extent);
     if (!work) return tagged(250, INTERNAL, 0);
-    memcpy(work->owned, input, (size_t)extent);
+    // The wire extent was bounded and disjoint above; calloc reserved a
+    // distinct owned tail of at least that exact extent.
+    copy_owned_bytes(work->owned, input, (size_t)extent);
     const uint64_t status = run(work, (size_t)extent);
     if ((status & UINT64_C(0xff)) == 0) memcpy(output, work->proposal, OUTPUT);
     free(work);

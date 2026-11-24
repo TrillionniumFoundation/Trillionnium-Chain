@@ -36,7 +36,10 @@ class ReleasePqHostedEvidence(unittest.TestCase):
                  for name in ("cc", "ld", "objcopy")}
         hashes = {name: shadow.sha(path.read_bytes()) for name, path in tools.items()}
         env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C"}
-        for extra in ((), ("-fno-builtin-memcmp",)):
+        variants = ((), ("-fno-builtin-memcmp",),
+                    ("-D_FORTIFY_SOURCE=2",), ("-D_FORTIFY_SOURCE=3",),
+                    ("-D_FORTIFY_SOURCE=3", "-fno-builtin-memcmp"))
+        for extra in variants:
             with self.subTest(extra=extra):
                 obj = self.root / "bridge.o"
                 subprocess.run([tools["cc"], "-std=c17", "-O2", "-Wall", "-Wextra", "-Werror",
