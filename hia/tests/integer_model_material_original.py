@@ -13,6 +13,7 @@ from hia.tests.test_worker_audit_jsonl_row import locked_dependencies
 
 LOCK = ROOT / "trillionnium/Cargo.lock"
 ADAPTER = Path(__file__).with_name("rust_integer_model_material_reference.rs")
+CALLER = Path(__file__).with_name("rust_integer_model_snapshot_caller.rs")
 PACKAGE = "trnm-model-material-reference"
 BINARIES = ("serde_json", "hex", "serde_core", "itoa", "memchr", "zmij")
 
@@ -46,6 +47,23 @@ def source():
             + model + old[a:b] + ADAPTER.read_bytes())
 
 
+def caller_source():
+    old = LEGACY.read_bytes()
+    state = (LEGACY.parent / "pon_executor.rs").read_bytes()
+    a = old.index(b"struct ReadState")
+    b = old.index(b"fn prefix(", a)
+    scan_start = state.index(b"pub(crate) fn prefix_rows")
+    scan_end = state.index(b"\n}", scan_start) + len(b"\n}")
+    prefix_rows = state[scan_start:scan_end]
+    preamble = source().removesuffix(ADAPTER.read_bytes())
+    exact_alias = pick(state, rb"^pub type State = [^\n]+;\n")
+    fixture_alias = b"type State = BTreeMap<String, Value>;\n"
+    if preamble.count(fixture_alias) != 1:
+        raise ValueError("original typed State alias boundary differs")
+    return (preamble.replace(fixture_alias, exact_alias) + b"use std::ops::Bound;\n" +
+            prefix_rows + b"\n" + old[a:b] + CALLER.read_bytes())
+
+
 def pin():
     rust = subprocess.run(["rustc", "-vV"], check=True, capture_output=True, timeout=10).stdout.decode()
     toolchain = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
@@ -54,7 +72,7 @@ def pin():
     return rust
 
 
-def verified_prebuilt(work, target, raw):
+def verified_prebuilt(work, target, raw, *, linked=()):
     target = Path(target).absolute()
     if target.resolve(strict=True) != target:
         raise ValueError("prebuilt target must be a direct directory")
@@ -92,7 +110,7 @@ def verified_prebuilt(work, target, raw):
     src.write_bytes(raw)
     subprocess.run(["rustc", "--edition=2024", "-Dwarnings", "-L", f"dependency={deps}",
                     "--extern", f"serde_json={files['serde_json']}", "--extern", f"hex={files['hex']}",
-                    src, "-o", binary], check=True, timeout=45)
+                    *linked, src, "-o", binary], check=True, timeout=45)
     if any(sha(path.read_bytes()) != entries[name]["artifact_sha256"] for name, path in files.items()):
         raise ValueError("a bound original artifact changed while linking")
     return binary, {"mode": "verified-prebuilt-original-lock", "locked_artifacts": entries}
@@ -167,4 +185,26 @@ def build(work):
         binary, proof = cargo_offline(work, raw)
     proof.update(source_sha256=sha(raw), oracle_sha256=sha(binary.read_bytes()), rustc=pin(),
                  cargo_lock_sha256=sha(LOCK.read_bytes()))
+    return binary, proof
+
+def build_caller(work, library, library_sha):
+    target = os.environ.get("HIA_M06_ORACLE_PREBUILT")
+    if not target:
+        raise ValueError("offline caller requires verified prebuilt Rust/Serde/Hex")
+    library = Path(library).absolute()
+    if (library.resolve(strict=True) != library or not library.is_file()
+            or sha(library.read_bytes()) != library_sha):
+        raise ValueError("named native object is not the exact admitted local artifact")
+    raw = caller_source()
+    binary, proof = verified_prebuilt(work, target, raw, linked=("-C", f"link-arg={library}"))
+    tags = subprocess.run(["/usr/bin/readelf", "-dW", binary],check=True,capture_output=True,
+                          text=True, timeout=10).stdout.splitlines()
+    needed = [line.rsplit("[",1)[-1].removesuffix("]") for line in tags if "(NEEDED)" in line]
+    artifacts = [n for n in needed if "integer_model_snapshot" in n]
+    if (artifacts != [str(library)] or sha(library.read_bytes()) != library_sha
+            or any("(RPATH)" in line or "(RUNPATH)" in line for line in tags)):
+        raise ValueError("caller does not link the exact named native snapshot")
+    proof.update(source_sha256=sha(raw), oracle_sha256=sha(binary.read_bytes()), rustc=pin(),
+                 cargo_lock_sha256=sha(LOCK.read_bytes()), bound_native_sha256=library_sha,
+                 physically_linked_exact_named_native=True, test_only_rust_projection=True)
     return binary, proof

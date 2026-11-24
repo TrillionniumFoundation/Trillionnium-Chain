@@ -301,13 +301,15 @@
     {
       "id": "state/integer-model-load",
       "node_integration_complete": false,
-      "scope": "Private one-call bounded original load_model over typed immutable snapshots: exact namespace and chunks, shared ILM2/3 geometry and model values, computed versioned digest and expected-ID comparison before atomic output. No host intermediate replay, live lookup, model execution, proof, authenticity, custody, storage mutation, admission or production authority.",
+      "scope": "Private one-call bounded original load_model over typed immutable snapshots: exact namespace and chunks, shared ILM2/3 geometry and model values, computed versioned digest and expected-ID comparison before atomic output. No host intermediate replay for the native model check; a separately qualified offline Rust caller projects actual immutable State to the named selfhost ELF. No live lookup, model execution, proof, authenticity, custody, storage mutation, admission or production authority.",
       "source": "hia/src/state/integer_model_load.hepta",
       "state": "native-kernel-implemented",
       "tests": [
         "hia/tests/test_integer_model_load.py",
         "hia/tests/integer_model_material_original.py",
-        "hia/tests/rust_integer_model_material_reference.rs"
+        "hia/tests/rust_integer_model_material_reference.rs",
+        "hia/tests/test_integer_model_snapshot_caller.py",
+        "hia/tests/rust_integer_model_snapshot_caller.rs"
       ]
     },
     {

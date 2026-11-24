@@ -95,3 +95,13 @@ dependency configuration. Hosted general discovery does not by itself
 qualify the original differential. The Rust storage scans, authentic
 state selection, production integration, model execution, updates, and
 module retirement remain outside this component.
+
+
+## Offline named caller
+
+The [private named artifact](../../platform/integer_model_snapshot/README.md)
+can be called from a Rust executable using real typed test State. Its caller
+uses the original State type and original read-only namespace scan before a
+single IMD2 call; the existing original `load_model` observes the same State.
+The Rust projection, the HIA loader and their independent results are
+distinguished. Neither the caller nor the library has a production call site.

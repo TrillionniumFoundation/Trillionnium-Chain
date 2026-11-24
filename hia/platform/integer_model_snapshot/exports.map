@@ -1,0 +1,4 @@
+{
+    global: trnm_integer_model_snapshot_load_v1;
+    local: *;
+};
