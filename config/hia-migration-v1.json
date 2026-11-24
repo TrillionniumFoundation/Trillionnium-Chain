@@ -1004,6 +1004,16 @@
       ]
     },
     {
+      "id": "bench/no-profile-cli",
+      "node_integration_complete": false,
+      "scope": "Finite full-width unsigned parsing of the three admitted original no-profile numeric arguments, no-arg defaults, and original repeat-limit decision. Other Clap syntax, diagnostics, strategy and profile remain out of scope.",
+      "source": "hia/src/bench/main_cli.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_main.py"
+      ]
+    },
+    {
       "id": "release-bundle/artifact-header",
       "node_integration_complete": false,
       "scope": "Exact RAC1 metadata header and original ArtifactEntryV0 metadata predicate over a private borrowed ABI. No hashing, raw artifact I/O, signature, release authorization or Node integration.",
@@ -1198,7 +1208,8 @@
         "bench/text",
         "bench/report",
         "bench/envp",
-        "bench/argv-observer"
+        "bench/argv-observer",
+        "bench/no-profile-cli"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
@@ -1494,6 +1505,18 @@
     }
   ],
   "native_foundations": [
+    {
+      "id": "bench/linux-no-profile-main",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Standalone Linux x86-64 no-profile Classic/Original process with real kernel argv and clock, native workload/schedule/digests/report, and no file writes. Synthetic isolated qualification and locked Rust differential; not production activation or complete Bench.",
+      "sources": [
+        "hia/platform/bench/main_emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_bench_main.py"
+      ]
+    },
     {
       "id": "bench/linux-argv-observer",
       "node_integration_complete": false,

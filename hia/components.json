@@ -17,6 +17,14 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "platform/bench/main_emitter.hepta": [
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "platform/bench/startup_emitter.hepta": [
       {
         "functions": [
@@ -3537,6 +3545,16 @@
         "functions": [
           "bench_get",
           "bench_put"
+        ],
+        "source": "src/bench/workload.hepta"
+      }
+    ],
+    "src/bench/main_cli.hepta": [
+      {
+        "functions": [
+          "bench_get",
+          "bench_put",
+          "bench_read"
         ],
         "source": "src/bench/workload.hepta"
       }

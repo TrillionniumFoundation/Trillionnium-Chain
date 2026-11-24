@@ -24,8 +24,10 @@ main comparisons. [Allowlisted environment selection](ENVIRONMENT.md#unix-startu
 projects a supplied ordered Unix startup span into the native parser. A separate
 [Linux startup observer](#linux-startup-observer) validates acquisition of the
 actual kernel argv bytes in synthetic processes. The real Bench CLI entry,
-OS environment acquisition, complete CLI parsing, clock measurement,
-file/process ownership and whole-package qualification remain open.
+OS environment acquisition, complete CLI parsing, profiling persistence and
+whole-package qualification remain open. The finite
+[no-profile executable](#linux-no-profile-executable) exercises the full default
+benchmark workload and real clocks from its isolated Linux entry.
 
 ## Linux startup observer
 
@@ -72,6 +74,60 @@ envp without changing the record, cross 2 MiB aggregate, exercise the Linux
 per-argument boundary and reject an excessive argc and an I/O failure.
 This does not implement command syntax, help/diagnostics, timing, environment
 acquisition, or the full Bench startup/process path.
+
+## Linux no-profile executable
+
+The [native build](../../platform/bench/main_build.py) produces a static
+Linux x86-64 ELF implementing the **bounded no-profile Classic/Original**
+path. The process reads actual kernel argv at `_start`. It only verifies
+that the environment pointer list is empty; it never dereferences an
+environment string. This is an isolated candidate executable, not an
+activated or general replacement for `trnm-bench`.
+
+Its admitted invocation is no arguments (the original 20,000 transactions and
+2,000 keys), or one each of `--txs`, `--keys` and
+`--determinism-repeats`, in split or equals form. The [HIA argument policy](main_cli.hepta)
+accepts unsigned ASCII decimal with one optional plus and rejects overflow,
+duplicates, missing values and malformed text. Zero transaction/key values
+retain the original normalization. The subset admits at most 20,000
+transactions and zero replays. A well-formed repeat count over 1,000 renders
+the original diagnostic and exit 2 before workload or clock work, even when
+a parsed transaction count is outside the candidate's capacity. Other
+invocations exit 2 with a distinct bounded-candidate diagnostic, **not** Clap
+diagnostic equivalence. In particular, `--profile`, help, nondefault
+strategies/workloads, nonempty env and nonzero valid replays are OPEN and
+never fall back to the old executable.
+
+The [native emitter](../../platform/bench/main_emitter.hepta) assembles
+the actual Linux boundary and five exact pinned component images. The
+argv policy's explicit object profile supplies import-free, relocation-free
+native `.text`; the other four components are the ordinary native flat
+images. The builder transports a checked address table and verifies exact
+images, an RX image, NX stack, absence of a dynamic loader and the literal
+1,168-byte adapter identity. It does not implement any Bench algorithms.
+The adapter never opens a file. It stages argv and owns disjoint regions
+for the workload (at most 1,280,136 bytes), scheduler result (at most
+320,264 bytes), scheduler arena (at most 6,244,096 bytes), and report.
+It invokes the real HIA workload, obtains actual realtime after workload
+construction, captures `CLOCK_MONOTONIC` immediately before and after the
+first scheduler call, and only then hashes/renders. It subtracts the times
+with nanosecond borrow and integer-millisecond truncation, retaining the
+unsigned 128-bit count. Clock error is a runtime refusal, not zero elapsed.
+The unchanged native renderer writes complete ordinary output bytes or the
+repeat-limit stderr, and the adapter publishes them to the exact output
+file descriptors using short-write and EINTR handling.
+
+[Qualification](../../tests/test_bench_main.py) independently builds the
+unaltered Rust CLI through the pinned **locked, offline Cargo graph** and runs
+both actual images in fresh isolated directories with explicit synthetic
+invocations. It compares all deterministic stdout bytes including both
+digests, the original exact repeat-limit diagnostic, exit behavior, and no
+created paths. Ordinary Clap invalid-input diagnostics remain visibly
+different. Only independently measured `elapsed_ms` is normalized in the
+comparator, and the original unmodified output streams are retained. This
+qualification does not cover profiled file publication or errors, a complete
+Clap-equivalent CLI, nonempty environment admission, whole-package retirement
+or production activation.
 
 ## Original observable contract
 
