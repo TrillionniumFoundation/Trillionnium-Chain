@@ -1468,6 +1468,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-dto-reputation-v3",
+      "node_integration_complete": false,
+      "scope": "Private WJD3 decodes only the optional signed i32 audit reputation delta and reuses the existing display-only projection into WJL1; staged WJF1/WJD3/WAT2 dual emitters reproduce the original three locked CLI files. No market or authority changes, no other non-null metadata, no generic Serde, no production dispatch.",
+      "source": "hia/src/worker_agent/journal_audit_dto_reputation_v3.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_dto_reputation_v3.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-dto-v2",
       "node_integration_complete": false,
       "scope": "Private WJD2 shares exact typed projection and adds arbitrary order of 22 literal known keys, independent absent/null options and duplicate checks; both emitter chains reproduce three unchanged locked Rust CLI files. Existing WJD1/WQX1, generic Serde, storage and production dispatch unchanged.",
