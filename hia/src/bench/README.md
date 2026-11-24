@@ -21,9 +21,57 @@ scheduler contract. [Native logarithms](LOGARITHM.md),
 also implemented. [Integer/calendar text](TEXT.md) and the [complete ordered
 report and persisted bytes](REPORT.md) now have native kernels and actual original
 main comparisons. [Allowlisted environment selection](ENVIRONMENT.md#unix-startup-byte-selection)
-projects a supplied ordered Unix startup span into the native parser. Actual OS
-environment acquisition, complete CLI parsing, clock
-measurement, file/process ownership and whole-package qualification remain open.
+projects a supplied ordered Unix startup span into the native parser. A separate
+[Linux startup observer](#linux-startup-observer) validates acquisition of the
+actual kernel argv bytes in synthetic processes. The real Bench CLI entry,
+OS environment acquisition, complete CLI parsing, clock measurement,
+file/process ownership and whole-package qualification remain open.
+
+## Linux startup observer
+
+The [HIA startup emitter](../../platform/bench/startup_emitter.hepta) packages the
+compiled [argument observer](startup_observer.hepta) behind a finite Linux x86-64
+kernel entry. This is a freestanding **test observer**, not the `trnm-bench`
+executable. The [builder](../../platform/bench/startup_build.py) runs the
+pinned self-hosted compiler and the native emitter on captured canonical inputs.
+The emitted ELF has one RX load segment, an NX stack, no interpreter, no dynamic
+loader and no host implementation in its runtime. Its 376-byte literal kernel
+adapter is checked with SHA-256
+`6473b769cf11900af9339eeb75b5b51c61f539b0e1bdb6863991e1a840a02db3`,
+followed by the exact self-hosted flat policy at ELF offset 552. That hash is
+an adapter identity check, not a formal proof of its instructions.
+
+The adapter reads the kernel's initial argc and only the argv pointer table
+through its null separator. It does not dereference argv[0], envp, or auxv.
+It requires 1 through 262,145 total entries, with each observed string's NUL
+within 131,072 bytes and a checked sum of at most 8 MiB. These are observer
+bounds, not changes to the original Bench CLI. It uses the kernel's trusted
+initial argv pointers, never foreign caller-provided addresses. It measures each
+string separately rather than assuming contiguous kernel storage, allocates one
+private RW mapping, and checks the remaining extent before each copy and exact
+completion afterward. Its three disjoint borrowed buffers occupy output [0,56),
+scratch [128,1336), and input [4096,4104+argument bytes). No runtime reads files
+or consults a live environment. Only the fixed 56-byte record is written; short
+writes are completed, EINTR is retried and other I/O failures exit 4.
+
+The HIA policy requires a little-endian u64 count and exactly that many
+NUL-terminated arguments, preserving empty arguments, bytes that are not
+UTF-8, and order. It returns `BARGV001`, count and payload length as u64 LE,
+then SHA-256 of the entire input frame including the count. Shape and capacity
+failures precede mutable work; the adapter exits 2 without emitting a record.
+No individual raw argument bytes are printed by the observer. A digest is an
+equivalence observation, not secrecy; the observer must not be used for actual
+user arguments outside the synthetic qualification.
+
+The [synthetic execve differential](../../tests/test_bench_argv_startup.py) runs
+sealed Linux images with explicit synthetic vectors and environments.
+Its pinned Rust reference uses `std::env::args_os().skip(1)` to observe the
+original access mechanism independently, not Clap parsing. Tests compare actual
+record bytes, distinguish absent/empty and reordered arguments, vary argv[0] and
+envp without changing the record, cross 2 MiB aggregate, exercise the Linux
+per-argument boundary and reject an excessive argc and an I/O failure.
+This does not implement command syntax, help/diagnostics, timing, environment
+acquisition, or the full Bench startup/process path.
 
 ## Original observable contract
 

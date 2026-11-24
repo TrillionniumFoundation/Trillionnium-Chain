@@ -993,6 +993,17 @@
       ]
     },
     {
+      "id": "bench/argv-observer",
+      "node_integration_complete": false,
+      "scope": "Finite canonical argv evidence record for a supplied NUL-delimited vector and explicit count, with full-length SHA-256. No Clap parsing, Bench invocation, entry activation, or general environment capture.",
+      "source": "hia/src/bench/startup_observer.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_argv_startup.py",
+        "hia/tests/rust_bench_argv_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/artifact-header",
       "node_integration_complete": false,
       "scope": "Exact RAC1 metadata header and original ArtifactEntryV0 metadata predicate over a private borrowed ABI. No hashing, raw artifact I/O, signature, release authorization or Node integration.",
@@ -1175,7 +1186,8 @@
         "bench/format-value",
         "bench/text",
         "bench/report",
-        "bench/envp"
+        "bench/envp",
+        "bench/argv-observer"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",
@@ -1470,6 +1482,19 @@
     }
   ],
   "native_foundations": [
+    {
+      "id": "bench/linux-argv-observer",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Test-only static Linux x86-64 ELF acquiring argv[1..] at kernel entry; only bounded observation record is emitted. No Bench CLI, production invocation, environment acquisition or fallback.",
+      "sources": [
+        "hia/platform/bench/startup_emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_bench_argv_startup.py",
+        "hia/tests/rust_bench_argv_reference.rs"
+      ]
+    },
     {
       "id": "platform/os-fixture",
       "node_integration_complete": false,

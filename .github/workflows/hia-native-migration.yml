@@ -209,6 +209,7 @@ jobs:
           HIA_BENCH_ENV_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/environment
           HIA_BENCH_PROFILE_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/profile
           HIA_BENCH_REPORT_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/report
+          HIA_BENCH_STARTUP_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/argv-startup
           TRNM_HIA_TASK_METADATA_ARTIFACT_DIR: ${{ runner.temp }}/hia-task-metadata-boundaries
           HIA_CONTROL_PLANE_OUTPUT: ${{ runner.temp }}/hia-control-plane-original
           TRNM_HIA_ESCROW_OUTPUT: ${{ runner.temp }}/hia-escrow-original

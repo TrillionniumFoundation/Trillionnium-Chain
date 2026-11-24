@@ -1,5 +1,30 @@
 {
   "includes": {
+    "src/bench/startup_observer.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
+    "platform/bench/startup_emitter.hepta": [
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "platform/checkpoint_store/api_driver.hepta": [
       {
         "functions": [
