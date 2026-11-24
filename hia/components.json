@@ -9458,6 +9458,86 @@
         "source": "src/worker_agent/audit_index_wire.hepta"
       }
     ],
+    "src/worker_agent/audit_task_query.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_ascii_encode",
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "wj_string_size",
+          "wj_close",
+          "wj_key",
+          "wj_project_text",
+          "wj_read_slot",
+          "wj_row"
+        ],
+        "source": "src/worker_agent/audit_jsonl_row.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wp_printable",
+          "wp_view",
+          "wp_schema_word",
+          "wp_schema"
+        ],
+        "source": "src/worker_agent/audit_display_labels.hepta"
+      },
+      {
+        "functions": [
+          "ws_selected"
+        ],
+        "source": "src/worker_agent/audit_select.hepta"
+      },
+      {
+        "functions": [
+          "wx_index",
+          "wx_map",
+          "wx_offsets",
+          "wx_key_after",
+          "wx_key",
+          "wx_decimal",
+          "wx_prefix",
+          "wx_map_header"
+        ],
+        "source": "src/worker_agent/audit_index_wire.hepta"
+      },
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start",
+          "or_trim_end"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "wt_descriptor",
+          "wt_selected"
+        ],
+        "source": "src/worker_agent/audit_export_transaction.hepta"
+      }
+    ],
     "src/worker_agent/audit_index_wire.hepta": [
       {
         "functions": [
