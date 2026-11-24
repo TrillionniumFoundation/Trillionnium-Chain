@@ -215,7 +215,8 @@ def cli_scenarios(*, project=False, display=False):
             "empty": []}
 
 
-def observe_original_batch(binary, build, directory, *, project=False, display=False):
+def observe_original_batch(binary, build, directory, *, project=False, display=False,
+                           open_native=None, invoke=observe):
     if display and not project:
         raise ValueError("WJB3 requires the raw reputation suffix as well as display fields")
     def bound():
@@ -224,9 +225,10 @@ def observe_original_batch(binary, build, directory, *, project=False, display=F
     if not bound():
         raise AssertionError("Actual Worker binary does not bind to current exact source and lock")
     report = {}
+    if open_native is None:
+        open_native = lambda backend: NativeModule(NATIVE, backend=backend, byte_exports=("f0",))
     with ExitStack() as stack:
-        modules = {backend: stack.enter_context(NativeModule(
-            NATIVE, backend=backend, byte_exports=("f0",))) for backend in BACKENDS}
+        modules = {backend: stack.enter_context(open_native(backend)) for backend in BACKENDS}
         for name, records in cli_scenarios(project=project, display=display).items():
             cwd = directory / name
             cwd.mkdir(mode=0o700)
@@ -262,7 +264,7 @@ def observe_original_batch(binary, build, directory, *, project=False, display=F
                 raw = request([typed(row, retained.get(identity(row))) for row in records])
             (cwd / "native.request.raw").write_bytes(raw)
             for backend, native in modules.items():
-                out_len, emitted = observe(native, raw, len(original) + 7)
+                out_len, emitted = invoke(native, raw, len(original) + 7)
                 out = emitted[:out_len]
                 if out_len != len(original) or out != original or emitted[out_len:] != FILL * 7:
                     raise AssertionError(f"Whole-batch byte difference: {name} {backend}")

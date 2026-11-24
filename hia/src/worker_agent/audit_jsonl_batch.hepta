@@ -1,6 +1,11 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_jsonl_batch_v1
 fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  result:u32 = call(input,output) {"function":"wb_dispatch"}
+  ret(result)
+end
+fn wb_dispatch(input:readbuf,output:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf)
   native_input_size:usize = buffer.len(input)
   input_size:u64 = int.cast(native_input_size) {"mode":"wrap"}
   header_size:u64 = const() {"value":8}

@@ -1339,6 +1339,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-owned-library",
+      "node_integration_complete": false,
+      "scope": "Candidate native ELF with a single named WJB3-only in-memory audit export API. Exact direct and selfhost text binding, narrow symbol inventory and genuine locked Worker CLI comparison. No journal, index, filesystem, or production capability.",
+      "source": "hia/src/worker_agent/audit_owned_entry.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_owned.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-jsonl-batch",
       "node_integration_complete": false,
       "scope": "One native call owns ordered selection and atomic JSONL emission across typed Worker records. WJB2 projects seven audit reputation fields, and WJB3 adds four display fields, from raw options via shared WJR and WJP evaluators. Both emitters compare with the actual locked original CLI. Other optional conversion, journal parsing, index and production routing remain original.",
@@ -1482,6 +1492,7 @@
         "worker-agent/audit-text",
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
+        "worker-agent/audit-owned-library",
         "worker-agent/audit-jsonl-batch",
         "worker-agent/audit-jsonl-row",
         "worker-agent/audit-display-labels",
