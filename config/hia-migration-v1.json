@@ -2081,6 +2081,18 @@
       ]
     },
     {
+      "id": "worker-agent/owned-sealed-stdin-fixture",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Offline Linux x86-64 HIA-packed static fixture reads only the synthetic sealed memfd held as stdin, verifies exact extent and EOF, and emits one unchanged WQX3 three-artifact result to an anonymous pipe. Actual held-offset and locked Rust byte comparisons; no filesystem path, storage publication, general OS authority or production dispatch.",
+      "sources": [
+        "hia/platform/worker_journal_audit_stdin/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_worker_journal_audit_stdin.py"
+      ]
+    },
+    {
       "id": "platform/os-fixture",
       "node_integration_complete": false,
       "retirement_accepted": false,
