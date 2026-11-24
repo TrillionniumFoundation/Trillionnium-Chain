@@ -31,6 +31,7 @@ fn var(name: &str) -> String {
 }
 struct EvaluationCase {
     test_script: &'static str,
+    prepare_mode: &'static str,
     input_environment: &'static str,
     model_environment: &'static str,
     namespace: &'static str,
@@ -39,6 +40,7 @@ struct EvaluationCase {
 }
 const CIRCUIT: EvaluationCase = EvaluationCase {
     test_script: "dev_circuit_evaluation.py",
+    prepare_mode: "prepare",
     input_environment: "TRNM_DEV_PAIRED_REQUEST_SHA256",
     model_environment: "TRNM_DEV_CIRCUIT_SHA256",
     namespace: "dev-circuit-evaluation",
@@ -47,6 +49,7 @@ const CIRCUIT: EvaluationCase = EvaluationCase {
 };
 const HISTORY: EvaluationCase = EvaluationCase {
     test_script: "dev_historical_evaluation.py",
+    prepare_mode: "prepare",
     input_environment: "TRNM_DEV_PUBLIC_PARQUET_SHA256",
     model_environment: "TRNM_DEV_HISTORICAL_MODEL_SHA256",
     namespace: "dev-historical-evaluation",
@@ -55,11 +58,18 @@ const HISTORY: EvaluationCase = EvaluationCase {
 };
 const PAIRED: EvaluationCase = EvaluationCase {
     test_script: "dev_intake_evaluation.py",
+    prepare_mode: "prepare",
     input_environment: "TRNM_DEV_PAIRED_REQUEST_SHA256",
     model_environment: "TRNM_DEV_PAIRED_MODEL_SHA256",
     namespace: "dev-plain-paired-intake-evaluation",
     work: b"one released plain-model request and frozen retention",
     delivered_input: "paired_request",
+};
+const BOUND_PAIRED: EvaluationCase = EvaluationCase {
+    prepare_mode: "prepare-bound",
+    namespace: "dev-bound-paired-loop-evaluation-v2",
+    work: b"one identity-bound released plain-model request and frozen retention",
+    ..PAIRED
 };
 impl EvaluationCase {
     fn commitment(&self, suffix: &str, parts: &[&[u8]]) -> Hash {
@@ -133,6 +143,12 @@ fn funded_plain_paired_intake_reopens_paid_native_operation() {
     funded_evaluation(&PAIRED);
 }
 
+#[test]
+#[ignore = "requires an independently pinned loop identity, original released pair and offline Linux Python environment"]
+fn funded_bound_paired_loop_reopens_paid_native_operation() {
+    funded_evaluation(&BOUND_PAIRED);
+}
+
 fn funded_evaluation(case: &EvaluationCase) {
     let job = PathBuf::from(var("TRNM_DEV_EVAL_JOB"));
     assert!(job.is_absolute(), "supply a fresh absolute output path");
@@ -144,7 +160,7 @@ fn funded_evaluation(case: &EvaluationCase) {
     #[cfg(not(unix))]
     {
         assert_ne!(
-            case.namespace, PAIRED.namespace,
+            case.test_script, PAIRED.test_script,
             "private paired evaluation requires Linux"
         );
         fs::create_dir(&job).unwrap();
@@ -152,7 +168,7 @@ fn funded_evaluation(case: &EvaluationCase) {
     let materials = fs::canonicalize(var("TRNM_DEV_HEPTA_MATERIALS")).unwrap();
     execute_service(
         case,
-        "prepare",
+        case.prepare_mode,
         &job,
         &materials,
         &[
@@ -164,6 +180,16 @@ fn funded_evaluation(case: &EvaluationCase) {
     );
     let admission_path = job.join("ADMISSION.json");
     let admission = read(&admission_path);
+    if case.prepare_mode == "prepare-bound" {
+        assert_eq!(
+            admission["schema"],
+            "trnm-isolated-bound-paired-evaluation-request-v2"
+        );
+        assert_eq!(
+            admission["loop_identity_sha256"],
+            var("TRNM_DEV_LOOP_IDENTITY_SHA256")
+        );
+    }
     let request = file_digest(&admission_path);
     let cfg = settings();
     let terms = FundedServiceContractV1 {

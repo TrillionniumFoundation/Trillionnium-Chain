@@ -65,9 +65,13 @@ def check_inputs(materials, pins, *, request_path=None, frozen_path=None, circui
     return request
 
 
-def prepare(job, materials, source, pins, *, intake=None, request_path=None, frozen_path=None, inspect_only=False):
+def prepare(job, materials, source, pins, *, intake=None, request_path=None, frozen_path=None, inspect_only=False,
+            loop_identity=None, expected_loop=None):
     import dev_intake_evaluation as plain
 
+    require((loop_identity is None) == (expected_loop is None), "both loop identity and retained pin required")
+    if loop_identity is not None:
+        require(intake is not None and not inspect_only, "bound loop needs an original intake release")
     plain_model = intake is not None or inspect_only
     request_path = request_path or materials / "paired.json"
     frozen_path = frozen_path or materials / "FROZEN.json"
@@ -96,6 +100,11 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
     require(entries == source_files(snapshot), "source snapshot changed while copying")
     listing = entries if not plain_model else dict(package=entries, catalog=plain.catalog_snapshot(job, source, pins["freeze"]))
     source_hash = record(job / "SOURCE.json", listing)
+    if loop_identity is not None:
+        import dev_loop_identity as bound
+
+        bound.validate(loop_identity, expected_loop, intake, request, read(job / "FROZEN.json"),
+                       runtime=bound.runtime_identity(entries))
     if plain_model:
         plain.check_catalog(job, listing["catalog"], pins["freeze"])
         plain.preflight(job, materials, pins["request"], retention_pin)
@@ -117,6 +126,10 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
                      intake_release=intake, intake_release_sha256=digest(intake))
         if retention_pin is not None:
             terms["source_retention_sha256"] = retention_pin
+    if loop_identity is not None:
+        terms.update(schema=bound.ADMISSION, output_schema=bound.DELIVERY,
+                     loop_identity=loop_identity, loop_identity_sha256=expected_loop,
+                     chain_evaluator_sources=bound.chain_sources())
     record(job / "ADMISSION.json", terms)
 
 
@@ -136,7 +149,7 @@ def execute(job, materials):
     terms = read(job / "ADMISSION.json")
     reservation = read(job / "RESERVATION.json")
     require(reservation["request"] == sha((job / "ADMISSION.json").read_bytes()), "reservation request mismatch")
-    plain_model = terms["schema"] == plain.ADMISSION
+    plain_model = terms["schema"] in plain.ADMISSIONS
     request_path = job / "PAIRED_INPUT.json" if plain_model else materials / "paired.json"
     request = check_inputs(materials, terms["pins"], request_path=request_path, frozen_path=job / "FROZEN.json",
                            circuit=not plain_model)
@@ -145,6 +158,10 @@ def execute(job, materials):
         require(sha(request_path.read_bytes()) == terms["request_file_sha256"], "original paired request bytes differ")
         plain.check_retention_record(job, terms)
         plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
+        if terms["schema"] == plain.BOUND_ADMISSION:
+            import dev_loop_identity as bound
+
+            bound.check_terms(job, terms, live=True)
     snapshot = job / "runtime" / "cell_experiments"
     before = source_files(snapshot)
     require(sha((job / "SOURCE.json").read_bytes()) == terms["source_listing_sha256"]
@@ -163,6 +180,8 @@ def execute(job, materials):
     if plain_model:
         plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
         plain.check_plain_result(result, terms)
+        if terms["schema"] == plain.BOUND_ADMISSION:
+            bound.check_terms(job, terms, live=True)
     require(result["schema"] == "hepta.paired-cold.result.v1" and result["circuit_loaded"] is (not plain_model)
             and result["external_teacher_calls_by_runner"] == 0 and result["request_sha256"] == terms["pins"]["request"],
             "wrong cold result")
@@ -283,16 +302,20 @@ def verify(job, *, expected_release=None):
     charge = sha((job / "COST.json").read_bytes())
     historical = a["schema"] == "trnm-isolated-historical-evaluation-request-v1"
     if expected_release is not None:
-        require(a["schema"] == plain.ADMISSION and a["intake_release_sha256"] == expected_release,
+        require(a["schema"] in plain.ADMISSIONS and a["intake_release_sha256"] == expected_release,
                 "independently retained release differs")
-    if a["schema"] == plain.ADMISSION:
-        spec, input_key = plain.DELIVERY, "paired_request"
+    if a["schema"] in plain.ADMISSIONS:
+        spec, input_key = plain.ADMISSIONS[a["schema"]], "paired_request"
         retained = job / "PAIRED_INPUT.json"
         require(sha(retained.read_bytes()) == a["request_file_sha256"] and
                 digest(read(retained)) == a["pins"]["request"], "original paired request bytes differ")
         plain.check_retention_record(job, a)
         plain.check_catalog(job, read(job / "SOURCE.json")["catalog"], a["pins"]["freeze"])
         plain.check_plain_result(read(job / "evaluation/RESULT.json"), a)
+        if a["schema"] == plain.BOUND_ADMISSION:
+            import dev_loop_identity as bound
+
+            bound.check_terms(job, a)
     elif historical:
         scope = "retrospective_historical_A_and_authored_retention"
         spec = "trnm-isolated-historical-evaluation-delivery-v1"

@@ -15797,3 +15797,50 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+### 2026-11-24 bound paired learning identity continuation
+
+Continue the existing #990 paired-consumer/evaluation stack. A new explicit
+`prepare-bound` entry creates `trnm-isolated-bound-paired-evaluation-request-v2`
+and the matching v2 delivery namespace. The complete Hepta loop identity is
+inside ADMISSION.json, whose exact bytes remain the native reservation's request
+commitment. It fixes the original study/admission/freeze, one ordinary causal-LM
+family, parent/candidate, exposure, model runtime, routing and evaluation panel,
+plus Hepta implementation bytes, interpreter bytes and installed dependency
+versions. Chain evaluator source hashes are additionally committed by v2 terms.
+Both implementation identities are checked before and after actual evaluation.
+
+The existing original intake, exposure/catalog, retention, independent cold arms,
+answer regrading and native payment checks remain. The new native
+`funded_bound_paired_loop_reopens_paid_native_operation` case explicitly selects
+`prepare-bound` and a fresh development namespace; the three original cases keep
+their v1 entries. Like the original externally provisioned cases, the new case
+requires exact private materials and is not executed by the ordinary unit run.
+It must be run explicitly on a fresh engineering or authorized owner capture
+before asserting any new native v2 evaluation payment. There is no new payment
+execution, production activation or useful-work reward in this source increment.
+
+The independent Python reader requires a pinned consumer readback and the same
+v2 identity before comparing it to a replayed native development evaluation. An
+old v1 paid evaluation cannot acquire v2 consumer identity after the fact.
+Equality still grants no live consumer, independent business-effect, settlement,
+learning-reward or consensus authority. Installed package versions are not a
+complete runtime byte closure: `runtime_closure_complete` remains false. Missing
+training/search/distribution/third-party costs remain unknown; neither elapsed
+stage sums nor evaluation charges establish adopted improvements per total cost.
+
+The focused command is `PYTHONPATH=scripts python3 -m unittest
+scripts/test_dev_loop_identity.py scripts/test_dev_circuit_evaluation.py
+scripts/test_dev_intake_evaluation.py -v`. It retains the historical paid-case
+and NoUpdate controls and adds identity retargeting, runtime/source mismatch,
+preflight-before-reservation refusal and v1-to-v2 promotion controls. Original
+service/protocol gates, fixed resource budgets and all qualification flags remain
+unchanged. The cross-user human experiment and full Q24 lifecycle remain open.
+
+The [actual cross-repository preflight evidence](../../evidence/bound-learning-preflight-20261124/README_ZH.md)
+now retains the missing-catalog refusal and a separate fresh engineering
+admission over existing weights and an unchanged registered catalog. Original
+`prepare-bound` and network-isolated preflight passed, including live identity
+and source checks; no reservation was created. All 368 original files are
+preserved with hashes. This adds no training, model forward, human authorization,
+payment or qualification; the native funded v2 case remains a separate gate.

@@ -4,10 +4,18 @@ on:
     paths:
       - 'evidence/cell-consumer-ledger-cross-readback-20261123/**'
       - '.github/workflows/archived-consumer-ledger-readback.yml'
+      - 'scripts/dev_loop_identity.py'
+      - 'scripts/dev_circuit_evaluation.py'
+      - 'scripts/dev_intake_evaluation.py'
+      - 'scripts/test_dev_loop_identity.py'
   pull_request:
     paths:
       - 'evidence/cell-consumer-ledger-cross-readback-20261123/**'
       - '.github/workflows/archived-consumer-ledger-readback.yml'
+      - 'scripts/dev_loop_identity.py'
+      - 'scripts/dev_circuit_evaluation.py'
+      - 'scripts/dev_intake_evaluation.py'
+      - 'scripts/test_dev_loop_identity.py'
 permissions:
   contents: read
 jobs:
@@ -23,6 +31,9 @@ jobs:
             evidence/cell-learning-business-readback-20261109/bindings
             evidence/hepta-real-native-adoption-20261108/chain-reader
             evidence/cell-released-pair-funded-evaluation-20261123
+            evidence/cell-circuit-funded-evaluation-20261123
+            evidence/cell-historical-funded-evaluation-20261123
+            evidence/cell-inline-source-preflight-20261123
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -33,3 +44,7 @@ jobs:
           persist-credentials: false
       - name: Replay immutable source bytes and mutation controls
         run: python3 -B evidence/cell-consumer-ledger-cross-readback-20261123/test_compare.py hepta/qualification/paired-consumer-use-20261123 -v
+      - name: Verify bound loop namespace and original evaluation regressions
+        env:
+          PYTHONPATH: scripts
+        run: python3 -B -m unittest scripts/test_dev_loop_identity.py scripts/test_dev_intake_evaluation.py scripts/test_dev_circuit_evaluation.py -v

@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-bound-preflight-evidence-archive-v1",
+  "archive": {
+    "reconstructed_name": "BOUND_PREFLIGHT.zip",
+    "bytes": 1264993,
+    "sha256": "0ab4cb4ae64e3883d553f9f395cd5b72f72839cd596ec731b3587071f015f313",
+    "member_file_count": 368,
+    "member_manifest": "FILE_SHA256.json",
+    "member_manifest_sha256": "27a9dda8844d975f3a9313a8fa133d80b65867c9caa31defbe3233c3c83ac5e7",
+    "readback_all_members_verified": true
+  },
+  "ordered_archive_parts": [
+    {
+      "path": "BOUND_PREFLIGHT.zip.part-000",
+      "bytes": 262144,
+      "sha256": "a75190aa3d5081f94aa2116eee398679516c0726e54626c8056042a635f35844"
+    },
+    {
+      "path": "BOUND_PREFLIGHT.zip.part-001",
+      "bytes": 262144,
+      "sha256": "d5223be3bf2944206642eefb81004434cca8e5fcf991a6154462c292923911d5"
+    },
+    {
+      "path": "BOUND_PREFLIGHT.zip.part-002",
+      "bytes": 262144,
+      "sha256": "3f006538a6b912af92f0906e788d3a27439291beffd4ea1aad426cb7bba10d5c"
+    },
+    {
+      "path": "BOUND_PREFLIGHT.zip.part-003",
+      "bytes": 262144,
+      "sha256": "84f3263605057df6782b30857047fe967f215f7b61e9feef4c06791b41cc50a8"
+    },
+    {
+      "path": "BOUND_PREFLIGHT.zip.part-004",
+      "bytes": 216417,
+      "sha256": "bf162d8d8b2192341c5f97f4a981aa506dc380f02ad027b01f6ec45a89c71977"
+    }
+  ],
+  "reassembly": "Concatenate ordered_archive_parts byte-for-byte; verify archive.sha256 before opening as ZIP.",
+  "text_files": {
+    "README_ZH.md": {
+      "bytes": 5545,
+      "lines": 43,
+      "sha256": "c6a0106d2be07741fec9cf39dc63dc3e82c53ce22acc84c65b06bc8930a7cef2"
+    },
+    "check_bound_prepare_fresh_engineering.py": {
+      "bytes": 11097,
+      "lines": 175,
+      "sha256": "8bfe8b6d46fd47d0d6cfabd3822e4cf2883d8827bbe135d52eaebaaed8de2eba"
+    },
+    "check_bound_prepare_originals.py": {
+      "bytes": 6719,
+      "lines": 128,
+      "sha256": "25fa7da4e054fca6c2930b3ca04434ed25d0b1af923855832ff26275c5bc80ff"
+    }
+  },
+  "no_training_forward_real_humans_payments_or_rewards": true,
+  "native_paid_ignored_gate_executed": false
+}
