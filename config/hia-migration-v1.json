@@ -1089,6 +1089,17 @@
       ]
     },
     {
+      "id": "release-bundle/file-descriptor",
+      "node_integration_complete": false,
+      "scope": "Native bounded Unix held-descriptor precheck and post-read metadata guard over private actual stat/offset records. Original dev/ino/mode/len/mtime/ctime equality and regular length offset checks; test host supplies held descriptor and receives honest IO events, does not reopen. Exact Rust observer/real synthetic held bytes differential only; no native syscall, production custody, path attestation or immutable snapshot.",
+      "source": "hia/src/release_bundle/file_descriptor.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_file_descriptor.py",
+        "hia/tests/rust_release_file_descriptor_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/pq-bundle-callback-quorum",
       "node_integration_complete": false,
       "scope": "Real native V0 callback-phase quorum for an independently trusted role roster. Canonical signed message and selected role remain required; root network/generation checks occur after callback mathematics in the separately qualified state guard. Test-only staged Rust differential; no authority or same-call token.",
@@ -1506,6 +1517,7 @@
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
+        "release-bundle/file-descriptor",
         "release-bundle/pq-bundle-callback-quorum",
         "release-bundle/pq-bundle-checkpoint",
         "release-bundle/pq-bundle-state",

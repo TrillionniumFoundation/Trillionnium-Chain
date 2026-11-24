@@ -5762,6 +5762,20 @@
         "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
+    "src/release_bundle/file_descriptor.hepta": [
+      {
+        "functions": [
+          "rac_read_le"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "sb_compare"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      }
+    ],
     "src/release_bundle/pq_bundle_callback_quorum.hepta": [
       {
         "functions": [

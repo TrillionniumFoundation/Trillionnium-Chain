@@ -34,7 +34,7 @@ WORK = b"\xc7"
 ZERO_DIGEST = b"\0" * 32
 
 
-def original_reference(directory):
+def original_reference(directory, *, held_file=False):
     rustc = os.environ.get("RUSTC", "rustc")
     actual = subprocess.run([rustc, "--version"], capture_output=True, text=True,
                             check=True, timeout=10).stdout.split()
@@ -69,6 +69,8 @@ def original_reference(directory):
         rb"impl<R: Read \+ \?Sized> Read for LegacyHashReader<'_, R> \{.*?^}\n",
         rb"pub fn observe_release_artifact_v1<.*?^}\n",
     ))
+    if held_file:
+        release_body += unique(release, rb"pub fn observe_release_file_v1\(.*?^}\n")
     protocol_body = b"".join(unique(protocol, expression) for expression in (
         rb"const DOMAIN:[^\n]+\n", rb"const MAGIC:[^\n]+\n",
         rb"pub const CONTENT_CLAIM_BYTES:[^\n]+\n", rb"const HEADER_BYTES:[^\n]+\n",
@@ -96,7 +98,11 @@ impl ContentContextV1 {
         protocol, rb"    pub fn encode\(&self\) -> Vec<u8> \{.*?^    }\n"
     ) + b"}\n"
     source = directory / "reference.rs"
-    source.write_bytes(lib_body + release_body + protocol_body + ORIGINAL_FIXTURE.read_bytes())
+    fixture = ORIGINAL_FIXTURE.read_bytes()
+    if held_file:
+        primitives = fixture[:fixture.index(b"struct SliceReader")]
+        fixture = primitives + Path(__file__).with_name("rust_release_file_descriptor_reference.rs").read_bytes()
+    source.write_bytes(lib_body + release_body + protocol_body + fixture)
     binary = directory / "reference"
     built = subprocess.run([rustc, "--edition=2021", "-Dwarnings", "-C", "overflow-checks=yes",
                             str(source), "-o", str(binary)], capture_output=True, timeout=30)
@@ -159,10 +165,11 @@ class ReleaseTranscriptComposition(unittest.TestCase):
         self.assertEqual(report.stderr, b"")
         return report.stdout
 
-    def observed(self, modules, case):
+    def observed(self, modules, case, reader=None):
         """Read budget, reader, EOF, and comparison here are the test owner."""
         calls = []
-        reader = io.BytesIO(case.data)
+        if reader is None:
+            reader = io.BytesIO(case.data)
         reads = int(case.precharge != 0)
         used = case.precharge + reads
         exhausted = False

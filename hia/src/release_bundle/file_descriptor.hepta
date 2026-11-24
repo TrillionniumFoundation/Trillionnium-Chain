@@ -1,0 +1,83 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_file_descriptor_check_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  pre:usize = const() {"value":88}
+  post:usize = const() {"value":136}
+  pre_size:bool = compare.eq(size,pre)
+  post_size:bool = compare.eq(size,post)
+  exact:bool = bool.or(pre_size,post_size)
+  branch exact frame(input,pre_size) malformed()
+block frame(fi:readbuf,is_pre:bool)
+  first:u64 = const() {"value":0}
+  size4:u64 = const() {"value":4}
+  magic:u64 = call(fi,first,size4) {"function":"rac_read_le"}
+  canonical:u64 = const() {"value":826558034}
+  magic_ok:bool = compare.eq(magic,canonical)
+  branch magic_ok command(fi,is_pre) malformed()
+block command(ci:readbuf,pre_frame:bool)
+  command_at:u64 = const() {"value":4}
+  command_size:u64 = const() {"value":4}
+  op:u64 = call(ci,command_at,command_size) {"function":"rac_read_le"}
+  expect_pre:u64 = const() {"value":1}
+  expect_post:u64 = const() {"value":2}
+  pre_opcode:bool = compare.eq(op,expect_pre)
+  post_opcode:bool = compare.eq(op,expect_post)
+  post_frame:bool = bool.not(pre_frame)
+  valid_pre:bool = bool.and(pre_frame,pre_opcode)
+  valid_post:bool = bool.and(post_frame,post_opcode)
+  branch valid_pre precheck(ci) try_post(ci,valid_post)
+block precheck(pi:readbuf)
+  expected_at:u64 = const() {"value":8}
+  position_at:u64 = const() {"value":16}
+  mode_at:u64 = const() {"value":40}
+  file_size_at:u64 = const() {"value":48}
+  eight:u64 = const() {"value":8}
+  expected:u64 = call(pi,expected_at,eight) {"function":"rac_read_le"}
+  position:u64 = call(pi,position_at,eight) {"function":"rac_read_le"}
+  mode:u64 = call(pi,mode_at,eight) {"function":"rac_read_le"}
+  actual:u64 = call(pi,file_size_at,eight) {"function":"rac_read_le"}
+  reserved_limit:u64 = const() {"value":4294967295}
+  reserved_ok:bool = compare.le(mode,reserved_limit)
+  branch reserved_ok prepolicy(mode,actual,expected,position) malformed()
+block prepolicy(pm:u64,pa:u64,pe:u64,pp:u64)
+  file_type_mask:u64 = const() {"value":61440}
+  regular:u64 = const() {"value":32768}
+  start:u64 = const() {"value":0}
+  file_type:u64 = bit.and(pm,file_type_mask)
+  is_file:bool = compare.eq(file_type,regular)
+  same_len:bool = compare.eq(pa,pe)
+  at_start:bool = compare.eq(pp,start)
+  good_len:bool = bool.and(is_file,same_len)
+  good:bool = bool.and(good_len,at_start)
+  branch good accept() file_identity()
+block try_post(ti:readbuf,tp:bool)
+  branch tp postcheck(ti) malformed()
+block postcheck(oi:readbuf)
+  left_pad:u64 = const() {"value":28}
+  right_pad:u64 = const() {"value":92}
+  four:u64 = const() {"value":4}
+  first_pad:u64 = call(oi,left_pad,four) {"function":"rac_read_le"}
+  last_pad:u64 = call(oi,right_pad,four) {"function":"rac_read_le"}
+  merged:u64 = bit.or(first_pad,last_pad)
+  zero:u64 = const() {"value":0}
+  pad_ok:bool = compare.eq(merged,zero)
+  branch pad_ok match_metadata(oi) malformed()
+block match_metadata(mi:readbuf)
+  before:u64 = const() {"value":8}
+  after:u64 = const() {"value":72}
+  width:u64 = const() {"value":64}
+  equal:u64 = const() {"value":1}
+  order:u64 = call(mi,before,after,width,width) {"function":"sb_compare"}
+  same:bool = compare.eq(order,equal)
+  branch same accept() file_identity()
+block accept()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block file_identity()
+  refused:u32 = const() {"value":101}
+  ret(refused)
+end
