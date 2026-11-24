@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 from hia.platform.pq_auth.qualification.contract import check_platform_environment
 from hia.tests.native_support import NativeModule
 from hia.tests.qualify_release_pq_observation import build_original, execute, require, sha
+from hia.tests.test_release_pq_bundle_checkpoint import snapshot_identity
 from hia.tests.test_release_pq_bundle_state import snapshot
 from hia.tests.test_release_pq_signing import DIR, pack_signatures
 from hia.tests.test_release_unsigned_candidate import ADAPTER as UNSIGNED_ADAPTER, case
@@ -79,22 +80,22 @@ def observations(modules, frame, metadata, roster, signatures, network, tip, exp
     counts = struct.unpack_from("<HHH", frame, 4)
     declared_digest_at = 1067 + sum(n * w for n, w in zip(counts, (877, 1351, 772))) + 290
     if metadata[0] != 1 or metadata[122:154] != frame[declared_digest_at:declared_digest_at + 32]:
-        return 1, [("outer", 1)]
+        return 1, [("outer", 1)], None
     code, unsigned = run("unsigned", frame, 168, 5360)
     if code:
-        return 2, trace
+        return 2, trace, None
     require(unsigned[:32] == metadata[122:154], "unsigned returned a different checked digest")
     code, role_identity = run("identity", network + metadata[:1], 32, 1256)
     require(not code, "trusted role identity frame unexpectedly refused")
     if role_identity != frame[42:74]:
-        return 2, trace + [("identity_mismatch", 0)]
+        return 2, trace + [("identity_mismatch", 0)], None
     count = struct.pack("<H", len(signatures))
     packed = pack_signatures(signatures)
     code, locator = run("locator", packed, 32, 1240)
     if code:
-        return 2, trace
+        return 2, trace, None
     if locator != frame[74:106]:
-        return 2, trace + [("locator_mismatch", 0)]
+        return 2, trace + [("locator_mismatch", 0)], None
     code, message = run("message", metadata, 184)
     require(not code, "typed original transcript was refused")
     quorum_input = (struct.pack("<H", 2) + count + struct.pack("<HBB", 2, 1, 0)
@@ -106,14 +107,19 @@ def observations(modules, frame, metadata, roster, signatures, network, tip, exp
         strict, _ = native(modules["strict"], quorum_input, 0, 32896)
         require(strict == 110, "strict ABI's root check changed")
     if code:
-        return 2, trace
+        return 2, trace, None
     # Synthetic original owner is initially pinned with no events. Supply the
     # very same immutable metadata; no math result or authorizing token enters
     # the state guard. This does not authenticate a source of current state.
     state = snapshot(trusted_tip=tip, owner_tip=tip, root_network=network, generation=1,
                      root_expiry=expiry, now=now, floor=now, version=0, events=0)
-    code, _ = run("state", metadata + state[155:])
-    return code, trace
+    borrowed = metadata + state[155:]
+    code, observation = run("state", borrowed, 72, 1512)
+    if code:
+        return code, trace, None
+    require(observation[32:64] == snapshot_identity(borrowed) and observation[64:] == b"\x4e" * 8,
+            "shadow trusted snapshot digest or output extent differs")
+    return code, trace, (observation[:32], observation[32:64])
 
 
 def check(out):
@@ -125,7 +131,7 @@ def check(out):
     raw_template = case()[0]
     signed = execute([binary], input=raw_template)
     head = 80 + 2 * KEY_WIDTH
-    row_width = 1 + 155 + 2 * SIG_WIDTH + len(raw_template)
+    row_width = 33 + 155 + 2 * SIG_WIDTH + len(raw_template)
     require(len(signed.stdout) == head + row_width * len(CASES) and not signed.stderr,
             "unexpected original fixture stream")
     raw = signed.stdout
@@ -135,7 +141,7 @@ def check(out):
     sources = {"unsigned": "unsigned_candidate", "identity": "pq_role_identity",
                "locator": "pq_signature_set", "message": "pq_signing_message",
                "quorum": "pq_bundle_callback_quorum", "strict": "pq_quorum",
-               "state": "pq_bundle_state"}
+               "state": "pq_bundle_checkpoint"}
     for backend in ("direct", "selfhost"):
         with ExitStack() as stack:
             modules = {name: stack.enter_context(NativeModule(DIR / (stem + ".hepta"),
@@ -145,16 +151,25 @@ def check(out):
             for i, (label, expected, phase, stage_code) in enumerate(CASES):
                 start = head + i * row_width
                 row = raw[start:start + row_width]
-                compare, metadata = row[0], row[1:156]
-                slots = (row[156:156 + SIG_WIDTH], row[156 + SIG_WIDTH:156 + 2 * SIG_WIDTH])
+                compare, checkpoint, metadata = row[0], row[1:33], row[33:188]
+                slots = (row[188:188 + SIG_WIDTH], row[188 + SIG_WIDTH:188 + 2 * SIG_WIDTH])
                 signatures = [(sig[:32], sig[32:]) for sig in slots]
-                bundle = row[156 + 2 * SIG_WIDTH:]
-                actual, trace = observations(modules, bundle, metadata, roster, signatures,
+                bundle = row[188 + 2 * SIG_WIDTH:]
+                actual, trace, observation = observations(modules, bundle, metadata, roster, signatures,
                                              network, tip, expiry, now)
                 require(actual == compare == expected and trace[-1] == (phase, stage_code),
                         f"{backend} {label}: native {actual} {trace}, original {compare}")
+                record = None
+                if actual == 0:
+                    require(observation is not None and checkpoint != bytes(32)
+                            and observation[0] == checkpoint, f"{backend}: checkpoint differs from Rust owner")
+                    record = {"original": checkpoint.hex(), "native": observation[0].hex(),
+                              "borrowed_snapshot_sha256": observation[1].hex()}
+                else:
+                    require(observation is None and checkpoint == bytes(32), "checkpoint on refusal")
                 rows.append({"case": label, "actual_original": compare, "native": actual,
-                             "native_phases": trace, "public_fixture_sha256": sha(row)})
+                             "native_phases": trace, "public_fixture_sha256": sha(row),
+                             "transition_checkpoint": record})
             images = {}
             for name, module in modules.items():
                 images[name] = module.artifact_sha256
@@ -174,7 +189,8 @@ def check(out):
     return {"status": "PASS", "source_head": h, "source_tree": t, "source_state":
             "committed-clean" if initially_clean and clean else "dirty-candidate",
             "locked_original": provenance, "backends": results, "production_authority": False,
-            "native_same_call_token": False, "test_only_composition": True}
+            "native_same_call_token": False, "native_shadow_checkpoint": True,
+            "test_only_composition": True}
 
 
 if __name__ == "__main__":

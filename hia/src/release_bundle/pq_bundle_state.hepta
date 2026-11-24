@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_release_bundle_state_shadow_v1
 fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  status:u32 = call(input) {"function":"rs_validate"}
+  ret(status)
+end
+
+fn rs_validate(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf)
   actual:usize = buffer.len(input)
   minimum:usize = const() {"value":334}
   enough:bool = compare.ge(actual,minimum)

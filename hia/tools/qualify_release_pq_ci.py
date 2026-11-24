@@ -242,6 +242,21 @@ def roster(rows, name_key, status_key, expected, digest_keys):
                 and all(valid_hash(row.get(k)) for k in digest_keys), "case identity or status differs")
 
 
+def callback_transition(row, code):
+    # A success marker alone does not establish the genuine final Rust output.
+    require("transition_checkpoint" in row, "missing callback checkpoint comparison")
+    transition = row["transition_checkpoint"]
+    if code:
+        require(transition is None, "callback produced a checkpoint on refusal")
+    else:
+        require(type(transition) is dict and set(transition) ==
+                {"original", "native", "borrowed_snapshot_sha256"}
+                and all(valid_hash(x) and x != "0" * 64 for x in transition.values())
+                and transition["original"] == transition["native"],
+                "callback checkpoint differs from the Rust owner")
+    return transition
+
+
 def validate_stage(root, stage, line, tree, lock):
     process = obj(root / "process.json")
     require(process.get("stage") == stage and all(process.get(k) == v and type(process[k]) is type(v)
@@ -301,7 +316,8 @@ def validate_stage(root, stage, line, tree, lock):
             hashes[backend] = {k: current.get(f"native_{k}_sha256") for k in ("quorum", "transcript")}
         else:
             require(report.get("production_authority") is False and report.get("native_same_call_token") is False
-                    and report.get("test_only_composition") is True, "incorrect callback scope")
+                    and report.get("test_only_composition") is True and report.get("native_shadow_checkpoint") is True,
+                    "incorrect callback scope")
             rows = current.get("rows")
             roster(rows, "case", "native", tuple(row[:2] for row in CASES[stage]), ("public_fixture_sha256",))
             for row, (_, code, phase, subcode) in zip(rows, CASES[stage], strict=True):
@@ -309,6 +325,13 @@ def validate_stage(root, stage, line, tree, lock):
                 require(type(row.get("actual_original")) is int and row["actual_original"] == code
                         and type(trace) is list and trace and trace[-1] == [phase, subcode],
                         "callback stage or original outcome differs")
+                transition = callback_transition(row, code)
+                if backend == "selfhost":
+                    counterpart = next(other for other in report["backends"]["direct"]["rows"]
+                                       if other["case"] == row["case"])
+                    require(transition == counterpart["transition_checkpoint"]
+                            and row["public_fixture_sha256"] == counterpart["public_fixture_sha256"],
+                            "callback emitters disagree on the exact public fixture or checkpoint")
             hashes[backend] = current.get("images", {})
             require(set(hashes[backend]) == CALLBACK_PHASES, "missing callback phase image")
         require(all(valid_hash(x) for x in hashes[backend].values()), "missing emitted machine identity")

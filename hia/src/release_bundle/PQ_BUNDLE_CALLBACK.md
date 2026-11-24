@@ -30,7 +30,7 @@ path.
 [`qualify_release_pq_callback.py`](../../tests/qualify_release_pq_callback.py)
 drives the actual native unsigned candidate, stable root-role identity,
 signature-set locator, canonical signing message, callback-phase math and
-post-callback state guard, in that order. The Python qualification driver
+[post-callback state/checkpoint proposal](PQ_BUNDLE_CHECKPOINT.md), in that order. The Python qualification driver
 performs the original outer role/declared-content comparisons and compares
 actual native digest outputs against the immutable declarations. Each phase is
 run through its own pinned emitted machine image. This is explicitly not a
@@ -46,7 +46,10 @@ including bad signature before wrong root, genuine valid signatures with wrong
 root or stale checkpoint, wrong locator before state, insufficient binding
 before unsigned checks, duplicate roster, and mathematically valid cross-role
 signatures outside the selected pin set. The shadow and original compare both
-the public outcome and the shadow's first failed stage. No production keys are
+the public outcome and the shadow's first failed stage. On success both native emitters must derive
+the same checkpoint returned by the actual locked Rust authority; on refusal
+neither side produces a checkpoint or advances its state. The proposal itself
+is not a verified quorum token. No production keys are
 read, generated keys never leave the offline Rust process, and core dumps are
 disabled.
 

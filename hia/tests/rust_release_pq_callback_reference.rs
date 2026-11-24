@@ -8,13 +8,12 @@ use std::{
 use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use trnm_release_bundle::{
-    pq_release::{
-        pq_release_signature_digest_v1, PqReleaseAuthorityV1, PqReleaseErrorV1,
-        PqReleaseMetadataV1, PqReleaseRoleKeysV1, PqReleaseRoleV1, PqReleaseRootV1,
-        PqReleaseSignatureV1,
-    },
     ArtifactEntryV0, BuildInputV0, BuilderProvenanceV0, Digest32V0, ExactSourceV0, ReleaseBundleV0,
     SbomPackageV0,
+    pq_release::{
+        PqReleaseAuthorityV1, PqReleaseErrorV1, PqReleaseMetadataV1, PqReleaseRoleKeysV1,
+        PqReleaseRoleV1, PqReleaseRootV1, PqReleaseSignatureV1, pq_release_signature_digest_v1,
+    },
 };
 use zeroize::Zeroizing;
 
@@ -179,21 +178,35 @@ fn issue(input: &[u8], out: &mut impl Write) -> io::Result<()> {
             bundle.exact_source.dirty = true;
         }
         let outcome = authority.accept_bundle(&bundle, &required, &metadata, &signatures, NOW);
-        let code = match outcome {
-            Ok(_) => 0,
-            Err(PqReleaseErrorV1::BundleBinding) => 1,
-            Err(PqReleaseErrorV1::InvalidBundle) => 2,
-            Err(PqReleaseErrorV1::Expired) => 203,
-            Err(PqReleaseErrorV1::WrongAuthority) => 204,
-            Err(PqReleaseErrorV1::CheckpointConflict) => 205,
+        let (code, observed) = match outcome {
+            Ok((_, verified)) => {
+                assert_eq!(verified.checkpoint(), authority.checkpoint());
+                assert_ne!(verified.checkpoint(), checkpoint);
+                (0, verified.checkpoint())
+            }
+            Err(PqReleaseErrorV1::BundleBinding) => (1, [0; 32]),
+            Err(PqReleaseErrorV1::InvalidBundle) => (2, [0; 32]),
+            Err(PqReleaseErrorV1::Expired) => (203, [0; 32]),
+            Err(PqReleaseErrorV1::WrongAuthority) => (204, [0; 32]),
+            Err(PqReleaseErrorV1::CheckpointConflict) => (205, [0; 32]),
             result => panic!("unexpected locked original bundle result: {result:?}"),
         };
+        if code != 0 {
+            assert_eq!(
+                authority.checkpoint(),
+                checkpoint,
+                "refusal mutated original state"
+            );
+            assert_eq!(authority.role_version(NODE), 0);
+            assert_eq!(authority.current_content(NODE), None);
+        }
         let mut frame = input.to_vec();
         frame[42..74].copy_from_slice(&bundle.signer_identity_digest.0);
         frame[74..106].copy_from_slice(&bundle.signature_digest.0);
         frame[298] = u8::from(bundle.exact_source.dirty);
         frame[tail..tail + 32].copy_from_slice(&bundle.bundle_digest.0);
         out.write_all(&[code])?;
+        out.write_all(&observed)?;
         out.write_all(&public_metadata(&metadata))?;
         for sig in &signatures {
             out.write_all(&sig.key_id)?;

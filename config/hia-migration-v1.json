@@ -1100,6 +1100,18 @@
       ]
     },
     {
+      "id": "release-bundle/pq-bundle-checkpoint",
+      "node_integration_complete": false,
+      "scope": "Pure native shadow continuation over one borrowed typed metadata and state descriptor: shared guard, canonical signing transcript, original proposed checkpoint SHA-256 and domain-separated borrowed snapshot identity. Only a staged Rust differential; no same-call quorum token, trusted live snapshot or persistent transition.",
+      "source": "hia/src/release_bundle/pq_bundle_checkpoint.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/qualify_release_pq_callback.py",
+        "hia/tests/rust_release_pq_callback_reference.rs",
+        "hia/tests/test_release_pq_bundle_checkpoint.py"
+      ]
+    },
+    {
       "id": "release-bundle/pq-bundle-state",
       "node_integration_complete": false,
       "scope": "Pure NodeSoftware state/frontier checks after the original V0 callback and before private token consumption, including separately supplied fresh checkpoint comparison and exact typed full-history ordering. No callback/token, clock ownership, retention, state advancement, custody or authorization.",
@@ -1495,6 +1507,7 @@
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
         "release-bundle/pq-bundle-callback-quorum",
+        "release-bundle/pq-bundle-checkpoint",
         "release-bundle/pq-bundle-state",
         "release-bundle/pq-quorum",
         "release-bundle/pq-role-identity",

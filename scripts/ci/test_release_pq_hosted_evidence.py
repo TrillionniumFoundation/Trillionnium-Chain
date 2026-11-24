@@ -73,6 +73,18 @@ class ReleasePqHostedEvidence(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "identity or status"):
             q.roster([{"case": "valid", "status": False}], "case", "status", (("valid", 0),), ())
 
+    def test_callback_checkpoint_is_exact_and_absent_on_refusal(self):
+        record = {"original": "1" * 64, "native": "1" * 64, "borrowed_snapshot_sha256": "2" * 64}
+        self.assertEqual(q.callback_transition({"transition_checkpoint": record}, 0), record)
+        self.assertIsNone(q.callback_transition({"transition_checkpoint": None}, 203))
+        with self.assertRaisesRegex(ValueError, "missing callback checkpoint"):
+            q.callback_transition({}, 0)
+        with self.assertRaisesRegex(ValueError, "on refusal"):
+            q.callback_transition({"transition_checkpoint": record}, 205)
+        for broken in ({**record, "native": "3" * 64}, {**record, "borrowed_snapshot_sha256": "0" * 64}):
+            with self.assertRaisesRegex(ValueError, "differs from the Rust owner"):
+                q.callback_transition({"transition_checkpoint": broken}, 0)
+
     def test_link_and_size_fail_closed(self):
         outside = self.root / "tiny.json"
         outside.write_bytes(b"{}")

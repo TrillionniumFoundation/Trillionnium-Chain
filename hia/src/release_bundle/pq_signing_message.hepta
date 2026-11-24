@@ -36,19 +36,37 @@ block capacity(ci:readbuf,co:mutbuf)
   fits:bool = compare.ge(output_len,message_len)
   branch fits publish(ci,co) short()
 block publish(pi:readbuf,po:mutbuf)
-  zero_out:u64 = const() {"value":0}
-  p1:u64 = const() {"value":8}
-  p2:u64 = const() {"value":16}
-  p3:u64 = const() {"value":24}
+  first:u64 = const() {"value":0}
+  _written:u64 = call(pi,po,first) {"function":"pm_write"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  frame_error:u32 = const() {"value":100}
+  ret(frame_error)
+block short()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+end
+
+fn pm_write(pi:readbuf,po:mutbuf,destination:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(pi:readbuf,po:mutbuf,destination:u64)
+  step1:u64 = const() {"value":8}
+  p1:u64 = int.add.wrap(destination,step1)
+  step2:u64 = const() {"value":16}
+  p2:u64 = int.add.wrap(destination,step2)
+  step3:u64 = const() {"value":24}
+  p3:u64 = int.add.wrap(destination,step3)
   d0:u64 = const() {"value":7810739491857912404}
   d1:u64 = const() {"value":3409594557391921509}
   d2:u64 = const() {"value":3903848277881998413}
   d3:u64 = const() {"value":829828917}
-  _d0:u64 = call(po,zero_out,d0) {"function":"tr_put"}
+  _d0:u64 = call(po,destination,d0) {"function":"tr_put"}
   _d1:u64 = call(po,p1,d1) {"function":"tr_put"}
   _d2:u64 = call(po,p2,d2) {"function":"tr_put"}
   _d3:u64 = call(po,p3,d3) {"function":"tr_put"}
-  message_start:u64 = const() {"value":29}
+  domain_width:u64 = const() {"value":29}
+  message_start:u64 = int.add.wrap(destination,domain_width)
+  zero_out:u64 = const() {"value":0}
   first_number:u64 = const() {"value":33}
   numeric_at:u64 = call(pi,po,zero_out,message_start,first_number) {"function":"rac_copy"}
   eight:u64 = const() {"value":8}
@@ -62,13 +80,6 @@ block publish(pi:readbuf,po:mutbuf)
   final_at:u64 = call(po,expiration_at,expiration,eight) {"function":"rac_write_be"}
   raw_tail:u64 = const() {"value":57}
   remaining:u64 = const() {"value":98}
-  _copied:u64 = call(pi,po,raw_tail,final_at,remaining) {"function":"rac_copy"}
-  ok:u32 = const() {"value":0}
-  ret(ok)
-block malformed()
-  frame_error:u32 = const() {"value":100}
-  ret(frame_error)
-block short()
-  capacity_code:u32 = const() {"value":102}
-  ret(capacity_code)
+  copied:u64 = call(pi,po,raw_tail,final_at,remaining) {"function":"rac_copy"}
+  ret(copied)
 end
