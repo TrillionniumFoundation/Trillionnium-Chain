@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -27,6 +29,35 @@ def sha(raw):
 def command(args):
     return subprocess.run(args, check=True, capture_output=True, timeout=30,
                           env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"}).stdout
+
+
+def require_bridge_symbols(owner, expected, object_sha256, platform_tools):
+    """Reject any other object surface, retaining only bounded symbol diagnostics."""
+    exports = {ENTRY}
+    allowed = expected | {"calloc", "free", "memcpy", "memset"}
+    defined, undefined = owner["defined"], owner["undefined"]
+    missing_phases, unexpected_imports = expected - undefined, undefined - allowed
+    if defined == exports and not missing_phases and not unexpected_imports:
+        return
+
+    def preview(symbols):
+        return {
+            "count": len(symbols),
+            "first": [name if re.fullmatch(r"[A-Za-z0-9_.$@-]{1,96}", name)
+                      else "<noncanonical>" for name in sorted(symbols)[:8]],
+        }
+
+    details = {
+        "expected_defined": sorted(exports), "expected_phases": sorted(expected),
+        "observed_defined": preview(defined), "observed_undefined": preview(undefined),
+        "missing_exports": preview(exports - defined),
+        "unexpected_exports": preview(defined - exports),
+        "missing_phases": preview(missing_phases),
+        "unexpected_imports": preview(unexpected_imports),
+        "bridge_object_sha256": object_sha256, "platform_tools": platform_tools,
+    }
+    raise ValueError("Bridge does not bind the exact private phases: " +
+                     json.dumps(details, ensure_ascii=True, separators=(",", ":"), sort_keys=True))
 
 
 class LinkedShadow(NativeModule):
@@ -98,11 +129,11 @@ class LinkedShadow(NativeModule):
                      "-fPIC", "-fvisibility=hidden", "-fno-strict-aliasing",
                      "-fno-ident", "-c", glue, "-o", bridge])
             # The reviewed C stage bridge must import the actual six phase symbols.
-            owner = inspect_object_symbols(bridge.read_bytes(), "ELF64", 62)
+            bridge_raw = bridge.read_bytes()
+            bridge_sha256 = sha(bridge_raw)
+            owner = inspect_object_symbols(bridge_raw, "ELF64", 62)
             expected = {item["symbol"] for item in entries.values()}
-            if (owner["defined"] != frozenset({ENTRY}) or not expected <= owner["undefined"]
-                    or owner["undefined"] - expected - {"calloc", "free", "memcpy", "memset"}):
-                raise ValueError("Bridge does not bind the exact private phases")
+            require_bridge_symbols(owner, expected, bridge_sha256, hashes)
 
             command([tools["ld"], "-m", "elf_x86_64", "-shared", "-z", "defs", "-z", "noexecstack",
                      "-z", "relro", "-z", "now", "--build-id=none", "--hash-style=both",

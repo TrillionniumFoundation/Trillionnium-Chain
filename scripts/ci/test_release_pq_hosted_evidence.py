@@ -1,5 +1,6 @@
 """No workflow, generic PASS marker, or synthetic evidence may substitute for actual M15."""
 from pathlib import Path
+import json
 import os
 import re
 import subprocess
@@ -7,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from hia.platform.release_pq_shadow import build as shadow
 from hia.tools import qualify_release_pq_ci as q
 
 
@@ -27,6 +29,42 @@ class ReleasePqHostedEvidence(unittest.TestCase):
     def source(self):
         q.save(self.root / "source-before.json", self.probe)
         q.save(self.root / "source-after.json", self.probe)
+
+    def test_bridge_surface_does_not_depend_on_builtin_memcmp(self):
+        expected = {"trnm_release_shadow_" + phase for phase in shadow.UNITS}
+        tools = {name: Path("/usr/bin", name).resolve(strict=True)
+                 for name in ("cc", "ld", "objcopy")}
+        hashes = {name: shadow.sha(path.read_bytes()) for name, path in tools.items()}
+        env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C"}
+        for extra in ((), ("-fno-builtin-memcmp",)):
+            with self.subTest(extra=extra):
+                obj = self.root / "bridge.o"
+                subprocess.run([tools["cc"], "-std=c17", "-O2", "-Wall", "-Wextra", "-Werror",
+                                "-fPIC", "-fvisibility=hidden", "-fno-strict-aliasing",
+                                "-fno-ident", *extra, "-c", shadow.HERE / "bridge.c", "-o", obj],
+                               check=True, capture_output=True, env=env, timeout=30)
+                raw = subprocess.check_output(["/usr/bin/nm", "-P", "-g", obj], text=True,
+                                              env=env, timeout=30)
+                owner = {"defined": set(), "undefined": set()}
+                for symbol, kind, *_ in map(str.split, raw.splitlines()):
+                    owner["undefined" if kind == "U" else "defined"].add(symbol)
+                digest = shadow.sha(obj.read_bytes())
+                shadow.require_bridge_symbols(owner, expected, digest, hashes)
+
+                missing = "trnm_release_shadow_state"
+                malformed = {"defined": set(), "undefined": (owner["undefined"] - {missing}) |
+                             {"memcmp", "/private/file with spaces"}}
+                with self.assertRaisesRegex(ValueError, "Bridge does not bind the exact private phases") as e:
+                    shadow.require_bridge_symbols(malformed, expected, digest, hashes)
+                message = str(e.exception)
+                self.assertLess(len(message), 3072)
+                self.assertNotIn("/private/", message)
+                details = json.loads(message.split(": ", 1)[1])
+                self.assertEqual(details["missing_exports"]["first"], [shadow.ENTRY])
+                self.assertEqual(details["missing_phases"]["first"], [missing])
+                self.assertEqual(details["unexpected_imports"]["first"], ["<noncanonical>", "memcmp"])
+                self.assertEqual(details["bridge_object_sha256"], digest)
+                self.assertEqual(details["platform_tools"], hashes)
 
     def test_scope_and_attempt_are_strict(self):
         self.source()

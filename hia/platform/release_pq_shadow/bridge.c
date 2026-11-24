@@ -67,7 +67,8 @@ static uint64_t run(struct workspace *w, size_t extent) {
     const size_t state_n = le(header + 4, 4), bundle_n = le(header + 8, 4);
     const unsigned keys = le(header + 12, 2), threshold = le(header + 14, 2);
     const unsigned sigs = le(header + 16, 2);
-    if (memcmp(header, "RSO1", 4) || le(header + 18, 2) || le(header + 20, 4) ||
+    if (header[0] != 'R' || header[1] != 'S' || header[2] != 'O' || header[3] != '1' ||
+        le(header + 18, 2) || le(header + 20, 4) ||
         state_n < STATE_FIXED || state_n > STATE_MAX || bundle_n < BUNDLE_MIN || bundle_n > BUNDLE_MAX ||
         keys > KEY_MAX || sigs > SIG_MAX || (keys == 0 ? threshold != 0 : threshold == 0 || threshold > keys))
         return tagged(100, WIRE, 100);
