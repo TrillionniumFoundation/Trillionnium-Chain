@@ -1,5 +1,21 @@
 {
   "includes": {
+    "src/verification/profile_registry.hepta": [
+      {
+        "functions": [
+          "rac_copy",
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "sb_compare"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      }
+    ],
     "src/bench/startup_observer.hepta": [
       {
         "functions": [

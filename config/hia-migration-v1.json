@@ -221,6 +221,17 @@
       ]
     },
     {
+      "id": "verification/profile-registry",
+      "node_integration_complete": false,
+      "scope": "Original closed six-kind registry construction and exact profile resolution on bounded typed rows. Per-row validation, first duplicate kind/identity, complete registry, exact ID/version/hash, enabled/window/revocation order, len/is_empty and returned profile. No registry persistence, provider dispatch, challenge, settlement, or live authority.",
+      "source": "hia/src/verification/profile_registry.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verification_profile_registry.py",
+        "hia/tests/rust_verification_profile_registry_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1595,7 +1606,8 @@
     },
     {
       "components": [
-        "verification/closed_round"
+        "verification/closed_round",
+        "verification/profile-registry"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",

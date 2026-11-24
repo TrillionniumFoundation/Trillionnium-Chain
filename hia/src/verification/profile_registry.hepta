@@ -1,0 +1,352 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_verification_profile_registry_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  minimum:usize = const() {"value":92}
+  enough:bool = compare.ge(extent,minimum)
+  branch enough header(input,output,extent) malformed()
+block header(hi:readbuf,ho:mutbuf,hn:usize)
+  zero:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  magic:u64 = call(hi,zero,four) {"function":"rac_read_le"}
+  expected_magic:u64 = const() {"value":827478102}
+  right_magic:bool = compare.eq(magic,expected_magic)
+  op:u64 = call(hi,four,four) {"function":"rac_read_le"}
+  one:u64 = const() {"value":1}
+  typed_op:bool = compare.le(op,one)
+  count:u64 = call(hi,eight,eight) {"function":"rac_read_le"}
+  cap:u64 = const() {"value":64}
+  bounded:bool = compare.le(count,cap)
+  end_at:u64 = call(count) {"function":"vr_row"}
+  observed:u64 = int.cast(hn) {"mode":"wrap"}
+  exact:bool = compare.eq(end_at,observed)
+  well_formed:bool = bool.and(right_magic,typed_op)
+  right_count:bool = bool.and(bounded,exact)
+  valid:bool = bool.and(well_formed,right_count)
+  branch valid scan(hi,ho,op,count,zero,zero) malformed()
+block scan(si:readbuf,so:mutbuf,sop:u64,total:u64,index:u64,seen:u64)
+  done:bool = compare.eq(index,total)
+  branch done complete(si,so,sop,total) entry_check(si,so,sop,total,index,seen)
+block entry_check(ei:readbuf,eo:mutbuf,eop:u64,en:u64,ei_index:u64,ekinds:u64)
+  row:u64 = call(ei_index) {"function":"vr_row"}
+  status:u32,kind:u64 = call(ei,row) {"function":"vr_validate"}
+  ok:u32 = const() {"value":0}
+  eligible:bool = compare.eq(status,ok)
+  branch eligible unique_kind(ei,eo,eop,en,ei_index,ekinds,row,kind) refuse(status)
+block unique_kind(ki:readbuf,ko:mutbuf,kop:u64,kn:u64,kidx:u64,known:u64,krow:u64,new_kind:u64)
+  one_kind:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one_kind,new_kind)
+  in_seen:u64 = bit.and(known,bit)
+  zero_bit:u64 = const() {"value":0}
+  fresh:bool = compare.eq(in_seen,zero_bit)
+  more:u64 = bit.or(known,bit)
+  branch fresh unique_identity(ki,ko,kop,kn,kidx,more,krow) duplicate_kind()
+block unique_identity(ui:readbuf,uo:mutbuf,uop:u64,un:u64,uidx:u64,ukinds:u64,urow:u64)
+  duplicate:bool = call(ui,uidx,urow) {"function":"vr_prior_identity"}
+  next_one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(uidx,next_one)
+  branch duplicate duplicate_id() scan(ui,uo,uop,un,next,ukinds)
+block complete(ci:readbuf,co:mutbuf,cop:u64,cn:u64)
+  six:u64 = const() {"value":6}
+  all_kinds:bool = compare.eq(cn,six)
+  branch all_kinds dispatch(ci,co,cop) incomplete()
+block dispatch(di:readbuf,doo:mutbuf,dop:u64)
+  no_query:u64 = const() {"value":0}
+  only_closed:bool = compare.eq(dop,no_query)
+  branch only_closed publish(di,doo,no_query) resolve(di,doo)
+block resolve(ri:readbuf,ro:mutbuf)
+  candidate:u64 = call(ri) {"function":"vr_find"}
+  no_candidate:u64 = const() {"value":0}
+  found:bool = compare.ne(candidate,no_candidate)
+  branch found active(ri,ro,candidate) not_found()
+block active(ai:readbuf,ao:mutbuf,arow:u64)
+  status_active:u32 = call(ai,arow) {"function":"vr_resolve"}
+  active_zero:u32 = const() {"value":0}
+  current:bool = compare.eq(status_active,active_zero)
+  branch current publish(ai,ao,arow) refuse(status_active)
+block publish(pi:readbuf,po:mutbuf,prow:u64)
+  zero_row:u64 = const() {"value":0}
+  has_row:bool = compare.ne(prow,zero_row)
+  need_row:usize = const() {"value":101}
+  need_base:usize = const() {"value":4}
+  minimum_out:usize = select(has_row,need_row,need_base)
+  room:usize = buffer.len(po)
+  enough_out:bool = compare.ge(room,minimum_out)
+  branch enough_out write_header(pi,po,prow,has_row) short()
+block write_header(wi:readbuf,wo:mutbuf,wrow:u64,whas:bool)
+  begin:usize = const() {"value":0}
+  extent_w:usize = const() {"value":4}
+  empty:u8 = const() {"value":0}
+  six_byte:u8 = const() {"value":6}
+  _ = buffer.fill_range(wo,begin,extent_w,empty)
+  _ = buffer.store(wo,begin,six_byte)
+  branch whas write_row(wi,wo,wrow) done()
+block write_row(fi:readbuf,fo:mutbuf,frow:u64)
+  offset:u64 = const() {"value":4}
+  width:u64 = const() {"value":97}
+  _bytes:u64 = call(fi,fo,frow,offset,width) {"function":"rac_copy"}
+  jump done()
+block done()
+  ok_done:u32 = const() {"value":0}
+  ret(ok_done)
+block refuse(code:u32)
+  ret(code)
+block malformed()
+  wire:u32 = const() {"value":100}
+  ret(wire)
+block short()
+  capacity:u32 = const() {"value":102}
+  ret(capacity)
+block duplicate_kind()
+  duplicated_kind:u32 = const() {"value":4}
+  ret(duplicated_kind)
+block duplicate_id()
+  duplicated_identity:u32 = const() {"value":5}
+  ret(duplicated_identity)
+block incomplete()
+  missing:u32 = const() {"value":6}
+  ret(missing)
+block not_found()
+  not_in_registry:u32 = const() {"value":7}
+  ret(not_in_registry)
+end
+
+fn vr_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  start:u64 = const() {"value":92}
+  width:u64 = const() {"value":97}
+  off:u64 = int.mul.wrap(index,width)
+  row:u64 = int.add.wrap(start,off)
+  ret(row)
+end
+
+fn vr_read(input:readbuf,row:u64,offset:u64,width:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64,offset:u64,width:u64)
+  off:u64 = int.add.wrap(row,offset)
+  number:u64 = call(input,off,width) {"function":"rac_read_le"}
+  ret(number)
+end
+
+fn vr_compare(input:readbuf,left:u64,right:u64,width:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64,width:u64)
+  order:u64 = call(input,left,right,width,width) {"function":"sb_compare"}
+  equal:u64 = const() {"value":1}
+  same:bool = compare.eq(order,equal)
+  ret(same)
+end
+
+fn vr_validate(input:readbuf,row:u64) -> (u32,u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  traits_at:u64 = const() {"value":92}
+  traits_len:u64 = const() {"value":5}
+  tags:u64 = call(input,row,traits_at,traits_len) {"function":"vr_read"}
+  lo:u64 = const() {"value":255}
+  kind:u64 = bit.and(tags,lo)
+  high:u64 = const() {"value":6}
+  hole:u64 = const() {"value":4}
+  low_enough:bool = compare.le(kind,high)
+  registered:bool = compare.ne(kind,hole)
+  typed_kind:bool = bool.and(low_enough,registered)
+  bad_bits:u64 = const() {"value":1095199817216}
+  reserved:u64 = bit.and(tags,bad_bits)
+  tag_zero:u64 = const() {"value":0}
+  flags_canonical:bool = compare.eq(reserved,tag_zero)
+  typed:bool = bool.and(typed_kind,flags_canonical)
+  branch typed options(input,row,kind,tags) format_error()
+block options(oi:readbuf,orow:u64,okind:u64,otags:u64)
+  expiry_at:u64 = const() {"value":76}
+  revocation_at:u64 = const() {"value":84}
+  wide:u64 = const() {"value":8}
+  exp:u64 = call(oi,orow,expiry_at,wide) {"function":"vr_read"}
+  revoke:u64 = call(oi,orow,revocation_at,wide) {"function":"vr_read"}
+  exp_mask:u64 = const() {"value":65536}
+  revoke_mask:u64 = const() {"value":16777216}
+  exp_tag:u64 = bit.and(otags,exp_mask)
+  revoke_tag:u64 = bit.and(otags,revoke_mask)
+  zero_opt:u64 = const() {"value":0}
+  exp_present:bool = compare.ne(exp_tag,zero_opt)
+  revoke_present:bool = compare.ne(revoke_tag,zero_opt)
+  exp_empty:bool = compare.eq(exp,zero_opt)
+  revoke_empty:bool = compare.eq(revoke,zero_opt)
+  exp_correct:bool = bool.or(exp_present,exp_empty)
+  revoke_correct:bool = bool.or(revoke_present,revoke_empty)
+  exact:bool = bool.and(exp_correct,revoke_correct)
+  branch exact identifiers(oi,orow,okind,otags,exp,revoke,exp_present,revoke_present) format_error()
+block identifiers(ii:readbuf,irow:u64,ikind:u64,itags:u64,iexp:u64,irevoke:u64,ihas_exp:bool,ihas_revoke:bool)
+  id_ok:bool = call(ii,irow) {"function":"rac_nonzero_digest"}
+  add_hash:u64 = const() {"value":32}
+  hash_at:u64 = int.add.wrap(irow,add_hash)
+  hash_ok:bool = call(ii,hash_at) {"function":"rac_nonzero_digest"}
+  both:bool = bool.and(id_ok,hash_ok)
+  branch both version(ii,irow,ikind,itags,iexp,irevoke,ihas_exp,ihas_revoke) zero_identifier()
+block version(vi:readbuf,vrow:u64,vkind:u64,vtags:u64,vexp:u64,vrev:u64,vhas_exp:bool,vhas_rev:bool)
+  version_at:u64 = const() {"value":64}
+  vwidth:u64 = const() {"value":4}
+  vvalue:u64 = call(vi,vrow,version_at,vwidth) {"function":"vr_read"}
+  version_zero:u64 = const() {"value":0}
+  positive:bool = compare.ne(vvalue,version_zero)
+  branch positive ranges(vi,vrow,vkind,vtags,vexp,vrev,vhas_exp,vhas_rev) zero_version()
+block ranges(ri:readbuf,rrow:u64,rkind:u64,rtags:u64,rexp:u64,rrev:u64,rhas_exp:bool,rhas_rev:bool)
+  from_at:u64 = const() {"value":68}
+  from_w:u64 = const() {"value":8}
+  low:u64 = call(ri,rrow,from_at,from_w) {"function":"vr_read"}
+  exp_below:bool = compare.lt(rexp,low)
+  rev_below:bool = compare.lt(rrev,low)
+  exp_bad:bool = bool.and(rhas_exp,exp_below)
+  rev_bad:bool = bool.and(rhas_rev,rev_below)
+  invalid:bool = bool.or(exp_bad,rev_bad)
+  branch invalid bad_height() authority(rkind,rtags)
+block authority(akind:u64,atags:u64)
+  subjective:u64 = const() {"value":6}
+  wants_mask:u64 = const() {"value":4294967296}
+  wants:u64 = bit.and(atags,wants_mask)
+  empty:u64 = const() {"value":0}
+  requests_objective:bool = compare.ne(wants,empty)
+  is_subjective:bool = compare.eq(akind,subjective)
+  conflict:bool = bool.and(requests_objective,is_subjective)
+  branch conflict escalation() validated(akind)
+block format_error()
+  malformed:u32 = const() {"value":100}
+  filler:u64 = const() {"value":0}
+  ret(malformed,filler)
+block zero_identifier()
+  no_id:u32 = const() {"value":1}
+  unused_id:u64 = const() {"value":0}
+  ret(no_id,unused_id)
+block zero_version()
+  no_version:u32 = const() {"value":2}
+  unused_ver:u64 = const() {"value":0}
+  ret(no_version,unused_ver)
+block bad_height()
+  height_error:u32 = const() {"value":3}
+  unused_height:u64 = const() {"value":0}
+  ret(height_error,unused_height)
+block escalation()
+  bad_authority:u32 = const() {"value":13}
+  unused_authority:u64 = const() {"value":0}
+  ret(bad_authority,unused_authority)
+block validated(valid_kind:u64)
+  ok:u32 = const() {"value":0}
+  ret(ok,valid_kind)
+end
+
+fn vr_prior_identity(input:readbuf,count:u64,proposed:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,proposed:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(input,count,proposed,zero)
+block loop(li:readbuf,limit:u64,target:u64,index:u64)
+  done:bool = compare.eq(index,limit)
+  branch done absent() match(li,limit,target,index)
+block match(mi:readbuf,ml:u64,mt:u64,midx:u64)
+  row:u64 = call(midx) {"function":"vr_row"}
+  id_width:u64 = const() {"value":32}
+  id_equal:bool = call(mi,row,mt,id_width) {"function":"vr_compare"}
+  version_at:u64 = const() {"value":64}
+  version_width:u64 = const() {"value":4}
+  existing:u64 = call(mi,row,version_at,version_width) {"function":"vr_read"}
+  offered:u64 = call(mi,mt,version_at,version_width) {"function":"vr_read"}
+  same_version:bool = compare.eq(existing,offered)
+  both:bool = bool.and(id_equal,same_version)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(midx,one)
+  branch both found() loop(mi,ml,mt,next)
+block found()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block absent()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn vr_find(input:readbuf) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf)
+  zero:u64 = const() {"value":0}
+  i_at:u64 = const() {"value":48}
+  i_width:u64 = const() {"value":4}
+  requested:u64 = call(input,i_at,i_width) {"function":"rac_read_le"}
+  jump loop(input,requested,zero)
+block loop(li:readbuf,lv:u64,idx:u64)
+  six:u64 = const() {"value":6}
+  done:bool = compare.eq(idx,six)
+  branch done absent() match(li,lv,idx)
+block match(mi:readbuf,mv:u64,midx:u64)
+  row:u64 = call(midx) {"function":"vr_row"}
+  requested_id:u64 = const() {"value":16}
+  id_len:u64 = const() {"value":32}
+  both_id:bool = call(mi,row,requested_id,id_len) {"function":"vr_compare"}
+  version_at:u64 = const() {"value":64}
+  version_len:u64 = const() {"value":4}
+  stored:u64 = call(mi,row,version_at,version_len) {"function":"vr_read"}
+  both_version:bool = compare.eq(stored,mv)
+  equal:bool = bool.and(both_id,both_version)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(midx,one)
+  branch equal found(row) loop(mi,mv,next)
+block found(match_row:u64)
+  ret(match_row)
+block absent()
+  not_found:u64 = const() {"value":0}
+  ret(not_found)
+end
+
+fn vr_resolve(input:readbuf,row:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  id_width:u64 = const() {"value":32}
+  stored:u64 = int.add.wrap(row,id_width)
+  asked:u64 = const() {"value":52}
+  hash_same:bool = call(input,stored,asked,id_width) {"function":"vr_compare"}
+  branch hash_same enabled(input,row) hash_mismatch()
+block enabled(ei:readbuf,erow:u64)
+  flags_at:u64 = const() {"value":93}
+  flag_width:u64 = const() {"value":4}
+  flags:u64 = call(ei,erow,flags_at,flag_width) {"function":"vr_read"}
+  one:u64 = const() {"value":1}
+  is_enabled:u64 = bit.and(flags,one)
+  ready:bool = compare.eq(is_enabled,one)
+  branch ready validity(ei,erow,flags) disabled()
+block validity(vi:readbuf,vrow:u64,vflags:u64)
+  width:u64 = const() {"value":8}
+  queried:u64 = const() {"value":84}
+  height:u64 = call(vi,queried,width) {"function":"rac_read_le"}
+  valid_at:u64 = const() {"value":68}
+  valid_from:u64 = call(vi,vrow,valid_at,width) {"function":"vr_read"}
+  future:bool = compare.lt(height,valid_from)
+  branch future not_yet() expiry(vi,vrow,vflags,height,width)
+block expiry(xi:readbuf,xrow:u64,xf:u64,xheight:u64,xw:u64)
+  expiration_at:u64 = const() {"value":76}
+  expiration:u64 = call(xi,xrow,expiration_at,xw) {"function":"vr_read"}
+  eflag:u64 = const() {"value":256}
+  ebit:u64 = bit.and(xf,eflag)
+  has_exp:bool = compare.eq(ebit,eflag)
+  after_expiry:bool = compare.gt(xheight,expiration)
+  closed:bool = bool.and(has_exp,after_expiry)
+  branch closed expired() revocation(xi,xrow,xf,xheight,xw)
+block revocation(ri:readbuf,rrow:u64,rf:u64,rheight:u64,rwidth:u64)
+  revoke_at:u64 = const() {"value":84}
+  revoked_at:u64 = call(ri,rrow,revoke_at,rwidth) {"function":"vr_read"}
+  rflag:u64 = const() {"value":65536}
+  rbit:u64 = bit.and(rf,rflag)
+  has_revoke:bool = compare.eq(rbit,rflag)
+  reached:bool = compare.ge(rheight,revoked_at)
+  lost:bool = bool.and(has_revoke,reached)
+  branch lost revoked() accept()
+block hash_mismatch()
+  bad_hash:u32 = const() {"value":8}
+  ret(bad_hash)
+block disabled()
+  not_enabled:u32 = const() {"value":9}
+  ret(not_enabled)
+block not_yet()
+  premature:u32 = const() {"value":10}
+  ret(premature)
+block expired()
+  too_late:u32 = const() {"value":11}
+  ret(too_late)
+block revoked()
+  not_current:u32 = const() {"value":12}
+  ret(not_current)
+block accept()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+end

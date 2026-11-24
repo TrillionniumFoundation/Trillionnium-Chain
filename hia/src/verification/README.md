@@ -64,3 +64,6 @@ independent container oracle, all six arrival orders, full-width score
 endpoints, exact Unicode identities, malformed framing and UTF-8, duplicate
 keys, output canaries, long names, and an independently emitted native backend.
 Native compiler and toolchain identities follow `hia/toolchain.lock.json`.
+
+For the separate original profile admission and exact lookup API, see
+[Closed verification profile registry](PROFILE_REGISTRY.md).
