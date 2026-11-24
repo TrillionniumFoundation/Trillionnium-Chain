@@ -1,5 +1,19 @@
 {
   "includes": {
+    "src/state/integer_model_project.hepta": [
+      {
+        "functions": ["ims_value_envelope", "ims_key_less", "ims_namespace", "ims_hex", "ims_write"],
+        "source": "src/state/integer_model_select.hepta"
+      },
+      {
+        "functions": ["rac_read_le"],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": ["utf8"],
+        "source": "src/verification/closed_round.hepta"
+      }
+    ],
     "src/state/integer_model_select.hepta": [
       {
         "functions": ["rac_read_le"],

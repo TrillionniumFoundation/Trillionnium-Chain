@@ -323,6 +323,16 @@
       ]
     },
     {
+      "id": "state/integer-model-project",
+      "node_integration_complete": false,
+      "scope": "Offline bounded raw JVT1 model-row projection into exact existing typed IMD2 bytes; dual backend comparison with original Rust projection and unchanged named native loader. Only ordinary selected row/metadata shapes are covered; no owner, trust, publication or production changes.",
+      "source": "hia/src/state/integer_model_project.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_model_project.py"
+      ]
+    },
+    {
       "id": "state/integer-model-load",
       "node_integration_complete": false,
       "scope": "Private one-call bounded original load_model over typed immutable snapshots: exact namespace and chunks, shared ILM2/3 geometry and model values, computed versioned digest and expected-ID comparison before atomic output. No host intermediate replay for the native model check; a separately qualified offline Rust caller projects actual immutable State to the named selfhost ELF. No live lookup, model execution, proof, authenticity, custody, storage mutation, admission or production authority.",
@@ -1990,6 +2000,7 @@
         "state/integer-model-codec",
         "state/integer-model-material",
         "state/integer-model-select",
+        "state/integer-model-project",
         "state/integer-model-load"
       ],
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
