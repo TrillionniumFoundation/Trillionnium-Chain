@@ -1,0 +1,406 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_integer_linear_normal_report_v1
+fn f0(input:readbuf, output:mutbuf, scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf, output:mutbuf, scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  expected:usize = const() {"value":3124}
+  exact:bool = compare.eq(extent,expected)
+  branch exact header(input,output) frame_error()
+block header(hi:readbuf,ho:mutbuf)
+  first:usize = const() {"value":0}
+  reserved:usize = const() {"value":4}
+  magic:u64 = call(hi,first) {"function":"iln_read"}
+  want:u64 = const() {"value":827214921}
+  magic_ok:bool = compare.eq(magic,want)
+  flag:u64 = call(hi,reserved) {"function":"iln_read"}
+  zero:u64 = const() {"value":0}
+  reserved_ok:bool = compare.eq(flag,zero)
+  ok:bool = bool.and(magic_ok,reserved_ok)
+  at:usize = const() {"value":40}
+  fixed:u64 = const() {"value":909}
+  branch ok measure(hi,ho,at,fixed) frame_error()
+block measure(mi:readbuf,mo:mutbuf,mp:usize,ml:u64)
+  endat:usize = const() {"value":3124}
+  complete:bool = compare.eq(mp,endat)
+  branch complete capacity(mi,mo,ml) inspect(mi,mo,mp,ml)
+block inspect(ii:readbuf,io:mutbuf,ip:usize,il:u64)
+  raw:u64 = call(ii,ip) {"function":"iln_read"}
+  bound:u64 = const() {"value":32767}
+  min_negative:u64 = const() {"value":4294934529}
+  positive_ok:bool = compare.le(raw,bound)
+  negative_ok:bool = compare.ge(raw,min_negative)
+  ok_delta:bool = bool.or(positive_ok,negative_ok)
+  branch ok_delta accumulate(ii,io,ip,il,raw,negative_ok) value_error()
+block accumulate(ai:readbuf,ao:mutbuf,ap:usize,al:u64,av:u64,an:bool)
+  absval:u64 = call(av,an) {"function":"iln_abs"}
+  divisor:u64 = call(absval) {"function":"iln_divisor"}
+  digits:u64 = call(divisor) {"function":"iln_digits"}
+  one_sign:u64 = const() {"value":1}
+  no_sign:u64 = const() {"value":0}
+  sign:u64 = select(an,one_sign,no_sign)
+  chars:u64 = int.add.wrap(digits,sign)
+  total:u64 = int.add.wrap(al,chars)
+  stride:usize = const() {"value":4}
+  next:usize = int.add.wrap(ap,stride)
+  jump measure(ai,ao,next,total)
+block capacity(ci:readbuf,co:mutbuf,cl:u64)
+  available:usize = buffer.len(co)
+  count:usize = int.cast(cl) {"mode":"wrap"}
+  enough:bool = compare.ge(available,count)
+  branch enough report(ci,co,cl) capacity_error()
+block report(ri:readbuf,ro:mutbuf,rl:u64)
+  _prefix_end:usize = call(ro) {"function":"iln_prefix"}
+  at0:usize = call(ri,ro) {"function":"iln_hex"}
+  at1:usize = call(ro,at0) {"function":"iln_middle"}
+  in0:usize = const() {"value":40}
+  at2:usize = call(ri,ro,in0,at1) {"function":"iln_row"}
+  at3:usize = call(ro,at2) {"function":"iln_comma"}
+  in1:usize = const() {"value":1068}
+  at4:usize = call(ri,ro,in1,at3) {"function":"iln_row"}
+  at5:usize = call(ro,at4) {"function":"iln_comma"}
+  in2:usize = const() {"value":2096}
+  at6:usize = call(ri,ro,in2,at5) {"function":"iln_row"}
+  _suffix_end:usize = call(ro,at6) {"function":"iln_suffix"}
+  size:u32 = int.cast(rl) {"mode":"wrap"}
+  ret(size)
+block frame_error()
+  frame:u32 = const() {"value":100}
+  ret(frame)
+block value_error()
+  invalid:u32 = const() {"value":101}
+  ret(invalid)
+block capacity_error()
+  small:u32 = const() {"value":102}
+  ret(small)
+end
+
+fn iln_read(input:readbuf, offset:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf, offset:usize)
+  raw_0:u8 = buffer.load(input,offset)
+  byte_0:u64 = int.cast(raw_0) {"mode":"wrap"}
+  stride_1:usize = const() {"value":1}
+  offset_1:usize = int.add.wrap(offset,stride_1)
+  raw_1:u8 = buffer.load(input,offset_1)
+  byte_1:u64 = int.cast(raw_1) {"mode":"wrap"}
+  shift_1:u64 = const() {"value":8}
+  part_1:u64 = int.shl.checked(byte_1,shift_1)
+  stride_2:usize = const() {"value":2}
+  offset_2:usize = int.add.wrap(offset,stride_2)
+  raw_2:u8 = buffer.load(input,offset_2)
+  byte_2:u64 = int.cast(raw_2) {"mode":"wrap"}
+  shift_2:u64 = const() {"value":16}
+  part_2:u64 = int.shl.checked(byte_2,shift_2)
+  stride_3:usize = const() {"value":3}
+  offset_3:usize = int.add.wrap(offset,stride_3)
+  raw_3:u8 = buffer.load(input,offset_3)
+  byte_3:u64 = int.cast(raw_3) {"mode":"wrap"}
+  shift_3:u64 = const() {"value":24}
+  part_3:u64 = int.shl.checked(byte_3,shift_3)
+  low:u64 = bit.or(byte_0,part_1)
+  hi:u64 = bit.or(part_2,part_3)
+  word:u64 = bit.or(low,hi)
+  ret(word)
+end
+
+fn iln_abs(value:u64, negative:bool) -> (u64) effects() entry(entry)
+block entry(value:u64, negative:bool)
+  mod32:u64 = const() {"value":4294967296}
+  magnitude:u64 = int.sub.wrap(mod32,value)
+  chosen:u64 = select(negative,magnitude,value)
+  ret(chosen)
+end
+
+fn iln_divisor(value:u64) -> (u64) effects() entry(entry)
+block entry(value:u64)
+  one:u64 = const() {"value":1}
+  ten:u64 = const() {"value":10}
+  hundred:u64 = const() {"value":100}
+  thousand:u64 = const() {"value":1000}
+  large:u64 = const() {"value":10000}
+  at_least_ten:bool = compare.ge(value,ten)
+  at_least_hundred:bool = compare.ge(value,hundred)
+  at_least_thousand:bool = compare.ge(value,thousand)
+  at_least_large:bool = compare.ge(value,large)
+  d2:u64 = select(at_least_ten,ten,one)
+  d3:u64 = select(at_least_hundred,hundred,d2)
+  d4:u64 = select(at_least_thousand,thousand,d3)
+  d5:u64 = select(at_least_large,large,d4)
+  ret(d5)
+end
+
+fn iln_digits(divisor:u64) -> (u64) effects(trap) entry(entry)
+block entry(divisor:u64)
+  one:u64 = const() {"value":1}
+  ten:u64 = const() {"value":10}
+  jump loop(divisor,one,one,ten)
+block loop(ld:u64,ln:u64,lone:u64,lten:u64)
+  more:bool = compare.gt(ld,lone)
+  branch more reduce(ld,ln,lone,lten) done(ln)
+block reduce(rd:u64,rn:u64,rone:u64,rten:u64)
+  part:u64 = int.div.checked(rd,rten)
+  inc:u64 = int.add.wrap(rn,rone)
+  jump loop(part,inc,rone,rten)
+block done(count:u64)
+  ret(count)
+end
+
+fn iln_char(output:mutbuf, offset:usize, byte:u8) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf, offset:usize, byte:u8)
+  _ = buffer.store(output,offset,byte)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(offset,one)
+  ret(next)
+end
+
+fn iln_hex(input:readbuf, output:mutbuf) -> (usize) effects(read,write,trap) entry(entry)
+block entry(input:readbuf, output:mutbuf)
+  at:usize = const() {"value":8}
+  out_at:usize = const() {"value":13}
+  jump loop(input,output,at,out_at)
+block loop(li:readbuf,lo:mutbuf,lp:usize,lw:usize)
+  endat:usize = const() {"value":40}
+  more:bool = compare.lt(lp,endat)
+  branch more next_byte(li,lo,lp,lw) done(lw)
+block next_byte(bi:readbuf,bo:mutbuf,bp:usize,bw:usize)
+  raw:u8 = buffer.load(bi,bp)
+  byte:u64 = int.cast(raw) {"mode":"wrap"}
+  four:u64 = const() {"value":4}
+  mask:u64 = const() {"value":15}
+  high:u64 = int.shr.checked(byte,four)
+  low:u64 = bit.and(byte,mask)
+  a:u8 = call(high) {"function":"iln_nibble"}
+  b:u8 = call(low) {"function":"iln_nibble"}
+  t:usize = call(bo,bw,a) {"function":"iln_char"}
+  next_w:usize = call(bo,t,b) {"function":"iln_char"}
+  one:usize = const() {"value":1}
+  next_p:usize = int.add.wrap(bp,one)
+  jump loop(bi,bo,next_p,next_w)
+block done(endpos:usize)
+  ret(endpos)
+end
+
+fn iln_nibble(value:u64) -> (u8) effects() entry(entry)
+block entry(value:u64)
+  nine:u64 = const() {"value":9}
+  digit:bool = compare.le(value,nine)
+  digit_base:u64 = const() {"value":48}
+  letter_base:u64 = const() {"value":87}
+  base:u64 = select(digit,digit_base,letter_base)
+  ascii:u64 = int.add.wrap(base,value)
+  byte:u8 = int.cast(ascii) {"mode":"wrap"}
+  ret(byte)
+end
+
+fn iln_row(input:readbuf, output:mutbuf, offset:usize, into:usize) -> (usize) effects(read,write,trap) entry(entry)
+block entry(input:readbuf, output:mutbuf, offset:usize, into:usize)
+  start:u8 = const() {"value":91}
+  outpos:usize = call(output,into,start) {"function":"iln_char"}
+  first:u64 = const() {"value":0}
+  jump loop(input,output,offset,outpos,first)
+block loop(li:readbuf,lo:mutbuf,lp:usize,lw:usize,ln:u64)
+  raw:u64 = call(li,lp) {"function":"iln_read"}
+  w1:usize = call(lo,lw,raw) {"function":"iln_number"}
+  last:u64 = const() {"value":256}
+  endrow:bool = compare.eq(ln,last)
+  branch endrow finish(lo,w1) separate(li,lo,lp,w1,ln)
+block separate(si:readbuf,so:mutbuf,sp:usize,sw:usize,sn:u64)
+  w2:usize = call(so,sw) {"function":"iln_comma"}
+  step:usize = const() {"value":4}
+  p2:usize = int.add.wrap(sp,step)
+  one:u64 = const() {"value":1}
+  n2:u64 = int.add.wrap(sn,one)
+  jump loop(si,so,p2,w2,n2)
+block finish(fo:mutbuf,fw:usize)
+  end:u8 = const() {"value":93}
+  finalpos:usize = call(fo,fw,end) {"function":"iln_char"}
+  ret(finalpos)
+end
+
+fn iln_number(output:mutbuf, into:usize, raw:u64) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf, into:usize, raw:u64)
+  lo_negative:u64 = const() {"value":4294934529}
+  negative:bool = compare.ge(raw,lo_negative)
+  magnitude:u64 = call(raw,negative) {"function":"iln_abs"}
+  divisor:u64 = call(magnitude) {"function":"iln_divisor"}
+  branch negative sign(output,into,magnitude,divisor) loop(output,into,magnitude,divisor)
+block sign(so:mutbuf,sw:usize,sm:u64,sd:u64)
+  minus:u8 = const() {"value":45}
+  next:usize = call(so,sw,minus) {"function":"iln_char"}
+  jump loop(so,next,sm,sd)
+block loop(lo:mutbuf,lw:usize,lm:u64,ld:u64)
+  digit:u64 = int.div.checked(lm,ld)
+  base:u64 = const() {"value":48}
+  ascii:u64 = int.add.wrap(digit,base)
+  byte:u8 = int.cast(ascii) {"mode":"wrap"}
+  next_w:usize = call(lo,lw,byte) {"function":"iln_char"}
+  one:u64 = const() {"value":1}
+  done_digit:bool = compare.eq(ld,one)
+  branch done_digit done(next_w) reduce(lo,next_w,lm,ld)
+block reduce(ro:mutbuf,rw:usize,rm:u64,rd:u64)
+  remains:u64 = int.rem.checked(rm,rd)
+  ten:u64 = const() {"value":10}
+  divisor2:u64 = int.div.checked(rd,ten)
+  jump loop(ro,rw,remains,divisor2)
+block done(n:usize)
+  ret(n)
+end
+
+fn iln_prefix(output:mutbuf) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf)
+  into:usize = const() {"value":0}
+  b0:u8 = const() {"value":123}
+  p0:usize = call(output,into,b0) {"function":"iln_char"}
+  b1:u8 = const() {"value":34}
+  p1:usize = call(output,p0,b1) {"function":"iln_char"}
+  b2:u8 = const() {"value":99}
+  p2:usize = call(output,p1,b2) {"function":"iln_char"}
+  b3:u8 = const() {"value":111}
+  p3:usize = call(output,p2,b3) {"function":"iln_char"}
+  b4:u8 = const() {"value":110}
+  p4:usize = call(output,p3,b4) {"function":"iln_char"}
+  b5:u8 = const() {"value":116}
+  p5:usize = call(output,p4,b5) {"function":"iln_char"}
+  b6:u8 = const() {"value":114}
+  p6:usize = call(output,p5,b6) {"function":"iln_char"}
+  b7:u8 = const() {"value":97}
+  p7:usize = call(output,p6,b7) {"function":"iln_char"}
+  b8:u8 = const() {"value":99}
+  p8:usize = call(output,p7,b8) {"function":"iln_char"}
+  b9:u8 = const() {"value":116}
+  p9:usize = call(output,p8,b9) {"function":"iln_char"}
+  b10:u8 = const() {"value":34}
+  p10:usize = call(output,p9,b10) {"function":"iln_char"}
+  b11:u8 = const() {"value":58}
+  p11:usize = call(output,p10,b11) {"function":"iln_char"}
+  b12:u8 = const() {"value":34}
+  p12:usize = call(output,p11,b12) {"function":"iln_char"}
+  ret(p12)
+end
+
+fn iln_middle(output:mutbuf, into:usize) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf, into:usize)
+  b0:u8 = const() {"value":34}
+  p0:usize = call(output,into,b0) {"function":"iln_char"}
+  b1:u8 = const() {"value":44}
+  p1:usize = call(output,p0,b1) {"function":"iln_char"}
+  b2:u8 = const() {"value":34}
+  p2:usize = call(output,p1,b2) {"function":"iln_char"}
+  b3:u8 = const() {"value":100}
+  p3:usize = call(output,p2,b3) {"function":"iln_char"}
+  b4:u8 = const() {"value":101}
+  p4:usize = call(output,p3,b4) {"function":"iln_char"}
+  b5:u8 = const() {"value":108}
+  p5:usize = call(output,p4,b5) {"function":"iln_char"}
+  b6:u8 = const() {"value":116}
+  p6:usize = call(output,p5,b6) {"function":"iln_char"}
+  b7:u8 = const() {"value":97}
+  p7:usize = call(output,p6,b7) {"function":"iln_char"}
+  b8:u8 = const() {"value":34}
+  p8:usize = call(output,p7,b8) {"function":"iln_char"}
+  b9:u8 = const() {"value":58}
+  p9:usize = call(output,p8,b9) {"function":"iln_char"}
+  b10:u8 = const() {"value":91}
+  p10:usize = call(output,p9,b10) {"function":"iln_char"}
+  ret(p10)
+end
+
+fn iln_suffix(output:mutbuf, into:usize) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf, into:usize)
+  b0:u8 = const() {"value":93}
+  p0:usize = call(output,into,b0) {"function":"iln_char"}
+  b1:u8 = const() {"value":44}
+  p1:usize = call(output,p0,b1) {"function":"iln_char"}
+  b2:u8 = const() {"value":34}
+  p2:usize = call(output,p1,b2) {"function":"iln_char"}
+  b3:u8 = const() {"value":115}
+  p3:usize = call(output,p2,b3) {"function":"iln_char"}
+  b4:u8 = const() {"value":99}
+  p4:usize = call(output,p3,b4) {"function":"iln_char"}
+  b5:u8 = const() {"value":104}
+  p5:usize = call(output,p4,b5) {"function":"iln_char"}
+  b6:u8 = const() {"value":101}
+  p6:usize = call(output,p5,b6) {"function":"iln_char"}
+  b7:u8 = const() {"value":109}
+  p7:usize = call(output,p6,b7) {"function":"iln_char"}
+  b8:u8 = const() {"value":97}
+  p8:usize = call(output,p7,b8) {"function":"iln_char"}
+  b9:u8 = const() {"value":34}
+  p9:usize = call(output,p8,b9) {"function":"iln_char"}
+  b10:u8 = const() {"value":58}
+  p10:usize = call(output,p9,b10) {"function":"iln_char"}
+  b11:u8 = const() {"value":34}
+  p11:usize = call(output,p10,b11) {"function":"iln_char"}
+  b12:u8 = const() {"value":112}
+  p12:usize = call(output,p11,b12) {"function":"iln_char"}
+  b13:u8 = const() {"value":111}
+  p13:usize = call(output,p12,b13) {"function":"iln_char"}
+  b14:u8 = const() {"value":110}
+  p14:usize = call(output,p13,b14) {"function":"iln_char"}
+  b15:u8 = const() {"value":45}
+  p15:usize = call(output,p14,b15) {"function":"iln_char"}
+  b16:u8 = const() {"value":110}
+  p16:usize = call(output,p15,b16) {"function":"iln_char"}
+  b17:u8 = const() {"value":111}
+  p17:usize = call(output,p16,b17) {"function":"iln_char"}
+  b18:u8 = const() {"value":114}
+  p18:usize = call(output,p17,b18) {"function":"iln_char"}
+  b19:u8 = const() {"value":109}
+  p19:usize = call(output,p18,b19) {"function":"iln_char"}
+  b20:u8 = const() {"value":97}
+  p20:usize = call(output,p19,b20) {"function":"iln_char"}
+  b21:u8 = const() {"value":108}
+  p21:usize = call(output,p20,b21) {"function":"iln_char"}
+  b22:u8 = const() {"value":105}
+  p22:usize = call(output,p21,b22) {"function":"iln_char"}
+  b23:u8 = const() {"value":122}
+  p23:usize = call(output,p22,b23) {"function":"iln_char"}
+  b24:u8 = const() {"value":101}
+  p24:usize = call(output,p23,b24) {"function":"iln_char"}
+  b25:u8 = const() {"value":100}
+  p25:usize = call(output,p24,b25) {"function":"iln_char"}
+  b26:u8 = const() {"value":45}
+  p26:usize = call(output,p25,b26) {"function":"iln_char"}
+  b27:u8 = const() {"value":108}
+  p27:usize = call(output,p26,b27) {"function":"iln_char"}
+  b28:u8 = const() {"value":105}
+  p28:usize = call(output,p27,b28) {"function":"iln_char"}
+  b29:u8 = const() {"value":110}
+  p29:usize = call(output,p28,b29) {"function":"iln_char"}
+  b30:u8 = const() {"value":101}
+  p30:usize = call(output,p29,b30) {"function":"iln_char"}
+  b31:u8 = const() {"value":97}
+  p31:usize = call(output,p30,b31) {"function":"iln_char"}
+  b32:u8 = const() {"value":114}
+  p32:usize = call(output,p31,b32) {"function":"iln_char"}
+  b33:u8 = const() {"value":45}
+  p33:usize = call(output,p32,b33) {"function":"iln_char"}
+  b34:u8 = const() {"value":117}
+  p34:usize = call(output,p33,b34) {"function":"iln_char"}
+  b35:u8 = const() {"value":112}
+  p35:usize = call(output,p34,b35) {"function":"iln_char"}
+  b36:u8 = const() {"value":100}
+  p36:usize = call(output,p35,b36) {"function":"iln_char"}
+  b37:u8 = const() {"value":97}
+  p37:usize = call(output,p36,b37) {"function":"iln_char"}
+  b38:u8 = const() {"value":116}
+  p38:usize = call(output,p37,b38) {"function":"iln_char"}
+  b39:u8 = const() {"value":101}
+  p39:usize = call(output,p38,b39) {"function":"iln_char"}
+  b40:u8 = const() {"value":45}
+  p40:usize = call(output,p39,b40) {"function":"iln_char"}
+  b41:u8 = const() {"value":118}
+  p41:usize = call(output,p40,b41) {"function":"iln_char"}
+  b42:u8 = const() {"value":49}
+  p42:usize = call(output,p41,b42) {"function":"iln_char"}
+  b43:u8 = const() {"value":34}
+  p43:usize = call(output,p42,b43) {"function":"iln_char"}
+  b44:u8 = const() {"value":125}
+  p44:usize = call(output,p43,b44) {"function":"iln_char"}
+  ret(p44)
+end
+
+fn iln_comma(output:mutbuf, into:usize) -> (usize) effects(write,trap) entry(entry)
+block entry(output:mutbuf, into:usize)
+  b0:u8 = const() {"value":44}
+  p0:usize = call(output,into,b0) {"function":"iln_char"}
+  ret(p0)
+end

@@ -83,3 +83,6 @@ transitions over a bounded immutable snapshot, see [Challenge book values](CHALL
 
 For the exact integer-linear context's canonical JSON and identity, see
 [Integer-linear context](INTEGER_LINEAR_CONTEXT.md).
+
+For canonical presentation of an already-computed update, see
+[Integer-linear normal report](INTEGER_LINEAR_NORMAL.md).

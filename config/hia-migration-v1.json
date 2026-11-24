@@ -276,6 +276,17 @@
       ]
     },
     {
+      "id": "verification/integer-linear-normal",
+      "node_integration_complete": false,
+      "scope": "Pure reporting serialization of caller-supplied signed 3 by 257 coordinates and opaque contract ID. Exact original normal JSON compared with the unchanged named Rust example. No factor verification, identity derivation, fingerprint change, live caller change or authority.",
+      "source": "hia/src/verification/integer_linear_normal.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_linear_normal.py",
+        "hia/tests/rust_integer_linear_normal_reference.rs"
+      ]
+    },
+    {
       "id": "state/integer-model-codec",
       "node_integration_complete": false,
       "scope": "Pure ILM2 and ILM3 exact IntegerModelV2 typed encoding, canonical decode, original rejection order and versioned content ID. No factor/BA verification, model execution, authenticated parent, storage, adoption, economic or production authority.",
@@ -2045,7 +2056,8 @@
         "verification/statement-preflight",
         "verification/challenge-record",
         "verification/challenge-book",
-        "verification/integer-linear-context"
+        "verification/integer-linear-context",
+        "verification/integer-linear-normal"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",
