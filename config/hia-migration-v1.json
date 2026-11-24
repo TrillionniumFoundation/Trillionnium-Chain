@@ -1078,6 +1078,17 @@
       ]
     },
     {
+      "id": "release-bundle/pq-quorum",
+      "node_integration_complete": false,
+      "scope": "Bounded shadow V1 Pure ML-DSA-65 quorum mathematics for one independently authorized immutable role snapshot, with actual unique membership, pinned SPKI, exact preflight order and every supplied signature verified. No current-owner or V0 callback authority, custody or state transition.",
+      "source": "hia/src/release_bundle/pq_quorum.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/qualify_release_pq_quorum.py",
+        "hia/tests/rust_release_pq_quorum_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/pq-role-identity",
       "node_integration_complete": false,
       "scope": "Exact stable V1 release bundle signer identity from the independently supplied root network and typed role. Mathematical signer observation qualification remains separate from role membership and release authority.",
@@ -1450,6 +1461,7 @@
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
+        "release-bundle/pq-quorum",
         "release-bundle/pq-role-identity",
         "release-bundle/pq-signing-message",
         "release-bundle/pq-signature-set",

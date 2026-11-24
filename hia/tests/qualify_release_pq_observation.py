@@ -48,7 +48,7 @@ def execute(command, **kwargs):
     return result
 
 
-def build_original(out):
+def build_original(out, adapter=ADAPTER):
     pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
     rustc, cargo = [Path(shutil.which(name) or "/nonexistent").absolute()
                     for name in ("rustc", "cargo")]
@@ -73,14 +73,14 @@ def build_original(out):
             libraries[name] = files[0]
     require(set(libraries) == crates, "missing original locked rlib")
     binary = out / "rust-original"
-    command = [rustc, "--edition=2024", "-Dwarnings", ADAPTER, "-L",
+    command = [rustc, "--edition=2024", "-Dwarnings", adapter, "-L",
                f"dependency={target / 'debug/deps'}", "-o", binary]
     for name, path in sorted(libraries.items()):
         command += ["--extern", f"{name}={path}"]
     execute(command)
     return binary, {"rust_pin": pin, "workspace_lock_sha256": sha(
         (ROOT / "trillionnium/Cargo.lock").read_bytes()), "public_adapter_sha256": sha(
-        ADAPTER.read_bytes()), "original_binary_sha256": sha(binary.read_bytes()),
+        adapter.read_bytes()), "original_binary_sha256": sha(binary.read_bytes()),
         "libraries": {name: sha(p.read_bytes()) for name, p in sorted(libraries.items())}}
 
 

@@ -1,0 +1,395 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_quorum_candidate_v1
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  length:usize = buffer.len(input)
+  header:usize = const() {"value":232}
+  enough:bool = compare.ge(length,header)
+  branch enough counts(input,work,length) malformed()
+block counts(ci:readbuf,cw:mutbuf,cl:usize)
+  key_count_at:usize = const() {"value":0}
+  sig_count_at:usize = const() {"value":2}
+  threshold_at:usize = const() {"value":4}
+  keys:u64 = call(ci,key_count_at) {"function":"rb_le16"}
+  sigs:u64 = call(ci,sig_count_at) {"function":"rb_le16"}
+  min:u64 = call(ci,threshold_at) {"function":"rb_le16"}
+  max_keys:u64 = const() {"value":16}
+  row_limit:u64 = const() {"value":32}
+  zero:u64 = const() {"value":0}
+  key_bound:bool = compare.le(keys,max_keys)
+  sig_bound:bool = compare.le(sigs,row_limit)
+  threshold_bound:bool = compare.le(min,keys)
+  threshold_positive:bool = compare.gt(min,zero)
+  threshold_valid:bool = bool.and(threshold_positive,threshold_bound)
+  counts_valid:bool = bool.and(key_bound,sig_bound)
+  typed:bool = bool.and(threshold_valid,counts_valid)
+  branch typed width(ci,cw,cl,keys,sigs,min) malformed()
+block width(wi:readbuf,ww:mutbuf,wl:usize,wk:u64,ws:u64,wm:u64)
+  keys_bucket:u64 = call(wk) {"function":"rq_key_row"}
+  sig_width:u64 = const() {"value":4130}
+  sig_extent:u64 = int.mul.wrap(ws,sig_width)
+  raw_extent:u64 = int.add.wrap(keys_bucket,sig_extent)
+  actual:u64 = int.cast(wl) {"mode":"wrap"}
+  exact:bool = compare.eq(actual,raw_extent)
+  branch exact trust(wi,ww,wk,ws,wm,keys_bucket) malformed()
+block trust(ti:readbuf,tw:mutbuf,tk:u64,ts:u64,tm:u64,sig_base:u64)
+  scope:u32 = call(ti) {"function":"rq_scope"}
+  zero_scope:u32 = const() {"value":0}
+  scope_ok:bool = compare.eq(scope,zero_scope)
+  branch scope_ok ordered(ti,tw,tk,ts,tm,sig_base) refused(scope)
+block ordered(oi:readbuf,ow:mutbuf,okeys:u64,os:u64,om:u64,ob:u64)
+  sorted:bool = call(oi,okeys) {"function":"rq_sorted_keys"}
+  branch sorted quorum_count(oi,ow,okeys,os,om,ob) malformed()
+block quorum_count(qi:readbuf,qw:mutbuf,qk:u64,qs:u64,qm:u64,qb:u64)
+  max:u64 = const() {"value":16}
+  lower:bool = compare.ge(qs,qm)
+  upper:bool = compare.le(qs,max)
+  allowed:bool = bool.and(lower,upper)
+  branch allowed capacity(qi,qw,qk,qs,qb) count_error()
+block capacity(api:readbuf,aw:mutbuf,ak:u64,as:u64,ab:u64)
+  work_size:usize = buffer.len(aw)
+  required:usize = const() {"value":32896}
+  fits:bool = compare.ge(work_size,required)
+  branch fits begin(api,aw,ak,as,ab) short()
+block begin(bi:readbuf,bw:mutbuf,bk:u64,bs:u64,bb:u64)
+  preflight:u32 = call(bi,bw,bk,bs,bb) {"function":"rq_preflight"}
+  zero_status:u32 = const() {"value":0}
+  admitted:bool = compare.eq(preflight,zero_status)
+  branch admitted math(bi,bw,bs,bb) clear(bw,preflight)
+block math(mi:readbuf,mw:mutbuf,ms:u64,mb:u64)
+  proof:u32 = call(mi,mw,ms,mb) {"function":"rq_verify"}
+  jump clear(mw,proof)
+block clear(clearing:mutbuf,status:u32)
+  start:usize = const() {"value":0}
+  extent:usize = const() {"value":32896}
+  zero_byte:u8 = const() {"value":0}
+  _ = buffer.fill_range(clearing,start,extent,zero_byte)
+  ret(status)
+block refused(refusal:u32)
+  ret(refusal)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block count_error()
+  count_error_code:u32 = const() {"value":105}
+  ret(count_error_code)
+end
+
+fn rq_scope(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf)
+  role_at:usize = const() {"value":6}
+  reserved_at:usize = const() {"value":7}
+  message_role_at:usize = const() {"value":77}
+  role:u8 = buffer.load(input,role_at)
+  reserved:u8 = buffer.load(input,reserved_at)
+  message_role:u8 = buffer.load(input,message_role_at)
+  zero:u8 = const() {"value":0}
+  one:u8 = const() {"value":1}
+  four:u8 = const() {"value":4}
+  first:bool = compare.ge(role,one)
+  last:bool = compare.le(role,four)
+  role_known:bool = bool.and(first,last)
+  reserved_ok:bool = compare.eq(reserved,zero)
+  private_typed:bool = bool.and(role_known,reserved_ok)
+  branch private_typed domain(input,role,message_role) bad()
+block domain(di:readbuf,dr:u8,dm:u8)
+  offset0:u64 = const() {"value":48}
+  offset1:u64 = const() {"value":56}
+  offset2:u64 = const() {"value":64}
+  offset3:u64 = const() {"value":72}
+  d0:u64 = const() {"value":7810739491857912404}
+  d1:u64 = const() {"value":3409594557391921509}
+  d2:u64 = const() {"value":3903848277881998413}
+  d3:u64 = const() {"value":829828917}
+  d3_width:u64 = const() {"value":5}
+  got0:u64 = call(di,offset0) {"function":"md_read64"}
+  got1:u64 = call(di,offset1) {"function":"md_read64"}
+  got2:u64 = call(di,offset2) {"function":"md_read64"}
+  got3:u64 = call(di,offset3,d3_width) {"function":"rac_read_le"}
+  a:bool = compare.eq(got0,d0)
+  b:bool = compare.eq(got1,d1)
+  c:bool = compare.eq(got2,d2)
+  d:bool = compare.eq(got3,d3)
+  ab:bool = bool.and(a,b)
+  cd:bool = bool.and(c,d)
+  exact_domain:bool = bool.and(ab,cd)
+  branch exact_domain flags(di,dr,dm) bad()
+block flags(fi:readbuf,fr:u8,fm:u8)
+  previous_at:usize = const() {"value":166}
+  rollback_at:usize = const() {"value":231}
+  previous:u8 = buffer.load(fi,previous_at)
+  rollback:u8 = buffer.load(fi,rollback_at)
+  one_flag:u8 = const() {"value":1}
+  p:bool = compare.le(previous,one_flag)
+  r:bool = compare.le(rollback,one_flag)
+  okay:bool = bool.and(p,r)
+  branch okay optional(fi,fr,fm,previous) bad()
+block optional(op:readbuf,orr:u8,omr:u8,present:u8)
+  optional_payload:u64 = const() {"value":167}
+  empty:u8 = const() {"value":0}
+  absent:bool = compare.eq(present,empty)
+  nonzero:bool = call(op,optional_payload) {"function":"rac_nonzero_digest"}
+  bad_option:bool = bool.and(absent,nonzero)
+  branch bad_option bad() binding(op,orr,omr)
+block binding(bi:readbuf,br:u8,bm:u8)
+  root_network:u64 = const() {"value":8}
+  message_network:u64 = const() {"value":78}
+  extent:u64 = const() {"value":32}
+  equal:u64 = const() {"value":1}
+  role_same:bool = compare.eq(br,bm)
+  network_order:u64 = call(bi,root_network,message_network,extent,extent) {"function":"sb_compare"}
+  network_same:bool = compare.eq(network_order,equal)
+  scope_same:bool = bool.and(role_same,network_same)
+  has_network:bool = call(bi,root_network) {"function":"rac_nonzero_digest"}
+  root_generation_at:u64 = const() {"value":40}
+  message_generation_at:u64 = const() {"value":110}
+  root_generation:u64 = call(bi,root_generation_at) {"function":"md_read64"}
+  message_generation:u64 = call(bi,message_generation_at) {"function":"pf_be64"}
+  generation_same:bool = compare.eq(root_generation,message_generation)
+  generation_zero:u64 = const() {"value":0}
+  has_generation:bool = compare.gt(root_generation,generation_zero)
+  bound:bool = bool.and(scope_same,generation_same)
+  root_typed:bool = bool.and(has_network,has_generation)
+  good:bool = bool.and(bound,root_typed)
+  return_bound:u32 = const() {"value":0}
+  wrong_scope:u32 = const() {"value":110}
+  decision:u32 = select(good,return_bound,wrong_scope)
+  ret(decision)
+block bad()
+  malformed:u32 = const() {"value":100}
+  ret(malformed)
+end
+
+fn rq_key_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  base:u64 = const() {"value":232}
+  width:u64 = const() {"value":2006}
+  within:u64 = int.mul.wrap(index,width)
+  result:u64 = int.add.wrap(base,within)
+  ret(result)
+end
+
+fn rq_sorted_keys(input:readbuf,count:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  first:u64 = const() {"value":1}
+  jump check(input,count,first)
+block check(ci:readbuf,cc:u64,next:u64)
+  done:bool = compare.eq(cc,next)
+  branch done sorted() pair(ci,cc,next)
+block pair(pi:readbuf,pc:u64,pnext:u64)
+  one:u64 = const() {"value":1}
+  prior:u64 = int.sub.wrap(pnext,one)
+  lhs:u64 = call(prior) {"function":"rq_key_row"}
+  rhs:u64 = call(pnext) {"function":"rq_key_row"}
+  bytes:u64 = const() {"value":32}
+  cmp:u64 = call(pi,lhs,rhs,bytes,bytes) {"function":"sb_compare"}
+  less:u64 = const() {"value":0}
+  ordered:bool = compare.eq(cmp,less)
+  advance:u64 = int.add.wrap(pnext,one)
+  branch ordered check(pi,pc,advance) unsorted()
+block sorted()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block unsorted()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rq_signature_row(base:u64,index:u64) -> (u64) effects() entry(entry)
+block entry(base:u64,index:u64)
+  width:u64 = const() {"value":4130}
+  within:u64 = int.mul.wrap(width,index)
+  row:u64 = int.add.wrap(base,within)
+  ret(row)
+end
+
+fn rq_find_key(input:readbuf,count:u64,id:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,id:u64)
+  zero:u64 = const() {"value":0}
+  jump search(input,count,id,zero)
+block search(si:readbuf,sc:u64,sid:u64,sidx:u64)
+  over:bool = compare.eq(sc,sidx)
+  branch over missing(sc) compare_key(si,sc,sid,sidx)
+block compare_key(ci:readbuf,cc:u64,cid:u64,cidx:u64)
+  row:u64 = call(cidx) {"function":"rq_key_row"}
+  width:u64 = const() {"value":32}
+  equal:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(cidx,equal)
+  cmp:u64 = call(ci,cid,row,width,width) {"function":"sb_compare"}
+  matched:bool = compare.eq(cmp,equal)
+  branch matched found(cidx) search(ci,cc,cid,next)
+block found(at:u64)
+  ret(at)
+block missing(end:u64)
+  ret(end)
+end
+
+fn rq_pin_matches(input:readbuf,key:u64,work:mutbuf) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,key:u64,work:mutbuf)
+  zero:u64 = const() {"value":0}
+  jump next(input,key,work,zero)
+block next(ni:readbuf,nk:u64,nw:mutbuf,index:u64)
+  digest_start:u64 = const() {"value":1168}
+  key_pos:u64 = int.add.wrap(nk,index)
+  hash_pos:u64 = int.add.wrap(digest_start,index)
+  k_at:usize = int.cast(key_pos) {"mode":"wrap"}
+  h_at:usize = int.cast(hash_pos) {"mode":"wrap"}
+  k:u8 = buffer.load(ni,k_at)
+  h:u8 = buffer.load(nw,h_at)
+  same:bool = compare.eq(k,h)
+  branch same ahead(ni,nk,nw,index) differs()
+block ahead(ai:readbuf,ak:u64,aw:mutbuf,at:u64)
+  one:u64 = const() {"value":1}
+  end:u64 = const() {"value":32}
+  after:u64 = int.add.wrap(at,one)
+  done:bool = compare.eq(after,end)
+  branch done matched() next(ai,ak,aw,after)
+block matched()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block differs()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rq_selected_at(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  base:u64 = const() {"value":32768}
+  width:u64 = const() {"value":8}
+  field_offset:u64 = int.mul.wrap(index,width)
+  offset:u64 = int.add.wrap(base,field_offset)
+  ret(offset)
+end
+
+fn rq_seen(input:readbuf,base:u64,count:u64,id:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,base:u64,count:u64,id:u64)
+  first:u64 = const() {"value":0}
+  jump check(input,base,count,id,first)
+block check(ci:readbuf,cb:u64,cc:u64,cid:u64,idx:u64)
+  end:bool = compare.eq(cc,idx)
+  branch end unique() compare_id(ci,cb,cc,cid,idx)
+block compare_id(si:readbuf,sb:u64,sc:u64,sid:u64,at:u64)
+  row:u64 = call(sb,at) {"function":"rq_signature_row"}
+  width:u64 = const() {"value":32}
+  equal:u64 = const() {"value":1}
+  later:u64 = int.add.wrap(at,equal)
+  comparison:u64 = call(si,row,sid,width,width) {"function":"sb_compare"}
+  duplicated:bool = compare.eq(comparison,equal)
+  branch duplicated seen() check(si,sb,sc,sid,later)
+block seen()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block unique()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rq_preflight(input:readbuf,work:mutbuf,keys:u64,sigs:u64,base:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,keys:u64,sigs:u64,base:u64)
+  zero:u64 = const() {"value":0}
+  jump step(input,work,keys,sigs,base,zero)
+block step(si:readbuf,sw:mutbuf,sk:u64,ss:u64,sb:u64,idx:u64)
+  complete:bool = compare.eq(idx,ss)
+  branch complete okay() duplicate(si,sw,sk,ss,sb,idx)
+block duplicate(di:readbuf,dw:mutbuf,dk:u64,ds:u64,db:u64,didx:u64)
+  row:u64 = call(db,didx) {"function":"rq_signature_row"}
+  seen:bool = call(di,db,didx,row) {"function":"rq_seen"}
+  branch seen repeated() find(di,dw,dk,ds,db,didx,row)
+block find(fi:readbuf,fw:mutbuf,fk:u64,fs:u64,fb:u64,fidx:u64,frow:u64)
+  key_idx:u64 = call(fi,fk,frow) {"function":"rq_find_key"}
+  unknown:bool = compare.eq(key_idx,fk)
+  branch unknown unknown_key() key_guard(fi,fw,fk,fs,fb,fidx,frow,key_idx)
+block key_guard(gi:readbuf,gw:mutbuf,gk:u64,gs:u64,gb:u64,gidx:u64,grow:u64,gkey:u64)
+  krow:u64 = call(gkey) {"function":"rq_key_row"}
+  idwidth:u64 = const() {"value":32}
+  spki_width:u64 = const() {"value":1974}
+  spki_at:u64 = int.add.wrap(krow,idwidth)
+  pin_code:u64 = call(gi,spki_at,spki_width,gw) {"function":"pf_key_id"}
+  expected:u64 = const() {"value":0}
+  failure:u64 = const() {"value":100}
+  fault:bool = compare.eq(pin_code,failure)
+  good:bool = compare.eq(pin_code,expected)
+  branch fault internal() pin_guard(gi,gw,gk,gs,gb,gidx,grow,krow,spki_at,good)
+block pin_guard(pi:readbuf,pw:mutbuf,pk:u64,ps:u64,pb:u64,pidx:u64,prow:u64,krow_pin:u64,pspki:u64,pgood:bool)
+  branch pgood pin_compare(pi,pw,pk,ps,pb,pidx,prow,krow_pin,pspki) invalid_key()
+block pin_compare(xi:readbuf,xw:mutbuf,xk:u64,xs:u64,xb:u64,xidx:u64,xrow:u64,xkey:u64,xspki:u64)
+  pinned:bool = call(xi,xkey,xw) {"function":"rq_pin_matches"}
+  branch pinned signature(xi,xw,xk,xs,xb,xidx,xrow,xspki) invalid_key()
+block signature(ri:readbuf,rw:mutbuf,rk:u64,rs:u64,rb:u64,ridx:u64,rrow:u64,rspki:u64)
+  offset:u64 = const() {"value":32}
+  len_at:u64 = int.add.wrap(rrow,offset)
+  len_abi:usize = int.cast(len_at) {"mode":"wrap"}
+  len:u64 = call(ri,len_abi) {"function":"rb_le16"}
+  exact:u64 = const() {"value":3309}
+  good_len:bool = compare.eq(len,exact)
+  branch good_len remember(ri,rw,rk,rs,rb,ridx,rspki) rejected()
+block remember(mi:readbuf,mw:mutbuf,mk:u64,ms:u64,mb:u64,midx:u64,mspki:u64)
+  select_at:u64 = call(midx) {"function":"rq_selected_at"}
+  _stored:u64 = call(mw,select_at,mspki) {"function":"tr_put"}
+  one_more:u64 = const() {"value":1}
+  advance:u64 = int.add.wrap(midx,one_more)
+  jump step(mi,mw,mk,ms,mb,advance)
+block okay()
+  okay_code:u32 = const() {"value":0}
+  ret(okay_code)
+block unknown_key()
+  unknown_code:u32 = const() {"value":108}
+  ret(unknown_code)
+block repeated()
+  duplicate_code:u32 = const() {"value":107}
+  ret(duplicate_code)
+block invalid_key()
+  invalid_code:u32 = const() {"value":109}
+  ret(invalid_code)
+block rejected()
+  bad_signature_code:u32 = const() {"value":106}
+  ret(bad_signature_code)
+block internal()
+  internal_code:u32 = const() {"value":103}
+  ret(internal_code)
+end
+
+fn rq_verify(input:readbuf,work:mutbuf,count:u64,base:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,count:u64,base:u64)
+  zero:u64 = const() {"value":0}
+  jump check(input,work,count,base,zero)
+block check(ci:readbuf,cw:mutbuf,cc:u64,cb:u64,idx:u64)
+  verified_all:bool = compare.eq(cc,idx)
+  branch verified_all okay() math(ci,cw,cc,cb,idx)
+block math(mi:readbuf,mw:mutbuf,mc:u64,mb:u64,midx:u64)
+  at:u64 = call(midx) {"function":"rq_selected_at"}
+  spki:u64 = call(mw,at) {"function":"tr_get"}
+  der_header:u64 = const() {"value":22}
+  key:u64 = int.add.wrap(spki,der_header)
+  row:u64 = call(mb,midx) {"function":"rq_signature_row"}
+  header_width:u64 = const() {"value":34}
+  sig:u64 = int.add.wrap(row,header_width)
+  start:usize = const() {"value":0}
+  extent:usize = const() {"value":32768}
+  zero_byte:u8 = const() {"value":0}
+  _ = buffer.fill_range(mw,start,extent,zero_byte)
+  algorithm:u64 = const() {"value":65}
+  context:u64 = const() {"value":0}
+  context_len:u64 = const() {"value":0}
+  message:u64 = const() {"value":48}
+  message_len:u64 = const() {"value":184}
+  pure:u64 = const() {"value":1}
+  result:u64 = call(mi,mw,algorithm,key,sig,message,message_len,context,context_len,pure) {"function":"md_verify"}
+  zero_math:u64 = const() {"value":0}
+  verified:bool = compare.eq(result,zero_math)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(midx,one)
+  branch verified check(mi,mw,mc,mb,next) failure(result)
+block failure(code:u64)
+  internal:u64 = const() {"value":9}
+  fault:bool = compare.eq(code,internal)
+  implementation_error:u32 = const() {"value":103}
+  signature_error:u32 = const() {"value":106}
+  result_error:u32 = select(fault,implementation_error,signature_error)
+  ret(result_error)
+block okay()
+  zero_code:u32 = const() {"value":0}
+  ret(zero_code)
+end
