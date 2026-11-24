@@ -1528,6 +1528,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-export-row-decode",
+      "node_integration_complete": false,
+      "scope": "Private WER1 decodes the supported actual original canonical compact audit export JSONL subset into existing WAT1/WJL1. Both emitters round-trip all original exports and hand WER1 with native WID1 to unchanged WTQ2 for full locked query stdout, with no host row/map parsing, generic Serde, custody or production routing.",
+      "source": "hia/src/worker_agent/audit_export_row_decode.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_export_row_decode.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-export",
       "node_integration_complete": false,
       "scope": "A single native raw-memory journal call composes fixed WJF1 framing, the two exact WJD1 DTO profiles, shared WAT2 selection/rendering, and all three audit artifacts, with atomic output and actual locked original byte comparisons. Generic Serde, authority, storage and production dispatch unchanged.",
