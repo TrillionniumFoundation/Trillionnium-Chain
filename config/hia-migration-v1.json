@@ -1361,6 +1361,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-index-group",
+      "node_integration_complete": false,
+      "scope": "One native invocation constructs all eight lexically ordered audit index maps from at most 64 ordered already-selected typed export rows and emits exact pretty JSON through shared WIX1. Both emitters match an independent actual locked CLI index; raw selection/conversion, provenance normalization, filesystem, query and production dispatch remain original.",
+      "source": "hia/src/worker_agent/audit_index_group.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_index_group.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-index-wire",
       "node_integration_complete": false,
       "scope": "Atomic complete original pretty audit index serialization from already-typed ordered maps, with lexical and ordinal structure checks and two original locked CLI file observations. Index construction, file IO, lookup, authority and production ownership remain original.",
