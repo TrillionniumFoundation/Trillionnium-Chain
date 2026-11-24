@@ -2309,6 +2309,18 @@
       ]
     },
     {
+      "id": "state/integer-model-sealed-descriptor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private standalone selfhost-only x86-64 held descriptor fixture reads the same immutable synthetic stock IMP1 data from sealed fd0 and emits only the exact admitted model bytes over the parent-owned anonymous stdout pipe. Compares ordinary original Rust ILM2/ILM3, retains the unchanged named handoff, and adds no path, authority, state mutation, model execution or production routing.",
+      "sources": [
+        "hia/platform/integer_model_sealed_descriptor/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_integer_model_sealed_descriptor.py"
+      ]
+    },
+    {
       "id": "platform/os-fixture",
       "node_integration_complete": false,
       "retirement_accepted": false,
