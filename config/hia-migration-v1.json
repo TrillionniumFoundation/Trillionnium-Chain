@@ -276,6 +276,17 @@
       ]
     },
     {
+      "id": "state/integer-model-codec",
+      "node_integration_complete": false,
+      "scope": "Pure ILM2 and ILM3 exact IntegerModelV2 typed encoding, canonical decode, original rejection order and versioned content ID. No factor/BA verification, model execution, authenticated parent, storage, adoption, economic or production authority.",
+      "source": "hia/src/state/integer_model_codec.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_model_codec.py",
+        "hia/tests/rust_integer_model_codec_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1648,7 +1659,8 @@
         "codec/json_primitives",
         "codec/json-number",
         "codec/json-value-wire",
-        "codec/json-value-encode"
+        "codec/json-value-encode",
+        "state/integer-model-codec"
       ],
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
       "module": "M06",
