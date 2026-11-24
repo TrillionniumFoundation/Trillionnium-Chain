@@ -1,0 +1,302 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_integer_model_select_v1
+fn f0(input:readbuf, output:mutbuf, scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf, output:mutbuf, scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  n:u64 = int.cast(extent) {"mode":"wrap"}
+  minimum:u64 = const() {"value":48}
+  cap:u64 = const() {"value":295984}
+  low_extent:bool = compare.ge(n,minimum)
+  high_extent:bool = compare.le(n,cap)
+  bounds:bool = bool.and(low_extent,high_extent)
+  branch bounds header(input,output,n) frame_error()
+block header(hi:readbuf,ho:mutbuf,hn:u64)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  at:u64 = const() {"value":40}
+  start:u64 = const() {"value":48}
+  maxrows:u64 = const() {"value":64}
+  magic:u64 = call(hi,zero,eight) {"function":"rac_read_le"}
+  expected:u64 = const() {"value":827542857}
+  header_ok:bool = compare.eq(magic,expected)
+  count:u64 = call(hi,at,eight) {"function":"rac_read_le"}
+  count_ok:bool = compare.le(count,maxrows)
+  ready:bool = bool.and(header_ok,count_ok)
+  branch ready scan(hi,ho,hn,start,count,zero,zero,zero,zero,zero,zero) frame_error()
+block scan(si:readbuf,so:mutbuf,sn:u64,sp:u64,sl:u64,sk:u64,skn:u64,sc2:u64,sc3:u64,sm:u64,smn:u64)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(sl,z)
+  branch done exact(so,sn,sp,sc2,sc3,sm,smn) row(si,so,sn,sp,sl,sk,skn,sc2,sc3,sm,smn)
+block row(ri:readbuf,ro:mutbuf,rn:u64,rp:u64,rl:u64,rk:u64,rkn:u64,rc2:u64,rc3:u64,rm:u64,rmn:u64)
+  left:u64 = int.sub.wrap(rn,rp)
+  row_header:u64 = const() {"value":16}
+  header_fits:bool = compare.ge(left,row_header)
+  branch header_fits row_lengths(ri,ro,rn,rp,rl,rk,rkn,rc2,rc3,rm,rmn,left) frame_error()
+block row_lengths(li:readbuf,lo:mutbuf,ln:u64,lp:u64,ll:u64,lk:u64,lkn:u64,lc2:u64,lc3:u64,lm:u64,lmn:u64,le:u64)
+  eight_l:u64 = const() {"value":8}
+  sixteen_l:u64 = const() {"value":16}
+  key_max:u64 = const() {"value":512}
+  val_min:u64 = const() {"value":9}
+  val_max:u64 = const() {"value":4096}
+  size_pos:u64 = int.add.wrap(lp,eight_l)
+  klen:u64 = call(li,lp,eight_l) {"function":"rac_read_le"}
+  vlen:u64 = call(li,size_pos,eight_l) {"function":"rac_read_le"}
+  ok_k:bool = compare.le(klen,key_max)
+  ok_v0:bool = compare.ge(vlen,val_min)
+  ok_v1:bool = compare.le(vlen,val_max)
+  ok_v:bool = bool.and(ok_v0,ok_v1)
+  ok_sizes:bool = bool.and(ok_k,ok_v)
+  branch ok_sizes extent_check(li,lo,ln,lp,ll,lk,lkn,lc2,lc3,lm,lmn,le,klen,vlen) frame_error()
+block extent_check(ei:readbuf,eo:mutbuf,en:u64,ep:u64,el:u64,ek:u64,ekn:u64,ec2:u64,ec3:u64,em:u64,emn:u64,ee:u64,ekl:u64,evl:u64)
+  row_header_e:u64 = const() {"value":16}
+  payload:u64 = int.add.wrap(ekl,evl)
+  need:u64 = int.add.wrap(payload,row_header_e)
+  room:bool = compare.ge(ee,need)
+  branch room inspect(ei,eo,en,ep,el,ek,ekn,ec2,ec3,em,emn,ekl,evl) frame_error()
+block inspect(ii:readbuf,io:mutbuf,in_n:u64,ip:u64,il:u64,ik:u64,ikn:u64,ic2:u64,ic3:u64,im:u64,imn:u64,ikl:u64,ivl:u64)
+  sixteen_i:u64 = const() {"value":16}
+  z_i:u64 = const() {"value":0}
+  kpos:u64 = int.add.wrap(ip,sixteen_i)
+  vpos:u64 = int.add.wrap(kpos,ikl)
+  kav:usize = int.cast(kpos) {"mode":"wrap"}
+  ksize:usize = int.cast(ikl) {"mode":"wrap"}
+  text_ok:bool = call(ii,kav,ksize) {"function":"utf8"}
+  frame_ok:bool = call(ii,vpos,ivl) {"function":"ims_value_envelope"}
+  mandatory:bool = bool.and(text_ok,frame_ok)
+  previous:bool = compare.ne(ik,z_i)
+  branch mandatory order(ii,io,in_n,il,ik,ikn,ic2,ic3,im,imn,ikl,ivl,kpos,vpos,previous) frame_error()
+block order(oi:readbuf,oo:mutbuf,on:u64,ol:u64,ok:u64,okn:u64,oc2:u64,oc3:u64,om:u64,omn:u64,okl:u64,ovl:u64,op:u64,ovp:u64,oprev:bool)
+  branch oprev ordered(oi,oo,on,ol,ok,okn,oc2,oc3,om,omn,okl,ovl,op,ovp) classify(oi,oo,on,ol,oc2,oc3,om,omn,okl,ovl,op,ovp)
+block ordered(ai:readbuf,ao:mutbuf,an:u64,al:u64,ak:u64,akn:u64,ac2:u64,ac3:u64,am:u64,amn:u64,akl:u64,avl:u64,ap:u64,avp:u64)
+  ascending:bool = call(ai,ak,akn,ap,akl) {"function":"ims_key_less"}
+  branch ascending classify(ai,ao,an,al,ac2,ac3,am,amn,akl,avl,ap,avp) frame_error()
+block classify(ci:readbuf,co:mutbuf,cn:u64,cl:u64,cc2:u64,cc3:u64,cm:u64,cmn:u64,ckl:u64,cvl:u64,cp:u64,cvp:u64)
+  kind:u64 = call(ci,cp,ckl) {"function":"ims_namespace"}
+  oldtag:u64 = const() {"value":2}
+  newtag:u64 = const() {"value":3}
+  old:bool = compare.eq(kind,oldtag)
+  new:bool = compare.eq(kind,newtag)
+  selected:bool = bool.or(old,new)
+  one:u64 = const() {"value":1}
+  zero_c:u64 = const() {"value":0}
+  old_add:u64 = select(old,one,zero_c)
+  new_add:u64 = select(new,one,zero_c)
+  old_sum:u64 = int.add.wrap(cc2,old_add)
+  new_sum:u64 = int.add.wrap(cc3,new_add)
+  exact_meta_key_len:u64 = const() {"value":85}
+  meta_len:bool = compare.eq(ckl,exact_meta_key_len)
+  guess_meta:bool = bool.and(meta_len,selected)
+  branch guess_meta match_meta(ci,co,cn,cl,old_sum,new_sum,cm,cmn,ckl,cvl,cp,cvp) advance(ci,co,cn,cl,old_sum,new_sum,cm,cmn,ckl,cvl,cp,cvp)
+block match_meta(mi:readbuf,mo:mutbuf,mn:u64,ml:u64,mc2:u64,mc3:u64,mm:u64,mmn:u64,mkl:u64,mvl:u64,mp:u64,mvp:u64)
+  pref:u64 = const() {"value":81}
+  mat:u64 = int.add.wrap(mp,pref)
+  four_m:u64 = const() {"value":4}
+  suffix:u64 = call(mi,mat,four_m) {"function":"rac_read_le"}
+  expected_m:u64 = const() {"value":1635018093}
+  yes:bool = compare.eq(suffix,expected_m)
+  dst:u64 = select(yes,mvp,mm)
+  dst_len:u64 = select(yes,mvl,mmn)
+  jump advance(mi,mo,mn,ml,mc2,mc3,dst,dst_len,mkl,mvl,mp,mvp)
+block advance(di:readbuf,do:mutbuf,dn:u64,dl:u64,dc2:u64,dc3:u64,dm:u64,dmn:u64,dkl:u64,dvl:u64,dp:u64,dvp:u64)
+  one_d:u64 = const() {"value":1}
+  remains:u64 = int.sub.wrap(dl,one_d)
+  row_end:u64 = int.add.wrap(dvp,dvl)
+  jump scan(di,do,dn,row_end,remains,dp,dkl,dc2,dc3,dm,dmn)
+block exact(xo:mutbuf,xn:u64,xp:u64,xc2:u64,xc3:u64,xm:u64,xmn:u64)
+  consumed:bool = compare.eq(xp,xn)
+  branch consumed collision(xo,xc2,xc3,xm,xmn) frame_error()
+block collision(bo:mutbuf,bc2:u64,bc3:u64,bm:u64,bmn:u64)
+  none:u64 = const() {"value":0}
+  nonempty2:bool = compare.ne(bc2,none)
+  nonempty3:bool = compare.ne(bc3,none)
+  both:bool = bool.and(nonempty2,nonempty3)
+  branch both model_collision() missing_check(bo,bc2,bc3,bm,bmn)
+block missing_check(cbo:mutbuf,cbc2:u64,cbc3:u64,cbm:u64,cbmn:u64)
+  zero_b:u64 = const() {"value":0}
+  no_meta:bool = compare.eq(cbm,zero_b)
+  branch no_meta model_missing() capacity_check(cbo,cbc2,cbc3,cbm,cbmn)
+block capacity_check(fo:mutbuf,fc2:u64,fc3:u64,fm:u64,fmn:u64)
+  out_size:usize = buffer.len(fo)
+  minout:usize = const() {"value":32}
+  enough_out:bool = compare.ge(out_size,minout)
+  branch enough_out publish(fo,fc2,fc3,fm,fmn) output_error()
+block publish(po:mutbuf,pc2:u64,pc3:u64,pm:u64,pmn:u64)
+  z_p:u64 = const() {"value":0}
+  eight_p:u64 = const() {"value":8}
+  sixteen_p:u64 = const() {"value":16}
+  twentyfour:u64 = const() {"value":24}
+  private_header:u64 = const() {"value":40}
+  offset:u64 = int.sub.wrap(pm,private_header)
+  a:u64 = call(po,z_p,pc2) {"function":"ims_write"}
+  b:u64 = call(po,eight_p,pc3) {"function":"ims_write"}
+  c:u64 = call(po,sixteen_p,offset) {"function":"ims_write"}
+  d:u64 = call(po,twentyfour,pmn) {"function":"ims_write"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block model_collision()
+  col:u32 = const() {"value":1}
+  ret(col)
+block model_missing()
+  miss:u32 = const() {"value":2}
+  ret(miss)
+block frame_error()
+  err:u32 = const() {"value":100}
+  ret(err)
+block output_error()
+  small:u32 = const() {"value":102}
+  ret(small)
+end
+
+fn ims_value_envelope(input:readbuf, start:u64, length:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf, start:u64, length:u64)
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  nine:u64 = const() {"value":9}
+  eight:u8 = const() {"value":8}
+  want:u64 = const() {"value":827610698}
+  magic:u64 = call(input,start,four) {"function":"rac_read_le"}
+  tag_pos:u64 = int.add.wrap(start,four)
+  tag_at:usize = int.cast(tag_pos) {"mode":"wrap"}
+  tag:u8 = buffer.load(input,tag_at)
+  decl_at:u64 = int.add.wrap(start,five)
+  declared:u64 = call(input,decl_at,four) {"function":"rac_read_le"}
+  expected:u64 = int.sub.wrap(length,nine)
+  ok1:bool = compare.eq(magic,want)
+  ok2:bool = compare.le(tag,eight)
+  ok3:bool = compare.eq(declared,expected)
+  a:bool = bool.and(ok1,ok2)
+  yes:bool = bool.and(a,ok3)
+  ret(yes)
+end
+
+fn ims_key_less(input:readbuf, previous:u64, pn:u64, next:u64, nn:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf, previous:u64, pn:u64, next:u64, nn:u64)
+  prev_short:bool = compare.lt(pn,nn)
+  common:u64 = select(prev_short,pn,nn)
+  jump digits(input,previous,next,common,prev_short)
+block digits(di:readbuf,dp:u64,dn:u64,dr:u64,ds:bool)
+  z:u64 = const() {"value":0}
+  more:bool = compare.ne(dr,z)
+  branch more compare_bytes(di,dp,dn,dr,ds) final_order(ds)
+block compare_bytes(ci:readbuf,cp:u64,cn:u64,cr:u64,cs:bool)
+  at_p:usize = int.cast(cp) {"mode":"wrap"}
+  at_n:usize = int.cast(cn) {"mode":"wrap"}
+  p:u8 = buffer.load(ci,at_p)
+  n:u8 = buffer.load(ci,at_n)
+  equal:bool = compare.eq(p,n)
+  less:bool = compare.lt(p,n)
+  branch equal advance(ci,cp,cn,cr,cs) final_order(less)
+block advance(ai:readbuf,ap:u64,an:u64,ar:u64,as:bool)
+  one:u64 = const() {"value":1}
+  np:u64 = int.add.wrap(ap,one)
+  nn2:u64 = int.add.wrap(an,one)
+  left:u64 = int.sub.wrap(ar,one)
+  jump digits(ai,np,nn2,left,as)
+block final_order(yes:bool)
+  ret(yes)
+end
+
+fn ims_namespace(input:readbuf, key:u64, n:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf, key:u64, n:u64)
+  prefix:u64 = const() {"value":81}
+  long_enough:bool = compare.ge(n,prefix)
+  branch long_enough common(input,key) other()
+block common(fi:readbuf,fk:u64)
+  eight:u64 = const() {"value":8}
+  six:u64 = const() {"value":6}
+  fourteen:u64 = const() {"value":14}
+  two:u64 = const() {"value":2}
+  b:u64 = int.add.wrap(fk,eight)
+  c:u64 = int.add.wrap(fk,fourteen)
+  a0:u64 = call(fi,fk,eight) {"function":"rac_read_le"}
+  a1:u64 = call(fi,b,six) {"function":"rac_read_le"}
+  a2:u64 = call(fi,c,two) {"function":"rac_read_le"}
+  c0:u64 = const() {"value":7867069886725253484}
+  c1:u64 = const() {"value":129937464190063}
+  v2:u64 = const() {"value":14898}
+  v3:u64 = const() {"value":14899}
+  m0:bool = compare.eq(a0,c0)
+  m1:bool = compare.eq(a1,c1)
+  old:bool = compare.eq(a2,v2)
+  newer:bool = compare.eq(a2,v3)
+  m2:bool = bool.or(old,newer)
+  shared:bool = bool.and(m0,m1)
+  ok:bool = bool.and(shared,m2)
+  tag2:u64 = const() {"value":2}
+  tag3:u64 = const() {"value":3}
+  tag:u64 = select(old,tag2,tag3)
+  branch ok start_bytes(fi,fk,tag) other()
+block start_bytes(si:readbuf,sk:u64,sv:u64)
+  id_start:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  hex_key:u64 = int.add.wrap(sk,sixteen)
+  jump digits(si,id_start,hex_key,sv)
+block digits(di:readbuf,dp:u64,dh:u64,dv:u64)
+  stop:u64 = const() {"value":40}
+  done:bool = compare.eq(dp,stop)
+  branch done terminator(di,dh,dv) digit(di,dp,dh,dv)
+block digit(gi:readbuf,gp:u64,gh:u64,gv:u64)
+  one:u64 = const() {"value":1}
+  two_g:u64 = const() {"value":2}
+  shift:u64 = const() {"value":4}
+  mask:u64 = const() {"value":15}
+  high_at:usize = int.cast(gh) {"mode":"wrap"}
+  low_off:u64 = int.add.wrap(gh,one)
+  low_at:usize = int.cast(low_off) {"mode":"wrap"}
+  by:usize = int.cast(gp) {"mode":"wrap"}
+  value:u8 = buffer.load(gi,by)
+  x:u64 = int.cast(value) {"mode":"wrap"}
+  hn:u64 = int.shr.checked(x,shift)
+  ln:u64 = bit.and(x,mask)
+  hex_h:u8 = call(hn) {"function":"ims_hex"}
+  hex_l:u8 = call(ln) {"function":"ims_hex"}
+  found_h:u8 = buffer.load(gi,high_at)
+  found_l:u8 = buffer.load(gi,low_at)
+  h_ok:bool = compare.eq(hex_h,found_h)
+  l_ok:bool = compare.eq(hex_l,found_l)
+  matches:bool = bool.and(h_ok,l_ok)
+  np:u64 = int.add.wrap(gp,one)
+  nh:u64 = int.add.wrap(gh,two_g)
+  branch matches digits(gi,np,nh,gv) other()
+block terminator(ti:readbuf,tp:u64,tv:u64)
+  at:usize = int.cast(tp) {"mode":"wrap"}
+  colon:u8 = const() {"value":58}
+  ch:u8 = buffer.load(ti,at)
+  correct:bool = compare.eq(ch,colon)
+  tag0:u64 = const() {"value":0}
+  result:u64 = select(correct,tv,tag0)
+  ret(result)
+block other()
+  none:u64 = const() {"value":0}
+  ret(none)
+end
+
+fn ims_hex(n:u64) -> (u8) effects() entry(entry)
+block entry(n:u64)
+  nine:u64 = const() {"value":9}
+  digit:bool = compare.le(n,nine)
+  d:u64 = const() {"value":48}
+  f:u64 = const() {"value":87}
+  base:u64 = select(digit,d,f)
+  ascii:u64 = int.add.wrap(base,n)
+  result:u8 = int.cast(ascii) {"mode":"wrap"}
+  ret(result)
+end
+
+fn ims_write(out:mutbuf, at:u64, value:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf, at:u64, value:u64)
+  zero:u64 = const() {"value":0}
+  jump write(out,at,value,zero)
+block write(wo:mutbuf,wp:u64,wv:u64,wn:u64)
+  ix:usize = int.cast(wp) {"mode":"wrap"}
+  byte:u8 = int.cast(wv) {"mode":"wrap"}
+  _ = buffer.store(wo,ix,byte)
+  one:u64 = const() {"value":1}
+  eight:u64 = const() {"value":8}
+  next_v:u64 = int.shr.checked(wv,eight)
+  next_p:u64 = int.add.wrap(wp,one)
+  next_n:u64 = int.add.wrap(wn,one)
+  done:bool = compare.eq(next_n,eight)
+  branch done final_count(next_n) write(wo,next_p,next_v,next_n)
+block final_count(n:u64)
+  ret(n)
+end

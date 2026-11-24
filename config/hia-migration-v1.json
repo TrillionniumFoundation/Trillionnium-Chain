@@ -312,6 +312,17 @@
       ]
     },
     {
+      "id": "state/integer-model-select",
+      "node_integration_complete": false,
+      "scope": "Offline bounded ordered V2/V3 model namespace selection and exact metadata-key observation over genuine native Execution State export bytes. Does not validate nested values, load a model, authenticate a snapshot or change any State owner or production path.",
+      "source": "hia/src/state/integer_model_select.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_model_select.py",
+        "hia/tests/rust_integer_model_select_reference.rs"
+      ]
+    },
+    {
       "id": "state/integer-model-load",
       "node_integration_complete": false,
       "scope": "Private one-call bounded original load_model over typed immutable snapshots: exact namespace and chunks, shared ILM2/3 geometry and model values, computed versioned digest and expected-ID comparison before atomic output. No host intermediate replay for the native model check; a separately qualified offline Rust caller projects actual immutable State to the named selfhost ELF. No live lookup, model execution, proof, authenticity, custody, storage mutation, admission or production authority.",
@@ -1966,6 +1977,7 @@
         "codec/json-value-encode",
         "state/integer-model-codec",
         "state/integer-model-material",
+        "state/integer-model-select",
         "state/integer-model-load"
       ],
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",

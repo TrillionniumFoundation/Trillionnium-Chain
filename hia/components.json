@@ -1,5 +1,15 @@
 {
   "includes": {
+    "src/state/integer_model_select.hepta": [
+      {
+        "functions": ["rac_read_le"],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": ["utf8"],
+        "source": "src/verification/closed_round.hepta"
+      }
+    ],
     "src/verification/challenge_book.hepta": [
       {
         "functions": [
