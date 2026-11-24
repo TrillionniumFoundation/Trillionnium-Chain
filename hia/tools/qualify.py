@@ -20,7 +20,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.tools.component_partition import (
-    GROUPS, ObservedResult, lineage, record_completion, select_suite,
+    PLANS, SPLIT_GROUPS, ObservedResult, lineage, record_completion, select_suite, source_bound_plan,
 )
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
                 "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
@@ -29,7 +29,7 @@ ML_DSA_ORACLE = "TRNM_HIA_RUST_ML_DSA_REFERENCE"
 
 
 def rust_oracle_names(group):
-    if group not in (*GROUPS, "all"):
+    if group not in (*SPLIT_GROUPS, "all"):
         raise ValueError("Unknown component shard")
     return (*RUST_ORACLES, ML_DSA_ORACLE) if group in ("ml-dsa", "all") else RUST_ORACLES
 
@@ -337,7 +337,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--require-rust-oracle", action="store_true")
-    parser.add_argument("--shard", choices=(*GROUPS, "all"), default="all")
+    parser.add_argument("--shard", choices=(*SPLIT_GROUPS, "all"), default="all")
+    parser.add_argument("--partition-plan", choices=PLANS)
     args = parser.parse_args()
     if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
         parser.error("Native component qualification refuses optimized Python")
@@ -352,6 +353,7 @@ def main():
     head_before = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     if actual_lineage is not None and actual_lineage["git_head"] != head_before:
         parser.error("Actual component checkout differs from CI lineage")
+    plan = source_bound_plan(ROOT, args.partition_plan)
     before = sources()
     from hia.tests.native_support import NativeModule
     from hia.tools import toolchain
@@ -392,7 +394,7 @@ def main():
     try:
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
                                                    pattern="test_*.py", top_level_dir=str(ROOT))
-        suite, partition = select_suite(suite, args.shard)
+        suite, partition = select_suite(suite, args.shard, plan)
         result = unittest.TextTestRunner(stream=sys.stderr, verbosity=2,
                                          resultclass=ObservedResult).run(suite)
     finally:

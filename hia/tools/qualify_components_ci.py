@@ -18,11 +18,12 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.tools import qualify, sha256_word_evidence
 from hia.tools.component_partition import (
-    GROUPS, canonical, descriptor, flatten, lineage, need, object_hash, same,
+    LEGACY_PLAN, PLANS, canonical, descriptor, flatten, groups_for, lineage, need, object_hash, same, source_bound_plan,
     validate_completion, validate_lineage,
 )
 
 SCHEMA = "trnm.hia.component-ci-readback.v6"
+SPLIT_SCHEMA = "trnm.hia.component-ci-readback.v7"
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
@@ -88,7 +89,7 @@ def source_receipt(value, expected_head):
     return value["tested_tree"]
 
 
-def validate_report(value, group, expected, sources, identifiers, compiler_binding):
+def validate_report(value, group, expected, sources, identifiers, compiler_binding, plan=LEGACY_PLAN):
     validate_lineage(expected)
     need(type(value) is dict and value.get("schema") == "trnm.hia.native-qualification.v1",
          "Wrong native component report")
@@ -109,7 +110,7 @@ def validate_report(value, group, expected, sources, identifiers, compiler_bindi
          "Missing actual unittest outcomes")
     need(tests["failures"] == [] and tests["errors"] == [] and tests["skipped"] == [],
          "Failed or skipped component tests cannot qualify")
-    selected = validate_completion(value.get("test_partition"), identifiers, group, tests["run"])
+    selected = validate_completion(value.get("test_partition"), identifiers, group, tests["run"], plan)
     need(value.get("selfhost_compiler_matches_cold_qualified_image") is True
          and value.get("retained_compiler_binding_sha256") == compiler_binding["binding_sha256"],
          "Component compiler differs from the retained cold-qualified image")
@@ -174,7 +175,7 @@ def verify_log(raw, value):
          "Actual qualifier stdout differs from its report")
 
 
-def read_bundle(directory, group, expected, sources, identifiers, compiler_binding):
+def read_bundle(directory, group, expected, sources, identifiers, compiler_binding, plan=LEGACY_PLAN):
     directory = Path(directory)
     need(directory.is_dir() and not directory.is_symlink(), "Missing downloaded component bundle")
     actual, actual_directories = set(), set()
@@ -190,7 +191,7 @@ def read_bundle(directory, group, expected, sources, identifiers, compiler_bindi
     need(actual_directories == expected_directories, "Downloaded component artifact has extra directories")
     before = {name: identity(directory / name) for name in sorted(expected_files)}
     value = read(directory / "hia-observations/qualification.json")
-    selected = validate_report(value, group, expected, sources, identifiers, compiler_binding)
+    selected = validate_report(value, group, expected, sources, identifiers, compiler_binding, plan)
     source = read(directory / "hia-observations/source.json")
     after = read(directory / "hia-observations/source-after.json")
     tree = source_receipt(source, expected["git_head"])
@@ -217,19 +218,20 @@ def read_bundle(directory, group, expected, sources, identifiers, compiler_bindi
             "original_oracles": value["rust_oracles"], "sha256_word_evidence": word_evidence}
 
 
-def verify_all(bundles, expected, sources, identifiers, compiler_binding, expected_tree):
-    need(type(bundles) is dict and set(bundles) == set(GROUPS),
+def verify_all(bundles, expected, sources, identifiers, compiler_binding, expected_tree, plan=LEGACY_PLAN):
+    groups = groups_for(plan)
+    need(type(bundles) is dict and set(bundles) == set(groups),
          "Exactly all component partitions are required")
     records = {group: read_bundle(bundles[group], group, expected, sources,
-                                 identifiers, compiler_binding) for group in GROUPS}
-    selected = [name for group in GROUPS for name in records[group]["selected_tests"]]
+                                 identifiers, compiler_binding, plan) for group in groups}
+    selected = [name for group in groups for name in records[group]["selected_tests"]]
     need(len(selected) == len(set(selected)) and sorted(selected) == sorted(identifiers),
          "Missing or repeated tests across component jobs")
     need(type(expected_tree) is str and re.fullmatch(r"[0-9a-f]{40}", expected_tree) is not None,
          "Exact current consumer Git tree is required")
     need(all(record["source_tree"] == expected_tree for record in records.values()),
          "Component jobs differ from the actual consumer Git tree")
-    return {"schema": SCHEMA, "status": "PASS", "lineage": expected,
+    return {"schema": SCHEMA if plan == LEGACY_PLAN else SPLIT_SCHEMA, "status": "PASS", "lineage": expected,
             "discovered_tests": sorted(identifiers), "tests": len(selected),
             "source_set_sha256": object_hash(sources), "partitions": records,
             "complete_disjoint_coverage": True, "actual_runtime_reexecuted": False,
@@ -238,8 +240,8 @@ def verify_all(bundles, expected, sources, identifiers, compiler_binding, expect
             "production_activation": False}
 
 
-def validate_job_results(environ):
-    for group in GROUPS:
+def validate_job_results(environ, plan=LEGACY_PLAN):
+    for group in groups_for(plan):
         key = "TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT"
         need(environ.get(key) == "success",
              "All actual prerequisite CI jobs must succeed: " + group)
@@ -253,6 +255,8 @@ def main(argv=None):
     parser.add_argument("--oracle", type=Path, required=True)
     parser.add_argument("--ml-dsa", type=Path, required=True)
     parser.add_argument("--research", type=Path, required=True)
+    parser.add_argument("--bench", type=Path)
+    parser.add_argument("--partition-plan", choices=PLANS)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):
@@ -265,20 +269,23 @@ def main(argv=None):
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=ROOT, text=True).strip()
         need(head == expected["git_head"], "Actual consumer Git head differs from CI lineage")
-        validate_job_results(os.environ)
+        plan = source_bound_plan(ROOT, args.partition_plan)
+        groups = groups_for(plan)
+        need((args.bench is not None) == ("bench" in groups), "Exact source requires its Bench artifact set")
+        if plan != LEGACY_PLAN:
+            report["schema"] = SPLIT_SCHEMA
+        validate_job_results(os.environ, plan)
         sources = qualify.sources()
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
                                                     pattern="test_*.py", top_level_dir=str(ROOT))
         identifiers = [case.id() for case in flatten(suite)]
-        descriptor(identifiers, "all")
+        descriptor(identifiers, "all", plan)
         binding_path = ROOT / "hia/qualification/compiler-binding.json"
         binding = read(binding_path)
         compiler = {"binding_sha256": identity(binding_path)["sha256"],
                     "compiler_sha256": binding["compiler_sha256"]}
-        report = verify_all({"general": args.general, "crypto-types": args.crypto_types,
-                             "state-root": args.state_root, "oracle": args.oracle,
-                             "ml-dsa": args.ml_dsa, "research": args.research},
-                            expected, sources, identifiers, compiler, tree)
+        bundles = {group: getattr(args, group.replace("-", "_")) for group in groups}
+        report = verify_all(bundles, expected, sources, identifiers, compiler, tree, plan)
         need(sources == qualify.sources(), "Source changed during independent component readback")
     except BaseException as error:
         report.update(status="FAIL", failure={"error": repr(error), "traceback": traceback.format_exc()})

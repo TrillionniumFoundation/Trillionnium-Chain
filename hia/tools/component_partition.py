@@ -18,6 +18,33 @@ CRYPTO_TYPES_MODULES = tuple("hia.tests." + name + "." for name in (
     "test_transfer", "test_transcript", "test_keccak", "test_ml_dsa_poly",
 ))
 SCHEMA = "trnm.hia.component-test-partition.v5"
+LEGACY_PLAN = "legacy-six-v1"
+SPLIT_PLAN = "split-bench-v1"
+PLANS = (LEGACY_PLAN, SPLIT_PLAN)
+SPLIT_GROUPS = (*GROUPS, "bench")
+SPLIT_SCHEMA = "trnm.hia.component-test-partition.v6"
+PLAN_TRACKED_LINE = "# HIA component coverage plan: split-bench-v1"
+
+
+def groups_for(plan):
+    need(plan in PLANS, "Unknown component coverage plan")
+    return GROUPS if plan == LEGACY_PLAN else SPLIT_GROUPS
+
+
+def source_plan(root):
+    """Select from the tracked source contract, never from downloaded artifacts."""
+    path = root / ".github/workflows/hia-native-migration.yml"
+    need(path.is_file() and not path.is_symlink(), "Missing exact component workflow")
+    lines = [line.strip() for line in path.read_text().splitlines()
+             if line.strip().startswith("# HIA component coverage plan:")]
+    need(lines in ([], [PLAN_TRACKED_LINE]), "Invalid component coverage plan in source")
+    return SPLIT_PLAN if lines else LEGACY_PLAN
+
+
+def source_bound_plan(root, requested):
+    observed = source_plan(root)
+    need(requested is None or requested == observed, "Requested component plan differs from tracked source")
+    return observed
 
 
 def need(condition, message):
@@ -37,7 +64,8 @@ def same(left, right):
     return canonical(left) == canonical(right)
 
 
-def group_for(identifier):
+def group_for(identifier, plan=LEGACY_PLAN):
+    groups_for(plan)
     need(type(identifier) is str and identifier.startswith("hia.tests.")
          and all(part.isidentifier() for part in identifier.split(".")),
          "Noncanonical component test identity")
@@ -53,21 +81,25 @@ def group_for(identifier):
     # modules. Discovery and actual start/finish records remain mandatory.
     if identifier.startswith(RESEARCH_MODULE_PREFIX):
         return "research"
+    if plan == SPLIT_PLAN and identifier.split(".")[2].startswith("test_bench_"):
+        return "bench"
     return "general"
 
 
-def descriptor(identifiers, group):
-    need(group in (*GROUPS, "all"), "Unknown component shard")
+def descriptor(identifiers, group, plan=LEGACY_PLAN):
+    groups = groups_for(plan)
+    need(group in (*groups, "all"), "Unknown component shard")
     need(type(identifiers) is list and identifiers, "Empty component discovery")
     for identifier in identifiers:
-        group_for(identifier)
+        group_for(identifier, plan)
     need(len(identifiers) == len(set(identifiers)), "Duplicate discovered component test")
     ordered = sorted(identifiers)
-    need({group_for(identifier) for identifier in ordered} == set(GROUPS),
+    need({group_for(identifier, plan) for identifier in ordered} == set(groups),
          "All complete component partitions are required")
     selected = [identifier for identifier in ordered
-                if group == "all" or group_for(identifier) == group]
-    return {"schema": SCHEMA, "group": group, "groups": list(GROUPS),
+                if group == "all" or group_for(identifier, plan) == group]
+    return {"schema": SCHEMA if plan == LEGACY_PLAN else SPLIT_SCHEMA,
+            "group": group, "groups": list(groups),
             "discovered_tests": ordered, "discovered_sha256": object_hash(ordered),
             "selected_tests": selected, "selected_sha256": object_hash(selected)}
 
@@ -83,9 +115,9 @@ def flatten(suite):
             yield item
 
 
-def select_suite(suite, group="all"):
+def select_suite(suite, group="all", plan=LEGACY_PLAN):
     cases = list(flatten(suite))
-    partition = descriptor([case.id() for case in cases], group)
+    partition = descriptor([case.id() for case in cases], group, plan)
     selected = set(partition["selected_tests"])
     return unittest.TestSuite(case for case in cases if case.id() in selected), partition
 
@@ -117,9 +149,9 @@ def record_completion(partition, result):
             "all_selected_completed": complete}
 
 
-def validate_completion(value, identifiers, group, tests_run):
+def validate_completion(value, identifiers, group, tests_run, plan=LEGACY_PLAN):
     need(type(value) is dict, "Missing actual component partition")
-    expected = descriptor(identifiers, group)
+    expected = descriptor(identifiers, group, plan)
     need(set(value) == set(expected) | {
         "started_tests", "finished_tests", "all_selected_completed"},
         "Unexpected component partition fields")

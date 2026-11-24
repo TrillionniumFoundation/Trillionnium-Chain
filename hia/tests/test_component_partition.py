@@ -23,6 +23,11 @@ IDS = ["hia.tests.test_example.Example.test_one",
        "hia.tests.test_research_command.Example.test_signature",
        "hia.tests.test_ml_dsa.Example.test_signature",
        "hia.tests.test_oracle.Example.test_original"]
+BENCH_IDS = [
+    "hia.tests.test_bench_main.NativeBenchMain.test_ordinary_classic_footprint_desc_exact_bounded_process",
+    "hia.tests.test_bench_main.NativeBenchMain.test_ordinary_classic_footprint_desc_default_direct_process",
+]
+SPLIT_IDS = IDS + BENCH_IDS
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 SOURCES.update(word_fixture.fixture()[2])
@@ -39,8 +44,8 @@ def fixture_case(identifier):
     return Fixture()
 
 
-def complete_report(group):
-    selection = part.descriptor(IDS, group)
+def complete_report(group, plan=part.LEGACY_PLAN):
+    selection = part.descriptor(IDS if plan == part.LEGACY_PLAN else SPLIT_IDS, group, plan)
     selected = selection["selected_tests"]
     return {"schema": "trnm.hia.native-qualification.v1", "status": "PASS",
             "lineage": copy.deepcopy(LINEAGE), "source_commit_observed": LINEAGE["git_head"],
@@ -107,6 +112,42 @@ class ComponentPartitions(unittest.TestCase):
         self.assertEqual(sorted(observed), sorted(IDS))
         self.assertEqual(len(observed), len(set(observed)))
         self.assertEqual(part.descriptor(IDS, "all")["selected_tests"], sorted(IDS))
+
+    def test_live_bench_executes_each_id_exactly_once_without_source_fallback(self):
+        observed = []
+        for group in part.SPLIT_GROUPS:
+            suite = unittest.TestSuite(fixture_case(i) for i in SPLIT_IDS)
+            selected, inventory = part.select_suite(suite, group, part.SPLIT_PLAN)
+            result = unittest.TextTestRunner(stream=io.StringIO(),
+                                             resultclass=part.ObservedResult).run(selected)
+            completion = part.record_completion(inventory, result)
+            observed.extend(part.validate_completion(
+                completion, SPLIT_IDS, group, result.testsRun, part.SPLIT_PLAN))
+            self.assertEqual(inventory["schema"], part.SPLIT_SCHEMA)
+        self.assertEqual(sorted(observed), sorted(SPLIT_IDS))
+        self.assertEqual(len(observed), len(set(observed)))
+        self.assertEqual(part.descriptor(SPLIT_IDS, "bench", part.SPLIT_PLAN)["selected_tests"],
+                         sorted(BENCH_IDS))
+        self.assertEqual(part.descriptor(SPLIT_IDS, "all", part.LEGACY_PLAN)["discovered_sha256"],
+                         part.descriptor(SPLIT_IDS, "all", part.SPLIT_PLAN)["discovered_sha256"])
+        with self.assertRaisesRegex(ValueError, "differs from tracked source"):
+            part.source_bound_plan(Path(__file__).resolve().parents[2], part.LEGACY_PLAN)
+
+    def test_live_discovery_preserves_legacy_inventory_and_all_bench_modules(self):
+        root = Path(__file__).resolve().parents[2]
+        suite = unittest.defaultTestLoader.discover(str(root / "hia/tests"),
+                    pattern="test_*.py", top_level_dir=str(root))
+        ids = [case.id() for case in part.flatten(suite)]
+        old = {g: part.descriptor(ids, g, part.LEGACY_PLAN)["selected_tests"] for g in part.GROUPS}
+        new = {g: part.descriptor(ids, g, part.SPLIT_PLAN)["selected_tests"] for g in part.SPLIT_GROUPS}
+        self.assertEqual(sorted(old["general"]), sorted(new["general"] + new["bench"]))
+        self.assertEqual(sorted(ids), sorted(i for names in new.values() for i in names))
+        self.assertEqual(set(new["bench"]), {i for i in ids if i.split(".")[2].startswith("test_bench_")})
+        self.assertEqual({i.split(".")[2] for i in new["bench"]},
+                         {p.stem for p in (root / "hia/tests").glob("test_bench_*.py")})
+        for group in set(part.GROUPS)-{"general"}:
+            self.assertEqual(old[group], new[group])
+        self.assertTrue(set(BENCH_IDS) <= set(new["bench"]))
 
     def test_invalid_discovery_never_silently_drops_a_test(self):
         variants = [[], IDS + [IDS[0]], IDS[:-1], [i for i in IDS if "state_root" not in i],
@@ -188,7 +229,7 @@ class ComponentPartitions(unittest.TestCase):
         jobs = {match[1]: text[match.start():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
                 for index, match in enumerate(headers)}
         expected = {group: "native-components" + ("-" + group if group != "general" else "")
-                    for group in part.GROUPS}
+                    for group in part.SPLIT_GROUPS}
         for group, name in expected.items():
             job = jobs[name]
             self.assertEqual(re.findall(r"(?m)^    timeout-minutes: ([0-9]+)$", job), ["20"])
@@ -205,7 +246,15 @@ class ComponentPartitions(unittest.TestCase):
             "${{ runner.temp }}/original-rust-build.jsonl"])
         self.assertIn("if: always()", upload)
         general = jobs["native-components"]
-        self.assertIn("HIA_BENCH_PROFILE_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/profile", general)
+        bench = jobs["native-components-bench"]
+        self.assertNotIn("HIA_BENCH_PROFILE_OBSERVATIONS:", general)
+        self.assertIn("HIA_BENCH_PROFILE_OBSERVATIONS: ${{ runner.temp }}/hia-bench-observations/profile", bench)
+        self.assertIn('hia-bench-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}', bench)
+        self.assertNotIn("hia-bench-${{", general)
+        self.assertIn("archive_ci_evidence.py", bench)
+        self.assertNotIn("archive_ci_evidence.py", general)
+        self.assertNotIn("TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR", bench)
+        self.assertIn("TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR", general)
         self.assertIn("HIA_RECOVERY_ACK_OUTPUT: ${{ runner.temp }}/hia-recovery-ack-observations", general)
         ack = re.search(r"(?ms)^      - name: Retain complete native recovery ACK observations\n(.*?)(?=^      - name:|\Z)", general)[1]
         self.assertIn("if: always()", ack)
@@ -216,7 +265,9 @@ class ComponentPartitions(unittest.TestCase):
         reader = jobs["native-components-readback"]
         needs = re.search(r"(?m)^    needs: \[(.*)\]$", reader)[1].split(", ")
         self.assertEqual(set(needs), set(expected.values()))
-        self.assertEqual(len(needs), 6)
+        self.assertEqual(len(needs), 7)
+        self.assertIn(" --partition-plan split-bench-v1 ", reader)
+        self.assertEqual(part.source_plan(root), part.SPLIT_PLAN)
         for group, producer in expected.items():
             variable = "TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT"
             self.assertIn(variable + ": ${{ needs." + producer + ".result }}", reader)
@@ -379,9 +430,9 @@ class ComponentReadback(unittest.TestCase):
             with self.subTest(changed=changed), self.assertRaises(ValueError):
                 ci.verify_log(changed, value)
 
-    def make_bundle(self, root, group):
+    def make_bundle(self, root, group, plan=part.LEGACY_PLAN):
         directory = root / group
-        value = complete_report(group)
+        value = complete_report(group, plan)
         source = {"kind": "head", "candidate": "a" * 40, "tested_commit": "a" * 40,
                   "tested_tree": "f" * 40, "tracked_worktree_verified": True,
                   "tests_executed_by_identity_check": False,
@@ -469,6 +520,34 @@ class ComponentReadback(unittest.TestCase):
                 with self.subTest(reason=reason), self.assertRaisesRegex(ValueError, reason):
                     ci.verify_all(bundles, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40)
                 path.write_bytes(baseline)
+
+    def test_live_readback_rejects_legacy_or_mixed_source_even_with_six_good_jobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            legacy = {g:self.make_bundle(root / "legacy",g) for g in part.GROUPS}
+            live = {g:self.make_bundle(root / "live",g,part.SPLIT_PLAN) for g in part.SPLIT_GROUPS}
+            result = ci.verify_all(live, LINEAGE, SOURCES, SPLIT_IDS, COMPILER, "f" * 40, part.SPLIT_PLAN)
+            self.assertEqual(result["schema"], ci.SPLIT_SCHEMA)
+            self.assertEqual(result["tests"],len(SPLIT_IDS))
+            self.assertEqual(ci.verify_all(legacy, LINEAGE, SOURCES, IDS, COMPILER, "f" * 40,
+                                           part.LEGACY_PLAN)["schema"], ci.SCHEMA)
+            for bad in (legacy, {**live, "state-root": legacy["state-root"]},
+                        {**live, "bench": live["general"]}):
+                with self.assertRaises(ValueError):
+                    ci.verify_all(bad, LINEAGE, SOURCES, SPLIT_IDS, COMPILER, "f" * 40, part.SPLIT_PLAN)
+            env = {"TRNM_COMPONENT_" + g.upper().replace("-","_") + "_RESULT":"success" for g in part.GROUPS}
+            with self.assertRaisesRegex(ValueError, "must succeed: bench"):
+                ci.validate_job_results(env, part.SPLIT_PLAN)
+            for result in ("cancelled", "skipped", "failure"):
+                with self.assertRaisesRegex(ValueError, "must succeed: bench"):
+                    ci.validate_job_results({**env,"TRNM_COMPONENT_BENCH_RESULT":result},part.SPLIT_PLAN)
+            ci.validate_job_results({**env,"TRNM_COMPONENT_BENCH_RESULT":"success"},part.SPLIT_PLAN)
+            for name, value in (("lineage", {**LINEAGE,"attempt":2}),
+                                ("tests", {"run":2,"failures":[],"errors":[],"skipped":[BENCH_IDS[0]]})):
+                bad = complete_report("bench", part.SPLIT_PLAN)
+                bad[name]=value
+                with self.assertRaises(ValueError):
+                    ci.validate_report(bad, "bench", LINEAGE, SOURCES, SPLIT_IDS, COMPILER, part.SPLIT_PLAN)
 
     def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
         with tempfile.TemporaryDirectory() as tmp:
