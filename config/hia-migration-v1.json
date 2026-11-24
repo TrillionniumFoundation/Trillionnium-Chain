@@ -1482,6 +1482,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-task-query-pretty",
+      "node_integration_complete": false,
+      "scope": "Private WTQ2 preserves WTQ1's actual all-map admission and task-to-row coverage and renders the same query result plus fixed typed decorations into complete original pretty stdout bytes. Both emitters match genuine locked Rust byte oracles and preserve old machine artifacts; no generic parser, paths, authority or production routing.",
+      "source": "hia/src/worker_agent/audit_task_query_pretty.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_task_query_pretty.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-export",
       "node_integration_complete": false,
       "scope": "A single native raw-memory journal call composes fixed WJF1 framing, the two exact WJD1 DTO profiles, shared WAT2 selection/rendering, and all three audit artifacts, with atomic output and actual locked original byte comparisons. Generic Serde, authority, storage and production dispatch unchanged.",
