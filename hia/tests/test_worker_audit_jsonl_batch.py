@@ -9,7 +9,7 @@ import subprocess
 import unittest
 
 from hia.tests.native_support import NativeModule
-from hia.tests.test_worker_audit_display_labels import source_rows
+from hia.tests.test_worker_audit_display_labels import LABELS, source_rows
 from hia.tests.test_worker_audit_jsonl_row import FIELDS, ROOT, frame, invalid_frames
 from hia.tests.test_worker_audit_select import (
     BACKENDS, FILL, INCLUDED, INSUFFICIENT, INVALID, MAX_RECORDS,
@@ -27,18 +27,22 @@ def request(frames):
         LENGTH.pack(len(data)) + data for data in frames)
 
 
-def project_request(frames):
-    return HEADER.pack(b"WJB2", len(frames)) + b"".join(
+def project_request(frames, *, display=False):
+    return HEADER.pack(b"WJB3" if display else b"WJB2", len(frames)) + b"".join(
         LENGTH.pack(len(row)) + row + DELTA.pack(int(delta is not None), delta or 0)
         for row, delta in frames)
 
 
-def typed(source, retained=None, *, project=False):
+def typed(source, retained=None, *, project=False, display=False):
     """Transfer typed facts only. Do not decide order, inclusion, or output bytes."""
     carried = FIELDS[:-7] if project else FIELDS
-    values = [source[key] if key in ("request_id", "task_id", "status")
-              else (retained or {}).get(key) for key in carried]
-    return frame((*values, *((None,) * 7 if project else ())))
+    values = dict(retained or {})
+    values.update((key, source[key]) for key in ("request_id", "task_id", "status"))
+    if display:
+        values["provenance_schema_version"] = source.get("provenance_schema_version")
+        labels = source.get("llm_provenance") or {}
+        values.update((key, labels.get(key)) for key in LABELS[1:])
+    return frame(tuple(values.get(key) for key in carried) + ((None,) * 7 if project else ()))
 
 
 def observe(native, raw, length):
@@ -79,7 +83,7 @@ class WorkerAuditJsonlBatch(unittest.TestCase):
         excluded = typed(ingress_rows(["waiting"])[0])
         bad_utf8_excluded = excluded[:-1] + b"\xff"
         raw = request([good, excluded])
-        bad = [b"", raw[:7], b"WJB3" + raw[4:], raw[:-1], raw + b"x",
+        bad = [b"", raw[:7], b"WJB4" + raw[4:], raw[:-1], raw + b"x",
                HEADER.pack(b"WJB1", MAX_RECORDS + 1), HEADER.pack(b"WJB1", MAX_RECORDS),
                raw[:8] + b"\xff" * 4 + raw[12:], request([good, bad_utf8_excluded])]
         bad.extend(request([good, row]) for row in invalid_frames(good))
@@ -140,17 +144,64 @@ class WorkerAuditJsonlBatch(unittest.TestCase):
                     self.assertEqual(observe(native, raw, 1024), (INVALID, FILL * 1024))
 
 
+    def test_v3_raw_spans_use_rust_display_rules_in_existing_column_order(self):
+        rows = ingress_rows(["rejected", "failed_adapter", "waiting"])
+        rows[0]["provenance_schema_version"] = " .LLM/✦V_2 "
+        rows[0]["llm_provenance"] = {"provider": '\u0085 Fancy "\\ \u3000',
+                                     "model": "m" * 128, "adapter": "bad\tlabel"}
+        rows[1]["provenance_schema_version"] = "LLM.v10"
+        rows[1]["llm_provenance"] = {"provider": "x" * 65, "model": " m ",
+                                     "adapter": "\u2002Queue?\u2009"}
+        rows[2]["llm_provenance"] = {"provider": "never output"}
+        raw = project_request([(typed(row, project=True, display=True), None) for row in rows],
+                              display=True)
+        projected = [("llm.v2", 'Fancy "\\', "m" * 128, None),
+                     (None, None, "m", "Queue?")]
+        expected = b""
+        for row, values in zip(rows[:2], projected, strict=True):
+            object_fields = dict.fromkeys(FIELDS)
+            object_fields.update(zip(LABELS, values, strict=True))
+            object_fields.update((key, row[key]) for key in ("request_id", "task_id", "status"))
+            expected += (json.dumps(object_fields, ensure_ascii=False, separators=(",", ":"))
+                         + "\n").encode()
+        for backend in BACKENDS:
+            with self.subTest(backend=backend), NativeModule(
+                    NATIVE, backend=backend, byte_exports=("f0",)) as native:
+                self.assertEqual(observe(native, raw, len(expected)), (len(expected), expected))
+                self.assertEqual(observe(native, raw, len(expected) + 7),
+                                 (len(expected), expected + FILL * 7))
+                self.assertEqual(observe(native, raw, len(expected) - 1),
+                                 (INSUFFICIENT, FILL * (len(expected) - 1)))
+                self.assertEqual(observe(native, project_request([], display=True), 0), (0, b""))
+
+    def test_v3_invalid_raw_utf8_in_last_excluded_row_preserves_output(self):
+        selected, excluded = ingress_rows(["rejected", "waiting"])
+        excluded["llm_provenance"] = {"provider": "a", "model": "b"}
+        first, last = [typed(row, project=True, display=True) for row in (selected, excluded)]
+        self.assertTrue(last.endswith(b"ab"))
+        invalid = (last[:-1] + b"\xff", last[:-2] + b"\xc3\xa9")
+        for backend in BACKENDS:
+            with self.subTest(backend=backend), NativeModule(
+                    NATIVE, backend=backend, byte_exports=("f0",)) as native:
+                for row in invalid:
+                    raw = project_request([(first, 3), (row, None)], display=True)
+                    self.assertEqual(observe(native, raw, 0), (INVALID, b""))
+                    self.assertEqual(observe(native, raw, 2048), (INVALID, FILL * 2048))
+
+
 def identity(row):
     return (row["request_id"], row["task_id"], row["status"])
 
 
-def cli_scenarios(*, project=False):
+def cli_scenarios(*, project=False, display=False):
     # Same genuine display labels, including valid retained provenance/hash facts,
     # plus interleaved statuses and repeated identity, with distinct raw
     # reputation in WJB2 to catch any grouping by identity.
     _, corpus = source_rows()
     combined = []
     for i, row in enumerate(corpus):
+        if display:
+            row.pop("provider_request_id", None)
         row["reputation_delta"] = (3, -1, -2, -3, None, 0, -(1 << 31))[i % 7]
         if i % 4 == 0:
             ignored = ingress_rows([("Rejected", "waiting", "rejected ", "✦")[(i // 4) % 4]])[0]
@@ -164,7 +215,9 @@ def cli_scenarios(*, project=False):
             "empty": []}
 
 
-def observe_original_batch(binary, build, directory, *, project=False):
+def observe_original_batch(binary, build, directory, *, project=False, display=False):
+    if display and not project:
+        raise ValueError("WJB3 requires the raw reputation suffix as well as display fields")
     def bound():
         return (build["repository_inputs"] == original_inputs()
                 and sha256(binary.read_bytes()).hexdigest() == build["executable_sha256"])
@@ -174,7 +227,7 @@ def observe_original_batch(binary, build, directory, *, project=False):
     with ExitStack() as stack:
         modules = {backend: stack.enter_context(NativeModule(
             NATIVE, backend=backend, byte_exports=("f0",))) for backend in BACKENDS}
-        for name, records in cli_scenarios(project=project).items():
+        for name, records in cli_scenarios(project=project, display=display).items():
             cwd = directory / name
             cwd.mkdir(mode=0o700)
             source, dest = cwd / "ingress.jsonl", cwd / "original.jsonl"
@@ -194,15 +247,17 @@ def observe_original_batch(binary, build, directory, *, project=False):
                 row = json.loads(line)
                 key = identity(row)
                 retained_fields = FIELDS[3:-7] if project else FIELDS[3:]
-                other = {field: row[field] for field in retained_fields}
+                other = {field: row[field] for field in retained_fields
+                         if not display or field not in LABELS}
                 if key in retained and retained[key] != other:
                     raise AssertionError("Duplicate fixture has ambiguous retained non-native values")
                 retained[key] = other
             # Every typed input row is transferred, including those the genuine
             # Worker didn't export. The lookup supplies optional values only.
             if project:
-                raw = project_request([(typed(row, retained.get(identity(row)), project=True),
-                                        row.get("reputation_delta")) for row in records])
+                raw = project_request([
+                    (typed(row, retained.get(identity(row)), project=True, display=display),
+                     row.get("reputation_delta")) for row in records], display=display)
             else:
                 raw = request([typed(row, retained.get(identity(row))) for row in records])
             (cwd / "native.request.raw").write_bytes(raw)
@@ -227,6 +282,8 @@ def observe_original_batch(binary, build, directory, *, project=False):
         "retained_optional_fields_from_actual_cli": True,
         "native_raw_reputation_projection": project,
         "retained_reputation_fields_from_actual_cli": not project,
+        "native_raw_display_normalization": display,
+        "retained_display_fields_from_actual_cli": not display,
         "native_io_index_or_stdout": False, "production_dispatch_changed": False,
         "backends": {name: module.artifact_sha256 for name, module in modules.items()},
         "scenarios": report,
@@ -237,7 +294,9 @@ def observe_original_batch(binary, build, directory, *, project=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--project-reputation", action="store_true", help="Observe the direct WJB2 input")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--project-reputation", action="store_true", help="Observe the raw WJB2 input")
+    mode.add_argument("--project-display", action="store_true", help="Observe the raw WJB3 input")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cargo-target", type=Path)
     parser.add_argument("--original-binary", type=Path)
@@ -255,8 +314,9 @@ def main():
         receipt = json.loads(args.original_build_receipt.read_bytes())
     else:
         binary, receipt = build_worker(output, target)
-    print(json.dumps(observe_original_batch(binary, receipt, output, project=args.project_reputation),
-                     sort_keys=True))
+    print(json.dumps(observe_original_batch(binary, receipt, output,
+                                            project=args.project_reputation or args.project_display,
+                                            display=args.project_display), sort_keys=True))
 
 
 if __name__ == "__main__":

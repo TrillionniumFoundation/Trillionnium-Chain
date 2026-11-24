@@ -32,54 +32,34 @@ block absent_shape(ao:mutbuf,as:u64,ah:u64)
   branch exact absent(ao) invalid()
 block utf8(ui:readbuf,uo:mutbuf,us:u64,uh:u64,uk:u8)
   text_len:u64 = int.sub.wrap(us,uh)
-  utf8_status:u64 = call(ui,uh,text_len) {"function":"value_utf8"}
-  utf8_true:u64 = const() {"value":1}
-  utf8_ok:bool = compare.eq(utf8_status,utf8_true)
-  branch utf8_ok choose(ui,uo,us,uh,text_len,uk) invalid()
-block choose(ci:readbuf,co:mutbuf,cs:u64,ch:u64,cn:u64,ck:u8)
-  schema_mode:u8 = const() {"value":0}
-  schema:bool = compare.eq(ck,schema_mode)
-  branch schema schema_value(ci,co,ch,cs) label(ci,co,cs,ch,cn,ck)
-block schema_value(si:readbuf,so:mutbuf,sa:u64,se:u64)
-  version:u64 = call(si,sa,se) {"function":"wp_schema"}
-  zero_version:u64 = const() {"value":0}
-  known_version:bool = compare.ne(version,zero_version)
-  branch known_version schema_capacity(so,version) absent(so)
-block schema_capacity(sco:mutbuf,scv:u64)
+  evaluated:u64,span_at:u64,span_size:u64 = call(ui,uh,text_len,uk) {"function":"wp_view"}
+  invalid_tag:u64 = const() {"value":4}
+  malformed:bool = compare.eq(evaluated,invalid_tag)
+  branch malformed invalid() choose(ui,uo,evaluated,span_at,span_size)
+block choose(ci:readbuf,co:mutbuf,ct:u64,ca:u64,cn:u64)
+  null_tag:u64 = const() {"value":0}
+  no_value:bool = compare.eq(ct,null_tag)
+  branch no_value absent(co) nonnull(ci,co,ct,ca,cn)
+block nonnull(ni:readbuf,no:mutbuf,nt:u64,na:u64,nn:u64)
+  label_tag:u64 = const() {"value":1}
+  has_span:bool = compare.eq(nt,label_tag)
+  branch has_span label_capacity(ni,no,na,nn) schema_capacity(no,nt)
+block schema_capacity(sco:mutbuf,sct:u64)
   schema_cap:usize = buffer.len(sco)
   schema_record:usize = const() {"value":7}
   schema_fits:bool = compare.ge(schema_cap,schema_record)
-  branch schema_fits write_version(sco,scv) insufficient()
-block write_version(vo:mutbuf,vv:u64)
-  version_one:u64 = const() {"value":1}
-  is_v1:bool = compare.eq(vv,version_one)
-  canonical_v1:u64 = const() {"value":13922215635217409}
-  canonical_v2:u64 = const() {"value":14203690611928065}
-  packed:u64 = select(is_v1,canonical_v1,canonical_v2)
-  version_at:u64 = const() {"value":0}
-  version_size:u64 = const() {"value":7}
+  branch schema_fits write_version(sco,sct) insufficient()
+block write_version(vo:mutbuf,vt:u64)
+  word:u64 = call(vt) {"function":"wp_schema_word"}
+  version_tag_at:usize = const() {"value":0}
+  version_tag:u8 = const() {"value":1}
+  _ = buffer.store(vo,version_tag_at,version_tag)
+  version_at:u64 = const() {"value":1}
+  version_size:u64 = const() {"value":6}
   yes_write:bool = const() {"value":true}
-  version_end:u64 = call(vo,version_at,packed,version_size,yes_write) {"function":"wa_word"}
+  version_end:u64 = call(vo,version_at,word,version_size,yes_write) {"function":"wa_word"}
   schema_result:u32 = int.cast(version_end) {"mode":"wrap"}
   ret(schema_result)
-block label(li:readbuf,lo:mutbuf,ls:u64,lh:u64,ln:u64,lk:u8)
-  trimmed_start:u64 = call(li,lh,ln) {"function":"or_trim_start"}
-  from_start:u64 = int.sub.wrap(ls,trimmed_start)
-  trimmed_end:u64 = call(li,trimmed_start,from_start) {"function":"or_trim_end"}
-  trimmed_size:u64 = int.sub.wrap(trimmed_end,trimmed_start)
-  model_kind:u8 = const() {"value":2}
-  model:bool = compare.eq(lk,model_kind)
-  model_max:u64 = const() {"value":128}
-  short_max:u64 = const() {"value":64}
-  maximum:u64 = select(model,model_max,short_max)
-  within_bound:bool = compare.le(trimmed_size,maximum)
-  zero_length:u64 = const() {"value":0}
-  nonempty:bool = compare.ne(trimmed_size,zero_length)
-  label_size_ok:bool = bool.and(within_bound,nonempty)
-  branch label_size_ok label_ascii(li,lo,trimmed_start,trimmed_end,trimmed_size) absent(lo)
-block label_ascii(lai:readbuf,lao:mutbuf,las:u64,lae:u64,lan:u64)
-  printable:bool = call(lai,las,lae) {"function":"wp_printable"}
-  branch printable label_capacity(lai,lao,las,lan) absent(lao)
 block label_capacity(lci:readbuf,lco:mutbuf,lcs:u64,lcn:u64)
   label_cap:usize = buffer.len(lco)
   one_extra:u64 = const() {"value":1}
@@ -114,6 +94,66 @@ block invalid()
 block insufficient()
   no_capacity:u32 = const() {"value":4294967294}
   ret(no_capacity)
+end
+fn wp_view(input:readbuf,start:u64,length:u64,kind:u8) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,length:u64,kind:u8)
+  typed:u64 = call(input,start,length) {"function":"value_utf8"}
+  valid_utf8:u64 = const() {"value":1}
+  valid:bool = compare.eq(typed,valid_utf8)
+  branch valid choose(input,start,length,kind) invalid()
+block choose(ci:readbuf,ca:u64,cn:u64,ck:u8)
+  schema_kind:u8 = const() {"value":0}
+  schema:bool = compare.eq(ck,schema_kind)
+  end_at:u64 = int.add.wrap(ca,cn)
+  branch schema schema_version(ci,ca,end_at) trim(ci,ca,cn,end_at,ck)
+block schema_version(si:readbuf,sa:u64,se:u64)
+  version:u64 = call(si,sa,se) {"function":"wp_schema"}
+  no_version:u64 = const() {"value":0}
+  known:bool = compare.ne(version,no_version)
+  schema_offset:u64 = const() {"value":1}
+  schema_tag:u64 = int.add.wrap(version,schema_offset)
+  branch known canonical(schema_tag) absent()
+block canonical(ct:u64)
+  no_span:u64 = const() {"value":0}
+  canonical_bytes:u64 = const() {"value":6}
+  ret(ct,no_span,canonical_bytes)
+block trim(ti:readbuf,ta:u64,tn:u64,te:u64,tk:u8)
+  trimmed_start:u64 = call(ti,ta,tn) {"function":"or_trim_start"}
+  remaining:u64 = int.sub.wrap(te,trimmed_start)
+  trimmed_end:u64 = call(ti,trimmed_start,remaining) {"function":"or_trim_end"}
+  trimmed_size:u64 = int.sub.wrap(trimmed_end,trimmed_start)
+  model_kind:u8 = const() {"value":2}
+  model:bool = compare.eq(tk,model_kind)
+  model_max:u64 = const() {"value":128}
+  short_max:u64 = const() {"value":64}
+  maximum:u64 = select(model,model_max,short_max)
+  within_bound:bool = compare.le(trimmed_size,maximum)
+  empty:u64 = const() {"value":0}
+  nonempty:bool = compare.ne(trimmed_size,empty)
+  size_ok:bool = bool.and(within_bound,nonempty)
+  branch size_ok check_ascii(ti,trimmed_start,trimmed_end,trimmed_size) absent()
+block check_ascii(ai:readbuf,aa:u64,ae:u64,an:u64)
+  printable:bool = call(ai,aa,ae) {"function":"wp_printable"}
+  branch printable span(aa,an) absent()
+block span(at:u64,size:u64)
+  span_tag:u64 = const() {"value":1}
+  ret(span_tag,at,size)
+block absent()
+  missing:u64 = const() {"value":0}
+  ret(missing,missing,missing)
+block invalid()
+  bad:u64 = const() {"value":4}
+  empty_slot:u64 = const() {"value":0}
+  ret(bad,empty_slot,empty_slot)
+end
+fn wp_schema_word(tag:u64) -> (u64) effects() entry(entry)
+block entry(tag:u64)
+  v1_tag:u64 = const() {"value":2}
+  is_v1:bool = compare.eq(tag,v1_tag)
+  canonical_v1:u64 = const() {"value":54383654825068}
+  canonical_v2:u64 = const() {"value":55483166452844}
+  packed:u64 = select(is_v1,canonical_v1,canonical_v2)
+  ret(packed)
 end
 fn wp_printable(input:readbuf,start:u64,end_at:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,start:u64,end_at:u64)

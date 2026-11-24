@@ -1330,7 +1330,7 @@
     {
       "id": "worker-agent/audit-jsonl-batch",
       "node_integration_complete": false,
-      "scope": "One native call owns ordered selection and atomic JSONL emission across typed Worker records. WJB2 also projects all seven audit reputation fields from a raw optional delta via the shared WJR mapping. Both emitters compare with the actual locked original CLI. Other optional conversion, journal parsing, index and production routing remain original.",
+      "scope": "One native call owns ordered selection and atomic JSONL emission across typed Worker records. WJB2 projects seven audit reputation fields, and WJB3 adds four display fields, from raw options via shared WJR and WJP evaluators. Both emitters compare with the actual locked original CLI. Other optional conversion, journal parsing, index and production routing remain original.",
       "source": "hia/src/worker_agent/audit_jsonl_batch.hepta",
       "state": "native-kernel-implemented",
       "tests": [

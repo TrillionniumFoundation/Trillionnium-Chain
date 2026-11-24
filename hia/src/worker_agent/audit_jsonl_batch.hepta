@@ -18,7 +18,10 @@ block header(hi:readbuf,ho:mutbuf,hs:u64)
   is_v1:bool = compare.eq(magic,expected)
   expected_v2:u64 = const() {"value":843205207}
   is_v2:bool = compare.eq(magic,expected_v2)
-  match_magic:bool = bool.or(is_v1,is_v2)
+  expected_v3:u64 = const() {"value":859982423}
+  is_v3:bool = compare.eq(magic,expected_v3)
+  old_magic:bool = bool.or(is_v1,is_v2)
+  match_magic:bool = bool.or(old_magic,is_v3)
   count:u64 = call(hi,word,word) {"function":"wa_read"}
   max_count:u64 = const() {"value":100000}
   legal_count:bool = compare.le(count,max_count)
@@ -116,8 +119,15 @@ block choose(ci:readbuf,co:mutbuf,cs:u64,cc:u64,cw:bool,ca:u64,ce:u64,cout:u64,c
   magic_width:u64 = const() {"value":4}
   batch_magic:u64 = call(ci,magic_at,magic_width) {"function":"wa_read"}
   projecting_magic:u64 = const() {"value":843205207}
-  projecting:bool = compare.eq(batch_magic,projecting_magic)
-  branch projecting rep_row(ci,co,cs,cc,cw,ce,cout,cm,bounds,included,write) ordinary_row(ci,co,cs,cc,cw,ce,cout,cm,bounds,included,write)
+  reputation_only:bool = compare.eq(batch_magic,projecting_magic)
+  display_magic:u64 = const() {"value":859982423}
+  display_mode:bool = compare.eq(batch_magic,display_magic)
+  projecting:bool = bool.or(reputation_only,display_mode)
+  display_bit:u64 = const() {"value":65536}
+  clear_bit:u64 = const() {"value":0}
+  raw_mode:u64 = select(display_mode,display_bit,clear_bit)
+  projection_mask:u64 = bit.or(cm,raw_mode)
+  branch projecting rep_row(ci,co,cs,cc,cw,ce,cout,projection_mask,bounds,included,write) ordinary_row(ci,co,cs,cc,cw,ce,cout,cm,bounds,included,write)
 block ordinary_row(oi:readbuf,oo:mutbuf,os:u64,oc:u64,ow:bool,oe:u64,oat:u64,om:u64,ob:u64,selected:bool,emit_row:bool)
   typed_end:u64 = call(oi,oo,ob,om,emit_row,oat) {"function":"wj_row"}
   jump advance(oi,oo,os,oc,ow,oe,oat,typed_end,selected)
@@ -138,7 +148,9 @@ end
 fn wb_rep_row(input:readbuf,out:mutbuf,total:u64,suffix_at:u64,out_at:u64,mask:u64,bounds:u64,emit:bool) -> (u64,u64) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,out:mutbuf,total:u64,suffix_at:u64,out_at:u64,mask:u64,bounds:u64,emit:bool)
   no_rep_mask:u64 = const() {"value":255}
-  mask_empty:bool = compare.le(mask,no_rep_mask)
+  presence_mask:u64 = const() {"value":32767}
+  row_presence:u64 = bit.and(mask,presence_mask)
+  mask_empty:bool = compare.le(row_presence,no_rep_mask)
   suffix_width:u64 = const() {"value":5}
   remaining:u64 = int.sub.wrap(total,suffix_at)
   enough:bool = compare.ge(remaining,suffix_width)

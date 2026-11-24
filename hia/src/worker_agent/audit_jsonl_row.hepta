@@ -112,7 +112,32 @@ block text_descriptor(ti:readbuf,to:mutbuf,ts:u64,tm:u64,tw:bool,tindex:u64,ttex
   text_fits:bool = compare.le(length,remaining)
   branch text_fits text_presence(ti,to,ts,tm,tw,tindex,ttext,tout,tp,length) fail()
 block text_presence(tpi:readbuf,tpo:mutbuf,tps:u64,tpm:u64,tpw:bool,tpindex:u64,tptext:u64,tpout:u64,tpp:bool,tplen:u64)
-  branch tpp measure_text(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen) absent(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen)
+  branch tpp text_kind(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen) absent(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen)
+block text_kind(ki:readbuf,ko:mutbuf,ks:u64,km:u64,kw:bool,kindex:u64,ktext:u64,kout:u64,klen:u64)
+  display_flag:u64 = const() {"value":65536}
+  flag:u64 = bit.and(km,display_flag)
+  want_raw:bool = compare.eq(flag,display_flag)
+  branch want_raw display_slot(ki,ko,ks,km,kw,kindex,ktext,kout,klen) measure_text(ki,ko,ks,km,kw,kindex,ktext,kout,klen)
+block display_slot(dsi:readbuf,dso:mutbuf,dss:u64,dsm:u64,dsw:bool,dsindex:u64,dstext:u64,dsout:u64,dslen:u64)
+  schema_field:u64 = const() {"value":4}
+  schema:bool = compare.eq(dsindex,schema_field)
+  provider_field:u64 = const() {"value":6}
+  adapter_field:u64 = const() {"value":8}
+  at_least_provider:bool = compare.ge(dsindex,provider_field)
+  at_most_adapter:bool = compare.le(dsindex,adapter_field)
+  display_label:bool = bool.and(at_least_provider,at_most_adapter)
+  projected:bool = bool.or(schema,display_label)
+  branch projected project_text(dsi,dso,dss,dsm,dsw,dsindex,dstext,dsout,dslen,schema) measure_text(dsi,dso,dss,dsm,dsw,dsindex,dstext,dsout,dslen)
+block project_text(pti:readbuf,pto:mutbuf,pts:u64,ptm:u64,ptw:bool,ptindex:u64,pttext:u64,ptout:u64,ptlen:u64,ptschema:bool)
+  kind_base:u64 = const() {"value":5}
+  known_index:u64 = select(ptschema,kind_base,ptindex)
+  kind_word:u64 = int.sub.wrap(known_index,kind_base)
+  kind:u8 = int.cast(kind_word) {"mode":"wrap"}
+  projected_end:u64 = call(pti,pto,pttext,ptlen,kind,ptout,ptw) {"function":"wj_project_text"}
+  project_zero:u64 = const() {"value":0}
+  good:bool = compare.ne(projected_end,project_zero)
+  consumed:u64 = int.add.wrap(pttext,ptlen)
+  branch good advance(pti,pto,pts,ptm,ptw,ptindex,consumed,projected_end) fail()
 block measure_text(mti:readbuf,mto:mutbuf,mts:u64,mtm:u64,mtw:bool,mtindex:u64,mttext:u64,mtout:u64,mtlen:u64)
   text_size:u64 = call(mti,mttext,mtlen) {"function":"wj_string_size"}
   measure_text_zero:u64 = const() {"value":0}
@@ -197,6 +222,48 @@ block advance(axi:readbuf,axo:mutbuf,axs:u64,axm:u64,axw:bool,axindex:u64,axtext
 block fail()
   bad_row:u64 = const() {"value":0}
   ret(bad_row)
+end
+fn wj_project_text(input:readbuf,output:mutbuf,start:u64,length:u64,kind:u8,at:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,start:u64,length:u64,kind:u8,at:u64,emit:bool)
+  tag:u64,span_at:u64,span_size:u64 = call(input,start,length,kind) {"function":"wp_view"}
+  invalid_tag:u64 = const() {"value":4}
+  bad:bool = compare.eq(tag,invalid_tag)
+  branch bad invalid() choose(input,output,tag,span_at,span_size,at,emit)
+block choose(ci:readbuf,co:mutbuf,ct:u64,ca:u64,cn:u64,cout:u64,cw:bool)
+  null_tag:u64 = const() {"value":0}
+  missing:bool = compare.eq(ct,null_tag)
+  branch missing missing_value(co,cout,cw) nonempty(ci,co,ct,ca,cn,cout,cw)
+block nonempty(ni:readbuf,no:mutbuf,nt:u64,na:u64,nn:u64,nout:u64,nw:bool)
+  span_tag:u64 = const() {"value":1}
+  span:bool = compare.eq(nt,span_tag)
+  branch span span_value(ni,no,na,nn,nout,nw) schema_word(no,nt,nout,nw)
+block span_value(si:readbuf,so:mutbuf,sa:u64,sn:u64,sout:u64,sw:bool)
+  branch sw span_write(si,so,sa,sn,sout) span_measure(si,sa,sn,sout)
+block span_write(wi:readbuf,wo:mutbuf,wa:u64,wn:u64,wout:u64)
+  bytes:u64 = call(wi,wa,wn,wo,wout) {"function":"json_ascii_encode"}
+  finished:u64 = int.add.wrap(wout,bytes)
+  ret(finished)
+block span_measure(mi:readbuf,ma:u64,mn:u64,mout:u64)
+  needed:u64 = call(mi,ma,mn) {"function":"wj_string_size"}
+  wrapped:u64 = int.add.wrap(mout,needed)
+  ret(wrapped)
+block schema_word(vo:mutbuf,vt:u64,vout:u64,vw:bool)
+  quote:u64 = const() {"value":34}
+  one:u64 = const() {"value":1}
+  six:u64 = const() {"value":6}
+  text:u64 = call(vt) {"function":"wp_schema_word"}
+  after_quote:u64 = call(vo,vout,quote,one,vw) {"function":"wa_word"}
+  after_text:u64 = call(vo,after_quote,text,six,vw) {"function":"wa_word"}
+  after_all:u64 = call(vo,after_text,quote,one,vw) {"function":"wa_word"}
+  ret(after_all)
+block missing_value(mo:mutbuf,missing_out:u64,empty_emit:bool)
+  null_word:u64 = const() {"value":1819047278}
+  size:u64 = const() {"value":4}
+  null_end:u64 = call(mo,missing_out,null_word,size,empty_emit) {"function":"wa_word"}
+  ret(null_end)
+block invalid()
+  invalid_result:u64 = const() {"value":0}
+  ret(invalid_result)
 end
 fn wj_close(output:mutbuf,at:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
 block entry(output:mutbuf,at:u64,emit:bool)

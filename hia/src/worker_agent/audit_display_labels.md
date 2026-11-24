@@ -55,3 +55,9 @@ byte. The test covers every admitted Unicode whitespace code point at
 both boundaries, internal controls, valid aliases with filtered
 characters, length boundaries, and absence. Rust retains all authority,
 other conversion, CLI routing, journal/index, and filesystem writes.
+
+The WJB3 batch uses the same internal `wp_view` evaluator. It returns a
+tag plus a span start and length, within the pinned selfhost's three-result
+limit. A normalized original label can be consumed without copying it;
+canonical schema words share one source. The external WJP1 wire is
+unchanged.
