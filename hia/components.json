@@ -9713,6 +9713,71 @@
         "source": "src/worker_agent/audit_task_query.hepta"
       }
     ],
+    "src/worker_agent/audit_index_decode.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_ascii_encode",
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "wj_string_size"
+        ],
+        "source": "src/worker_agent/audit_jsonl_row.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wx_index",
+          "wx_map",
+          "wx_offsets",
+          "wx_key_after",
+          "wx_key",
+          "wx_decimal",
+          "wx_prefix",
+          "wx_map_header"
+        ],
+        "source": "src/worker_agent/audit_index_wire.hepta"
+      },
+      {
+        "functions": [
+          "wd_octet",
+          "wd_expect",
+          "wd_number",
+          "wd_u128_digit"
+        ],
+        "source": "src/worker_agent/journal_audit_dto.hepta"
+      },
+      {
+        "functions": [
+          "ws_selected"
+        ],
+        "source": "src/worker_agent/audit_select.hepta"
+      },
+      {
+        "functions": [
+          "wtq_mask",
+          "wtq_task_key"
+        ],
+        "source": "src/worker_agent/audit_task_query.hepta"
+      }
+    ],
     "src/worker_agent/audit_index_wire.hepta": [
       {
         "functions": [

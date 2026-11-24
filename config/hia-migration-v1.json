@@ -1506,6 +1506,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-index-decode",
+      "node_integration_complete": false,
+      "scope": "Private WID1 decodes actual original version-1 canonical raw sidecar bytes into WIX1, requires the final three policy maps empty, and validates all eight maps before atomic typed output. Both emitters feed the unchanged WTQ2 and match real locked query stdout; no generic JSON, identity, path, storage or production routing.",
+      "source": "hia/src/worker_agent/audit_index_decode.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_index_decode.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-export",
       "node_integration_complete": false,
       "scope": "A single native raw-memory journal call composes fixed WJF1 framing, the two exact WJD1 DTO profiles, shared WAT2 selection/rendering, and all three audit artifacts, with atomic output and actual locked original byte comparisons. Generic Serde, authority, storage and production dispatch unchanged.",
