@@ -1581,12 +1581,13 @@
       "id": "bench/linux-no-profile-main",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Standalone Linux x86-64 bounded Original, WriteLast and HotBucketInterleave Bench for Classic and admitted single-domain or single-writer Mixed/HotStreak. Real argv, exact single-key TRNM_HOT_BUCKETS startup selection through the native normalizer, first-call-only clocks, native post-clock schedule replays with independent digest/ordered-membership checks, report/profile and isolated persistence/errors. No profile writes in ordinary invocation or unbound mode; synthetic isolated qualification and locked Rust differential only, not complete Bench or production activation.",
+      "scope": "Standalone Linux x86-64 bounded Original, WriteLast and HotBucketInterleave Bench for Classic and admitted single-domain or single-writer Mixed/HotStreak. Real argv, exact single-key TRNM_HOT_BUCKETS startup selection through the native normalizer, first-call-only clocks, native post-clock schedule replays with independent digest/ordered-membership checks, report/profile and isolated persistence/errors. No profile writes in ordinary invocation or unbound mode. Separate reader-high-water-v1 oracle qualifies default Mixed/Hot native components without expanding ELF admission. Not complete Bench or production activation.",
       "sources": [
         "hia/platform/bench/main_emitter.hepta"
       ],
       "tests": [
-        "hia/tests/test_bench_main.py"
+        "hia/tests/test_bench_main.py",
+        "hia/tests/test_bench_reader_high_water.py"
       ]
     },
     {

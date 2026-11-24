@@ -162,6 +162,28 @@ on the default Classic, admitted default-sized single-writer workloads and
 admitted small inputs; independent elapsed observations
 are retained and are not compared as deterministic bytes.
 
+### Corrected workload qualification
+
+The test-only `reader-high-water-v1` suite creates a private exact Git archive
+of the Cargo tree and builds it with the original lock. Exactly four reader
+table updates in the private Rust executor retain the larger reader group.
+No tracked Rust source, workload, profile code, or lock changes. The old
+experimental group digests above remain historical comparisons; this
+corrected oracle is a distinct semantics target, not old Rust byte parity.
+
+The qualification compares ordered group membership, raw and rendered profile,
+the two digests and replay against that actual private Cargo CLI and adapter.
+An independent access graph checks every transaction exactly once and denies
+overlapping writes/reads in each group. The native formatter receives the
+oracle's actual clock/path fields to check rendered report and persisted bytes;
+it does not measure native end-to-end clocks or directory behavior for these
+larger workloads. The existing ELF still rejects unqualified multi-key
+multiwriter defaults. This test does not add a runtime flag, change a signed
+domain, or replace any production entry.
+
+Run `python3 -m unittest hia.tests.test_bench_reader_high_water -v` with the
+pinned HIA toolchain and cached original locked Cargo dependencies.
+
 ### Hot bucket startup environment
 
 Original and WriteLast still refuse nonempty environments on admitted
