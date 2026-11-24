@@ -109,7 +109,7 @@ def fixtures():
     return cases
 
 
-def genuine_original(work):
+def genuine_original(work, *, observer=ORACLE):
     path = Path(os.environ[ENV]).absolute()
     rust, graph, bound = dependency_graph(path)
     original = VERSION.read_bytes()
@@ -126,8 +126,8 @@ def genuine_original(work):
     root_diag = Path(__file__).with_name("rust_cell_model_root_reference.rs").read_bytes().split(
         b"\nfn model_root_status(",1
     )[1]
-    observer = Path(__file__).with_name("rust_cell_closure_reference.rs").read_bytes()
-    (work / "closure_observation.rs").write_bytes(observer)
+    closure_observer = Path(__file__).with_name("rust_cell_closure_reference.rs").read_bytes()
+    (work / "closure_observation.rs").write_bytes(closure_observer)
     constants = b"".join(pick(original,pattern) for pattern in (
         rb"^pub const MAX_CELL_VERSION_BYTES_V1:[^\n]+;\n",
         rb"^pub const MAX_CELL_VERSION_MANIFESTS_V1:[^\n]+;\n",
@@ -141,12 +141,14 @@ def genuine_original(work):
                       original.index(b"    /// Re-read every declared manifest")]
     input_helper = original[original.index(b"struct VersionInput<'a>"):
                             original.index(b"#[cfg(test)]")]
-    adapter = ORACLE.read_bytes()
+    adapter = observer.read_bytes()
     raw = (base + b"\nuse sha2::{Digest,Sha512};\nuse std::collections::BTreeSet;\n"
            b"use model_root::CellModelReleaseRootV1;\n" + constants + definition
-           + methods + codecs + b"}\n" + input_helper
-           + b"impl CellVersionManifestV1 {\n    fn declared_environment(&self) -> CellResultV1<()> {\n"
-           + prefix + b"        Ok(())\n    }\n}\n\nfn model_root_status(" + root_diag + adapter)
+           + methods + codecs + b"}\n" + input_helper)
+    if observer == ORACLE:
+        raw += (b"impl CellVersionManifestV1 {\n    fn declared_environment(&self) -> CellResultV1<()> {\n"
+                + prefix + b"        Ok(())\n    }\n}\n\nfn model_root_status(" + root_diag)
+    raw += adapter
     shell, binary = work / "original.rs", work / "original"
     shell.write_bytes(raw)
     run = subprocess.run(["rustc","--edition=2024","-Dwarnings","-L",f"dependency={path.parent}",

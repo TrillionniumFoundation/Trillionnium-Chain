@@ -785,6 +785,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-complete-version",
+      "node_integration_complete": false,
+      "scope": "One-call original canonical TCV1 declared metadata on the shared 1 MiB native loan: authentic TMR/TCD/TCM bytes, environment relation, sorted deduplicated coverage and matched dual closure descriptor checks. The output is environment ID and count, not version commitment, loader, authority, payload, IO, storage, network, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_complete_version.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_complete_version.py",
+        "hia/tests/rust_cell_complete_version_reference.rs",
+        "hia/tests/test_cell_version_environment.py",
+        "hia/tests/cell_manifest_original.py"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
