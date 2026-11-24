@@ -14,8 +14,10 @@ block wire(wi:readbuf,wo:mutbuf,ww:mutbuf,wire_len:usize)
   magic_ok:bool = compare.eq(magic,want)
   operation:u64 = call(wi,four,four) {"function":"rac_read_le"}
   one:u64 = const() {"value":1}
-  typed:bool = compare.le(operation,one)
-  preflight:bool = compare.eq(operation,one)
+  two:u64 = const() {"value":2}
+  typed:bool = compare.le(operation,two)
+  preflight:bool = compare.ge(operation,one)
+  decision:bool = compare.eq(operation,two)
   row_count:u64 = call(wi,eight,eight) {"function":"rac_read_le"}
   bound:u64 = const() {"value":64}
   zero_rows:bool = compare.eq(row_count,zero)
@@ -25,7 +27,9 @@ block wire(wi:readbuf,wo:mutbuf,ww:mutbuf,wire_len:usize)
   suffix:u64 = call(row_count) {"function":"vr_row"}
   full:u64 = const() {"value":476}
   short:u64 = const() {"value":252}
-  used:u64 = select(preflight,full,short)
+  extended:u64 = const() {"value":477}
+  existing:u64 = select(preflight,full,short)
+  used:u64 = select(decision,extended,existing)
   target:u64 = int.add.wrap(suffix,used)
   actual:u64 = int.cast(wire_len) {"mode":"wrap"}
   extent_ok:bool = compare.eq(actual,target)
@@ -90,7 +94,51 @@ block window(ni:readbuf,no:mutbuf,nw:mutbuf,nstatement:u64,nprofile:u64)
   not_early:bool = compare.ge(current,lower)
   not_late:bool = compare.le(current,upper)
   within:bool = bool.and(not_early,not_late)
-  branch within publish_preflight(ni,no,nw,nprofile) evidence_window()
+  branch within observed_mode(ni,no,nw,nstatement,nprofile) evidence_window()
+block observed_mode(oi:readbuf,oo:mutbuf,ow:mutbuf,ostatement:u64,orow:u64)
+  field:u64 = const() {"value":4}
+  op_two:u64 = const() {"value":2}
+  op:u64 = call(oi,field,field) {"function":"rac_read_le"}
+  decision_mode:bool = compare.eq(op,op_two)
+  branch decision_mode observed_status(oi,oo,ow,ostatement,orow) publish_preflight(oi,oo,ow,orow)
+block observed_status(bi:readbuf,bo:mutbuf,bw:mutbuf,bst:u64,brow:u64)
+  relative:u64 = const() {"value":476}
+  status_width:u64 = const() {"value":1}
+  maximum_status:u64 = const() {"value":2}
+  observation_offset:u64 = int.add.wrap(bst,relative)
+  status:u64 = call(bi,observation_offset,status_width) {"function":"rac_read_le"}
+  typed_observation:bool = compare.le(status,maximum_status)
+  branch typed_observation decision_capacity(bi,bo,bw,bst,brow) malformed()
+block decision_capacity(ci_:readbuf,co_:mutbuf,cw_:mutbuf,cst_:u64,crow_:u64)
+  out_minimum:usize = const() {"value":68}
+  output_extent:usize = buffer.len(co_)
+  available:bool = compare.ge(output_extent,out_minimum)
+  branch available decision_hash(ci_,co_,cw_,cst_,crow_) insufficient()
+block decision_hash(hi:readbuf,ho:mutbuf,hw:mutbuf,hst:u64,hrow:u64)
+  result:u64 = call(hi,hst,hrow,hw) {"function":"vs_decision_hash"}
+  clear:u64 = const() {"value":0}
+  done_hash:bool = compare.eq(result,clear)
+  branch done_hash publish_decision(hi,ho,hw,hst,hrow) internal_error()
+block publish_decision(vi:readbuf,vo:mutbuf,vw:mutbuf,vst:u64,vrow:u64)
+  zero_out:u64 = const() {"value":0}
+  one_out:u64 = const() {"value":1}
+  two_out:u64 = const() {"value":2}
+  statement_at:u64 = const() {"value":252}
+  statement_field:u64 = int.add.wrap(vst,statement_at)
+  observed_at:u64 = const() {"value":476}
+  observed_field:u64 = int.add.wrap(vst,observed_at)
+  kind_at:u64 = const() {"value":92}
+  kind_field:u64 = int.add.wrap(vrow,kind_at)
+  width:u64 = const() {"value":32}
+  decision_out:u64 = const() {"value":34}
+  false_out:u64 = const() {"value":66}
+  _status:u64 = call(vi,vo,observed_field,zero_out,one_out) {"function":"rac_copy"}
+  _kind:u64 = call(vi,vo,kind_field,one_out,one_out) {"function":"rac_copy"}
+  _statement:u64 = call(vi,vo,statement_field,two_out,width) {"function":"rac_copy"}
+  _decision:u64 = call(vw,vo,decision_out) {"function":"sb_copy_digest"}
+  _flags:u64 = call(vo,false_out,zero_out,two_out) {"function":"rac_write_be"}
+  success:u32 = const() {"value":0}
+  ret(success)
 block publish_preflight(ti:readbuf,to:mutbuf,tw:mutbuf,trow:u64)
   out_min:usize = const() {"value":129}
   extent_out:usize = buffer.len(to)
@@ -327,4 +375,52 @@ block entry(input:readbuf,base:u64,rel:u64,width:u64,work:mutbuf,pos:u64)
   value:u64 = call(input,base,rel,width) {"function":"vr_read"}
   after:u64 = call(work,target,value,width) {"function":"rac_write_be"}
   ret(after)
+end
+
+fn vs_decision_hash(input:readbuf,statement:u64,row:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,statement:u64,row:u64,work:mutbuf)
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  good:bool = compare.eq(initialized,zero)
+  branch good build(input,statement,row,work) refused(initialized)
+block build(bi:readbuf,bs:u64,br:u64,bw:mutbuf)
+  base:u64 = const() {"value":1208}
+  eight:u64 = const() {"value":8}
+  domain_width:u64 = const() {"value":34}
+  domain_at:u64 = call(bw,base,domain_width,eight) {"function":"rac_write_be"}
+  value_0:u64 = const() {"value":7147889007692509812}
+  _written_0:u64 = call(bw,domain_at,value_0) {"function":"tr_put"}
+  domain_pos_1:u64 = const() {"value":1224}
+  value_1:u64 = const() {"value":7163369285386335790}
+  _written_1:u64 = call(bw,domain_pos_1,value_1) {"function":"tr_put"}
+  domain_pos_2:u64 = const() {"value":1232}
+  value_2:u64 = const() {"value":7306014447840621665}
+  _written_2:u64 = call(bw,domain_pos_2,value_2) {"function":"tr_put"}
+  domain_pos_3:u64 = const() {"value":1240}
+  value_3:u64 = const() {"value":8515865370193783139}
+  _written_3:u64 = call(bw,domain_pos_3,value_3) {"function":"tr_put"}
+  domain_pos_4:u64 = const() {"value":1248}
+  value_4:u64 = const() {"value":49}
+  _written_4:u64 = call(bw,domain_pos_4,value_4) {"function":"tr_put"}
+  after_domain:u64 = int.add.wrap(domain_at,domain_width)
+  digest_width:u64 = const() {"value":32}
+  one:u64 = const() {"value":1}
+  statement_at:u64 = const() {"value":252}
+  kind_at:u64 = const() {"value":92}
+  status_at:u64 = const() {"value":476}
+  payload_at:u64 = const() {"value":444}
+  after_statement:u64 = call(bi,bs,statement_at,digest_width,bw,after_domain) {"function":"vs_frame_bytes"}
+  after_kind:u64 = call(bi,br,kind_at,one,bw,after_statement) {"function":"vs_frame_bytes"}
+  after_status:u64 = call(bi,bs,status_at,one,bw,after_kind) {"function":"vs_frame_bytes"}
+  after_payload:u64 = call(bi,bs,payload_at,digest_width,bw,after_status) {"function":"vs_frame_bytes"}
+  extent:u64 = int.sub.wrap(after_payload,base)
+  updated:u64 = call(bw,base,extent) {"function":"tr_sha_update_work"}
+  okay:u64 = const() {"value":0}
+  update_ok:bool = compare.eq(updated,okay)
+  branch update_ok finish(bw) refused(updated)
+block finish(fw:mutbuf)
+  result:u64 = call(fw) {"function":"tr_sha_final"}
+  ret(result)
+block refused(code:u64)
+  ret(code)
 end

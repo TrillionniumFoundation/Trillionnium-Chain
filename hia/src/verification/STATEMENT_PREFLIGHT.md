@@ -1,4 +1,4 @@
-# Verification statement preflight
+# Verification statement preflight and observational output
 
 The native entry implements the actual
 [`VerificationStatementV1::new` and `verify_statement_v1` pre-provider sequence](../../../trillionnium/crates/trnm-verification-profiles/src/lib.rs).
@@ -12,8 +12,9 @@ inclusive current-height evidence window only after evidence matches.
 An immutable profile table is validated through the shared
 [closed registry](PROFILE_REGISTRY.md) used by the original native entry.
 Invalid tables fail at registry construction, before simulating any call
-over an already constructed Rust registry. No expected profile or outcome
-flag can stand in for native computation.
+over an already constructed Rust registry. No expected profile or result flag can stand in for native validation.
+The optional output codec accepts only a typed, non-authoritative observation,
+and derives all digest fields and kind from the same checked frame.
 
 ## Private frame
 
@@ -34,6 +35,20 @@ and submitted heights. Integers in this private argument are little-endian.
   evidence fields (task, lease, execution receipt, artifact, availability,
   and backend payload). Success writes the computed statement digest and
   exact 97-byte resolved profile. No backend result is an input or output.
+- Operation 2 appends one byte to operation 1: the read-only observational
+  label (0 Verified, 1 Rejected, 2 Unavailable). It runs the same
+  preflight; only after success does it interpret the label. It publishes
+  a private 68-byte record: observed status, resolved kind, computed
+  statement digest (32 bytes), decision digest (32 bytes), and two literal
+  zero bytes for economic and order-reorganization authority.
+
+The operation-2 digest uses the original `trnm.g2c.verification-decision.v1`
+domain including its NUL, verified statement digest, exact selected kind
+(one byte, original tags 0, 1, 2, 3, 5, 6), observed tag (one byte), and the
+backend-payload digest from the same admitted evidence (32 bytes), in that
+order. Each field uses its original big-endian u64 length. The result is
+a deterministic presentation, not a public wire status, backend proof,
+or signed authority. No backend is called from HIA.
 
 The result uses original registry statuses, plus 14 malformed statement,
 15 evidence binding mismatch, and 16 evidence window closed. Local framing,
@@ -43,8 +58,10 @@ extent. It changes no output on refusal, and no suffix on acceptance.
 
 The [original differential](../../tests/test_verification_statement_preflight.py)
 compiles the unchanged Rust methods with pinned rustc and an independent
-system SHA-256 adapter. Rust invokes a test backend that counts actual
-invocations and always returns Unavailable. Refusals must not invoke that
-backend. The native entry proves only reaching the boundary with matching
-inputs; it does not implement backend verification, final decision records,
-challenge lifecycle, payments, fork weight, or production admission.
+system SHA-256 adapter. Rust invokes a purely offline enum fixture and counts actual calls.
+Operation 1 keeps the Unavailable fixture; operation 2 covers all six
+kinds and all three enum labels, and compares every output byte from the
+original Rust decision. Rust validation refusals never invoke the fixture.
+Neither the fixture's label nor any emitted record proves verification;
+backend ownership, challenge lifecycle, payments, fork weight and
+production admission remain outside this component.

@@ -68,5 +68,6 @@ Native compiler and toolchain identities follow `hia/toolchain.lock.json`.
 For the separate original profile admission and exact lookup API, see
 [Closed verification profile registry](PROFILE_REGISTRY.md).
 
-For typed digest framing and registry/evidence validation before a backend,
-see [Verification statement preflight](STATEMENT_PREFLIGHT.md).
+For typed digest framing, registry/evidence validation before a backend,
+and the private deterministic observation codec, see
+[Verification statement preflight and observational output](STATEMENT_PREFLIGHT.md).

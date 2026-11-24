@@ -1,4 +1,4 @@
-// Exact Rust registry, statement and pre-provider sequence are prefixed by the test.
+// Exact Rust registry and statement decision sequence are prefixed by the test.
 use std::process::{Command, Stdio};
 
 struct Sha256(Vec<u8>);
@@ -23,12 +23,13 @@ impl Sha256 {
     }
 }
 
-#[derive(Default)]
-struct AbsentBackend {
+// Offline semantic enum fixture, not a verifier or proof of backend execution.
+struct ObservedFixture {
     calls: usize,
     selected: Option<VerificationProfileV1>,
+    observation: VerificationBackendResultV1,
 }
-impl VerificationBackendV1 for AbsentBackend {
+impl VerificationBackendV1 for ObservedFixture {
     fn verify(
         &mut self,
         profile: VerificationProfileV1,
@@ -37,7 +38,7 @@ impl VerificationBackendV1 for AbsentBackend {
     ) -> VerificationBackendResultV1 {
         self.calls += 1;
         self.selected = Some(profile);
-        VerificationBackendResultV1::Unavailable
+        self.observation
     }
 }
 
@@ -76,8 +77,17 @@ fn main() -> io::Result<()> {
     while !raw.is_empty() {
         let count = u64_at(raw, 8) as usize;
         let start = 92 + 97 * count;
-        let construct = u32_at(raw, 4) == 0;
-        let (frame, next) = raw.split_at(start + if construct { 252 } else { 476 });
+        let operation = u32_at(raw, 4);
+        let (frame, next) = raw.split_at(
+            start
+                + match operation {
+                    0 => 252,
+                    1 => 476,
+                    2 => 477,
+                    _ => panic!("nonsemantic differential frame"),
+                },
+        );
+        let construct = operation == 0;
         raw = next;
         let s = &frame[start..];
         if construct {
@@ -113,19 +123,49 @@ fn main() -> io::Result<()> {
         };
         let stmt = statement(s);
         let evidence = evidence(&s[284..]);
-        let mut backend = AbsentBackend::default();
+        let observation = if operation == 2 {
+            match s[476] {
+                0 => VerificationBackendResultV1::Verified,
+                1 => VerificationBackendResultV1::Rejected,
+                2 => VerificationBackendResultV1::Unavailable,
+                _ => panic!("nonsemantic observation"),
+            }
+        } else {
+            VerificationBackendResultV1::Unavailable
+        };
+        let mut backend = ObservedFixture {
+            calls: 0,
+            selected: None,
+            observation,
+        };
         let result =
             verify_statement_v1(&registry, &stmt, &evidence, u64_at(frame, 16), &mut backend);
         match result {
             Ok(decision) => {
                 assert_eq!(backend.calls, 1);
-                assert_eq!(decision.status, VerificationDecisionStatusV1::Unavailable);
                 assert!(!decision.economic_authority && !decision.order_reorg_authority);
                 let selected = backend.selected.unwrap();
                 assert_eq!(decision.profile_kind, selected.kind);
                 out.write_all(&[0, 1])?;
-                out.write_all(&decision.statement_digest)?;
-                emit(selected, &mut out)?;
+                if operation == 2 {
+                    let status = match decision.status {
+                        VerificationDecisionStatusV1::Verified => 0,
+                        VerificationDecisionStatusV1::Rejected => 1,
+                        VerificationDecisionStatusV1::Unavailable => 2,
+                    };
+                    assert_eq!(status, s[476]);
+                    out.write_all(&[status, decision.profile_kind.tag()])?;
+                    out.write_all(&decision.statement_digest)?;
+                    out.write_all(&decision.decision_digest)?;
+                    out.write_all(&[
+                        u8::from(decision.economic_authority),
+                        u8::from(decision.order_reorg_authority),
+                    ])?;
+                } else {
+                    assert_eq!(decision.status, VerificationDecisionStatusV1::Unavailable);
+                    out.write_all(&decision.statement_digest)?;
+                    emit(selected, &mut out)?;
+                }
             }
             Err(err) => {
                 assert_eq!(backend.calls, 0);

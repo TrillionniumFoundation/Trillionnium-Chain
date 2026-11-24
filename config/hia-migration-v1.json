@@ -234,7 +234,7 @@
     {
       "id": "verification/statement-preflight",
       "node_integration_complete": false,
-      "scope": "Original VerificationStatementV1 constructor/digest and verify_statement_v1 pre-provider sequence. Shares native closed registry and exact lookup; validates typed evidence and current height window. Returns only computed statement digest and selected profile, with no provider flag, decision, economic or reorganization authority.",
+      "scope": "Exact VerificationStatementV1 constructor/digest and verify_statement_v1 pre-provider sequence share the closed registry and exact typed evidence/window checks. A private observational codec computes the original deterministic decision bytes from that frame and a typed non-authoritative enum observation; no provider verification, public wire, economic or reorganization authority.",
       "source": "hia/src/verification/statement_preflight.hepta",
       "state": "native-kernel-implemented",
       "tests": [
