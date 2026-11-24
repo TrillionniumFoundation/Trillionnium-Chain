@@ -10117,6 +10117,27 @@
         "source": "platform/worker_journal_audit_stdin/emitter.hepta"
       }
     ],
+    "platform/worker_audit_sealed_query_lines/emitter.hepta": [
+      {
+        "functions": [
+          "fd_checks",
+          "anonymous_buffers",
+          "read_exact",
+          "eof_and_call",
+          "stdout",
+          "retry_and_exit",
+          "put_le64"
+        ],
+        "source": "platform/worker_journal_audit_stdin/emitter.hepta"
+      },
+      {
+        "functions": [
+          "query_thunk_0",
+          "query_thunk_2"
+        ],
+        "source": "platform/worker_audit_sealed_query/emitter.hepta"
+      }
+    ],
     "src/worker_agent/audit_index_wire.hepta": [
       {
         "functions": [

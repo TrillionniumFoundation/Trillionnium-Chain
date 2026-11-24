@@ -2224,6 +2224,18 @@
       ]
     },
     {
+      "id": "worker-agent/owned-sealed-audit-query-lines-fixture",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Separate uninstalled static selfhost-only Linux x86-64 WQS2 fixture reuses the exact WQS1 sealed fd0 and anonymous stdout pipe wire and runtime guards, retaining native WID1/WTQ2 with strict importless WER2. Actual original Rust stdout covers CRLF, Unicode-blank and unterminated query input including the combined physical 64 KiB cap; no path, credential, authority, service or production activation.",
+      "sources": [
+        "hia/platform/worker_audit_sealed_query_lines/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_worker_audit_sealed_query_lines.py"
+      ]
+    },
+    {
       "id": "platform/os-fixture",
       "node_integration_complete": false,
       "retirement_accepted": false,
