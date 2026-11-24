@@ -14,6 +14,7 @@ CODEC = CELL / "manifest.rs"
 ERASURE = CELL / "erasure.rs"
 CLOSURE = CELL / "closure.rs"
 MODEL_ROOT = CELL / "model_root.rs"
+TENSOR_CONTRACT = CELL / "tensor.rs"
 ADAPTER = Path(__file__).with_name("rust_cell_manifest_reference.rs")
 BINDING_ADAPTER = Path(__file__).with_name("rust_cell_binding_reference.rs")
 ENV = "HIA_M09_SHA2_RLIB"
@@ -26,7 +27,24 @@ def binding_source():
     return original[start:end]
 
 
-def source(with_closure=False, with_model_root=False):
+def tensor_contract_source():
+    original = TENSOR_CONTRACT.read_bytes()
+    names = (b"MAX_CELL_TENSOR_CONTRACT_BYTES_V1", b"HASH_PROFILE_SHA256_V1",
+             b"CODEC_SAFETENSORS_DENSE_V1", b"MAX_TENSORS", b"MAX_TENSOR_NAME_BYTES", b"MAX_RANK")
+    sizes = b"".join(pick(original, rb"^(?:pub )?const " + name + rb":[^\n]+;\n")
+                     for name in names)
+    start = original.index(b"#[derive(Clone, Copy, Debug, Eq, PartialEq)]\n#[repr(u8)]\npub enum CellTensorDTypeV1")
+    terminal = original.index(b"#[derive(Clone, Debug, Eq, PartialEq)]\npub struct CellTensorReadbackV1", start)
+    declaration = original[start:terminal]
+    a = original.index(b"impl CellTensorContractV1 {")
+    b = original.index(b"    /// Verify the independent owner pin", a)
+    c = original.index(b"    pub fn encode(", b)
+    d = original.index(b"    /// Re-read one complete real container", c)
+    helpers = original[original.index(b"fn valid_name("):original.index(b"fn read_section<")]
+    return sizes + declaration + original[a:b] + original[c:d] + b"}\n" + helpers
+
+
+def source(with_closure=False, with_model_root=False, with_tensor_contract=False):
     boundary = CELL.with_suffix(".rs").read_bytes()
     digest = pick(boundary, rb"^pub type CellDigestV1 = [^\n]+;\n")
     result = pick(boundary, rb"^pub type CellResultV1<T> = [^\n]+;\n")
@@ -38,6 +56,14 @@ def source(with_closure=False, with_model_root=False):
     conversion = pick(boundary, rb"^impl From<io::Error> for CellErrorV1 \{\n.*?^}\n")
     shell = (b"use std::io::{self, Read, Write};\n#[derive(Debug)]\npub enum CellErrorV1 {\n" +
              variants + b"}\n" + conversion)
+    if with_tensor_contract:
+        constants = (pick(wire, rb"^pub const MAX_CELL_BYTES:[^\n]+;\n") +
+                     pick(CLOSURE.read_bytes(), rb"^pub const MAX_CELL_CLOSURE_FILES_V1:[^\n]+;\n"))
+        return (shell + digest + result + check + constants +
+                b"#[allow(dead_code)]\nmod tensor_contract {\n"
+                b"use super::{require,CellDigestV1,CellErrorV1,CellResultV1,MAX_CELL_BYTES,MAX_CELL_CLOSURE_FILES_V1};\n"
+                b"use std::io::{Cursor,Read}; use sha2::{Digest,Sha256};\n" +
+                tensor_contract_source() + b"}\n" + b'include!("tensor_contract_observation.rs");\n')
     isolated = b"""#[allow(dead_code)]
 mod binding {
     use super::{require, CellDigestV1, CellErrorV1, CellResultV1};
@@ -145,16 +171,23 @@ def dependency_graph(artifact):
     return rust, details, bound
 
 
-def build(work, *, with_closure=False, with_model_root=False):
+def build(work, *, with_closure=False, with_model_root=False, with_tensor_contract=False):
     path = Path(os.environ[ENV]).absolute()
     rust, graph, bound = dependency_graph(path)
     source_path, binary = work / "original.rs", work / "original"
-    raw = source(with_closure=with_closure, with_model_root=with_model_root)
+    raw = source(with_closure=with_closure, with_model_root=with_model_root,
+                 with_tensor_contract=with_tensor_contract)
     source_path.write_bytes(raw)
     observe = BINDING_ADAPTER.read_bytes()
     (work / "binding_observation.rs").write_bytes(observe)
     extra_proof = {}
-    if with_closure or with_model_root:
+    if with_tensor_contract:
+        observer = Path(__file__).with_name("rust_cell_tensor_contract_reference.rs").read_bytes()
+        (work / "tensor_contract_observation.rs").write_bytes(observer)
+        extra_proof = {"original_tensor_contract_source_sha256": sha(TENSOR_CONTRACT.read_bytes()),
+                       "original_tensor_contract_pure_extract_sha256": sha(tensor_contract_source()),
+                       "oracle_tensor_contract_observer_sha256": sha(observer)}
+    elif with_closure or with_model_root:
         closure_observer = Path(__file__).with_name("rust_cell_closure_reference.rs").read_bytes()
         (work / "closure_observation.rs").write_bytes(closure_observer)
         extra_proof = {"original_closure_source_sha256": sha(CLOSURE.read_bytes()),

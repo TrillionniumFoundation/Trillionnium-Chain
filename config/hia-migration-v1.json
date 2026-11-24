@@ -713,6 +713,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-contract",
+      "node_integration_complete": false,
+      "scope": "Pure original TMT1 declaration decode, exact Unicode/name/file/shape ordering, integer byte limits and domain SHA-256 ID. No tensor headers, payload, weights, owner pin, loader, authentication, storage, network, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_tensor_contract.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_tensor_contract.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_tensor_contract_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1879,7 +1891,8 @@
         "data-availability/cell-release-manifest",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
-        "data-availability/cell-model-release-root"
+        "data-availability/cell-model-release-root",
+        "data-availability/cell-tensor-contract"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",
