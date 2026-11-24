@@ -245,6 +245,57 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
                 self.assertFalse(self.run_path.exists())
 
+    def test_ordinary_classic_footprint_desc_default_direct_process(self):
+        strategy = (b"--strategy=footprint-desc",)
+        explicit = (*strategy, b"--workload=classic", b"--txs=20000", b"--keys=2000")
+        input_hash = hashlib.sha256(b"TRNM-BENCH-INPUT-V1\0")
+        for j in range(20_000):
+            key = j % 2_000
+            input_hash.update(struct.pack("<8Q", j, 1, key, 1, 1, key, 1, 0))
+        expected_groups = group_digest([range(j, j + 2_000) for j in range(0, 20_000, 2_000)])
+        expected = {b"workload": b"Classic", b"strategy": b"FootprintDesc",
+                    b"txs": b"20000", b"keys": b"2000", b"groups": b"10", b"grouped": b"20000",
+                    b"estimated_conflict_rate": b"0.9000",
+                    b"determinism.input_sha256": input_hash.hexdigest().encode(),
+                    b"determinism.groups_sha256": expected_groups.hex().encode()}
+        for repeats, args in enumerate((strategy, (*explicit, b"--determinism-repeats=1"))):
+            comparable = []
+            for owner, image in (("rust", self.original), ("native", self.native)):
+                result, wall = self.actual(f"classic-footprint-default-{repeats}-{owner}", image, args)
+                self.assertEqual((result.returncode, result.stderr), (0, b""))
+                _, out = stdout_observation(result.stdout, wall)
+                fields = dict(line.split(b"=", 1) for line in out.splitlines() if b"=" in line)
+                self.assertEqual({key: fields[key] for key in expected}, expected)
+                self.assertEqual(fields[b"determinism.repeats"], str(repeats).encode())
+                self.assertEqual(fields[b"determinism.replay_match"], b"true" if repeats else b"not-requested")
+                comparable.append(out)
+                self.assertFalse(self.run_path.exists())
+            self.assertEqual(*comparable)
+
+        controls = (
+            ((*explicit, b"--determinism-repeats=2"), {}),
+            ((*explicit, b"--determinism-repeats=1000"), {}),
+            ((*strategy, b"--txs=19999", b"--keys=2000"), {}),
+            ((*strategy, b"--txs=20000", b"--keys=1999"), {}),
+            ((*strategy, b"--txs=20001", b"--keys=2000"), {}),
+            ((*strategy, b"--txs=20000", b"--keys=2001"), {}),
+            ((*strategy, b"--workload=mixed"), {}),
+            ((*strategy, b"--workload=hot-streak"), {}),
+            ((*strategy, b"--reader-high-water-v1"), {}),
+            ((*strategy, b"--profile"), {}),
+            ((*strategy, b"--persist-profile"), {}),
+            (strategy, {b"LANG": b"C"}),
+        )
+        for j, (args, env) in enumerate(controls):
+            denied, _ = self.actual(f"classic-footprint-default-closed-{j}", self.native, args, env=env)
+            self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+        for owner, image in (("rust", self.original), ("native", self.native)):
+            denied, _ = self.actual(f"classic-footprint-default-over-{owner}", image,
+                                    (*explicit, b"--determinism-repeats=1001"))
+            self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", REPEAT))
+            self.assertFalse(self.run_path.exists())
+
     def test_actual_exact_repeat_error_and_invalid_exit(self):
         for index, args in enumerate(((b"--determinism-repeats", b"1001"),
                                       (b"--txs=99999", b"--determinism-repeats=18446744073709551615"),
@@ -436,7 +487,7 @@ class NativeBenchMain(unittest.TestCase):
 
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
         for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),
-                                      (b"--workload=hot-streak",), (b"--strategy=footprint-desc",),
+                                      (b"--workload=hot-streak",), (b"--strategy=footprint-desc", b"--keys=1999"),
                                       (b"--txs=20001",),
                                       (b"--workload=mixed", b"--txs=32", b"--keys=2", b"--write-every=31"),
                                       (b"--workload=hot-streak", b"--txs=32", b"--keys=2", b"--write-every=31"),
