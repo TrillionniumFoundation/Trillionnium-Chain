@@ -236,13 +236,23 @@ block enum_value(ev_i:readbuf,ev_o:mutbuf,ev_n:u64,ev_p:u64,ev_e:u64,ev_k:u64,ev
   native_wire:u64 = select(is_footprint,footprint_wire,current_wire)
   optional_wire:u64 = select(is_auto,auto_wire,native_wire)
   strategy_wire:u64 = select(is_greedy,greedy_wire,optional_wire)
-  branch clean_work keep(ev_i,ev_o,ev_n,ev_e,ev_k,ev_f,ev_seen,ev_flag,enum_index) keep_strategy(ev_i,ev_o,ev_n,ev_e,ev_k,ev_f,ev_seen,ev_flag,strategy_wire,clean_strategy)
-block keep_strategy(ks_i:readbuf,ks_o:mutbuf,ks_n:u64,ks_e:u64,ks_k:u64,ks_f:u64,ks_seen:u64,ks_flag:u64,ks_value:u64,ks_valid:bool)
-  branch ks_valid keep(ks_i,ks_o,ks_n,ks_e,ks_k,ks_f,ks_seen,ks_flag,ks_value) fail()
+  branch clean_work keep(ev_i,ev_o,ev_n,ev_e,ev_k,ev_f,ev_seen,ev_flag,enum_index) keep_strategy(ev_i,ev_o,ev_n,ev_p,ev_e,ev_k,ev_f,ev_seen,ev_flag,strategy_wire,clean_strategy)
+block keep_strategy(ks_i:readbuf,ks_o:mutbuf,ks_n:u64,ks_p:u64,ks_e:u64,ks_k:u64,ks_f:u64,ks_seen:u64,ks_flag:u64,ks_value:u64,ks_valid:bool)
+  branch ks_valid keep(ks_i,ks_o,ks_n,ks_e,ks_k,ks_f,ks_seen,ks_flag,ks_value) enum_bad(ks_i,ks_o,ks_p,ks_e,ks_f)
+block enum_bad(eb_i:readbuf,eb_o:mutbuf,eb_p:u64,eb_e:u64,eb_f:u64)
+  empty_eb:bool = compare.eq(eb_p,eb_e)
+  branch empty_eb missing(eb_o,eb_f) enum_message(eb_i,eb_o,eb_p,eb_e,eb_f)
+block enum_message(em_i:readbuf,em_o:mutbuf,em_p:u64,em_e:u64,em_f:u64)
+  six_em:u64 = const() {"value":6}
+  work_em:bool = compare.eq(em_f,six_em)
+  work_base:u64 = const() {"value":96}
+  strat_base:u64 = const() {"value":95}
+  base_em:u64 = select(work_em,work_base,strat_base)
+  jump value_diagnostic(em_i,em_o,em_p,em_e,em_f,base_em)
 block number_start(i_ns:readbuf,o_ns:mutbuf,n_ns:u64,p_ns:u64,e_ns:u64,k_ns:u64,f_ns:u64,seen_ns:u64,b_ns:u64)
   has_ns:bool = compare.lt(p_ns,e_ns)
   empty_ns:u64 = const() {"value":64}
-  branch has_ns optional_plus(i_ns,o_ns,n_ns,p_ns,e_ns,k_ns,f_ns,seen_ns,b_ns) numeric_error(i_ns,o_ns,p_ns,e_ns,f_ns,empty_ns)
+  branch has_ns optional_plus(i_ns,o_ns,n_ns,p_ns,e_ns,k_ns,f_ns,seen_ns,b_ns) value_diagnostic(i_ns,o_ns,p_ns,e_ns,f_ns,empty_ns)
 block optional_plus(i_pl:readbuf,o_pl:mutbuf,n_pl:u64,p_pl:u64,e_pl:u64,k_pl:u64,f_pl:u64,seen_pl:u64,b_pl:u64)
   at_pl:usize = int.cast(p_pl) {"mode":"wrap"}
   first_pl:u8 = buffer.load(i_pl,at_pl)
@@ -256,7 +266,7 @@ block positive(i_ps:readbuf,o_ps:mutbuf,n_ps:u64,p_ps:u64,e_ps:u64,k_ps:u64,f_ps
   have_digit:bool = compare.lt(p_ps,e_ps)
   start_val:u64 = const() {"value":0}
   invalid_ps:u64 = const() {"value":80}
-  branch have_digit digits(i_ps,o_ps,n_ps,p_ps,e_ps,k_ps,f_ps,s_ps,b_ps,start_val,start_ps) numeric_error(i_ps,o_ps,start_ps,e_ps,f_ps,invalid_ps)
+  branch have_digit digits(i_ps,o_ps,n_ps,p_ps,e_ps,k_ps,f_ps,s_ps,b_ps,start_val,start_ps) value_diagnostic(i_ps,o_ps,start_ps,e_ps,f_ps,invalid_ps)
 block digits(i_ds:readbuf,o_ds:mutbuf,n_ds:u64,p_ds:u64,e_ds:u64,k_ds:u64,f_ds:u64,s_ds:u64,b_ds:u64,acc_ds:u64,start_ds:u64)
   at_ds:usize = int.cast(p_ds) {"mode":"wrap"}
   raw_ds:u8 = buffer.load(i_ds,at_ds)
@@ -278,11 +288,11 @@ block digits(i_ds:readbuf,o_ds:mutbuf,n_ds:u64,p_ds:u64,e_ds:u64,k_ds:u64,f_ds:u
   invalid_ds:u64 = const() {"value":80}
   overflow_ds:u64 = const() {"value":96}
   error_ds:u64 = select(digit_ok,overflow_ds,invalid_ds)
-  branch ok_ds after_digit(i_ds,o_ds,n_ds,p_inc,e_ds,k_ds,f_ds,s_ds,b_ds,combined,start_ds) numeric_error(i_ds,o_ds,start_ds,e_ds,f_ds,error_ds)
+  branch ok_ds after_digit(i_ds,o_ds,n_ds,p_inc,e_ds,k_ds,f_ds,s_ds,b_ds,combined,start_ds) value_diagnostic(i_ds,o_ds,start_ds,e_ds,f_ds,error_ds)
 block after_digit(i_ad:readbuf,o_ad:mutbuf,n_ad:u64,p_ad:u64,e_ad:u64,k_ad:u64,f_ad:u64,s_ad:u64,b_ad:u64,a_ad:u64,start_ad:u64)
   another:bool = compare.lt(p_ad,e_ad)
   branch another digits(i_ad,o_ad,n_ad,p_ad,e_ad,k_ad,f_ad,s_ad,b_ad,a_ad,start_ad) keep(i_ad,o_ad,n_ad,e_ad,k_ad,f_ad,s_ad,b_ad,a_ad)
-block numeric_error(i_ne:readbuf,o_ne:mutbuf,p_ne:u64,e_ne:u64,f_ne:u64,base_ne:u64)
+block value_diagnostic(i_ne:readbuf,o_ne:mutbuf,p_ne:u64,e_ne:u64,f_ne:u64,base_ne:u64)
   marked_ne:bool = call(o_ne) {"function":"bc_marked"}
   size_ne:u64 = int.sub.wrap(e_ne,p_ne)
   limit_ne:u64 = const() {"value":127}

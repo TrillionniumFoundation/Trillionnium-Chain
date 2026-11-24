@@ -109,13 +109,20 @@ plain `-h`/`--help` stdout and exit 0. Recognized missing values and duplicate
 options use its exact stderr and exit 2. The five unsigned options also match
 the locked Rust diagnostic for empty values, invalid digits and overflow when
 the value is printable ASCII within the existing 127-byte argv token extent.
-Only that value is reflected; control bytes, invalid UTF-8, shell positions,
-and unsupported option/enum diagnostics retain the candidate refusal. The HIA
-renderer reads a packed [literal catalog](main_diagnostics.json) instead of
+Only the consumed value is reflected. Invalid printable ASCII workload and
+strategy values also match the locked Clap error, including the ordered
+possible-value list and optional suggestion. The HIA scorer uses the
+`strsim` 0.11.1 greedy Jaro match window and transpositions, with integer
+normalization producing the same binary64 round-to-nearest-even divisions
+and additions in the same order. The best score must be strictly greater than
+0.7 after rounding; exact ties favor the later original roster entry.
+Control bytes, invalid UTF-8, free-standing unknown options and other
+unqualified grammar remain refused. The HIA renderer reads a packed
+[literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted
 prefix and takes precedence over later arguments.
-The remaining value/option diagnostics, suggestions, grammar outside the
+The remaining grammar and option-name diagnostics outside the
 bounded parser, colors/terminal output, general environments and other work
 strategies remain open. The original help lists every strategy; it does not
 grant admission to any unimplemented strategy in this candidate.
@@ -352,7 +359,7 @@ The original is a Clap-derived executable with the following long options:
 The retained Clap front end defines help, strict options and all parse errors.
 The [native qualification](../../tests/test_bench_main.py) compares real stdout,
 stderr and exit status for plain help, terminal `--`, and the admitted strict
-missing-value, duplicate and printable unsigned-value families against the unmodified, locked Cargo binary.
+missing-value, duplicate and printable numeric/enum value families against the unmodified, locked Cargo binary.
 A binary request frame is not a substitute for this layer. In particular,
 `--persist-profile=false` does not disable persistence in the retained CLI.
 

@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_emitter_v6
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_emitter_v7
 fn f0(payload:readbuf,image:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(payload:readbuf,image:mutbuf,scratch:mutbuf)
   n:usize = buffer.len(payload)
@@ -1593,7 +1593,7 @@ block entry(out:mutbuf,n:u64)
   k4008:u64 = const() {"value":18195122216251888246}
   _w4008:u64 = call(out,a4008,k4008) {"function":"tr_put"}
   a4016:u64 = const() {"value":4016}
-  k4016:u64 = const() {"value":9732109437795041280}
+  k4016:u64 = const() {"value":9732111636818296832}
   _w4016:u64 = call(out,a4016,k4016) {"function":"tr_put"}
   a4024:u64 = const() {"value":4024}
   k4024:u64 = const() {"value":8123239494246727923}
@@ -1649,7 +1649,7 @@ block entry(out:mutbuf,n:u64)
   k4144:u64 = const() {"value":1374616766464}
   _w4144:u64 = call(out,a4144,k4144) {"function":"tr_put"}
   a4152:u64 = const() {"value":4152}
-  k4152:u64 = const() {"value":1080863924543914312}
+  k4152:u64 = const() {"value":1080863925282111816}
   _w4152:u64 = call(out,a4152,k4152) {"function":"tr_put"}
   a4160:u64 = const() {"value":4160}
   k4160:u64 = const() {"value":17978730352276965250}
@@ -1673,7 +1673,7 @@ block entry(out:mutbuf,n:u64)
   k4208:u64 = const() {"value":12096834980864}
   _w4208:u64 = call(out,a4208,k4208) {"function":"tr_put"}
   a4216:u64 = const() {"value":4216}
-  k4216:u64 = const() {"value":1584985593857816897}
+  k4216:u64 = const() {"value":1584985593867516225}
   _w4216:u64 = call(out,a4216,k4216) {"function":"tr_put"}
   a4224:u64 = const() {"value":4224}
   k4224:u64 = const() {"value":4932779169340719332}

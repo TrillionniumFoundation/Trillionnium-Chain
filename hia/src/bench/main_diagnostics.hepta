@@ -3,15 +3,15 @@ fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   nz:usize = buffer.len(i)
   oz:usize = buffer.len(o)
-  at_least:usize = const() {"value":976}
+  at_least:usize = const() {"value":1020}
   limit:usize = const() {"value":8192}
   min_ok:bool = compare.ge(nz,at_least)
   max_ok:bool = compare.le(nz,limit)
   valid:bool = bool.and(min_ok,max_ok)
   n:u64 = int.cast(nz) {"mode":"wrap"}
   cap:u64 = int.cast(oz) {"mode":"wrap"}
-  branch valid lookup(i,o,n,cap) refuse()
-block lookup(r_i:readbuf,r_o:mutbuf,r_n:u64,r_cap:u64)
+  branch valid lookup(i,o,s,n,cap) refuse()
+block lookup(r_i:readbuf,r_o:mutbuf,r_s:mutbuf,r_n:u64,r_cap:u64)
   z:u64 = const() {"value":0}
   len_off:u64 = const() {"value":8}
   code:u64 = call(r_i,z) {"function":"diag_u16"}
@@ -21,8 +21,8 @@ block lookup(r_i:readbuf,r_o:mutbuf,r_n:u64,r_cap:u64)
   code_fit:bool = compare.lt(code,code_limit)
   value_fit:bool = compare.le(value_len,value_limit)
   fit:bool = bool.and(code_fit,value_fit)
-  branch fit load_row(r_i,r_o,r_n,r_cap,code,value_len) refuse()
-block load_row(l_i:readbuf,l_o:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_vlen:u64)
+  branch fit load_row(r_i,r_o,r_s,r_n,r_cap,code,value_len) refuse()
+block load_row(l_i:readbuf,l_o:mutbuf,l_s:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_vlen:u64)
   base:u64 = const() {"value":144}
   size:u64 = const() {"value":8}
   index:u64 = int.mul.wrap(l_code,size)
@@ -51,7 +51,7 @@ block load_row(l_i:readbuf,l_o:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_vlen:u64)
   both_pieces:bool = compare.gt(b,z_row)
   correct_suf:bool = compare.eq(numeric,both_pieces)
   text_valid:bool = bool.and(shape,correct_suf)
-  floor_data:u64 = const() {"value":832}
+  floor_data:u64 = const() {"value":876}
   in_data:bool = compare.ge(rel,floor_data)
   start:u64 = int.add.wrap(base,rel)
   p_end:u64 = int.add.wrap(start,a)
@@ -66,11 +66,11 @@ block load_row(l_i:readbuf,l_o:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_vlen:u64)
   fit_report:bool = bool.and(fit_out,hard_fit)
   fit_both:bool = bool.and(data_ok,fit_report)
   ready:bool = bool.and(text_valid,fit_both)
-  branch ready token_check(l_i,l_o,start,p_end,a,b,l_vlen,total,z_row) refuse()
-block token_check(t_i:readbuf,t_o:mutbuf,t_start:u64,t_after:u64,t_a:u64,t_b:u64,t_vlen:u64,t_total:u64,t_j:u64)
+  branch ready token_check(l_i,l_o,l_s,l_code,start,p_end,a,b,l_vlen,total,z_row) refuse()
+block token_check(t_i:readbuf,t_o:mutbuf,t_s:mutbuf,t_code:u64,t_start:u64,t_after:u64,t_a:u64,t_b:u64,t_vlen:u64,t_total:u64,t_j:u64)
   arrived:bool = compare.eq(t_j,t_vlen)
-  branch arrived render(t_i,t_o,t_start,t_after,t_a,t_b,t_vlen,t_total) token_byte(t_i,t_o,t_start,t_after,t_a,t_b,t_vlen,t_total,t_j)
-block token_byte(b_i:readbuf,b_o:mutbuf,b_start:u64,b_after:u64,b_a:u64,b_b:u64,b_vlen:u64,b_total:u64,b_j:u64)
+  branch arrived variant(t_i,t_o,t_s,t_code,t_start,t_after,t_a,t_b,t_vlen,t_total) token_byte(t_i,t_o,t_s,t_code,t_start,t_after,t_a,t_b,t_vlen,t_total,t_j)
+block token_byte(b_i:readbuf,b_o:mutbuf,b_s:mutbuf,b_code:u64,b_start:u64,b_after:u64,b_a:u64,b_b:u64,b_vlen:u64,b_total:u64,b_j:u64)
   prefix_byte:u64 = const() {"value":16}
   off_b:u64 = int.add.wrap(prefix_byte,b_j)
   idx_b:usize = int.cast(off_b) {"mode":"wrap"}
@@ -82,7 +82,68 @@ block token_byte(b_i:readbuf,b_o:mutbuf,b_start:u64,b_after:u64,b_a:u64,b_b:u64,
   byte_ok:bool = bool.and(min_ok_b,max_ok_b)
   inc_b:u64 = const() {"value":1}
   next_b:u64 = int.add.wrap(b_j,inc_b)
-  branch byte_ok token_check(b_i,b_o,b_start,b_after,b_a,b_b,b_vlen,b_total,next_b) refuse()
+  branch byte_ok token_check(b_i,b_o,b_s,b_code,b_start,b_after,b_a,b_b,b_vlen,b_total,next_b) refuse()
+block variant(v_i:readbuf,v_o:mutbuf,v_s:mutbuf,v_code:u64,v_start:u64,v_after:u64,v_a:u64,v_b:u64,v_len:u64,v_total:u64)
+  enum_floor:u64 = const() {"value":102}
+  is_enum:bool = compare.ge(v_code,enum_floor)
+  branch is_enum consider_tip(v_i,v_o,v_s,v_code,v_start,v_after,v_a,v_b,v_len,v_total) render(v_i,v_o,v_start,v_after,v_a,v_b,v_len,v_total)
+block consider_tip(c_i:readbuf,c_o:mutbuf,c_s:mutbuf,c_code:u64,c_start:u64,c_after:u64,c_a:u64,c_b:u64,c_len:u64,c_total:u64)
+  scratch:usize = buffer.len(c_s)
+  minimum:usize = const() {"value":149}
+  fits:bool = compare.ge(scratch,minimum)
+  footer:u64 = const() {"value":38}
+  room:bool = compare.ge(c_b,footer)
+  eligible:bool = bool.and(fits,room)
+  branch eligible choose_tip(c_i,c_o,c_s,c_code,c_start,c_after,c_a,c_b,c_len,c_total) refuse()
+block choose_tip(j_i:readbuf,j_o:mutbuf,j_s:mutbuf,j_code:u64,j_start:u64,j_after:u64,j_a:u64,j_b:u64,j_len:u64,j_total:u64)
+  best:u64 = call(j_i,j_s,j_len,j_code) {"function":"jaro_choice"}
+  zero_j:u64 = const() {"value":0}
+  has_tip:bool = compare.ne(best,zero_j)
+  branch has_tip bound_tip(j_i,j_o,j_start,j_after,j_a,j_b,j_len,j_total,best) render(j_i,j_o,j_start,j_after,j_a,j_b,j_len,j_total)
+block bound_tip(p_i:readbuf,p_o:mutbuf,p_start:u64,p_after:u64,p_a:u64,p_b:u64,p_len:u64,p_total:u64,p_tip:u64)
+  mask:u64 = const() {"value":65535}
+  word_len:u64 = bit.and(p_tip,mask)
+  tip_index:u64 = const() {"value":10}
+  label:u64 = call(p_i,tip_index) {"function":"jaro_label"}
+  tip_len:u64 = bit.and(label,mask)
+  extra:u64 = int.add.wrap(word_len,tip_len)
+  quote:u64 = const() {"value":1}
+  appendix:u64 = int.add.wrap(extra,quote)
+  n_new:u64 = int.add.wrap(p_total,appendix)
+  tip_out_len:usize = buffer.len(p_o)
+  cap_out:u64 = int.cast(tip_out_len) {"mode":"wrap"}
+  output_max:u64 = const() {"value":2048}
+  cap_ok:bool = compare.le(n_new,cap_out)
+  tip_max_ok:bool = compare.le(n_new,output_max)
+  label_known:u64 = const() {"value":34}
+  label_ok:bool = compare.eq(tip_len,label_known)
+  fits_both:bool = bool.and(cap_ok,tip_max_ok)
+  tip_ok:bool = bool.and(fits_both,label_ok)
+  branch tip_ok write_tip(p_i,p_o,p_start,p_after,p_a,p_b,p_len,label,p_tip,n_new) refuse()
+block write_tip(w_i:readbuf,w_o:mutbuf,w_start:u64,w_after:u64,w_a:u64,w_b:u64,w_len:u64,w_label:u64,w_tip:u64,w_total:u64)
+  zero_w:u64 = const() {"value":0}
+  token_w:u64 = const() {"value":16}
+  mask_w:u64 = const() {"value":65535}
+  end_w:u64 = const() {"value":38}
+  tail_w:u64 = int.sub.wrap(w_b,end_w)
+  t_at:u64 = int.shr.checked(w_label,token_w)
+  t_n:u64 = bit.and(w_label,mask_w)
+  word_at:u64 = int.shr.checked(w_tip,token_w)
+  word_n:u64 = bit.and(w_tip,mask_w)
+  _head:u64 = call(w_i,w_o,w_start,zero_w,w_a) {"function":"diag_copy"}
+  d_a:u64 = call(w_i,w_o,token_w,w_a,w_len) {"function":"diag_copy"}
+  d_b:u64 = call(w_i,w_o,w_after,d_a,tail_w) {"function":"diag_copy"}
+  d_c:u64 = call(w_i,w_o,t_at,d_b,t_n) {"function":"diag_copy"}
+  d_d:u64 = call(w_i,w_o,word_at,d_c,word_n) {"function":"diag_copy"}
+  quote_at:usize = int.cast(d_d) {"mode":"wrap"}
+  quote_b:u8 = const() {"value":39}
+  _ = buffer.store(w_o,quote_at,quote_b)
+  one_w:u64 = const() {"value":1}
+  quote_end:u64 = int.add.wrap(d_d,one_w)
+  end_at:u64 = int.add.wrap(w_after,tail_w)
+  _footer:u64 = call(w_i,w_o,end_at,quote_end,end_w) {"function":"diag_copy"}
+  final_size:u32 = int.cast(w_total) {"mode":"wrap"}
+  ret(final_size)
 block render(e_i:readbuf,e_o:mutbuf,e_start:u64,e_after:u64,e_a:u64,e_b:u64,e_vlen:u64,e_total:u64)
   zero_e:u64 = const() {"value":0}
   token_e:u64 = const() {"value":16}
@@ -130,4 +191,343 @@ block entry(i:readbuf,p:u64)
   high:u64 = int.shl.checked(bb,eight)
   v:u64 = bit.or(high,aa)
   ret(v)
+end
+
+fn jaro_fraction(n:u64,d:u64) -> (u64) effects(trap) entry(entry)
+block entry(n:u64,d:u64)
+  initial:u64 = const() {"value":1023}
+  jump normalize(n,d,initial)
+block normalize(nn:u64,nd:u64,ne:u64)
+  ready:bool = compare.ge(nn,nd)
+  branch ready exact(nn,nd,ne) widen(nn,nd,ne)
+block widen(wn:u64,wd:u64,we:u64)
+  one:u64 = const() {"value":1}
+  x:u64 = int.shl.checked(wn,one)
+  exp:u64 = int.sub.wrap(we,one)
+  jump normalize(x,wd,exp)
+block exact(xn:u64,xd:u64,xe:u64)
+  sh:u64 = const() {"value":52}
+  ext:u64 = int.shl.checked(xn,sh)
+  ans:u64 = call(ext,xd,xe) {"function":"jaro_rounded_div"}
+  ret(ans)
+end
+
+fn jaro_rounded_div(n:u64,d:u64,e:u64) -> (u64) effects(trap) entry(entry)
+block entry(n:u64,d:u64,e:u64)
+  q:u64 = int.div.checked(n,d)
+  prod:u64 = int.mul.wrap(q,d)
+  r:u64 = int.sub.wrap(n,prod)
+  answer:u64 = call(q,r,d,e) {"function":"jaro_round"}
+  ret(answer)
+end
+
+fn jaro_round(q:u64,r:u64,d:u64,e:u64) -> (u64) effects(trap) entry(entry)
+block entry(q:u64,r:u64,d:u64,e:u64)
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  twice:u64 = int.shl.checked(r,one)
+  greater:bool = compare.gt(twice,d)
+  equal:bool = compare.eq(twice,d)
+  low:u64 = bit.and(q,one)
+  odd:bool = compare.ne(low,zero)
+  even_tie:bool = bool.and(equal,odd)
+  increment:bool = bool.or(greater,even_tie)
+  plus:u64 = select(increment,one,zero)
+  rounded:u64 = int.add.wrap(q,plus)
+  two:u64 = const() {"value":9007199254740992}
+  carry:bool = compare.eq(rounded,two)
+  wide:u64 = select(carry,one,zero)
+  shifted:u64 = int.shr.checked(rounded,wide)
+  adjusted:u64 = int.add.wrap(e,wide)
+  mask:u64 = const() {"value":4503599627370495}
+  frac:u64 = bit.and(shifted,mask)
+  exp_sh:u64 = const() {"value":52}
+  exp:u64 = int.shl.checked(adjusted,exp_sh)
+  answer:u64 = bit.or(exp,frac)
+  ret(answer)
+end
+
+fn jaro_add(a:u64,b:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64,b:u64)
+  ordered:bool = compare.ge(a,b)
+  big:u64 = select(ordered,a,b)
+  small:u64 = select(ordered,b,a)
+  exp_sh:u64 = const() {"value":52}
+  eb:u64 = int.shr.checked(big,exp_sh)
+  es:u64 = int.shr.checked(small,exp_sh)
+  delta:u64 = int.sub.wrap(eb,es)
+  mask:u64 = const() {"value":4503599627370495}
+  hidden:u64 = const() {"value":4503599627370496}
+  mbits:u64 = bit.and(big,mask)
+  sbits:u64 = bit.and(small,mask)
+  mb:u64 = bit.or(mbits,hidden)
+  ms:u64 = bit.or(sbits,hidden)
+  aligned:u64 = int.shl.checked(mb,delta)
+  sum:u64 = int.add.wrap(aligned,ms)
+  boundary:u64 = const() {"value":9007199254740992}
+  bound:u64 = int.shl.checked(boundary,delta)
+  carry:bool = compare.ge(sum,bound)
+  one_norm:u64 = const() {"value":1}
+  zero_norm:u64 = const() {"value":0}
+  norm:u64 = select(carry,one_norm,zero_norm)
+  cut:u64 = int.add.wrap(delta,norm)
+  one:u64 = const() {"value":1}
+  den:u64 = int.shl.checked(one,cut)
+  e:u64 = int.add.wrap(eb,norm)
+  result:u64 = call(sum,den,e) {"function":"jaro_rounded_div"}
+  ret(result)
+end
+
+fn jaro_third(a:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64)
+  exp_sh:u64 = const() {"value":52}
+  exp:u64 = int.shr.checked(a,exp_sh)
+  mask:u64 = const() {"value":4503599627370495}
+  hidden:u64 = const() {"value":4503599627370496}
+  bits:u64 = bit.and(a,mask)
+  actual:u64 = bit.or(bits,hidden)
+  cross:u64 = const() {"value":6755399441055744}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  near:bool = compare.ge(actual,cross)
+  shift:u64 = select(near,one,two)
+  e:u64 = int.sub.wrap(exp,shift)
+  lifted:u64 = int.shl.checked(actual,shift)
+  ans:u64 = call(lifted,three,e) {"function":"jaro_rounded_div"}
+  ret(ans)
+end
+
+fn jaro_formula(a:u64,b:u64,m:u64,trans:u64) -> (u64) effects(trap) entry(entry)
+block entry(a:u64,b:u64,m:u64,trans:u64)
+  one:u64 = const() {"value":1}
+  half:u64 = int.shr.checked(trans,one)
+  matching:u64 = int.sub.wrap(m,half)
+  p:u64 = call(m,a) {"function":"jaro_fraction"}
+  q:u64 = call(m,b) {"function":"jaro_fraction"}
+  r:u64 = call(matching,m) {"function":"jaro_fraction"}
+  pq:u64 = call(p,q) {"function":"jaro_add"}
+  total:u64 = call(pq,r) {"function":"jaro_add"}
+  result:u64 = call(total) {"function":"jaro_third"}
+  ret(result)
+end
+
+fn jaro_score(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64)
+  z:usize = const() {"value":0}
+  jump clear(i,s,a,b_at,b,z)
+block clear(c_i:readbuf,c_s:mutbuf,c_a:u64,c_b_at:u64,c_b:u64,c_idx:usize)
+  stop:usize = const() {"value":149}
+  done:bool = compare.eq(c_idx,stop)
+  branch done begin(c_i,c_s,c_a,c_b_at,c_b) clear_byte(c_i,c_s,c_a,c_b_at,c_b,c_idx)
+block clear_byte(e_i:readbuf,e_s:mutbuf,e_a:u64,e_b_at:u64,e_b:u64,e_idx:usize)
+  no:u8 = const() {"value":0}
+  _ = buffer.store(e_s,e_idx,no)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(e_idx,one)
+  jump clear(e_i,e_s,e_a,e_b_at,e_b,next)
+block begin(b_i:readbuf,b_s:mutbuf,b_a:u64,b_b_at:u64,b_b:u64)
+  one_b:u64 = const() {"value":1}
+  zero_b:u64 = const() {"value":0}
+  ag:bool = compare.ge(b_a,b_b)
+  big:u64 = select(ag,b_a,b_b)
+  h:u64 = int.shr.checked(big,one_b)
+  has_range:bool = compare.gt(h,zero_b)
+  raw:u64 = int.sub.wrap(h,one_b)
+  range:u64 = select(has_range,raw,zero_b)
+  m:u64 = call(b_i,b_s,b_a,b_b_at,b_b,range) {"function":"jaro_match"}
+  any:bool = compare.gt(m,zero_b)
+  branch any calculate(b_i,b_s,b_a,b_b_at,b_b,m) no_score()
+block calculate(ca_i:readbuf,ca_s:mutbuf,ca_a:u64,ca_b_at:u64,ca_b:u64,ca_m:u64)
+  tr:u64 = call(ca_i,ca_s,ca_a,ca_b_at,ca_b) {"function":"jaro_trans"}
+  bits:u64 = call(ca_a,ca_b,ca_m,tr) {"function":"jaro_formula"}
+  ret(bits)
+block no_score()
+  none_score:u64 = const() {"value":0}
+  ret(none_score)
+end
+
+fn jaro_match(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64,range:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64,range:u64)
+  z:u64 = const() {"value":0}
+  jump scan(i,s,a,b_at,b,range,z,z)
+block scan(sc_i:readbuf,sc_s:mutbuf,sc_a:u64,sc_b_at:u64,sc_b:u64,sc_range:u64,sc_j:u64,sc_m:u64)
+  done:bool = compare.eq(sc_a,sc_j)
+  branch done count(sc_m) window(sc_i,sc_s,sc_a,sc_b_at,sc_b,sc_range,sc_j,sc_m)
+block window(w_i:readbuf,w_s:mutbuf,w_a:u64,w_b_at:u64,w_b:u64,w_range:u64,w_j:u64,w_m:u64)
+  z_w:u64 = const() {"value":0}
+  one_w:u64 = const() {"value":1}
+  token_w:u64 = const() {"value":16}
+  left:bool = compare.gt(w_j,w_range)
+  minus:u64 = int.sub.wrap(w_j,w_range)
+  from:u64 = select(left,minus,z_w)
+  next_w:u64 = int.add.wrap(w_j,one_w)
+  large_w:u64 = int.add.wrap(next_w,w_range)
+  enough:bool = compare.lt(large_w,w_b)
+  to:u64 = select(enough,large_w,w_b)
+  ap:u64 = int.add.wrap(w_j,token_w)
+  ai:usize = int.cast(ap) {"mode":"wrap"}
+  letter:u8 = buffer.load(w_i,ai)
+  pos:u64 = call(w_i,w_s,w_b_at,from,to,letter) {"function":"jaro_find"}
+  miss:u64 = const() {"value":255}
+  matched:bool = compare.ne(pos,miss)
+  branch matched record(w_i,w_s,w_a,w_b_at,w_b,w_range,w_j,next_w,w_m,pos) scan(w_i,w_s,w_a,w_b_at,w_b,w_range,next_w,w_m)
+block record(r_i:readbuf,r_s:mutbuf,r_a:u64,r_b_at:u64,r_b:u64,r_range:u64,r_j:u64,r_next:u64,r_m:u64,r_pos:u64)
+  yes:u8 = const() {"value":1}
+  one_r:u64 = const() {"value":1}
+  bflags:u64 = const() {"value":128}
+  bp:u64 = int.add.wrap(bflags,r_pos)
+  af:usize = int.cast(r_j) {"mode":"wrap"}
+  bf:usize = int.cast(bp) {"mode":"wrap"}
+  _ = buffer.store(r_s,af,yes)
+  _ = buffer.store(r_s,bf,yes)
+  new_m:u64 = int.add.wrap(r_m,one_r)
+  jump scan(r_i,r_s,r_a,r_b_at,r_b,r_range,r_next,new_m)
+block count(m:u64)
+  ret(m)
+end
+
+fn jaro_find(i:readbuf,s:mutbuf,b_at:u64,from:u64,to:u64,letter:u8) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,s:mutbuf,b_at:u64,from:u64,to:u64,letter:u8)
+  jump scan(i,s,b_at,from,to,letter)
+block scan(f_i:readbuf,f_s:mutbuf,f_b_at:u64,f_from:u64,f_to:u64,f_letter:u8)
+  has:bool = compare.lt(f_from,f_to)
+  branch has check(f_i,f_s,f_b_at,f_from,f_to,f_letter) miss()
+block check(c_i:readbuf,c_s:mutbuf,c_b_at:u64,c_from:u64,c_to:u64,c_letter:u8)
+  bflags:u64 = const() {"value":128}
+  flag:u64 = int.add.wrap(bflags,c_from)
+  fl_at:usize = int.cast(flag) {"mode":"wrap"}
+  fl:u8 = buffer.load(c_s,fl_at)
+  zero_c:u8 = const() {"value":0}
+  fresh:bool = compare.eq(fl,zero_c)
+  rel:u64 = int.add.wrap(c_b_at,c_from)
+  at:usize = int.cast(rel) {"mode":"wrap"}
+  item:u8 = buffer.load(c_i,at)
+  same:bool = compare.eq(item,c_letter)
+  yes:bool = bool.and(fresh,same)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(c_from,one)
+  branch yes hit(c_from) scan(c_i,c_s,c_b_at,next,c_to,c_letter)
+block hit(found:u64)
+  ret(found)
+block miss()
+  no:u64 = const() {"value":255}
+  ret(no)
+end
+
+fn jaro_trans(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,s:mutbuf,a:u64,b_at:u64,b:u64)
+  z:u64 = const() {"value":0}
+  jump scan(i,s,a,b_at,b,z,z,z)
+block scan(s_i:readbuf,s_s:mutbuf,s_a:u64,s_b_at:u64,s_b:u64,s_x:u64,s_y:u64,s_count:u64)
+  done:bool = compare.eq(s_a,s_x)
+  branch done answer(s_count) check(s_i,s_s,s_a,s_b_at,s_b,s_x,s_y,s_count)
+block check(c_i:readbuf,c_s:mutbuf,c_a:u64,c_b_at:u64,c_b:u64,c_x:u64,c_y:u64,c_count:u64)
+  at_x:usize = int.cast(c_x) {"mode":"wrap"}
+  mark:u8 = buffer.load(c_s,at_x)
+  no:u8 = const() {"value":0}
+  active:bool = compare.ne(mark,no)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(c_x,one)
+  branch active seek(c_i,c_s,c_a,c_b_at,c_b,c_x,next,c_y,c_count) scan(c_i,c_s,c_a,c_b_at,c_b,next,c_y,c_count)
+block seek(k_i:readbuf,k_s:mutbuf,k_a:u64,k_b_at:u64,k_b:u64,k_x:u64,k_next:u64,k_y:u64,k_count:u64)
+  has:bool = compare.lt(k_y,k_b)
+  branch has next_b(k_i,k_s,k_a,k_b_at,k_b,k_x,k_next,k_y,k_count) answer(k_count)
+block next_b(n_i:readbuf,n_s:mutbuf,n_a:u64,n_b_at:u64,n_b:u64,n_x:u64,n_next:u64,n_y:u64,n_count:u64)
+  bflags:u64 = const() {"value":128}
+  p_flag:u64 = int.add.wrap(bflags,n_y)
+  f_idx:usize = int.cast(p_flag) {"mode":"wrap"}
+  b_mark:u8 = buffer.load(n_s,f_idx)
+  z_n:u8 = const() {"value":0}
+  selected:bool = compare.ne(b_mark,z_n)
+  one_n:u64 = const() {"value":1}
+  advance:u64 = int.add.wrap(n_y,one_n)
+  branch selected compare_order(n_i,n_s,n_a,n_b_at,n_b,n_x,n_next,n_y,advance,n_count) seek(n_i,n_s,n_a,n_b_at,n_b,n_x,n_next,advance,n_count)
+block compare_order(o_i:readbuf,o_s:mutbuf,o_a:u64,o_b_at:u64,o_b:u64,o_x:u64,o_next:u64,o_y:u64,o_advance:u64,o_count:u64)
+  token:u64 = const() {"value":16}
+  p:u64 = int.add.wrap(token,o_x)
+  q:u64 = int.add.wrap(o_b_at,o_y)
+  aa:usize = int.cast(p) {"mode":"wrap"}
+  bb:usize = int.cast(q) {"mode":"wrap"}
+  actual_a:u8 = buffer.load(o_i,aa)
+  actual_b:u8 = buffer.load(o_i,bb)
+  different:bool = compare.ne(actual_a,actual_b)
+  one_o:u64 = const() {"value":1}
+  none_o:u64 = const() {"value":0}
+  inc:u64 = select(different,one_o,none_o)
+  count_o:u64 = int.add.wrap(o_count,inc)
+  jump scan(o_i,o_s,o_a,o_b_at,o_b,o_next,o_advance,count_o)
+block answer(r_count:u64)
+  ret(r_count)
+end
+
+fn jaro_choice(i:readbuf,s:mutbuf,len:u64,code:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,s:mutbuf,len:u64,code:u64)
+  workload:u64 = const() {"value":102}
+  enabled:bool = compare.eq(code,workload)
+  three:u64 = const() {"value":3}
+  ten:u64 = const() {"value":10}
+  z:u64 = const() {"value":0}
+  start:u64 = select(enabled,z,three)
+  stop:u64 = select(enabled,three,ten)
+  threshold:u64 = const() {"value":4604480259023595110}
+  jump scan(i,s,len,start,stop,threshold,z)
+block scan(c_i:readbuf,c_s:mutbuf,c_len:u64,c_j:u64,c_stop:u64,c_best:u64,c_name:u64)
+  done:bool = compare.eq(c_j,c_stop)
+  branch done chosen(c_name) candidate(c_i,c_s,c_len,c_j,c_stop,c_best,c_name)
+block candidate(a_i:readbuf,a_s:mutbuf,a_len:u64,a_j:u64,a_stop:u64,a_best:u64,a_name:u64)
+  offset_len:u64 = call(a_i,a_j) {"function":"jaro_label"}
+  mask:u64 = const() {"value":65535}
+  count:u64 = bit.and(offset_len,mask)
+  zero_a:u64 = const() {"value":0}
+  max_len:u64 = const() {"value":21}
+  have:bool = compare.gt(count,zero_a)
+  fits:bool = compare.le(count,max_len)
+  valid:bool = bool.and(have,fits)
+  branch valid compare_candidate(a_i,a_s,a_len,a_j,a_stop,a_best,a_name,offset_len,count) invalid()
+block compare_candidate(k_i:readbuf,k_s:mutbuf,k_len:u64,k_j:u64,k_stop:u64,k_best:u64,k_name:u64,k_row:u64,k_count:u64)
+  sixteen:u64 = const() {"value":16}
+  at_name:u64 = int.shr.checked(k_row,sixteen)
+  bits:u64 = call(k_i,k_s,k_len,at_name,k_count) {"function":"jaro_score"}
+  threshold_k:u64 = const() {"value":4604480259023595110}
+  passed:bool = compare.gt(bits,threshold_k)
+  at_least:bool = compare.ge(bits,k_best)
+  new_best:bool = bool.and(passed,at_least)
+  best:u64 = select(new_best,bits,k_best)
+  word:u64 = select(new_best,k_row,k_name)
+  one_k:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(k_j,one_k)
+  jump scan(k_i,k_s,k_len,next,k_stop,best,word)
+block chosen(found:u64)
+  ret(found)
+block invalid()
+  none:u64 = const() {"value":0}
+  ret(none)
+end
+
+fn jaro_label(i:readbuf,index:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,index:u64)
+  directory:u64 = const() {"value":976}
+  width:u64 = const() {"value":4}
+  slot:u64 = int.mul.wrap(index,width)
+  row:u64 = int.add.wrap(directory,slot)
+  two:u64 = const() {"value":2}
+  n_at:u64 = int.add.wrap(row,two)
+  offset:u64 = call(i,row) {"function":"diag_u16"}
+  name_len:u64 = call(i,n_at) {"function":"diag_u16"}
+  floor_label:u64 = const() {"value":876}
+  after_directory:bool = compare.ge(offset,floor_label)
+  h:u64 = const() {"value":144}
+  at:u64 = int.add.wrap(offset,h)
+  end:u64 = int.add.wrap(at,name_len)
+  extent:usize = buffer.len(i)
+  cap:u64 = int.cast(extent) {"mode":"wrap"}
+  fits:bool = compare.le(end,cap)
+  valid:bool = bool.and(fits,after_directory)
+  shift:u64 = const() {"value":16}
+  left:u64 = int.shl.checked(at,shift)
+  combined:u64 = bit.or(left,name_len)
+  absent:u64 = const() {"value":0}
+  result:u64 = select(valid,combined,absent)
+  ret(result)
 end

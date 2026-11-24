@@ -23,7 +23,7 @@ COMPONENTS = (
 )
 EMITTER = "platform/bench/main_emitter.hepta"
 DIAGNOSTIC_SOURCE = "src/bench/main_diagnostics.json"
-ADAPTER_SHA256 = "2756fa986ed24ae7da27665ee4fd76bf2654a7eefe8a9f9346bddd58a6764660"
+ADAPTER_SHA256 = "b4b579b2d16080b22ca97748cd0d9dcefb9ab9f93029b728b37effd00f64afa3"
 PREFIX, BASE = 4384, 0x400000
 
 
@@ -69,22 +69,38 @@ def diagnostics_catalog(raw: bytes) -> bytes:
     numeric_fields = (0, 1, 2, 4, 5)
     existing = {3, *(16+i for i in (*numeric_fields, 6, 8)), *range(32, 41)}
     numeric = {base + i for base in (64, 80, 96) for i in numeric_fields}
-    if (set(source) != {"schema", "entries"} or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v1"
-            or set(source["entries"]) != {str(code) for code in existing | numeric}):
+    enums = {102, 103}
+    reflected = numeric | enums
+    if (set(source) != {"schema", "entries", "suggestions"} or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v2"
+            or set(source["entries"]) != {str(code) for code in existing | reflected}):
         raise ValueError("Incorrect diagnostic text roster")
-    table = bytearray(104 * 8)
+    words = source["suggestions"]
+    if (type(words) is not list or len(words) != 11 or len(set(words[:10])) != 10
+            or any(type(word) is not str or not 1 <= len(word) <= 21
+                   or not all(ch.isascii() and (ch.islower() or ch == "-") for ch in word) for word in words[:10])
+            or words[10] != "\n\n  tip: a similar value exists: '"):
+        raise ValueError("Incorrect source text for enum suggestions")
+    table = bytearray(104 * 8 + 11 * 4)
     payload = bytearray()
-    for code in sorted(existing | numeric):
+    for code in sorted(existing | reflected):
         row = source["entries"][str(code)]
         if type(row) is not list or len(row) != 2 or any(type(text) is not str for text in row):
             raise ValueError("Incorrect diagnostic text definition")
         before, after = (text.encode("ascii") for text in row)
-        if (not before or bool(after) != (code in numeric) or not (after or before).endswith(b"\n")
+        if (not before or bool(after) != (code in reflected) or not (after or before).endswith(b"\n")
                 or any(b != 10 and not 32 <= b <= 126 for b in before + after)
-                or len(before) + len(after) + (127 if code in numeric else 0) > 2048):
+                or len(before) + len(after) + (127 if code in reflected else 0) > 2048):
             raise ValueError("Out-of-domain diagnostic template")
         struct.pack_into("<4H", table, code * 8, len(table) + len(payload), len(before), len(after), 0)
         payload += before + after
+    footer = "\n\nFor more information, try '--help'.\n"
+    for code, roster in ((102, words[:3]), (103, words[3:10])):
+        if not source["entries"][str(code)][1].endswith("  [possible values: " + ", ".join(roster) + "]" + footer):
+            raise ValueError("Enum diagnostic text disagrees with its ordered suggestions")
+    for idx, word in enumerate(words):
+        raw_word = word.encode("ascii")
+        struct.pack_into("<2H", table, 104 * 8 + idx * 4, len(table) + len(payload), len(raw_word))
+        payload += raw_word
     result = bytes(table + payload)
     if len(result) > 8048:
         raise ValueError("Packed diagnostic catalog exceeded 8048 bytes")
@@ -207,7 +223,7 @@ sys.stdout.buffer.write(out.raw[:n])
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
     report = {"diagnostics_catalog": {"sha256": sha256(catalog), "bytes": len(catalog)},
-              "schema": "trnm.hia.bench-main.build.v6",
+              "schema": "trnm.hia.bench-main.build.v7",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},

@@ -236,7 +236,7 @@ class NativeBenchMain(unittest.TestCase):
             self.assertTrue(old.stderr)
             strict = any(fragment in old.stderr for fragment in (
                 b"a value is required", b"cannot be used multiple times",
-                b"invalid digit found in string", b"number too large to fit in target type"))
+                b"invalid digit found in string", b"number too large to fit in target type", b"[possible values:"))
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr if strict else OUTSIDE))
 
     def test_actual_plain_cli_help_terminator_and_strict_grammar(self):
@@ -330,6 +330,63 @@ class NativeBenchMain(unittest.TestCase):
         denied, _ = self.actual("uint-cli-env-denied", self.native, (b"--txs=bad",),
                                 env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_plain_enum_diagnostics_and_exact_similarity_boundary(self):
+        groups = (
+            (b"--workload", (b"classic", b"mixed", b"hot-streak")),
+            (b"--strategy", (b"original", b"footprint-desc", b"write-first", b"write-last",
+                              b"hot-bucket-interleave", b"auto-adaptive", b"aggressive-greedy")),
+        )
+        # o crosses 0.7 by one binary64 step, lcs is below. write-rilst
+        # ties two exact f64 scores; the source value listed last must win.
+        fixed = (
+            (0, b"o", b"hot-streak"), (0, b"lcs", b""), (0, b"Mixed", b"mixed"),
+            (0, b"CLASSIC", b""), (1, b"write-rilst", b"write-last"),
+            (1, b"e", b"write-last"), (1, b"--", b""), (1, b"write", b"write-last"),
+            (1, b"writ-first", b"write-first"), (1, b"auto-adaptav", b"auto-adaptive"),
+        )
+        cases = [(groups[k][0], value, tip) for k, value, tip in fixed]
+        for flag, expected in groups:
+            values = {b"", b"arbitrary invalid synthetic", b"z" * 127, b"z" * 116, b"-", b"wrong'text"}
+            for name in expected:
+                for at in (0, len(name) // 2, len(name) - 1):
+                    values.update((name[:at] + name[at + 1:], name[:at] + name[at:at + 1].upper() + name[at + 1:],
+                                   name[:at] + b"x" + name[at + 1:]))
+                for at in range(0, len(name) - 1, 3):
+                    values.add(name[:at] + name[at:at + 2][::-1] + name[at + 2:])
+            cases.extend((flag, value, None) for value in sorted(values.difference(expected)))
+        number = 0
+        suggestion_count = 0
+        for flag, value, tip in cases:
+            arguments = []
+            if len(flag) + 1 + len(value) <= 127:
+                arguments.append((flag + b"=" + value,))
+            if not (len(value) > 1 and value.startswith(b"-")):
+                arguments.append((flag, value))
+            for words in arguments:
+                args = (b"--profile", *words, b"--help")
+                old, _ = self.actual(f"enum-cli-{number}-rust", self.original, args)
+                new, _ = self.actual(f"enum-cli-{number}-hia", self.native, args)
+                number += 1
+                self.assertEqual((old.returncode, old.stdout), (2, b""))
+                self.assertIn(b"[possible values:", old.stderr)
+                self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr), args)
+                suggestion_count += b"tip: a similar value exists:" in old.stderr
+                if tip:
+                    self.assertIn(b"tip: a similar value exists: '" + tip + b"'\n", old.stderr)
+                elif tip == b"":
+                    self.assertNotIn(b"tip:", old.stderr)
+        self.assertGreater(number, 200)
+        self.assertGreater(suggestion_count, 100)
+        for i, (args, env) in enumerate((
+                ((b"--workload=\xff",), {}), ((b"--strategy=\x1brust",), {}),
+                ((b"--workload", b"x" * 128), {}), ((b"--workload", b"--misspelled"), {}),
+                ((b"--reader-high-water-v1", b"--strategy=writ-first"), {}),
+                ((b"--strategy=writ-first",), {b"HIA_BENCH_TEST_ONLY": b"synthetic"}),
+                ((b"--strategy=auto-adaptive",), {}), ((b"--strategy=aggressive-greedy",), {}))):
+            denied, _ = self.actual(f"enum-cli-closed-{i}", self.native, args, env=env)
+            self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
 
     def test_plain_cli_help_refuses_native_terminal_without_emitting_help(self):
@@ -714,7 +771,14 @@ class NativeBenchMain(unittest.TestCase):
             args = (b"--profile", *flags) if flags[0].startswith(b"--strategy") else (
                 b"--profile", b"--strategy=write-last", *flags)
             actual, _ = self.actual(f"write-last-refused-{index}", self.native, args)
-            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+            if index >= 4:
+                original, _ = self.actual(f"write-last-refused-{index}-rust", self.original, args)
+                self.assertEqual((original.returncode, original.stdout), (2, b""))
+                self.assertIn(b"[possible values:", original.stderr)
+                expected = original.stderr
+            else:
+                expected = OUTSIDE
+            self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", expected))
             self.assertFalse(self.run_path.exists())
 
     def test_actual_hot_bucket_environment_controls_order(self):

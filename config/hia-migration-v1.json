@@ -1049,7 +1049,7 @@
     {
       "id": "bench/plain-cli-diagnostics",
       "node_integration_complete": false,
-      "scope": "Plain locked Clap help, admitted missing-value/duplicate-option and printable unsigned-value bytes from actual bounded HIA parser outcomes in the same Linux Bench ELF before work or I/O. Literal table data is source-bound; reflection is limited to owned printable ASCII numeric-option values inside the existing argv bounds. No general diagnostics, ambient environment, terminal styling, or production activation.",
+      "scope": "Plain locked Clap help, admitted missing/duplicate and printable numeric/enum error bytes from the bounded HIA parser in the original Linux Bench ELF path before work or I/O. Includes original ordered enum roster and native binary64-equivalent Jaro suggestions. Source-bound table and existing argv limits; no general option diagnostics, environment widening, terminal styling, or production activation.",
       "source": "hia/src/bench/main_diagnostics.hepta",
       "state": "native-kernel-implemented",
       "tests": [
