@@ -811,6 +811,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-release-snapshot-metadata",
+      "node_integration_complete": false,
+      "scope": "Bounded CTS1 structural and declared post-pin semantic diagnostic, same-loan validated TCV1/TMA1 subspans, exact canonical TMR equality and declared Configuration selection, and original snapshot content digest. No supplied trusted pin, authority, verify_for_loader, actual payload, filesystem, network, signatures, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_release_snapshot_metadata.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_release_snapshot_metadata.py",
+        "hia/tests/cts_metadata_derivation.py",
+        "hia/tests/rust_cell_release_snapshot_metadata_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
