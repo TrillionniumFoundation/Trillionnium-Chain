@@ -10003,6 +10003,96 @@
         "source": "src/worker_agent/audit_index_decode.hepta"
       }
     ],
+    "src/worker_agent/audit_export_row_lines_v2.hepta": [
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "wer_field",
+          "wer_ascii",
+          "wer_number",
+          "wer_request",
+          "wer_spelling"
+        ],
+        "source": "src/worker_agent/audit_export_row_decode.hepta"
+      },
+      {
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "oj_utf8"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "json_hex_lower",
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wd_octet",
+          "wd_expect",
+          "wd_number",
+          "wd_u128_digit"
+        ],
+        "source": "src/worker_agent/journal_audit_dto.hepta"
+      },
+      {
+        "functions": [
+          "wd3_i32"
+        ],
+        "source": "src/worker_agent/journal_audit_dto_reputation_v3.hepta"
+      },
+      {
+        "functions": [
+          "wj_key"
+        ],
+        "source": "src/worker_agent/audit_jsonl_row.hepta"
+      },
+      {
+        "functions": [
+          "ws_selected"
+        ],
+        "source": "src/worker_agent/audit_select.hepta"
+      },
+      {
+        "functions": [
+          "wid_key",
+          "wid_equal",
+          "wid_copy"
+        ],
+        "source": "src/worker_agent/audit_index_decode.hepta"
+      }
+    ],
     "platform/worker_audit_sealed_query/emitter.hepta": [
       {
         "functions": [

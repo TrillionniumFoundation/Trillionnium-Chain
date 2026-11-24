@@ -1565,6 +1565,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-export-row-lines-v2",
+      "node_integration_complete": false,
+      "scope": "Private WER2 adds original query-file logical line framing to the same bounded canonical compact 18-field export row profile. Both pinned emitters admit CRLF, Unicode-blank lines, and no terminal LF without host row parsing, and match actual locked Rust task-query stdout through unchanged WID1 and WTQ2. No broader JSON field grammar, path, custody, authority, named target, or production dispatch.",
+      "source": "hia/src/worker_agent/audit_export_row_lines_v2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_export_row_lines_v2.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-export",
       "node_integration_complete": false,
       "scope": "A single native raw-memory journal call composes fixed WJF1 framing, the two exact WJD1 DTO profiles, shared WAT2 selection/rendering, and all three audit artifacts, with atomic output and actual locked original byte comparisons. Generic Serde, authority, storage and production dispatch unchanged.",
