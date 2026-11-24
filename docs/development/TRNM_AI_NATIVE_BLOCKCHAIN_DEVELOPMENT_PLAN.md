@@ -15836,3 +15836,11 @@ and NoUpdate controls and adds identity retargeting, runtime/source mismatch,
 preflight-before-reservation refusal and v1-to-v2 promotion controls. Original
 service/protocol gates, fixed resource budgets and all qualification flags remain
 unchanged. The cross-user human experiment and full Q24 lifecycle remain open.
+
+The [actual cross-repository preflight evidence](../../evidence/bound-learning-preflight-20261124/README_ZH.md)
+now retains the missing-catalog refusal and a separate fresh engineering
+admission over existing weights and an unchanged registered catalog. Original
+`prepare-bound` and network-isolated preflight passed, including live identity
+and source checks; no reservation was created. All 368 original files are
+preserved with hashes. This adds no training, model forward, human authorization,
+payment or qualification; the native funded v2 case remains a separate gate.
