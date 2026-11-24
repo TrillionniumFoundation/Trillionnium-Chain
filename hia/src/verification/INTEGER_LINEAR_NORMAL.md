@@ -60,3 +60,24 @@ the example's presentation call, not a replacement of that call or of any
 production path. Tests cover signed extrema, all decimal width transitions,
 row boundaries, an invalid final coordinate, short capacity after full
 validation, reserved/framing refusals and byte-for-byte canaries.
+
+## Offline named-example caller
+
+`hia/tests/test_integer_linear_normal_caller.py` separately compiles the
+original example and two private candidate executables against the same
+isolated Rust reference crate. Each candidate substitutes only the original
+post-verification `normal_bytes` presentation call in a source-pinned temporary
+copy of the example. The sole bridge borrows the original
+`CheckedIntegerLinearUpdateV1` immutably and invokes a statically linked ILN1
+object with disjoint fixed buffers. The candidates preserve original argument
+and file parsing, original Rust factor verification (including its still-Rust
+internal fingerprint), all other output fields and original error order.
+
+Tests compare full stdout, stderr and exit status from actual processes using
+owned read-only synthetic fixtures: ranks 1, 2 and 8, cancellation, both
+report-length extrema, and work-budget and malformed-input refusals. A
+separately compiled control gives the same native object insufficient output
+capacity. The actual example reports a bounded error with no stdout rather
+than calling a Rust reporting fallback. The shipped Rust example and Cargo
+graph are unchanged. This is neither a pure-HIA executable nor a production
+caller cutover.
