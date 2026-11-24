@@ -1357,6 +1357,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-display-labels",
+      "node_integration_complete": false,
+      "scope": "Four optional audit display fields (schema version, provider, model, adapter) with original alias handling, Unicode whitespace boundaries and printable ASCII caps. Actual unchanged locked Worker export-audit and full native WJL replay against synthetic local rows. No credentials, fingerprint, protocol policy or production routing.",
+      "source": "hia/src/worker_agent/audit_display_labels.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_display_labels.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
@@ -1451,6 +1461,7 @@
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
         "worker-agent/audit-jsonl-row",
+        "worker-agent/audit-display-labels",
         "worker-agent/audit-reputation-projection",
         "worker-agent/audit-select",
         "worker-agent/audit-report"

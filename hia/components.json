@@ -8538,6 +8538,31 @@
         "source": "src/worker_agent/audit_report.hepta"
       }
     ],
+    "src/worker_agent/audit_display_labels.hepta": [
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start",
+          "or_trim_end"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      }
+    ],
     "src/worker_agent/audit_report.hepta": [
       {
         "source": "src/worker_agent/audit_text.hepta",

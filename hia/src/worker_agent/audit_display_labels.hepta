@@ -1,0 +1,208 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_display_labels_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  native_size:usize = buffer.len(input)
+  size:u64 = int.cast(native_size) {"mode":"wrap"}
+  header:u64 = const() {"value":6}
+  enough:bool = compare.ge(size,header)
+  branch enough frame(input,output,size,header) invalid()
+block frame(fi:readbuf,fo:mutbuf,fs:u64,fh:u64)
+  base:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  actual:u64 = call(fi,base,four) {"function":"wa_read"}
+  magic:u64 = const() {"value":827345495}
+  correct:bool = compare.eq(actual,magic)
+  kind_at:usize = const() {"value":4}
+  flag_at:usize = const() {"value":5}
+  kind:u8 = buffer.load(fi,kind_at)
+  flag:u8 = buffer.load(fi,flag_at)
+  highest:u8 = const() {"value":3}
+  one:u8 = const() {"value":1}
+  kind_ok:bool = compare.le(kind,highest)
+  flag_ok:bool = compare.le(flag,one)
+  both_ok:bool = bool.and(kind_ok,flag_ok)
+  shape:bool = bool.and(correct,both_ok)
+  branch shape presence(fi,fo,fs,fh,kind,flag) invalid()
+block presence(pi:readbuf,po:mutbuf,ps:u64,ph:u64,pk:u8,pp:u8)
+  present_flag:u8 = const() {"value":1}
+  present:bool = compare.eq(pp,present_flag)
+  branch present utf8(pi,po,ps,ph,pk) absent_shape(po,ps,ph)
+block absent_shape(ao:mutbuf,as:u64,ah:u64)
+  exact:bool = compare.eq(as,ah)
+  branch exact absent(ao) invalid()
+block utf8(ui:readbuf,uo:mutbuf,us:u64,uh:u64,uk:u8)
+  text_len:u64 = int.sub.wrap(us,uh)
+  utf8_status:u64 = call(ui,uh,text_len) {"function":"value_utf8"}
+  utf8_true:u64 = const() {"value":1}
+  utf8_ok:bool = compare.eq(utf8_status,utf8_true)
+  branch utf8_ok choose(ui,uo,us,uh,text_len,uk) invalid()
+block choose(ci:readbuf,co:mutbuf,cs:u64,ch:u64,cn:u64,ck:u8)
+  schema_mode:u8 = const() {"value":0}
+  schema:bool = compare.eq(ck,schema_mode)
+  branch schema schema_value(ci,co,ch,cs) label(ci,co,cs,ch,cn,ck)
+block schema_value(si:readbuf,so:mutbuf,sa:u64,se:u64)
+  version:u64 = call(si,sa,se) {"function":"wp_schema"}
+  zero_version:u64 = const() {"value":0}
+  known_version:bool = compare.ne(version,zero_version)
+  branch known_version schema_capacity(so,version) absent(so)
+block schema_capacity(sco:mutbuf,scv:u64)
+  schema_cap:usize = buffer.len(sco)
+  schema_record:usize = const() {"value":7}
+  schema_fits:bool = compare.ge(schema_cap,schema_record)
+  branch schema_fits write_version(sco,scv) insufficient()
+block write_version(vo:mutbuf,vv:u64)
+  version_one:u64 = const() {"value":1}
+  is_v1:bool = compare.eq(vv,version_one)
+  canonical_v1:u64 = const() {"value":13922215635217409}
+  canonical_v2:u64 = const() {"value":14203690611928065}
+  packed:u64 = select(is_v1,canonical_v1,canonical_v2)
+  version_at:u64 = const() {"value":0}
+  version_size:u64 = const() {"value":7}
+  yes_write:bool = const() {"value":true}
+  version_end:u64 = call(vo,version_at,packed,version_size,yes_write) {"function":"wa_word"}
+  schema_result:u32 = int.cast(version_end) {"mode":"wrap"}
+  ret(schema_result)
+block label(li:readbuf,lo:mutbuf,ls:u64,lh:u64,ln:u64,lk:u8)
+  trimmed_start:u64 = call(li,lh,ln) {"function":"or_trim_start"}
+  from_start:u64 = int.sub.wrap(ls,trimmed_start)
+  trimmed_end:u64 = call(li,trimmed_start,from_start) {"function":"or_trim_end"}
+  trimmed_size:u64 = int.sub.wrap(trimmed_end,trimmed_start)
+  model_kind:u8 = const() {"value":2}
+  model:bool = compare.eq(lk,model_kind)
+  model_max:u64 = const() {"value":128}
+  short_max:u64 = const() {"value":64}
+  maximum:u64 = select(model,model_max,short_max)
+  within_bound:bool = compare.le(trimmed_size,maximum)
+  zero_length:u64 = const() {"value":0}
+  nonempty:bool = compare.ne(trimmed_size,zero_length)
+  label_size_ok:bool = bool.and(within_bound,nonempty)
+  branch label_size_ok label_ascii(li,lo,trimmed_start,trimmed_end,trimmed_size) absent(lo)
+block label_ascii(lai:readbuf,lao:mutbuf,las:u64,lae:u64,lan:u64)
+  printable:bool = call(lai,las,lae) {"function":"wp_printable"}
+  branch printable label_capacity(lai,lao,las,lan) absent(lao)
+block label_capacity(lci:readbuf,lco:mutbuf,lcs:u64,lcn:u64)
+  label_cap:usize = buffer.len(lco)
+  one_extra:u64 = const() {"value":1}
+  needed:u64 = int.add.wrap(lcn,one_extra)
+  capacity:u64 = int.cast(label_cap) {"mode":"wrap"}
+  label_fits:bool = compare.ge(capacity,needed)
+  branch label_fits write_label(lci,lco,lcs,lcn,needed) insufficient()
+block write_label(wi:readbuf,wo:mutbuf,ws:u64,wn:u64,wr:u64)
+  tag:usize = const() {"value":0}
+  non_null:u8 = const() {"value":1}
+  _ = buffer.store(wo,tag,non_null)
+  output_start:usize = const() {"value":1}
+  text_start:usize = int.cast(ws) {"mode":"wrap"}
+  text_count:usize = int.cast(wn) {"mode":"wrap"}
+  _ = buffer.copy_range(wo,wi,output_start,text_start,text_count)
+  label_result:u32 = int.cast(wr) {"mode":"wrap"}
+  ret(label_result)
+block absent(abo:mutbuf)
+  empty_cap:usize = buffer.len(abo)
+  empty_size:usize = const() {"value":1}
+  absence_fits:bool = compare.ge(empty_cap,empty_size)
+  branch absence_fits write_absent(abo) insufficient()
+block write_absent(wao:mutbuf)
+  pos:usize = const() {"value":0}
+  null:u8 = const() {"value":0}
+  _ = buffer.store(wao,pos,null)
+  absent_result:u32 = const() {"value":1}
+  ret(absent_result)
+block invalid()
+  invalid_result:u32 = const() {"value":4294967295}
+  ret(invalid_result)
+block insufficient()
+  no_capacity:u32 = const() {"value":4294967294}
+  ret(no_capacity)
+end
+fn wp_printable(input:readbuf,start:u64,end_at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,end_at:u64)
+  jump scan(input,start,end_at)
+block scan(si:readbuf,sa:u64,se:u64)
+  more:bool = compare.lt(sa,se)
+  branch more octet(si,sa,se) yes()
+block octet(oi:readbuf,os:u64,oe:u64)
+  at:usize = int.cast(os) {"mode":"wrap"}
+  b:u8 = buffer.load(oi,at)
+  space:u8 = const() {"value":32}
+  tilde:u8 = const() {"value":126}
+  low:bool = compare.ge(b,space)
+  high:bool = compare.le(b,tilde)
+  ok:bool = bool.and(low,high)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(os,step)
+  branch ok scan(oi,next,oe) no()
+block yes()
+  printable:bool = const() {"value":true}
+  ret(printable)
+block no()
+  non_printable:bool = const() {"value":false}
+  ret(non_printable)
+end
+fn wp_schema(input:readbuf,start:u64,end_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,end_at:u64)
+  zero:u64 = const() {"value":0}
+  jump scan(input,start,end_at,zero,zero)
+block scan(si:readbuf,sa:u64,se:u64,snum:u64,spack:u64)
+  more:bool = compare.lt(sa,se)
+  branch more octet(si,sa,se,snum,spack) classify(spack)
+block octet(oi:readbuf,oa:u64,oe:u64,on:u64,op:u64)
+  idx:usize = int.cast(oa) {"mode":"wrap"}
+  b:u8 = buffer.load(oi,idx)
+  upper_a:u8 = const() {"value":65}
+  upper_z:u8 = const() {"value":90}
+  lower_a:u8 = const() {"value":97}
+  lower_z:u8 = const() {"value":122}
+  zero_byte:u8 = const() {"value":48}
+  nine_byte:u8 = const() {"value":57}
+  g_upper:bool = compare.ge(b,upper_a)
+  l_upper:bool = compare.le(b,upper_z)
+  upper:bool = bool.and(g_upper,l_upper)
+  g_lower:bool = compare.ge(b,lower_a)
+  l_lower:bool = compare.le(b,lower_z)
+  lower:bool = bool.and(g_lower,l_lower)
+  g_digit:bool = compare.ge(b,zero_byte)
+  l_digit:bool = compare.le(b,nine_byte)
+  digit:bool = bool.and(g_digit,l_digit)
+  any_alpha:bool = bool.or(upper,lower)
+  alnum:bool = bool.or(any_alpha,digit)
+  one_byte:u64 = const() {"value":1}
+  next_at:u64 = int.add.wrap(oa,one_byte)
+  branch alnum size(oi,next_at,oe,on,op,b,upper) scan(oi,next_at,oe,on,op)
+block size(si2:readbuf,sa2:u64,se2:u64,sn2:u64,sp2:u64,sb2:u8,su2:bool)
+  widest_alias:u64 = const() {"value":5}
+  fits:bool = compare.lt(sn2,widest_alias)
+  branch fits pack(si2,sa2,se2,sn2,sp2,sb2,su2) absent_version()
+block pack(pi:readbuf,pa:u64,pe:u64,pn:u64,pp:u64,pb:u8,pu:bool)
+  lower_mask:u8 = const() {"value":32}
+  lower_byte:u8 = bit.or(pb,lower_mask)
+  folded:u8 = select(pu,lower_byte,pb)
+  widened:u64 = int.cast(folded) {"mode":"wrap"}
+  bits:u64 = const() {"value":8}
+  shift:u64 = int.mul.wrap(pn,bits)
+  at_byte:u64 = int.shl.checked(widened,shift)
+  next_word:u64 = bit.or(pp,at_byte)
+  step:u64 = const() {"value":1}
+  next_count:u64 = int.add.wrap(pn,step)
+  jump scan(pi,pa,pe,next_count,next_word)
+block classify(word:u64)
+  with_v1:u64 = const() {"value":212440280172}
+  with_v2:u64 = const() {"value":216735247468}
+  short1:u64 = const() {"value":829254764}
+  short2:u64 = const() {"value":846031980}
+  long_is1:bool = compare.eq(word,with_v1)
+  long_is2:bool = compare.eq(word,with_v2)
+  short_is1:bool = compare.eq(word,short1)
+  short_is2:bool = compare.eq(word,short2)
+  is1:bool = bool.or(long_is1,short_is1)
+  is2:bool = bool.or(long_is2,short_is2)
+  version1:u64 = const() {"value":1}
+  version2:u64 = const() {"value":2}
+  absent_v:u64 = const() {"value":0}
+  second:u64 = select(is2,version2,absent_v)
+  result:u64 = select(is1,version1,second)
+  ret(result)
+block absent_version()
+  no_version:u64 = const() {"value":0}
+  ret(no_version)
+end
