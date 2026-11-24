@@ -1078,6 +1078,28 @@
       ]
     },
     {
+      "id": "release-bundle/pq-signing-message",
+      "node_integration_complete": false,
+      "scope": "Exact V1 typed PqReleaseMetadataV1 signing bytes with the original role, Boolean fields, big-endian numbers and checkpoint/profile domain. This is message preparation, not a signature, mathematical verification, quorum or authorization.",
+      "source": "hia/src/release_bundle/pq_signing_message.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_pq_signing.py",
+        "hia/tests/rust_release_pq_signing_reference.rs"
+      ]
+    },
+    {
+      "id": "release-bundle/pq-signature-set",
+      "node_integration_complete": false,
+      "scope": "Exact bounded V1 signature-set locator used by the V0 callback, with stable key-ID sorting and original count/duplicate/length order. No signature equation, key-ID authority, role quorum or state advance.",
+      "source": "hia/src/release_bundle/pq_signature_set.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_pq_signing.py",
+        "hia/tests/rust_release_pq_signing_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/raw-artifact-sha256",
       "node_integration_complete": false,
       "scope": "Raw ReleaseArtifact legacy-locator SHA-256 over an explicitly sized, in-process byte stream using the full shared incremental helpers. A matching digest is not content commitment, EOF, file custody or release authority; production linkage and retirement remain open.",
@@ -1417,6 +1439,8 @@
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
+        "release-bundle/pq-signing-message",
+        "release-bundle/pq-signature-set",
         "release-bundle/raw-artifact-sha256",
         "release-bundle/sbom-admission",
         "release-bundle/sbom-digest",

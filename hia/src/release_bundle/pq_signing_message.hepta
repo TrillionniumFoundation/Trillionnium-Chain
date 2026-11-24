@@ -1,0 +1,74 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_signing_message_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  width:usize = const() {"value":155}
+  exact:bool = compare.eq(size,width)
+  branch exact flags(input,output) malformed()
+block flags(fi:readbuf,fo:mutbuf)
+  role_at:usize = const() {"value":0}
+  previous_at:usize = const() {"value":89}
+  rollback_at:usize = const() {"value":154}
+  role:u8 = buffer.load(fi,role_at)
+  previous:u8 = buffer.load(fi,previous_at)
+  rollback:u8 = buffer.load(fi,rollback_at)
+  one:u8 = const() {"value":1}
+  four:u8 = const() {"value":4}
+  role_known:bool = compare.ge(role,one)
+  role_in_range:bool = compare.le(role,four)
+  previous_known:bool = compare.le(previous,one)
+  rollback_known:bool = compare.le(rollback,one)
+  role_ok:bool = bool.and(role_known,role_in_range)
+  bools_ok:bool = bool.and(previous_known,rollback_known)
+  canonical:bool = bool.and(role_ok,bools_ok)
+  branch canonical optional(fi,fo,previous) malformed()
+block optional(oi:readbuf,oo:mutbuf,previous_flag:u8)
+  zero:u8 = const() {"value":0}
+  absent:bool = compare.eq(previous_flag,zero)
+  branch absent trailing_zero(oi,oo) capacity(oi,oo)
+block trailing_zero(zi:readbuf,zo:mutbuf)
+  previous_digest:u64 = const() {"value":90}
+  has_bytes:bool = call(zi,previous_digest) {"function":"rac_nonzero_digest"}
+  branch has_bytes malformed() capacity(zi,zo)
+block capacity(ci:readbuf,co:mutbuf)
+  output_len:usize = buffer.len(co)
+  message_len:usize = const() {"value":184}
+  fits:bool = compare.ge(output_len,message_len)
+  branch fits publish(ci,co) short()
+block publish(pi:readbuf,po:mutbuf)
+  zero_out:u64 = const() {"value":0}
+  p1:u64 = const() {"value":8}
+  p2:u64 = const() {"value":16}
+  p3:u64 = const() {"value":24}
+  d0:u64 = const() {"value":7810739491857912404}
+  d1:u64 = const() {"value":3409594557391921509}
+  d2:u64 = const() {"value":3903848277881998413}
+  d3:u64 = const() {"value":829828917}
+  _d0:u64 = call(po,zero_out,d0) {"function":"tr_put"}
+  _d1:u64 = call(po,p1,d1) {"function":"tr_put"}
+  _d2:u64 = call(po,p2,d2) {"function":"tr_put"}
+  _d3:u64 = call(po,p3,d3) {"function":"tr_put"}
+  message_start:u64 = const() {"value":29}
+  first_number:u64 = const() {"value":33}
+  numeric_at:u64 = call(pi,po,zero_out,message_start,first_number) {"function":"rac_copy"}
+  eight:u64 = const() {"value":8}
+  second_number:u64 = const() {"value":41}
+  third_number:u64 = const() {"value":49}
+  generation:u64 = call(pi,first_number,eight) {"function":"rac_read_le"}
+  version:u64 = call(pi,second_number,eight) {"function":"rac_read_le"}
+  expiration:u64 = call(pi,third_number,eight) {"function":"rac_read_le"}
+  version_at:u64 = call(po,numeric_at,generation,eight) {"function":"rac_write_be"}
+  expiration_at:u64 = call(po,version_at,version,eight) {"function":"rac_write_be"}
+  final_at:u64 = call(po,expiration_at,expiration,eight) {"function":"rac_write_be"}
+  raw_tail:u64 = const() {"value":57}
+  remaining:u64 = const() {"value":98}
+  _copied:u64 = call(pi,po,raw_tail,final_at,remaining) {"function":"rac_copy"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  frame_error:u32 = const() {"value":100}
+  ret(frame_error)
+block short()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+end

@@ -1,0 +1,244 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_signature_set_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  header:usize = const() {"value":2}
+  readable:bool = compare.ge(size,header)
+  branch readable extent(input,output,scratch,size) malformed()
+block extent(ei:readbuf,eo:mutbuf,ew:mutbuf,en:usize)
+  zero_index:usize = const() {"value":0}
+  count:u64 = call(ei,zero_index) {"function":"rb_le16"}
+  wire_max:u64 = const() {"value":32}
+  bounded:bool = compare.le(count,wire_max)
+  expected:u64 = call(count) {"function":"ps_row"}
+  actual:u64 = int.cast(en) {"mode":"wrap"}
+  exact:bool = compare.eq(actual,expected)
+  frame_ok:bool = bool.and(bounded,exact)
+  branch frame_ok check_wire(ei,eo,ew,count) malformed()
+block check_wire(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  wire_valid:bool = call(ci,cn) {"function":"ps_wire_valid"}
+  branch wire_valid count_gate(ci,co,cw,cn) malformed()
+block count_gate(gi:readbuf,go:mutbuf,gw:mutbuf,gn:u64)
+  zero:u64 = const() {"value":0}
+  max_sig:u64 = const() {"value":16}
+  enough:bool = compare.gt(gn,zero)
+  not_many:bool = compare.le(gn,max_sig)
+  sufficient:bool = bool.and(enough,not_many)
+  branch sufficient validate_sorted(gi,go,gw,gn) insufficient()
+block validate_sorted(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64)
+  outcome:u32 = call(vi,vn) {"function":"ps_validate_order"}
+  status_zero:u32 = const() {"value":0}
+  valid:bool = compare.eq(outcome,status_zero)
+  branch valid capacity(vi,vo,vw,vn) refused(outcome)
+block capacity(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
+  cap_out:usize = buffer.len(po)
+  cap_work:usize = buffer.len(pw)
+  need_out:usize = const() {"value":32}
+  need_work:usize = const() {"value":1240}
+  out_ok:bool = compare.ge(cap_out,need_out)
+  work_ok:bool = compare.ge(cap_work,need_work)
+  fits:bool = bool.and(out_ok,work_ok)
+  branch fits digest(pi,po,pw,pn) short()
+block digest(di:readbuf,do_:mutbuf,dw:mutbuf,dn:u64)
+  formed:u64 = call(di,dw,dn) {"function":"ps_hash"}
+  crypto_zero:u64 = const() {"value":0}
+  digest_ok:bool = compare.eq(formed,crypto_zero)
+  branch digest_ok publish(do_,dw) internal()
+block publish(out:mutbuf,work:mutbuf)
+  origin:u64 = const() {"value":0}
+  _copy:u64 = call(work,out,origin) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refused(code:u32)
+  ret(code)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block insufficient()
+  count_code:u32 = const() {"value":105}
+  ret(count_code)
+block short()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+block internal()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
+end
+
+fn ps_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  width:u64 = const() {"value":4130}
+  head:u64 = const() {"value":2}
+  off:u64 = int.mul.wrap(index,width)
+  pos:u64 = int.add.wrap(head,off)
+  ret(pos)
+end
+
+fn ps_length(input:readbuf,start:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64)
+  length_at:u64 = const() {"value":32}
+  raw:u64 = int.add.wrap(start,length_at)
+  at:usize = int.cast(raw) {"mode":"wrap"}
+  length:u64 = call(input,at) {"function":"rb_le16"}
+  ret(length)
+end
+
+fn ps_wire_valid(input:readbuf,count:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  jump next(input,count,zero)
+block next(ni:readbuf,nc:u64,index:u64)
+  done:bool = compare.eq(index,nc)
+  branch done good() check_length(ni,nc,index)
+block check_length(ci:readbuf,cc:u64,idx:u64)
+  row:u64 = call(idx) {"function":"ps_row"}
+  length:u64 = call(ci,row) {"function":"ps_length"}
+  maximum:u64 = const() {"value":4096}
+  fits:bool = compare.le(length,maximum)
+  one:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(idx,one)
+  branch fits next(ci,cc,after) bad()
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn ps_key_order(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64)
+  a:u64 = call(left) {"function":"ps_row"}
+  b:u64 = call(right) {"function":"ps_row"}
+  width:u64 = const() {"value":32}
+  order:u64 = call(input,a,b,width,width) {"function":"sb_compare"}
+  ret(order)
+end
+
+fn ps_select(input:readbuf,count:u64,used:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,used:u64)
+  zero:u64 = const() {"value":0}
+  jump scan(input,count,used,zero,count)
+block scan(si:readbuf,sn:u64,su:u64,idx:u64,best:u64)
+  done:bool = compare.eq(idx,sn)
+  branch done finish(best) available(si,sn,su,idx,best)
+block available(ai:readbuf,an:u64,au:u64,aidx:u64,abest:u64)
+  one:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one,aidx)
+  matched:u64 = bit.and(au,bit)
+  zero_used:u64 = const() {"value":0}
+  skip:bool = compare.ne(matched,zero_used)
+  branch skip advance(ai,an,au,aidx,abest) inspect(ai,an,au,aidx,abest)
+block inspect(ii:readbuf,ic:u64,iu:u64,iidx:u64,ibest:u64)
+  absent:bool = compare.eq(ibest,ic)
+  branch absent advance(ii,ic,iu,iidx,iidx) comparison(ii,ic,iu,iidx,ibest)
+block comparison(ci:readbuf,cc:u64,cu:u64,cidx:u64,cbest:u64)
+  order:u64 = call(ci,cidx,cbest) {"function":"ps_key_order"}
+  less:u64 = const() {"value":0}
+  replace:bool = compare.eq(order,less)
+  next_best:u64 = select(replace,cidx,cbest)
+  jump advance(ci,cc,cu,cidx,next_best)
+block advance(vi:readbuf,vc:u64,vu:u64,vidx:u64,vbest:u64)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(vidx,step)
+  jump scan(vi,vc,vu,next,vbest)
+block finish(answer:u64)
+  ret(answer)
+end
+
+fn ps_validate_order(input:readbuf,count:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  jump next(input,count,zero,zero,count)
+block next(ni:readbuf,nc:u64,nu:u64,done:u64,previous:u64)
+  complete:bool = compare.eq(done,nc)
+  branch complete accepted() select_row(ni,nc,nu,done,previous)
+block select_row(si:readbuf,sc:u64,su:u64,sd:u64,sp:u64)
+  idx:u64 = call(si,sc,su) {"function":"ps_select"}
+  chosen:bool = compare.lt(idx,sc)
+  branch chosen previous_guard(si,sc,su,sd,sp,idx) internal_error()
+block previous_guard(pi:readbuf,pc:u64,pu:u64,pd:u64,pp:u64,pidx:u64)
+  absent:bool = compare.eq(pp,pc)
+  branch absent length(pi,pc,pu,pd,pidx) duplicate_guard(pi,pc,pu,pd,pp,pidx)
+block duplicate_guard(di:readbuf,dc:u64,du:u64,dd:u64,dp:u64,didx:u64)
+  key_order:u64 = call(di,dp,didx) {"function":"ps_key_order"}
+  equal:u64 = const() {"value":1}
+  repeated:bool = compare.eq(key_order,equal)
+  branch repeated duplicate() length(di,dc,du,dd,didx)
+block length(li:readbuf,lc:u64,lu:u64,ld:u64,lidx:u64)
+  row:u64 = call(lidx) {"function":"ps_row"}
+  actual:u64 = call(li,row) {"function":"ps_length"}
+  required:u64 = const() {"value":3309}
+  exact:bool = compare.eq(actual,required)
+  one:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one,lidx)
+  used:u64 = bit.or(lu,bit)
+  progress:u64 = int.add.wrap(ld,one)
+  branch exact next(li,lc,used,progress,lidx) rejected()
+block accepted()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block duplicate()
+  duplicate_code:u32 = const() {"value":107}
+  ret(duplicate_code)
+block rejected()
+  length_code:u32 = const() {"value":106}
+  ret(length_code)
+block internal_error()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
+end
+
+fn ps_hash(input:readbuf,work:mutbuf,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,count:u64)
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(initialized,zero)
+  branch ready domain(input,work,count) failed(initialized)
+block domain(di:readbuf,dw:mutbuf,dc:u64)
+  p0:u64 = const() {"value":1208}
+  p1:u64 = const() {"value":1216}
+  p2:u64 = const() {"value":1224}
+  p3:u64 = const() {"value":1232}
+  d0:u64 = const() {"value":7810739491857912404}
+  d1:u64 = const() {"value":3409594557391921509}
+  d2:u64 = const() {"value":8247626254411852115}
+  d3:u64 = const() {"value":13922220047160165}
+  _domain0:u64 = call(dw,p0,d0) {"function":"tr_put"}
+  _domain1:u64 = call(dw,p1,d1) {"function":"tr_put"}
+  _domain2:u64 = call(dw,p2,d2) {"function":"tr_put"}
+  _domain3:u64 = call(dw,p3,d3) {"function":"tr_put"}
+  width:u64 = const() {"value":32}
+  status:u64 = call(dw,p0,width) {"function":"tr_sha_update_work"}
+  hash_zero:u64 = const() {"value":0}
+  domain_ok:bool = compare.eq(status,hash_zero)
+  branch domain_ok visit(di,dw,dc,hash_zero,hash_zero) failed(status)
+block visit(vi:readbuf,vw:mutbuf,vc:u64,used:u64,done:u64)
+  complete:bool = compare.eq(done,vc)
+  branch complete finalize(vw) hash_key(vi,vw,vc,used,done)
+block hash_key(ki:readbuf,kw:mutbuf,kc:u64,ku:u64,kd:u64)
+  index:u64 = call(ki,kc,ku) {"function":"ps_select"}
+  row:u64 = call(index) {"function":"ps_row"}
+  key_width:u64 = const() {"value":32}
+  result:u64 = call(ki,row,key_width,kw) {"function":"tr_sha_update"}
+  key_zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(result,key_zero)
+  branch hashed hash_signature(ki,kw,kc,ku,kd,index,row) failed(result)
+block hash_signature(si:readbuf,sw:mutbuf,sc:u64,su:u64,sd:u64,sidx:u64,srow:u64)
+  relative:u64 = const() {"value":34}
+  start:u64 = int.add.wrap(srow,relative)
+  signature_width:u64 = const() {"value":3309}
+  consumed:u64 = call(si,start,signature_width,sw) {"function":"tr_sha_update"}
+  sig_zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(consumed,sig_zero)
+  one:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one,sidx)
+  seen:u64 = bit.or(su,bit)
+  progress:u64 = int.add.wrap(sd,one)
+  branch okay visit(si,sw,sc,seen,progress) failed(consumed)
+block finalize(fw:mutbuf)
+  result_final:u64 = call(fw) {"function":"tr_sha_final"}
+  ret(result_final)
+block failed(error:u64)
+  ret(error)
+end
