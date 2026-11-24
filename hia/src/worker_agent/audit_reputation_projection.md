@@ -60,3 +60,10 @@ fields. Cases include the four recognized deltas, missing and explicit
 null, present zero, both signed limits and deterministic in-domain
 samples outside the four recognized values. Rust retains journal IO,
 all other record normalization, index creation and production dispatch.
+
+The WJB2 batch imports the same internal `wr_values` classifier and
+arithmetic. WJR1's independent input frame and encoded output are unchanged.
+The internal metadata word holds label length (bits 0–4), tier (5–6),
+rank (7–8), and weight (9 and above); score and gap are separate results.
+This keeps each internal call within the pinned selfhost's three-result
+limit. No metadata encoding is part of the external WJR1 or WJB2 frame.

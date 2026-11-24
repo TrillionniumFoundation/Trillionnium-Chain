@@ -58,18 +58,25 @@ block entry(row_input:readbuf,row_output:mutbuf,row_bounds:u64,row_mask:u64,row_
   text_start:u64 = int.add.wrap(first_text,row_start)
   jump field(row_input,row_output,row_bounds,row_mask,row_emit,first_field,text_start,row_out_at)
 block field(fi:readbuf,fo:mutbuf,fs:u64,fm:u64,fw:bool,field_index:u64,field_text:u64,field_out:u64)
-  field_count:u64 = const() {"value":18}
+  prefix_bit:u64 = const() {"value":32768}
+  prefix_flag:u64 = bit.and(fm,prefix_bit)
+  is_prefix:bool = compare.eq(prefix_flag,prefix_bit)
+  all_fields:u64 = const() {"value":18}
+  prefix_fields:u64 = const() {"value":11}
+  field_count:u64 = select(is_prefix,prefix_fields,all_fields)
   more:bool = compare.lt(field_index,field_count)
-  branch more dispatch(fi,fo,fs,fm,fw,field_index,field_text,field_out) finish(fo,fs,fw,field_text,field_out)
-block finish(fini_out:mutbuf,fini_size:u64,fini_emit:bool,fini_text:u64,fini_at:u64)
+  branch more dispatch(fi,fo,fs,fm,fw,field_index,field_text,field_out) finish(fo,fs,fw,field_text,field_out,is_prefix)
+block finish(fini_out:mutbuf,fini_size:u64,fini_emit:bool,fini_text:u64,fini_at:u64,fini_prefix:bool)
   bounds_low:u64 = const() {"value":4294967295}
   row_end:u64 = bit.and(fini_size,bounds_low)
   exact:bool = compare.eq(fini_text,row_end)
-  branch exact close(fini_out,fini_at,fini_emit) fail()
+  branch exact finish_kind(fini_out,fini_at,fini_emit,fini_prefix) fail()
+block finish_kind(end_out:mutbuf,end_at:u64,end_emit:bool,end_prefix:bool)
+  branch end_prefix prefix_end(end_at) close(end_out,end_at,end_emit)
+block prefix_end(prefix_at:u64)
+  ret(prefix_at)
 block close(close_out:mutbuf,close_at:u64,close_emit:bool)
-  brace_lf:u64 = const() {"value":2685}
-  two_end:u64 = const() {"value":2}
-  finished:u64 = call(close_out,close_at,brace_lf,two_end,close_emit) {"function":"wa_word"}
+  finished:u64 = call(close_out,close_at,close_emit) {"function":"wj_close"}
   ret(finished)
 block dispatch(di:readbuf,do:mutbuf,ds:u64,dm:u64,dw:bool,dindex:u64,dtext:u64,dout:u64)
   value_at:u64 = call(do,dout,dindex,dw) {"function":"wj_key"}
@@ -190,6 +197,13 @@ block advance(axi:readbuf,axo:mutbuf,axs:u64,axm:u64,axw:bool,axindex:u64,axtext
 block fail()
   bad_row:u64 = const() {"value":0}
   ret(bad_row)
+end
+fn wj_close(output:mutbuf,at:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(output:mutbuf,at:u64,emit:bool)
+  brace_lf:u64 = const() {"value":2685}
+  two_end:u64 = const() {"value":2}
+  finished:u64 = call(output,at,brace_lf,two_end,emit) {"function":"wa_word"}
+  ret(finished)
 end
 fn wj_read_slot(source:readbuf,row_bounds:u64,relative_at:u64,width:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(source:readbuf,row_bounds:u64,relative_at:u64,width:u64)

@@ -8512,7 +8512,8 @@
           "wj_row",
           "wj_read_slot",
           "wj_string_size",
-          "wj_key"
+          "wj_key",
+          "wj_close"
         ],
         "source": "src/worker_agent/audit_jsonl_row.hepta"
       },
@@ -8522,6 +8523,15 @@
           "wa_word"
         ],
         "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wr_values",
+          "wr_metadata",
+          "wr_rank",
+          "wr_label"
+        ],
+        "source": "src/worker_agent/audit_reputation_projection.hepta"
       },
       {
         "functions": [

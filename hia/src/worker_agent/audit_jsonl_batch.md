@@ -21,6 +21,26 @@ unused. The frame is:
   original bounded ingress reader. Request and successful result lengths
   are at most `0xfffffffd` bytes.
 
+## Private WJB2 ABI: raw reputation projection
+
+The outer magic is `WJB2`. The candidate count and each typed row's
+length and contents follow WJB1. Immediately after each typed row, five
+additional bytes carry a presence byte followed by a little-endian i32
+reputation delta. Only presence 0 or 1 is valid; absence requires a zero
+delta payload. The five bytes do not count toward the row's length.
+All seven reputation options in the typed row must be canonically absent:
+no presence bits, all six numeric slots zero, and a zero label length.
+The original WJB1 and standalone WJL1 encodings are unchanged.
+
+The WJL renderer emits the first eleven fields and checks the exact inner
+extent; the WJB2 renderer supplies all seven remaining fields in original
+order from `wr_values`, the same canonical mapping used by WJR1.
+Known audit labels are fixed ASCII; decimal output reuses WJL helpers.
+An absent delta or an unrecognized i32 emits seven nulls. No host-projected
+reputation field is accepted in WJB2, including on excluded rows.
+
+## Atomic output
+
 The first pass checks every row and computes the aggregate output size.
 An invalid late record, including an excluded row, never publishes an earlier
 row. A second pass writes directly into the checked output range. Neither
@@ -42,9 +62,10 @@ ABI. Neither refusal alters the output.
 ```sh
 python3 -B -m unittest -v hia.tests.test_worker_audit_jsonl_batch
 python3 -B -m hia.tests.test_worker_audit_jsonl_batch --output /path/to/new-proof
+python3 -B -m hia.tests.test_worker_audit_jsonl_batch --project-reputation --output /path/to/wjb2-proof
 ```
 
-The second command runs the original Rust 1.95.0 locked CLI on isolated
+Both observation commands run the original Rust 1.95.0 locked CLI on isolated
 synthetic journals. To reuse its exact already-built executable, supply
 `--original-binary` and its `--original-build-receipt`; the test checks the six
 original source/lock object identities and the executable digest before and
@@ -54,9 +75,10 @@ per emitter must match the original ordered JSONL byte for byte and the
 record count printed by original stdout. The surrounding CLI status line,
 file paths, and index are not native outputs.
 
-This is an in-memory typed selection and serialization boundary, not
-raw-ingress conversion. The host still supplies typed optional fields, including
-display and reputation projections and already-produced fingerprint and policy
-facts. The isolated WJP/WJR projectors are not invoked by this component.
-The Rust production dispatch, journal parsing, identity, index, persistence,
-and Markdown behavior remain unchanged.
+This is an in-memory typed boundary, not complete raw-ingress conversion.
+The host still supplies display, fingerprint and policy facts. For WJB2
+the comparison passes only raw reputation inputs from the synthetic ingress
+records; it cannot feed the original CLI's projected reputation values back
+to the native renderer. The isolated WJP display projector is not invoked
+by this component. The Rust production dispatch, journal parsing, identity,
+index, persistence, and Markdown behavior remain unchanged.
