@@ -9717,6 +9717,179 @@
         "source": "src/worker_agent/journal_line_frame.hepta"
       }
     ],
+    "src/worker_agent/journal_audit_export_v2.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_ascii_encode",
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "wj_string_size",
+          "wj_close",
+          "wj_key",
+          "wj_project_text",
+          "wj_read_slot",
+          "wj_row"
+        ],
+        "source": "src/worker_agent/audit_jsonl_row.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word",
+          "wa_cell",
+          "wa_separator",
+          "wa_decimal"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wp_printable",
+          "wp_view",
+          "wp_schema_word",
+          "wp_schema"
+        ],
+        "source": "src/worker_agent/audit_display_labels.hepta"
+      },
+      {
+        "functions": [
+          "ws_selected"
+        ],
+        "source": "src/worker_agent/audit_select.hepta"
+      },
+      {
+        "functions": [
+          "wx_index",
+          "wx_map",
+          "wx_offsets",
+          "wx_key_after",
+          "wx_key",
+          "wx_decimal",
+          "wx_prefix",
+          "wx_map_header"
+        ],
+        "source": "src/worker_agent/audit_index_wire.hepta"
+      },
+      {
+        "functions": [
+          "or_character",
+          "or_char_size",
+          "or_space",
+          "or_trim_start",
+          "or_trim_end"
+        ],
+        "source": "src/oracle/values.hepta"
+      },
+      {
+        "functions": [
+          "wa_active_header"
+        ],
+        "source": "src/worker_agent/audit_active_table_tokens.hepta"
+      },
+      {
+        "functions": [
+          "wa_visible_byte"
+        ],
+        "source": "src/worker_agent/audit_text.hepta"
+      },
+      {
+        "functions": [
+          "wg_cell",
+          "wg_copy_key",
+          "wg_stage",
+          "wg_mask",
+          "wg_map",
+          "wg_pick",
+          "wg_member",
+          "wg_length",
+          "wg_compare",
+          "wg_group"
+        ],
+        "source": "src/worker_agent/audit_index_group.hepta"
+      },
+      {
+        "functions": [
+          "wm_row",
+          "wm_decimal"
+        ],
+        "source": "src/worker_agent/audit_markdown_batch.hepta"
+      },
+      {
+        "functions": [
+          "wt_selected"
+        ],
+        "source": "src/worker_agent/audit_export_transaction.hepta"
+      },
+      {
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "oj_utf8"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "wd_emit_at",
+          "wd_octet",
+          "wd_space",
+          "wd_expect",
+          "wd_string",
+          "wd_number",
+          "wd_u128_digit",
+          "wd_key"
+        ],
+        "source": "src/worker_agent/journal_audit_dto.hepta"
+      },
+      {
+        "functions": [
+          "wjf_scan",
+          "wjf_descriptor"
+        ],
+        "source": "src/worker_agent/journal_line_frame.hepta"
+      },
+      {
+        "functions": [
+          "wd2_record_at",
+          "wd2_key"
+        ],
+        "source": "src/worker_agent/journal_audit_dto_ordered_fields_v2.hepta"
+      },
+      {
+        "functions": [
+          "wq_span",
+          "wq_slot",
+          "wq_save",
+          "wq_load",
+          "wq_length",
+          "wq_materialize",
+          "wq_select_and_measure",
+          "wq_keys",
+          "wq_store_keys",
+          "wq_publish",
+          "wq_emit_rows"
+        ],
+        "source": "src/worker_agent/journal_audit_export.hepta"
+      }
+    ],
     "src/worker_agent/journal_line_frame.hepta": [
       {
         "functions": [

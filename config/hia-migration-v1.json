@@ -1446,6 +1446,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-export-v2",
+      "node_integration_complete": false,
+      "scope": "An independent one-call WQX2 raw audit export switches only to the verified WJD2 known-key order and absent/null parser. Full graph equivalence outside that replacement and both emitters reproduce all three genuine locked Rust CLI files; unchanged WQX1 named/package ABI, generic Serde, authority, custody and production dispatch.",
+      "source": "hia/src/worker_agent/journal_audit_export_v2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_export_v2.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-dto-v2",
       "node_integration_complete": false,
       "scope": "Private WJD2 shares exact typed projection and adds arbitrary order of 22 literal known keys, independent absent/null options and duplicate checks; both emitter chains reproduce three unchanged locked Rust CLI files. Existing WJD1/WQX1, generic Serde, storage and production dispatch unchanged.",
