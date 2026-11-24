@@ -38,12 +38,12 @@ class SettlementCompanionTests(unittest.TestCase):
 
     def invoke(self, *, root=None, dest=None, succeeds=True, extra=()):
         result = subprocess.run([
-            sys.executable, "-B", str(ROOT / "hia/tools/settlement_companion.py"),
+            sys.executable, "-B", "-m", "hia.tools.settlement_companion",
             "--root", str(root or self.source), "--output-dir", str(dest or self.dest),
             "--head", HEAD, "--run-id", "12345", "--run-attempt", "2",
             "--execution-outcome", "failure", "--source-after-outcome", "success",
             "--binding-outcome", "skipped", "--job-status", "failure",
-            *extra], check=False, capture_output=True, text=True, timeout=10)
+            *extra], cwd=ROOT, check=False, capture_output=True, text=True, timeout=10)
         if not succeeds:
             self.assertNotEqual(result.returncode, 0)
             return
@@ -178,6 +178,67 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertEqual(result["availability"], "invalid-source-bind")
         self.assertNotIn("projection", result)
 
+    def test_integrity_failure_prefix_is_not_a_failed_control_verdict(self):
+        report = {"status": "FAIL", "cases": [
+            {"name": companion.ROSTER[0], "result": "PASS"},
+            {"name": companion.ROSTER[1], "result": "REJECTED", "exception": SECRET},
+        ], "exception": SECRET}
+        data = self.doc(companion.INTEGRITY, report).read_bytes()
+        receipt = "qualification/stages/integrity/receipt.json"
+        self.doc(receipt, self.timed_receipt())
+        summary = self.invoke()
+        observations = summary["observations"]
+        self.assertEqual(observations[receipt]["projection"]["status"], "FAIL")
+        self.assertEqual(observations[companion.INTEGRITY]["original"], companion.identity(data))
+        projected = observations[companion.INTEGRITY]["projection"]
+        self.assertEqual(projected["reported_status"], "FAIL")
+        self.assertEqual(projected["results_in_roster_order"], ["PASS", "REJECTED"])
+        self.assertEqual(projected["last_recorded_control"], companion.ROSTER[1])
+        self.assertEqual(projected["first_unrecorded_control"], companion.ROSTER[2])
+        self.assertEqual(projected["unrecorded_controls"], len(companion.ROSTER) - 2)
+        self.assertFalse(projected["establishes_reader_success"])
+
+    def test_integrity_complete_producer_does_not_substitute_missing_reader(self):
+        roster = companion.ROSTER
+        self.doc(companion.INTEGRITY, {"schema": companion.INTEGRITY_SCHEMA, "status": "PASS",
+                                     "roster": roster, "passed": len(roster), "failed": 0,
+                                     "not_run": 0, "cases": [
+                                         {"name": name, "result": "PASS",
+                                          "arbitrary_nested_diagnostic": SECRET}
+                                         for name in roster]})
+        result = self.invoke()["observations"]
+        projected = result[companion.INTEGRITY]["projection"]
+        self.assertEqual(projected["reported_status"], "PASS")
+        self.assertEqual(projected["unrecorded_controls"], 0)
+        self.assertIsNone(projected["first_unrecorded_control"])
+        self.assertFalse(projected["establishes_reader_success"])
+        self.assertEqual(result["independent-readback/report.json"], {"availability": "missing"})
+
+    def test_integrity_rejects_fabricated_partial_pass_or_unregistered_label(self):
+        roster = companion.ROSTER
+        partial = {"schema": companion.INTEGRITY_SCHEMA, "status": "PASS",
+                   "roster": roster, "passed": len(roster), "failed": 0, "not_run": 0,
+                   "cases": [{"name": roster[0], "result": "PASS"}]}
+        cases = (
+            partial, {"status": "FAIL", "cases": [{"name": roster[1], "result": "PASS"}]},
+            {"status": "FAIL", "cases": [{"name": SECRET, "result": "PASS"}]},
+            {"status": "FAIL", "cases": [42] * (len(roster) + 1)},
+        )
+        for report in cases:
+            self.doc(companion.INTEGRITY, report)
+            observed = self.invoke()["observations"][companion.INTEGRITY]
+            self.assertIn(observed["availability"], ("invalid-integrity-roster",
+                                                      "invalid-integrity-report"))
+            self.assertNotIn("projection", observed)
+            (self.dest / "summary.json").unlink()
+
+    def test_integrity_report_and_process_receipt_have_separate_availability(self):
+        path = "qualification/stages/integrity/receipt.json"
+        self.doc(path, dict(self.timed_receipt(), execution_deadline_seconds=239))
+        observations = self.invoke()["observations"]
+        self.assertEqual(observations[path]["availability"], "invalid-deadline")
+        self.assertEqual(observations[companion.INTEGRITY], {"availability": "missing"})
+
     def test_wiring_keeps_full_original_upload_and_non_gating_sidecar(self):
         workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
         job = workflow.split("\n  native-additional-owners:", 1)[1]
@@ -192,6 +253,7 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertEqual(compact.count("continue-on-error: true"), 2)
         self.assertEqual(compact.count("if: always() && matrix.component == 'settlement-engine'"), 2)
         self.assertIn("path: ${{ runner.temp }}/settlement-compact/summary.json", compact)
+        self.assertIn("python3 -B -m hia.tools.settlement_companion", compact)
         self.assertNotIn("OWNER_ARTIFACT", compact)
         self.assertNotIn("continue-on-error:", full)
         self.assertIn("archive_runtime_observations.py --root \"component=$OWNER_ROOT\"", full)

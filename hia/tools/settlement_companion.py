@@ -16,6 +16,8 @@ from pathlib import PurePosixPath
 import re
 import stat
 
+from hia.platform.service_settlement.qualification.integrity_roster import ROSTER
+
 
 MAX_RECEIPT = 2 * 1024 * 1024
 MAX_CURSOR_ROWS = 4096
@@ -28,6 +30,8 @@ CI_OUTCOMES = ("success", "failure", "cancelled", "skipped")
 PINS = ("observations/source-before.json", "observations/source-after.json")
 BINDING = "observations/binding.json"
 CURSOR = "qualification/native/fixture-progress.jsonl"
+INTEGRITY = "qualification/integrity/report.json"
+INTEGRITY_SCHEMA = "trnm.hia.service-settlement-engine.integrity.v1"
 ROOT_STATUS = {
     "qualification/report.json": "trnm.hia.service-settlement-engine.qualification.v1",
     "independent-readback/report.json": "trnm.hia.service-settlement-engine.readback.v1",
@@ -192,7 +196,7 @@ def invocation_result(row):
             "completed_monotonic_ns": scalar(row["completed_monotonic_ns"])}
 
 
-def stage_receipt(row, *, native=False):
+def stage_receipt(row, *, fixed_budget=False):
     schema(row, "trnm.service-settlement.owned-process.v1")
     result = {"status": pick_status(row), "started": pick_bool(row, "started"),
               "exit_code": scalar(row["exit_code"], nullable=True, signed=True),
@@ -203,7 +207,7 @@ def stage_receipt(row, *, native=False):
               "original_deadline_monotonic_ns": scalar(row["original_deadline_monotonic_ns"])}
     if (result["cleanup_deadline_seconds"] != EXPECTED_CLEANUP_SECONDS
             or not 0 < result["execution_deadline_seconds"] <= EXPECTED_NATIVE_SECONDS
-            or (native and result["execution_deadline_seconds"] != EXPECTED_NATIVE_SECONDS)):
+            or (fixed_budget and result["execution_deadline_seconds"] != EXPECTED_NATIVE_SECONDS)):
         raise Refused("invalid-deadline")
     for key in ("elapsed_ns", "observed_completed_monotonic_ns"):
         if key in row:
@@ -222,6 +226,41 @@ def root_status(row, schema_name):
     if "elapsed_ns" in row:
         result["elapsed_ns"] = scalar(row["elapsed_ns"])
     return result
+
+
+def integrity_report(row):
+    """Project the producer report, not the independent reader's decision."""
+    status = pick_status(row)
+    cases = row["cases"]
+    if (status not in ("PASS", "FAIL") or not isinstance(cases, list)
+            or not 0 <= len(cases) <= len(ROSTER)):
+        raise Refused("invalid-integrity-report")
+    # The legacy FAIL envelope has no schema; its cases are only an ordered
+    # completed prefix. Do not guess a verdict for the first missing control.
+    if status == "PASS":
+        schema(row, INTEGRITY_SCHEMA)
+        if (row["roster"] != ROSTER or len(cases) != len(ROSTER)
+                or any(scalar(row[k]) != wanted for k, wanted in
+                       (("passed", len(ROSTER)), ("failed", 0), ("not_run", 0)))):
+            raise Refused("invalid-integrity-roster")
+    elif "schema" in row:
+        schema(row, INTEGRITY_SCHEMA)
+    results = []
+    for name, case in zip(ROSTER, cases):
+        if (not isinstance(case, dict) or case.get("name") != name
+                or case.get("result") not in ("PASS", "REJECTED")):
+            raise Refused("invalid-integrity-roster")
+        results.append(case["result"])
+    cursor = len(results)
+    return {
+        "reported_status": status,
+        "registered_controls": len(ROSTER),
+        "results_in_roster_order": results,
+        "unrecorded_controls": len(ROSTER) - cursor,
+        "last_recorded_control": None if not cursor else ROSTER[cursor - 1],
+        "first_unrecorded_control": None if cursor == len(ROSTER) else ROSTER[cursor],
+        "establishes_reader_success": False,
+    }
 
 
 def progress_record(raw):
@@ -308,11 +347,12 @@ def export(root_path, head, run_id, run_attempt, outcomes, job_status):
     entries.update({"qualification/" + name + "-invocation-result.json": invocation_result
                     for name in ("original", "generator")})
     entries.update({"qualification/stages/" + name + "/receipt.json":
-                    lambda row, name=name: stage_receipt(row, native=name == "native")
+                    lambda row, name=name: stage_receipt(row, fixed_budget=name in ("native", "integrity"))
                     for name in STAGE_NAMES})
     entries.update({name: lambda row, expected=expected: root_status(row, expected)
                     for name, expected in ROOT_STATUS.items()})
     entries[CURSOR] = progress_record
+    entries[INTEGRITY] = integrity_report
     try:
         with safe_directory(root_path) as root:
             observations = {name: observe(root, name, projector, is_cursor=name == CURSOR)

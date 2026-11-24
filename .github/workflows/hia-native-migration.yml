@@ -7401,7 +7401,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -m 700 -- "$RUNNER_TEMP/settlement-compact"
-          python3 -B hia/tools/settlement_companion.py \
+          python3 -B -m hia.tools.settlement_companion \
             --root "${OWNER_ROOT:-$RUNNER_TEMP/settlement-unavailable}" \
             --output-dir "$RUNNER_TEMP/settlement-compact" \
             --head "$TRNM_EXPECTED_SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" \
