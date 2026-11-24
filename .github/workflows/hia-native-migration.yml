@@ -204,6 +204,14 @@ jobs:
               cat "$RUNNER_TEMP/hia-bench-observations/general-cargo-fetch.stderr.raw" >&2
               exit 1
             }
+      - name: Prepare exact original M06 and M09 (General only)
+        run: |
+          set -euo pipefail
+          python3 -B -m scripts.ci.prepare_original_m06_m09_oracles \
+            --general-cargo-events "$RUNNER_TEMP/original-rust-build.jsonl" \
+            --general-target "$RUNNER_TEMP/original-rust-values" \
+            --output "$RUNNER_TEMP/m06-m09-original-oracles" \
+            --github-env "$GITHUB_ENV"
       - name: Execute every assigned native HIA and independent reference case
         env:
           TRNM_HIA_TASK_METADATA_ARTIFACT_DIR: ${{ runner.temp }}/hia-task-metadata-boundaries
