@@ -234,7 +234,9 @@ class NativeBenchMain(unittest.TestCase):
             new, _ = self.actual(f"invalid-{index}-native", self.native, args)
             self.assertEqual((old.returncode, old.stdout), (2, b""))
             self.assertTrue(old.stderr)
-            strict = (b"a value is required" in old.stderr or b"cannot be used multiple times" in old.stderr)
+            strict = any(fragment in old.stderr for fragment in (
+                b"a value is required", b"cannot be used multiple times",
+                b"invalid digit found in string", b"number too large to fit in target type"))
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr if strict else OUTSIDE))
 
     def test_actual_plain_cli_help_terminator_and_strict_grammar(self):
@@ -278,7 +280,7 @@ class NativeBenchMain(unittest.TestCase):
             new, new_ns = self.actual(f"terminal-cli-{i}-hia", self.native, args)
             self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
             self.assertEqual(stdout_observation(old.stdout, old_ns)[1], stdout_observation(new.stdout, new_ns)[1])
-        for i, args in enumerate(((b"--typo", b"--help"), (b"--txs=bad", b"--help"),
+        for i, args in enumerate(((b"--typo", b"--help"),
                                   (b"--txs=1", b"--txs", b"-2"), (b"--txs", b"--", b"--profile"),
                                   (b"--help=true",), (b"--", b"--help"),
                                   (b"--reader-high-water-v1", b"--help"),
@@ -291,6 +293,43 @@ class NativeBenchMain(unittest.TestCase):
             actual, _ = self.actual(f"plain-cli-env-denied-{name}", self.native, args,
                                     env={b"HIA_BENCH_TEST_ONLY": b"synthetic-not-read"})
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_plain_uint_cli_diagnostics_and_no_unbounded_echo(self):
+        # Check every original unsigned field, both spellings, precedence,
+        # the maximum Unix staging length, and no partial echo or file effect.
+        fields = (b"--txs", b"--keys", b"--determinism-repeats", b"--read-fanout", b"--write-every")
+        empty = b"cannot parse integer from empty string"
+        invalid = b"invalid digit found in string"
+        overflow = b"number too large to fit in target type"
+        values = ((b"", empty), (b"+", invalid), (b"bad", invalid), (b"-1", invalid),
+                  (b" 4", invalid), (b"12'abc", invalid),
+                  (b"18446744073709551616", overflow), (b"+18446744073709551616x", overflow),
+                  (b"1844674407370955161x", invalid), (b"9999999999999999999x", invalid),
+                  (b"00018446744073709551616", overflow))
+        cases = []
+        for key in fields:
+            for val, error in values:
+                cases.append(((b"--profile", key + b"=" + val, b"--help"), error))
+                if not val.startswith(b"-"):
+                    cases.append(((b"--profile", key, val, b"--help"), error))
+            cases.append(((key, b"-"), invalid))
+            cases.append(((key, b"0" * 126 + b"x"), invalid))
+        for i, (args, reason) in enumerate(cases):
+            old, _ = self.actual(f"uint-cli-{i}-rust", self.original, args)
+            new, _ = self.actual(f"uint-cli-{i}-hia", self.native, args)
+            self.assertEqual((old.returncode, old.stdout), (2, b""))
+            self.assertIn(reason, old.stderr)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr), args)
+        closed = ((b"--txs=\xff",), (b"--txs=bad\x01",), (b"--txs=bad\x1b[0m",),
+                  (b"--write-every=\t",), (b"--read-fanout", b"0" * 127 + b"x"),
+                  (b"--txs", b"-1"), (b"--reader-high-water-v1", b"--txs=bad"))
+        for i, args in enumerate(closed):
+            new, _ = self.actual(f"uint-cli-closed-{i}-hia", self.native, args)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE))
+        denied, _ = self.actual("uint-cli-env-denied", self.native, (b"--txs=bad",),
+                                env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
+        self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
 
     def test_plain_cli_help_refuses_native_terminal_without_emitting_help(self):

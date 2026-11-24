@@ -106,9 +106,15 @@ scope below. Unsupported work stays closed and never falls back to Rust.
 With an empty environment and nonterminal output, the same native parser and
 [diagnostics renderer](main_diagnostics.hepta) reproduce the locked Rust CLI's
 plain `-h`/`--help` stdout and exit 0. Recognized missing values and duplicate
-options use its exact stderr and exit 2. Both are emitted before any scheduler,
-clock or profile I/O; none reflect supplied argument text. Help comes after a
-syntactically admitted prefix and takes precedence over later arguments.
+options use its exact stderr and exit 2. The five unsigned options also match
+the locked Rust diagnostic for empty values, invalid digits and overflow when
+the value is printable ASCII within the existing 127-byte argv token extent.
+Only that value is reflected; control bytes, invalid UTF-8, shell positions,
+and unsupported option/enum diagnostics retain the candidate refusal. The HIA
+renderer reads a packed [literal catalog](main_diagnostics.json) instead of
+one sequence of machine instructions per message. All these outcomes precede
+scheduler, clock or profile I/O. Help comes after a syntactically admitted
+prefix and takes precedence over later arguments.
 The remaining value/option diagnostics, suggestions, grammar outside the
 bounded parser, colors/terminal output, general environments and other work
 strategies remain open. The original help lists every strategy; it does not
@@ -159,7 +165,7 @@ argument, diagnostics and report code and the build-time packer use the pinned c
 explicit object profile; native workload, schedule, digests, profile and
 environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 4,104-byte Linux adapter. It does not execute the
+the address table, and the 4,208-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 17 argument tokens in a private span and owns
@@ -346,7 +352,7 @@ The original is a Clap-derived executable with the following long options:
 The retained Clap front end defines help, strict options and all parse errors.
 The [native qualification](../../tests/test_bench_main.py) compares real stdout,
 stderr and exit status for plain help, terminal `--`, and the admitted strict
-missing-value/duplicate families against the unmodified, locked Cargo binary.
+missing-value, duplicate and printable unsigned-value families against the unmodified, locked Cargo binary.
 A binary request frame is not a substitute for this layer. In particular,
 `--persist-profile=false` does not disable persistence in the retained CLI.
 

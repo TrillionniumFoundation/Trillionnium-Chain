@@ -22,8 +22,9 @@ COMPONENTS = (
     "src/bench/main_diagnostics.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "f8c2f97cb3c6e3a3b4b58c80319405ecc886fe3ce47c834177591b69aafa2b5a"
-PREFIX, BASE = 4280, 0x400000
+DIAGNOSTIC_SOURCE = "src/bench/main_diagnostics.json"
+ADAPTER_SHA256 = "2756fa986ed24ae7da27665ee4fd76bf2654a7eefe8a9f9346bddd58a6764660"
+PREFIX, BASE = 4384, 0x400000
 
 
 def exact_native_text(data):
@@ -55,6 +56,39 @@ def exact_native_text(data):
             or global_funcs[0][4] != 0 or not 0 < global_funcs[0][5] <= txt[5]):
         raise ValueError("Argument f0 does not start exact resolved .text")
     return data[txt[4]:txt[4] + txt[5]]
+
+
+def diagnostics_catalog(raw: bytes) -> bytes:
+    """Pack a reviewed static text table, without classifying or rendering argv."""
+    def unique(pairs):
+        values = dict(pairs)
+        if len(values) != len(pairs):
+            raise ValueError("Duplicate diagnostic source key")
+        return values
+    source = json.loads(raw, object_pairs_hook=unique)
+    numeric_fields = (0, 1, 2, 4, 5)
+    existing = {3, *(16+i for i in (*numeric_fields, 6, 8)), *range(32, 41)}
+    numeric = {base + i for base in (64, 80, 96) for i in numeric_fields}
+    if (set(source) != {"schema", "entries"} or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v1"
+            or set(source["entries"]) != {str(code) for code in existing | numeric}):
+        raise ValueError("Incorrect diagnostic text roster")
+    table = bytearray(104 * 8)
+    payload = bytearray()
+    for code in sorted(existing | numeric):
+        row = source["entries"][str(code)]
+        if type(row) is not list or len(row) != 2 or any(type(text) is not str for text in row):
+            raise ValueError("Incorrect diagnostic text definition")
+        before, after = (text.encode("ascii") for text in row)
+        if (not before or bool(after) != (code in numeric) or not (after or before).endswith(b"\n")
+                or any(b != 10 and not 32 <= b <= 126 for b in before + after)
+                or len(before) + len(after) + (127 if code in numeric else 0) > 2048):
+            raise ValueError("Out-of-domain diagnostic template")
+        struct.pack_into("<4H", table, code * 8, len(table) + len(payload), len(before), len(after), 0)
+        payload += before + after
+    result = bytes(table + payload)
+    if len(result) > 8048:
+        raise ValueError("Packed diagnostic catalog exceeded 8048 bytes")
+    return result
 
 
 def build(output: Path, *, bind_profile_output=False):
@@ -107,13 +141,16 @@ def build(output: Path, *, bind_profile_output=False):
         if not raw:
             raise ValueError("Empty native Bench component")
         parts.append(raw)
+    catalog_raw = (HIA_ROOT / DIAGNOSTIC_SOURCE).read_bytes()
+    catalog = diagnostics_catalog(catalog_raw)
+    sources[DIAGNOSTIC_SOURCE] = {DIAGNOSTIC_SOURCE: sha256(catalog_raw)}
     addresses = []
-    position = BASE + PREFIX + 8 * (len(parts) + 2)
+    position = BASE + PREFIX + 8 * (len(parts) + 4)
     for raw in parts:
         addresses.append(position)
         position += len(raw)
-    payload = struct.pack("<10Q", *addresses[:6], position if anchor else 0, len(anchor),
-                          *addresses[6:]) + b"".join(parts)
+    payload = struct.pack("<12Q", *addresses[:6], position + len(catalog) if anchor else 0, len(anchor),
+                          *addresses[6:], position, len(catalog)) + b"".join(parts) + catalog
     if anchor:
         payload += anchor + b"\0"
     if len(payload) > 950272:
@@ -169,7 +206,8 @@ sys.stdout.buffer.write(out.raw[:n])
             if sha256((HIA_ROOT / relative).read_bytes()) != identity:
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
-    report = {"schema": "trnm.hia.bench-main.build.v5",
+    report = {"diagnostics_catalog": {"sha256": sha256(catalog), "bytes": len(catalog)},
+              "schema": "trnm.hia.bench-main.build.v6",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},
