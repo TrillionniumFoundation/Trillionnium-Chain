@@ -1014,6 +1014,17 @@
       ]
     },
     {
+      "id": "release-bundle/artifact-set-digest",
+      "node_integration_complete": false,
+      "scope": "Bounded original ArtifactEntryV0 member and sorted aggregate digests over actual typed rows. Separate candidate mode validates entries and duplicate logical names in original verifier order. No raw bytes, artifact custody, expected-roster coverage, signature or production integration.",
+      "source": "hia/src/release_bundle/artifact_set_digest.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_artifact_set_digest.py",
+        "hia/tests/rust_release_artifact_set_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/bundle-binding",
       "node_integration_complete": false,
       "scope": "Pure V0 release binding: derives and validates the native ExactSourceV0 prefix, compares the three provenance links, hashes the original length-framed ReleaseBundleV0 digest, and compares the declaration. External artifact-set, SBOM and provenance digests are explicitly supplied; this does not verify their memberships, provenance contents, signatures, custody, or production admission.",
@@ -1346,6 +1357,7 @@
     {
       "components": [
         "release-bundle/artifact-header",
+        "release-bundle/artifact-set-digest",
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
