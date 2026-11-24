@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_export_transaction_wat1
 fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  preselection:bool = const() {"value":false}
+  result:u32 = call(input,output,scratch,preselection) {"function":"wt_transaction"}
+  ret(result)
+end
+fn wt_transaction(input:readbuf,output:mutbuf,scratch:mutbuf,preselection:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf,preselection:bool)
   native:usize = buffer.len(input)
   extent:u64 = int.cast(native) {"mode":"wrap"}
   minimum:u64 = const() {"value":8}
@@ -8,38 +14,44 @@ block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
   has_header:bool = compare.ge(extent,minimum)
   within_input:bool = compare.le(extent,maximum)
   size_ok:bool = bool.and(has_header,within_input)
-  branch size_ok header(input,output,scratch,extent) malformed()
-block header(hi:readbuf,ho:mutbuf,hs:mutbuf,he:u64)
+  branch size_ok header(input,output,scratch,extent,preselection) malformed()
+block header(hi:readbuf,ho:mutbuf,hs:mutbuf,he:u64,hp:bool)
   zero:u64 = const() {"value":0}
   four:u64 = const() {"value":4}
   magic:u64 = call(hi,zero,four) {"function":"wa_read"}
   wat1:u64 = const() {"value":827605335}
-  is_wat:bool = compare.eq(magic,wat1)
+  wat2:u64 = const() {"value":844382551}
+  expected:u64 = select(hp,wat2,wat1)
+  is_wat:bool = compare.eq(magic,expected)
   count:u64 = call(hi,four,four) {"function":"wa_read"}
   limit:u64 = const() {"value":64}
   allowed:bool = compare.le(count,limit)
   shape:bool = bool.and(is_wat,allowed)
-  branch shape workspace(hi,ho,hs,he,count) malformed()
-block workspace(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64)
+  branch shape workspace(hi,ho,hs,he,count,hp) malformed()
+block workspace(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64,wp:bool)
   bytes:usize = buffer.len(ws)
   minimum_scratch:usize = const() {"value":102400}
   enough:bool = compare.ge(bytes,minimum_scratch)
-  branch enough measure(wi,wo,ws,we,wc) capacity()
-block measure(mi:readbuf,mo:mutbuf,ms:mutbuf,me:u64,mc:u64)
-  json_bytes:u64,markdown_bytes:u64 = call(mi,mo,ms,me,mc) {"function":"wt_measure"}
+  branch enough measure(wi,wo,ws,we,wc,wp) capacity()
+block measure(mi:readbuf,mo:mutbuf,ms:mutbuf,me:u64,mc:u64,mp:bool)
+  sizes:u64,selection:u64,selected:u64 = call(mi,mo,ms,me,mc,mp) {"function":"wt_measure"}
   invalid:u64 = const() {"value":0}
-  rows_ok:bool = compare.ne(markdown_bytes,invalid)
-  branch rows_ok index(mi,mo,ms,me,mc,json_bytes,markdown_bytes) malformed()
-block index(ii:readbuf,io:mutbuf,is:mutbuf,ie:u64,ic:u64,ij:u64,im:u64)
-  wire_extent:u64 = call(is,ic) {"function":"wg_stage"}
+  shift:u64 = const() {"value":32}
+  low:u64 = const() {"value":4294967295}
+  rows_ok:bool = compare.ne(sizes,invalid)
+  json_bytes:u64 = int.shr.checked(sizes,shift)
+  markdown_bytes:u64 = bit.and(sizes,low)
+  branch rows_ok index(mi,mo,ms,me,mc,selected,selection,json_bytes,markdown_bytes) malformed()
+block index(ii:readbuf,io:mutbuf,is:mutbuf,ie:u64,ic:u64,ir:u64,ib:u64,ij:u64,im:u64)
+  wire_extent:u64 = call(is,ir) {"function":"wg_stage"}
   staged:readbuf = borrow.read(is)
   no:bool = const() {"value":false}
-  index_bytes:u64 = call(staged,io,wire_extent,ic,no) {"function":"wx_index"}
+  index_bytes:u64 = call(staged,io,wire_extent,ir,no) {"function":"wx_index"}
   _ = loan.end(staged)
   bad_size:u64 = const() {"value":0}
   staged_valid:bool = compare.ne(index_bytes,bad_size)
-  branch staged_valid fit(ii,io,is,ie,ic,ij,im,wire_extent,index_bytes) malformed()
-block fit(fi:readbuf,fo:mutbuf,fs:mutbuf,fe:u64,fc:u64,fj:u64,fm:u64,fw:u64,fx:u64)
+  branch staged_valid fit(ii,io,is,ie,ic,ir,ib,ij,im,wire_extent,index_bytes) malformed()
+block fit(fi:readbuf,fo:mutbuf,fs:mutbuf,fe:u64,fc:u64,fr:u64,fb:u64,fj:u64,fm:u64,fw:u64,fx:u64)
   header_len:u64 = const() {"value":16}
   markdown_at:u64 = int.add.wrap(header_len,fj)
   index_at:u64 = int.add.wrap(markdown_at,fm)
@@ -50,9 +62,9 @@ block fit(fi:readbuf,fo:mutbuf,fs:mutbuf,fe:u64,fc:u64,fj:u64,fm:u64,fw:u64,fx:u
   size:u64 = int.cast(capacity_native) {"mode":"wrap"}
   capacity_ok:bool = compare.le(needed,size)
   ready:bool = bool.and(max_ok,capacity_ok)
-  branch ready publish(fi,fo,fs,fe,fc,fj,fm,fw,fx,needed) capacity()
-block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pe:u64,pc:u64,pj:u64,pm:u64,pw:u64,px:u64,pn:u64)
-  _ = call(pi,po,ps,pe,pc,pj,pm,pw,px) {"function":"wt_emit"}
+  branch ready publish(fi,fo,fs,fe,fc,fr,fb,fj,fm,fw,fx,needed) capacity()
+block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pe:u64,pc:u64,pr:u64,pb:u64,pj:u64,pm:u64,pw:u64,px:u64,pn:u64)
+  _ = call(pi,po,ps,pe,pc,pr,pb,pj,pm,pw,px) {"function":"wt_emit"}
   length:u32 = int.cast(pn) {"mode":"wrap"}
   ret(length)
 block malformed()
@@ -97,45 +109,76 @@ block invalid()
   none:u64 = const() {"value":0}
   ret(none,none)
 end
-fn wt_measure(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64)
+fn wt_measure(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,preselection:bool) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,preselection:bool)
   first:u64 = const() {"value":8}
   zero:u64 = const() {"value":0}
   markdown_header:u64 = const() {"value":446}
-  jump rows(input,output,scratch,extent,count,zero,first,zero,markdown_header)
-block rows(ri:readbuf,ro:mutbuf,rs:mutbuf,re:u64,rc:u64,row:u64,at:u64,json_at:u64,md_at:u64)
+  jump rows(input,output,scratch,extent,count,preselection,zero,zero,zero,first,zero,markdown_header)
+block rows(ri:readbuf,ro:mutbuf,rs:mutbuf,re:u64,rc:u64,rp:bool,row:u64,selected:u64,bits:u64,at:u64,json_at:u64,md_at:u64)
   more:bool = compare.lt(row,rc)
-  branch more describe(ri,ro,rs,re,rc,row,at,json_at,md_at) finish(re,at,json_at,md_at)
-block describe(di:readbuf,do:mutbuf,ds:mutbuf,de:u64,dc:u64,dr:u64,da:u64,dj:u64,dm:u64)
+  branch more describe(ri,ro,rs,re,rc,rp,row,selected,bits,at,json_at,md_at) finish(re,at,json_at,md_at,bits,selected)
+block describe(di:readbuf,do:mutbuf,ds:mutbuf,de:u64,dc:u64,dp:bool,dr:u64,dn:u64,df:u64,da:u64,dj:u64,dm:u64)
   bounds:u64,mask:u64 = call(di,de,da) {"function":"wt_descriptor"}
   empty:u64 = const() {"value":0}
   valid:bool = compare.ne(bounds,empty)
-  branch valid typed(di,do,ds,de,dc,dr,dj,dm,bounds,mask) failure()
-block typed(ti:readbuf,to:mutbuf,ts:mutbuf,te:u64,tc:u64,tr:u64,tj:u64,tm:u64,tb:u64,tp:u64)
+  branch valid typed(di,do,ds,de,dc,dp,dr,dn,df,dj,dm,bounds,mask) failure()
+block typed(ti:readbuf,to:mutbuf,ts:mutbuf,te:u64,tc:u64,tp:bool,tr:u64,tn:u64,tf:u64,tj:u64,tm:u64,tb:u64,tk:u64)
   dry:bool = const() {"value":false}
-  json_next:u64 = call(ti,to,tb,tp,dry,tj) {"function":"wj_row"}
+  json_next:u64 = call(ti,to,tb,tk,dry,tj) {"function":"wj_row"}
   bad:u64 = const() {"value":0}
   valid_row:bool = compare.ne(json_next,bad)
-  branch valid_row key_slots(ti,to,ts,te,tc,tr,json_next,tm,tb,tp) failure()
-block key_slots(ki:readbuf,ko:mutbuf,ks:mutbuf,ke:u64,kc:u64,kr:u64,kj:u64,km:u64,kb:u64,kp:u64)
-  admitted:bool = call(ki,ks,kb,kr) {"function":"wt_index_row"}
-  branch admitted render(ki,ko,ks,ke,kc,kr,kj,km,kb,kp) failure()
-block render(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64,wr:u64,wj:u64,wm:u64,wb:u64,wp:u64)
+  branch valid_row decide(ti,to,ts,te,tc,tp,tr,tn,tf,tj,tm,tb,tk,json_next) failure()
+block decide(ci:readbuf,co:mutbuf,cs:mutbuf,ce:u64,cc:u64,cp:bool,cr:u64,cn:u64,cf:u64,cj:u64,cm:u64,cb:u64,ck:u64,cnew:u64)
+  included:bool = call(ci,cb) {"function":"wt_selected"}
+  branch included key_slots(ci,co,cs,ce,cc,cp,cr,cn,cf,cnew,cm,cb,ck) excluded(ci,co,cs,ce,cc,cp,cr,cn,cf,cj,cm,cb)
+block excluded(xi:readbuf,xo:mutbuf,xs:mutbuf,xe:u64,xc:u64,xp:bool,xr:u64,xn:u64,xf:u64,xj:u64,xm:u64,xb:u64)
+  branch xp advance(xi,xo,xs,xe,xc,xp,xr,xn,xf,xj,xm,xb) failure()
+block key_slots(ki:readbuf,ko:mutbuf,ks:mutbuf,ke:u64,kc:u64,kp:bool,kr:u64,kn:u64,kf:u64,kj:u64,km:u64,kb:u64,kk:u64)
+  admitted:bool = call(ki,ks,kb,kn) {"function":"wt_index_row"}
+  branch admitted render(ki,ko,ks,ke,kc,kp,kr,kn,kf,kj,km,kb,kk) failure()
+block render(wi:readbuf,wo:mutbuf,ws:mutbuf,we:u64,wc:u64,wp:bool,wr:u64,wn:u64,wf:u64,wj:u64,wm:u64,wb:u64,wk:u64)
   no:bool = const() {"value":false}
-  md_next:u64 = call(wi,wo,wb,wp,wm,no) {"function":"wm_row"}
-  low_word:u64 = const() {"value":4294967295}
-  next_input:u64 = bit.and(wb,low_word)
+  md_next:u64 = call(wi,wo,wb,wk,wm,no) {"function":"wm_row"}
   one:u64 = const() {"value":1}
-  next_row:u64 = int.add.wrap(wr,one)
-  jump rows(wi,wo,ws,we,wc,next_row,next_input,wj,md_next)
-block finish(expected:u64,seen:u64,json_end:u64,markdown_end:u64)
+  marked:u64 = int.shl.checked(one,wr)
+  new_bits:u64 = bit.or(wf,marked)
+  new_selected:u64 = int.add.wrap(wn,one)
+  jump advance(wi,wo,ws,we,wc,wp,wr,new_selected,new_bits,wj,md_next,wb)
+block advance(ai:readbuf,ao:mutbuf,as:mutbuf,ae:u64,ac:u64,ap:bool,ar:u64,an:u64,af:u64,aj:u64,am:u64,ab:u64)
+  low_word:u64 = const() {"value":4294967295}
+  next_input:u64 = bit.and(ab,low_word)
+  step:u64 = const() {"value":1}
+  next_row:u64 = int.add.wrap(ar,step)
+  jump rows(ai,ao,as,ae,ac,ap,next_row,an,af,next_input,aj,am)
+block finish(expected:u64,seen:u64,json_end:u64,markdown_end:u64,chosen:u64,total_chosen:u64)
   exact:bool = compare.eq(seen,expected)
-  branch exact good(json_end,markdown_end) failure()
-block good(json_bytes:u64,md_bytes:u64)
-  ret(json_bytes,md_bytes)
+  branch exact good(json_end,markdown_end,chosen,total_chosen) failure()
+block good(json_bytes:u64,md_bytes:u64,out_bits:u64,out_chosen:u64)
+  high_shift:u64 = const() {"value":32}
+  high:u64 = int.shl.checked(json_bytes,high_shift)
+  sizes:u64 = bit.or(high,md_bytes)
+  ret(sizes,out_bits,out_chosen)
 block failure()
   reject:u64 = const() {"value":0}
-  ret(reject,reject)
+  ret(reject,reject,reject)
+end
+fn wt_selected(input:readbuf,bounds:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,bounds:u64)
+  shift:u64 = const() {"value":32}
+  row_at:u64 = int.shr.checked(bounds,shift)
+  row_header:u64 = const() {"value":108}
+  payload:u64 = int.add.wrap(row_at,row_header)
+  request_desc:u64 = const() {"value":64}
+  status_desc:u64 = const() {"value":68}
+  width:u64 = const() {"value":4}
+  request_len:u64 = call(input,bounds,request_desc,width) {"function":"wj_read_slot"}
+  status_len:u64 = call(input,bounds,status_desc,width) {"function":"wj_read_slot"}
+  status_at:u64 = int.add.wrap(payload,request_len)
+  selector:u8 = call(input,status_at,status_len) {"function":"ws_selected"}
+  one:u8 = const() {"value":1}
+  admitted:bool = compare.eq(selector,one)
+  ret(admitted)
 end
 fn wt_index_row(input:readbuf,scratch:mutbuf,bounds:u64,row:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,scratch:mutbuf,bounds:u64,row:u64)
@@ -183,12 +226,7 @@ block bounded(bi:readbuf,bs:mutbuf,bb:u64,br:u64,ba:u64,bf:u64,bn:u64,bm:u64)
 block classify(ci:readbuf,cs:mutbuf,cb:u64,cr:u64,ca:u64,cf:u64,cn:u64,cm:u64)
   one2:u64 = const() {"value":1}
   is_status:bool = compare.eq(cm,one2)
-  branch is_status status(ci,cs,cb,cr,ca,cf,cn,cm) label(ci,cs,cb,cr,ca,cf,cn,cm)
-block status(si:readbuf,ss:mutbuf,sb:u64,sr:u64,sa:u64,sf:u64,sn:u64,sm:u64)
-  status_result:u8 = call(si,sa,sn) {"function":"ws_selected"}
-  selected:u8 = const() {"value":1}
-  status_ok:bool = compare.eq(status_result,selected)
-  branch status_ok phase(si,ss,sb,sr,sa,sf,sn,sm) bad()
+  branch is_status phase(ci,cs,cb,cr,ca,cf,cn,cm) label(ci,cs,cb,cr,ca,cf,cn,cm)
 block phase(pi:readbuf,ps:mutbuf,pb:u64,pr:u64,pa:u64,pf:u64,pn:u64,pm:u64)
   two:u64 = const() {"value":2}
   one3:u64 = const() {"value":1}
@@ -228,11 +266,11 @@ block bad()
   invalid:bool = const() {"value":false}
   ret(invalid)
 end
-fn wt_emit(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64) -> () effects(read,write,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64)
+fn wt_emit(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,selected_count:u64,selection:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,selected_count:u64,selection:u64,json_length:u64,md_length:u64,wire_extent:u64,index_length:u64)
   yes:bool = const() {"value":true}
   staged:readbuf = borrow.read(scratch)
-  serialized:u64 = call(staged,output,wire_extent,count,yes) {"function":"wx_index"}
+  serialized:u64 = call(staged,output,wire_extent,selected_count,yes) {"function":"wx_index"}
   _ = loan.end(staged)
   header_length:u64 = const() {"value":16}
   markdown_at:u64 = int.add.wrap(header_length,json_length)
@@ -248,7 +286,7 @@ block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json
   _ = buffer.copy_range(output,header,md_pos,zero,md_header_size)
   _ = loan.end(header)
   row_at:u64 = int.add.wrap(markdown_at,header_written)
-  _ = call(input,output,extent,count,header_length,row_at) {"function":"wt_emit_rows"}
+  _ = call(input,output,extent,count,selection,header_length,row_at) {"function":"wt_emit_rows"}
   marker:u64 = const() {"value":827277655}
   start:u64 = const() {"value":0}
   four:u64 = const() {"value":4}
@@ -258,24 +296,32 @@ block entry(input:readbuf,output:mutbuf,scratch:mutbuf,extent:u64,count:u64,json
   envelope_end:u64 = call(output,md_size_end,index_length,four,yes) {"function":"wa_word"}
   ret()
 end
-fn wt_emit_rows(input:readbuf,output:mutbuf,extent:u64,count:u64,json_at:u64,markdown_at:u64) -> () effects(read,write,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,extent:u64,count:u64,json_at:u64,markdown_at:u64)
+fn wt_emit_rows(input:readbuf,output:mutbuf,extent:u64,count:u64,selection:u64,json_at:u64,markdown_at:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,extent:u64,count:u64,selection:u64,json_at:u64,markdown_at:u64)
   first:u64 = const() {"value":8}
-  jump rows(input,output,extent,count,json_at,markdown_at,first)
-block rows(ri:readbuf,ro:mutbuf,re:u64,rc:u64,rj:u64,rm:u64,ra:u64)
+  jump rows(input,output,extent,count,selection,json_at,markdown_at,first)
+block rows(ri:readbuf,ro:mutbuf,re:u64,rc:u64,rf:u64,rj:u64,rm:u64,ra:u64)
   zero:u64 = const() {"value":0}
   more:bool = compare.ne(rc,zero)
-  branch more render(ri,ro,re,rc,rj,rm,ra) finish()
-block render(ei:readbuf,eo:mutbuf,ee:u64,ec:u64,ej:u64,em:u64,ea:u64)
-  bounds:u64,mask:u64 = call(ei,ee,ea) {"function":"wt_descriptor"}
-  yes:bool = const() {"value":true}
-  next_json:u64 = call(ei,eo,bounds,mask,yes,ej) {"function":"wj_row"}
-  next_md:u64 = call(ei,eo,bounds,mask,em,yes) {"function":"wm_row"}
-  word:u64 = const() {"value":4294967295}
-  next_input:u64 = bit.and(bounds,word)
+  branch more decide(ri,ro,re,rc,rf,rj,rm,ra) finish()
+block decide(di:readbuf,do:mutbuf,de:u64,dc:u64,df:u64,dj:u64,dm:u64,da:u64)
+  bounds:u64,mask:u64 = call(di,de,da) {"function":"wt_descriptor"}
   one:u64 = const() {"value":1}
-  remaining:u64 = int.sub.wrap(ec,one)
-  jump rows(ei,eo,ee,remaining,next_json,next_md,next_input)
+  low:u64 = bit.and(df,one)
+  write:bool = compare.eq(low,one)
+  branch write render(di,do,de,dc,df,dj,dm,bounds,mask) advance(di,do,de,dc,df,dj,dm,bounds)
+block render(ei:readbuf,eo:mutbuf,ee:u64,ec:u64,ef:u64,ej:u64,em:u64,eb:u64,ek:u64)
+  yes:bool = const() {"value":true}
+  next_json:u64 = call(ei,eo,eb,ek,yes,ej) {"function":"wj_row"}
+  next_md:u64 = call(ei,eo,eb,ek,em,yes) {"function":"wm_row"}
+  jump advance(ei,eo,ee,ec,ef,next_json,next_md,eb)
+block advance(ai:readbuf,ao:mutbuf,ae:u64,ac:u64,af:u64,aj:u64,am:u64,ab:u64)
+  word:u64 = const() {"value":4294967295}
+  next_input:u64 = bit.and(ab,word)
+  step:u64 = const() {"value":1}
+  remaining:u64 = int.sub.wrap(ac,step)
+  later_bits:u64 = int.shr.checked(af,step)
+  jump rows(ai,ao,ae,remaining,later_bits,aj,am,next_input)
 block finish()
   ret()
 end

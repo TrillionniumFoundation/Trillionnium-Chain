@@ -1384,6 +1384,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-export-preselection",
+      "node_integration_complete": false,
+      "scope": "One bounded HIA transaction selects exact literal statuses from all ordered preconverted typed candidates, reuses one attendance mask for JSONL/Markdown and compact index ordinals, and compares all three artifacts to independent actual original locked CLI files. Original raw reader/conversion, file authority and production routing unchanged.",
+      "source": "hia/src/worker_agent/audit_export_preselection.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_export_preselection.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-export-transaction",
       "node_integration_complete": false,
       "scope": "One atomic dry HIA call validates a single bounded ordered selected WJL1 snapshot, derives all eight index maps and emits complete JSONL, eighteen-column Markdown and index JSON using shared renderers. Both emitters compare exact locked original CLI files. Rust retains source conversion, selection, authority, filesystem, query and production routing.",
