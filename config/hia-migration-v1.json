@@ -1499,7 +1499,8 @@
       "source": "hia/src/worker_agent/journal_audit_export_v3.hepta",
       "state": "native-kernel-implemented",
       "tests": [
-        "hia/tests/test_worker_journal_audit_export_v3.py"
+        "hia/tests/test_worker_journal_audit_export_v3.py",
+        "hia/tests/test_worker_journal_audit_owned_files.py"
       ]
     },
     {
