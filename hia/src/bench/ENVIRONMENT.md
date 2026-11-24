@@ -2,9 +2,9 @@
 
 These components continue the [Bench migration](README.md). They implement text
 conversion and the effective configuration consumed by the existing native
-scheduler. They do not yet provide a native process environment reader, argument
-parser, formatted report, clock, or persistent-file owner. The original Bench
-package remains required.
+scheduler. An allowlisted byte selector also accepts a supplied ordered startup span. The
+original Bench package remains required; none of these components reads a live
+process environment, parses CLI arguments, acquires clocks or owns persistence.
 
 ## Exact finite decimal conversion
 
@@ -80,6 +80,48 @@ scratch intact. Parsing an individual invalid value is successful configuration
 selection using its default. The owner first computes all ten words in private
 scratch and only then writes the output.
 
+## Unix startup byte selection
+
+[`envp.hepta`](envp.hepta) accepts a supplied span of ordered Unix startup
+entries separated by NUL, including the final entry's NUL. An empty span
+represents no entries. No live environment, file or process is read.
+Only the twelve listed names are eligible. A name matches exactly, including
+case, and must be followed immediately by its first `=`. The first matching
+entry wins, including a zero-length value or invalid UTF-8; a later valid
+duplicate does not take its place. The rest of the selected entry is value
+data, including any other `=`. Entries without `=`, empty names, unrelated
+entries and name prefixes do not contribute to the result. Only selected values
+enter the output.
+
+The borrowed ABI `f0(readbuf, mutbuf, mutbuf) -> u32` returns a complete
+`BENV0001` frame in the output prefix; compute its extent from the twelve
+lengths as above. The output tail is untouched. The 192-byte scratch prefix
+holds twelve private offset/length pairs and its tail is untouched. Return
+code 1 is an unterminated nonempty input; 100 is insufficient capacity or
+unrepresentable extent. In either case output is untouched. Frame failure
+and inability to hold the fixed 104 output/192 scratch bytes precede all
+writes. An output capable of holding the header but not the selected values
+may have used private scratch before refusal.
+
+The selector uses one forward scan, at most a constant twelve exact key checks
+per candidate name and one copy of each selected value; there is no new value
+or entry-count cap. Name comparison reads complete eight-byte pieces and a
+bounded tail only after matching a known name length. Stored ranges are
+disjoint subsets of the input; the total frame is at most input length plus
+104, checked for representability before scratch is written. The caller
+provides nonoverlapping borrowed buffers and is responsible for acquisition,
+serialization and ownership of the source span.
+
+[The differential](../../tests/test_bench_envp.py) starts the pinned Rust
+reference via real Linux `execve` using only synthetic entries, preserving
+duplicates and invalid UTF-8. It compares both separately built native
+backends with the original `std::env::var_os` lookups byte for byte, then
+passes the native frame through the canonical parser to compare all ten
+effective words against the active executor's unmodified original getters.
+This tests the startup projection on Linux x86-64, not a replacement startup
+ELF, a platform-independent libc contract, or arbitrary environment capture.
+The native Bench CLI and acquisition boundary are still open.
+
 ## Preserved text rules
 
 The implementation calls the canonical strict HIA UTF-8 validator, trims exactly
@@ -136,7 +178,5 @@ With the explicit existing compiler/toolchain pins and a fresh external
 python -m unittest hia.tests.test_bench_environment -v
 ```
 
-These tests establish only their recorded component scope. The complete Bench CLI,
-OS environment boundary, derived profile methods and entropy, complete report formatting,
-clock and persistence remain separate requirements before the old package can be
-retired.
+These tests establish only their recorded component scope. The complete Bench CLI, real OS environment acquisition, clock and persistence
+remain separate requirements before the old package can be retired.

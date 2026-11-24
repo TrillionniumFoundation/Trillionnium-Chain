@@ -20,7 +20,9 @@ scheduler contract. [Native logarithms](LOGARITHM.md),
 [all 51 derived profile fields](PROFILE.md) and complete field formatting are
 also implemented. [Integer/calendar text](TEXT.md) and the [complete ordered
 report and persisted bytes](REPORT.md) now have native kernels and actual original
-main comparisons. OS environment acquisition, complete CLI parsing, clock
+main comparisons. [Allowlisted environment selection](ENVIRONMENT.md#unix-startup-byte-selection)
+projects a supplied ordered Unix startup span into the native parser. Actual OS
+environment acquisition, complete CLI parsing, clock
 measurement, file/process ownership and whole-package qualification remain open.
 
 ## Original observable contract
@@ -301,9 +303,9 @@ and undersized buffers, comparator negative controls, default 20,000-transaction
 workloads, inputs exceeding 2 MiB, physically unaligned buffers and sequential
 arena reuse. Hash, membership, output-tail, input and arena guards are checked.
 
-The environment text parsing, derived profile methods and entropy, and
-four-decimal formatting now have their own actual native qualifications. The
-CLI parser, OS environment acquisition, clock capture, complete ordered report
-and persistent-file owner remain OPEN.
+The environment byte selection and text parsing, derived profile methods and
+entropy, four-decimal formatting and ordered report have separate native
+qualifications. The CLI parser, OS environment acquisition, clock capture and
+persistent-file owner remain OPEN.
 The original `trnm-bench` package and executor dependency must remain until those
 contracts and their complete real-original qualification are closed.

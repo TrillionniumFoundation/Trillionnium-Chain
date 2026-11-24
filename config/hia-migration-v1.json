@@ -982,6 +982,17 @@
       ]
     },
     {
+      "id": "bench/envp",
+      "node_integration_complete": false,
+      "scope": "Allowlisted twelve Bench values from a supplied ordered NUL-separated Unix startup byte span, preserving first exact match into the original-value BENV0001 parser. Synthetic Linux execve differential only; no process acquisition, native Bench CLI, or production integration.",
+      "source": "hia/src/bench/envp.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_bench_envp.py",
+        "hia/tests/rust_bench_envp_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/artifact-header",
       "node_integration_complete": false,
       "scope": "Exact RAC1 metadata header and original ArtifactEntryV0 metadata predicate over a private borrowed ABI. No hashing, raw artifact I/O, signature, release authorization or Node integration.",
@@ -1152,7 +1163,8 @@
         "bench/profile",
         "bench/format-value",
         "bench/text",
-        "bench/report"
+        "bench/report",
+        "bench/envp"
       ],
       "legacy_path": "trillionnium/crates/trnm-bench",
       "module": "M17",

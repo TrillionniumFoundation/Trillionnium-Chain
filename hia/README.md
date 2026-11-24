@@ -40,8 +40,10 @@ The [Bench implementation](src/bench/README.md) adds
 workload, scheduler, environment and 51-field profile layers. Seven report methods
 passed 2,572 native calls, including 42 real original-main runs, 21 complete
 native profile/report chains, exact output bytes and real file-failure controls.
-CLI parsing, OS environment/clock acquisition and file/process ownership remain
-under implementation; prior scheduler safety differences remain explicit.
+[Startup byte selection](src/bench/ENVIRONMENT.md#unix-startup-byte-selection)
+now feeds the native environment parser from a supplied span. CLI parsing, live
+environment and clock acquisition, and file/process ownership remain under
+implementation; prior scheduler safety differences remain explicit.
 
 Fresh discovery has 738 methods in six disjoint groups: 523 general,
 95 crypto-types, seven State-root, 22 Oracle, 37 ML-DSA and 54 Research.
