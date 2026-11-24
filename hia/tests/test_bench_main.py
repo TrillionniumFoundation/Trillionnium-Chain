@@ -216,6 +216,35 @@ class NativeBenchMain(unittest.TestCase):
                     self.assertIn(b"\ntxs=20000\n", bytes_new)
                     self.assertGreater(tt_new, 0)  # the default does actual scheduler work
 
+    def test_ordinary_classic_footprint_desc_exact_bounded_process(self):
+        mode = (b"--workload=classic", b"--strategy=footprint-desc")
+        for i, (txs, keys, repeats) in enumerate(((32, 5, 1), (64, 64, 0), (0, 0, 2))):
+            args = (*mode, f"--txs={txs}".encode(), f"--keys={keys}".encode(),
+                    f"--determinism-repeats={repeats}".encode())
+            with self.subTest(txs=txs, keys=keys, repeats=repeats):
+                old, old_ns = self.actual(f"classic-footprint-{i}-original", self.original, args)
+                new, new_ns = self.actual(f"classic-footprint-{i}-native", self.native, args)
+                self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
+                self.assertEqual(stdout_observation(old.stdout, old_ns)[1],
+                                 stdout_observation(new.stdout, new_ns)[1])
+                fields = dict(line.split(b"=", 1) for line in new.stdout.splitlines() if b"=" in line)
+                self.assertEqual(fields[b"strategy"], b"FootprintDesc")
+                self.assertEqual(int(fields[b"groups"]), (max(txs, 1) + max(keys, 1) - 1) // max(keys, 1))
+                self.assertEqual(fields.get(b"determinism.replay_match"), b"true" if repeats else b"not-requested")
+                self.assertFalse(self.run_path.exists())
+        base = (*mode, b"--txs=32", b"--keys=5")
+        for i, (args, env) in enumerate((
+                ((*base, b"--profile"), {}), ((*base, b"--persist-profile"), {}),
+                ((b"--strategy=footprint-desc", b"--txs=65", b"--keys=5"), {}),
+                ((b"--strategy=footprint-desc", b"--txs=32", b"--keys=65"), {}),
+                ((b"--workload=mixed", *base[1:]), {}),
+                ((b"--workload=hot-streak", *base[1:]), {}),
+                ((*base, b"--reader-high-water-v1"), {}), (base, {b"LANG": b"C"}))):
+            with self.subTest(i=i):
+                denied, _ = self.actual(f"classic-footprint-closed-{i}", self.native, args, env=env)
+                self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+                self.assertFalse(self.run_path.exists())
+
     def test_actual_exact_repeat_error_and_invalid_exit(self):
         for index, args in enumerate(((b"--determinism-repeats", b"1001"),
                                       (b"--txs=99999", b"--determinism-repeats=18446744073709551615"),

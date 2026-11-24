@@ -334,7 +334,7 @@ block strategy_semantics(o_ss:mutbuf)
   ss_mode_bit:u64 = bit.and(ss_seen,ss_mode)
   ss_unmarked:bool = compare.eq(ss_mode_bit,ss_zero)
   ss_uses_footprint:bool = compare.eq(ss_strategy,ss_footprint)
-  ss_legacy_denied:bool = bool.and(ss_unmarked,ss_uses_footprint)
+  ss_check_footprint:bool = bool.and(ss_unmarked,ss_uses_footprint)
   ss_auto:u64 = const() {"value":5}
   ss_workload_at:u64 = const() {"value":48}
   ss_aggressive:u64 = const() {"value":6}
@@ -347,9 +347,25 @@ block strategy_semantics(o_ss:mutbuf)
   ss_ordinary_classic:bool = bool.and(ss_unmarked,ss_classic)
   ss_wrong_domain:bool = bool.not(ss_ordinary_classic)
   ss_domain_denied:bool = bool.and(ss_classic_only,ss_wrong_domain)
-  ss_previous_denied:bool = bool.or(ss_legacy_denied,ss_other_denied)
-  ss_denied:bool = bool.or(ss_previous_denied,ss_domain_denied)
-  branch ss_denied fail() repeat_bound(o_ss)
+  ss_denied:bool = bool.or(ss_other_denied,ss_domain_denied)
+  branch ss_denied fail() ordinary_footprint_check(o_ss,ss_check_footprint,ss_classic,ss_seen)
+block ordinary_footprint_check(of_o:mutbuf,of_check:bool,of_classic:bool,of_seen:u64)
+  branch of_check ordinary_footprint(of_o,of_classic,of_seen) repeat_bound(of_o)
+block ordinary_footprint(op_o:mutbuf,op_classic:bool,op_seen:u64)
+  op_zero:u64 = const() {"value":0}
+  op_at8:u64 = const() {"value":8}
+  op_profile_flags:u64 = const() {"value":136}
+  op_limit:u64 = const() {"value":64}
+  op_flags:u64 = bit.and(op_seen,op_profile_flags)
+  op_no_profile:bool = compare.eq(op_flags,op_zero)
+  op_txs:u64 = call(op_o,op_zero) {"function":"bench_get"}
+  op_keys:u64 = call(op_o,op_at8) {"function":"bench_get"}
+  op_txs_ok:bool = compare.le(op_txs,op_limit)
+  op_keys_ok:bool = compare.le(op_keys,op_limit)
+  op_shape:bool = bool.and(op_txs_ok,op_keys_ok)
+  op_mode:bool = bool.and(op_no_profile,op_classic)
+  op_admitted:bool = bool.and(op_shape,op_mode)
+  branch op_admitted repeat_bound(op_o) fail()
 block repeat_bound(o_rep:mutbuf)
   at16_rep:u64 = const() {"value":16}
   repeats:u64 = call(o_rep,at16_rep) {"function":"bench_get"}
