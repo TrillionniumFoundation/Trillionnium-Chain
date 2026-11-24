@@ -254,6 +254,17 @@
       ]
     },
     {
+      "id": "verification/challenge-book",
+      "node_integration_complete": false,
+      "scope": "Bounded local immutable ChallengeBookV1 open and lookup value semantics with original duplicate priority, byte-sorted result identity and recomputed record integrity. No borrowed pointer, live registry, storage, actor authentication, admission, economic or reorganization authority.",
+      "source": "hia/src/verification/challenge_book.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verification_challenge_book.py",
+        "hia/tests/rust_verification_challenge_book_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1709,7 +1720,8 @@
         "verification/closed_round",
         "verification/profile-registry",
         "verification/statement-preflight",
-        "verification/challenge-record"
+        "verification/challenge-record",
+        "verification/challenge-book"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",

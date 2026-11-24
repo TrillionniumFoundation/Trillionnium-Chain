@@ -1,0 +1,364 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_verification_challenge_book_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  prefix:usize = const() {"value":205}
+  enough:bool = compare.ge(size,prefix)
+  branch enough framing(input,output,scratch,size) malformed()
+block framing(fi:readbuf,fo:mutbuf,fw:mutbuf,size_f:usize)
+  zero_f:u64 = const() {"value":0}
+  one_f:u64 = const() {"value":1}
+  two_f:u64 = const() {"value":2}
+  four_f:u64 = const() {"value":4}
+  first:u64 = call(fi,zero_f,four_f) {"function":"rac_read_le"}
+  first_wanted:u64 = const() {"value":827867990}
+  first_ok:bool = compare.eq(first,first_wanted)
+  mode_prefix:u64 = call(fi,four_f,four_f) {"function":"rac_read_le"}
+  prefix_open:bool = compare.eq(mode_prefix,zero_f)
+  suffix_at:u64 = const() {"value":197}
+  magic:u64 = call(fi,suffix_at,four_f) {"function":"rac_read_le"}
+  want:u64 = const() {"value":826426198}
+  magic_ok:bool = compare.eq(magic,want)
+  op_at:u64 = const() {"value":201}
+  op:u64 = call(fi,op_at,one_f) {"function":"rac_read_le"}
+  operation_ok:bool = compare.le(op,one_f)
+  opens:bool = compare.eq(op,zero_f)
+  count_at:u64 = const() {"value":202}
+  count:u64 = call(fi,count_at,one_f) {"function":"rac_read_le"}
+  maximum:u64 = const() {"value":32}
+  limit:bool = compare.le(count,maximum)
+  reserved_at:u64 = const() {"value":203}
+  reserved:u64 = call(fi,reserved_at,two_f) {"function":"rac_read_le"}
+  cleared:bool = compare.eq(reserved,zero_f)
+  end_input:u64 = call(count) {"function":"cb_row"}
+  measured:u64 = int.cast(size_f) {"mode":"wrap"}
+  exact:bool = compare.eq(end_input,measured)
+  shape_ids:bool = call(fi,zero_f) {"function":"cx_shape"}
+  a:bool = bool.and(first_ok,prefix_open)
+  b:bool = bool.and(magic_ok,operation_ok)
+  c:bool = bool.and(limit,cleared)
+  d:bool = bool.and(exact,shape_ids)
+  e:bool = bool.and(a,b)
+  g:bool = bool.and(c,d)
+  valid:bool = bool.and(e,g)
+  branch valid scratch_room(fi,fo,fw,opens,count) malformed()
+block scratch_room(si:readbuf,so:mutbuf,sw:mutbuf,opening_s:bool,n_s:u64)
+  scratch_size:usize = buffer.len(sw)
+  scratch_bound:usize = const() {"value":1472}
+  available:bool = compare.ge(scratch_size,scratch_bound)
+  branch available validate(si,so,sw,opening_s,n_s) insufficient()
+block validate(vi:readbuf,vo:mutbuf,vw:mutbuf,opening_v:bool,n_v:u64)
+  valid_book:bool = call(vi,vw,n_v) {"function":"cb_valid_snapshot"}
+  branch valid_book seek(vi,vo,vw,opening_v,n_v) snapshot_bad()
+block seek(ki:readbuf,ko:mutbuf,kw:mutbuf,opening_k:bool,n_k:u64)
+  index:u64,found:bool = call(ki,n_k) {"function":"cb_seek"}
+  branch opening_k attempt_open(ki,ko,kw,n_k,index,found) lookup(ki,ko,n_k,index,found)
+block lookup(li:readbuf,lo:mutbuf,n_l:u64,index_l:u64,found_l:bool)
+  branch found_l lookup_room(li,lo,n_l,index_l) missing()
+block lookup_room(ri:readbuf,ro:mutbuf,n_r:u64,index_r:u64)
+  fits_l:bool = call(ro,n_r) {"function":"cb_output_room"}
+  branch fits_l publish_lookup(ri,ro,n_r,index_r) insufficient()
+block publish_lookup(ui:readbuf,uo:mutbuf,n_u:u64,index_u:u64)
+  _published_l:u64 = call(ui,uo,n_u,index_u) {"function":"cb_lookup_output"}
+  success_l:u32 = const() {"value":0}
+  ret(success_l)
+block attempt_open(ai:readbuf,ao:mutbuf,aw:mutbuf,n_a:u64,index_a:u64,found_a:bool)
+  branch found_a duplicate() opening_data(ai,ao,aw,n_a,index_a)
+block opening_data(di:readbuf,doo:mutbuf,dw:mutbuf,n_d:u64,index_d:u64)
+  book_status:u64 = call(di) {"function":"cx_open"}
+  packed_zero:u64 = const() {"value":0}
+  acceptable:bool = compare.eq(book_status,packed_zero)
+  code:u32 = int.cast(book_status) {"mode":"wrap"}
+  branch acceptable insertion_room(di,doo,dw,n_d,index_d) refused(code)
+block insertion_room(ii:readbuf,io:mutbuf,iw:mutbuf,n_i:u64,index_i:u64)
+  book_max:u64 = const() {"value":32}
+  spare:bool = compare.lt(n_i,book_max)
+  insertion_one:u64 = const() {"value":1}
+  after_insert:u64 = int.add.wrap(n_i,insertion_one)
+  branch spare output_room(ii,io,iw,after_insert,index_i) full()
+block output_room(bi:readbuf,bo:mutbuf,bw:mutbuf,n_b:u64,index_b:u64)
+  fits_b:bool = call(bo,n_b) {"function":"cb_output_room"}
+  branch fits_b hash_open(bi,bo,bw,n_b,index_b) insufficient()
+block hash_open(hi:readbuf,ho:mutbuf,hw:mutbuf,n_h:u64,index_h:u64)
+  open_zero:u64 = const() {"value":0}
+  width_h:u64 = const() {"value":8}
+  decision_field:u64 = const() {"value":144}
+  appeal_field:u64 = const() {"value":152}
+  decision:u64 = call(hi,decision_field,width_h) {"function":"rac_read_le"}
+  appeal:u64 = call(hi,appeal_field,width_h) {"function":"rac_read_le"}
+  hashed:u64 = call(hi,hw,open_zero,decision,appeal) {"function":"cx_hash"}
+  digest_ok:bool = compare.eq(hashed,open_zero)
+  branch digest_ok publish_open(hi,ho,hw,n_h,index_h) internal()
+block publish_open(pi:readbuf,po:mutbuf,pw:mutbuf,n_p:u64,index_p:u64)
+  _published:u64 = call(pi,po,pw,n_p,index_p) {"function":"cb_insert_output"}
+  success_o:u32 = const() {"value":0}
+  ret(success_o)
+block refused(err:u32)
+  ret(err)
+block malformed()
+  frame_error:u32 = const() {"value":100}
+  ret(frame_error)
+block snapshot_bad()
+  bad_snapshot:u32 = const() {"value":101}
+  ret(bad_snapshot)
+block insufficient()
+  cap:u32 = const() {"value":102}
+  ret(cap)
+block internal()
+  internal_error:u32 = const() {"value":103}
+  ret(internal_error)
+block full()
+  full_book:u32 = const() {"value":104}
+  ret(full_book)
+block duplicate()
+  known_result:u32 = const() {"value":20}
+  ret(known_result)
+block missing()
+  not_found:u32 = const() {"value":21}
+  ret(not_found)
+end
+
+fn cb_row(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  stride:u64 = const() {"value":173}
+  prefix:u64 = const() {"value":205}
+  offset:u64 = int.mul.wrap(index,stride)
+  row:u64 = int.add.wrap(prefix,offset)
+  ret(row)
+end
+
+fn cb_valid_snapshot(input:readbuf,work:mutbuf,count:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,count:u64)
+  first:u64 = const() {"value":0}
+  jump each(input,work,count,first)
+block each(ei:readbuf,ew:mutbuf,en:u64,ei_:u64)
+  at_end:bool = compare.eq(ei_,en)
+  branch at_end accepted() order(ei,ew,en,ei_)
+block order(oi:readbuf,ow:mutbuf,on:u64,ox:u64)
+  zero:u64 = const() {"value":0}
+  first_row:bool = compare.eq(ox,zero)
+  branch first_row value(oi,ow,on,ox) sorted(oi,ow,on,ox)
+block sorted(si:readbuf,sw:mutbuf,sn:u64,sx:u64)
+  key_at:u64 = const() {"value":32}
+  one:u64 = const() {"value":1}
+  previous:u64 = int.sub.wrap(sx,one)
+  prior:u64 = call(previous) {"function":"cb_row"}
+  current:u64 = call(sx) {"function":"cb_row"}
+  prior_key:u64 = int.add.wrap(prior,key_at)
+  this_key:u64 = int.add.wrap(current,key_at)
+  relation:u64 = call(si,prior_key,this_key,key_at,key_at) {"function":"sb_compare"}
+  ascending:u64 = const() {"value":0}
+  right_order:bool = compare.eq(relation,ascending)
+  branch right_order value(si,sw,sn,sx) rejected()
+block value(vi:readbuf,vw:mutbuf,vn:u64,vx:u64)
+  record_at:u64 = call(vx) {"function":"cb_row"}
+  valid:bool = call(vi,vw,record_at) {"function":"cb_verify_record"}
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(vx,step)
+  branch valid each(vi,vw,vn,next) rejected()
+block accepted()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block rejected()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn cb_verify_record(input:readbuf,work:mutbuf,record:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,record:u64)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  max_phase:u64 = const() {"value":7}
+  max_outcome:u64 = const() {"value":4}
+  zero:u64 = const() {"value":0}
+  res_offset:u64 = const() {"value":32}
+  challenger_offset:u64 = const() {"value":64}
+  res:u64 = int.add.wrap(record,res_offset)
+  challenger:u64 = int.add.wrap(record,challenger_offset)
+  id_ok:bool = call(input,record) {"function":"rac_nonzero_digest"}
+  res_ok:bool = call(input,res) {"function":"rac_nonzero_digest"}
+  actor_ok:bool = call(input,challenger) {"function":"rac_nonzero_digest"}
+  ids:bool = bool.and(id_ok,res_ok)
+  all_ids:bool = bool.and(ids,actor_ok)
+  phase_off:u64 = const() {"value":136}
+  used_off:u64 = const() {"value":137}
+  outcome_off:u64 = const() {"value":138}
+  flags_off:u64 = const() {"value":139}
+  phase_pos:u64 = int.add.wrap(record,phase_off)
+  used_pos:u64 = int.add.wrap(record,used_off)
+  outcome_pos:u64 = int.add.wrap(record,outcome_off)
+  flags_pos:u64 = int.add.wrap(record,flags_off)
+  phase:u64 = call(input,phase_pos,one) {"function":"rac_read_le"}
+  used:u64 = call(input,used_pos,one) {"function":"rac_read_le"}
+  outcome:u64 = call(input,outcome_pos,one) {"function":"rac_read_le"}
+  flags:u64 = call(input,flags_pos,two) {"function":"rac_read_le"}
+  phase_ok:bool = compare.le(phase,max_phase)
+  used_ok:bool = compare.le(used,one)
+  outcome_ok:bool = compare.le(outcome,max_outcome)
+  flags_ok:bool = compare.eq(flags,zero)
+  tags_a:bool = bool.and(phase_ok,used_ok)
+  tags_b:bool = bool.and(outcome_ok,flags_ok)
+  all_tags:bool = bool.and(tags_a,tags_b)
+  bounded:bool = bool.and(all_ids,all_tags)
+  branch bounded binding(input,work,record,phase,used,outcome) rejected()
+block binding(bi:readbuf,bw:mutbuf,br:u64,bphase:u64,bused:u64,boutcome:u64)
+  decision_off:u64 = const() {"value":120}
+  appeal_off:u64 = const() {"value":128}
+  decision_pos:u64 = int.add.wrap(br,decision_off)
+  appeal_pos:u64 = int.add.wrap(br,appeal_off)
+  eight:u64 = const() {"value":8}
+  d:u64 = call(bi,decision_pos,eight) {"function":"rac_read_le"}
+  a:u64 = call(bi,appeal_pos,eight) {"function":"rac_read_le"}
+  packed:u64 = call(bphase,bused,boutcome) {"function":"cx_pack"}
+  result:u64 = call(bi,bw,packed,d,a,br) {"function":"cx_hash_at"}
+  okay:u64 = const() {"value":0}
+  complete:bool = compare.eq(result,okay)
+  branch complete compare(bi,bw,br) rejected()
+block compare(ci:readbuf,cw:mutbuf,cr:u64)
+  digest_off:u64 = const() {"value":141}
+  digest_pos:u64 = int.add.wrap(cr,digest_off)
+  low:u64 = const() {"value":1168}
+  same:bool = call(ci,cw,digest_pos,low) {"function":"cb_compare_digest"}
+  ret(same)
+block rejected()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn cb_compare_digest(input:readbuf,work:mutbuf,at:u64,hash_at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,at:u64,hash_at:u64)
+  jump each(input,work,at,hash_at)
+block each(ei:readbuf,ew:mutbuf,ea:u64,eh:u64)
+  eight:u64 = const() {"value":8}
+  expected:u64 = call(ei,ea,eight) {"function":"rac_read_le"}
+  observed:u64 = call(ew,eh) {"function":"tr_get"}
+  same:bool = compare.eq(expected,observed)
+  limit:u64 = const() {"value":1192}
+  last:bool = compare.eq(eh,limit)
+  branch same advance(ei,ew,ea,eh,last) no()
+block advance(ai:readbuf,aw:mutbuf,aa:u64,ha:u64,final:bool)
+  branch final yes() next(ai,aw,aa,ha)
+block next(ni:readbuf,nw:mutbuf,na:u64,nh:u64)
+  stride:u64 = const() {"value":8}
+  next_a:u64 = int.add.wrap(na,stride)
+  next_h:u64 = int.add.wrap(nh,stride)
+  jump each(ni,nw,next_a,next_h)
+block yes()
+  valid:bool = const() {"value":true}
+  ret(valid)
+block no()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end
+
+fn cb_seek(input:readbuf,count:u64) -> (u64,bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64)
+  start:u64 = const() {"value":0}
+  jump each(input,count,start)
+block each(ei:readbuf,en:u64,ex:u64)
+  exhausted:bool = compare.eq(ex,en)
+  branch exhausted miss(ex) compare(ei,en,ex)
+block compare(ci:readbuf,cn:u64,cx:u64)
+  key:u64 = const() {"value":32}
+  query:u64 = const() {"value":56}
+  row:u64 = call(cx) {"function":"cb_row"}
+  row_key:u64 = int.add.wrap(row,key)
+  comparison:u64 = call(ci,row_key,query,key,key) {"function":"sb_compare"}
+  low:u64 = const() {"value":0}
+  equal:u64 = const() {"value":1}
+  before:bool = compare.eq(comparison,low)
+  match:bool = compare.eq(comparison,equal)
+  next:u64 = int.add.wrap(cx,equal)
+  branch before each(ci,cn,next) result(cx,match)
+block result(index:u64,found:bool)
+  ret(index,found)
+block miss(missing_index:u64)
+  absent:bool = const() {"value":false}
+  ret(missing_index,absent)
+end
+
+fn cb_out_at(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  stride:u64 = const() {"value":173}
+  prefix:u64 = const() {"value":8}
+  offset:u64 = int.mul.wrap(stride,index)
+  row:u64 = int.add.wrap(offset,prefix)
+  ret(row)
+end
+
+fn cb_output_room(output:mutbuf,count:u64) -> (bool) effects(read,write) entry(entry)
+block entry(output:mutbuf,count:u64)
+  one:u64 = const() {"value":1}
+  with_selected:u64 = int.add.wrap(count,one)
+  bytes:u64 = call(with_selected) {"function":"cb_out_at"}
+  need:usize = int.cast(bytes) {"mode":"wrap"}
+  capacity:usize = buffer.len(output)
+  fits:bool = compare.ge(capacity,need)
+  ret(fits)
+end
+
+fn cb_result_header(output:mutbuf,count:u64,index:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(output:mutbuf,count:u64,index:u64)
+  prefix:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  six:u64 = const() {"value":6}
+  _count:u64 = call(output,prefix,count,one) {"function":"rac_write_be"}
+  _index:u64 = call(output,one,index,one) {"function":"rac_write_be"}
+  end:u64 = call(output,two,prefix,six) {"function":"rac_write_be"}
+  ret(end)
+end
+
+fn cb_lookup_output(input:readbuf,output:mutbuf,count:u64,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,count:u64,index:u64)
+  header:u64 = call(output,count,index) {"function":"cb_result_header"}
+  start:u64 = const() {"value":205}
+  width:u64 = const() {"value":173}
+  old_bytes:u64 = int.mul.wrap(width,count)
+  after_book:u64 = call(input,output,start,header,old_bytes) {"function":"rac_copy"}
+  selected:u64 = call(index) {"function":"cb_row"}
+  after_pick:u64 = call(input,output,selected,after_book,width) {"function":"rac_copy"}
+  ret(after_pick)
+end
+
+fn cb_insert_output(input:readbuf,output:mutbuf,work:mutbuf,count:u64,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf,count:u64,index:u64)
+  header:u64 = call(output,count,index) {"function":"cb_result_header"}
+  zero:u64 = const() {"value":0}
+  front:bool = compare.eq(index,zero)
+  branch front new_row(input,output,work,count,index,header) former(input,output,work,count,index,header)
+block former(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_:u64,fx:u64,head:u64)
+  start:u64 = const() {"value":205}
+  width:u64 = const() {"value":173}
+  bytes:u64 = int.mul.wrap(fx,width)
+  after:u64 = call(fi,fo,start,head,bytes) {"function":"rac_copy"}
+  jump new_row(fi,fo,fw,fn_,fx,after)
+block new_row(ni:readbuf,no:mutbuf,nw:mutbuf,nn:u64,nx:u64,at:u64)
+  following:u64 = call(ni,no,nw,at) {"function":"cb_write_open"}
+  one_n:u64 = const() {"value":1}
+  next_n:u64 = int.add.wrap(nx,one_n)
+  final_row:bool = compare.eq(nn,next_n)
+  branch final_row selected(ni,no,nw,following) latter(ni,no,nw,nn,nx,next_n,following)
+block latter(li:readbuf,lo:mutbuf,lw:mutbuf,ln:u64,lx:u64,lnew:u64,lout:u64)
+  old:u64 = call(lx) {"function":"cb_row"}
+  count_l:u64 = int.sub.wrap(ln,lnew)
+  width_l:u64 = const() {"value":173}
+  remaining:u64 = int.mul.wrap(count_l,width_l)
+  tail:u64 = call(li,lo,old,lout,remaining) {"function":"rac_copy"}
+  jump selected(li,lo,lw,tail)
+block selected(si:readbuf,so:mutbuf,sw:mutbuf,pos:u64)
+  end:u64 = call(si,so,sw,pos) {"function":"cb_write_open"}
+  ret(end)
+end
+
+fn cb_write_open(input:readbuf,output:mutbuf,work:mutbuf,at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf,at:u64)
+  typed_fields:u64 = const() {"value":136}
+  metadata:u64 = const() {"value":24}
+  width:u64 = const() {"value":5}
+  zero:u64 = const() {"value":0}
+  after_fields:u64 = call(input,output,metadata,at,typed_fields) {"function":"rac_copy"}
+  after_flags:u64 = call(output,after_fields,zero,width) {"function":"rac_write_be"}
+  end:u64 = call(work,output,after_flags) {"function":"sb_copy_digest"}
+  ret(end)
+end

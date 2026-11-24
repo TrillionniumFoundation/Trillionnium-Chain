@@ -469,11 +469,18 @@ end
 
 fn cx_hash(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64)
+  record_at:u64 = const() {"value":24}
+  result:u64 = call(input,work,packed,decision,appeal,record_at) {"function":"cx_hash_at"}
+  ret(result)
+end
+
+fn cx_hash_at(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64,record:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64,record:u64)
   init:u64 = call(work) {"function":"tr_sha_init"}
   zero:u64 = const() {"value":0}
   okay:bool = compare.eq(init,zero)
-  branch okay transcript(input,work,packed,decision,appeal) refused(init)
-block transcript(ti:readbuf,tw:mutbuf,tp:u64,td:u64,ta:u64)
+  branch okay transcript(input,work,packed,decision,appeal,record) refused(init)
+block transcript(ti:readbuf,tw:mutbuf,tp:u64,td:u64,ta:u64,tr:u64)
   base:u64 = const() {"value":1208}
   eight:u64 = const() {"value":8}
   one:u64 = const() {"value":1}
@@ -491,10 +498,11 @@ block transcript(ti:readbuf,tw:mutbuf,tp:u64,td:u64,ta:u64)
   place_3:u64 = const() {"value":1240}
   _w_3:u64 = call(tw,place_3,word_3) {"function":"tr_put"}
   after_domain:u64 = int.add.wrap(at,width)
-  challenge_at:u64 = const() {"value":24}
-  result_at:u64 = const() {"value":56}
-  actor_at:u64 = const() {"value":88}
-  after_challenge:u64 = call(ti,tw,after_domain,challenge_at) {"function":"cx_frame_digest"}
+  result_position:u64 = const() {"value":32}
+  result_at:u64 = int.add.wrap(tr,result_position)
+  actor_position:u64 = const() {"value":64}
+  actor_at:u64 = int.add.wrap(tr,actor_position)
+  after_challenge:u64 = call(ti,tw,after_domain,tr) {"function":"cx_frame_digest"}
   after_result:u64 = call(ti,tw,after_challenge,result_at) {"function":"cx_frame_digest"}
   after_actor:u64 = call(ti,tw,after_result,actor_at) {"function":"cx_frame_digest"}
   used_shift:u64 = const() {"value":16}
@@ -507,13 +515,16 @@ block transcript(ti:readbuf,tw:mutbuf,tp:u64,td:u64,ta:u64)
   used:u64 = bit.and(used_bits,mask)
   outcome:u64 = bit.and(outcome_bits,mask)
   after_phase:u64 = call(tw,after_actor,phase,one) {"function":"cx_frame_number"}
-  opened_at:u64 = const() {"value":120}
+  opened_position:u64 = const() {"value":96}
+  opened_at:u64 = int.add.wrap(tr,opened_position)
   opened:u64 = call(ti,opened_at,eight) {"function":"rac_read_le"}
   after_opened:u64 = call(tw,after_phase,opened,eight) {"function":"cx_frame_number"}
-  evidence_at:u64 = const() {"value":128}
+  evidence_position:u64 = const() {"value":104}
+  evidence_at:u64 = int.add.wrap(tr,evidence_position)
   evidence:u64 = call(ti,evidence_at,eight) {"function":"rac_read_le"}
   after_evidence:u64 = call(tw,after_opened,evidence,eight) {"function":"cx_frame_number"}
-  response_at:u64 = const() {"value":136}
+  response_position:u64 = const() {"value":112}
+  response_at:u64 = int.add.wrap(tr,response_position)
   response:u64 = call(ti,response_at,eight) {"function":"rac_read_le"}
   after_response:u64 = call(tw,after_evidence,response,eight) {"function":"cx_frame_number"}
   after_decision:u64 = call(tw,after_response,td,eight) {"function":"cx_frame_number"}

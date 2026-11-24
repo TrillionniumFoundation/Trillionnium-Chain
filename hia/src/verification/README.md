@@ -75,3 +75,7 @@ and the private deterministic observation codec, see
 
 For the separate pure per-record challenge transitions, see
 [Challenge record lifecycle](CHALLENGE_RECORD.md).
+
+
+For original book opening and exact result-key lookup over a bounded immutable
+snapshot, see [Challenge book values](CHALLENGE_BOOK.md).
