@@ -1078,6 +1078,17 @@
       ]
     },
     {
+      "id": "release-bundle/pq-bundle-callback-quorum",
+      "node_integration_complete": false,
+      "scope": "Real native V0 callback-phase quorum for an independently trusted role roster. Canonical signed message and selected role remain required; root network/generation checks occur after callback mathematics in the separately qualified state guard. Test-only staged Rust differential; no authority or same-call token.",
+      "source": "hia/src/release_bundle/pq_bundle_callback_quorum.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/qualify_release_pq_callback.py",
+        "hia/tests/rust_release_pq_callback_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/pq-bundle-state",
       "node_integration_complete": false,
       "scope": "Pure NodeSoftware state/frontier checks after the original V0 callback and before private token consumption, including separately supplied fresh checkpoint comparison and exact typed full-history ordering. No callback/token, clock ownership, retention, state advancement, custody or authorization.",
@@ -1472,6 +1483,7 @@
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
+        "release-bundle/pq-bundle-callback-quorum",
         "release-bundle/pq-bundle-state",
         "release-bundle/pq-quorum",
         "release-bundle/pq-role-identity",

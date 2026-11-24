@@ -5698,6 +5698,123 @@
         "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
+    "src/release_bundle/pq_bundle_callback_quorum.hepta": [
+      {
+        "functions": [
+          "rq_run",
+          "rq_scope",
+          "rq_key_row",
+          "rq_sorted_keys",
+          "rq_signature_row",
+          "rq_find_key",
+          "rq_pin_matches",
+          "rq_selected_at",
+          "rq_seen",
+          "rq_preflight",
+          "rq_verify"
+        ],
+        "source": "src/release_bundle/pq_quorum.hepta"
+      },
+      {
+        "functions": [
+          "md_reply",
+          "md_read64",
+          "md_bits",
+          "md_copy",
+          "md_absorb_work",
+          "md_xof_byte",
+          "md_squeeze_work",
+          "md_mu",
+          "md_hint_decode",
+          "md_z_decode",
+          "md_challenge",
+          "md_sample_a",
+          "md_matrix_row",
+          "md_t1_row",
+          "md_high_bits",
+          "md_hint_high",
+          "md_reconstruct_row",
+          "md_verify",
+          "md_div"
+        ],
+        "source": "src/crypto/ml_dsa.hepta"
+      },
+      {
+        "functions": [
+          "mp_load_mut",
+          "mp_store",
+          "mp_add",
+          "mp_mul",
+          "mp_sub",
+          "mp_twiddle",
+          "mp_forward",
+          "mp_inverse"
+        ],
+        "source": "src/crypto/ml_dsa_poly.hepta"
+      },
+      {
+        "functions": [
+          "kf_load64",
+          "kf_store64",
+          "kf_rate",
+          "kf_digest_size",
+          "keccak_clear",
+          "keccak_init",
+          "kf_valid",
+          "keccak_update",
+          "keccak_finalize",
+          "kf_rc",
+          "kf_permute",
+          "kf_round"
+        ],
+        "source": "src/crypto/keccak_stream.hepta"
+      },
+      {
+        "functions": [
+          "pf_be64",
+          "pf_key_id",
+          "pf_literal",
+          "pf_spki_byte"
+        ],
+        "source": "src/crypto/pq_frame.hepta"
+      },
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update_limit",
+          "tr_sha_update_full",
+          "tr_sha_update_work_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_feed_limit",
+          "tr_sha_final_limit",
+          "tr_sha_final_full",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ],
+        "source": "src/release_bundle/artifact_header.hepta"
+      },
+      {
+        "functions": [
+          "rb_le16"
+        ],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      },
+      {
+        "functions": [
+          "sb_compare"
+        ],
+        "source": "src/release_bundle/sbom_digest.hepta"
+      }
+    ],
     "src/release_bundle/pq_quorum.hepta": [
       {
         "functions": [

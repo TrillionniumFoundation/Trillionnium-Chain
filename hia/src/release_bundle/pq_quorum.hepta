@@ -1,11 +1,18 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_quorum_candidate_v1
 fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  scoped:bool = const() {"value":true}
+  answer:u32 = call(input,work,scoped) {"function":"rq_run"}
+  ret(answer)
+end
+
+fn rq_run(input:readbuf,work:mutbuf,strict:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,strict:bool)
   length:usize = buffer.len(input)
   header:usize = const() {"value":232}
   enough:bool = compare.ge(length,header)
-  branch enough counts(input,work,length) malformed()
-block counts(ci:readbuf,cw:mutbuf,cl:usize)
+  branch enough counts(input,work,length,strict) malformed()
+block counts(ci:readbuf,cw:mutbuf,cl:usize,cscope:bool)
   key_count_at:usize = const() {"value":0}
   sig_count_at:usize = const() {"value":2}
   threshold_at:usize = const() {"value":4}
@@ -22,17 +29,17 @@ block counts(ci:readbuf,cw:mutbuf,cl:usize)
   threshold_valid:bool = bool.and(threshold_positive,threshold_bound)
   counts_valid:bool = bool.and(key_bound,sig_bound)
   typed:bool = bool.and(threshold_valid,counts_valid)
-  branch typed width(ci,cw,cl,keys,sigs,min) malformed()
-block width(wi:readbuf,ww:mutbuf,wl:usize,wk:u64,ws:u64,wm:u64)
+  branch typed width(ci,cw,cl,keys,sigs,min,cscope) malformed()
+block width(wi:readbuf,ww:mutbuf,wl:usize,wk:u64,ws:u64,wm:u64,wscope:bool)
   keys_bucket:u64 = call(wk) {"function":"rq_key_row"}
   sig_width:u64 = const() {"value":4130}
   sig_extent:u64 = int.mul.wrap(ws,sig_width)
   raw_extent:u64 = int.add.wrap(keys_bucket,sig_extent)
   actual:u64 = int.cast(wl) {"mode":"wrap"}
   exact:bool = compare.eq(actual,raw_extent)
-  branch exact trust(wi,ww,wk,ws,wm,keys_bucket) malformed()
-block trust(ti:readbuf,tw:mutbuf,tk:u64,ts:u64,tm:u64,sig_base:u64)
-  scope:u32 = call(ti) {"function":"rq_scope"}
+  branch exact trust(wi,ww,wk,ws,wm,keys_bucket,wscope) malformed()
+block trust(ti:readbuf,tw:mutbuf,tk:u64,ts:u64,tm:u64,sig_base:u64,tscope:bool)
+  scope:u32 = call(ti,tscope) {"function":"rq_scope"}
   zero_scope:u32 = const() {"value":0}
   scope_ok:bool = compare.eq(scope,zero_scope)
   branch scope_ok ordered(ti,tw,tk,ts,tm,sig_base) refused(scope)
@@ -77,8 +84,8 @@ block count_error()
   ret(count_error_code)
 end
 
-fn rq_scope(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
-block entry(input:readbuf)
+fn rq_scope(input:readbuf,strict:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,strict:bool)
   role_at:usize = const() {"value":6}
   reserved_at:usize = const() {"value":7}
   message_role_at:usize = const() {"value":77}
@@ -93,8 +100,8 @@ block entry(input:readbuf)
   role_known:bool = bool.and(first,last)
   reserved_ok:bool = compare.eq(reserved,zero)
   private_typed:bool = bool.and(role_known,reserved_ok)
-  branch private_typed domain(input,role,message_role) bad()
-block domain(di:readbuf,dr:u8,dm:u8)
+  branch private_typed domain(input,role,message_role,strict) bad()
+block domain(di:readbuf,dr:u8,dm:u8,dstrict:bool)
   offset0:u64 = const() {"value":48}
   offset1:u64 = const() {"value":56}
   offset2:u64 = const() {"value":64}
@@ -115,8 +122,8 @@ block domain(di:readbuf,dr:u8,dm:u8)
   ab:bool = bool.and(a,b)
   cd:bool = bool.and(c,d)
   exact_domain:bool = bool.and(ab,cd)
-  branch exact_domain flags(di,dr,dm) bad()
-block flags(fi:readbuf,fr:u8,fm:u8)
+  branch exact_domain flags(di,dr,dm,dstrict) bad()
+block flags(fi:readbuf,fr:u8,fm:u8,fstrict:bool)
   previous_at:usize = const() {"value":166}
   rollback_at:usize = const() {"value":231}
   previous:u8 = buffer.load(fi,previous_at)
@@ -125,14 +132,22 @@ block flags(fi:readbuf,fr:u8,fm:u8)
   p:bool = compare.le(previous,one_flag)
   r:bool = compare.le(rollback,one_flag)
   okay:bool = bool.and(p,r)
-  branch okay optional(fi,fr,fm,previous) bad()
-block optional(op:readbuf,orr:u8,omr:u8,present:u8)
+  branch okay optional(fi,fr,fm,previous,fstrict) bad()
+block optional(op:readbuf,orr:u8,omr:u8,present:u8,checking:bool)
   optional_payload:u64 = const() {"value":167}
   empty:u8 = const() {"value":0}
   absent:bool = compare.eq(present,empty)
   nonzero:bool = call(op,optional_payload) {"function":"rac_nonzero_digest"}
   bad_option:bool = bool.and(absent,nonzero)
-  branch bad_option bad() binding(op,orr,omr)
+  branch bad_option bad() select_scope(op,orr,omr,checking)
+block select_scope(si:readbuf,sr:u8,sm:u8,sscope:bool)
+  branch sscope binding(si,sr,sm) role_only(sr,sm)
+block role_only(snapshot_role:u8,metadata_role:u8)
+  matches:bool = compare.eq(snapshot_role,metadata_role)
+  ok:u32 = const() {"value":0}
+  wrong_role:u32 = const() {"value":110}
+  result:u32 = select(matches,ok,wrong_role)
+  ret(result)
 block binding(bi:readbuf,br:u8,bm:u8)
   root_network:u64 = const() {"value":8}
   message_network:u64 = const() {"value":78}
