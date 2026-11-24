@@ -7,8 +7,8 @@ block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
   bounded:bool = compare.le(bytes,limit)
   branch bounded record(input,output,bytes) capacity()
 block record(ri:readbuf,ro:mutbuf,rn:u64)
-  task:u64,request:u64,status:u64 = call(ri,ro,rn) {"function":"wd_record"}
   zero:u64 = const() {"value":0}
+  task:u64,request:u64,status:u64 = call(ri,ro,zero,rn) {"function":"wd_record_at"}
   accepted:bool = compare.ne(request,zero)
   branch accepted fit(ri,ro,rn,task,request,status) malformed()
 block fit(fi:readbuf,fo:mutbuf,fn:u64,ft:u64,fr:u64,fs:u64)
@@ -23,26 +23,8 @@ block fit(fi:readbuf,fo:mutbuf,fn:u64,ft:u64,fr:u64,fs:u64)
   ready:bool = compare.le(needed,cap)
   branch ready emit(fi,fo,fn,ft,fr,fs,request_size,status_size,header_size,needed) capacity()
 block emit(ei:readbuf,eo:mutbuf,en:u64,et:u64,er:u64,es:u64,ern:u64,esn:u64,eh:u64,el:u64)
-  empty_at:usize = const() {"value":0}
-  fixed_len:usize = const() {"value":108}
-  empty_octet:u8 = const() {"value":0}
-  _ = buffer.fill_range(eo,empty_at,fixed_len,empty_octet)
-  start:u64 = const() {"value":0}
-  magic:u64 = const() {"value":827083351}
-  four:u64 = const() {"value":4}
-  eight:u64 = const() {"value":8}
-  request_slot:u64 = const() {"value":64}
-  yes:bool = const() {"value":true}
-  magic_end:u64 = call(eo,start,magic,four,yes) {"function":"wa_word"}
-  task_end:u64 = call(eo,eight,et,eight,yes) {"function":"wa_word"}
-  status_slot:u64 = call(eo,request_slot,ern,four,yes) {"function":"wa_word"}
-  status_end:u64 = call(eo,status_slot,esn,four,yes) {"function":"wa_word"}
-  shift:u64 = const() {"value":32}
-  request_at:u64 = int.shr.checked(er,shift)
-  status_at:u64 = int.shr.checked(es,shift)
-  status_dest:u64 = int.add.wrap(eh,ern)
-  r_after:u64,r_size:u64 = call(ei,eo,request_at,en,eh,yes) {"function":"wd_string"}
-  s_after:u64,s_size:u64 = call(ei,eo,status_at,en,status_dest,yes) {"function":"wd_string"}
+  row_at:u64 = const() {"value":0}
+  _ = call(ei,eo,row_at,en,et,er,es) {"function":"wd_emit_at"}
   total:u32 = int.cast(el) {"mode":"wrap"}
   ret(total)
 block malformed()
@@ -52,10 +34,40 @@ block capacity()
   insufficient:u32 = const() {"value":4294967294}
   ret(insufficient)
 end
-fn wd_record(input:readbuf,output:mutbuf,extent:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,extent:u64)
+fn wd_emit_at(input:readbuf,out:mutbuf,at:u64,extent:u64,task:u64,request:u64,status:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,at:u64,extent:u64,task:u64,request:u64,status:u64)
+  begin:usize = int.cast(at) {"mode":"wrap"}
+  fixed_size:usize = const() {"value":108}
+  empty:u8 = const() {"value":0}
+  _ = buffer.fill_range(out,begin,fixed_size,empty)
+  magic:u64 = const() {"value":827083351}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  req_desc:u64 = const() {"value":64}
+  header_size:u64 = const() {"value":108}
+  yes:bool = const() {"value":true}
+  ignored_magic:u64 = call(out,at,magic,four,yes) {"function":"wa_word"}
+  task_at:u64 = int.add.wrap(at,eight)
+  ignored_task:u64 = call(out,task_at,task,eight,yes) {"function":"wa_word"}
+  request_slot:u64 = int.add.wrap(at,req_desc)
+  low:u64 = const() {"value":4294967295}
+  req_len:u64 = bit.and(request,low)
+  status_len:u64 = bit.and(status,low)
+  status_slot:u64 = call(out,request_slot,req_len,four,yes) {"function":"wa_word"}
+  ignored_lengths:u64 = call(out,status_slot,status_len,four,yes) {"function":"wa_word"}
+  shift:u64 = const() {"value":32}
+  req_at:u64 = int.shr.checked(request,shift)
+  status_at:u64 = int.shr.checked(status,shift)
+  req_dest:u64 = int.add.wrap(at,header_size)
+  status_dest:u64 = int.add.wrap(req_dest,req_len)
+  r_end:u64,r_size:u64 = call(input,out,req_at,extent,req_dest,yes) {"function":"wd_string"}
+  s_end:u64,s_size:u64 = call(input,out,status_at,extent,status_dest,yes) {"function":"wd_string"}
+  ret()
+end
+fn wd_record_at(input:readbuf,output:mutbuf,origin:u64,extent:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,origin:u64,extent:u64)
   start:u64 = const() {"value":0}
-  first_token:u64 = call(input,start,extent) {"function":"wd_space"}
+  first_token:u64 = call(input,origin,extent) {"function":"wd_space"}
   open:u64 = const() {"value":123}
   width:u64 = const() {"value":1}
   next:u64 = call(input,first_token,extent,open,width) {"function":"wd_expect"}

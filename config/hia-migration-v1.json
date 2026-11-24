@@ -1433,6 +1433,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-export",
+      "node_integration_complete": false,
+      "scope": "A single native raw-memory journal call composes fixed WJF1 framing, the two exact WJD1 DTO profiles, shared WAT2 selection/rendering, and all three audit artifacts, with atomic output and actual locked original byte comparisons. Generic Serde, authority, storage and production dispatch unchanged.",
+      "source": "hia/src/worker_agent/journal_audit_export.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_export.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-dto",
       "node_integration_complete": false,
       "scope": "Bounded complete parsing of the nine required ordinary Worker journal fields in declaration order, with no options or the complete ordered null suffix, emitting WJL1. Real native WJF1\u2192WJD1\u2192WAT2 and unchanged locked CLI three-artifact parity. Generic Serde, non-null metadata, authority, files and dispatch unchanged.",
