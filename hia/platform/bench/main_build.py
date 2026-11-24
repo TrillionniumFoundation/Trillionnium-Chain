@@ -1,14 +1,16 @@
 """Source-bound build for the finite Bench Linux process; no host runtime."""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 from pathlib import Path
+import stat
 import struct
 import subprocess
 import sys
 
-from hia.platform.build import Build, inspect_executable, sha256
+from hia.platform.build import Build, INPUTS, inspect_executable, sha256
 from hia.tools.toolchain import HIA_ROOT, build_native, checked_source
 
 COMPONENTS = (
@@ -243,3 +245,111 @@ sys.stdout.buffer.write(out.raw[:n])
               "compiled_profile_root": anchor.decode("utf-8") if anchor else None}
     (output / "build.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
     return image, report
+
+
+TARGET_NAME = "trnm-bench-hia"
+_REPO = HIA_ROOT.parent
+_TARGET_BUILD_INPUTS = (
+    "hia/platform/bench/main_build.py",
+    "hia/platform/build.py",
+    "hia/tools/toolchain.py",
+    "trillionnium/Cargo.lock",
+    *("hia/" + name for name in INPUTS),
+)
+
+
+def _target_git(*args) -> bytes:
+    return subprocess.check_output(["git", *args], cwd=_REPO, timeout=15,
+                                   stderr=subprocess.PIPE)
+
+
+def _target_source(head: str, relative: str) -> str:
+    path = _REPO / relative
+    if not path.is_file() or path.resolve(strict=True) != path:
+        raise ValueError("Named Bench target requires a regular committed source: " + relative)
+    raw = path.read_bytes()
+    if raw != _target_git("cat-file", "blob", head + ":" + relative):
+        raise ValueError("Named Bench target source differs from the committed bytes: " + relative)
+    return sha256(raw)
+
+
+def _target_output(path: Path) -> Path:
+    output = path.absolute()
+    parent = output.parent
+    st = parent.lstat()
+    if (parent.resolve(strict=True) != parent or not stat.S_ISDIR(st.st_mode)
+            or st.st_uid != os.geteuid() or st.st_mode & 0o077
+            or output.name in ("", ".", "..") or output.is_relative_to(_REPO)):
+        raise ValueError("Use a new output directory under an existing private directory outside the checkout")
+    if output.exists() or output.is_symlink():
+        raise FileExistsError("Named Bench target will not overwrite an existing output")
+    return output
+
+
+def build_named_target(output: Path, *, bind_profile_output: bool = False) -> dict:
+    """Materialize the same native entry; never install it or make a profile directory."""
+    output = _target_output(output)
+    head = _target_git("rev-parse", "--verify", "HEAD^{commit}").decode("ascii").strip()
+    sources = {name: _target_source(head, name) for name in _TARGET_BUILD_INPUTS}
+    selected = {DIAGNOSTIC_SOURCE}
+    for relative in (*COMPONENTS, EMITTER):
+        _, _, _, _, captured = checked_source(HIA_ROOT / relative)
+        selected.update(path.relative_to(HIA_ROOT).as_posix() for path, _ in captured)
+    # Reject any modified selected source before a compiler or emitter executes.
+    sources.update(("hia/" + name, _target_source(head, "hia/" + name)) for name in sorted(selected))
+    image, report = build(output, bind_profile_output=bind_profile_output)
+    reported = set()
+    for captured in report["source_inputs"].values():
+        for relative, expected in captured.items():
+            path = "hia/" + relative
+            reported.add(relative)
+            if sources.get(path) != expected:
+                raise ValueError("Inconsistent named Bench target source capture: " + path)
+    if selected != reported:
+        raise ValueError("Missing named Bench target source capture")
+    if (_target_git("rev-parse", "--verify", "HEAD^{commit}").decode("ascii").strip() != head
+            or any(_target_source(head, path) != identity for path, identity in sources.items())
+            or sha256(image) != report["native_elf"]["sha256"]):
+        raise ValueError("Named Bench target inputs or executable changed during the build")
+    destination = output / TARGET_NAME
+    # The creation is exclusive, and the regular file gains execute
+    # permission only after all bytes have been flushed and read back.
+    fd = os.open(destination, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "w+b") as binary:
+        if binary.write(image) != len(image):
+            raise OSError("Short named Bench target write")
+        binary.flush()
+        binary.seek(0)
+        if sha256(binary.read(len(image) + 1)) != report["native_elf"]["sha256"]:
+            raise OSError("Named Bench target executable readback differed")
+        os.fchmod(binary.fileno(), 0o500)
+    receipt = {"schema": "trnm.hia.bench.named-target.v1", "result": "BUILD_PASS",
+               "source_commit": head, "source_sha256": sources,
+               "executable": TARGET_NAME, "elf": report["native_elf"],
+               "compiled_profile_root": report["compiled_profile_root"],
+               "compiler_sha256": report["compiler_sha256"],
+               "toolchain_revision": report["toolchain_revision"],
+               "installed": False, "production_entrypoint_activated": False,
+               "runtime_rust_or_python_fallback": False}
+    with (output / "named-target.json").open("x", encoding="utf-8") as file:
+        json.dump(receipt, file, indent=2, sort_keys=True)
+        file.write("\n")
+    return receipt
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Build the scoped Linux x86-64 trnm-bench-hia executable")
+    parser.add_argument("--output", required=True, type=Path, help="fresh child of an existing private directory")
+    parser.add_argument("--bind-profile-output", action="store_true",
+                        help="reuse the verified private repo-shaped profile root beside the output")
+    args = parser.parse_args()
+    try:
+        receipt = build_named_target(args.output, bind_profile_output=args.bind_profile_output)
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
+        parser.exit(2, f"Bench native target refused: {exc}\n")
+    print(json.dumps({"target": TARGET_NAME, "sha256": receipt["elf"]["sha256"],
+                      "compiled_profile_root": receipt["compiled_profile_root"]}, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

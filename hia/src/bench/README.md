@@ -75,6 +75,38 @@ per-argument boundary and reject an excessive argc and an I/O failure.
 This does not implement command syntax, help/diagnostics, timing, environment
 acquisition, or the full Bench startup/process path.
 
+## Named Linux x86-64 Bench target
+
+With the repository's pinned HIA toolchain, compiler and compiler SHA-256
+configured, build a named executable from an exact committed source:
+
+```sh
+base="$(mktemp -d)"
+python3 -B -m hia.platform.bench.main_build --output "$base/output"
+"$base/output/trnm-bench-hia" --txs=19 --keys=3 --determinism-repeats=2
+```
+
+Use a fresh child of an existing private directory outside the checkout.
+The command emits the same static executable, full build details and a
+`named-target.json` manifest binding its SHA-256 to the exact commit, selected
+inputs and pinned compiler. It does not install anything or activate the
+production Rust replacement. There is no build fallback or runtime Python
+wrapper. Independent unbound builds of the same input are byte-identical.
+
+Profile is refused by default. A caller who already owns a private
+`isolated-source/trillionnium` directory beside the output, with an exact copy
+of the checked-in `Cargo.lock`, can pass `--bind-profile-output`. Its absolute
+path is compiled in (so the bound image is specific to that root); the build
+does not make the profile root, follow a symlink, or accept a runtime destination.
+The pre-existing profile writer and file guards still own all runtime writes.
+
+To run the opt-in local smoke (including live report, replay and unbound
+refusal) under the same pinned compiler:
+
+```sh
+python3 -B -m hia.tests.qualify_bench_named_target --output "$base/smoke"
+```
+
 ## Linux no-profile executable
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux

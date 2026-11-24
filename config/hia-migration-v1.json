@@ -1039,11 +1039,12 @@
     {
       "id": "bench/no-profile-cli",
       "node_integration_complete": false,
-      "scope": "Finite full-width unsigned parsing, terminal double-dash, workload selector/fanout/stride, bare profile/persist flags, bounded original strategy subset (including unmarked empty-env Classic AutoAdaptive and the original ten-field decision report, plus empty-env unmarked Classic AggressiveGreedy fast path, with ordinary unprofiled output or existing privately bound profile and replay) and inclusive 0–1000 replay admission. Unmarked Mixed/HotStreak preserve their proved compatibility fence; explicit reader-high-water-v1 admits only proved corrected defaults including Mixed FootprintDesc. Plain help and admitted missing/duplicate outcomes are wired to a separate native renderer. Complete CLI, other strategies and general environment remain open.",
+      "scope": "Finite full-width unsigned parsing, terminal double-dash, workload selector/fanout/stride, bare profile/persist flags, bounded original strategy subset (including unmarked empty-env Classic AutoAdaptive and the original ten-field decision report, plus empty-env unmarked Classic AggressiveGreedy fast path, with ordinary unprofiled output or existing privately bound profile and replay) and inclusive 0–1000 replay admission. Unmarked Mixed/HotStreak preserve their proved compatibility fence; explicit reader-high-water-v1 admits only proved corrected defaults including Mixed FootprintDesc. Plain help and admitted missing/duplicate outcomes are wired to a separate native renderer. The opt-in pinned Linux named artifact reuses this entry and its private file guard without installation. Complete CLI, other strategies and general environment remain open.",
       "source": "hia/src/bench/main_cli.hepta",
       "state": "native-kernel-implemented",
       "tests": [
-        "hia/tests/test_bench_main.py"
+        "hia/tests/test_bench_main.py",
+        "hia/tests/qualify_bench_named_target.py"
       ]
     },
     {
