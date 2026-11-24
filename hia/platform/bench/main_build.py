@@ -20,8 +20,8 @@ COMPONENTS = (
     "src/bench/profile.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "945a40606ae80187e5f949e8f2ca2d87c113722852711d353448b8b57a455956"
-PREFIX, BASE = 3344, 0x400000
+ADAPTER_SHA256 = "f4e66775b58db488b46d9148e7a2d07862259ae5a8ee4cbc1b894bc254a00091"
+PREFIX, BASE = 3408, 0x400000
 
 
 def exact_native_text(data):

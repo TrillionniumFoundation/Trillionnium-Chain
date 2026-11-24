@@ -78,23 +78,52 @@ acquisition, or the full Bench startup/process path.
 ## Linux no-profile executable
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
-x86-64 ELF for the **bounded Classic/Original** process. It reads real argv at
+x86-64 ELF for the **bounded Original-order** process. It reads real argv at
 `_start` and checks that the environment pointer list is empty without
 dereferencing environment strings. This is an isolated candidate, not an
 activated general replacement for `trnm-bench`.
 
-Its admitted invocation is no arguments (20,000 transactions and 2,000 keys),
-or one each of `--txs`, `--keys` and `--determinism-repeats` in split or equals
-form. The [HIA argument policy](main_cli.hepta) parses unsigned ASCII decimal
-with one optional plus and rejects overflow, duplicates, missing values and
-malformed text. Zero transaction/key values retain original normalization.
-The subset admits at most 20,000 transactions and zero replays. A parsed repeat
-count over 1,000 renders the original exact diagnostic and exit 2 before
-workload or clock work, even when a parsed transaction count is outside the
-candidate's capacity. Other unsupported invocations exit 2 with a distinct
-candidate diagnostic, **not** Clap diagnostic equivalence. Help, other
-strategies/workloads, nonempty environments and nonzero valid replays remain
+Its admitted invocation is no arguments (Classic, 20,000 transactions and
+2,000 keys), one each of `--txs`, `--keys`, `--read-fanout`, `--write-every`,
+`--workload`, `--strategy original` and `--determinism-repeats` in split
+or equals form, plus one bare `--persist-profile` and, when privately bound,
+one bare `--profile`. Explicit persistence retains the original true default.
+[The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
+decimal with one optional plus and rejects overflow, duplicates, missing
+values and malformed text. Zero numeric workload counts retain the original
+one-minimum normalization. The subset admits at most 20,000 transactions and
+zero replays. A parsed repeat count over 1,000 renders the exact original
+diagnostic and exit 2 before workload or clock work, including with parsed
+values outside candidate bounds. Other unsupported invocations exit 2 with a
+distinct candidate diagnostic, **not** Clap diagnostic equivalence. Help,
+other strategies, nonempty environments and nonzero valid replays remain
 open and never fall back to the old executable.
+
+The three `--workload` values are `classic`, `mixed`, and `hot-streak`.
+Classic ignores fanout/stride for generation but still reports normalized
+configured values at full width. Mixed and HotStreak require normalized
+fanout at most eight and either one normalized key or normalized write
+stride at least the transaction count. This is a compatibility boundary
+around the existing [reader-high-water correction](../executor/README.md#intentional-safety-correction),
+not a rollback of the fix:
+
+- With one key, a read-only transaction's required group is zero before
+  the first writer and otherwise one above the latest writer group.
+  The writer groups on that single key strictly increase, so the reader
+  group cannot regress and replacing it with its high-water value is identical.
+- With write stride at least the batch size, only transaction zero writes.
+  There is no prior reader when it writes and there is no later write
+  that can observe the different reader table.
+
+The unmodified default multiwriter Mixed run is **not** admitted. A real
+locked Rust run and ungated HIA development run on default Mixed produced
+the same input digest and group counts but different ordered group hashes:
+`badb3c2b47df242068d7ed3988257e229f5a8e6f57785e037461f4432e76ed90` (original)
+versus `dab1a86625487d9bd619f6c8d54af22642db79ee0134e1655e5b3fb99ced5a83`
+(repaired). Arbitrary multi-key/multiwriter HotStreak is likewise refused,
+rather than promised equivalent without proof. These restrictions apply
+only to the isolated executable; the existing pure HIA workload and safe
+scheduler components keep their own contracts.
 
 The [native emitter](../../platform/bench/main_emitter.hepta) creates one RX
 load segment and an NX stack with no loader or runtime imports. The resolved
@@ -102,17 +131,22 @@ argument code and the build-time packer use the pinned compiler's explicit
 object profile; native workload, schedule, digests, report and profile use the
 usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 3,168-byte Linux adapter. It does not execute the
+the address table, and the 3,232-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
-The adapter stages argv and owns disjoint workload, scheduler, report and
-scratch regions. It acquires real realtime after workload construction and
+The adapter stages at most 16 argument tokens in a private span and owns
+disjoint workload, scheduler, report and scratch regions. The largest
+admitted general layout has at most 180,000 raw reference pairs, requiring
+no more than 3,520,136 workload bytes and 16,324,096 scheduler-scratch
+bytes, below the fixed separate arenas. Profile paths and fd guards do
+not change. It acquires real realtime after workload construction and
 brackets only the first scheduler call with `CLOCK_MONOTONIC`. It handles
 nanosecond borrow and truncates to an unsigned 128-bit millisecond count;
 a clock failure never becomes a zero-duration success. Only after this call
 does it hash, render and publish. The ordinary no-profile path never creates
 directories or files. Original and native deterministic stdout/digests match
-on the default and admitted small inputs; independent elapsed observations
+on the default Classic, admitted default-sized single-writer workloads and
+admitted small inputs; independent elapsed observations
 are retained and are not compared as deterministic bytes.
 
 ### Isolated profile persistence

@@ -156,7 +156,21 @@ class NativeBenchMain(unittest.TestCase):
         accepted = ((), (b"--txs", b"4", b"--keys=2"), (b"--keys", b"+11", b"--txs=32"),
                     (b"--txs=0", b"--keys=0", b"--determinism-repeats=0"),
                     (b"--txs=37", b"--keys=18446744073709551615"),
-                    (b"--txs=100", b"--keys=3"))
+                    (b"--txs=100", b"--keys=3"),
+                    (b"--workload=classic", b"--strategy", b"original", b"--persist-profile",
+                     b"--txs=6", b"--read-fanout=18446744073709551615",
+                     b"--write-every=18446744073709551615"),
+                    (b"--workload", b"mixed", b"--txs=37", b"--keys=0",
+                     b"--read-fanout=0", b"--write-every=0"),
+                    (b"--workload=mixed", b"--txs=64", b"--keys=3",
+                     b"--read-fanout", b"8", b"--write-every", b"64"),
+                    (b"--workload=hot-streak", b"--txs=48", b"--keys=1",
+                     b"--read-fanout=8", b"--write-every=2"),
+                    (b"--workload=hot-streak", b"--txs=32", b"--keys=3",
+                     b"--read-fanout=8", b"--write-every=33"),
+                    (b"--workload=mixed", b"--write-every=20000"),
+                    (b"--workload=hot-streak", b"--write-every=20000"),
+                    (b"--workload=mixed", b"--keys=1", b"--read-fanout=8"))
         for index, args in enumerate(accepted):
             with self.subTest(fixture=index):
                 old, old_ns = self.actual(f"matched-{index}-original", self.original, args)
@@ -174,14 +188,19 @@ class NativeBenchMain(unittest.TestCase):
 
     def test_actual_exact_repeat_error_and_invalid_exit(self):
         for index, args in enumerate(((b"--determinism-repeats", b"1001"),
-                                      (b"--txs=99999", b"--determinism-repeats=18446744073709551615"))):
+                                      (b"--txs=99999", b"--determinism-repeats=18446744073709551615"),
+                                      (b"--workload=mixed", b"--read-fanout=9",
+                                       b"--determinism-repeats=1001"))):
             old, _ = self.actual(f"over-{index}-original", self.original, args)
             new, _ = self.actual(f"over-{index}-native", self.native, args)
             self.assertEqual((old.returncode, old.stdout, old.stderr), (2, b"", REPEAT))
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", REPEAT))
         for index, args in enumerate(((b"--unknown",), (b"--txs=oops",), (b"--txs",),
                                        (b"--keys=18446744073709551616",),
-                                       (b"--txs=40", b"--txs", b"4"), (b"--profile", b"--profile"))):
+                                       (b"--txs=40", b"--txs", b"4"), (b"--profile", b"--profile"),
+                    (b"--workload=Mixed",), (b"--workload=original",), (b"--strategy=classic",),
+                    (b"--persist-profile=false",), (b"--persist-profile", b"--persist-profile"),
+                    (b"--read-fanout=3", b"--read-fanout", b"4"), (b"--write-every",))):
             old, _ = self.actual(f"invalid-{index}-original", self.original, args)
             new, _ = self.actual(f"invalid-{index}-native", self.native, args)
             self.assertEqual((old.returncode, old.stdout), (2, b""))
@@ -190,7 +209,13 @@ class NativeBenchMain(unittest.TestCase):
 
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
         for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),
-                                      (b"--txs=20001",), (b"--determinism-repeats=1",))):
+                                      (b"--workload=hot-streak",), (b"--strategy=write-first",),
+                                      (b"--txs=20001",), (b"--determinism-repeats=1",),
+                                      (b"--workload=mixed", b"--txs=32", b"--keys=2", b"--write-every=31"),
+                                      (b"--workload=hot-streak", b"--txs=32", b"--keys=2", b"--write-every=31"),
+                                      (b"--workload=mixed", b"--keys=1", b"--read-fanout=9"),
+                                      (b"--workload=hot-streak", b"--txs=8", b"--keys=2",
+                                       b"--write-every=8", b"--read-fanout=9"))):
             result, _ = self.actual(f"outside-{index}", self.native, args)
             self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", OUTSIDE))
         result, _ = self.actual("outside-env", self.native, (b"--txs=4",),
@@ -374,3 +399,21 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual(isolated_sentinel.read_bytes(), b"do not truncate")
                 self.assertEqual(set(targets), set(self.bench_path.iterdir()))
                 self.reset_profile_path()
+
+    def test_actual_profile_with_all_workload_options_and_full_cli_extent(self):
+        # Every value-bearing option uses a separate token to reach the prior
+        # adapter's new 17 argv-entry boundary, including argv[0].
+        mixed = (b"--profile", b"--persist-profile", b"--txs", b"33", b"--keys", b"3",
+                 b"--determinism-repeats", b"0", b"--read-fanout", b"8", b"--write-every",
+                 b"33", b"--workload", b"mixed", b"--strategy", b"original")
+        hot = (b"--profile", b"--persist-profile", b"--txs=40", b"--keys=1",
+               b"--read-fanout=8", b"--write-every=3", b"--workload=hot-streak")
+        for index, args in enumerate((mixed, hot)):
+            matched = []
+            for tag, image in (("original", self.original), ("native", self.native)):
+                self.reset_profile_path()
+                label = f"profile-workload-{index}-{tag}"
+                out, _, _ = self.profile_comparable(*self.actual(label, image, args), "file")
+                matched.append(out)
+            self.assertEqual(matched[0], matched[1])
+        self.reset_profile_path()
