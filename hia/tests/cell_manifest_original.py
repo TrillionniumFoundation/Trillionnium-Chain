@@ -12,6 +12,7 @@ from hia.tests.test_verification_profile_registry import ROOT, pick
 CELL = ROOT / "trillionnium/crates/trnm-data-availability/src/cell"
 CODEC = CELL / "manifest.rs"
 ERASURE = CELL / "erasure.rs"
+CLOSURE = CELL / "closure.rs"
 ADAPTER = Path(__file__).with_name("rust_cell_manifest_reference.rs")
 BINDING_ADAPTER = Path(__file__).with_name("rust_cell_binding_reference.rs")
 ENV = "HIA_M09_SHA2_RLIB"
@@ -24,7 +25,7 @@ def binding_source():
     return original[start:end]
 
 
-def source():
+def source(with_closure=False):
     boundary = CELL.with_suffix(".rs").read_bytes()
     digest = pick(boundary, rb"^pub type CellDigestV1 = [^\n]+;\n")
     result = pick(boundary, rb"^pub type CellResultV1<T> = [^\n]+;\n")
@@ -41,10 +42,14 @@ mod binding {
     use super::{require, CellDigestV1, CellErrorV1, CellResultV1};
     use super::manifest::{CellChunkV1, CellContextV1, CellManifestV1};
 """
-    return (shell + digest + result + check + b"#[allow(dead_code)]\nmod manifest {\n" +
-            wire + b"\n}\n" + isolated + binding_source() +
+    base = shell + digest + result + check + b"#[allow(dead_code)]\nmod manifest {\n" + wire + b"\n}\n"
+    if with_closure:
+        return (base +
+                b"use manifest::{CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES};\n"
+                b"#[allow(dead_code)]\nmod closure {\n" + CLOSURE.read_bytes() + b"\n}\n"
+                b'include!("closure_observation.rs");\n')
+    return (base + isolated + binding_source() +
             b'include!("binding_observation.rs");\n}\n' + ADAPTER.read_bytes())
-
 
 def regular(path):
     if path.resolve(strict=True) != path or not path.is_file():
@@ -132,14 +137,23 @@ def dependency_graph(artifact):
     return rust, details, bound
 
 
-def build(work):
+def build(work, *, with_closure=False):
     path = Path(os.environ[ENV]).absolute()
     rust, graph, bound = dependency_graph(path)
     source_path, binary = work / "original.rs", work / "original"
-    raw = source()
+    raw = source(with_closure=with_closure)
     source_path.write_bytes(raw)
     observe = BINDING_ADAPTER.read_bytes()
     (work / "binding_observation.rs").write_bytes(observe)
+    extra_proof = {}
+    if with_closure:
+        closure_observer = Path(__file__).with_name("rust_cell_closure_reference.rs").read_bytes()
+        (work / "closure_observation.rs").write_bytes(closure_observer)
+        extra_proof = {"original_closure_source_sha256": sha(CLOSURE.read_bytes()),
+                       "oracle_closure_observer_sha256": sha(closure_observer)}
+    else:
+        extra_proof = {"original_binding_source_sha256": sha(binding_source()),
+                       "oracle_binding_observer_sha256": sha(observe)}
     subprocess.run(["rustc", "--edition=2024", "-Dwarnings", "-L", f"dependency={path.parent}",
                     "--extern", f"sha2={path}", source_path, "-o", binary],
                    check=True, timeout=45, capture_output=True)
@@ -147,7 +161,5 @@ def build(work):
         raise ValueError("locked oracle library changed during linking")
     return binary, {"mode": "verified-prebuilt-original-sha2", "cargo_lock_sha256": sha(LOCK.read_bytes()),
                     "original_manifest_source_sha256": sha(CODEC.read_bytes()),
-                    "original_binding_source_sha256": sha(binding_source()),
-                    "oracle_binding_observer_sha256": sha(observe),
                     "oracle_source_sha256": sha(raw), "oracle_sha256": sha(binary.read_bytes()),
-                    "rustc": rust, "locked_graph": graph}
+                    "rustc": rust, "locked_graph": graph, **extra_proof}

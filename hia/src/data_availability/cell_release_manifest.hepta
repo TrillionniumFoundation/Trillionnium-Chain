@@ -3,7 +3,8 @@ fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,tr
 block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
   extent:usize = buffer.len(input)
   length:u64 = int.cast(extent) {"mode":"wrap"}
-  code:u32,count:u64 = call(input,length) {"function":"crm_decode"}
+  input_start:u64 = const() {"value":0}
+  code:u32,count:u64 = call(input,input_start,length) {"function":"crm_decode"}
   zero:u32 = const() {"value":0}
   valid:bool = compare.eq(code,zero)
   branch valid room(input,output,scratch,length,count) failure(code)
@@ -17,13 +18,13 @@ block room(ri:readbuf,ro:mutbuf,rs:mutbuf,rl:u64,rn:u64)
   fits:bool = bool.and(enough_o,enough_w)
   branch fits hash(ri,ro,rs,rl,rn) capacity()
 block hash(hi:readbuf,ho:mutbuf,hs:mutbuf,hl:u64,hn:u64)
-  result:u64 = call(hi,hl,hs) {"function":"crm_hash"}
   zero_h:u64 = const() {"value":0}
+  result:u64 = call(hi,zero_h,hl,hs) {"function":"crm_hash"}
   done:bool = compare.eq(result,zero_h)
   branch done publish(ho,hs,hn) internal()
 block publish(po:mutbuf,ps:mutbuf,pn:u64)
-  start:u64 = const() {"value":0}
-  count_at:u64 = call(ps,po,start) {"function":"sb_copy_digest"}
+  output_start:u64 = const() {"value":0}
+  count_at:u64 = call(ps,po,output_start) {"function":"sb_copy_digest"}
   at:usize = int.cast(count_at) {"mode":"wrap"}
   b:u8 = int.cast(pn) {"mode":"wrap"}
   _ = buffer.store(po,at,b)
@@ -53,25 +54,27 @@ block failure(error:u32)
   ret(error)
 end
 
-fn crm_decode(input:readbuf,length:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,length:u64)
+fn crm_decode(input:readbuf,wire_start:u64,length:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,wire_start:u64,length:u64)
   cap:u64 = const() {"value":1048576}
   size_ok:bool = compare.le(length,cap)
-  branch size_ok magic_extent(input,length) bad_length()
-block magic_extent(mi:readbuf,ml:u64)
+  end_at:u64 = int.add.wrap(wire_start,length)
+  branch size_ok magic_extent(input,wire_start,end_at,length) bad_length()
+block magic_extent(mi:readbuf,ms:u64,me:u64,ml:u64)
   four:u64 = const() {"value":4}
   present:bool = compare.ge(ml,four)
-  branch present magic(mi,ml,four) bad_version()
-block magic(gi:readbuf,gl:u64,gw:u64)
-  zero_g:u64 = const() {"value":0}
-  actual:u64 = call(gi,zero_g,gw) {"function":"rac_read_le"}
+  branch present magic(mi,ms,me,four) bad_version()
+block magic(gi:readbuf,gs:u64,ge:u64,gw:u64)
+  actual:u64 = call(gi,gs,gw) {"function":"rac_read_le"}
   tcr1:u64 = const() {"value":827474772}
   matches:bool = compare.eq(actual,tcr1)
-  branch matches family_length_extent(gi,gl,gw) bad_version()
-block family_length_extent(ei:readbuf,el:u64,ew:u64)
-  five:u64 = const() {"value":5}
-  present_e:bool = compare.ge(el,five)
-  branch present_e family_length(ei,el,ew,five) truncated()
+  after_magic:u64 = int.add.wrap(gs,gw)
+  branch matches family_length_extent(gi,ge,after_magic) bad_version()
+block family_length_extent(ei:readbuf,ee:u64,ea:u64)
+  one_e:u64 = const() {"value":1}
+  start_family:u64 = int.add.wrap(ea,one_e)
+  present_e:bool = compare.le(start_family,ee)
+  branch present_e family_length(ei,ee,ea,start_family) truncated()
 block family_length(fi:readbuf,fl:u64,fw:u64,fh:u64)
   one_f:u64 = const() {"value":1}
   size:u64 = call(fi,fw,one_f) {"function":"rac_read_le"}
@@ -215,13 +218,13 @@ block no()
   ret(bad)
 end
 
-fn crm_hash(input:readbuf,length:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(input:readbuf,length:u64,work:mutbuf)
+fn crm_hash(input:readbuf,start:u64,length:u64,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,length:u64,work:mutbuf)
   initial:u64 = call(work) {"function":"tr_sha_init"}
   zero:u64 = const() {"value":0}
   okay:bool = compare.eq(initial,zero)
-  branch okay prefix(input,length,work) fail(initial)
-block prefix(pi:readbuf,pl:u64,pw:mutbuf)
+  branch okay prefix(input,start,length,work) fail(initial)
+block prefix(pi:readbuf,ps:u64,pl:u64,pw:mutbuf)
   at_0:u64 = const() {"value":1208}
   word_0:u64 = const() {"value":7810758179799593588}
   _word_0:u64 = call(pw,at_0,word_0) {"function":"tr_put"}
@@ -238,9 +241,9 @@ block prefix(pi:readbuf,pl:u64,pw:mutbuf)
   fed:u64 = call(pw,at_0,prefix_extent) {"function":"tr_sha_update_work"}
   zero_p:u64 = const() {"value":0}
   okay_p:bool = compare.eq(fed,zero_p)
-  branch okay_p feed(pi,pl,pw,zero_p) fail(fed)
-block feed(fi:readbuf,fl:u64,fw:mutbuf,fz:u64)
-  result:u64 = call(fi,fz,fl,fw) {"function":"tr_sha_update"}
+  branch okay_p feed(pi,ps,pl,pw,zero_p) fail(fed)
+block feed(fi:readbuf,fs:u64,fl:u64,fw:mutbuf,fz:u64)
+  result:u64 = call(fi,fs,fl,fw) {"function":"tr_sha_update"}
   body_ok:bool = compare.eq(result,fz)
   branch body_ok finish(fw) fail(result)
 block finish(ww:mutbuf)
