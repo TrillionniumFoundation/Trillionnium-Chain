@@ -763,6 +763,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-environment",
+      "node_integration_complete": false,
+      "scope": "Pure TCV1 declared model-to-environment environment-ID, exact family and Configuration-role relation over one private EVB1 frame with genuine canonical TMR1/TCD1 bytes; not full TCV1/CTS1 or any loader, authority, storage, tensor payload, network, adoption or production route.",
+      "source": "hia/src/data_availability/cell_version_environment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_version_environment.py",
+        "hia/tests/rust_cell_version_environment_reference.rs",
+        "hia/tests/cell_manifest_original.py"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
