@@ -57,7 +57,10 @@ The synthetic root invariant includes all required roles; missing-role and
 live persisted/rotation behavior are not covered here. The post-state layer
 still requires an independently obtained fresh checkpoint in non-synthetic use.
 The original same-call token, trusted live snapshot source and durable
-transition remain unported/unclaimed.
+transition remain unported/unclaimed. The staged driver also replays every
+public fixture through [one linked shadow qualification call](../../platform/release_pq_shadow/README.md).
+That shadow keeps each successful phase internal to the call; it does not
+replace production Rust or export an authorization token.
 
 ```sh
 python3 -I -S -B hia/tests/qualify_release_pq_callback.py \

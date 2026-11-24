@@ -1,0 +1,4 @@
+{
+  global: trnm_release_shadow_v1;
+  local: *;
+};

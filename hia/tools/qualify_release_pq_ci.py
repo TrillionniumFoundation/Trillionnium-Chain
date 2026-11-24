@@ -65,6 +65,16 @@ BACKENDS = ("direct", "selfhost")
 COMMON = ("qualification.json", "rust-build.stdout.jsonl", "rust-build.stderr.raw")
 RAW = ("process.json", "stdout.raw", "stderr.raw")
 CALLBACK_PHASES = {"unsigned", "identity", "locator", "message", "quorum", "strict", "state"}
+LINKED_EXPORT = "trnm_release_shadow_v1"
+LINKED_CONTROLS = (
+    ("truncated_private_wire", 100, "wire", 100),
+    ("nonzero_reserved", 100, "wire", 100),
+    ("output_below_extent", 102, "wire", 102),
+    ("unknown_role_pins_before_unsigned", 209, "outer", 209),
+    ("anchor_refused_after_genuine_quorum", 111, "state", 111),
+    ("wrong_locator_before_old_anchor", 2, "locator_mismatch", 0),
+    ("valid_after_refusals", 0, "state", 0),
+)
 
 
 def require(ok, message):
@@ -152,7 +162,8 @@ def stage_files(stage):
         return (*COMMON, "owned-verifier.json")
     if stage == "callback":
         return (*COMMON, *(f"{b}-{kind}-native-build.json" for b in BACKENDS
-                           for kind in sorted(CALLBACK_PHASES)))
+                           for kind in sorted(CALLBACK_PHASES)),
+                *(f"{b}-linked-shadow.json" for b in BACKENDS))
     return (*COMMON, *(f"{b}-{kind}-native-build.json" for b in BACKENDS
                        for kind in ("quorum", "transcript")))
 
@@ -257,6 +268,35 @@ def callback_transition(row, code):
     return transition
 
 
+def linked_callback_receipt(value, backend, declared, native_source_hashes):
+    dynamic = value.get("dynamic", {})
+    units = value.get("units", {})
+    require(value.get("schema") == "trnm.hia.release-shadow-linked.v1"
+            and value.get("scope") == "qualification-only"
+            and value.get("backend") == backend and value.get("bridge_language") == "C"
+            and value.get("production_authority") is False
+            and value.get("pure_hia_owner") is False and value.get("externally_reusable_token") is False
+            and value.get("exports") == dynamic.get("dynamic_exports") == [LINKED_EXPORT]
+            and dynamic.get("machine") == 62 and dynamic.get("kind") == "ET_DYN"
+            and value.get("artifact_sha256") == declared and valid_hash(declared)
+            and valid_hash(value.get("bridge_object_sha256"))
+            and set(value.get("platform_tools", {})) == {"cc", "ld", "objcopy"}
+            and set(value.get("bridge_inputs", {})) == {"bridge.c", "exports.map"}
+            and all(valid_hash(x) for label in ("platform_tools", "bridge_inputs") for x in value[label].values())
+            and set(units) == set(native_source_hashes) == CALLBACK_PHASES - {"strict"},
+            "linked callback image, ownership scope or export differs")
+    for name, unit in units.items():
+        require(unit.get("symbol") == "trnm_release_shadow_" + name
+                and unit.get("fallback_used") is False
+                and unit.get("source_sha256") == native_source_hashes[name]
+                and all(valid_hash(unit.get(k)) for k in ("raw_sha256", "linked_sha256", "text_sha256"))
+                and (valid_hash(unit.get("compiler_wire_sha256")) if backend == "selfhost"
+                     else unit.get("compiler_wire_sha256") is None)
+                and (unit.get("local_scalar_exports") == [] if backend == "selfhost"
+                     else type(unit.get("local_scalar_exports")) is list),
+                "linked callback phase binding differs")
+
+
 def validate_stage(root, stage, line, tree, lock):
     process = obj(root / "process.json")
     require(process.get("stage") == stage and all(process.get(k) == v and type(process[k]) is type(v)
@@ -316,15 +356,17 @@ def validate_stage(root, stage, line, tree, lock):
             hashes[backend] = {k: current.get(f"native_{k}_sha256") for k in ("quorum", "transcript")}
         else:
             require(report.get("production_authority") is False and report.get("native_same_call_token") is False
-                    and report.get("test_only_composition") is True and report.get("native_shadow_checkpoint") is True,
+                    and report.get("test_only_composition") is True and report.get("native_shadow_checkpoint") is True
+                    and report.get("same_call_linked_shadow") is True and report.get("linked_bridge_language") == "C",
                     "incorrect callback scope")
             rows = current.get("rows")
             roster(rows, "case", "native", tuple(row[:2] for row in CASES[stage]), ("public_fixture_sha256",))
             for row, (_, code, phase, subcode) in zip(rows, CASES[stage], strict=True):
                 trace = row.get("native_phases")
                 require(type(row.get("actual_original")) is int and row["actual_original"] == code
-                        and type(trace) is list and trace and trace[-1] == [phase, subcode],
-                        "callback stage or original outcome differs")
+                        and type(trace) is list and trace and trace[-1] == [phase, subcode]
+                        and row.get("linked_terminal") == [code, phase, subcode],
+                        "callback stage, linked terminal or original outcome differs")
                 transition = callback_transition(row, code)
                 if backend == "selfhost":
                     counterpart = next(other for other in report["backends"]["direct"]["rows"]
@@ -334,6 +376,16 @@ def validate_stage(root, stage, line, tree, lock):
                             "callback emitters disagree on the exact public fixture or checkpoint")
             hashes[backend] = current.get("images", {})
             require(set(hashes[backend]) == CALLBACK_PHASES, "missing callback phase image")
+            require(current.get("linked_private_controls") ==
+                    [{"label": label, "status": code, "stage": phase, "detail": detail}
+                     for label, code, phase, detail in LINKED_CONTROLS], "linked callback controls differ")
+            linked_callback_receipt(obj(root / f"{backend}-linked-shadow.json"), backend,
+                    current.get("linked_elf_sha256"),
+                    {name: obj(root / f"{backend}-{name}-native-build.json")["chain_migration"]["source_sha256"]
+                     for name in CALLBACK_PHASES - {"strict"}})
+            if backend == "selfhost":
+                require(current["linked_elf_sha256"] != report["backends"]["direct"]["linked_elf_sha256"],
+                        "linked callback emitters must produce distinct images")
         require(all(valid_hash(x) for x in hashes[backend].values()), "missing emitted machine identity")
         if stage != "observation":
             for kind, digest in hashes[backend].items():

@@ -85,6 +85,31 @@ class ReleasePqHostedEvidence(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "differs from the Rust owner"):
                 q.callback_transition({"transition_checkpoint": broken}, 0)
 
+    def test_no_extra_linked_export_or_unsealed_phase(self):
+        phases = q.CALLBACK_PHASES - {"strict"}
+        digest = "a" * 64
+        sources = {name: digest for name in phases}
+        made = {"schema": "trnm.hia.release-shadow-linked.v1", "scope": "qualification-only",
+                "backend": "selfhost", "bridge_language": "C", "production_authority": False,
+                "pure_hia_owner": False, "externally_reusable_token": False,
+                "exports": [q.LINKED_EXPORT], "artifact_sha256": digest, "bridge_object_sha256": digest,
+                "dynamic": {"machine": 62, "kind": "ET_DYN", "dynamic_exports": [q.LINKED_EXPORT]},
+                "platform_tools": {name: digest for name in ("cc", "ld", "objcopy")},
+                "bridge_inputs": {name: digest for name in ("bridge.c", "exports.map")},
+                "units": {name: {"symbol": "trnm_release_shadow_" + name, "fallback_used": False,
+                                 "source_sha256": digest, "raw_sha256": digest, "linked_sha256": digest,
+                                 "text_sha256": digest, "compiler_wire_sha256": digest,
+                                 "local_scalar_exports": []}
+                          for name in phases}}
+        q.linked_callback_receipt(made, "selfhost", digest, sources)
+        for key, value in (("externally_reusable_token", True), ("pure_hia_owner", True),
+                           ("exports", [q.LINKED_EXPORT, "unverified_quorum"])):
+            with self.assertRaisesRegex(ValueError, "linked callback image"):
+                q.linked_callback_receipt({**made, key: value}, "selfhost", digest, sources)
+        made["units"]["quorum"]["source_sha256"] = "b" * 64
+        with self.assertRaisesRegex(ValueError, "linked callback phase binding"):
+            q.linked_callback_receipt(made, "selfhost", digest, sources)
+
     def test_link_and_size_fail_closed(self):
         outside = self.root / "tiny.json"
         outside.write_bytes(b"{}")

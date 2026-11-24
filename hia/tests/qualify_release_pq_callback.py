@@ -14,6 +14,8 @@ from contextlib import ExitStack
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.platform.pq_auth.qualification.contract import check_platform_environment
+from hia.platform.release_pq_shadow.build import LinkedShadow
+from hia.tests.release_linked_shadow import observe, private_controls, request
 from hia.tests.native_support import NativeModule
 from hia.tests.qualify_release_pq_observation import build_original, execute, require, sha
 from hia.tests.test_release_pq_bundle_checkpoint import snapshot_identity
@@ -147,7 +149,8 @@ def check(out):
             modules = {name: stack.enter_context(NativeModule(DIR / (stem + ".hepta"),
                                       backend=backend, byte_exports=("f0",)))
                        for name, stem in sources.items()}
-            rows = []
+            linked = stack.enter_context(LinkedShadow(backend))
+            rows, linked_cases, control = [], [], None
             for i, (label, expected, phase, stage_code) in enumerate(CASES):
                 start = head + i * row_width
                 row = raw[start:start + row_width]
@@ -167,9 +170,27 @@ def check(out):
                               "borrowed_snapshot_sha256": observation[1].hex()}
                 else:
                     require(observation is None and checkpoint == bytes(32), "checkpoint on refusal")
+                borrowed = metadata + snapshot(trusted_tip=tip, owner_tip=tip, root_network=network,
+                    generation=1, root_expiry=expiry, now=now, floor=now, version=0, events=0)[155:]
+                linked_cases.append((request(bundle, borrowed, roster, signatures), 72))
+                if actual == 0:
+                    require(control is None, "unexpected second positive linked control fixture")
+                    control = (bundle, borrowed, roster, signatures, b"".join(observation))
                 rows.append({"case": label, "actual_original": compare, "native": actual,
                              "native_phases": trace, "public_fixture_sha256": sha(row),
                              "transition_checkpoint": record})
+            for row, (code, stage, detail, data) in zip(rows, observe(linked, linked_cases), strict=True):
+                require(code == row["native"] and [stage, detail] == list(row["native_phases"][-1]),
+                        f"linked native pipeline or first failure differs: {backend} {row['case']}")
+                checkpoint = row["transition_checkpoint"]
+                require(data is None if code else data == bytes.fromhex(
+                    checkpoint["native"] + checkpoint["borrowed_snapshot_sha256"]),
+                    "linked output differs from genuine Rust and staged observation")
+                row["linked_terminal"] = [code, stage, detail]
+            require(control is not None, "missing exact positive Rust fixture")
+            controls = private_controls(linked, *control)
+            (out / f"{backend}-linked-shadow.json").write_text(
+                json.dumps(linked.receipt, sort_keys=True, indent=2) + "\n")
             images = {}
             for name, module in modules.items():
                 images[name] = module.artifact_sha256
@@ -179,9 +200,11 @@ def check(out):
                     image = module.library.read_bytes()
                     require(sha(image) == images[name], "native callback proof image changed")
                     (out / f"{backend}-{name}.so").write_bytes(image)
-            results[backend] = {"images": images, "rows": rows}
+            results[backend] = {"images": images, "rows": rows, "linked_elf_sha256": linked.artifact_sha256,
+                                "linked_private_controls": controls}
     require(all(results["direct"]["images"][name] != results["selfhost"]["images"][name]
-                for name in sources), "independent machine emitters are required for every phase")
+                for name in sources) and results["direct"]["linked_elf_sha256"]
+                != results["selfhost"]["linked_elf_sha256"], "independent machine emitters are required for every phase")
     require(source == execute(["git", "show", "-s", "--format=%H %T"], cwd=ROOT).stdout,
             "local source changed")
     clean = not execute(["git", "status", "--porcelain"], cwd=ROOT).stdout
@@ -190,6 +213,7 @@ def check(out):
             "committed-clean" if initially_clean and clean else "dirty-candidate",
             "locked_original": provenance, "backends": results, "production_authority": False,
             "native_same_call_token": False, "native_shadow_checkpoint": True,
+            "same_call_linked_shadow": True, "linked_bridge_language": "C",
             "test_only_composition": True}
 
 
