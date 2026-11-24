@@ -46,33 +46,12 @@ block extent_check(ei:readbuf,eo:mutbuf,ew:mutbuf,el:usize,en:u64,ev:u64,ea:u64,
   branch exact wire(ei,eo,ew,en,ev,ea,ep,artifact_begin,package_begin,key_begin,expected) malformed()
 block wire(wi:readbuf,wo:mutbuf,ww:mutbuf,wn:u64,wv:u64,wa:u64,wp:u64,was:u64,wps:u64,wrs:u64,we:u64)
   valid:bool = call(wi,was,wps,wrs,we) {"function":"up_wire"}
-  branch valid prelude(wi,wo,ww,wn,wv,wa,wp,was,wps,wrs,we) malformed()
-block prelude(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pv:u64,pa:u64,pp:u64,pas:u64,pps:u64,prs:u64,pe:u64)
-  header_valid:bool = call(pi,pn,pv,pa,pp) {"function":"up_header"}
-  branch header_valid source(pi,po,pw,pa,pp,pas,pps,prs,pe) invalid_bundle()
-block source(si:readbuf,so:mutbuf,sw:mutbuf,sa:u64,sp:u64,sas:u64,sps:u64,srs:u64,se:u64)
-  source_start:u64 = const() {"value":106}
-  source_status:u32 = call(si,source_start) {"function":"es_validate_at"}
+  branch valid check(wi,wo,ww,wn,wv,wa,wp,was,wps,wrs,we) malformed()
+block check(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pv:u64,pa:u64,pp:u64,pas:u64,pps:u64,prs:u64,pe:u64)
+  result:u32 = call(pi,pn,pv,pa,pp,pas,pps,prs,pe) {"function":"up_check"}
   zero:u32 = const() {"value":0}
-  valid_source:bool = compare.eq(source_status,zero)
-  branch valid_source artifact(si,so,sw,sa,sp,sas,sps,srs,se) refused(source_status)
-block artifact(ai:readbuf,ao:mutbuf,aw:mutbuf,aa:u64,ap:u64,aas:u64,aps:u64,ars:u64,ae:u64)
-  art_status:u32 = call(ai,aa,aas) {"function":"aset_membership_at"}
-  art_zero:u32 = const() {"value":0}
-  valid_artifact:bool = compare.eq(art_status,art_zero)
-  branch valid_artifact sbom(ai,ao,aw,aa,ap,aas,aps,ars,ae) refused(art_status)
-block sbom(bi:readbuf,bo:mutbuf,bw:mutbuf,ba:u64,bp:u64,bas:u64,bps:u64,brs:u64,be:u64)
-  sbom_status:u32 = call(bi,bp,bps) {"function":"sba_packages_at"}
-  sbom_zero:u32 = const() {"value":0}
-  valid_sbom:bool = compare.eq(sbom_status,sbom_zero)
-  branch valid_sbom coverage(bi,bo,bw,ba,bp,bas,bps,brs,be) sbom_error(sbom_status)
-block sbom_error(code:u32)
-  class_offset:u32 = const() {"value":10}
-  specific:u32 = int.add.wrap(code,class_offset)
-  ret(specific)
-block coverage(ci:readbuf,co:mutbuf,cw:mutbuf,ca:u64,cp:u64,cas:u64,cps:u64,crs:u64,ce:u64)
-  covered:bool = call(ci,cp,crs,ce,cps) {"function":"sba_coverage_at"}
-  branch covered capacity(ci,co,cw,ca,cp,cas,cps) incomplete()
+  validated:bool = compare.eq(result,zero)
+  branch validated capacity(pi,po,pw,pa,pp,pas,pps) refused(result)
 block capacity(fi:readbuf,fo:mutbuf,fw:mutbuf,fa:u64,fp:u64,fas:u64,fps:u64)
   out_len:usize = buffer.len(fo)
   work_len:usize = buffer.len(fw)
@@ -81,32 +60,13 @@ block capacity(fi:readbuf,fo:mutbuf,fw:mutbuf,fa:u64,fp:u64,fas:u64,fps:u64)
   out_ok:bool = compare.ge(out_len,out_min)
   work_ok:bool = compare.ge(work_len,work_min)
   sufficient:bool = bool.and(out_ok,work_ok)
-  branch sufficient derive_source(fi,fo,fw,fa,fp,fas,fps) short()
-block derive_source(di:readbuf,do_:mutbuf,dw:mutbuf,da:u64,dp:u64,das:u64,dps:u64)
-  start:u64 = const() {"value":106}
-  hashed:u64 = call(di,dw,start) {"function":"es_hash_at"}
-  hash_zero:u64 = const() {"value":0}
-  hash_ok:bool = compare.eq(hashed,hash_zero)
-  branch hash_ok retain_source(di,do_,dw,da,dp,das,dps) internal()
-block retain_source(ri:readbuf,ro:mutbuf,rw:mutbuf,ra:u64,rp:u64,ras:u64,rps:u64)
-  source_slot:u64 = const() {"value":5200}
-  _source_saved:u64 = call(rw,source_slot) {"function":"sb_append_digest"}
-  art_result:u32 = call(ri,rw,ra,ras) {"function":"aset_hash_at"}
-  art_ok_code:u32 = const() {"value":0}
-  art_hashed:bool = compare.eq(art_result,art_ok_code)
-  branch art_hashed retain_artifact(ri,ro,rw,rp,rps) internal()
-block retain_artifact(hi:readbuf,ho:mutbuf,hw:mutbuf,hp:u64,hps:u64)
-  artifact_slot:u64 = const() {"value":5232}
-  _artifact_saved:u64 = call(hw,artifact_slot) {"function":"sb_append_digest"}
-  sbom_result:u32 = call(hi,hw,hp,hps) {"function":"sb_hash_at"}
-  sbom_ok_code:u32 = const() {"value":0}
-  sbom_hashed:bool = compare.eq(sbom_result,sbom_ok_code)
-  branch sbom_hashed retain_sbom(ho,hw) internal()
-block retain_sbom(zo:mutbuf,zw:mutbuf)
-  sbom_slot:u64 = const() {"value":5264}
-  _sbom_saved:u64 = call(zw,sbom_slot) {"function":"sb_append_digest"}
-  first:u64 = const() {"value":0}
-  jump publish(zo,zw,first)
+  branch sufficient derive(fi,fo,fw,fa,fp,fas,fps) short()
+block derive(di:readbuf,do_:mutbuf,dw:mutbuf,da:u64,dp:u64,das:u64,dps:u64)
+  derived_status:u32 = call(di,dw,da,dp,das,dps) {"function":"up_derive"}
+  derived_zero:u32 = const() {"value":0}
+  output_start:u64 = const() {"value":0}
+  hashed:bool = compare.eq(derived_status,derived_zero)
+  branch hashed publish(do_,dw,output_start) refused(derived_status)
 block publish(pub_out:mutbuf,pub_work:mutbuf,idx:u64)
   source_at:u64 = const() {"value":5200}
   at:u64 = int.add.wrap(source_at,idx)
@@ -126,9 +86,40 @@ block malformed()
 block short()
   capacity_error:u32 = const() {"value":102}
   ret(capacity_error)
-block internal()
-  helper_error:u32 = const() {"value":103}
-  ret(helper_error)
+block refused(error:u32)
+  ret(error)
+end
+
+fn up_check(pi:readbuf,pn:u64,pv:u64,pa:u64,pp:u64,pas:u64,pps:u64,prs:u64,pe:u64) -> (u32) effects(read,write,trap) entry(prelude)
+block prelude(pi:readbuf,pn:u64,pv:u64,pa:u64,pp:u64,pas:u64,pps:u64,prs:u64,pe:u64)
+  header_valid:bool = call(pi,pn,pv,pa,pp) {"function":"up_header"}
+  branch header_valid source(pi,pa,pp,pas,pps,prs,pe) invalid_bundle()
+block source(si:readbuf,sa:u64,sp:u64,sas:u64,sps:u64,srs:u64,se:u64)
+  source_start:u64 = const() {"value":106}
+  source_status:u32 = call(si,source_start) {"function":"es_validate_at"}
+  zero:u32 = const() {"value":0}
+  valid_source:bool = compare.eq(source_status,zero)
+  branch valid_source artifact(si,sa,sp,sas,sps,srs,se) refused(source_status)
+block artifact(ai:readbuf,aa:u64,ap:u64,aas:u64,aps:u64,ars:u64,ae:u64)
+  art_status:u32 = call(ai,aa,aas) {"function":"aset_membership_at"}
+  art_zero:u32 = const() {"value":0}
+  valid_artifact:bool = compare.eq(art_status,art_zero)
+  branch valid_artifact sbom(ai,aa,ap,aas,aps,ars,ae) refused(art_status)
+block sbom(bi:readbuf,ba:u64,bp:u64,bas:u64,bps:u64,brs:u64,be:u64)
+  sbom_status:u32 = call(bi,bp,bps) {"function":"sba_packages_at"}
+  sbom_zero:u32 = const() {"value":0}
+  valid_sbom:bool = compare.eq(sbom_status,sbom_zero)
+  branch valid_sbom coverage(bi,ba,bp,bas,bps,brs,be) sbom_error(sbom_status)
+block sbom_error(code:u32)
+  class_offset:u32 = const() {"value":10}
+  specific:u32 = int.add.wrap(code,class_offset)
+  ret(specific)
+block coverage(ci:readbuf,ca:u64,cp:u64,cas:u64,cps:u64,crs:u64,ce:u64)
+  covered:bool = call(ci,cp,crs,ce,cps) {"function":"sba_coverage_at"}
+  branch covered accepted() incomplete()
+block accepted()
+  passed_code:u32 = const() {"value":0}
+  ret(passed_code)
 block invalid_bundle()
   bundle_error:u32 = const() {"value":110}
   ret(bundle_error)
@@ -137,6 +128,37 @@ block incomplete()
   ret(missing_error)
 block refused(error:u32)
   ret(error)
+end
+
+fn up_derive(di:readbuf,dw:mutbuf,da:u64,dp:u64,das:u64,dps:u64) -> (u32) effects(read,write,trap) entry(derive_source)
+block derive_source(di:readbuf,dw:mutbuf,da:u64,dp:u64,das:u64,dps:u64)
+  start:u64 = const() {"value":106}
+  hashed:u64 = call(di,dw,start) {"function":"es_hash_at"}
+  hash_zero:u64 = const() {"value":0}
+  hash_ok:bool = compare.eq(hashed,hash_zero)
+  branch hash_ok retain_source(di,dw,da,dp,das,dps) internal()
+block retain_source(ri:readbuf,rw:mutbuf,ra:u64,rp:u64,ras:u64,rps:u64)
+  source_slot:u64 = const() {"value":5200}
+  _source_saved:u64 = call(rw,source_slot) {"function":"sb_append_digest"}
+  art_result:u32 = call(ri,rw,ra,ras) {"function":"aset_hash_at"}
+  art_ok_code:u32 = const() {"value":0}
+  art_hashed:bool = compare.eq(art_result,art_ok_code)
+  branch art_hashed retain_artifact(ri,rw,rp,rps) internal()
+block retain_artifact(hi:readbuf,hw:mutbuf,hp:u64,hps:u64)
+  artifact_slot:u64 = const() {"value":5232}
+  _artifact_saved:u64 = call(hw,artifact_slot) {"function":"sb_append_digest"}
+  sbom_result:u32 = call(hi,hw,hp,hps) {"function":"sb_hash_at"}
+  sbom_ok_code:u32 = const() {"value":0}
+  sbom_hashed:bool = compare.eq(sbom_result,sbom_ok_code)
+  branch sbom_hashed retain_sbom(hw) internal()
+block retain_sbom(zw:mutbuf)
+  sbom_slot:u64 = const() {"value":5264}
+  _sbom_saved:u64 = call(zw,sbom_slot) {"function":"sb_append_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block internal()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
 end
 
 fn up_wire(input:readbuf,artifact:u64,packages:u64,required:u64,end:u64) -> (bool) effects(read,trap) entry(entry)

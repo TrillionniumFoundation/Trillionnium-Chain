@@ -1121,6 +1121,17 @@
       ]
     },
     {
+      "id": "release-bundle/unsigned-candidate",
+      "node_integration_complete": false,
+      "scope": "One emitted bounded unsigned V0 owner deriving actual typed source, artifact, SBOM, provenance and bundle digests over one frame. Original pre-signature decision order, independent link checks and atomic output. Signature, custody, trusted roster derivation and production admission remain outside.",
+      "source": "hia/src/release_bundle/unsigned_candidate.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_unsigned_candidate.py",
+        "hia/tests/rust_release_unsigned_candidate_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/unsigned-prefix",
       "node_integration_complete": false,
       "scope": "Single bounded native unsigned V0 prefix owner over one borrowed frame. Checks top-level declarations, source, artifact membership, SBOM membership and required keys in original order, then atomically publishes three computed digests. No provenance/final binding in this entry, signature verification, custody, or production integration.",
@@ -1410,6 +1421,7 @@
         "release-bundle/sbom-admission",
         "release-bundle/sbom-digest",
         "release-bundle/sha512-transcript-bootstrap",
+        "release-bundle/unsigned-candidate",
         "release-bundle/unsigned-prefix"
       ],
       "legacy_path": "trillionnium/crates/trnm-release-bundle",
