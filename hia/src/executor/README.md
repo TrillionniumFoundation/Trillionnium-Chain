@@ -74,6 +74,14 @@ The function has no filesystem, process environment, clock or external authority
 access. Scratch is initialized for every successful parse, permitting sequential
 reuse across different batch sizes and configurations.
 
+The three internal little-endian word helpers use a straight-line sequence
+of eight checked byte accesses, in the original ascending order. They
+support unaligned borrowed buffers without widening or bypassing a bounds
+check. The constant shifts preserve byte order and remove the dynamic
+eight-iteration loop. The Bench digest kernel imports the same checked
+read helper; neither its byte domains nor the scheduler dependency and
+placement rules change.
+
 There is no new transaction/reference/payload count ceiling. Checked lengths,
 addressable memory and the caller's extents bound the frame. The test runner's
 1 MiB convenience bound is not a product limit: raw sealed-artifact tests run
