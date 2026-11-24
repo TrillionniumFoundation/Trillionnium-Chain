@@ -3,11 +3,11 @@
   "batch_parent": "408d35eec10d0818ebbde4639459753c270ec7e7445156c59d4178418aa6681d",
   "expected_emitted_prefix": {
     "bytes": 13224,
-    "sha256": "2cb492fd3604ec4d93be2cc0c5699b74481197f0afef25e02e26f12959544087"
+    "sha256": "f2d3eb89e9a5ca2e566cb5f920526b949396d5c65a51aea00c19916f7783df42"
   },
   "expected_executable": {
-    "bytes": 9416238,
-    "sha256": "90c1af655c9f4fa3bcbdee00875caec055bb879d2a0a28fddff33cb7fce81528"
+    "bytes": 9415870,
+    "sha256": "6e044798ec74ec6f4aae92a406ec2936cf6f7810d75f270a559e4dbd4cc203dc"
   },
   "expected_images": {
     "application_claim": {
@@ -43,8 +43,8 @@
       "sha256": "bb34a922da12cecc675d000aa027ec2a2e3475f3be5b176339e91205d62d0095"
     },
     "ed": {
-      "bytes": 111193,
-      "sha256": "4ec09670bf092c30f74439dfa06a02419223246ab332ee60f8bca0f42a81b939"
+      "bytes": 111009,
+      "sha256": "f2f3e0b52227cbb6418d0f0e8b14e08bc3d7bf7cd08bd86618758548e29d03fd"
     },
     "genesis": {
       "bytes": 268603,
@@ -99,8 +99,8 @@
       "sha256": "65c30f68e2d514d28898f10ece6cf36ca9edcc0b02e910b19f0251dc628ddb59"
     },
     "settings": {
-      "bytes": 425070,
-      "sha256": "c497678770acceb4c2667ef19400e8d657e0ad571efdfb817c67f533afb0676b"
+      "bytes": 424886,
+      "sha256": "56af124ad7aaa227714190f4672a877f9a80263f4c98aa4b1016407af48f3218"
     },
     "sha": {
       "bytes": 28938,
@@ -5595,8 +5595,8 @@
           "file": "hia/src/crypto/ed25519_group.hepta",
           "function": "ed_load64",
           "identity": {
-            "bytes": 2061,
-            "sha256": "8bc93779e9b82c42bdb7ceb59f5a95ad077227ce145ef1142a2fea74400e0f1c"
+            "bytes": 1908,
+            "sha256": "b4961a4c4034cd99cd5d6bba4d5b116464a54ca76781ec7bff38698f8b6fcb50"
           },
           "prefix_hex": ""
         },
@@ -5881,8 +5881,8 @@
         }
       ],
       "source": {
-        "bytes": 122104,
-        "sha256": "959b489ab719aba3503927d8190e59834beac977489b40f871e8256b69efec19"
+        "bytes": 121951,
+        "sha256": "ad943a6e0dcb38c094250804439937f44c3a576775906d0e00137f755ae0b5e6"
       },
       "suffix_hex": ""
     },
@@ -13146,8 +13146,8 @@
           "file": "hia/src/crypto/ed25519_group.hepta",
           "function": "ed_load64",
           "identity": {
-            "bytes": 2061,
-            "sha256": "8bc93779e9b82c42bdb7ceb59f5a95ad077227ce145ef1142a2fea74400e0f1c"
+            "bytes": 1908,
+            "sha256": "b4961a4c4034cd99cd5d6bba4d5b116464a54ca76781ec7bff38698f8b6fcb50"
           },
           "prefix_hex": ""
         },
@@ -13459,8 +13459,8 @@
         }
       ],
       "source": {
-        "bytes": 406771,
-        "sha256": "e0062e7f737af38f5f7d5fdfde0c726ec1affca7006d7e1e47220da4c5e5900e"
+        "bytes": 406618,
+        "sha256": "c873024dfda40b5a6f601305f661d4c218d97252fd111ec818e3674cc11d35bc"
       },
       "suffix_hex": ""
     },
