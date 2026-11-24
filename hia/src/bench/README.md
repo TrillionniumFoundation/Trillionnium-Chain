@@ -79,7 +79,7 @@ acquisition, or the full Bench startup/process path.
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
-process, ordinary Classic AutoAdaptive, and explicitly corrected Mixed FootprintDesc. It reads real argv at
+process, ordinary Classic AutoAdaptive, [Classic AggressiveGreedy fast path](#ordinary-classic-aggressivegreedy-fast-path), and explicitly corrected Mixed FootprintDesc. It reads real argv at
 `_start`. Startup accepts either the [passive launcher names](#passive-classic-launcher-environment)
 for ordinary no-profile Classic Original, or the separate HotBucketInterleave
 [single-variable startup policy](#hot-bucket-startup-environment). This is an isolated candidate, not an activated general replacement
@@ -91,7 +91,8 @@ Its admitted invocation is no arguments (Classic, 20,000 transactions and
 or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
 `write-first`, `write-last` or `hot-bucket-interleave`; ordinary Classic with
-an empty environment also admits `auto-adaptive`. Explicit persistence retains
+an empty environment also admits `auto-adaptive` and, without `--profile`,
+`aggressive-greedy`. Explicit persistence retains
 the original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
@@ -206,7 +207,23 @@ changes ordered membership versus Original on the same workload digest.
 The locked original and HIA agree on both orders, the exact adaptive fields
 and persisted file fixed points. The existing limits remain; nonempty startup
 environments, AutoAdaptive on Mixed/HotStreak, the explicit corrected marker
-with AutoAdaptive, and AggressiveGreedy are not admitted here.
+with AutoAdaptive are not admitted here.
+
+### Ordinary Classic AggressiveGreedy fast path
+
+An unmarked Classic invocation may select `aggressive-greedy` when the process
+environment is empty and profiling is not requested. The workload emits the
+existing executor strategy word 6 with the original effective defaults
+(flags 6, deep-scan bit clear); the process does not rewrite it as Original.
+The retained Rust fast path and the HIA scheduler take the same dependency
+placement for Classic, which reads and writes one object per transaction.
+The locked original and HIA are compared on the full output excluding only
+independently checked elapsed time. A separate arithmetic model verifies both
+digest domains and ordered assignment across distinct workload dimensions.
+The existing zero-through-1,000 replay range and 20,000-transaction cap still
+apply. Deep scan and its tunables, profiles, nonempty environments, corrected
+mode, Mixed and HotStreak remain outside this candidate scope. There is no
+new file authority or fallback.
 
 ### Corrected workload qualification
 

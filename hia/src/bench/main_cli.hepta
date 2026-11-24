@@ -225,8 +225,8 @@ block enum_value(ev_i:readbuf,ev_o:mutbuf,ev_n:u64,ev_p:u64,ev_e:u64,ev_k:u64,ev
   native_strategy:bool = bool.or(current_strategies,is_footprint)
   is_auto:bool = compare.eq(enum_index,auto_enum)
   is_greedy:bool = compare.eq(enum_index,greedy_enum)
-  is_not_admitted:bool = bool.or(is_auto,is_greedy)
-  candidate_strategy:bool = bool.or(native_strategy,is_not_admitted)
+  scoped_strategy:bool = bool.or(is_auto,is_greedy)
+  candidate_strategy:bool = bool.or(native_strategy,scoped_strategy)
   is_strat_opt:bool = bool.not(is_work_opt)
   clean_strategy:bool = bool.and(candidate_strategy,is_strat_opt)
   zero_enum:u64 = const() {"value":0}
@@ -337,7 +337,8 @@ block strategy_semantics(o_ss:mutbuf)
   ss_legacy_denied:bool = bool.and(ss_unmarked,ss_uses_footprint)
   ss_auto:u64 = const() {"value":5}
   ss_workload_at:u64 = const() {"value":48}
-  ss_other_denied:bool = compare.gt(ss_strategy,ss_auto)
+  ss_aggressive:u64 = const() {"value":6}
+  ss_other_denied:bool = compare.gt(ss_strategy,ss_aggressive)
   ss_workload:u64 = call(o_ss,ss_workload_at) {"function":"bench_get"}
   ss_classic:bool = compare.eq(ss_workload,ss_zero)
   ss_uses_auto:bool = compare.eq(ss_strategy,ss_auto)
@@ -345,7 +346,15 @@ block strategy_semantics(o_ss:mutbuf)
   ss_wrong_auto:bool = bool.not(ss_auto_domain)
   ss_auto_denied:bool = bool.and(ss_uses_auto,ss_wrong_auto)
   ss_previous_denied:bool = bool.or(ss_legacy_denied,ss_other_denied)
-  ss_denied:bool = bool.or(ss_previous_denied,ss_auto_denied)
+  ss_uses_aggressive:bool = compare.eq(ss_strategy,ss_aggressive)
+  ss_profile_mask:u64 = const() {"value":8}
+  ss_profile_bit:u64 = bit.and(ss_seen,ss_profile_mask)
+  ss_no_profile:bool = compare.eq(ss_profile_bit,ss_zero)
+  ss_aggressive_domain:bool = bool.and(ss_auto_domain,ss_no_profile)
+  ss_wrong_aggressive:bool = bool.not(ss_aggressive_domain)
+  ss_aggressive_denied:bool = bool.and(ss_uses_aggressive,ss_wrong_aggressive)
+  ss_before_aggressive:bool = bool.or(ss_previous_denied,ss_auto_denied)
+  ss_denied:bool = bool.or(ss_before_aggressive,ss_aggressive_denied)
   branch ss_denied fail() repeat_bound(o_ss)
 block repeat_bound(o_rep:mutbuf)
   at16_rep:u64 = const() {"value":16}

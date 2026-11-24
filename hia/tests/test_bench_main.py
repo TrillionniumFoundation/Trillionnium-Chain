@@ -24,7 +24,7 @@ import unittest
 
 from hia.platform.bench.main_build import build
 from hia.platform.build import inspect_executable, new_output, sealed_executable
-from hia.tests.test_bench_native import run_original_command
+from hia.tests.test_bench_native import group_digest, run_original_command
 
 ROOT = Path(__file__).resolve().parents[2]
 REPEAT = b"--determinism-repeats exceeds bounded maximum 1000\n"
@@ -386,7 +386,7 @@ class NativeBenchMain(unittest.TestCase):
                 ((b"--reader-high-water-v1", b"--strategy=writ-first"), {}),
                 ((b"--strategy=writ-first",), {b"HIA_BENCH_TEST_ONLY": b"synthetic"}),
                 ((b"--workload=mixed", b"--strategy=auto-adaptive"), {}),
-                ((b"--strategy=aggressive-greedy",), {}))):
+                ((b"--strategy=aggressive-greedy", b"--workload=mixed"), {}))):
             denied, _ = self.actual(f"enum-cli-closed-{i}", self.native, args, env=env)
             self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
@@ -879,6 +879,72 @@ class NativeBenchMain(unittest.TestCase):
             result, _ = self.actual(f"auto-classic-over-{name}", image, over)
             self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", REPEAT))
             self.assertFalse(self.run_path.exists())
+
+    def test_actual_classic_aggressive_greedy_fast_path(self):
+        strategy = b"--strategy=aggressive-greedy"
+        cases = (
+            ((), 20_000, 2_000, 0),
+            ((b"--txs=0", b"--keys=0", b"--determinism-repeats=1000"), 1, 1, 1000),
+            ((b"--txs=19", b"--keys=3", b"--determinism-repeats=2"), 19, 3, 2),
+            ((b"--txs=32", b"--keys=1", b"--determinism-repeats=1"), 32, 1, 1),
+            ((b"--txs=17", b"--keys=18446744073709551615", b"--persist-profile"),
+             17, (1 << 64) - 1, 0),
+            ((b"--txs=1025", b"--keys=7", b"--read-fanout=0", b"--write-every=0",
+              b"--determinism-repeats=2"), 1025, 7, 2),
+        )
+        for i, (args, n, keys, repeats) in enumerate(cases):
+            with self.subTest(n=n, keys=keys, repeats=repeats):
+                # Classic transaction i sees key i % keys in both sets. The
+                # current group is the count of previous writes on that key.
+                expected_groups = [range(at, min(at+keys,n)) for at in range(0,n,keys)]
+                group_sha = group_digest(expected_groups).hex().encode()
+                inp = hashlib.sha256(b"TRNM-BENCH-INPUT-V1\0")
+                for j in range(n):
+                    key = j % keys
+                    inp.update(struct.pack("<8Q", j, 1, key, 1, 1, key, 1, 0))
+                normal = []
+                for owner, image in (("rust", self.original), ("native", self.native)):
+                    r, wall = self.actual(f"classic-aggressive-{i}-{owner}", image, (strategy, *args))
+                    self.assertEqual((r.returncode,r.stderr),(0,b""))
+                    elapsed, out = stdout_observation(r.stdout,wall)
+                    self.events[-1]["observed_elapsed_ms"] = elapsed
+                    self.assertNotIn(b"profile.report.", out)
+                    fields = dict(line.split(b"=",1) for line in out.splitlines() if b"=" in line)
+                    self.assertEqual(fields[b"strategy"],b"AggressiveGreedy")
+                    self.assertEqual(fields[b"determinism.input_sha256"],inp.hexdigest().encode())
+                    self.assertEqual(fields[b"determinism.groups_sha256"],group_sha)
+                    self.assertEqual(fields[b"groups"],str(len(expected_groups)).encode())
+                    self.assertEqual(fields[b"grouped"],str(n).encode())
+                    self.assertEqual(fields[b"determinism.repeats"],str(repeats).encode())
+                    self.assertEqual(fields.get(b"determinism.replay_match"),b"true" if repeats else b"not-requested")
+                    normal.append(out)
+                self.assertEqual(*normal)
+                self.assertFalse(self.run_path.exists())
+        over = (strategy, b"--txs=20001", b"--determinism-repeats=1001")
+        for owner, image in (("rust", self.original), ("native", self.native)):
+            r, _ = self.actual(f"classic-aggressive-over-replay-{owner}",image,over)
+            self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",REPEAT))
+
+    def test_classic_aggressive_greedy_preserves_scope_and_file_refusal(self):
+        strategy = (b"--strategy", b"aggressive-greedy", b"--txs=4")
+        rows = (
+            ((b"--profile",), ()), ((b"--profile", b"--persist-profile"), ()),
+            ((b"--workload=mixed", b"--keys=1"), ()),
+            ((b"--workload=hot-streak", b"--keys=1"), ()),
+            ((b"--reader-high-water-v1",), ()), ((), (b"TRNM_AGGR_DEEP_SCAN=1",)),
+            ((), (b"TRNM_AGGR_DEEP_SCAN=0",)), ((), (b"TRNM_AGGR_SCAN_WINDOW=1",)),
+            ((), (b"TRNM_HOT_BUCKETS=8",)), ((), (b"LANG=C",)),
+            ((), (b"LANG=C", b"TRNM_AGGR_DEEP_SCAN=1")),
+        )
+        for i, (args, entries) in enumerate(rows):
+            r, _ = self.actual(f"classic-aggressive-refusal-{i}",self.native,(*strategy,*args),
+                               env_entries=entries)
+            self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+        r, _ = self.actual("classic-aggressive-refusal-cap",self.native,
+                           (b"--strategy=aggressive-greedy",b"--txs=20001"))
+        self.assertEqual((r.returncode,r.stdout,r.stderr),(2,b"",OUTSIDE))
+        self.assertFalse(self.run_path.exists())
 
     def test_actual_classic_original_ignores_only_passive_launcher_values(self):
         # All values are constructed here, not inherited or printed. Include
