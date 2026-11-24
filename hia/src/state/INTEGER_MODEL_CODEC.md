@@ -51,3 +51,7 @@ independent system SHA-256 seam. Both locked HIA emitters are compared on
 complete synthetic bytes and content IDs, all graph count classes,
 header mutations, signed endpoints and late coefficient checks, error
 precedence, and exact output/scratch canaries.
+
+
+For the separate earlier stage that selects typed metadata and combines
+snapshot chunks into raw bytes, see [Model materialization](INTEGER_MODEL_MATERIAL.md).

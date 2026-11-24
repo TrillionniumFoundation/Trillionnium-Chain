@@ -287,6 +287,18 @@
       ]
     },
     {
+      "id": "state/integer-model-material",
+      "node_integration_complete": false,
+      "scope": "Pure staged load_model namespace selection, typed Value metadata equality and lowercase chunk decoding over bounded immutable row snapshots. Returns only bytes before separately owned ILM and ID checks; no live state, model execution, authenticity, custody, admission or write.",
+      "source": "hia/src/state/integer_model_material.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_model_material.py",
+        "hia/tests/integer_model_material_original.py",
+        "hia/tests/rust_integer_model_material_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1670,7 +1682,8 @@
         "codec/json-number",
         "codec/json-value-wire",
         "codec/json-value-encode",
-        "state/integer-model-codec"
+        "state/integer-model-codec",
+        "state/integer-model-material"
       ],
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
       "module": "M06",

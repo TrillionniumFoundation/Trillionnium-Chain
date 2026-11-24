@@ -88,6 +88,26 @@
         "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
+    "src/state/integer_model_material.hepta": [
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare"
+        ]
+      },
+      {
+        "source": "src/verification/integer_linear_context.hepta",
+        "functions": [
+          "il_unhex"
+        ]
+      }
+    ],
     "src/state/integer_model_codec.hepta": [
       {
         "functions": [
