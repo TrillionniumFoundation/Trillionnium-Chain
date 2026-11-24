@@ -1,0 +1,533 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_verification_challenge_record_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  expect:usize = const() {"value":197}
+  exact:bool = compare.eq(extent,expect)
+  branch exact frame(input,output,scratch) malformed()
+block frame(fi:readbuf,fo:mutbuf,fw:mutbuf)
+  op_at:u64 = const() {"value":4}
+  no:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  magic:u64 = call(fi,no,op_at) {"function":"rac_read_le"}
+  want:u64 = const() {"value":827867990}
+  right_magic:bool = compare.eq(magic,want)
+  operation:u64 = call(fi,op_at,one) {"function":"rac_read_le"}
+  largest_op:u64 = const() {"value":8}
+  known:bool = compare.le(operation,largest_op)
+  reserved_at:u64 = const() {"value":6}
+  reserve_width:u64 = const() {"value":2}
+  reserved:u64 = call(fi,reserved_at,reserve_width) {"function":"rac_read_le"}
+  cleared:bool = compare.eq(reserved,no)
+  kind_ok:bool = bool.and(right_magic,known)
+  header_ok:bool = bool.and(kind_ok,cleared)
+  branch header_ok shape(fi,fo,fw,operation) malformed()
+block shape(si:readbuf,so:mutbuf,sw:mutbuf,sop:u64)
+  well_formed:bool = call(si,sop) {"function":"cx_shape"}
+  branch well_formed transition(si,so,sw,sop) malformed()
+block transition(ti:readbuf,to:mutbuf,tw:mutbuf,top:u64)
+  packed:u64 = call(ti,top) {"function":"cx_step"}
+  mask:u64 = const() {"value":255}
+  error_code:u64 = bit.and(packed,mask)
+  good:u64 = const() {"value":0}
+  agreed:bool = compare.eq(error_code,good)
+  converted:u32 = int.cast(error_code) {"mode":"wrap"}
+  branch agreed capacity(ti,to,tw,top,packed) refusal(converted)
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf,cop:u64,result:u64)
+  destination_n:usize = buffer.len(co)
+  workspace_n:usize = buffer.len(cw)
+  need_output:usize = const() {"value":173}
+  need_work:usize = const() {"value":1472}
+  enough_out:bool = compare.ge(destination_n,need_output)
+  enough_work:bool = compare.ge(workspace_n,need_work)
+  enough:bool = bool.and(enough_out,enough_work)
+  branch enough prepare(ci,co,cw,cop,result) insufficient()
+block prepare(pi:readbuf,po:mutbuf,pw:mutbuf,pop:u64,pr:u64)
+  appeal_op:u64 = const() {"value":5}
+  appeals:bool = compare.eq(pop,appeal_op)
+  arg_at:u64 = const() {"value":16}
+  old_dec_at:u64 = const() {"value":144}
+  old_app_at:u64 = const() {"value":152}
+  width:u64 = const() {"value":8}
+  new_deadline:u64 = call(pi,arg_at,width) {"function":"rac_read_le"}
+  old_dec:u64 = call(pi,old_dec_at,width) {"function":"rac_read_le"}
+  old_app:u64 = call(pi,old_app_at,width) {"function":"rac_read_le"}
+  ddeadline:u64 = select(appeals,new_deadline,old_dec)
+  adeadline:u64 = select(appeals,new_deadline,old_app)
+  hash_status:u64 = call(pi,pw,pr,ddeadline,adeadline) {"function":"cx_hash"}
+  no_hash_error:u64 = const() {"value":0}
+  complete:bool = compare.eq(hash_status,no_hash_error)
+  branch complete publish(pi,po,pw,pr,ddeadline,adeadline) internal()
+block publish(ri:readbuf,ro:mutbuf,rw:mutbuf,rr:u64,dd:u64,ad:u64)
+  state_at:u64 = const() {"value":24}
+  out_start:u64 = const() {"value":0}
+  out_dec:u64 = const() {"value":120}
+  out_app:u64 = const() {"value":128}
+  out_small:u64 = const() {"value":136}
+  out_flags:u64 = const() {"value":139}
+  out_digest:u64 = const() {"value":141}
+  flag_width:u64 = const() {"value":2}
+  status_shift:u64 = const() {"value":8}
+  small:u64 = int.shr.checked(rr,status_shift)
+  unchanged_end:u64 = call(ri,ro,state_at,out_start,out_dec) {"function":"rac_copy"}
+  next_dec:u64 = call(ro,out_dec,dd,status_shift) {"function":"cx_write_le"}
+  next_app:u64 = call(ro,out_app,ad,status_shift) {"function":"cx_write_le"}
+  small_width:u64 = const() {"value":3}
+  next_small:u64 = call(ro,out_small,small,small_width) {"function":"cx_write_le"}
+  next_flags:u64 = call(ro,out_flags,out_start,flag_width) {"function":"rac_write_be"}
+  next_digest:u64 = call(rw,ro,out_digest) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refusal(code:u32)
+  ret(code)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block insufficient()
+  short:u32 = const() {"value":102}
+  ret(short)
+block internal()
+  internal_status:u32 = const() {"value":103}
+  ret(internal_status)
+end
+
+fn cx_shape(input:readbuf,op:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64)
+  zero:u64 = const() {"value":0}
+  five:u64 = const() {"value":5}
+  opened:bool = compare.eq(op,zero)
+  appeals:bool = compare.eq(op,five)
+  special_arg:bool = bool.or(opened,appeals)
+  height_at:u64 = const() {"value":8}
+  argument_at:u64 = const() {"value":16}
+  full:u64 = const() {"value":8}
+  height:u64 = call(input,height_at,full) {"function":"rac_read_le"}
+  argument:u64 = call(input,argument_at,full) {"function":"rac_read_le"}
+  idle_height:bool = compare.eq(height,zero)
+  no_argument:bool = compare.eq(argument,zero)
+  arg_ok:bool = bool.or(no_argument,special_arg)
+  not_open:bool = bool.not(opened)
+  meaningful_height:bool = bool.or(not_open,idle_height)
+  header_times:bool = bool.and(meaningful_height,arg_ok)
+  choice_at:u64 = const() {"value":5}
+  one:u64 = const() {"value":1}
+  choice:u64 = call(input,choice_at,one) {"function":"rac_read_le"}
+  four:u64 = const() {"value":4}
+  deciding:bool = compare.eq(op,four)
+  no_choice:bool = compare.eq(choice,zero)
+  upper_choice:bool = compare.le(choice,four)
+  lower_choice:bool = compare.ge(choice,one)
+  typed:bool = bool.and(lower_choice,upper_choice)
+  private_choice:bool = select(deciding,typed,no_choice)
+  phase_at:u64 = const() {"value":160}
+  appeal_at:u64 = const() {"value":161}
+  outcome_at:u64 = const() {"value":162}
+  flags_at:u64 = const() {"value":163}
+  two:u64 = const() {"value":2}
+  seven:u64 = const() {"value":7}
+  phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
+  used:u64 = call(input,appeal_at,one) {"function":"rac_read_le"}
+  outcome:u64 = call(input,outcome_at,one) {"function":"rac_read_le"}
+  flags:u64 = call(input,flags_at,two) {"function":"rac_read_le"}
+  phase_ok:bool = compare.le(phase,seven)
+  used_ok:bool = compare.le(used,one)
+  outcome_ok:bool = compare.le(outcome,four)
+  no_flags:bool = compare.eq(flags,zero)
+  all_tags_a:bool = bool.and(phase_ok,used_ok)
+  all_tags_b:bool = bool.and(outcome_ok,no_flags)
+  all_tags:bool = bool.and(all_tags_a,all_tags_b)
+  open_state_at:u64 = const() {"value":160}
+  five_bytes:u64 = const() {"value":5}
+  open_state:u64 = call(input,open_state_at,five_bytes) {"function":"rac_read_le"}
+  canonical_open:bool = compare.eq(open_state,zero)
+  old_digest_at:u64 = const() {"value":165}
+  nonzero_old_digest:bool = call(input,old_digest_at) {"function":"rac_nonzero_digest"}
+  empty_old_digest:bool = bool.not(nonzero_old_digest)
+  blank_open:bool = bool.and(canonical_open,empty_old_digest)
+  record_ok:bool = select(opened,blank_open,all_tags)
+  header_ok:bool = bool.and(header_times,private_choice)
+  okay:bool = bool.and(header_ok,record_ok)
+  ret(okay)
+end
+
+fn cx_step(input:readbuf,op:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64)
+  first:u64 = const() {"value":0}
+  opening:bool = compare.eq(op,first)
+  branch opening open(input) dispatch(input,op)
+block open(oi:readbuf)
+  opened:u64 = call(oi) {"function":"cx_open"}
+  ret(opened)
+block dispatch(di:readbuf,dop:u64)
+  three:u64 = const() {"value":3}
+  ordinary:bool = compare.le(dop,three)
+  branch ordinary progress(di,dop) others(di,dop)
+block progress(pi:readbuf,pop:u64)
+  progressed:u64 = call(pi,pop) {"function":"cx_progress"}
+  ret(progressed)
+block others(ri:readbuf,rop:u64)
+  four:u64 = const() {"value":4}
+  is_decide:bool = compare.eq(rop,four)
+  branch is_decide decide(ri) after_decide(ri,rop)
+block decide(ai:readbuf)
+  decided:u64 = call(ai) {"function":"cx_decide"}
+  ret(decided)
+block after_decide(bi:readbuf,bop:u64)
+  five:u64 = const() {"value":5}
+  is_appeal:bool = compare.eq(bop,five)
+  branch is_appeal appeal(bi) after_appeal(bi,bop)
+block appeal(ei:readbuf)
+  appealed:u64 = call(ei) {"function":"cx_appeal"}
+  ret(appealed)
+block after_appeal(ki:readbuf,kop:u64)
+  terminal:u64 = call(ki,kop) {"function":"cx_terminal"}
+  ret(terminal)
+end
+fn cx_open(input:readbuf) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf)
+  eight:u64 = const() {"value":8}
+  id_at:u64 = const() {"value":24}
+  result_at:u64 = const() {"value":56}
+  actor_at:u64 = const() {"value":88}
+  opened_phase:u64 = const() {"value":0}
+  opened_at:u64 = const() {"value":120}
+  opened:u64 = call(input,opened_at,eight) {"function":"rac_read_le"}
+  evidence_at:u64 = const() {"value":128}
+  evidence:u64 = call(input,evidence_at,eight) {"function":"rac_read_le"}
+  response_at:u64 = const() {"value":136}
+  response:u64 = call(input,response_at,eight) {"function":"rac_read_le"}
+  decision_at:u64 = const() {"value":144}
+  decision:u64 = call(input,decision_at,eight) {"function":"rac_read_le"}
+  appeal_at:u64 = const() {"value":152}
+  appeal:u64 = call(input,appeal_at,eight) {"function":"rac_read_le"}
+  window_at:u64 = const() {"value":16}
+  window:u64 = call(input,window_at,eight) {"function":"rac_read_le"}
+  has_id:bool = call(input,id_at) {"function":"rac_nonzero_digest"}
+  has_result:bool = call(input,result_at) {"function":"rac_nonzero_digest"}
+  has_actor:bool = call(input,actor_at) {"function":"rac_nonzero_digest"}
+  ids:bool = bool.and(has_id,has_result)
+  all_ids:bool = bool.and(ids,has_actor)
+  in_window:bool = compare.le(opened,window)
+  evidence_order:bool = compare.le(opened,evidence)
+  response_order:bool = compare.le(evidence,response)
+  decision_order:bool = compare.le(response,decision)
+  appeal_order:bool = compare.le(decision,appeal)
+  phases_a:bool = bool.and(in_window,evidence_order)
+  phases_b:bool = bool.and(response_order,decision_order)
+  phases_c:bool = bool.and(phases_a,phases_b)
+  all_times:bool = bool.and(phases_c,appeal_order)
+  branch all_ids after_ids(all_times,opened_phase) identifier()
+block after_ids(times:bool,phase:u64)
+  branch times success(phase) late()
+block success(next:u64)
+  ret(next)
+block identifier()
+  failure_identifier:u64 = const() {"value":1}
+  ret(failure_identifier)
+block late()
+  failure_late:u64 = const() {"value":18}
+  ret(failure_late)
+end
+fn cx_progress(input:readbuf,op:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64)
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  three:u64 = const() {"value":3}
+  height_at:u64 = const() {"value":8}
+  height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
+  evidence_at:u64 = const() {"value":128}
+  evidence:u64 = call(input,evidence_at,eight) {"function":"rac_read_le"}
+  response_at:u64 = const() {"value":136}
+  response:u64 = call(input,response_at,eight) {"function":"rac_read_le"}
+  phase_at:u64 = const() {"value":160}
+  phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
+  used_at:u64 = const() {"value":161}
+  used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
+  outcome_at:u64 = const() {"value":162}
+  outcome:u64 = call(input,outcome_at,one) {"function":"rac_read_le"}
+  before:u64 = int.sub.wrap(op,one)
+  on_phase:bool = compare.eq(phase,before)
+  sends_evidence:bool = compare.eq(op,one)
+  deadline:u64 = select(sends_evidence,evidence,response)
+  on_time:bool = compare.le(height,deadline)
+  branch on_phase timed(on_time,op,used,outcome) invalid()
+block timed(clock_ok:bool,np:u64,nu:u64,no:u64)
+  branch clock_ok accept(np,nu,no) late()
+block accept(pp:u64,pu:u64,po:u64)
+  packet:u64 = call(pp,pu,po) {"function":"cx_pack"}
+  ret(packet)
+block invalid()
+  failure_invalid:u64 = const() {"value":17}
+  ret(failure_invalid)
+block late()
+  failure_late:u64 = const() {"value":18}
+  ret(failure_late)
+end
+fn cx_decide(input:readbuf) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf)
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  six:u64 = const() {"value":6}
+  height_at:u64 = const() {"value":8}
+  height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
+  deadline_at:u64 = const() {"value":144}
+  deadline:u64 = call(input,deadline_at,eight) {"function":"rac_read_le"}
+  phase_at:u64 = const() {"value":160}
+  phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
+  used_at:u64 = const() {"value":161}
+  used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
+  choice_at:u64 = const() {"value":5}
+  choice:u64 = call(input,choice_at,one) {"function":"rac_read_le"}
+  waiting:bool = compare.eq(phase,three)
+  reconsidering:bool = compare.eq(phase,six)
+  phase_ok:bool = bool.or(waiting,reconsidering)
+  upholds:bool = compare.eq(choice,one)
+  rejects:bool = compare.eq(choice,two)
+  known:bool = bool.or(upholds,rejects)
+  permitted:bool = bool.and(phase_ok,known)
+  on_time:bool = compare.le(height,deadline)
+  next:u64 = select(upholds,four,five)
+  branch permitted timed(on_time,next,used,choice) invalid()
+block timed(clock_ok:bool,np:u64,nu:u64,no:u64)
+  branch clock_ok accept(np,nu,no) late()
+block accept(pp:u64,pu:u64,po:u64)
+  packet:u64 = call(pp,pu,po) {"function":"cx_pack"}
+  ret(packet)
+block invalid()
+  failure_invalid:u64 = const() {"value":17}
+  ret(failure_invalid)
+block late()
+  failure_late:u64 = const() {"value":18}
+  ret(failure_late)
+end
+fn cx_appeal(input:readbuf) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  six:u64 = const() {"value":6}
+  height_at:u64 = const() {"value":8}
+  height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
+  offered_at:u64 = const() {"value":16}
+  offered:u64 = call(input,offered_at,eight) {"function":"rac_read_le"}
+  deadline_at:u64 = const() {"value":152}
+  deadline:u64 = call(input,deadline_at,eight) {"function":"rac_read_le"}
+  phase_at:u64 = const() {"value":160}
+  phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
+  used_at:u64 = const() {"value":161}
+  used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
+  first_appeal:bool = compare.eq(used,zero)
+  upheld:bool = compare.eq(phase,four)
+  rejected:bool = compare.eq(phase,five)
+  legal:bool = bool.or(upheld,rejected)
+  on_time:bool = compare.le(height,deadline)
+  future:bool = compare.le(height,offered)
+  clock_ok:bool = bool.and(on_time,future)
+  branch first_appeal phase_gate(legal,clock_ok,six,one,zero) spent()
+block phase_gate(eligible:bool,timing:bool,np:u64,nu:u64,no:u64)
+  branch eligible timed(timing,np,nu,no) invalid()
+block timed(ok:bool,tp:u64,tu:u64,to:u64)
+  branch ok accept(tp,tu,to) late()
+block accept(pp:u64,pu:u64,po:u64)
+  packet:u64 = call(pp,pu,po) {"function":"cx_pack"}
+  ret(packet)
+block spent()
+  failure_spent:u64 = const() {"value":19}
+  ret(failure_spent)
+block invalid()
+  failure_invalid:u64 = const() {"value":17}
+  ret(failure_invalid)
+block late()
+  failure_late:u64 = const() {"value":18}
+  ret(failure_late)
+end
+fn cx_terminal(input:readbuf,op:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,op:u64)
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  six:u64 = const() {"value":6}
+  seven:u64 = const() {"value":7}
+  height_at:u64 = const() {"value":8}
+  height:u64 = call(input,height_at,eight) {"function":"rac_read_le"}
+  evidence_at:u64 = const() {"value":128}
+  evidence:u64 = call(input,evidence_at,eight) {"function":"rac_read_le"}
+  response_at:u64 = const() {"value":136}
+  response:u64 = call(input,response_at,eight) {"function":"rac_read_le"}
+  decision_at:u64 = const() {"value":144}
+  decision:u64 = call(input,decision_at,eight) {"function":"rac_read_le"}
+  appeal_at:u64 = const() {"value":152}
+  appeal:u64 = call(input,appeal_at,eight) {"function":"rac_read_le"}
+  phase_at:u64 = const() {"value":160}
+  phase:u64 = call(input,phase_at,one) {"function":"rac_read_le"}
+  used_at:u64 = const() {"value":161}
+  used:u64 = call(input,used_at,one) {"function":"rac_read_le"}
+  outcome_at:u64 = const() {"value":162}
+  outcome:u64 = call(input,outcome_at,one) {"function":"rac_read_le"}
+  open_group:bool = compare.le(phase,one)
+  responds:bool = compare.eq(phase,two)
+  waits:bool = compare.eq(phase,three)
+  reconsider:bool = compare.eq(phase,six)
+  wait_group:bool = bool.or(waits,reconsider)
+  early_group:bool = bool.or(open_group,responds)
+  can_expire:bool = bool.or(early_group,wait_group)
+  response_or_decision:u64 = select(responds,response,decision)
+  deadline:u64 = select(open_group,evidence,response_or_decision)
+  overdue:bool = compare.gt(height,deadline)
+  upheld:bool = compare.eq(phase,four)
+  rejected:bool = compare.eq(phase,five)
+  decided:bool = bool.or(upheld,rejected)
+  appeal_closed:bool = compare.gt(height,appeal)
+  can_finalize:bool = bool.and(decided,appeal_closed)
+  can_withdraw:bool = compare.le(phase,three)
+  finalizing:bool = compare.eq(op,six)
+  withdrawing:bool = compare.eq(op,seven)
+  branch finalizing finish(can_finalize,used,outcome) other(withdrawing,can_withdraw,can_expire,overdue,used)
+block finish(allowed:bool,fu:u64,fo:u64)
+  branch allowed accept(fu,fo) invalid()
+block other(is_withdraw:bool,can_w:bool,can_e:bool,late_e:bool,ou:u64)
+  branch is_withdraw withdrawal(can_w,ou) expiry(can_e,late_e,ou)
+block withdrawal(allow_w:bool,wu:u64)
+  withdrawn:u64 = const() {"value":3}
+  branch allow_w accept(wu,withdrawn) invalid()
+block expiry(allow_e:bool,missed:bool,eu:u64)
+  branch allow_e overdue_gate(missed,eu) invalid()
+block overdue_gate(late_enough:bool,gu:u64)
+  expired:u64 = const() {"value":4}
+  branch late_enough accept(gu,expired) late()
+block accept(pu:u64,po:u64)
+  final_phase:u64 = const() {"value":7}
+  value:u64 = call(final_phase,pu,po) {"function":"cx_pack"}
+  ret(value)
+block invalid()
+  failure_invalid:u64 = const() {"value":17}
+  ret(failure_invalid)
+block late()
+  failure_late:u64 = const() {"value":18}
+  ret(failure_late)
+end
+fn cx_pack(phase:u64,used:u64,outcome:u64) -> (u64) effects(trap) entry(entry)
+block entry(phase:u64,used:u64,outcome:u64)
+  phase_shift:u64 = const() {"value":8}
+  used_shift:u64 = const() {"value":16}
+  outcome_shift:u64 = const() {"value":24}
+  a:u64 = int.shl.checked(phase,phase_shift)
+  b:u64 = int.shl.checked(used,used_shift)
+  c:u64 = int.shl.checked(outcome,outcome_shift)
+  d:u64 = bit.or(a,b)
+  packed:u64 = bit.or(d,c)
+  ret(packed)
+end
+
+fn cx_write_le(out:mutbuf,start:u64,value:u64,count:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf,start:u64,value:u64,count:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(out,start,value,count,zero)
+block loop(lo:mutbuf,ls:u64,lv:u64,ln:u64,li:u64)
+  more:bool = compare.lt(li,ln)
+  branch more copy(lo,ls,lv,ln,li) finished(ls,ln)
+block copy(co:mutbuf,cs:u64,cv:u64,cn:u64,ci:u64)
+  index:u64 = int.add.wrap(cs,ci)
+  pointer:usize = int.cast(index) {"mode":"wrap"}
+  byte:u8 = int.cast(cv) {"mode":"wrap"}
+  _ = buffer.store(co,pointer,byte)
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  remaining:u64 = int.shr.checked(cv,eight)
+  next:u64 = int.add.wrap(ci,one)
+  jump loop(co,cs,remaining,cn,next)
+block finished(fs:u64,fn_:u64)
+  end_offset:u64 = int.add.wrap(fs,fn_)
+  ret(end_offset)
+end
+
+fn cx_frame_number(work:mutbuf,pos:u64,value:u64,width:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(work:mutbuf,pos:u64,value:u64,width:u64)
+  eight:u64 = const() {"value":8}
+  at:u64 = call(work,pos,width,eight) {"function":"rac_write_be"}
+  end_offset:u64 = call(work,at,value,width) {"function":"rac_write_be"}
+  ret(end_offset)
+end
+
+fn cx_frame_digest(input:readbuf,work:mutbuf,pos:u64,source:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,pos:u64,source:u64)
+  eight:u64 = const() {"value":8}
+  width:u64 = const() {"value":32}
+  at:u64 = call(work,pos,width,eight) {"function":"rac_write_be"}
+  end_offset:u64 = call(input,work,source,at,width) {"function":"rac_copy"}
+  ret(end_offset)
+end
+
+fn cx_hash(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,packed:u64,decision:u64,appeal:u64)
+  init:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(init,zero)
+  branch okay transcript(input,work,packed,decision,appeal) refused(init)
+block transcript(ti:readbuf,tw:mutbuf,tp:u64,td:u64,ta:u64)
+  base:u64 = const() {"value":1208}
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  width:u64 = const() {"value":29}
+  at:u64 = call(tw,base,width,eight) {"function":"rac_write_be"}
+  word_0:u64 = const() {"value":7147889007692509812}
+  _w_0:u64 = call(tw,at,word_0) {"function":"tr_put"}
+  word_1:u64 = const() {"value":7954883529566348078}
+  place_1:u64 = const() {"value":1224}
+  _w_1:u64 = call(tw,place_1,word_1) {"function":"tr_put"}
+  word_2:u64 = const() {"value":8245918730097091943}
+  place_2:u64 = const() {"value":1232}
+  _w_2:u64 = call(tw,place_2,word_2) {"function":"tr_put"}
+  word_3:u64 = const() {"value":829828708}
+  place_3:u64 = const() {"value":1240}
+  _w_3:u64 = call(tw,place_3,word_3) {"function":"tr_put"}
+  after_domain:u64 = int.add.wrap(at,width)
+  challenge_at:u64 = const() {"value":24}
+  result_at:u64 = const() {"value":56}
+  actor_at:u64 = const() {"value":88}
+  after_challenge:u64 = call(ti,tw,after_domain,challenge_at) {"function":"cx_frame_digest"}
+  after_result:u64 = call(ti,tw,after_challenge,result_at) {"function":"cx_frame_digest"}
+  after_actor:u64 = call(ti,tw,after_result,actor_at) {"function":"cx_frame_digest"}
+  used_shift:u64 = const() {"value":16}
+  outcome_shift:u64 = const() {"value":24}
+  mask:u64 = const() {"value":255}
+  phase_bits:u64 = int.shr.checked(tp,eight)
+  used_bits:u64 = int.shr.checked(tp,used_shift)
+  outcome_bits:u64 = int.shr.checked(tp,outcome_shift)
+  phase:u64 = bit.and(phase_bits,mask)
+  used:u64 = bit.and(used_bits,mask)
+  outcome:u64 = bit.and(outcome_bits,mask)
+  after_phase:u64 = call(tw,after_actor,phase,one) {"function":"cx_frame_number"}
+  opened_at:u64 = const() {"value":120}
+  opened:u64 = call(ti,opened_at,eight) {"function":"rac_read_le"}
+  after_opened:u64 = call(tw,after_phase,opened,eight) {"function":"cx_frame_number"}
+  evidence_at:u64 = const() {"value":128}
+  evidence:u64 = call(ti,evidence_at,eight) {"function":"rac_read_le"}
+  after_evidence:u64 = call(tw,after_opened,evidence,eight) {"function":"cx_frame_number"}
+  response_at:u64 = const() {"value":136}
+  response:u64 = call(ti,response_at,eight) {"function":"rac_read_le"}
+  after_response:u64 = call(tw,after_evidence,response,eight) {"function":"cx_frame_number"}
+  after_decision:u64 = call(tw,after_response,td,eight) {"function":"cx_frame_number"}
+  after_appeal:u64 = call(tw,after_decision,ta,eight) {"function":"cx_frame_number"}
+  after_used:u64 = call(tw,after_appeal,used,one) {"function":"cx_frame_number"}
+  after_outcome:u64 = call(tw,after_used,outcome,one) {"function":"cx_frame_number"}
+  extent:u64 = int.sub.wrap(after_outcome,base)
+  updated:u64 = call(tw,base,extent) {"function":"tr_sha_update_work"}
+  clear:u64 = const() {"value":0}
+  done:bool = compare.eq(updated,clear)
+  branch done finish(tw) refused(updated)
+block finish(fw:mutbuf)
+  digest_status:u64 = call(fw) {"function":"tr_sha_final"}
+  ret(digest_status)
+block refused(code:u64)
+  ret(code)
+end

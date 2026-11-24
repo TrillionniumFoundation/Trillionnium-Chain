@@ -243,6 +243,17 @@
       ]
     },
     {
+      "id": "verification/challenge-record",
+      "node_integration_complete": false,
+      "scope": "Original per-record ChallengeRecordV1 construction, pure transitions and complete deterministic digest, with immutable private snapshots and only false authority fields. No book or global admission, persistence, actor authentication, economic, reorganization or production authority.",
+      "source": "hia/src/verification/challenge_record.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verification_challenge.py",
+        "hia/tests/rust_verification_challenge_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1686,7 +1697,8 @@
       "components": [
         "verification/closed_round",
         "verification/profile-registry",
-        "verification/statement-preflight"
+        "verification/statement-preflight",
+        "verification/challenge-record"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",

@@ -71,3 +71,7 @@ For the separate original profile admission and exact lookup API, see
 For typed digest framing, registry/evidence validation before a backend,
 and the private deterministic observation codec, see
 [Verification statement preflight and observational output](STATEMENT_PREFLIGHT.md).
+
+
+For the separate pure per-record challenge transitions, see
+[Challenge record lifecycle](CHALLENGE_RECORD.md).
