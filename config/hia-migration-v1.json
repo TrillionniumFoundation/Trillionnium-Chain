@@ -1035,6 +1035,17 @@
       ]
     },
     {
+      "id": "release-bundle/builder-provenance",
+      "node_integration_complete": false,
+      "scope": "Bounded actual BuildInputV0 and BuilderProvenanceV0 canonical SHA-256, with candidate validation preserving fixed-field, declaration and row/duplicate precedence. Supplied identity claims are not attested; no production caller, custody, signature, or release authority.",
+      "source": "hia/src/release_bundle/builder_provenance.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_builder_provenance.py",
+        "hia/tests/rust_release_builder_provenance_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/bundle-binding",
       "node_integration_complete": false,
       "scope": "Pure V0 release binding: derives and validates the native ExactSourceV0 prefix, compares the three provenance links, hashes the original length-framed ReleaseBundleV0 digest, and compares the declaration. External artifact-set, SBOM and provenance digests are explicitly supplied; this does not verify their memberships, provenance contents, signatures, custody, or production admission.",
@@ -1369,6 +1380,7 @@
       "components": [
         "release-bundle/artifact-header",
         "release-bundle/artifact-set-digest",
+        "release-bundle/builder-provenance",
         "release-bundle/bundle-binding",
         "release-bundle/content-claim-frame",
         "release-bundle/exact-source",
