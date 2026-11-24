@@ -823,6 +823,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-release-snapshot-content-equality",
+      "node_integration_complete": false,
+      "scope": "Offline immutable CTS1 supplied content equality and original length/digest/layout order; one borrowed envelope includes 64-byte untrusted expected SHA-512, with unchanged shared total <=1 MiB. No authority, trusted pin, verify_for_loader, payload, filesystem, network, signatures, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_release_snapshot_content_equality.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_release_snapshot_content_equality.py",
+        "hia/tests/cts_content_equality_derivation.py",
+        "hia/tests/rust_cell_release_snapshot_content_equality_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
