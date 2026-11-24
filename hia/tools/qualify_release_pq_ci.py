@@ -65,6 +65,18 @@ BACKENDS = ("direct", "selfhost")
 COMMON = ("qualification.json", "rust-build.stdout.jsonl", "rust-build.stderr.raw")
 RAW = ("process.json", "stdout.raw", "stderr.raw")
 CALLBACK_PHASES = {"unsigned", "identity", "locator", "message", "quorum", "strict", "state"}
+HELD_PHASES = {
+    **{name: f"hia/src/release_bundle/{name}.hepta" for name in
+       ("file_descriptor", "artifact_header", "content_claim_frame",
+        "sha512_transcript_bootstrap", "raw_artifact_sha256")},
+    "sha512_stream": "hia/src/crypto/sha512_stream.hepta",
+}
+HELD_JOIN = (
+    ("same_held_artifact_and_signed_bundle", "complete", 0, [0, "state", 0]),
+    ("same_size_incorrect_raw_bytes", "artifact", 6, None),
+    ("valid_v0_scope_but_different_expected_strong_claim", "claim", 112, None),
+    ("valid_held_content_then_original_invalid_quorum", "linked", 2, [2, "quorum", 106]),
+)
 LINKED_EXPORT = "trnm_release_shadow_v1"
 LINKED_CONTROLS = (
     ("truncated_private_wire", 100, "wire", 100),
@@ -163,7 +175,8 @@ def stage_files(stage):
     if stage == "callback":
         return (*COMMON, *(f"{b}-{kind}-native-build.json" for b in BACKENDS
                            for kind in sorted(CALLBACK_PHASES)),
-                *(f"{b}-linked-shadow.json" for b in BACKENDS))
+                *(f"{b}-linked-shadow.json" for b in BACKENDS),
+                *(f"{b}-held-stream.json" for b in BACKENDS))
     return (*COMMON, *(f"{b}-{kind}-native-build.json" for b in BACKENDS
                        for kind in ("quorum", "transcript")))
 
@@ -297,6 +310,43 @@ def linked_callback_receipt(value, backend, declared, native_source_hashes):
                 "linked callback phase binding differs")
 
 
+def held_join_receipt(report, current, checkpoint):
+    data, bound, digest = (report.get(k) for k in
+        ("held_raw_bytes", "held_encoded_charge", "held_origin_claim_sha256"))
+    require(report.get("v0_signs_strong_content_claim") is False
+            and type(data) is int and 8192 < data <= 64 * 1024
+            and type(bound) is int and data + 128 <= bound <= data + 894
+            and valid_hash(digest) and valid_hash(report.get("held_raw_sha256")), "held join origin differs")
+    cases = current.get("held_and_signed")
+    require(type(cases) is list and len(cases) == len(HELD_JOIN), "incomplete held-signature join")
+    for row, (label, stage, code, terminal) in zip(cases, HELD_JOIN, strict=True):
+        calls = row.get("actual_requested")
+        require(row.get("label") == label and row.get("stage") == stage
+                and type(row.get("status")) is int and row["status"] == code and row.get("consumed") == data
+                and type(calls) is list and 3 <= len(calls) <= 16 and calls[-1] == 1
+                and all(type(n) is int and 0 < n <= 8192 for n in calls)
+                and sum(calls[:-1]) == data and row.get("linked_terminal") == terminal
+                and row.get("held_claim_sha256") == (None if stage == "artifact" else digest)
+                and row.get("linked_checkpoint") == (checkpoint if code == 0 else None)
+                and row.get("published") is (code == 0), "held join stages, EOF, or complete output differ")
+
+
+def held_build_receipt(value, backend, images):
+    require(set(value) == set(images) == set(HELD_PHASES), "held native phase roster differs")
+    for phase, source in HELD_PHASES.items():
+        receipt = value[phase]
+        claims = receipt.get("claims", {})
+        observed_source = receipt.get("chain_migration", {})
+        require(receipt.get("ok") is True and valid_hash(images[phase])
+                and receipt.get("artifact_sha256") == images[phase]
+                and observed_source.get("source_sha256") == sha(read(ROOT / source))
+                and observed_source.get("backend") == backend
+                and claims.get("direct_machine_code") is True and claims.get("fallback_used") is False
+                and claims.get("self_hosted") is (backend == "selfhost")
+                and (backend != "selfhost" or receipt.get("compiler_sha256") == PIN),
+                "held native artifact source, emitter or evidence differs")
+
+
 def validate_stage(root, stage, line, tree, lock):
     process = obj(root / "process.json")
     require(process.get("stage") == stage and all(process.get(k) == v and type(process[k]) is type(v)
@@ -383,9 +433,14 @@ def validate_stage(root, stage, line, tree, lock):
                     current.get("linked_elf_sha256"),
                     {name: obj(root / f"{backend}-{name}-native-build.json")["chain_migration"]["source_sha256"]
                      for name in CALLBACK_PHASES - {"strict"}})
+            held_join_receipt(report, current, rows[0]["transition_checkpoint"]["original"])
+            held_build_receipt(obj(root / f"{backend}-held-stream.json"), backend, current.get("held_images", {}))
             if backend == "selfhost":
-                require(current["linked_elf_sha256"] != report["backends"]["direct"]["linked_elf_sha256"],
-                        "linked callback emitters must produce distinct images")
+                prior = report["backends"]["direct"]
+                require(current["linked_elf_sha256"] != prior["linked_elf_sha256"]
+                        and all(current["held_images"][name] != prior["held_images"][name] for name in HELD_PHASES)
+                        and current["held_and_signed"] == prior["held_and_signed"],
+                        "joined callback emitters or observations differ")
         require(all(valid_hash(x) for x in hashes[backend].values()), "missing emitted machine identity")
         if stage != "observation":
             for kind, digest in hashes[backend].items():

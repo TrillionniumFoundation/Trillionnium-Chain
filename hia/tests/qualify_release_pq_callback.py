@@ -9,6 +9,7 @@ from pathlib import Path
 import resource
 import struct
 import sys
+import tempfile
 from contextlib import ExitStack
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -16,12 +17,13 @@ sys.path.insert(0, str(ROOT))
 from hia.platform.pq_auth.qualification.contract import check_platform_environment
 from hia.platform.release_pq_shadow.build import LinkedShadow
 from hia.tests.release_linked_shadow import observe, private_controls, request
+from hia.tests.release_held_callback import CONTENT_CLAIM_WIDTH, RUNTIME_ARTIFACTS, qualify as qualify_held
 from hia.tests.native_support import NativeModule
 from hia.tests.qualify_release_pq_observation import build_original, execute, require, sha
 from hia.tests.test_release_pq_bundle_checkpoint import snapshot_identity
 from hia.tests.test_release_pq_bundle_state import snapshot
 from hia.tests.test_release_pq_signing import DIR, pack_signatures
-from hia.tests.test_release_unsigned_candidate import ADAPTER as UNSIGNED_ADAPTER, case
+from hia.tests.test_release_unsigned_candidate import ADAPTER as UNSIGNED_ADAPTER, ARTIFACT, case
 from hia.tools.ml_dsa_original import check_environment
 
 ADAPTER = Path(__file__).with_name("rust_release_pq_callback_reference.rs")
@@ -130,14 +132,24 @@ def check(out):
     source = execute(["git", "show", "-s", "--format=%H %T"], cwd=ROOT).stdout
     initially_clean = not execute(["git", "status", "--porcelain"], cwd=ROOT).stdout
     binary, provenance = bound_original(out)
-    raw_template = case()[0]
-    signed = execute([binary], input=raw_template)
-    head = 80 + 2 * KEY_WIDTH
+    # Two raw read partitions and a real EOF from a bounded newly created artifact.
+    contents = (b"synthetic release image, no production I/O\n" * 220) + bytes(range(1, 33))
+    name, media, _, _, exe, platform, source_path = ARTIFACT
+    item = (name, media, len(contents), bytes.fromhex(sha(contents)), exe, platform, source_path)
+    raw_template = case(artifacts=(item,))[0]
+    artifact_dir = tempfile.TemporaryDirectory(prefix="trnm-signed-held-release-")
+    artifact_path = Path(artifact_dir.name) / "public-synthetic-artifact"
+    artifact_path.write_bytes(contents)
+    signed = execute([binary, artifact_path], input=raw_template)
+    pins_end = 80 + 2 * KEY_WIDTH
+    head = pins_end + CONTENT_CLAIM_WIDTH + 16
     row_width = 33 + 155 + 2 * SIG_WIDTH + len(raw_template)
     require(len(signed.stdout) == head + row_width * len(CASES) and not signed.stderr,
             "unexpected original fixture stream")
     raw = signed.stdout
-    network, tip, roster = raw[:32], raw[32:64], raw[80:head]
+    network, tip, roster = raw[:32], raw[32:64], raw[80:pins_end]
+    held_claim = raw[pins_end:pins_end + CONTENT_CLAIM_WIDTH]
+    held_budget = struct.unpack_from("<QQ", raw, pins_end + CONTENT_CLAIM_WIDTH)
     expiry, now = struct.unpack_from("<QQ", raw, 64)
     results = {}
     sources = {"unsigned": "unsigned_candidate", "identity": "pq_role_identity",
@@ -150,13 +162,13 @@ def check(out):
                                       backend=backend, byte_exports=("f0",)))
                        for name, stem in sources.items()}
             linked = stack.enter_context(LinkedShadow(backend))
-            rows, linked_cases, control = [], [], None
+            rows, linked_cases, control, wrong_quorum = [], [], None, None
             for i, (label, expected, phase, stage_code) in enumerate(CASES):
                 start = head + i * row_width
                 row = raw[start:start + row_width]
                 compare, checkpoint, metadata = row[0], row[1:33], row[33:188]
                 slots = (row[188:188 + SIG_WIDTH], row[188 + SIG_WIDTH:188 + 2 * SIG_WIDTH])
-                signatures = [(sig[:32], sig[32:]) for sig in slots]
+                signatures = tuple((sig[:32], sig[32:]) for sig in slots)
                 bundle = row[188 + 2 * SIG_WIDTH:]
                 actual, trace, observation = observations(modules, bundle, metadata, roster, signatures,
                                              network, tip, expiry, now)
@@ -176,6 +188,8 @@ def check(out):
                 if actual == 0:
                     require(control is None, "unexpected second positive linked control fixture")
                     control = (bundle, borrowed, roster, signatures, b"".join(observation))
+                if label == "bad_signature_before_wrong_generation":
+                    wrong_quorum = (bundle, borrowed, roster, signatures)
                 rows.append({"case": label, "actual_original": compare, "native": actual,
                              "native_phases": trace, "public_fixture_sha256": sha(row),
                              "transition_checkpoint": record})
@@ -189,6 +203,14 @@ def check(out):
                 row["linked_terminal"] = [code, stage, detail]
             require(control is not None, "missing exact positive Rust fixture")
             controls = private_controls(linked, *control)
+            require(wrong_quorum is not None, "missing actual compound refusal fixture")
+            held_modules = {source: stack.enter_context(NativeModule(source, backend=backend, byte_exports=("f0",)))
+                            for source in RUNTIME_ARTIFACTS}
+            joined = qualify_held(held_modules, linked, artifact_path, contents, held_claim, held_budget,
+                                 control[:4], wrong_quorum, control[-1])
+            (out / f"{backend}-held-stream.json").write_text(json.dumps({
+                source.stem: module.receipt for source, module in held_modules.items()
+            }, sort_keys=True, indent=2) + "\n")
             (out / f"{backend}-linked-shadow.json").write_text(
                 json.dumps(linked.receipt, sort_keys=True, indent=2) + "\n")
             images = {}
@@ -201,7 +223,12 @@ def check(out):
                     require(sha(image) == images[name], "native callback proof image changed")
                     (out / f"{backend}-{name}.so").write_bytes(image)
             results[backend] = {"images": images, "rows": rows, "linked_elf_sha256": linked.artifact_sha256,
-                                "linked_private_controls": controls}
+                                "linked_private_controls": controls, "held_and_signed": joined,
+                                "held_images": {source.stem: module.artifact_sha256
+                                                for source, module in held_modules.items()}}
+    artifact_dir.cleanup()
+    require(all(results["direct"]["held_images"][source.stem] != results["selfhost"]["held_images"][source.stem]
+                for source in RUNTIME_ARTIFACTS), "independent held stream emitters required")
     require(all(results["direct"]["images"][name] != results["selfhost"]["images"][name]
                 for name in sources) and results["direct"]["linked_elf_sha256"]
                 != results["selfhost"]["linked_elf_sha256"], "independent machine emitters are required for every phase")
@@ -214,7 +241,9 @@ def check(out):
             "locked_original": provenance, "backends": results, "production_authority": False,
             "native_same_call_token": False, "native_shadow_checkpoint": True,
             "same_call_linked_shadow": True, "linked_bridge_language": "C",
-            "test_only_composition": True}
+            "test_only_composition": True, "v0_signs_strong_content_claim": False,
+            "held_origin_claim_sha256": sha(held_claim), "held_raw_sha256": sha(contents),
+            "held_raw_bytes": len(contents), "held_encoded_charge": held_budget[1]}
 
 
 if __name__ == "__main__":

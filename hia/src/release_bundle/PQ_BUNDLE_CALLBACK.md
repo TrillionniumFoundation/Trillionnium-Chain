@@ -62,6 +62,18 @@ public fixture through [one linked shadow qualification call](../../platform/rel
 That shadow keeps each successful phase internal to the call; it does not
 replace production Rust or export an authorization token.
 
+The same qualifier also derives the typed held artifact directly from the
+single artifact row in a freshly signed V0 fixture. The
+[held streaming shadow](../../platform/release_file_shadow/README.md)
+reads the bounded synthetic artifact, checks raw SHA-256, and compares the
+entire CCH1 claim byte-for-byte to the original Rust observer before the
+unchanged linked V0 call. The combined observation is returned only when
+the actual private quorum and checkpoint succeed. Separate controls reject
+same-size wrong bytes, a different expected strong claim under valid V0,
+and an original invalid signature after a successful held read. V0 signs
+the entry and legacy locator, **not** the independent SHA-512 claim.
+No CPQ1 authentication, live custody, or release authorization is inferred.
+
 ```sh
 python3 -I -S -B hia/tests/qualify_release_pq_callback.py \
   --output /tmp/new-release-pq-callback

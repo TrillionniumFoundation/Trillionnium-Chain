@@ -6,10 +6,15 @@ use std::{
     io::{self, Read, Write},
 };
 use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
-use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+use trnm_protocol::{
+    content_commitment::{ContentContextV1, ContentKind, ContentReadBudget},
+    crypto_profile::{CryptoProfile, ProfileBinding, ProfileScope},
+    pq_frame::ml_dsa_65_key_id_from_spki,
+};
 use trnm_release_bundle::{
     ArtifactEntryV0, BuildInputV0, BuilderProvenanceV0, Digest32V0, ExactSourceV0, ReleaseBundleV0,
     SbomPackageV0,
+    content_v1::observe_release_file_v1,
     pq_release::{
         PqReleaseAuthorityV1, PqReleaseErrorV1, PqReleaseMetadataV1, PqReleaseRoleKeysV1,
         PqReleaseRoleV1, PqReleaseRootV1, PqReleaseSignatureV1, pq_release_signature_digest_v1,
@@ -87,7 +92,7 @@ fn public_metadata(m: &PqReleaseMetadataV1) -> Vec<u8> {
     v
 }
 
-fn issue(input: &[u8], out: &mut impl Write) -> io::Result<()> {
+fn issue(input: &[u8], file: &mut File, out: &mut impl Write) -> io::Result<()> {
     let (template, required, tail) = decode(input);
     let mut random = File::open("/dev/urandom")?;
     let mut node = [ephemeral(&mut random), ephemeral(&mut random)];
@@ -123,6 +128,28 @@ fn issue(input: &[u8], out: &mut impl Write) -> io::Result<()> {
         out.write_all(&k.public_key_id())?;
         out.write_all(k.public_spki())?;
     }
+    assert_eq!(template.artifacts.len(), 1);
+    let profile = CryptoProfile::CandidateMlDsa65V1
+        .bind(ProfileBinding {
+            network: [1; 32],
+            parameters: [2; 32],
+            genesis: [3; 32],
+            protocol_version: 1,
+            scope: ProfileScope::WholeSystemCandidate,
+            activation_height: 0,
+            retirement_height: None,
+        })
+        .unwrap();
+    let context =
+        ContentContextV1::new(&profile, ContentKind::ReleaseArtifact, [7; 64], 1).unwrap();
+    let mut budget = ContentReadBudget::new(1, 1 << 20).unwrap();
+    let held = observe_release_file_v1(&context, &mut budget, &template.artifacts[0], file)
+        .expect("fresh original retained artifact");
+    let claim = held.claim().encode();
+    assert_eq!(claim.len(), 213);
+    out.write_all(&claim)?;
+    out.write_all(&budget.reads_reserved().to_le_bytes())?;
+    out.write_all(&budget.bytes_reserved().to_le_bytes())?;
     for index in 0..14 {
         let mut authority = PqReleaseAuthorityV1::bootstrap_pinned(root.clone(), pin, NOW).unwrap();
         let mut bundle = template.clone();
@@ -220,5 +247,7 @@ fn issue(input: &[u8], out: &mut impl Write) -> io::Result<()> {
 fn main() -> io::Result<()> {
     let mut input = vec![];
     io::stdin().read_to_end(&mut input)?;
-    issue(&input, &mut io::stdout().lock())
+    let path = std::env::args_os().nth(1).expect("synthetic fixture path");
+    let mut file = File::open(path)?;
+    issue(&input, &mut file, &mut io::stdout().lock())
 }

@@ -110,6 +110,27 @@ class ReleasePqHostedEvidence(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "linked callback phase binding"):
             q.linked_callback_receipt(made, "selfhost", digest, sources)
 
+    def test_join_requires_real_held_claim_eof_and_no_refusal_publication(self):
+        value = "1" * 64
+        header = {"held_raw_bytes": 8193, "held_encoded_charge": 8330,
+                  "held_origin_claim_sha256": value, "held_raw_sha256": "2" * 64,
+                  "v0_signs_strong_content_claim": False}
+        rows = [{"label": label, "stage": phase, "status": code, "consumed": 8193,
+                 "actual_requested": [8192, 1, 1], "linked_terminal": terminal,
+                 "held_claim_sha256": None if phase == "artifact" else value,
+                 "linked_checkpoint": value if code == 0 else None,
+                 "published": code == 0} for label, phase, code, terminal in q.HELD_JOIN]
+        q.held_join_receipt(header, {"held_and_signed": rows}, value)
+        with self.assertRaisesRegex(ValueError, "held join origin"):
+            q.held_join_receipt({**header, "v0_signs_strong_content_claim": True}, {"held_and_signed": rows}, value)
+        rows[1]["published"] = True
+        with self.assertRaisesRegex(ValueError, "held join stages"):
+            q.held_join_receipt(header, {"held_and_signed": rows}, value)
+        rows[1]["published"] = False
+        rows[0]["actual_requested"].pop()
+        with self.assertRaisesRegex(ValueError, "held join stages"):
+            q.held_join_receipt(header, {"held_and_signed": rows}, value)
+
     def test_link_and_size_fail_closed(self):
         outside = self.root / "tiny.json"
         outside.write_bytes(b"{}")
