@@ -13,6 +13,7 @@ CELL = ROOT / "trillionnium/crates/trnm-data-availability/src/cell"
 CODEC = CELL / "manifest.rs"
 ERASURE = CELL / "erasure.rs"
 CLOSURE = CELL / "closure.rs"
+MODEL_ROOT = CELL / "model_root.rs"
 ADAPTER = Path(__file__).with_name("rust_cell_manifest_reference.rs")
 BINDING_ADAPTER = Path(__file__).with_name("rust_cell_binding_reference.rs")
 ENV = "HIA_M09_SHA2_RLIB"
@@ -25,7 +26,7 @@ def binding_source():
     return original[start:end]
 
 
-def source(with_closure=False):
+def source(with_closure=False, with_model_root=False):
     boundary = CELL.with_suffix(".rs").read_bytes()
     digest = pick(boundary, rb"^pub type CellDigestV1 = [^\n]+;\n")
     result = pick(boundary, rb"^pub type CellResultV1<T> = [^\n]+;\n")
@@ -43,11 +44,18 @@ mod binding {
     use super::manifest::{CellChunkV1, CellContextV1, CellManifestV1};
 """
     base = shell + digest + result + check + b"#[allow(dead_code)]\nmod manifest {\n" + wire + b"\n}\n"
-    if with_closure:
-        return (base +
+    if with_closure or with_model_root:
+        base = (base +
                 b"use manifest::{CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES};\n"
-                b"#[allow(dead_code)]\nmod closure {\n" + CLOSURE.read_bytes() + b"\n}\n"
-                b'include!("closure_observation.rs");\n')
+                b"#[allow(dead_code)]\nmod closure {\n" + CLOSURE.read_bytes() + b"\n}\n")
+        if with_model_root:
+            return (base +
+                    b"use closure::{CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1, MAX_CELL_CLOSURE_BYTES_V1};\n"
+                    b"#[allow(dead_code)]\nmod model_root {\n" + MODEL_ROOT.read_bytes() + b"\n}\n"
+                    b"#[allow(dead_code)]\nmod closure_observer {\nuse super::*;\n"
+                    b'include!("closure_observation.rs");\n}\n'
+                    b'include!("model_root_observation.rs");\n')
+        return base + b'include!("closure_observation.rs");\n'
     return (base + isolated + binding_source() +
             b'include!("binding_observation.rs");\n}\n' + ADAPTER.read_bytes())
 
@@ -137,20 +145,25 @@ def dependency_graph(artifact):
     return rust, details, bound
 
 
-def build(work, *, with_closure=False):
+def build(work, *, with_closure=False, with_model_root=False):
     path = Path(os.environ[ENV]).absolute()
     rust, graph, bound = dependency_graph(path)
     source_path, binary = work / "original.rs", work / "original"
-    raw = source(with_closure=with_closure)
+    raw = source(with_closure=with_closure, with_model_root=with_model_root)
     source_path.write_bytes(raw)
     observe = BINDING_ADAPTER.read_bytes()
     (work / "binding_observation.rs").write_bytes(observe)
     extra_proof = {}
-    if with_closure:
+    if with_closure or with_model_root:
         closure_observer = Path(__file__).with_name("rust_cell_closure_reference.rs").read_bytes()
         (work / "closure_observation.rs").write_bytes(closure_observer)
         extra_proof = {"original_closure_source_sha256": sha(CLOSURE.read_bytes()),
                        "oracle_closure_observer_sha256": sha(closure_observer)}
+        if with_model_root:
+            root_observer = Path(__file__).with_name("rust_cell_model_root_reference.rs").read_bytes()
+            (work / "model_root_observation.rs").write_bytes(root_observer)
+            extra_proof.update(original_model_root_source_sha256=sha(MODEL_ROOT.read_bytes()),
+                               oracle_model_root_observer_sha256=sha(root_observer))
     else:
         extra_proof = {"original_binding_source_sha256": sha(binding_source()),
                        "oracle_binding_observer_sha256": sha(observe)}

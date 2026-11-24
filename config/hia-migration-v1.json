@@ -699,6 +699,20 @@
       ]
     },
     {
+      "id": "data-availability/cell-model-release-root",
+      "node_integration_complete": false,
+      "scope": "Pure original TMR1 canonical metadata decode: embedded offset-aware TCD1, exact computed ordered router-roster digest, declared lineage shape and outer domain identity. No payload, loader policy, owner pins, ancestry verification, authentication, storage, network, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_model_release_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_model_release_root.py",
+        "hia/tests/test_cell_dependency_closure.py",
+        "hia/tests/test_cell_closure_manifest_relation.py",
+        "hia/tests/cell_manifest_original.py",
+        "hia/tests/rust_cell_model_root_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
@@ -1854,7 +1868,8 @@
         "data-availability/cell-manifest-binding",
         "data-availability/cell-release-manifest",
         "data-availability/cell-dependency-closure",
-        "data-availability/cell-closure-manifest-relation"
+        "data-availability/cell-closure-manifest-relation",
+        "data-availability/cell-model-release-root"
       ],
       "legacy_path": "trillionnium/crates/trnm-data-availability",
       "module": "M09",

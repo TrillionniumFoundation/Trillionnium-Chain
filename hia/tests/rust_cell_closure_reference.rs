@@ -32,7 +32,7 @@ fn observe_cell_dependency_closure(wire: &[u8], output: &mut impl Write) -> io::
     }
 }
 
-fn closure_error_status(error: CellErrorV1) -> u8 {
+pub(crate) fn closure_error_status(error: CellErrorV1) -> u8 {
     match error {
         CellErrorV1::Io(error) if error.kind() == io::ErrorKind::UnexpectedEof => 2,
         CellErrorV1::Invalid(reason) => match reason {
