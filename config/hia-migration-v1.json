@@ -798,6 +798,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-commitment",
+      "node_integration_complete": false,
+      "scope": "Same-call bounded canonical TCV1 validation and original domain SHA-512 commitment of the validated immutable bytes, publishing only computed environment ID, manifest count and commitment. Native <=1 MiB only; no owner decision, loader, payload, filesystem, storage, network, signatures, adoption or production routing.",
+      "source": "hia/src/data_availability/cell_version_commitment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_version_commitment.py",
+        "hia/tests/tcv_commitment_guard.py",
+        "hia/tests/test_cell_complete_version.py",
+        "hia/tests/rust_cell_complete_version_reference.rs"
+      ]
+    },
+    {
       "id": "control-plane/core",
       "node_integration_complete": false,
       "scope": "Complete public descriptor/action/plan/receipt digests, shape/measurement/i128-bound validation and arbitrary-part Digest32 hashing; independent original Rust comparison; signature provider and node-local plan acceptance remain separate",
