@@ -10,6 +10,18 @@ fn main() -> io::Result<()> {
         let extent = u32::from_le_bytes(framed[..4].try_into().unwrap()) as usize;
         let (wire, rest) = framed[4..].split_at(extent);
         framed = rest;
+        if mode.as_deref() == Some("--release") {
+            match manifest::CellReleaseManifestV1::decode(wire) {
+                Ok(value) => {
+                    assert_eq!(value.encode(), wire);
+                    output.write_all(&[0])?;
+                    output.write_all(&value.id())?;
+                    output.write_all(&(value.cells().len() as u32).to_le_bytes())?;
+                }
+                Err(error) => output.write_all(&[release_error_status(error)])?,
+            }
+            continue;
+        }
         if mode.as_deref() == Some("--binding") {
             match binding::observe(wire) {
                 Ok(row) => {
@@ -71,5 +83,25 @@ fn error_status(error: CellErrorV1) -> u8 {
             _ => panic!("unexpected original diagnostic: {reason}"),
         },
         other => panic!("unexpected original error: {other:?}"),
+    }
+}
+
+fn release_error_status(error: CellErrorV1) -> u8 {
+    match error {
+        CellErrorV1::Io(error) if error.kind() == io::ErrorKind::UnexpectedEof => 3,
+        CellErrorV1::Invalid(reason) => match reason {
+            "release manifest length" => 1,
+            "release version" => 2,
+            "release family length" => 4,
+            "release family encoding" => 5,
+            "model family" => 6,
+            "release context digest" => 7,
+            "release cell count" => 8,
+            "release manifest coverage" => 9,
+            "release cell order/duplicates" => 10,
+            "release cell digest" => 11,
+            _ => panic!("unexpected original release diagnostic: {reason}"),
+        },
+        other => panic!("unexpected original release error: {other:?}"),
     }
 }
