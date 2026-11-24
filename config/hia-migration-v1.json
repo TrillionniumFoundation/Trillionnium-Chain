@@ -1420,6 +1420,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-dto",
+      "node_integration_complete": false,
+      "scope": "Bounded complete parsing of the nine required ordinary Worker journal fields in declaration order, with no options or the complete ordered null suffix, emitting WJL1. Real native WJF1\u2192WJD1\u2192WAT2 and unchanged locked CLI three-artifact parity. Generic Serde, non-null metadata, authority, files and dispatch unchanged.",
+      "source": "hia/src/worker_agent/journal_audit_dto.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_dto.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-line-frame",
       "node_integration_complete": false,
       "scope": "Atomic bounded original Worker raw journal framing (whole UTF-8, terminal LF, exact CRLF and blank-only Rust Unicode whitespace handling) emits borrowed line ranges and logical ordinals. Exact source-extracted Rust span and real locked CLI replay; no JSON/status admission, filesystem authority or production routing.",

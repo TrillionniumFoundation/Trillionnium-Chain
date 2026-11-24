@@ -9434,6 +9434,35 @@
         "source": "src/worker_agent/audit_report.hepta"
       }
     ],
+    "src/worker_agent/journal_audit_dto.hepta": [
+      {
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "oj_utf8"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      }
+    ],
     "src/worker_agent/journal_line_frame.hepta": [
       {
         "functions": [
