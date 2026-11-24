@@ -1350,6 +1350,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-markdown-batch",
+      "node_integration_complete": false,
+      "scope": "Full active eighteen-column Markdown export for ordered already-typed Worker rows, using original display escapes, exact 446-byte header and atomic native output. Both emitters compare to the actual original locked CLI Markdown file. Selection, indexing, filesystem and production ownership remain original.",
+      "source": "hia/src/worker_agent/audit_markdown_batch.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_markdown_batch.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-owned-library",
       "node_integration_complete": false,
       "scope": "Candidate native ELF with a single named WJB3-only in-memory audit export API. Exact direct and selfhost text binding, narrow symbol inventory and genuine locked Worker CLI comparison. No journal, index, filesystem, or production capability.",
@@ -1503,6 +1513,7 @@
         "worker-agent/audit-text",
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
+        "worker-agent/audit-markdown-batch",
         "worker-agent/audit-owned-library",
         "worker-agent/audit-jsonl-batch",
         "worker-agent/audit-jsonl-row",
