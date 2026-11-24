@@ -1350,6 +1350,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-index-wire",
+      "node_integration_complete": false,
+      "scope": "Atomic complete original pretty audit index serialization from already-typed ordered maps, with lexical and ordinal structure checks and two original locked CLI file observations. Index construction, file IO, lookup, authority and production ownership remain original.",
+      "source": "hia/src/worker_agent/audit_index_wire.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_index_wire.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-markdown-batch",
       "node_integration_complete": false,
       "scope": "Full active eighteen-column Markdown export for ordered already-typed Worker rows, using original display escapes, exact 446-byte header and atomic native output. Both emitters compare to the actual original locked CLI Markdown file. Selection, indexing, filesystem and production ownership remain original.",
@@ -1513,6 +1523,7 @@
         "worker-agent/audit-text",
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
+        "worker-agent/audit-index-wire",
         "worker-agent/audit-markdown-batch",
         "worker-agent/audit-owned-library",
         "worker-agent/audit-jsonl-batch",
