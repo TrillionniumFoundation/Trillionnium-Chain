@@ -1,6 +1,7 @@
 """Original locked Cargo Bench versus a freestanding admitted HIA process."""
 from __future__ import annotations
 
+from collections import Counter
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -285,7 +286,7 @@ class NativeBenchMain(unittest.TestCase):
                                   (b"--help=true",), (b"--", b"--help"),
                                   (b"--reader-high-water-v1", b"--help"),
                                   (b"--reader-high-water-v1", b"--txs"),
-                                  (b"--profile", b"--strategy=auto-adaptive"),
+                                  (b"--profile", b"--workload=mixed", b"--strategy=auto-adaptive"),
                                   (b"--profile", b"--strategy=aggressive-greedy"))):
             actual, _ = self.actual(f"plain-cli-denied-{i}", self.native, args)
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
@@ -384,7 +385,8 @@ class NativeBenchMain(unittest.TestCase):
                 ((b"--workload", b"x" * 128), {}), ((b"--workload", b"--misspelled"), {}),
                 ((b"--reader-high-water-v1", b"--strategy=writ-first"), {}),
                 ((b"--strategy=writ-first",), {b"HIA_BENCH_TEST_ONLY": b"synthetic"}),
-                ((b"--strategy=auto-adaptive",), {}), ((b"--strategy=aggressive-greedy",), {}))):
+                ((b"--workload=mixed", b"--strategy=auto-adaptive"), {}),
+                ((b"--strategy=aggressive-greedy",), {}))):
             denied, _ = self.actual(f"enum-cli-closed-{i}", self.native, args, env=env)
             self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
@@ -779,6 +781,103 @@ class NativeBenchMain(unittest.TestCase):
             else:
                 expected = OUTSIDE
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", expected))
+            self.assertFalse(self.run_path.exists())
+
+    def test_actual_classic_auto_adaptive_decision_profile_and_replay(self):
+        def independent_classic_decision(raw_n, raw_keys):
+            n, keys = max(1, raw_n), max(1, raw_keys)
+            sample = min(n, 2048)
+            if n < 512:
+                active, reason, streak, share = False, b"small_batch", 0.0, 0.0
+            else:
+                ids = [j * (n - 1) // (sample - 1) % keys for j in range(sample)]
+                streak = sum(x == y for x, y in zip(ids, ids[1:])) / (sample - 1)
+                share = max(Counter(ids).values()) / sample
+                active = streak >= 0.22 + 0.04 and share >= 0.0075 and streak * share >= 0.01
+                reason = (b"hotspot_detected" if active else b"low_hot_key_share" if share < 0.0075
+                          else b"low_expected_gain" if streak * share < 0.01 else b"below_streak_budget")
+            f = lambda x: f"{x:.4f}".encode()
+            return {b"profile.auto." + k: v for k, v in {
+                b"use_hot_bucket": b"true" if active else b"false", b"reason": reason,
+                b"sample_len": str(sample).encode(), b"streak_ratio": f(streak),
+                b"streak_threshold": b"0.2200", b"min_margin": b"0.0400",
+                b"hot_key_share": f(share), b"min_hot_key_share": b"0.0075",
+                b"expected_gain_score": f(streak * share), b"min_expected_gain_score": b"0.0100"}.items()}
+
+        def items(raw):
+            return dict(line.split(b"=", 1) for line in raw.splitlines() if b"=" in line)
+
+        witnesses = {}
+        cases = ((0, 0, 1000), (511, 1, 2), (512, 1, 2), (513, 4, 2), (2048, 4, 2),
+                 (2049, 4, 2), (4095, 2, 2), (20_000, 2_000, 2))
+        reason_roster = set()
+        for i, (n, k, repeats) in enumerate(cases):
+            args = [b"--strategy", b"auto-adaptive"] if i % 2 == 0 else [b"--strategy=auto-adaptive"]
+            if i == 0:
+                args += [b"--workload=classic"]
+            if i != len(cases) - 1:
+                args += [f"--txs={n}".encode(), f"--keys={k}".encode()]
+            args += [f"--determinism-repeats={repeats}".encode()]
+            expected = independent_classic_decision(n, k)
+            reason_roster.add(expected[b"profile.auto.reason"])
+            pair = []
+            for name, image in (("rust", self.original), ("native", self.native)):
+                self.reset_profile_path()
+                actual, elapsed = self.actual(f"auto-classic-{i}-{name}", image, (*args, b"--profile"))
+                stdout, _, raw_file = self.profile_comparable(actual, elapsed, "file")
+                fields = items(stdout)
+                self.assertEqual(fields[b"determinism.replay_match"], b"true")
+                self.assertEqual(fields[b"determinism.repeats"], str(repeats).encode())
+                self.assertEqual(fields[b"strategy"], b"AutoAdaptive")
+                self.assertEqual({kk: vv for kk, vv in fields.items() if kk.startswith(b"profile.auto.")}, expected)
+                self.assertEqual({kk: vv for kk, vv in items(raw_file).items() if kk.startswith(b"profile.auto.")},
+                                 expected)
+                pair.append(stdout)
+            self.assertEqual(*pair)
+            if (n, k) == (4095, 2):
+                profile = items(pair[1])
+                self.assertEqual(profile[b"profile.auto.use_hot_bucket"], b"true")
+                witnesses["auto"] = [profile[b"determinism.input_sha256"], profile[b"determinism.groups_sha256"]]
+        self.assertEqual(reason_roster, {b"small_batch", b"hotspot_detected", b"low_expected_gain", b"low_hot_key_share"})
+
+        for strategy in (b"original", b"auto-adaptive"):
+            args = (b"--strategy=" + strategy, b"--txs=4095", b"--keys=2", b"--determinism-repeats=2")
+            self.reset_profile_path()
+            old, old_elapsed = self.actual(f"auto-reorders-{strategy.decode()}-rust", self.original, args)
+            new, new_elapsed = self.actual(f"auto-reorders-{strategy.decode()}-native", self.native, args)
+            self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
+            self.assertEqual(stdout_observation(old.stdout, old_elapsed)[1], stdout_observation(new.stdout, new_elapsed)[1])
+            self.assertFalse(self.run_path.exists())
+            fields = items(new.stdout)
+            if strategy == b"original":
+                witnesses["original"] = [fields[b"determinism.input_sha256"], fields[b"determinism.groups_sha256"]]
+            else:
+                self.assertEqual(witnesses["auto"], [fields[b"determinism.input_sha256"], fields[b"determinism.groups_sha256"]])
+        self.assertEqual(witnesses["auto"][0], witnesses["original"][0])
+        self.assertNotEqual(witnesses["auto"][1], witnesses["original"][1])
+        (self.root / "auto-adaptive-classic.json").write_text(json.dumps(
+            {k: [v.decode() for v in val] for k, val in witnesses.items()}, sort_keys=True) + "\n")
+
+    def test_classic_auto_adaptive_scope_still_fails_closed(self):
+        classic = (b"--strategy=auto-adaptive", b"--profile")
+        controls = (
+            ((*classic, b"--workload=mixed"), {}),
+            ((*classic, b"--workload=hot-streak", b"--keys=1"), {}),
+            ((*classic, b"--reader-high-water-v1"), {}),
+            ((*classic, b"--txs=20001"), {}),
+            ((b"--strategy=aggressive-greedy", b"--profile"), {}),
+            (classic, {b"TRNM_AUTO_MIN_BATCH_LEN": b"64"}),
+            (classic, {b"TRNM_HOT_BUCKETS": b"17"}),
+            (classic, {b"HIA_BENCH_FIXTURE_UNRELATED": b"synthetic"}),
+        )
+        for label, (args, env) in enumerate(controls):
+            result, _ = self.actual(f"auto-classic-denied-{label}", self.native, args, env=env)
+            self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", OUTSIDE))
+            self.assertFalse(self.run_path.exists())
+        over = (*classic, b"--determinism-repeats=1001")
+        for name, image in (("rust", self.original), ("native", self.native)):
+            result, _ = self.actual(f"auto-classic-over-{name}", image, over)
+            self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", REPEAT))
             self.assertFalse(self.run_path.exists())
 
     def test_actual_hot_bucket_environment_controls_order(self):

@@ -23,8 +23,8 @@ COMPONENTS = (
 )
 EMITTER = "platform/bench/main_emitter.hepta"
 DIAGNOSTIC_SOURCE = "src/bench/main_diagnostics.json"
-ADAPTER_SHA256 = "b4b579b2d16080b22ca97748cd0d9dcefb9ab9f93029b728b37effd00f64afa3"
-PREFIX, BASE = 4384, 0x400000
+ADAPTER_SHA256 = "b5601cee0bbd312bccd2b68d81652893c00ba25c81a95ec8fc18569ac47c9b37"
+PREFIX, BASE = 4416, 0x400000
 
 
 def exact_native_text(data):
@@ -223,7 +223,7 @@ sys.stdout.buffer.write(out.raw[:n])
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
     report = {"diagnostics_catalog": {"sha256": sha256(catalog), "bytes": len(catalog)},
-              "schema": "trnm.hia.bench-main.build.v7",
+              "schema": "trnm.hia.bench-main.build.v8",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},

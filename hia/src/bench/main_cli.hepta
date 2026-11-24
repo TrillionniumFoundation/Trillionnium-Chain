@@ -335,9 +335,17 @@ block strategy_semantics(o_ss:mutbuf)
   ss_unmarked:bool = compare.eq(ss_mode_bit,ss_zero)
   ss_uses_footprint:bool = compare.eq(ss_strategy,ss_footprint)
   ss_legacy_denied:bool = bool.and(ss_unmarked,ss_uses_footprint)
-  ss_highest_admitted:u64 = const() {"value":4}
-  ss_other_denied:bool = compare.gt(ss_strategy,ss_highest_admitted)
-  ss_denied:bool = bool.or(ss_legacy_denied,ss_other_denied)
+  ss_auto:u64 = const() {"value":5}
+  ss_workload_at:u64 = const() {"value":48}
+  ss_other_denied:bool = compare.gt(ss_strategy,ss_auto)
+  ss_workload:u64 = call(o_ss,ss_workload_at) {"function":"bench_get"}
+  ss_classic:bool = compare.eq(ss_workload,ss_zero)
+  ss_uses_auto:bool = compare.eq(ss_strategy,ss_auto)
+  ss_auto_domain:bool = bool.and(ss_unmarked,ss_classic)
+  ss_wrong_auto:bool = bool.not(ss_auto_domain)
+  ss_auto_denied:bool = bool.and(ss_uses_auto,ss_wrong_auto)
+  ss_previous_denied:bool = bool.or(ss_legacy_denied,ss_other_denied)
+  ss_denied:bool = bool.or(ss_previous_denied,ss_auto_denied)
   branch ss_denied fail() repeat_bound(o_ss)
 block repeat_bound(o_rep:mutbuf)
   at16_rep:u64 = const() {"value":16}

@@ -79,7 +79,7 @@ acquisition, or the full Bench startup/process path.
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
-process and explicitly corrected Mixed FootprintDesc. It reads real argv at
+process, ordinary Classic AutoAdaptive, and explicitly corrected Mixed FootprintDesc. It reads real argv at
 `_start` and, only for HotBucketInterleave,
 admits the [single-variable startup policy](#hot-bucket-startup-environment)
 below. This is an isolated candidate, not an activated general replacement
@@ -90,8 +90,9 @@ Its admitted invocation is no arguments (Classic, 20,000 transactions and
 `--workload`, `--strategy` and `--determinism-repeats` in split
 or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
-`write-first`, `write-last` or `hot-bucket-interleave`. Explicit persistence retains the
-original true default.
+`write-first`, `write-last` or `hot-bucket-interleave`; ordinary Classic with
+an empty environment also admits `auto-adaptive`. Explicit persistence retains
+the original true default.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
 values and malformed text. Zero numeric workload counts retain the original
@@ -172,7 +173,7 @@ argument, diagnostics and report code and the build-time packer use the pinned c
 explicit object profile; native workload, schedule, digests, profile and
 environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 4,208-byte Linux adapter. It does not execute the
+the address table, and the 4,240-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 17 argument tokens in a private span and owns
@@ -189,6 +190,23 @@ creates directories or files. Original and native deterministic stdout/digests m
 on the default Classic, admitted default-sized single-writer workloads and
 admitted small inputs; independent elapsed observations
 are retained and are not compared as deterministic bytes.
+
+### Ordinary Classic AutoAdaptive
+
+Classic generates one read and one write on the same key for every transaction;
+there are no distinct read-only accesses that could regress a writer's required
+group. The existing scheduler therefore runs the original AutoAdaptive decision
+against its unchanged defaults. The admitted process keeps real clocks,
+membership replay and protected profile persistence. Its original 10
+adaptive fields travel from the actual scheduler result to the report; only the
+separately observed clocks and their derived names are normalized in comparison.
+At 4,095 transactions on two alternating keys, the 2,048-point endpoint-aware
+sample sees only one key. The real decision selects the hot-bucket strategy and
+changes ordered membership versus Original on the same workload digest.
+The locked original and HIA agree on both orders, the exact adaptive fields
+and persisted file fixed points. The existing limits remain; nonempty startup
+environments, AutoAdaptive on Mixed/HotStreak, the explicit corrected marker
+with AutoAdaptive, and AggressiveGreedy are not admitted here.
 
 ### Corrected workload qualification
 
