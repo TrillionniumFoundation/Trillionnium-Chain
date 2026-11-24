@@ -21,8 +21,8 @@ COMPONENTS = (
     "src/bench/environment.hepta",
 )
 EMITTER = "platform/bench/main_emitter.hepta"
-ADAPTER_SHA256 = "63a685240bc7642e23c47d81fa86f4ca475e3f6041b39bda24f94fc675e11f08"
-PREFIX, BASE = 3976, 0x400000
+ADAPTER_SHA256 = "be08042ab2f9ef37e23fac8be58b2395b0a962b16a70e976d65462e06af6268a"
+PREFIX, BASE = 4088, 0x400000
 
 
 def exact_native_text(data):
@@ -75,26 +75,29 @@ def build(output: Path, *, bind_profile_output=False):
     if not __debug__:
         raise RuntimeError("Optimized Python source qualification refused")
     pinned = Build(output)
-    sources, wires, parts, cli_receipt = {}, {}, [], None
+    sources, wires, parts, object_receipts = {}, {}, [], {}
     for rel in (*COMPONENTS, EMITTER):
         _, wire, _, _, captured = checked_source(HIA_ROOT / rel)
         sources[rel] = {p.relative_to(HIA_ROOT).as_posix(): sha256(raw) for p, raw in captured}
         wires[rel] = wire
-    for index, rel in enumerate(COMPONENTS):
-        if index == 0:
-            # The fixed-core flat profile refuses this CFG. Its pinned object
-            # profile is explicitly selected, not a host/direct-emitter fallback.
-            obj = output / "cli.o"
-            cli_receipt, _ = build_native(HIA_ROOT / rel, obj, byte_exports=("f0",), kind="object",
+    explicit_object = {"src/bench/main_cli.hepta": "cli", "src/bench/report.hepta": "report"}
+    for rel in COMPONENTS:
+        if rel in explicit_object:
+            # The fixed-core flat profile refuses these CFGs. The self-host
+            # object profile is selected explicitly; there is no host fallback.
+            name = explicit_object[rel]
+            obj = output / f"{name}.o"
+            receipt, _ = build_native(HIA_ROOT / rel, obj, byte_exports=("f0",), kind="object",
                 backend="selfhost", compiler=os.environ["HIA_NATIVE_COMPILER"],
                 compiler_sha256=os.environ["HIA_NATIVE_COMPILER_SHA256"])
-            record = output / "cli.canonical-input.hepta"
+            object_receipts[name] = receipt
+            record = output / f"{name}.canonical-input.hepta"
             value = checked_source(HIA_ROOT / rel)[0].as_dict()
             value["module"] = "selfhost_elf"
             from hepta.hia_agent_assembly import render_assembly
             wire = render_assembly(value).encode()
-            if sha256(wire) != cli_receipt["compiler_wire_sha256"]:
-                raise ValueError("Exact original argument compiler request changed")
+            if sha256(wire) != receipt["compiler_wire_sha256"]:
+                raise ValueError("Exact Bench object compiler request changed: " + name)
             record.write_bytes(wire)
             raw = exact_native_text(obj.read_bytes())
         else:
@@ -164,12 +167,13 @@ sys.stdout.buffer.write(out.raw[:n])
             if sha256((HIA_ROOT / relative).read_bytes()) != identity:
                 raise ValueError("Native Bench source changed during construction")
     pinned.check_pin()
-    report = {"schema": "trnm.hia.bench-main.build.v3",
+    report = {"schema": "trnm.hia.bench-main.build.v4",
               "status": "BUILD_PASS", "compiler_sha256": sha256(pinned.compiler),
               "toolchain_revision": pinned.lock["revision"], "source_inputs": sources,
               "native_elf": {**elf, "sha256": sha256(image), "bytes": len(image)},
               "adapter_sha256": ADAPTER_SHA256, "adapter_bytes": PREFIX - 176,
-              "argument_object": cli_receipt, "emitter_object": emitter_receipt,
+              "argument_object": object_receipts["cli"], "report_object": object_receipts["report"],
+              "emitter_object": emitter_receipt,
               "contained_parts": [{"source": rel, "entry_address": addr, "sha256": sha256(raw),
                                    "bytes": len(raw)}
                                   for rel, addr, raw in zip(COMPONENTS, addresses, parts, strict=True)],

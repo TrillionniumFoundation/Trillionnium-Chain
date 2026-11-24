@@ -12,12 +12,15 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
+from datetime import datetime, timezone
 import tomllib
 import unittest
 
 from hia.platform.bench.main_build import build
 from hia.platform.build import new_output, sealed_executable
 from hia.tests.native_support import NativeModule
+from hia.tests.test_bench_main import replay_fixture, stdout_observation
 from hia.tests.test_bench_native import REFERENCE, request, run_original_command, txs_from_frame
 from hia.tests.test_bench_report import report_case, report_frame
 from hia.tests.test_executor_schedule import decoded_output, sizes, tx
@@ -28,6 +31,9 @@ MAIN = Path("crates/trnm-bench/src/main.rs")
 LOCK = Path("Cargo.lock")
 SOURCE_SHA = "d5cf48dfe4daa00bd739b39bd3dbbc2148f6bddf171eb0e356b0f1df434db5f4"
 SEMANTICS = "reader-high-water-v1"
+MODE = "--reader-high-water-v1"
+STAMP = b"schedule_semantics=reader-high-water-v1\n"
+CORRECTED_BASENAME = "executor-profile-summary-reader-high-water-v1-"
 LIMIT = 16 << 20
 WORKLOADS = {0: "classic", 1: "mixed", 2: "hot-streak"}
 STRATEGIES = {0: "original", 4: "hot-bucket-interleave"}
@@ -211,7 +217,7 @@ class BenchReaderHighWater(unittest.TestCase):
         configured = os.environ.get("HIA_BENCH_READER_HIGH_WATER_OBSERVATIONS")
         cls.root = (new_output(Path(configured)) if configured else Path(cls.enterClassContext(
             tempfile.TemporaryDirectory(prefix="trnm-bench-reader-high-water-"))))
-        private = cls.root / "private-rust"
+        private = cls.root / "isolated-source"
         private.mkdir(mode=0o700)
         cls.addClassCleanup(shutil.rmtree, private)
         target = Path(cls.enterClassContext(tempfile.TemporaryDirectory(prefix="trnm-corrected-cargo-")))
@@ -221,14 +227,17 @@ class BenchReaderHighWater(unittest.TestCase):
             ("workload", "bench/workload"), ("schedule", "executor/schedule"),
             ("repeat", "bench/repeat"), ("digests", "bench/digests"),
             ("profile", "bench/profile"), ("report", "bench/report"))}
+        cls.image, cls.image_receipt = build(cls.root / "corrected-bound", bind_profile_output=True)
         cls.events = []
         cls.results = []
+        cls.standalone = []
 
     @classmethod
     def tearDownClass(cls):
         record = {"semantics": SEMANTICS, "test_only": True, "actual_native_calls": cls.events,
                   "cohorts": cls.results, "legacy_vulnerable_runtime_replayed": False,
-                  "elf_default_admission_expanded": False, "production_activation": False,
+                  "explicit_corrected_elf": cls.standalone,
+                  "unmarked_elf_default_admission_expanded": False, "production_activation": False,
                   "native_machine": {name: m.receipt for name, m in cls.native.items()}}
         (cls.root / "observations.json").write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
 
@@ -256,7 +265,8 @@ class BenchReaderHighWater(unittest.TestCase):
 
     def test_native_defaults_match_corrected_rust_graph_profile_and_replay(self):
         rows = ((0, 32, 7, 3, 1, 0), (1, 20000, 2000, 3, 1, 0),
-                (2, 20000, 2000, 3, 1, 0), (2, 20000, 2000, 3, 1, 4))
+                (2, 20000, 2000, 3, 1, 0), (2, 20000, 2000, 3, 1, 4),
+                (1, 20000, 1, 8, 1, 0))
         for row_index, row in enumerate(rows):
             with self.subTest(row=row):
                 self.compare_cohort(row_index, row)
@@ -303,7 +313,8 @@ class BenchReaderHighWater(unittest.TestCase):
         derived=list(struct.unpack_from("<51Q",p,8))
         command=[str(self.cli),"--workload",WORKLOADS[w],
                  "--strategy",STRATEGIES[strategy],"--determinism-repeats",str(repeats),"--profile"]
-        if w==0: command += ["--txs",str(n),"--keys",str(k)]
+        if (n, k, fan, stride) != (20000, 2000, 3, 1):
+            command += ["--txs", str(n), "--keys", str(k), "--read-fanout", str(fan), "--write-every", str(stride)]
         stdout=self.actual(label+"-corrected-cli",command)
         fields=dict(line.split(b"=",1) for line in stdout.splitlines()[1:])
         self.assertEqual(fields[b"determinism.input_sha256"],input_hex)
@@ -325,10 +336,109 @@ class BenchReaderHighWater(unittest.TestCase):
         self.assertEqual(rendered[40:40+a],stdout)
         self.assertEqual(rendered[40+a:40+a+c],persisted)
         self.assertEqual(rendered[40+a+c:],b"\xA5"*(len(rendered)-40-a-c))
+        if w:
+            self.compare_standalone(label, command[1:], stdout, profile, persisted, len(raw), scratch_n)
         self.results.append({"label":label,"input":row,"group_count":result["group_count"],
                              "independent_accesses":edges,"conflicts":0,"members":n,
                              "input_sha256":input_hex.decode(),"group_sha256":groups_hex.decode(),
                              "profile_sha256":sha(persisted),"native_schedule_invocations_in_replay":3})
+
+    def standalone_process(self, label, args, *, image=None, env=None):
+        fd = sealed_executable(self.image if image is None else image, label)
+        try:
+            before = time.time_ns()
+            monotonic = time.monotonic_ns()
+            result = subprocess.run(["trnm-bench", *args], executable=f"/proc/self/fd/{fd}",
+                        pass_fds=(fd,), env={} if env is None else env, cwd=self.root,
+                        stdin=subprocess.DEVNULL, capture_output=True, timeout=25)
+            elapsed = time.monotonic_ns() - monotonic
+            after = time.time_ns()
+        finally:
+            os.close(fd)
+        for k, raw in (("stdout", result.stdout), ("stderr", result.stderr)):
+            (self.root / f"{label}.{k}.raw").write_bytes(raw)
+        return result, elapsed, before, after
+
+    def compare_standalone(self, label, args, rust_stdout, rust_path, rust_file, work_bytes, scratch_bytes):
+        # Both binaries take their own clocks. Only exact clock/path-dependent
+        # fields and the new explicit semantics metadata are normalized.
+        native, wall, before, after = self.standalone_process(label+"-native-profile", [MODE, *args])
+        self.assertEqual((native.returncode, native.stderr), (0, b""))
+        measured, _ = stdout_observation(native.stdout, wall)
+        self.assertGreater(measured, 0)
+        keys = dict(line.split(b"=", 1) for line in native.stdout.splitlines()[1:])
+        epoch = int(keys[b"profile.report.capture_started_at_epoch"])
+        self.assertLessEqual(before//1_000_000_000, epoch)
+        self.assertLessEqual(epoch, after//1_000_000_000)
+        iso = datetime.fromtimestamp(epoch, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ").encode()
+        self.assertEqual(keys[b"profile.report.capture_started_at_iso"], iso)
+        self.assertEqual(keys[b"profile.report.elapsed_ms"], str(measured).encode())
+        for key in (b"capture_stamp", b"capture_stamp_epoch"):
+            self.assertEqual(keys[b"profile.report."+key], str(epoch).encode())
+        candidate = self.anchor/"run/bench"/f"{CORRECTED_BASENAME}{epoch}.txt"
+        self.assertEqual(keys[b"profile.report.path"], os.fsencode(candidate))
+        self.assertEqual(keys[b"profile.report.artifact_basename"], os.fsencode(candidate.name))
+        self.assertNotEqual(candidate, rust_path)
+        self.assertEqual(rust_path.read_bytes(), rust_file)
+        persisted = candidate.read_bytes()
+        (self.root / (label + "-native-profile.file.raw")).write_bytes(persisted)
+        for file, stdout in ((persisted, native.stdout), (rust_file, rust_stdout)):
+            footer = (f"profile.report.output_line_count={file.count(bytes([10]))}\n"
+                      f"profile.report.output_bytes={len(file)}\n").encode()
+            self.assertEqual(file, stdout + footer)
+        self.assertEqual(native.stdout.count(STAMP), 1)
+        self.assertNotIn(STAMP, rust_stdout)
+        permitted = {b"elapsed_ms"} | {b"profile.report." + k for k in (
+            b"capture_started_at_epoch", b"capture_started_at_iso", b"capture_stamp",
+            b"capture_stamp_epoch", b"elapsed_ms", b"path", b"artifact_basename")}
+        def normalized(stdout):
+            return [line for line in stdout.splitlines()
+                    if line.partition(b"=")[0] not in permitted and line != STAMP.rstrip(b"\n")]
+        self.assertEqual(normalized(native.stdout), normalized(rust_stdout))
+        candidate.unlink()
+        rust_path.unlink()
+        self.standalone.append({"label": label, "profile_and_replay": True, "native_wall_ns": wall,
+                                "native_elapsed_ms": measured, "native_realtime_epoch": epoch,
+                                "native_profile_sha256": sha(persisted), "original_profile_sha256": sha(rust_file),
+                                "native_profile_basename": candidate.name, "workload_frame_bytes": work_bytes,
+                                "scheduler_scratch_required": scratch_bytes, "separate_profile_namespace": True})
+
+    def test_corrected_mode_scope_and_native_replay_clock_bound(self):
+        args = [MODE, "--workload=mixed", "--txs", "3", "--keys", "1"]
+        cases = ([MODE, "--workload=classic"], [MODE, "--workload=mixed", "--keys=1999"],
+                 [MODE, "--workload=hot-streak", "--txs=19999"],
+                 [MODE, "--workload=mixed", "--strategy=write-last"],
+                 [MODE, "--workload=hot-streak", "--read-fanout=9"],
+                 [MODE, "--workload=hot-streak", "--txs=20001"],
+                 [MODE, MODE, "--workload=hot-streak"],
+                 [MODE+"=true", "--workload=hot-streak"])
+        for k, flags in enumerate(cases):
+            result, *_ = self.standalone_process(f"corrected-refused-{k}", flags)
+            self.assertEqual((result.returncode,result.stdout,result.stderr),(2,b"",OUTSIDE))
+        result, *_ = self.standalone_process("corrected-nonempty-env", [MODE, "--workload=hot-streak",
+             "--strategy=hot-bucket-interleave"], env={b"TRNM_HOT_BUCKETS":b"8"})
+        self.assertEqual((result.returncode,result.stdout,result.stderr),(2,b"",OUTSIDE))
+        image = replay_fixture(self.image, self.image_receipt, self.root, "corrected-mode-count", 0)
+        for count in (0, 2, 1000):
+            result, wall, *_ = self.standalone_process(f"corrected-count-{count}",
+                    [*args, f"--determinism-repeats={count}"], image=image)
+            self.assertEqual((result.returncode, result.stderr), (0, b"S"*(1+count)))
+            self.assertIn(STAMP,result.stdout)
+            _, comparable = stdout_observation(result.stdout, wall)
+            self.assertIn(b"determinism.replay_match="+(b"true" if count else b"not-requested"), comparable)
+        result, *_ = self.standalone_process("corrected-count-over", [MODE, "--workload=mixed",
+                 "--determinism-repeats=1001"], image=image)
+        self.assertEqual((result.returncode,result.stdout,result.stderr),
+                         (2,b"",b"--determinism-repeats exceeds bounded maximum 1000\n"))
+        delayed = replay_fixture(self.image, self.image_receipt, self.root, "corrected-mode-delay", 3)
+        result, wall, *_ = self.standalone_process("corrected-delay", [*args,"--determinism-repeats=4"], image=delayed)
+        self.assertEqual((result.returncode,result.stderr),(0,b"SSSSS"))
+        elapsed, _ = stdout_observation(result.stdout, wall)
+        self.assertGreaterEqual(wall - elapsed*1_000_000, 190_000_000)
+        self.standalone.append({"count_exact": [1, 3, 1001], "over_bound_started_calls": 0,
+                               "delayed_replay_wall_ns": wall, "timed_first_schedule_ms": elapsed})
+        directory = self.anchor / "run/bench"
+        self.assertFalse(directory.exists() and any(directory.iterdir()))
 
     def test_existing_elf_default_multiwriter_admission_remains_closed(self):
         image,receipt=build(self.root/"existing-unbound")
@@ -342,4 +452,15 @@ class BenchReaderHighWater(unittest.TestCase):
                 os.close(fd)
             self.assertEqual((result.returncode,result.stdout,result.stderr),(2,b"",OUTSIDE))
             (self.root/f"existing-{w}.stderr.raw").write_bytes(result.stderr)
-        self.assertEqual(receipt["native_elf"]["sha256"],sha(image))
+        self.assertEqual(receipt["native_elf"]["sha256"], sha(image))
+        # In the same unbound image, the explicit corrected choice owns
+        # no-profile reporting but still cannot acquire a file authority.
+        for workload in ("mixed", "hot-streak"):
+            result, wall, *_ = self.standalone_process("unbound-corrected-" + workload,
+                                      [MODE, "--workload", workload], image=image)
+            self.assertEqual((result.returncode, result.stderr), (0, b""))
+            self.assertIn(STAMP, stdout_observation(result.stdout, wall)[1])
+            denied, *_ = self.standalone_process("unbound-profile-refused-" + workload,
+                        [MODE, "--workload", workload, "--profile"], image=image)
+            self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse((self.anchor / "run").exists())

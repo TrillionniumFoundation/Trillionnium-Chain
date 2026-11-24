@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v4
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v5
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -47,7 +47,7 @@ block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:
   equal_at:u64 = call(i_name,p_name,e_name) {"function":"bc_equal"}
   w_name:u64 = int.sub.wrap(equal_at,p_name)
   opt:u64 = call(i_name,p_name,w_name) {"function":"bc_option"}
-  max_field:u64 = const() {"value":8}
+  max_field:u64 = const() {"value":9}
   known:bool = compare.le(opt,max_field)
   branch known flag_or_arg(i_name,o_name,n_name,k_name,e_name,equal_at,opt) fail()
 block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,fo_field:u64)
@@ -55,7 +55,10 @@ block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,
   persist_field:u64 = const() {"value":7}
   profile:bool = compare.eq(fo_field,profile_field)
   persist:bool = compare.eq(fo_field,persist_field)
-  boolean:bool = bool.or(profile,persist)
+  corrected_field:u64 = const() {"value":9}
+  corrected:bool = compare.eq(fo_field,corrected_field)
+  ordinary_flag:bool = bool.or(profile,persist)
+  boolean:bool = bool.or(ordinary_flag,corrected)
   branch boolean profile_flag(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field) sep(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field)
 block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64,pf_field:u64)
   bare:bool = compare.eq(pf_e,pf_at)
@@ -204,7 +207,49 @@ block workload_capacity(o_wc:mutbuf)
   fanout_wc:u64 = call(o_wc,fanout_pos) {"function":"bench_get"}
   max_fanout:u64 = const() {"value":8}
   fits_fanout:bool = compare.le(fanout_wc,max_fanout)
-  branch is_classic success() parity_domain(o_wc,fits_fanout)
+  bitmap_pos:u64 = const() {"value":24}
+  mode_bitmap:u64 = call(o_wc,bitmap_pos) {"function":"bench_get"}
+  new_mode:u64 = const() {"value":512}
+  mode_bit:u64 = bit.and(mode_bitmap,new_mode)
+  corrected_mode:bool = compare.ne(mode_bit,zero_work)
+  branch corrected_mode corrected_domain(o_wc,is_classic,fits_fanout) ordinary_domain(o_wc,is_classic,fits_fanout)
+block ordinary_domain(od_o:mutbuf,od_classic:bool,od_fanout:bool)
+  branch od_classic success() parity_domain(od_o,od_fanout)
+block corrected_domain(cd_o:mutbuf,cd_classic:bool,cd_fanout:bool)
+  branch cd_classic fail() corrected_policy(cd_o,cd_fanout)
+block corrected_policy(cp_o:mutbuf,cp_fanout:bool)
+  cp_at0:u64 = const() {"value":0}
+  cp_at8:u64 = const() {"value":8}
+  cp_at32:u64 = const() {"value":32}
+  cp_at40:u64 = const() {"value":40}
+  cp_at48:u64 = const() {"value":48}
+  cp_at64:u64 = const() {"value":64}
+  cp_n:u64 = call(cp_o,cp_at0) {"function":"bench_get"}
+  cp_k:u64 = call(cp_o,cp_at8) {"function":"bench_get"}
+  cp_r:u64 = call(cp_o,cp_at32) {"function":"bench_get"}
+  cp_w:u64 = call(cp_o,cp_at40) {"function":"bench_get"}
+  cp_kind:u64 = call(cp_o,cp_at48) {"function":"bench_get"}
+  cp_strategy:u64 = call(cp_o,cp_at64) {"function":"bench_get"}
+  cp_n0:u64 = const() {"value":20000}
+  cp_k0:u64 = const() {"value":2000}
+  cp_r0:u64 = const() {"value":3}
+  cp_w0:u64 = const() {"value":1}
+  cp_hot:u64 = const() {"value":2}
+  cp_interleave:u64 = const() {"value":4}
+  cp_n_match:bool = compare.eq(cp_n,cp_n0)
+  cp_k_match:bool = compare.eq(cp_k,cp_k0)
+  cp_r_match:bool = compare.eq(cp_r,cp_r0)
+  cp_w_match:bool = compare.eq(cp_w,cp_w0)
+  cp_dimensions:bool = bool.and(cp_n_match,cp_k_match)
+  cp_accesses:bool = bool.and(cp_r_match,cp_w_match)
+  cp_default:bool = bool.and(cp_dimensions,cp_accesses)
+  cp_hot_kind:bool = compare.eq(cp_kind,cp_hot)
+  cp_hot_strategy:bool = compare.eq(cp_strategy,cp_interleave)
+  cp_hot_order:bool = bool.and(cp_hot_kind,cp_hot_strategy)
+  cp_original_order:bool = compare.eq(cp_strategy,cp_at0)
+  cp_admitted_order:bool = bool.or(cp_original_order,cp_hot_order)
+  cp_admitted:bool = bool.and(cp_default,cp_admitted_order)
+  branch cp_admitted success() parity_domain(cp_o,cp_fanout)
 block parity_domain(pd_o:mutbuf,pd_fanout:bool)
   pd_keys_at:u64 = const() {"value":8}
   pd_stride_at:u64 = const() {"value":40}
@@ -456,7 +501,7 @@ block v7(vi7:readbuf,vp7:u64,vn7:u64)
 block k8(ki8:readbuf,kp8:u64,kn8:u64)
   w8:u64 = const() {"value":10}
   same8:bool = compare.eq(kn8,w8)
-  branch same8 v8(ki8,kp8,kn8) absent()
+  branch same8 v8(ki8,kp8,kn8) k9(ki8,kp8,kn8)
 block v8(vi8:readbuf,vp8:u64,vn8:u64)
   offset8_0:u64 = const() {"value":0}
   pos8_0:u64 = int.add.wrap(vp8,offset8_0)
@@ -472,11 +517,38 @@ block v8(vi8:readbuf,vp8:u64,vn8:u64)
   match8_8:bool = compare.eq(read8_8,target8_8)
   all8_8:bool = bool.and(match8_0,match8_8)
   index8:u64 = const() {"value":8}
-  branch all8_8 success(index8) absent()
+  branch all8_8 success(index8) k9(vi8,vp8,vn8)
+block k9(ki9:readbuf,kp9:u64,kn9:u64)
+  w9:u64 = const() {"value":22}
+  same9:bool = compare.eq(kn9,w9)
+  branch same9 v9(ki9,kp9) absent()
+block v9(vi9:readbuf,vp9:u64)
+  off9_0:u64 = const() {"value":0}
+  pos9_0:u64 = int.add.wrap(vp9,off9_0)
+  width9_0:u64 = const() {"value":8}
+  read9_0:u64 = call(vi9,pos9_0,width9_0) {"function":"bc_tail"}
+  want9_0:u64 = const() {"value":8243105062448147757}
+  match9_0:bool = compare.eq(read9_0,want9_0)
+  off9_8:u64 = const() {"value":8}
+  pos9_8:u64 = int.add.wrap(vp9,off9_8)
+  width9_8:u64 = const() {"value":8}
+  read9_8:u64 = call(vi9,pos9_8,width9_8) {"function":"bc_tail"}
+  want9_8:u64 = const() {"value":7023132070342387757}
+  match9_8:bool = compare.eq(read9_8,want9_8)
+  off9_16:u64 = const() {"value":16}
+  pos9_16:u64 = int.add.wrap(vp9,off9_16)
+  width9_16:u64 = const() {"value":6}
+  read9_16:u64 = call(vi9,pos9_16,width9_16) {"function":"bc_tail"}
+  want9_16:u64 = const() {"value":54383638373748}
+  match9_16:bool = compare.eq(read9_16,want9_16)
+  first9:bool = bool.and(match9_0,match9_8)
+  all9:bool = bool.and(first9,match9_16)
+  index9:u64 = const() {"value":9}
+  branch all9 success(index9) absent()
 block success(result:u64)
   ret(result)
 block absent()
-  invalid:u64 = const() {"value":9}
+  invalid:u64 = const() {"value":10}
   ret(invalid)
 end
 

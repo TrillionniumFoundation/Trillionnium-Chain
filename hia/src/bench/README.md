@@ -100,7 +100,8 @@ renders the exact original diagnostic and exit 2 before workload or clock
 work, including with parsed values outside candidate bounds. Other unsupported
 invocations exit 2 with a distinct candidate diagnostic, **not** Clap
 diagnostic equivalence. Help, other strategies and general environments
-remain open and never fall back to the old executable.
+remain open and never fall back to the old executable. The optional bare
+`--reader-high-water-v1` explicitly selects the corrected scope below.
 
 The three `--workload` values are `classic`, `mixed`, and `hot-streak`.
 Classic ignores fanout/stride for generation but still reports normalized
@@ -128,26 +129,27 @@ have 12 groups instead of 22 under Original on the same workload digest.
 The tests compare ordered-group digests, replay success and actual profile
 file bytes with the matching original strategy, not merely the printed name.
 
-The unmodified default multiwriter Mixed run is **not** admitted. A real
+Without the corrected flag the default multiwriter Mixed run is **not** admitted. A real
 locked Rust run and ungated HIA development run on default Mixed produced
 the same input digest and group counts but different ordered group hashes:
 `badb3c2b47df242068d7ed3988257e229f5a8e6f57785e037461f4432e76ed90` (original)
 versus `dab1a86625487d9bd619f6c8d54af22642db79ee0134e1655e5b3fb99ced5a83`
-(repaired). Arbitrary multi-key/multiwriter HotStreak is likewise refused,
-rather than promised equivalent without proof. These restrictions apply
+(repaired). Arbitrary multi-key/multiwriter Mixed and HotStreak remain
+refused; the explicitly qualified default dimension/strategy combinations
+below are not a promise of broader equivalence. These restrictions apply
 only to the isolated executable; the existing pure HIA workload and safe
 scheduler components keep their own contracts.
 
 The [native emitter](../../platform/bench/main_emitter.hepta) creates one RX
 load segment and an NX stack with no loader or runtime imports. The resolved
-argument code and the build-time packer use the pinned compiler's explicit
-object profile; native workload, schedule, digests, report, profile and
+argument and report code and the build-time packer use the pinned compiler's
+explicit object profile; native workload, schedule, digests, profile and
 environment normalization use the usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 3,800-byte Linux adapter. It does not execute the
+the address table, and the 3,912-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
-The adapter stages at most 16 argument tokens in a private span and owns
+The adapter stages at most 17 argument tokens in a private span and owns
 disjoint workload, scheduler, report and scratch regions. The largest
 admitted general layout has at most 180,000 raw reference pairs, requiring
 no more than 3,520,136 workload bytes and 16,324,096 scheduler-scratch
@@ -174,12 +176,27 @@ corrected oracle is a distinct semantics target, not old Rust byte parity.
 The qualification compares ordered group membership, raw and rendered profile,
 the two digests and replay against that actual private Cargo CLI and adapter.
 An independent access graph checks every transaction exactly once and denies
-overlapping writes/reads in each group. The native formatter receives the
-oracle's actual clock/path fields to check rendered report and persisted bytes;
-it does not measure native end-to-end clocks or directory behavior for these
-larger workloads. The existing ELF still rejects unqualified multi-key
-multiwriter defaults. This test does not add a runtime flag, change a signed
-domain, or replace any production entry.
+overlapping writes/reads in each group. The component-level formatter comparison receives the oracle's actual clock
+and path fields; the separate standalone comparison below checks the native
+clocks and file behavior directly. The standalone ELF admits these exact multiwriter
+defaults only with an explicit bare `--reader-high-water-v1` and an empty
+environment: 20,000 transactions, 2,000 keys, fanout 3, write every 1, and
+Original order (Mixed or HotStreak) or HotBucketInterleave (HotStreak only).
+Existing already-admitted Mixed/HotStreak shapes can also be explicitly
+marked; no Classic, arbitrary new multiwriter shape, or nonempty environment
+is admitted by this flag. Workload and replay limits are unchanged.
+
+The same ELF takes real clocks, runs the real native scheduler and replay,
+renders `schedule_semantics=reader-high-water-v1` in stdout and the
+persisted profile, and uses `executor-profile-summary-reader-high-water-v1-`
+as a separate filename prefix. The old profile path and unmarked output
+are unchanged. The full differential compares exact profile fields with the
+corrected Rust CLI independently of real clock/path differences and confirms
+each actual output file byte with its corresponding stdout and fixed-point
+metadata. Existing workload/replay limits and file protection remain.
+The test also exercises the largest existing bounded 20k-by-fanout-8
+arena and the 1,000-replay bound on a small workload. This flag does not
+change a signed domain or replace any production entry.
 
 Run `python3 -m unittest hia.tests.test_bench_reader_high_water -v` with the
 pinned HIA toolchain and cached original locked Cargo dependencies.

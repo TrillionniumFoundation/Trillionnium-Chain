@@ -11,7 +11,10 @@ block magic(v7:readbuf,v8:mutbuf,v9:mutbuf,v10:u64)
   v12:u64 = call(v7,v11) {"function":"bench_read"}
   v13:u64 = const() {"value":3544385890871693890}
   v14:bool = compare.eq(v12,v13)
-  branch v14 fields(v7,v8,v9,v10) bad_magic()
+  bh2_magic:u64 = const() {"value":3616443484909621826}
+  bh2_mode:bool = compare.eq(v12,bh2_magic)
+  bh_magic_valid:bool = bool.or(v14,bh2_mode)
+  branch bh_magic_valid fields(v7,v8,v9,v10) bad_magic()
 block fields(v15:readbuf,v16:mutbuf,v17:mutbuf,v18:u64)
   v19:bool = const() {"value":true}
   v20:u64 = const() {"value":8}
@@ -540,7 +543,16 @@ block entry(v0:mutbuf,v1:mutbuf,v2:u64,v3:u64)
   jump loop(v0,v1,v2,v3,v19,v20,v2)
 block loop(v21:mutbuf,v22:mutbuf,v23:u64,v24:u64,v25:u64,v26:u64,v27:u64)
   v28:bool = compare.lt(v26,v25)
-  branch v28 line(v21,v22,v23,v24,v25,v26,v27) persist(v21,v22,v23,v24,v27)
+  branch v28 line(v21,v22,v23,v24,v25,v26,v27) semantics(v21,v22,v23,v24,v27)
+block semantics(bh_s:mutbuf,bh_o:mutbuf,bh_begin:u64,bh_cap:u64,bh_end:u64)
+  bh_magic_at:u64 = const() {"value":8192}
+  bh_magic:u64 = call(bh_s,bh_magic_at) {"function":"bench_get"}
+  bh_correct:u64 = const() {"value":3616443484909621826}
+  bh_mark:bool = compare.eq(bh_magic,bh_correct)
+  branch bh_mark stamped(bh_s,bh_o,bh_begin,bh_cap,bh_end) persist(bh_s,bh_o,bh_begin,bh_cap,bh_end)
+block stamped(st_s:mutbuf,st_o:mutbuf,st_begin:u64,st_cap:u64,st_end:u64)
+  st_after:u64 = call(st_s,st_end) {"function":"br_semantics_line"}
+  jump persist(st_s,st_o,st_begin,st_cap,st_after)
 block line(v29:mutbuf,v30:mutbuf,v31:u64,v32:u64,v33:u64,v34:u64,v35:u64)
   v36:u64 = call(v29,v30,v35,v34) {"function":"br_line"}
   v37:u64 = const() {"value":1}
@@ -7035,4 +7047,31 @@ block text_150(v606:mutbuf,v607:u64)
   ret(v637)
 block case_151(v638:mutbuf,v639:u64,v640:u64)
   trap user
+end
+
+fn br_semantics_line(s:mutbuf,at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(s:mutbuf,at:u64)
+  off0:u64 = const() {"value":0}
+  pos0:u64 = int.add.wrap(at,off0)
+  word0:u64 = const() {"value":7308345369373991795}
+  _word0:u64 = call(s,pos0,word0) {"function":"bench_put"}
+  off8:u64 = const() {"value":8}
+  pos8:u64 = int.add.wrap(at,off8)
+  word8:u64 = const() {"value":7598819836007117663}
+  _word8:u64 = call(s,pos8,word8) {"function":"bench_put"}
+  off16:u64 = const() {"value":16}
+  pos16:u64 = int.add.wrap(at,off16)
+  word16:u64 = const() {"value":7306071583838008163}
+  _word16:u64 = call(s,pos16,word16) {"function":"bench_put"}
+  off24:u64 = const() {"value":24}
+  pos24:u64 = int.add.wrap(at,off24)
+  word24:u64 = const() {"value":8587634857824759154}
+  _word24:u64 = call(s,pos24,word24) {"function":"bench_put"}
+  off32:u64 = const() {"value":32}
+  pos32:u64 = int.add.wrap(at,off32)
+  word32:u64 = const() {"value":734498151802958945}
+  _word32:u64 = call(s,pos32,word32) {"function":"bench_put"}
+  len:u64 = const() {"value":40}
+  next:u64 = int.add.wrap(at,len)
+  ret(next)
 end

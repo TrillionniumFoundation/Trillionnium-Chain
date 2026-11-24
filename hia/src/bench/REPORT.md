@@ -13,7 +13,7 @@ The fixed header is 848 bytes. Every integer/float-bit field is little-endian.
 
 | Offset | Bytes | Meaning |
 | --- | ---: | --- |
-| 0 | 8 | `BRPT0001` |
+| 0 | 8 | `BRPT0001` legacy report or `BRPT0002` explicitly marked reader-high-water-v1 report |
 | 8 | 120 | 15 context u64 words, listed below |
 | 128 | 136 | 17 original raw profile words, in `PROFILE.md` order |
 | 264 | 408 | 51 derived profile words, in `PROFILE.md` method order |
@@ -37,7 +37,11 @@ unused decision and codes 1..6 render the original reason strings.
 The derived words are supplied by the separately compiled native profile
 component. The renderer does not replace that component with a host
 calculation. The eventual owner must preserve this actual native data flow.
-Synthetic component tests are distinct from an integrated original CLI run.
+Synthetic component tests are distinct from an integrated original CLI run. The
+new report magic has the same private framing and bounds but adds a
+`schedule_semantics=reader-high-water-v1` line to each success report and
+persisted candidate file. It does not change replay error streams. Only the
+process admission owner may select that magic for corrected CLI modes.
 
 Persistence states are: 0, no persistence suffix; 1, directory creation
 failure (error only); 2, successful path setup and candidate write; 3,
@@ -73,9 +77,9 @@ immediately after it, and file staging is another B bytes later. In-buffer
 copies use one mutable capability and proved disjoint source/destination
 ranges. Output publication reads these staged streams only after rendering.
 
-All possible fixed lines and their maximal value lengths together need at
-most 23,604 bytes, including the otherwise mutually exclusive optional
-lines. A binary64 fixed-four field needs at most 315 bytes; u64/u128 need
+The original fixed lines and their maximal value lengths together need at
+most 23,604 bytes, including mutually exclusive optional lines. The new
+40-byte marker raises that conservative bound to 23,644, still below B. A binary64 fixed-four field needs at most 315 bytes; u64/u128 need
 20/39. Each payload segment is used at most once in either stream. Thus B
 also bounds arbitrary accepted UTF-8 path/error payloads. Input-length
 arithmetic is rejected before it could overflow u64.
