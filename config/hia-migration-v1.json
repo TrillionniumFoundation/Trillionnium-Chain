@@ -1480,6 +1480,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-export-v3",
+      "node_integration_complete": false,
+      "scope": "Private one-call WQX3 carries the exact WJD3 signed reputation display into all three real original outputs while reusing previously qualified framing, selection, scratch limits, and artifact writers. Both emitters compare locked Rust bytes; no fingerprint, authority, filesystem or production dispatch changes.",
+      "source": "hia/src/worker_agent/journal_audit_export_v3.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_export_v3.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-dto-reputation-v3",
       "node_integration_complete": false,
       "scope": "Private WJD3 decodes only the optional signed i32 audit reputation delta and reuses the existing display-only projection into WJL1; staged WJF1/WJD3/WAT2 dual emitters reproduce the original three locked CLI files. No market or authority changes, no other non-null metadata, no generic Serde, no production dispatch.",
