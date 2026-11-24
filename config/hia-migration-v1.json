@@ -2538,6 +2538,19 @@
       ]
     },
     {
+      "id": "platform/integer-model-handoff",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Selfhost-only offline named library over a held stock State projection envelope. A HIA-emitted syscall-free thunk statically chains the exact unmodified IMP1 and IMD2 machine text without a runtime host shuttle. No State owner, persistence, trust, production dispatch or retirement change.",
+      "sources": [
+        "hia/platform/integer_model_handoff/emitter.hepta"
+      ],
+      "tests": [
+        "hia/platform/integer_model_handoff/build.py",
+        "hia/tests/test_integer_model_handoff.py"
+      ]
+    },
+    {
       "id": "platform/execution-state",
       "node_integration_complete": false,
       "retirement_accepted": false,

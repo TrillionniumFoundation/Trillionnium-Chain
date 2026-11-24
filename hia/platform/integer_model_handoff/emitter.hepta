@@ -1,0 +1,390 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_integer_model_handoff_carrier
+fn f0(kernels:readbuf,carrier:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(kernels:readbuf,carrier:mutbuf,scratch:mutbuf)
+  raw_extent:usize = buffer.len(kernels)
+  out_extent:usize = buffer.len(carrier)
+  wanted:usize = const() {"value":135334}
+  required:usize = const() {"value":136192}
+  exact:bool = compare.eq(raw_extent,wanted)
+  fits:bool = compare.ge(out_extent,required)
+  ready:bool = bool.and(exact,fits)
+  branch ready pack(kernels,carrier,wanted) refuse()
+block pack(src:readbuf,output:mutbuf,n:usize)
+  zero:usize = const() {"value":0}
+  start:usize = const() {"value":346}
+  a:u64 = call(output) {"function":"carrier_header"}
+  b:u64 = call(output) {"function":"carrier_thunk"}
+  c:u64 = call(output) {"function":"carrier_tail"}
+  _ = buffer.copy_range(output,src,start,zero,n)
+  count:u32 = const() {"value":136192}
+  ret(count)
+block refuse()
+  invalid:u32 = const() {"value":102}
+  ret(invalid)
+end
+
+fn carrier_header(out:mutbuf) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf)
+  offset_0:u64 = const() {"value":0}
+  word_0:u64 = const() {"value":282584257676671}
+  a_0:u64 = call(out,offset_0,word_0) {"function":"put64"}
+  offset_8:u64 = const() {"value":8}
+  word_8:u64 = const() {"value":0}
+  a_8:u64 = call(out,offset_8,word_8) {"function":"put64"}
+  offset_16:u64 = const() {"value":16}
+  word_16:u64 = const() {"value":4299030529}
+  a_16:u64 = call(out,offset_16,word_16) {"function":"put64"}
+  offset_24:u64 = const() {"value":24}
+  word_24:u64 = const() {"value":0}
+  a_24:u64 = call(out,offset_24,word_24) {"function":"put64"}
+  offset_32:u64 = const() {"value":32}
+  word_32:u64 = const() {"value":0}
+  a_32:u64 = call(out,offset_32,word_32) {"function":"put64"}
+  offset_40:u64 = const() {"value":40}
+  word_40:u64 = const() {"value":135808}
+  a_40:u64 = call(out,offset_40,word_40) {"function":"put64"}
+  offset_48:u64 = const() {"value":48}
+  word_48:u64 = const() {"value":274877906944}
+  a_48:u64 = call(out,offset_48,word_48) {"function":"put64"}
+  offset_56:u64 = const() {"value":56}
+  word_56:u64 = const() {"value":1407400657551360}
+  a_56:u64 = call(out,offset_56,word_56) {"function":"put64"}
+  ret(a_56)
+end
+
+fn carrier_thunk(out:mutbuf) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf)
+  offset_64:u64 = const() {"value":64}
+  word_64:u64 = const() {"value":288639250564424}
+  a_64:u64 = call(out,offset_64,word_64) {"function":"put64"}
+  offset_72:u64 = const() {"value":72}
+  word_72:u64 = const() {"value":71358372599121920}
+  a_72:u64 = call(out,offset_72,word_72) {"function":"put64"}
+  offset_80:u64 = const() {"value":80}
+  word_80:u64 = const() {"value":17619224961724776448}
+  a_80:u64 = call(out,offset_80,word_80) {"function":"put64"}
+  offset_88:u64 = const() {"value":88}
+  word_88:u64 = const() {"value":9534400242355535872}
+  a_88:u64 = call(out,offset_88,word_88) {"function":"put64"}
+  offset_96:u64 = const() {"value":96}
+  word_96:u64 = const() {"value":942863745028}
+  a_96:u64 = call(out,offset_96,word_96) {"function":"put64"}
+  offset_104:u64 = const() {"value":104}
+  word_104:u64 = const() {"value":1080864536308318537}
+  a_104:u64 = call(out,offset_104,word_104) {"function":"put64"}
+  offset_112:u64 = const() {"value":112}
+  word_112:u64 = const() {"value":18053040845640225922}
+  a_112:u64 = call(out,offset_112,word_112) {"function":"put64"}
+  offset_120:u64 = const() {"value":120}
+  word_120:u64 = const() {"value":227058008588617}
+  a_120:u64 = call(out,offset_120,word_120) {"function":"put64"}
+  offset_128:u64 = const() {"value":128}
+  word_128:u64 = const() {"value":1138004747434412288}
+  a_128:u64 = call(out,offset_128,word_128) {"function":"put64"}
+  offset_136:u64 = const() {"value":136}
+  word_136:u64 = const() {"value":13873703689975284354}
+  a_136:u64 = call(out,offset_136,word_136) {"function":"put64"}
+  offset_144:u64 = const() {"value":144}
+  word_144:u64 = const() {"value":200669726769484}
+  a_144:u64 = call(out,offset_144,word_144) {"function":"put64"}
+  offset_152:u64 = const() {"value":152}
+  word_152:u64 = const() {"value":12811578047285248}
+  a_152:u64 = call(out,offset_152,word_152) {"function":"put64"}
+  offset_160:u64 = const() {"value":160}
+  word_160:u64 = const() {"value":1334208747807440896}
+  a_160:u64 = call(out,offset_160,word_160) {"function":"put64"}
+  offset_168:u64 = const() {"value":168}
+  word_168:u64 = const() {"value":9444012380800417792}
+  a_168:u64 = call(out,offset_168,word_168) {"function":"put64"}
+  offset_176:u64 = const() {"value":176}
+  word_176:u64 = const() {"value":1140036654258454537}
+  a_176:u64 = call(out,offset_176,word_176) {"function":"put64"}
+  offset_184:u64 = const() {"value":184}
+  word_184:u64 = const() {"value":14355584452057404034}
+  a_184:u64 = call(out,offset_184,word_184) {"function":"put64"}
+  offset_192:u64 = const() {"value":192}
+  word_192:u64 = const() {"value":4128956433369236239}
+  a_192:u64 = call(out,offset_192,word_192) {"function":"put64"}
+  offset_200:u64 = const() {"value":200}
+  word_200:u64 = const() {"value":5188146772886818768}
+  a_200:u64 = call(out,offset_200,word_200) {"function":"put64"}
+  offset_208:u64 = const() {"value":208}
+  word_208:u64 = const() {"value":79525038469}
+  a_208:u64 = call(out,offset_208,word_208) {"function":"put64"}
+  offset_216:u64 = const() {"value":216}
+  word_216:u64 = const() {"value":10458509752648}
+  a_216:u64 = call(out,offset_216,word_216) {"function":"put64"}
+  offset_224:u64 = const() {"value":224}
+  word_224:u64 = const() {"value":28571977211530496}
+  a_224:u64 = call(out,offset_224,word_224) {"function":"put64"}
+  offset_232:u64 = const() {"value":232}
+  word_232:u64 = const() {"value":6215342699822776320}
+  a_232:u64 = call(out,offset_232,word_232) {"function":"put64"}
+  offset_240:u64 = const() {"value":240}
+  word_240:u64 = const() {"value":9893789945935726921}
+  a_240:u64 = call(out,offset_240,word_240) {"function":"put64"}
+  offset_248:u64 = const() {"value":248}
+  word_248:u64 = const() {"value":20504490667494598}
+  a_248:u64 = call(out,offset_248,word_248) {"function":"put64"}
+  offset_256:u64 = const() {"value":256}
+  word_256:u64 = const() {"value":80095779834112}
+  a_256:u64 = call(out,offset_256,word_256) {"function":"put64"}
+  offset_264:u64 = const() {"value":264}
+  word_264:u64 = const() {"value":5181391372511918401}
+  a_264:u64 = call(out,offset_264,word_264) {"function":"put64"}
+  offset_272:u64 = const() {"value":272}
+  word_272:u64 = const() {"value":9588093810366218240}
+  a_272:u64 = call(out,offset_272,word_272) {"function":"put64"}
+  offset_280:u64 = const() {"value":280}
+  word_280:u64 = const() {"value":13760618145964359712}
+  a_280:u64 = call(out,offset_280,word_280) {"function":"put64"}
+  offset_288:u64 = const() {"value":288}
+  word_288:u64 = const() {"value":5540141451129669848}
+  a_288:u64 = call(out,offset_288,word_288) {"function":"put64"}
+  offset_296:u64 = const() {"value":296}
+  word_296:u64 = const() {"value":20504270731078025}
+  a_296:u64 = call(out,offset_296,word_296) {"function":"put64"}
+  offset_304:u64 = const() {"value":304}
+  word_304:u64 = const() {"value":16717361968041246976}
+  a_304:u64 = call(out,offset_304,word_304) {"function":"put64"}
+  offset_312:u64 = const() {"value":312}
+  word_312:u64 = const() {"value":6719755752279408321}
+  a_312:u64 = call(out,offset_312,word_312) {"function":"put64"}
+  offset_320:u64 = const() {"value":320}
+  word_320:u64 = const() {"value":432596540481}
+  a_320:u64 = call(out,offset_320,word_320) {"function":"put64"}
+  offset_328:u64 = const() {"value":328}
+  word_328:u64 = const() {"value":5243034391196121283}
+  a_328:u64 = call(out,offset_328,word_328) {"function":"put64"}
+  offset_336:u64 = const() {"value":336}
+  word_336:u64 = const() {"value":1099511627960}
+  a_336:u64 = call(out,offset_336,word_336) {"function":"put64"}
+  offset_344:u64 = const() {"value":344}
+  word_344:u64 = const() {"value":49920}
+  width_344:u64 = const() {"value":2}
+  a_344:u64 = call(out,offset_344,word_344,width_344) {"function":"put"}
+  ret(a_344)
+end
+
+fn carrier_tail(out:mutbuf) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf)
+  offset_135680:u64 = const() {"value":135680}
+  word_135680:u64 = const() {"value":0}
+  a_135680:u64 = call(out,offset_135680,word_135680) {"function":"put64"}
+  offset_135688:u64 = const() {"value":135688}
+  word_135688:u64 = const() {"value":0}
+  a_135688:u64 = call(out,offset_135688,word_135688) {"function":"put64"}
+  offset_135696:u64 = const() {"value":135696}
+  word_135696:u64 = const() {"value":0}
+  a_135696:u64 = call(out,offset_135696,word_135696) {"function":"put64"}
+  offset_135704:u64 = const() {"value":135704}
+  word_135704:u64 = const() {"value":281552286121985}
+  a_135704:u64 = call(out,offset_135704,word_135704) {"function":"put64"}
+  offset_135712:u64 = const() {"value":135712}
+  word_135712:u64 = const() {"value":0}
+  a_135712:u64 = call(out,offset_135712,word_135712) {"function":"put64"}
+  offset_135720:u64 = const() {"value":135720}
+  word_135720:u64 = const() {"value":282}
+  a_135720:u64 = call(out,offset_135720,word_135720) {"function":"put64"}
+  offset_135728:u64 = const() {"value":135728}
+  word_135728:u64 = const() {"value":7955995140335760384}
+  a_135728:u64 = call(out,offset_135728,word_135728) {"function":"put64"}
+  offset_135736:u64 = const() {"value":135736}
+  word_135736:u64 = const() {"value":8029178655603647860}
+  a_135736:u64 = call(out,offset_135736,word_135736) {"function":"put64"}
+  offset_135744:u64 = const() {"value":135744}
+  word_135744:u64 = const() {"value":7236828752136398180}
+  a_135744:u64 = call(out,offset_135744,word_135744) {"function":"put64"}
+  offset_135752:u64 = const() {"value":135752}
+  word_135752:u64 = const() {"value":54384476448367}
+  a_135752:u64 = call(out,offset_135752,word_135752) {"function":"put64"}
+  offset_135760:u64 = const() {"value":135760}
+  word_135760:u64 = const() {"value":8299571663526523950}
+  a_135760:u64 = call(out,offset_135760,word_135760) {"function":"put64"}
+  offset_135768:u64 = const() {"value":135768}
+  word_135768:u64 = const() {"value":8299571585832217977}
+  a_135768:u64 = call(out,offset_135768,word_135768) {"function":"put64"}
+  offset_135776:u64 = const() {"value":135776}
+  word_135776:u64 = const() {"value":7939283615642579572}
+  a_135776:u64 = call(out,offset_135776,word_135776) {"function":"put64"}
+  offset_135784:u64 = const() {"value":135784}
+  word_135784:u64 = const() {"value":3266603172355208303}
+  a_135784:u64 = call(out,offset_135784,word_135784) {"function":"put64"}
+  offset_135792:u64 = const() {"value":135792}
+  word_135792:u64 = const() {"value":8299571624519234675}
+  a_135792:u64 = call(out,offset_135792,word_135792) {"function":"put64"}
+  offset_135800:u64 = const() {"value":135800}
+  word_135800:u64 = const() {"value":27691700481979240}
+  a_135800:u64 = call(out,offset_135800,word_135800) {"function":"put64"}
+  offset_135808:u64 = const() {"value":135808}
+  word_135808:u64 = const() {"value":0}
+  a_135808:u64 = call(out,offset_135808,word_135808) {"function":"put64"}
+  offset_135816:u64 = const() {"value":135816}
+  word_135816:u64 = const() {"value":0}
+  a_135816:u64 = call(out,offset_135816,word_135816) {"function":"put64"}
+  offset_135824:u64 = const() {"value":135824}
+  word_135824:u64 = const() {"value":0}
+  a_135824:u64 = call(out,offset_135824,word_135824) {"function":"put64"}
+  offset_135832:u64 = const() {"value":135832}
+  word_135832:u64 = const() {"value":0}
+  a_135832:u64 = call(out,offset_135832,word_135832) {"function":"put64"}
+  offset_135840:u64 = const() {"value":135840}
+  word_135840:u64 = const() {"value":0}
+  a_135840:u64 = call(out,offset_135840,word_135840) {"function":"put64"}
+  offset_135848:u64 = const() {"value":135848}
+  word_135848:u64 = const() {"value":0}
+  a_135848:u64 = call(out,offset_135848,word_135848) {"function":"put64"}
+  offset_135856:u64 = const() {"value":135856}
+  word_135856:u64 = const() {"value":0}
+  a_135856:u64 = call(out,offset_135856,word_135856) {"function":"put64"}
+  offset_135864:u64 = const() {"value":135864}
+  word_135864:u64 = const() {"value":0}
+  a_135864:u64 = call(out,offset_135864,word_135864) {"function":"put64"}
+  offset_135872:u64 = const() {"value":135872}
+  word_135872:u64 = const() {"value":4294967297}
+  a_135872:u64 = call(out,offset_135872,word_135872) {"function":"put64"}
+  offset_135880:u64 = const() {"value":135880}
+  word_135880:u64 = const() {"value":6}
+  a_135880:u64 = call(out,offset_135880,word_135880) {"function":"put64"}
+  offset_135888:u64 = const() {"value":135888}
+  word_135888:u64 = const() {"value":0}
+  a_135888:u64 = call(out,offset_135888,word_135888) {"function":"put64"}
+  offset_135896:u64 = const() {"value":135896}
+  word_135896:u64 = const() {"value":64}
+  a_135896:u64 = call(out,offset_135896,word_135896) {"function":"put64"}
+  offset_135904:u64 = const() {"value":135904}
+  word_135904:u64 = const() {"value":135616}
+  a_135904:u64 = call(out,offset_135904,word_135904) {"function":"put64"}
+  offset_135912:u64 = const() {"value":135912}
+  word_135912:u64 = const() {"value":0}
+  a_135912:u64 = call(out,offset_135912,word_135912) {"function":"put64"}
+  offset_135920:u64 = const() {"value":135920}
+  word_135920:u64 = const() {"value":16}
+  a_135920:u64 = call(out,offset_135920,word_135920) {"function":"put64"}
+  offset_135928:u64 = const() {"value":135928}
+  word_135928:u64 = const() {"value":0}
+  a_135928:u64 = call(out,offset_135928,word_135928) {"function":"put64"}
+  offset_135936:u64 = const() {"value":135936}
+  word_135936:u64 = const() {"value":8589934599}
+  a_135936:u64 = call(out,offset_135936,word_135936) {"function":"put64"}
+  offset_135944:u64 = const() {"value":135944}
+  word_135944:u64 = const() {"value":0}
+  a_135944:u64 = call(out,offset_135944,word_135944) {"function":"put64"}
+  offset_135952:u64 = const() {"value":135952}
+  word_135952:u64 = const() {"value":0}
+  a_135952:u64 = call(out,offset_135952,word_135952) {"function":"put64"}
+  offset_135960:u64 = const() {"value":135960}
+  word_135960:u64 = const() {"value":135680}
+  a_135960:u64 = call(out,offset_135960,word_135960) {"function":"put64"}
+  offset_135968:u64 = const() {"value":135968}
+  word_135968:u64 = const() {"value":48}
+  a_135968:u64 = call(out,offset_135968,word_135968) {"function":"put64"}
+  offset_135976:u64 = const() {"value":135976}
+  word_135976:u64 = const() {"value":4294967299}
+  a_135976:u64 = call(out,offset_135976,word_135976) {"function":"put64"}
+  offset_135984:u64 = const() {"value":135984}
+  word_135984:u64 = const() {"value":8}
+  a_135984:u64 = call(out,offset_135984,word_135984) {"function":"put64"}
+  offset_135992:u64 = const() {"value":135992}
+  word_135992:u64 = const() {"value":24}
+  a_135992:u64 = call(out,offset_135992,word_135992) {"function":"put64"}
+  offset_136000:u64 = const() {"value":136000}
+  word_136000:u64 = const() {"value":12884901903}
+  a_136000:u64 = call(out,offset_136000,word_136000) {"function":"put64"}
+  offset_136008:u64 = const() {"value":136008}
+  word_136008:u64 = const() {"value":0}
+  a_136008:u64 = call(out,offset_136008,word_136008) {"function":"put64"}
+  offset_136016:u64 = const() {"value":136016}
+  word_136016:u64 = const() {"value":0}
+  a_136016:u64 = call(out,offset_136016,word_136016) {"function":"put64"}
+  offset_136024:u64 = const() {"value":136024}
+  word_136024:u64 = const() {"value":135728}
+  a_136024:u64 = call(out,offset_136024,word_136024) {"function":"put64"}
+  offset_136032:u64 = const() {"value":136032}
+  word_136032:u64 = const() {"value":31}
+  a_136032:u64 = call(out,offset_136032,word_136032) {"function":"put64"}
+  offset_136040:u64 = const() {"value":136040}
+  word_136040:u64 = const() {"value":0}
+  a_136040:u64 = call(out,offset_136040,word_136040) {"function":"put64"}
+  offset_136048:u64 = const() {"value":136048}
+  word_136048:u64 = const() {"value":1}
+  a_136048:u64 = call(out,offset_136048,word_136048) {"function":"put64"}
+  offset_136056:u64 = const() {"value":136056}
+  word_136056:u64 = const() {"value":0}
+  a_136056:u64 = call(out,offset_136056,word_136056) {"function":"put64"}
+  offset_136064:u64 = const() {"value":136064}
+  word_136064:u64 = const() {"value":4294967319}
+  a_136064:u64 = call(out,offset_136064,word_136064) {"function":"put64"}
+  offset_136072:u64 = const() {"value":136072}
+  word_136072:u64 = const() {"value":0}
+  a_136072:u64 = call(out,offset_136072,word_136072) {"function":"put64"}
+  offset_136080:u64 = const() {"value":136080}
+  word_136080:u64 = const() {"value":0}
+  a_136080:u64 = call(out,offset_136080,word_136080) {"function":"put64"}
+  offset_136088:u64 = const() {"value":136088}
+  word_136088:u64 = const() {"value":135680}
+  a_136088:u64 = call(out,offset_136088,word_136088) {"function":"put64"}
+  offset_136096:u64 = const() {"value":136096}
+  word_136096:u64 = const() {"value":0}
+  a_136096:u64 = call(out,offset_136096,word_136096) {"function":"put64"}
+  offset_136104:u64 = const() {"value":136104}
+  word_136104:u64 = const() {"value":0}
+  a_136104:u64 = call(out,offset_136104,word_136104) {"function":"put64"}
+  offset_136112:u64 = const() {"value":136112}
+  word_136112:u64 = const() {"value":1}
+  a_136112:u64 = call(out,offset_136112,word_136112) {"function":"put64"}
+  offset_136120:u64 = const() {"value":136120}
+  word_136120:u64 = const() {"value":0}
+  a_136120:u64 = call(out,offset_136120,word_136120) {"function":"put64"}
+  offset_136128:u64 = const() {"value":136128}
+  word_136128:u64 = const() {"value":12884901927}
+  a_136128:u64 = call(out,offset_136128,word_136128) {"function":"put64"}
+  offset_136136:u64 = const() {"value":136136}
+  word_136136:u64 = const() {"value":0}
+  a_136136:u64 = call(out,offset_136136,word_136136) {"function":"put64"}
+  offset_136144:u64 = const() {"value":136144}
+  word_136144:u64 = const() {"value":0}
+  a_136144:u64 = call(out,offset_136144,word_136144) {"function":"put64"}
+  offset_136152:u64 = const() {"value":136152}
+  word_136152:u64 = const() {"value":135759}
+  a_136152:u64 = call(out,offset_136152,word_136152) {"function":"put64"}
+  offset_136160:u64 = const() {"value":136160}
+  word_136160:u64 = const() {"value":49}
+  a_136160:u64 = call(out,offset_136160,word_136160) {"function":"put64"}
+  offset_136168:u64 = const() {"value":136168}
+  word_136168:u64 = const() {"value":0}
+  a_136168:u64 = call(out,offset_136168,word_136168) {"function":"put64"}
+  offset_136176:u64 = const() {"value":136176}
+  word_136176:u64 = const() {"value":1}
+  a_136176:u64 = call(out,offset_136176,word_136176) {"function":"put64"}
+  offset_136184:u64 = const() {"value":136184}
+  word_136184:u64 = const() {"value":0}
+  a_136184:u64 = call(out,offset_136184,word_136184) {"function":"put64"}
+  ret(a_136184)
+end
+
+fn put64(out:mutbuf,offset:u64,value:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf,offset:u64,value:u64)
+  width:u64 = const() {"value":8}
+  wrote:u64 = call(out,offset,value,width) {"function":"put"}
+  ret(wrote)
+end
+
+fn put(out:mutbuf,at:u64,value:u64,n:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(out:mutbuf,at:u64,value:u64,n:u64)
+  jump next(out,at,value,n)
+block next(no:mutbuf,na:u64,nv:u64,nn:u64)
+  pos:usize = int.cast(na) {"mode":"wrap"}
+  byte:u8 = int.cast(nv) {"mode":"wrap"}
+  _ = buffer.store(no,pos,byte)
+  one:u64 = const() {"value":1}
+  eight:u64 = const() {"value":8}
+  next_at:u64 = int.add.wrap(na,one)
+  reduced:u64 = int.shr.checked(nv,eight)
+  left:u64 = int.sub.wrap(nn,one)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(left,z)
+  branch done finish(next_at) next(no,next_at,reduced,left)
+block finish(stop:u64)
+  ret(stop)
+end
