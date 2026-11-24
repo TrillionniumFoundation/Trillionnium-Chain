@@ -1,8 +1,9 @@
 """Publish safe, bounded Settlement CI observations without reopening the full archive.
 
 This exporter has no qualification authority. It reads exact fixed paths only
-and writes one projected JSON document; raw streams, requests and environment
-records are never opened. All input identities refer to the unchanged originals.
+and writes one projected JSON document. The optional dispatch checkpoint reads
+the call index, not captured byte streams, requests or environment records.
+All input identities refer to the unchanged originals.
 """
 from __future__ import annotations
 
@@ -30,6 +31,25 @@ CI_OUTCOMES = ("success", "failure", "cancelled", "skipped")
 PINS = ("observations/source-before.json", "observations/source-after.json")
 BINDING = "observations/binding.json"
 CURSOR = "qualification/native/fixture-progress.jsonl"
+CALL_INDEX = "qualification/native/calls.jsonl"
+DISPATCH_FIXTURE = 319
+MAX_CALL_ROWS = 32768
+MAX_CALL_ROW = 128 * 1024
+MAX_CALL_BYTES = 128 * 1024 * 1024
+# Only synchronous PublicEngine.call timers enter the cursor total.
+DISPATCH_METHODS = (
+    "bytes_view", "consumption_receipt_id", "consumption_rollup_id",
+    "engine_apply", "engine_clone", "engine_history_count", "engine_new",
+    "engine_replay", "engine_state", "engine_state_copy", "engine_state_root",
+    "engine_trust", "engine_validate_execution", "error_code", "error_display",
+    "error_message", "operation_id", "owned_clone", "owned_drop", "owned_kind",
+    "settlement_policy_hash",
+)
+DERIVED_CALL_RECORDS = frozenset({
+    "bytes_view:view", "engine_history_count:scalar", "engine_state:view",
+    "engine_state_root:view", "engine_trust:view", "error_code:scalar",
+    "error_message:view",
+})
 INTEGRITY = "qualification/integrity/report.json"
 INTEGRITY_SCHEMA = "trnm.hia.service-settlement-engine.integrity.v1"
 ROOT_STATUS = {
@@ -301,6 +321,123 @@ def progress_record(raw):
             "last_complete_row": cursor}
 
 
+def dispatch_boundary(raw):
+    # progress_record has independently validated this exact file's row shapes
+    # and clocks. Require the complete ordered fixture prefix as well.
+    phase, fixture, operations = "fixture_start", 1, 0
+    counts = (0, 0)
+    for line in raw.split(b"\n")[1:-1]:
+        row = strict_json(line)
+        current = row["phase"]
+        observed = (row["capture_records"], row["public_dispatch_wall_ns"])
+        if (row.get("fixture_ordinal") != fixture
+                or row["completed_fixtures"] != fixture - (current != "fixture_done")
+                or row["completed_operations"] != operations
+                or any(now < last for now, last in zip(observed, counts))):
+            raise Refused("invalid-dispatch-boundary")
+        counts = observed
+        if current == "operation_start" and phase == "operations":
+            ordinal += 1
+            if row["operation_ordinal"] != ordinal:
+                raise Refused("invalid-dispatch-boundary")
+            operations += 1
+        elif current == "fixture_result" and phase == "operations":
+            phase = "fixture_cleanup"
+        elif current != phase:
+            raise Refused("invalid-dispatch-boundary")
+        elif current == "fixture_start":
+            phase, ordinal = "operations", 0
+        elif current == "fixture_cleanup":
+            phase = "fixture_done"
+        elif current == "fixture_done":
+            if fixture == DISPATCH_FIXTURE:
+                if (not 0 < counts[0] <= MAX_CALL_ROWS
+                        or not 0 < counts[1] <= row["wall_ns"]):
+                    raise Refused("invalid-dispatch-boundary")
+                return row
+            phase = "fixture_start"
+            fixture += 1
+    raise Refused("checkpoint-not-reached")
+
+
+def dispatch_prefix(root, boundary):
+    parts = path_parts(CALL_INDEX, absolute=False)
+    rows = {method: {"calls": 0, "wall_ns": 0} for method in DISPATCH_METHODS}
+    digest, size, elapsed = hashlib.sha256(), 0, 0
+    with descend(root, parts[:-1]) as parent:
+        fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK,
+                     dir_fd=parent)
+        with os.fdopen(fd, "rb") as file:
+            before = os.fstat(fd)
+            if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1:
+                raise Refused("unsafe-path")
+            if not 0 <= before.st_size <= MAX_CALL_BYTES:
+                raise Refused("over-byte-limit")
+            for ordinal in range(boundary["capture_records"]):
+                line = file.readline(MAX_CALL_ROW + 1)
+                size += len(line)
+                if len(line) > MAX_CALL_ROW or size > MAX_CALL_BYTES:
+                    raise Refused("over-byte-limit")
+                if not line.endswith(b"\n"):
+                    raise Refused("incomplete-call-prefix")
+                digest.update(line)
+                row = strict_json(line)
+                if scalar(row["ordinal"]) != ordinal:
+                    raise Refused("invalid-call-ordinal")
+                method = row["function"]
+                if method in DERIVED_CALL_RECORDS:
+                    if "native_call" in row or "elapsed_ns" in row:
+                        raise Refused("invalid-call-record")
+                    continue
+                if row.get("native_call") is not True:
+                    raise Refused("invalid-call-record")
+                scalar(row["status"])
+                cost = scalar(row["elapsed_ns"])
+                if method == "private_proportional_fee":
+                    continue
+                if method == "owned_drop" and "owner" in row:
+                    # Non-null drop bypasses PublicEngine.call.
+                    if "owners" in row or scalar(row["owner"]) == 0:
+                        raise Refused("invalid-call-record")
+                    continue
+                if method not in rows or not isinstance(row.get("owners"), list) or "owner" in row:
+                    raise Refused("invalid-call-record")
+                elapsed += cost
+                if elapsed > boundary["public_dispatch_wall_ns"]:
+                    raise Refused("dispatch-total-mismatch")
+                rows[method]["calls"] += 1
+                rows[method]["wall_ns"] += cost
+            if (signature(before) != signature(os.fstat(fd))
+                    or signature(before) != signature(os.stat(parts[-1], dir_fd=parent, follow_symlinks=False))):
+                raise Refused("changed-while-reading")
+    if elapsed != boundary["public_dispatch_wall_ns"]:
+        raise Refused("dispatch-total-mismatch")
+    return rows, {"bytes": size, "sha256": digest.hexdigest()}
+
+
+def observe_dispatch(root, observations, source_after):
+    cursor = observations[CURSOR]
+    if cursor["availability"] != "observed":
+        return {"availability": cursor["availability"]}
+    if (source_after != "success" or any(observations[path]["availability"] != "observed" for path in PINS)
+            or observations[PINS[0]]["projection"] != observations[PINS[1]]["projection"]):
+        return {"availability": "source-unbound"}
+    try:
+        raw = read_member(root, CURSOR, MAX_CURSOR_ROWS * MAX_CURSOR_ROW)
+        if identity(raw) != cursor["original"]:
+            raise Refused("changed-while-reading")
+        boundary = dispatch_boundary(raw)
+        del raw
+        rows, prefix = dispatch_prefix(root, boundary)
+        if identity(read_member(root, CURSOR, MAX_CURSOR_ROWS * MAX_CURSOR_ROW)) != cursor["original"]:
+            raise Refused("changed-while-reading")
+    except ERRORS as error:
+        return {"availability": error_state(error)}
+    return {"availability": "observed", "establishes_execution_success": False,
+            "boundary": boundary, "cursor": cursor["original"], "call_index_prefix": prefix,
+            "public_methods": rows}
+
+
 def error_state(error):
     if isinstance(error, Refused):
         return str(error)
@@ -357,15 +494,17 @@ def export(root_path, head, run_id, run_attempt, outcomes, job_status):
         with safe_directory(root_path) as root:
             observations = {name: observe(root, name, projector, is_cursor=name == CURSOR)
                             for name, projector in entries.items()}
+            checkpoint = observe_dispatch(root, observations, outcomes[1])
     except ERRORS as exc:
         observations = {name: {"availability": error_state(exc)} for name in entries}
+        checkpoint = {"availability": error_state(exc)}
     control = {"component": "settlement-engine", "head": head, "run_id": run_id, "run_attempt": run_attempt,
                "source_after_step": outcomes[1], "execution_step": outcomes[0], "binding_step": outcomes[2],
                "job_status_at_collection": job_status}
     control = {key: value if value != "" else None for key, value in control.items()}
     return {"schema": "trnm.hia.settlement-ci-companion.v1", "workflow": control,
             "qualifies_execution": False, "substitutes_full_original_archive": False,
-            "observations": observations}
+            "observations": observations, "dispatch_checkpoint": checkpoint}
 
 
 def main():

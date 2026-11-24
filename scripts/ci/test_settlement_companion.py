@@ -112,6 +112,115 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertEqual(observations[companion.BINDING], {"availability": "missing"})
         self.assertEqual(observations["observations/readback.receipt.json"], {"availability": "missing"})
 
+    def checkpoint_inputs(self):
+        source = {"schema": "trnm-ci-source-v1", "kind": "head",
+                  "tested_commit": HEAD, "candidate": HEAD, "tested_tree": TREE,
+                  "tracked_worktree_verified": True, "tracked_entries": 4, "tracked_bytes": 900}
+        for path in companion.PINS:
+            self.doc(path, source)
+        self.doc("qualification/stages/native/receipt.json", self.timed_receipt())
+        progress = [{"phase": "stage_start", "wall_ns": 1, "thread_cpu_ns": 1}]
+        calls = []
+        measured = 0
+
+        def step(phase, fixture, operations, complete=False, **kw):
+            progress.append({"phase": phase, "wall_ns": len(progress) * 100,
+                             "thread_cpu_ns": len(progress) * 99, "fixture_ordinal": fixture,
+                             "completed_fixtures": fixture if complete else fixture - 1,
+                             "completed_operations": operations, "capture_records": len(calls),
+                             "public_dispatch_wall_ns": measured, **kw})
+
+        for i in range(1, 320):
+            step("fixture_start", i, i - 1)
+            step("operation_start", i, i - 1, operation_ordinal=1, opcode=1)
+            calls.append({"ordinal": len(calls), "function": "engine_apply", "native_call": True,
+                          "status": 0, "elapsed_ns": 20, "request": SECRET, "owners": [1]})
+            measured += 20
+            if i == 319:
+                calls.extend((
+                    {"ordinal": len(calls), "function": "bytes_view:view", "owner": 1, "value": SECRET},
+                    {"ordinal": len(calls) + 1, "function": "owned_drop", "owner": 1,
+                     "native_call": True, "status": 0, "elapsed_ns": 1234},
+                    {"ordinal": len(calls) + 2, "function": "private_proportional_fee",
+                     "native_call": True, "status": 0, "elapsed_ns": 2345},
+                    {"ordinal": len(calls) + 3, "function": "owned_drop", "owners": [],
+                     "native_call": True, "status": 0, "elapsed_ns": 7},
+                ))
+                measured += 7
+            step("fixture_result", i, i)
+            step("fixture_cleanup", i, i)
+            step("fixture_done", i, i, complete=True)
+        step("fixture_start", 320, 319)
+        return progress, calls
+
+    def journal(self, path, rows, tail=b""):
+        return self.write(path, b"".join(json.dumps(row).encode() + b"\n" for row in rows) + tail)
+
+    def test_dispatch_checkpoint_observes_exact_prefix_not_tail_or_success(self):
+        progress, calls = self.checkpoint_inputs()
+        path = "qualification/stages/native/receipt.json"
+        cursor = self.journal(companion.CURSOR, progress)
+        journal = self.journal(companion.CALL_INDEX, calls)
+        prefix_identity = companion.identity(journal.read_bytes())
+        with journal.open("ab") as file:
+            file.write(b'{"truncated":')
+        data = self.invoke()
+        checkpoint = data["dispatch_checkpoint"]
+        self.assertEqual(checkpoint["availability"], "observed")
+        self.assertFalse(checkpoint["establishes_execution_success"])
+        self.assertFalse(data["qualifies_execution"])
+        self.assertTrue(data["observations"][path]["projection"]["timed_out"])
+        self.assertEqual(checkpoint["boundary"]["fixture_ordinal"], 319)
+        self.assertEqual(checkpoint["boundary"]["capture_records"], len(calls))
+        self.assertEqual(checkpoint["cursor"], companion.identity(cursor.read_bytes()))
+        self.assertEqual(checkpoint["call_index_prefix"], prefix_identity)
+        methods = checkpoint["public_methods"]
+        self.assertEqual(list(methods), sorted(companion.DISPATCH_METHODS))
+        self.assertEqual(methods["engine_apply"], {"calls": 319, "wall_ns": 6380})
+        self.assertEqual(methods["owned_drop"], {"calls": 1, "wall_ns": 7})
+        self.assertEqual(sum(method["calls"] for method in methods.values()), 320)
+        self.assertEqual(sum(method["wall_ns"] for method in methods.values()), 6387)
+
+    def test_dispatch_checkpoint_refuses_unbound_incomplete_or_invalid_evidence(self):
+        progress, calls = self.checkpoint_inputs()
+        for change, expected in (
+            ("missing", "missing"), ("truncated", "incomplete-call-prefix"),
+            ("ordinal", "invalid-call-ordinal"), ("method", "invalid-call-record"),
+            ("time", "invalid-json-or-fields"), ("sum", "dispatch-total-mismatch"),
+            ("oversized", "over-byte-limit"), ("hardlink", "unsafe-path"),
+            ("boundary", "invalid-dispatch-boundary"), ("early", "checkpoint-not-reached"),
+            ("source", "source-unbound"),
+        ):
+            with self.subTest(change=change):
+                case = self.temp / ("case-" + change)
+                case.mkdir()
+                previous = self.dest
+                try:
+                    self.dest = case
+                    rows = [dict(row) for row in progress]
+                    records = [dict(row) for row in calls]
+                    if change == "ordinal": records[1]["ordinal"] = 0
+                    if change == "method": records[1]["function"] = SECRET
+                    if change == "time": del records[1]["elapsed_ns"]
+                    if change == "sum": records[1]["elapsed_ns"] -= 1
+                    if change == "oversized": records[1]["request"] = "x" * companion.MAX_CALL_ROW
+                    if change == "boundary": rows[5]["completed_fixtures"] = 0
+                    if change == "early": rows = rows[:-2]
+                    if change == "truncated": records.pop()
+                    self.journal(companion.CURSOR, rows)
+                    journal = self.journal(companion.CALL_INDEX, records)
+                    if change == "missing": journal.unlink()
+                    if change == "hardlink":
+                        alias = self.temp / "call-index-alias"
+                        os.link(journal, alias)
+                        self.addCleanup(alias.unlink)
+                    data = self.invoke(extra=("--source-after-outcome", "failure") if change == "source" else ())
+                    self.assertEqual(data["dispatch_checkpoint"], {"availability": expected})
+                    self.assertEqual(data["workflow"]["execution_step"], "failure")
+                    self.assertTrue(data["observations"]["qualification/stages/native/receipt.json"]["projection"]["timed_out"])
+                finally:
+                    self.dest = previous
+
     def test_linked_leaf_parent_and_hardlink_are_refused(self):
         outside = self.temp / "outside"
         outside.mkdir()
