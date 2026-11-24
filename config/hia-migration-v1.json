@@ -1327,6 +1327,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-jsonl-batch",
+      "node_integration_complete": false,
+      "scope": "One native call owns ordered selection and atomic complete JSONL emission across already-typed Worker records. Both emitters compare with the actual locked original CLI on local fixtures. Optional conversion facts, journal parsing, index and production routing remain original.",
+      "source": "hia/src/worker_agent/audit_jsonl_batch.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_jsonl_batch.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-jsonl-row",
       "node_integration_complete": false,
       "scope": "Exact active 18-field Worker audit JSONL row serialization with UTF-8, ordered fields, native atomic output, and actual locked Rust/Serde typed parity. Does not move record selection, the full CLI, index/query I/O, or production ownership.",
@@ -1460,6 +1470,7 @@
         "worker-agent/audit-text",
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
+        "worker-agent/audit-jsonl-batch",
         "worker-agent/audit-jsonl-row",
         "worker-agent/audit-display-labels",
         "worker-agent/audit-reputation-projection",

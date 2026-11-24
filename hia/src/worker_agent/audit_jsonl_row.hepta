@@ -23,7 +23,8 @@ block bounded(bound_input:readbuf,bound_output:mutbuf,bound_size:u64,bound_mask:
   branch request_fits measure(bound_input,bound_output,bound_size,bound_mask) capacity()
 block measure(measure_input:readbuf,measure_output:mutbuf,measure_size:u64,measure_mask:u64)
   no_emit:bool = const() {"value":false}
-  needed:u64 = call(measure_input,measure_output,measure_size,measure_mask,no_emit) {"function":"wj_row"}
+  measure_at:u64 = const() {"value":0}
+  needed:u64 = call(measure_input,measure_output,measure_size,measure_mask,no_emit,measure_at) {"function":"wj_row"}
   zero:u64 = const() {"value":0}
   admissible:bool = compare.ne(needed,zero)
   branch admissible measure_capacity(measure_input,measure_output,measure_size,measure_mask,needed) invalid()
@@ -37,7 +38,8 @@ block measure_capacity(cap_input:readbuf,cap_output:mutbuf,cap_size:u64,cap_mask
   branch fits emit(cap_input,cap_output,cap_size,cap_mask) capacity()
 block emit(emit_input:readbuf,emit_output:mutbuf,emit_size:u64,emit_mask:u64)
   do_emit:bool = const() {"value":true}
-  size:u64 = call(emit_input,emit_output,emit_size,emit_mask,do_emit) {"function":"wj_row"}
+  emit_at:u64 = const() {"value":0}
+  size:u64 = call(emit_input,emit_output,emit_size,emit_mask,do_emit,emit_at) {"function":"wj_row"}
   result:u32 = int.cast(size) {"mode":"wrap"}
   ret(result)
 block invalid()
@@ -47,17 +49,22 @@ block capacity()
   insufficient:u32 = const() {"value":4294967294}
   ret(insufficient)
 end
-fn wj_row(row_input:readbuf,row_output:mutbuf,row_size:u64,row_mask:u64,row_emit:bool) -> (u64) effects(read,write,trap) entry(entry)
-block entry(row_input:readbuf,row_output:mutbuf,row_size:u64,row_mask:u64,row_emit:bool)
+fn wj_row(row_input:readbuf,row_output:mutbuf,row_bounds:u64,row_mask:u64,row_emit:bool,row_out_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(row_input:readbuf,row_output:mutbuf,row_bounds:u64,row_mask:u64,row_emit:bool,row_out_at:u64)
   first_field:u64 = const() {"value":0}
   first_text:u64 = const() {"value":108}
-  jump field(row_input,row_output,row_size,row_mask,row_emit,first_field,first_text,first_field)
+  bounds_shift:u64 = const() {"value":32}
+  row_start:u64 = int.shr.checked(row_bounds,bounds_shift)
+  text_start:u64 = int.add.wrap(first_text,row_start)
+  jump field(row_input,row_output,row_bounds,row_mask,row_emit,first_field,text_start,row_out_at)
 block field(fi:readbuf,fo:mutbuf,fs:u64,fm:u64,fw:bool,field_index:u64,field_text:u64,field_out:u64)
   field_count:u64 = const() {"value":18}
   more:bool = compare.lt(field_index,field_count)
   branch more dispatch(fi,fo,fs,fm,fw,field_index,field_text,field_out) finish(fo,fs,fw,field_text,field_out)
 block finish(fini_out:mutbuf,fini_size:u64,fini_emit:bool,fini_text:u64,fini_at:u64)
-  exact:bool = compare.eq(fini_text,fini_size)
+  bounds_low:u64 = const() {"value":4294967295}
+  row_end:u64 = bit.and(fini_size,bounds_low)
+  exact:bool = compare.eq(fini_text,row_end)
   branch exact close(fini_out,fini_at,fini_emit) fail()
 block close(close_out:mutbuf,close_at:u64,close_emit:bool)
   brace_lf:u64 = const() {"value":2685}
@@ -91,8 +98,10 @@ block text_descriptor(ti:readbuf,to:mutbuf,ts:u64,tm:u64,tw:bool,tindex:u64,ttex
   text_slot_bytes:u64 = int.mul.wrap(text_slot,text_width)
   descriptor_start:u64 = const() {"value":64}
   length_at:u64 = int.add.wrap(descriptor_start,text_slot_bytes)
-  length:u64 = call(ti,length_at,text_width) {"function":"wa_read"}
-  remaining:u64 = int.sub.wrap(ts,ttext)
+  length:u64 = call(ti,ts,length_at,text_width) {"function":"wj_read_slot"}
+  text_bounds_low:u64 = const() {"value":4294967295}
+  text_row_end:u64 = bit.and(ts,text_bounds_low)
+  remaining:u64 = int.sub.wrap(text_row_end,ttext)
   text_fits:bool = compare.le(length,remaining)
   branch text_fits text_presence(ti,to,ts,tm,tw,tindex,ttext,tout,tp,length) fail()
 block text_presence(tpi:readbuf,tpo:mutbuf,tps:u64,tpm:u64,tpw:bool,tpindex:u64,tptext:u64,tpout:u64,tpp:bool,tplen:u64)
@@ -119,7 +128,7 @@ block numeric_descriptor(ni:readbuf,no:mutbuf,ns:u64,nm:u64,nw:bool,nindex:u64,n
   numeric_width:u64 = const() {"value":8}
   numeric_offset:u64 = int.mul.wrap(numeric_slot,numeric_width)
   numeric_at:u64 = int.add.wrap(numeric_width,numeric_offset)
-  raw_number:u64 = call(ni,numeric_at,numeric_width) {"function":"wa_read"}
+  raw_number:u64 = call(ni,ns,numeric_at,numeric_width) {"function":"wj_read_slot"}
   branch np number_type(ni,no,ns,nm,nw,nindex,ntext,nout,raw_number,ntask) absent(ni,no,ns,nm,nw,nindex,ntext,nout,raw_number)
 block number_type(nti:readbuf,nto:mutbuf,nts:u64,ntm:u64,ntw:bool,ntindex:u64,nttext:u64,ntout:u64,ntval:u64,ntt:bool)
   delta:u64 = const() {"value":12}
@@ -181,6 +190,14 @@ block advance(axi:readbuf,axo:mutbuf,axs:u64,axm:u64,axw:bool,axindex:u64,axtext
 block fail()
   bad_row:u64 = const() {"value":0}
   ret(bad_row)
+end
+fn wj_read_slot(source:readbuf,row_bounds:u64,relative_at:u64,width:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(source:readbuf,row_bounds:u64,relative_at:u64,width:u64)
+  bounds_shift:u64 = const() {"value":32}
+  row_start:u64 = int.shr.checked(row_bounds,bounds_shift)
+  absolute_at:u64 = int.add.wrap(row_start,relative_at)
+  value:u64 = call(source,absolute_at,width) {"function":"wa_read"}
+  ret(value)
 end
 fn wj_string_size(source:readbuf,start:u64,length:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(source:readbuf,start:u64,length:u64)

@@ -1,0 +1,122 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_jsonl_batch_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  native_input_size:usize = buffer.len(input)
+  input_size:u64 = int.cast(native_input_size) {"mode":"wrap"}
+  header_size:u64 = const() {"value":8}
+  header_present:bool = compare.ge(input_size,header_size)
+  branch header_present bound(input,output,input_size) invalid()
+block bound(bi:readbuf,bo:mutbuf,bs:u64)
+  maximum:u64 = const() {"value":4294967293}
+  allowed:bool = compare.le(bs,maximum)
+  branch allowed header(bi,bo,bs) capacity()
+block header(hi:readbuf,ho:mutbuf,hs:u64)
+  zero:u64 = const() {"value":0}
+  word:u64 = const() {"value":4}
+  magic:u64 = call(hi,zero,word) {"function":"wa_read"}
+  expected:u64 = const() {"value":826427991}
+  match_magic:bool = compare.eq(magic,expected)
+  count:u64 = call(hi,word,word) {"function":"wa_read"}
+  max_count:u64 = const() {"value":100000}
+  legal_count:bool = compare.le(count,max_count)
+  header_ok:bool = bool.and(match_magic,legal_count)
+  branch header_ok measure(hi,ho,hs,count) invalid()
+block measure(mi:readbuf,mo:mutbuf,ms:u64,mc:u64)
+  no:bool = const() {"value":false}
+  needed:u64 = call(mi,mo,ms,mc,no) {"function":"wb_pass"}
+  malformed:u64 = const() {"value":18446744073709551615}
+  valid:bool = compare.ne(needed,malformed)
+  branch valid check_capacity(mi,mo,ms,mc,needed) invalid()
+block check_capacity(ci:readbuf,co:mutbuf,cs:u64,cc:u64,cn:u64)
+  output_len:usize = buffer.len(co)
+  available:u64 = int.cast(output_len) {"mode":"wrap"}
+  limit:u64 = const() {"value":4294967293}
+  fits_output:bool = compare.le(cn,available)
+  fits_return:bool = compare.le(cn,limit)
+  fits:bool = bool.and(fits_output,fits_return)
+  branch fits emit(ci,co,cs,cc) capacity()
+block emit(ei:readbuf,eo:mutbuf,es:u64,ec:u64)
+  yes:bool = const() {"value":true}
+  actual:u64 = call(ei,eo,es,ec,yes) {"function":"wb_pass"}
+  result:u32 = int.cast(actual) {"mode":"wrap"}
+  ret(result)
+block invalid()
+  error:u32 = const() {"value":4294967295}
+  ret(error)
+block capacity()
+  error_capacity:u32 = const() {"value":4294967294}
+  ret(error_capacity)
+end
+fn wb_pass(source:readbuf,out:mutbuf,extent:u64,count:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(source:readbuf,out:mutbuf,extent:u64,count:u64,emit:bool)
+  start:u64 = const() {"value":8}
+  entry_zero:u64 = const() {"value":0}
+  jump next_row(source,out,extent,count,emit,start,entry_zero)
+block next_row(ni:readbuf,no:mutbuf,ns:u64,nc:u64,nw:bool,na:u64,nout:u64)
+  zero_count:u64 = const() {"value":0}
+  complete:bool = compare.eq(nc,zero_count)
+  branch complete finish(ns,na,nout) descriptor(ni,no,ns,nc,nw,na,nout)
+block finish(total:u64,consumed:u64,produced:u64)
+  exact:bool = compare.eq(total,consumed)
+  branch exact success(produced) invalid()
+block success(result:u64)
+  ret(result)
+block descriptor(di:readbuf,do:mutbuf,ds:u64,dc:u64,dw:bool,da:u64,dout:u64)
+  descriptor_remaining:u64 = int.sub.wrap(ds,da)
+  size_width:u64 = const() {"value":4}
+  has_size:bool = compare.ge(descriptor_remaining,size_width)
+  branch has_size row_extent(di,do,ds,dc,dw,da,dout,descriptor_remaining,size_width) invalid()
+block row_extent(ri:readbuf,ro:mutbuf,rs:u64,rc:u64,rw:bool,ra:u64,rout:u64,row_extent_remaining:u64,width:u64)
+  row_size:u64 = call(ri,ra,width) {"function":"wa_read"}
+  row_start:u64 = int.add.wrap(ra,width)
+  past_size:u64 = int.sub.wrap(row_extent_remaining,width)
+  minimum:u64 = const() {"value":108}
+  all_inside:bool = compare.le(row_size,past_size)
+  enough_header:bool = compare.ge(row_size,minimum)
+  fits:bool = bool.and(all_inside,enough_header)
+  row_end:u64 = int.add.wrap(row_start,row_size)
+  branch fits row_header(ri,ro,rs,rc,rw,row_start,row_end,rout) invalid()
+block row_header(row_header_hi:readbuf,ho:mutbuf,hs:u64,hc:u64,hw:bool,ha:u64,he:u64,hout:u64)
+  word:u64 = const() {"value":4}
+  expected_magic:u64 = const() {"value":827083351}
+  magic:u64 = call(row_header_hi,ha,word) {"function":"wa_read"}
+  good_magic:bool = compare.eq(magic,expected_magic)
+  mask_at:u64 = int.add.wrap(ha,word)
+  mask:u64 = call(row_header_hi,mask_at,word) {"function":"wa_read"}
+  max_mask:u64 = const() {"value":32767}
+  good_mask:bool = compare.le(mask,max_mask)
+  good:bool = bool.and(good_magic,good_mask)
+  branch good status_extent(row_header_hi,ho,hs,hc,hw,ha,he,hout,mask) invalid()
+block status_extent(si:readbuf,so:mutbuf,ss:u64,sc:u64,sw:bool,sa:u64,se:u64,sout:u64,sm:u64)
+  four:u64 = const() {"value":4}
+  id_descriptor:u64 = const() {"value":64}
+  id_at:u64 = int.add.wrap(sa,id_descriptor)
+  id_size:u64 = call(si,id_at,four) {"function":"wa_read"}
+  status_descriptor:u64 = int.add.wrap(id_at,four)
+  status_extent_status_size:u64 = call(si,status_descriptor,four) {"function":"wa_read"}
+  header_len:u64 = const() {"value":108}
+  text_at:u64 = int.add.wrap(sa,header_len)
+  row_text_size:u64 = int.sub.wrap(se,text_at)
+  before_status_end:u64 = int.add.wrap(id_size,status_extent_status_size)
+  contained:bool = compare.le(before_status_end,row_text_size)
+  status_extent_status_at:u64 = int.add.wrap(text_at,id_size)
+  branch contained choose(si,so,ss,sc,sw,sa,se,sout,sm,status_extent_status_at,status_extent_status_size) invalid()
+block choose(ci:readbuf,co:mutbuf,cs:u64,cc:u64,cw:bool,ca:u64,ce:u64,cout:u64,cm:u64,choose_status_at:u64,choose_status_size:u64)
+  selection:u8 = call(ci,choose_status_at,choose_status_size) {"function":"ws_selected"}
+  one_byte:u8 = const() {"value":1}
+  included:bool = compare.eq(selection,one_byte)
+  write:bool = bool.and(cw,included)
+  shift:u64 = const() {"value":32}
+  choose_hi:u64 = int.shl.checked(ca,shift)
+  bounds:u64 = bit.or(choose_hi,ce)
+  end_after_row:u64 = call(ci,co,bounds,cm,write,cout) {"function":"wj_row"}
+  choose_zero:u64 = const() {"value":0}
+  valid:bool = compare.ne(end_after_row,choose_zero)
+  chosen_end:u64 = select(included,end_after_row,cout)
+  one:u64 = const() {"value":1}
+  next_count:u64 = int.sub.wrap(cc,one)
+  branch valid next_row(ci,co,cs,next_count,cw,ce,chosen_end) invalid()
+block invalid()
+  failed:u64 = const() {"value":18446744073709551615}
+  ret(failed)
+end
