@@ -1446,6 +1446,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-audit-dto-v2",
+      "node_integration_complete": false,
+      "scope": "Private WJD2 shares exact typed projection and adds arbitrary order of 22 literal known keys, independent absent/null options and duplicate checks; both emitter chains reproduce three unchanged locked Rust CLI files. Existing WJD1/WQX1, generic Serde, storage and production dispatch unchanged.",
+      "source": "hia/src/worker_agent/journal_audit_dto_ordered_fields_v2.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_audit_dto_v2.py"
+      ]
+    },
+    {
       "id": "worker-agent/journal-audit-dto",
       "node_integration_complete": false,
       "scope": "Bounded complete parsing of the nine required ordinary Worker journal fields in declaration order, with no options or the complete ordered null suffix, emitting WJL1. Real native WJF1\u2192WJD1\u2192WAT2 and unchanged locked CLI three-artifact parity. Generic Serde, non-null metadata, authority, files and dispatch unchanged.",

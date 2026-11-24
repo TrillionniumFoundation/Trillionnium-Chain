@@ -9524,6 +9524,48 @@
         "source": "src/worker_agent/audit_report.hepta"
       }
     ],
+    "src/worker_agent/journal_audit_dto_ordered_fields_v2.hepta": [
+      {
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ],
+        "source": "src/codec/json_value_wire.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "oj_utf8"
+        ],
+        "source": "src/oracle/serde_json.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      },
+      {
+        "functions": [
+          "wd_emit_at",
+          "wd_octet",
+          "wd_space",
+          "wd_expect",
+          "wd_string",
+          "wd_number",
+          "wd_u128_digit",
+          "wd_key"
+        ],
+        "source": "src/worker_agent/journal_audit_dto.hepta"
+      }
+    ],
     "src/worker_agent/journal_audit_export.hepta": [
       {
         "functions": [
