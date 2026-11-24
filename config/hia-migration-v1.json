@@ -1396,6 +1396,16 @@
       ]
     },
     {
+      "id": "worker-agent/journal-line-frame",
+      "node_integration_complete": false,
+      "scope": "Atomic bounded original Worker raw journal framing (whole UTF-8, terminal LF, exact CRLF and blank-only Rust Unicode whitespace handling) emits borrowed line ranges and logical ordinals. Exact source-extracted Rust span and real locked CLI replay; no JSON/status admission, filesystem authority or production routing.",
+      "source": "hia/src/worker_agent/journal_line_frame.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_journal_line_frame.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-export-preselection",
       "node_integration_complete": false,
       "scope": "One bounded HIA transaction selects exact literal statuses from all ordered preconverted typed candidates, reuses one attendance mask for JSONL/Markdown and compact index ordinals, and compares all three artifacts to independent actual original locked CLI files. Original raw reader/conversion, file authority and production routing unchanged.",
