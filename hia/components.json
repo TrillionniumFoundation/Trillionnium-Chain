@@ -88,6 +88,39 @@
         "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
+    "src/verification/integer_linear_context.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_copy",
+          "rac_read_le",
+          "rac_write_be"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_copy_digest"
+        ]
+      }
+    ],
     "src/verification/statement_preflight.hepta": [
       {
         "functions": [

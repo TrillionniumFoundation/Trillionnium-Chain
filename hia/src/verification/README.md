@@ -79,3 +79,7 @@ For the separate pure per-record challenge transitions, see
 
 For original book opening, exact result-key lookup and one-call member
 transitions over a bounded immutable snapshot, see [Challenge book values](CHALLENGE_BOOK.md).
+
+
+For the exact integer-linear context's canonical JSON and identity, see
+[Integer-linear context](INTEGER_LINEAR_CONTEXT.md).

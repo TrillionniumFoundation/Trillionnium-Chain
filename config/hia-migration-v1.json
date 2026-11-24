@@ -265,6 +265,17 @@
       ]
     },
     {
+      "id": "verification/integer-linear-context",
+      "node_integration_complete": false,
+      "scope": "Pure IntegerLinearContextV1 construction and exact 372-byte canonical JSON decode/encode plus original contract ID, with strictly opaque parent identity. No factors, model arithmetic, authentication, adoption, economic or production authority.",
+      "source": "hia/src/verification/integer_linear_context.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_linear_context.py",
+        "hia/tests/rust_integer_linear_context_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -1743,7 +1754,8 @@
         "verification/profile-registry",
         "verification/statement-preflight",
         "verification/challenge-record",
-        "verification/challenge-book"
+        "verification/challenge-book",
+        "verification/integer-linear-context"
       ],
       "legacy_path": "trillionnium/crates/trnm-verification-profiles",
       "module": "M11",
