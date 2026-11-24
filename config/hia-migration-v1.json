@@ -1006,7 +1006,7 @@
     {
       "id": "bench/no-profile-cli",
       "node_integration_complete": false,
-      "scope": "Finite full-width unsigned parsing, original workload selector/fanout/stride and bare profile/persist flags, Original strategy, and original repeat-limit decision. Mixed and HotStreak use proved single-domain or single-writer parity admission; general equivalence, diagnostics, strategies, replays and real env remain open.",
+      "scope": "Finite full-width unsigned parsing, workload selector/fanout/stride, bare profile/persist flags, Original strategy and original inclusive 0–1000 replay admission. Mixed/HotStreak preserve their proved single-domain or single-writer compatibility fence; complete CLI, diagnostics, other strategies and real env remain open.",
       "source": "hia/src/bench/main_cli.hepta",
       "state": "native-kernel-implemented",
       "tests": [
@@ -1533,7 +1533,7 @@
       "id": "bench/linux-no-profile-main",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Standalone Linux x86-64 bounded Original-order Bench for Classic and the admitted single-domain or single-writer Mixed/HotStreak workloads with real kernel argv and clocks, native schedule/digests/profile/report, and build-bound isolated profile persistence plus actual directory and file-write failures. No profile writes in ordinary invocation or unbound mode; synthetic isolated qualification and locked Rust differential only, not complete Bench or production activation.",
+      "scope": "Standalone Linux x86-64 bounded Original-order Bench for Classic and admitted single-domain or single-writer Mixed/HotStreak. Real argv and first-call-only clocks, native post-clock schedule replays with independent digest/ordered-membership checks, report/profile and isolated persistence/errors. No profile writes in ordinary invocation or unbound mode; synthetic isolated qualification and locked Rust differential only, not complete Bench or production activation.",
       "sources": [
         "hia/platform/bench/main_emitter.hepta"
       ],

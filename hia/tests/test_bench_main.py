@@ -11,6 +11,7 @@ import re
 import resource
 import shutil
 import signal
+import struct
 import subprocess
 import tarfile
 import tempfile
@@ -19,7 +20,7 @@ import tomllib
 import unittest
 
 from hia.platform.bench.main_build import build
-from hia.platform.build import new_output, sealed_executable
+from hia.platform.build import inspect_executable, new_output, sealed_executable
 from hia.tests.test_bench_native import run_original_command
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -210,7 +211,7 @@ class NativeBenchMain(unittest.TestCase):
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
         for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),
                                       (b"--workload=hot-streak",), (b"--strategy=write-first",),
-                                      (b"--txs=20001",), (b"--determinism-repeats=1",),
+                                      (b"--txs=20001",),
                                       (b"--workload=mixed", b"--txs=32", b"--keys=2", b"--write-every=31"),
                                       (b"--workload=hot-streak", b"--txs=32", b"--keys=2", b"--write-every=31"),
                                       (b"--workload=mixed", b"--keys=1", b"--read-fanout=9"),
@@ -417,3 +418,213 @@ class NativeBenchMain(unittest.TestCase):
                 matched.append(out)
             self.assertEqual(matched[0], matched[1])
         self.reset_profile_path()
+
+    def test_actual_replay_cli_and_profile_against_locked_rust(self):
+        admitted = (
+            (b"--txs=4", b"--keys=4", b"--determinism-repeats=1"),
+            (b"--txs=1", b"--determinism-repeats", b"1000"),
+            (b"--txs=20", b"--keys=1", b"--workload=hot-streak", b"--determinism-repeats=5"),
+            (b"--txs=20", b"--keys=2", b"--workload=mixed", b"--write-every=20",
+             b"--determinism-repeats=3"),
+        )
+        for index, args in enumerate(admitted):
+            old, old_wall = self.actual(f"replay-{index}-original", self.original, args)
+            new, new_wall = self.actual(f"replay-{index}-native", self.native, args)
+            self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
+            before_ms, before = stdout_observation(old.stdout, old_wall)
+            after_ms, after = stdout_observation(new.stdout, new_wall)
+            self.events[-2]["observed_elapsed_ms"] = before_ms
+            self.events[-1]["observed_elapsed_ms"] = after_ms
+            self.assertEqual(after, before)
+            self.assertIn(b"\ndeterminism.replay_match=true\n", after)
+            self.assertFalse(self.run_path.exists())
+        observed = []
+        args = (b"--profile", b"--txs=4", b"--keys=4", b"--determinism-repeats=3")
+        for kind, image in (("original", self.original), ("native", self.native)):
+            self.reset_profile_path()
+            row, _, _ = self.profile_comparable(*self.actual(f"replay-profile-{kind}", image, args), "file")
+            self.assertIn(b"\ndeterminism.replay_match=true\n", row)
+            observed.append(row)
+        self.assertEqual(observed[0], observed[1])
+        self.reset_profile_path()
+
+    def test_actual_replay_count_and_independent_membership_digest_guards(self):
+        # Test-only synthetic ELF links never become the supported Bench image.
+        args = (b"--txs=4", b"--keys=4")
+        original, _ = self.actual("replay-leaf-original", self.original,
+                                  (*args, b"--determinism-repeats=4"))
+        input_digest = re.search(rb"(?m)^determinism.input_sha256=([0-9a-f]{64})$", original.stdout)
+        self.assertEqual(original.returncode, 0)
+        self.assertIsNotNone(input_digest)
+        expected = (b"determinism replay mismatch for input " + input_digest[1] +
+                    b" and strategy Original\n")
+        count_only = replay_fixture(self.native, self.build, self.root, "count", 0)
+        for count in (0, 4, 1000):
+            case = (*args, f"--determinism-repeats={count}".encode())
+            observed, _ = self.actual(f"replay-leaf-count-{count}", count_only, case)
+            self.assertEqual(observed.returncode, 0)
+            self.assertEqual(observed.stderr, b"S" * (1 + count))
+            self.events[-1]["observed_scheduler_invocations"] = len(observed.stderr)
+        observed, _ = self.actual("replay-leaf-before-bound", count_only,
+                                  (*args, b"--determinism-repeats=1001"))
+        self.assertEqual((observed.returncode, observed.stdout, observed.stderr), (2, b"", REPEAT))
+        self.events[-1]["observed_scheduler_invocations"] = 0
+        delayed = replay_fixture(self.native, self.build, self.root, "after-clock-delay", 3)
+        observed, wall = self.actual("replay-leaf-after-clock-delay", delayed,
+                                     (*args, b"--determinism-repeats=4"))
+        self.assertEqual((observed.returncode, observed.stderr), (0, b"SSSSS"))
+        elapsed, _ = stdout_observation(observed.stdout, wall)
+        # Four real 50-ms sleeps occur only after replay callbacks; they
+        # cannot fall inside the independently measured first interval.
+        self.assertGreaterEqual(wall - elapsed * 1_000_000, 190_000_000)
+        self.events[-1].update(observed_scheduler_invocations=5, observed_elapsed_ms=elapsed,
+                               injected_post_clock_nanoseconds=200_000_000)
+        for mode, label in ((1, "membership-even-with-same-digest"), (2, "digest-only")):
+            mutant = replay_fixture(self.native, self.build, self.root, label, mode)
+            observed, _ = self.actual(f"replay-leaf-{label}", mutant,
+                                      (*args, b"--profile", b"--determinism-repeats=4"))
+            # The first replay must stop the loop, and never publish an ordinary
+            # report or create the requested file after either mismatch.
+            self.assertEqual((observed.returncode, observed.stdout, observed.stderr),
+                             (2, b"", b"SS" + expected))
+            self.events[-1]["observed_scheduler_invocations"] = 2
+            self.assertFalse(self.run_path.exists())
+
+
+# Independent leaf fixture. It invokes the real scheduler and digest bodies.
+# Count markers are just synthetic stderr observations, not business fields.
+# Mode 1 changes only the first two replay members and then equalizes its hash
+# to expose a missing membership check. Mode 2 touches only the replay digest.
+LEAF_FIXTURE_ASM = r"""
+.text
+.global sched_hook
+.global digest_hook
+sched_hook:
+  push %r12
+  mov %rdx,%r12
+  push %rdi
+  push %rsi
+  push %rdx
+  push %rcx
+  mov $1,%eax
+  mov $2,%edi
+  lea marker(%rip),%rsi
+  mov $1,%edx
+  syscall
+  pop %rcx
+  pop %rdx
+  pop %rsi
+  pop %rdi
+  call *real_sched(%rip)
+  test %eax,%eax
+  jne sched_done
+  lea 0x1741000(%rbx),%rdx
+  cmp %rdx,%r12
+  jne sched_done
+  cmpq $3,mode(%rip)
+  je after_clock_delay
+  cmpq $1,mode(%rip)
+  jne sched_done
+  cmpq $4,16(%r12)
+  jne fixture_invalid
+  cmpq $1,24(%r12)
+  jne fixture_invalid
+  cmpq $0,272(%r12)
+  jne fixture_invalid
+  cmpq $1,280(%r12)
+  jne fixture_invalid
+  movq $1,272(%r12)
+  movq $0,280(%r12)
+  jmp sched_done
+after_clock_delay:
+  mov $35,%eax
+  lea delay(%rip),%rdi
+  xor %esi,%esi
+  syscall
+  cmp $-4,%rax
+  je after_clock_delay
+  test %rax,%rax
+  jne fixture_invalid
+sched_done:
+  pop %r12
+  ret
+digest_hook:
+  push %r12
+  mov %rdx,%r12
+  call *real_digest(%rip)
+  test %eax,%eax
+  jne digest_done
+  lea 5800(%rbx),%rdx
+  cmp %rdx,%r12
+  jne digest_done
+  cmpq $1,mode(%rip)
+  je match_digest
+  cmpq $2,mode(%rip)
+  jne digest_done
+  xorb $1,(%r12)
+  jmp digest_done
+match_digest:
+  lea 0x1700310(%rbx),%rsi
+  mov %r12,%rdi
+  mov $4,%ecx
+  rep movsq
+digest_done:
+  pop %r12
+  ret
+fixture_invalid:
+  ud2
+delay:
+  .quad 0,50000000
+marker:
+  .byte 0x53
+real_sched:
+  .quad REAL_SCHED
+real_digest:
+  .quad REAL_DIGEST
+mode:
+  .quad FIXTURE_MODE
+"""
+
+
+def replay_fixture(image, receipt, parent, name, mode):
+    if mode not in (0, 1, 2, 3):
+        raise ValueError("Unrecognized private replay fixture")
+    root = parent / ("fixture-" + name)
+    root.mkdir(mode=0o700)
+    source = root / "probe.S"
+    obj, stub = root / "probe.o", root / "probe.bin"
+    addresses = {item["source"]: item["entry_address"] for item in receipt["contained_parts"]}
+    scheduler = addresses["src/executor/schedule.hepta"]
+    digest_entry = addresses["src/bench/digests.hepta"]
+    source.write_text(LEAF_FIXTURE_ASM.replace("REAL_SCHED", str(scheduler))
+                      .replace("REAL_DIGEST", str(digest_entry)).replace("FIXTURE_MODE", str(mode)))
+    subprocess.run(["as", "--64", "-o", str(obj), str(source)], check=True, timeout=15,
+                   capture_output=True)
+    subprocess.run(["objcopy", "-O", "binary", "-j", ".text", str(obj), str(stub)], check=True,
+                   timeout=15, capture_output=True)
+    syms = {}
+    for line in subprocess.check_output(["nm", "-P", str(obj)], text=True, timeout=10).splitlines():
+        fields = line.split()
+        if fields[0] in ("sched_hook", "digest_hook"):
+            syms[fields[0]] = int(fields[2], 16)
+    raw = stub.read_bytes()
+    if set(syms) != {"sched_hook", "digest_hook"} or not all(0 <= n < len(raw) for n in syms.values()):
+        raise ValueError("Unexpected private leaf fixture linking")
+    if receipt["native_elf"]["sha256"] != digest(image):
+        raise ValueError("Fixture original image differs")
+    packed = bytearray(image + raw)
+    prefix = 176 + receipt["adapter_bytes"]
+    for delta, expected, symbol in ((16, scheduler, "sched_hook"), (24, digest_entry, "digest_hook")):
+        if struct.unpack_from("<Q", packed, prefix + delta)[0] != expected:
+            raise ValueError("Unexpected original dispatch entry")
+        struct.pack_into("<Q", packed, prefix + delta, 0x400000 + len(image) + syms[symbol])
+    for off in (96, 104):
+        struct.pack_into("<Q", packed, off, len(packed))
+    final = bytes(packed)
+    inspect_executable(final)
+    (root / "receipt.json").write_text(json.dumps({
+        "test_fixture_only": True, "original_elf_sha256": digest(image),
+        "linked_fixture_sha256": digest(final), "fixture_stub_sha256": digest(raw),
+        "fixture_mode": mode, "original_runtime_shipped": False,
+    }, sort_keys=True, indent=2) + "\n")
+    return final

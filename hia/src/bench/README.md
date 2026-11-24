@@ -92,12 +92,12 @@ one bare `--profile`. Explicit persistence retains the original true default.
 decimal with one optional plus and rejects overflow, duplicates, missing
 values and malformed text. Zero numeric workload counts retain the original
 one-minimum normalization. The subset admits at most 20,000 transactions and
-zero replays. A parsed repeat count over 1,000 renders the exact original
-diagnostic and exit 2 before workload or clock work, including with parsed
-values outside candidate bounds. Other unsupported invocations exit 2 with a
-distinct candidate diagnostic, **not** Clap diagnostic equivalence. Help,
-other strategies, nonempty environments and nonzero valid replays remain
-open and never fall back to the old executable.
+the original inclusive zero through 1,000 replays. A parsed count over 1,000
+renders the exact original diagnostic and exit 2 before workload or clock
+work, including with parsed values outside candidate bounds. Other unsupported
+invocations exit 2 with a distinct candidate diagnostic, **not** Clap
+diagnostic equivalence. Help, other strategies and nonempty environments
+remain open and never fall back to the old executable.
 
 The three `--workload` values are `classic`, `mixed`, and `hot-streak`.
 Classic ignores fanout/stride for generation but still reports normalized
@@ -131,7 +131,7 @@ argument code and the build-time packer use the pinned compiler's explicit
 object profile; native workload, schedule, digests, report and profile use the
 usual native flat profile. The build-time host transports bytes to the pinned
 HIA packer, records its request/output and independently checks the result,
-the address table, and the 3,232-byte Linux adapter. It does not execute the
+the address table, and the 3,472-byte Linux adapter. It does not execute the
 Bench algorithms or substitute their runtime behavior.
 
 The adapter stages at most 16 argument tokens in a private span and owns
@@ -143,11 +143,34 @@ not change. It acquires real realtime after workload construction and
 brackets only the first scheduler call with `CLOCK_MONOTONIC`. It handles
 nanosecond borrow and truncates to an unsigned 128-bit millisecond count;
 a clock failure never becomes a zero-duration success. Only after this call
-does it hash, render and publish. The ordinary no-profile path never creates
-directories or files. Original and native deterministic stdout/digests match
+does it hash, replay, render and publish. The ordinary no-profile path never
+creates directories or files. Original and native deterministic stdout/digests match
 on the default Classic, admitted default-sized single-writer workloads and
 admitted small inputs; independent elapsed observations
 are retained and are not compared as deterministic bytes.
+
+### Replay ownership in the Linux process
+
+The entry invokes the real scheduler once inside the clock, retaining that
+result and its initial group hash. Each additional requested call invokes
+the same scheduler on the same immutable workload, with a separate bounded
+result region and the scheduler's ordinary per-call initialization. Only
+after a validated replay obtains its own canonical digest does the owner
+check its digest, transaction/group counts and every ordered group offset
+and member word. Raw profile fields are not part of replay membership.
+The initial scheduler result, clock and profile remain unchanged.
+
+A mismatch exits 2 using the original input-hash diagnostic before ordinary
+stdout or profile-file creation. At zero replays the report says
+`determinism.replay_match=not-requested`. The unchanged locked Rust CLI
+differential includes real no-profile and persisted-profile replays, plus
+1,000 replays of a small finite workload. This is not a maximum-scale
+throughput or elapsed-time acceptance statement. The separate synthetic
+leaf-linked fixture, which is not the supported executable, independently
+counts real native calls (including zero before the bound, and 1,001 at
+the maximum replay count), puts real delays after replay callbacks to
+verify the clock exclusion, and exercises separate ordered-membership
+and digest mismatches even when the other comparison still matches.
 
 ### Isolated profile persistence
 

@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v3
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v4
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -178,15 +178,13 @@ block repeat_bound(o_rep:mutbuf)
   repeats:u64 = call(o_rep,at16_rep) {"function":"bench_get"}
   bound:u64 = const() {"value":1000}
   excess:bool = compare.gt(repeats,bound)
-  branch excess exceed() supported(o_rep,repeats)
-block supported(o_su:mutbuf,r_su:u64)
+  branch excess exceed() supported(o_rep)
+block supported(o_su:mutbuf)
   zero_su:u64 = const() {"value":0}
   tx_su:u64 = call(o_su,zero_su) {"function":"bench_get"}
   cap_su:u64 = const() {"value":20000}
   valid_tx:bool = compare.le(tx_su,cap_su)
-  no_replay:bool = compare.eq(r_su,zero_su)
-  accepted:bool = bool.and(valid_tx,no_replay)
-  branch accepted workload_capacity(o_su) fail()
+  branch valid_tx workload_capacity(o_su) fail()
 block workload_capacity(o_wc:mutbuf)
   off_work:u64 = const() {"value":48}
   selected_work:u64 = call(o_wc,off_work) {"function":"bench_get"}
