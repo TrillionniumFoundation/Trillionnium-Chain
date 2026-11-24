@@ -215,6 +215,7 @@ class BenchReaderHighWater(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         configured = os.environ.get("HIA_BENCH_READER_HIGH_WATER_OBSERVATIONS")
+        cls.persist_native_requests = bool(configured)
         cls.root = (new_output(Path(configured)) if configured else Path(cls.enterClassContext(
             tempfile.TemporaryDirectory(prefix="trnm-bench-reader-high-water-"))))
         private = cls.root / "isolated-source"
@@ -254,6 +255,8 @@ class BenchReaderHighWater(unittest.TestCase):
             raise ValueError("Outside test-only private transport")
         sent = [sys.executable, "-I", "-S", "-B", "-c", LARGE_CALL, str(module.library),
                 module.artifact_sha256, str(output), str(scratch)]
+        if self.persist_native_requests:
+            (self.root / f"{case}.stdin.raw").write_bytes(data)
         response = self.actual(case, sent, data)
         status, = struct.unpack_from("<Q", response)
         self.assertEqual((status, len(response)), (0, 8 + output), case)

@@ -202,7 +202,17 @@ arena and the 1,000-replay bound on a small workload. This flag does not
 change a signed domain or replace any production entry.
 
 Run `python3 -m unittest hia.tests.test_bench_reader_high_water -v` with the
-pinned HIA toolchain and cached original locked Cargo dependencies.
+pinned HIA toolchain and cached original locked Cargo dependencies. An
+[independent workflow](../../../.github/workflows/hia-bench-corrected-evidence.yml)
+runs the same four methods on the exact source, without changing the General
+job or its legacy Bench carrier. It retains a separate ZIP containing only
+allowlisted synthetic request/response, CLI and profile streams, their
+checksums, exact commit/tree/run/attempt and the actual test-start/finish
+receipt. The reader rejects extra, missing, linked or oversized entries,
+binds raw native calls and effect bytes to the corrected locked Rust oracle,
+and checks ZIP CRC on read. Ambient environment data, build directories and
+private compiler binaries are not retained. A local focused receipt does not
+substitute for a hosted run or General qualification.
 
 ### Hot bucket startup environment
 
