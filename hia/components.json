@@ -8491,6 +8491,30 @@
         ]
       }
     ],
+    "src/worker_agent/audit_jsonl_row.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "json_ascii_encode",
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      },
+      {
+        "functions": [
+          "wa_read",
+          "wa_word"
+        ],
+        "source": "src/worker_agent/audit_report.hepta"
+      }
+    ],
     "src/worker_agent/audit_report.hepta": [
       {
         "source": "src/worker_agent/audit_text.hepta",

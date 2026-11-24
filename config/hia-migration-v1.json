@@ -1317,6 +1317,16 @@
       ]
     },
     {
+      "id": "worker-agent/audit-jsonl-row",
+      "node_integration_complete": false,
+      "scope": "Exact active 18-field Worker audit JSONL row serialization with UTF-8, ordered fields, native atomic output, and actual locked Rust/Serde typed parity. Does not move record selection, the full CLI, index/query I/O, or production ownership.",
+      "source": "hia/src/worker_agent/audit_jsonl_row.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_worker_audit_jsonl_row.py"
+      ]
+    },
+    {
       "id": "worker-agent/audit-report",
       "node_integration_complete": false,
       "scope": "Retained 11-column Worker Agent Markdown profile for bounded admitted typed records, including exact header, row order, decimal task IDs and all optional cells of that profile. Active 18-column parity, unbounded report materialization, CLI dispatch, record selection, JSONL/index I/O and original-package retirement remain open.",
@@ -1409,6 +1419,7 @@
         "worker-agent/audit-text",
         "worker-agent/audit-active-table-tokens",
         "worker-agent/audit-cell-fragment",
+        "worker-agent/audit-jsonl-row",
         "worker-agent/audit-report"
       ],
       "legacy_path": "trillionnium/crates/trnm-worker-agent",
