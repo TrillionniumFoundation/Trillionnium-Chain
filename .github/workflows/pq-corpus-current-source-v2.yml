@@ -10,7 +10,6 @@ jobs:
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      CURRENT_CORPUS_OUT: ${{ runner.temp }}/pq-corpus-current-v2-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -22,6 +21,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export CURRENT_CORPUS_OUT="$RUNNER_TEMP/pq-corpus-current-v2-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          printf 'CURRENT_CORPUS_OUT=%s\n' "$CURRENT_CORPUS_OUT" >> "$GITHUB_ENV"
           mkdir "$CURRENT_CORPUS_OUT"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" \
             --output "$CURRENT_CORPUS_OUT/source-before.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/source-before.log"
