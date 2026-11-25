@@ -66,6 +66,8 @@ def run(message, reader, provider):
             1298: "m13-sqlite-delete-delta-",
             1434: "m13-sqlite-insert-delta-",
         }.get(len(proposal))
+        if len(proposal) == 1434 and proposal[:8] == b"UPD1M13!":
+            mode = "m13-sqlite-update-delta-"
         if mode is None or message["advance"]:
             raise ValueError("Exact private single-delta replay input required")
         if not directory.parent.name.startswith(mode) or directory.name != "owned":

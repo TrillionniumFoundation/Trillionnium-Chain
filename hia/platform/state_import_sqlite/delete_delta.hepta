@@ -5,7 +5,8 @@ block entry(raw:readbuf,work:mutbuf)
   ns_len:u64 = call(work,ns_len_at) {"function":"cp_get"}
   ns_start:usize = const() {"value":24}
   ns_value:usize = const() {"value":902024}
-  found:usize = call(raw,work,ns_start,ns_value,ns_len) {"function":"dw_field_match"}
+  ns_colon:u8 = const() {"value":58}
+  found:usize = call(raw,work,ns_start,ns_value,ns_len,ns_colon) {"function":"dw_field_match"}
   fail:usize = const() {"value":0}
   ns_ok:bool = compare.ne(found,fail)
   branch ns_ok key(raw,work,found) bad()
@@ -13,7 +14,8 @@ block key(kr:readbuf,kw:mutbuf,from:usize)
   key_len_at:u64 = const() {"value":902016}
   key_len:u64 = call(kw,key_len_at) {"function":"cp_get"}
   key_value:usize = const() {"value":902088}
-  matched:usize = call(kr,kw,from,key_value,key_len) {"function":"dw_field_match"}
+  key_colon:u8 = const() {"value":58}
+  matched:usize = call(kr,kw,from,key_value,key_len,key_colon) {"function":"dw_field_match"}
   zero:usize = const() {"value":0}
   okay:bool = compare.ne(matched,zero)
   ret(okay)
@@ -22,20 +24,22 @@ block bad()
   ret(no)
 end
 
-fn dw_field_match(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64) -> (usize) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64)
+fn dw_field_match(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64,delim:u8) -> (usize) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64,delim:u8)
   n:usize = int.cast(len) {"mode":"wrap"}
   two:usize = const() {"value":2}
   width:usize = int.mul.wrap(n,two)
   delimiter:usize = int.add.wrap(from,width)
   input_size:usize = buffer.len(r)
   fits:bool = compare.lt(delimiter,input_size)
-  branch fits marker(r,w,from,expected,delimiter) bad()
-block marker(mr:readbuf,mw:mutbuf,mp:usize,me:usize,last:usize)
+  branch fits marker(r,w,from,expected,delimiter,delim) bad()
+block marker(mr:readbuf,mw:mutbuf,mp:usize,me:usize,last:usize,want_delim:u8)
   actual:u8 = buffer.load(mr,last)
-  colon:u8 = const() {"value":58}
-  closed:bool = compare.eq(actual,colon)
-  branch closed scan(mr,mw,mp,me,last) bad()
+  closed:bool = compare.eq(actual,want_delim)
+  branch closed nonempty(mr,mw,mp,me,last) bad()
+block nonempty(ner:readbuf,new:mutbuf,nep:usize,nee:usize,nel:usize)
+  empty:bool = compare.eq(nep,nel)
+  branch empty good(nel) scan(ner,new,nep,nee,nel)
 block scan(ir:readbuf,iw:mutbuf,at:usize,it:usize,stop:usize)
   first:u8 = buffer.load(ir,at)
   one:usize = const() {"value":1}
@@ -137,7 +141,11 @@ block entry(m:mutbuf,w:mutbuf)
   inserting:bool = compare.eq(mode,insert_id)
   larger:u64 = int.add.wrap(before,one)
   insert_match:bool = compare.eq(after,larger)
-  matches:bool = select(inserting,insert_match,delete_match)
+  changed:bool = select(inserting,insert_match,delete_match)
+  update_id:u64 = const() {"value":3}
+  updating:bool = compare.eq(mode,update_id)
+  unchanged:bool = compare.eq(after,before)
+  matches:bool = select(updating,unchanged,changed)
   branch matches bind(m,after) bad()
 block bind(state:mutbuf,rows:u64)
   stmt_at:u64 = const() {"value":40}
@@ -334,6 +342,74 @@ block entry(m:mutbuf)
   _put64:u64 = call(m,p64,word64) {"function":"cp_put"}
   p72:u64 = const() {"value":344}
   word72:u64 = const() {"value":41}
+  _put72:u64 = call(m,p72,word72) {"function":"cp_put"}
+  phase:u64 = const() {"value":30}
+  op:u64 = const() {"value":5}
+  full:u64 = const() {"value":89}
+  out:u32 = call(m,phase,op,full) {"function":"sr_issue"}
+  ret(out)
+end
+
+fn dw_value_matches(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  ns_len_at:u64 = const() {"value":902008}
+  k_len_at:u64 = const() {"value":902016}
+  ns_len:u64 = call(work,ns_len_at) {"function":"cp_get"}
+  k_len:u64 = call(work,k_len_at) {"function":"cp_get"}
+  prefix:u64 = int.add.wrap(ns_len,k_len)
+  two:u64 = const() {"value":2}
+  encoded:u64 = int.mul.wrap(prefix,two)
+  separators_and_reply:u64 = const() {"value":26}
+  from64:u64 = int.add.wrap(encoded,separators_and_reply)
+  from:usize = int.cast(from64) {"mode":"wrap"}
+  raw_value_at:usize = const() {"value":902264}
+  size_at:u64 = const() {"value":902256}
+  size:u64 = call(work,size_at) {"function":"cp_get"}
+  lf:u8 = const() {"value":10}
+  after:usize = call(raw,work,from,raw_value_at,size,lf) {"function":"dw_field_match"}
+  full:usize = buffer.len(raw)
+  equal:bool = compare.eq(after,full)
+  ret(equal)
+end
+
+fn dw_sql_existing(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  db_at:u64 = const() {"value":32}
+  db:u64 = call(m,db_at) {"function":"cp_get"}
+  first:u64 = const() {"value":256}
+  len_at:u64 = const() {"value":264}
+  size:u64 = const() {"value":73}
+  _db:u64 = call(m,first,db) {"function":"cp_put"}
+  _sz:u64 = call(m,len_at,size) {"function":"cp_put"}
+  p0:u64 = const() {"value":272}
+  word0:u64 = const() {"value":7863361177563451477}
+  _put0:u64 = call(m,p0,word0) {"function":"cp_put"}
+  p8:u64 = const() {"value":280}
+  word8:u64 = const() {"value":7957695015158966121}
+  _put8:u64 = call(m,p8,word8) {"function":"cp_put"}
+  p16:u64 = const() {"value":288}
+  word16:u64 = const() {"value":8241412995773981791}
+  _put16:u64 = call(m,p16,word16) {"function":"cp_put"}
+  p24:u64 = const() {"value":296}
+  word24:u64 = const() {"value":5989840789368436591}
+  _put24:u64 = call(m,p24,word24) {"function":"cp_put"}
+  p32:u64 = const() {"value":304}
+  word32:u64 = const() {"value":7310868735955326021}
+  _put32:u64 = call(m,p32,word32) {"function":"cp_put"}
+  p40:u64 = const() {"value":312}
+  word40:u64 = const() {"value":5928224023542710077}
+  _put40:u64 = call(m,p40,word40) {"function":"cp_put"}
+  p48:u64 = const() {"value":320}
+  word48:u64 = const() {"value":8102931675030102085}
+  _put48:u64 = call(m,p48,word48) {"function":"cp_put"}
+  p56:u64 = const() {"value":328}
+  word56:u64 = const() {"value":4692804959402812257}
+  _put56:u64 = call(m,p56,word56) {"function":"cp_put"}
+  p64:u64 = const() {"value":336}
+  word64:u64 = const() {"value":4556931874464744526}
+  _put64:u64 = call(m,p64,word64) {"function":"cp_put"}
+  p72:u64 = const() {"value":344}
+  word72:u64 = const() {"value":50}
   _put72:u64 = call(m,p72,word72) {"function":"cp_put"}
   phase:u64 = const() {"value":30}
   op:u64 = const() {"value":5}

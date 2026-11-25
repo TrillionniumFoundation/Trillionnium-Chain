@@ -116,7 +116,11 @@ block discriminate(di:readbuf,dm:mutbuf,dw:mutbuf,dn:usize)
 block maybe_insert(ins_raw:readbuf,ins_mem:mutbuf,ins_work:mutbuf,ins_n:usize,ins_fid:u64)
   insert_magic:u64 = const() {"value":2392310034673651273}
   is_insert:bool = compare.eq(ins_fid,insert_magic)
-  branch is_insert format_insert(ins_raw,ins_mem,ins_work,ins_n) format_empty(ins_raw,ins_mem,ins_work,ins_n)
+  branch is_insert format_value(ins_raw,ins_mem,ins_work,ins_n,insert_magic) maybe_update(ins_raw,ins_mem,ins_work,ins_n,ins_fid)
+block maybe_update(up_raw:readbuf,up_mem:mutbuf,up_work:mutbuf,up_n:usize,up_fid:u64)
+  update_magic:u64 = const() {"value":2392310034672668757}
+  is_update:bool = compare.eq(up_fid,update_magic)
+  branch is_update format_value(up_raw,up_mem,up_work,up_n,update_magic) format_empty(up_raw,up_mem,up_work,up_n)
 block format_empty(ei:readbuf,em:mutbuf,ew:mutbuf,en:usize)
   max_req:usize = const() {"value":1682}
   fits_empty:bool = compare.le(en,max_req)
@@ -131,21 +135,25 @@ block format_delete(fi:readbuf,fm:mutbuf,fw:mutbuf,fl:usize)
   ext:bool = bool.and(ge,le)
   delete_mode:u64 = const() {"value":1}
   branch ext key_lengths(fi,fm,fw,fl,dl,delete_mode) bad()
-block format_insert(iri:readbuf,iri_m:mutbuf,iri_w:mutbuf,iri_n:usize)
+block format_value(iri:readbuf,iri_m:mutbuf,iri_w:mutbuf,iri_n:usize,iri_magic:u64)
   imin:usize = const() {"value":1563}
   imax:usize = const() {"value":2074}
   imin_ok:bool = compare.ge(iri_n,imin)
   imax_ok:bool = compare.le(iri_n,imax)
   i_fit:bool = bool.and(imin_ok,imax_ok)
-  branch i_fit value_width(iri,iri_m,iri_w,iri_n) bad()
-block value_width(vwi:readbuf,vwm:mutbuf,vww:mutbuf,vwn:usize)
+  branch i_fit value_width(iri,iri_m,iri_w,iri_n,iri_magic) bad()
+block value_width(vwi:readbuf,vwm:mutbuf,vww:mutbuf,vwn:usize,v_magic:u64)
   value_at:u64 = const() {"value":256}
   size_v:u64 = call(vwi,value_at) {"function":"tr_read"}
   max_v:u64 = const() {"value":128}
   v_fits:bool = compare.le(size_v,max_v)
   prefix_size:u64 = const() {"value":392}
   insert_mode:u64 = const() {"value":2}
-  branch v_fits key_lengths(vwi,vwm,vww,vwn,prefix_size,insert_mode) bad()
+  update_mode:u64 = const() {"value":3}
+  insert_wire:u64 = const() {"value":2392310034673651273}
+  insert_wire_eq:bool = compare.eq(v_magic,insert_wire)
+  value_mode:u64 = select(insert_wire_eq,insert_mode,update_mode)
+  branch v_fits key_lengths(vwi,vwm,vww,vwn,prefix_size,value_mode) bad()
 block key_lengths(ki:readbuf,km:mutbuf,kw:mutbuf,kl:usize,kd:u64,write_mode:u64)
   ns_off:u64 = const() {"value":8}
   k_off:u64 = const() {"value":16}
@@ -272,7 +280,7 @@ block before_mode(prem:mutbuf)
 block row_operation(rom:mutbuf,rop:u64)
   insert_id:u64 = const() {"value":2}
   insert_route:bool = compare.eq(rop,insert_id)
-  branch insert_route insert_statement(rom) match_count(rom)
+  branch insert_route insert_statement(rom) match_count(rom,rop)
 block insert_statement(ins_stage:mutbuf)
   seen_slot:u64 = const() {"value":120}
   observed_hits:u64 = call(ins_stage,seen_slot) {"function":"cp_get"}
@@ -282,12 +290,19 @@ block insert_statement(ins_stage:mutbuf)
 block prepare_insert(pi_mem:mutbuf)
   inserted:u32 = call(pi_mem) {"function":"dw_sql_insert"}
   ret(inserted)
-block match_count(mc:mutbuf)
+block match_count(mc:mutbuf,mc_mode:u64)
   matched_at:u64 = const() {"value":120}
   hits:u64 = call(mc,matched_at) {"function":"cp_get"}
   one_hit:u64 = const() {"value":1}
   exactly_one_match:bool = compare.eq(hits,one_hit)
-  branch exactly_one_match delete_statement(mc) bad()
+  branch exactly_one_match existing_statement(mc,mc_mode) bad()
+block existing_statement(e_stage:mutbuf,e_mode:u64)
+  update_route_id:u64 = const() {"value":3}
+  update_route:bool = compare.eq(e_mode,update_route_id)
+  branch update_route update_statement(e_stage) delete_statement(e_stage)
+block update_statement(update_stage:mutbuf)
+  update_schedule:u32 = call(update_stage) {"function":"dw_sql_existing"}
+  ret(update_schedule)
 block delete_statement(ds:mutbuf)
   delete_schedule:u32 = call(ds) {"function":"dw_sql_delete"}
   ret(delete_schedule)
@@ -417,11 +432,18 @@ block maybe_match(row_raw:readbuf,row_mem:mutbuf,rwork:mutbuf)
   branch must_verify match_row(row_raw,row_mem,rwork,kind) keep_pending()
 block match_row(mr:readbuf,mm:mutbuf,mw:mutbuf,operation:u64)
   expected_key:bool = call(mr,mw) {"function":"dw_key_match"}
-  branch expected_key found_row(mm,mw,operation) keep_pending()
-block found_row(fr_mem:mutbuf,fr_work:mutbuf,fr_mode:u64)
-  need_prior:u64 = const() {"value":1}
-  deleting:bool = compare.eq(fr_mode,need_prior)
-  branch deleting row_digest(fr_mem,fr_work) bad()
+  branch expected_key found_row(mr,mm,mw,operation) keep_pending()
+block found_row(fr_raw:readbuf,fr_mem:mutbuf,fr_work:mutbuf,fr_mode:u64)
+  insert_fr:u64 = const() {"value":2}
+  inserting_fr:bool = compare.eq(fr_mode,insert_fr)
+  branch inserting_fr bad() verify_row_change(fr_raw,fr_mem,fr_work,fr_mode)
+block verify_row_change(vrc:readbuf,vrc_mem:mutbuf,vrc_work:mutbuf,vrc_mode:u64)
+  mode_update:u64 = const() {"value":3}
+  changing:bool = compare.eq(vrc_mode,mode_update)
+  branch changing ensure_change(vrc,vrc_mem,vrc_work) row_digest(vrc_mem,vrc_work)
+block ensure_change(change_raw:readbuf,change_mem:mutbuf,change_work:mutbuf)
+  equal_value:bool = call(change_raw,change_work) {"function":"dw_value_matches"}
+  branch equal_value bad() row_digest(change_mem,change_work)
 block row_digest(dgm:mutbuf,dgw:mutbuf)
   old_digest:bool = call(dgw) {"function":"dw_digest_match"}
   branch old_digest record_match(dgm) bad()
@@ -478,8 +500,8 @@ block action32(raw32:readbuf,mem32:mutbuf,wrk32:mutbuf)
 block success32(s32:mutbuf,sw32:mutbuf)
   mode_at32:u64 = const() {"value":96}
   mode32:u64 = call(s32,mode_at32) {"function":"cp_get"}
-  insert_id32:u64 = const() {"value":2}
-  bind_payload:bool = compare.eq(mode32,insert_id32)
+  delete_id32:u64 = const() {"value":1}
+  bind_payload:bool = compare.ne(mode32,delete_id32)
   branch bind_payload insertion_value(s32,sw32) step_row_operation(s32)
 block insertion_value(iv_m:mutbuf,iv_w:mutbuf)
   len_at:u64 = const() {"value":902256}

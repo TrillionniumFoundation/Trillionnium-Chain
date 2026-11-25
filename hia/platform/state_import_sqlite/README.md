@@ -147,3 +147,30 @@ update; neither uncommitted transaction may survive original cold reopen.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_insert_write -v
 ```
+
+## Disposable single existing-row UPDATE
+
+The `UPD1M13!` fixture uses the bounded INSERT envelope with a required
+prior row digest. Inside BEGIN IMMEDIATE, HIA matches the exact namespace
+and key and the native digest of that stored row. A missing tuple, wrong
+digest, or byte-identical value is refused before a writable statement.
+The fixed `UPDATE ... SET value=?3 WHERE namespace=?1 AND key=?2` binds
+the original key tuple and replacement value as three BLOBs. It cannot
+create a new row. For this proven-existing row, it has the same row
+effect as the retained Rust owner's original upsert.
+
+HIA requires exactly one changed row and the same total count, re-reads
+the complete actual successor and its persisted row digest, and compares
+the reviewed metadata, including the supplied but not independently
+recomputed application root. A result remains staged until the real
+commit and connection close succeed. The exact original Rust owner
+independently derives one changed row and establishes the cold successor
+for both empty-to-binary and binary-to-empty changes. Cold Rust reopen
+also checks that unrelated rows and order stay fixed and that wrong,
+missing, already applied, same-value, or interrupted attempts fail
+without a committed change. Both row-change and metadata-change kill
+seams use the provider's actual one-row change observation.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_update_write -v
+```
