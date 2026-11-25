@@ -57,24 +57,105 @@ block d10(in10:readbuf,mem10:mutbuf,work10:mutbuf,p10:u64)
 block d11(in11:readbuf,mem11:mutbuf,work11:mutbuf,p11:u64)
   phase_11:u64 = const() {"value":28}
   is_11:bool = compare.eq(p11,phase_11)
-  branch is_11 action28(in11,mem11,work11) cold(in11,mem11,work11)
+  branch is_11 action28(in11,mem11,work11) dd0(in11,mem11,work11,p11)
+block dd0(di0:readbuf,dm0:mutbuf,dw0:mutbuf,dp0:u64)
+  wanted0:u64 = const() {"value":13}
+  wanted_ok0:bool = compare.eq(dp0,wanted0)
+  branch wanted_ok0 action13(di0,dm0,dw0) dd1(di0,dm0,dw0,dp0)
+block dd1(di1:readbuf,dm1:mutbuf,dw1:mutbuf,dp1:u64)
+  wanted1:u64 = const() {"value":30}
+  wanted_ok1:bool = compare.eq(dp1,wanted1)
+  branch wanted_ok1 action30(di1,dm1,dw1) dd2(di1,dm1,dw1,dp1)
+block dd2(di2:readbuf,dm2:mutbuf,dw2:mutbuf,dp2:u64)
+  wanted2:u64 = const() {"value":31}
+  wanted_ok2:bool = compare.eq(dp2,wanted2)
+  branch wanted_ok2 action31(di2,dm2,dw2) dd3(di2,dm2,dw2,dp2)
+block dd3(di3:readbuf,dm3:mutbuf,dw3:mutbuf,dp3:u64)
+  wanted3:u64 = const() {"value":32}
+  wanted_ok3:bool = compare.eq(dp3,wanted3)
+  branch wanted_ok3 action32(di3,dm3,dw3) dd4(di3,dm3,dw3,dp3)
+block dd4(di4:readbuf,dm4:mutbuf,dw4:mutbuf,dp4:u64)
+  wanted4:u64 = const() {"value":33}
+  wanted_ok4:bool = compare.eq(dp4,wanted4)
+  branch wanted_ok4 action33(di4,dm4,dw4) dd5(di4,dm4,dw4,dp4)
+block dd5(di5:readbuf,dm5:mutbuf,dw5:mutbuf,dp5:u64)
+  wanted5:u64 = const() {"value":34}
+  wanted_ok5:bool = compare.eq(dp5,wanted5)
+  branch wanted_ok5 action34(di5,dm5,dw5) dd6(di5,dm5,dw5,dp5)
+block dd6(di6:readbuf,dm6:mutbuf,dw6:mutbuf,dp6:u64)
+  wanted6:u64 = const() {"value":35}
+  wanted_ok6:bool = compare.eq(dp6,wanted6)
+  branch wanted_ok6 action35(di6,dm6,dw6) dd7(di6,dm6,dw6,dp6)
+block dd7(di7:readbuf,dm7:mutbuf,dw7:mutbuf,dp7:u64)
+  wanted7:u64 = const() {"value":40}
+  wanted_ok7:bool = compare.eq(dp7,wanted7)
+  branch wanted_ok7 action40(di7,dm7,dw7) dd8(di7,dm7,dw7,dp7)
+block dd8(di8:readbuf,dm8:mutbuf,dw8:mutbuf,dp8:u64)
+  wanted8:u64 = const() {"value":41}
+  wanted_ok8:bool = compare.eq(dp8,wanted8)
+  branch wanted_ok8 action41(di8,dm8,dw8) dd9(di8,dm8,dw8,dp8)
+block dd9(di9:readbuf,dm9:mutbuf,dw9:mutbuf,dp9:u64)
+  wanted9:u64 = const() {"value":42}
+  wanted_ok9:bool = compare.eq(dp9,wanted9)
+  branch wanted_ok9 action42(di9,dm9,dw9) cold(di9,dm9,dw9)
 block action0(opening:readbuf,open_mem:mutbuf,open_work:mutbuf)
   request_len:usize = buffer.len(opening)
   min_req:usize = const() {"value":1171}
-  max_req:usize = const() {"value":1682}
   required:bool = compare.ge(request_len,min_req)
-  allowed:bool = compare.le(request_len,max_req)
-  size:bool = bool.and(required,allowed)
-  branch size open_request(opening,open_mem,open_work,request_len) bad()
-block open_request(op_raw:readbuf,op_mem:mutbuf,op_work:mutbuf,op_len:usize)
+  branch required discriminate(opening,open_mem,open_work,request_len) bad()
+block discriminate(di:readbuf,dm:mutbuf,dw:mutbuf,dn:usize)
+  fid_at:u64 = const() {"value":0}
+  fid:u64 = call(di,fid_at) {"function":"tr_read"}
+  magic:u64 = const() {"value":2392310034673190212}
+  wants_delete:bool = compare.eq(fid,magic)
+  branch wants_delete format_delete(di,dm,dw,dn) format_empty(di,dm,dw,dn)
+block format_empty(ei:readbuf,em:mutbuf,ew:mutbuf,en:usize)
+  max_req:usize = const() {"value":1682}
+  fits_empty:bool = compare.le(en,max_req)
+  zero_offset:u64 = const() {"value":0}
+  branch fits_empty open_request(ei,em,ew,en,zero_offset) bad()
+block format_delete(fi:readbuf,fm:mutbuf,fw:mutbuf,fl:usize)
+  dl:u64 = const() {"value":256}
+  dmin:usize = const() {"value":1427}
+  dmax:usize = const() {"value":1938}
+  ge:bool = compare.ge(fl,dmin)
+  le:bool = compare.le(fl,dmax)
+  ext:bool = bool.and(ge,le)
+  branch ext key_lengths(fi,fm,fw,fl,dl) bad()
+block key_lengths(ki:readbuf,km:mutbuf,kw:mutbuf,kl:usize,kd:u64)
+  ns_off:u64 = const() {"value":8}
+  k_off:u64 = const() {"value":16}
+  ns_n:u64 = call(ki,ns_off) {"function":"tr_read"}
+  key_n:u64 = call(ki,k_off) {"function":"tr_read"}
+  limit_n:u64 = const() {"value":64}
+  nonempty:u64 = const() {"value":1}
+  ns_min:bool = compare.ge(ns_n,nonempty)
+  ns_max:bool = compare.le(ns_n,limit_n)
+  k_min:bool = compare.ge(key_n,nonempty)
+  k_max:bool = compare.le(key_n,limit_n)
+  ns_ok:bool = bool.and(ns_min,ns_max)
+  k_ok:bool = bool.and(k_min,k_max)
+  width_ok:bool = bool.and(ns_ok,k_ok)
+  branch width_ok save_delete(ki,km,kw,kl,kd) bad()
+block save_delete(si:readbuf,sm:mutbuf,sw:mutbuf,sl:usize,sd:u64)
+  raw_start:u64 = const() {"value":0}
+  private_proposal:u64 = const() {"value":902000}
+  _proposal:u64 = call(si,raw_start,sw,private_proposal,sd) {"function":"cp_copy"}
+  mode_at:u64 = const() {"value":96}
+  write_delete:u64 = const() {"value":1}
+  _mode:u64 = call(sm,mode_at,write_delete) {"function":"cp_put"}
+  jump open_request(si,sm,sw,sl,sd)
+block open_request(op_raw:readbuf,op_mem:mutbuf,op_work:mutbuf,op_len:usize,op_offset:u64)
   zero:u64 = const() {"value":0}
   proposal_to:u64 = const() {"value":900000}
   proposal_len:u64 = const() {"value":1042}
-  _save_proposal:u64 = call(op_raw,zero,op_work,proposal_to,proposal_len) {"function":"cp_copy"}
+  _save_proposal:u64 = call(op_raw,op_offset,op_work,proposal_to,proposal_len) {"function":"cp_copy"}
   expected_to:u64 = const() {"value":1800}
   binding_len:u64 = const() {"value":128}
-  _save_binding:u64 = call(op_raw,proposal_len,op_mem,expected_to,binding_len) {"function":"cp_copy"}
-  path_at:u64 = const() {"value":1170}
+  binding_from:u64 = int.add.wrap(proposal_len,op_offset)
+  _save_binding:u64 = call(op_raw,binding_from,op_mem,expected_to,binding_len) {"function":"cp_copy"}
+  base_path_at:u64 = const() {"value":1170}
+  path_at:u64 = int.add.wrap(base_path_at,op_offset)
   request_total:u64 = int.cast(op_len) {"mode":"wrap"}
   path_len:u64 = int.sub.wrap(request_total,path_at)
   flags:u64 = const() {"value":16777218}
@@ -158,7 +239,22 @@ block ok14(sql_reply:readbuf,check_mem:mutbuf,check_work:mutbuf)
 block before(before_mem:mutbuf,before_work:mutbuf)
   expected_before:u64 = const() {"value":900000}
   before_matches:bool = call(before_mem,before_work,expected_before) {"function":"ew_match"}
-  branch before_matches write_statement(before_mem) bad()
+  branch before_matches before_mode(before_mem) bad()
+block before_mode(prem:mutbuf)
+  md_at:u64 = const() {"value":96}
+  md:u64 = call(prem,md_at) {"function":"cp_get"}
+  empty:u64 = const() {"value":0}
+  is_empty:bool = compare.eq(md,empty)
+  branch is_empty write_statement(prem) match_count(prem)
+block match_count(mc:mutbuf)
+  matched_at:u64 = const() {"value":120}
+  hits:u64 = call(mc,matched_at) {"function":"cp_get"}
+  one_hit:u64 = const() {"value":1}
+  exactly_one_match:bool = compare.eq(hits,one_hit)
+  branch exactly_one_match delete_statement(mc) bad()
+block delete_statement(ds:mutbuf)
+  delete_schedule:u32 = call(ds) {"function":"dw_sql_delete"}
+  ret(delete_schedule)
 block write_statement(write_mem:mutbuf)
   sql_update:u32 = call(write_mem) {"function":"ew_sql_update"}
   ret(sql_update)
@@ -196,13 +292,25 @@ block action25(a25:readbuf,m25:mutbuf,w25:mutbuf)
   s25_len:usize = buffer.len(a25)
   s25_expect:u64 = const() {"value":0}
   s25_matched:bool = call(a25,s25_len,s25_expect) {"function":"sr_status"}
-  branch s25_matched ok25(m25) bad()
-block ok25(p25:mutbuf)
+  branch s25_matched ok25(m25,w25) bad()
+block ok25(p25:mutbuf,h25:mutbuf)
+  mode25_at:u64 = const() {"value":96}
+  mode25:u64 = call(p25,mode25_at) {"function":"cp_get"}
+  empty25:u64 = const() {"value":0}
+  old_route:bool = compare.eq(mode25,empty25)
+  branch old_route base_step(p25) rows_digest_bind(p25,h25)
+block rows_digest_bind(rbm:mutbuf,rbw:mutbuf)
+  param3:u64 = const() {"value":3}
+  row_hash_at:u64 = const() {"value":902184}
+  post_bind3:u64 = const() {"value":40}
+  bind_r:u32 = call(rbm,rbw,param3,row_hash_at,post_bind3) {"function":"ew_bind"}
+  ret(bind_r)
+block base_step(base_step_mem:mutbuf)
   update_step_handle_at:u64 = const() {"value":40}
-  update_step_handle:u64 = call(p25,update_step_handle_at) {"function":"cp_get"}
+  update_step_handle:u64 = call(base_step_mem,update_step_handle_at) {"function":"cp_get"}
   update_step_phase:u64 = const() {"value":26}
   update_step_op:u64 = const() {"value":7}
-  update_step:u32 = call(p25,update_step_phase,update_step_op,update_step_handle) {"function":"sr_handle"}
+  update_step:u32 = call(base_step_mem,update_step_phase,update_step_op,update_step_handle) {"function":"sr_handle"}
   ret(update_step)
 block action26(a26:readbuf,m26:mutbuf,w26:mutbuf)
   s26_len:usize = buffer.len(a26)
@@ -256,6 +364,149 @@ block recheck(check:mutbuf,hash:mutbuf)
 block new_meta(new_mem:mutbuf)
   reread:u32 = call(new_mem) {"function":"sr_meta"}
   ret(reread)
+block action13(row_in:readbuf,row_stage:mutbuf,row_work:mutbuf)
+  reading:u32 = call(row_in,row_stage,row_work) {"function":"sr_cold"}
+  pending:u32 = const() {"value":198}
+  read_ok:bool = compare.eq(reading,pending)
+  branch read_ok maybe_match(row_in,row_stage,row_work) return_row(reading)
+block maybe_match(row_raw:readbuf,row_mem:mutbuf,rwork:mutbuf)
+  kind_at:u64 = const() {"value":96}
+  kind:u64 = call(row_mem,kind_at) {"function":"cp_get"}
+  wrote_at:u64 = const() {"value":88}
+  wrote:u64 = call(row_mem,wrote_at) {"function":"cp_get"}
+  delete_kind:u64 = const() {"value":1}
+  pristine:u64 = const() {"value":0}
+  is_delete:bool = compare.eq(kind,delete_kind)
+  read_before:bool = compare.eq(wrote,pristine)
+  must_verify:bool = bool.and(is_delete,read_before)
+  branch must_verify match_row(row_raw,row_mem,rwork) keep_pending()
+block match_row(mr:readbuf,mm:mutbuf,mw:mutbuf)
+  expected_key:bool = call(mr,mw) {"function":"dw_key_match"}
+  branch expected_key row_digest(mm,mw) keep_pending()
+block row_digest(dgm:mutbuf,dgw:mutbuf)
+  old_digest:bool = call(dgw) {"function":"dw_digest_match"}
+  branch old_digest record_match(dgm) bad()
+block record_match(rmm:mutbuf)
+  flag_at:u64 = const() {"value":120}
+  seen_match:u64 = call(rmm,flag_at) {"function":"cp_get"}
+  unmarked:u64 = const() {"value":0}
+  first_match:bool = compare.eq(seen_match,unmarked)
+  branch first_match mark_match(rmm,flag_at) bad()
+block mark_match(mkm:mutbuf,mka:u64)
+  hit:u64 = const() {"value":1}
+  _marked:u64 = call(mkm,mka,hit) {"function":"cp_put"}
+  jump keep_pending()
+block keep_pending()
+  hold_pending:u32 = const() {"value":198}
+  ret(hold_pending)
+block return_row(status:u32)
+  ret(status)
+block action30(raw30:readbuf,mem30:mutbuf,wrk30:mutbuf)
+  size30:usize = buffer.len(raw30)
+  expect30:u64 = const() {"value":0}
+  valid30:bool = call(raw30,size30,expect30) {"function":"sr_status"}
+  branch valid30 success30(raw30,mem30,wrk30) bad()
+block success30(v30:readbuf,s30:mutbuf,w30:mutbuf)
+  p30:u64 = const() {"value":8}
+  stmt30:u64 = call(v30,p30) {"function":"tr_read"}
+  sa30:u64 = const() {"value":40}
+  _save30:u64 = call(s30,sa30,stmt30) {"function":"cp_put"}
+  ns_len30:u64 = const() {"value":902008}
+  len30:u64 = call(w30,ns_len30) {"function":"cp_get"}
+  ns30:u64 = const() {"value":902024}
+  id30:u64 = const() {"value":1}
+  next30:u64 = const() {"value":31}
+  out30:u32 = call(s30,w30,id30,ns30,len30,next30) {"function":"dw_bind"}
+  ret(out30)
+block action31(raw31:readbuf,mem31:mutbuf,wrk31:mutbuf)
+  size31:usize = buffer.len(raw31)
+  expect31:u64 = const() {"value":0}
+  valid31:bool = call(raw31,size31,expect31) {"function":"sr_status"}
+  branch valid31 success31(mem31,wrk31) bad()
+block success31(s31:mutbuf,w31:mutbuf)
+  key_len31:u64 = const() {"value":902016}
+  len31:u64 = call(w31,key_len31) {"function":"cp_get"}
+  key31:u64 = const() {"value":902088}
+  id31:u64 = const() {"value":2}
+  next31:u64 = const() {"value":32}
+  out31:u32 = call(s31,w31,id31,key31,len31,next31) {"function":"dw_bind"}
+  ret(out31)
+block action32(raw32:readbuf,mem32:mutbuf,wrk32:mutbuf)
+  size32:usize = buffer.len(raw32)
+  expect32:u64 = const() {"value":0}
+  valid32:bool = call(raw32,size32,expect32) {"function":"sr_status"}
+  branch valid32 success32(mem32) bad()
+block success32(s32:mutbuf)
+  at32:u64 = const() {"value":40}
+  h32:u64 = call(s32,at32) {"function":"cp_get"}
+  p32:u64 = const() {"value":33}
+  op32:u64 = const() {"value":7}
+  out32:u32 = call(s32,p32,op32,h32) {"function":"sr_handle"}
+  ret(out32)
+block action33(raw33:readbuf,mem33:mutbuf,wrk33:mutbuf)
+  size33:usize = buffer.len(raw33)
+  expect33:u64 = const() {"value":101}
+  valid33:bool = call(raw33,size33,expect33) {"function":"sr_status"}
+  branch valid33 success33(mem33) bad()
+block success33(s33:mutbuf)
+  at33:u64 = const() {"value":40}
+  h33:u64 = call(s33,at33) {"function":"cp_get"}
+  p33:u64 = const() {"value":34}
+  op33:u64 = const() {"value":9}
+  out33:u32 = call(s33,p33,op33,h33) {"function":"sr_handle"}
+  ret(out33)
+block action34(raw34:readbuf,mem34:mutbuf,wrk34:mutbuf)
+  size34:usize = buffer.len(raw34)
+  expect34:u64 = const() {"value":0}
+  valid34:bool = call(raw34,size34,expect34) {"function":"sr_status"}
+  branch valid34 success34(mem34) bad()
+block success34(s34:mutbuf)
+  at34:u64 = const() {"value":32}
+  h34:u64 = call(s34,at34) {"function":"cp_get"}
+  p34:u64 = const() {"value":35}
+  op34:u64 = const() {"value":10}
+  out34:u32 = call(s34,p34,op34,h34) {"function":"sr_handle"}
+  ret(out34)
+block action35(raw35:readbuf,mem35:mutbuf,wrk35:mutbuf)
+  size35:usize = buffer.len(raw35)
+  expect35:u64 = const() {"value":0}
+  valid35:bool = call(raw35,size35,expect35) {"function":"sr_status"}
+  branch valid35 success35(raw35,mem35) bad()
+block success35(v35:readbuf,s35:mutbuf)
+  at35:u64 = const() {"value":8}
+  count35:u64 = call(v35,at35) {"function":"tr_read"}
+  expected35:u64 = const() {"value":1}
+  one_deleted:bool = compare.eq(count35,expected35)
+  branch one_deleted set_metadata35(s35) bad()
+block set_metadata35(sm35:mutbuf)
+  stmt35:u32 = call(sm35) {"function":"dw_sql_update"}
+  ret(stmt35)
+block action40(raw40:readbuf,mem40:mutbuf,wrk40:mutbuf)
+  size40:usize = buffer.len(raw40)
+  expect40:u64 = const() {"value":0}
+  valid40:bool = call(raw40,size40,expect40) {"function":"sr_status"}
+  branch valid40 success40(mem40,wrk40) bad()
+block success40(s40:mutbuf,w40:mutbuf)
+  param4:u64 = const() {"value":4}
+  new_root_at:u64 = const() {"value":902216}
+  after_root:u64 = const() {"value":41}
+  out40:u32 = call(s40,w40,param4,new_root_at,after_root) {"function":"ew_bind"}
+  ret(out40)
+block action41(raw41:readbuf,mem41:mutbuf,wrk41:mutbuf)
+  size41:usize = buffer.len(raw41)
+  expect41:u64 = const() {"value":0}
+  valid41:bool = call(raw41,size41,expect41) {"function":"sr_status"}
+  branch valid41 success41(mem41,wrk41) bad()
+block success41(s41:mutbuf,w41:mutbuf)
+  out41:u32 = call(s41,w41) {"function":"dw_bind_count"}
+  ret(out41)
+block action42(raw42:readbuf,mem42:mutbuf,wrk42:mutbuf)
+  size42:usize = buffer.len(raw42)
+  expect42:u64 = const() {"value":0}
+  valid42:bool = call(raw42,size42,expect42) {"function":"sr_status"}
+  branch valid42 success42(mem42) bad()
+block success42(s42:mutbuf)
+  jump base_step(s42)
 block cold(cold_raw:readbuf,cold_mem:mutbuf,cold_hash:mutbuf)
   cold_result:u32 = call(cold_raw,cold_mem,cold_hash) {"function":"sr_cold"}
   ret(cold_result)

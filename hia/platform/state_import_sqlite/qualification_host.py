@@ -60,11 +60,12 @@ def run(message, reader, provider):
     proposal_hex = message.get("empty_delta")
     writes = proposal_hex is not None
     if writes:
-        if not directory.parent.name.startswith("m13-sqlite-empty-delta-") or directory.name != "owned":
-            raise ValueError("Write qualification only uses its own named disposable directory")
         proposal = bytes.fromhex(proposal_hex)
-        if len(proposal) != 1042 or message["advance"]:
-            raise ValueError("Exact private empty-delta replay input required")
+        mode = {1042: "m13-sqlite-empty-delta-", 1298: "m13-sqlite-delete-delta-"}.get(len(proposal))
+        if mode is None or message["advance"]:
+            raise ValueError("Exact private single-delta replay input required")
+        if not directory.parent.name.startswith(mode) or directory.name != "owned":
+            raise ValueError("Write qualification only uses its own named disposable directory")
         raw = proposal + raw
     ops = (2, 3, 5, 6, 7, 8, 9, 10) if writes else (2, 3, 5, 7, 8, 9)
     owner = make()
@@ -95,7 +96,9 @@ def run(message, reader, provider):
             call = ctypes.addressof(state) + 256
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))
-            if writes and message.get("kill_after_update") and (phase, op) == (28, 10):
+            stopped_after_metadata = message.get("kill_after_update") and (phase, op) == (28, 10)
+            stopped_after_delete = message.get("kill_after_delete") and (phase, op) == (35, 10)
+            if writes and (stopped_after_metadata or stopped_after_delete):
                 if amount != 24 or struct.unpack_from("<QQ", response) != (0, 1):
                     raise ValueError("Expected a real one-row uncommitted update before termination")
                 os.kill(os.getpid(), signal.SIGKILL)

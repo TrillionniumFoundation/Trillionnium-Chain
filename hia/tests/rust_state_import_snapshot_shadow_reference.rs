@@ -109,6 +109,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             store.apply_delta_v0(&delta, &FixtureRoot)?;
         }
+        ("delete-advance", 3) => {
+            let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
+            let before = store.read_rows_v0()?;
+            if before.is_empty() {
+                return Err("delete fixture starts with at least one row".into());
+            }
+            let mut after = before.clone();
+            after.remove(before.len() / 2);
+            let delta = derive_incremental_delta_v0(
+                d(10), d(11), context(&before, 5), context(&after, 6),
+                &before, &after, &FixtureRoot,
+            )?;
+            if delta.entries.len() != 1 || delta.entries[0].value.is_some() {
+                return Err("reference should contain exactly one DELETE".into());
+            }
+            store.apply_delta_v0(&delta, &FixtureRoot)?;
+        }
         ("empty-advance", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let rows = store.read_rows_v0()?;
@@ -126,7 +143,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/empty-advance/export on disposable staging only".into()),
+        _ => return Err("scope is seed/advance/delete-advance/empty-advance/export on disposable staging only".into()),
     }
     Ok(())
 }

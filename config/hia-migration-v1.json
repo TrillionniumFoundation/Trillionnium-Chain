@@ -2460,13 +2460,15 @@
       "id": "state_import/sqlite-empty-delta-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "M13 native BEGIN IMMEDIATE metadata-only empty-delta transition for reviewed disposable local staging, exact predecessor and successor checks, persisted row digests, and original Rust cold reopen differential; no production authority, row mutations or application root",
+      "scope": "M13 native BEGIN IMMEDIATE empty and one-row DELETE transitions for reviewed disposable local staging; exact prior key, row commitment, successor and persisted row digests, and original Rust cold reopen differential; no production authority, UPSERT or application-root recomputation",
       "sources": [
-        "hia/platform/state_import_sqlite/empty_write.hepta"
+        "hia/platform/state_import_sqlite/empty_write.hepta",
+        "hia/platform/state_import_sqlite/delete_delta.hepta"
       ],
       "tests": [
         "hia/platform/state_import_sqlite/qualification_host.py",
         "hia/tests/test_state_import_sqlite_empty_write.py",
+        "hia/tests/test_state_import_sqlite_delete_write.py",
         "hia/tests/rust_state_import_snapshot_shadow_reference.rs"
       ]
     },

@@ -59,6 +59,40 @@
           "sr_match64",
           "sr_append"
         ]
+      },
+      {
+        "source": "platform/state_import_sqlite/delete_delta.hepta",
+        "functions": [
+          "dw_key_match",
+          "dw_field_match",
+          "dw_digest_match",
+          "dw_bind",
+          "dw_bind_count",
+          "dw_sql_delete",
+          "dw_sql_update"
+        ]
+      }
+    ],
+    "platform/state_import_sqlite/delete_delta.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_nibble",
+          "rc_octet"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_issue"
+        ]
       }
     ],
     "platform/state_import_sqlite/cold_read.hepta": [

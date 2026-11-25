@@ -1,0 +1,288 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_local_delete_delta
+fn dw_key_match(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  ns_len_at:u64 = const() {"value":902008}
+  ns_len:u64 = call(work,ns_len_at) {"function":"cp_get"}
+  ns_start:usize = const() {"value":24}
+  ns_value:usize = const() {"value":902024}
+  found:usize = call(raw,work,ns_start,ns_value,ns_len) {"function":"dw_field_match"}
+  fail:usize = const() {"value":0}
+  ns_ok:bool = compare.ne(found,fail)
+  branch ns_ok key(raw,work,found) bad()
+block key(kr:readbuf,kw:mutbuf,from:usize)
+  key_len_at:u64 = const() {"value":902016}
+  key_len:u64 = call(kw,key_len_at) {"function":"cp_get"}
+  key_value:usize = const() {"value":902088}
+  matched:usize = call(kr,kw,from,key_value,key_len) {"function":"dw_field_match"}
+  zero:usize = const() {"value":0}
+  okay:bool = compare.ne(matched,zero)
+  ret(okay)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dw_field_match(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64) -> (usize) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,from:usize,expected:usize,len:u64)
+  n:usize = int.cast(len) {"mode":"wrap"}
+  two:usize = const() {"value":2}
+  width:usize = int.mul.wrap(n,two)
+  delimiter:usize = int.add.wrap(from,width)
+  input_size:usize = buffer.len(r)
+  fits:bool = compare.lt(delimiter,input_size)
+  branch fits marker(r,w,from,expected,delimiter) bad()
+block marker(mr:readbuf,mw:mutbuf,mp:usize,me:usize,last:usize)
+  actual:u8 = buffer.load(mr,last)
+  colon:u8 = const() {"value":58}
+  closed:bool = compare.eq(actual,colon)
+  branch closed scan(mr,mw,mp,me,last) bad()
+block scan(ir:readbuf,iw:mutbuf,at:usize,it:usize,stop:usize)
+  first:u8 = buffer.load(ir,at)
+  one:usize = const() {"value":1}
+  second_at:usize = int.add.wrap(at,one)
+  second:u8 = buffer.load(ir,second_at)
+  decoded:u64 = call(first,second) {"function":"rc_octet"}
+  expected_byte:u8 = buffer.load(iw,it)
+  expected_num:u64 = int.cast(expected_byte) {"mode":"wrap"}
+  eq:bool = compare.eq(decoded,expected_num)
+  branch eq next(ir,iw,second_at,it,stop) bad()
+block next(nr:readbuf,nw:mutbuf,after:usize,old:usize,last_at:usize)
+  step:usize = const() {"value":1}
+  new_at:usize = int.add.wrap(after,step)
+  new_exp:usize = int.add.wrap(old,step)
+  done:bool = compare.eq(new_at,last_at)
+  branch done good(last_at) scan(nr,nw,new_at,new_exp,last_at)
+block good(end:usize)
+  plus:usize = const() {"value":1}
+  beginning:usize = int.add.wrap(end,plus)
+  ret(beginning)
+block bad()
+  invalid:usize = const() {"value":0}
+  ret(invalid)
+end
+
+fn dw_digest_match(work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf)
+  leaf:u64 = const() {"value":1216}
+  reviewed:u64 = const() {"value":902152}
+  final_leaf:u64 = const() {"value":1240}
+  jump words(work,leaf,reviewed,final_leaf)
+block words(m:mutbuf,actual:u64,reference:u64,last:u64)
+  seen:u64 = call(m,actual) {"function":"cp_get"}
+  want:u64 = call(m,reference) {"function":"cp_get"}
+  match:bool = compare.eq(seen,want)
+  branch match next(m,actual,reference,last) bad()
+block next(nm:mutbuf,a:u64,r:u64,final_at:u64)
+  done:bool = compare.eq(a,final_at)
+  eight:u64 = const() {"value":8}
+  new_a:u64 = int.add.wrap(a,eight)
+  new_r:u64 = int.add.wrap(r,eight)
+  branch done yes() words(nm,new_a,new_r,final_at)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dw_bind(m:mutbuf,w:mutbuf,parameter:u64,at:u64,width:u64,phase:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,parameter:u64,at:u64,width:u64,phase:u64)
+  stmt_at:u64 = const() {"value":40}
+  stmt:u64 = call(m,stmt_at) {"function":"cp_get"}
+  request:u64 = const() {"value":256}
+  ordinal:u64 = const() {"value":264}
+  kind:u64 = const() {"value":272}
+  payload:usize = const() {"value":280}
+  blob:u64 = const() {"value":4}
+  _stmt:u64 = call(m,request,stmt) {"function":"cp_put"}
+  _parameter:u64 = call(m,ordinal,parameter) {"function":"cp_put"}
+  _type:u64 = call(m,kind,blob) {"function":"cp_put"}
+  start:usize = int.cast(at) {"mode":"wrap"}
+  amount:usize = int.cast(width) {"mode":"wrap"}
+  overhead:u64 = const() {"value":24}
+  length:u64 = int.add.wrap(width,overhead)
+  jump copy(m,w,start,payload,amount,phase,length)
+block copy(out:mutbuf,source:mutbuf,from:usize,to:usize,n:usize,p:u64,total:u64)
+  octet:u8 = buffer.load(source,from)
+  _ = buffer.store(out,to,octet)
+  one:usize = const() {"value":1}
+  stop:bool = compare.eq(n,one)
+  next_from:usize = int.add.wrap(from,one)
+  next_to:usize = int.add.wrap(to,one)
+  remains:usize = int.sub.wrap(n,one)
+  branch stop issue(out,p,total) copy(out,source,next_from,next_to,remains,p,total)
+block issue(arena:mutbuf,request_phase:u64,request_len:u64)
+  bind_op:u64 = const() {"value":6}
+  result:u32 = call(arena,request_phase,bind_op,request_len) {"function":"sr_issue"}
+  ret(result)
+end
+
+fn dw_bind_count(m:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf)
+  after_at:u64 = const() {"value":902248}
+  before_at:u64 = const() {"value":72}
+  after:u64 = call(w,after_at) {"function":"cp_get"}
+  before:u64 = call(m,before_at) {"function":"cp_get"}
+  smaller:bool = compare.lt(after,before)
+  one:u64 = const() {"value":1}
+  plus:u64 = int.add.wrap(after,one)
+  decremented:bool = compare.eq(plus,before)
+  matches:bool = bool.and(smaller,decremented)
+  branch matches bind(m,after) bad()
+block bind(state:mutbuf,rows:u64)
+  stmt_at:u64 = const() {"value":40}
+  stmt:u64 = call(state,stmt_at) {"function":"cp_get"}
+  req_at:u64 = const() {"value":256}
+  ordinal_at:u64 = const() {"value":264}
+  tag_at:u64 = const() {"value":272}
+  rows_at:u64 = const() {"value":280}
+  ordinal:u64 = const() {"value":5}
+  integer:u64 = const() {"value":1}
+  _db:u64 = call(state,req_at,stmt) {"function":"cp_put"}
+  _param:u64 = call(state,ordinal_at,ordinal) {"function":"cp_put"}
+  _type:u64 = call(state,tag_at,integer) {"function":"cp_put"}
+  _count:u64 = call(state,rows_at,rows) {"function":"cp_put"}
+  phase:u64 = const() {"value":42}
+  op:u64 = const() {"value":6}
+  n:u64 = const() {"value":32}
+  scheduled:u32 = call(state,phase,op,n) {"function":"sr_issue"}
+  ret(scheduled)
+block bad()
+  refused:u32 = const() {"value":100}
+  ret(refused)
+end
+
+fn dw_sql_delete(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  db_at:u64 = const() {"value":32}
+  db:u64 = call(m,db_at) {"function":"cp_get"}
+  first:u64 = const() {"value":256}
+  len_at:u64 = const() {"value":264}
+  size:u64 = const() {"value":65}
+  _db:u64 = call(m,first,db) {"function":"cp_put"}
+  _sz:u64 = call(m,len_at,size) {"function":"cp_put"}
+  p0:u64 = const() {"value":272}
+  word0:u64 = const() {"value":5053115010151892292}
+  _put0:u64 = call(m,p0,word0) {"function":"cp_put"}
+  p8:u64 = const() {"value":280}
+  word8:u64 = const() {"value":8243673560339271506}
+  _put8:u64 = call(m,p8,word8) {"function":"cp_put"}
+  p16:u64 = const() {"value":288}
+  word16:u64 = const() {"value":7306069423422010465}
+  _put16:u64 = call(m,p16,word16) {"function":"cp_put"}
+  p24:u64 = const() {"value":296}
+  word24:u64 = const() {"value":8320241373607457900}
+  _put24:u64 = call(m,p24,word24) {"function":"cp_put"}
+  p32:u64 = const() {"value":304}
+  word32:u64 = const() {"value":5928224023542527583}
+  _put32:u64 = call(m,p32,word32) {"function":"cp_put"}
+  p40:u64 = const() {"value":312}
+  word40:u64 = const() {"value":8102931675030102085}
+  _put40:u64 = call(m,p40,word40) {"function":"cp_put"}
+  p48:u64 = const() {"value":320}
+  word48:u64 = const() {"value":4692804959402812257}
+  _put48:u64 = call(m,p48,word48) {"function":"cp_put"}
+  p56:u64 = const() {"value":328}
+  word56:u64 = const() {"value":4556931874464744526}
+  _put56:u64 = call(m,p56,word56) {"function":"cp_put"}
+  p64:u64 = const() {"value":336}
+  word64:u64 = const() {"value":50}
+  _put64:u64 = call(m,p64,word64) {"function":"cp_put"}
+  phase:u64 = const() {"value":30}
+  op:u64 = const() {"value":5}
+  full:u64 = const() {"value":81}
+  out:u32 = call(m,phase,op,full) {"function":"sr_issue"}
+  ret(out)
+end
+
+fn dw_sql_update(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  db_at:u64 = const() {"value":32}
+  db:u64 = call(m,db_at) {"function":"cp_get"}
+  first:u64 = const() {"value":256}
+  len_at:u64 = const() {"value":264}
+  size:u64 = const() {"value":199}
+  _db:u64 = call(m,first,db) {"function":"cp_put"}
+  _sz:u64 = call(m,len_at,size) {"function":"cp_put"}
+  p0:u64 = const() {"value":272}
+  word0:u64 = const() {"value":7863361177563451477}
+  _put0:u64 = call(m,p0,word0) {"function":"cp_put"}
+  p8:u64 = const() {"value":280}
+  word8:u64 = const() {"value":7957695015158966121}
+  _put8:u64 = call(m,p8,word8) {"function":"cp_put"}
+  p16:u64 = const() {"value":288}
+  word16:u64 = const() {"value":7881125025584342111}
+  _put16:u64 = call(m,p16,word16) {"function":"cp_put"}
+  p24:u64 = const() {"value":296}
+  word24:u64 = const() {"value":5989840789367256165}
+  _put24:u64 = call(m,p24,word24) {"function":"cp_put"}
+  p32:u64 = const() {"value":304}
+  word32:u64 = const() {"value":7306934683317589061}
+  _put32:u64 = call(m,p32,word32) {"function":"cp_put"}
+  p40:u64 = const() {"value":312}
+  word40:u64 = const() {"value":8675468274863136628}
+  _put40:u64 = call(m,p40,word40) {"function":"cp_put"}
+  p48:u64 = const() {"value":320}
+  word48:u64 = const() {"value":8391162025545588596}
+  _put48:u64 = call(m,p48,word48) {"function":"cp_put"}
+  p56:u64 = const() {"value":328}
+  word56:u64 = const() {"value":8391157647947153213}
+  _put56:u64 = call(m,p56,word56) {"function":"cp_put"}
+  p64:u64 = const() {"value":336}
+  word64:u64 = const() {"value":7232606679242990687}
+  _put64:u64 = call(m,p64,word64) {"function":"cp_put"}
+  p72:u64 = const() {"value":344}
+  word72:u64 = const() {"value":3620680195790694249}
+  _put72:u64 = call(m,p72,word72) {"function":"cp_put"}
+  p80:u64 = const() {"value":352}
+  word80:u64 = const() {"value":7594299821183169068}
+  _put80:u64 = call(m,p80,word80) {"function":"cp_put"}
+  p88:u64 = const() {"value":360}
+  word88:u64 = const() {"value":3184958894660347239}
+  _put88:u64 = call(m,p88,word88) {"function":"cp_put"}
+  p96:u64 = const() {"value":368}
+  word96:u64 = const() {"value":8030585974903895155}
+  _put96:u64 = call(m,p96,word96) {"function":"cp_put"}
+  p104:u64 = const() {"value":376}
+  word104:u64 = const() {"value":8030529688465929327}
+  _put104:u64 = call(m,p104,word104) {"function":"cp_put"}
+  p112:u64 = const() {"value":384}
+  word112:u64 = const() {"value":4428285784271052663}
+  _put112:u64 = call(m,p112,word112) {"function":"cp_put"}
+  p120:u64 = const() {"value":392}
+  word120:u64 = const() {"value":8243116074773263679}
+  _put120:u64 = call(m,p120,word120) {"function":"cp_put"}
+  p128:u64 = const() {"value":400}
+  word128:u64 = const() {"value":7306876464956798049}
+  _put128:u64 = call(m,p128,word128) {"function":"cp_put"}
+  p136:u64 = const() {"value":408}
+  word136:u64 = const() {"value":7957695015158965614}
+  _put136:u64 = call(m,p136,word136) {"function":"cp_put"}
+  p144:u64 = const() {"value":416}
+  word144:u64 = const() {"value":4995131113708990763}
+  _put144:u64 = call(m,p144,word144) {"function":"cp_put"}
+  p152:u64 = const() {"value":424}
+  word152:u64 = const() {"value":8387229072537252640}
+  _put152:u64 = call(m,p152,word152) {"function":"cp_put"}
+  p160:u64 = const() {"value":432}
+  word160:u64 = const() {"value":4921943049283399279}
+  _put160:u64 = call(m,p160,word160) {"function":"cp_put"}
+  p168:u64 = const() {"value":440}
+  word168:u64 = const() {"value":8386109761109976864}
+  _put168:u64 = call(m,p168,word168) {"function":"cp_put"}
+  p176:u64 = const() {"value":448}
+  word176:u64 = const() {"value":3689066266178252649}
+  _put176:u64 = call(m,p176,word176) {"function":"cp_put"}
+  p184:u64 = const() {"value":456}
+  word184:u64 = const() {"value":3834874676185806643}
+  _put184:u64 = call(m,p184,word184) {"function":"cp_put"}
+  p192:u64 = const() {"value":464}
+  word192:u64 = const() {"value":15534141688198964}
+  _put192:u64 = call(m,p192,word192) {"function":"cp_put"}
+  phase:u64 = const() {"value":23}
+  op:u64 = const() {"value":5}
+  full:u64 = const() {"value":215}
+  out:u32 = call(m,phase,op,full) {"function":"sr_issue"}
+  ret(out)
+end

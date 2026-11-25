@@ -91,3 +91,35 @@ finality validation, or support for applying row mutations.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_empty_write -v
 ```
+
+## Disposable one-row DELETE
+
+The same private writer admits a distinct `DEL1M13!` fixture prefix for one
+reviewed original DELETE. It carries the original raw namespace and key
+(each 1–64 bytes in fixed 64-byte fields), the old row's canonical digest,
+and the reviewed next rows digest, application root, and row count. These
+are fixture boundary limits, not changes to original StateImport limits.
+
+Before writing, HIA finds exactly one matching namespace and key among the
+actual ordered prior rows and binds that row to the reviewed canonical
+digest, in addition to verifying the prior persisted rows digest and the
+complete reviewed metadata. The exact same unencoded tuple is bound as two
+SQLite BLOBs in one fixed DELETE. SQLite must report exactly one changed row.
+A fixed metadata update binds the reviewed new count, rows digest and root
+along with the original target-context and last-delta digests. The native
+count must decrease by one. Within the same IMMEDIATE transaction, HIA reads
+the remaining actual rows, independently checks their persisted digest, and
+compares the complete successor metadata before committing. A root supplied
+by the test is not an independently recomputed application root.
+
+The real original SQLite owner independently derives and applies exactly one
+DELETE to disposable databases. Its cold export must match after deleting the
+only row and after deleting a middle row. Missing key, wrong prior row digest,
+wrong successor rows digest and stale reviewed inputs must refuse publication
+and leave original cold bytes unchanged. Separate process deaths are injected
+after one real row deletion and after one real metadata update; original
+cold reopen must observe the exact complete predecessor in both cases.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_delete_write -v
+```
