@@ -1,3 +1,76 @@
+**Explicit development witness phase observations, 2026-11-25 UTC — HOLD:**
+
+The original prospective-source runtime job
+[139120929254](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45589881222/job/139120929254)
+failed on `ac2600d129d050154cbf8edb3cdd5b2be7f80244` after the first live request
+following the binary reopen. Its retained child observation was still running
+477,898 microseconds after spawn, with readiness at 73,996 microseconds. The
+connection refused in `request_dispatch` with `PQ_WITNESS_DEADLINE` after
+260,217 microseconds in that stage. The later SIGKILL was fixture cleanup. This
+is evidence of the original 250 ms witness cap being reached; it does not
+identify signing, verification, scheduling, wire waiting or durable storage as
+the cause. The original failure remains a failure. No timeout or SQL check is
+relaxed to infer a fix.
+
+A new explicit `--witness-phase-diagnostics true` selector follows the existing
+`--development` gate. Enablement follows all original owner-input guards. Ordinary client and
+service construction remains disabled. The observation starts after the
+original absolute deadline is chosen. It records fixed phase enums, bounded
+integer costs and nullable same-thread CPU, without keys, request bodies,
+checkpoint roots, paths or arbitrary errors. The request result, pre-transport
+availability behavior, post-transport fail-closed behavior and authenticated
+late-CAS reconciliation are preserved. Host, storage identity, permissions,
+schema, row, signature, deadline and reopen checks remain in place.
+
+`trnm-pq-witness-phase-v1` emits failures or an already-completed late result,
+with at most 16 attempts per process and 2,048 body bytes per record. There is
+one write attempt per record; interruption, partial output or write failure is
+not retried. The collector retains its original 4 KiB stderr prefix and only
+projects the versioned enum/integer schema from records with a retained final
+LF. Complete JSON without that terminator remains a partial observation. A first failure summary can fit
+inside that prefix; preceding unrelated output or a partial write can still
+leave observation unknown. Bounded bytes do not establish a wall-time bound
+for an arbitrary blocked stderr sink. Clock sampling, stderr locking and the
+write are diagnostic cost, and the existing supervisor timeout remains.
+
+One separately authorized engineering capsule used no Cargo, dependency
+download, old campaign or E1-E6 budget. Rustfmt 1.9.0 with edition 2021 parsed
+and formatted the seven changed Rust files. Rustc 1.95.0 on
+`aarch64-apple-darwin` compiled the standalone observer and its five named
+controls passed, with zero ignored tests. Inclusive capsule wall time was
+3.366353083 seconds and reaped child CPU was 0.515119 seconds within its
+independent 30-second bound. A later independent review found that a complete
+JSON value could be accepted despite a missing final LF. The new collector and
+its boundary cases were corrected; a format-only continuation consumed
+0.146917708 seconds and 0.061182 seconds of child CPU. The combined engineering
+wall time is 3.513270791 seconds and child CPU is 0.576301 seconds, still within
+the same 30-second cap. The unchanged observer controls were not rerun, and the
+revised parser was not claimed to have executed. These are module controls, not
+a full CLI build or native deadline success. Linux thread-CPU compilation, the two CLI gate
+controls, four parser controls, strict Clippy, and the original native witness
+path remain subject to the new exact-source CI. The scope, exact inputs,
+commands, output hashes and authoritative terminal observation are retained
+in the [engineering attempt](../../evidence/pq-witness-phase-20261125/engineering-attempt.json),
+[control log](../../evidence/pq-witness-phase-20261125/observer-controls.txt) and
+[readback](../../evidence/pq-witness-phase-20261125/readback.json); the bounded
+[format continuation](../../evidence/pq-witness-phase-20261125/framing-format.json)
+retains its separate exact source hashes and zero executed tests.
+
+The older #998 source has independent exact-source evidence: run
+[45606912106](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45606912106)
+passed its native fullpath engineering job on
+`3ee476eb1591c4ad3f92061c0eb906cb5ad22f89`, tree
+`b851587ae7f46f2d7070892be290b6d22395cc44`. Its exact namespace control passed
+1/1 and the noise framing, callback-budget and every-boundary cancellation
+controls passed 3/3, all with zero ignored tests and unchanged source/lock
+receipts. Its existing component collector still reported HOLD and
+COMPONENT_OBSERVATION_ONLY. Those results establish their own source's named
+controls; they do not certify this new diagnostic source or the original
+pressure target. Exact prior-source receipts and named logs are retained in the
+[existing CI readback](../../evidence/pq-witness-phase-20261125/existing-ci-readback.json). The original E1-E6 owners, inputs, budgets and Group rosters,
+all prior failures and #983 integration candidate remain unchanged.
+
+
 **Public evaluation console boundaries, 2026-11-25 UTC — source fix, official scan pending:**
 
 The original CodeQL Python analyses found two paths from the verified development

@@ -1,0 +1,372 @@
+{
+  "schema": "witness-phase-engineering-attempt-v1",
+  "status": "PASS",
+  "budget_wall_seconds": 30.0,
+  "original_E1_E6_budget_used": 0,
+  "network_dependency_downloads": 0,
+  "cargo_invocations": 0,
+  "steps": [
+    {
+      "label": "01-rustc-version",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "timeout_seconds": 28.498822334,
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.145136208,
+      "inclusive_child_cpu_seconds": 0.03762,
+      "stdout": {
+        "path": "01-rustc-version.stdout",
+        "bytes": 192,
+        "sha256": "e61cba8ded8c60e985f759f74a221c4773649021477d00b44c7af411eb8c218c"
+      },
+      "stderr": {
+        "path": "01-rustc-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-rustfmt-version",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--version"
+      ],
+      "timeout_seconds": 28.353487417,
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.047702417,
+      "inclusive_child_cpu_seconds": 0.022753999999999996,
+      "stdout": {
+        "path": "02-rustfmt-version.stdout",
+        "bytes": 45,
+        "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+      },
+      "stderr": {
+        "path": "02-rustfmt-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-00",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.305557417,
+      "stdin_sha256": "4eaf0c8a81d3db18bd99159479d2359baa1bbda91899e03a3f1da3a06ef3ee6f",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.068088292,
+      "inclusive_child_cpu_seconds": 0.03773399999999999,
+      "stdout": {
+        "path": "fmt-00.stdout",
+        "bytes": 48575,
+        "sha256": "fa1fdeac2e904824d52d72bd514c2b7fea42f95375666604c4902ba44a152e65"
+      },
+      "stderr": {
+        "path": "fmt-00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-01",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.237169375,
+      "stdin_sha256": "2add03d1c3f0d208807b90a4f7cc62291fe7fae730cdc3647bf125bdfff89852",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.04764304199999997,
+      "inclusive_child_cpu_seconds": 0.021993000000000013,
+      "stdout": {
+        "path": "fmt-01.stdout",
+        "bytes": 13218,
+        "sha256": "c59bbcb151b95ca6149a3ce768e69c60f4c9f1aeb2334efbbd71ada5a3dd15d4"
+      },
+      "stderr": {
+        "path": "fmt-01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-02",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.189209375,
+      "stdin_sha256": "e4092cf43530c74c79a2daf5f45e8d6442147bc0a766bcd1f2e73c4e350ff5f0",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.04765208399999998,
+      "inclusive_child_cpu_seconds": 0.022228999999999985,
+      "stdout": {
+        "path": "fmt-02.stdout",
+        "bytes": 11257,
+        "sha256": "10123090bae56fbeacada8a69dad8da4355373ba595a81bd6cedd0fb45ea53ec"
+      },
+      "stderr": {
+        "path": "fmt-02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-03",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.141262125,
+      "stdin_sha256": "0f450db2d493a73c1882f9cfad616b1f0b1a769b6b186e8a6126c9a96a325fbc",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.023563541999999993,
+      "inclusive_child_cpu_seconds": 0.021123000000000003,
+      "stdout": {
+        "path": "fmt-03.stdout",
+        "bytes": 6715,
+        "sha256": "7efcdb101607c7f5814f4dc6bb93523fd441227652110c272872ca700462d7ea"
+      },
+      "stderr": {
+        "path": "fmt-03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-04",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.117396042,
+      "stdin_sha256": "bf6dc4a87a519e3686d1b3765685685127e04d1e6a33450764d10593d4c30762",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.02349399999999996,
+      "inclusive_child_cpu_seconds": 0.020717000000000013,
+      "stdout": {
+        "path": "fmt-04.stdout",
+        "bytes": 4172,
+        "sha256": "1dcc0a818187cdd6c873852f53b55692bc9b6f06ea80fd6c85e10fd084ea06d9"
+      },
+      "stderr": {
+        "path": "fmt-04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-05",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.093644667,
+      "stdin_sha256": "3aa3ef158aa89b619707b3aa1ee93bcb7b6bc502af071bd1ded5c72d3ed4985b",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.02348262499999998,
+      "inclusive_child_cpu_seconds": 0.020457999999999976,
+      "stdout": {
+        "path": "fmt-05.stdout",
+        "bytes": 6085,
+        "sha256": "62e0007cb3a18b2378993ebf2bc76c09e83be7742ed2c0045e1b538998a71950"
+      },
+      "stderr": {
+        "path": "fmt-05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "fmt-06",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "timeout_seconds": 28.069880042,
+      "stdin_sha256": "f4932665e94c142a7fabffd9f4d728dd0e95a41b17c3fcf948fb7316d1a48777",
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.03230166600000001,
+      "inclusive_child_cpu_seconds": 0.022651000000000004,
+      "stdout": {
+        "path": "fmt-06.stdout",
+        "bytes": 17982,
+        "sha256": "f4932665e94c142a7fabffd9f4d728dd0e95a41b17c3fcf948fb7316d1a48777"
+      },
+      "stderr": {
+        "path": "fmt-06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "03-compile",
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/rustc",
+        "--edition",
+        "2021",
+        "--test",
+        "/private/tmp/chain-witness-phase-engineering-20261125-7c9e/observer_control.rs",
+        "-o",
+        "/private/tmp/chain-witness-phase-engineering-20261125-7c9e/observer-tests"
+      ],
+      "timeout_seconds": 28.037208459,
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 0.43559883299999996,
+      "inclusive_child_cpu_seconds": 0.280485,
+      "stdout": {
+        "path": "03-compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "03-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "04-controls",
+      "argv": [
+        "/private/tmp/chain-witness-phase-engineering-20261125-7c9e/observer-tests"
+      ],
+      "timeout_seconds": 27.601398042,
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "status": "PASS",
+      "wall_seconds": 2.4593465,
+      "inclusive_child_cpu_seconds": 0.007355,
+      "stdout": {
+        "path": "04-controls.stdout",
+        "bytes": 615,
+        "sha256": "b40a9e04e78a4c8248660989e868e4684d1f7104cb32f60140205bece16c3454"
+      },
+      "stderr": {
+        "path": "04-controls.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "qualification": "macOS std-only observer only; native CLI and Linux CPU remain unverified",
+  "input_archive_sha256": "b51ae791dfe4c5d7ce68a49d57c35c5d6c03398874c5999f17bf08c203c80177",
+  "input": {
+    "schema": "witness-phase-engineering-input-v1",
+    "source_head": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+    "source_tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+    "cargo_lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+    "budget_wall_seconds": 30,
+    "scope": "New engineering only: rustfmt syntax and macOS std-only observation unit controls. No Cargo, no download, no original E1-E6, no scientific or native pressure qualification. Linux CPU branch and native CLI remain uncompiled here.",
+    "files": {
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+        "bytes": 44317,
+        "sha256": "4eaf0c8a81d3db18bd99159479d2359baa1bbda91899e03a3f1da3a06ef3ee6f"
+      },
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs": {
+        "bytes": 12210,
+        "sha256": "2add03d1c3f0d208807b90a4f7cc62291fe7fae730cdc3647bf125bdfff89852"
+      },
+      "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs": {
+        "bytes": 11119,
+        "sha256": "e4092cf43530c74c79a2daf5f45e8d6442147bc0a766bcd1f2e73c4e350ff5f0"
+      },
+      "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs": {
+        "bytes": 6692,
+        "sha256": "0f450db2d493a73c1882f9cfad616b1f0b1a769b6b186e8a6126c9a96a325fbc"
+      },
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs": {
+        "bytes": 4113,
+        "sha256": "bf6dc4a87a519e3686d1b3765685685127e04d1e6a33450764d10593d4c30762"
+      },
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs": {
+        "bytes": 5689,
+        "sha256": "3aa3ef158aa89b619707b3aa1ee93bcb7b6bc502af071bd1ded5c72d3ed4985b"
+      },
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs": {
+        "bytes": 17982,
+        "sha256": "f4932665e94c142a7fabffd9f4d728dd0e95a41b17c3fcf948fb7316d1a48777"
+      }
+    }
+  },
+  "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "rustfmt_version": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)\n",
+  "wrapper_sha256": "3984598828d5c0df41d33e8c83d0515b65655b3f72d03a4b04ff5791cb80d11f",
+  "controls": [
+    "every_phase_cost_slot_keeps_its_exact_label",
+    "inactive_scope_observes_no_clock_and_keeps_original_deadline",
+    "healthy_success_emits_nothing_but_failed_result_is_observed",
+    "fixed_enum_projection_is_bounded_and_unknown_cpu_stays_null",
+    "output_attempts_have_one_fixed_budget_and_no_write_retry"
+  ],
+  "output_files": {
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+      "bytes": 48575,
+      "sha256": "fa1fdeac2e904824d52d72bd514c2b7fea42f95375666604c4902ba44a152e65"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs": {
+      "bytes": 13218,
+      "sha256": "c59bbcb151b95ca6149a3ce768e69c60f4c9f1aeb2334efbbd71ada5a3dd15d4"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs": {
+      "bytes": 11257,
+      "sha256": "10123090bae56fbeacada8a69dad8da4355373ba595a81bd6cedd0fb45ea53ec"
+    },
+    "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs": {
+      "bytes": 6715,
+      "sha256": "7efcdb101607c7f5814f4dc6bb93523fd441227652110c272872ca700462d7ea"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs": {
+      "bytes": 4172,
+      "sha256": "1dcc0a818187cdd6c873852f53b55692bc9b6f06ea80fd6c85e10fd084ea06d9"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs": {
+      "bytes": 6085,
+      "sha256": "62e0007cb3a18b2378993ebf2bc76c09e83be7742ed2c0045e1b538998a71950"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs": {
+      "bytes": 17982,
+      "sha256": "f4932665e94c142a7fabffd9f4d728dd0e95a41b17c3fcf948fb7316d1a48777"
+    }
+  },
+  "formatted_archive_sha256": "ed4bd748a7b0f69d505fa84750b78521c94056c8bf3861318c99c353d16e3cb1",
+  "wall_seconds": 3.366353083,
+  "inclusive_child_cpu_seconds": 0.515119
+}
