@@ -1,3 +1,65 @@
+# 2026-11-25 — Borrowed Response signing bytes and current source bindings
+
+This isolated engineering candidate starts from the actual reviewed Chain
+commit `6ee5ec33746cf58b6dc3ca4723570aeb445d09de`, tree
+`5e5a038d77291ada09b09cbb8d6da5e5791eaeaf`. It removes a concrete redundant
+allocation path: signing and verifying a public Response previously cloned
+eight strings and the complete JSON value before serializing an otherwise
+unchanged unsigned response. A private borrowed serialization view preserves
+the eleven fields, their original order, the empty signature field and the
+original domain-separated message construction. It neither caches a digest nor
+changes a signature, protocol namespace, challenge, Host check, request deadline,
+confirmation depth or resource limit.
+
+Four new native controls are authored for exact original serialization bytes,
+every field's signed contribution, bounded JSON values and the existing real
+signer/verifier plus all four progress refusal boundaries. They have not yet
+executed on this candidate. They are separate from the 131 retained Corpus
+controls and do not add passes to that older roster. The reviewed Rust 1.95
+formatter ran once on the two source files: production bytes were unchanged;
+only test layout and trailing commas changed. Formatting is not compilation,
+native equivalence, a measured time saving or a pressure result.
+
+The current lifetime correspondence continues to declare the same 21 paths;
+only the Response source hash changes. The original 46-path root inventory and
+their single shared release path retain a 66-path declared union. The matching
+current reader and composition pins follow these reviewed bytes. Original
+historical model, source lock, composition, arithmetic, false qualification
+fields and null lifetime bounds remain intact.
+
+The unchanged native inventory policy adds the new Rust control module, from
+1,750 to 1,751 selected paths. The current Corpus overlay preserves all 2,613
+frozen blob identities, expands its reviewed replacement set from 32 to 33,
+and explicitly adds this control module as the third current-only addition.
+The resulting 2,616 declared paths have independent current-map and canonical
+blob-snapshot pins in the reader. The map and reader remain outside their own
+declared set and require the existing complete committed-source CI recorder.
+The generated inventory embeds all three changed configuration JSON files:
+the current lifetime map, composition manifest and current Corpus map. It does
+not select the Python readers. These declarations are not a complete dependency
+graph or a proof of the native binary's cryptography.
+
+The current metadata fixture independently names the third addition and expects
+three additional paths. Its original 18 names and all refusal conditions remain;
+the existing source-tampering loop also covers the new path. The 113 frozen
+historical controls retain their original source bytes.
+
+The four frozen Corpus inputs, all 131 original control names, the original
+bounded descriptor and coverage checks, provider contract, 600-second CI cap,
+Cargo lock and production activation boundaries are unchanged. Earlier source
+refusals, original pressure failures and their costs remain retained under
+their original identities. A successful earlier commit cannot qualify these
+new bytes. Future exact-source observations must separately establish current
+correspondence, native control execution and any performance improvement.
+
+All current outputs retain HOLD, false native/security/deployment/campaign
+qualification and a null actual lifetime failure bound. No old E1–E6 allocation
+is reset, reused or renamed. This candidate does not establish the four-second
+confirmation target, useful learning, a new foundation model or release
+qualification.
+
+The complete preceding sole plan follows without deletion or amendment.
+
 # 2026-11-25 — Current PQ declared-source correspondence, independent V2
 
 The current engineering parent is Chain commit

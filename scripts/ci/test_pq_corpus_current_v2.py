@@ -31,6 +31,7 @@ class CurrentCorpusTests(unittest.TestCase):
     ADDED = (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
         "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/response_signing_tests.rs",
     )
 
     def setUp(self):
@@ -139,7 +140,7 @@ class CurrentCorpusTests(unittest.TestCase):
                          current.QUALIFICATION)
         self.assertEqual((result["status"], result["current_source_correspondence_checked"],
                           result["source_revision_bound"], result["current_declared_path_count"]),
-                         ("HOLD", True, False, len(self.original["pinned_blobs"]) + 2))
+                         ("HOLD", True, False, len(self.original["pinned_blobs"]) + 3))
 
     def test_original_v1_entry_still_refuses_changed_source(self):
         with self.assertRaisesRegex(frozen.IntegrityError, "changed source: " + self.CHANGED):

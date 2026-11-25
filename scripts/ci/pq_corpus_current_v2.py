@@ -26,8 +26,8 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 MAX_MAP_BYTES = 64 * 1024
 MAX_REPORT_BYTES = 64 * 1024
 EXPECTED_FROZEN_PIN_COUNT = 2613
-EXPECTED_MAP_SHA256 = "b6e8fb90556e82193163c3db10eb90d3c10ca0ad5a1550b4f58a9319afc4196d"
-EXPECTED_CURRENT_BLOBS_SHA256 = "ff4ac22125cce4143e6635effbd924fa6f54138c76c1194705cc4f4504771445"
+EXPECTED_MAP_SHA256 = "00c97ce762ed2c555ba995bcde4d8e5a2711148e94494c8ed8d98d1a17b011bd"
+EXPECTED_CURRENT_BLOBS_SHA256 = "0be38de4e47025d72bd203c931c0a10d0c7cbe1940db73b20556c3f7bfad9219"
 FROZEN_INPUTS_SHA256 = {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -60,6 +60,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "scripts/w1_stark_route_audit.py",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
     "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs",
@@ -70,6 +71,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
 ))
 EXPECTED_ADDED_PATHS = frozenset((
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/response_signing_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs",
 ))
 QUALIFICATION = {
