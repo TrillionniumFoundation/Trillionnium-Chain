@@ -201,3 +201,39 @@ stock input extent bounds the call, not the original export row-count or
 value limits. The Rust differential is the actual unchanged
 `verify_export_v0` operating on synthesized rows in a local exact-fixture
 context; it issues no production authorization.
+
+## Durable SQLite snapshot shadow
+
+The qualification runs the complete unchanged original `trnm-state-import`
+crate with its locked bundled SQLite. Its disposable owner initializes a real
+database, exits, and a fresh process calls
+`SqliteIncrementalStateStoreV0::open_existing` and `export_snapshot_v0`.
+A second cold read must observe the identical generation bytes and must not
+change the database bytes. A separate original process commits a real delta
+with changed rows, root, and target context. Both cold generations replay in
+HIA; a private frame mixing intact predecessor rows with successor metadata
+is rejected without output. The fixture-only deterministic root callback is
+not the production State root builder or any finality verifier.
+
+Both native backends independently check the returned snapshot: row framing,
+row shape and digest, reserved prefixes and strict order, exact row count,
+the canonical target-rows transcript, and the canonical nine-field snapshot
+commitment. The private shadow frame starts with six raw 32-byte metadata
+digests, two big-endian u64 fields, the last-delta digest and the expected
+snapshot digest, followed by the same private 44-byte row header plus data
+used by the folded export fixture. All private buffers are disjoint. Within
+the normal 1 MiB fixture spans, the scratch minimum is 1,400 + 32 × rows
+bytes. Output is the 32-byte recomputed commitment only on success. Shadow
+codes 110/111 distinguish rows and snapshot commitment mismatch; ordinary
+row and private framing/capacity codes are reused, not original SQLite
+or install errors.
+
+The native call observes the original owner's atomic snapshot export. It
+does not own the SQL transaction, recompute the application state root,
+decide snapshot admissibility, verify finality, install or authorize cutover.
+No production routing is changed. Run with the pinned compiler environment
+and a populated locked Cargo cache:
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_snapshot_shadow -v
+```

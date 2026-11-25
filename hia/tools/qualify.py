@@ -92,6 +92,7 @@ def sources():
         paths.append(crate / "Cargo.toml")
     paths += sorted((ROOT / "config/pon").rglob("*.json"))
     paths += [ROOT / name for name in (
+        "trillionnium/crates/trnm-state-import/Cargo.toml",
         "trillionnium/crates/trnm-state-import/src/lib.rs",
         "hia/src/state_import/README.md",
         "trillionnium/crates/trnm-transport/src/lib.rs",

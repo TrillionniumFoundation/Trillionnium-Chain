@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/durable_snapshot_shadow",
+      "node_integration_complete": false,
+      "scope": "M13 dual-backend native target-row and snapshot commitment shadow of actual retained Rust SQLite cold export on disposable databases; never substitutes SQLite, root builder, finality or install ownership",
+      "source": "hia/src/state_import/durable_snapshot_shadow.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_snapshot_shadow.py",
+        "hia/tests/rust_state_import_snapshot_shadow_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/export_post_finality_fold",
       "node_integration_complete": false,
       "scope": "M13 original post-finality ordered batch row validation, first-error priority, root equality and atomic ordered digest publication in a bounded native call; no source authorization, production owner or persistence",
@@ -2176,7 +2187,8 @@
         "state_import/export_header_admission",
         "state_import/export_ordered_root_join",
         "state_import/export_order_step",
-        "state_import/export_post_finality_fold"
+        "state_import/export_post_finality_fold",
+        "state_import/durable_snapshot_shadow"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",
