@@ -104,7 +104,7 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
         import dev_loop_identity as bound
 
         bound.validate(loop_identity, expected_loop, intake, request, read(job / "FROZEN.json"),
-                       runtime=bound.runtime_identity(entries))
+                       runtime=bound.observed_runtime(entries, loop_identity))
     if plain_model:
         plain.check_catalog(job, listing["catalog"], pins["freeze"])
         plain.preflight(job, materials, pins["request"], retention_pin)
@@ -127,9 +127,10 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
         if retention_pin is not None:
             terms["source_retention_sha256"] = retention_pin
     if loop_identity is not None:
-        terms.update(schema=bound.ADMISSION, output_schema=bound.DELIVERY,
+        bound_admission, bound_delivery = bound.schemas(loop_identity)
+        terms.update(schema=bound_admission, output_schema=bound_delivery,
                      loop_identity=loop_identity, loop_identity_sha256=expected_loop,
-                     chain_evaluator_sources=bound.chain_sources())
+                     chain_evaluator_sources=bound.chain_sources(loop_identity))
     record(job / "ADMISSION.json", terms)
 
 
@@ -158,7 +159,7 @@ def execute(job, materials):
         require(sha(request_path.read_bytes()) == terms["request_file_sha256"], "original paired request bytes differ")
         plain.check_retention_record(job, terms)
         plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
-        if terms["schema"] == plain.BOUND_ADMISSION:
+        if terms["schema"] in plain.BOUND_ADMISSIONS:
             import dev_loop_identity as bound
 
             bound.check_terms(job, terms, live=True)
@@ -180,7 +181,7 @@ def execute(job, materials):
     if plain_model:
         plain.check_catalog(job, listing["catalog"], terms["pins"]["freeze"])
         plain.check_plain_result(result, terms)
-        if terms["schema"] == plain.BOUND_ADMISSION:
+        if terms["schema"] in plain.BOUND_ADMISSIONS:
             bound.check_terms(job, terms, live=True)
     require(result["schema"] == "hepta.paired-cold.result.v1" and result["circuit_loaded"] is (not plain_model)
             and result["external_teacher_calls_by_runner"] == 0 and result["request_sha256"] == terms["pins"]["request"],
@@ -312,7 +313,7 @@ def verify(job, *, expected_release=None):
         plain.check_retention_record(job, a)
         plain.check_catalog(job, read(job / "SOURCE.json")["catalog"], a["pins"]["freeze"])
         plain.check_plain_result(read(job / "evaluation/RESULT.json"), a)
-        if a["schema"] == plain.BOUND_ADMISSION:
+        if a["schema"] in plain.BOUND_ADMISSIONS:
             import dev_loop_identity as bound
 
             bound.check_terms(job, a)
