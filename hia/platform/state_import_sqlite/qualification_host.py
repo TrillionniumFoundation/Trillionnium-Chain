@@ -61,7 +61,11 @@ def run(message, reader, provider):
     writes = proposal_hex is not None
     if writes:
         proposal = bytes.fromhex(proposal_hex)
-        mode = {1042: "m13-sqlite-empty-delta-", 1298: "m13-sqlite-delete-delta-"}.get(len(proposal))
+        mode = {
+            1042: "m13-sqlite-empty-delta-",
+            1298: "m13-sqlite-delete-delta-",
+            1434: "m13-sqlite-insert-delta-",
+        }.get(len(proposal))
         if mode is None or message["advance"]:
             raise ValueError("Exact private single-delta replay input required")
         if not directory.parent.name.startswith(mode) or directory.name != "owned":
@@ -97,8 +101,8 @@ def run(message, reader, provider):
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))
             stopped_after_metadata = message.get("kill_after_update") and (phase, op) == (28, 10)
-            stopped_after_delete = message.get("kill_after_delete") and (phase, op) == (35, 10)
-            if writes and (stopped_after_metadata or stopped_after_delete):
+            stopped_after_row = (message.get("kill_after_delete") or message.get("kill_after_row")) and (phase, op) == (35, 10)
+            if writes and (stopped_after_metadata or stopped_after_row):
                 if amount != 24 or struct.unpack_from("<QQ", response) != (0, 1):
                     raise ValueError("Expected a real one-row uncommitted update before termination")
                 os.kill(os.getpid(), signal.SIGKILL)

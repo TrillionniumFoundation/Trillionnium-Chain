@@ -123,3 +123,27 @@ cold reopen must observe the exact complete predecessor in both cases.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_delete_write -v
 ```
+
+## Disposable single INSERT
+
+The distinct `INS1M13!` prefix uses the same reviewed metadata fields as
+DELETE and adds an actual BLOB value of 0–128 bytes; its predecessor-leaf
+slot is unused. The staged native reader checks the exact namespace and
+key against every ordered predecessor row. It refuses an existing tuple
+before any writable statement. The SQL is fixed `INSERT` without an
+update clause, so a conflict cannot replace a row. HIA binds the namespace,
+key and value as SQLite BLOBs and requires exactly one changed row and a
+count increase of one. Full reviewed metadata, actual row commitments,
+commit/close and publication are checked in the same way as DELETE.
+
+The exact retained Rust delta derivation and SQLite writer establish
+separate original successors for an empty value in an empty store and a
+128-byte binary value inserted among existing ordered rows. A preexisting
+key, stale proposal, excessive value length and wrong successor digest
+must refuse without changing cold Rust readback. The fixture terminates
+the native process after a real row insert and after a real metadata
+update; neither uncommitted transaction may survive original cold reopen.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_insert_write -v
+```

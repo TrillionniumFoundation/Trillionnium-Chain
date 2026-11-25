@@ -79,7 +79,8 @@
           "dw_bind",
           "dw_bind_count",
           "dw_sql_delete",
-          "dw_sql_update"
+          "dw_sql_update",
+          "dw_sql_insert"
         ]
       }
     ],
