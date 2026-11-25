@@ -1511,6 +1511,17 @@
       ]
     },
     {
+      "id": "service-settlement/read-only-store-uri",
+      "node_integration_complete": false,
+      "scope": "Linux byte-exact bounded URI construction for the original Settlement read-only SQLite pathname; does not open a store, validate sidecars, acquire a locking snapshot, perform replay, or establish Node integration",
+      "source": "hia/src/service_settlement/read_only_store_uri.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/rust_settlement_read_only_uri_reference.rs",
+        "hia/tests/test_settlement_read_only_uri.py"
+      ]
+    },
+    {
       "id": "release-bundle/file-descriptor",
       "node_integration_complete": false,
       "scope": "Native bounded Unix held-descriptor precheck and post-read metadata guard over private actual stat/offset records. Original dev/ino/mode/len/mtime/ctime equality and regular length offset checks; test host supplies held descriptor and receives honest IO events, does not reopen. Exact Rust observer/real synthetic held bytes differential only; no native syscall, production custody, path attestation or immutable snapshot.",
@@ -2159,7 +2170,9 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "service-settlement/read-only-store-uri"
+      ],
       "legacy_path": "trillionnium/crates/trnm-service-settlement",
       "module": "M12",
       "package": "trnm-service-settlement",
