@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/export_header_admission",
+      "node_integration_complete": false,
+      "scope": "M13 original verify_export_v0 pure header check before independent finality; exact row-count geometry and stored header digest equality, no verifier or capability",
+      "source": "hia/src/state_import/export_header_admission.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_header_admission.py",
+        "hia/tests/rust_state_import_header_admission_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/export_merkle_root",
       "node_integration_complete": false,
       "scope": "M13 original ordered export Merkle root with true empty and odd-layer rules on bounded borrowed digest leaves; no row ordering, export admission, finality or durable owner",
@@ -2128,7 +2139,8 @@
         "state_import/reserved_namespace",
         "state_import/finalized_export_header_digest",
         "state_import/export_row_validate",
-        "state_import/export_merkle_root"
+        "state_import/export_merkle_root",
+        "state_import/export_header_admission"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

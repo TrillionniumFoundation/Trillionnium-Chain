@@ -83,3 +83,30 @@ borrowed scratch ceiling admits at most 32,726 leaves in one call; this is a
 local ABI bound, not a change to the original export row-count policy. This
 method does not validate, sort or deduplicate leaves, verify a finalized
 source, issue an authorization, or qualify persistent import.
+
+## Export header admission before independent finality
+
+`export_header_admission.hepta` implements the complete pure header predicate
+before the original `verify_export_v0` calls `SourceFinalityVerifierV0`. It
+requires nonzero source identities, source height, export root and stored
+header digest; an exact nonzero row count at most 100,000,000; and equality of
+the stored and natively recomputed header digests. It never examines rows
+before finality: the original may report a finality refusal in the presence
+of invalid or unsorted rows.
+
+The local input appends one big-endian `u64` observed rows length to the
+240-byte header fixture. The returned status is not a verified export:
+0 means only that an independent finality verifier may be called; 107 maps to
+original `InvalidExportHeader`. Malformed fixture extent (100), short private
+scratch (102), and internal hash refusal (103) are local transport errors.
+The second ABI span is untouched, and private hash computation requires
+1,529 scratch bytes. This entry never calls a finality verifier, issues a
+capability or admits a batch, nor does it validate the provided count against
+actual rows from an independent host.
+
+The exact Rust differential calls the original `verify_export_v0` with
+intentionally invalid row objects and a separate refusing sentinel. It verifies
+that valid header cases reach the sentinel exactly once and that rejected
+headers reach it zero times; it never allows the original post-finality loop.
+The separate high-count ABI control supplies an observed length, not a
+fabricated Rust vector of 100 million rows.
