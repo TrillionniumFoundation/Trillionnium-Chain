@@ -27,7 +27,7 @@ def execute(argv, *, timeout=30, **kwargs):
     return answer
 
 
-def original_adapter(out, *, metadata=False, operation=False):
+def original_adapter(out, *, metadata=False, operation=False, marker=False):
     source = (STORE / "src/store.rs").read_bytes()
     pieces = []
     for name in (b"META_SQL", b"OP_SQL", b"COMMITTED_BLOCKS_SQL"):
@@ -71,14 +71,14 @@ def original_adapter(out, *, metadata=False, operation=False):
     binary = out / "original"
     extra = []
     adapter = "rust_settlement_schema_reference.rs"
-    if metadata or operation:
+    if metadata or operation or marker:
         [owner] = [unlinked_path(p) for p in settlement["filenames"] if p.endswith(".rlib")]
         [borsh_event] = [e for e in events if e.get("reason") == "compiler-artifact"
                          and e["target"]["name"] == "borsh"]
         [borsh] = [unlinked_path(p) for p in borsh_event["filenames"] if p.endswith(".rlib")]
         extra = ["--extern", f"trnm_service_settlement={owner}", "--extern", f"borsh={borsh}"]
         adapter = "rust_settlement_metadata_reference.rs"
-    if operation:
+    if operation or marker:
         for dependency in ("sha2", "trnm_task_kernel"):
             [event] = [e for e in events if e.get("reason") == "compiler-artifact"
                        and e["target"]["name"] == dependency
@@ -97,12 +97,29 @@ def original_adapter(out, *, metadata=False, operation=False):
             raise ValueError("Exact retained M12 operation lookup source differs")
         (out / "operation.rs").write_bytes(lookup)
         adapter = "rust_settlement_operation_reference.rs"
+    if marker:
+        parts = []
+        for name in (b"JOURNAL_SCHEMA_VERSION_V1", b"MAX_OPERATION_ROWS_V1", b"MAX_COMMITTED_BLOCK_ROWS_V1"):
+            [part] = re.findall(rb"(?m)^const " + name + rb": [^\n]*;\n", source)
+            parts.append(part)
+        [record] = re.findall(rb"(?ms)^struct CommittedBlockMarkerV1 \{.*?^\}\n", source)
+        parts.append(record)
+        for name in (b"load_committed_block_markers", b"load_committed_block_markers_with_limit",
+                     b"committed_block_marker_checksum", b"config_bytes", b"from_sqlite", b"array32"):
+            [part] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
+            parts.append(part)
+        marker_src = b"\n".join(parts)
+        if hashlib.sha256(marker_src).hexdigest() != "7b0ff70ff09fd2298fea8a4efa5949e79df4bbb2416d099bf527e1537b6f5664":
+            raise ValueError("Exact retained M12 committed-block marker source differs")
+        (out / "markers.rs").write_bytes(marker_src)
+        adapter = "rust_settlement_marker_reference.rs"
     execute([rustc, "--edition=2024", "-Dwarnings", "--extern", f"rusqlite={rust}", *extra,
              "-L", f"dependency={rust.parent}", "-L", f"native={native[7:]}",
              Path(__file__).with_name(adapter), "-o", binary],
             timeout=60, env={**os.environ, "TRNM_SETTLEMENT_SCHEMA_SOURCE": str(section),
                              "TRNM_SETTLEMENT_SCHEMA_ERROR": str(STORE / "src/error.rs"),
                              "TRNM_SETTLEMENT_OPERATION_SELECTED": str(out / "operation.rs"),
+                             "TRNM_SETTLEMENT_MARKERS_SELECTED": str(out / "markers.rs"),
                              "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
     return binary, unlinked_path(provider_source["manifest_path"]).parent
 

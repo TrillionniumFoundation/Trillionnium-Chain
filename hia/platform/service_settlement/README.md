@@ -101,3 +101,24 @@ Settlement fixture. It compares present and absent observations, held
 rollback reads and failure controls. Native lookup does not supersede
 Rust's strict typed Borsh decodes and derived operation/receipt identity,
 nor production Store metadata checks, replay, confirmation or trust.
+
+### Bounded committed-block marker checksum and linkage
+
+`marker_read.hepta` reads the original typed fields in marker-sequence order
+inside the same read-only SQLite transaction as the original schema check.
+The disposable test fixture binds the independently original genesis height,
+block ID, state root, empty operation-journal root, and canonical configuration.
+HIA checks the original checksum domain and length-framed marker fields,
+the original configuration-bound predecessor checksum, the anchor and every
+direct parent link. It checks marker-sequence continuity, height advancement,
+parent identity, predecessor checksum, and source sequence/state/operation
+roots against the prior row's targets. It refuses empty journals and states
+a private maximum of 64 marker rows, not a new production limit.
+
+Only after finalize and close does the handler publish a 40-byte observation
+(row count and tail checksum). The original owner still checks operation
+ranges and canonical operation roots by replay, target state and metadata
+head, and all production Store and authority rules. The original differential
+uses its public Store API to create the anchor, commit commands and advance
+empty blocks, and its exact retained Rust marker loader and public readback
+for comparison, including a checksum-valid but invalid direct-parent fixture.

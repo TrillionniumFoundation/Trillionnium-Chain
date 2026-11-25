@@ -3155,6 +3155,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-marker-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 read-only ordered committed-block marker checksum, original fixture anchor and direct linkage in one held schema-checked rollback-journal transaction. Genuine original Store fixture rows; no operation replay, root recomputation, production owner or authority.",
+      "sources": [
+        "hia/platform/service_settlement/marker_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_marker_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-operation-read",
       "node_integration_complete": false,
       "retirement_accepted": false,
