@@ -1,0 +1,145 @@
+{
+  "attempts": [
+    {
+      "authorized_max_compile_and_test_seconds": 60,
+      "cargo_lock_sha256": "de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5",
+      "commands": [
+        {
+          "argv": [
+            "/opt/homebrew/opt/rustup/bin/rustfmt",
+            "--edition",
+            "2024",
+            "src/pon_work/noise_frame.rs"
+          ],
+          "returncode": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_tail": "",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_tail": "",
+          "wall_seconds": 0.043522833
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/rustup/bin/cargo",
+            "generate-lockfile"
+          ],
+          "returncode": 0,
+          "stderr_sha256": "d4043d6cc4b5485e447028b5b8e297856983e867d8d7909f08f95b543335df37",
+          "stderr_tail": "    Updating crates.io index\n     Locking 10 packages to latest Rust 1.95.0 compatible versions\n      Adding generic-array v0.14.7 (available: v0.14.9)\n      Adding sha2 v0.10.9 (available: v0.11.1)\n",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_tail": "",
+          "wall_seconds": 25.78789775
+        }
+      ],
+      "error": "engineering subprocess timeout",
+      "passed": false,
+      "scope": "isolated bounded module equivalence; not full repository, E1-E6, pressure or performance qualification",
+      "source_capsule_sha256": "e00cdd3720c204cb3ffffd4d7424943cda96c486cf9ee4da5362b2481a65b131",
+      "tested_module_sha256": "35ddb5e17815d9ad54a3461157fc075d348107b553767e82e85db995af044713",
+      "wall_seconds": 60.008960124999994
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/rustup/bin/cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "attempt": 2,
+      "cargo_lock_sha256": "de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5",
+      "child_system_cpu_seconds": 0.013408999999999999,
+      "child_user_cpu_seconds": 0.029965,
+      "cumulative_two_attempt_wall_seconds": 60.056405209,
+      "effective_wall_limit_seconds": 29.991039875000006,
+      "first_attempt_cpu_seconds": null,
+      "first_attempt_passed": false,
+      "first_attempt_wall_seconds": 60.008960124999994,
+      "maximum_attempt_seconds": 30,
+      "module_sha256": "35ddb5e17815d9ad54a3461157fc075d348107b553767e82e85db995af044713",
+      "passed": false,
+      "returncode": 101,
+      "scope": "separate authorized offline engineering completion; original attempt remains failed; no old E6 or pressure qualification",
+      "stderr_sha256": "1f5a385ba9f8be2dd7bbdcc19d3b32390ee1f3ca61f5aeb456f7daaf27fe2c5d",
+      "stderr_tail": "error: failed to download `libc v0.2.191`\n\nCaused by:\n  attempting to make an HTTP request, but --offline was specified\n",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_tail": "",
+      "timed_out": false,
+      "wall_seconds": 0.047445084
+    },
+    {
+      "attempt": 3,
+      "cargo_lock_sha256": "de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5",
+      "cumulative_all_attempt_wall_seconds": 70.13139029199999,
+      "error": {
+        "message": "official-locked-libc-download_FAILED",
+        "type": "RuntimeError"
+      },
+      "first_attempt_cpu_seconds": null,
+      "module_sha256": "35ddb5e17815d9ad54a3461157fc075d348107b553767e82e85db995af044713",
+      "passed": false,
+      "prior_attempt_statuses": [
+        "FAIL_TIMEOUT_DEPENDENCY_ACQUISITION",
+        "FAIL_OFFLINE_MISSING_LOCKED_LIBC"
+      ],
+      "prior_cumulative_wall_seconds": 60.056405209,
+      "remaining_authorized_seconds": 29.943594791000002,
+      "scope": "isolated engineering module equality only; original E1-E6 and pressure qualification unchanged",
+      "stages": [
+        {
+          "argv": [
+            "curl",
+            "--fail",
+            "--silent",
+            "--show-error",
+            "--proto",
+            "=https",
+            "--connect-timeout",
+            "4",
+            "--max-time",
+            "10",
+            "--max-filesize",
+            "8388608",
+            "--output",
+            "/tmp/chain-w1-noise-engineering-20261125-7c9e/attempt-3-locked-libc/libc-0.2.191.crate.part",
+            "https://static.crates.io/crates/libc/libc-0.2.191.crate"
+          ],
+          "child_system_cpu_seconds": 0.013333999999999999,
+          "child_user_cpu_seconds": 0.022494999999999998,
+          "returncode": 28,
+          "stage": "official-locked-libc-download",
+          "stderr_sha256": "e586700a60019206e7c0cb98db61d687046a4afb0a02d1e1a401365056273653",
+          "stderr_tail": "curl: (28) Operation timed out after 10007 milliseconds with 220643 out of 855401 bytes received\n",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_tail": "",
+          "timed_out": false,
+          "wall_seconds": 10.072840541000001
+        }
+      ],
+      "wall_seconds": 10.074985083,
+      "within_authorized_cumulative_bound": true
+    }
+  ],
+  "cumulative_wall_seconds": 70.13139029199999,
+  "first_attempt_cpu_seconds": null,
+  "original_E6_budget_used": 0,
+  "original_pressure_qualified": false,
+  "performance_qualified": false,
+  "schema": "w1-noise-frame-engineering-attempts-v1",
+  "scope": "isolated engineering capsule; not repository Cargo-graph qualification or original E1-E6",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+      "sha256": "35ddb5e17815d9ad54a3461157fc075d348107b553767e82e85db995af044713"
+    }
+  ],
+  "tests_executed": 0,
+  "tests_passed": 0,
+  "third_stage_original_host_job": "main/1a2126143b2-ffbe-3f87"
+}

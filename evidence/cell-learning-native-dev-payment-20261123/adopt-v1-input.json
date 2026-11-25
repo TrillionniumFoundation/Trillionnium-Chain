@@ -1,0 +1,19 @@
+{
+  "bindings": "../cell-learning-business-readback-20261109/bindings/adopt-v1.json",
+  "bindings_sha256": "8ba561db51a2808a3d6a4ebcc684436cbb3619c94387c0f3939eadc34b7c88a8",
+  "initial_sha256": "ad8cab25a363c0ef8555c1178edd9fddb202c8f5c916a026285f79b8bec8a124",
+  "invocation_id": "archived-adopt-v1",
+  "materials": "../hepta-real-native-adoption-20261108/chain-reader/adopt-v1",
+  "operation_id": "learning-d9fb-native-adopt-v1",
+  "schema": "trnm-isolated-learning-dev-replay-input-v1",
+  "source_pair": {
+    "chain": {
+      "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+      "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+    },
+    "hepta": {
+      "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+      "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+    }
+  }
+}

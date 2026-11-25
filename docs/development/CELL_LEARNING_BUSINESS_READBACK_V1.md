@@ -104,6 +104,17 @@ Two new application-level SHA-256 domains define an opt-in contract mapping:
   completed learning head, Selection/NoUpdate, selected complete bundle, next
   task/input, original committed-step receipt and cost-source digest.
 
+Before dispatch, the payer can calculate the existing `terms.request` from the
+original admission checkpoint. For the inputs, run
+`python3 scripts/cell_learning_business_join.py prepare-request --help`.
+Provide the independently retained SHA-256 of the
+initial checkpoint, expected operation ID, invocation ID and the Chain and Hepta
+commit/tree pairs. The command checks the initial checkpoint, requires zero
+recorded stages, and prints one lowercase request digest. Record the inputs and
+use this digest when the authorized payer reserves the contract. The existing
+completion reader recomputes the same digest after Selection or NoUpdate. This
+offline computation alone creates no contract, timestamp, authorization or payment.
+
 Canonical JSON is ASCII, sorted by key, uses compact separators and rejects
 non-finite values. These are new application mapping namespaces; no existing
 signed native domain, stored schema, authority or owner is changed.
@@ -184,3 +195,72 @@ consensus-cost qualification remain separate obligations.
 
 All source-execution, independence, physical-installation, complete-cost,
 settlement, FinalUse and production qualification flags remain false.
+
+## Isolated development ledger replay
+
+`prepare-request --contract-fields` emits four values for a funded service
+reservation. `request` retains the existing application digest. `model` identifies
+the complete baseline bundle in the initial checkpoint, `input` identifies its
+source task receipt, and `evaluation_protocol` identifies its evaluation
+profile. A payer supplies the other contract terms. A selected candidate can
+first be bound to the delivered output once the original completion is available.
+
+Run the two local integration cases from the repository root with Python 3 on
+PATH. The capture switch emits each original native paid-v3 JSON report inside
+the fixture observation wrapper.
+
+```sh
+TRNM_CAPTURE_NATIVE_TASK_CURRENT_V3=1 cargo test --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --test native_task_operation_v2 learning_contract:: -- --nocapture --test-threads=1
+```
+
+To replay another retained operation, supply an input file shaped like the
+[Selection input](../../evidence/cell-learning-native-dev-payment-20261123/adopt-v1-input.json).
+Its material directory contains the six original files `initial.bin`,
+`selection.bin`, `completed.bin`, `readback.json`, `freeze.json` and
+`expected.json`. Material and business-bindings paths resolve from the input
+file. Retain the initial pin and source pair independently. This development
+replay accepts original business bindings with an empty economics history.
+It requires the retained completion materials and does not run training.
+
+```sh
+TRNM_DEV_LEARNING_INPUT=/absolute/path/to/input.json TRNM_CAPTURE_NATIVE_TASK_CURRENT_V3=1 \
+  cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node \
+  --test native_task_operation_v2 learning_contract::supplied_learning_contract_replays_on_isolated_dev_ledger \
+  -- --exact --ignored --nocapture
+```
+
+Each case opens its own temporary authenticated development Node and M12 operation
+store. It signs a reservation against the initial checkpoint, records Begin, then
+replays the pinned terminal learning materials. The provider signs the delivery
+of the computed result. The development arbitrator signs the service payment.
+The case closes both stores, reopens them, and verifies the full contract,
+output, completion head, payment operation and amount against the native owner.
+It also checks refusal with a changed model commitment.
+
+The [Selection observation](../../evidence/cell-learning-native-dev-payment-20261123/adopt-v1.json)
+and [NoUpdate observation](../../evidence/cell-learning-native-dev-payment-20261123/no-update-v9.json)
+each record a service fee of 2,000 native development units on a separate fresh
+ledger. Their public development keys and cost declarations are controlled by
+the runner. The historical learning operations retain their original unfunded
+status. These replays establish neither an independent customer's payment nor
+an independent consumer's use, model improvement bonus, or consensus credit.
+
+A paired cold evaluation that names a coding-SFT model manifest uses a different
+identity from a native compatibility bundle. Joining the two requires an owner
+that checks the actual model components and commits to that manifest. The native
+next-use receipt here belongs to the source principal. Identifying a subsequent
+consumer requires their own authorization and receipt bound to the same model,
+task and output.
+
+
+A [separate general funded evaluation](../../evidence/cell-circuit-funded-evaluation-20261123/README.md)
+reserved a native development fee before executing the frozen two-arm Circuit.
+Its contract binds the candidate manifest, evaluation request, newly produced
+results and measured CPU. This commission uses the native service owner directly
+and preserves the scope of the historical training receipts above.
+
+The [funded public historical A evaluation](../../evidence/cell-historical-funded-evaluation-20261123/README.md)
+uses a distinct native service request for one seen training task and an authored
+retention item. It retains the original retrospective task labels and its own
+signed reservation, measured costs, cold outputs and development fee.

@@ -70,6 +70,7 @@ impl Witness {
             signer(&witness),
         )
         .unwrap();
+        owner.enable_development_diagnostics();
         let socket = directory.join("w.sock");
         let listener = UnixListener::bind(&socket).unwrap();
         listener.set_nonblocking(true).unwrap();
@@ -216,7 +217,8 @@ pub(super) fn command(
         );
         command
             .arg("--witness-writer-key")
-            .arg(directory.join("writer.pem"));
+            .arg(directory.join("writer.pem"))
+            .args(["--witness-phase-diagnostics", "true"]);
     }
     command
 }
@@ -289,7 +291,8 @@ fn stderr_observation(mut stream: impl Read) -> Value {
     json!({"observed_bytes":bytes,"observed_sha256":hex::encode(digest.finalize()),
         "marker_scan_bytes":prefix.len(),"marker_scan_truncated":bytes > prefix.len() as u64,
         "known_markers":markers,"read_error_kind":error,"raw_text_redacted":true,
-        "connection_refusals":refusal_diagnostics::records(&prefix)})
+        "connection_refusals":refusal_diagnostics::records(&prefix),
+        "witness_phase_refusals":refusal_diagnostics::witness_records(&prefix)})
 }
 
 fn child_observation(status: std::io::Result<Option<ExitStatus>>) -> Value {

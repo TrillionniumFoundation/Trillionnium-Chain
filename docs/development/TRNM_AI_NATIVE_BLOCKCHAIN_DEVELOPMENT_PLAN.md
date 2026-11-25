@@ -1,3 +1,519 @@
+# 2026-11-25 — Borrowed Response signing bytes and current source bindings
+
+This isolated engineering candidate starts from the actual reviewed Chain
+commit `6ee5ec33746cf58b6dc3ca4723570aeb445d09de`, tree
+`5e5a038d77291ada09b09cbb8d6da5e5791eaeaf`. It removes a concrete redundant
+allocation path: signing and verifying a public Response previously cloned
+eight strings and the complete JSON value before serializing an otherwise
+unchanged unsigned response. A private borrowed serialization view preserves
+the eleven fields, their original order, the empty signature field and the
+original domain-separated message construction. It neither caches a digest nor
+changes a signature, protocol namespace, challenge, Host check, request deadline,
+confirmation depth or resource limit.
+
+Four new native controls are authored for exact original serialization bytes,
+every field's signed contribution, bounded JSON values and the existing real
+signer/verifier plus all four progress refusal boundaries. They have not yet
+executed on this candidate. They are separate from the 131 retained Corpus
+controls and do not add passes to that older roster. The reviewed Rust 1.95
+formatter ran once on the two source files: production bytes were unchanged;
+only test layout and trailing commas changed. Formatting is not compilation,
+native equivalence, a measured time saving or a pressure result.
+
+The current lifetime correspondence continues to declare the same 21 paths;
+only the Response source hash changes. The original 46-path root inventory and
+their single shared release path retain a 66-path declared union. The matching
+current reader and composition pins follow these reviewed bytes. Original
+historical model, source lock, composition, arithmetic, false qualification
+fields and null lifetime bounds remain intact.
+
+The unchanged native inventory policy adds the new Rust control module, from
+1,750 to 1,751 selected paths. The current Corpus overlay preserves all 2,613
+frozen blob identities, expands its reviewed replacement set from 32 to 33,
+and explicitly adds this control module as the third current-only addition.
+The resulting 2,616 declared paths have independent current-map and canonical
+blob-snapshot pins in the reader. The map and reader remain outside their own
+declared set and require the existing complete committed-source CI recorder.
+The generated inventory embeds all three changed configuration JSON files:
+the current lifetime map, composition manifest and current Corpus map. It does
+not select the Python readers. These declarations are not a complete dependency
+graph or a proof of the native binary's cryptography.
+
+The current metadata fixture independently names the third addition and expects
+three additional paths. Its original 18 names and all refusal conditions remain;
+the existing source-tampering loop also covers the new path. The 113 frozen
+historical controls retain their original source bytes.
+
+The four frozen Corpus inputs, all 131 original control names, the original
+bounded descriptor and coverage checks, provider contract, 600-second CI cap,
+Cargo lock and production activation boundaries are unchanged. Earlier source
+refusals, original pressure failures and their costs remain retained under
+their original identities. A successful earlier commit cannot qualify these
+new bytes. Future exact-source observations must separately establish current
+correspondence, native control execution and any performance improvement.
+
+All current outputs retain HOLD, false native/security/deployment/campaign
+qualification and a null actual lifetime failure bound. No old E1–E6 allocation
+is reset, reused or renamed. This candidate does not establish the four-second
+confirmation target, useful learning, a new foundation model or release
+qualification.
+
+The complete preceding sole plan follows without deletion or amendment.
+
+# 2026-11-25 — Current PQ declared-source correspondence, independent V2
+
+The current engineering parent is Chain commit
+`92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7`, tree
+`7118a8748cfaa2a580e703afd6090eee559a9a58`. Its actual CPQ1 ARM command in run
+45644157214 / job 139310473789 refused at the first changed frozen source,
+`.github/workflows/chain-hepta-closure-candidate.yml`. The original source
+receipt and log are retained under
+`evidence/pq-corpus-current-source-20261125-v2/`. The command's 7.470137729-second
+observation remains a failure. Later CPQ native commands did not execute.
+
+The immutable V1 corpus, its checker, negative controls, descriptor reader and
+four original workflow callers are unchanged. The frozen V1 entry must continue
+to reject source outside its original pin set. No result here substitutes for
+that entry, replays its campaign, or grants its old qualification to new source.
+
+This current-only namespace checks all 2,613 original declared paths, preserving
+each old blob identity while naming exactly 30 reviewed replacements. It adds
+the separately reviewed `pon_work/noise_frame.rs` and witness
+`development_observation.rs` modules, yielding 2,615 current declared paths.
+Both the delta map and canonical current blob snapshot have independent pins in
+the new reader. The original bounded PQ coverage traversal and canonical-provider
+constraints remain active. Separate descriptor reads are not an immutable Git
+snapshot or a complete Rust dependency graph; the new reader, control roster,
+workflow and all other committed bytes need independent exact-head CI binding.
+
+The embedded native source inventory receives only the two missing module paths
+and the new current-map configuration path. Its expected count changes from
+1,747 to 1,750 under the original generator policy. This repairs the observed
+repository inventory gap without changing that generator or any frozen pin.
+
+The proposed metadata lane records 18 new current-entry controls and all 113
+unchanged V1 controls (99 direct methods and 14 inherited descriptor controls),
+requiring every exact name once and no skips. It separately checks current source
+correspondence and the original inventory policy between complete clean-source
+observations. Before actual execution these are required controls, not results.
+The root owns the isolated bounded engineering launch; no old E1–E6 allocation
+is reset, reused or relabeled. Every original failed attempt and its cost remains.
+
+All outputs retain HOLD, false native/security/deployment/campaign qualification
+and a null actual lifetime failure bound. This source change does not establish
+cryptographic soundness, the 250 ms witness objective, pressure performance,
+full dependency coverage, learning efficacy, CodeQL acceptance or production
+activation. Each of those retains its own original evidence and unresolved gate.
+
+The complete preceding sole plan follows without deletion or amendment.
+
+**Witness completion and current W1 source bindings, 2026-11-25 UTC — HOLD:**
+
+This isolated review candidate is based on #1000 at `6b851bc64db9d87db1bae083654902846f14c275`. Its 20 source
+changes address two observed repository gates. Native Clippy rejected two
+immediately invoked closures around the test observation macro. Private
+`handle_observed` and `serve_one_observed` methods now contain the original
+operation bodies, while the public owner finishes the development observation
+after every normal result. Both macro configurations keep their `?` and early
+return boundary. The original deadline is computed before observation; the
+250 ms limit, dynamic Host checks, storage, permission, cancellation and late-CAS
+semantics are unchanged. No lint exemption or claim of compiled equivalence is
+introduced. The exact Rust source was formatted once with the reviewed 1.95
+binary; its own new-source native CI remains required.
+
+The second gate rejected the current `pon_work.rs` size/hash after the already
+reviewed noise-framing module was introduced. The new current W1 inventory
+includes that existing module: 145 to 146 files, 123 to 124 Rust files, the same
+six crates, six path-dependency edges and eight literal include targets. The
+16 selected project paths, 15 open obligations, frozen V1 reader/contract,
+upstream source/proof identities, locks, historical fixtures and unknown costs
+remain. This limited inventory is not a full Rust module graph, build closure
+or PQ qualification. The current PQ correspondence still declares 21 paths;
+only its Witness source pin follows the formatted method boundary.
+
+Every reviewed active current consumer follows the new source bytes: proof
+profile and upstream-withdrawal mapping, route inputs, hash-use inputs, fixed
+cost inputs, joint qualification and lifetime overlays. The 31 declared
+hash-use paths and 19-use semantics, four-source cost scope, 23-source joint
+scope and 20-source lifetime scope remain explicit. Historical pins and
+activation/qualification fields remain unchanged. The candidate descriptor
+changes from `2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4`
+to `fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3` because its
+definition includes the current mapping and selected source bytes. The active
+CI flag and positive tests require the new digest; the original digest is now
+also an explicit refusal case. The descriptor reader itself is unchanged.
+
+Four separately identified metadata execution attempts consumed 11.07193668999389 s of
+one 30 s engineering allocation. The first three original capsule results
+remain FAIL: an inherited-test roster error despite 82 actual successes;
+37 successes and two profile errors after 29 other successes; then 128
+successes followed by a sparse import configuration failure before the planned
+16 fixed-cost controls ran. The final continuation executed only the remaining
+51 named controls and ten report CLIs. Across all original snapshots there are
+290 distinct successful controls, 327 successful test events, 37 repeated
+successes, two real control errors and one loader error. These are not a
+single-head 290-test qualification. All four source/input snapshots, failed
+records, exact logs and inclusive owner/child CPU costs are retained. The
+final 350 inputs were checked before and after; the three added configuration
+files are unchanged bytes from the same Git base. No Rust build, native test,
+pressure campaign or original E1–E6 budget was used by these capsules.
+
+All ten reports preserve their HOLD or affected-upstream status and false/null
+qualification. The original #999/#1000 Clippy failures, W1 current-map refusal,
+ARM 16-worker confirmation failure and old-source runtime identities remain
+separate evidence. Neither the four-second confirmation target nor the 250 ms
+Witness deadline is widened. The Witness deadline cause remains unproved.
+Existing 1+3 native controls belong to their actual earlier source identities;
+they do not qualify this new candidate. No scan waiver, settings change,
+production activation, merge or old campaign replay is included.
+
+Evidence is in `evidence/witness-boundary-w1-current-20261125/`. The compact raw
+record envelope preserves each exact original byte sequence with independent
+SHA-256 and compression hashes; the readable readback and source review state
+the scope of every observation. The complete preceding sole plan follows
+unchanged below.
+
+**Current PQ declared-path correspondence refresh, 2026-11-25 UTC — HOLD:**
+
+This stage repairs current source metadata after two reviewed engineering changes.
+It preserves the frozen PQ128 V1 model, source lock and original experiment.
+The exact parent is #999, commit `875234c4d2c3621fa6aac49224122067f149f3f4`,
+tree `3036919a5b813cc90c048dd3c0829d97fbf61a63`.
+
+## Actual failure and minimal change
+
+Original #999 run `45619422244`, job `139223277825`, failed before Rust in
+`test_pq_chain_claim_guard`: 57 controls were attempted and ten errored because
+the current correspondence still pinned older source. The original artifact
+`15025006693` is 11,772 bytes with SHA-256
+`f7ee0f7bc33e8532e9e81eb45fe16bca1414abf5cdb8d716358dd8d9da07417a`.
+The original failure remains a failure.
+
+All 21 original declared event paths were independently hashed at the parent.
+Only `pon_work.rs` and `pq_rollback_witness.rs` differed. The former uses the
+reviewed immutable W1 framing helper; the latter adds explicitly enabled
+development diagnostics while preserving the original 250 ms witness deadline.
+The current map now binds those reviewed bytes and its exact aggregate digest;
+the reader changes only its two reviewed metadata pins. The other nineteen
+path hashes, the path roster, strict hash equalities and reader logic are intact.
+
+The original current map is retained in complete bytes at SHA-256
+`5328f618642aa14125b6325ebcc2285f8be85cf39843a11c6d9157863a0c27c6`.
+Its replacement is `812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2`;
+the new declared-file snapshot is
+`dc07a48f35a976b01d1c87e15f0cc96be5f4becf4d813d2ddde692df5b271fc8`.
+
+## Scope and preserved boundaries
+
+The V1 model manifest remains
+`0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd`,
+the V1 source lock remains
+`094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2`,
+and the frozen revision remains `0f9b30549328e5be20f4d3e6e27bd132b42d90de`.
+Every result remains `HOLD`; actual lifetime failure probability is unknown and
+all security, applicability, composition and production qualification flags
+remain false. No frozen E1–E6 budget, task, campaign or old CI run is reset.
+
+The 21 paths are the original event declarations. They are not a complete
+source dependency set or proof of Git provenance. The newly referenced W1 and
+Witness helper files are separately retained and reviewed in the drift record.
+No original path is deleted to make the declared count fit, and this stage
+claims no whole-chain lifetime bound or current model applicability.
+
+## Independent engineering validation
+
+Root launched the one independent Linux metadata capsule. Its 110 source
+inputs matched before and after execution. All 25 current-correspondence
+controls and 57 original claim-guard controls passed: 82 executed, zero skipped.
+An independent readback matched every named test to the unchanged source test
+classes, including inherited filesystem controls. All seven commands exited
+zero with resolved owned-process cleanup. Both actual CLI reports remained
+HOLD with false/null qualification fields; the model still has eight unknown
+terms and four unknown query budgets. The original V1 reader still refuses
+current-source substitution.
+
+The measured capsule interval was 1.1737242989984225 seconds within its new
+30-second bound, with 1.136737 seconds of observed owner and reaped-child CPU.
+These are scoped metadata-control costs, not the cost of the whole task and
+not evidence of a training or pressure advantage. The exact attempt SHA-256 is
+`e10bcb446daf07da0355ed377eb57daa76b4305c8ababd5fb1389e1e96adc893`.
+The independent readback is
+`a705b07527749c21f1bf698b040a699959d80ff00121273368ca370b907d8b11`.
+Local sparse-checkout/preflight preparation failures are also retained; no
+failed original observation was rerun or converted into a pass.
+
+The immutable capsule keeps its source manifest, exact commands, original
+failures, logs, wall time and observed owner/reaped-child CPU. It executes no
+Cargo command, native test, training, network qualification or historical model
+program. A passing capsule means only that current correspondence is readable
+and all existing tamper and promotion refusals still hold.
+
+The parent #999 native fullpath job `139223279553` separately passed its exact
+identity selector and three W1 framing controls. Its original summary hash is
+`87146e8398c4c52889906f7f6176b87128ade41d2f6ab66209ab3a47dc75dcce`.
+That observation is retained under its own source identity; it does not qualify
+this new commit, pressure performance, the five Witness observer controls, two
+CLI controls or four parser controls. Those new native paths still require
+their own actual execution evidence. The original Witness deadline cause
+remains unresolved.
+
+---
+
+**Explicit development witness phase observations, 2026-11-25 UTC — HOLD:**
+
+The original prospective-source runtime job
+[139120929254](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45589881222/job/139120929254)
+failed on `ac2600d129d050154cbf8edb3cdd5b2be7f80244` after the first live request
+following the binary reopen. Its retained child observation was still running
+477,898 microseconds after spawn, with readiness at 73,996 microseconds. The
+connection refused in `request_dispatch` with `PQ_WITNESS_DEADLINE` after
+260,217 microseconds in that stage. The later SIGKILL was fixture cleanup. This
+is evidence of the original 250 ms witness cap being reached; it does not
+identify signing, verification, scheduling, wire waiting or durable storage as
+the cause. The original failure remains a failure. No timeout or SQL check is
+relaxed to infer a fix.
+
+A new explicit `--witness-phase-diagnostics true` selector follows the existing
+`--development` gate. Enablement follows all original owner-input guards. Ordinary client and
+service construction remains disabled. The observation starts after the
+original absolute deadline is chosen. It records fixed phase enums, bounded
+integer costs and nullable same-thread CPU, without keys, request bodies,
+checkpoint roots, paths or arbitrary errors. The request result, pre-transport
+availability behavior, post-transport fail-closed behavior and authenticated
+late-CAS reconciliation are preserved. Host, storage identity, permissions,
+schema, row, signature, deadline and reopen checks remain in place.
+
+`trnm-pq-witness-phase-v1` emits failures or an already-completed late result,
+with at most 16 attempts per process and 2,048 body bytes per record. There is
+one write attempt per record; interruption, partial output or write failure is
+not retried. The collector retains its original 4 KiB stderr prefix and only
+projects the versioned enum/integer schema from records with a retained final
+LF. Complete JSON without that terminator remains a partial observation. A first failure summary can fit
+inside that prefix; preceding unrelated output or a partial write can still
+leave observation unknown. Bounded bytes do not establish a wall-time bound
+for an arbitrary blocked stderr sink. Clock sampling, stderr locking and the
+write are diagnostic cost, and the existing supervisor timeout remains.
+
+One separately authorized engineering capsule used no Cargo, dependency
+download, old campaign or E1-E6 budget. Rustfmt 1.9.0 with edition 2021 parsed
+and formatted the seven changed Rust files. Rustc 1.95.0 on
+`aarch64-apple-darwin` compiled the standalone observer and its five named
+controls passed, with zero ignored tests. Inclusive capsule wall time was
+3.366353083 seconds and reaped child CPU was 0.515119 seconds within its
+independent 30-second bound. A later independent review found that a complete
+JSON value could be accepted despite a missing final LF. The new collector and
+its boundary cases were corrected; a format-only continuation consumed
+0.146917708 seconds and 0.061182 seconds of child CPU. The combined engineering
+wall time is 3.513270791 seconds and child CPU is 0.576301 seconds, still within
+the same 30-second cap. The unchanged observer controls were not rerun, and the
+revised parser was not claimed to have executed. These are module controls, not
+a full CLI build or native deadline success. Linux thread-CPU compilation, the two CLI gate
+controls, four parser controls, strict Clippy, and the original native witness
+path remain subject to the new exact-source CI. The scope, exact inputs,
+commands, output hashes and authoritative terminal observation are retained
+in the [engineering attempt](../../evidence/pq-witness-phase-20261125/engineering-attempt.json),
+[control log](../../evidence/pq-witness-phase-20261125/observer-controls.txt) and
+[readback](../../evidence/pq-witness-phase-20261125/readback.json); the bounded
+[format continuation](../../evidence/pq-witness-phase-20261125/framing-format.json)
+retains its separate exact source hashes and zero executed tests.
+
+The older #998 source has independent exact-source evidence: run
+[45606912106](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45606912106)
+passed its native fullpath engineering job on
+`3ee476eb1591c4ad3f92061c0eb906cb5ad22f89`, tree
+`b851587ae7f46f2d7070892be290b6d22395cc44`. Its exact namespace control passed
+1/1 and the noise framing, callback-budget and every-boundary cancellation
+controls passed 3/3, all with zero ignored tests and unchanged source/lock
+receipts. Its existing component collector still reported HOLD and
+COMPONENT_OBSERVATION_ONLY. Those results establish their own source's named
+controls; they do not certify this new diagnostic source or the original
+pressure target. Exact prior-source receipts and named logs are retained in the
+[existing CI readback](../../evidence/pq-witness-phase-20261125/existing-ci-readback.json). The original E1-E6 owners, inputs, budgets and Group rosters,
+all prior failures and #983 integration candidate remain unchanged.
+
+
+**Public evaluation console boundaries, 2026-11-25 UTC — source fix, official scan pending:**
+
+The original CodeQL Python analyses found two paths from the verified development
+fee to console JSON: the evaluation verifier and archived consumer-ledger reader.
+Both commands now run every original byte, signature, amount and scope check,
+then construct an explicitly versioned public summary. The console exposes
+verification counts, field equality and the existing unverified business scope.
+It does not forward payment amounts, operation identifiers, subjects, receipt
+commitments or arbitrary nested evidence. Internal `verify()` and `compare()`
+contracts and the original archived v1 `READOUT.json` remain unchanged.
+
+Five new controls exercise real paired and historical CLI output, exact public
+schemas, top-level and nested disclosure canaries, and a tampered original fee
+that must fail before any stdout. Together with fourteen retained controls,
+all nineteen passed locally. The archived comparison still exactly reproduces
+its original private/internal report and still reports `same_released_pair=false`.
+See the [retained validation](../../evidence/public-evaluation-output-20261125/VALIDATION.json)
+and [public console contract](../../evidence/cell-consumer-ledger-cross-readback-20261123/README.md).
+
+This is new-source engineering work based on unique review commit
+`b8864b81aa60b149889e26012bbcd1ded2bbe528`. Its own official CodeQL and native
+checks remain required; the original findings and failed exporter are retained.
+The earlier review reused commit `18ccda7b583a96add9402a87117e3b687efc6a02`, whose
+official annotation check was associated with PR #996 rather than #997. The
+unique review commit corrected the association without changing the tree; it
+did not resolve the Python findings. No query suppression, security-policy
+change or fixture randomization is part of this fix. The eight Rust fixture
+warnings are separate evidence and are not declared resolved by this change.
+
+The evaluator source digest changes with this fix. Original frozen evaluator
+pins, E1-E6 inputs and budgets, the integration candidate #983 and historical
+failures are unchanged. No new training, adoption, payment or activation is
+performed or certified. Earlier plan sections below retain their original
+as-of observations; this section supplies the current security-review state.
+
+
+**Early bound-identity and noise engineering controls, 2026-11-25 UTC — HOLD:**
+
+The existing native fullpath job now observes the exact bound-identity namespace
+selector and the three noise-frame equality/cancellation controls after its
+original native builds. They reuse that runner and target directory with
+`--offline --locked` and the existing default feature profile. Cargo.lock and
+dependency declarations stay unchanged; no optional PQ feature is requested. The existing
+all-features workspace qualification and its complete test inventory remain
+required; this small execution does not replace them or run ignored learning
+fixtures. Original E1-E6 inputs, owners, budgets and Group rosters are unchanged.
+
+An independent `trnm-bound-primitive-engineering-v1` receipt retains actual
+source-before/source-after verification, Cargo.lock hashes, exact commands,
+full logs, command exits, named harness results, wall time, owner CPU and reaped
+child CPU. Compilation, source checking and failed commands remain in the
+observed cost. Command costs are nested inside the inclusive helper total;
+whole-host CPU is not asserted. The reader controls have a separate retained
+wall/user/system timer. Missing, zero-test, wrong-name, duplicate, ignored,
+malformed and unsuccessful harness results cannot pass.
+
+The added step has a five-minute limit, with two existing process-owner calls
+bounded to 120 seconds each plus the retained cleanup behavior. The job keeps
+its original 45-minute limit. An added-step failure is temporarily continued
+only so all original component collection steps can still run; a final
+unconditional gate requires that added step's actual outcome to be success.
+The two new script paths are also added to the existing PR trigger so a future
+reader-only change must execute its own controls. Removing those two paths and
+the two added steps yields the original workflow semantics exactly. No original
+command, pressure target, Host check, CPU policy or trigger was removed or relaxed.
+The new Python reader controls passed 9/9 in 0.017 seconds; actual
+Rust execution is pending on the new CI source. Original failures and the
+same-commit #997 review-only scan remain separate observations, without branch
+movement, rerun, merge, activation or performance promotion.
+
+
+The first actual #996 native-fullpath job
+[139162640475](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45601893240/job/139162640475)
+failed at `cargo fmt --check`: the isolated capsule had formatted the new module
+with edition 2024, while this workspace declares edition 2021. The follow-up
+changes only the single import ordering line requested by that real CI diff.
+The 116 Python component-reader controls passed; Clippy, native tests and the
+collector did not execute. The later missing collector file is a secondary
+failure, not separate evidence of a native regression. Preserve this original
+failure in the [format observation](../../evidence/w1-noise-frame-20261125/native-format-failure-18cc.json).
+New formatting/native execution remains pending; #997 continues scanning its
+original unmodified `18ccda7b583a96add9402a87117e3b687efc6a02` source.
+
+
+**W1 per-expansion noise framing, 2026-11-25 UTC — HOLD:**
+
+Prepare the exact 66-byte `noise` hash frame once per expansion in the default
+full-limb replay path. Only the four counter bytes change between iterations.
+Each original Noise callback still runs before hashing all 66 bytes, and the
+counter cap, rejection sampling, output words, cancellation result, dynamic
+Host checks, CPU accounting, public deadline and 4-second confirmation target
+remain unchanged. The scalar and other retained reference paths keep the
+original generic framed hash. No hash state, computed result or authority is
+cached across callbacks or invocations.
+
+Three new Rust controls compare the original hash domain and length framing,
+complete outputs and callback sequences (including the fixed 128-counter
+refusal), and cancellation at every observed noise boundary followed by a fresh
+retry. Their execution is pending. An isolated engineering capsule with exact
+`sha2 = 0.10.9` and lockfile SHA-256
+`de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5`
+did not reach Rust compilation: the first attempt hit its dependency-acquisition
+timeout after 60.008960125 seconds including cleanup; the second offline attempt
+failed in 0.047445084 seconds because locked `libc 0.2.191` was absent. A separately
+bounded request for only that official crate timed out after receiving
+220643 of 855401 bytes and used 10.074985083 seconds. The partial download was
+not accepted into the cache, checksum verification was not reached, and no
+third test command was started. All three failures remain failures; their
+cumulative measured wall time is 70.131390292 seconds within the separately
+authorized 90-second engineering bound. The first attempt's CPU cost was not
+measured and remains unknown.
+
+The engineering capsule is not the repository Cargo graph or an original E1-E6
+qualification. No original budget, frozen source, test roster, Host check or
+pressure criterion was changed. This patch has no measured performance claim;
+the original 16-worker 0/1 timely-confirmation result and pending native
+integration gates remain open. The existing #983 integration candidate remains
+the route to main; any additional main-base Draft is review-only.
+
+
+Retained attempt records: [engineering attempts](../../evidence/w1-noise-frame-20261125/engineering-attempts.json).
+
+
+**Original four-second pressure failure readback, 2026-11-25 — HOLD:**
+
+The retained ARM original-source job
+[139117638615](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923716/job/139117638615)
+at `11d4bbe356331ef533d662ef4080a096ed20c8b1` compiled and returned all five
+named native calls, but its confirmation gate failed. Artifact `15010597984`
+retains the original confirmation JSON SHA-256
+`4f6cf81efc482e6433c70feba35028d8ca600d51f1e34a07be2de759c7565d4c`.
+The baseline confirmed one transaction in 1,808,336,328 ns. Under 16 workers,
+all seven signed submissions returned by 1,196,601,697 ns; five independent
+history pages replayed, and the sixth W1 replay returned
+`PUBLIC_REQUEST_DEADLINE` at 4,000,846,761 ns. Final confirmation was never
+entered, so the original four-second result remains zero of one.
+
+The native confirmation-interval overlap counter is zero when no confirmation
+stamp exists. The v2 readback now separately emits
+`public-v3-business-window-attack-overlap-v1` from actual retained caller
+intervals, bounded by the original business start and four-second window.
+The original failed artifact has 482 recorded submitted calls and 480 positive
+intersections with that window. The original counter, failure, hashes and
+confirmation denominator remain unchanged. Missing worker/call lists, statuses
+or clocks keep the exact recorded count unknown; exhausted and zero-width
+records cannot establish positive overlap, and late calls cannot extend the
+window. This is caller timing, not receiver execution or successful adoption.
+
+Six additional offline controls and the full 184-test driver suite passed.
+Only already retained artifacts were read: no native campaign, compilation or
+frozen E1–E6 budget was restarted. No quota, Host check, request deadline,
+acceptance gate, source identity or production authority is changed.
+**CodeQL empty-source availability observation, 2026-11-25 — HOLD:**
+
+The read-only exporter observed 39 empty exact-source API snapshots for
+PR #992 at `11d4bbe356331ef533d662ef4080a096ed20c8b1` in
+[run 45588923372](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923372).
+Its retained head, base and ordered prospective-merge identities were correct.
+The current repository default setup is configured, while the stacked base is
+an unprotected non-default branch. GitHub's documented
+[default-setup triggers](https://docs.github.com/en/code-security/concepts/code-scanning/setup-types)
+do not schedule that PR scan.
+
+After an empty exact-source snapshot, the exporter now retains the current PR,
+repository default branch, exact base-branch commit/protection and default-setup
+configuration. A confirmed uncovered base ends the export with `complete=false`
+and an explicit availability error, instead of repeating the same empty poll.
+The optional default-setup endpoint requires Administration read access: its
+HTTP 403/404 is retained as UNKNOWN and the exporter continues under the original
+deadline without inferring an uncovered trigger. Required analyses/checks API
+permission failures, malformed metadata and moved source remain errors. Covered
+bases continue waiting under the existing deadline, advanced analyses remain
+supported when default setup is not configured, and already available exact
+analyses do not depend on the current trigger configuration. No token permissions
+are added. This observation does not claim that a historical scan was or was not
+scheduled.
+
+The independently retained local SARIF workflow still supplies its own immutable
+head/merge analysis artifacts for review. Its `upload: never` results do not
+satisfy the Code Scanning API export contract or the official PR security gate.
+No query, branch protection, alert disposition, wait budget or security verdict
+is changed. The original failed export and all partial observations remain.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 
@@ -15797,3 +16313,50 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+### 2026-11-24 bound paired learning identity continuation
+
+Continue the existing #990 paired-consumer/evaluation stack. A new explicit
+`prepare-bound` entry creates `trnm-isolated-bound-paired-evaluation-request-v2`
+and the matching v2 delivery namespace. The complete Hepta loop identity is
+inside ADMISSION.json, whose exact bytes remain the native reservation's request
+commitment. It fixes the original study/admission/freeze, one ordinary causal-LM
+family, parent/candidate, exposure, model runtime, routing and evaluation panel,
+plus Hepta implementation bytes, interpreter bytes and installed dependency
+versions. Chain evaluator source hashes are additionally committed by v2 terms.
+Both implementation identities are checked before and after actual evaluation.
+
+The existing original intake, exposure/catalog, retention, independent cold arms,
+answer regrading and native payment checks remain. The new native
+`funded_bound_paired_loop_reopens_paid_native_operation` case explicitly selects
+`prepare-bound` and a fresh development namespace; the three original cases keep
+their v1 entries. Like the original externally provisioned cases, the new case
+requires exact private materials and is not executed by the ordinary unit run.
+It must be run explicitly on a fresh engineering or authorized owner capture
+before asserting any new native v2 evaluation payment. There is no new payment
+execution, production activation or useful-work reward in this source increment.
+
+The independent Python reader requires a pinned consumer readback and the same
+v2 identity before comparing it to a replayed native development evaluation. An
+old v1 paid evaluation cannot acquire v2 consumer identity after the fact.
+Equality still grants no live consumer, independent business-effect, settlement,
+learning-reward or consensus authority. Installed package versions are not a
+complete runtime byte closure: `runtime_closure_complete` remains false. Missing
+training/search/distribution/third-party costs remain unknown; neither elapsed
+stage sums nor evaluation charges establish adopted improvements per total cost.
+
+The focused command is `PYTHONPATH=scripts python3 -m unittest
+scripts/test_dev_loop_identity.py scripts/test_dev_circuit_evaluation.py
+scripts/test_dev_intake_evaluation.py -v`. It retains the historical paid-case
+and NoUpdate controls and adds identity retargeting, runtime/source mismatch,
+preflight-before-reservation refusal and v1-to-v2 promotion controls. Original
+service/protocol gates, fixed resource budgets and all qualification flags remain
+unchanged. The cross-user human experiment and full Q24 lifecycle remain open.
+
+The [actual cross-repository preflight evidence](../../evidence/bound-learning-preflight-20261124/README_ZH.md)
+now retains the missing-catalog refusal and a separate fresh engineering
+admission over existing weights and an unchanged registered catalog. Original
+`prepare-bound` and network-isolated preflight passed, including live identity
+and source checks; no reservation was created. All 368 original files are
+preserved with hashes. This adds no training, model forward, human authorization,
+payment or qualification; the native funded v2 case remains a separate gate.

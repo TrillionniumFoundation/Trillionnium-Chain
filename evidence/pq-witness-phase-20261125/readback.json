@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-pq-witness-phase-engineering-readback-v1",
+  "qualification": "HOLD: new diagnostic source; std-only macOS observer controls passed, full native CLI, Linux CPU branch and exact-source CI pending",
+  "source_base": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+  "source_base_tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+  "cargo_lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+  "capsule_runner_sha256": "6b11ebacf373465309f98b525266c292c37a17134747ce783ded272eee162bbc",
+  "capsule_input_zip_sha256": "b51ae791dfe4c5d7ce68a49d57c35c5d6c03398874c5999f17bf08c203c80177",
+  "formatted_source_zip_sha256": "ed4bd748a7b0f69d505fa84750b78521c94056c8bf3861318c99c353d16e3cb1",
+  "engineering_attempt_sha256": "40dd8621477994f0d93c760e12bb86a7a3f966619348a0c56ca057af57f94389",
+  "observer_control_log_sha256": "b40a9e04e78a4c8248660989e868e4684d1f7104cb32f60140205bece16c3454",
+  "runtime": {
+    "job_id": "1a212b46230-ffbe-3ff2",
+    "state": "succeeded",
+    "exit_code": 0,
+    "automatic_retry": false,
+    "timed_out": false,
+    "cancelled": false,
+    "output_complete": true,
+    "output_durable": true,
+    "terminal_publication_confirmed": true
+  },
+  "original_E1_E6_budget_used": 0,
+  "original_caps_and_checks_changed": false,
+  "preparation_observations": [
+    {
+      "stage": "first preflight before sparse worktree population",
+      "exit_code": 127,
+      "resolution": "populated only exact base source, then preflight passed 26 packages before edits or compilation; no original research executed"
+    },
+    {
+      "stage": "source review before any capsule execution",
+      "findings": "Non-test observe_operation expands to a block, so service result closures are required to retain observations on every ? return. Formatted diagnostic output uses one write call, including on Interrupted. Both fixed before the sole capsule attempt."
+    },
+    {
+      "stage": "handoff path inventory",
+      "finding": "The original .log export matched repository ignore rules; the same exact control bytes are retained as observer-controls.txt so source publication includes them."
+    },
+    {
+      "stage": "independent source review",
+      "finding": "The new collector initially accepted complete JSON without its final LF. It now accepts only LF-terminated records and retains missing-LF and exact-4-KiB-cutoff negative cases plus an in-prefix LF positive case. This parser revision was formatted but its Rust controls remain pending new-source CI."
+    }
+  ],
+  "limitations": [
+    "Diagnostic wall and thread CPU observations are not authenticated physical time or whole-host CPU.",
+    "A single bounded stderr write does not establish a wall-time bound for arbitrary blocked stderr; the unchanged CLI supervisor timeout still governs.",
+    "Observation clocks and stderr lock/write are diagnostic costs; success never changes a refusal or renews an original deadline.",
+    "The original 4 KiB stderr prefix is unchanged; an absent or incomplete record is unknown, never a successful result.",
+    "No original experiment, native pressure gate, original 250 ms witness exchange or four-second confirmation requirement is certified by these module controls."
+  ],
+  "post_review_framing_format": {
+    "result_sha256": "9adb6b4dad81615f954f24562c5b919cc5346e8f8a2ccef66cd0417e2aa6d7cb",
+    "runtime": {
+      "job_id": "1a212be0fa6-ffbe-4002",
+      "state": "succeeded",
+      "exit_code": 0,
+      "automatic_retry": false,
+      "timed_out": false,
+      "cancelled": false,
+      "output_complete": true,
+      "output_durable": true,
+      "terminal_publication_confirmed": true
+    },
+    "wall_seconds": 0.146917708,
+    "inclusive_child_cpu_seconds": 0.061182,
+    "aggregate_wall_seconds": 3.513270791,
+    "aggregate_child_cpu_seconds": 0.576301,
+    "tests_executed": 0,
+    "observer_module_unchanged": true
+  }
+}

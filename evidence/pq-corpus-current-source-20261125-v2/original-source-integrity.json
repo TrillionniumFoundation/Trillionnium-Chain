@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7",
+    "tested_tree": "7118a8748cfaa2a580e703afd6090eee559a9a58",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 4003378592,
+    "tracked_entries": 41971,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7",
+    "tested_tree": "7118a8748cfaa2a580e703afd6090eee559a9a58",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 4003378592,
+    "tracked_entries": 41971,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 7470137729,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/cpq1-full-content-target",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "45644157214",
+    "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3GL3n76R/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": "ARM64",
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.3GL3n76R/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "07c82bc049d8cd6120a79486c9413aacd935cce1358b83b68da9ff4958831478",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 1,
+  "log_bytes": 80,
+  "log_file": "source-integrity.log",
+  "log_sha256": "87d8f925cd77838fd46dbf997a8437cab57f3a5211ff1243ce347fd25d45463d",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-25T15:27:22.397217+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

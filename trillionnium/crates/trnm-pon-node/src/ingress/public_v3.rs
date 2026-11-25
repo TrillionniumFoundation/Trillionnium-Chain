@@ -20,6 +20,8 @@ mod canonical_packet;
 mod growth;
 mod history_response;
 pub(super) mod request_observation;
+#[cfg(test)]
+mod response_signing_tests;
 pub mod scalar_cpu;
 mod work_arithmetic;
 mod work_rejection;
@@ -1054,22 +1056,54 @@ struct Response {
     signature: String,
 }
 impl Response {
+    fn signing_bytes(&self) -> Result<Vec<u8>> {
+        // Preserve Response's field order and empty signature without cloning
+        // its strings or the bounded response value into a second owned tree.
+        #[derive(Serialize)]
+        struct UnsignedResponse<'a> {
+            schema: &'a str,
+            profile: &'a str,
+            network: &'a str,
+            parameters: &'a str,
+            genesis: &'a str,
+            server: &'a str,
+            cookie_digest: &'a str,
+            request_digest: &'a str,
+            ok: bool,
+            value: &'a Value,
+            signature: &'a str,
+        }
+        // Exhaustive matching makes a new Response field require an explicit
+        // signing-view review instead of silently excluding it from the bytes.
+        let Self {
+            schema,
+            profile,
+            network,
+            parameters,
+            genesis,
+            server,
+            cookie_digest,
+            request_digest,
+            ok,
+            value,
+            signature: _,
+        } = self;
+        Ok(serde_json::to_vec(&UnsignedResponse {
+            schema,
+            profile,
+            network,
+            parameters,
+            genesis,
+            server,
+            cookie_digest,
+            request_digest,
+            ok: *ok,
+            value,
+            signature: "",
+        })?)
+    }
     fn message(&self) -> Result<Vec<u8>> {
-        let mut r = Self {
-            schema: self.schema.clone(),
-            profile: self.profile.clone(),
-            network: self.network.clone(),
-            parameters: self.parameters.clone(),
-            genesis: self.genesis.clone(),
-            server: self.server.clone(),
-            cookie_digest: self.cookie_digest.clone(),
-            request_digest: self.request_digest.clone(),
-            ok: self.ok,
-            value: self.value.clone(),
-            signature: String::new(),
-        };
-        r.signature.clear();
-        let raw = serde_json::to_vec(&r)?;
+        let raw = self.signing_bytes()?;
         if self.schema == "public-protected-response-pq-v4" {
             let mut out = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
             out.extend_from_slice(&sha2::Sha384::digest(&raw));

@@ -1,0 +1,110 @@
+{
+  "aggregate_local_status": "FAIL_TIMEOUT_PRESERVED",
+  "all_131_completed": false,
+  "cap_seconds": 30,
+  "current_source_cli_executed": false,
+  "current_suite": {
+    "actual_completed": 18,
+    "actual_passed": 18,
+    "fully_qualified_names": [
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_changed_source_cannot_reuse_reviewed_pins",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_current_map_symlink_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_duplicate_json_key_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_frozen_corpus_tampering_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_frozen_guard_source_tampering_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_map_changed_during_inspection_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_missing_or_extra_addition_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_missing_original_source_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_new_nested_pq_source_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_original_v1_entry_still_refuses_changed_source",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_qualification_cannot_be_promoted",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_reports_are_recomputed_against_current_source",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_reviewed_current_fixture_remains_hold",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_source_and_checkout_symlinks_refuse",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_supplied_self_hash_cannot_replace_independent_snapshot",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_unchanged_source_cannot_be_relabelled_as_replacement",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_unreviewed_replacement_roster_refuses",
+      "test_pq_corpus_current_v2.CurrentCorpusTests.test_wrong_original_blob_refuses"
+    ],
+    "reported_wall_seconds": 0.112,
+    "skipped": 0
+  },
+  "input_file_count": 5956,
+  "inputs_before_after_equal": true,
+  "inventory_check_executed": false,
+  "named_partial_sha256": "3e2b10526d77c47c86e645b165da322b0aee6480774f0e220d6b07ad048303c3",
+  "native_or_training_executed": false,
+  "new_head_full_source_binding_required": true,
+  "no_replay_or_budget_reset": true,
+  "original_actual_readout_sha256": "6d172a3c2be3dc4aebff5604537a2c3cba96cfa3efbed93eed5f65160e7347f0",
+  "original_frozen_failure_preserved": true,
+  "original_twelve_source_paths_unchanged_after_attempt": true,
+  "preflight": {
+    "actual_result": "PASS",
+    "log_sha256": "5cada8275066efef6ca0496571004b83d196208029fcf50b37adac6e49aaae9c",
+    "packages": 26
+  },
+  "publication_evidence_outside_declared_current_map": true,
+  "qualification": {
+    "actual_lifetime_failure_bound": null,
+    "native_cryptography_qualified": false,
+    "old_campaign_qualification_transferred": false,
+    "source_commit_qualified": false
+  },
+  "raw_log_sha256": "f474371a1f8468ef0da5c502633386c874e8f2e964e54b571c17ec7ab92957e5",
+  "readonly_static_cost_cause": {
+    "active_method": "test_convergence_owner_source_changes_cannot_reuse_prior_pins",
+    "active_method_mutation_path_count": 378,
+    "checker_sha256": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+    "complete_active_method_source_prefix_reads_if_all_mutations_finish": 195610,
+    "final_convergence_path_count": 376,
+    "final_native_required_path_count": 1077,
+    "fresh_fixture_pin_count": 1098,
+    "module_sha256": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+    "original_checker_or_test_changes_proposed": false,
+    "reason": "Every CorpusGateTests case builds its own complete fixture. The active unchanged method mutates every convergence path in turn and calls the real V1 descriptor/blob checker after each mutation. That checker rereads the manifest and walks the ordered pin prefix up to the changed path each time. This is a source-derived repetition cost, not a measured per-phase attribution or a deadlock diagnosis. No native, SQL, network or model call occurs in this method."
+  },
+  "reaped_children_cpu_seconds": 24.337753,
+  "result_sha256": "7219ab6bd3cedf61f197177652f675af9b823dcc9aa352c0b547d8257d47638c",
+  "retained_suite": {
+    "actual_individual_ok_lines": 15,
+    "individual_ok_names": [
+      "test_pq_research_integration.CorpusGateTests.test_account_owner_or_report_cannot_be_omitted",
+      "test_pq_research_integration.CorpusGateTests.test_account_profile_cannot_claim_complete_authority_or_miner_roster",
+      "test_pq_research_integration.CorpusGateTests.test_all_global_acceptance_flags_stay_false",
+      "test_pq_research_integration.CorpusGateTests.test_authenticated_caller_v5_sources_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_canonical_provider_malformed_tables_and_feature_shapes_fail_closed",
+      "test_pq_research_integration.CorpusGateTests.test_canonical_provider_manifest_change_is_refused_even_if_repinned",
+      "test_pq_research_integration.CorpusGateTests.test_canonical_slice_forbids_fallback_refund_and_unaccepted_combinations",
+      "test_pq_research_integration.CorpusGateTests.test_cell_acquisition_api_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_cell_peer_failure_order_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_changed_signature_or_source_refuses",
+      "test_pq_research_integration.CorpusGateTests.test_cheap_cache_and_crossclaim_sources_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_codeql_diagnostic_reader_sources_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_collected_unit_observer_sources_cannot_omit_or_mutate",
+      "test_pq_research_integration.CorpusGateTests.test_consolidation_control_bytes_are_bound_without_qualification",
+      "test_pq_research_integration.CorpusGateTests.test_consolidation_controls_require_each_path_and_pin"
+    ],
+    "remaining_names_without_execution_evidence": 97,
+    "required_names": 113,
+    "started_without_terminal_result": [
+      "test_pq_research_integration.CorpusGateTests.test_convergence_owner_source_changes_cannot_reuse_prior_pins"
+    ],
+    "suite_qualification": false,
+    "terminal_suite_summary": false
+  },
+  "schema": "chain-pq-current-correspondence-publication-readout-v1",
+  "self_cpu_seconds": 2.593649,
+  "source_preparation": {
+    "combined_wall_seconds": 15.020280128992454,
+    "exact_missing_blob_fetch_wall_seconds": 11.458067575993482,
+    "materialization_wall_seconds": 3.5622125529989717,
+    "not_tests_or_qualification": true,
+    "original_preparation_failures_preserved": true
+  },
+  "status": "SOURCE_READY_PENDING_EXACT_CI",
+  "timeout_case_body_entry_observed": false,
+  "timeout_phase_caveat": "unittest prints a test name before setUp. The original log does not identify whether fixture setup, the body, or cleanup was active at the deadline. The static repetition estimate is not measured attribution.",
+  "timeout_phase_unknown": true,
+  "wall_seconds": 27.0613314719958
+}

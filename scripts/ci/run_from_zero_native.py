@@ -1255,6 +1255,58 @@ def attack_attempt_observation(workers: list | None, scheduled: int, window: int
     }
 
 
+def business_window_attack_overlap(phase: dict, attempts: dict) -> dict:
+    """Describe retained caller intervals even when confirmation never returned.
+
+    The native confirmation-interval counter is zero when its end is absent.
+    Keep that original fact, and separately intersect actual caller intervals
+    with business start through the unchanged original window. This does not
+    assert receiver execution, authenticated workload completeness or success.
+    """
+    number = ConfirmationReportChecks.number
+    start = number(phase.get('business_started_ns'))
+    end = number(phase.get('requested_window_ns'))
+    require(end == 4_000_000_000, 'CONFIRMATION_OVERLAP_ORIGINAL_WINDOW')
+    known = unknown = overlapping = 0
+    for worker in phase.get('attacks') or []:
+        for row in worker.get('calls') or []:
+            if row.get('status') not in ('ok', 'refused', 'error'):
+                continue
+            begin, finish = row.get('started_ns'), row.get('ended_ns')
+            if begin is None or finish is None:
+                unknown += 1
+                continue
+            begin, finish = number(begin), number(finish)
+            require(begin <= finish, 'CONFIRMATION_ATTACK_CALL_TIME')
+            known += 1
+            # Zero-width/adjacent intervals have no observed positive overlap.
+            # A late return may overlap the window but never extends its end.
+            overlapping += max(start, begin) < min(end, finish)
+    complete = (attempts['all_scheduled_worker_call_lists_observed']
+                and attempts['unknown_status_records'] == 0 and unknown == 0)
+    reported = phase.get('overlapping_false_calls')
+    require(reported is None or type(reported) is int, 'CONFIRMATION_NUMBER')
+    if reported is not None:
+        number(reported)
+    return {
+        'schema': 'public-v3-business-window-attack-overlap-v1',
+        'business_started_ns': start, 'original_window_ended_ns': end,
+        'positive_business_interval': start < end,
+        'submitted_calls_with_known_intervals': known,
+        'submitted_calls_with_unknown_intervals': unknown,
+        'known_overlapping_submitted_calls': overlapping,
+        'recorded_call_overlap_count': overlapping if complete else None,
+        'all_scheduled_call_lists_and_recorded_intervals_available': complete,
+        'pressure_overlap_observed': True if overlapping else (False if complete else None),
+        'original_reported_confirmation_interval_overlap': reported,
+        'confirmation_credit_granted': False,
+        'scope': 'retained caller intervals intersect business start through the original four-second window; '
+                 'this differs from overlap through a returned confirmation stamp; late calls may intersect '
+                 'but never extend the window; missing workers, lists, status or clocks keep exact count unknown; '
+                 'known count is a lower bound, not receiver dispatch, workload completeness or confirmation',
+    }
+
+
 def complete_confirmation_observation(doc: dict, report: dict) -> dict:
     """Add v2 accounting from existing facts without correlating distinct clocks.
 
@@ -1400,6 +1452,8 @@ def complete_confirmation_observation(doc: dict, report: dict) -> dict:
         measured['resource_coverage'] = resources
         measured['attacker_attempts'] = attack_attempt_observation(
             workers, phase['workers'], measured['window_ns'])
+        measured['business_window_attack_overlap'] = business_window_attack_overlap(
+            phase, measured['attacker_attempts'])
 
         business = measured['business']
         in_window = business['reported_independently_confirmed_in_window'] == 1

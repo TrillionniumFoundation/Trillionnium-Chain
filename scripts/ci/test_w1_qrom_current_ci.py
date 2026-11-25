@@ -149,8 +149,8 @@ class CurrentCiTests(unittest.TestCase):
                  '5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7'),
                 ('formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock', 46018,
                  '93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b'),
-                ('trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs', 106066,
-                 '7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e'),
+                ('trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs', 106379,
+                 '7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4'),
                 ('trillionnium/crates/trnm-protocol/src/pon_wire.rs', 32654,
                  'ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b'),
             ])

@@ -1,0 +1,1 @@
+{"circuit_work":{"candidate":{"input_tokens":12,"model_calls":4,"output_tokens":4},"parent":{"input_tokens":12,"model_calls":4,"output_tokens":4}},"cpu_ns":21212086000,"cpu_scope":"getrusage waited child process group and reaped descendants","evaluated_examples":4,"schema":"trnm-isolated-circuit-evaluation-cost-v1","wall_ns":19229477623}
