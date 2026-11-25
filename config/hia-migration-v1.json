@@ -3153,6 +3153,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-operation-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 read-only SQLite operation-ID lookup with typed persisted fields and original raw checksum inside the checked rollback-journal schema transaction. Found or absent diagnostic only after close on genuine committed Store fixtures; no strict Borsh identity, replay, confirmation, or production authority is qualified.",
+      "sources": [
+        "hia/platform/service_settlement/operation_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_operation_reference.rs",
+        "hia/tests/test_settlement_operation_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-metadata-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

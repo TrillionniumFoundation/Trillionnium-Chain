@@ -22,12 +22,17 @@ def run(request, uri_image, reader, provider):
         raise ValueError("Only owned disposable databases are allowed")
     expected_hex = request.get("metadata_config")
     metadata = expected_hex is not None
+    operation_hex = request.get("operation_id")
+    operation = operation_hex is not None
+    if metadata and operation:
+        raise ValueError("Choose one private continuation")
+    projected = metadata or operation
     with db.open("rb") as stream:
         header = stream.read(20)
     if len(header) != 20:
         # Preserve the actual short header without treating pathname bytes as header.
         refused = {"status": 100, "transcript": [], "released": 0, "held": False}
-        if metadata:
+        if projected:
             refused["projection"] = None
         return refused
     ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
@@ -48,11 +53,11 @@ def run(request, uri_image, reader, provider):
         raise ValueError("Owned fixture URI escaped the private ABI")
     initial = header + encoded.raw[:n]
     state, response = (ctypes.create_string_buffer(EXTENT) for _ in range(2))
-    if metadata:
-        expected = bytes.fromhex(expected_hex)
+    if projected:
+        expected = bytes.fromhex(expected_hex if metadata else operation_hex)
         config = ctypes.create_string_buffer(expected)
         if step(config, len(expected), state, EXTENT, work, EXTENT) != 196:
-            raise ValueError("Native metadata fixture did not bind the independent configuration")
+            raise ValueError("Native fixture did not accept the private binding")
     raw = initial
     owner = make()
     if not owner:
@@ -60,24 +65,26 @@ def run(request, uri_image, reader, provider):
     transcript = []
     held = False
     projection = None
-    end_phase = 34 if metadata else 15
-    hold_phase = 21 if metadata else 7
+    end_phase = 34 if metadata else (31 if operation else 15)
+    hold_phase = 21 if metadata else (22 if operation else 7)
+    sizes = (147,) if metadata else ((8, 80) if operation else (0,))
+    allowed_ops = (2, 3, 4, 5, 6, 7, 8, 9) if operation else (2, 3, 4, 5, 7, 8, 9)
     try:
-        for _ in range(64 if metadata else 32):
+        for _ in range(64 if projected else 32):
             borrowed = ctypes.create_string_buffer(raw)
             status = step(borrowed, len(raw), state, EXTENT, work, EXTENT)
             phase, op, length, publication = struct.unpack_from("<QQQQ", state)
             if status == 0:
-                if (phase, op, len(raw), publication) != (end_phase, 3, 24, 147 if metadata else 0):
+                if (phase, op, len(raw)) != (end_phase, 3, 24) or publication not in sizes:
                     raise ValueError("Success requires a real closed transaction and exact private output")
-                if metadata:
+                if projected:
                     projection = ctypes.string_at(ctypes.addressof(state) + 4096, publication).hex()
                 break
             if publication:
                 raise ValueError("Early or refused metadata must never be published")
             if status == 100:
                 break
-            if status != 198 or op not in (2, 3, 4, 5, 7, 8, 9) or not 8 <= length <= 1552:
+            if status != 198 or op not in allowed_ops or not 8 <= length <= 1552:
                 raise ValueError("Unexpected read-only request")
             payload = ctypes.addressof(state) + 256
             amount = fetch(owner, op, payload, length, response, EXTENT)
@@ -97,7 +104,7 @@ def run(request, uri_image, reader, provider):
         else:
             raise ValueError("Bounded schema check did not finish")
         result = {"status": status, "transcript": transcript, "held": held, "released": reset(owner)}
-        if metadata:
+        if projected:
             result["projection"] = projection
         return result
     finally:

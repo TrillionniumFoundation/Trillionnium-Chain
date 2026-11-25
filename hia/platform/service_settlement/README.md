@@ -82,3 +82,22 @@ A checksum does not convey authority. The Rust Store still owns strict Borsh
 state decode and round-trip, recomputation of the canonical state root,
 committed-block and journal replay, fence policy at public open/readback,
 and the filesystem identity and sidecar checks above.
+
+### Bounded, checksum-checked operation lookup
+
+`operation_read.hepta` binds an exact 32-byte operation ID as a SQLite BLOB
+in the original `operations WHERE operation_id=?1` select. A native schema
+check and the query share one rollback-journal read transaction. For a row,
+HIA checks the signed SQLite sequence, exact returned ID, encoded BLOB types
+and widths, and original checksum over sequence, ID and the raw execution,
+command and receipt bytes. Responses larger than the private 1 MiB frame cap
+are refused. After finalize and real close it publishes an 8-byte absent
+marker or an 80-byte found diagnostic (marker, sequence, ID and checksum).
+Raw operation payloads are never published.
+
+The oracle runs the exact retained Rust `load_operation` on stores where
+the original owner genuinely committed two commands from the pinned
+Settlement fixture. It compares present and absent observations, held
+rollback reads and failure controls. Native lookup does not supersede
+Rust's strict typed Borsh decodes and derived operation/receipt identity,
+nor production Store metadata checks, replay, confirmation or trust.
