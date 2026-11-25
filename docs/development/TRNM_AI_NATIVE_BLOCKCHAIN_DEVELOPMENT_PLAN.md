@@ -1,3 +1,89 @@
+**Current PQ declared-path correspondence refresh, 2026-11-25 UTC — HOLD:**
+
+This stage repairs current source metadata after two reviewed engineering changes.
+It preserves the frozen PQ128 V1 model, source lock and original experiment.
+The exact parent is #999, commit `875234c4d2c3621fa6aac49224122067f149f3f4`,
+tree `3036919a5b813cc90c048dd3c0829d97fbf61a63`.
+
+## Actual failure and minimal change
+
+Original #999 run `45619422244`, job `139223277825`, failed before Rust in
+`test_pq_chain_claim_guard`: 57 controls were attempted and ten errored because
+the current correspondence still pinned older source. The original artifact
+`15025006693` is 11,772 bytes with SHA-256
+`f7ee0f7bc33e8532e9e81eb45fe16bca1414abf5cdb8d716358dd8d9da07417a`.
+The original failure remains a failure.
+
+All 21 original declared event paths were independently hashed at the parent.
+Only `pon_work.rs` and `pq_rollback_witness.rs` differed. The former uses the
+reviewed immutable W1 framing helper; the latter adds explicitly enabled
+development diagnostics while preserving the original 250 ms witness deadline.
+The current map now binds those reviewed bytes and its exact aggregate digest;
+the reader changes only its two reviewed metadata pins. The other nineteen
+path hashes, the path roster, strict hash equalities and reader logic are intact.
+
+The original current map is retained in complete bytes at SHA-256
+`5328f618642aa14125b6325ebcc2285f8be85cf39843a11c6d9157863a0c27c6`.
+Its replacement is `812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2`;
+the new declared-file snapshot is
+`dc07a48f35a976b01d1c87e15f0cc96be5f4becf4d813d2ddde692df5b271fc8`.
+
+## Scope and preserved boundaries
+
+The V1 model manifest remains
+`0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd`,
+the V1 source lock remains
+`094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2`,
+and the frozen revision remains `0f9b30549328e5be20f4d3e6e27bd132b42d90de`.
+Every result remains `HOLD`; actual lifetime failure probability is unknown and
+all security, applicability, composition and production qualification flags
+remain false. No frozen E1–E6 budget, task, campaign or old CI run is reset.
+
+The 21 paths are the original event declarations. They are not a complete
+source dependency set or proof of Git provenance. The newly referenced W1 and
+Witness helper files are separately retained and reviewed in the drift record.
+No original path is deleted to make the declared count fit, and this stage
+claims no whole-chain lifetime bound or current model applicability.
+
+## Independent engineering validation
+
+Root launched the one independent Linux metadata capsule. Its 110 source
+inputs matched before and after execution. All 25 current-correspondence
+controls and 57 original claim-guard controls passed: 82 executed, zero skipped.
+An independent readback matched every named test to the unchanged source test
+classes, including inherited filesystem controls. All seven commands exited
+zero with resolved owned-process cleanup. Both actual CLI reports remained
+HOLD with false/null qualification fields; the model still has eight unknown
+terms and four unknown query budgets. The original V1 reader still refuses
+current-source substitution.
+
+The measured capsule interval was 1.1737242989984225 seconds within its new
+30-second bound, with 1.136737 seconds of observed owner and reaped-child CPU.
+These are scoped metadata-control costs, not the cost of the whole task and
+not evidence of a training or pressure advantage. The exact attempt SHA-256 is
+`e10bcb446daf07da0355ed377eb57daa76b4305c8ababd5fb1389e1e96adc893`.
+The independent readback is
+`a705b07527749c21f1bf698b040a699959d80ff00121273368ca370b907d8b11`.
+Local sparse-checkout/preflight preparation failures are also retained; no
+failed original observation was rerun or converted into a pass.
+
+The immutable capsule keeps its source manifest, exact commands, original
+failures, logs, wall time and observed owner/reaped-child CPU. It executes no
+Cargo command, native test, training, network qualification or historical model
+program. A passing capsule means only that current correspondence is readable
+and all existing tamper and promotion refusals still hold.
+
+The parent #999 native fullpath job `139223279553` separately passed its exact
+identity selector and three W1 framing controls. Its original summary hash is
+`87146e8398c4c52889906f7f6176b87128ade41d2f6ab66209ab3a47dc75dcce`.
+That observation is retained under its own source identity; it does not qualify
+this new commit, pressure performance, the five Witness observer controls, two
+CLI controls or four parser controls. Those new native paths still require
+their own actual execution evidence. The original Witness deadline cause
+remains unresolved.
+
+---
+
 **Explicit development witness phase observations, 2026-11-25 UTC — HOLD:**
 
 The original prospective-source runtime job
