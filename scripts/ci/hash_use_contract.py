@@ -34,10 +34,11 @@ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa6
 # The reviewed map binds current candidate bytes, including uncommitted changes.
 # It does not establish exact git-show identity at an anchor or a candidate commit.
 # Source consistency does not authenticate provenance or grant qualification.
-# This literal binds the current 31-path map; inspect never regenerates it.
+# The 2026-11-25 review rebinds only pon_work.rs and its selected-profile map.
+# This literal binds the same 31-path map; inspect never regenerates it.
 # New exported APIs remain outside these declared uses and do not acquire
 # whole-callgraph coverage. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "5e0801d22adab09c2104b568a8427dafdc0b43b2124951fc1e67a968e49fc3c0"
+REVIEWED_SOURCE_MAP_SHA256 = "cf4db5e45b5c4f20db2f09604d39a428fc73042a934a1be6b3269e80c2a8fdc8"
 
 USES = {
     "model-legacy-root": "model",

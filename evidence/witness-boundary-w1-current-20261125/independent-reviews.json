@@ -1,0 +1,851 @@
+{
+  "schema": "chain-independent-source-reviews-v1",
+  "reviews": [
+    {
+      "name": "analytic_chain_witness_boundary_review.json",
+      "bytes": 3183,
+      "sha256": "66c7c845097836a147d37d5b959db874e4151c25e6aac3af6b50731da77d201e",
+      "review": {
+        "schema": "trnm-witness-execution-boundary-independent-readonly-review-v1",
+        "reviewer": "/root/analytic_network",
+        "base": "6b851bc64db9d87db1bae083654902846f14c275",
+        "source": {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "before_bytes": 48575,
+          "before_sha256": "fa1fdeac2e904824d52d72bd514c2b7fea42f95375666604c4902ba44a152e65",
+          "after_bytes": 48281,
+          "after_sha256": "045c71dc34f138829b7c1849fe891b0f61c2e75768abdeffa02d9f95e5d64329"
+        },
+        "independent_body_comparison": [
+          {
+            "name": "handle",
+            "before_body_sha256": "4ac733befcb328860256d9633cca99a362e7451f916177bf44d045cbe73d473d",
+            "after_body_reindented_sha256": "4ac733befcb328860256d9633cca99a362e7451f916177bf44d045cbe73d473d",
+            "exact_reindent_equality": true
+          },
+          {
+            "name": "serve_one",
+            "before_body_sha256": "63d5f3db8da5ea63198f2a66d4cc4ebb125ec0f37e9e43162575a8435de8198e",
+            "after_body_reindented_sha256": "63d5f3db8da5ea63198f2a66d4cc4ebb125ec0f37e9e43162575a8435de8198e",
+            "exact_reindent_equality": true
+          }
+        ],
+        "findings": [
+          "Both public owners create the same DevelopmentOperation with the caller-supplied original until, invoke one private execution boundary, then consume the operation exactly once through finish_development after any normal Result.",
+          "Under cfg(test), observe_operation still places the action inside test_observation::with_operation closure. All ? and explicit early returns resolve inside that closure, the private method returns its Result, and the public owner reaches finish_development.",
+          "Under cfg(not(test)), observe_operation expands to its action block. All ? and early returns now resolve at the private method boundary instead of escaping the public owner, so the same final observation is retained without the immediately invoked outer closure that Clippy rejected.",
+          "The development Option is a local variable independent of the mutable witness owner. Each helper borrows it only for the synchronous call; phase guards are scoped inside that call. Returned Vec/unit and owned Error do not borrow it, so the borrow is finished before the public method moves the Option into finish_development.",
+          "Each complete operation body was independently extracted from Git base and current source and compared after exactly four leading spaces were restored on each nonempty line. Both are byte-identical after that reindent.",
+          "Original 250ms MAX_EXCHANGE, identical until values, read/write deadlines, precommit deadline, commit_uncertain sequencing, authenticated reply construction, committed CAS late-reply treatment, and current-operation final deadline remain unchanged.",
+          "No definite source-level blocker found. This review is not a Rust compilation, Clippy pass, native execution result or performance claim."
+        ],
+        "scope": {
+          "source_edits": 0,
+          "test_runs": 0,
+          "compile_runs": 0,
+          "formatter_runs": 0,
+          "network_connections": 0,
+          "production_activations": 0
+        },
+        "limitation": "Reviewed the current pre-format method-boundary candidate only. Exact final source and actual CI must remain separately bound."
+      }
+    },
+    {
+      "name": "analytic_chain_w1_mapping_scope_review.json",
+      "bytes": 6134,
+      "sha256": "c29779cecda2830852911c80658ef89a15543dd9a3f830744e24d8ce5792904b",
+      "review": {
+        "schema": "trnm-w1-current-mapping-proposed-refresh-independent-review-v1",
+        "reviewer": "analytic_network",
+        "base_commit": "6b851bc64db9d87db1bae083654902846f14c275",
+        "scope": "Read-only review of the proposed current inventory refresh; no final patch or new-source execution is qualified.",
+        "source_manifest": {
+          "path": "config/pon/w1-qrom-implementation-current-v2.json",
+          "bytes": 50313,
+          "sha256": "b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1"
+        },
+        "source_binding_observation": {
+          "pin_occurrences": 173,
+          "unique_paths": 157,
+          "changed_occurrences": [
+            {
+              "manifest_location": "/project_files/13",
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "before_bytes": 106066,
+              "before_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+              "current_bytes": 106379,
+              "current_sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
+            },
+            {
+              "manifest_location": "/local_path_closure/files/59",
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "before_bytes": 106066,
+              "before_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+              "current_bytes": 106379,
+              "current_sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
+            }
+          ],
+          "unavailable_originals": 0,
+          "old_closure_file_count": 145,
+          "new_module": {
+            "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+            "bytes": 5494,
+            "sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc"
+          },
+          "proposed_closure_count": 146,
+          "same_crate_roots": [
+            "formal/pon-nakamoto-v1/w1_hardened_verifier",
+            "formal/pon-nakamoto-v1/w1_v2_verifier",
+            "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+            "formal/pon-nakamoto-v1/w1_zkvm/relation",
+            "trillionnium/crates/trnm-crypto-primitives",
+            "trillionnium/crates/trnm-protocol"
+          ],
+          "same_literal_includes": [
+            "config/pon/work-profile-v1.json",
+            "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+            "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+            "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+            "tests/fixtures/cpq1-content-v1/vectors.json",
+            "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+            "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+            "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+          ]
+        },
+        "findings": [
+          "The new full-limb noise helper assembles the same 66-byte domain-separated frame as the original hash function: prefix, LE16 tag length, noise tag, LE32 challenge/label/counter lengths, exact challenge and label, and LE32 counter. It computes a fresh whole-input SHA-256 per original checkpoint; this static comparison is not a speed result.",
+          "Counter bound 128, callback-before-hash, same rejection test against Q, same LE32 extraction, partial final digest consumption and immediate cancellation are preserved in the reviewed source. The selected default FULL_LIMB path calls the new helper; retained reference paths still call the original helper. No hash-state, result or authority cache is introduced.",
+          "Both selected project and local-closure pon_work pins must be updated; noise_frame must enter the actual six-crate Rust inventory. The existing reader enforces complete Rust inventory inside those crate roots and the eight literal includes, while still disclaiming Rust #[path] imports outside roots and external compiled dependency identity.",
+          "The three mapping consumers (proof profile, upstream withdrawal and route registry), current reader literals, and independent current-reader tests need exact new hashes/counts. Updating these pins must not change the historical reader/contract, held upstream profile, empty approved_current_profile_ids, 15 unresolved obligations, null lifetime/security bounds or qualification booleans.",
+          "The hash-use reader intentionally binds declared paths and 19 existing purposes and explicitly disclaims whole-callgraph/refinement coverage. Its proposed two-pin update may preserve those semantics and 31 declared paths, but cannot claim that inventory by itself now binds every newly introduced noise helper call. The separate current W1 closure is what adds that module pin.",
+          "Two other manifests retain direct old pon_work pins: joint-consensus-qualification-v1 and w1-lifetime-current-source-v2. They are outside the three mapping-contract consumers. This review does not approve silently repinning them or claiming every current reader is closed."
+        ],
+        "hash_use": {
+          "manifest_sha256": "17bbc73b8d319c3ce9ccf6eb70c27b011013d71e0d5668ab7d0124dd47f5e03e",
+          "declared_paths": 31,
+          "declared_uses": 19,
+          "reviewed_semantics_sha256": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b",
+          "reviewed_source_map_sha256": "5e0801d22adab09c2104b568a8427dafdc0b43b2124951fc1e67a968e49fc3c0",
+          "base_source_mismatches": [
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "before": {
+                "bytes": 106066,
+                "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+              },
+              "current": {
+                "bytes": 106379,
+                "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
+              }
+            }
+          ],
+          "proposed_additional_pin_update": "config/pon/pq-proof-profile-binding-v1.json after its exact mapping pin is refreshed"
+        },
+        "controls_executed": 0,
+        "native_tests_executed": 0,
+        "compiler_or_formatter_executed": false,
+        "files_edited_in_candidate": 0,
+        "historical_or_scientific_qualification_transferred": false,
+        "assessment": "Proposed limited inventory refresh is consistent with the inspected source boundary; final exact diff and source-bound CI are still required."
+      }
+    },
+    {
+      "name": "analytic_chain_final19_review.json",
+      "bytes": 10087,
+      "sha256": "c0a13521c34141be9dde4bbadd678c691b31a27b3345646fc24e689d631fce3f",
+      "review": {
+        "schema": "trnm-final-witness-w1-independent-source-review-v1",
+        "parent": "6b851bc64db9d87db1bae083654902846f14c275",
+        "patch_sha256": "2a2224d99b0472fc26969f6492775427c2c6cc544b6597c1a39a38adc2afed7a",
+        "source_propagation_review_sha256": "54e187f489df91e1a4b9d24ebdebc3256c0ff35a11d75d97175d48eb93e51876",
+        "files": [
+          {
+            "path": "config/pon/hash-use-contract-v1.json",
+            "before_sha256": "17bbc73b8d319c3ce9ccf6eb70c27b011013d71e0d5668ab7d0124dd47f5e03e",
+            "after_sha256": "c6b233fbde9776448895708836cf6850b3792391b758308d284953026fdd222e",
+            "bytes": 72224,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/joint-consensus-qualification-v1.json",
+            "before_sha256": "433d1eae36ce71eb114cb92b4c7328581e78355fc5e7418aea481c30d815f146",
+            "after_sha256": "3a13b8f0c8ec84a4753e8230ff20341a2043b2d77c421d67998b2551c7ced1e1",
+            "bytes": 10339,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/pq-proof-profile-binding-v1.json",
+            "before_sha256": "0dc3c01c24a56b298b3ca905c71ae288f467f6cf74032d1d73f69cab969a313b",
+            "after_sha256": "5361d6ec8f42d0172d8c1345e64a32748a89db3f614d34ce34b48b9e12beb81d",
+            "bytes": 2378,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/pq128-source-correspondence-current-v2.json",
+            "before_sha256": "812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2",
+            "after_sha256": "20a8f5a09f9e40ec938d85739c0ccb982aa307d8b09d5562faecdc76a5c8540f",
+            "bytes": 3782,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/w1-lifetime-current-source-v2.json",
+            "before_sha256": "ea0f8e2a0c82a01c0601e627cf64d8df34682457904fb00a65639138a0be46fa",
+            "after_sha256": "ba85c62a50417efbe2c698f65f1296c429af6a65f5bc846c464e5926458ed4b8",
+            "bytes": 6997,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/w1-qrom-implementation-current-v2.json",
+            "before_sha256": "b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1",
+            "after_sha256": "4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427",
+            "bytes": 51950,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/w1-stark-route-registry-v1.json",
+            "before_sha256": "c41cc913029383ae089964ef5e2489c02624d8e5238eb1a71360c5840d82bf33",
+            "after_sha256": "eaac9ffd5ac8663fd7c80da4ff81155414cd5f2431ad0986defe2c9850fd5c9c",
+            "bytes": 25703,
+            "base_mode": "100644"
+          },
+          {
+            "path": "config/pon/w1-upstream-security-v1.json",
+            "before_sha256": "7962bb5ef0966fb75357a4479b76cbf29b0a4a2da1cf90f5056bb92f2b8c680d",
+            "after_sha256": "3dcc4c724b6d2f4a4087e0490ef1afd20f4cc741d55d8ddb59e28cf7efd5b06a",
+            "bytes": 1366,
+            "base_mode": "100644"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+            "before_sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092",
+            "after_sha256": "1d44a42aeb356c7421890ae3cd7ed056c0d28644e873859ac24bdf1f52042b68",
+            "bytes": 5102,
+            "base_mode": "100644"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+            "before_sha256": "14c6a9eef9da884bed2d24d4b07980b5ce8146760c162ec1b9827287b735f4ec",
+            "after_sha256": "4093899036bd905062d569c5eea5052c966bc2254f2fb0eacfd11b32e6962e73",
+            "bytes": 20206,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/ci/hash_use_contract.py",
+            "before_sha256": "d22127c612b940f8267394d3c723ea60a63c6b312818bbb083b0057f525067e4",
+            "after_sha256": "bb97be040f871f1d71331b015b988cd0339c79e1d805c7cd54ff3f6a9493b533",
+            "bytes": 18531,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/ci/pq_lifetime_current_v2.py",
+            "before_sha256": "2a2e8bbb1b8814b70bcd921314fbbc3abffc998bb3c66188558676362037938a",
+            "after_sha256": "a915f9544aac4ac44d04262c4b93642dcb8010a420eedbc2913b43c323419069",
+            "bytes": 10522,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/ci/test_pq_proof_profile_binding.py",
+            "before_sha256": "c0b35f83ac7b8cc729d6ebfdfe48d61699241300bac6b92b19891aae089188be",
+            "after_sha256": "966e1daf3c16d4fd20c8478542356336b7c44de569c702f55054ef479b836fcd",
+            "bytes": 22268,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/ci/test_w1_qrom_current_ci.py",
+            "before_sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26",
+            "after_sha256": "e05098e0558fbfd4589830a45b18d412d6932589a11361ed92157c5fd5e64c3b",
+            "bytes": 21400,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+            "before_sha256": "f63e88533619880f4ceb0bbfdd165c3a58b8edbf3f14c5aa987bda14a758b92c",
+            "after_sha256": "b67779f5f9ba436639a9f44d882af78ccd4aacfb649da1b452d67b8d99d961bf",
+            "bytes": 12789,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/w1_lifetime_current_observation.py",
+            "before_sha256": "b4f9164f50fdc4df9c1d56346f65706c9feb2fc4f542cdbc9e3c9a761e36c23e",
+            "after_sha256": "a73bfd46f8cb9a88cecb616ad81d397955fa697d9aa90e6295d83b4c9496ca47",
+            "bytes": 9776,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/w1_qrom_current_implementation_audit.py",
+            "before_sha256": "3ac2aa88b672b1eedc607214ab3d5d2fea2539cf653fa3895f146cc4ed11e0e9",
+            "after_sha256": "98d64e337d28f38d879a1294df5ba11b88ecc78febf80dc45729e3ac8ef16050",
+            "bytes": 17150,
+            "base_mode": "100644"
+          },
+          {
+            "path": "scripts/w1_stark_route_audit.py",
+            "before_sha256": "7ce10d5ea4b3401a111c53258655dfedbbf083b7f6d8157b8566904dc09fc106",
+            "after_sha256": "318ba714fe5c43d12cda1c3a06b08ba132d04bb176b7d4f9bbd0861652934a57",
+            "bytes": 35128,
+            "base_mode": "100644"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+            "before_sha256": "fa1fdeac2e904824d52d72bd514c2b7fea42f95375666604c4902ba44a152e65",
+            "after_sha256": "2d89753fd73ffa30dad2daef75731171d885a661a6a9073c1e4a2e942a1aa687",
+            "bytes": 48174,
+            "base_mode": "100644"
+          }
+        ],
+        "independent_literal_correspondence_checks": [
+          {
+            "consumer": "scripts/ci/hash_use_contract.py",
+            "literal": "REVIEWED_SOURCE_MAP_SHA256",
+            "actual_sha256": "cf4db5e45b5c4f20db2f09604d39a428fc73042a934a1be6b3269e80c2a8fdc8"
+          },
+          {
+            "consumer": "scripts/w1_stark_route_audit.py",
+            "literal": "FROZEN_SOURCE_SET_SHA256",
+            "actual_sha256": "a0159bd0daec19af3ed4c9e2bc869cdb01c7bb614ab053c3a9eabf543ee62655"
+          },
+          {
+            "consumer": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+            "literal": "REVIEWED_SOURCE_MAP_SHA256",
+            "actual_sha256": "a69f17781ad128e79634f37825764b60a8346bb2d68a21cc3450d1eccdf1746c"
+          },
+          {
+            "consumer": "scripts/ci/pq_lifetime_current_v2.py",
+            "literal": "EXPECTED_CURRENT_FILES_SHA256",
+            "actual_sha256": "12c56455a8941f633b29a5edd59f32a1bb18759fc713c1610c2943579b831c34"
+          },
+          {
+            "consumer": "scripts/w1_qrom_current_implementation_audit.py",
+            "literal": "CONTRACT_SHA256",
+            "actual_sha256": "4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427"
+          },
+          {
+            "consumer": "scripts/w1_lifetime_current_observation.py",
+            "literal": "CONTRACT_SHA256",
+            "actual_sha256": "ba85c62a50417efbe2c698f65f1296c429af6a65f5bc846c464e5926458ed4b8"
+          },
+          {
+            "consumer": "scripts/ci/pq_lifetime_current_v2.py",
+            "literal": "EXPECTED_MAP_SHA256",
+            "actual_sha256": "20a8f5a09f9e40ec938d85739c0ccb982aa307d8b09d5562faecdc76a5c8540f"
+          }
+        ],
+        "review": [
+          "All 19 exact before/after bytes match the frozen manifest and actual base Git tree. Final patch read in full.",
+          "The source logic edit is only the Witness owner/helper boundary plus root formatter output. handle and serve_one retain the original supplied until; execution helpers borrow development by reference; every ordinary question-mark return lands in helper and original public owner records finish before returning result in both cfg(test) and cfg(not(test)) macro forms.",
+          "MAX_EXCHANGE remains exactly Duration::from_millis(250). Signing, storage ownership, commit_uncertain, known_head, retry_from, strict checks and late committed-CAS receipt handling are retained. No deadline, cancellation, SQL or error contract relaxation.",
+          "Original pre-format operation-body relocation proof remains historical with its own pre-format SHA; final formatted operation bodies were separately visually reviewed, not claimed byte-identical to that pre-format file.",
+          "W1 current selected project map remains16. Prior145 local inputs: only pon_work is repinned, noise_frame added for146. Other144 records and all other closure metadata retain exact values.",
+          "Current three consumers and expanded fixed-probability/joint/lifetime source-map pins are narrowly propagated. Independent canonical map and exact whole-file literals match actual final bytes.",
+          "Hash-use31 roster and19 semantics remain unchanged; only pon_work and selected-profile input pins differ. Current source correspondence remains21 declared inputs; historic locks/register/anchors/HOLD/null qualification fields unchanged.",
+          "All Python implementation changes outside tests are fixed source constants or explanatory comments; no checker refusal logic, source roster relaxation or thresholds were removed. Existing named controls kept; same-size tamper cases add strength."
+        ],
+        "limitations": [
+          "Read-only source review: zero test controls, native commands, compilation, formatter, CI launches or reruns.",
+          "Source mapping does not transfer prior native/proof observations or establish speed, complete Rust module closure, upstream proof-use approval, security or consensus qualification.",
+          "Current source inventory still explicitly excludes pre-existing external path imports and third-party/build closure."
+        ],
+        "verdict": "no new definite source blocker found within reviewed19-file scope"
+      }
+    },
+    {
+      "name": "analytic_chain_descriptor_increment_review.json",
+      "bytes": 6303,
+      "sha256": "8306c03e57234111e93cd6a420f161c848bb89c7ccfe5221283dce78a2890635",
+      "review": {
+        "schema": "trnm-analytic-current-descriptor-increment-review-v1",
+        "source_base": "6b851bc64db9d87db1bae083654902846f14c275",
+        "proposed_patch_sha256": "865f8d5958f6ba9f0f70edf4a2eee508503cb0daf78ea304e41d854a59f0b795",
+        "old_descriptor_sha256": "2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4",
+        "new_descriptor_sha256": "fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3",
+        "canonical_exact": true,
+        "only_descriptor_changes": [
+          "mapping_contract_sha256",
+          "source_inputs/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+        ],
+        "identity_profile_snapshot_unchanged": true,
+        "current_source_inputs": [
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+            "bytes": 64,
+            "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+            "matches": true
+          },
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+            "bytes": 375928,
+            "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+            "matches": true
+          },
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+            "bytes": 318,
+            "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+            "matches": true
+          },
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+            "bytes": 49506,
+            "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+            "matches": true
+          },
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+            "bytes": 198014,
+            "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+            "matches": true
+          },
+          {
+            "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+            "bytes": 257014,
+            "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+            "bytes": 38332,
+            "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+            "bytes": 349,
+            "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+            "bytes": 5246,
+            "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+            "bytes": 1282,
+            "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+            "bytes": 46018,
+            "sha256": "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+            "bytes": 498,
+            "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+            "bytes": 284,
+            "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+            "bytes": 11172,
+            "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+            "bytes": 46025,
+            "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+            "bytes": 564,
+            "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+            "bytes": 445,
+            "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+            "bytes": 14597,
+            "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322",
+            "matches": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+            "bytes": 11159,
+            "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b",
+            "matches": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "bytes": 106379,
+            "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4",
+            "matches": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+            "bytes": 3747,
+            "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+            "matches": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "bytes": 32654,
+            "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+            "matches": true
+          }
+        ],
+        "actual_changed_files": [
+          {
+            "path": "scripts/ci/test_pq_proof_profile_binding.py",
+            "bytes": 22359,
+            "sha256": "009a4425345db193ba08638ce80b95c26e421e275d8cf631052459df6a57711c"
+          },
+          {
+            "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+            "bytes": 3683,
+            "sha256": "6048e3fd296cf7f8aa6c5936b0345501bd361f4a69be18dd610be041cb2a539d"
+          }
+        ],
+        "review": "Both positive literals match exact current descriptor; old descriptor added to existing wrong-digest tuple, preserving all older negative cases. Workflow triggers, permissions, timeouts and commands otherwise unchanged. Reader algorithm and historical qualification evidence unchanged.",
+        "prior_final19_review_sha256": "c0a13521c34141be9dde4bbadd678c691b31a27b3345646fc24e689d631fce3f",
+        "new_native_or_security_qualification": false,
+        "tests": 0,
+        "imports": 0,
+        "source_edits": 0,
+        "verdict": "No definite blocker found in this two-path increment; final source scope is20 paths, not19."
+      }
+    },
+    {
+      "name": "analytic_chain_joint_static_inputs.json",
+      "bytes": 14719,
+      "sha256": "e311c80fe1c5bffae3e12e03cc907c20d672d435564b4ffdc80b0b9a4e9fd575",
+      "review": {
+        "schema": "trnm-joint-qualification-static-input-review-v1",
+        "source_base": "6b851bc64db9d87db1bae083654902846f14c275",
+        "inspected_plan_sha256": "c3f6b262da1fba4c42b4eb74ce2c0f8c34a885c5bfb6fc599e578fb713d9cae7",
+        "imports_and_reads": [
+          {
+            "path": "PROJECT_BOUNDARY.json",
+            "present": true,
+            "HEAD_bytes": 2002,
+            "HEAD_sha256": "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9",
+            "current_sha256": "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "config/consensus-mainline.json",
+            "present": true,
+            "HEAD_bytes": 806,
+            "HEAD_sha256": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3",
+            "current_sha256": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "config/pon-nakamoto-v1.json",
+            "present": true,
+            "HEAD_bytes": 11035,
+            "HEAD_sha256": "906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085",
+            "current_sha256": "906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "config/pon/devnet-v1.json",
+            "present": true,
+            "HEAD_bytes": 1964,
+            "HEAD_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+            "current_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+            "role": "import-time config"
+          },
+          {
+            "path": "config/pon/joint-consensus-qualification-v1.json",
+            "present": true,
+            "HEAD_bytes": 10339,
+            "HEAD_sha256": "433d1eae36ce71eb114cb92b4c7328581e78355fc5e7418aea481c30d815f146",
+            "current_sha256": "3a13b8f0c8ec84a4753e8230ff20341a2043b2d77c421d67998b2551c7ced1e1",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "config/pon/ledger-v1.json",
+            "present": false,
+            "HEAD_bytes": 7793,
+            "HEAD_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+            "current_sha256": null,
+            "role": "import-time config"
+          },
+          {
+            "path": "config/pon/model-family-v1.json",
+            "present": false,
+            "HEAD_bytes": 1383,
+            "HEAD_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+            "current_sha256": null,
+            "role": "import-time config"
+          },
+          {
+            "path": "config/pon/work-profile-v1.json",
+            "present": true,
+            "HEAD_bytes": 1596,
+            "HEAD_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+            "current_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+            "role": "import-time config"
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md",
+            "present": true,
+            "HEAD_bytes": 16050,
+            "HEAD_sha256": "f0ff1503c7ce5a9b19cb265f3f327862de50a879ea51642179845b7cb85c74c1",
+            "current_sha256": "f0ff1503c7ce5a9b19cb265f3f327862de50a879ea51642179845b7cb85c74c1",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+            "present": true,
+            "HEAD_bytes": 14281,
+            "HEAD_sha256": "04d2bf96cebde01ee983a0d92ab466b71c6f8d1574745a52d442ec2e84ad7829",
+            "current_sha256": "04d2bf96cebde01ee983a0d92ab466b71c6f8d1574745a52d442ec2e84ad7829",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md",
+            "present": true,
+            "HEAD_bytes": 21734,
+            "HEAD_sha256": "e8f0ce993256717b67e12033667aa03069d3ef66889c670ad99a2486713df3f2",
+            "current_sha256": "e8f0ce993256717b67e12033667aa03069d3ef66889c670ad99a2486713df3f2",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md",
+            "present": true,
+            "HEAD_bytes": 31611,
+            "HEAD_sha256": "e6644ec5d759a15a825487dd8fe50ffb02a8daf1dd521030e62c7857b6063af9",
+            "current_sha256": "e6644ec5d759a15a825487dd8fe50ffb02a8daf1dd521030e62c7857b6063af9",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+            "present": true,
+            "HEAD_bytes": 32066,
+            "HEAD_sha256": "aeaf1d009f123d5525d502cb079b4efd806569b3639501ab0da5f240b2d3e6f9",
+            "current_sha256": "aeaf1d009f123d5525d502cb079b4efd806569b3639501ab0da5f240b2d3e6f9",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md",
+            "present": true,
+            "HEAD_bytes": 16582,
+            "HEAD_sha256": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766",
+            "current_sha256": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+            "present": true,
+            "HEAD_bytes": 11309,
+            "HEAD_sha256": "b3457f80f58ac1651b028bc80213756ebf2ba68b1c504b30ced96f9c78098d6d",
+            "current_sha256": "b3457f80f58ac1651b028bc80213756ebf2ba68b1c504b30ced96f9c78098d6d",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+            "present": true,
+            "HEAD_bytes": 27428,
+            "HEAD_sha256": "29c128cf14ea9b85da419f3885f505f8c417a6a3ca34b058ee061fd620439201",
+            "current_sha256": "29c128cf14ea9b85da419f3885f505f8c417a6a3ca34b058ee061fd620439201",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/bounded_process.py",
+            "present": true,
+            "HEAD_bytes": 8627,
+            "HEAD_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+            "current_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contract_wire.py",
+            "present": true,
+            "HEAD_bytes": 8924,
+            "HEAD_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+            "current_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+            "present": true,
+            "HEAD_bytes": 11399,
+            "HEAD_sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc",
+            "current_sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+            "present": true,
+            "HEAD_bytes": 5102,
+            "HEAD_sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092",
+            "current_sha256": "1d44a42aeb356c7421890ae3cd7ed056c0d28644e873859ac24bdf1f52042b68",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+            "present": true,
+            "HEAD_bytes": 20206,
+            "HEAD_sha256": "14c6a9eef9da884bed2d24d4b07980b5ce8146760c162ec1b9827287b735f4ec",
+            "current_sha256": "4093899036bd905062d569c5eea5052c966bc2254f2fb0eacfd11b32e6962e73",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+            "present": true,
+            "HEAD_bytes": 14587,
+            "HEAD_sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+            "current_sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+            "present": true,
+            "HEAD_bytes": 15652,
+            "HEAD_sha256": "b91c318b3a5edf49a0db8392eb71b50b9740791148b043027796cb168c3e82e0",
+            "current_sha256": "b91c318b3a5edf49a0db8392eb71b50b9740791148b043027796cb168c3e82e0",
+            "role": "import"
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/work_oracle.py",
+            "present": true,
+            "HEAD_bytes": 2944,
+            "HEAD_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "current_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "role": "import"
+          },
+          {
+            "path": "scripts/ci/pq_source_reader.py",
+            "present": true,
+            "HEAD_bytes": 5569,
+            "HEAD_sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+            "current_sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+            "role": "import"
+          },
+          {
+            "path": "trillionnium/Cargo.lock",
+            "present": true,
+            "HEAD_bytes": 42127,
+            "HEAD_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+            "current_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "present": true,
+            "HEAD_bytes": 106379,
+            "HEAD_sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4",
+            "current_sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+            "present": true,
+            "HEAD_bytes": 2357,
+            "HEAD_sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012",
+            "current_sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+            "present": true,
+            "HEAD_bytes": 20510,
+            "HEAD_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+            "current_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "present": true,
+            "HEAD_bytes": 37947,
+            "HEAD_sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d",
+            "current_sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "present": true,
+            "HEAD_bytes": 394623,
+            "HEAD_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+            "current_sha256": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+            "present": true,
+            "HEAD_bytes": 34979,
+            "HEAD_sha256": "79d4048bf04061cb839bb3c23f19ef1c63b0bdabb77aa68dc981abc152131ea2",
+            "current_sha256": "79d4048bf04061cb839bb3c23f19ef1c63b0bdabb77aa68dc981abc152131ea2",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/growth/confirmation.rs",
+            "present": true,
+            "HEAD_bytes": 10187,
+            "HEAD_sha256": "b80069fdbe8c508b560838db8220ce2de3a519f4875de666bf8031248674d431",
+            "current_sha256": "b80069fdbe8c508b560838db8220ce2de3a519f4875de666bf8031248674d431",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs",
+            "present": true,
+            "HEAD_bytes": 5033,
+            "HEAD_sha256": "20cd8d967d0ac817d7b7c4b1f353d3c56dde642ef2175a70feeaed5b5c0fc73a",
+            "current_sha256": "20cd8d967d0ac817d7b7c4b1f353d3c56dde642ef2175a70feeaed5b5c0fc73a",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+            "present": true,
+            "HEAD_bytes": 34389,
+            "HEAD_sha256": "5ba2704b48e02dc1aa8a33eb3226b9e21f0e6c127fc976d4c7ae2bfd538863b1",
+            "current_sha256": "5ba2704b48e02dc1aa8a33eb3226b9e21f0e6c127fc976d4c7ae2bfd538863b1",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+            "present": true,
+            "HEAD_bytes": 2014,
+            "HEAD_sha256": "6e961948607155c6846c947a9c767e8727028bc98d3445b015a8ceefb2096842",
+            "current_sha256": "6e961948607155c6846c947a9c767e8727028bc98d3445b015a8ceefb2096842",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+            "present": true,
+            "HEAD_bytes": 3760,
+            "HEAD_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "current_sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "role": "explicit inspected source/obligation"
+          },
+          {
+            "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "present": true,
+            "HEAD_bytes": 32654,
+            "HEAD_sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+            "current_sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+            "role": "explicit inspected source/obligation"
+          }
+        ],
+        "boundaries": [
+          "Pure AST/source/Git-object inspection only; no module imports, unit tests, CLI execution or configuration mutation.",
+          "Both joint --check and --require-qualified import fixed_probability_contract -> mandatory_units_relation -> contract_wire/work_oracle and bounded_process.",
+          "contract_wire immediately loads ledger, work-profile, model-family, then devnet under default legacy-first-two-v3; its PARAMS branch reads evaluation-round-v1.json only if TRNM_PON_EVALUATION_POLICY equals closed-round-all-eligible-min-v1. Unknown policy raises ValueError. Freeze or record the actual inherited variable, not an assumption.",
+          "35 unit controls copy all23 listed source paths, manifest, and each unique obligation document into fresh temporary roots. The two CLIs read same source/obligation inputs; --require-qualified still refuses with code3.",
+          "This static selected import path review is not a claim of arbitrary dynamic Python or full stdlib/build closure. Newly introduced dynamic call paths would require separate review."
+        ],
+        "policy_observed": "absent",
+        "tests": 0,
+        "cli_runs": 0,
+        "edits": 0
+      }
+    }
+  ],
+  "reviewer_tests_or_compilation": 0
+}

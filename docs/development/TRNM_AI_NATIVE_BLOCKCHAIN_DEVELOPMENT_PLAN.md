@@ -1,3 +1,69 @@
+**Witness completion and current W1 source bindings, 2026-11-25 UTC — HOLD:**
+
+This isolated review candidate is based on #1000 at `6b851bc64db9d87db1bae083654902846f14c275`. Its 20 source
+changes address two observed repository gates. Native Clippy rejected two
+immediately invoked closures around the test observation macro. Private
+`handle_observed` and `serve_one_observed` methods now contain the original
+operation bodies, while the public owner finishes the development observation
+after every normal result. Both macro configurations keep their `?` and early
+return boundary. The original deadline is computed before observation; the
+250 ms limit, dynamic Host checks, storage, permission, cancellation and late-CAS
+semantics are unchanged. No lint exemption or claim of compiled equivalence is
+introduced. The exact Rust source was formatted once with the reviewed 1.95
+binary; its own new-source native CI remains required.
+
+The second gate rejected the current `pon_work.rs` size/hash after the already
+reviewed noise-framing module was introduced. The new current W1 inventory
+includes that existing module: 145 to 146 files, 123 to 124 Rust files, the same
+six crates, six path-dependency edges and eight literal include targets. The
+16 selected project paths, 15 open obligations, frozen V1 reader/contract,
+upstream source/proof identities, locks, historical fixtures and unknown costs
+remain. This limited inventory is not a full Rust module graph, build closure
+or PQ qualification. The current PQ correspondence still declares 21 paths;
+only its Witness source pin follows the formatted method boundary.
+
+Every reviewed active current consumer follows the new source bytes: proof
+profile and upstream-withdrawal mapping, route inputs, hash-use inputs, fixed
+cost inputs, joint qualification and lifetime overlays. The 31 declared
+hash-use paths and 19-use semantics, four-source cost scope, 23-source joint
+scope and 20-source lifetime scope remain explicit. Historical pins and
+activation/qualification fields remain unchanged. The candidate descriptor
+changes from `2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4`
+to `fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3` because its
+definition includes the current mapping and selected source bytes. The active
+CI flag and positive tests require the new digest; the original digest is now
+also an explicit refusal case. The descriptor reader itself is unchanged.
+
+Four separately identified metadata execution attempts consumed 11.07193668999389 s of
+one 30 s engineering allocation. The first three original capsule results
+remain FAIL: an inherited-test roster error despite 82 actual successes;
+37 successes and two profile errors after 29 other successes; then 128
+successes followed by a sparse import configuration failure before the planned
+16 fixed-cost controls ran. The final continuation executed only the remaining
+51 named controls and ten report CLIs. Across all original snapshots there are
+290 distinct successful controls, 327 successful test events, 37 repeated
+successes, two real control errors and one loader error. These are not a
+single-head 290-test qualification. All four source/input snapshots, failed
+records, exact logs and inclusive owner/child CPU costs are retained. The
+final 350 inputs were checked before and after; the three added configuration
+files are unchanged bytes from the same Git base. No Rust build, native test,
+pressure campaign or original E1–E6 budget was used by these capsules.
+
+All ten reports preserve their HOLD or affected-upstream status and false/null
+qualification. The original #999/#1000 Clippy failures, W1 current-map refusal,
+ARM 16-worker confirmation failure and old-source runtime identities remain
+separate evidence. Neither the four-second confirmation target nor the 250 ms
+Witness deadline is widened. The Witness deadline cause remains unproved.
+Existing 1+3 native controls belong to their actual earlier source identities;
+they do not qualify this new candidate. No scan waiver, settings change,
+production activation, merge or old campaign replay is included.
+
+Evidence is in `evidence/witness-boundary-w1-current-20261125/`. The compact raw
+record envelope preserves each exact original byte sequence with independent
+SHA-256 and compression hashes; the readable readback and source review state
+the scope of every observation. The complete preceding sole plan follows
+unchanged below.
+
 **Current PQ declared-path correspondence refresh, 2026-11-25 UTC — HOLD:**
 
 This stage repairs current source metadata after two reviewed engineering changes.

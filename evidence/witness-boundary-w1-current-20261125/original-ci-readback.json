@@ -1,0 +1,1345 @@
+{
+  "schema": "chain-original-ci-retained-observations-v1",
+  "observations": [
+    {
+      "name": "ORIGINAL_CI_FAILURES.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/ORIGINAL_CI_FAILURES.json",
+      "bytes": 6137,
+      "sha256": "df8b1d7d9bdba5c0c5b6dfb3925c792ea9927c4bcf9e74329d6c0e1a1cdd89ef",
+      "observation": {
+        "schema": "trnm-witness-observation-boundary-original-ci-failure-v1",
+        "original_observations": [
+          {
+            "job": 139223279939,
+            "run": 45619422416,
+            "run_attempt": 1,
+            "source_kind": "head",
+            "started_at": "2026-11-25T13:23:16Z",
+            "completed_at": "2026-11-25T13:34:14Z",
+            "conclusion": "failure",
+            "source": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "source_before_equals_after": true,
+            "command_sha256": "5f46e68f4d31ddd3b4a5ead0217bcad2faae3b7acd457ee3ed5f8e8b57968f7a",
+            "artifact": {
+              "id": 15026573544,
+              "bytes": 660246,
+              "sha256": "a35999e3822acb4db8ba4a391fc374e64cc45594092d6a08b7b33e6aa0ba4af8",
+              "retained_local_path": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/original-quality-head.zip"
+            },
+            "raw_job_log": {
+              "bytes": 123633,
+              "sha256": "2ba1dd45b22f81267c0f315630ca805b7c27f956a94fedcb874cddc99be127f0",
+              "retained_local_path": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/original-job-139223279939.log"
+            },
+            "errors": [
+              {
+                "rule": "clippy::redundant_closure_call",
+                "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                "line": 797,
+                "column": 22,
+                "message": "try not to call a closure in the expression where it is declared"
+              },
+              {
+                "rule": "clippy::redundant_closure_call",
+                "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                "line": 996,
+                "column": 22,
+                "message": "try not to call a closure in the expression where it is declared"
+              }
+            ],
+            "exit_code": 101
+          },
+          {
+            "job": 139223280022,
+            "run": 45619422416,
+            "run_attempt": 1,
+            "source_kind": "prospective",
+            "started_at": "2026-11-25T13:26:37Z",
+            "completed_at": "2026-11-25T13:40:20Z",
+            "conclusion": "failure",
+            "source": {
+              "base": "c1221acaa448accd789c51c64774a2285aa7f125",
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "prospective-merge",
+              "prospective_merge": "22c6870ca6613a7a9e61560d2d1e055a2dff5b5d",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "22c6870ca6613a7a9e61560d2d1e055a2dff5b5d",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "source_before_equals_after": true,
+            "command_sha256": "5f46e68f4d31ddd3b4a5ead0217bcad2faae3b7acd457ee3ed5f8e8b57968f7a",
+            "artifact": {
+              "id": 15028618503,
+              "bytes": 660380,
+              "sha256": "97752fb54173bcf74aba47c9d8b5fbc38c2c9f7fa54fd5ca404314045af6de22",
+              "retained_local_path": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/original-quality-prospective.zip"
+            },
+            "raw_job_log": {
+              "bytes": 127080,
+              "sha256": "3b811bb0352e783d0b3aa0b871a17c431d78c0413feea6cd6d698f0de71438a5",
+              "retained_local_path": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/original-job-139223280022.log"
+            },
+            "errors": [
+              {
+                "rule": "clippy::redundant_closure_call",
+                "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                "line": 797,
+                "column": 22,
+                "message": "try not to call a closure in the expression where it is declared"
+              },
+              {
+                "rule": "clippy::redundant_closure_call",
+                "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                "line": 996,
+                "column": 22,
+                "message": "try not to call a closure in the expression where it is declared"
+              }
+            ],
+            "exit_code": 101
+          }
+        ],
+        "diagnosis": {
+          "normal_cfg": "observe_operation! expands to its action block. The original outer immediately invoked closure is the return boundary ensuring ? and return do not skip finish_development.",
+          "test_cfg": "observe_operation! expands to test_observation::with_operation(kind, |observation| action). That callback already owns the action return boundary, so Clippy 1.95 detects the outer immediately called closure as redundant.",
+          "safe_remediation": "Each public method retains DevelopmentOperation ownership, invokes one private observed execution method, then calls finish_development with its result. Every original action expression is preserved within the private method.",
+          "why_not_apply_suggested_deletion": "Deleting the outer closure without providing another non-test function boundary lets ? and return bypass finish_development in normal builds.",
+          "why_no_lint_allow": "The private execution boundary has actual return-scope semantics in both cfg variants; no allowance or suppression is introduced.",
+          "unmodified_contracts": [
+            "Original until supplied without resampling or reset.",
+            "MAX_EXCHANGE remains Duration::from_millis(250).",
+            "Storage/schema/host/identity/cryptographic checks and full original CAS sequence unchanged.",
+            "Late matching CAS reply reconciliation unchanged.",
+            "Default-off observer performs no additional diagnostic clock sampling or formatting.",
+            "Original stdout/stderr logging limits and supervisor remain."
+          ]
+        },
+        "qualification": {
+          "new_source_lib_test_clippy_passed": false,
+          "new_source_native_controls_executed": 0,
+          "old_E1_E6_budget_used": 0,
+          "production_activation": false
+        },
+        "original_failed_jobs_rerun": false
+      }
+    },
+    {
+      "name": "ORIGINAL_1000_QUALITY_FAILURES.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/ORIGINAL_1000_QUALITY_FAILURES.json",
+      "bytes": 2490,
+      "sha256": "47a32e3052c9b431ac5b824d1992c8b0862ae43c51cb61461e87f3da96f238ce",
+      "observation": {
+        "run_id": 45626601924,
+        "source_head": "6b851bc64db9d87db1bae083654902846f14c275",
+        "source_identity_from_run_is_not_prospective_tested_sha": true,
+        "actual_jobs": [
+          {
+            "job_id": 139248353298,
+            "path": "original-1000-job-139248353298.log",
+            "bytes": 123537,
+            "sha256": "de7326d370a5288cea5ebf2d7f77c7c758f1c27ca7e860df0fd643ad7af8c9c3",
+            "actual_diagnostics": [
+              "2026-11-25T14:00:34.1124574Z    --> crates/trnm-pon-node/src/pq_rollback_witness.rs:797:22",
+              "2026-11-25T14:00:34.1134612Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#redundant_closure_call",
+              "2026-11-25T14:00:34.1138526Z     = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+              "2026-11-25T14:00:34.1303914Z     --> crates/trnm-pon-node/src/pq_rollback_witness.rs:996:22",
+              "2026-11-25T14:00:34.1308708Z      = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#redundant_closure_call",
+              "2026-11-25T14:00:40.6694173Z error: could not compile `trnm-pon-node` (lib test) due to 2 previous errors",
+              "2026-11-25T14:00:44.3364663Z ##[error]Process completed with exit code 101."
+            ]
+          },
+          {
+            "job_id": 139248352691,
+            "path": "original-1000-job-139248352691.log",
+            "bytes": 127238,
+            "sha256": "82e9f1b054ed95bd604d87813e30f78bbc374c5dc5e94a432e62cac2ba9c1e91",
+            "actual_diagnostics": [
+              "2026-11-25T14:00:33.1131932Z    --> crates/trnm-pon-node/src/pq_rollback_witness.rs:797:22",
+              "2026-11-25T14:00:33.1138512Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#redundant_closure_call",
+              "2026-11-25T14:00:33.1143247Z     = help: to override `-D warnings` add `#[allow(clippy::redundant_closure_call)]`",
+              "2026-11-25T14:00:33.1269834Z     --> crates/trnm-pon-node/src/pq_rollback_witness.rs:996:22",
+              "2026-11-25T14:00:33.1277616Z      = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#redundant_closure_call",
+              "2026-11-25T14:00:44.1885922Z error: could not compile `trnm-pon-node` (lib test) due to 2 previous errors",
+              "2026-11-25T14:00:51.5696016Z ##[error]Process completed with exit code 101."
+            ]
+          }
+        ],
+        "conclusion": "FAIL two lib-test redundant_closure_call errors; no suppression or rerun"
+      }
+    },
+    {
+      "name": "READBACK.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/chain-1000-map-ci/READBACK.json",
+      "bytes": 6972,
+      "sha256": "5e05b39c8eb0dba213991f577b11b633ea6e124e60d1af5d2bc2531ca4b4aa0f",
+      "observation": {
+        "schema": "trnm-chain-1000-current-map-ci-readback-v1",
+        "source": "6b851bc64db9d87db1bae083654902846f14c275",
+        "script_path": "scripts/ci/ci_job.sh",
+        "script_sha256": "174abda80ce99938549f9063dabcdca41f81f49b479076bf39b5cfc4cb77a27f",
+        "command_mapping": "The exact source script runs lifetime58, current25 and its CLI, then other controls and claim57 immediately before the failing current W1 audit. Both original jobs reached and returned OK from these commands. CI logs use unittest dots for these suites, not 82 independent per-name lines.",
+        "jobs": [
+          {
+            "job": 139248353141,
+            "run": 45626601924,
+            "conclusion": "failure",
+            "source_before": {
+              "base": null,
+              "candidate": "6b851bc64db9d87db1bae083654902846f14c275",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "6b851bc64db9d87db1bae083654902846f14c275",
+              "tested_tree": "900c2fa895a8aea10ff61a2650e18bb2982c7f35",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002794009,
+              "tracked_entries": 41964,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": null,
+              "candidate": "6b851bc64db9d87db1bae083654902846f14c275",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "6b851bc64db9d87db1bae083654902846f14c275",
+              "tested_tree": "900c2fa895a8aea10ff61a2650e18bb2982c7f35",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002794009,
+              "tracked_entries": 41964,
+              "tracked_worktree_verified": true
+            },
+            "original_job_log": {
+              "path": "/tmp/chain-native-closure-20261125-7c9e/chain-1000-map-ci/original-job-139248353141.log",
+              "bytes": 164123,
+              "sha256": "78f10e4d16b3c917a79e29a7f041fba1d14c592ff7b439ff801ddf6aac185379"
+            },
+            "observed_test_summaries": {
+              "lifetime_controls": {
+                "count": 58,
+                "summary_line": "2026-11-25T13:58:26.5822208Z Ran 58 tests in 0.167s",
+                "following_ok_line": "2026-11-25T13:58:26.5822485Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              },
+              "current_map_controls": {
+                "count": 25,
+                "summary_line": "2026-11-25T13:58:26.9224841Z Ran 25 tests in 0.245s",
+                "following_ok_line": "2026-11-25T13:58:26.9225082Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              },
+              "claim_guard_controls": {
+                "count": 57,
+                "summary_line": "2026-11-25T13:58:41.0253856Z Ran 57 tests in 1.039s",
+                "following_ok_line": "2026-11-25T13:58:41.0254106Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              }
+            },
+            "current_report": {
+              "path": "/tmp/chain-native-closure-20261125-7c9e/chain-1000-map-ci/current-report-139248353141.json",
+              "sha256": "eaffe4c6751d492072fb11b0e5b3d20be2fa96d7f99d24925d634d0ebd3cb737",
+              "status": "HOLD",
+              "qualification_unchanged": true,
+              "map_sha256": "812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2"
+            },
+            "later_failure": "2026-11-25T13:58:41.1217176Z w1_qrom_current_implementation_audit.AuditError: nonregular or oversized current source: trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "later_setup_tests_executed": 0
+          },
+          {
+            "job": 139248353255,
+            "run": 45626601924,
+            "conclusion": "failure",
+            "source_before": {
+              "base": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "candidate": "6b851bc64db9d87db1bae083654902846f14c275",
+              "kind": "prospective-merge",
+              "prospective_merge": "b73e75297a4e7ec4ee09e729adf6c4a8b0badf6b",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "b73e75297a4e7ec4ee09e729adf6c4a8b0badf6b",
+              "tested_tree": "900c2fa895a8aea10ff61a2650e18bb2982c7f35",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002794009,
+              "tracked_entries": 41964,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "candidate": "6b851bc64db9d87db1bae083654902846f14c275",
+              "kind": "prospective-merge",
+              "prospective_merge": "b73e75297a4e7ec4ee09e729adf6c4a8b0badf6b",
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "b73e75297a4e7ec4ee09e729adf6c4a8b0badf6b",
+              "tested_tree": "900c2fa895a8aea10ff61a2650e18bb2982c7f35",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002794009,
+              "tracked_entries": 41964,
+              "tracked_worktree_verified": true
+            },
+            "original_job_log": {
+              "path": "/tmp/chain-native-closure-20261125-7c9e/chain-1000-map-ci/original-job-139248353255.log",
+              "bytes": 165028,
+              "sha256": "65b929fa8876cee8fef3214a56ab0794c8b512d629b10e3eb1382b0d5b8fec14"
+            },
+            "observed_test_summaries": {
+              "lifetime_controls": {
+                "count": 58,
+                "summary_line": "2026-11-25T13:55:35.5347196Z Ran 58 tests in 0.110s",
+                "following_ok_line": "2026-11-25T13:55:35.5347417Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              },
+              "current_map_controls": {
+                "count": 25,
+                "summary_line": "2026-11-25T13:55:35.5347930Z Ran 25 tests in 0.170s",
+                "following_ok_line": "2026-11-25T13:55:35.5348051Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              },
+              "claim_guard_controls": {
+                "count": 57,
+                "summary_line": "2026-11-25T13:55:48.0411117Z Ran 57 tests in 1.696s",
+                "following_ok_line": "2026-11-25T13:55:48.0411347Z OK",
+                "names_individually_logged": false,
+                "skipped": 0
+              }
+            },
+            "current_report": {
+              "path": "/tmp/chain-native-closure-20261125-7c9e/chain-1000-map-ci/current-report-139248353255.json",
+              "sha256": "eaffe4c6751d492072fb11b0e5b3d20be2fa96d7f99d24925d634d0ebd3cb737",
+              "status": "HOLD",
+              "qualification_unchanged": true,
+              "map_sha256": "812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2"
+            },
+            "later_failure": "2026-11-25T13:55:48.1100179Z w1_qrom_current_implementation_audit.AuditError: nonregular or oversized current source: trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "later_setup_tests_executed": 0
+          }
+        ],
+        "meaning": "The original current-source mapping refusal is closed for this exact source; entire repository-truth lane remains failed on a different current W1 local closure pin. Old V1 refusal, original failed jobs and security qualification remain unchanged.",
+        "readonly_parser_failure_retained": "READBACK_ATTEMPT1.json",
+        "native_tests_or_compilation_by_reviewer": 0,
+        "reruns_or_dispatches": 0
+      }
+    },
+    {
+      "name": "chain-999-CI-READBACK.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/chain-999-CI-READBACK.json",
+      "bytes": 13607,
+      "sha256": "711396faf7718ee8d1032a1d28cb515b818fd1387ad54b419e2e8039465f7eae",
+      "observation": {
+        "schema": "chain-999-native-and-pq-original-ci-observations-v1",
+        "source_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+        "source_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+        "original_fullpath_run": 45619422452,
+        "original_fullpath_job": 139223279553,
+        "fullpath_conclusion": "success",
+        "job_started_at": "2026-11-25T13:08:20Z",
+        "job_completed_at": "2026-11-25T13:18:16Z",
+        "fullpath_artifact": {
+          "id": 15026211061,
+          "bytes": 135158,
+          "sha256": "e1114743cd8ff187404b5bb5994aececc949120ce25cb5e5b1e492be0300a1c8"
+        },
+        "source_receipt_sha256": "0a79695f92c2fb434e9aa37c930af93a9b3982fd99f4149c6d5a91e5b0654dd8",
+        "engineering_summary_sha256": "87146e8398c4c52889906f7f6176b87128ade41d2f6ab66209ab3a47dc75dcce",
+        "native_named_controls": [
+          {
+            "name": "bound-identity-selector",
+            "expected_tests": [
+              "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces"
+            ],
+            "observation": {
+              "tests": [
+                "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces"
+              ],
+              "passed": 1,
+              "filtered_out": 14
+            },
+            "log_bytes": 562,
+            "log_sha256": "b090c7101c8a1970bf30d974c472eadc54553f6ffe9eadcd317eb983a9a796ba"
+          },
+          {
+            "name": "noise-frame-controls",
+            "expected_tests": [
+              "pon_work::noise_frame::tests::framing_matches_original_domain_and_all_part_lengths",
+              "pon_work::noise_frame::tests::words_callbacks_and_fixed_noise_budget_match_reference",
+              "pon_work::noise_frame::tests::each_cancelled_noise_boundary_stops_and_retry_has_fresh_framing"
+            ],
+            "observation": {
+              "tests": [
+                "pon_work::noise_frame::tests::each_cancelled_noise_boundary_stops_and_retry_has_fresh_framing",
+                "pon_work::noise_frame::tests::framing_matches_original_domain_and_all_part_lengths",
+                "pon_work::noise_frame::tests::words_callbacks_and_fixed_noise_budget_match_reference"
+              ],
+              "passed": 3,
+              "filtered_out": 231
+            },
+            "log_bytes": 1040,
+            "log_sha256": "e30a4e98e70f6e8cdd30d6f9d28dcce6cd7d01f9e57338931e7946985683f066"
+          }
+        ],
+        "engineering_inclusive_wall_seconds": 102.915405304,
+        "engineering_observed_owner_and_reaped_cpu_seconds": 167.51304100000002,
+        "nested_costs_not_added_again": true,
+        "cargo_lock_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+        "fullpath_component_gates": {
+          "overall_gate": "HOLD",
+          "security_gate": "HOLD",
+          "performance_gate": "COMPONENT_OBSERVATION_ONLY",
+          "timely_accepted_progress": 0,
+          "production_activation": false
+        },
+        "original_pq_head_run": 45619422244,
+        "original_pq_head_job": 139223277825,
+        "pq_head_conclusion": "failure",
+        "pq_head_started_at": "2026-11-25T13:03:50Z",
+        "pq_head_completed_at": "2026-11-25T13:15:15Z",
+        "pq_head_artifact": {
+          "id": 15025006693,
+          "bytes": 11772,
+          "sha256": "f7ee0f7bc33e8532e9e81eb45fe16bca1414abf5cdb8d716358dd8d9da07417a"
+        },
+        "pq_failure_stage": "Require retained source and claim controls; test_pq_chain_claim_guard; 57 tests, 10 errors",
+        "pq_failure_reason": "current correspondence source hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "pq_commands": {
+          "test_record_pq_native_command.json": {
+            "after": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "argv": [
+              "python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "scripts/ci",
+              "-p",
+              "test_record_pq_native_command.py",
+              "-v"
+            ],
+            "before": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 10538133731,
+            "environment": {
+              "CARGO_BUILD_JOBS": "2",
+              "CARGO_ENCODED_RUSTFLAGS": null,
+              "CARGO_INCREMENTAL": "0",
+              "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+              "GITHUB_RUN_ATTEMPT": "1",
+              "GITHUB_RUN_ID": "45619422244",
+              "OPENSSL_DIR": null,
+              "OPENSSL_STATIC": null,
+              "RUNNER_ARCH": "X64",
+              "RUSTC": null,
+              "RUSTC_WORKSPACE_WRAPPER": null,
+              "RUSTC_WRAPPER": null,
+              "RUSTFLAGS": null,
+              "RUST_TEST_THREADS": "1",
+              "TRNM_PQ_OPENSSL": null,
+              "TRNM_PQ_OPENSSL_SHA256": null,
+              "TRNM_PQ_OPENSSL_VERSION": null
+            },
+            "exit_code": 0,
+            "log_bytes": 2678,
+            "log_file": "test_record_pq_native_command.log",
+            "log_sha256": "fe30a1497cea0fd571ee9cb15f28edd6bb9cf576896bd7a5597671a98d41d319",
+            "schema": "trnm-pq-native-command-v1",
+            "started_utc": "2026-11-25T13:05:23.568697+00:00",
+            "status": "command_succeeded",
+            "whole_chain_quantum_security_qualified": false
+          },
+          "test_pq_research_integration.json": {
+            "after": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "argv": [
+              "python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "scripts/ci",
+              "-p",
+              "test_pq_research_integration.py",
+              "-v"
+            ],
+            "before": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 568113522926,
+            "environment": {
+              "CARGO_BUILD_JOBS": "2",
+              "CARGO_ENCODED_RUSTFLAGS": null,
+              "CARGO_INCREMENTAL": "0",
+              "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+              "GITHUB_RUN_ATTEMPT": "1",
+              "GITHUB_RUN_ID": "45619422244",
+              "OPENSSL_DIR": null,
+              "OPENSSL_STATIC": null,
+              "RUNNER_ARCH": "X64",
+              "RUSTC": null,
+              "RUSTC_WORKSPACE_WRAPPER": null,
+              "RUSTC_WRAPPER": null,
+              "RUSTFLAGS": null,
+              "RUST_TEST_THREADS": "1",
+              "TRNM_PQ_OPENSSL": null,
+              "TRNM_PQ_OPENSSL_SHA256": null,
+              "TRNM_PQ_OPENSSL_VERSION": null
+            },
+            "exit_code": 0,
+            "log_bytes": 19042,
+            "log_file": "test_pq_research_integration.log",
+            "log_sha256": "a3b6dbca2a8ea53d3e012b78bc9af406d1ff2f9eeef3476b0eea808ce92aff9d",
+            "schema": "trnm-pq-native-command-v1",
+            "started_utc": "2026-11-25T13:05:34.165342+00:00",
+            "status": "command_succeeded",
+            "whole_chain_quantum_security_qualified": false
+          },
+          "test_pq_chain_claim_guard.json": {
+            "after": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "argv": [
+              "python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "scripts/ci",
+              "-p",
+              "test_pq_chain_claim_guard.py",
+              "-v"
+            ],
+            "before": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 10878730855,
+            "environment": {
+              "CARGO_BUILD_JOBS": "2",
+              "CARGO_ENCODED_RUSTFLAGS": null,
+              "CARGO_INCREMENTAL": "0",
+              "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+              "GITHUB_RUN_ATTEMPT": "1",
+              "GITHUB_RUN_ID": "45619422244",
+              "OPENSSL_DIR": null,
+              "OPENSSL_STATIC": null,
+              "RUNNER_ARCH": "X64",
+              "RUSTC": null,
+              "RUSTC_WORKSPACE_WRAPPER": null,
+              "RUSTC_WRAPPER": null,
+              "RUSTFLAGS": null,
+              "RUST_TEST_THREADS": "1",
+              "TRNM_PQ_OPENSSL": null,
+              "TRNM_PQ_OPENSSL_SHA256": null,
+              "TRNM_PQ_OPENSSL_VERSION": null
+            },
+            "exit_code": 1,
+            "log_bytes": 28637,
+            "log_file": "test_pq_chain_claim_guard.log",
+            "log_sha256": "f058a23d747824d240202737327be9d6bd2047dfa44da77c508444b64218dbf9",
+            "schema": "trnm-pq-native-command-v1",
+            "started_utc": "2026-11-25T13:15:02.335380+00:00",
+            "status": "command_failed",
+            "whole_chain_quantum_security_qualified": false
+          },
+          "test_ci_source_integrity.json": {
+            "after": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "argv": [
+              "python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "scripts/ci",
+              "-p",
+              "test_ci_source_integrity.py",
+              "-v"
+            ],
+            "before": {
+              "base": null,
+              "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+              "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 4002580850,
+              "tracked_entries": 41948,
+              "tracked_worktree_verified": true
+            },
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 13158494355,
+            "environment": {
+              "CARGO_BUILD_JOBS": "2",
+              "CARGO_ENCODED_RUSTFLAGS": null,
+              "CARGO_INCREMENTAL": "0",
+              "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+              "GITHUB_RUN_ATTEMPT": "1",
+              "GITHUB_RUN_ID": "45619422244",
+              "OPENSSL_DIR": null,
+              "OPENSSL_STATIC": null,
+              "RUNNER_ARCH": "X64",
+              "RUSTC": null,
+              "RUSTC_WORKSPACE_WRAPPER": null,
+              "RUSTC_WRAPPER": null,
+              "RUSTFLAGS": null,
+              "RUST_TEST_THREADS": "1",
+              "TRNM_PQ_OPENSSL": null,
+              "TRNM_PQ_OPENSSL_SHA256": null,
+              "TRNM_PQ_OPENSSL_VERSION": null
+            },
+            "exit_code": 0,
+            "log_bytes": 7586,
+            "log_file": "test_ci_source_integrity.log",
+            "log_sha256": "e954e8dabbb0146dabf4b675eeaf1af0b31d0e8a6be7e15cb8683fdb2e400fd0",
+            "schema": "trnm-pq-native-command-v1",
+            "started_utc": "2026-11-25T13:05:10.355777+00:00",
+            "status": "command_succeeded",
+            "whole_chain_quantum_security_qualified": false
+          },
+          "source.json": {
+            "base": null,
+            "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 4002580850,
+            "tracked_entries": 41948,
+            "tracked_worktree_verified": true
+          }
+        },
+        "witness_phase_controls_executed_in_pq_lane": 0,
+        "witness_cause_resolved": false,
+        "pressure_qualified": false,
+        "old_E1_E6_budget_changed": false,
+        "reruns_dispatched": 0
+      }
+    },
+    {
+      "name": "chain-999-ARM-CONFIRMATION-READBACK.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/chain-999-ARM-CONFIRMATION-READBACK.json",
+      "bytes": 15893,
+      "sha256": "1da7f84351074a453bb7b89875cdbf7390b15b0c2f345e93beb9f9f958f36c56",
+      "observation": {
+        "schema": "trnm-chain-999-arm-confirmation-readonly-v1",
+        "artifact_id": 15027002825,
+        "artifact_zip_sha256": "ee0df69418fddbb927f7410e71fb3d164bd500314744a66bf8996eeed01d84ee",
+        "report_sha256": "f8de8536173212821757a1f2244eedd570fb988f0bf577ef787878f6870f6c5e",
+        "source_before": {
+          "commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+          "tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+          "tracked_source_identity": {
+            "schema": "trnm-ci-source-v1",
+            "kind": "head",
+            "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+            "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "base": null,
+            "prospective_merge": null,
+            "tracked_worktree_verified": true,
+            "tracked_entries": 41948,
+            "tracked_bytes": 4002580850,
+            "tests_executed_by_identity_check": false
+          },
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+        },
+        "source_after": {
+          "commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+          "tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+          "tracked_source_identity": {
+            "schema": "trnm-ci-source-v1",
+            "kind": "head",
+            "tested_commit": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "tested_tree": "3036919a5b813cc90c048dd3c0829d97fbf61a63",
+            "candidate": "875234c4d2c3621fa6aac49224122067f149f3f4",
+            "base": null,
+            "prospective_merge": null,
+            "tracked_worktree_verified": true,
+            "tracked_entries": 41948,
+            "tracked_bytes": 4002580850,
+            "tests_executed_by_identity_check": false
+          },
+          "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+        },
+        "native_control_names_passed": true,
+        "original_business_gate": {
+          "passed": false,
+          "failures": [
+            "CONFIRMATION_TARGET"
+          ],
+          "qualified": false
+        },
+        "phases": [
+          {
+            "mode": "attack-free-baseline",
+            "workers": 0,
+            "window_ns": 4000000000,
+            "business_started_ns": 178820,
+            "confirmed_transactions": 1,
+            "confirmation_latency_ns": 1885824852,
+            "signed_submission_attempts": 7,
+            "signed_submission_status_counts": {
+              "ok": 7
+            },
+            "history_calls": 7,
+            "final_confirmation_stage": {
+              "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+              "confirmation_ended_ns": 1885998840,
+              "confirmation_started_ns": 1809357253,
+              "confirmation_thread_cpu_ns": 1004920,
+              "confirmation_wall_ns": 76641587,
+              "observation_returned": true
+            },
+            "pages": [
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 204359479,
+                "ended_ns": 755220257,
+                "wall_ns": 550860778,
+                "caller_cpu_ns": 46434232,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30764008,
+                    "wall_ns": 86413376
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29024288,
+                  "wall_ns": 28994759,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 760063149,
+                "ended_ns": 900638442,
+                "wall_ns": 140575293,
+                "caller_cpu_ns": 37356680,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 31110504,
+                    "wall_ns": 128343684
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29418512,
+                  "wall_ns": 29395347,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 905339024,
+                "ended_ns": 1090350564,
+                "wall_ns": 185011540,
+                "caller_cpu_ns": 37081240,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30378536,
+                    "wall_ns": 100184503
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28697968,
+                  "wall_ns": 28666675,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1094860822,
+                "ended_ns": 1208047723,
+                "wall_ns": 113186901,
+                "caller_cpu_ns": 37608280,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30797520,
+                    "wall_ns": 105336319
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29150584,
+                  "wall_ns": 29116329,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1286562872,
+                "ended_ns": 1402767806,
+                "wall_ns": 116204934,
+                "caller_cpu_ns": 38047792,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30471584,
+                    "wall_ns": 107780397
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28868584,
+                  "wall_ns": 28842799,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1407464092,
+                "ended_ns": 1598394704,
+                "wall_ns": 190930612,
+                "caller_cpu_ns": 39028640,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30997456,
+                    "wall_ns": 181915863
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29339544,
+                  "wall_ns": 29304388,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1603224782,
+                "ended_ns": 1809243636,
+                "wall_ns": 206018854,
+                "caller_cpu_ns": 50931712,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30327152,
+                    "wall_ns": 182462780
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 28690656,
+                  "wall_ns": 28640494,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              }
+            ],
+            "verification_errors": [],
+            "pressure_overlap_observed": false
+          },
+          {
+            "mode": "from-zero-pressure",
+            "workers": 16,
+            "window_ns": 4000000000,
+            "business_started_ns": 5900897,
+            "confirmed_transactions": 0,
+            "confirmation_latency_ns": null,
+            "signed_submission_attempts": 7,
+            "signed_submission_status_counts": {
+              "ok": 7
+            },
+            "history_calls": 6,
+            "final_confirmation_stage": null,
+            "pages": [
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1002665420,
+                "ended_ns": 1697264235,
+                "wall_ns": 694598815,
+                "caller_cpu_ns": 43842464,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 30708872,
+                    "wall_ns": 194937886
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29013944,
+                  "wall_ns": 28973659,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 1700546258,
+                "ended_ns": 2097689641,
+                "wall_ns": 397143383,
+                "caller_cpu_ns": 37065560,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 31405608,
+                    "wall_ns": 390543313
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 29704088,
+                  "wall_ns": 119841650,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 2195991150,
+                "ended_ns": 2603043015,
+                "wall_ns": 407051865,
+                "caller_cpu_ns": 38448688,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 32121432,
+                    "wall_ns": 399178076
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30357720,
+                  "wall_ns": 32446787,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 2697423407,
+                "ended_ns": 3197003896,
+                "wall_ns": 499580489,
+                "caller_cpu_ns": 38966592,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 31764792,
+                    "wall_ns": 395698424
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30003648,
+                  "wall_ns": 118697475,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": true,
+                "error": null,
+                "started_ns": 3201916076,
+                "ended_ns": 3603028355,
+                "wall_ns": 401112279,
+                "caller_cpu_ns": 39416368,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": true,
+                    "error_code": null,
+                    "thread_cpu_ns": 32013784,
+                    "wall_ns": 392607948
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1099,
+                  "calls_completed": 1099,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 30228680,
+                  "wall_ns": 32084487,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              },
+              {
+                "accepted": false,
+                "error": "PUBLIC_REQUEST_DEADLINE",
+                "started_ns": 3698314628,
+                "ended_ns": 4001347338,
+                "wall_ns": 303032710,
+                "caller_cpu_ns": 31276440,
+                "packet_work": [
+                  {
+                    "phase": "work",
+                    "started": true,
+                    "completed": true,
+                    "accepted": false,
+                    "error_code": "PUBLIC_REQUEST_DEADLINE",
+                    "thread_cpu_ns": 29464888,
+                    "wall_ns": 299480868
+                  }
+                ],
+                "work_host_checkpoints": {
+                  "calls_started": 1012,
+                  "calls_completed": 1012,
+                  "calls_rejected": 0,
+                  "thread_cpu_ns": 27906904,
+                  "wall_ns": 119780555,
+                  "last_error_code": null
+                },
+                "packet_reserve_attempts": 1,
+                "packet_reserve_budget_refusals": 0,
+                "packet_reserve_granted": 1
+              }
+            ],
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ],
+            "pressure_overlap_observed": true
+          }
+        ],
+        "interpretation_limits": [
+          "The pressure business began inside the original 4s window; all seven signed submissions returned ok. This retained observation does not support attributing the zero result to missing business start or an ACK failure.",
+          "The sixth independent replay was refused inside W1 work at the original public request deadline; its recorded packet CPU reserve was granted. This is distinct from the separate Witness 250ms deadline.",
+          "Wall versus caller CPU and work Host checkpoint intervals are observations. They do not identify the scheduler, cgroup, Host checks or any one cost as a proven sole cause; nested intervals are not additive.",
+          "One sample per mode and source; no 4s relaxation, budget change, rerun or source qualification transfer."
+        ],
+        "tests_executed_by_reviewer": 0
+      }
+    },
+    {
+      "name": "chain-999-HOST-CHECKPOINT-READONLY.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/chain-999-HOST-CHECKPOINT-READONLY.json",
+      "bytes": 2469,
+      "sha256": "9aa5e15a3c14f28a25aec272c9d7b1afae42ca7f508a9a48a6ee93bdc4ed3167",
+      "observation": {
+        "schema": "trnm-current-host-checkpoint-readonly-assessment-v1",
+        "source_base": "6b851bc64db9d87db1bae083654902846f14c275",
+        "same_bytes_at_observed_head": "875234c4d2c3621fa6aac49224122067f149f3f4",
+        "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+        "bytes": 67363,
+        "sha256": "6645e5718115e6e31d270f34d4049a3f57b324bf594dbbe7660e9c2220e01836",
+        "observed_context": "#999 ARM confirmation pressure: last independent replay refused at original 4s deadline; work Host checkpoints are a large nested recorded CPU interval. This does not establish their sole causal contribution to wall delay.",
+        "read_sections": [
+          "KernelBudget::checked_parent/check/verify at lines 550-574 and632-634.",
+          "ScopedParentDirectory, per-check O_PATH descriptor, current metadata and final path fence at lines220-349.",
+          "read_context and current invoking thread membership at lines404-486."
+        ],
+        "existing_conservative_optimizations": [
+          "Current parent is opened once per check, and five child limits are opened relative to this per-call descriptor.",
+          "The five bounded limit buffers are stack allocations; no descriptor, file value or verdict survives to the next check.",
+          "Short proc context reads use a stack buffer with complete EOF/UTF8 validation, preserving longer-input fallback and late I/O errors.",
+          "Only approved immutable parent spelling is retained; boot, current inode/ownership, thread membership and all limit contents remain dynamic."
+        ],
+        "why_no_further_patch_is_proposed": [
+          "The next visible dominant operations are fresh OS observations that the accepted contract explicitly requires on every checkpoint. Cross-check caching or skipped probes would weaken that contract.",
+          "Batching/reordering opens or EOF reads would alter the currently enforced observation order and substitution/failure behavior; no equivalence proof is available.",
+          "No repeated parsing of the same retained immutable large input was found inside this check; the existing parser reads each fresh bounded limit once.",
+          "Small integer/zeroing changes have no current evidence of material wall-time benefit and would not establish closure of the measured pressure target."
+        ],
+        "result": "NO_ADDITIONAL_PROVEN_CONSERVATIVE_HOST_PATCH_IDENTIFIED_IN_REVIEWED_PATH",
+        "source_edits": 0,
+        "compile_or_tests": 0,
+        "old_E1_E6_budget_used": 0,
+        "pressure_target_relaxed": false,
+        "host_dynamic_check_relaxed": false
+      }
+    },
+    {
+      "name": "RETAINED_RUNTIME_STATUS_V1.json",
+      "origin": "/tmp/chain-native-closure-20261125-7c9e/witness-observation-boundary/RETAINED_RUNTIME_STATUS_V1.json",
+      "bytes": 2622,
+      "sha256": "083ce3f2998c9417912b3007b7df3f2b5971284a861d29955fa82fdcf13bef1e",
+      "observation": {
+        "schema": "chain-retained-runtime-readonly-status-v1",
+        "observed_at": "2026-11-25 15:05:24 UTC",
+        "manual_reruns": 0,
+        "qualification_transferred": false,
+        "runs": [
+          {
+            "run_id": 45619422416,
+            "source_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45619422416/jobs?per_page=100",
+            "jobs": [
+              {
+                "id": 139223280273,
+                "name": "rust-baseline shard (runtime)",
+                "status": "in_progress",
+                "conclusion": null,
+                "started_at": "2026-11-25T13:26:59Z",
+                "completed_at": null,
+                "rust_step": {
+                  "name": "Run retained Rust shard",
+                  "status": "in_progress",
+                  "conclusion": null,
+                  "number": 9,
+                  "started_at": "2026-11-25T13:31:04Z",
+                  "completed_at": null
+                }
+              },
+              {
+                "id": 139223280317,
+                "name": "prospective Rust shard (runtime)",
+                "status": "in_progress",
+                "conclusion": null,
+                "started_at": "2026-11-25T13:26:37Z",
+                "completed_at": null,
+                "rust_step": {
+                  "name": "Run retained Rust shard",
+                  "status": "in_progress",
+                  "conclusion": null,
+                  "number": 9,
+                  "started_at": "2026-11-25T13:31:26Z",
+                  "completed_at": null
+                }
+              }
+            ]
+          },
+          {
+            "run_id": 45626601924,
+            "source_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45626601924/jobs?per_page=100",
+            "jobs": [
+              {
+                "id": 139248353094,
+                "name": "rust-baseline shard (runtime)",
+                "status": "in_progress",
+                "conclusion": null,
+                "started_at": "2026-11-25T13:52:00Z",
+                "completed_at": null,
+                "rust_step": {
+                  "name": "Run retained Rust shard",
+                  "status": "in_progress",
+                  "conclusion": null,
+                  "number": 9,
+                  "started_at": "2026-11-25T13:57:35Z",
+                  "completed_at": null
+                }
+              },
+              {
+                "id": 139248353203,
+                "name": "prospective Rust shard (runtime)",
+                "status": "in_progress",
+                "conclusion": null,
+                "started_at": "2026-11-25T13:57:31Z",
+                "completed_at": null,
+                "rust_step": {
+                  "name": "Run retained Rust shard",
+                  "status": "in_progress",
+                  "conclusion": null,
+                  "number": 9,
+                  "started_at": "2026-11-25T14:03:11Z",
+                  "completed_at": null
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "qualification_transferred": false,
+  "manual_reruns": 0
+}

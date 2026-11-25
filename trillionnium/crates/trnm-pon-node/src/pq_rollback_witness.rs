@@ -794,198 +794,203 @@ impl DurableWitness {
             },
             until,
         );
-        let result = (|| {
-            observe_operation!(
-                observation,
-                match request.get(4) {
-                    Some(1) => test_observation::Kind::ServiceCurrent,
-                    Some(2) => test_observation::Kind::ServiceCas,
-                    _ => test_observation::Kind::ServiceUnknown,
-                },
-                {
-                    #[cfg(test)]
-                    if let Some(observation) = observation.as_ref() {
-                        observation.deadlines(Some(until), until);
-                    }
-                    development_phase!(
-                        development,
-                        StorageEntry,
-                        observe_phase!(
-                            observation,
-                            ServiceEntryAndStorage,
-                            (|| {
-                                deadline(until)?;
-                                self.check_storage()
-                            })()
-                        )
-                    )?;
-                    development_phase!(
-                        development,
-                        RequestContext,
-                        observe_phase!(
-                            observation,
-                            ServiceRequestContext,
-                            (|| {
-                                ensure(
-                                    request.len() == REQUEST_BYTES
-                                        && &request[..4] == b"PWR1"
-                                        && request[5..69] == self.binding.id
-                                        && request[213..245] != [0; 32],
-                                    "PQ_WITNESS_REQUEST_CONTEXT",
-                                )?;
-                                ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
-                                if request[4] == 1 {
-                                    ensure(
-                                        request[69..213] == [0; 144],
-                                        "PQ_WITNESS_CURRENT_FIELDS",
-                                    )?;
-                                }
-                                Ok::<_, Error>(())
-                            })()
-                        )
-                    )?;
-                    development_phase!(
-                        development,
-                        RequestVerify,
-                        observe_phase!(
-                            observation,
-                            ServiceRequestVerify,
-                            self.binding
-                                .writer
-                                .verify_exact_message(
-                                    &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
-                                    &request[REQUEST_BODY..],
-                                )
-                                .map(|_| ())
-                        )
-                    )
-                    .map_err(crypto)?;
-                    development_phase!(
-                        development,
-                        RequestContext,
-                        observe_phase!(observation, ServiceRequestContext, deadline(until))
-                    )?;
-                    let head = if request[4] == 2 {
-                        observe_phase!(
-                            observation,
-                            ServiceCas,
-                            (|| {
-                                let preparation = development
-                                    .as_ref()
-                                    .map(|operation| operation.phase(DevelopmentPhase::CasPrepare));
-                                let previous = Checkpoint::decode(&request[69..141])?;
-                                let next = Checkpoint::decode(&request[141..213])?;
-                                ensure(
-                                    previous.sequence.checked_add(1) == Some(next.sequence),
-                                    "PQ_WITNESS_SEQUENCE",
-                                )?;
-                                let tx = self
-                                    .db
-                                    .transaction_with_behavior(TransactionBehavior::Immediate)?;
-                                validate_row(&tx, self.binding.canonical().len())?;
-                                let (binding,seq,root,old_seq,old_root):(Vec<u8>,u64,Vec<u8>,u64,Vec<u8>)=tx.query_row("SELECT binding,sequence,root,previous_sequence,previous_root FROM witness_v1 WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
-                                ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
-                                let current = Checkpoint::new(
-                                    seq,
-                                    root.try_into().map_err(|_| "PQ_WITNESS_STATE")?,
-                                )?;
-                                ensure(
-                                    self.known_head == Some(current),
-                                    "PQ_WITNESS_STORAGE_ROLLBACK",
-                                )?;
-                                if current == next {
-                                    ensure(
-                                        self.retry_from == Some(previous)
-                                            && old_seq == previous.sequence
-                                            && old_root == previous.root,
-                                        "PQ_WITNESS_RETRY_CONFLICT",
-                                    )?;
-                                } else {
-                                    ensure(current == previous, "PQ_WITNESS_CAS")?;
-                                    ensure(tx.execute("UPDATE witness_v1 SET sequence=?,root=?,previous_sequence=?,previous_root=? WHERE singleton=1 AND sequence=? AND root=?",params![next.sequence,next.root.as_slice(),previous.sequence,previous.root.as_slice(),previous.sequence,previous.root.as_slice()])?==1,"PQ_WITNESS_CAS")?;
-                                }
-                                deadline(until)?;
-                                // All legitimate writers use this exclusive owner's handle. If a
-                                // local COMMIT has an unknown result, refuse later requests until
-                                // explicit reopen; a disk read must not silently resolve it.
-                                self.commit_uncertain = true;
-                                #[cfg(test)]
-                                if let Some(observation) = observation.as_ref() {
-                                    observation.mark(test_observation::Mark::CasCommitAttempted);
-                                }
-                                drop(preparation);
-                                development_phase!(
-                                    development,
-                                    Commit,
-                                    observe_phase!(observation, ServiceCommit, tx.commit())
-                                )?;
-                                #[cfg(test)]
-                                if let Some(observation) = observation.as_ref() {
-                                    observation.mark(test_observation::Mark::CasCommitted);
-                                }
-                                self.known_head = Some(next);
-                                if current != next {
-                                    self.retry_from = Some(previous);
-                                }
-                                self.commit_uncertain = false;
-                                Ok::<_, Error>(next)
-                            })()
-                        )?
-                    } else {
-                        development_phase!(
-                            development,
-                            ReadState,
-                            observe_phase!(observation, ServiceRead, self.read_head())
-                        )?
-                    };
-                    development_phase!(
-                        development,
-                        StorageFinal,
-                        observe_phase!(observation, ServiceFinalStorage, self.check_storage())
-                    )?;
-                    let mut reply = b"PWS1".to_vec();
-                    reply.extend(self.binding.id);
-                    reply.extend(head.bytes());
-                    reply.extend(&request[213..245]);
-                    reply.extend(
-                        development_phase!(
-                            development,
-                            ReplySign,
-                            observe_phase!(
-                                observation,
-                                ReplySignIncludingSelfVerify,
-                                self.signer
-                                    .sign_exact_message(&message(REPLY_DOMAIN, &reply))
-                            )
-                        )
-                        .map_err(crypto)?,
-                    );
-                    // A successful CAS has already committed its exact successor.
-                    // Keep the completed, signed receipt for the client's existing
-                    // reconciliation path even when COMMIT/signing crossed `until`.
-                    // The client still authenticates the complete reply and aligns
-                    // its local commit before refusing late live use. Current has
-                    // no such committed outcome; serve_one also retains the same
-                    // absolute write deadline for every reply.
-                    development_phase!(
-                        development,
-                        FinalCheck,
-                        observe_phase!(
-                            observation,
-                            ServiceFinal,
-                            if request[4] == 2 {
-                                Ok(())
-                            } else {
-                                deadline(until).map(|_| ())
-                            }
-                        )
-                    )?;
-                    Ok(reply)
-                }
-            )
-        })();
+        let result = self.handle_observed(request, until, &development);
         finish_development(development, &result);
         result
+    }
+    // Keep every normal early return inside this execution boundary so the
+    // public owner always records its completed result in both macro forms.
+    fn handle_observed(
+        &mut self,
+        request: &[u8],
+        until: Instant,
+        development: &Option<DevelopmentOperation>,
+    ) -> Result<Vec<u8>> {
+        observe_operation!(
+            observation,
+            match request.get(4) {
+                Some(1) => test_observation::Kind::ServiceCurrent,
+                Some(2) => test_observation::Kind::ServiceCas,
+                _ => test_observation::Kind::ServiceUnknown,
+            },
+            {
+                #[cfg(test)]
+                if let Some(observation) = observation.as_ref() {
+                    observation.deadlines(Some(until), until);
+                }
+                development_phase!(
+                    development,
+                    StorageEntry,
+                    observe_phase!(
+                        observation,
+                        ServiceEntryAndStorage,
+                        (|| {
+                            deadline(until)?;
+                            self.check_storage()
+                        })()
+                    )
+                )?;
+                development_phase!(
+                    development,
+                    RequestContext,
+                    observe_phase!(
+                        observation,
+                        ServiceRequestContext,
+                        (|| {
+                            ensure(
+                                request.len() == REQUEST_BYTES
+                                    && &request[..4] == b"PWR1"
+                                    && request[5..69] == self.binding.id
+                                    && request[213..245] != [0; 32],
+                                "PQ_WITNESS_REQUEST_CONTEXT",
+                            )?;
+                            ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
+                            if request[4] == 1 {
+                                ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
+                            }
+                            Ok::<_, Error>(())
+                        })()
+                    )
+                )?;
+                development_phase!(
+                    development,
+                    RequestVerify,
+                    observe_phase!(
+                        observation,
+                        ServiceRequestVerify,
+                        self.binding
+                            .writer
+                            .verify_exact_message(
+                                &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
+                                &request[REQUEST_BODY..],
+                            )
+                            .map(|_| ())
+                    )
+                )
+                .map_err(crypto)?;
+                development_phase!(
+                    development,
+                    RequestContext,
+                    observe_phase!(observation, ServiceRequestContext, deadline(until))
+                )?;
+                let head = if request[4] == 2 {
+                    observe_phase!(
+                        observation,
+                        ServiceCas,
+                        (|| {
+                            let preparation = development
+                                .as_ref()
+                                .map(|operation| operation.phase(DevelopmentPhase::CasPrepare));
+                            let previous = Checkpoint::decode(&request[69..141])?;
+                            let next = Checkpoint::decode(&request[141..213])?;
+                            ensure(
+                                previous.sequence.checked_add(1) == Some(next.sequence),
+                                "PQ_WITNESS_SEQUENCE",
+                            )?;
+                            let tx = self
+                                .db
+                                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+                            validate_row(&tx, self.binding.canonical().len())?;
+                            let (binding,seq,root,old_seq,old_root):(Vec<u8>,u64,Vec<u8>,u64,Vec<u8>)=tx.query_row("SELECT binding,sequence,root,previous_sequence,previous_root FROM witness_v1 WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+                            ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
+                            let current = Checkpoint::new(
+                                seq,
+                                root.try_into().map_err(|_| "PQ_WITNESS_STATE")?,
+                            )?;
+                            ensure(
+                                self.known_head == Some(current),
+                                "PQ_WITNESS_STORAGE_ROLLBACK",
+                            )?;
+                            if current == next {
+                                ensure(
+                                    self.retry_from == Some(previous)
+                                        && old_seq == previous.sequence
+                                        && old_root == previous.root,
+                                    "PQ_WITNESS_RETRY_CONFLICT",
+                                )?;
+                            } else {
+                                ensure(current == previous, "PQ_WITNESS_CAS")?;
+                                ensure(tx.execute("UPDATE witness_v1 SET sequence=?,root=?,previous_sequence=?,previous_root=? WHERE singleton=1 AND sequence=? AND root=?",params![next.sequence,next.root.as_slice(),previous.sequence,previous.root.as_slice(),previous.sequence,previous.root.as_slice()])?==1,"PQ_WITNESS_CAS")?;
+                            }
+                            deadline(until)?;
+                            // All legitimate writers use this exclusive owner's handle. If a
+                            // local COMMIT has an unknown result, refuse later requests until
+                            // explicit reopen; a disk read must not silently resolve it.
+                            self.commit_uncertain = true;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitAttempted);
+                            }
+                            drop(preparation);
+                            development_phase!(
+                                development,
+                                Commit,
+                                observe_phase!(observation, ServiceCommit, tx.commit())
+                            )?;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitted);
+                            }
+                            self.known_head = Some(next);
+                            if current != next {
+                                self.retry_from = Some(previous);
+                            }
+                            self.commit_uncertain = false;
+                            Ok::<_, Error>(next)
+                        })()
+                    )?
+                } else {
+                    development_phase!(
+                        development,
+                        ReadState,
+                        observe_phase!(observation, ServiceRead, self.read_head())
+                    )?
+                };
+                development_phase!(
+                    development,
+                    StorageFinal,
+                    observe_phase!(observation, ServiceFinalStorage, self.check_storage())
+                )?;
+                let mut reply = b"PWS1".to_vec();
+                reply.extend(self.binding.id);
+                reply.extend(head.bytes());
+                reply.extend(&request[213..245]);
+                reply.extend(
+                    development_phase!(
+                        development,
+                        ReplySign,
+                        observe_phase!(
+                            observation,
+                            ReplySignIncludingSelfVerify,
+                            self.signer
+                                .sign_exact_message(&message(REPLY_DOMAIN, &reply))
+                        )
+                    )
+                    .map_err(crypto)?,
+                );
+                // A successful CAS has already committed its exact successor.
+                // Keep the completed, signed receipt for the client's existing
+                // reconciliation path even when COMMIT/signing crossed `until`.
+                // The client still authenticates the complete reply and aligns
+                // its local commit before refusing late live use. Current has
+                // no such committed outcome; serve_one also retains the same
+                // absolute write deadline for every reply.
+                development_phase!(
+                    development,
+                    FinalCheck,
+                    observe_phase!(
+                        observation,
+                        ServiceFinal,
+                        if request[4] == 2 {
+                            Ok(())
+                        } else {
+                            deadline(until).map(|_| ())
+                        }
+                    )
+                )?;
+                Ok(reply)
+            }
+        )
     }
     pub fn serve_one(&mut self, stream: &mut UnixStream, until: Instant) -> Result<()> {
         let development = DevelopmentOperation::start(
@@ -993,40 +998,46 @@ impl DurableWitness {
             DevelopmentKind::ServiceConnection,
             until,
         );
-        let result = (|| {
-            observe_operation!(observation, test_observation::Kind::WitnessConnection, {
-                #[cfg(test)]
-                if let Some(observation) = observation.as_ref() {
-                    observation.deadlines(Some(until), until);
-                }
-                let mut request = vec![0; REQUEST_BYTES];
-                development_phase!(
-                    development,
-                    WireRead,
-                    observe_phase!(
-                        observation,
-                        WitnessRead,
-                        read_until(stream, &mut request, until)
-                    )
-                )?;
-                let reply = development_phase!(
-                    development,
-                    ServiceHandle,
-                    observe_phase!(observation, WitnessHandle, self.handle(&request, until))
-                )?;
-                development_phase!(
-                    development,
-                    WireWrite,
-                    observe_phase!(
-                        observation,
-                        WitnessWrite,
-                        write_until(stream, &reply, until)
-                    )
-                )
-            })
-        })();
+        let result = self.serve_one_observed(stream, until, &development);
         finish_development(development, &result);
         result
+    }
+    fn serve_one_observed(
+        &mut self,
+        stream: &mut UnixStream,
+        until: Instant,
+        development: &Option<DevelopmentOperation>,
+    ) -> Result<()> {
+        observe_operation!(observation, test_observation::Kind::WitnessConnection, {
+            #[cfg(test)]
+            if let Some(observation) = observation.as_ref() {
+                observation.deadlines(Some(until), until);
+            }
+            let mut request = vec![0; REQUEST_BYTES];
+            development_phase!(
+                development,
+                WireRead,
+                observe_phase!(
+                    observation,
+                    WitnessRead,
+                    read_until(stream, &mut request, until)
+                )
+            )?;
+            let reply = development_phase!(
+                development,
+                ServiceHandle,
+                observe_phase!(observation, WitnessHandle, self.handle(&request, until))
+            )?;
+            development_phase!(
+                development,
+                WireWrite,
+                observe_phase!(
+                    observation,
+                    WitnessWrite,
+                    write_until(stream, &reply, until)
+                )
+            )
+        })
     }
     pub fn storage_path(&self) -> &Path {
         &self.path
