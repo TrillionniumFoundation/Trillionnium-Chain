@@ -64,3 +64,22 @@ Return codes: success 0; malformed private framing 100; Rust
 `ForbiddenAuthorityState` 104. Framing and logical length refusals precede
 scratch validation and hashing. This is row-level validation only, without
 export ordering, finality, SQLite import, caller integration, or activation.
+
+## Ordered export Merkle commitment
+
+`export_merkle_root.hepta` ports the exact original
+`trnm_state_import::merkle_root_v0(&[Digest32V0])`. The input is the ordered
+concatenation of 32-byte digest leaves. Empty input hashes the original
+empty-root domain; a singleton returns that digest unchanged. Every reduction
+layer hashes ordered, length-prefixed digest pairs in the original node domain.
+An odd final node at any layer is paired with itself, not skipped.
+
+The local borrowed fixture takes one exact multiple-of-32 input, at least
+32 bytes of output, and at least 1,336 bytes plus the input extent of scratch.
+The implementation reduces layers in private scratch and publishes the final
+32 bytes only after completion. Returns: success 0; malformed input extent 100;
+short output or scratch 102; internal hash refusal 103. The stock 1 MiB
+borrowed scratch ceiling admits at most 32,726 leaves in one call; this is a
+local ABI bound, not a change to the original export row-count policy. This
+method does not validate, sort or deduplicate leaves, verify a finalized
+source, issue an authorization, or qualify persistent import.
