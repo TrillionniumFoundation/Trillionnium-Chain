@@ -1,3 +1,39 @@
+**Public evaluation console boundaries, 2026-11-25 UTC — source fix, official scan pending:**
+
+The original CodeQL Python analyses found two paths from the verified development
+fee to console JSON: the evaluation verifier and archived consumer-ledger reader.
+Both commands now run every original byte, signature, amount and scope check,
+then construct an explicitly versioned public summary. The console exposes
+verification counts, field equality and the existing unverified business scope.
+It does not forward payment amounts, operation identifiers, subjects, receipt
+commitments or arbitrary nested evidence. Internal `verify()` and `compare()`
+contracts and the original archived v1 `READOUT.json` remain unchanged.
+
+Five new controls exercise real paired and historical CLI output, exact public
+schemas, top-level and nested disclosure canaries, and a tampered original fee
+that must fail before any stdout. Together with fourteen retained controls,
+all nineteen passed locally. The archived comparison still exactly reproduces
+its original private/internal report and still reports `same_released_pair=false`.
+See the [retained validation](../../evidence/public-evaluation-output-20261125/VALIDATION.json)
+and [public console contract](../../evidence/cell-consumer-ledger-cross-readback-20261123/README.md).
+
+This is new-source engineering work based on unique review commit
+`b8864b81aa60b149889e26012bbcd1ded2bbe528`. Its own official CodeQL and native
+checks remain required; the original findings and failed exporter are retained.
+The earlier review reused commit `18ccda7b583a96add9402a87117e3b687efc6a02`, whose
+official annotation check was associated with PR #996 rather than #997. The
+unique review commit corrected the association without changing the tree; it
+did not resolve the Python findings. No query suppression, security-policy
+change or fixture randomization is part of this fix. The eight Rust fixture
+warnings are separate evidence and are not declared resolved by this change.
+
+The evaluator source digest changes with this fix. Original frozen evaluator
+pins, E1-E6 inputs and budgets, the integration candidate #983 and historical
+failures are unchanged. No new training, adoption, payment or activation is
+performed or certified. Earlier plan sections below retain their original
+as-of observations; this section supplies the current security-review state.
+
+
 **Early bound-identity and noise engineering controls, 2026-11-25 UTC — HOLD:**
 
 The existing native fullpath job now observes the exact bound-identity namespace

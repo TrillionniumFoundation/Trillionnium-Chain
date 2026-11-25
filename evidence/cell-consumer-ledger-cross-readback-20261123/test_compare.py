@@ -3,9 +3,11 @@
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 import compare
 
@@ -14,6 +16,39 @@ HEPTA = Path(sys.argv.pop(1)).resolve()
 
 
 class ArchivedCrossReadback(unittest.TestCase):
+    def test_public_cli_retains_scope_without_ledger_material(self):
+        result = subprocess.run([sys.executable, "-B", str(HERE / "compare.py"), str(HEPTA)],
+                                capture_output=True, text=True, timeout=15, check=True)
+        self.assertEqual(result.stderr, "")
+        report = json.loads(result.stdout)
+        self.assertEqual(report, dict(
+            schema="trnm.archived-consumer-ledger-cross-readback-public-summary.v1",
+            status="VERIFIED_ARCHIVE_READBACK", same_released_pair=False,
+            release_field_equality={key: key == "scope" for key in
+                ("scope", "study_sha256", "admission_sha256", "freeze_sha256", "candidate_sha256", "request_sha256")},
+            legacy_operations_checked=2, subsequent_fixture_uses_checked=2, verified_evaluation_files=12,
+            independently_verified_business_effect="UNVERIFIED", real_independent_consumer_use="UNVERIFIED",
+            external_payer_and_settlement="UNVERIFIED", improvement_reward="UNVERIFIED",
+            consensus_credit="UNVERIFIED", settlement_authorized=False))
+        original = json.loads((HERE / "READOUT.json").read_bytes())
+        for key in ("task", "payment_operation", "payment_subject", "development_units"):
+            self.assertNotIn(str(original["checked_development_evaluation"][key]), result.stdout)
+
+    def test_public_summary_cannot_inherit_private_nested_fields(self):
+        original = json.loads((HERE / "READOUT.json").read_bytes())
+        canary = "private-payment-canary-not-for-console"
+        original["extra_private_field"] = canary
+        original["checked_development_evaluation"].update(
+            development_units=canary, payment_operation=canary, payment_subject=canary)
+        original["legacy_operations"][0]["operation"] = canary
+        original["subsequent_fixture_uses"][0]["operation"] = canary
+        original["common_release_fields"]["scope"]["chain_evaluation"] = canary
+        with mock.patch.object(compare, "compare", return_value=original) as verifier:
+            result = compare.public_comparison_summary(HEPTA)
+        verifier.assert_called_once_with(HEPTA)
+        self.assertNotIn(canary, json.dumps(result))
+        self.assertEqual(original["checked_development_evaluation"]["development_units"], canary)
+
     def test_fixed_observation_and_scopes(self):
         report = compare.compare(HEPTA)
         self.assertEqual(report, json.loads((HERE / "READOUT.json").read_bytes()))

@@ -103,7 +103,25 @@ def compare(folder, job=JOB):
                 actual_external_payment_amount=None, settlement_authorized=False)
 
 
+def public_comparison_summary(folder):
+    """Keep the full internal comparison and its payment material out of stdout."""
+    report = compare(folder)
+    return dict(schema="trnm.archived-consumer-ledger-cross-readback-public-summary.v1",
+                status="VERIFIED_ARCHIVE_READBACK",
+                same_released_pair=report["same_released_pair"],
+                release_field_equality={field: report["common_release_fields"][field]["equal"]
+                    for field in ("scope", "study_sha256", "admission_sha256", "freeze_sha256",
+                                  "candidate_sha256", "request_sha256")},
+                legacy_operations_checked=len(report["legacy_operations"]),
+                subsequent_fixture_uses_checked=len(report["subsequent_fixture_uses"]),
+                verified_evaluation_files=report["checked_development_evaluation"]["verified_evaluation_files"],
+                independently_verified_business_effect="UNVERIFIED",
+                real_independent_consumer_use="UNVERIFIED", external_payer_and_settlement="UNVERIFIED",
+                improvement_reward="UNVERIFIED", consensus_credit="UNVERIFIED",
+                settlement_authorized=False)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("hepta_evidence", type=Path, help="directory of the pinned public, fictional engineering archive")
-    print(json.dumps(compare(parser.parse_args().hepta_evidence), indent=2, sort_keys=True))
+    print(json.dumps(public_comparison_summary(parser.parse_args().hepta_evidence), indent=2, sort_keys=True))

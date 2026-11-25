@@ -8,7 +8,9 @@ Two older HEPLCP02 histories were also replayed from their original binary selec
 
 ## Reproduce
 
-Check out the Hepta fixture commit `60347d4d1687147ddf7c1e12350711583dac5918` locally. From this Chain checkout supply its original fixture directory to the Python 3.11+ commands below. The audit pins the original ZIP, its upstream verifier, both legacy bindings and the separate native evaluation release. It opens no network connection and writes its JSON report to stdout. The controls create temporary copies.
+Check out the Hepta fixture commit `60347d4d1687147ddf7c1e12350711583dac5918` locally. From this Chain checkout supply its original fixture directory to the Python 3.11+ commands below. The audit pins the original ZIP, its upstream verifier, both legacy bindings and the separate native evaluation release. It opens no network connection and writes an explicitly scoped public JSON summary to stdout. The controls create temporary copies.
+
+The console schema is `trnm.archived-consumer-ledger-cross-readback-public-summary.v1`. It reports field equality, verification counts and the unverified business scope without publishing payment amounts, operation identifiers, subjects or nested original evidence. The internal `compare()` API still returns the complete verified v1 report, and the original `READOUT.json` is unchanged. The `dev_circuit_evaluation.py verify` command similarly publishes `trnm.development-evaluation-public-summary.v1` after all original signed-fee and amount checks succeed; its internal `verify()` API remains unchanged.
 
 ```sh
 study=evidence/cell-consumer-ledger-cross-readback-20261123

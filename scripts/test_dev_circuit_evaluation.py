@@ -1,8 +1,12 @@
 """Check that independently retained evaluation and payment bytes cannot be swapped."""
 from pathlib import Path
+import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
+from unittest import mock
 
 import dev_circuit_evaluation as evaluation
 
@@ -14,6 +18,49 @@ class DevelopmentEvaluationTests(unittest.TestCase):
     def test_retained_evaluation_and_fee(self):
         result = evaluation.verify(CAPTURE)
         self.assertEqual((result["development_units"], result["checked_evaluation_files"]), (2000, 12))
+
+    def test_public_cli_excludes_ledger_material_in_both_modes(self):
+        for capture, mode, count in ((CAPTURE, "paired", 12),
+                (CAPTURE.parent / "cell-historical-funded-evaluation-20261123", "historical", 4)):
+            with self.subTest(mode=mode):
+                result = subprocess.run([sys.executable, "-B", evaluation.__file__, "verify", str(capture)],
+                                        capture_output=True, text=True, timeout=15, check=True)
+                self.assertEqual(result.stderr, "")
+                self.assertEqual(json.loads(result.stdout), dict(
+                    schema="trnm.development-evaluation-public-summary.v1",
+                    status="VERIFIED", scope="archived_development_evaluation",
+                    evaluation_mode=mode, checked_evaluation_files=count,
+                    native_development_fee_verified=True, actual_consumer_use_verified=False,
+                    learning_improvement_bonus=False, settlement_authorized=False,
+                    consensus_credit_authorized=False))
+                private = evaluation.verify(capture)
+                for key in ("task", "output", "result", "measurement_receipt", "payment_operation", "development_units"):
+                    self.assertNotIn(str(private[key]), result.stdout)
+
+    def test_public_summary_does_not_inherit_nested_private_fields(self):
+        canary = "private-ledger-canary-not-for-console"
+        retained = dict(checked_evaluation_files=12, development_units=canary,
+                        payment_operation=canary, extra_private_field=canary,
+                        cost_scope={"private": canary}, paired_performance={"private": canary})
+        with mock.patch.object(evaluation, "verify", return_value=retained) as original:
+            result = evaluation.public_verification_summary(CAPTURE, expected_release="pinned-release")
+        original.assert_called_once_with(CAPTURE, expected_release="pinned-release")
+        self.assertNotIn(canary, json.dumps(result))
+        self.assertEqual(result["checked_evaluation_files"], 12)
+        self.assertEqual(retained["development_units"], canary)
+
+    def test_public_cli_still_rejects_a_tampered_fee_before_output(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw)
+            shutil.copytree(CAPTURE, path, ignore=shutil.ignore_patterns("node", "*.sqlite"), dirs_exist_ok=True)
+            current = evaluation.read(path / "CURRENT.json")
+            current["current_payment"]["beneficiary_credit"] += 1
+            (path / "CURRENT.json").write_bytes(evaluation.canonical(current))
+            result = subprocess.run([sys.executable, "-B", evaluation.__file__, "verify", str(path)],
+                                    capture_output=True, text=True, timeout=15)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(result.stdout, "")
+            self.assertIn("native development fee or scope mismatch", result.stderr)
 
     def test_regrade_original_paid_engineering_pairs(self):
         plain = CAPTURE.parent / "cell-released-pair-funded-evaluation-20261123"

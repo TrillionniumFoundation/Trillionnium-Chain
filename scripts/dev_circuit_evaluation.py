@@ -497,10 +497,28 @@ def verify(job, *, expected_release=None):
     return verified
 
 
+def public_verification_summary(job, *, expected_release=None):
+    """Verify all retained material, then expose only the public CLI contract.
+
+    ``verify`` remains the internal ledger readback API. Its payment identifiers,
+    amount, receipt commitments and nested evidence must not enter console logs.
+    New internal fields do not automatically become public output fields.
+    """
+    verified = verify(job, expected_release=expected_release)
+    return dict(schema="trnm.development-evaluation-public-summary.v1",
+                status="VERIFIED", scope="archived_development_evaluation",
+                evaluation_mode="paired" if "paired_performance" in verified else "historical",
+                checked_evaluation_files=verified["checked_evaluation_files"],
+                native_development_fee_verified=True,
+                actual_consumer_use_verified=False, learning_improvement_bonus=False,
+                settlement_authorized=False, consensus_credit_authorized=False)
+
+
 if __name__ == "__main__":
     if len(sys.argv) in (3, 4) and sys.argv[1] == "verify":
         expected = sys.argv[3] if len(sys.argv) == 4 else None
-        print(json.dumps(verify(Path(sys.argv[2]).resolve(strict=True), expected_release=expected), sort_keys=True))
+        print(json.dumps(public_verification_summary(Path(sys.argv[2]).resolve(strict=True),
+                                                   expected_release=expected), sort_keys=True))
         sys.exit(0)
     mode, job_path, material_path, *extra = sys.argv[1:]
     job, materials = Path(job_path).resolve(strict=True), Path(material_path).resolve(strict=True)
