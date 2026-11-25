@@ -7263,6 +7263,46 @@
         ]
       }
     ],
+    "src/state_import/export_order_step.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7"
+        ],
+        "source": "src/state_import/reserved_namespace.hepta"
+      },
+      {
+        "functions": [
+          "r_hash",
+          "r_part",
+          "r_digest_match"
+        ],
+        "source": "src/state_import/export_row_validate.hepta"
+      }
+    ],
     "src/state_import/export_row_validate.hepta": [
       {
         "functions": [

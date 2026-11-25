@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/export_order_step",
+      "node_integration_complete": false,
+      "scope": "M13 original per-row validation then strict namespace/key byte ordering against optional caller-held prior, preserving error precedence; no retained owner or finality",
+      "source": "hia/src/state_import/export_order_step.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_order_step.py",
+        "hia/tests/rust_state_import_order_step_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/export_ordered_root_join",
       "node_integration_complete": false,
       "scope": "M13 original post-finality Merkle-root equality and ordered digest publication over already validated ordered row digests; no field, order, input authority or durable qualification",
@@ -2152,7 +2163,8 @@
         "state_import/export_row_validate",
         "state_import/export_merkle_root",
         "state_import/export_header_admission",
-        "state_import/export_ordered_root_join"
+        "state_import/export_ordered_root_join",
+        "state_import/export_order_step"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

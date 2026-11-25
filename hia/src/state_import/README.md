@@ -137,3 +137,30 @@ The context is not a production finality verifier or transferable recipient
 capability. The native callable itself cannot establish those prerequisites,
 does not validate rows or their order and cannot accept an export, issue a
 `VerifiedExportV0`, or authorize persistent import.
+
+## Post-finality row-order step
+
+`export_order_step.hepta` is the original within-loop sequence on one
+current export row and an optional established prior (namespace, key)
+tuple: validate the current row first, then require strictly increasing
+unsigned byte order by namespace and then key. Shared native helpers
+recompute the original canonical digest and enforce the seven reserved
+prefixes. The resulting order error (109, `RowsNotStrictlyOrdered`) cannot
+supersede `InvalidExportRow` (101) or `ForbiddenAuthorityState` (104).
+
+The private fixture appends the prior namespace and key after the current
+namespace, key and value. Then append five little-endian `u32` lengths in
+that order and the current stored 32-byte digest (52 trailer bytes).
+Two empty prior fields mark the first row. Otherwise each prior field must
+be nonempty and meet the original width bounds; this distinguishes
+malformed transport (100) from an original current-row refusal. The prior
+tuple is an input from the caller, not a verified or persisted state.
+Private scratch requires 1,248 bytes (or returns 102); hash refusal is 103.
+The second ABI span is untouched, and all calls require disjoint spans
+under the stock 1 MiB cap. No output record is published.
+
+The actual Rust differential runs exact `verify_export_v0` on one or two
+synthetic rows in an isolated local context that recognizes only its exact
+test fixture; eligible prior rows are independently validated in Rust.
+This helper does not perform independent finality, accumulate an entire
+batch, install a retained prior tuple or authorize any future row.
