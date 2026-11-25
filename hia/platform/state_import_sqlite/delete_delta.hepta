@@ -146,7 +146,17 @@ block entry(m:mutbuf,w:mutbuf)
   updating:bool = compare.eq(mode,update_id)
   unchanged:bool = compare.eq(after,before)
   matches:bool = select(updating,unchanged,changed)
-  branch matches bind(m,after) bad()
+  batch_at:u64 = const() {"value":136}
+  batch:u64 = call(m,batch_at) {"function":"cp_get"}
+  batching:bool = compare.eq(batch,one)
+  branch batching vector_count(m,after) single_count(m,after,matches)
+block vector_count(vector_mem:mutbuf,vector_after:u64)
+  count_at:u64 = const() {"value":232}
+  expect:u64 = call(vector_mem,count_at) {"function":"cp_get"}
+  exact:bool = compare.eq(vector_after,expect)
+  branch exact bind(vector_mem,vector_after) bad()
+block single_count(single_mem:mutbuf,single_after:u64,native_expected:bool)
+  branch native_expected bind(single_mem,single_after) bad()
 block bind(state:mutbuf,rows:u64)
   stmt_at:u64 = const() {"value":40}
   stmt:u64 = call(state,stmt_at) {"function":"cp_get"}

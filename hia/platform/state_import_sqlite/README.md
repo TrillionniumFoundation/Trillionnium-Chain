@@ -207,3 +207,35 @@ complete original predecessor.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_mixed_write -v
 ```
+
+## Disposable variable ordered vector
+
+The `VEC1M13!` mode carries a little-endian u64 record count (1–8)
+followed by that many of the same 392-byte typed records. Each record
+supplies its DELETE, INSERT, or UPDATE tag. The tags may repeat and
+have no required ordering; the binary (namespace, key) tuples must
+be distinct and strictly increasing in the original order. The final
+record carries the reviewed successor rows digest, state-root value
+and count. The original single-operation and fixed-three fixtures
+retain their distinct framing and checks.
+
+Native HIA validates the vector before SQLite I/O and checks every
+required prior digest, changed UPDATE value, and INSERT absence during
+the held prerequisite scan. After validating the exact predecessor,
+it computes the successor count from the inserts and deletes, applies
+one typed SQLite statement per entry, and requires one actual change
+each. One metadata statement and complete native successor/rows
+verification precede COMMIT and CLOSE. The transaction remains
+authority-free and does not recompute the application root.
+
+The unchanged Rust owner independently derives and commits one
+insertion, four ordered deletes, and eight mixed entries with repeated
+operation kinds. Each length 1–8 has actual original cold parity. Tests
+refuse zero or nine
+entries, duplicate/unsorted tuples and wrong prior or successor digests,
+and interrupt real row changes at the first and last steps and after
+metadata update. Earlier single and fixed mixed tests are also retained.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_vector_write -v
+```

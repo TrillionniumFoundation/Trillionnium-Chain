@@ -67,6 +67,8 @@ def run(message, reader, provider):
             1434: "m13-sqlite-insert-delta-",
             2226: "m13-sqlite-mixed-delta-",
         }.get(len(proposal))
+        if 1450 <= len(proposal) <= 4194 and proposal[:8] == b"VEC1M13!":
+            mode = "m13-sqlite-vector-delta-"
         if len(proposal) == 1434 and proposal[:8] == b"UPD1M13!":
             mode = "m13-sqlite-update-delta-"
         if mode is None or message["advance"] or (len(proposal) == 2226 and proposal[:8] != b"BAT1M13!"):

@@ -124,7 +124,36 @@ block maybe_update(up_raw:readbuf,up_mem:mutbuf,up_work:mutbuf,up_n:usize,up_fid
 block maybe_batch(b_raw:readbuf,b_mem:mutbuf,b_work:mutbuf,b_n:usize,b_fid:u64)
   batch_magic:u64 = const() {"value":2392310034673713474}
   is_batch:bool = compare.eq(b_fid,batch_magic)
-  branch is_batch batch_frame(b_raw,b_mem,b_work,b_n) format_empty(b_raw,b_mem,b_work,b_n)
+  branch is_batch batch_frame(b_raw,b_mem,b_work,b_n) maybe_vector(b_raw,b_mem,b_work,b_n,b_fid)
+block maybe_vector(vec_raw:readbuf,vec_mem:mutbuf,vec_work:mutbuf,vec_n:usize,vec_fid:u64)
+  vector_magic:u64 = const() {"value":2392310034672600406}
+  is_vector:bool = compare.eq(vec_fid,vector_magic)
+  branch is_vector vector_shape(vec_raw,vec_mem,vec_work,vec_n) format_empty(vec_raw,vec_mem,vec_work,vec_n)
+block vector_shape(vs_raw:readbuf,vs_mem:mutbuf,vs_work:mutbuf,vs_n:usize)
+  count_at:u64 = const() {"value":8}
+  vec_count:u64 = call(vs_raw,count_at) {"function":"tr_read"}
+  min_count:u64 = const() {"value":1}
+  max_count:u64 = const() {"value":8}
+  enough:bool = compare.ge(vec_count,min_count)
+  bounded:bool = compare.le(vec_count,max_count)
+  count_valid:bool = bool.and(enough,bounded)
+  branch count_valid vector_extent(vs_raw,vs_mem,vs_work,vs_n,vec_count) bad()
+block vector_extent(ve_raw:readbuf,ve_mem:mutbuf,ve_work:mutbuf,ve_n:usize,ve_count:u64)
+  width:u64 = const() {"value":392}
+  body_bytes:u64 = int.mul.wrap(ve_count,width)
+  min_base:u64 = const() {"value":1187}
+  max_base:u64 = const() {"value":1698}
+  need_bytes:u64 = int.add.wrap(body_bytes,min_base)
+  greatest:u64 = int.add.wrap(body_bytes,max_base)
+  actual_bytes:u64 = int.cast(ve_n) {"mode":"wrap"}
+  more_than_min:bool = compare.ge(actual_bytes,need_bytes)
+  less_than_max:bool = compare.le(actual_bytes,greatest)
+  fits_vec:bool = bool.and(more_than_min,less_than_max)
+  branch fits_vec vector_order(ve_raw,ve_mem,ve_work,ve_n,ve_count) bad()
+block vector_order(vo_raw:readbuf,vo_mem:mutbuf,vo_work:mutbuf,vo_n:usize,vo_count:u64)
+  sorted_vec:bool = call(vo_raw,vo_count) {"function":"bm_vector"}
+  offset_start:u64 = const() {"value":16}
+  branch sorted_vec stage_batch(vo_raw,vo_mem,vo_work,vo_n,offset_start,vo_count) bad()
 block batch_frame(bf_raw:readbuf,bf_mem:mutbuf,bf_work:mutbuf,bf_len:usize)
   min_batch:usize = const() {"value":2355}
   max_batch:usize = const() {"value":2866}
@@ -137,14 +166,20 @@ block batch_order(bo_raw:readbuf,bo_mem:mutbuf,bo_work:mutbuf,bo_len:usize)
   branch ordered_batch save_batch(bo_raw,bo_mem,bo_work,bo_len) bad()
 block save_batch(sb_raw:readbuf,sb_mem:mutbuf,sb_work:mutbuf,sb_len:usize)
   src_batch:u64 = const() {"value":8}
+  three_records:u64 = const() {"value":3}
+  jump stage_batch(sb_raw,sb_mem,sb_work,sb_len,src_batch,three_records)
+block stage_batch(bg_raw:readbuf,bg_mem:mutbuf,bg_work:mutbuf,bg_len:usize,body_at:u64,records:u64)
+  row_width:u64 = const() {"value":392}
+  vec_body:u64 = int.mul.wrap(records,row_width)
   dst_batch:u64 = const() {"value":904000}
-  bytes_batch:u64 = const() {"value":1176}
-  _save_batch:u64 = call(sb_raw,src_batch,sb_work,dst_batch,bytes_batch) {"function":"cp_copy"}
+  _save_batch:u64 = call(bg_raw,body_at,bg_work,dst_batch,vec_body) {"function":"cp_copy"}
   batch_slot:u64 = const() {"value":136}
   batch_enabled:u64 = const() {"value":1}
-  _set_batch:u64 = call(sb_mem,batch_slot,batch_enabled) {"function":"cp_put"}
-  batch_prefix:u64 = const() {"value":1184}
-  jump open_request(sb_raw,sb_mem,sb_work,sb_len,batch_prefix)
+  _set_batch:u64 = call(bg_mem,batch_slot,batch_enabled) {"function":"cp_put"}
+  records_at:u64 = const() {"value":152}
+  _record_count:u64 = call(bg_mem,records_at,records) {"function":"cp_put"}
+  batch_prefix:u64 = int.add.wrap(body_at,vec_body)
+  jump open_request(bg_raw,bg_mem,bg_work,bg_len,batch_prefix)
 block format_empty(ei:readbuf,em:mutbuf,ew:mutbuf,en:usize)
   max_req:usize = const() {"value":1682}
   fits_empty:bool = compare.le(en,max_req)

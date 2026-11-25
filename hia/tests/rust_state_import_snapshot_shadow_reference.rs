@@ -109,6 +109,70 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             store.apply_delta_v0(&delta, &FixtureRoot)?;
         }
+        ("vector-advance", 3) => {
+            let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
+            let before = store.read_rows_v0()?;
+            let mut after = before.clone();
+            let insert = |key: Vec<u8>, value: Vec<u8>| TargetRowV0 {
+                namespace: b"ordinary-snapshot".to_vec(), key, value,
+            };
+            let wanted = match before.len() {
+                0 => {
+                    after.push(insert(vec![0, 4, 255], Vec::new()));
+                    b"I".to_vec()
+                }
+                11 => {
+                    for index in [6, 4, 2, 0] {
+                        after.remove(index);
+                    }
+                    b"DDDD".to_vec()
+                }
+                17 => {
+                    after[0].value = vec![255, 0, 128, 13, 10];
+                    after[3].value = Vec::new();
+                    after[5].value = (0..128).map(|i| (255 - i * 3 % 256) as u8).collect();
+                    after.remove(2);
+                    after.remove(1);
+                    after.push(insert(vec![0, 1, 255], vec![58, 13, 0]));
+                    after.push(insert(vec![0, 3, 255], Vec::new()));
+                    after.push(insert(vec![0, 4, 255], vec![255, 0, 85]));
+                    b"UDIDUIIU".to_vec()
+                }
+                rows if (22..=27).contains(&rows) => {
+                    let kinds = b"IUDDIUU";
+                    let requested = rows - 20;
+                    for (index, kind) in kinds[..requested].iter().enumerate() {
+                        match kind {
+                            b'I' => after.push(insert(vec![0, index as u8, 255], vec![0, 255])),
+                            b'U' => after.iter_mut().find(|row| row.key == before[index].key)
+                                .unwrap().value = vec![255, index as u8, 0],
+                            b'D' => after.retain(|row| row.key != before[index].key),
+                            _ => unreachable!(),
+                        }
+                    }
+                    kinds[..requested].to_vec()
+                }
+                _ => return Err("wrong bounded vector qualification fixture".into()),
+            };
+            after.sort();
+            let delta = derive_incremental_delta_v0(
+                d(10), d(11), context(&before, 5), context(&after, 6),
+                &before, &after, &FixtureRoot,
+            )?;
+            let kinds: Vec<u8> = delta.entries.iter().map(|entry| {
+                if entry.value.is_none() {
+                    b'D'
+                } else if before.iter().any(|row| row.namespace == entry.namespace && row.key == entry.key) {
+                    b'U'
+                } else {
+                    b'I'
+                }
+            }).collect();
+            if kinds != wanted {
+                return Err("original must derive exact bounded vector kinds in byte-key order".into());
+            }
+            store.apply_delta_v0(&delta, &FixtureRoot)?;
+        }
         ("mixed-advance", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let before = store.read_rows_v0()?;
@@ -221,7 +285,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/export on disposable staging only".into()),
+        _ => return Err("scope is seed/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/export on disposable staging only".into()),
     }
     Ok(())
 }

@@ -245,7 +245,10 @@
           "bm_focus",
           "bm_load",
           "bm_start",
-          "bm_next"
+          "bm_next",
+          "bm_request",
+          "bm_kind",
+          "bm_vector"
         ]
       }
     ],
