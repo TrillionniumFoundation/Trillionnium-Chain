@@ -1,0 +1,50 @@
+{
+  "schema": "trnm.current-corpus-source-readonly-review.v1",
+  "source_files": [
+    {
+      "path": "scripts/ci/pq_corpus_current_v2.py",
+      "bytes": 12805,
+      "sha256": "7ac3c8c8a257d6199cf7ea378f4311e4f7ab0cd59431e4970244688ca244db92"
+    },
+    {
+      "path": "scripts/ci/test_pq_corpus_current_v2.py",
+      "bytes": 13230,
+      "sha256": "5cb5d2a42f80ca1aa638736b8211c7a898f7b20552519e4d332fa5b261f73978"
+    }
+  ],
+  "frozen_files": [
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "sha256": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
+      "equal_to_original_HEAD": true
+    },
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "3e28aa336967d1916612d9a62d2ea0726e1b7211cbdfdac58d0a3219b17ea3d0",
+      "equal_to_original_HEAD": true
+    },
+    {
+      "path": "scripts/ci/pq_source_reader.py",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+      "equal_to_original_HEAD": true
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
+      "equal_to_original_HEAD": true
+    }
+  ],
+  "reviewed": [
+    "Exact map hash plus closed 30 replacement/2 addition sets preserve all original declared pins and reject map-only self-hash changes. The independently hardcoded current snapshot constant is required in both the supplied map and canonical combined pin map.",
+    "Strict JSON rejects duplicate keys and nonfinite numbers; exact fields, row digests and original frozen guard identities are checked.",
+    "Every declared current path uses original descriptor-based regular-file reader; original coverage traversal and canonical provider guard run. The original descriptor reader uses NOFOLLOW/NONBLOCK, same-fd identity checks and bounded bytes.",
+    "Separate source reads are explicitly not a Git snapshot; source_revision_bound remains false and all qualification flags are false/null under HOLD. No claim of complete dependency graph or native cryptography follows.",
+    "18 source controls retain real descriptor/coverage/provider implementations and patch only synthetic identity constants; original frozen check source remains exact. Tests include changed-source V1 refusal, missing/additional coverage, symlink, map race, supplied-self-hash refusal and report recomputation."
+  ],
+  "status": "NO_DEFINITE_ADDITIONAL_SOURCE_BLOCKER_FOUND",
+  "limits": [
+    "No checker, unittest, compiler, formatter, network, or source edit was executed.",
+    "This is reader/test source review and frozen four-file identity, not an executed 2615-source correspondence check or proof of native qualification.",
+    "CI and publication roster, final snapshot provenance and newly added workflow are outside this narrow two-file review."
+  ]
+}
