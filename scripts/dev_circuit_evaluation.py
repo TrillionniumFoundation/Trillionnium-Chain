@@ -11,6 +11,15 @@ import subprocess
 import sys
 import time
 
+ATTEMPT_FILE = "EVALUATION_ATTEMPT.json"
+ATTEMPT_SCHEMA = "trnm-evaluation-child-attempt-v1"
+INTENT_FILE = "EVALUATION_STARTED.json"
+INTENT_SCHEMA = "trnm-evaluation-child-intent-v1"
+CPU_SCOPE = "getrusage RUSAGE_CHILDREN delta; concurrent children are not isolated"
+COST_SCHEMAS_V2 = {f"trnm-isolated-{kind}-evaluation-cost-v2" for kind in
+                   ("circuit", "plain-paired", "historical")}
+COST_SCHEMAS_V1 = {schema.removesuffix("v2") + "v1" for schema in COST_SCHEMAS_V2}
+
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
@@ -135,13 +144,122 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
 
 
 def measure(job, command, env):
+    """Retain measured child attempts, including failures; never infer full cost.
+
+    A killed recorder may leave no receipt. Absence remains unknown, not zero.
+    Receipt persistence and earlier/later pipeline stages are outside this clock.
+    """
+    require(not os.path.lexists(job / ATTEMPT_FILE), "evaluation attempt already recorded")
+    require(not any(os.path.lexists(job / name) for name in ("evaluation.stdout", "evaluation.stderr")),
+            "evaluation logs already exist")
+    request = sha((job / "ADMISSION.json").read_bytes())
+    # The exclusive launch gate and output reservations are outside the terminal
+    # recorder. A losing/colliding caller must not write another owner's outcome.
+    intent = record(job / INTENT_FILE, dict(schema=INTENT_SCHEMA, request_sha256=request,
+        command_sha256=digest(command), attempt_nonce=secrets.token_hex(16), execution_authority=False))
+    with (job / "evaluation.stdout").open("x+b") as stdout, (job / "evaluation.stderr").open("x+b") as stderr:
+        return _measure_owned(job, command, env, request, intent, stdout, stderr)
+
+
+def _measure_owned(job, command, env, request, intent, stdout, stderr):
     cpu0, start = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic_ns()
-    with (job / "evaluation.stdout").open("xb") as stdout, (job / "evaluation.stderr").open("xb") as stderr:
-        subprocess.run(command, check=True, cwd=job, env=env, stdout=stdout, stderr=stderr)
-    wall_ns = time.monotonic_ns() - start
-    cpu1 = resource.getrusage(resource.RUSAGE_CHILDREN)
-    cpu_ns = round(((cpu1.ru_utime - cpu0.ru_utime) + (cpu1.ru_stime - cpu0.ru_stime)) * 1_000_000_000)
+    status, returncode, error_type, failure = "unknown", None, None, None
+    try:
+        result = subprocess.run(command, check=False, cwd=job, env=env, stdout=stdout, stderr=stderr)
+        returncode = result.returncode
+        status = "succeeded" if returncode == 0 else "failed"
+        if returncode:
+            raise subprocess.CalledProcessError(returncode, command)
+    except BaseException as error:
+        error_type = type(error).__name__
+        failure = error
+        raise
+    finally:
+        wall_ns = time.monotonic_ns() - start
+        cpu1 = resource.getrusage(resource.RUSAGE_CHILDREN)
+        cpu_ns = round(((cpu1.ru_utime - cpu0.ru_utime) + (cpu1.ru_stime - cpu0.ru_stime)) * 1_000_000_000)
+        try:
+            require(sha((job / INTENT_FILE).read_bytes()) == intent, "evaluation launch intent changed")
+            logs = {}
+            for name, stream in (("evaluation.stdout", stdout), ("evaluation.stderr", stderr)):
+                stream.flush()
+                stream.seek(0)
+                logs[name] = hashlib.file_digest(stream, "sha256").hexdigest()
+            record(job / ATTEMPT_FILE, dict(schema=ATTEMPT_SCHEMA, request_sha256=request,
+                intent_sha256=intent,
+                command_sha256=digest(command), child_status=status, returncode=returncode,
+                error_type=error_type, cpu_ns=cpu_ns, wall_ns=wall_ns, cpu_scope=CPU_SCOPE,
+                logs=logs, cost_completeness_verified=False, execution_authority=False))
+        except Exception as receipt_error:
+            # Preserve the original execution failure if recording also fails.
+            if error_type is None:
+                raise
+            failure.add_note("evaluation attempt receipt could not be persisted: " + type(receipt_error).__name__)
     return cpu_ns, wall_ns
+
+
+def attempt_cost_fields(job):
+    return dict(evaluation_attempt_sha256=sha((job / ATTEMPT_FILE).read_bytes()),
+                cpu_scope=CPU_SCOPE, cost_completeness_verified=False)
+
+
+def verify_attempt_cost(job, cost, *, admission=None):
+    """Verify retained child-cost statements; this is not execution authentication."""
+    schema = cost.get("schema")
+    require(schema in COST_SCHEMAS_V1 | COST_SCHEMAS_V2, "unknown evaluation cost schema")
+    if admission is not None:
+        import dev_intake_evaluation as plain
+
+        request_schema = admission.get("schema")
+        if request_schema == "trnm-isolated-historical-evaluation-request-v1":
+            family = "historical"
+        elif request_schema in plain.ADMISSIONS:
+            family = "plain-paired"
+        else:
+            require(request_schema == "trnm-isolated-circuit-evaluation-request-v1", "unknown cost admission schema")
+            family = "circuit"
+        version = "v2" if schema in COST_SCHEMAS_V2 else "v1"
+        require(schema == f"trnm-isolated-{family}-evaluation-cost-{version}", "cost family differs from admission")
+        if request_schema == plain.ARTIFACT_ADMISSION:
+            require(schema in COST_SCHEMAS_V2, "artifact-bound admission requires cost v2")
+    if schema in COST_SCHEMAS_V1:
+        require("evaluation_attempt_sha256" not in cost, "attempt pin requires cost v2")
+        require(cost.get("cost_completeness_verified", False) is False, "historical cost completeness differs")
+        return dict(scope="historical_evaluation_only", attempt_receipt_bound=False,
+                    cost_completeness_verified=False)
+    require(cost.get("cpu_scope") == CPU_SCOPE and cost.get("cost_completeness_verified") is False,
+            "evaluation cost scope differs")
+    raw = (job / ATTEMPT_FILE).read_bytes()
+    require(sha(raw) == cost.get("evaluation_attempt_sha256"), "evaluation attempt pin differs")
+    attempt = read(job / ATTEMPT_FILE)
+    require(set(attempt) == {"schema", "request_sha256", "command_sha256", "intent_sha256", "child_status", "returncode",
+                            "error_type", "cpu_ns", "wall_ns", "cpu_scope", "logs",
+                            "cost_completeness_verified", "execution_authority"}
+            and attempt["schema"] == ATTEMPT_SCHEMA
+            and attempt["request_sha256"] == sha((job / "ADMISSION.json").read_bytes())
+            and attempt["child_status"] == "succeeded" and type(attempt["returncode"]) is int
+            and attempt["returncode"] == 0 and attempt["error_type"] is None
+            and attempt["cost_completeness_verified"] is False and attempt["execution_authority"] is False
+            and attempt["cpu_scope"] == CPU_SCOPE, "evaluation attempt scope or request differs")
+    for key in ("cpu_ns", "wall_ns"):
+        require(type(attempt[key]) is int and 0 <= attempt[key] < 2**64
+                and type(cost.get(key)) is int and cost[key] == attempt[key], "evaluation attempt counters differ")
+    require(attempt["wall_ns"] > 0 and isinstance(attempt["command_sha256"], str)
+            and len(attempt["command_sha256"]) == 64
+            and all(c in "0123456789abcdef" for c in attempt["command_sha256"]), "invalid attempt identity")
+    intent_raw = (job / INTENT_FILE).read_bytes()
+    require(sha(intent_raw) == attempt["intent_sha256"], "evaluation launch intent pin differs")
+    intent = read(job / INTENT_FILE)
+    require(set(intent) == {"schema", "request_sha256", "command_sha256", "attempt_nonce", "execution_authority"}
+            and intent["schema"] == INTENT_SCHEMA and intent["execution_authority"] is False
+            and intent["request_sha256"] == attempt["request_sha256"]
+            and intent["command_sha256"] == attempt["command_sha256"]
+            and isinstance(intent["attempt_nonce"], str) and len(intent["attempt_nonce"]) == 32
+            and all(c in "0123456789abcdef" for c in intent["attempt_nonce"]), "evaluation launch intent differs")
+    logs = {name: sha((job / name).read_bytes()) for name in ("evaluation.stdout", "evaluation.stderr")}
+    require(attempt["logs"] == logs, "evaluation attempt logs differ")
+    return dict(scope="evaluation_child_only", attempt_receipt_bound=True,
+                cost_completeness_verified=False, execution_authenticated=False)
 
 
 def execute(job, materials):
@@ -193,11 +311,10 @@ def execute(job, materials):
             "wrong reloaded model or request")
     evaluated = sum(len(r["row_hashes"]) for r in receipts)
     require(evaluated == terms["evaluated_examples"], "incomplete paired rows")
-    cost = dict(schema="trnm-isolated-circuit-evaluation-cost-v1", evaluated_examples=evaluated,
-                cpu_ns=cpu_ns, cpu_scope="getrusage waited child process group and reaped descendants",
-                wall_ns=wall_ns)
+    cost = dict(schema="trnm-isolated-circuit-evaluation-cost-v2", evaluated_examples=evaluated,
+                cpu_ns=cpu_ns, wall_ns=wall_ns, **attempt_cost_fields(job))
     if plain_model:
-        cost.update(schema="trnm-isolated-plain-paired-evaluation-cost-v1")
+        cost.update(schema="trnm-isolated-plain-paired-evaluation-cost-v2")
     else:
         cost["circuit_work"] = result["measured_circuit_work"]
     cost_hash = record(job / "COST.json", cost)
@@ -301,6 +418,7 @@ def verify(job, *, expected_release=None):
     output = sha((job / "DELIVERY.json").read_bytes())
     evidence = sha((job / "evaluation/RESULT.json").read_bytes())
     charge = sha((job / "COST.json").read_bytes())
+    cost_scope = verify_attempt_cost(job, c, admission=a)
     historical = a["schema"] == "trnm-isolated-historical-evaluation-request-v1"
     if expected_release is not None:
         require(a["schema"] in plain.ADMISSIONS and a["intake_release_sha256"] == expected_release,
@@ -373,7 +491,7 @@ def verify(job, *, expected_release=None):
             n["chainwork_awarded"] == 0, "native development fee or scope mismatch")
     verified = dict(task=n["task"], output=output, result=evidence, measurement_receipt=charge,
                     payment_operation=payment["operation"], development_units=payment["beneficiary_credit"],
-                    checked_evaluation_files=len(files))
+                    checked_evaluation_files=len(files), cost_scope=cost_scope)
     if not historical:
         verified["paired_performance"] = paired_performance(job, a, submitted, read(job / "evaluation/RESULT.json"))
     return verified
