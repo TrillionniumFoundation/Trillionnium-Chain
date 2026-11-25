@@ -164,3 +164,33 @@ synthetic rows in an isolated local context that recognizes only its exact
 test fixture; eligible prior rows are independently validated in Rust.
 This helper does not perform independent finality, accumulate an entire
 batch, install a retained prior tuple or authorize any future row.
+
+## Post-finality batch fold
+
+`export_post_finality_fold.hepta` joins the original pure downstream
+operations of `verify_export_v0` in one native call: validate each current
+row, reject non-increasing tuples against the prior row already observed by
+this same call, collect the original row digests, recompute and compare the
+Merkle root, and publish the original ordered digest only on success. The
+first original row, reserved-namespace, or ordering error precedes any
+later row or root check. A failed root comparison does not publish output.
+
+The private fixture begins with the already admitted header's expected root
+(32 bytes), then a little-endian `u32` nonzero row count. Each row encodes
+three little-endian `u32` widths (namespace, key, value), the 32-byte stored
+row digest, then the three byte fields. Bounds are checked before reads.
+Malformed transport or trailing data returns 100; 101, 104, 108 and 109
+correspond to original row, reserved namespace, root and ordering refusals.
+Transport capacity (102) and internal hash (103) are not protocol errors.
+Native borrowed spans must be disjoint and satisfy the stock 1 MiB extent.
+The first 32 output bytes receive the ordered digest on success; scratch
+requires at least 1,400 + 32 times row count bytes. Scratch may contain partial
+work on refusal; it is not an output or a transferable state.
+
+This pure entry is not a public import command, an independent finality
+verifier, a `VerifiedExportV0` constructor, or a durable owner. Its caller
+must establish the actual source and finality outside the kernel. The
+stock input extent bounds the call, not the original export row-count or
+value limits. The Rust differential is the actual unchanged
+`verify_export_v0` operating on synthesized rows in a local exact-fixture
+context; it issues no production authorization.

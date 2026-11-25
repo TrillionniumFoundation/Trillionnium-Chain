@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/export_post_finality_fold",
+      "node_integration_complete": false,
+      "scope": "M13 original post-finality ordered batch row validation, first-error priority, root equality and atomic ordered digest publication in a bounded native call; no source authorization, production owner or persistence",
+      "source": "hia/src/state_import/export_post_finality_fold.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_post_finality_fold.py",
+        "hia/tests/rust_state_import_post_finality_fold_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/export_order_step",
       "node_integration_complete": false,
       "scope": "M13 original per-row validation then strict namespace/key byte ordering against optional caller-held prior, preserving error precedence; no retained owner or finality",
@@ -2164,7 +2175,8 @@
         "state_import/export_merkle_root",
         "state_import/export_header_admission",
         "state_import/export_ordered_root_join",
-        "state_import/export_order_step"
+        "state_import/export_order_step",
+        "state_import/export_post_finality_fold"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",
