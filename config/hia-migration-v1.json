@@ -2433,9 +2433,10 @@
       "id": "state_import/sqlite-cold-read-projection",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "M13 original SQLite format read-only typed projection held on one HIA-owned deferred transaction, with unchanged original provider backend and disposable qualification; no snapshot installation or production authority",
+      "scope": "M13 original SQLite typed projection and persisted target-row digest verification in one HIA-owned read-only deferred transaction, with unchanged provider backend and disposable qualification; no application root, snapshot installation or production authority",
       "sources": [
-        "hia/platform/state_import_sqlite/cold_read.hepta"
+        "hia/platform/state_import_sqlite/cold_read.hepta",
+        "hia/platform/state_import_sqlite/row_commitment.hepta"
       ],
       "tests": [
         "hia/platform/state_import_sqlite/qualification_host.py",

@@ -54,7 +54,7 @@ def run(message, reader, provider):
         raise ValueError("Owned canonical disposable test database required")
     state = ctypes.create_string_buffer(EXTENT)
     response = ctypes.create_string_buffer(EXTENT)
-    unused = ctypes.create_string_buffer(b"unused")
+    hash_work = ctypes.create_string_buffer(EXTENT)
     raw = bytes.fromhex(message["expected"]).hex().upper().encode() + os.fsencode(db)
     owner = make()
     if not owner:
@@ -63,7 +63,7 @@ def run(message, reader, provider):
     try:
         for _ in range(85000):
             argument = ctypes.create_string_buffer(raw)
-            status = step(argument, len(raw), state, EXTENT, unused, 6)
+            status = step(argument, len(raw), state, EXTENT, hash_work, EXTENT)
             phase, op, length, published = struct.unpack_from("<QQQQ", state)
             if status != 198:
                 if status == 0 and phase == 18 and 489 <= published <= EXTENT - 4096:

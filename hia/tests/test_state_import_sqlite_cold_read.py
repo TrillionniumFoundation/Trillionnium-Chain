@@ -93,6 +93,7 @@ class StateImportSqliteColdRead(unittest.TestCase):
                 got = invoke(db, **kwargs)
                 self.assertEqual((got["status"], got["result"]), (100, None))
                 self.assertGreater(got["released"], 0)
+                return got
 
             refusal(db, expected="FF" * 64)
             for i, change in enumerate((
@@ -102,6 +103,8 @@ class StateImportSqliteColdRead(unittest.TestCase):
                 "UPDATE migration_delta_meta_v0 SET row_count=0",
                 "CREATE TABLE unrelated (extra INTEGER)",
                 "UPDATE migration_delta_rows_v0 SET namespace='text-not-blob'",
+                "UPDATE migration_delta_rows_v0 SET value=X'000AFF' WHERE key=X'0001'",
+                "UPDATE migration_delta_meta_v0 SET rows_digest=zeroblob(32)",
             )):
                 with self.subTest(change=change):
                     invalid = cases / f"invalid-{i}.db"
@@ -113,5 +116,11 @@ class StateImportSqliteColdRead(unittest.TestCase):
                         [writer, "export", invalid], capture_output=True, timeout=30,
                     ).returncode, 0)
                     before = invalid.read_bytes()
-                    refusal(invalid)
+                    got = refusal(invalid)
+                    if i >= 6:
+                        # The original BLOB types and row count remain valid.
+                        # The last read must be actual SQLITE_DONE: it was
+                        # the recomputed digest which withheld COMMIT/output.
+                        self.assertEqual(got["transcript"][-1], [12, 7, 24])
+                        self.assertNotIn([15, 5, 24], got["transcript"])
                     self.assertEqual(invalid.read_bytes(), before)

@@ -1,5 +1,61 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_state_import_sqlite_projection
-fn f0(in:readbuf,mem:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+fn f0(input:readbuf,mem:mutbuf,hash:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,hash:mutbuf)
+  mem_len:usize = buffer.len(mem)
+  hash_len:usize = buffer.len(hash)
+  required:usize = const() {"value":1048576}
+  mem_ok:bool = compare.eq(mem_len,required)
+  hash_ok:bool = compare.eq(hash_len,required)
+  sizes_ok:bool = bool.and(mem_ok,hash_ok)
+  branch sizes_ok phase(input,mem,hash) bad()
+block phase(raw:readbuf,state:mutbuf,arena:mutbuf)
+  phase_at:u64 = const() {"value":0}
+  live_phase:u64 = call(state,phase_at) {"function":"cp_get"}
+  fresh:bool = compare.eq(live_phase,phase_at)
+  branch fresh begin(raw,state,arena) old(raw,state,arena,live_phase)
+block begin(init_raw:readbuf,init_state:mutbuf,init_work:mutbuf)
+  seeded:bool = call(init_state,init_work) {"function":"rc_begin"}
+  branch seeded project(init_raw,init_state,init_work) bad()
+block old(old_raw:readbuf,old_state:mutbuf,old_work:mutbuf,p:u64)
+  column:u64 = const() {"value":13}
+  got_column:bool = compare.eq(p,column)
+  branch got_column row(old_raw,old_state,old_work) maybe_end(old_raw,old_state,old_work,p)
+block row(row_raw:readbuf,row_state:mutbuf,row_work:mutbuf)
+  row_size:usize = buffer.len(row_raw)
+  header:usize = const() {"value":24}
+  minimum:bool = compare.gt(row_size,header)
+  limit:usize = const() {"value":1048576}
+  maximum:bool = compare.le(row_size,limit)
+  whole:bool = bool.and(minimum,maximum)
+  branch whole typed(row_raw,row_state,row_work,row_size) bad()
+block typed(cell:readbuf,cell_mem:mutbuf,cell_work:mutbuf,cell_size:usize)
+  text:u64 = const() {"value":3}
+  valid:bool = call(cell,cell_size,text) {"function":"sr_value"}
+  branch valid hash_row(cell,cell_mem,cell_work,cell_size) bad()
+block hash_row(fields:readbuf,fields_mem:mutbuf,fields_work:mutbuf,fields_size:usize)
+  tracked:bool = call(fields,fields_mem,fields_work,fields_size) {"function":"rc_row"}
+  branch tracked project(fields,fields_mem,fields_work) bad()
+block maybe_end(end_raw:readbuf,end_state:mutbuf,end_work:mutbuf,end_phase:u64)
+  stepping:u64 = const() {"value":12}
+  row_step:bool = compare.eq(end_phase,stepping)
+  branch row_step end_code(end_raw,end_state,end_work) project(end_raw,end_state,end_work)
+block end_code(tail:readbuf,tail_mem:mutbuf,tail_work:mutbuf)
+  tail_len:usize = buffer.len(tail)
+  done:u64 = const() {"value":101}
+  all_rows:bool = call(tail,tail_len,done) {"function":"sr_status"}
+  branch all_rows compare(tail,tail_mem,tail_work) project(tail,tail_mem,tail_work)
+block compare(sealed:readbuf,sealed_mem:mutbuf,sealed_work:mutbuf)
+  digest_matches:bool = call(sealed_mem,sealed_work) {"function":"rc_finish"}
+  branch digest_matches project(sealed,sealed_mem,sealed_work) bad()
+block project(ps:readbuf,pm:mutbuf,pw:mutbuf)
+  status:u32 = call(ps,pm,pw) {"function":"sr_projection"}
+  ret(status)
+block bad()
+  refused:u32 = const() {"value":100}
+  ret(refused)
+end
+
+fn sr_projection(in:readbuf,mem:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(in:readbuf,mem:mutbuf,unused:mutbuf)
   cap:usize = buffer.len(mem)
   need:usize = const() {"value":1048576}

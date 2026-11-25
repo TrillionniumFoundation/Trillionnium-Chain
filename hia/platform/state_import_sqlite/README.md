@@ -30,6 +30,12 @@ For review, the SQL embedded in the native requests is equivalent to:
    schema and enforces the original count bound.
 3. Select the original rows in `ORDER BY namespace,key`, checking original
    BLOB types and field sizes before framing, and require the exact count.
+   For every row, HIA decodes the three canonical hex fields to their
+   original bytes and applies the original `ExportRowV0::canonical_digest`
+   domain and big-endian length prefixes. It streams the resulting 32-byte
+   digests in order behind the raw `trnm.migration.target-rows.v0` prefix
+   and compares all 32 bytes to the persisted digest from this transaction
+   after SQLite returns DONE. A mismatch fails without COMMIT or output.
 4. `COMMIT`, finalize, and close.
 
 The diagnostic output is uppercase hex, colon-separated, LF-terminated.
@@ -38,7 +44,7 @@ digits. Each row has exactly its original namespace, key, and value. The
 diagnostic is intentionally not an original wire format, a cryptographic
 readback, or a substitute for the retained verified-snapshot install. This
 slice does not port original path/sidecar ancestry rules, WAL reconfiguration,
-root or row commitment checking, or production wiring. The held-reader test
+application state-root checking, or production wiring. The held-reader test
 runs a real unrelated original writer process between metadata and row reads
 of one native transaction, then separately checks the successor transaction.
 
