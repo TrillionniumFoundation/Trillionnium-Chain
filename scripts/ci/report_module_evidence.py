@@ -216,14 +216,68 @@ def rust_code(text: str) -> str:
     return ''.join(out)
 
 
+def rust_attributed_test(text: str, symbol: str) -> bool:
+    """Match the retained attribute/test language in O(len(text) + len(symbol)).
+
+    Attribute bodies may contain closing brackets, but not LF, just as before.
+    Keep both possible closing/body states instead of retrying their partitions.
+    The literal symbol uses KMP; a ring retains whether its start followed an
+    attributed `fn` and whitespace. No input prefix or source bytes are omitted.
+    """
+    if not symbol:
+        return False  # check_symbol already rejects an empty public selector.
+    failure = [0] * len(symbol)
+    matched = 0
+    for index in range(1, len(symbol)):
+        while matched and symbol[index] != symbol[matched]:
+            matched = failure[matched - 1]
+        if symbol[index] == symbol[matched]:
+            matched += 1
+        failure[index] = matched
+
+    starts = bytearray(len(symbol) + 1)
+    matched = 0
+    between = after_hash = in_attribute = False
+    after_f = after_fn = after_fn_space = after_symbol = False
+    for index, char in enumerate(text):
+        # A complete symbol may only be followed by whitespace and an opening
+        # parenthesis. Multiple pending matches have the same suffix state.
+        if after_symbol:
+            if char == '(':
+                return True
+            after_symbol = char.isspace()
+        starts[index % len(starts)] = after_fn_space
+        while matched and char != symbol[matched]:
+            matched = failure[matched - 1]
+        if char == symbol[matched]:
+            matched += 1
+        if matched == len(symbol):
+            start = index + 1 - len(symbol)
+            if starts[start % len(starts)]:
+                after_symbol = True
+            matched = failure[matched - 1]
+
+        # These are parallel transitions from the states before this character.
+        # Python str.isspace preserves the original Unicode whitespace class.
+        test_ends = char == ']' and index >= 6 and text.startswith('#[test]', index - 6)
+        between, after_hash, in_attribute, after_f, after_fn, after_fn_space = (
+            (between and char.isspace()) or (in_attribute and char == ']') or test_ends,
+            between and char == '#',
+            (in_attribute and char != '\n') or (after_hash and char == '['),
+            between and char == 'f',
+            after_f and char == 'n',
+            (after_fn or after_fn_space) and char.isspace(),
+        )
+    return False
+
+
 def check_test_selector(root: Path, selector: str) -> None:
     """Bind a real test, including Rust tests whose names do not start with test_."""
     path, symbol = selector.split('::', 1)
     check_symbol(root, {'path': path, 'symbol': symbol})
     if path.endswith('.rs'):
         text = rust_code(safe(root, path).read_text())
-        require(re.search(r'#\[test\]\s*(?:#\[[^\n]*\]\s*)*fn\s+' +
-                          re.escape(symbol) + r'\s*\(', text),
+        require(rust_attributed_test(text, symbol),
                 'not an attributed Rust test selector')
     else:
         require(symbol.split('.')[-1].startswith('test_'), 'not an executable test selector')
