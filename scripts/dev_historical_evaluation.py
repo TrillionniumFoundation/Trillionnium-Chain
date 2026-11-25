@@ -6,7 +6,7 @@ import secrets
 import shutil
 import sys
 
-from dev_circuit_evaluation import digest, measure, read, record, require, sha, source_files
+from dev_circuit_evaluation import attempt_cost_fields, digest, measure, read, record, require, sha, source_files
 
 
 DRIVERS = ("historical_a.py", "replay_historical.py")
@@ -98,9 +98,9 @@ def execute(job, materials):
             arms["candidate"]["model_sha256"] == admission["pins"]["candidate"] and
             all(set(arms[k]["outcomes"]) == {"historical_training_A", "old_capability"} and
                 arms[k]["model_calls"] == 2 for k in ("parent", "candidate")), "wrong tasks, models or workers")
-    cost = record(job / "COST.json", dict(schema="trnm-isolated-historical-evaluation-cost-v1",
+    cost = record(job / "COST.json", dict(schema="trnm-isolated-historical-evaluation-cost-v2",
                   cpu_ns=cpu_ns, wall_ns=wall_ns, evaluated_examples=4,
-                  cpu_scope="getrusage waited subprocess and reaped descendants",
+                  **attempt_cost_fields(job),
                   work={arm:{k:arms[arm][k] for k in ("model_calls","input_tokens","output_tokens")} for arm in arms}))
     files = {p.relative_to(output).as_posix(): sha(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file()}
     record(job / "DELIVERY.json", dict(schema=admission["output_schema"], request=reservation["request"],

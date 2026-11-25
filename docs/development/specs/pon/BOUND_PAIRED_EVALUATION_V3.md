@@ -1,4 +1,4 @@
-# Artifact-bound paired evaluation
+# Artifact-bound paired evaluation and attempted cost
 
 This development profile extends the existing released-pair evaluation. It does
 not dispatch training, grant FinalUse, settle a real customer payment, or change
@@ -46,22 +46,42 @@ driver closure, nor immutability after verification. Thus
 without pretending to reobserve a historical environment. v1/v2 readbacks must
 match their loop version; old artifacts are never relabelled.
 
+## Failed evaluation costs
+
+The existing paired and historical evaluator paths now create
+`EVALUATION_ATTEMPT.json` under schema `trnm-evaluation-child-attempt-v1`. It binds
+an exclusive `EVALUATION_STARTED.json` intent, the original admission bytes,
+command commitment, child outcome, exact stdout
+and stderr digests, wall time, and waited-child CPU delta. A nonzero child exit
+retains its measured attempt before the original exception is raised. Recording
+failure does not hide that original exception. A failed launch records unknown
+execution, and a second attempt cannot overwrite or reexecute the first.
+Intent and output reservations occur before entering the terminal recorder. An
+existing intent or output collision blocks dispatch without writing a competing
+terminal receipt. An interrupted intent with no terminal receipt remains unknown.
+
+Successful new `COST.json` documents use their respective `cost-v2` namespace and
+bind the attempt receipt. Verification checks the successful child outcome,
+original intent, admission, counters and raw logs. Only the explicit cost-v1/v2
+namespaces are accepted, and the cost family must match the actual admission.
+Artifact-bound request-v3 requires cost-v2 and cannot downgrade to historical
+cost-v1. Historical cost-v1 records remain
+readable without acquiring this new evidence. Child exit zero is not itself a
+successful evaluation, adoption, output acknowledgement or authorized delivery;
+the existing subsequent checks remain required.
+
+The clock excludes receipt persistence and pipeline stages outside the evaluated
+child. `RUSAGE_CHILDREN` is a process-wide waited-child delta and does not isolate
+unrelated concurrent children. A killed recorder may leave no receipt; missing
+cost stays unknown. Diagnostic search, failed candidates elsewhere, feature
+construction, training, transmission, adoption, energy and monetary expense are
+not reconstructed here. `cost_completeness_verified` remains false.
 
 ## Verification scope
 
-The identity and retained-readback suites cover original v1 records, v2 artifact
-admission, actual byte mutation, namespace downgrade, unrelated copied bundles,
-symlinks and malformed manifests. A parent directory is actually replaced at a
-leaf-file open; the descriptor-relative reader refuses without opening the
-external file. Missing safe filesystem operations refuse before file access.
-The package metadata in these controls is synthetic; no model is executed.
-
-The native funded-evaluation driver selects the exact request and delivery schema
-from the independently retained original loop identity, compares the complete
-identity and retained pin, and rejects unknown versions. The new native namespace
-selector test still requires validation on the same source. Python tests do not
-certify native execution, real users, FinalUse, adoption or payment.
-
-Attempt-cost accounting remains a separate dependent increment. This identity
-change does not establish complete costs, authorize another frozen trial, or
-qualify artifact-bound request-v3 for production.
+The `test_dev_*.py` suites cover original retained readbacks, artifact admission,
+byte mutation, namespace downgrade, copied-bundle refusal, symlinks and malformed
+manifests, plus real lightweight child success/failure and missing-cost behavior.
+The package metadata in artifact controls is synthetic. These are engineering
+controls, not extra training, independent users, frozen scientific trials, paid
+operations or production qualification.
