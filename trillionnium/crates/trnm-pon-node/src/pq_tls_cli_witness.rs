@@ -71,6 +71,20 @@ impl Configuration {
         policy: &PqNetworkPolicy,
         key_path: &str,
     ) -> Result<Node> {
+        self.open_node_with_development_observation(
+            store, settings, workers, policy, key_path, false,
+        )
+    }
+
+    pub(super) fn open_node_with_development_observation(
+        self,
+        store: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        key_path: &str,
+        development_diagnostics: bool,
+    ) -> Result<Node> {
         // Selection is part of the pinned configuration, never inferred from
         // missing files or a failed existing-state/witness observation.
         match self.node_mode {
@@ -127,7 +141,10 @@ impl Configuration {
         connect(&descriptor, &address).map_err(|_| "PQ_TLS_WITNESS_CONNECT")?;
         ensure(Instant::now() < until, "PQ_TLS_WITNESS_CONNECT_TIMEOUT")?;
         let transport = ConnectedWitnessTransport::new(UnixStream::from(descriptor));
-        let client = WitnessClient::new(binding, writer, Box::new(transport))?;
+        let mut client = WitnessClient::new(binding, writer, Box::new(transport))?;
+        if development_diagnostics {
+            client.enable_development_diagnostics();
+        }
         match self.node_mode {
             NodeMode::OpenInitialized => {
                 Node::open_existing_with_pq_witness(store, settings, workers, policy, client)

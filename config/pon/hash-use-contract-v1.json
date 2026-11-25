@@ -1543,7 +1543,7 @@
   "source_files": {
     "config/pon/pq-proof-profile-binding-v1.json": {
       "bytes": 2378,
-      "sha256": "0dc3c01c24a56b298b3ca905c71ae288f467f6cf74032d1d73f69cab969a313b"
+      "sha256": "5361d6ec8f42d0172d8c1345e64a32748a89db3f614d34ce34b48b9e12beb81d"
     },
     "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": {
       "bytes": 5246,
@@ -1566,8 +1566,8 @@
       "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
     },
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
-      "bytes": 106066,
-      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      "bytes": 106379,
+      "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
     },
     "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs": {
       "bytes": 3525,

@@ -1,0 +1,780 @@
+{
+  "controls_executed": 0,
+  "entry_files": [
+    "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+    "scripts/ci/pq_lifetime_current_v2.py",
+    "scripts/ci/pq_chain_claim_guard.py",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/ci/pq_proof_profile_binding.py",
+    "scripts/ci/w1_upstream_security.py",
+    "scripts/w1_stark_route_audit.py",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/w1_lifetime_current_observation.py",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py"
+  ],
+  "environment_selection_changed": false,
+  "explicit_pinned_dynamic_loads": [
+    "scripts/w1_qrom_implementation_audit.py",
+    "scripts/w1_control_tree_audit.py",
+    "scripts/w1_profile_source_map.py",
+    "scripts/w1_fri_transcript_audit.py",
+    "tests/fixtures/w1-lifetime-historical-7150/ledger.py"
+  ],
+  "github_mutations": 0,
+  "local_import_edges": [
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "line": 21
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "importer": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "line": 22
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "importer": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "line": 17
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/bounded_process.py",
+      "importer": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "line": 16
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/contract_wire.py",
+      "importer": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "line": 17
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/work_oracle.py",
+      "importer": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "line": 18
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/contract_wire.py",
+      "importer": "formal/pon-nakamoto-v1/work_oracle.py",
+      "line": 6
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_budget.py",
+      "importer": "scripts/ci/hash_use_contract.py",
+      "line": 17
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/hash_use_contract.py",
+      "line": 18
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/pq_lifetime_budget.py",
+      "line": 20
+    },
+    {
+      "imported": "scripts/w1_stark_field_certificates.py",
+      "importer": "scripts/w1_stark_route_audit.py",
+      "line": 376
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_budget.py",
+      "importer": "scripts/ci/w1_upstream_security.py",
+      "line": 20
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/w1_upstream_security.py",
+      "line": 21
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_budget.py",
+      "importer": "scripts/ci/pq_proof_profile_binding.py",
+      "line": 24
+    },
+    {
+      "imported": "scripts/ci/w1_upstream_security.py",
+      "importer": "scripts/ci/pq_proof_profile_binding.py",
+      "line": 25
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/pq_proof_profile_binding.py",
+      "line": 26
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/pq_chain_claim_guard.py",
+      "line": 16
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_budget.py",
+      "importer": "scripts/ci/pq_chain_claim_guard.py",
+      "line": 17
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_current_v2.py",
+      "importer": "scripts/ci/pq_chain_claim_guard.py",
+      "line": 20
+    },
+    {
+      "imported": "scripts/ci/pq_lifetime_budget.py",
+      "importer": "scripts/ci/pq_lifetime_current_v2.py",
+      "line": 17
+    },
+    {
+      "imported": "scripts/ci/pq_source_reader.py",
+      "importer": "scripts/ci/pq_lifetime_current_v2.py",
+      "line": 18
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "importer": "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+      "line": 15
+    },
+    {
+      "imported": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "importer": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+      "line": 10
+    }
+  ],
+  "materialized_inputs": {
+    "config/pon/evaluation-round-v1.json": {
+      "absent_before_materialization": true,
+      "bytes": 890,
+      "git_blob_sha": "23b0861700b07067cdc54e02081e6d4487450f6b",
+      "materialized_exact_git_bytes": true,
+      "mode": "100644",
+      "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+      "source_revision": "6b851bc64db9d87db1bae083654902846f14c275"
+    },
+    "config/pon/ledger-v1.json": {
+      "absent_before_materialization": true,
+      "bytes": 7793,
+      "git_blob_sha": "f7d8dba05cd0267b716834d76774a7ce94a1276b",
+      "materialized_exact_git_bytes": true,
+      "mode": "100644",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "source_revision": "6b851bc64db9d87db1bae083654902846f14c275"
+    },
+    "config/pon/model-family-v1.json": {
+      "absent_before_materialization": true,
+      "bytes": 1383,
+      "git_blob_sha": "9a931f21ca86563cf7e5c6415acd20a0ced7da68",
+      "materialized_exact_git_bytes": true,
+      "mode": "100644",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "source_revision": "6b851bc64db9d87db1bae083654902846f14c275"
+    }
+  },
+  "method": "AST and read-only source/manual call-path inspection, not repository execution. Reads of manifests and immutable Git blob bytes. No controls rerun.",
+  "module_count": 24,
+  "modules": {
+    "formal/pon-nakamoto-v1/bounded_process.py": {
+      "bytes": 8627,
+      "read_expressions": [],
+      "registered_before": true,
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "formal/pon-nakamoto-v1/contract_wire.py": {
+      "bytes": 8924,
+      "read_expressions": [
+        {
+          "expression": "read_config('config/pon/ledger-v1.json')",
+          "line": 18
+        },
+        {
+          "expression": "read_config('config/pon/work-profile-v1.json')",
+          "line": 19
+        },
+        {
+          "expression": "read_config('config/pon/model-family-v1.json')",
+          "line": 20
+        },
+        {
+          "expression": "read_config('config/pon/devnet-v1.json')",
+          "line": 46
+        },
+        {
+          "expression": "read_config('config/pon/evaluation-round-v1.json')",
+          "line": 51
+        },
+        {
+          "expression": "(ROOT / path).read_text()",
+          "line": 17
+        }
+      ],
+      "registered_before": true,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py": {
+      "bytes": 11399,
+      "read_expressions": [
+        {
+          "expression": "path.open('rb')",
+          "line": 75
+        },
+        {
+          "expression": "path.read_bytes()",
+          "line": 100
+        }
+      ],
+      "registered_before": true,
+      "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+    },
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py": {
+      "bytes": 20206,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, path, ceiling)",
+          "line": 282
+        }
+      ],
+      "registered_before": true,
+      "sha256": "4093899036bd905062d569c5eea5052c966bc2254f2fb0eacfd11b32e6962e73"
+    },
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": {
+      "bytes": 14587,
+      "read_expressions": [],
+      "registered_before": true,
+      "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+    },
+    "formal/pon-nakamoto-v1/test_fixed_probability_contract.py": {
+      "bytes": 9606,
+      "read_expressions": [
+        {
+          "expression": "path.open('ab')",
+          "line": 100
+        },
+        {
+          "expression": "(contract.ROOT / name).read_bytes()",
+          "line": 78
+        },
+        {
+          "expression": "changed.read_bytes()",
+          "line": 80
+        }
+      ],
+      "registered_before": true,
+      "sha256": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51"
+    },
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": {
+      "bytes": 15652,
+      "read_expressions": [
+        {
+          "expression": "(q.ROOT / q.MANIFEST).read_text()",
+          "line": 23
+        },
+        {
+          "expression": "source.read_bytes()",
+          "line": 196
+        },
+        {
+          "expression": "path.read_text()",
+          "line": 221
+        },
+        {
+          "expression": "path.read_text()",
+          "line": 235
+        },
+        {
+          "expression": "path.read_text()",
+          "line": 244
+        },
+        {
+          "expression": "(self.root / path).read_bytes()",
+          "line": 260
+        },
+        {
+          "expression": "(self.root / path).read_bytes()",
+          "line": 273
+        },
+        {
+          "expression": "(q.ROOT / name).read_bytes()",
+          "line": 29
+        },
+        {
+          "expression": "target.read_bytes()",
+          "line": 254
+        },
+        {
+          "expression": "path.read_bytes()",
+          "line": 225
+        },
+        {
+          "expression": "path.read_bytes()",
+          "line": 239
+        },
+        {
+          "expression": "path.read_bytes()",
+          "line": 248
+        },
+        {
+          "expression": "target.read_bytes()",
+          "line": 256
+        },
+        {
+          "expression": "(self.root / path).read_bytes()",
+          "line": 77
+        }
+      ],
+      "registered_before": true,
+      "sha256": "b91c318b3a5edf49a0db8392eb71b50b9740791148b043027796cb168c3e82e0"
+    },
+    "formal/pon-nakamoto-v1/work_oracle.py": {
+      "bytes": 2944,
+      "read_expressions": [],
+      "registered_before": true,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "scripts/ci/hash_use_contract.py": {
+      "bytes": 18531,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, path, MAX_BYTES)",
+          "line": 352
+        },
+        {
+          "expression": "read_regular(root, source, MAX_SOURCE_BYTES)",
+          "line": 356
+        }
+      ],
+      "registered_before": true,
+      "sha256": "bb97be040f871f1d71331b015b988cd0339c79e1d805c7cd54ff3f6a9493b533"
+    },
+    "scripts/ci/pq_chain_claim_guard.py": {
+      "bytes": 14458,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, relative, 1024 * 1024)",
+          "line": 133
+        }
+      ],
+      "registered_before": true,
+      "sha256": "ae1c9d908115aac21f3b7f1c91ba37ba58b3e653eba645579af66a5ef9c8efb8"
+    },
+    "scripts/ci/pq_lifetime_budget.py": {
+      "bytes": 20543,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, relative_path(manifest_path, 'manifest'), MAX_BYTES)",
+          "line": 364
+        },
+        {
+          "expression": "read_regular(root, DEFAULT_SOURCE_LOCK, MAX_BYTES)",
+          "line": 369
+        },
+        {
+          "expression": "read_regular(root, path, MAX_BYTES)",
+          "line": 382
+        }
+      ],
+      "registered_before": true,
+      "sha256": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e"
+    },
+    "scripts/ci/pq_lifetime_current_v2.py": {
+      "bytes": 10522,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, DEFAULT_MAP, MAX_MAP_BYTES)",
+          "line": 96
+        },
+        {
+          "expression": "read_regular(root, legacy.DEFAULT_MANIFEST, legacy.MAX_BYTES)",
+          "line": 120
+        },
+        {
+          "expression": "read_regular(root, legacy.DEFAULT_SOURCE_LOCK, legacy.MAX_BYTES)",
+          "line": 121
+        },
+        {
+          "expression": "read_regular(root, path, limit)",
+          "line": 158
+        },
+        {
+          "expression": "read_regular(root, path, legacy.MAX_BYTES)",
+          "line": 147
+        }
+      ],
+      "registered_before": true,
+      "sha256": "a915f9544aac4ac44d04262c4b93642dcb8010a420eedbc2913b43c323419069"
+    },
+    "scripts/ci/pq_proof_profile_binding.py": {
+      "bytes": 22503,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, path, row['bytes'])",
+          "line": 90
+        },
+        {
+          "expression": "read_regular(root, lifetime.relative_path(manifest, 'binding manifest'), lifetime.MAX_BYTES)",
+          "line": 233
+        },
+        {
+          "expression": "read_regular(root, system_path, lifetime.MAX_BYTES)",
+          "line": 242
+        },
+        {
+          "expression": "read_regular(root, path, MAX_BYTES)",
+          "line": 331
+        },
+        {
+          "expression": "read_regular(root, path, len(before))",
+          "line": 335
+        }
+      ],
+      "registered_before": true,
+      "sha256": "2ffa73eee7f027c22956c13aa7eb4c43de76180734e52dd6d8fe238824cbcfa7"
+    },
+    "scripts/ci/pq_source_reader.py": {
+      "bytes": 5569,
+      "read_expressions": [
+        {
+          "expression": "os.open(leaf, flags, dir_fd=parent_fd)",
+          "line": 70
+        },
+        {
+          "expression": "os.open(component, directory_flags, dir_fd=parent_fd)",
+          "line": 56
+        }
+      ],
+      "registered_before": true,
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb"
+    },
+    "scripts/ci/w1_upstream_security.py": {
+      "bytes": 16500,
+      "read_expressions": [
+        {
+          "expression": "read_regular(root, path, row['bytes'])",
+          "line": 103
+        },
+        {
+          "expression": "read_regular(root, lifetime.relative_path(manifest, 'security register'), MAX_BYTES)",
+          "line": 182
+        },
+        {
+          "expression": "read_regular(root, path, len(value))",
+          "line": 257
+        }
+      ],
+      "registered_before": true,
+      "sha256": "7d270d96446eceb4b974f2e671e601b401d2a0f8f7249712b8511105257beb31"
+    },
+    "scripts/w1_control_tree_audit.py": {
+      "bytes": 18002,
+      "read_expressions": [
+        {
+          "expression": "path.open('rb')",
+          "line": 341
+        },
+        {
+          "expression": "args.out.open('x', encoding='utf-8')",
+          "line": 374
+        }
+      ],
+      "registered_before": true,
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    "scripts/w1_fri_transcript_audit.py": {
+      "bytes": 23660,
+      "read_expressions": [
+        {
+          "expression": "gzip.open(args.snapshot, 'rb')",
+          "line": 419
+        },
+        {
+          "expression": "args.receipt.open('rb')",
+          "line": 429
+        }
+      ],
+      "registered_before": true,
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    },
+    "scripts/w1_lifetime_current_observation.py": {
+      "bytes": 9776,
+      "read_expressions": [
+        {
+          "expression": "os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)",
+          "line": 77
+        },
+        {
+          "expression": "read_regular(root, LEGACY)",
+          "line": 95
+        },
+        {
+          "expression": "exec(compile(raw, legacy.__file__, 'exec'), legacy.__dict__)",
+          "line": 99
+        },
+        {
+          "expression": "read_regular(root, CONTRACT, 128 * 1024)",
+          "line": 101
+        },
+        {
+          "expression": "compile(raw, legacy.__file__, 'exec')",
+          "line": 99
+        },
+        {
+          "expression": "read_regular(root, name, row['bytes'])",
+          "line": 129
+        },
+        {
+          "expression": "args.input.open('rb')",
+          "line": 183
+        }
+      ],
+      "registered_before": true,
+      "sha256": "a73bfd46f8cb9a88cecb616ad81d397955fa697d9aa90e6295d83b4c9496ca47"
+    },
+    "scripts/w1_profile_source_map.py": {
+      "bytes": 33723,
+      "read_expressions": [
+        {
+          "expression": "path.open('rb')",
+          "line": 32
+        },
+        {
+          "expression": "path.open('rb')",
+          "line": 44
+        },
+        {
+          "expression": "(registry / 'src').glob('index.crates.io-*')",
+          "line": 146
+        },
+        {
+          "expression": "(registry / 'cache').glob('index.crates.io-*')",
+          "line": 147
+        },
+        {
+          "expression": "tarfile.open(fileobj=io.BytesIO(archive_bytes), mode='r:gz')",
+          "line": 166
+        },
+        {
+          "expression": "path.open('x', encoding='utf-8')",
+          "line": 542
+        }
+      ],
+      "registered_before": true,
+      "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+    },
+    "scripts/w1_qrom_current_implementation_audit.py": {
+      "bytes": 17150,
+      "read_expressions": [
+        {
+          "expression": "os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)",
+          "line": 59
+        },
+        {
+          "expression": "read_regular(root, LEGACY_READER)",
+          "line": 93
+        },
+        {
+          "expression": "exec(compile(original, audit.__file__, 'exec'), audit.__dict__)",
+          "line": 97
+        },
+        {
+          "expression": "read_regular(root, CONTRACT, 128 * 1024)",
+          "line": 99
+        },
+        {
+          "expression": "read_regular(root, name, row['bytes'])",
+          "line": 83
+        },
+        {
+          "expression": "compile(original, audit.__file__, 'exec')",
+          "line": 97
+        },
+        {
+          "expression": "read_regular(root, CONTRACT, 128 * 1024)",
+          "line": 279
+        },
+        {
+          "expression": "Path(__file__).read_bytes()",
+          "line": 283
+        },
+        {
+          "expression": "args.output.open('x')",
+          "line": 310
+        },
+        {
+          "expression": "read_regular(root, LEGACY_READER)",
+          "line": 280
+        }
+      ],
+      "registered_before": true,
+      "sha256": "98d64e337d28f38d879a1294df5ba11b88ecc78febf80dc45729e3ac8ef16050"
+    },
+    "scripts/w1_qrom_implementation_audit.py": {
+      "bytes": 21678,
+      "read_expressions": [
+        {
+          "expression": "exec(compile(data, module.__file__, 'exec'), module.__dict__)",
+          "line": 140
+        },
+        {
+          "expression": "checked_helper(root, control_path, helpers[control_path])",
+          "line": 295
+        },
+        {
+          "expression": "checked_helper(root, profile_path, helpers[profile_path])",
+          "line": 310
+        },
+        {
+          "expression": "checked_helper(root, transcript_path, helpers[transcript_path])",
+          "line": 313
+        },
+        {
+          "expression": "path.open('rb')",
+          "line": 93
+        },
+        {
+          "expression": "compile(data, module.__file__, 'exec')",
+          "line": 140
+        },
+        {
+          "expression": "Path(__file__).read_bytes()",
+          "line": 333
+        },
+        {
+          "expression": "args.output.open('x')",
+          "line": 381
+        }
+      ],
+      "registered_before": true,
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    "scripts/w1_stark_field_certificates.py": {
+      "bytes": 26104,
+      "read_expressions": [
+        {
+          "expression": "os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)",
+          "line": 100
+        },
+        {
+          "expression": "read_pinned(root, name, record)",
+          "line": 138
+        },
+        {
+          "expression": "tarfile.open(fileobj=io.BytesIO(inputs[P3_ARCHIVE]), mode='r:gz')",
+          "line": 162
+        },
+        {
+          "expression": "read_pinned(root, name, row)",
+          "line": 451
+        },
+        {
+          "expression": "args.output.open('x', encoding='utf-8')",
+          "line": 479
+        }
+      ],
+      "registered_before": true,
+      "sha256": "7a0b78bc9b2e3e4cdd9507f7600bab8495190f1ec8f74033b32bb85f993578cf"
+    },
+    "scripts/w1_stark_route_audit.py": {
+      "bytes": 35128,
+      "read_expressions": [
+        {
+          "expression": "source.open('rb')",
+          "line": 140
+        },
+        {
+          "expression": "regular_file(root, REGISTRY_PATH).open('rb')",
+          "line": 556
+        }
+      ],
+      "registered_before": true,
+      "sha256": "318ba714fe5c43d12cda1c3a06b08ba132d04bb176b7d4f9bbd0861652934a57"
+    },
+    "tests/fixtures/w1-lifetime-historical-7150/ledger.py": {
+      "bytes": 37507,
+      "read_expressions": [
+        {
+          "expression": "path.open('rb')",
+          "line": 482
+        },
+        {
+          "expression": "path.open('rb')",
+          "line": 693
+        }
+      ],
+      "registered_before": true,
+      "sha256": "7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6"
+    }
+  },
+  "native_compilation": 0,
+  "new_config_policy_environment_observed": null,
+  "old347_input_bytes_unchanged": true,
+  "old_E1_E6_budget_used": 0,
+  "optional_backend_absence": {
+    "git_tree_absent": true,
+    "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json"
+  },
+  "original_v3_result_retained": "257e36d75dc96da9879964919cee1178a947131d3f1f3d4eff5e6f8d5289eaaf",
+  "read_config_calls": [
+    {
+      "conditional": false,
+      "line": 18,
+      "path": "config/pon/ledger-v1.json",
+      "reader": "formal/pon-nakamoto-v1/contract_wire.py"
+    },
+    {
+      "conditional": false,
+      "line": 19,
+      "path": "config/pon/work-profile-v1.json",
+      "reader": "formal/pon-nakamoto-v1/contract_wire.py"
+    },
+    {
+      "conditional": false,
+      "line": 20,
+      "path": "config/pon/model-family-v1.json",
+      "reader": "formal/pon-nakamoto-v1/contract_wire.py"
+    },
+    {
+      "conditional": false,
+      "line": 46,
+      "path": "config/pon/devnet-v1.json",
+      "reader": "formal/pon-nakamoto-v1/contract_wire.py"
+    },
+    {
+      "conditional": true,
+      "line": 51,
+      "path": "config/pon/evaluation-round-v1.json",
+      "reader": "formal/pon-nakamoto-v1/contract_wire.py"
+    }
+  ],
+  "registered_after": 350,
+  "registered_before": 347,
+  "schema": "chain-remaining-metadata-static-import-input-review-v1",
+  "scope_notes": [
+    "contract_wire reads ledger/work-profile/model-family and selected devnet parameters at import; all5 configuration branches are retained, including evaluation-round even though the observed unset environment selects legacy-first-two-v3.",
+    "mandatory_units_relation imports bounded_process but neither the two metadata test modules nor the requested audit/report call path calls run_bounded, native verifier, solver, training or campaign entrypoints.",
+    "The selected W1 map source/fixture/helper/local-crate rows, profile/system/upstream register rows, route18 rows, fixed cost4 rows, joint23 rows, current lifetime20 rows, PQ21 rows and31 hash-use rows are already bound in the existing347 inputs. This is a bounded metadata call-path review, not a whole-repository dependency closure.",
+    "The profile helper registry/cache-reading CLI is not called: the mapping uses only extract_stark_parameters with supplied snapshot bytes. FRI/control helpers use supplied retained bytes. Historical lifetime module uses template and pure survey/evaluate; its independent CLI file-read paths are not entered.",
+    "Two literature evidence strings (manuscript-comparison/theorem-review) are retained provenance fields, not dereferenced by these report call paths; no new retrieval or old proof qualification.",
+    "Root strings name directories;20 absent-build inputs are required absent and remain absent. The optional removed backend manifest is absent in exactHEAD and remains absent; no fabricated file."
+  ],
+  "source_base": "6b851bc64db9d87db1bae083654902846f14c275",
+  "source_changes_unchanged": [
+    ".github/workflows/chain-hepta-closure-candidate.yml",
+    "config/pon/hash-use-contract-v1.json",
+    "config/pon/joint-consensus-qualification-v1.json",
+    "config/pon/pq-proof-profile-binding-v1.json",
+    "config/pon/pq128-source-correspondence-current-v2.json",
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "config/pon/w1-stark-route-registry-v1.json",
+    "config/pon/w1-upstream-security-v1.json",
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_lifetime_current_v2.py",
+    "scripts/ci/test_pq_proof_profile_binding.py",
+    "scripts/ci/test_w1_qrom_current_ci.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "scripts/w1_lifetime_current_observation.py",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/w1_stark_route_audit.py",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+  ]
+}

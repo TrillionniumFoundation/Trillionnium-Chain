@@ -14,6 +14,7 @@ pub mod low_rank_prefix;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
 pub mod maintenance_prefix;
+mod noise_frame;
 pub mod paired_product;
 pub mod rejection_cache;
 #[cfg(test)]
@@ -1029,10 +1030,20 @@ fn evaluate_transcript_kernel_with_progress<
     ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
     validate(a)?;
     validate(b)?;
-    let el = expand_with_progress(challenge, 0, N * R, progress)?;
-    let er = expand_with_progress(challenge, 1, R * N, progress)?;
-    let fl = expand_with_progress(challenge, 2, N * R, progress)?;
-    let fr = expand_with_progress(challenge, 3, R * N, progress)?;
+    // Only the default full-limb path prepares its immutable noise framing
+    // once per expansion. Every original callback, full hash and rejection
+    // sample remains; the retained reference kernels keep their original path.
+    let mut noise = |label| {
+        if FULL_LIMB {
+            noise_frame::expand_with_progress(challenge, label, N * R, progress)
+        } else {
+            expand_with_progress(challenge, label, N * R, progress)
+        }
+    };
+    let el = noise(0)?;
+    let er = noise(1)?;
+    let fl = noise(2)?;
+    let fr = noise(3)?;
     let e = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&el, &er, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
     let f = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&fl, &fr, N, R, N, progress)

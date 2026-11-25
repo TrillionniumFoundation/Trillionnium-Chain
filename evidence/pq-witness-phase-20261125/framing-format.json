@@ -1,0 +1,54 @@
+{
+  "schema": "witness-phase-framing-format-v1",
+  "status": "PASS",
+  "prior_capsule_wall_seconds": 3.366353083,
+  "prior_capsule_child_cpu_seconds": 0.515119,
+  "aggregate_wall_limit_seconds": 30,
+  "tests_executed": 0,
+  "Cargo_invocations": 0,
+  "original_E1_E6_budget_used": 0,
+  "scope": "Format only after LF framing review; original observer module unchanged and parser tests pending native CI",
+  "steps": [
+    {
+      "name": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs",
+      "input_sha256": "50c371fc1a28f59d0e6259ba503afffbf01c9066e250b76bef1daee34ffe4b30",
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.12128475,
+      "inclusive_child_cpu_seconds": 0.039871,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "output_sha256": "50c371fc1a28f59d0e6259ba503afffbf01c9066e250b76bef1daee34ffe4b30",
+      "output_bytes": 6220
+    },
+    {
+      "name": "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs",
+      "input_sha256": "bb5360fd7103cf50a875f9cf940f84c6e495b9b89e9373b9fd87b8a9aa2a8861",
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--emit",
+        "stdout"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.02422358300000002,
+      "inclusive_child_cpu_seconds": 0.021311000000000004,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "output_sha256": "bb5360fd7103cf50a875f9cf940f84c6e495b9b89e9373b9fd87b8a9aa2a8861",
+      "output_bytes": 4902
+    }
+  ],
+  "archive_sha256": "5a72c895e73c0bbd3d5ca1dadc47f363fdec0e209d71733d72123cfb12a69b99",
+  "wall_seconds": 0.146917708,
+  "inclusive_child_cpu_seconds": 0.061182,
+  "aggregate_wall_seconds": 3.513270791,
+  "aggregate_child_cpu_seconds": 0.576301
+}

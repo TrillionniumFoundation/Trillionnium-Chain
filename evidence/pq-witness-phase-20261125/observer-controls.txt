@@ -1,0 +1,10 @@
+
+running 5 tests
+test development_observation::tests::every_phase_cost_slot_keeps_its_exact_label ... ok
+test development_observation::tests::healthy_success_emits_nothing_but_failed_result_is_observed ... ok
+test development_observation::tests::inactive_scope_observes_no_clock_and_keeps_original_deadline ... ok
+test development_observation::tests::fixed_enum_projection_is_bounded_and_unknown_cpu_stays_null ... ok
+test development_observation::tests::output_attempts_have_one_fixed_budget_and_no_write_retry ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

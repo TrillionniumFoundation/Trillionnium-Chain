@@ -115,6 +115,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         "--tls-key",
         "--tls-ca",
         "--witness-writer-key",
+        "--witness-phase-diagnostics",
         "--tls-network-profile",
     ];
     ensure(
@@ -125,6 +126,13 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         args.get("--development").map(String::as_str) == Some("true"),
         "EXPLICIT_DEVELOPMENT_REQUIRED",
     )?;
+    // This explicit selector follows the existing development gate and grants
+    // no new input, storage, witness or network authority. Default remains off.
+    let witness_diagnostics = match args.get("--witness-phase-diagnostics").map(String::as_str) {
+        None => false,
+        Some("true") => true,
+        _ => return Err("PQ_TLS_WITNESS_DIAGNOSTICS_OPTION".into()),
+    };
     let address: SocketAddr = need(args, "--listen")?
         .parse()
         .map_err(|_| "PQ_TLS_LISTEN")?;
@@ -210,14 +218,19 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     // Validate all input and cryptographic configuration before creating/opening
     // the actual owner or binding the listener. No other backend is selected.
     let witness_selected = config.witness.is_some();
+    ensure(
+        !witness_diagnostics || witness_selected,
+        "PQ_TLS_WITNESS_CONFIG_REQUIRED",
+    )?;
     let store = Path::new(need(args, "--store")?);
     let node = match config.witness {
-        Some(config) => config.open_node(
+        Some(config) => config.open_node_with_development_observation(
             store,
             settings,
             workers,
             &policy,
             witness_key.ok_or("PQ_TLS_WITNESS_CONFIG_REQUIRED")?,
+            witness_diagnostics,
         )?,
         None => Node::open_with_pq_network(store, settings, workers, &policy)?,
     };
@@ -246,4 +259,31 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false,
         "pinned_endpoint_development":endpoint_selected,"public_wan_qualification":false}),
     )
+}
+
+#[cfg(test)]
+mod development_observation_tests {
+    use super::*;
+    #[test]
+    fn diagnostic_selector_never_bypasses_the_original_development_gate() {
+        let args = BTreeMap::from([("--witness-phase-diagnostics".into(), "true".into())]);
+        assert_eq!(
+            run(&args).unwrap_err().to_string(),
+            "EXPLICIT_DEVELOPMENT_REQUIRED"
+        );
+    }
+    #[test]
+    fn invalid_diagnostic_selector_refuses_before_configuration_or_owner_io() {
+        let args = BTreeMap::from([
+            ("--development".into(), "true".into()),
+            (
+                "--witness-phase-diagnostics".into(),
+                "secret invalid selector".into(),
+            ),
+        ]);
+        assert_eq!(
+            run(&args).unwrap_err().to_string(),
+            "PQ_TLS_WITNESS_DIAGNOSTICS_OPTION"
+        );
+    }
 }

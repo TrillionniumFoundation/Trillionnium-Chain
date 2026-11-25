@@ -31,6 +31,14 @@ class ExportError(Exception):
     pass
 
 
+class APIHTTPError(ExportError):
+    """Typed, safe HTTP failure; response bodies and exception text stay private."""
+
+    def __init__(self, path, status):
+        self.status = status
+        super().__init__(f"GitHub GET {path}: HTTP {status}; no fallback")
+
+
 def require(condition, message):
     if not condition:
         raise ExportError(message)
@@ -149,7 +157,7 @@ class API:
                 # still refuses the export, even when response close fails.
                 pass
             self.record_request_failure(path, relative, started, timeout, error)
-            raise ExportError(f"GitHub GET {path}: HTTP {error.code}; no fallback") from None
+            raise APIHTTPError(path, error.code) from None
         except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as error:
             self.record_request_failure(path, relative, started, timeout, error)
             raise ExportError(f"GitHub GET {path}: transport failure; no fallback") from None
@@ -269,6 +277,59 @@ def snapshot(api, target, directory):
              "analyses": sorted(exact, key=lambda row: row["id"])}
     api.save_json(f"{directory}/selection.json", {"ready": ready, **state})
     return ready, state
+
+
+def default_setup_availability(api, target):
+    """Explain an empty API snapshot without changing any security verdict.
+
+    Default setup schedules PR scans only for default/protected base branches.
+    This is a current configuration observation, not proof of historical
+    scheduling or a substitute for analyses from the exact frozen source.
+    """
+    prefix = "default-setup-availability"
+    pr = api.get(f'/pulls/{target["pr"]}', prefix + "/pr.json")
+    check_pr(pr, target)
+    base_ref = pr["base"].get("ref")
+    require(isinstance(base_ref, str) and bool(base_ref), "Missing base branch identity")
+    repository = api.get("", prefix + "/repository.json")
+    require(repository.get("full_name") == "TrillionniumFoundation/Trillionnium-Chain"
+            and isinstance(repository.get("default_branch"), str)
+            and bool(repository["default_branch"]), "Repository default branch identity missing")
+    branch = api.get("/branches/" + urllib.parse.quote(base_ref, safe=""),
+                     prefix + "/base-branch.json")
+    require(branch.get("name") == base_ref and branch.get("commit", {}).get("sha") == target["base"]
+            and type(branch.get("protected")) is bool,
+            "Base branch source or protection observation changed")
+    setup_state, configuration_http_status = None, None
+    try:
+        setup = api.get("/code-scanning/default-setup", prefix + "/configuration.json")
+    except APIHTTPError as error:
+        # This optional endpoint requires Administration:read, which an
+        # evidence-reading workflow token need not have. Retain UNKNOWN and
+        # wait for real exact-source evidence under the original deadline.
+        # No error from the required analyses/checks reads is caught here.
+        if error.status not in {403, 404}:
+            raise
+        configuration_http_status = error.status
+    else:
+        require(setup.get("state") in {"configured", "not-configured"},
+                "Unknown CodeQL default setup state")
+        setup_state = setup["state"]
+    covered = base_ref == repository["default_branch"] or branch["protected"]
+    observed = {
+        "schema": "codeql-default-setup-availability-v1",
+        "pr": target["pr"], "head": target["head"], "base": target["base"],
+        "base_ref": base_ref, "default_branch": repository["default_branch"],
+        "base_protected": branch["protected"], "default_setup_state": setup_state,
+        "configuration_observation": "known" if setup_state is not None else "unknown",
+        "configuration_http_status": configuration_http_status,
+        "default_setup_trigger_covered": covered if setup_state == "configured" else None,
+        "scope": "Current default-setup PR trigger configuration after an empty exact-source API snapshot; "
+                 "not historical scheduling proof, local SARIF acceptance or a security verdict.",
+        "security_gate_changed": False,
+    }
+    api.save_json(prefix + "/observation.json", observed)
+    return observed
 
 
 def export_analyses(api, target, state):
@@ -398,6 +459,11 @@ def main():
             result["last_checks"] = [{"id": row["id"], "head_sha": row["head_sha"],
                                       "status": row["status"], "conclusion": row["conclusion"]}
                                      for row in state["checks"]]
+            if not state["checks"] and not state["analyses"] and "default_setup_availability" not in result:
+                result["default_setup_availability"] = default_setup_availability(api, target)
+                require(result["default_setup_availability"]["default_setup_trigger_covered"] is not False,
+                        "No exact-source CodeQL evidence observed; current default setup does not schedule "
+                        "PR scans to this unprotected non-default base")
             if ready and state == previous:
                 result["analyses"] = export_analyses(api, target, state)
                 result["check_annotations"] = export_check_annotations(

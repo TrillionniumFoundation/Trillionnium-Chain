@@ -64,6 +64,43 @@ pub(crate) use {observe_operation, observe_phase};
 #[cfg(test)]
 pub(crate) mod test_observation;
 
+mod development_observation;
+use development_observation::{
+    Code as DevelopmentCode, Kind as DevelopmentKind, Operation as DevelopmentOperation,
+    Phase as DevelopmentPhase,
+};
+macro_rules! development_phase {
+    ($operation:expr, $phase:ident, $action:expr) => {{
+        let _phase = $operation
+            .as_ref()
+            .map(|operation| operation.phase(DevelopmentPhase::$phase));
+        $action
+    }};
+}
+fn finish_development<T>(operation: Option<DevelopmentOperation>, result: &Result<T>) {
+    if let Some(operation) = operation {
+        let code = result
+            .as_ref()
+            .err()
+            .map(|error| match error.to_string().as_str() {
+                "PQ_WITNESS_DEADLINE" => DevelopmentCode::Deadline,
+                "PQ_WITNESS_EOF" => DevelopmentCode::Eof,
+                "PQ_WITNESS_UNAVAILABLE" => DevelopmentCode::Unavailable,
+                "PQ_WITNESS_BUSY" => DevelopmentCode::Busy,
+                "PQ_WITNESS_COMMIT_UNCERTAIN" => DevelopmentCode::CommitUncertain,
+                "PQ_WITNESS_ROLLBACK"
+                | "PQ_WITNESS_OBSERVATION_ROLLBACK"
+                | "PQ_WITNESS_STORAGE_ROLLBACK" => DevelopmentCode::Rollback,
+                "PQ_WITNESS_STORAGE_IDENTITY" => DevelopmentCode::StorageIdentity,
+                "PQ_WITNESS_SCHEMA" => DevelopmentCode::Schema,
+                "PQ_WITNESS_STATE" => DevelopmentCode::State,
+                "PQ_WITNESS_STATE_WIDTH" => DevelopmentCode::StateWidth,
+                _ => DevelopmentCode::Other,
+            });
+        operation.finish(result.is_ok(), code);
+    }
+}
+
 const REQUEST_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/request/v1\0";
 const REPLY_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/reply/v1\0";
 const BINDING_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/binding/v1\0";
@@ -318,6 +355,7 @@ pub struct WitnessClient {
     transport: Box<dyn WitnessTransport>,
     unavailable: bool,
     last_verified: Option<Checkpoint>,
+    development_diagnostics: bool,
     #[cfg(test)]
     before_send: Option<Box<dyn FnMut(Instant) + Send>>,
 }
@@ -337,12 +375,18 @@ impl WitnessClient {
             transport,
             unavailable: false,
             last_verified: None,
+            development_diagnostics: false,
             #[cfg(test)]
             before_send: None,
         })
     }
     pub(crate) fn binding(&self) -> &WitnessBinding {
         &self.binding
+    }
+    /// Explicit local development observations; disabled on ordinary construction.
+    /// The native CLI calls this only after its original development/input guards.
+    pub fn enable_development_diagnostics(&mut self) {
+        self.development_diagnostics = true;
     }
     pub(crate) fn available(&self) -> Result<()> {
         ensure(!self.unavailable, "PQ_WITNESS_UNAVAILABLE")
@@ -379,110 +423,153 @@ impl WitnessClient {
                         Ok::<_, Error>(until)
                     })()
                 )?;
-                // Until transport entry no remote mutation or unread response exists.
-                // A local preparation failure or cancellation must leave this client
-                // usable; latching here would turn a short request into a service outage.
-                let (challenge, mut body) = observe_phase!(
-                    observation,
-                    ChallengeAndBody,
-                    (|| {
-                        let mut challenge = [0; 32];
-                        File::open("/dev/urandom")?.read_exact(&mut challenge)?;
-                        ensure(challenge != [0; 32], "PQ_WITNESS_CHALLENGE")?;
-                        let mut body = b"PWR1".to_vec();
-                        body.push(if previous.is_some() { 2 } else { 1 });
-                        body.extend(self.binding.id);
-                        body.extend(previous.map_or([0; 72], Checkpoint::bytes));
-                        body.extend(next.map_or([0; 72], Checkpoint::bytes));
-                        body.extend(challenge);
-                        Ok::<_, Error>((challenge, body))
-                    })()
-                )?;
-                body.extend(
-                    observe_phase!(
-                        observation,
-                        RequestSignIncludingSelfVerify,
-                        self.writer
-                            .sign_exact_message(&message(REQUEST_DOMAIN, &body))
-                    )
-                    .map_err(crypto)?,
+                let development = DevelopmentOperation::start(
+                    self.development_diagnostics,
+                    if previous.is_some() {
+                        DevelopmentKind::ClientCas
+                    } else {
+                        DevelopmentKind::ClientCurrent
+                    },
+                    until,
                 );
-                #[cfg(test)]
-                if let Some(before_send) = self.before_send.as_mut() {
-                    observe_phase!(observation, BeforeSendHook, {
-                        before_send(until);
-                        Ok::<_, Error>(())
-                    })?;
-                }
-                observe_phase!(observation, BeforeTransport, deadline(until))?;
-                let result: Result<Checkpoint> = (|| {
-                    #[cfg(test)]
-                    if let Some(observation) = observation.as_ref() {
-                        observation.mark(test_observation::Mark::TransportEntered);
-                    }
-                    let reply = observe_phase!(
-                        observation,
-                        Transport,
-                        self.transport.exchange(&body, until)
-                    )?;
-                    observe_phase!(
-                        observation,
-                        ReplyContext,
-                        ensure(
-                            reply.len() == REPLY_BYTES
-                                && &reply[..4] == b"PWS1"
-                                && reply[4..68] == self.binding.id
-                                && reply[140..172] == challenge,
-                            "PQ_WITNESS_REPLY_CONTEXT",
+                let result = (|| {
+                    // Until transport entry no remote mutation or unread response exists.
+                    // A local preparation failure or cancellation must leave this client
+                    // usable; latching here would turn a short request into a service outage.
+                    let (challenge, mut body) = development_phase!(
+                        development,
+                        Challenge,
+                        observe_phase!(
+                            observation,
+                            ChallengeAndBody,
+                            (|| {
+                                let mut challenge = [0; 32];
+                                File::open("/dev/urandom")?.read_exact(&mut challenge)?;
+                                ensure(challenge != [0; 32], "PQ_WITNESS_CHALLENGE")?;
+                                let mut body = b"PWR1".to_vec();
+                                body.push(if previous.is_some() { 2 } else { 1 });
+                                body.extend(self.binding.id);
+                                body.extend(previous.map_or([0; 72], Checkpoint::bytes));
+                                body.extend(next.map_or([0; 72], Checkpoint::bytes));
+                                body.extend(challenge);
+                                Ok::<_, Error>((challenge, body))
+                            })()
                         )
                     )?;
-                    observe_phase!(
-                        observation,
-                        ClientReplyVerify,
-                        self.binding
-                            .witness
-                            .verify_exact_message(
-                                &message(REPLY_DOMAIN, &reply[..REPLY_BODY]),
-                                &reply[REPLY_BODY..],
+                    body.extend(
+                        development_phase!(
+                            development,
+                            Sign,
+                            observe_phase!(
+                                observation,
+                                RequestSignIncludingSelfVerify,
+                                self.writer
+                                    .sign_exact_message(&message(REQUEST_DOMAIN, &body))
                             )
-                            .map(|_| ())
-                    )
-                    .map_err(crypto)?;
-                    observe_phase!(
-                        observation,
-                        ClientFinal,
-                        (|| {
-                            let observed = Checkpoint::decode(&reply[68..140])?;
-                            // A fresh challenge authenticates this response, but does not by
-                            // itself establish that the independent service never rewound.
-                            // Other legitimate clients may advance it by several generations.
-                            ensure(
-                                self.last_verified.is_none_or(|previous| {
-                                    observed.sequence > previous.sequence || observed == previous
-                                }),
-                                "PQ_WITNESS_OBSERVATION_ROLLBACK",
-                            )?;
-                            // Authenticated matching CAS success must be persisted locally even
-                            // if its verification completed after the live-use deadline.
-                            if next != Some(observed) {
-                                deadline(until)?;
-                            }
-                            #[cfg(test)]
-                            if next == Some(observed) {
-                                if let Some(observation) = observation.as_ref() {
-                                    observation.mark(test_observation::Mark::MatchingCasReceipt);
-                                }
-                            }
-                            self.last_verified = Some(observed);
-                            Ok::<_, Error>(observed)
-                        })()
-                    )
+                        )
+                        .map_err(crypto)?,
+                    );
+                    #[cfg(test)]
+                    if let Some(before_send) = self.before_send.as_mut() {
+                        observe_phase!(observation, BeforeSendHook, {
+                            before_send(until);
+                            Ok::<_, Error>(())
+                        })?;
+                    }
+                    development_phase!(
+                        development,
+                        FinalCheck,
+                        observe_phase!(observation, BeforeTransport, deadline(until))
+                    )?;
+                    let result: Result<Checkpoint> = (|| {
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.mark(test_observation::Mark::TransportEntered);
+                        }
+                        let reply = development_phase!(
+                            development,
+                            Exchange,
+                            observe_phase!(
+                                observation,
+                                Transport,
+                                self.transport.exchange(&body, until)
+                            )
+                        )?;
+                        development_phase!(
+                            development,
+                            ReplyContext,
+                            observe_phase!(
+                                observation,
+                                ReplyContext,
+                                ensure(
+                                    reply.len() == REPLY_BYTES
+                                        && &reply[..4] == b"PWS1"
+                                        && reply[4..68] == self.binding.id
+                                        && reply[140..172] == challenge,
+                                    "PQ_WITNESS_REPLY_CONTEXT",
+                                )
+                            )
+                        )?;
+                        development_phase!(
+                            development,
+                            ReplyVerify,
+                            observe_phase!(
+                                observation,
+                                ClientReplyVerify,
+                                self.binding
+                                    .witness
+                                    .verify_exact_message(
+                                        &message(REPLY_DOMAIN, &reply[..REPLY_BODY]),
+                                        &reply[REPLY_BODY..],
+                                    )
+                                    .map(|_| ())
+                            )
+                        )
+                        .map_err(crypto)?;
+                        development_phase!(
+                            development,
+                            FinalCheck,
+                            observe_phase!(
+                                observation,
+                                ClientFinal,
+                                (|| {
+                                    let observed = Checkpoint::decode(&reply[68..140])?;
+                                    // A fresh challenge authenticates this response, but does not by
+                                    // itself establish that the independent service never rewound.
+                                    // Other legitimate clients may advance it by several generations.
+                                    ensure(
+                                        self.last_verified.is_none_or(|previous| {
+                                            observed.sequence > previous.sequence
+                                                || observed == previous
+                                        }),
+                                        "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                                    )?;
+                                    // Authenticated matching CAS success must be persisted locally even
+                                    // if its verification completed after the live-use deadline.
+                                    if next != Some(observed) {
+                                        deadline(until)?;
+                                    }
+                                    #[cfg(test)]
+                                    if next == Some(observed) {
+                                        if let Some(observation) = observation.as_ref() {
+                                            observation
+                                                .mark(test_observation::Mark::MatchingCasReceipt);
+                                        }
+                                    }
+                                    self.last_verified = Some(observed);
+                                    Ok::<_, Error>(observed)
+                                })()
+                            )
+                        )
+                    })();
+                    // Once exchange begins an error can leave an unread response or an
+                    // uncertain external CAS. This transport instance cannot be reused.
+                    if result.is_err() {
+                        self.fail_closed();
+                    }
+                    result
                 })();
-                // Once exchange begins an error can leave an unread response or an
-                // uncertain external CAS. This transport instance cannot be reused.
-                if result.is_err() {
-                    self.fail_closed();
-                }
+                finish_development(development, &result);
                 result
             }
         )
@@ -556,6 +643,7 @@ pub struct DurableWitness {
     // A retained current-head pin does not authenticate restored predecessor bytes.
     retry_from: Option<Checkpoint>,
     commit_uncertain: bool,
+    development_diagnostics: bool,
 }
 impl DurableWitness {
     pub fn register_new(
@@ -612,6 +700,7 @@ impl DurableWitness {
             known_head: Some(initial),
             retry_from: None,
             commit_uncertain: false,
+            development_diagnostics: false,
         };
         owner.check_storage()?;
         Ok(owner)
@@ -665,6 +754,7 @@ impl DurableWitness {
             known_head: Some(expected),
             retry_from: None,
             commit_uncertain: false,
+            development_diagnostics: false,
         };
         owner.read_head()?;
         Ok(owner)
@@ -695,6 +785,27 @@ impl DurableWitness {
         Ok(head)
     }
     pub fn handle(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+        let development = DevelopmentOperation::start(
+            self.development_diagnostics,
+            match request.get(4) {
+                Some(1) => DevelopmentKind::ServiceCurrent,
+                Some(2) => DevelopmentKind::ServiceCas,
+                _ => DevelopmentKind::ServiceConnection,
+            },
+            until,
+        );
+        let result = self.handle_observed(request, until, &development);
+        finish_development(development, &result);
+        result
+    }
+    // Keep every normal early return inside this execution boundary so the
+    // public owner always records its completed result in both macro forms.
+    fn handle_observed(
+        &mut self,
+        request: &[u8],
+        until: Instant,
+        development: &Option<DevelopmentOperation>,
+    ) -> Result<Vec<u8>> {
         observe_operation!(
             observation,
             match request.get(4) {
@@ -707,50 +818,69 @@ impl DurableWitness {
                 if let Some(observation) = observation.as_ref() {
                     observation.deadlines(Some(until), until);
                 }
-                observe_phase!(
-                    observation,
-                    ServiceEntryAndStorage,
-                    (|| {
-                        deadline(until)?;
-                        self.check_storage()
-                    })()
+                development_phase!(
+                    development,
+                    StorageEntry,
+                    observe_phase!(
+                        observation,
+                        ServiceEntryAndStorage,
+                        (|| {
+                            deadline(until)?;
+                            self.check_storage()
+                        })()
+                    )
                 )?;
-                observe_phase!(
-                    observation,
-                    ServiceRequestContext,
-                    (|| {
-                        ensure(
-                            request.len() == REQUEST_BYTES
-                                && &request[..4] == b"PWR1"
-                                && request[5..69] == self.binding.id
-                                && request[213..245] != [0; 32],
-                            "PQ_WITNESS_REQUEST_CONTEXT",
-                        )?;
-                        ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
-                        if request[4] == 1 {
-                            ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
-                        }
-                        Ok::<_, Error>(())
-                    })()
+                development_phase!(
+                    development,
+                    RequestContext,
+                    observe_phase!(
+                        observation,
+                        ServiceRequestContext,
+                        (|| {
+                            ensure(
+                                request.len() == REQUEST_BYTES
+                                    && &request[..4] == b"PWR1"
+                                    && request[5..69] == self.binding.id
+                                    && request[213..245] != [0; 32],
+                                "PQ_WITNESS_REQUEST_CONTEXT",
+                            )?;
+                            ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
+                            if request[4] == 1 {
+                                ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
+                            }
+                            Ok::<_, Error>(())
+                        })()
+                    )
                 )?;
-                observe_phase!(
-                    observation,
-                    ServiceRequestVerify,
-                    self.binding
-                        .writer
-                        .verify_exact_message(
-                            &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
-                            &request[REQUEST_BODY..],
-                        )
-                        .map(|_| ())
+                development_phase!(
+                    development,
+                    RequestVerify,
+                    observe_phase!(
+                        observation,
+                        ServiceRequestVerify,
+                        self.binding
+                            .writer
+                            .verify_exact_message(
+                                &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
+                                &request[REQUEST_BODY..],
+                            )
+                            .map(|_| ())
+                    )
                 )
                 .map_err(crypto)?;
-                observe_phase!(observation, ServiceRequestContext, deadline(until))?;
+                development_phase!(
+                    development,
+                    RequestContext,
+                    observe_phase!(observation, ServiceRequestContext, deadline(until))
+                )?;
                 let head = if request[4] == 2 {
                     observe_phase!(
                         observation,
                         ServiceCas,
                         (|| {
+                            let preparation = development
+                                .as_ref()
+                                .map(|operation| operation.phase(DevelopmentPhase::CasPrepare));
                             let previous = Checkpoint::decode(&request[69..141])?;
                             let next = Checkpoint::decode(&request[141..213])?;
                             ensure(
@@ -791,7 +921,12 @@ impl DurableWitness {
                             if let Some(observation) = observation.as_ref() {
                                 observation.mark(test_observation::Mark::CasCommitAttempted);
                             }
-                            observe_phase!(observation, ServiceCommit, tx.commit())?;
+                            drop(preparation);
+                            development_phase!(
+                                development,
+                                Commit,
+                                observe_phase!(observation, ServiceCommit, tx.commit())
+                            )?;
                             #[cfg(test)]
                             if let Some(observation) = observation.as_ref() {
                                 observation.mark(test_observation::Mark::CasCommitted);
@@ -805,19 +940,31 @@ impl DurableWitness {
                         })()
                     )?
                 } else {
-                    observe_phase!(observation, ServiceRead, self.read_head())?
+                    development_phase!(
+                        development,
+                        ReadState,
+                        observe_phase!(observation, ServiceRead, self.read_head())
+                    )?
                 };
-                observe_phase!(observation, ServiceFinalStorage, self.check_storage())?;
+                development_phase!(
+                    development,
+                    StorageFinal,
+                    observe_phase!(observation, ServiceFinalStorage, self.check_storage())
+                )?;
                 let mut reply = b"PWS1".to_vec();
                 reply.extend(self.binding.id);
                 reply.extend(head.bytes());
                 reply.extend(&request[213..245]);
                 reply.extend(
-                    observe_phase!(
-                        observation,
-                        ReplySignIncludingSelfVerify,
-                        self.signer
-                            .sign_exact_message(&message(REPLY_DOMAIN, &reply))
+                    development_phase!(
+                        development,
+                        ReplySign,
+                        observe_phase!(
+                            observation,
+                            ReplySignIncludingSelfVerify,
+                            self.signer
+                                .sign_exact_message(&message(REPLY_DOMAIN, &reply))
+                        )
                     )
                     .map_err(crypto)?,
                 );
@@ -828,41 +975,76 @@ impl DurableWitness {
                 // its local commit before refusing late live use. Current has
                 // no such committed outcome; serve_one also retains the same
                 // absolute write deadline for every reply.
-                observe_phase!(
-                    observation,
-                    ServiceFinal,
-                    if request[4] == 2 {
-                        Ok(())
-                    } else {
-                        deadline(until).map(|_| ())
-                    }
+                development_phase!(
+                    development,
+                    FinalCheck,
+                    observe_phase!(
+                        observation,
+                        ServiceFinal,
+                        if request[4] == 2 {
+                            Ok(())
+                        } else {
+                            deadline(until).map(|_| ())
+                        }
+                    )
                 )?;
                 Ok(reply)
             }
         )
     }
     pub fn serve_one(&mut self, stream: &mut UnixStream, until: Instant) -> Result<()> {
+        let development = DevelopmentOperation::start(
+            self.development_diagnostics,
+            DevelopmentKind::ServiceConnection,
+            until,
+        );
+        let result = self.serve_one_observed(stream, until, &development);
+        finish_development(development, &result);
+        result
+    }
+    fn serve_one_observed(
+        &mut self,
+        stream: &mut UnixStream,
+        until: Instant,
+        development: &Option<DevelopmentOperation>,
+    ) -> Result<()> {
         observe_operation!(observation, test_observation::Kind::WitnessConnection, {
             #[cfg(test)]
             if let Some(observation) = observation.as_ref() {
                 observation.deadlines(Some(until), until);
             }
             let mut request = vec![0; REQUEST_BYTES];
-            observe_phase!(
-                observation,
-                WitnessRead,
-                read_until(stream, &mut request, until)
+            development_phase!(
+                development,
+                WireRead,
+                observe_phase!(
+                    observation,
+                    WitnessRead,
+                    read_until(stream, &mut request, until)
+                )
             )?;
-            let reply = observe_phase!(observation, WitnessHandle, self.handle(&request, until))?;
-            observe_phase!(
-                observation,
-                WitnessWrite,
-                write_until(stream, &reply, until)
+            let reply = development_phase!(
+                development,
+                ServiceHandle,
+                observe_phase!(observation, WitnessHandle, self.handle(&request, until))
+            )?;
+            development_phase!(
+                development,
+                WireWrite,
+                observe_phase!(
+                    observation,
+                    WitnessWrite,
+                    write_until(stream, &reply, until)
+                )
             )
         })
     }
     pub fn storage_path(&self) -> &Path {
         &self.path
+    }
+    /// Opt in only for the explicitly selected development service owner.
+    pub fn enable_development_diagnostics(&mut self) {
+        self.development_diagnostics = true;
     }
     fn check_known_head(&self, head: Checkpoint) -> Result<()> {
         ensure(
