@@ -39,8 +39,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/ci/run_pq_corpus_current_controls_v2.py \
-            --output "$CURRENT_CORPUS_OUT/named-controls.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/named-controls.log"
+          python3 scripts/ci/run_pq_fixture_tmpfs_v1.py \
+            --output "$CURRENT_CORPUS_OUT/named-controls.json" \
+            --fixture-receipt "$CURRENT_CORPUS_OUT/fixture-tmpfs.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/named-controls.log"
       - name: Inspect the separate current source correspondence
         id: correspondence
         if: always() && steps.preflight.outcome == 'success'
