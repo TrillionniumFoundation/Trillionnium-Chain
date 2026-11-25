@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/reserved_namespace",
+      "node_integration_complete": false,
+      "scope": "M13 exact original seven-prefix forbidden-authority namespace predicate on bounded native byte spans; no row, finality, durable owner or Node qualification",
+      "source": "hia/src/state_import/reserved_namespace.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_namespace.py",
+        "hia/tests/rust_state_import_namespace_reference.rs"
+      ]
+    },
+    {
       "id": "protocol/id",
       "node_integration_complete": false,
       "scope": "ASCII identifier validation",
@@ -2080,12 +2091,14 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "state_import/reserved_namespace"
+      ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",
       "package": "trnm-state-import",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     },
     {
       "components": [
