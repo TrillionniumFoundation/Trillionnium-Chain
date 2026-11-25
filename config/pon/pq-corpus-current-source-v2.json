@@ -9,7 +9,7 @@
       "current_sha256": "c59bbcb151b95ca6149a3ce768e69c60f4c9f1aeb2334efbbd71ada5a3dd15d4"
     }
   },
-  "current_git_blob_map_sha256": "1ef63256e682973e0ee2cac35a028f866bc88a25bf9b977172202f20d76a8452",
+  "current_git_blob_map_sha256": "ff4ac22125cce4143e6635effbd924fa6f54138c76c1194705cc4f4504771445",
   "frozen_inputs_sha256": {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -46,6 +46,11 @@
       "current_git_blob": "fbfce48ddf7404b750ac253f5eb10ce130e07e23",
       "current_sha256": "5361d6ec8f42d0172d8c1345e64a32748a89db3f614d34ce34b48b9e12beb81d",
       "frozen_git_blob": "73a8b3943bbe2a3a77e1a181bc2116ec85c0301e"
+    },
+    "config/pon/pq128-lifetime-composition-current-v3.json": {
+      "current_git_blob": "52f097cab1be9aa81fb1feb54d5123ded6159008",
+      "current_sha256": "63e2b6cba46b5315c24f9a01697ad1063e4cd874e2fd007b5c8b1d6b80c2b3da",
+      "frozen_git_blob": "9a82a3cb4538a8c3c28b356faf0b51356237491a"
     },
     "config/pon/pq128-source-correspondence-current-v2.json": {
       "current_git_blob": "b8db4cf0bb1226bee3e7a3cb8df21db66de918e7",
@@ -86,6 +91,11 @@
       "current_git_blob": "774e6b0ad66efbac9483e4e77c5a735a9bb2feb0",
       "current_sha256": "bb97be040f871f1d71331b015b988cd0339c79e1d805c7cd54ff3f6a9493b533",
       "frozen_git_blob": "bfe426e42fb0010e9a3febbfccee973029336d56"
+    },
+    "scripts/ci/pq_lifetime_composition.py": {
+      "current_git_blob": "662ea03c91ca0079dfbd8a0ae317309a5d06811e",
+      "current_sha256": "1dd962482d0c61cf30d724af0cf463970b0e6f2e9257cbff42d236e1cf2fb157",
+      "frozen_git_blob": "68a224ef3de327a8a86df1f2327e925cb690610f"
     },
     "scripts/ci/pq_lifetime_current_v2.py": {
       "current_git_blob": "d8ccc5614b1350762e0b7cd623e89dd6c705165f",

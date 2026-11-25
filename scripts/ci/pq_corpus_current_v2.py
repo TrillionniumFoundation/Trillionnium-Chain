@@ -26,8 +26,8 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 MAX_MAP_BYTES = 64 * 1024
 MAX_REPORT_BYTES = 64 * 1024
 EXPECTED_FROZEN_PIN_COUNT = 2613
-EXPECTED_MAP_SHA256 = "ae615d95b2c922607b2a564df074ebb790441e601f507648c96cddeee83958bd"
-EXPECTED_CURRENT_BLOBS_SHA256 = "1ef63256e682973e0ee2cac35a028f866bc88a25bf9b977172202f20d76a8452"
+EXPECTED_MAP_SHA256 = "b6e8fb90556e82193163c3db10eb90d3c10ca0ad5a1550b4f58a9319afc4196d"
+EXPECTED_CURRENT_BLOBS_SHA256 = "ff4ac22125cce4143e6635effbd924fa6f54138c76c1194705cc4f4504771445"
 FROZEN_INPUTS_SHA256 = {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -39,6 +39,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "config/pon/hash-use-contract-v1.json",
     "config/pon/joint-consensus-qualification-v1.json",
     "config/pon/pq-proof-profile-binding-v1.json",
+    "config/pon/pq128-lifetime-composition-current-v3.json",
     "config/pon/pq128-source-correspondence-current-v2.json",
     "config/pon/w1-lifetime-current-source-v2.json",
     "config/pon/w1-qrom-implementation-current-v2.json",
@@ -47,6 +48,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
     "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
     "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_lifetime_composition.py",
     "scripts/ci/pq_lifetime_current_v2.py",
     "scripts/ci/run_from_zero_native.py",
     "scripts/ci/test_pq_proof_profile_binding.py",
