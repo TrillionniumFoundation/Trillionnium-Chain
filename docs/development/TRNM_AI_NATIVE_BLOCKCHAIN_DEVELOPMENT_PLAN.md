@@ -1,3 +1,33 @@
+
+**Original four-second pressure failure readback, 2026-11-25 — HOLD:**
+
+The retained ARM original-source job
+[139117638615](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923716/job/139117638615)
+at `11d4bbe356331ef533d662ef4080a096ed20c8b1` compiled and returned all five
+named native calls, but its confirmation gate failed. Artifact `15010597984`
+retains the original confirmation JSON SHA-256
+`4f6cf81efc482e6433c70feba35028d8ca600d51f1e34a07be2de759c7565d4c`.
+The baseline confirmed one transaction in 1,808,336,328 ns. Under 16 workers,
+all seven signed submissions returned by 1,196,601,697 ns; five independent
+history pages replayed, and the sixth W1 replay returned
+`PUBLIC_REQUEST_DEADLINE` at 4,000,846,761 ns. Final confirmation was never
+entered, so the original four-second result remains zero of one.
+
+The native confirmation-interval overlap counter is zero when no confirmation
+stamp exists. The v2 readback now separately emits
+`public-v3-business-window-attack-overlap-v1` from actual retained caller
+intervals, bounded by the original business start and four-second window.
+The original failed artifact has 482 recorded submitted calls and 480 positive
+intersections with that window. The original counter, failure, hashes and
+confirmation denominator remain unchanged. Missing worker/call lists, statuses
+or clocks keep the exact recorded count unknown; exhausted and zero-width
+records cannot establish positive overlap, and late calls cannot extend the
+window. This is caller timing, not receiver execution or successful adoption.
+
+Six additional offline controls and the full 184-test driver suite passed.
+Only already retained artifacts were read: no native campaign, compilation or
+frozen E1–E6 budget was restarted. No quota, Host check, request deadline,
+acceptance gate, source identity or production authority is changed.
 **CodeQL empty-source availability observation, 2026-11-25 — HOLD:**
 
 The read-only exporter observed 39 empty exact-source API snapshots for
