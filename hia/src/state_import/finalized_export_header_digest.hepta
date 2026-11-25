@@ -1,0 +1,134 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_export_header_digest
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  input_size:usize = buffer.len(input)
+  extent:usize = const() {"value":240}
+  exact:bool = compare.eq(input_size,extent)
+  branch exact capacity(input,output,work) malformed()
+block capacity(cap_input:readbuf,cap_output:mutbuf,cap_work:mutbuf)
+  out_size:usize = buffer.len(cap_output)
+  work_size:usize = buffer.len(cap_work)
+  digest_bytes:usize = const() {"value":32}
+  work_bytes:usize = const() {"value":1529}
+  enough_out:bool = compare.ge(out_size,digest_bytes)
+  enough_work:bool = compare.ge(work_size,work_bytes)
+  enough:bool = bool.and(enough_out,enough_work)
+  branch enough initialize(cap_input,cap_output,cap_work) short()
+block initialize(init_input:readbuf,init_output:mutbuf,init_work:mutbuf)
+  init_code:u64 = call(init_work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  initialized:bool = compare.eq(init_code,zero)
+  branch initialized populate(init_input,init_output,init_work) internal()
+block populate(data:readbuf,out:mutbuf,transcript:mutbuf)
+  pos0:u64 = const() {"value":1208}
+  word0:u64 = const() {"value":2954361355555045376}
+  _word0:u64 = call(transcript,pos0,word0) {"function":"tr_put"}
+  pos1:u64 = const() {"value":1216}
+  word1:u64 = const() {"value":7451607104633074292}
+  _word1:u64 = call(transcript,pos1,word1) {"function":"tr_put"}
+  pos2:u64 = const() {"value":1224}
+  word2:u64 = const() {"value":7362943865586999666}
+  _word2:u64 = call(transcript,pos2,word2) {"function":"tr_put"}
+  pos3:u64 = const() {"value":1232}
+  word3:u64 = const() {"value":7234322969649049193}
+  _word3:u64 = call(transcript,pos3,word3) {"function":"tr_put"}
+  pos4:u64 = const() {"value":1240}
+  word4:u64 = const() {"value":3275368651959067949}
+  _word4:u64 = call(transcript,pos4,word4) {"function":"tr_put"}
+  pos5:u64 = const() {"value":1248}
+  word5:u64 = const() {"value":8515869725205554536}
+  _word5:u64 = call(transcript,pos5,word5) {"function":"tr_put"}
+  pos6:u64 = const() {"value":1256}
+  word6:u64 = const() {"value":48}
+  _word6:u64 = call(transcript,pos6,word6) {"function":"tr_put"}
+  from0:u64 = const() {"value":0}
+  to0:u64 = const() {"value":1257}
+  size0:u64 = const() {"value":32}
+  _part0:u64 = call(data,transcript,from0,to0,size0) {"function":"append"}
+  from1:u64 = const() {"value":32}
+  to1:u64 = const() {"value":1297}
+  size1:u64 = const() {"value":32}
+  _part1:u64 = call(data,transcript,from1,to1,size1) {"function":"append"}
+  from2:u64 = const() {"value":64}
+  to2:u64 = const() {"value":1337}
+  size2:u64 = const() {"value":8}
+  _part2:u64 = call(data,transcript,from2,to2,size2) {"function":"append"}
+  from3:u64 = const() {"value":72}
+  to3:u64 = const() {"value":1353}
+  size3:u64 = const() {"value":32}
+  _part3:u64 = call(data,transcript,from3,to3,size3) {"function":"append"}
+  from4:u64 = const() {"value":104}
+  to4:u64 = const() {"value":1393}
+  size4:u64 = const() {"value":32}
+  _part4:u64 = call(data,transcript,from4,to4,size4) {"function":"append"}
+  from5:u64 = const() {"value":136}
+  to5:u64 = const() {"value":1433}
+  size5:u64 = const() {"value":32}
+  _part5:u64 = call(data,transcript,from5,to5,size5) {"function":"append"}
+  from6:u64 = const() {"value":168}
+  to6:u64 = const() {"value":1473}
+  size6:u64 = const() {"value":8}
+  _part6:u64 = call(data,transcript,from6,to6,size6) {"function":"append"}
+  from7:u64 = const() {"value":176}
+  to7:u64 = const() {"value":1489}
+  size7:u64 = const() {"value":32}
+  _part7:u64 = call(data,transcript,from7,to7,size7) {"function":"append"}
+  start:u64 = const() {"value":1208}
+  payload_bytes:u64 = const() {"value":321}
+  update:u64 = call(transcript,start,payload_bytes) {"function":"tr_sha_update_work"}
+  zero_update:u64 = const() {"value":0}
+  updated:bool = compare.eq(update,zero_update)
+  branch updated finalize(out,transcript) internal()
+block finalize(fin_out:mutbuf,fin_work:mutbuf)
+  final_code:u64 = call(fin_work) {"function":"tr_sha_final"}
+  zero_final:u64 = const() {"value":0}
+  hashed:bool = compare.eq(final_code,zero_final)
+  branch hashed publish(fin_out,fin_work,zero_final) internal()
+block publish(pub_out:mutbuf,pub_work:mutbuf,idx:u64)
+  state_digest:u64 = const() {"value":1168}
+  source_pos:u64 = int.add.wrap(state_digest,idx)
+  source_idx:usize = int.cast(source_pos) {"mode":"wrap"}
+  target_idx:usize = int.cast(idx) {"mode":"wrap"}
+  value:u8 = buffer.load(pub_work,source_idx)
+  _ = buffer.store(pub_out,target_idx,value)
+  one:u64 = const() {"value":1}
+  next_idx:u64 = int.add.wrap(idx,one)
+  end_idx:u64 = const() {"value":32}
+  all_written:bool = compare.eq(next_idx,end_idx)
+  branch all_written success() publish(pub_out,pub_work,next_idx)
+block success()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  frame_code:u32 = const() {"value":100}
+  ret(frame_code)
+block short()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+block internal()
+  hash_code:u32 = const() {"value":103}
+  ret(hash_code)
+end
+
+fn append(a_input:readbuf,a_work:mutbuf,source:u64,destination:u64,size:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(a_input:readbuf,a_work:mutbuf,source:u64,destination:u64,size:u64)
+  shift:u64 = const() {"value":56}
+  big_endian:u64 = int.shl.checked(size,shift)
+  _field_len:u64 = call(a_work,destination,big_endian) {"function":"tr_put"}
+  header:u64 = const() {"value":8}
+  data_start:u64 = int.add.wrap(destination,header)
+  jump copy(a_input,a_work,source,data_start,size)
+block copy(c_input:readbuf,c_work:mutbuf,c_src:u64,c_dst:u64,remaining:u64)
+  word:u64 = call(c_input,c_src) {"function":"tr_read"}
+  _store:u64 = call(c_work,c_dst,word) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_src:u64 = int.add.wrap(c_src,eight)
+  next_dst:u64 = int.add.wrap(c_dst,eight)
+  left:u64 = int.sub.wrap(remaining,eight)
+  zero_left:u64 = const() {"value":0}
+  done:bool = compare.eq(left,zero_left)
+  branch done exit() copy(c_input,c_work,next_src,next_dst,left)
+block exit()
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end

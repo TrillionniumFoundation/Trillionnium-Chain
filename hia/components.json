@@ -7263,6 +7263,24 @@
         ]
       }
     ],
+    "src/state_import/finalized_export_header_digest.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/release_bundle/exact_source.hepta": [
       {
         "functions": [
