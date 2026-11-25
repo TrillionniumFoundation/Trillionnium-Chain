@@ -3151,6 +3151,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-schema-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite read-only M12 schema gate using the retained native SQLite provider on owned rollback-journal fixtures. The exact original three table definitions and zero triggers are checked within one read transaction. No metadata/state publication, production path ownership, replay or Store/Node retirement.",
+      "sources": [
+        "hia/platform/service_settlement/schema_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_schema_reference.rs",
+        "hia/tests/test_settlement_schema_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-engine",
       "node_integration_complete": false,
       "retirement_accepted": false,

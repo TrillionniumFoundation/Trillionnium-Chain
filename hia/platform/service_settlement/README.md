@@ -34,3 +34,29 @@ For a native-stage timeout, inspect `native/fixture-progress.jsonl` in the origi
 The hosted Settlement matrix additionally uploads `hia-settlement-compact-<head>-<run>-<attempt>` before packaging the complete archive. Its one bounded `summary.json` contains hashes of observed original source binds and phase receipts; it projects only fixed statuses, flags and counts. The last complete fixture-progress row, complete-row count and trailing-fragment byte count come from the existing journal. Missing, refused, changed and over-limit inputs are named without substituting successful values. The original receipt files, cursor history and full archive remain unchanged; raw requests, responses, command lines, exception text and environment records are not part of this companion. It neither qualifies a run nor changes a job outcome. A runner terminated before collection may have no companion.
 
 The same compact summary reports the original integrity report's availability and hash separately from its 240-second process receipt. The report exposes only the fixed roster's recorded `PASS`/`REJECTED` values in order, plus the last recorded and first unrecorded control. An unrecorded control is not an observed failure or acceptance, and a producer `PASS` is not independent reader success. No exception strings, source inputs, arbitrary control labels or nested diagnostics are exported.
+
+### Read-only Store schema gate (finite qualification)
+
+`schema_read.hepta` is a separate qualification-only SQLite continuation. The
+native URI encoder supplies the pathname URI; a disposable fixture transport
+supplies the first 20 raw file bytes and relays the continuation's requests to
+the exact checked native SQLite provider. HIA refuses a WAL header before any
+SQLite open, selects the original read-only URI/NOFOLLOW/NOMUTEX flags, sets the
+original two-second busy timeout, and executes `BEGIN DEFERRED`. HIA then checks
+the exact three ordered names and SQLite definitions and the original zero
+trigger count; nothing is published before the real statement and connection
+close. An owned rollback-journal reader keeps an original writer from committing
+between steps. The test uses the extracted exact original Rust Store open and
+schema functions with its locked bundled SQLite, and checks extra/missing/
+changed tables, forbidden triggers, and the original WAL refusal.
+
+The fixture checks its private directory's currently resolved pathname and
+refuses a final symlink before reading the header. SQLite also uses NOFOLLOW.
+That is not a stable ancestor/descriptor identity, the original sidecar gate,
+or the original post-open file check. None of those owner checks, metadata/state
+decoding, journal replay, application state verification, or whole-Store or Node
+integration is qualified here.
+
+```sh
+python3 -B -m unittest hia.tests.test_settlement_schema_read -v
+```

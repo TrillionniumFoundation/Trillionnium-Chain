@@ -1,5 +1,15 @@
 {
   "includes": {
+    "platform/service_settlement/schema_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": ["cp_get", "cp_put", "cp_copy"]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": ["tr_read"]
+      }
+    ],
     "platform/state_import_sqlite/empty_write.hepta": [
       {
         "source": "src/control_plane/core.hepta",

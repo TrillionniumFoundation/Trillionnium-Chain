@@ -155,9 +155,10 @@ def sources():
         "hia/src/release_bundle/CONTENT_CLAIM_FRAME.md",
         "hia/src/release_bundle/RAW_ARTIFACT_SHA256.md",
         "hia/src/release_bundle/SHA512_TRANSCRIPT_BOOTSTRAP.md")]
-    # The M12 URI test compiles the actual Store serializer. Its Rust test
-    # adapter is independently bound by the recursive hia/tests *.rs roster.
-    paths.append(ROOT / "trillionnium/crates/trnm-service-settlement/src/store.rs")
+    # M12 compiles exact retained Store URI, schema and open bodies with the
+    # original error type. Test adapters are bound by the recursive *.rs roster.
+    paths += [ROOT / "trillionnium/crates/trnm-service-settlement/src/store.rs",
+              ROOT / "trillionnium/crates/trnm-service-settlement/src/error.rs"]
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
