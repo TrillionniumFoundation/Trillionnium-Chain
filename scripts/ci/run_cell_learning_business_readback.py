@@ -46,7 +46,7 @@ TESTS = (
     ("iteration-controls", "scripts/test_cell_learning_iteration_join.py", 25, ()),
     ("completion-controls", "scripts/test_cell_learning_completion_join.py", 13, ()),
     ("economics-controls", "scripts/test_cell_learning_business_economics.py", 29, ()),
-    ("business-controls", "scripts/test_cell_learning_business_join.py", 24, ()),
+    ("business-controls", "scripts/test_cell_learning_business_join.py", 26, ()),
     ("trainer-no-update-controls", "scripts/test_cell_learning_training_no_update_join.py", 17, ()),
     ("ci-contract-controls", "scripts/ci/test_ci_contract.py", len(CI_CONTRACT_METHODS),
      ("MergedQualificationLaneTests",)),

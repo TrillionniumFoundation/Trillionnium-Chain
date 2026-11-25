@@ -35,7 +35,7 @@ REVIEWED_NATIVE_COMMIT = "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
 # Source consistency does not authenticate provenance or grant qualification.
 # REVIEWED_NATIVE_COMMIT remains the historical anchor. This independent literal
 # binds the current 23-path map; changing it still requires code review.
-REVIEWED_SOURCE_MAP_SHA256 = "c054bb9b2f0c5ec695c8e999799d3df86dde068681a14eb52e2033fb4f4dda0e"
+REVIEWED_SOURCE_MAP_SHA256 = "a69f17781ad128e79634f37825764b60a8346bb2d68a21cc3450d1eccdf1746c"
 
 # Deliberately a named scope, not a claim to cover every dependency or entrypoint.
 # Omission/addition requires code review; no CLI automatically repins a source.

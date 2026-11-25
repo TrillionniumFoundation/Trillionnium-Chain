@@ -15,10 +15,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import w1_qrom_current_implementation_audit as current
 
 
-# Independently reviewed additions at the consolidated source checkpoint.
+# Independently reviewed consolidated additions and the later immutable noise frame.
 CONSOLIDATED_LOCAL_SOURCE_PINS = {
     'trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs':
         (21222, '2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb'),
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs':
+        (5494, '5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc'),
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs':
         (13950, '83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5'),
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs':
@@ -90,7 +92,7 @@ class CurrentImplementationTests(unittest.TestCase):
 
     def test_all_six_local_crates_and_literal_inputs_are_bound(self):
         result = self.report['local_path_closure']
-        self.assertEqual(result['source_files_checked'], 145)
+        self.assertEqual(result['source_files_checked'], 146)
         self.assertTrue(result['source_before_after_equal'])
         manifests = set(self.contract['local_path_closure']['entry_manifests'])
         manifests.update(row['target'] for row in result['path_edges'])
@@ -167,7 +169,7 @@ class CurrentImplementationTests(unittest.TestCase):
 
     def test_project_input_digests_are_the_reviewed_values(self):
         # Independent review pins bind the new graph; no runtime-generated expectation.
-        self.assertEqual(current.SOURCE, '5c04c60e463462d9df8884786e0d5bb32af08a64')
+        self.assertEqual(current.SOURCE, '6b851bc64db9d87db1bae083654902846f14c275')
         self.assertEqual(current.CHANGED, frozenset({
             'formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock',
             'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
@@ -181,7 +183,7 @@ class CurrentImplementationTests(unittest.TestCase):
         pon_work = next(row for row in self.contract['project_files']
                         if row['path'] == 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs')
         self.assertEqual((pon_work['bytes'], pon_work['sha256']),
-                         (106066, '7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e'))
+                         (106379, '7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4'))
         old, _ = self.audit.load_contract(current.ROOT)
         old_rows = {row['path']: row for row in old['project_files']}
         new_rows = {row['path']: row for row in self.contract['project_files']}
@@ -203,14 +205,17 @@ class CurrentImplementationTests(unittest.TestCase):
 
     def test_each_consolidated_source_refuses_omission_and_mutation(self):
         for name in CONSOLIDATED_LOCAL_SOURCE_PINS:
-            for mode in ("missing", "changed"):
+            for mode in ("missing", "changed", "same_size"):
                 with self.subTest(path=name, mode=mode):
                     self.copy_inputs()
                     path = self.root / name
                     if mode == "missing":
                         path.unlink()
-                    else:
+                    elif mode == "changed":
                         path.write_bytes(path.read_bytes() + b"\n")
+                    else:
+                        raw = path.read_bytes()
+                        path.write_bytes(bytes([raw[0] ^ 1]) + raw[1:])
                     with self.assertRaises((current.AuditError, OSError)):
                         current.build_report(self.root)
 

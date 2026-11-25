@@ -5,6 +5,8 @@ from copy import deepcopy
 import json
 import os
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -104,6 +106,100 @@ class ParserCacheMutationTests(unittest.TestCase):
             path.symlink_to(outside)
             with self.assertRaisesRegex(ValueError, 'missing evidence'):
                 check_test_selector(self.root, 'bound.rs::test_bound')
+
+
+class RustAttributeScanTests(unittest.TestCase):
+    """Current source binding must finish even with ambiguous attribute runs."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='pon-attribute-scan-')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.path = self.root / 'bound.rs'
+
+    def bind(self, text, symbol='bound'):
+        self.path.write_text(text)
+        check_test_selector(self.root, 'bound.rs::' + symbol)
+
+    def test_normal_attributes_and_unicode_whitespace_stay_bound(self):
+        for text in [
+            '#[test]\nfn bound() {}',
+            '#[test]#[ignore]#[allow(dead_code)] fn bound() {}',
+            '#[test]\n#[ignore]\n#[allow(dead_code)]\nfn bound () {}',
+            '#[test]\u2003#[ignore]\r\nfn\u2003bound\u2003() {}',
+            '#[test]#[outer[inner]] fn bound() {}',
+            '#[test]#[outer] remaining ] fn bound() {}',
+        ]:
+            with self.subTest(source=text):
+                self.bind(text)
+
+    def test_attribute_line_and_exact_callable_boundaries_stay_required(self):
+        for text in [
+            '#[test] #[attr(\n)] fn bound() {}',
+            '#[test] fn bound_extra() {}\nfn bound() {}',
+            '#[test] fn bound<T>() {}\nfn bound() {}',
+            '#[test] #[ignore] fn other() {}\nfn bound() {}',
+        ]:
+            with self.subTest(source=text), self.assertRaisesRegex(
+                    ValueError, '^not an attributed Rust test selector$'):
+                self.bind(text)
+
+    def test_overlapping_literal_symbols_do_not_bind_another_name(self):
+        for symbol in ['abababab', 'aaaaa', '\u00e9\u00e9\u00e9']:
+            with self.subTest(symbol=symbol):
+                self.bind('#[test] fn ' + symbol + 'extra() {}\n#[test] fn ' + symbol + '() {}', symbol)
+                with self.assertRaisesRegex(ValueError, '^not an attributed Rust test selector$'):
+                    self.bind('#[test] fn ' + symbol + 'extra() {}\nfn ' + symbol + '() {}', symbol)
+
+    def test_source_beyond_parse_cache_limit_keeps_its_final_test(self):
+        padding = '/*' + 'x' * (1024 * 1024) + '*/\n'
+        self.bind(padding + '#[test]\nfn bound() {}')
+        with self.assertRaisesRegex(ValueError, '^not an attributed Rust test selector$'):
+            self.bind(padding + 'fn bound() {}')
+
+    def bounded_binding(self, text, expected):
+        self.path.write_text(text)
+        # This known child only imports the current checker and reads this one
+        # fixture. subprocess.run kills and reaps it on timeout; it creates no
+        # grandchildren or output files, and the fixture is cleaned afterwards.
+        child = '''import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from report_module_evidence import check_test_selector
+root = Path(sys.argv[2])
+selector = 'bound.rs::bound'
+print('BOUND-ENTERED', flush=True)
+try:
+    check_test_selector(root, selector)
+except ValueError as error:
+    if sys.argv[3] != 'refuse' or str(error) != 'not an attributed Rust test selector':
+        raise
+    print('BOUND-REFUSE')
+else:
+    if sys.argv[3] != 'accept':
+        raise AssertionError('unattributed helper was accepted')
+    print('BOUND-ACCEPT')
+'''
+        try:
+            result = subprocess.run(
+                [sys.executable, '-I', '-B', '-c', child,
+                 str(Path(__file__).resolve().parent), str(self.root), expected],
+                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                timeout=3.0, check=False,
+            )
+        except subprocess.TimeoutExpired:
+            self.fail('current attributed-test binding exceeded the 3-second fixture deadline')
+        self.assertEqual(result.returncode, 0, result.stderr.decode(errors='replace'))
+        self.assertEqual(result.stderr, b'')
+        self.assertEqual(result.stdout, ('BOUND-ENTERED\nBOUND-' + expected.upper() + '\n').encode())
+
+    def test_ambiguous_attributes_refuse_unattributed_helper_within_deadline(self):
+        prefix = '#[test]' + '#[allow(dead_code)]' * 512 + 'fn other() {}\n'
+        self.bounded_binding(prefix + 'fn bound() {}', 'refuse')
+
+    def test_ambiguous_attributes_do_not_block_a_later_real_test(self):
+        prefix = '#[test]' + '#[allow(dead_code)]' * 512 + 'fn other() {}\n'
+        self.bounded_binding(prefix + '#[test] fn bound() {}', 'accept')
 
 
 class NativeContinuationApplicabilityTests(unittest.TestCase):

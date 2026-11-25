@@ -1,0 +1,81 @@
+name: Rust attribute owner exact-source engineering
+on:
+  pull_request:
+    types: [opened]
+    paths:
+      - .github/workflows/rust-attribute-owner-engineering-v1.yml
+      - scripts/ci/run_rust_attribute_engineering_v1.py
+      - scripts/ci/run_rust_attribute_cases_v1.py
+      - scripts/ci/report_module_evidence.py
+      - scripts/ci/test_applicability.py
+      - scripts/ci/check_applicability.py
+      - scripts/ci/check_invariant_evidence.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/ci/project_boundary.py
+      - scripts/project-preflight.sh
+      - AGENTS.md
+permissions:
+  contents: read
+jobs:
+  attribution-owner:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.event.pull_request.head.repo.full_name == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.event.pull_request.user.login == 'ProfHepta' &&
+      github.event.pull_request.draft == true &&
+      github.event.pull_request.head.ref == 'fix/chain-linear-test-attribution-20261125-7c9e' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Check out the complete exact head and its immediate parent
+        id: checkout
+        timeout-minutes: 2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Observe original failures and repaired named controls under one budget
+        id: scope
+        timeout-minutes: 1
+        shell: bash
+        env:
+          ATTRIBUTION_OUT: ${{ runner.temp }}/rust-attribute-owner-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/run_rust_attribute_engineering_v1.py \
+            --expected-head "$EXPECTED_HEAD" --output "$ATTRIBUTION_OUT"
+      - name: Retain actual commands, original failures, source images and costs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rust-attribute-owner-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/rust-attribute-owner-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Require the actual scope result without granting security acceptance
+        if: always()
+        shell: bash
+        env:
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          SCOPE_OUTCOME: ${{ steps.scope.outcome }}
+          ATTRIBUTION_OUT: ${{ runner.temp }}/rust-attribute-owner-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          test "$CHECKOUT_OUTCOME" = success
+          test "$SCOPE_OUTCOME" = success
+          python3 - <<'PY'
+          import json, os, pathlib
+          report = json.loads((pathlib.Path(os.environ['ATTRIBUTION_OUT']) / 'summary.json').read_text())
+          assert report['status'] == 'PASS_SELECTED_OWNER_CONTROLS' and report['complete'] is True
+          assert report['expected_head'] == os.environ['EXPECTED_HEAD']
+          assert all(report[key] is True for key in ('source_consistent', 'cleanup_resolved',
+              'within_shared_wall_cap', 'baseline_actual_failures_preserved', 'fixed_all_named_passed'))
+          assert report['elapsed_seconds'] <= 30
+          assert all(report[key] is False for key in ('native_qualified', 'security_qualified', 'production_activation'))
+          print('Selected attribution-owner controls observed. Original scans and research qualification are unchanged.')
+          PY

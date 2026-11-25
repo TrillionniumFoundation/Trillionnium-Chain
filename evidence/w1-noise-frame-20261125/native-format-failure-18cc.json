@@ -1,0 +1,52 @@
+{
+  "schema": "trnm-w1-noise-frame-format-observation-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source": "18ccda7b583a96add9402a87117e3b687efc6a02",
+  "tree": "7fcb3e13c3346cd171dcaa0ecd5ea6c02dcfd0ce",
+  "run_id": 45601893240,
+  "job_id": 139162640475,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45601893240/job/139162640475",
+  "result": "FAIL",
+  "failed_command": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--check"
+  ],
+  "rust_workspace_edition": "2021",
+  "isolated_capsule_format_edition": "2024",
+  "observed_diff": {
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+    "before": "use super::{Hash, Q, VerificationError, VerificationProgress, WorkError};",
+    "required": "use super::{Hash, VerificationError, VerificationProgress, WorkError, Q};"
+  },
+  "python_component_reader_tests": {
+    "passed": 116,
+    "wall_seconds": 4.172
+  },
+  "focused_clippy_executed": false,
+  "native_component_tests_executed": false,
+  "collector_started": false,
+  "missing_collector_file_is_secondary_failure": true,
+  "source_before_and_after_verified": true,
+  "original_source_guard_artifact": {
+    "id": 15015404314,
+    "zip_sha256": "2b51c05613faab96e8ab8d44b1063ef55bcae1e1551a8ba3dd5185e3ac0ee247",
+    "scope": "two source identity receipts only; no native execution"
+  },
+  "raw_job_log": {
+    "utf8_bytes": 67503,
+    "sha256": "da5a4e259e9849fdb93be5650c78043e25e585460fe1591a286a5a6785d2b61e"
+  },
+  "repair": {
+    "scope": "import ordering only, exactly as the existing formatter requested",
+    "before_sha256": "35ddb5e17815d9ad54a3461157fc075d348107b553767e82e85db995af044713",
+    "after_sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc",
+    "new_rust_execution": "pending"
+  },
+  "cpu_seconds": null,
+  "original_research_budget_changed": false,
+  "security_or_pressure_qualification": false
+}

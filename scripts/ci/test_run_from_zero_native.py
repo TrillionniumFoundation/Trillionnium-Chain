@@ -1869,6 +1869,95 @@ class AttackAttemptObservationTests(unittest.TestCase):
                          '868038bb147c31963efaf6db6f83ca824fb46701815ca4d9f27de462400e6ea1')
 
 
+class BusinessWindowAttackOverlapTests(unittest.TestCase):
+    """Missing confirmation must not erase actual original-window pressure."""
+
+    summarize = CompleteConfirmationObservationTests.summarize
+
+    def test_failed_confirmation_retains_observed_pressure_without_success_credit(self):
+        def edit(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            doc['phases'][1]['overlapping_false_calls'] = 0
+        result = self.summarize(edit)
+        pressure = result['phases'][1]
+        overlap = pressure['business_window_attack_overlap']
+        self.assertEqual(overlap['original_reported_confirmation_interval_overlap'], 0)
+        self.assertEqual(overlap['recorded_call_overlap_count'], 16)
+        self.assertIs(overlap['pressure_overlap_observed'], True)
+        self.assertFalse(overlap['confirmation_credit_granted'])
+        self.assertFalse(result['original_gate_validated'])
+        self.assertEqual(pressure['business']['reported_independently_confirmed_in_window'], 0)
+        self.assertIsNone(pressure['business']['observed_success_latency_ns'])
+        self.assertEqual(result['phases'][0]['business_window_attack_overlap']['recorded_call_overlap_count'], 0)
+
+    def test_original_window_and_confirmation_interval_remain_distinct(self):
+        def edit(doc):
+            row = copy.deepcopy(doc['phases'][1]['attacks'][0]['calls'][1])
+            row.update(started_ns=1000, ended_ns=1100, elapsed_wall_ns=100)
+            doc['phases'][1]['attacks'][0]['calls'].append(row)
+        pressure = self.summarize(edit)['phases'][1]
+        overlap = pressure['business_window_attack_overlap']
+        self.assertEqual(overlap['recorded_call_overlap_count'], 17)
+        self.assertEqual(overlap['original_reported_confirmation_interval_overlap'], 16)
+        self.assertEqual(overlap['original_window_ended_ns'], 4_000_000_000)
+        self.assertFalse(overlap['confirmation_credit_granted'])
+
+    def test_adjacent_zero_width_and_postwindow_calls_do_not_overlap(self):
+        def edit(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            calls = doc['phases'][1]['attacks'][0]['calls']
+            sample = calls[1]
+            for begin, end in ((0, 10), (10, 10), (20, 20),
+                               (4_000_000_000, 4_000_000_001)):
+                calls.append(dict(sample, started_ns=begin, ended_ns=end,
+                    elapsed_wall_ns=end-begin, returned_after_window=end >= 4_000_000_000))
+            calls.append(dict(sample, started_ns=3_999_999_999, ended_ns=4_000_000_001,
+                elapsed_wall_ns=2, returned_after_window=True))
+        overlap = self.summarize(edit)['phases'][1]['business_window_attack_overlap']
+        self.assertEqual(overlap['recorded_call_overlap_count'], 17)
+        self.assertEqual(overlap['original_window_ended_ns'], 4_000_000_000)
+
+    def test_missing_workers_lists_status_or_clocks_keep_exact_count_unknown(self):
+        def missing_worker(phase):
+            phase['attacks'].pop()
+        def missing_list(phase):
+            phase['attacks'][0].pop('calls')
+        def missing_status(phase):
+            phase['attacks'][0]['calls'][1].pop('status')
+        def missing_clock(phase):
+            phase['attacks'][0]['calls'][1].pop('ended_ns')
+        for mutate in (missing_worker, missing_list, missing_status, missing_clock):
+            with self.subTest(mutate=mutate.__name__):
+                def edit(doc):
+                    ConfirmationObservationTests.fail_pressure(doc)
+                    mutate(doc['phases'][1])
+                overlap = self.summarize(edit)['phases'][1]['business_window_attack_overlap']
+                self.assertIsNone(overlap['recorded_call_overlap_count'])
+                self.assertGreater(overlap['known_overlapping_submitted_calls'], 0)
+                self.assertTrue(overlap['pressure_overlap_observed'])
+                self.assertFalse(overlap['all_scheduled_call_lists_and_recorded_intervals_available'])
+
+    def test_absent_workload_is_unknown_and_exhausted_rows_cannot_create_pressure(self):
+        def absent(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            doc['phases'][1].pop('attacks')
+        overlap = self.summarize(absent)['phases'][1]['business_window_attack_overlap']
+        self.assertIsNone(overlap['recorded_call_overlap_count'])
+        self.assertIsNone(overlap['pressure_overlap_observed'])
+        def exhausted(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            for worker in doc['phases'][1]['attacks']:
+                worker['calls'] = [{'status': 'not_submitted_exhausted',
+                                    'started_ns': 11, 'ended_ns': 100}]
+        overlap = self.summarize(exhausted)['phases'][1]['business_window_attack_overlap']
+        self.assertEqual(overlap['recorded_call_overlap_count'], 0)
+        self.assertFalse(overlap['pressure_overlap_observed'])
+
+    def test_legacy_readback_has_no_new_window_observation(self):
+        report = self.summarize(observation_version=1)
+        self.assertNotIn('business_window_attack_overlap', report['phases'][1])
+
+
 class ReceiveClockObservationTests(unittest.TestCase):
     """One synthetic local epoch and peer claims, never authenticated execution."""
 

@@ -1,0 +1,70 @@
+{
+  "schema": "trnm.public-evaluation-console-engineering.v1",
+  "source_base_commit": "b8864b81aa60b149889e26012bbcd1ded2bbe528",
+  "source_base_tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+  "original_codeql": {
+    "run": 45602536619,
+    "head": "18ccda7b583a96add9402a87117e3b687efc6a02",
+    "rule": "py/clear-text-logging-sensitive-data",
+    "paths": [
+      "scripts/dev_circuit_evaluation.py",
+      "evidence/cell-consumer-ledger-cross-readback-20261123/compare.py"
+    ],
+    "fingerprints": [
+      "aa3519074c4c00b:1",
+      "1c66a40ba1fd6bd3:1"
+    ],
+    "source_field": "current_payment.beneficiary_credit",
+    "original_report_preserved": true,
+    "scope": "Two original Python flows reviewed; new-source official analysis is pending."
+  },
+  "change": "Both CLI sinks now publish explicit versioned public summaries after complete original verification. Internal verify()/compare() return contracts and historical evidence are unchanged.",
+  "controls": {
+    "new_tests": 5,
+    "retained_tests": 14,
+    "total_passed": 19,
+    "failures": 0,
+    "runs": [
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "scripts/test_dev_circuit_evaluation.py",
+          "-v"
+        ],
+        "returncode": 0,
+        "wall_seconds": 0.4780605280029704,
+        "log_bytes": 2199,
+        "sha256": "515383dbdcb49c69074047f7cb6bf9b775c4fb896a26cbd6a86520fb20558f9d",
+        "full_output": "test_counts_and_delta_must_agree_with_original_rows (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_counts_and_delta_must_agree_with_original_rows) ... ok\ntest_local_regrade_uses_answer_and_expected_structure (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_local_regrade_uses_answer_and_expected_structure) ... ok\ntest_public_cli_excludes_ledger_material_in_both_modes (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_public_cli_excludes_ledger_material_in_both_modes) ... ok\ntest_public_cli_still_rejects_a_tampered_fee_before_output (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_public_cli_still_rejects_a_tampered_fee_before_output) ... ok\ntest_public_summary_does_not_inherit_nested_private_fields (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_public_summary_does_not_inherit_nested_private_fields) ... ok\ntest_raw_candidate_prediction_cannot_be_replaced_by_parents (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_raw_candidate_prediction_cannot_be_replaced_by_parents) ... ok\ntest_regrade_original_paid_engineering_pairs (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_regrade_original_paid_engineering_pairs) ... ok\ntest_replacing_signed_arbitration_with_delivery_is_refused (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_replacing_signed_arbitration_with_delivery_is_refused) ... ok\ntest_retained_evaluation_and_fee (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_retained_evaluation_and_fee) ... ok\ntest_retained_no_update_preflight_has_no_paid_score (scripts.test_dev_circuit_evaluation.DevelopmentEvaluationTests.test_retained_no_update_preflight_has_no_paid_score) ... ok\ntest_historical_fee_replays_with_zero_future_users (scripts.test_dev_circuit_evaluation.HistoricalServiceTests.test_historical_fee_replays_with_zero_future_users) ... ok\ntest_seen_task_cannot_be_relabelled_future (scripts.test_dev_circuit_evaluation.HistoricalServiceTests.test_seen_task_cannot_be_relabelled_future) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.324s\n\nOK\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "evidence/cell-consumer-ledger-cross-readback-20261123/test_compare.py",
+          "/tmp/hepta_acceptance_7c9e/hepta/qualification/paired-consumer-use-20261123",
+          "-v"
+        ],
+        "returncode": 0,
+        "wall_seconds": 0.5080207149949274,
+        "log_bytes": 1070,
+        "sha256": "0c1b23bc4c9620e62a048de7c63e2aefcd5bca3c87fe8b185d8a29594fa10d40",
+        "full_output": "test_development_payment_cannot_be_retargeted_to_b_answer (__main__.ArchivedCrossReadback.test_development_payment_cannot_be_retargeted_to_b_answer) ... ok\ntest_external_verifier_is_pinned_before_execution (__main__.ArchivedCrossReadback.test_external_verifier_is_pinned_before_execution) ... ok\ntest_fixed_observation_and_scopes (__main__.ArchivedCrossReadback.test_fixed_observation_and_scopes) ... ok\ntest_original_learning_checkpoint_is_required (__main__.ArchivedCrossReadback.test_original_learning_checkpoint_is_required) ... ok\ntest_positive_json_cannot_replace_original_zip (__main__.ArchivedCrossReadback.test_positive_json_cannot_replace_original_zip) ... ok\ntest_public_cli_retains_scope_without_ledger_material (__main__.ArchivedCrossReadback.test_public_cli_retains_scope_without_ledger_material) ... ok\ntest_public_summary_cannot_inherit_private_nested_fields (__main__.ArchivedCrossReadback.test_public_summary_cannot_inherit_private_nested_fields) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.308s\n\nOK\n"
+      }
+    ]
+  },
+  "independent_review": "authorization_delivery read the exact five-file diff and callers; no blocking defect found; no additional test run.",
+  "qualification": {
+    "official_new_head_codeql": "PENDING",
+    "rust_workspace": "UNCHANGED_SOURCE_GATES_REMAIN_REQUIRED",
+    "real_adoption": false,
+    "production_activation": false,
+    "scientific_panels_repeated": 0,
+    "old_e6_compile_seconds_remaining": 1.9960488015785813
+  },
+  "sensitive_output_contract": "No payment amount, operation identifier, subject, task/receipt commitment, arbitrary nested evidence or internal new field is forwarded to stdout.",
+  "source_identity": "The changed evaluator has a new source digest. Existing frozen live evaluator pins are not migrated or requalified."
+}

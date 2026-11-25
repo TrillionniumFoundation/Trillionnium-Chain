@@ -1,0 +1,590 @@
+{
+  "approved_descriptor_reconstruction_sha256": "556a014305c4e9e791c5d119329f507f5d88fa96a02fd762a379008ccce10ae0",
+  "changes": [
+    {
+      "after_bytes": 3683,
+      "after_sha256": "6048e3fd296cf7f8aa6c5936b0345501bd361f4a69be18dd610be041cb2a539d",
+      "before_bytes": 3683,
+      "before_sha256": "c116ad4667fa796801b5d0ce93e84fda4b61be5ce939f6d2059b4c489c6bab24",
+      "binding_kind": "current-reviewed-source-exact-descriptor",
+      "frozen_historical_evidence_rewritten": false,
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "purpose": "Current PR head/prospective metadata gate exact descriptor literal only; original checkout/triggers/permissions/timeout/commands remain. No oldcampaign dispatcher."
+    },
+    {
+      "after_bytes": 72224,
+      "after_sha256": "c6b233fbde9776448895708836cf6850b3792391b758308d284953026fdd222e",
+      "before_bytes": 72224,
+      "before_sha256": "17bbc73b8d319c3ce9ccf6eb70c27b011013d71e0d5668ab7d0124dd47f5e03e",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/hash-use-contract-v1.json",
+      "purpose": "Current31-declared-path map: pon_work and profile-binding only; all19 purpose/game semantics unchanged"
+    },
+    {
+      "after_bytes": 10339,
+      "after_sha256": "3a13b8f0c8ec84a4753e8230ff20341a2043b2d77c421d67998b2551c7ced1e1",
+      "before_bytes": 10339,
+      "before_sha256": "433d1eae36ce71eb114cb92b4c7328581e78355fc5e7418aea481c30d815f146",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/joint-consensus-qualification-v1.json",
+      "purpose": "Current23-path overlay: pon_work and composed fixed-cost JSON only; historical anchor and all unknown bounds retained"
+    },
+    {
+      "after_bytes": 2378,
+      "after_sha256": "5361d6ec8f42d0172d8c1345e64a32748a89db3f614d34ce34b48b9e12beb81d",
+      "before_bytes": 2378,
+      "before_sha256": "0dc3c01c24a56b298b3ca905c71ae288f467f6cf74032d1d73f69cab969a313b",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "purpose": "Current proof profile mapping pointer only; selected withdrawn profile/parameters stay unchanged"
+    },
+    {
+      "after_bytes": 3782,
+      "after_sha256": "20a8f5a09f9e40ec938d85739c0ccb982aa307d8b09d5562faecdc76a5c8540f",
+      "before_bytes": 3782,
+      "before_sha256": "812410ba11b93b2b88a330cf686cf7872a63b918447c473e41b981c8829d6aa2",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "purpose": "Current21-declared-path snapshot: only reviewed Witness hash changed; frozenV1 register/lock untouched"
+    },
+    {
+      "after_bytes": 6997,
+      "after_sha256": "ba85c62a50417efbe2c698f65f1296c429af6a65f5bc846c464e5926458ed4b8",
+      "before_bytes": 6997,
+      "before_sha256": "ea0f8e2a0c82a01c0601e627cf64d8df34682457904fb00a65639138a0be46fa",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "purpose": "Current20-source overlay: only pon_work current size/hash; all historical hashes/fixture/anchors untouched"
+    },
+    {
+      "after_bytes": 51950,
+      "after_sha256": "4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427",
+      "before_bytes": 50313,
+      "before_sha256": "b8249228d4399f12f58cb593599536b2831bb11145af59b74b7217435a68d6c1",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/w1-qrom-implementation-current-v2.json",
+      "purpose": "Reviewed current16-path selected source plus146 local-input inventory; retain full old current bytes and frozenV1 contract/reader"
+    },
+    {
+      "after_bytes": 25703,
+      "after_sha256": "eaac9ffd5ac8663fd7c80da4ff81155414cd5f2431ad0986defe2c9850fd5c9c",
+      "before_bytes": 25703,
+      "before_sha256": "c41cc913029383ae089964ef5e2489c02624d8e5238eb1a71360c5840d82bf33",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/w1-stark-route-registry-v1.json",
+      "purpose": "Current selected source pointer only; historical/literature anchor/route semantics/unknown qualification unchanged"
+    },
+    {
+      "after_bytes": 1366,
+      "after_sha256": "3dcc4c724b6d2f4a4087e0490ef1afd20f4cc741d55d8ddb59e28cf7efd5b06a",
+      "before_bytes": 1366,
+      "before_sha256": "7962bb5ef0966fb75357a4479b76cbf29b0a4a2da1cf90f5056bb92f2b8c680d",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "config/pon/w1-upstream-security-v1.json",
+      "purpose": "Current mapping pointer only; original upstream withdrawal and empty approved profile list remain"
+    },
+    {
+      "after_bytes": 5102,
+      "after_sha256": "1d44a42aeb356c7421890ae3cd7ed056c0d28644e873859ac24bdf1f52042b68",
+      "before_bytes": 5102,
+      "before_sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "purpose": "Current4-source audit input: pon_work only; mathematical/accounting/cost unknowns stay frozen; root approved this current overlay scope"
+    },
+    {
+      "after_bytes": 20206,
+      "after_sha256": "4093899036bd905062d569c5eea5052c966bc2254f2fb0eacfd11b32e6962e73",
+      "before_bytes": 20206,
+      "before_sha256": "14c6a9eef9da884bed2d24d4b07980b5ce8146760c162ec1b9827287b735f4ec",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "purpose": "Independent current23-path map digest only; checker/native semantics/thresholds unchanged"
+    },
+    {
+      "after_bytes": 18531,
+      "after_sha256": "bb97be040f871f1d71331b015b988cd0339c79e1d805c7cd54ff3f6a9493b533",
+      "before_bytes": 18455,
+      "before_sha256": "d22127c612b940f8267394d3c723ea60a63c6b312818bbb083b0057f525067e4",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/ci/hash_use_contract.py",
+      "purpose": "Independent reviewed current31-path map literal only; semantic digest and all refusal logic unchanged"
+    },
+    {
+      "after_bytes": 10522,
+      "after_sha256": "a915f9544aac4ac44d04262c4b93642dcb8010a420eedbc2913b43c323419069",
+      "before_bytes": 10522,
+      "before_sha256": "2a2e8bbb1b8814b70bcd921314fbbc3abffc998bb3c66188558676362037938a",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/ci/pq_lifetime_current_v2.py",
+      "purpose": "Independent current map/snapshot literal pins only; all old input limits/refusals preserved"
+    },
+    {
+      "after_bytes": 22359,
+      "after_sha256": "009a4425345db193ba08638ce80b95c26e421e275d8cf631052459df6a57711c",
+      "before_bytes": 22262,
+      "before_sha256": "c0b35f83ac7b8cc729d6ebfdfe48d61699241300bac6b92b19891aae089188be",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "purpose": "Keep39 original names; independent exact refreshed mapping hash/size; exact independently reconstructed current descriptor literal plus explicit superseded descriptor refusal subcase"
+    },
+    {
+      "after_bytes": 21400,
+      "after_sha256": "e05098e0558fbfd4589830a45b18d412d6932589a11361ed92157c5fd5e64c3b",
+      "before_bytes": 21400,
+      "before_sha256": "93ba9f55ece5e54dca2fa10da6bb84218e72c70becae1a020b5bf7b23c7ded26",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "purpose": "Keep13 original names; update exact observed current pon_work tuple only"
+    },
+    {
+      "after_bytes": 12789,
+      "after_sha256": "b67779f5f9ba436639a9f44d882af78ccd4aacfb649da1b452d67b8d99d961bf",
+      "before_bytes": 12439,
+      "before_sha256": "f63e88533619880f4ceb0bbfdd165c3a58b8edbf3f14c5aa987bda14a758b92c",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+      "purpose": "Keep16 original names; exact observed source pins/count and added same-size tamper subcases"
+    },
+    {
+      "after_bytes": 9776,
+      "after_sha256": "a73bfd46f8cb9a88cecb616ad81d397955fa697d9aa90e6295d83b4c9496ca47",
+      "before_bytes": 9776,
+      "before_sha256": "b4f9164f50fdc4df9c1d56346f65706c9feb2fc4f542cdbc9e3c9a761e36c23e",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "purpose": "Independent current overlay contract digest only; byte-pinned historical function and observer logic untouched"
+    },
+    {
+      "after_bytes": 17150,
+      "after_sha256": "98d64e337d28f38d879a1294df5ba11b88ecc78febf80dc45729e3ac8ef16050",
+      "before_bytes": 17150,
+      "before_sha256": "3ac2aa88b672b1eedc607214ab3d5d2fea2539cf653fa3895f146cc4ed11e0e9",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "purpose": "Independent reviewed current contract SHA/source namespace literals; no checker weakening"
+    },
+    {
+      "after_bytes": 35128,
+      "after_sha256": "318ba714fe5c43d12cda1c3a06b08ba132d04bb176b7d4f9bbd0861652934a57",
+      "before_bytes": 35116,
+      "before_sha256": "7ce10d5ea4b3401a111c53258655dfedbbf083b7f6d8157b8566904dc09fc106",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "scripts/w1_stark_route_audit.py",
+      "purpose": "Independent reviewed18-input source-set literal; same strict checker/refusals"
+    },
+    {
+      "after_bytes": 48174,
+      "after_sha256": "2d89753fd73ffa30dad2daef75731171d885a661a6a9073c1e4a2e942a1aa687",
+      "before_bytes": 48575,
+      "before_sha256": "fa1fdeac2e904824d52d72bd514c2b7fea42f95375666604c4902ba44a152e65",
+      "binding_kind": "current-reviewed-source-overlay-or-engineering-control",
+      "frozen_historical_evidence_rewritten": false,
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "purpose": "Rust execution/finish boundary helper; exact root Rustfmt1.95 output; original deadline and250ms/cancellation/CAS semantics retained; no native compilation here"
+    }
+  ],
+  "dependency_edges": [
+    {
+      "consumers": [
+        "config/pon/w1-qrom-implementation-current-v2.json",
+        "config/pon/hash-use-contract-v1.json",
+        "config/pon/joint-consensus-qualification-v1.json",
+        "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+        "config/pon/w1-lifetime-current-source-v2.json"
+      ],
+      "input": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "consumers": [
+        "config/pon/w1-qrom-implementation-current-v2.json"
+      ],
+      "input": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+      "scope": "local inventory only, not standalone hash-use callgraph qualification"
+    },
+    {
+      "consumers": [
+        "scripts/w1_qrom_current_implementation_audit.py",
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        "config/pon/pq-proof-profile-binding-v1.json",
+        "config/pon/w1-upstream-security-v1.json",
+        "config/pon/w1-stark-route-registry-v1.json"
+      ],
+      "input": "config/pon/w1-qrom-implementation-current-v2.json"
+    },
+    {
+      "consumers": [
+        "config/pon/hash-use-contract-v1.json"
+      ],
+      "input": "config/pon/pq-proof-profile-binding-v1.json"
+    },
+    {
+      "consumers": [
+        "scripts/ci/hash_use_contract.py"
+      ],
+      "input": "config/pon/hash-use-contract-v1.json#source_files"
+    },
+    {
+      "consumers": [
+        "scripts/w1_stark_route_audit.py"
+      ],
+      "input": "config/pon/w1-stark-route-registry-v1.json#source_inputs"
+    },
+    {
+      "consumers": [
+        "config/pon/joint-consensus-qualification-v1.json"
+      ],
+      "input": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+    },
+    {
+      "consumers": [
+        "formal/pon-nakamoto-v1/joint_consensus_qualification.py"
+      ],
+      "input": "config/pon/joint-consensus-qualification-v1.json#source_sha256"
+    },
+    {
+      "consumers": [
+        "scripts/w1_lifetime_current_observation.py"
+      ],
+      "input": "config/pon/w1-lifetime-current-source-v2.json"
+    },
+    {
+      "consumers": [],
+      "disposition": "remain historical, never globally rewritten",
+      "input": "historical corpus Git blob references and retained evidence"
+    },
+    {
+      "consumers": [
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        ".github/workflows/chain-hepta-closure-candidate.yml"
+      ],
+      "current_descriptor_sha256": "fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3",
+      "input": "canonical source descriptor over reviewed current mapping+22selected hashes+unchanged proof identity",
+      "superseded_descriptor_retained_as_refusal": "2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4"
+    }
+  ],
+  "final_metadata_input_delta_from_prior_346": {
+    ".github/workflows/chain-hepta-closure-candidate.yml": {
+      "current": {
+        "bytes": 3683,
+        "sha256": "6048e3fd296cf7f8aa6c5936b0345501bd361f4a69be18dd610be041cb2a539d"
+      },
+      "previous": null
+    },
+    "scripts/ci/test_pq_proof_profile_binding.py": {
+      "current": {
+        "bytes": 22359,
+        "sha256": "009a4425345db193ba08638ce80b95c26e421e275d8cf631052459df6a57711c"
+      },
+      "previous": {
+        "bytes": 22268,
+        "sha256": "966e1daf3c16d4fd20c8478542356336b7c44de569c702f55054ef479b836fcd"
+      }
+    }
+  },
+  "frozen_inputs_unchanged": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 525351,
+      "sha256": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176"
+    },
+    "config/pon/pq128-lifetime-budget-v1.json": {
+      "bytes": 18358,
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
+    },
+    "config/pon/pq128-source-lock-v1.json": {
+      "bytes": 3017,
+      "sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
+    },
+    "config/pon/w1-qrom-current-required-tests-v1.json": {
+      "bytes": 10175,
+      "sha256": "88a96c11d81b5a5ea7f4d587564b09db0973b95a771068ec02ace8d6c51df363"
+    },
+    "config/pon/w1-qrom-implementation-v1.json": {
+      "bytes": 6875,
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    "config/pon/w1-qrom-supplemental-tests-v1.json": {
+      "bytes": 3970,
+      "sha256": "fa715038acf5fa4536acc5c1d4fd4186d54af3f8a12ec76a03b5c502a53e1307"
+    },
+    "scripts/w1_qrom_implementation_audit.py": {
+      "bytes": 21678,
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    "tests/fixtures/w1-lifetime-historical-7150/ledger.py": {
+      "bytes": 37507,
+      "sha256": "7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6"
+    }
+  },
+  "hash_use_semantics_sha256_unchanged": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b",
+  "lifetime_historical_pin_roster_unchanged": true,
+  "old_E1_E6_budget_used": 0,
+  "prior_actual_snapshots_retained": true,
+  "prior_review_sha256": "54e187f489df91e1a4b9d24ebdebc3256c0ff35a11d75d97175d48eb93e51876",
+  "schema": "trnm-witness-w1-current-propagation-review-v2",
+  "source_base": "6b851bc64db9d87db1bae083654902846f14c275",
+  "source_execution_or_security_qualification": false,
+  "tests_executed": 0,
+  "unchanged_sections": {
+    "config/pon/hash-use-contract-v1.json": {
+      "canonical_sha256": "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b",
+      "sections": [
+        "games",
+        "migration_requirements",
+        "primitives",
+        "proof_profiles",
+        "purpose",
+        "qualification",
+        "query_model_notes",
+        "review_base_revision",
+        "schema",
+        "source_binding",
+        "uses"
+      ],
+      "unchanged": true
+    },
+    "config/pon/joint-consensus-qualification-v1.json": {
+      "canonical_sha256": "82e92a092128bc11314f436f981bda895207a0714bfa15c494f3017ecbedadcb",
+      "sections": [
+        "actual_lifetime_failure_bound",
+        "native_semantics",
+        "obligations",
+        "parameters",
+        "production_activation",
+        "properties",
+        "qualification",
+        "reviewed_native_source_commit",
+        "schema",
+        "security_probability_calibrated",
+        "source_binding_scope",
+        "unknown_parameters"
+      ],
+      "unchanged": true
+    },
+    "config/pon/pq-proof-profile-binding-v1.json": {
+      "canonical_sha256": "57576f00af2daed690e2898599014085cb8ba2dbd14bd1c781aa5f5b957e52c7",
+      "sections": [
+        "excluded_profile_sources",
+        "expected_identity",
+        "schema",
+        "scope",
+        "selected_profile_id",
+        "system_lifetime_register",
+        "theorem_reference"
+      ],
+      "unchanged": true
+    },
+    "config/pon/w1-lifetime-current-source-v2.json": {
+      "canonical_sha256": "bcb4c9978f6d7bcf1a8525bff47fae4dbf3a98f6dfd137f63244725ea130c2d8",
+      "sections": [
+        "changed_paths",
+        "historical_reader",
+        "historical_source_base_commit",
+        "qualification",
+        "schema",
+        "selected_source_scope",
+        "source_base_commit"
+      ],
+      "unchanged": true
+    },
+    "config/pon/w1-qrom-implementation-current-v2.json": {
+      "canonical_sha256": "50cead898078bd9c024d76fa18785528b1044ff1584a0a3acdb5fd0788655199",
+      "sections": [
+        "audit_helpers",
+        "historical_contract",
+        "historical_reader",
+        "lifetime_budget",
+        "profile_id",
+        "project_source_scope",
+        "proof_obligations",
+        "qualification",
+        "saved_v2_files",
+        "schema",
+        "scope",
+        "upstream_commit",
+        "upstream_snapshot"
+      ],
+      "unchanged": true
+    },
+    "config/pon/w1-stark-route-registry-v1.json": {
+      "canonical_sha256": "00527f47224c8cb359a562854d283742603037644ffd5b32a750823670936eb4",
+      "sections": [
+        "literature_review",
+        "qualification",
+        "routes",
+        "schema",
+        "source_base_commit",
+        "source_scope"
+      ],
+      "unchanged": true
+    },
+    "config/pon/w1-upstream-security-v1.json": {
+      "canonical_sha256": "990fb021a0e7cd078113e2ea5b1636b0964c44ec54457864f847437cb2b5508b",
+      "sections": [
+        "advisories",
+        "approved_current_profile_ids",
+        "observed_on",
+        "release",
+        "schema",
+        "scope",
+        "selected_profile_id"
+      ],
+      "unchanged": true
+    },
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json": {
+      "canonical_sha256": "ad5c240fcaeb4410da0742a323f210b0e7b3ab8b2d3f891d900b01879ac7da90",
+      "sections": [
+        "accounting",
+        "cost_envelopes",
+        "relation",
+        "required_strategy_classes",
+        "schema",
+        "unclosed_obligations"
+      ],
+      "unchanged": true
+    }
+  },
+  "w1_selection": {
+    "added_local_input": {
+      "bytes": 5494,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+      "sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc"
+    },
+    "current_project_pin_changes": [
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    ],
+    "local_inventory_after": 146,
+    "local_inventory_before": 145,
+    "new_reviewed_entry_only": [
+      "noise_frame_source_inventory_20261125"
+    ],
+    "prior_local_inputs_unchanged": 144,
+    "proof_obligations_unchanged": 15,
+    "same_eight_literal_includes": [
+      "config/pon/work-profile-v1.json",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "tests/fixtures/cpq1-content-v1/vectors.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+    ],
+    "same_six_crates": [
+      "formal/pon-nakamoto-v1/w1_hardened_verifier",
+      "formal/pon-nakamoto-v1/w1_v2_verifier",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation",
+      "trillionnium/crates/trnm-crypto-primitives",
+      "trillionnium/crates/trnm-protocol"
+    ],
+    "same_twenty_absent_build_inputs": [
+      ".cargo/config",
+      ".cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/build.rs",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/build.rs",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/build.rs",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/.cargo/config",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/.cargo/config.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/build.rs",
+      "trillionnium/crates/trnm-crypto-primitives/.cargo/config",
+      "trillionnium/crates/trnm-crypto-primitives/.cargo/config.toml",
+      "trillionnium/crates/trnm-crypto-primitives/build.rs",
+      "trillionnium/crates/trnm-protocol/.cargo/config",
+      "trillionnium/crates/trnm-protocol/.cargo/config.toml",
+      "trillionnium/crates/trnm-protocol/build.rs"
+    ],
+    "selected_paths_unchanged": 16,
+    "unchanged_manifests_and_locks": {
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": {
+        "bytes": 38332,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+      },
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml": {
+        "bytes": 349,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+      },
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": {
+        "bytes": 46018,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "sha256": "93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b"
+      },
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml": {
+        "bytes": 498,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+      },
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": {
+        "bytes": 74379,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+      },
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml": {
+        "bytes": 397,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "sha256": "955e810713a1c15cf7b9af3f635705e7fdd20434aee829080f314fd68b98725e"
+      },
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": {
+        "bytes": 46025,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+      },
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml": {
+        "bytes": 564,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+      },
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml": {
+        "bytes": 290,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "sha256": "98317da54f1b107b02486236f409f240c1910c948eaf31b5e093365147e2004f"
+      },
+      "trillionnium/Cargo.lock": {
+        "bytes": 42127,
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+      },
+      "trillionnium/Cargo.toml": {
+        "bytes": 2204,
+        "path": "trillionnium/Cargo.toml",
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": {
+        "bytes": 1016,
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "sha256": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de"
+      },
+      "trillionnium/crates/trnm-protocol/Cargo.toml": {
+        "bytes": 684,
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      }
+    }
+  }
+}

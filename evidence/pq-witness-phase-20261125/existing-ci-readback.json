@@ -1,0 +1,443 @@
+{
+  "schema": "trnm-existing-native-control-readback-v1",
+  "scope": "Read only observations of their exact existing sources; no transfer to later source and no manual rerun",
+  "fullpath": {
+    "run_id": 45606912106,
+    "job_id": 139180047454,
+    "head": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+    "tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+    "started_at": "2026-11-25T12:11:36Z",
+    "completed_at": "2026-11-25T12:21:17Z",
+    "conclusion": "success",
+    "steps": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:11:37Z",
+        "completed_at": "2026-11-25T12:11:37Z"
+      },
+      {
+        "number": 2,
+        "name": "Checkout exact candidate",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:11:37Z",
+        "completed_at": "2026-11-25T12:12:48Z"
+      },
+      {
+        "number": 3,
+        "name": "Check source and project boundary",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:12:48Z",
+        "completed_at": "2026-11-25T12:12:53Z"
+      },
+      {
+        "number": 4,
+        "name": "Install pinned Rust toolchain",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:12:53Z",
+        "completed_at": "2026-11-25T12:13:02Z"
+      },
+      {
+        "number": 5,
+        "name": "Bind isolated target path",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:13:02Z",
+        "completed_at": "2026-11-25T12:13:02Z"
+      },
+      {
+        "number": 6,
+        "name": "Reject incomplete and spliced observation evidence",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:13:02Z",
+        "completed_at": "2026-11-25T12:13:09Z"
+      },
+      {
+        "number": 7,
+        "name": "Check formatting and focused strict Clippy",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:13:09Z",
+        "completed_at": "2026-11-25T12:14:21Z"
+      },
+      {
+        "number": 8,
+        "name": "Execute freshly sealed wrong-context native regressions",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:14:21Z",
+        "completed_at": "2026-11-25T12:19:16Z"
+      },
+      {
+        "number": 9,
+        "name": "Observe exact bound-identity and noise engineering controls",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:19:16Z",
+        "completed_at": "2026-11-25T12:20:56Z"
+      },
+      {
+        "number": 10,
+        "name": "Collect real native component processes",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:20:56Z",
+        "completed_at": "2026-11-25T12:21:09Z"
+      },
+      {
+        "number": 11,
+        "name": "Read retained evidence and require explicit component HOLD",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:09Z",
+        "completed_at": "2026-11-25T12:21:09Z"
+      },
+      {
+        "number": 12,
+        "name": "Verify source remained unchanged",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:09Z",
+        "completed_at": "2026-11-25T12:21:14Z"
+      },
+      {
+        "number": 13,
+        "name": "Require the added engineering controls to have passed",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:14Z",
+        "completed_at": "2026-11-25T12:21:14Z"
+      },
+      {
+        "number": 14,
+        "name": "Retain raw component observations",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:14Z",
+        "completed_at": "2026-11-25T12:21:15Z"
+      },
+      {
+        "number": 28,
+        "name": "Post Checkout exact candidate",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:15Z",
+        "completed_at": "2026-11-25T12:21:15Z"
+      },
+      {
+        "number": 29,
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-25T12:21:15Z",
+        "completed_at": "2026-11-25T12:21:16Z"
+      }
+    ],
+    "artifact": {
+      "id": 15020677503,
+      "bytes": 135154,
+      "sha256": "eb78346c7b59d48f973050e545eb300b1c11c5b13f60196bf58532f4e163ec36"
+    },
+    "pressure_qualification": "HOLD / COMPONENT_OBSERVATION_ONLY",
+    "engineering_summary": {
+      "schema": "trnm-bound-primitive-engineering-v1",
+      "result": "PASS",
+      "scope": "default-feature engineering tests only; no E1-E6, pressure, learning or production qualification",
+      "source_expected": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+      "commands": [
+        {
+          "name": "bound-identity-selector",
+          "argv": [
+            "cargo",
+            "test",
+            "--offline",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "native_task_operation_v2",
+            "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces",
+            "--",
+            "--test-threads=1",
+            "--color",
+            "never",
+            "--exact"
+          ],
+          "expected_tests": [
+            "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces"
+          ],
+          "execution": {
+            "command": [
+              "cargo",
+              "test",
+              "--offline",
+              "--locked",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "native_task_operation_v2",
+              "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces",
+              "--",
+              "--test-threads=1",
+              "--color",
+              "never",
+              "--exact"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 0,
+            "timed_out": false,
+            "elapsed_ns": 15671400550,
+            "log": "bound-identity-selector.log",
+            "executed": true,
+            "process_exit_code": 0,
+            "expected_source": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "observation": {
+            "tests": [
+              "circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces"
+            ],
+            "passed": 1,
+            "filtered_out": 14
+          },
+          "error": null,
+          "elapsed_ns": 15671969812,
+          "cpu": {
+            "owner_user_seconds": 6.476875000000001,
+            "owner_system_seconds": 2.288576,
+            "reaped_children_user_seconds": 11.435701,
+            "reaped_children_system_seconds": 1.6128959999999999
+          },
+          "log": "bound-identity-selector.log",
+          "log_bytes": 562,
+          "log_sha256": "a491635f240712bf4a9635f56d86de799ce5906cbad5e690dfb4d4c4e05a0851"
+        },
+        {
+          "name": "noise-frame-controls",
+          "argv": [
+            "cargo",
+            "test",
+            "--offline",
+            "--locked",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-crypto-primitives",
+            "--lib",
+            "pon_work::noise_frame::tests::",
+            "--",
+            "--test-threads=1",
+            "--color",
+            "never"
+          ],
+          "expected_tests": [
+            "pon_work::noise_frame::tests::framing_matches_original_domain_and_all_part_lengths",
+            "pon_work::noise_frame::tests::words_callbacks_and_fixed_noise_budget_match_reference",
+            "pon_work::noise_frame::tests::each_cancelled_noise_boundary_stops_and_retry_has_fresh_framing"
+          ],
+          "execution": {
+            "command": [
+              "cargo",
+              "test",
+              "--offline",
+              "--locked",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-crypto-primitives",
+              "--lib",
+              "pon_work::noise_frame::tests::",
+              "--",
+              "--test-threads=1",
+              "--color",
+              "never"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 0,
+            "timed_out": false,
+            "elapsed_ns": 74767139289,
+            "log": "noise-frame-controls.log",
+            "executed": true,
+            "process_exit_code": 0,
+            "expected_source": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "observation": {
+            "tests": [
+              "pon_work::noise_frame::tests::each_cancelled_noise_boundary_stops_and_retry_has_fresh_framing",
+              "pon_work::noise_frame::tests::framing_matches_original_domain_and_all_part_lengths",
+              "pon_work::noise_frame::tests::words_callbacks_and_fixed_noise_budget_match_reference"
+            ],
+            "passed": 3,
+            "filtered_out": 231
+          },
+          "error": null,
+          "elapsed_ns": 74767310302,
+          "cpu": {
+            "owner_user_seconds": 6.716829000000001,
+            "owner_system_seconds": 2.414379,
+            "reaped_children_user_seconds": 116.874416,
+            "reaped_children_system_seconds": 4.465209
+          },
+          "log": "noise-frame-controls.log",
+          "log_bytes": 1040,
+          "log_sha256": "88813225c5009267c71494b1a91f9fddfc5c5285855ea2c924c905b416a246c3"
+        }
+      ],
+      "command_timeout_seconds": 120,
+      "run": {
+        "GITHUB_RUN_ID": "45606912106",
+        "GITHUB_RUN_ATTEMPT": "1"
+      },
+      "cpu_scope": "observed owner and reaped children, including command compilation and source checks; not whole-host CPU",
+      "command_costs_nested_in_inclusive_total": true,
+      "pressure_qualified": false,
+      "original_research_budget_changed": false,
+      "source_before": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "head",
+        "tested_commit": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+        "tested_tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+        "candidate": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+        "base": null,
+        "prospective_merge": null,
+        "tracked_worktree_verified": true,
+        "tracked_entries": 41941,
+        "tracked_bytes": 4002491505,
+        "tests_executed_by_identity_check": false
+      },
+      "lock_sha256_before": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+      "source_after": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "head",
+        "tested_commit": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+        "tested_tree": "b851587ae7f46f2d7070892be290b6d22395cc44",
+        "candidate": "3ee476eb1591c4ad3f92061c0eb906cb5ad22f89",
+        "base": null,
+        "prospective_merge": null,
+        "tracked_worktree_verified": true,
+        "tracked_entries": 41941,
+        "tracked_bytes": 4002491505,
+        "tests_executed_by_identity_check": false
+      },
+      "lock_sha256_after": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+      "elapsed_ns": 100030336955,
+      "cpu": {
+        "owner_user_seconds": 19.652759,
+        "owner_system_seconds": 7.0466869999999995,
+        "reaped_children_user_seconds": 128.695909,
+        "reaped_children_system_seconds": 6.7955179999999995
+      }
+    },
+    "exact_native_logs": {
+      "bound-identity-selector.log": "   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.14s\n     Running tests/native_task_operation_v2.rs (/home/runner/work/_temp/native-fullpath-target/debug/deps/native_task_operation_v2-c7e4fa38f8c60c7f)\n\nrunning 1 test\ntest circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s\n\n",
+      "noise-frame-controls.log": "   Compiling syn v3.0.9\n   Compiling rustix v1.1.6\n   Compiling linux-raw-sys v0.12.1\n   Compiling serde_derive v1.0.229\n   Compiling serde v1.0.229\n   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)\n   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 05s\n     Running unittests src/lib.rs (/home/runner/work/_temp/native-fullpath-target/debug/deps/trnm_crypto_primitives-2cb045c0a04feb47)\n\nrunning 3 tests\ntest pon_work::noise_frame::tests::each_cancelled_noise_boundary_stops_and_retry_has_fresh_framing ... ok\ntest pon_work::noise_frame::tests::framing_matches_original_domain_and_all_part_lengths ... ok\ntest pon_work::noise_frame::tests::words_callbacks_and_fixed_noise_budget_match_reference ... ok\n\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 231 filtered out; finished in 0.00s\n\n"
+    }
+  },
+  "old992": {
+    "run_id": 45588923716,
+    "job_id": 139117638551,
+    "started_at": "2026-11-25T09:52:22Z",
+    "completed_at": "2026-11-25T12:30:52Z",
+    "conclusion": "success",
+    "exact_job_log_lines": [
+      "2026-11-25T11:24:29.1179816Z test circuit_evaluation::bound_identity_versions_select_exact_request_and_delivery_namespaces ... ok",
+      "2026-11-25T11:27:56.6224494Z test witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database ... ok"
+    ],
+    "artifact": {
+      "id": 15020339188,
+      "bytes": 15661220,
+      "sha256": "93046e0def24585ad626792de609c6e5abbbef08bba56952ab937370333f48ad"
+    },
+    "workspace_log_sha256": "ff6770c03a1ba6a482909cb9dfe8113b45337009e94516add907d8e418c625a2",
+    "source_receipt": {
+      "schema": "trnm-rust-baseline-shard-v1",
+      "shard": "runtime",
+      "status": "passed",
+      "exit_code": 0,
+      "command_sha256": "1f28b13c51ae267c9fae6cad499b61b5bc60d241565401284d70b998072c5fb5",
+      "run": {
+        "GITHUB_RUN_ID": "45588923716",
+        "GITHUB_RUN_ATTEMPT": "1"
+      },
+      "before": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "prospective-merge",
+        "tested_commit": "596f30e7916f5d1f08316a3d1c374788e024ed61",
+        "tested_tree": "b0ab6fd1d3bf46fe3d1ac17262a800210dcabccb",
+        "candidate": "11d4bbe356331ef533d662ef4080a096ed20c8b1",
+        "base": "998d40da03644363d33a2153cbee1d7a8b11163f",
+        "prospective_merge": "596f30e7916f5d1f08316a3d1c374788e024ed61",
+        "tracked_worktree_verified": true,
+        "tracked_entries": 41935,
+        "tracked_bytes": 4002413141,
+        "tests_executed_by_identity_check": false
+      },
+      "after": {
+        "schema": "trnm-ci-source-v1",
+        "kind": "prospective-merge",
+        "tested_commit": "596f30e7916f5d1f08316a3d1c374788e024ed61",
+        "tested_tree": "b0ab6fd1d3bf46fe3d1ac17262a800210dcabccb",
+        "candidate": "11d4bbe356331ef533d662ef4080a096ed20c8b1",
+        "base": "998d40da03644363d33a2153cbee1d7a8b11163f",
+        "prospective_merge": "596f30e7916f5d1f08316a3d1c374788e024ed61",
+        "tracked_worktree_verified": true,
+        "tracked_entries": 41935,
+        "tracked_bytes": 4002413141,
+        "tests_executed_by_identity_check": false
+      }
+    }
+  },
+  "old993": {
+    "run_id": 45589881222,
+    "job_id": 139120929254,
+    "source": "ac2600d129d050154cbf8edb3cdd5b2be7f80244",
+    "tree": "7884ab5f751db5ae02acef30aa3db7c316e7ff16",
+    "candidate": "2f0c7bf637cdae4b3a429b29118e2f16b09c42c9",
+    "base": "11d4bbe356331ef533d662ef4080a096ed20c8b1",
+    "conclusion": "failure",
+    "namespace_control": "passed",
+    "native_task_operation_v2": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 5
+    },
+    "failure": "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database: first send after reopen, transport UnexpectedEof, original witness request_dispatch deadline at 260217 us",
+    "failure_cause": "unknown",
+    "original_failure_preserved": true
+  },
+  "remaining": {
+    "jobs": [
+      {
+        "id": 139117638686,
+        "status": "in_progress",
+        "started_at": "2026-11-25T10:12:17Z",
+        "original_job_limit_minutes": 180
+      },
+      {
+        "id": 139120928741,
+        "status": "in_progress",
+        "started_at": "2026-11-25T10:14:55Z",
+        "original_job_limit_minutes": 180
+      }
+    ],
+    "scope": "Status at the same GitHub collection read retained here, not a current terminal claim"
+  },
+  "retrieval_date_utc": "2026-11-25",
+  "individual_github_receipt_timestamp_recorded": false,
+  "parallel_H_status_at_unix_ms": 1795610144871
+}

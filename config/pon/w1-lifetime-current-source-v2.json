@@ -81,8 +81,8 @@
       "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs"
     },
     {
-      "bytes": 106066,
-      "current_sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+      "bytes": 106379,
+      "current_sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4",
       "historical_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
     },

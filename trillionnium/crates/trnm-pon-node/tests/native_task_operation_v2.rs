@@ -944,6 +944,53 @@ fn capture_current_fixture(
     );
 }
 
+struct SignedSettlement {
+    original_receipt: Vec<u8>,
+    receipted: Hash,
+    decision: FundedServiceDecisionV1,
+    original_payment: Vec<u8>,
+    payment_operation: Hash,
+}
+
+fn settle_dev_output(
+    node: &mut Node,
+    store: &mut NativeTaskOperationStoreV2,
+    bind: &NativeTaskOperationBindingV2,
+    reserved: Hash,
+    output: Hash,
+    evidence: Hash,
+) -> SignedSettlement {
+    let cfg = node.settings().clone();
+    let task = bind.task;
+    let mut receipt_payload = task.to_vec();
+    receipt_payload.extend(output);
+    let original_receipt = signed(&cfg, 1, 1, 4, receipt_payload);
+    let receipted = mine(node, reserved, vec![original_receipt.clone()]);
+    store.bind_delivery(node, bind.claim).unwrap();
+    let decision = FundedServiceDecisionV1 {
+        task,
+        contract_digest: bind.contract_digest,
+        output,
+        evidence,
+        verdict: FundedServiceVerdictV1::PayProvider,
+    };
+    let original_payment = signed(&cfg, 2, 1, 5, decision.encode().unwrap());
+    let payment_operation = Envelope::decode(&original_payment).unwrap().id().unwrap();
+    mine(node, receipted, vec![original_payment.clone()]);
+    store
+        .record_native_payment(node, bind.claim, payment_operation)
+        .unwrap();
+    node.reconcile_native_task_operation_v2(store, bind.claim, 23)
+        .unwrap();
+    SignedSettlement {
+        original_receipt,
+        receipted,
+        decision,
+        original_payment,
+        payment_operation,
+    }
+}
+
 fn current_paid_branch_scenario(backend: Backend, branch_case: &str) {
     let directory = tempfile::tempdir().unwrap();
     let mut node = open(&directory.path().join("node"), backend).unwrap();
@@ -1002,26 +1049,13 @@ fn current_paid_branch_scenario(backend: Backend, branch_case: &str) {
         )
         .unwrap();
     store.complete(CLAIM, OPERATION, output, [73; 32]).unwrap();
-    let mut receipt_payload = task.to_vec();
-    receipt_payload.extend(output);
-    let original_receipt = signed(&cfg, 1, 1, 4, receipt_payload);
-    let receipted = mine(&mut node, reserved, vec![original_receipt.clone()]);
-    store.bind_delivery(&mut node, CLAIM).unwrap();
-    let decision = FundedServiceDecisionV1 {
-        task,
-        contract_digest: digest,
-        output,
-        evidence: [74; 32],
-        verdict: FundedServiceVerdictV1::PayProvider,
-    };
-    let original_payment = signed(&cfg, 2, 1, 5, decision.encode().unwrap());
-    let payment_operation = Envelope::decode(&original_payment).unwrap().id().unwrap();
-    mine(&mut node, receipted, vec![original_payment.clone()]);
-    store
-        .record_native_payment(&mut node, CLAIM, payment_operation)
-        .unwrap();
-    node.reconcile_native_task_operation_v2(&store, CLAIM, 23)
-        .unwrap();
+    let SignedSettlement {
+        original_receipt,
+        receipted,
+        decision,
+        original_payment,
+        payment_operation,
+    } = settle_dev_output(&mut node, &mut store, &bind, reserved, output, [74; 32]);
     let historical = store.snapshot(CLAIM).unwrap();
     let original = node
         .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
@@ -1207,3 +1241,9 @@ fn current_paid_observation_rechecks_original_receipts_and_settlement_on_both_ba
         }
     }
 }
+
+#[path = "native_task_operation_v2/learning_contract.rs"]
+mod learning_contract;
+
+#[path = "native_task_operation_v2/circuit_evaluation.rs"]
+mod circuit_evaluation;

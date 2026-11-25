@@ -9,7 +9,7 @@
     "source_lock_sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2"
   },
   "current_source_files_sha256": {
-    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
     "trillionnium/crates/trnm-data-availability/src/cell.rs": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c",
@@ -24,14 +24,14 @@
     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "9b8abe32fa33e4144b4330e146877518d410941f0c8ba333516245e46a09733a",
-    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "18684092d5a701e4a11587361b0181d2ce80e8ec194e3092b7e6276b9a81a561",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "2d89753fd73ffa30dad2daef75731171d885a661a6a9073c1e4a2e942a1aa687",
     "trillionnium/crates/trnm-pon-node/src/store.rs": "9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
     "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0",
     "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
   },
-  "current_source_snapshot_sha256": "f9991545b8b43b870559106d7be807d286f4b2ac555a2a10dbaf6c6e850ac8fd",
+  "current_source_snapshot_sha256": "12c56455a8941f633b29a5edd59f32a1bb18759fc713c1610c2943579b831c34",
   "qualification": {
     "actual_lifetime_failure_bound": null,
     "whole_chain_pq_qualified": false,

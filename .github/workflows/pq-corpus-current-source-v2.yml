@@ -1,0 +1,99 @@
+name: PQ current declared-source correspondence v2
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  current-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind the complete clean candidate source before observation
+        id: source_before
+        shell: bash
+        run: |
+          set -euo pipefail
+          export CURRENT_CORPUS_OUT="$RUNNER_TEMP/pq-corpus-current-v2-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          printf 'CURRENT_CORPUS_OUT=%s\n' "$CURRENT_CORPUS_OUT" >> "$GITHUB_ENV"
+          mkdir "$CURRENT_CORPUS_OUT"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" \
+            --output "$CURRENT_CORPUS_OUT/source-before.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/source-before.log"
+      - name: Check the original maintenance boundary
+        id: preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 --version 2>&1 | tee "$CURRENT_CORPUS_OUT/python-version.log"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$CURRENT_CORPUS_OUT/preflight.log"
+      - name: Observe every current and retained V1 control by exact name
+        id: controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/run_pq_fixture_tmpfs_v1.py \
+            --output "$CURRENT_CORPUS_OUT/named-controls.json" \
+            --fixture-receipt "$CURRENT_CORPUS_OUT/fixture-tmpfs.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/named-controls.log"
+      - name: Inspect the separate current source correspondence
+        id: correspondence
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/pq_corpus_current_v2.py --root "$GITHUB_WORKSPACE" \
+            > "$CURRENT_CORPUS_OUT/current-source.json" 2> "$CURRENT_CORPUS_OUT/current-source.stderr"
+          cat "$CURRENT_CORPUS_OUT/current-source.json"
+      - name: Check the unchanged generated-inventory policy
+        id: inventory
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/refresh_distributed_source_inventory.py --check \
+            2>&1 | tee "$CURRENT_CORPUS_OUT/inventory.log"
+      - name: Recheck the complete clean candidate source
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" \
+            --output "$CURRENT_CORPUS_OUT/source-after.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/source-after.log"
+          cmp "$CURRENT_CORPUS_OUT/source-before.json" "$CURRENT_CORPUS_OUT/source-after.json"
+      - name: Require every actual stage while retaining HOLD
+        if: always()
+        shell: bash
+        env:
+          CURRENT_CORPUS_STEPS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          sys.path.insert(0, 'scripts/ci')
+          import pq_corpus_current_v2 as current
+          steps = json.loads(os.environ['CURRENT_CORPUS_STEPS'])
+          required = ('source_before', 'preflight', 'controls', 'correspondence', 'inventory', 'source_after')
+          if any(steps.get(name, {}).get('outcome') != 'success' for name in required):
+              raise SystemExit('all source and metadata stages must actually succeed')
+          out = pathlib.Path(os.environ['CURRENT_CORPUS_OUT'])
+          result = current.verify_report(pathlib.Path.cwd(), (out / 'current-source.json').read_bytes())
+          if result['status'] != 'HOLD' or result['source_revision_bound'] is not False:
+              raise SystemExit('source-only result cannot acquire qualification')
+          print('Current declared-source correspondence observed; original frozen V1 and native qualification remain unchanged.')
+          PY
+      - name: Retain complete source, named observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pq-corpus-current-v2-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.CURRENT_CORPUS_OUT }}/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,26 @@
+{
+  "schema": "chain-current-map-preparation-v1",
+  "source": "875234c4d2c3621fa6aac49224122067f149f3f4",
+  "pre_edit_preflight_attempts": [
+    {
+      "exit": 127,
+      "reason": "--no-checkout worktree had not yet populated sparse index; no source edits made"
+    },
+    {
+      "exit": 2,
+      "reason": "initial local branch omitted required chain- prefix; no source edits made"
+    },
+    {
+      "exit": 0,
+      "result": "PASS;26 packages; exact allowed fix/chain-pq-current-map-refresh-20261125-7c9e branch before edits"
+    }
+  ],
+  "remote_policy_changed": false,
+  "original_research_budget_changed": false,
+  "native_test_or_compile": false,
+  "additional_preparation_failure": {
+    "command": "git sparse-checkout add --no-cone <new auxiliary path>",
+    "exit": 129,
+    "reason": "add inherits current non-cone mode and rejects redundant option; next add without option succeeded; no test executed and candidate bytes unchanged"
+  }
+}
