@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_state_import_sqlite_projection
 fn f0(input:readbuf,mem:mutbuf,hash:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,mem:mutbuf,hash:mutbuf)
+  result:u32 = call(input,mem,hash) {"function":"sr_cold"}
+  ret(result)
+end
+
+fn sr_cold(input:readbuf,mem:mutbuf,hash:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,hash:mutbuf)
   mem_len:usize = buffer.len(mem)
   hash_len:usize = buffer.len(hash)
   required:usize = const() {"value":1048576}

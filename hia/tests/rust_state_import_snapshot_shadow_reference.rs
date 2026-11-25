@@ -109,12 +109,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             store.apply_delta_v0(&delta, &FixtureRoot)?;
         }
+        ("empty-advance", 3) => {
+            let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
+            let rows = store.read_rows_v0()?;
+            let delta = derive_incremental_delta_v0(
+                d(10), d(11), context(&rows, 5), context(&rows, 6),
+                &rows, &rows, &FixtureRoot,
+            )?;
+            if !delta.entries.is_empty() {
+                return Err("reference should contain no row mutations".into());
+            }
+            store.apply_delta_v0(&delta, &FixtureRoot)?;
+        }
         ("export", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/export on disposable staging only".into()),
+        _ => return Err("scope is seed/advance/empty-advance/export on disposable staging only".into()),
     }
     Ok(())
 }

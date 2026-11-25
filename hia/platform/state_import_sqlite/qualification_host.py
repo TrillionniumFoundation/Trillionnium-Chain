@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import signal
 import struct
 import subprocess
 import sys
@@ -56,6 +57,16 @@ def run(message, reader, provider):
     response = ctypes.create_string_buffer(EXTENT)
     hash_work = ctypes.create_string_buffer(EXTENT)
     raw = bytes.fromhex(message["expected"]).hex().upper().encode() + os.fsencode(db)
+    proposal_hex = message.get("empty_delta")
+    writes = proposal_hex is not None
+    if writes:
+        if not directory.parent.name.startswith("m13-sqlite-empty-delta-") or directory.name != "owned":
+            raise ValueError("Write qualification only uses its own named disposable directory")
+        proposal = bytes.fromhex(proposal_hex)
+        if len(proposal) != 1042 or message["advance"]:
+            raise ValueError("Exact private empty-delta replay input required")
+        raw = proposal + raw
+    ops = (2, 3, 5, 6, 7, 8, 9, 10) if writes else (2, 3, 5, 7, 8, 9)
     owner = make()
     if not owner:
         raise MemoryError("Provider allocation failed")
@@ -71,7 +82,7 @@ def run(message, reader, provider):
                 elif status != 100 or published:
                     raise ValueError("Unexpected terminal status or private-output publication")
                 break
-            if published or op not in (2, 3, 5, 7, 8, 9) or not 8 <= length <= 1544:
+            if published or op not in ops or not 8 <= length <= 1544:
                 raise ValueError("Native request escaped the private mechanical ABI")
             if message["advance"] and phase == 11 and op == 5:
                 if advanced:
@@ -84,6 +95,10 @@ def run(message, reader, provider):
             call = ctypes.addressof(state) + 256
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))
+            if writes and message.get("kill_after_update") and (phase, op) == (28, 10):
+                if amount != 24 or struct.unpack_from("<QQ", response) != (0, 1):
+                    raise ValueError("Expected a real one-row uncommitted update before termination")
+                os.kill(os.getpid(), signal.SIGKILL)
             # Huge provider lengths and sentinel errors are not interpreted
             # and cannot cause access outside the mechanically owned response.
             if amount > EXTENT:

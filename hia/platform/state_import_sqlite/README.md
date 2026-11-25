@@ -53,3 +53,41 @@ Run from a normal pinned HIA toolchain and populated offline locked Rust cache:
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_cold_read -v
 ```
+
+## Disposable empty-delta write
+
+`empty_write.hepta` qualifies one transition with **no row mutations**. Its
+private proposal supplies the complete predecessor and expected successor
+metadata lines (489 bytes each), the raw 32-byte target-context and delta
+digests, and then the original plan/schema and local test path fields. This
+proposal is staged data from the test's unchanged original Rust delta
+derivation. It is not an authority token or input from a network peer.
+
+HIA opens the existing disposable database read-write with NOFOLLOW, sets
+FULL synchronous mode for its own SQLite connection, and takes BEGIN
+IMMEDIATE. It validates the exact predecessor in that same transaction,
+including the actual persisted row commitment. HIA then prepares one fixed
+metadata statement with two owned BLOB bindings; it changes only the target
+context, last delta digest and generation, refuses signed generation overflow,
+and requires an actual SQLite changes count of one. The original empty
+delta's other metadata fields and all rows remain unchanged.
+
+Before committing, HIA repeats the original-format read and row commitment
+verification in its still-held transaction and compares the full reviewed
+successor metadata. Any refusal has no published output and closes the
+uncommitted transaction. Only successful commit, finalize and physical
+connection close permit the successor projection to leave the continuation.
+A repeated proposal bound to the old predecessor is refused. The retained
+Rust owner still supplies its distinct idempotent replay receipt.
+
+The test runs the original full locked Rust crate on separate SQLite files
+for zero rows and nonempty state. It compares complete cold exports after
+a real native write, verifies stale and wrong-postcondition refusals, and
+kills the native process only after the provider observes one actual updated
+metadata row, then cold reopens the exact original predecessor in Rust.
+There is no HIA app-root recomputation, production write path, signed
+finality validation, or support for applying row mutations.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_empty_write -v
+```
