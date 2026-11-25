@@ -1,5 +1,36 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_schema_read
-fn f0(entry_r:readbuf,entry_m:mutbuf,entry_unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+fn f0(input:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,work:mutbuf)
+  close:bool = const() {"value":false}
+  status:u32 = call(input,mem,work,close) {"function":"ssr_read"}
+  ret(status)
+end
+
+fn ssr_read(input:readbuf,mem:mutbuf,work:mutbuf,hold:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,work:mutbuf,hold:bool)
+  cap:usize = buffer.len(mem)
+  required:usize = const() {"value":1048576}
+  same:bool = compare.eq(cap,required)
+  maybe:bool = bool.and(same,hold)
+  branch maybe held(input,mem,work) normal(input,mem,work)
+block held(held_input:readbuf,held_mem:mutbuf,held_work:mutbuf)
+  at:u64 = const() {"value":0}
+  done:u64 = const() {"value":14}
+  phase:u64 = call(held_mem,at) {"function":"cp_get"}
+  finished:bool = compare.eq(phase,done)
+  n:usize = buffer.len(held_input)
+  valid:bool = call(held_input,n,at) {"function":"ssr_status"}
+  ready:bool = bool.and(finished,valid)
+  branch ready schema_done() normal(held_input,held_mem,held_work)
+block schema_done()
+  pending:u32 = const() {"value":197}
+  ret(pending)
+block normal(raw:readbuf,state:mutbuf,scratch:mutbuf)
+  received:u32 = call(raw,state,scratch) {"function":"ssr_schema"}
+  ret(received)
+end
+
+fn ssr_schema(entry_r:readbuf,entry_m:mutbuf,entry_unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(entry_r:readbuf,entry_m:mutbuf,entry_unused:mutbuf)
   entry_mem:usize = buffer.len(entry_m)
   entry_capacity:usize = const() {"value":1048576}

@@ -3152,6 +3152,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-metadata-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 read-only typed metadata projection within the held original rollback-journal schema snapshot, including exact expected fixture config and the original persisted raw checksum, on real original initialized stores. No Borsh state, replay, durable-state, or production authority is qualified.",
+      "sources": [
+        "hia/platform/service_settlement/metadata_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_metadata_reference.rs",
+        "hia/tests/test_settlement_metadata_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-schema-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

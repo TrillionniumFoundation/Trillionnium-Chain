@@ -1,5 +1,47 @@
 {
   "includes": {
+    "platform/service_settlement/metadata_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "platform/service_settlement/schema_read.hepta",
+        "functions": [
+          "ssr_begin",
+          "ssr_exact_text",
+          "ssr_issue",
+          "ssr_prepared",
+          "ssr_read",
+          "ssr_schema",
+          "ssr_status",
+          "ssr_table_value",
+          "ssr_tables",
+          "ssr_triggers"
+        ]
+      }
+    ],
     "platform/service_settlement/schema_read.hepta": [
       {
         "source": "src/control_plane/core.hepta",

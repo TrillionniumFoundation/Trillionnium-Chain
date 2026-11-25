@@ -60,3 +60,25 @@ integration is qualified here.
 ```sh
 python3 -B -m unittest hia.tests.test_settlement_schema_read -v
 ```
+
+### Bounded, checksum-checked metadata observation
+
+`metadata_read.hepta` reuses the successful schema check without closing the
+read transaction first. A private invocation supplies the independently
+encoded, expected fixture configuration (1 to 65,536 bytes). HIA reads the
+original singleton SELECT, checks SQLite value types, schema version,
+nonnegative sequence/height, fence, config equality, and the fixed-width
+BLOBs. It hashes the original store-checksum domain and all nine original
+little-endian-length-prefixed fields, including the raw serialized state,
+without publishing configuration or state. An oversized column response
+(over 1 MiB including the 24-byte provider framing) is refused. These are
+private fixture bounds, not proposed production database limits.
+
+Only after statement finalization and real close does the handler expose a
+147-byte diagnostic: schema u16 LE, sequence and height u64 LE, block ID,
+state root field, journal root field, fence byte and stored checksum. This
+is an observation of checked raw bytes, not verification of state or history.
+A checksum does not convey authority. The Rust Store still owns strict Borsh
+state decode and round-trip, recomputation of the canonical state root,
+committed-block and journal replay, fence policy at public open/readback,
+and the filesystem identity and sidecar checks above.

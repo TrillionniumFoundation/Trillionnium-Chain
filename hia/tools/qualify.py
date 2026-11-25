@@ -84,7 +84,8 @@ def sources():
                  "trnm-mvcc-fee", "trnm-executor", "trnm-types", "trnm-data-availability",
                  "trnm-worker-agent", "trnm-control-plane", "trnm-escrow-vault",
                  "trnm-governance-guard",
-                 "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol", "trnm-bench"):
+                 "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol", "trnm-bench",
+                 "trnm-service-settlement", "trnm-task-kernel"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths += sorted((crate / "tests").rglob("*.rs"))
@@ -155,10 +156,9 @@ def sources():
         "hia/src/release_bundle/CONTENT_CLAIM_FRAME.md",
         "hia/src/release_bundle/RAW_ARTIFACT_SHA256.md",
         "hia/src/release_bundle/SHA512_TRANSCRIPT_BOOTSTRAP.md")]
-    # M12 compiles exact retained Store URI, schema and open bodies with the
-    # original error type. Test adapters are bound by the recursive *.rs roster.
-    paths += [ROOT / "trillionnium/crates/trnm-service-settlement/src/store.rs",
-              ROOT / "trillionnium/crates/trnm-service-settlement/src/error.rs"]
+    # The genuine original M12 Store uses frozen trust bytes from this corpus.
+    # Its owning Rust crates are bound above and the adapter under hia/tests.
+    paths.append(ROOT / "hia/platform/service_settlement/qualification/fixtures.json.xz")
     # Bind the complete retained original Host implementation and typed errors.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
               ROOT / "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",

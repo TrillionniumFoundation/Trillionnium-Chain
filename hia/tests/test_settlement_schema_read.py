@@ -27,7 +27,7 @@ def execute(argv, *, timeout=30, **kwargs):
     return answer
 
 
-def original_adapter(out):
+def original_adapter(out, *, metadata=False):
     source = (STORE / "src/store.rs").read_bytes()
     pieces = []
     for name in (b"META_SQL", b"OP_SQL", b"COMMITTED_BLOCKS_SQL"):
@@ -69,9 +69,18 @@ def original_adapter(out):
     if not native.startswith("native=") or sqlite["linked_libs"] != ["static=sqlite3"]:
         raise ValueError("Original must link the locked bundled SQLite")
     binary = out / "original"
-    execute([rustc, "--edition=2024", "-Dwarnings", "--extern", f"rusqlite={rust}",
+    extra = []
+    adapter = "rust_settlement_schema_reference.rs"
+    if metadata:
+        [owner] = [unlinked_path(p) for p in settlement["filenames"] if p.endswith(".rlib")]
+        [borsh_event] = [e for e in events if e.get("reason") == "compiler-artifact"
+                         and e["target"]["name"] == "borsh"]
+        [borsh] = [unlinked_path(p) for p in borsh_event["filenames"] if p.endswith(".rlib")]
+        extra = ["--extern", f"trnm_service_settlement={owner}", "--extern", f"borsh={borsh}"]
+        adapter = "rust_settlement_metadata_reference.rs"
+    execute([rustc, "--edition=2024", "-Dwarnings", "--extern", f"rusqlite={rust}", *extra,
              "-L", f"dependency={rust.parent}", "-L", f"native={native[7:]}",
-             Path(__file__).with_name("rust_settlement_schema_reference.rs"), "-o", binary],
+             Path(__file__).with_name(adapter), "-o", binary],
             timeout=60, env={**os.environ, "TRNM_SETTLEMENT_SCHEMA_SOURCE": str(section),
                              "TRNM_SETTLEMENT_SCHEMA_ERROR": str(STORE / "src/error.rs")})
     return binary, unlinked_path(provider_source["manifest_path"]).parent
