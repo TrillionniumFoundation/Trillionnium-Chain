@@ -110,3 +110,30 @@ that valid header cases reach the sentinel exactly once and that rejected
 headers reach it zero times; it never allows the original post-finality loop.
 The separate high-count ABI control supplies an observed length, not a
 fabricated Rust vector of 100 million rows.
+
+## Post-finality ordered root and digest join
+
+`export_ordered_root_join.hepta` ports the final pure join from
+`verify_export_v0` for **already validated rows in their established order**.
+The caller supplies only a sequence of at least one 32-byte row digest and
+then the expected 32-byte export root, all in that order. Internally it
+computes the original raw-domain SHA-256 ordered digest and uses the original
+pair reduction to recompute the Merkle root. It publishes the ordered digest
+only if the Merkle root equals the supplied value. A root mismatch returns
+108 (`ExportRootMismatch`) and does not publish output; scratch is private
+and may have changed. It does not verify the trust of the supplied root.
+
+This local callable requires disjoint borrowed spans, a multiple-of-32 input
+of at least 64 bytes, at least 32 output bytes and private scratch of at least
+1,400 bytes plus the leaf bytes. Stock 1 MiB scratch permits 32,724 leaves.
+Transport extent (100), capacity (102) and internal hash (103) refusals are
+not original protocol errors. The Direct stock borrowed wrapper rejects overlap before entering the kernel;
+self-hosted callers must supply disjoint owned spans as a precondition. On
+success only the first 32 output bytes change.
+
+The test executes the original Rust function in an isolated fixed synthetic
+fixture context, with actual row validation and ordering before the root join.
+The context is not a production finality verifier or transferable recipient
+capability. The native callable itself cannot establish those prerequisites,
+does not validate rows or their order and cannot accept an export, issue a
+`VerifiedExportV0`, or authorize persistent import.
