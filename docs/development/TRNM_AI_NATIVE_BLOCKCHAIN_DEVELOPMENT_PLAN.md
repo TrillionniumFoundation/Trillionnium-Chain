@@ -1,3 +1,185 @@
+**Public evaluation console boundaries, 2026-11-25 UTC — source fix, official scan pending:**
+
+The original CodeQL Python analyses found two paths from the verified development
+fee to console JSON: the evaluation verifier and archived consumer-ledger reader.
+Both commands now run every original byte, signature, amount and scope check,
+then construct an explicitly versioned public summary. The console exposes
+verification counts, field equality and the existing unverified business scope.
+It does not forward payment amounts, operation identifiers, subjects, receipt
+commitments or arbitrary nested evidence. Internal `verify()` and `compare()`
+contracts and the original archived v1 `READOUT.json` remain unchanged.
+
+Five new controls exercise real paired and historical CLI output, exact public
+schemas, top-level and nested disclosure canaries, and a tampered original fee
+that must fail before any stdout. Together with fourteen retained controls,
+all nineteen passed locally. The archived comparison still exactly reproduces
+its original private/internal report and still reports `same_released_pair=false`.
+See the [retained validation](../../evidence/public-evaluation-output-20261125/VALIDATION.json)
+and [public console contract](../../evidence/cell-consumer-ledger-cross-readback-20261123/README.md).
+
+This is new-source engineering work based on unique review commit
+`b8864b81aa60b149889e26012bbcd1ded2bbe528`. Its own official CodeQL and native
+checks remain required; the original findings and failed exporter are retained.
+The earlier review reused commit `18ccda7b583a96add9402a87117e3b687efc6a02`, whose
+official annotation check was associated with PR #996 rather than #997. The
+unique review commit corrected the association without changing the tree; it
+did not resolve the Python findings. No query suppression, security-policy
+change or fixture randomization is part of this fix. The eight Rust fixture
+warnings are separate evidence and are not declared resolved by this change.
+
+The evaluator source digest changes with this fix. Original frozen evaluator
+pins, E1-E6 inputs and budgets, the integration candidate #983 and historical
+failures are unchanged. No new training, adoption, payment or activation is
+performed or certified. Earlier plan sections below retain their original
+as-of observations; this section supplies the current security-review state.
+
+
+**Early bound-identity and noise engineering controls, 2026-11-25 UTC — HOLD:**
+
+The existing native fullpath job now observes the exact bound-identity namespace
+selector and the three noise-frame equality/cancellation controls after its
+original native builds. They reuse that runner and target directory with
+`--offline --locked` and the existing default feature profile. Cargo.lock and
+dependency declarations stay unchanged; no optional PQ feature is requested. The existing
+all-features workspace qualification and its complete test inventory remain
+required; this small execution does not replace them or run ignored learning
+fixtures. Original E1-E6 inputs, owners, budgets and Group rosters are unchanged.
+
+An independent `trnm-bound-primitive-engineering-v1` receipt retains actual
+source-before/source-after verification, Cargo.lock hashes, exact commands,
+full logs, command exits, named harness results, wall time, owner CPU and reaped
+child CPU. Compilation, source checking and failed commands remain in the
+observed cost. Command costs are nested inside the inclusive helper total;
+whole-host CPU is not asserted. The reader controls have a separate retained
+wall/user/system timer. Missing, zero-test, wrong-name, duplicate, ignored,
+malformed and unsuccessful harness results cannot pass.
+
+The added step has a five-minute limit, with two existing process-owner calls
+bounded to 120 seconds each plus the retained cleanup behavior. The job keeps
+its original 45-minute limit. An added-step failure is temporarily continued
+only so all original component collection steps can still run; a final
+unconditional gate requires that added step's actual outcome to be success.
+The two new script paths are also added to the existing PR trigger so a future
+reader-only change must execute its own controls. Removing those two paths and
+the two added steps yields the original workflow semantics exactly. No original
+command, pressure target, Host check, CPU policy or trigger was removed or relaxed.
+The new Python reader controls passed 9/9 in 0.017 seconds; actual
+Rust execution is pending on the new CI source. Original failures and the
+same-commit #997 review-only scan remain separate observations, without branch
+movement, rerun, merge, activation or performance promotion.
+
+
+The first actual #996 native-fullpath job
+[139162640475](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45601893240/job/139162640475)
+failed at `cargo fmt --check`: the isolated capsule had formatted the new module
+with edition 2024, while this workspace declares edition 2021. The follow-up
+changes only the single import ordering line requested by that real CI diff.
+The 116 Python component-reader controls passed; Clippy, native tests and the
+collector did not execute. The later missing collector file is a secondary
+failure, not separate evidence of a native regression. Preserve this original
+failure in the [format observation](../../evidence/w1-noise-frame-20261125/native-format-failure-18cc.json).
+New formatting/native execution remains pending; #997 continues scanning its
+original unmodified `18ccda7b583a96add9402a87117e3b687efc6a02` source.
+
+
+**W1 per-expansion noise framing, 2026-11-25 UTC — HOLD:**
+
+Prepare the exact 66-byte `noise` hash frame once per expansion in the default
+full-limb replay path. Only the four counter bytes change between iterations.
+Each original Noise callback still runs before hashing all 66 bytes, and the
+counter cap, rejection sampling, output words, cancellation result, dynamic
+Host checks, CPU accounting, public deadline and 4-second confirmation target
+remain unchanged. The scalar and other retained reference paths keep the
+original generic framed hash. No hash state, computed result or authority is
+cached across callbacks or invocations.
+
+Three new Rust controls compare the original hash domain and length framing,
+complete outputs and callback sequences (including the fixed 128-counter
+refusal), and cancellation at every observed noise boundary followed by a fresh
+retry. Their execution is pending. An isolated engineering capsule with exact
+`sha2 = 0.10.9` and lockfile SHA-256
+`de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5`
+did not reach Rust compilation: the first attempt hit its dependency-acquisition
+timeout after 60.008960125 seconds including cleanup; the second offline attempt
+failed in 0.047445084 seconds because locked `libc 0.2.191` was absent. A separately
+bounded request for only that official crate timed out after receiving
+220643 of 855401 bytes and used 10.074985083 seconds. The partial download was
+not accepted into the cache, checksum verification was not reached, and no
+third test command was started. All three failures remain failures; their
+cumulative measured wall time is 70.131390292 seconds within the separately
+authorized 90-second engineering bound. The first attempt's CPU cost was not
+measured and remains unknown.
+
+The engineering capsule is not the repository Cargo graph or an original E1-E6
+qualification. No original budget, frozen source, test roster, Host check or
+pressure criterion was changed. This patch has no measured performance claim;
+the original 16-worker 0/1 timely-confirmation result and pending native
+integration gates remain open. The existing #983 integration candidate remains
+the route to main; any additional main-base Draft is review-only.
+
+
+Retained attempt records: [engineering attempts](../../evidence/w1-noise-frame-20261125/engineering-attempts.json).
+
+
+**Original four-second pressure failure readback, 2026-11-25 — HOLD:**
+
+The retained ARM original-source job
+[139117638615](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923716/job/139117638615)
+at `11d4bbe356331ef533d662ef4080a096ed20c8b1` compiled and returned all five
+named native calls, but its confirmation gate failed. Artifact `15010597984`
+retains the original confirmation JSON SHA-256
+`4f6cf81efc482e6433c70feba35028d8ca600d51f1e34a07be2de759c7565d4c`.
+The baseline confirmed one transaction in 1,808,336,328 ns. Under 16 workers,
+all seven signed submissions returned by 1,196,601,697 ns; five independent
+history pages replayed, and the sixth W1 replay returned
+`PUBLIC_REQUEST_DEADLINE` at 4,000,846,761 ns. Final confirmation was never
+entered, so the original four-second result remains zero of one.
+
+The native confirmation-interval overlap counter is zero when no confirmation
+stamp exists. The v2 readback now separately emits
+`public-v3-business-window-attack-overlap-v1` from actual retained caller
+intervals, bounded by the original business start and four-second window.
+The original failed artifact has 482 recorded submitted calls and 480 positive
+intersections with that window. The original counter, failure, hashes and
+confirmation denominator remain unchanged. Missing worker/call lists, statuses
+or clocks keep the exact recorded count unknown; exhausted and zero-width
+records cannot establish positive overlap, and late calls cannot extend the
+window. This is caller timing, not receiver execution or successful adoption.
+
+Six additional offline controls and the full 184-test driver suite passed.
+Only already retained artifacts were read: no native campaign, compilation or
+frozen E1–E6 budget was restarted. No quota, Host check, request deadline,
+acceptance gate, source identity or production authority is changed.
+**CodeQL empty-source availability observation, 2026-11-25 — HOLD:**
+
+The read-only exporter observed 39 empty exact-source API snapshots for
+PR #992 at `11d4bbe356331ef533d662ef4080a096ed20c8b1` in
+[run 45588923372](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923372).
+Its retained head, base and ordered prospective-merge identities were correct.
+The current repository default setup is configured, while the stacked base is
+an unprotected non-default branch. GitHub's documented
+[default-setup triggers](https://docs.github.com/en/code-security/concepts/code-scanning/setup-types)
+do not schedule that PR scan.
+
+After an empty exact-source snapshot, the exporter now retains the current PR,
+repository default branch, exact base-branch commit/protection and default-setup
+configuration. A confirmed uncovered base ends the export with `complete=false`
+and an explicit availability error, instead of repeating the same empty poll.
+The optional default-setup endpoint requires Administration read access: its
+HTTP 403/404 is retained as UNKNOWN and the exporter continues under the original
+deadline without inferring an uncovered trigger. Required analyses/checks API
+permission failures, malformed metadata and moved source remain errors. Covered
+bases continue waiting under the existing deadline, advanced analyses remain
+supported when default setup is not configured, and already available exact
+analyses do not depend on the current trigger configuration. No token permissions
+are added. This observation does not claim that a historical scan was or was not
+scheduled.
+
+The independently retained local SARIF workflow still supplies its own immutable
+head/merge analysis artifacts for review. Its `upload: never` results do not
+satisfy the Code Scanning API export contract or the official PR security gate.
+No query, branch protection, alert disposition, wait budget or security verdict
+is changed. The original failed export and all partial observations remain.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 
@@ -15797,3 +15979,50 @@ own final gate and archive readbacks.
 See [the exact continuation evidence](../../evidence/branch-consolidation-20261114/continuation-20261115-cache/README.md)
 for native receipts, per-call costs, independent review, failed/corrected binding
 observations, complete branch maps and source identities.
+
+### 2026-11-24 bound paired learning identity continuation
+
+Continue the existing #990 paired-consumer/evaluation stack. A new explicit
+`prepare-bound` entry creates `trnm-isolated-bound-paired-evaluation-request-v2`
+and the matching v2 delivery namespace. The complete Hepta loop identity is
+inside ADMISSION.json, whose exact bytes remain the native reservation's request
+commitment. It fixes the original study/admission/freeze, one ordinary causal-LM
+family, parent/candidate, exposure, model runtime, routing and evaluation panel,
+plus Hepta implementation bytes, interpreter bytes and installed dependency
+versions. Chain evaluator source hashes are additionally committed by v2 terms.
+Both implementation identities are checked before and after actual evaluation.
+
+The existing original intake, exposure/catalog, retention, independent cold arms,
+answer regrading and native payment checks remain. The new native
+`funded_bound_paired_loop_reopens_paid_native_operation` case explicitly selects
+`prepare-bound` and a fresh development namespace; the three original cases keep
+their v1 entries. Like the original externally provisioned cases, the new case
+requires exact private materials and is not executed by the ordinary unit run.
+It must be run explicitly on a fresh engineering or authorized owner capture
+before asserting any new native v2 evaluation payment. There is no new payment
+execution, production activation or useful-work reward in this source increment.
+
+The independent Python reader requires a pinned consumer readback and the same
+v2 identity before comparing it to a replayed native development evaluation. An
+old v1 paid evaluation cannot acquire v2 consumer identity after the fact.
+Equality still grants no live consumer, independent business-effect, settlement,
+learning-reward or consensus authority. Installed package versions are not a
+complete runtime byte closure: `runtime_closure_complete` remains false. Missing
+training/search/distribution/third-party costs remain unknown; neither elapsed
+stage sums nor evaluation charges establish adopted improvements per total cost.
+
+The focused command is `PYTHONPATH=scripts python3 -m unittest
+scripts/test_dev_loop_identity.py scripts/test_dev_circuit_evaluation.py
+scripts/test_dev_intake_evaluation.py -v`. It retains the historical paid-case
+and NoUpdate controls and adds identity retargeting, runtime/source mismatch,
+preflight-before-reservation refusal and v1-to-v2 promotion controls. Original
+service/protocol gates, fixed resource budgets and all qualification flags remain
+unchanged. The cross-user human experiment and full Q24 lifecycle remain open.
+
+The [actual cross-repository preflight evidence](../../evidence/bound-learning-preflight-20261124/README_ZH.md)
+now retains the missing-catalog refusal and a separate fresh engineering
+admission over existing weights and an unchanged registered catalog. Original
+`prepare-bound` and network-isolated preflight passed, including live identity
+and source checks; no reservation was created. All 368 original files are
+preserved with hashes. This adds no training, model forward, human authorization,
+payment or qualification; the native funded v2 case remains a separate gate.

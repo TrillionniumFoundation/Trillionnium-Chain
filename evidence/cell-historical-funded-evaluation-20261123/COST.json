@@ -1,0 +1,1 @@
+{"cpu_ns":16205516000,"cpu_scope":"getrusage waited subprocess and reaped descendants","evaluated_examples":4,"schema":"trnm-isolated-historical-evaluation-cost-v1","wall_ns":14655941764,"work":{"candidate":{"input_tokens":145,"model_calls":2,"output_tokens":62},"parent":{"input_tokens":145,"model_calls":2,"output_tokens":4}}}
