@@ -1,0 +1,1201 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_sqlite_projection
+fn f0(in:readbuf,mem:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(in:readbuf,mem:mutbuf,unused:mutbuf)
+  cap:usize = buffer.len(mem)
+  need:usize = const() {"value":1048576}
+  exact:bool = compare.eq(cap,need)
+  branch exact classify(in,mem) bad()
+block classify(a:readbuf,m:mutbuf)
+  phase_at:u64 = const() {"value":0}
+  phase:u64 = call(m,phase_at) {"function":"cp_get"}
+  z:u64 = const() {"value":0}
+  fresh:bool = compare.eq(phase,z)
+  branch fresh init(a,m) response(a,m,phase)
+block init(src:readbuf,st:mutbuf)
+  n:usize = buffer.len(src)
+  minp:usize = const() {"value":129}
+  maxp:usize = const() {"value":640}
+  pl:bool = compare.ge(n,minp)
+  ph:bool = compare.le(n,maxp)
+  okp:bool = bool.and(pl,ph)
+  branch okp open(src,st,n) bad()
+block open(os:readbuf,om:mutbuf,ol:usize)
+  pre:u64 = const() {"value":128}
+  zero:u64 = const() {"value":0}
+  expected:u64 = const() {"value":1800}
+  _expected:u64 = call(os,zero,om,expected,pre) {"function":"cp_copy"}
+  olen:u64 = int.cast(ol) {"mode":"wrap"}
+  pathlen:u64 = int.sub.wrap(olen,pre)
+  flags:u64 = const() {"value":16777217}
+  put_atflags:u64 = const() {"value":256}
+  _putflags:u64 = call(om,put_atflags,flags) {"function":"cp_put"}
+  put_atplen:u64 = const() {"value":264}
+  _putplen:u64 = call(om,put_atplen,pathlen) {"function":"cp_put"}
+  payload:u64 = const() {"value":272}
+  _path:u64 = call(os,pre,om,payload,pathlen) {"function":"cp_copy"}
+  base:u64 = const() {"value":4096}
+  put_atbase:u64 = const() {"value":56}
+  _putbase:u64 = call(om,put_atbase,base) {"function":"cp_put"}
+  over:u64 = const() {"value":16}
+  open_size:u64 = int.add.wrap(pathlen,over)
+  open_phase:u64 = const() {"value":1}
+  open_op:u64 = const() {"value":2}
+  open_code:u32 = call(om,open_phase,open_op,open_size) {"function":"sr_issue"}
+  ret(open_code)
+block response(r:readbuf,s:mutbuf,p:u64)
+  len:usize = buffer.len(r)
+  minimum:usize = const() {"value":24}
+  room:bool = compare.ge(len,minimum)
+  branch room d1(r,s,p,len) bad()
+block d1(r1:readbuf,m1:mutbuf,p1:u64,n1:usize)
+  ph1:u64 = const() {"value":1}
+  is1:bool = compare.eq(p1,ph1)
+  branch is1 a1(r1,m1,n1) d2(r1,m1,p1,n1)
+block d2(r2:readbuf,m2:mutbuf,p2:u64,n2:usize)
+  ph2:u64 = const() {"value":2}
+  is2:bool = compare.eq(p2,ph2)
+  branch is2 a2(r2,m2,n2) d3(r2,m2,p2,n2)
+block d3(r3:readbuf,m3:mutbuf,p3:u64,n3:usize)
+  ph3:u64 = const() {"value":3}
+  is3:bool = compare.eq(p3,ph3)
+  branch is3 a3(r3,m3,n3) d4(r3,m3,p3,n3)
+block d4(r4:readbuf,m4:mutbuf,p4:u64,n4:usize)
+  ph4:u64 = const() {"value":4}
+  is4:bool = compare.eq(p4,ph4)
+  branch is4 a4(r4,m4,n4) d5(r4,m4,p4,n4)
+block d5(r5:readbuf,m5:mutbuf,p5:u64,n5:usize)
+  ph5:u64 = const() {"value":5}
+  is5:bool = compare.eq(p5,ph5)
+  branch is5 a5(r5,m5,n5) d6(r5,m5,p5,n5)
+block d6(r6:readbuf,m6:mutbuf,p6:u64,n6:usize)
+  ph6:u64 = const() {"value":6}
+  is6:bool = compare.eq(p6,ph6)
+  branch is6 a6(r6,m6,n6) d7(r6,m6,p6,n6)
+block d7(r7:readbuf,m7:mutbuf,p7:u64,n7:usize)
+  ph7:u64 = const() {"value":7}
+  is7:bool = compare.eq(p7,ph7)
+  branch is7 a7(r7,m7,n7) d8(r7,m7,p7,n7)
+block d8(r8:readbuf,m8:mutbuf,p8:u64,n8:usize)
+  ph8:u64 = const() {"value":8}
+  is8:bool = compare.eq(p8,ph8)
+  branch is8 a8(r8,m8,n8) d9(r8,m8,p8,n8)
+block d9(r9:readbuf,m9:mutbuf,p9:u64,n9:usize)
+  ph9:u64 = const() {"value":9}
+  is9:bool = compare.eq(p9,ph9)
+  branch is9 a9(r9,m9,n9) d10(r9,m9,p9,n9)
+block d10(r10:readbuf,m10:mutbuf,p10:u64,n10:usize)
+  ph10:u64 = const() {"value":10}
+  is10:bool = compare.eq(p10,ph10)
+  branch is10 a10(r10,m10,n10) d11(r10,m10,p10,n10)
+block d11(r11:readbuf,m11:mutbuf,p11:u64,n11:usize)
+  ph11:u64 = const() {"value":11}
+  is11:bool = compare.eq(p11,ph11)
+  branch is11 a11(r11,m11,n11) d12(r11,m11,p11,n11)
+block d12(r12:readbuf,m12:mutbuf,p12:u64,n12:usize)
+  ph12:u64 = const() {"value":12}
+  is12:bool = compare.eq(p12,ph12)
+  branch is12 a12(r12,m12,n12) d13(r12,m12,p12,n12)
+block d13(r13:readbuf,m13:mutbuf,p13:u64,n13:usize)
+  ph13:u64 = const() {"value":13}
+  is13:bool = compare.eq(p13,ph13)
+  branch is13 a13(r13,m13,n13) d14(r13,m13,p13,n13)
+block d14(r14:readbuf,m14:mutbuf,p14:u64,n14:usize)
+  ph14:u64 = const() {"value":14}
+  is14:bool = compare.eq(p14,ph14)
+  branch is14 a14(r14,m14,n14) d15(r14,m14,p14,n14)
+block d15(r15:readbuf,m15:mutbuf,p15:u64,n15:usize)
+  ph15:u64 = const() {"value":15}
+  is15:bool = compare.eq(p15,ph15)
+  branch is15 a15(r15,m15,n15) d16(r15,m15,p15,n15)
+block d16(r16:readbuf,m16:mutbuf,p16:u64,n16:usize)
+  ph16:u64 = const() {"value":16}
+  is16:bool = compare.eq(p16,ph16)
+  branch is16 a16(r16,m16,n16) d17(r16,m16,p16,n16)
+block d17(r17:readbuf,m17:mutbuf,p17:u64,n17:usize)
+  ph17:u64 = const() {"value":17}
+  is17:bool = compare.eq(p17,ph17)
+  branch is17 a17(r17,m17,n17) d18(r17,m17,p17,n17)
+block d18(r18:readbuf,m18:mutbuf,p18:u64,n18:usize)
+  ph18:u64 = const() {"value":18}
+  is18:bool = compare.eq(p18,ph18)
+  branch is18 a18(r18,m18,n18) bad()
+block a1(ar1:readbuf,am1:mutbuf,an1:usize)
+  want1:u64 = const() {"value":0}
+  valid1:bool = call(ar1,an1,want1) {"function":"sr_status"}
+  branch valid1 b1(ar1,am1) bad()
+block b1(br1:readbuf,bm1:mutbuf)
+  sv1_at:u64 = const() {"value":8}
+  sv1:u64 = call(br1,sv1_at) {"function":"tr_read"}
+  put_at1:u64 = const() {"value":32}
+  _put1:u64 = call(bm1,put_at1,sv1) {"function":"cp_put"}
+  out_begin:u32 = call(bm1) {"function":"sr_begin"}
+  ret(out_begin)
+block a2(ar2:readbuf,am2:mutbuf,an2:usize)
+  want2:u64 = const() {"value":0}
+  valid2:bool = call(ar2,an2,want2) {"function":"sr_status"}
+  branch valid2 b2(ar2,am2) bad()
+block b2(br2:readbuf,bm2:mutbuf)
+  sv2_at:u64 = const() {"value":8}
+  sv2:u64 = call(br2,sv2_at) {"function":"tr_read"}
+  put_at2:u64 = const() {"value":40}
+  _put2:u64 = call(bm2,put_at2,sv2) {"function":"cp_put"}
+  h2_at:u64 = const() {"value":40}
+  h2:u64 = call(bm2,h2_at) {"function":"cp_get"}
+  np2:u64 = const() {"value":3}
+  po2:u64 = const() {"value":7}
+  issue2:u32 = call(bm2,np2,po2,h2) {"function":"sr_handle"}
+  ret(issue2)
+block a3(ar3:readbuf,am3:mutbuf,an3:usize)
+  want3:u64 = const() {"value":101}
+  valid3:bool = call(ar3,an3,want3) {"function":"sr_status"}
+  branch valid3 b3(ar3,am3) bad()
+block b3(br3:readbuf,bm3:mutbuf)
+  h3_at:u64 = const() {"value":40}
+  h3:u64 = call(bm3,h3_at) {"function":"cp_get"}
+  np3:u64 = const() {"value":4}
+  po3:u64 = const() {"value":9}
+  issue3:u32 = call(bm3,np3,po3,h3) {"function":"sr_handle"}
+  ret(issue3)
+block a4(ar4:readbuf,am4:mutbuf,an4:usize)
+  want4:u64 = const() {"value":0}
+  valid4:bool = call(ar4,an4,want4) {"function":"sr_status"}
+  branch valid4 b4(ar4,am4) bad()
+block b4(br4:readbuf,bm4:mutbuf)
+  out_meta:u32 = call(bm4) {"function":"sr_meta"}
+  ret(out_meta)
+block a5(ar5:readbuf,am5:mutbuf,an5:usize)
+  want5:u64 = const() {"value":0}
+  valid5:bool = call(ar5,an5,want5) {"function":"sr_status"}
+  branch valid5 b5(ar5,am5) bad()
+block b5(br5:readbuf,bm5:mutbuf)
+  sv5_at:u64 = const() {"value":8}
+  sv5:u64 = call(br5,sv5_at) {"function":"tr_read"}
+  put_at5:u64 = const() {"value":40}
+  _put5:u64 = call(bm5,put_at5,sv5) {"function":"cp_put"}
+  h5_at:u64 = const() {"value":40}
+  h5:u64 = call(bm5,h5_at) {"function":"cp_get"}
+  np5:u64 = const() {"value":6}
+  po5:u64 = const() {"value":7}
+  issue5:u32 = call(bm5,np5,po5,h5) {"function":"sr_handle"}
+  ret(issue5)
+block a6(ar6:readbuf,am6:mutbuf,an6:usize)
+  want6:u64 = const() {"value":100}
+  valid6:bool = call(ar6,an6,want6) {"function":"sr_status"}
+  branch valid6 b6(ar6,am6) bad()
+block b6(br6:readbuf,bm6:mutbuf)
+  cp6:u64 = const() {"value":7}
+  ci6:u64 = const() {"value":1}
+  issue6:u32 = call(bm6,cp6,ci6) {"function":"sr_col"}
+  ret(issue6)
+block a7(ar7:readbuf,am7:mutbuf,an7:usize)
+  int_tag:u64 = const() {"value":1}
+  ivalid:bool = call(ar7,an7,int_tag) {"function":"sr_value"}
+  ibytes:usize = const() {"value":32}
+  iexact:bool = compare.eq(an7,ibytes)
+  in_ok:bool = bool.and(ivalid,iexact)
+  branch in_ok count(ar7,am7) bad()
+block count(cr:readbuf,cm:mutbuf)
+  count_at:u64 = const() {"value":24}
+  count:u64 = call(cr,count_at) {"function":"tr_read"}
+  max_count:u64 = const() {"value":100000000}
+  cvalid:bool = compare.le(count,max_count)
+  branch cvalid save_count(cm,count) bad()
+block save_count(sc:mutbuf,sv:u64)
+  put_atcount:u64 = const() {"value":72}
+  _putcount:u64 = call(sc,put_atcount,sv) {"function":"cp_put"}
+  colp:u64 = const() {"value":8}
+  coli:u64 = const() {"value":0}
+  schedule:u32 = call(sc,colp,coli) {"function":"sr_col"}
+  ret(schedule)
+block a8(ar8:readbuf,am8:mutbuf,an8:usize)
+  metatype:u64 = const() {"value":3}
+  validmeta:bool = call(ar8,an8,metatype) {"function":"sr_value"}
+  metasize:usize = const() {"value":513}
+  mexact:bool = compare.eq(an8,metasize)
+  mgood:bool = bool.and(validmeta,mexact)
+  branch mgood expect(ar8,am8,an8) bad()
+block expect(er:readbuf,em:mutbuf,en:usize)
+  matches:bool = call(er,em) {"function":"sr_expected"}
+  branch matches hold_meta(er,em,en) bad()
+block hold_meta(mr:readbuf,mm:mutbuf,mn:usize)
+  copied:bool = call(mr,mm,mn) {"function":"sr_append"}
+  branch copied finish_meta(mm) bad()
+block finish_meta(fm:mutbuf)
+  mh_at:u64 = const() {"value":40}
+  mh:u64 = call(fm,mh_at) {"function":"cp_get"}
+  mp:u64 = const() {"value":9}
+  ms:u64 = const() {"value":7}
+  mi:u32 = call(fm,mp,ms,mh) {"function":"sr_handle"}
+  ret(mi)
+block a9(ar9:readbuf,am9:mutbuf,an9:usize)
+  want9:u64 = const() {"value":101}
+  valid9:bool = call(ar9,an9,want9) {"function":"sr_status"}
+  branch valid9 b9(ar9,am9) bad()
+block b9(br9:readbuf,bm9:mutbuf)
+  h9_at:u64 = const() {"value":40}
+  h9:u64 = call(bm9,h9_at) {"function":"cp_get"}
+  np9:u64 = const() {"value":10}
+  po9:u64 = const() {"value":9}
+  issue9:u32 = call(bm9,np9,po9,h9) {"function":"sr_handle"}
+  ret(issue9)
+block a10(ar10:readbuf,am10:mutbuf,an10:usize)
+  want10:u64 = const() {"value":0}
+  valid10:bool = call(ar10,an10,want10) {"function":"sr_status"}
+  branch valid10 b10(ar10,am10) bad()
+block b10(br10:readbuf,bm10:mutbuf)
+  out_rows:u32 = call(bm10) {"function":"sr_rows"}
+  ret(out_rows)
+block a11(ar11:readbuf,am11:mutbuf,an11:usize)
+  want11:u64 = const() {"value":0}
+  valid11:bool = call(ar11,an11,want11) {"function":"sr_status"}
+  branch valid11 b11(ar11,am11) bad()
+block b11(br11:readbuf,bm11:mutbuf)
+  sv11_at:u64 = const() {"value":8}
+  sv11:u64 = call(br11,sv11_at) {"function":"tr_read"}
+  put_at11:u64 = const() {"value":40}
+  _put11:u64 = call(bm11,put_at11,sv11) {"function":"cp_put"}
+  h11_at:u64 = const() {"value":40}
+  h11:u64 = call(bm11,h11_at) {"function":"cp_get"}
+  np11:u64 = const() {"value":12}
+  po11:u64 = const() {"value":7}
+  issue11:u32 = call(bm11,np11,po11,h11) {"function":"sr_handle"}
+  ret(issue11)
+block a12(ar12:readbuf,am12:mutbuf,an12:usize)
+  rowcode:u64 = const() {"value":100}
+  has:bool = call(ar12,an12,rowcode) {"function":"sr_status"}
+  branch has row_before(am12) row_end(ar12,am12,an12)
+block row_before(rb:mutbuf)
+  seen_at:u64 = const() {"value":64}
+  seen:u64 = call(rb,seen_at) {"function":"cp_get"}
+  want_at:u64 = const() {"value":72}
+  want:u64 = call(rb,want_at) {"function":"cp_get"}
+  less:bool = compare.lt(seen,want)
+  branch less get_row(rb) bad()
+block get_row(gr:mutbuf)
+  grp:u64 = const() {"value":13}
+  gri:u64 = const() {"value":0}
+  greq:u32 = call(gr,grp,gri) {"function":"sr_col"}
+  ret(greq)
+block row_end(rer:readbuf,rem:mutbuf,ren:usize)
+  done:u64 = const() {"value":101}
+  ended:bool = call(rer,ren,done) {"function":"sr_status"}
+  total_at:u64 = const() {"value":64}
+  total:u64 = call(rem,total_at) {"function":"cp_get"}
+  needed_at:u64 = const() {"value":72}
+  needed:u64 = call(rem,needed_at) {"function":"cp_get"}
+  match_count:bool = compare.eq(total,needed)
+  all:bool = bool.and(ended,match_count)
+  branch all finalize_rows(rem) bad()
+block finalize_rows(fr:mutbuf)
+  frh_at:u64 = const() {"value":40}
+  frh:u64 = call(fr,frh_at) {"function":"cp_get"}
+  frp:u64 = const() {"value":14}
+  fro:u64 = const() {"value":9}
+  freq:u32 = call(fr,frp,fro,frh) {"function":"sr_handle"}
+  ret(freq)
+block a13(ar13:readbuf,am13:mutbuf,an13:usize)
+  rowtype:u64 = const() {"value":3}
+  validrow:bool = call(ar13,an13,rowtype) {"function":"sr_value"}
+  branch validrow hold_row(ar13,am13,an13) bad()
+block hold_row(hr:readbuf,hm:mutbuf,hn:usize)
+  kept:bool = call(hr,hm,hn) {"function":"sr_append"}
+  branch kept next_row(hm) bad()
+block next_row(nm:mutbuf)
+  before_at:u64 = const() {"value":64}
+  before:u64 = call(nm,before_at) {"function":"cp_get"}
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(before,one)
+  put_atseen:u64 = const() {"value":64}
+  _putseen:u64 = call(nm,put_atseen,next) {"function":"cp_put"}
+  nst_at:u64 = const() {"value":40}
+  nst:u64 = call(nm,nst_at) {"function":"cp_get"}
+  nrph:u64 = const() {"value":12}
+  nrop:u64 = const() {"value":7}
+  nreq:u32 = call(nm,nrph,nrop,nst) {"function":"sr_handle"}
+  ret(nreq)
+block a14(ar14:readbuf,am14:mutbuf,an14:usize)
+  want14:u64 = const() {"value":0}
+  valid14:bool = call(ar14,an14,want14) {"function":"sr_status"}
+  branch valid14 b14(ar14,am14) bad()
+block b14(br14:readbuf,bm14:mutbuf)
+  out_commit:u32 = call(bm14) {"function":"sr_commit"}
+  ret(out_commit)
+block a15(ar15:readbuf,am15:mutbuf,an15:usize)
+  want15:u64 = const() {"value":0}
+  valid15:bool = call(ar15,an15,want15) {"function":"sr_status"}
+  branch valid15 b15(ar15,am15) bad()
+block b15(br15:readbuf,bm15:mutbuf)
+  sv15_at:u64 = const() {"value":8}
+  sv15:u64 = call(br15,sv15_at) {"function":"tr_read"}
+  put_at15:u64 = const() {"value":40}
+  _put15:u64 = call(bm15,put_at15,sv15) {"function":"cp_put"}
+  h15_at:u64 = const() {"value":40}
+  h15:u64 = call(bm15,h15_at) {"function":"cp_get"}
+  np15:u64 = const() {"value":16}
+  po15:u64 = const() {"value":7}
+  issue15:u32 = call(bm15,np15,po15,h15) {"function":"sr_handle"}
+  ret(issue15)
+block a16(ar16:readbuf,am16:mutbuf,an16:usize)
+  want16:u64 = const() {"value":101}
+  valid16:bool = call(ar16,an16,want16) {"function":"sr_status"}
+  branch valid16 b16(ar16,am16) bad()
+block b16(br16:readbuf,bm16:mutbuf)
+  h16_at:u64 = const() {"value":40}
+  h16:u64 = call(bm16,h16_at) {"function":"cp_get"}
+  np16:u64 = const() {"value":17}
+  po16:u64 = const() {"value":9}
+  issue16:u32 = call(bm16,np16,po16,h16) {"function":"sr_handle"}
+  ret(issue16)
+block a17(ar17:readbuf,am17:mutbuf,an17:usize)
+  want17:u64 = const() {"value":0}
+  valid17:bool = call(ar17,an17,want17) {"function":"sr_status"}
+  branch valid17 b17(ar17,am17) bad()
+block b17(br17:readbuf,bm17:mutbuf)
+  h17_at:u64 = const() {"value":32}
+  h17:u64 = call(bm17,h17_at) {"function":"cp_get"}
+  np17:u64 = const() {"value":18}
+  po17:u64 = const() {"value":3}
+  issue17:u32 = call(bm17,np17,po17,h17) {"function":"sr_handle"}
+  ret(issue17)
+block a18(ar18:readbuf,am18:mutbuf,an18:usize)
+  want18:u64 = const() {"value":0}
+  valid18:bool = call(ar18,an18,want18) {"function":"sr_status"}
+  branch valid18 b18(ar18,am18) bad()
+block b18(br18:readbuf,bm18:mutbuf)
+  endpos_at:u64 = const() {"value":56}
+  endpos:u64 = call(bm18,endpos_at) {"function":"cp_get"}
+  startpos:u64 = const() {"value":4096}
+  result_len:u64 = int.sub.wrap(endpos,startpos)
+  put_atpublish:u64 = const() {"value":24}
+  _putpublish:u64 = call(bm18,put_atpublish,result_len) {"function":"cp_put"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block bad()
+  refuse:u32 = const() {"value":100}
+  ret(refuse)
+end
+
+fn sr_begin(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  dbh_at:u64 = const() {"value":32}
+  dbh:u64 = call(m,dbh_at) {"function":"cp_get"}
+  put_atdbh:u64 = const() {"value":256}
+  _putdbh:u64 = call(m,put_atdbh,dbh) {"function":"cp_put"}
+  n:u64 = const() {"value":14}
+  put_atn:u64 = const() {"value":264}
+  _putn:u64 = call(m,put_atn,n) {"function":"cp_put"}
+  word0:u64 = const() {"value":4991149807642297666}
+  put_atsql0:u64 = const() {"value":272}
+  _putsql0:u64 = call(m,put_atsql0,word0) {"function":"cp_put"}
+  word8:u64 = const() {"value":75064524555590}
+  put_atsql8:u64 = const() {"value":280}
+  _putsql8:u64 = call(m,put_atsql8,word8) {"function":"cp_put"}
+  p:u64 = const() {"value":2}
+  o:u64 = const() {"value":5}
+  nreq:u64 = const() {"value":30}
+  q:u32 = call(m,p,o,nreq) {"function":"sr_issue"}
+  ret(q)
+end
+
+fn sr_meta(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  dbh_at:u64 = const() {"value":32}
+  dbh:u64 = call(m,dbh_at) {"function":"cp_get"}
+  put_atdbh:u64 = const() {"value":256}
+  _putdbh:u64 = call(m,put_atdbh,dbh) {"function":"cp_put"}
+  n:u64 = const() {"value":1338}
+  put_atn:u64 = const() {"value":264}
+  _putn:u64 = call(m,put_atn,n) {"function":"cp_put"}
+  word0:u64 = const() {"value":7503089627101414739}
+  put_atsql0:u64 = const() {"value":272}
+  _putsql0:u64 = call(m,put_atsql0,word0) {"function":"cp_put"}
+  word8:u64 = const() {"value":6876540799407388773}
+  put_atsql8:u64 = const() {"value":280}
+  _putsql8:u64 = call(m,put_atsql8,word8) {"function":"cp_put"}
+  word16:u64 = const() {"value":8946810173719538020}
+  put_atsql16:u64 = const() {"value":288}
+  _putsql16:u64 = call(m,put_atsql16,word16) {"function":"cp_put"}
+  word24:u64 = const() {"value":7307227268084541308}
+  put_atsql24:u64 = const() {"value":296}
+  _putsql24:u64 = call(m,put_atsql24,word24) {"function":"cp_put"}
+  word32:u64 = const() {"value":7020378893159966840}
+  put_atsql32:u64 = const() {"value":304}
+  _putsql32:u64 = call(m,put_atsql32,word32) {"function":"cp_put"}
+  word40:u64 = const() {"value":2987139332217332831}
+  put_atsql40:u64 = const() {"value":312}
+  _putsql40:u64 = call(m,put_atsql40,word40) {"function":"cp_put"}
+  word48:u64 = const() {"value":7529029184977861756}
+  put_atsql48:u64 = const() {"value":320}
+  _putsql48:u64 = call(m,put_atsql48,word48) {"function":"cp_put"}
+  word56:u64 = const() {"value":7165919078633732197}
+  put_atsql56:u64 = const() {"value":328}
+  _putsql56:u64 = call(m,put_atsql56,word56) {"function":"cp_put"}
+  word64:u64 = const() {"value":8675468274863136613}
+  put_atsql64:u64 = const() {"value":336}
+  _putsql64:u64 = call(m,put_atsql64,word64) {"function":"cp_put"}
+  word72:u64 = const() {"value":8391162025545588596}
+  put_atsql72:u64 = const() {"value":344}
+  _putsql72:u64 = call(m,put_atsql72,word72) {"function":"cp_put"}
+  word80:u64 = const() {"value":8970087688539241513}
+  put_atsql80:u64 = const() {"value":352}
+  _putsql80:u64 = call(m,put_atsql80,word80) {"function":"cp_put"}
+  word88:u64 = const() {"value":7454127484774671720}
+  put_atsql88:u64 = const() {"value":360}
+  _putsql88:u64 = call(m,put_atsql88,word88) {"function":"cp_put"}
+  word96:u64 = const() {"value":7310589519816782949}
+  put_atsql96:u64 = const() {"value":368}
+  _putsql96:u64 = call(m,put_atsql96,word96) {"function":"cp_put"}
+  word104:u64 = const() {"value":8315165989362693240}
+  put_atsql104:u64 = const() {"value":376}
+  _putsql104:u64 = call(m,put_atsql104,word104) {"function":"cp_put"}
+  word112:u64 = const() {"value":8946183126061427060}
+  put_atsql112:u64 = const() {"value":384}
+  _putsql112:u64 = call(m,put_atsql112,word112) {"function":"cp_put"}
+  word120:u64 = const() {"value":8606222931072477308}
+  put_atsql120:u64 = const() {"value":392}
+  _putsql120:u64 = call(m,put_atsql120,word120) {"function":"cp_put"}
+  word128:u64 = const() {"value":8391162025545588595}
+  put_atsql128:u64 = const() {"value":400}
+  _putsql128:u64 = call(m,put_atsql128,word128) {"function":"cp_put"}
+  word136:u64 = const() {"value":8970087688539241513}
+  put_atsql136:u64 = const() {"value":408}
+  _putsql136:u64 = call(m,put_atsql136,word136) {"function":"cp_put"}
+  word144:u64 = const() {"value":8386112019089614184}
+  put_atsql144:u64 = const() {"value":416}
+  _putsql144:u64 = call(m,put_atsql144,word144) {"function":"cp_put"}
+  word152:u64 = const() {"value":8946810156708159333}
+  put_atsql152:u64 = const() {"value":424}
+  _putsql152:u64 = call(m,put_atsql152,word152) {"function":"cp_put"}
+  word160:u64 = const() {"value":8246227790391289724}
+  put_atsql160:u64 = const() {"value":432}
+  _putsql160:u64 = call(m,put_atsql160,word160) {"function":"cp_put"}
+  word168:u64 = const() {"value":3469222142429916777}
+  put_atsql168:u64 = const() {"value":440}
+  _putsql168:u64 = call(m,put_atsql168,word168) {"function":"cp_put"}
+  word176:u64 = const() {"value":8606222946892527153}
+  put_atsql176:u64 = const() {"value":448}
+  _putsql176:u64 = call(m,put_atsql176,word176) {"function":"cp_put"}
+  word184:u64 = const() {"value":8946810152513659743}
+  put_atsql184:u64 = const() {"value":456}
+  _putsql184:u64 = call(m,put_atsql184,word184) {"function":"cp_put"}
+  word192:u64 = const() {"value":8246227790391289724}
+  put_atsql192:u64 = const() {"value":464}
+  _putsql192:u64 = call(m,put_atsql192,word192) {"function":"cp_put"}
+  word200:u64 = const() {"value":3469222142429916777}
+  put_atsql200:u64 = const() {"value":472}
+  _putsql200:u64 = call(m,put_atsql200,word200) {"function":"cp_put"}
+  word208:u64 = const() {"value":7954877756156163633}
+  put_atsql208:u64 = const() {"value":480}
+  _putsql208:u64 = call(m,put_atsql208,word208) {"function":"cp_put"}
+  word216:u64 = const() {"value":2985446101708010085}
+  put_atsql216:u64 = const() {"value":488}
+  _putsql216:u64 = call(m,put_atsql216,word216) {"function":"cp_put"}
+  word224:u64 = const() {"value":7529029184977861756}
+  put_atsql224:u64 = const() {"value":496}
+  _putsql224:u64 = call(m,put_atsql224,word224) {"function":"cp_put"}
+  word232:u64 = const() {"value":6878249393165203557}
+  put_atsql232:u64 = const() {"value":504}
+  _putsql232:u64 = call(m,put_atsql232,word232) {"function":"cp_put"}
+  word240:u64 = const() {"value":7594299743823226212}
+  put_atsql240:u64 = const() {"value":512}
+  _putsql240:u64 = call(m,put_atsql240,word240) {"function":"cp_put"}
+  word248:u64 = const() {"value":7168741224356210023}
+  put_atsql248:u64 = const() {"value":520}
+  _putsql248:u64 = call(m,put_atsql248,word248) {"function":"cp_put"}
+  word256:u64 = const() {"value":3182127599404081512}
+  put_atsql256:u64 = const() {"value":528}
+  _putsql256:u64 = call(m,put_atsql256,word256) {"function":"cp_put"}
+  word264:u64 = const() {"value":7959390389041327986}
+  put_atsql264:u64 = const() {"value":536}
+  _putsql264:u64 = call(m,put_atsql264,word264) {"function":"cp_put"}
+  word272:u64 = const() {"value":7863369952466968692}
+  put_atsql272:u64 = const() {"value":544}
+  _putsql272:u64 = call(m,put_atsql272,word272) {"function":"cp_put"}
+  word280:u64 = const() {"value":7957695015158966121}
+  put_atsql280:u64 = const() {"value":552}
+  _putsql280:u64 = call(m,put_atsql280,word280) {"function":"cp_put"}
+  word288:u64 = const() {"value":7881125025584342111}
+  put_atsql288:u64 = const() {"value":560}
+  _putsql288:u64 = call(m,put_atsql288,word288) {"function":"cp_put"}
+  word296:u64 = const() {"value":6278071165518967909}
+  put_atsql296:u64 = const() {"value":568}
+  _putsql296:u64 = call(m,put_atsql296,word296) {"function":"cp_put"}
+  word304:u64 = const() {"value":7956016799165859144}
+  put_atsql304:u64 = const() {"value":576}
+  _putsql304:u64 = call(m,put_atsql304,word304) {"function":"cp_put"}
+  word312:u64 = const() {"value":3548113506411048039}
+  put_atsql312:u64 = const() {"value":584}
+  _putsql312:u64 = call(m,put_atsql312,word312) {"function":"cp_put"}
+  word320:u64 = const() {"value":8104636686363672864}
+  put_atsql320:u64 = const() {"value":592}
+  _putsql320:u64 = call(m,put_atsql320,word320) {"function":"cp_put"}
+  word328:u64 = const() {"value":7953757645882945381}
+  put_atsql328:u64 = const() {"value":600}
+  _putsql328:u64 = call(m,put_atsql328,word328) {"function":"cp_put"}
+  word336:u64 = const() {"value":2987139332217332831}
+  put_atsql336:u64 = const() {"value":608}
+  _putsql336:u64 = call(m,put_atsql336,word336) {"function":"cp_put"}
+  word344:u64 = const() {"value":2316928764004673341}
+  put_atsql344:u64 = const() {"value":616}
+  _putsql344:u64 = call(m,put_atsql344,word344) {"function":"cp_put"}
+  word352:u64 = const() {"value":7453005948416970305}
+  put_atsql352:u64 = const() {"value":624}
+  _putsql352:u64 = call(m,put_atsql352,word352) {"function":"cp_put"}
+  word360:u64 = const() {"value":6876540799407384692}
+  put_atsql360:u64 = const() {"value":632}
+  _putsql360:u64 = call(m,put_atsql360,word360) {"function":"cp_put"}
+  word368:u64 = const() {"value":4407181749330078052}
+  put_atsql368:u64 = const() {"value":640}
+  _putsql368:u64 = call(m,put_atsql368,word368) {"function":"cp_put"}
+  word376:u64 = const() {"value":8367763210545148467}
+  put_atsql376:u64 = const() {"value":648}
+  _putsql376:u64 = call(m,put_atsql376,word376) {"function":"cp_put"}
+  word384:u64 = const() {"value":7166115852497285241}
+  put_atsql384:u64 = const() {"value":656}
+  _putsql384:u64 = call(m,put_atsql384,word384) {"function":"cp_put"}
+  word392:u64 = const() {"value":7451597419280426344}
+  put_atsql392:u64 = const() {"value":664}
+  _putsql392:u64 = call(m,put_atsql392,word392) {"function":"cp_put"}
+  word400:u64 = const() {"value":7809847847455847269}
+  put_atsql400:u64 = const() {"value":672}
+  _putsql400:u64 = call(m,put_atsql400,word400) {"function":"cp_put"}
+  word408:u64 = const() {"value":2325069349249311343}
+  put_atsql408:u64 = const() {"value":680}
+  _putsql408:u64 = call(m,put_atsql408,word408) {"function":"cp_put"}
+  word416:u64 = const() {"value":8297997162590922092}
+  put_atsql416:u64 = const() {"value":688}
+  _putsql416:u64 = call(m,put_atsql416,word416) {"function":"cp_put"}
+  word424:u64 = const() {"value":7594299743705327715}
+  put_atsql424:u64 = const() {"value":696}
+  _putsql424:u64 = call(m,put_atsql424,word424) {"function":"cp_put"}
+  word432:u64 = const() {"value":3617302173965313383}
+  put_atsql432:u64 = const() {"value":704}
+  _putsql432:u64 = call(m,put_atsql432,word432) {"function":"cp_put"}
+  word440:u64 = const() {"value":8104636686363672864}
+  put_atsql440:u64 = const() {"value":712}
+  _putsql440:u64 = call(m,put_atsql440,word440) {"function":"cp_put"}
+  word448:u64 = const() {"value":8247620832988655461}
+  put_atsql448:u64 = const() {"value":720}
+  _putsql448:u64 = call(m,put_atsql448,word448) {"function":"cp_put"}
+  word456:u64 = const() {"value":7310589519816779107}
+  put_atsql456:u64 = const() {"value":728}
+  _putsql456:u64 = call(m,put_atsql456,word456) {"function":"cp_put"}
+  word464:u64 = const() {"value":8315165989362693240}
+  put_atsql464:u64 = const() {"value":736}
+  _putsql464:u64 = call(m,put_atsql464,word464) {"function":"cp_put"}
+  word472:u64 = const() {"value":7093007106952735092}
+  put_atsql472:u64 = const() {"value":744}
+  _putsql472:u64 = call(m,put_atsql472,word472) {"function":"cp_put"}
+  word480:u64 = const() {"value":7308251773058228263}
+  put_atsql480:u64 = const() {"value":752}
+  _putsql480:u64 = call(m,put_atsql480,word480) {"function":"cp_put"}
+  word488:u64 = const() {"value":8462108842240796526}
+  put_atsql488:u64 = const() {"value":760}
+  _putsql488:u64 = call(m,put_atsql488,word488) {"function":"cp_put"}
+  word496:u64 = const() {"value":8389765628430738290}
+  put_atsql496:u64 = const() {"value":768}
+  _putsql496:u64 = call(m,put_atsql496,word496) {"function":"cp_put"}
+  word504:u64 = const() {"value":7306924800251033701}
+  put_atsql504:u64 = const() {"value":776}
+  _putsql504:u64 = call(m,put_atsql504,word504) {"function":"cp_put"}
+  word512:u64 = const() {"value":4692806007370904691}
+  put_atsql512:u64 = const() {"value":784}
+  _putsql512:u64 = call(m,put_atsql512,word512) {"function":"cp_put"}
+  word520:u64 = const() {"value":8026945577799402574}
+  put_atsql520:u64 = const() {"value":792}
+  _putsql520:u64 = call(m,put_atsql520,word520) {"function":"cp_put"}
+  word528:u64 = const() {"value":8387223622006351974}
+  put_atsql528:u64 = const() {"value":800}
+  _putsql528:u64 = call(m,put_atsql528,word528) {"function":"cp_put"}
+  word536:u64 = const() {"value":8392569456348324703}
+  put_atsql536:u64 = const() {"value":808}
+  _putsql536:u64 = call(m,put_atsql536,word536) {"function":"cp_put"}
+  word544:u64 = const() {"value":2987139332217332831}
+  put_atsql544:u64 = const() {"value":816}
+  _putsql544:u64 = call(m,put_atsql544,word544) {"function":"cp_put"}
+  word552:u64 = const() {"value":2316928764004673341}
+  put_atsql552:u64 = const() {"value":824}
+  _putsql552:u64 = call(m,put_atsql552,word552) {"function":"cp_put"}
+  word560:u64 = const() {"value":7453005948416970305}
+  put_atsql560:u64 = const() {"value":832}
+  _putsql560:u64 = call(m,put_atsql560,word560) {"function":"cp_put"}
+  word568:u64 = const() {"value":7306934683318118516}
+  put_atsql568:u64 = const() {"value":840}
+  _putsql568:u64 = call(m,put_atsql568,word568) {"function":"cp_put"}
+  word576:u64 = const() {"value":8675468274863136628}
+  put_atsql576:u64 = const() {"value":848}
+  _putsql576:u64 = call(m,put_atsql576,word576) {"function":"cp_put"}
+  word584:u64 = const() {"value":8391162025545588596}
+  put_atsql584:u64 = const() {"value":856}
+  _putsql584:u64 = call(m,put_atsql584,word584) {"function":"cp_put"}
+  word592:u64 = const() {"value":4921943049299508521}
+  put_atsql592:u64 = const() {"value":864}
+  _putsql592:u64 = call(m,put_atsql592,word592) {"function":"cp_put"}
+  word600:u64 = const() {"value":2911136690610992160}
+  put_atsql600:u64 = const() {"value":872}
+  _putsql600:u64 = call(m,put_atsql600,word600) {"function":"cp_put"}
+  word608:u64 = const() {"value":7451597419583074162}
+  put_atsql608:u64 = const() {"value":880}
+  _putsql608:u64 = call(m,put_atsql608,word608) {"function":"cp_put"}
+  word616:u64 = const() {"value":7809847847455847269}
+  put_atsql616:u64 = const() {"value":888}
+  _putsql616:u64 = call(m,put_atsql616,word616) {"function":"cp_put"}
+  word624:u64 = const() {"value":2325069349249311343}
+  put_atsql624:u64 = const() {"value":896}
+  _putsql624:u64 = call(m,put_atsql624,word624) {"function":"cp_put"}
+  word632:u64 = const() {"value":8225939568552994156}
+  put_atsql632:u64 = const() {"value":904}
+  _putsql632:u64 = call(m,put_atsql632,word632) {"function":"cp_put"}
+  word640:u64 = const() {"value":7306924800250967919}
+  put_atsql640:u64 = const() {"value":912}
+  _putsql640:u64 = call(m,put_atsql640,word640) {"function":"cp_put"}
+  word648:u64 = const() {"value":4692806007370904691}
+  put_atsql648:u64 = const() {"value":920}
+  _putsql648:u64 = call(m,put_atsql648,word648) {"function":"cp_put"}
+  word656:u64 = const() {"value":8026945577799402574}
+  put_atsql656:u64 = const() {"value":928}
+  _putsql656:u64 = call(m,put_atsql656,word656) {"function":"cp_put"}
+  word664:u64 = const() {"value":6874028368165283942}
+  put_atsql664:u64 = const() {"value":936}
+  _putsql664:u64 = call(m,put_atsql664,word664) {"function":"cp_put"}
+  word672:u64 = const() {"value":7072688988065066866}
+  put_atsql672:u64 = const() {"value":944}
+  _putsql672:u64 = call(m,put_atsql672,word672) {"function":"cp_put"}
+  word680:u64 = const() {"value":4921943049118052204}
+  put_atsql680:u64 = const() {"value":952}
+  _putsql680:u64 = call(m,put_atsql680,word680) {"function":"cp_put"}
+  word688:u64 = const() {"value":2911705146677619744}
+  put_atsql688:u64 = const() {"value":960}
+  _putsql688:u64 = call(m,put_atsql688,word688) {"function":"cp_put"}
+  word696:u64 = const() {"value":8030585974903895155}
+  put_atsql696:u64 = const() {"value":968}
+  _putsql696:u64 = call(m,put_atsql696,word696) {"function":"cp_put"}
+  word704:u64 = const() {"value":4692806007370904687}
+  put_atsql704:u64 = const() {"value":976}
+  _putsql704:u64 = call(m,put_atsql704,word704) {"function":"cp_put"}
+  word712:u64 = const() {"value":8026945577799402574}
+  put_atsql712:u64 = const() {"value":984}
+  _putsql712:u64 = call(m,put_atsql712,word712) {"function":"cp_put"}
+  word720:u64 = const() {"value":7232627565484845158}
+  put_atsql720:u64 = const() {"value":992}
+  _putsql720:u64 = call(m,put_atsql720,word720) {"function":"cp_put"}
+  word728:u64 = const() {"value":7451597419280886885}
+  put_atsql728:u64 = const() {"value":1000}
+  _putsql728:u64 = call(m,put_atsql728,word728) {"function":"cp_put"}
+  word736:u64 = const() {"value":7809847847455847269}
+  put_atsql736:u64 = const() {"value":1008}
+  _putsql736:u64 = call(m,put_atsql736,word736) {"function":"cp_put"}
+  word744:u64 = const() {"value":2325069349249311343}
+  put_atsql744:u64 = const() {"value":1016}
+  _putsql744:u64 = call(m,put_atsql744,word744) {"function":"cp_put"}
+  word752:u64 = const() {"value":7793594004325426540}
+  put_atsql752:u64 = const() {"value":1024}
+  _putsql752:u64 = call(m,put_atsql752,word752) {"function":"cp_put"}
+  word760:u64 = const() {"value":8389191687656993633}
+  put_atsql760:u64 = const() {"value":1032}
+  _putsql760:u64 = call(m,put_atsql760,word760) {"function":"cp_put"}
+  word768:u64 = const() {"value":8391162025545588577}
+  put_atsql768:u64 = const() {"value":1040}
+  _putsql768:u64 = call(m,put_atsql768,word768) {"function":"cp_put"}
+  word776:u64 = const() {"value":4921943049299508521}
+  put_atsql776:u64 = const() {"value":1048}
+  _putsql776:u64 = call(m,put_atsql776,word776) {"function":"cp_put"}
+  word784:u64 = const() {"value":6874009749498589984}
+  put_atsql784:u64 = const() {"value":1056}
+  _putsql784:u64 = call(m,put_atsql784,word784) {"function":"cp_put"}
+  word792:u64 = const() {"value":6878254908042014563}
+  put_atsql792:u64 = const() {"value":1064}
+  _putsql792:u64 = call(m,put_atsql792,word792) {"function":"cp_put"}
+  word800:u64 = const() {"value":4484587367925508452}
+  put_atsql800:u64 = const() {"value":1072}
+  _putsql800:u64 = call(m,put_atsql800,word800) {"function":"cp_put"}
+  word808:u64 = const() {"value":7093007108164183418}
+  put_atsql808:u64 = const() {"value":1080}
+  _putsql808:u64 = call(m,put_atsql808,word808) {"function":"cp_put"}
+  word816:u64 = const() {"value":4921943049148445480}
+  put_atsql816:u64 = const() {"value":1088}
+  _putsql816:u64 = call(m,put_atsql816,word816) {"function":"cp_put"}
+  word824:u64 = const() {"value":6878234025876616224}
+  put_atsql824:u64 = const() {"value":1096}
+  _putsql824:u64 = call(m,put_atsql824,word824) {"function":"cp_put"}
+  word832:u64 = const() {"value":6878254908042014563}
+  put_atsql832:u64 = const() {"value":1104}
+  _putsql832:u64 = call(m,put_atsql832,word832) {"function":"cp_put"}
+  word840:u64 = const() {"value":4484587367925508452}
+  put_atsql840:u64 = const() {"value":1112}
+  _putsql840:u64 = call(m,put_atsql840,word840) {"function":"cp_put"}
+  word848:u64 = const() {"value":7093007108164183418}
+  put_atsql848:u64 = const() {"value":1120}
+  _putsql848:u64 = call(m,put_atsql848,word848) {"function":"cp_put"}
+  word856:u64 = const() {"value":4921943049148445480}
+  put_atsql856:u64 = const() {"value":1128}
+  _putsql856:u64 = call(m,put_atsql856,word856) {"function":"cp_put"}
+  word864:u64 = const() {"value":2911136690610992160}
+  put_atsql864:u64 = const() {"value":1136}
+  _putsql864:u64 = call(m,put_atsql864,word864) {"function":"cp_put"}
+  word872:u64 = const() {"value":7959390389041327986}
+  put_atsql872:u64 = const() {"value":1144}
+  _putsql872:u64 = call(m,put_atsql872,word872) {"function":"cp_put"}
+  word880:u64 = const() {"value":7310589493038098804}
+  put_atsql880:u64 = const() {"value":1152}
+  _putsql880:u64 = call(m,put_atsql880,word880) {"function":"cp_put"}
+  word888:u64 = const() {"value":4921943049119098215}
+  put_atsql888:u64 = const() {"value":1160}
+  _putsql888:u64 = call(m,put_atsql888,word888) {"function":"cp_put"}
+  word896:u64 = const() {"value":8462091486529286688}
+  put_atsql896:u64 = const() {"value":1168}
+  _putsql896:u64 = call(m,put_atsql896,word896) {"function":"cp_put"}
+  word904:u64 = const() {"value":5638823600002593902}
+  put_atsql904:u64 = const() {"value":1176}
+  _putsql904:u64 = call(m,put_atsql904,word904) {"function":"cp_put"}
+  word912:u64 = const() {"value":7381229848031928388}
+  put_atsql912:u64 = const() {"value":1184}
+  _putsql912:u64 = call(m,put_atsql912,word912) {"function":"cp_put"}
+  word920:u64 = const() {"value":8386109761109976872}
+  put_atsql920:u64 = const() {"value":1192}
+  _putsql920:u64 = call(m,put_atsql920,word920) {"function":"cp_put"}
+  word928:u64 = const() {"value":7955933360368283497}
+  put_atsql928:u64 = const() {"value":1200}
+  _putsql928:u64 = call(m,put_atsql928,word928) {"function":"cp_put"}
+  word936:u64 = const() {"value":4692794184001086836}
+  put_atsql936:u64 = const() {"value":1208}
+  _putsql936:u64 = call(m,put_atsql936,word936) {"function":"cp_put"}
+  word944:u64 = const() {"value":8243116074772481102}
+  put_atsql944:u64 = const() {"value":1216}
+  _putsql944:u64 = call(m,put_atsql944,word944) {"function":"cp_put"}
+  word952:u64 = const() {"value":3476003131436397665}
+  put_atsql952:u64 = const() {"value":1224}
+  _putsql952:u64 = call(m,put_atsql952,word952) {"function":"cp_put"}
+  word960:u64 = const() {"value":4995380530734055712}
+  put_atsql960:u64 = const() {"value":1232}
+  _putsql960:u64 = call(m,put_atsql960,word960) {"function":"cp_put"}
+  word968:u64 = const() {"value":8102082521120064844}
+  put_atsql968:u64 = const() {"value":1240}
+  _putsql968:u64 = call(m,put_atsql968,word968) {"function":"cp_put"}
+  word976:u64 = const() {"value":7957695015157983596}
+  put_atsql976:u64 = const() {"value":1248}
+  _putsql976:u64 = call(m,put_atsql976,word976) {"function":"cp_put"}
+  word984:u64 = const() {"value":5570761725225232735}
+  put_atsql984:u64 = const() {"value":1256}
+  _putsql984:u64 = call(m,put_atsql984,word984) {"function":"cp_put"}
+  word992:u64 = const() {"value":6872894797128036384}
+  put_atsql992:u64 = const() {"value":1264}
+  _putsql992:u64 = call(m,put_atsql992,word992) {"function":"cp_put"}
+  word1000:u64 = const() {"value":8386093285582598241}
+  put_atsql1000:u64 = const() {"value":1272}
+  _putsql1000:u64 = call(m,put_atsql1000,word1000) {"function":"cp_put"}
+  word1008:u64 = const() {"value":4407164114094157673}
+  put_atsql1008:u64 = const() {"value":1280}
+  _putsql1008:u64 = call(m,put_atsql1008,word1008) {"function":"cp_put"}
+  word1016:u64 = const() {"value":4051330045739873329}
+  put_atsql1016:u64 = const() {"value":1288}
+  _putsql1016:u64 = call(m,put_atsql1016,word1016) {"function":"cp_put"}
+  word1024:u64 = const() {"value":2891386063662626359}
+  put_atsql1024:u64 = const() {"value":1296}
+  _putsql1024:u64 = call(m,put_atsql1024,word1024) {"function":"cp_put"}
+  word1032:u64 = const() {"value":8439838349594477907}
+  put_atsql1032:u64 = const() {"value":1304}
+  _putsql1032:u64 = call(m,put_atsql1032,word1032) {"function":"cp_put"}
+  word1040:u64 = const() {"value":8318823020788606323}
+  put_atsql1040:u64 = const() {"value":1312}
+  _putsql1040:u64 = call(m,put_atsql1040,word1040) {"function":"cp_put"}
+  word1048:u64 = const() {"value":5570761725225889641}
+  put_atsql1048:u64 = const() {"value":1320}
+  _putsql1048:u64 = call(m,put_atsql1048,word1048) {"function":"cp_put"}
+  word1056:u64 = const() {"value":6872894797128036384}
+  put_atsql1056:u64 = const() {"value":1328}
+  _putsql1056:u64 = call(m,put_atsql1056,word1056) {"function":"cp_put"}
+  word1064:u64 = const() {"value":8243124845284782965}
+  put_atsql1064:u64 = const() {"value":1336}
+  _putsql1064:u64 = call(m,put_atsql1064,word1064) {"function":"cp_put"}
+  word1072:u64 = const() {"value":2319702531228264819}
+  put_atsql1072:u64 = const() {"value":1344}
+  _putsql1072:u64 = call(m,put_atsql1072,word1072) {"function":"cp_put"}
+  word1080:u64 = const() {"value":5495890352080703041}
+  put_atsql1080:u64 = const() {"value":1352}
+  _putsql1080:u64 = call(m,put_atsql1080,word1080) {"function":"cp_put"}
+  word1088:u64 = const() {"value":8247620794198541125}
+  put_atsql1088:u64 = const() {"value":1360}
+  _putsql1088:u64 = call(m,put_atsql1088,word1088) {"function":"cp_put"}
+  word1096:u64 = const() {"value":7306087011044843886}
+  put_atsql1096:u64 = const() {"value":1368}
+  _putsql1096:u64 = call(m,put_atsql1096,word1096) {"function":"cp_put"}
+  word1104:u64 = const() {"value":8246126434130740768}
+  put_atsql1104:u64 = const() {"value":1376}
+  _putsql1104:u64 = call(m,put_atsql1104,word1104) {"function":"cp_put"}
+  word1112:u64 = const() {"value":8462099182741448545}
+  put_atsql1112:u64 = const() {"value":1384}
+  _putsql1112:u64 = call(m,put_atsql1112,word1112) {"function":"cp_put"}
+  word1120:u64 = const() {"value":7237123382815321714}
+  put_atsql1120:u64 = const() {"value":1392}
+  _putsql1120:u64 = call(m,put_atsql1120,word1120) {"function":"cp_put"}
+  word1128:u64 = const() {"value":2840752629351262565}
+  put_atsql1128:u64 = const() {"value":1400}
+  _putsql1128:u64 = call(m,put_atsql1128,word1128) {"function":"cp_put"}
+  word1136:u64 = const() {"value":4995380530734055712}
+  put_atsql1136:u64 = const() {"value":1408}
+  _putsql1136:u64 = call(m,put_atsql1136,word1136) {"function":"cp_put"}
+  word1144:u64 = const() {"value":8462091215356249420}
+  put_atsql1144:u64 = const() {"value":1416}
+  _putsql1144:u64 = call(m,put_atsql1144,word1144) {"function":"cp_put"}
+  word1152:u64 = const() {"value":5928461320652878958}
+  put_atsql1152:u64 = const() {"value":1424}
+  _putsql1152:u64 = call(m,put_atsql1152,word1152) {"function":"cp_put"}
+  word1160:u64 = const() {"value":8388355015472860495}
+  put_atsql1160:u64 = const() {"value":1432}
+  _putsql1160:u64 = call(m,put_atsql1160,word1160) {"function":"cp_put"}
+  word1168:u64 = const() {"value":8243122731876179813}
+  put_atsql1168:u64 = const() {"value":1440}
+  _putsql1168:u64 = call(m,put_atsql1168,word1168) {"function":"cp_put"}
+  word1176:u64 = const() {"value":7935418763078817568}
+  put_atsql1176:u64 = const() {"value":1448}
+  _putsql1176:u64 = call(m,put_atsql1176,word1176) {"function":"cp_put"}
+  word1184:u64 = const() {"value":2329574104226950497}
+  put_atsql1184:u64 = const() {"value":1456}
+  _putsql1184:u64 = call(m,put_atsql1184,word1184) {"function":"cp_put"}
+  word1192:u64 = const() {"value":8174920768162580812}
+  put_atsql1192:u64 = const() {"value":1464}
+  _putsql1192:u64 = call(m,put_atsql1192,word1192) {"function":"cp_put"}
+  word1200:u64 = const() {"value":2965379971301009772}
+  put_atsql1200:u64 = const() {"value":1472}
+  _putsql1200:u64 = call(m,put_atsql1200,word1200) {"function":"cp_put"}
+  word1208:u64 = const() {"value":2891386063662625341}
+  put_atsql1208:u64 = const() {"value":1480}
+  _putsql1208:u64 = call(m,put_atsql1208,word1208) {"function":"cp_put"}
+  word1216:u64 = const() {"value":7142801656911775059}
+  put_atsql1216:u64 = const() {"value":1488}
+  _putsql1216:u64 = call(m,put_atsql1216,word1216) {"function":"cp_put"}
+  word1224:u64 = const() {"value":2317429836499285359}
+  put_atsql1224:u64 = const() {"value":1496}
+  _putsql1224:u64 = call(m,put_atsql1224,word1224) {"function":"cp_put"}
+  word1232:u64 = const() {"value":7814153411037712966}
+  put_atsql1232:u64 = const() {"value":1504}
+  _putsql1232:u64 = call(m,put_atsql1232,word1232) {"function":"cp_put"}
+  word1240:u64 = const() {"value":8391157653101180009}
+  put_atsql1240:u64 = const() {"value":1512}
+  _putsql1240:u64 = call(m,put_atsql1240,word1240) {"function":"cp_put"}
+  word1248:u64 = const() {"value":4995131113709007461}
+  put_atsql1248:u64 = const() {"value":1520}
+  _putsql1248:u64 = call(m,put_atsql1248,word1248) {"function":"cp_put"}
+  word1256:u64 = const() {"value":8369725938379355168}
+  put_atsql1256:u64 = const() {"value":1528}
+  _putsql1256:u64 = call(m,put_atsql1256,word1256) {"function":"cp_put"}
+  word1264:u64 = const() {"value":5638823562021986913}
+  put_atsql1264:u64 = const() {"value":1536}
+  _putsql1264:u64 = call(m,put_atsql1264,word1264) {"function":"cp_put"}
+  word1272:u64 = const() {"value":5269323084483928132}
+  put_atsql1272:u64 = const() {"value":1544}
+  _putsql1272:u64 = call(m,put_atsql1272,word1272) {"function":"cp_put"}
+  word1280:u64 = const() {"value":8243673560454275150}
+  put_atsql1280:u64 = const() {"value":1552}
+  _putsql1280:u64 = call(m,put_atsql1280,word1280) {"function":"cp_put"}
+  word1288:u64 = const() {"value":7306069423422010465}
+  put_atsql1288:u64 = const() {"value":1560}
+  _putsql1288:u64 = call(m,put_atsql1288,word1288) {"function":"cp_put"}
+  word1296:u64 = const() {"value":7022349239403508844}
+  put_atsql1296:u64 = const() {"value":1568}
+  _putsql1296:u64 = call(m,put_atsql1296,word1296) {"function":"cp_put"}
+  word1304:u64 = const() {"value":7596771217033426527}
+  put_atsql1304:u64 = const() {"value":1576}
+  _putsql1304:u64 = call(m,put_atsql1304,word1304) {"function":"cp_put"}
+  word1312:u64 = const() {"value":6876556179756118631}
+  put_atsql1312:u64 = const() {"value":1584}
+  _putsql1312:u64 = call(m,put_atsql1312,word1312) {"function":"cp_put"}
+  word1320:u64 = const() {"value":8030585957724743012}
+  put_atsql1320:u64 = const() {"value":1592}
+  _putsql1320:u64 = call(m,put_atsql1320,word1320) {"function":"cp_put"}
+  word1328:u64 = const() {"value":2965944918698062711}
+  put_atsql1328:u64 = const() {"value":1600}
+  _putsql1328:u64 = call(m,put_atsql1328,word1328) {"function":"cp_put"}
+  word1336:u64 = const() {"value":12861}
+  put_atsql1336:u64 = const() {"value":1608}
+  _putsql1336:u64 = call(m,put_atsql1336,word1336) {"function":"cp_put"}
+  p:u64 = const() {"value":5}
+  o:u64 = const() {"value":5}
+  nreq:u64 = const() {"value":1354}
+  q:u32 = call(m,p,o,nreq) {"function":"sr_issue"}
+  ret(q)
+end
+
+fn sr_rows(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  dbh_at:u64 = const() {"value":32}
+  dbh:u64 = call(m,dbh_at) {"function":"cp_get"}
+  put_atdbh:u64 = const() {"value":256}
+  _putdbh:u64 = call(m,put_atdbh,dbh) {"function":"cp_put"}
+  n:u64 = const() {"value":321}
+  put_atn:u64 = const() {"value":264}
+  _putn:u64 = call(m,put_atn,n) {"function":"cp_put"}
+  word0:u64 = const() {"value":4836958647698081107}
+  put_atsql0:u64 = const() {"value":272}
+  _putsql0:u64 = call(m,put_atsql0,word0) {"function":"cp_put"}
+  word8:u64 = const() {"value":5639993647392183105}
+  put_atsql8:u64 = const() {"value":280}
+  _putsql8:u64 = call(m,put_atsql8,word8) {"function":"cp_put"}
+  word16:u64 = const() {"value":2911136690610992160}
+  put_atsql16:u64 = const() {"value":288}
+  _putsql16:u64 = call(m,put_atsql16,word16) {"function":"cp_put"}
+  word24:u64 = const() {"value":7161128523421016430}
+  put_atsql24:u64 = const() {"value":296}
+  _putsql24:u64 = call(m,put_atsql24,word24) {"function":"cp_put"}
+  word32:u64 = const() {"value":7093007106952735077}
+  put_atsql32:u64 = const() {"value":304}
+  _putsql32:u64 = call(m,put_atsql32,word32) {"function":"cp_put"}
+  word40:u64 = const() {"value":7308251773058228263}
+  put_atsql40:u64 = const() {"value":312}
+  _putsql40:u64 = call(m,put_atsql40,word40) {"function":"cp_put"}
+  word48:u64 = const() {"value":7881701942705284974}
+  put_atsql48:u64 = const() {"value":320}
+  _putsql48:u64 = call(m,put_atsql48,word48) {"function":"cp_put"}
+  word56:u64 = const() {"value":2317494960769758053}
+  put_atsql56:u64 = const() {"value":328}
+  _putsql56:u64 = call(m,put_atsql56,word56) {"function":"cp_put"}
+  word64:u64 = const() {"value":2327874221517325634}
+  put_atsql64:u64 = const() {"value":336}
+  _putsql64:u64 = call(m,put_atsql64,word64) {"function":"cp_put"}
+  word72:u64 = const() {"value":3616707453497974833}
+  put_atsql72:u64 = const() {"value":344}
+  _putsql72:u64 = call(m,put_atsql72,word72) {"function":"cp_put"}
+  word80:u64 = const() {"value":8751655453630472248}
+  put_atsql80:u64 = const() {"value":352}
+  _putsql80:u64 = call(m,put_atsql80,word80) {"function":"cp_put"}
+  word88:u64 = const() {"value":8747515672498496880}
+  put_atsql88:u64 = const() {"value":360}
+  _putsql88:u64 = call(m,put_atsql88,word88) {"function":"cp_put"}
+  word96:u64 = const() {"value":2837953226490723625}
+  put_atsql96:u64 = const() {"value":368}
+  _putsql96:u64 = call(m,put_atsql96,word96) {"function":"cp_put"}
+  word104:u64 = const() {"value":7954883202660581664}
+  put_atsql104:u64 = const() {"value":376}
+  _putsql104:u64 = call(m,put_atsql104,word104) {"function":"cp_put"}
+  word112:u64 = const() {"value":2988531338650874983}
+  put_atsql112:u64 = const() {"value":384}
+  _putsql112:u64 = call(m,put_atsql112,word112) {"function":"cp_put"}
+  word120:u64 = const() {"value":5639990349729710624}
+  put_atsql120:u64 = const() {"value":392}
+  _putsql120:u64 = call(m,put_atsql120,word120) {"function":"cp_put"}
+  word128:u64 = const() {"value":3900192380193616160}
+  put_atsql128:u64 = const() {"value":400}
+  _putsql128:u64 = call(m,put_atsql128,word128) {"function":"cp_put"}
+  word136:u64 = const() {"value":4921943049366615349}
+  put_atsql136:u64 = const() {"value":408}
+  _putsql136:u64 = call(m,put_atsql136,word136) {"function":"cp_put"}
+  word144:u64 = const() {"value":2911136690610992160}
+  put_atsql144:u64 = const() {"value":416}
+  _putsql144:u64 = call(m,put_atsql144,word144) {"function":"cp_put"}
+  word152:u64 = const() {"value":2827461656797012342}
+  put_atsql152:u64 = const() {"value":424}
+  _putsql152:u64 = call(m,put_atsql152,word152) {"function":"cp_put"}
+  word160:u64 = const() {"value":5638823561971854434}
+  put_atsql160:u64 = const() {"value":432}
+  _putsql160:u64 = call(m,put_atsql160,word160) {"function":"cp_put"}
+  word168:u64 = const() {"value":7526754601088589892}
+  put_atsql168:u64 = const() {"value":440}
+  _putsql168:u64 = call(m,put_atsql168,word168) {"function":"cp_put"}
+  word176:u64 = const() {"value":4335107671324718632}
+  put_atsql176:u64 = const() {"value":448}
+  _putsql176:u64 = call(m,put_atsql176,word176) {"function":"cp_put"}
+  word184:u64 = const() {"value":3544956566983029053}
+  put_atsql184:u64 = const() {"value":456}
+  _putsql184:u64 = call(m,put_atsql184,word184) {"function":"cp_put"}
+  word192:u64 = const() {"value":7503083038672429110}
+  put_atsql192:u64 = const() {"value":464}
+  _putsql192:u64 = call(m,put_atsql192,word192) {"function":"cp_put"}
+  word200:u64 = const() {"value":8315172552236890213}
+  put_atsql200:u64 = const() {"value":472}
+  _putsql200:u64 = call(m,put_atsql200,word200) {"function":"cp_put"}
+  word208:u64 = const() {"value":2845285581827826032}
+  put_atsql208:u64 = const() {"value":480}
+  _putsql208:u64 = call(m,put_atsql208,word208) {"function":"cp_put"}
+  word216:u64 = const() {"value":2916192258161911610}
+  put_atsql216:u64 = const() {"value":488}
+  _putsql216:u64 = call(m,put_atsql216,word216) {"function":"cp_put"}
+  word224:u64 = const() {"value":4190454851005146475}
+  put_atsql224:u64 = const() {"value":496}
+  _putsql224:u64 = call(m,put_atsql224,word224) {"function":"cp_put"}
+  word232:u64 = const() {"value":8514187472483941415}
+  put_atsql232:u64 = const() {"value":504}
+  _putsql232:u64 = call(m,put_atsql232,word232) {"function":"cp_put"}
+  word240:u64 = const() {"value":7168741224104684641}
+  put_atsql240:u64 = const() {"value":512}
+  _putsql240:u64 = call(m,put_atsql240,word240) {"function":"cp_put"}
+  word248:u64 = const() {"value":2317436470948946280}
+  put_atsql248:u64 = const() {"value":520}
+  _putsql248:u64 = call(m,put_atsql248,word248) {"function":"cp_put"}
+  word256:u64 = const() {"value":5500388420411935813}
+  put_atsql256:u64 = const() {"value":528}
+  _putsql256:u64 = call(m,put_atsql256,word256) {"function":"cp_put"}
+  word264:u64 = const() {"value":5928461437222854732}
+  put_atsql264:u64 = const() {"value":536}
+  _putsql264:u64 = call(m,put_atsql264,word264) {"function":"cp_put"}
+  word272:u64 = const() {"value":7021788471524085071}
+  put_atsql272:u64 = const() {"value":544}
+  _putsql272:u64 = call(m,put_atsql272,word272) {"function":"cp_put"}
+  word280:u64 = const() {"value":7810759489781459316}
+  put_atsql280:u64 = const() {"value":552}
+  _putsql280:u64 = call(m,put_atsql280,word280) {"function":"cp_put"}
+  word288:u64 = const() {"value":6877972376468808052}
+  put_atsql288:u64 = const() {"value":560}
+  _putsql288:u64 = call(m,put_atsql288,word288) {"function":"cp_put"}
+  word296:u64 = const() {"value":5928219604808642678}
+  put_atsql296:u64 = const() {"value":568}
+  _putsql296:u64 = call(m,put_atsql296,word296) {"function":"cp_put"}
+  word304:u64 = const() {"value":7308604895909200416}
+  put_atsql304:u64 = const() {"value":576}
+  _putsql304:u64 = call(m,put_atsql304,word304) {"function":"cp_put"}
+  word312:u64 = const() {"value":7307983634309410931}
+  put_atsql312:u64 = const() {"value":584}
+  _putsql312:u64 = call(m,put_atsql312,word312) {"function":"cp_put"}
+  word320:u64 = const() {"value":121}
+  put_atsql320:u64 = const() {"value":592}
+  _putsql320:u64 = call(m,put_atsql320,word320) {"function":"cp_put"}
+  p:u64 = const() {"value":11}
+  o:u64 = const() {"value":5}
+  nreq:u64 = const() {"value":337}
+  q:u32 = call(m,p,o,nreq) {"function":"sr_issue"}
+  ret(q)
+end
+
+fn sr_commit(m:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  dbh_at:u64 = const() {"value":32}
+  dbh:u64 = call(m,dbh_at) {"function":"cp_get"}
+  put_atdbh:u64 = const() {"value":256}
+  _putdbh:u64 = call(m,put_atdbh,dbh) {"function":"cp_put"}
+  n:u64 = const() {"value":6}
+  put_atn:u64 = const() {"value":264}
+  _putn:u64 = call(m,put_atn,n) {"function":"cp_put"}
+  word0:u64 = const() {"value":92673806257987}
+  put_atsql0:u64 = const() {"value":272}
+  _putsql0:u64 = call(m,put_atsql0,word0) {"function":"cp_put"}
+  p:u64 = const() {"value":15}
+  o:u64 = const() {"value":5}
+  nreq:u64 = const() {"value":22}
+  q:u32 = call(m,p,o,nreq) {"function":"sr_issue"}
+  ret(q)
+end
+fn sr_issue(s:mutbuf,p:u64,op:u64,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(s:mutbuf,p:u64,op:u64,n:u64)
+  phase:u64 = const() {"value":0}
+  operation:u64 = const() {"value":8}
+  request_size:u64 = const() {"value":16}
+  _phase:u64 = call(s,phase,p) {"function":"cp_put"}
+  _operation:u64 = call(s,operation,op) {"function":"cp_put"}
+  _size:u64 = call(s,request_size,n) {"function":"cp_put"}
+  scheduled:u32 = const() {"value":198}
+  ret(scheduled)
+end
+
+fn sr_handle(s:mutbuf,p:u64,op:u64,h:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(s:mutbuf,p:u64,op:u64,h:u64)
+  req:u64 = const() {"value":256}
+  _handle:u64 = call(s,req,h) {"function":"cp_put"}
+  width:u64 = const() {"value":8}
+  result:u32 = call(s,p,op,width) {"function":"sr_issue"}
+  ret(result)
+end
+
+fn sr_col(s:mutbuf,p:u64,column:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(s:mutbuf,p:u64,column:u64)
+  stmt_at:u64 = const() {"value":40}
+  stmt:u64 = call(s,stmt_at) {"function":"cp_get"}
+  field0:u64 = const() {"value":256}
+  field1:u64 = const() {"value":264}
+  _stmt:u64 = call(s,field0,stmt) {"function":"cp_put"}
+  _col:u64 = call(s,field1,column) {"function":"cp_put"}
+  op:u64 = const() {"value":8}
+  width:u64 = const() {"value":16}
+  result:u32 = call(s,p,op,width) {"function":"sr_issue"}
+  ret(result)
+end
+
+fn sr_status(r:readbuf,n:usize,want:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,n:usize,want:u64)
+  full:usize = const() {"value":24}
+  extent_ok:bool = compare.eq(n,full)
+  branch extent_ok code(r,want) fail()
+block code(in:readbuf,expected:u64)
+  start:u64 = const() {"value":0}
+  actual:u64 = call(in,start) {"function":"tr_read"}
+  matched:bool = compare.eq(actual,expected)
+  ret(matched)
+block fail()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end
+
+fn sr_value(r:readbuf,n:usize,kind:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,n:usize,kind:u64)
+  code_at:u64 = const() {"value":0}
+  type_at:u64 = const() {"value":8}
+  extent_at:u64 = const() {"value":16}
+  header:u64 = const() {"value":24}
+  actual:u64 = call(r,code_at) {"function":"tr_read"}
+  sqlite_type:u64 = call(r,type_at) {"function":"tr_read"}
+  extent:u64 = call(r,extent_at) {"function":"tr_read"}
+  available:u64 = int.cast(n) {"mode":"wrap"}
+  payload:u64 = int.sub.wrap(available,header)
+  okay:bool = compare.eq(actual,code_at)
+  typed:bool = compare.eq(sqlite_type,kind)
+  exact:bool = compare.eq(extent,payload)
+  typed_ok:bool = bool.and(okay,typed)
+  result:bool = bool.and(exact,typed_ok)
+  ret(result)
+end
+
+fn sr_expected(r:readbuf,s:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,s:mutbuf)
+  first_from:usize = const() {"value":24}
+  first_expected:usize = const() {"value":1800}
+  first_end:usize = const() {"value":1864}
+  first:bool = call(r,s,first_from,first_expected,first_end) {"function":"sr_match64"}
+  second_from:usize = const() {"value":89}
+  second_end:usize = const() {"value":1928}
+  second:bool = call(r,s,second_from,first_end,second_end) {"function":"sr_match64"}
+  result:bool = bool.and(first,second)
+  ret(result)
+end
+
+fn sr_match64(ir:readbuf,is:mutbuf,ifrom:usize,istart:usize,iend:usize) -> (bool) effects(read,write,trap) entry(entry)
+block entry(ir:readbuf,is:mutbuf,ifrom:usize,istart:usize,iend:usize)
+  jump loop(ir,is,ifrom,istart,iend)
+block loop(r:readbuf,s:mutbuf,from:usize,start:usize,end_at:usize)
+  actual:u8 = buffer.load(r,from)
+  expected:u8 = buffer.load(s,start)
+  match:bool = compare.eq(actual,expected)
+  branch match next(r,s,from,start,end_at) bad()
+block next(nr:readbuf,ns:mutbuf,nf:usize,nb:usize,ne:usize)
+  one:usize = const() {"value":1}
+  next_r:usize = int.add.wrap(nf,one)
+  next_s:usize = int.add.wrap(nb,one)
+  done:bool = compare.eq(next_s,ne)
+  branch done good() loop(nr,ns,next_r,next_s,ne)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn sr_append(r:readbuf,s:mutbuf,n:usize) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,s:mutbuf,n:usize)
+  source:u64 = const() {"value":24}
+  position:u64 = const() {"value":56}
+  next:u64 = call(s,position) {"function":"cp_get"}
+  width:u64 = int.cast(n) {"mode":"wrap"}
+  bytes:u64 = int.sub.wrap(width,source)
+  available:u64 = const() {"value":1048576}
+  remain:u64 = int.sub.wrap(available,next)
+  fits:bool = compare.le(bytes,remain)
+  branch fits copy(r,s,next,bytes,source,position) bad()
+block copy(cr:readbuf,cs:mutbuf,at:u64,cn:u64,src:u64,pos:u64)
+  _data:u64 = call(cr,src,cs,at,cn) {"function":"cp_copy"}
+  new:u64 = int.add.wrap(at,cn)
+  _end:u64 = call(cs,pos,new) {"function":"cp_put"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end

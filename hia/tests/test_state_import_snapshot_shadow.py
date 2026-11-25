@@ -45,6 +45,9 @@ def _build_original(directory):
         raise ValueError("Wrong original StateImport source or profile")
     [sqlite] = [e for e in events if e.get("reason") == "build-script-executed"
                 and e["package_id"].endswith("libsqlite3-sys@0.39.1")]
+    [source] = [e for e in events if e.get("reason") == "compiler-artifact"
+                and e["package_id"] == sqlite["package_id"] and e["target"]["name"] == "libsqlite3_sys"]
+    sqlite_dependency = unlinked_path(source["manifest_path"]).parent
     [sqlite_native] = sqlite["linked_paths"]
     if sqlite["linked_libs"] != ["static=sqlite3"] or not sqlite_native.startswith("native="):
         raise ValueError("Original StateImport must link its locked bundled SQLite")
@@ -55,7 +58,7 @@ def _build_original(directory):
     _run([rustc, "--edition=2024", "-O", "--extern", f"trnm_state_import={rust_artifact}",
           "-L", f"dependency={deps}", "-L", f"native={native_path}", str(ADAPTER), "-o", str(binary)],
          timeout=60)
-    return binary
+    return binary, sqlite_dependency
 
 
 def _digest(path):
@@ -67,7 +70,7 @@ def original_snapshots():
     before = tuple(_digest(p) for p in bound)
     with tempfile.TemporaryDirectory(prefix="trnm-state-import-snapshot-") as tmp:
         directory = Path(tmp)
-        binary = _build_original(directory)
+        binary, _ = _build_original(directory)
         snapshots = []
         def cold_export(db, count, generation):
             database = _digest(db)

@@ -1,5 +1,21 @@
 {
   "includes": {
+    "platform/state_import_sqlite/cold_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      }
+    ],
     "src/state/integer_model_project.hepta": [
       {
         "functions": ["ims_value_envelope", "ims_key_less", "ims_namespace", "ims_hex", "ims_write"],

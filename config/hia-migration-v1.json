@@ -2430,6 +2430,19 @@
       ]
     },
     {
+      "id": "state_import/sqlite-cold-read-projection",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "M13 original SQLite format read-only typed projection held on one HIA-owned deferred transaction, with unchanged original provider backend and disposable qualification; no snapshot installation or production authority",
+      "sources": [
+        "hia/platform/state_import_sqlite/cold_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/state_import_sqlite/qualification_host.py",
+        "hia/tests/test_state_import_sqlite_cold_read.py"
+      ]
+    },
+    {
       "id": "platform/os-fixture",
       "node_integration_complete": false,
       "retirement_accepted": false,

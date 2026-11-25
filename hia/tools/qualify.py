@@ -92,6 +92,8 @@ def sources():
         paths.append(crate / "Cargo.toml")
     paths += sorted((ROOT / "config/pon").rglob("*.json"))
     paths += [ROOT / name for name in (
+        "hia/platform/task_kernel/provider_abi.json",
+        "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
         "trillionnium/crates/trnm-state-import/Cargo.toml",
         "trillionnium/crates/trnm-state-import/src/lib.rs",
         "hia/src/state_import/README.md",
