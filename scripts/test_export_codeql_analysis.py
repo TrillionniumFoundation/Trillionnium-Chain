@@ -234,6 +234,132 @@ class ExportTests(unittest.TestCase):
                 self.assertGreater(server.polls, 1)
                 self.assertIn("deadline", result["error"])
 
+    def empty_scope_server(self, *, default="main", protected=False,
+                           state="configured", empty_polls=100):
+        server = Server()
+        server.pr = {**PR, "base": {**PR["base"], "ref": "fix/stacked-base"}}
+        server.scope = {
+            "/repos/" + REPO: {"full_name": REPO, "default_branch": default},
+            "/repos/" + REPO + "/branches/fix%2Fstacked-base": {
+                "name": "fix/stacked-base", "commit": {"sha": BASE}, "protected": protected},
+            "/repos/" + REPO + "/code-scanning/default-setup": {"state": state},
+        }
+        original = server.open
+
+        def serve(request, timeout):
+            path = urllib.parse.urlsplit(request.full_url).path
+            if path in server.scope:
+                server.requests.append(request.full_url)
+                value = server.scope[path]
+                if isinstance(value, Exception):
+                    raise value
+                return Response(json.dumps(value).encode())
+            if path.endswith("/commits/" + HEAD + "/check-runs") and server.polls < empty_polls:
+                server.requests.append(request.full_url)
+                server.polls += 1
+                return Response(json.dumps({"check_runs": []}).encode())
+            return original(request, timeout)
+
+        server.rows_at_poll = lambda count: [] if count <= empty_polls else server.rows
+        server.open = serve
+        return server
+
+    def test_uncovered_default_setup_fails_after_one_empty_snapshot_with_raw_evidence(self):
+        server = self.empty_scope_server()
+        code, result, out = self.run_export(server)
+        self.assertEqual((code, server.polls, result["complete"]), (1, 1, False))
+        self.assertIn("unprotected non-default base", result["error"])
+        observation = json.loads((out / "default-setup-availability/observation.json").read_text())
+        self.assertEqual(observation, result["default_setup_availability"])
+        self.assertIs(observation["default_setup_trigger_covered"], False)
+        self.assertEqual(result["analyses"], [])
+        self.assertIs(result["target_pr_gate_authenticated"], False)
+        self.assertIsNone(result["target_pr_gate_verdict"])
+
+    def test_covered_default_or_protected_base_keeps_waiting_for_real_exact_evidence(self):
+        for args in ({"default": "fix/stacked-base"}, {"protected": True}):
+            with self.subTest(args=args):
+                server = self.empty_scope_server(**args, empty_polls=1)
+                code, result, _ = self.run_export(server)
+                self.assertEqual(code, 0)
+                self.assertIs(result["default_setup_availability"]["default_setup_trigger_covered"], True)
+                self.assertGreater(server.polls, 1)
+                self.assertEqual(len(result["analyses"]), 1)
+
+    def test_unconfigured_default_setup_does_not_preclude_later_advanced_analyses(self):
+        server = self.empty_scope_server(state="not-configured", empty_polls=1)
+        code, result, _ = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertIsNone(result["default_setup_availability"]["default_setup_trigger_covered"])
+        self.assertEqual(len(result["analyses"]), 1)
+
+    def test_existing_exact_evidence_does_not_depend_on_current_trigger_coverage(self):
+        server = self.empty_scope_server(empty_polls=0)
+        code, result, _ = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertNotIn("default_setup_availability", result)
+        self.assertFalse(any("default-setup" in request for request in server.requests))
+
+    def test_unknown_or_moved_branch_metadata_cannot_claim_uncovered_trigger(self):
+        cases = ({"commit": {"sha": STALE}}, {"name": "other"},
+                 {"protected": None}, {"protected": 0})
+        for changed in cases:
+            with self.subTest(changed=changed):
+                server = self.empty_scope_server()
+                branch = server.scope["/repos/" + REPO + "/branches/fix%2Fstacked-base"]
+                branch.update(changed)
+                code, result, _ = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertNotIn("default_setup_availability", result)
+                self.assertIn("observation changed", result["error"])
+
+    def test_optional_scope_403_or_404_keeps_waiting_until_real_exact_evidence_arrives(self):
+        for status in (403, 404):
+            with self.subTest(status=status):
+                server = self.empty_scope_server(empty_polls=1)
+                server.scope["/repos/" + REPO + "/code-scanning/default-setup"] = urllib.error.HTTPError(
+                    API_BASE + "/code-scanning/default-setup", status, TOKEN, {}, None)
+                code, result, out = self.run_export(server)
+                self.assertEqual(code, 0)
+                self.assertEqual(len(result["analyses"]), 1)
+                self.assertGreater(server.polls, 1)
+                observation = result["default_setup_availability"]
+                self.assertIsNone(observation["default_setup_state"])
+                self.assertIsNone(observation["default_setup_trigger_covered"])
+                self.assertEqual(observation["configuration_observation"], "unknown")
+                self.assertEqual(observation["configuration_http_status"], status)
+                self.assertIs(observation["security_gate_changed"], False)
+                failures = list((out / "request-failures").glob("*.json"))
+                self.assertEqual(len(failures), 1)
+                self.assertEqual(json.loads(failures[0].read_text())["http_status"], status)
+
+    def test_optional_scope_403_or_404_without_evidence_keeps_original_deadline_failure(self):
+        for status in (403, 404):
+            with self.subTest(status=status):
+                server = self.empty_scope_server()
+                server.scope["/repos/" + REPO + "/code-scanning/default-setup"] = urllib.error.HTTPError(
+                    API_BASE + "/code-scanning/default-setup", status, TOKEN, {}, None)
+                code, result, out = self.run_export(server)
+                self.assertEqual((code, server.polls), (1, 5))
+                self.assertIn("deadline", result["error"])
+                self.assertEqual(result["analyses"], [])
+                self.assertIsNone(result["default_setup_availability"]["default_setup_trigger_covered"])
+                self.assertIs(result["target_pr_gate_authenticated"], False)
+                self.assertIsNone(result["target_pr_gate_verdict"])
+                self.assertEqual(len(list((out / "request-failures").glob("*.json"))), 1)
+
+    def test_other_scope_http_failures_remain_errors(self):
+        for status in (401, 500):
+            with self.subTest(status=status):
+                server = self.empty_scope_server()
+                server.scope["/repos/" + REPO + "/code-scanning/default-setup"] = urllib.error.HTTPError(
+                    API_BASE + "/code-scanning/default-setup", status, TOKEN, {}, None)
+                code, result, out = self.run_export(server)
+                self.assertEqual((code, server.polls), (1, 1))
+                self.assertNotIn("default_setup_availability", result)
+                self.assertIn(f"HTTP {status}", result["error"])
+                self.assertEqual(len(list((out / "request-failures").glob("*.json"))), 1)
+
     def test_permission_denial_and_processing_error_fail_with_evidence(self):
         denied = Server()
         denied.forbidden = True

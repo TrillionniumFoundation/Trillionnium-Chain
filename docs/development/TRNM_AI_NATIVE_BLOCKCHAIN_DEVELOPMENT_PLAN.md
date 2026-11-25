@@ -1,3 +1,33 @@
+**CodeQL empty-source availability observation, 2026-11-25 — HOLD:**
+
+The read-only exporter observed 39 empty exact-source API snapshots for
+PR #992 at `11d4bbe356331ef533d662ef4080a096ed20c8b1` in
+[run 45588923372](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45588923372).
+Its retained head, base and ordered prospective-merge identities were correct.
+The current repository default setup is configured, while the stacked base is
+an unprotected non-default branch. GitHub's documented
+[default-setup triggers](https://docs.github.com/en/code-security/concepts/code-scanning/setup-types)
+do not schedule that PR scan.
+
+After an empty exact-source snapshot, the exporter now retains the current PR,
+repository default branch, exact base-branch commit/protection and default-setup
+configuration. A confirmed uncovered base ends the export with `complete=false`
+and an explicit availability error, instead of repeating the same empty poll.
+The optional default-setup endpoint requires Administration read access: its
+HTTP 403/404 is retained as UNKNOWN and the exporter continues under the original
+deadline without inferring an uncovered trigger. Required analyses/checks API
+permission failures, malformed metadata and moved source remain errors. Covered
+bases continue waiting under the existing deadline, advanced analyses remain
+supported when default setup is not configured, and already available exact
+analyses do not depend on the current trigger configuration. No token permissions
+are added. This observation does not claim that a historical scan was or was not
+scheduled.
+
+The independently retained local SARIF workflow still supplies its own immutable
+head/merge analysis artifacts for review. Its `upload: never` results do not
+satisfy the Code Scanning API export contract or the official PR security gate.
+No query, branch protection, alert disposition, wait budget or security verdict
+is changed. The original failed export and all partial observations remain.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 
