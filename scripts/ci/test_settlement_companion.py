@@ -1,6 +1,7 @@
 """Exercise the exact hosted companion entry point; this never runs Settlement."""
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -16,6 +17,87 @@ ROOT = Path(__file__).resolve().parents[2]
 HEAD = "1" * 40
 TREE = "2" * 40
 SECRET = "private-fixture-bytes-and-env-secret"
+
+
+# Only the three reviewed optional runner-CPU steps are exempt from the
+# pre-existing mandatory-owner and image-postlude scope checks.
+CPU_STEP_ALLOWLIST = {
+    'Observe Settlement runner CPU before execution': (
+        '      - name: Observe Settlement runner CPU before execution\n'
+        "        if: matrix.component == 'settlement-engine'\n"
+        '        continue-on-error: true\n'
+        '        run: |\n'
+        '          set -euo pipefail\n'
+        '          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"\n'
+        '          mkdir -m 700 -- "$RUNNER_TEMP/settlement-runner-cpu"\n'
+        '          timeout 2s python3 -B -m hia.tools.settlement_runner_cpu \\\n'
+        '            --phase before --output-dir "$RUNNER_TEMP/settlement-runner-cpu" \\\n'
+        '            --head "$TRNM_EXPECTED_SOURCE_SHA" --tree "$(git rev-parse \'HEAD^{tree}\')" \\\n'
+        '            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"\n'
+    ),
+    'Observe Settlement runner CPU after execution': (
+        '      - name: Observe Settlement runner CPU after execution\n'
+        "        if: always() && matrix.component == 'settlement-engine'\n"
+        '        continue-on-error: true\n'
+        '        run: |\n'
+        '          set -euo pipefail\n'
+        '          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"\n'
+        '          test -d "$RUNNER_TEMP/settlement-runner-cpu"\n'
+        '          timeout 2s python3 -B -m hia.tools.settlement_runner_cpu \\\n'
+        '            --phase after --output-dir "$RUNNER_TEMP/settlement-runner-cpu" \\\n'
+        '            --head "$TRNM_EXPECTED_SOURCE_SHA" --tree "$(git rev-parse \'HEAD^{tree}\')" \\\n'
+        '            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"\n'
+    ),
+    'Upload separate optional Settlement runner CPU observations': (
+        '      - name: Upload separate optional Settlement runner CPU observations\n'
+        "        if: always() && matrix.component == 'settlement-engine'\n"
+        '        continue-on-error: true\n'
+        '        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n'
+        '        with:\n'
+        '          name: hia-settlement-runner-cpu-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}\n'
+        '          path: |\n'
+        '            ${{ runner.temp }}/settlement-runner-cpu/before.json\n'
+        '            ${{ runner.temp }}/settlement-runner-cpu/after.json\n'
+        '          if-no-files-found: ignore\n'
+        '          retention-days: 30\n'
+    ),
+}
+OWNER_JOB = "\n  native-additional-owners:\n"
+STEP_NAME = re.compile(r"(?m)^      - name: ([^\n]+)\n")
+
+
+def owner_without_cpu_workflow(workflow):
+    if workflow.count(OWNER_JOB) != 1:
+        raise ValueError("expected one native owner job")
+    job = workflow.split(OWNER_JOB, 1)[1]
+    next_job = re.search(r"(?m)^  [a-z0-9_-]+:[ \t]*$", job)
+    if next_job is not None:
+        job = job[:next_job.start()]
+    # Ignore trailing blank separators between jobs, not step content.
+    job = job.rstrip("\n") + "\n"
+    steps = list(STEP_NAME.finditer(job))
+    names = tuple(step[1] for step in steps)
+    indices = {}
+    for name, expected in CPU_STEP_ALLOWLIST.items():
+        named_prefix = f"      - name: {name}\n"
+        if workflow.count(named_prefix) != 1 or names.count(name) != 1:
+            raise ValueError(f"missing, duplicate, or misplaced Settlement step: {name}")
+        index = names.index(name)
+        end = steps[index + 1].start() if index + 1 < len(steps) else len(job)
+        start = steps[index].start()
+        if job[start:end] != expected:
+            raise ValueError(f"changed optional Settlement step: {name}")
+        indices[name] = (index, start, end)
+    before, after, upload = (value[0] for value in indices.values())
+    if (names[before + 1:after] != ("Execute the complete component and its independent reader",)
+            or names[after + 1:after + 2] != ("Recheck every committed source byte after success or failure",)
+            or upload == 0
+            or names[upload - 1] != "Upload the separate Settlement image identity diagnostic"
+            or not before < after < upload):
+        raise ValueError("optional Settlement steps are not scoped around execution and original upload")
+    for _, start, end in sorted(indices.values(), reverse=True):
+        job = job[:start] + job[end:]
+    return job
 
 
 class SettlementCompanionTests(unittest.TestCase):
@@ -351,7 +433,10 @@ class SettlementCompanionTests(unittest.TestCase):
 
     def test_wiring_keeps_full_original_upload_and_non_gating_sidecar(self):
         workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
-        job = workflow.split("\n  native-additional-owners:", 1)[1]
+        self.assert_wiring_keeps_full_original_upload(workflow)
+
+    def assert_wiring_keeps_full_original_upload(self, workflow):
+        job = owner_without_cpu_workflow(workflow)
         run = job.split("      - name: Collect compact", 1)[0]
         compact = job.split("      - name: Collect compact", 1)[1].split("      - name: Retain and reread", 1)[0]
         full = job.split("      - name: Retain and reread", 1)[1].split(
@@ -367,34 +452,16 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertIn("python3 -B -m hia.tools.settlement_companion", compact)
         self.assertNotIn("OWNER_ARTIFACT", compact)
         self.assertNotIn("continue-on-error:", full)
+        self.assertEqual(full.count("if: always()"), 2)
+        self.assertIn("if-no-files-found: error", full)
         self.assertIn("archive_runtime_observations.py --root \"component=$OWNER_ROOT\"", full)
         self.assertIn("${{ env.OWNER_ARTIFACT }}/", full)
         self.assertIn("${{ env.OWNER_ROOT }}/observations/", full)
 
     def test_image_identity_is_separate_settlement_only_postlude(self):
         workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
-        mark = "      - name: Collect separate Settlement image identity"
-        self.assertEqual(workflow.count(mark), 1)
-        original, postlude = workflow.split(mark, 1)
-        self.assertTrue(original.endswith("          retention-days: 30\n"))
-        self.assertTrue(original.rsplit("\n  native-additional-owners:", 1)[1].rfind(
-            "Upload complete current-source observations and diagnostics") > 0)
-        collect, upload = postlude.split("      - name: Upload the separate Settlement image identity diagnostic")
-        self.assertEqual(postlude.count("continue-on-error: true"), 2)
-        self.assertEqual(postlude.count("if: always() && matrix.component == 'settlement-engine'"), 2)
-        self.assertIn("id: settlement_image_identity", collect)
-        self.assertIn("SETTLEMENT_SOURCE_AFTER_OUTCOME: ${{ steps.owner_source_after.outcome }}", collect)
-        self.assertIn("&& steps.settlement_image_identity.outcome == 'success'", upload)
-        self.assertIn("name: hia-settlement-image-identity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}"
-                      "-${{ github.run_id }}-${{ github.run_attempt }}", upload)
-        self.assertIn("path: ${{ runner.temp }}/settlement-image-identity/image-identity.json", upload)
-        self.assertIn("retention-days: 30", upload)
-        self.assertNotIn("OWNER_ARTIFACT", postlude)
-        self.assertNotIn("settlement-compact", postlude)
-        self.assertNotIn("timeout-minutes:", postlude)
-        self.assertNotIn("permissions:", postlude)
-        self.assertNotIn("qualify_additional_owner_ci.py", postlude)
-
+        postlude = self.assert_image_identity_postlude(workflow)
+        collect, _ = postlude.split("      - name: Upload the separate Settlement image identity diagnostic")
         # Exercise the actual shell postlude on an ordinary incomplete owner;
         # it must preserve v1 and emit a distinct non-qualifying missing result.
         shell = textwrap.dedent(collect.split("        run: |\n", 1)[1])
@@ -421,6 +488,69 @@ class SettlementCompanionTests(unittest.TestCase):
         self.assertFalse(actual["qualifies_execution"])
         self.assertFalse(actual["substitutes_full_original_archive"])
         self.assertEqual(legacy.read_bytes(), before)
+
+    def assert_image_identity_postlude(self, workflow):
+        job = owner_without_cpu_workflow(workflow)
+        mark = "      - name: Collect separate Settlement image identity"
+        self.assertEqual(job.count(mark), 1)
+        original, postlude = job.split(mark, 1)
+        self.assertTrue(original.endswith("          retention-days: 30\n"))
+        self.assertGreater(original.rfind("Upload complete current-source observations and diagnostics"), 0)
+        collect, upload = postlude.split("      - name: Upload the separate Settlement image identity diagnostic")
+        self.assertEqual(postlude.count("continue-on-error: true"), 2)
+        self.assertEqual(postlude.count("if: always() && matrix.component == 'settlement-engine'"), 2)
+        self.assertIn("id: settlement_image_identity", collect)
+        self.assertIn("SETTLEMENT_SOURCE_AFTER_OUTCOME: ${{ steps.owner_source_after.outcome }}", collect)
+        self.assertIn("&& steps.settlement_image_identity.outcome == 'success'", upload)
+        self.assertIn("name: hia-settlement-image-identity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}"
+                      "-${{ github.run_id }}-${{ github.run_attempt }}", upload)
+        self.assertIn("path: ${{ runner.temp }}/settlement-image-identity/image-identity.json", upload)
+        self.assertIn("retention-days: 30", upload)
+        self.assertNotIn("OWNER_ARTIFACT", postlude)
+        self.assertNotIn("settlement-compact", postlude)
+        self.assertNotIn("timeout-minutes:", postlude)
+        self.assertNotIn("permissions:", postlude)
+        self.assertNotIn("qualify_additional_owner_ci.py", postlude)
+
+        return postlude
+
+    def test_optional_cpu_allowlist_refuses_drift_misplacement_and_duplicates(self):
+        workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
+        before, after, upload = CPU_STEP_ALLOWLIST.values()
+        for name, altered in {
+                "missing before": workflow.replace(before, ""),
+                "duplicate after": workflow.replace(after, after + after),
+                "wrong lane": workflow.replace(before, before.replace("'settlement-engine'", "'pq-auth'")),
+                "archive destination": workflow.replace(upload, upload.replace("settlement-runner-cpu/before.json", "settlement-compact/summary.json")),
+                "mandatory CPU": workflow.replace(after, after.replace("continue-on-error: true", "continue-on-error: false")),
+                "overlong optional probe": workflow.replace(before, before.replace("timeout 2s", "timeout 240s")),
+                "misplaced before": workflow.replace(before, "").replace(after, before + after),
+                "misplaced upload": workflow.replace(upload, "").replace(before, upload + before),
+        }.items():
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                owner_without_cpu_workflow(altered)
+
+    def test_optional_cpu_allowlist_does_not_exempt_mandatory_or_other_optional_steps(self):
+        workflow = (ROOT / ".github/workflows/hia-native-migration.yml").read_text()
+        for mark, check in (
+            ("id: owner_execute", self.assert_wiring_keeps_full_original_upload),
+            ("name: Upload complete current-source observations and diagnostics",
+             self.assert_wiring_keeps_full_original_upload),
+            ("name: Upload the separate Settlement image identity diagnostic",
+             self.assert_image_identity_postlude),
+        ):
+            with self.subTest(mark=mark):
+                self.assertEqual(workflow.count(mark), 1)
+                altered = workflow.replace(mark + "\n", mark + "\n        continue-on-error: true\n", 1)
+                with self.assertRaises(AssertionError):
+                    check(altered)
+
+        # A differently named optional step is not hidden by the projection.
+        extra = ("      - name: Unreviewed optional step\n"
+                 "        continue-on-error: true\n"
+                 "        run: echo example\n")
+        with self.assertRaises(AssertionError):
+            self.assert_image_identity_postlude(workflow + extra)
 
 
 if __name__ == "__main__":
