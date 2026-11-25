@@ -65,10 +65,11 @@ def run(message, reader, provider):
             1042: "m13-sqlite-empty-delta-",
             1298: "m13-sqlite-delete-delta-",
             1434: "m13-sqlite-insert-delta-",
+            2226: "m13-sqlite-mixed-delta-",
         }.get(len(proposal))
         if len(proposal) == 1434 and proposal[:8] == b"UPD1M13!":
             mode = "m13-sqlite-update-delta-"
-        if mode is None or message["advance"]:
+        if mode is None or message["advance"] or (len(proposal) == 2226 and proposal[:8] != b"BAT1M13!"):
             raise ValueError("Exact private single-delta replay input required")
         if not directory.parent.name.startswith(mode) or directory.name != "owned":
             raise ValueError("Write qualification only uses its own named disposable directory")
@@ -78,6 +79,7 @@ def run(message, reader, provider):
     if not owner:
         raise MemoryError("Provider allocation failed")
     status, transcript, result, advanced = None, [], None, False
+    row_changes_seen = 0
     try:
         for _ in range(85000):
             argument = ctypes.create_string_buffer(raw)
@@ -103,7 +105,13 @@ def run(message, reader, provider):
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))
             stopped_after_metadata = message.get("kill_after_update") and (phase, op) == (28, 10)
-            stopped_after_row = (message.get("kill_after_delete") or message.get("kill_after_row")) and (phase, op) == (35, 10)
+            row_changes = (phase, op) == (35, 10)
+            if row_changes:
+                row_changes_seen += 1
+            stopped_after_row = row_changes and (
+                message.get("kill_after_delete") or message.get("kill_after_row")
+                or message.get("kill_after_row_index") == row_changes_seen
+            )
             if writes and (stopped_after_metadata or stopped_after_row):
                 if amount != 24 or struct.unpack_from("<QQ", response) != (0, 1):
                     raise ValueError("Expected a real one-row uncommitted update before termination")

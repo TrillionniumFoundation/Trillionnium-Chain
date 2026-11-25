@@ -1,0 +1,201 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_bounded_mixed_delta
+fn bm_validate(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  first:u64 = const() {"value":8}
+  second:u64 = const() {"value":400}
+  third:u64 = const() {"value":792}
+  delete_tag:u64 = const() {"value":2392310034673190212}
+  insert_tag:u64 = const() {"value":2392310034673651273}
+  update_tag:u64 = const() {"value":2392310034672668757}
+  first_ok:bool = call(raw,first,delete_tag) {"function":"bm_shape"}
+  second_ok:bool = call(raw,second,insert_tag) {"function":"bm_shape"}
+  third_ok:bool = call(raw,third,update_tag) {"function":"bm_shape"}
+  fst_two:bool = bool.and(first_ok,second_ok)
+  valid:bool = bool.and(fst_two,third_ok)
+  branch valid sort(raw,first,second,third) bad()
+block sort(data:readbuf,a:u64,b:u64,c:u64)
+  less_ab:bool = call(data,a,b) {"function":"bm_order"}
+  less_bc:bool = call(data,b,c) {"function":"bm_order"}
+  sorted:bool = bool.and(less_ab,less_bc)
+  ret(sorted)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn bm_shape(raw:readbuf,at:u64,need_tag:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64,need_tag:u64)
+  actual:u64 = call(raw,at) {"function":"tr_read"}
+  tag_ok:bool = compare.eq(actual,need_tag)
+  ns_rel:u64 = const() {"value":8}
+  key_rel:u64 = const() {"value":16}
+  val_rel:u64 = const() {"value":256}
+  ns_at:u64 = int.add.wrap(at,ns_rel)
+  key_at:u64 = int.add.wrap(at,key_rel)
+  val_at:u64 = int.add.wrap(at,val_rel)
+  ns:u64 = call(raw,ns_at) {"function":"tr_read"}
+  key:u64 = call(raw,key_at) {"function":"tr_read"}
+  val:u64 = call(raw,val_at) {"function":"tr_read"}
+  lower:u64 = const() {"value":1}
+  key_limit:u64 = const() {"value":64}
+  value_limit:u64 = const() {"value":128}
+  ns_min:bool = compare.ge(ns,lower)
+  ns_max:bool = compare.le(ns,key_limit)
+  key_min:bool = compare.ge(key,lower)
+  key_max:bool = compare.le(key,key_limit)
+  val_max:bool = compare.le(val,value_limit)
+  ns_ok:bool = bool.and(ns_min,ns_max)
+  key_ok:bool = bool.and(key_min,key_max)
+  keys:bool = bool.and(ns_ok,key_ok)
+  remaining:bool = bool.and(val_max,tag_ok)
+  okay:bool = bool.and(keys,remaining)
+  ret(okay)
+end
+
+fn bm_order(raw:readbuf,a:u64,b:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,a:u64,b:u64)
+  ns_len_rel:u64 = const() {"value":8}
+  ns_raw_rel:u64 = const() {"value":24}
+  ns_len_a:u64 = int.add.wrap(a,ns_len_rel)
+  ns_len_b:u64 = int.add.wrap(b,ns_len_rel)
+  ns_a:u64 = int.add.wrap(a,ns_raw_rel)
+  ns_b:u64 = int.add.wrap(b,ns_raw_rel)
+  n_a:u64 = call(raw,ns_len_a) {"function":"tr_read"}
+  n_b:u64 = call(raw,ns_len_b) {"function":"tr_read"}
+  compared:u32 = call(raw,ns_a,n_a,ns_b,n_b) {"function":"step_lex"}
+  same:u32 = const() {"value":0}
+  equal_ns:bool = compare.eq(compared,same)
+  branch equal_ns keys(raw,a,b) less(compared)
+block keys(data:readbuf,l:u64,r:u64)
+  key_len_rel:u64 = const() {"value":16}
+  key_raw_rel:u64 = const() {"value":88}
+  key_len_l:u64 = int.add.wrap(l,key_len_rel)
+  key_len_r:u64 = int.add.wrap(r,key_len_rel)
+  key_l:u64 = int.add.wrap(l,key_raw_rel)
+  key_r:u64 = int.add.wrap(r,key_raw_rel)
+  num_l:u64 = call(data,key_len_l) {"function":"tr_read"}
+  num_r:u64 = call(data,key_len_r) {"function":"tr_read"}
+  compared_keys:u32 = call(data,key_l,num_l,key_r,num_r) {"function":"step_lex"}
+  jump less(compared_keys)
+block less(result:u32)
+  before:u32 = const() {"value":2}
+  increasing:bool = compare.eq(result,before)
+  ret(increasing)
+end
+
+fn bm_scan(raw:readbuf,mem:mutbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  zero:u64 = const() {"value":0}
+  jump scan(raw,mem,work,zero)
+block scan(r:readbuf,m:mutbuf,w:mutbuf,slot:u64)
+  _focus:u64 = call(w,slot) {"function":"bm_focus"}
+  match:bool = call(r,w) {"function":"dw_key_match"}
+  branch match match_kind(r,m,w,slot) next(r,m,w,slot)
+block match_kind(mr:readbuf,mm:mutbuf,mw:mutbuf,mi:u64)
+  insert_slot:u64 = const() {"value":1}
+  is_insert:bool = compare.eq(mi,insert_slot)
+  branch is_insert bad() known(mr,mm,mw,mi)
+block known(kr:readbuf,km:mutbuf,kw:mutbuf,ki:u64)
+  digest:bool = call(kw) {"function":"dw_digest_match"}
+  branch digest changed(kr,km,kw,ki) bad()
+block changed(cr:readbuf,cm:mutbuf,cw:mutbuf,ci:u64)
+  is_update:u64 = const() {"value":2}
+  update_slot:bool = compare.eq(ci,is_update)
+  branch update_slot update(cr,cm,cw,ci) mark(cm,ci)
+block update(ur:readbuf,um:mutbuf,uw:mutbuf,ui:u64)
+  same:bool = call(ur,uw) {"function":"dw_value_matches"}
+  branch same bad() mark(um,ui)
+block mark(mark_mem:mutbuf,mark_index:u64)
+  width:u64 = const() {"value":8}
+  base:u64 = const() {"value":160}
+  offset:u64 = int.mul.wrap(mark_index,width)
+  at:u64 = int.add.wrap(base,offset)
+  present:u64 = call(mark_mem,at) {"function":"cp_get"}
+  zero_mark:u64 = const() {"value":0}
+  first:bool = compare.eq(present,zero_mark)
+  branch first record(mark_mem,at) bad()
+block record(record_mem:mutbuf,record_at:u64)
+  one:u64 = const() {"value":1}
+  _saved:u64 = call(record_mem,record_at,one) {"function":"cp_put"}
+  jump good()
+block next(nr:readbuf,nm:mutbuf,nw:mutbuf,ni:u64)
+  increment:u64 = const() {"value":1}
+  last:u64 = const() {"value":2}
+  finished:bool = compare.eq(ni,last)
+  more:u64 = int.add.wrap(ni,increment)
+  branch finished good() scan(nr,nm,nw,more)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn bm_focus(work:mutbuf,slot:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,slot:u64)
+  width:u64 = const() {"value":392}
+  base:u64 = const() {"value":904000}
+  dest:u64 = const() {"value":902000}
+  offset:u64 = int.mul.wrap(slot,width)
+  from:u64 = int.add.wrap(base,offset)
+  copied:u64 = call(work,from,dest,width) {"function":"cp_wcopy"}
+  ret(copied)
+end
+
+fn bm_load(mem:mutbuf,work:mutbuf,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf,index:u64)
+  mode:u64 = const() {"value":96}
+  cursor:u64 = const() {"value":144}
+  added:u64 = const() {"value":1}
+  operation:u64 = int.add.wrap(index,added)
+  _mode:u64 = call(mem,mode,operation) {"function":"cp_put"}
+  _cursor:u64 = call(mem,cursor,index) {"function":"cp_put"}
+  loaded:u64 = call(work,index) {"function":"bm_focus"}
+  ret(loaded)
+end
+
+fn bm_start(mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf)
+  delete_at:u64 = const() {"value":160}
+  update_at:u64 = const() {"value":176}
+  del:u64 = call(mem,delete_at) {"function":"cp_get"}
+  upd:u64 = call(mem,update_at) {"function":"cp_get"}
+  one:u64 = const() {"value":1}
+  key_a:bool = compare.eq(del,one)
+  key_b:bool = compare.eq(upd,one)
+  both:bool = bool.and(key_a,key_b)
+  branch both start(mem,work) bad()
+block start(in_mem:mutbuf,in_work:mutbuf)
+  first:u64 = const() {"value":0}
+  _loaded:u64 = call(in_mem,in_work,first) {"function":"bm_load"}
+  scheduled:u32 = call(in_mem) {"function":"dw_sql_delete"}
+  ret(scheduled)
+block bad()
+  refusal:u32 = const() {"value":100}
+  ret(refusal)
+end
+
+fn bm_next(mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf)
+  slot_at:u64 = const() {"value":144}
+  slot:u64 = call(mem,slot_at) {"function":"cp_get"}
+  last:u64 = const() {"value":2}
+  end:bool = compare.eq(slot,last)
+  branch end metadata(mem) next(mem,work,slot)
+block next(nm:mutbuf,nw:mutbuf,idx:u64)
+  one:u64 = const() {"value":1}
+  forward:u64 = int.add.wrap(idx,one)
+  _loaded:u64 = call(nm,nw,forward) {"function":"bm_load"}
+  inserting:bool = compare.eq(forward,one)
+  branch inserting insert(nm) update(nm)
+block insert(im:mutbuf)
+  scheduled_insert:u32 = call(im) {"function":"dw_sql_insert"}
+  ret(scheduled_insert)
+block update(um:mutbuf)
+  scheduled_update:u32 = call(um) {"function":"dw_sql_existing"}
+  ret(scheduled_update)
+block metadata(mm:mutbuf)
+  scheduled_metadata:u32 = call(mm) {"function":"dw_sql_update"}
+  ret(scheduled_metadata)
+end

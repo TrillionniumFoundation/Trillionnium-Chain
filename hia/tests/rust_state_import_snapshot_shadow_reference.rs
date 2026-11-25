@@ -109,6 +109,41 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             store.apply_delta_v0(&delta, &FixtureRoot)?;
         }
+        ("mixed-advance", 3) => {
+            let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
+            let before = store.read_rows_v0()?;
+            if before.len() < 3 {
+                return Err("mixed fixture requires three or more predecessor rows".into());
+            }
+            let mut after = before[1..].to_vec();
+            let last = after.last_mut().unwrap();
+            last.value = vec![255, 0, 13, 10, 128, 0, 58];
+            let inserted = TargetRowV0 {
+                namespace: b"ordinary-snapshot".to_vec(),
+                key: vec![0, 0, 255],
+                value: if before.len() == 3 { Vec::new() } else {
+                    (0..128).map(|i| (255 - i * 3 % 256) as u8).collect()
+                },
+            };
+            after.push(inserted.clone());
+            after.sort();
+            let update = after.last().unwrap();
+            let delta = derive_incremental_delta_v0(
+                d(10), d(11), context(&before, 5), context(&after, 6),
+                &before, &after, &FixtureRoot,
+            )?;
+            if delta.entries.len() != 3
+                || delta.entries[0].key != before[0].key
+                || delta.entries[0].value.is_some()
+                || delta.entries[1].key != inserted.key
+                || delta.entries[1].value.as_ref() != Some(&inserted.value)
+                || delta.entries[2].key != update.key
+                || delta.entries[2].value.as_ref() != Some(&update.value)
+            {
+                return Err("reference should derive one sorted DELETE/INSERT/UPDATE".into());
+            }
+            store.apply_delta_v0(&delta, &FixtureRoot)?;
+        }
         ("update-advance", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let before = store.read_rows_v0()?;
@@ -186,7 +221,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/update-advance/insert-advance/delete-advance/empty-advance/export on disposable staging only".into()),
+        _ => return Err("scope is seed/advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/export on disposable staging only".into()),
     }
     Ok(())
 }

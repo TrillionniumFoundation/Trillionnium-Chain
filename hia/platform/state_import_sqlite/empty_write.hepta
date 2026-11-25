@@ -120,7 +120,31 @@ block maybe_insert(ins_raw:readbuf,ins_mem:mutbuf,ins_work:mutbuf,ins_n:usize,in
 block maybe_update(up_raw:readbuf,up_mem:mutbuf,up_work:mutbuf,up_n:usize,up_fid:u64)
   update_magic:u64 = const() {"value":2392310034672668757}
   is_update:bool = compare.eq(up_fid,update_magic)
-  branch is_update format_value(up_raw,up_mem,up_work,up_n,update_magic) format_empty(up_raw,up_mem,up_work,up_n)
+  branch is_update format_value(up_raw,up_mem,up_work,up_n,update_magic) maybe_batch(up_raw,up_mem,up_work,up_n,up_fid)
+block maybe_batch(b_raw:readbuf,b_mem:mutbuf,b_work:mutbuf,b_n:usize,b_fid:u64)
+  batch_magic:u64 = const() {"value":2392310034673713474}
+  is_batch:bool = compare.eq(b_fid,batch_magic)
+  branch is_batch batch_frame(b_raw,b_mem,b_work,b_n) format_empty(b_raw,b_mem,b_work,b_n)
+block batch_frame(bf_raw:readbuf,bf_mem:mutbuf,bf_work:mutbuf,bf_len:usize)
+  min_batch:usize = const() {"value":2355}
+  max_batch:usize = const() {"value":2866}
+  low_batch:bool = compare.ge(bf_len,min_batch)
+  high_batch:bool = compare.le(bf_len,max_batch)
+  full_batch:bool = bool.and(low_batch,high_batch)
+  branch full_batch batch_order(bf_raw,bf_mem,bf_work,bf_len) bad()
+block batch_order(bo_raw:readbuf,bo_mem:mutbuf,bo_work:mutbuf,bo_len:usize)
+  ordered_batch:bool = call(bo_raw) {"function":"bm_validate"}
+  branch ordered_batch save_batch(bo_raw,bo_mem,bo_work,bo_len) bad()
+block save_batch(sb_raw:readbuf,sb_mem:mutbuf,sb_work:mutbuf,sb_len:usize)
+  src_batch:u64 = const() {"value":8}
+  dst_batch:u64 = const() {"value":904000}
+  bytes_batch:u64 = const() {"value":1176}
+  _save_batch:u64 = call(sb_raw,src_batch,sb_work,dst_batch,bytes_batch) {"function":"cp_copy"}
+  batch_slot:u64 = const() {"value":136}
+  batch_enabled:u64 = const() {"value":1}
+  _set_batch:u64 = call(sb_mem,batch_slot,batch_enabled) {"function":"cp_put"}
+  batch_prefix:u64 = const() {"value":1184}
+  jump open_request(sb_raw,sb_mem,sb_work,sb_len,batch_prefix)
 block format_empty(ei:readbuf,em:mutbuf,ew:mutbuf,en:usize)
   max_req:usize = const() {"value":1682}
   fits_empty:bool = compare.le(en,max_req)
@@ -270,7 +294,16 @@ block ok14(sql_reply:readbuf,check_mem:mutbuf,check_work:mutbuf)
 block before(before_mem:mutbuf,before_work:mutbuf)
   expected_before:u64 = const() {"value":900000}
   before_matches:bool = call(before_mem,before_work,expected_before) {"function":"ew_match"}
-  branch before_matches before_mode(before_mem) bad()
+  branch before_matches before_batch(before_mem,before_work) bad()
+block before_batch(batch_mem:mutbuf,batch_work:mutbuf)
+  has_batch_at:u64 = const() {"value":136}
+  has_batch:u64 = call(batch_mem,has_batch_at) {"function":"cp_get"}
+  batched:u64 = const() {"value":1}
+  go_batch:bool = compare.eq(has_batch,batched)
+  branch go_batch start_batch(batch_mem,batch_work) before_mode(batch_mem)
+block start_batch(stb_mem:mutbuf,stb_work:mutbuf)
+  started_batch:u32 = call(stb_mem,stb_work) {"function":"bm_start"}
+  ret(started_batch)
 block before_mode(prem:mutbuf)
   md_at:u64 = const() {"value":96}
   md:u64 = call(prem,md_at) {"function":"cp_get"}
@@ -419,7 +452,21 @@ block action13(row_in:readbuf,row_stage:mutbuf,row_work:mutbuf)
   reading:u32 = call(row_in,row_stage,row_work) {"function":"sr_cold"}
   pending:u32 = const() {"value":198}
   read_ok:bool = compare.eq(reading,pending)
-  branch read_ok maybe_match(row_in,row_stage,row_work) return_row(reading)
+  branch read_ok maybe_batch_match(row_in,row_stage,row_work) return_row(reading)
+block maybe_batch_match(br_raw:readbuf,br_mem:mutbuf,br_work:mutbuf)
+  read_route_at:u64 = const() {"value":136}
+  read_route:u64 = call(br_mem,read_route_at) {"function":"cp_get"}
+  already_write_at:u64 = const() {"value":88}
+  already_write:u64 = call(br_mem,already_write_at) {"function":"cp_get"}
+  batch_route:u64 = const() {"value":1}
+  before_write:u64 = const() {"value":0}
+  batch_match:bool = compare.eq(read_route,batch_route)
+  prior_scan:bool = compare.eq(already_write,before_write)
+  check_batch:bool = bool.and(batch_match,prior_scan)
+  branch check_batch match_batch(br_raw,br_mem,br_work) maybe_match(br_raw,br_mem,br_work)
+block match_batch(mb_raw:readbuf,mb_mem:mutbuf,mb_work:mutbuf)
+  accepted:bool = call(mb_raw,mb_mem,mb_work) {"function":"bm_scan"}
+  branch accepted keep_pending() bad()
 block maybe_match(row_raw:readbuf,row_mem:mutbuf,rwork:mutbuf)
   kind_at:u64 = const() {"value":96}
   kind:u64 = call(row_mem,kind_at) {"function":"cp_get"}
@@ -551,13 +598,22 @@ block action35(raw35:readbuf,mem35:mutbuf,wrk35:mutbuf)
   size35:usize = buffer.len(raw35)
   expect35:u64 = const() {"value":0}
   valid35:bool = call(raw35,size35,expect35) {"function":"sr_status"}
-  branch valid35 success35(raw35,mem35) bad()
-block success35(v35:readbuf,s35:mutbuf)
+  branch valid35 success35(raw35,mem35,wrk35) bad()
+block success35(v35:readbuf,s35:mutbuf,w35:mutbuf)
   at35:u64 = const() {"value":8}
   count35:u64 = call(v35,at35) {"function":"tr_read"}
   expected35:u64 = const() {"value":1}
   one_deleted:bool = compare.eq(count35,expected35)
-  branch one_deleted set_metadata35(s35) bad()
+  branch one_deleted choose_next(s35,w35) bad()
+block choose_next(cn_mem:mutbuf,cn_work:mutbuf)
+  next_batch_at:u64 = const() {"value":136}
+  next_batch:u64 = call(cn_mem,next_batch_at) {"function":"cp_get"}
+  in_batch:u64 = const() {"value":1}
+  is_batched:bool = compare.eq(next_batch,in_batch)
+  branch is_batched next_batch_row(cn_mem,cn_work) set_metadata35(cn_mem)
+block next_batch_row(nbr_mem:mutbuf,nbr_work:mutbuf)
+  next_row_operation:u32 = call(nbr_mem,nbr_work) {"function":"bm_next"}
+  ret(next_row_operation)
 block set_metadata35(sm35:mutbuf)
   stmt35:u32 = call(sm35) {"function":"dw_sql_update"}
   ret(stmt35)

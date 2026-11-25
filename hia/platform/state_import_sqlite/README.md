@@ -174,3 +174,36 @@ seams use the provider's actual one-row change observation.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_update_write -v
 ```
+
+## Disposable bounded mixed batch
+
+The `BAT1M13!` mode admits exactly three 392-byte records: one DELETE,
+one non-replacing INSERT, and one existing-row UPDATE. The input key
+tuples must be strictly increasing in the original raw byte order
+(namespace first, then key), independently of their operation tags.
+This is one bounded route, not a general mixed-batch engine. Record
+widths are the same as for the single operations; the UPDATE record
+carries the reviewed final count, rows digest, and application root.
+
+Inside one BEGIN IMMEDIATE, HIA completes the prior ordered scan,
+recomputes its persisted row commitment, proves both required row
+preimages and the inserted key's absence, and checks the complete
+reviewed predecessor. It schedules all three typed SQLite statements
+in order and verifies one physical change for each. There is exactly
+one subsequent metadata update, one generation advance, and one
+complete native successor read/row-digest comparison before COMMIT
+and CLOSE. The supplied application root is reviewed data only.
+
+The unchanged original Rust owner derives and applies the same three
+ordered entries. Real cold SQLite exports must match exactly on a
+three-row fixture and a seventeen-row fixture. Invalid order, a present
+INSERT key, a bad last prior leaf and a stale predecessor are refused
+without row writes. A wrong successor digest causes rollback even
+after all three changes. The tests terminate the actual native process
+after its first and third successful row effects and separately after
+the metadata update. Every uncommitted case reopens to the exact
+complete original predecessor.
+
+```sh
+python3 -B -m unittest hia.tests.test_state_import_sqlite_mixed_write -v
+```

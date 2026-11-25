@@ -177,6 +177,73 @@
           "dw_value_matches",
           "dw_sql_existing"
         ]
+      },
+      {
+        "source": "src/state_import/export_order_step.hepta",
+        "functions": [
+          "step_lex"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/mixed_batch.hepta",
+        "functions": [
+          "bm_validate",
+          "bm_shape",
+          "bm_order",
+          "bm_scan",
+          "bm_focus",
+          "bm_load",
+          "bm_start",
+          "bm_next"
+        ]
+      }
+    ],
+    "platform/state_import_sqlite/mixed_batch.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_wcopy"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/state_import/export_order_step.hepta",
+        "functions": [
+          "step_lex"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/delete_delta.hepta",
+        "functions": [
+          "dw_key_match",
+          "dw_field_match",
+          "dw_digest_match",
+          "dw_value_matches",
+          "dw_sql_delete",
+          "dw_sql_insert",
+          "dw_sql_existing",
+          "dw_sql_update"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_nibble",
+          "rc_octet"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_issue"
+        ]
       }
     ],
     "platform/state_import_sqlite/delete_delta.hepta": [
