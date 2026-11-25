@@ -54,16 +54,23 @@ published.
 
 For this private borrowed callable, concatenate namespace, key, and value
 bytes, then append three little-endian 32-bit field lengths and the stored
-32-byte row digest. This fixture ABI is not an original wire format. Its
-stock x86-64 borrowed input limit is 1 MiB including the 44-byte trailer;
-the original Rust row type can carry a value up to 16 MiB. Logical field
-limits are unchanged. The second ABI span is never used or written, and
+32-byte row digest. This fixture ABI is not an original wire format. The
+direct x86-64 wrapper still admits at most 1 MiB per borrowed span. The pinned
+Selfhost legacy `f0(readbuf,mutbuf,mutbuf)->u32` profile also runs the original
+full row extent in an opt-in isolated fixture with live, disjoint allocations:
+128 namespace bytes, 65,536 key bytes and a 16 MiB value plus the 44-byte
+trailer (16,842,924 bytes). Logical field limits are unchanged. Native SHA-256
+uses the existing offset-based stream with a row-specific transcript bound
+of 16,842,940 bytes (maximum fields plus the 28-byte domain and four 8-byte
+length prefixes). The second ABI span is never used or written, and
 the scratch span must have at least 1,248 bytes when hashing is needed.
 Return codes: success 0; malformed private framing 100; Rust
 `InvalidExportRow` 101; short scratch 102; internal hash refusal 103; Rust
 `ForbiddenAuthorityState` 104. Framing and logical length refusals precede
 scratch validation and hashing. This is row-level validation only, without
 export ordering, finality, SQLite import, caller integration, or activation.
+The larger private fixture does not widen the Direct ABI or any mutable span,
+and does not establish a production full-size batch or durable handoff.
 
 ## Ordered export Merkle commitment
 

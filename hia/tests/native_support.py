@@ -18,6 +18,7 @@ import sys
 import tempfile
 
 MAX_EXTENT = 1 << 20
+MAX_SELFHOST_PRIVATE_INPUT = 17 << 20
 
 
 def unlinked_path(value, *, directory=False):
@@ -50,7 +51,15 @@ class NativeCall:
 
 
 class NativeModule:
-    def __init__(self, source, *, byte_exports=(), backend="selfhost", fixture_owner=None):
+    def __init__(self, source, *, byte_exports=(), backend="selfhost", fixture_owner=None,
+                 max_input_extent=MAX_EXTENT):
+        # The stock Selfhost f0 takes caller-owned disjoint spans; unlike the
+        # direct wrapper it does not impose the test runner's default 1 MiB.
+        # Keep explicit fixture opt-in and do not widen any mutable span.
+        if (type(max_input_extent) is not int or not MAX_EXTENT <= max_input_extent <= MAX_SELFHOST_PRIVATE_INPUT
+                or max_input_extent != MAX_EXTENT and (backend != "selfhost" or tuple(byte_exports) != ("f0",))):
+            raise ValueError("Invalid private native input extent/profile")
+        self.max_input_extent = max_input_extent
         # Namespace-package import also works with unittest's -s hia/tests.
         root = Path(__file__).resolve().parents[2]
         if str(root) not in sys.path:
@@ -103,8 +112,9 @@ class NativeModule:
             for param, arg in zip(fn["params"], arguments):
                 typ = param["type"]
                 if typ in {"readbuf", "mutbuf"}:
-                    if type(arg) not in {bytes, bytearray} or len(arg) > MAX_EXTENT:
-                        raise ValueError("Borrowed inputs must be private bytes of at most 1 MiB")
+                    extent = self.max_input_extent if typ == "readbuf" else MAX_EXTENT
+                    if type(arg) not in {bytes, bytearray} or len(arg) > extent:
+                        raise ValueError("Borrowed arguments must be private bytes within the fixture extent")
                     encoded.append({"type": typ, "bytes": base64.b64encode(arg).decode()})
                 else:
                     if not scalar_value_valid(arg, typ):

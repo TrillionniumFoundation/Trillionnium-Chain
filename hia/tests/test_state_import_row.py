@@ -150,3 +150,37 @@ class StateImportExportRow(unittest.TestCase):
                 args = [[raw, b"\xaa" * 7, b"\xcc" * work] for raw, _, work in cases]
                 for i, call in enumerate(module.call_many([("f0", row) for row in args])):
                     self.assertEqual((call.require_returned().value, call.arguments), (cases[i][1], args[i]))
+
+
+    def test_selfhost_original_absolute_row_extent(self):
+        namespace = b"n" * LIMITS[0]
+        key = b"k" * LIMITS[1]
+        # Non-periodic ends distinguish hashing the full value from a truncated
+        # or repeated prefix without using a second implementation for admission.
+        value = b"start" + bytes(range(256)) * ((LIMITS[2] - 9) // 256)
+        value += b"\xa5" * (LIMITS[2] - len(value) - 4) + b"last"
+        max_wire = sum(LIMITS) + 44
+        with NativeModule(SOURCE, byte_exports=("f0",), backend="selfhost",
+                          max_input_extent=max_wire + 1) as wide:
+            for parts, known_status in (((namespace, key, value), 0),
+                                        ((namespace, key, value + b"!"), 101)):
+                with self.subTest(value_bytes=len(parts[2])):
+                    row = frame(parts)
+                    self.assertEqual(len(row), max_wire + (known_status != 0))
+                    [(status, digest)] = original_rows([row])
+                    self.assertEqual(status, known_status)
+                    before = b"\xcc" * WORK
+                    call = wide.call("f0", [row, b"keep", before], timeout=45).require_returned()
+                    self.assertEqual(call.value, status)
+                    self.assertEqual(call.arguments[:2], [row, b"keep"])
+                    if status == 0:
+                        self.assertEqual(call.arguments[2][1168:1200], digest)
+                    else:
+                        self.assertEqual(call.arguments[2], before)
+            with self.assertRaises(ValueError):
+                wide.call("f0", [b"", b"", bytearray(ABI_LIMIT + 1)])
+        for backend in ("selfhost", "direct"):
+            with self.assertRaises(ValueError):
+                self.modules[backend].call("f0", [bytearray(ABI_LIMIT + 1), b"", b""])
+        with self.assertRaises(ValueError):
+            NativeModule(SOURCE, byte_exports=("f0",), backend="direct", max_input_extent=max_wire)

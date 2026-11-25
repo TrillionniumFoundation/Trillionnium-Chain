@@ -109,7 +109,8 @@ block entry(input:readbuf,work:mutbuf,nlen:u64,klen:u64,vlen:u64,val_at:u64)
   result_ns:u64 = call(input,work,zero,nlen) {"function":"r_part"}
   result_key:u64 = call(input,work,nlen,klen) {"function":"r_part"}
   result_val:u64 = call(input,work,val_at,vlen) {"function":"r_part"}
-  result_final:u64 = call(work) {"function":"tr_sha_final"}
+  max_row_hash:u64 = const() {"value":16842940}
+  result_final:u64 = call(work,max_row_hash) {"function":"tr_sha_final_limit"}
   st0:u64 = bit.or(result_init,result_dom)
   st1:u64 = bit.or(result_ns,result_key)
   st2:u64 = bit.or(result_val,result_final)
@@ -144,8 +145,9 @@ block entry(part_input:readbuf,part_work:mutbuf,offset:u64,length:u64)
   pair23:u64 = bit.or(byte2_be,byte3_be)
   length_be:u64 = bit.or(pair01,pair23)
   _st:u64 = call(part_work,stage,length_be) {"function":"tr_put"}
-  result_length:u64 = call(part_work,stage,eight_bits) {"function":"tr_sha_update_work"}
-  result_part:u64 = call(part_input,offset,length,part_work) {"function":"tr_sha_update"}
+  max_row_hash:u64 = const() {"value":16842940}
+  result_length:u64 = call(part_work,stage,eight_bits,max_row_hash) {"function":"tr_sha_update_work_limit"}
+  result_part:u64 = call(part_input,offset,length,part_work,max_row_hash) {"function":"tr_sha_update_limit"}
   result:u64 = bit.or(result_length,result_part)
   ret(result)
 end

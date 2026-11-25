@@ -117,7 +117,7 @@
     {
       "id": "state_import/export_row_validate",
       "node_integration_complete": false,
-      "scope": "M13 original ExportRowV0 structural bounds, canonical row SHA-256 equality and reserved namespace error priority within stock 1 MiB borrowed ABI; no export admission or durable owner",
+      "scope": "M13 original ExportRowV0 structural bounds, canonical row SHA-256 equality and reserved namespace error priority through stock Direct 1 MiB borrowed ABI and original full-size Selfhost row in an isolated test caller; no export admission or durable owner",
       "source": "hia/src/state_import/export_row_validate.hepta",
       "state": "native-kernel-implemented",
       "tests": [
