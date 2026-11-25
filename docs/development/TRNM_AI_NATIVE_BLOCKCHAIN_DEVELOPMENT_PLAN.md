@@ -1,3 +1,51 @@
+**Early bound-identity and noise engineering controls, 2026-11-25 UTC — HOLD:**
+
+The existing native fullpath job now observes the exact bound-identity namespace
+selector and the three noise-frame equality/cancellation controls after its
+original native builds. They reuse that runner and target directory with
+`--offline --locked` and the existing default feature profile. Cargo.lock and
+dependency declarations stay unchanged; no optional PQ feature is requested. The existing
+all-features workspace qualification and its complete test inventory remain
+required; this small execution does not replace them or run ignored learning
+fixtures. Original E1-E6 inputs, owners, budgets and Group rosters are unchanged.
+
+An independent `trnm-bound-primitive-engineering-v1` receipt retains actual
+source-before/source-after verification, Cargo.lock hashes, exact commands,
+full logs, command exits, named harness results, wall time, owner CPU and reaped
+child CPU. Compilation, source checking and failed commands remain in the
+observed cost. Command costs are nested inside the inclusive helper total;
+whole-host CPU is not asserted. The reader controls have a separate retained
+wall/user/system timer. Missing, zero-test, wrong-name, duplicate, ignored,
+malformed and unsuccessful harness results cannot pass.
+
+The added step has a five-minute limit, with two existing process-owner calls
+bounded to 120 seconds each plus the retained cleanup behavior. The job keeps
+its original 45-minute limit. An added-step failure is temporarily continued
+only so all original component collection steps can still run; a final
+unconditional gate requires that added step's actual outcome to be success.
+The two new script paths are also added to the existing PR trigger so a future
+reader-only change must execute its own controls. Removing those two paths and
+the two added steps yields the original workflow semantics exactly. No original
+command, pressure target, Host check, CPU policy or trigger was removed or relaxed.
+The new Python reader controls passed 9/9 in 0.017 seconds; actual
+Rust execution is pending on the new CI source. Original failures and the
+same-commit #997 review-only scan remain separate observations, without branch
+movement, rerun, merge, activation or performance promotion.
+
+
+The first actual #996 native-fullpath job
+[139162640475](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/45601893240/job/139162640475)
+failed at `cargo fmt --check`: the isolated capsule had formatted the new module
+with edition 2024, while this workspace declares edition 2021. The follow-up
+changes only the single import ordering line requested by that real CI diff.
+The 116 Python component-reader controls passed; Clippy, native tests and the
+collector did not execute. The later missing collector file is a secondary
+failure, not separate evidence of a native regression. Preserve this original
+failure in the [format observation](../../evidence/w1-noise-frame-20261125/native-format-failure-18cc.json).
+New formatting/native execution remains pending; #997 continues scanning its
+original unmodified `18ccda7b583a96add9402a87117e3b687efc6a02` source.
+
+
 **W1 per-expansion noise framing, 2026-11-25 UTC — HOLD:**
 
 Prepare the exact 66-byte `noise` hash frame once per expansion in the default

@@ -1,5 +1,5 @@
 //! Per-expansion byte framing only: no hash state, result or authority is cached.
-use super::{Hash, Q, VerificationError, VerificationProgress, WorkError};
+use super::{Hash, VerificationError, VerificationProgress, WorkError, Q};
 use sha2::{Digest, Sha256};
 
 fn frame(challenge: Hash, label: u8) -> [u8; 66] {
