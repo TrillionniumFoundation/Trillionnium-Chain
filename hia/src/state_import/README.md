@@ -41,3 +41,26 @@ The differential compiles the unchanged original two types and implementations
 with the existing General C original SHA2 0.10.9 dependency, checks ordinary
 and boundary values, compares both real native images, and shows that changing
 each stored digest byte has no effect. No production verifier is replaced.
+
+## Export row admission
+
+`export_row_validate.hepta` ports the bounded call to the exact Rust
+`ExportRowV0::validate()`. It checks namespace/key/value lengths, computes
+the original SHA-256 domain-and-three-parts transcript, compares all 32 stored
+digest bytes, then applies the same seven native reserved-prefix checks to
+the namespace extent only. A stale digest therefore precedes the forbidden
+namespace error, as in Rust. No validation bytes or authority capability are
+published.
+
+For this private borrowed callable, concatenate namespace, key, and value
+bytes, then append three little-endian 32-bit field lengths and the stored
+32-byte row digest. This fixture ABI is not an original wire format. Its
+stock x86-64 borrowed input limit is 1 MiB including the 44-byte trailer;
+the original Rust row type can carry a value up to 16 MiB. Logical field
+limits are unchanged. The second ABI span is never used or written, and
+the scratch span must have at least 1,248 bytes when hashing is needed.
+Return codes: success 0; malformed private framing 100; Rust
+`InvalidExportRow` 101; short scratch 102; internal hash refusal 103; Rust
+`ForbiddenAuthorityState` 104. Framing and logical length refusals precede
+scratch validation and hashing. This is row-level validation only, without
+export ordering, finality, SQLite import, caller integration, or activation.

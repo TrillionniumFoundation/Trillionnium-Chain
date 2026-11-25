@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "state_import/export_row_validate",
+      "node_integration_complete": false,
+      "scope": "M13 original ExportRowV0 structural bounds, canonical row SHA-256 equality and reserved namespace error priority within stock 1 MiB borrowed ABI; no export admission or durable owner",
+      "source": "hia/src/state_import/export_row_validate.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_row.py",
+        "hia/tests/rust_state_import_row_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/finalized_export_header_digest",
       "node_integration_complete": false,
       "scope": "M13 exact original length-coded finalized-export header SHA-256 commitment; no header admission, finality verification, durable owner or Node qualification",
@@ -2104,7 +2115,8 @@
     {
       "components": [
         "state_import/reserved_namespace",
-        "state_import/finalized_export_header_digest"
+        "state_import/finalized_export_header_digest",
+        "state_import/export_row_validate"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",
