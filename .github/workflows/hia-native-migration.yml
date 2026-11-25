@@ -7578,11 +7578,33 @@ jobs:
               stream.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
               stream.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
           PY
+      - name: Observe Settlement runner CPU before execution
+        if: matrix.component == 'settlement-engine'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          mkdir -m 700 -- "$RUNNER_TEMP/settlement-runner-cpu"
+          timeout 2s python3 -B -m hia.tools.settlement_runner_cpu \
+            --phase before --output-dir "$RUNNER_TEMP/settlement-runner-cpu" \
+            --head "$TRNM_EXPECTED_SOURCE_SHA" --tree "$(git rev-parse 'HEAD^{tree}')" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"
       - name: Execute the complete component and its independent reader
         id: owner_execute
         run: |
           set -euo pipefail
           python3 -B hia/tools/qualify_additional_owner_ci.py run --component '${{ matrix.component }}' --root "$OWNER_ROOT" --rust-bin "$OWNER_RUST_BIN" >"$OWNER_ROOT/observations/driver.stdout.raw" 2>"$OWNER_ROOT/observations/driver.stderr.raw"
+      - name: Observe Settlement runner CPU after execution
+        if: always() && matrix.component == 'settlement-engine'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          test -d "$RUNNER_TEMP/settlement-runner-cpu"
+          timeout 2s python3 -B -m hia.tools.settlement_runner_cpu \
+            --phase after --output-dir "$RUNNER_TEMP/settlement-runner-cpu" \
+            --head "$TRNM_EXPECTED_SOURCE_SHA" --tree "$(git rev-parse 'HEAD^{tree}')" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"
       - name: Recheck every committed source byte after success or failure
         id: owner_source_after
         if: always()
@@ -7669,4 +7691,15 @@ jobs:
           name: hia-settlement-image-identity-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/settlement-image-identity/image-identity.json
           if-no-files-found: error
+          retention-days: 30
+      - name: Upload separate optional Settlement runner CPU observations
+        if: always() && matrix.component == 'settlement-engine'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-settlement-runner-cpu-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/settlement-runner-cpu/before.json
+            ${{ runner.temp }}/settlement-runner-cpu/after.json
+          if-no-files-found: ignore
           retention-days: 30
