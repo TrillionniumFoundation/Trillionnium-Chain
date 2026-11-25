@@ -51,6 +51,11 @@ class NativeCall:
 
 
 class NativeModule:
+    # Prelinked qualification fixtures reuse the worker without invoking this
+    # constructor. They inherit the same default; only the checked private f0
+    # constructor path can opt in to a wider read-only input.
+    max_input_extent = MAX_EXTENT
+
     def __init__(self, source, *, byte_exports=(), backend="selfhost", fixture_owner=None,
                  max_input_extent=MAX_EXTENT):
         # The stock Selfhost f0 takes caller-owned disjoint spans; unlike the
