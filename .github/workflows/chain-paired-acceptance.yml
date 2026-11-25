@@ -1,0 +1,44 @@
+name: Bound paired identity and cost controls
+
+on:
+  pull_request:
+    paths:
+      - scripts/dev_circuit_evaluation.py
+      - scripts/dev_historical_evaluation.py
+      - scripts/dev_intake_evaluation.py
+      - scripts/dev_loop_identity.py
+      - scripts/dev_runtime_artifacts.py
+      - scripts/test_dev_*.py
+      - .github/workflows/chain-paired-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  paired-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts
+            config
+            trillionnium
+            evidence/cell-circuit-funded-evaluation-20261123
+            evidence/cell-released-pair-funded-evaluation-20261123
+            evidence/cell-historical-funded-evaluation-20261123
+            evidence/cell-inline-source-preflight-20261123
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Check unchanged project boundary
+        run: bash scripts/project-preflight.sh --audit
+      - name: Check new and retained engineering contracts
+        run: python3 -B -m unittest discover -s scripts -p 'test_dev_*.py' -v
+      - name: Check source stayed unchanged
+        run: git diff --exit-code

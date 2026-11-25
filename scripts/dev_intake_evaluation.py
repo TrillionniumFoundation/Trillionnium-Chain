@@ -8,10 +8,12 @@ from pathlib import Path
 
 from dev_circuit_evaluation import digest, execute, prepare, read, require, sha
 from dev_loop_identity import ADMISSION as BOUND_ADMISSION, DELIVERY as BOUND_DELIVERY
+from dev_loop_identity import ARTIFACT_ADMISSION, ARTIFACT_DELIVERY
 
 ADMISSION = "trnm-isolated-plain-paired-evaluation-request-v1"
 DELIVERY = "trnm-isolated-plain-paired-evaluation-delivery-v1"
-ADMISSIONS = {ADMISSION: DELIVERY, BOUND_ADMISSION: BOUND_DELIVERY}
+ADMISSIONS = {ADMISSION: DELIVERY, BOUND_ADMISSION: BOUND_DELIVERY, ARTIFACT_ADMISSION: ARTIFACT_DELIVERY}
+BOUND_ADMISSIONS = {BOUND_ADMISSION, ARTIFACT_ADMISSION}
 STUDY = "00e43fc72bb1cc2545d6f1d13fa67c448f413343c5e0c3ce1fdd9de91086f5fa"
 FIELDS = {"study_sha256", "freeze_sha256", "candidate_sha256", "request_sha256", "admission_sha256"}
 
@@ -49,7 +51,7 @@ def original_retention(report_path, retention_pin):
 def check_retention_record(job, terms):
     release = terms["intake_release"]
     candidate = read(job / "FROZEN.json")["candidate"]
-    study = terms["loop_identity"]["release"]["study_sha256"] if terms["schema"] == BOUND_ADMISSION else STUDY
+    study = terms["loop_identity"]["release"]["study_sha256"] if terms["schema"] in BOUND_ADMISSIONS else STUDY
     check_release(release, terms["intake_release_sha256"], terms["pins"], candidate, expected_study=study)
     if requires_retention(release, candidate):
         pin = release["source_retention_sha256"]

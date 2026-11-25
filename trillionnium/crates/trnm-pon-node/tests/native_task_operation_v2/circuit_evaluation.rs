@@ -76,6 +76,44 @@ impl EvaluationCase {
         hash(format!("{}-{suffix}", self.namespace).as_bytes(), parts)
     }
 }
+
+fn bound_evaluation_schemas(identity: &Value) -> Option<(&'static str, &'static str)> {
+    match identity["schema"].as_str() {
+        Some("hepta.paired-learning.loop-identity.v1") => Some((
+            "trnm-isolated-bound-paired-evaluation-request-v2",
+            "trnm-isolated-bound-paired-evaluation-delivery-v2",
+        )),
+        Some("hepta.paired-learning.loop-identity.v2") => Some((
+            "trnm-isolated-bound-paired-evaluation-request-v3",
+            "trnm-isolated-bound-paired-evaluation-delivery-v3",
+        )),
+        _ => None,
+    }
+}
+
+#[test]
+fn bound_identity_versions_select_exact_request_and_delivery_namespaces() {
+    for (version, request_version) in [("v1", "v2"), ("v2", "v3")] {
+        let identity = json!({"schema": format!("hepta.paired-learning.loop-identity.{version}")});
+        let (request, delivery) = bound_evaluation_schemas(&identity).unwrap();
+        assert_eq!(
+            request,
+            format!("trnm-isolated-bound-paired-evaluation-request-{request_version}")
+        );
+        assert_eq!(
+            delivery,
+            format!("trnm-isolated-bound-paired-evaluation-delivery-{request_version}")
+        );
+    }
+    for identity in [
+        json!({}),
+        json!({"schema": true}),
+        json!({"schema": "hepta.paired-learning.loop-identity.v3"}),
+    ] {
+        assert!(bound_evaluation_schemas(&identity).is_none());
+    }
+}
+
 fn execute_service(
     case: &EvaluationCase,
     mode: &str,
@@ -181,10 +219,12 @@ fn funded_evaluation(case: &EvaluationCase) {
     let admission_path = job.join("ADMISSION.json");
     let admission = read(&admission_path);
     if case.prepare_mode == "prepare-bound" {
-        assert_eq!(
-            admission["schema"],
-            "trnm-isolated-bound-paired-evaluation-request-v2"
-        );
+        let original_identity = read(Path::new(&var("TRNM_DEV_LOOP_IDENTITY_FILE")));
+        let (request_schema, delivery_schema) = bound_evaluation_schemas(&original_identity)
+            .expect("unsupported bound loop identity schema");
+        assert_eq!(admission["loop_identity"], original_identity);
+        assert_eq!(admission["schema"], request_schema);
+        assert_eq!(admission["output_schema"], delivery_schema);
         assert_eq!(
             admission["loop_identity_sha256"],
             var("TRNM_DEV_LOOP_IDENTITY_SHA256")
@@ -250,6 +290,7 @@ fn funded_evaluation(case: &EvaluationCase) {
     execute_service(case, "execute", &job, &materials, &[]);
     let delivery_path = job.join("DELIVERY.json");
     let delivered = read(&delivery_path);
+    assert_eq!(delivered["schema"], admission["output_schema"]);
     let output = file_digest(&delivery_path);
     let result = file_digest(&job.join("evaluation/RESULT.json"));
     let cost = file_digest(&job.join("COST.json"));
