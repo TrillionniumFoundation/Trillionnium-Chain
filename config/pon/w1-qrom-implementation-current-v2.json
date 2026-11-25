@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "source_base_commit": "6b851bc64db9d87db1bae083654902846f14c275",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -72,8 +72,8 @@
     },
     {
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
-      "bytes": 106066,
-      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      "bytes": 106379,
+      "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
     },
     {
       "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
@@ -541,8 +541,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
-        "bytes": 106066,
-        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+        "bytes": 106379,
+        "sha256": "7a5f4b72fe9c236ff42ca90329badce900542972bda19a16fdeb75a42e5511c4"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
@@ -633,6 +633,11 @@
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
         "bytes": 26429,
         "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+        "bytes": 5494,
+        "sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
@@ -983,6 +988,7 @@
     "audited_branch_integration_20261113": "Reviewed source 975ab0937243949b73cdbea9f13902802bbd7d00 rebinds four of the prior 139 local-closure inputs: the workspace lock, crypto Cargo manifest, crypto lib.rs and protocol lib.rs. Their exact old blobs match the separately reviewed dependency and source changes: the resolved package graph, Ed25519 API migration with stricter weak-key/canonical decoding, and validated protocol deserialization. Add the ordinary ed25519_rfc8032.rs vector source found by complete crate-directory enumeration, producing 140 inputs. The other 135 prior closure records, all 16 selected project files, saved proof materials, historical reader/contract, audit helpers, six crate roots, eight literal includes, proof parameters and 15 unresolved obligations retain their bytes. Preserve the earlier exact source-pin and unlisted-Rust-source refusals. Source byte counts identify reviewed files; they are not larger protocol, compute or security budgets. This selected inventory does not enumerate external Rust #[path] imports or third-party implementations and establishes no native execution, new proof, current-use approval or security qualification.",
     "operator_weak_key_error_contract_20261113": "Reviewed combination 80ee3a6ad326662074b329d4c9b7c04a5580b504 contains actor error-contract commit 1166b1661b389104b2209fc71dd9a81f263f17a1. Only crypto/lib.rs changes among the 140 local-closure inputs. The strict decode/canonical-encoding/point-parse/weak-key rejection order, display text and accepted key set remain unchanged. A typed WeakEd25519Key reason lets the separately reviewed operator preserve ACTOR_WEAK_KEY. New finite parser controls remain in the same source file. The mvcc caller is outside this selected six-crate closure. The other 139 inputs, 16 selected project files, saved proofs, historical reader/contract, helpers, eight literal includes, proof parameters and 15 unresolved obligations are unchanged. No business, CPU, protocol or security budget changes. This binding supplies no native execution, complete dependency proof, current-proof-use approval or security qualification.",
     "independent_locked_graph_repair_20261114": "Reviewed source d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00 synchronizes the independent native and V2 verifier Cargo locks with the already selected shared crypto manifest. Only the V2 verifier lock changes among the 16 selected project inputs and 140 local-closure inputs: Ed25519 2.2 to 3.0 and Curve25519 4.1 to 5.0, their required Fiat/SHA2 edges, and removal of unused older edges. All unchanged-version registry checksums, RISC Zero 3.0.6 packages, relation source, saved proof, guest lock/image, historical reader/contract, helpers, eight literal includes and 15 unresolved obligations retain their identities. Complete locked offline Cargo graphs, original release tests, strict Clippy, formatting and release builds ran separately on Rust 1.95.0 macOS arm64. The mapping itself still performs no native execution or cryptographic verification. No upstream proof-use approval, security qualification, changed constraint or guest build is implied.",
-    "all_branch_source_consolidation_20261114": "Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 changes nine of the prior 140 local-closure records and adds five crypto sources: the explicit root cost example, low_rank_prefix, statement_boundaries, task_product_facts and its tests. The nine changed inputs are the crypto manifest, rank-batch diagnostic, pon_work entry, legal_attempt, rejection_cache and its controls, and the pq_root_v3 implementation plus unit/native controls. The 131 other prior closure inputs, six Cargo-reachable crate roots, eight literal includes, saved proof materials, guest lock/image, historical reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their identities. The selected 16-path project map changes only pon_work.rs from the preceding current checkpoint; its historical-V1 difference set therefore contains four paths. Native product reuse, cheap-statement checks, cooperative task hashing and explicit structured producers are separately reviewed source capabilities. Immutable root-key expansion preserves each-call quorum verification and the original budget. This mapping adds no native execution, lower cost bound, current-profile approval, full Rust #[path] closure, external implementation proof or security qualification. The SP27 example belongs to trnm-research-protocol and is outside these six crates."
+    "all_branch_source_consolidation_20261114": "Reviewed source 5c04c60e463462d9df8884786e0d5bb32af08a64 changes nine of the prior 140 local-closure records and adds five crypto sources: the explicit root cost example, low_rank_prefix, statement_boundaries, task_product_facts and its tests. The nine changed inputs are the crypto manifest, rank-batch diagnostic, pon_work entry, legal_attempt, rejection_cache and its controls, and the pq_root_v3 implementation plus unit/native controls. The 131 other prior closure inputs, six Cargo-reachable crate roots, eight literal includes, saved proof materials, guest lock/image, historical reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their identities. The selected 16-path project map changes only pon_work.rs from the preceding current checkpoint; its historical-V1 difference set therefore contains four paths. Native product reuse, cheap-statement checks, cooperative task hashing and explicit structured producers are separately reviewed source capabilities. Immutable root-key expansion preserves each-call quorum verification and the original budget. This mapping adds no native execution, lower cost bound, current-profile approval, full Rust #[path] closure, external implementation proof or security qualification. The SP27 example belongs to trnm-research-protocol and is outside these six crates.",
+    "noise_frame_source_inventory_20261125": "Reviewed source 6b851bc64db9d87db1bae083654902846f14c275 rebinds only pon_work.rs among the 16 selected project inputs and the prior 145 local-closure inputs, then adds pon_work/noise_frame.rs for 146 local inputs. The new private expansion assembles the same 66 current domain/framing bytes once per expansion; it still hashes the full current input after each original callback and retains the 128-counter limit, rejection sampling, cancellation, reference path and fresh-challenge behavior. No hash state, verified result or authority is cached. The other 144 local inputs, six Cargo-reachable crate roots, eight literal includes, all manifests and locks, saved proof materials, historical V1 reader/contract, audit helpers, proof parameters and 15 unresolved obligations retain their bytes or values. Preserve the actual earlier current-map source-bound refusal and the original historical V1 refusal. This inventory still excludes two pre-existing external #[path] imports into node example support and all third-party/build identity closure; it is not a full Rust module or call graph. Original native observations retain their own source identities and are not requalified by this mapping. This source review establishes no new native execution, wall-time or CPU advantage, current-proof-use approval, cryptographic security, quantum work or consensus qualification."
   }
 }
