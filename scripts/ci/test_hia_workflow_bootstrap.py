@@ -25,6 +25,8 @@ BOOTSTRAP = re.compile(
 JOB_HEADER = re.compile(r"(?m)^ {2}(?P<job>[a-z0-9][a-z0-9_-]*):[ \t]*(?:#[^\n]*)?$")
 EXPECTED_BOOTSTRAP_JOBS = (
     "native-components",
+    "native-components-general-b",
+    "native-components-general-c",
     "native-components-oracle",
     "native-components-bench",
     "native-components-crypto-types",

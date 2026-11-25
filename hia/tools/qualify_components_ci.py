@@ -18,12 +18,16 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.tools import qualify, sha256_word_evidence
 from hia.tools.component_partition import (
-    LEGACY_PLAN, PLANS, canonical, descriptor, flatten, groups_for, lineage, need, object_hash, same, source_bound_plan,
+    GENERAL_PLAN, LEGACY_PLAN, PLANS, SHA_WORD_GROUPS, SPLIT_PLAN, canonical, descriptor,
+    flatten, groups_for, lineage, need, object_hash, same, source_bound_plan,
     validate_completion, validate_lineage,
 )
 
 SCHEMA = "trnm.hia.component-ci-readback.v6"
 SPLIT_SCHEMA = "trnm.hia.component-ci-readback.v7"
+GENERAL_SCHEMA = "trnm.hia.component-ci-readback.v8"
+READBACK_SCHEMAS = {LEGACY_PLAN: SCHEMA, SPLIT_PLAN: SPLIT_SCHEMA,
+                    GENERAL_PLAN: GENERAL_SCHEMA}
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
@@ -32,7 +36,7 @@ FILES = {
 
 
 def artifact_files(group):
-    return FILES | (sha256_word_evidence.artifact_files() if group == "general" else set())
+    return FILES | (sha256_word_evidence.artifact_files() if group in SHA_WORD_GROUPS else set())
 
 
 def identity(path):
@@ -204,7 +208,7 @@ def read_bundle(directory, group, expected, sources, identifiers, compiler_bindi
          "Actual component compiler bootstrap did not pass")
     verify_log((directory / "hia-observations/qualification.log").read_bytes(), value)
     word_evidence = None
-    if group == "general":
+    if group in SHA_WORD_GROUPS:
         captured = {name: (directory / name).read_bytes()
                     for name in sha256_word_evidence.artifact_files() | {"hia-observations/qualification.log"}}
         need(all(sha256_word_evidence.identity(raw) == before[name] for name, raw in captured.items()),
@@ -231,7 +235,7 @@ def verify_all(bundles, expected, sources, identifiers, compiler_binding, expect
          "Exact current consumer Git tree is required")
     need(all(record["source_tree"] == expected_tree for record in records.values()),
          "Component jobs differ from the actual consumer Git tree")
-    return {"schema": SCHEMA if plan == LEGACY_PLAN else SPLIT_SCHEMA, "status": "PASS", "lineage": expected,
+    return {"schema": READBACK_SCHEMAS[plan], "status": "PASS", "lineage": expected,
             "discovered_tests": sorted(identifiers), "tests": len(selected),
             "source_set_sha256": object_hash(sources), "partitions": records,
             "complete_disjoint_coverage": True, "actual_runtime_reexecuted": False,
@@ -249,13 +253,9 @@ def validate_job_results(environ, plan=LEGACY_PLAN):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--general", type=Path, required=True)
-    parser.add_argument("--crypto-types", type=Path, required=True)
-    parser.add_argument("--state-root", type=Path, required=True)
-    parser.add_argument("--oracle", type=Path, required=True)
-    parser.add_argument("--ml-dsa", type=Path, required=True)
-    parser.add_argument("--research", type=Path, required=True)
-    parser.add_argument("--bench", type=Path)
+    possible_groups = tuple(dict.fromkeys(group for plan in PLANS for group in groups_for(plan)))
+    for group in possible_groups:
+        parser.add_argument("--" + group, type=Path)
     parser.add_argument("--partition-plan", choices=PLANS)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -271,9 +271,10 @@ def main(argv=None):
         need(head == expected["git_head"], "Actual consumer Git head differs from CI lineage")
         plan = source_bound_plan(ROOT, args.partition_plan)
         groups = groups_for(plan)
-        need((args.bench is not None) == ("bench" in groups), "Exact source requires its Bench artifact set")
-        if plan != LEGACY_PLAN:
-            report["schema"] = SPLIT_SCHEMA
+        report["schema"] = READBACK_SCHEMAS[plan]
+        supplied = {group: getattr(args, group.replace("-", "_")) for group in possible_groups
+                    if getattr(args, group.replace("-", "_")) is not None}
+        need(set(supplied) == set(groups), "Exact source requires its complete artifact set")
         validate_job_results(os.environ, plan)
         sources = qualify.sources()
         suite = unittest.defaultTestLoader.discover(str(ROOT / "hia/tests"),
@@ -284,8 +285,7 @@ def main(argv=None):
         binding = read(binding_path)
         compiler = {"binding_sha256": identity(binding_path)["sha256"],
                     "compiler_sha256": binding["compiler_sha256"]}
-        bundles = {group: getattr(args, group.replace("-", "_")) for group in groups}
-        report = verify_all(bundles, expected, sources, identifiers, compiler, tree, plan)
+        report = verify_all(supplied, expected, sources, identifiers, compiler, tree, plan)
         need(sources == qualify.sources(), "Source changed during independent component readback")
     except BaseException as error:
         report.update(status="FAIL", failure={"error": repr(error), "traceback": traceback.format_exc()})

@@ -20,7 +20,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.tools.component_partition import (
-    PLANS, SPLIT_GROUPS, ObservedResult, lineage, record_completion, select_suite, source_bound_plan,
+    GENERAL_SHARDS, PLANS, SPLIT_GROUPS, ObservedResult, lineage, record_completion, select_suite, source_bound_plan,
 )
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
                 "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
@@ -29,7 +29,7 @@ ML_DSA_ORACLE = "TRNM_HIA_RUST_ML_DSA_REFERENCE"
 
 
 def rust_oracle_names(group):
-    if group not in (*SPLIT_GROUPS, "all"):
+    if group not in (*SPLIT_GROUPS, *GENERAL_SHARDS, "all"):
         raise ValueError("Unknown component shard")
     return (*RUST_ORACLES, ML_DSA_ORACLE) if group in ("ml-dsa", "all") else RUST_ORACLES
 
@@ -337,7 +337,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--require-rust-oracle", action="store_true")
-    parser.add_argument("--shard", choices=(*SPLIT_GROUPS, "all"), default="all")
+    parser.add_argument("--shard", choices=(*SPLIT_GROUPS, *GENERAL_SHARDS, "all"), default="all")
     parser.add_argument("--partition-plan", choices=PLANS)
     args = parser.parse_args()
     if sys.flags.optimize or os.environ.get("PYTHONOPTIMIZE") not in (None, "", "0"):

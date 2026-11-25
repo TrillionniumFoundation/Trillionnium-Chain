@@ -20,15 +20,27 @@ CRYPTO_TYPES_MODULES = tuple("hia.tests." + name + "." for name in (
 SCHEMA = "trnm.hia.component-test-partition.v5"
 LEGACY_PLAN = "legacy-six-v1"
 SPLIT_PLAN = "split-bench-v1"
-PLANS = (LEGACY_PLAN, SPLIT_PLAN)
+GENERAL_PLAN = "split-general-v1"
+PLANS = (LEGACY_PLAN, SPLIT_PLAN, GENERAL_PLAN)
 SPLIT_GROUPS = (*GROUPS, "bench")
 SPLIT_SCHEMA = "trnm.hia.component-test-partition.v6"
-PLAN_TRACKED_LINE = "# HIA component coverage plan: split-bench-v1"
+GENERAL_SHARDS = ("general-a", "general-b", "general-c")
+GENERAL_GROUPS = (*GENERAL_SHARDS, *SPLIT_GROUPS[1:])
+GENERAL_SCHEMA = "trnm.hia.component-test-partition.v7"
+PLAN_TRACKED_PREFIX = "# HIA component coverage plan:"
+PLAN_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {SPLIT_PLAN}"
+GENERAL_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {GENERAL_PLAN}"
+
+# Keep complete unittest modules together, including their shared fixtures.
+GENERAL_A_LAST = "test_control_guard"
+GENERAL_B_LAST = "test_release_file_descriptor"
+SHA_WORD_GROUPS = frozenset(("general", "general-c"))
 
 
 def groups_for(plan):
     need(plan in PLANS, "Unknown component coverage plan")
-    return GROUPS if plan == LEGACY_PLAN else SPLIT_GROUPS
+    return {LEGACY_PLAN: GROUPS, SPLIT_PLAN: SPLIT_GROUPS,
+            GENERAL_PLAN: GENERAL_GROUPS}[plan]
 
 
 def source_plan(root):
@@ -36,9 +48,11 @@ def source_plan(root):
     path = root / ".github/workflows/hia-native-migration.yml"
     need(path.is_file() and not path.is_symlink(), "Missing exact component workflow")
     lines = [line.strip() for line in path.read_text().splitlines()
-             if line.strip().startswith("# HIA component coverage plan:")]
-    need(lines in ([], [PLAN_TRACKED_LINE]), "Invalid component coverage plan in source")
-    return SPLIT_PLAN if lines else LEGACY_PLAN
+             if line.strip().startswith(PLAN_TRACKED_PREFIX)]
+    need(lines in ([], [PLAN_TRACKED_LINE], [GENERAL_TRACKED_LINE]),
+         "Invalid component coverage plan in source")
+    return {(): LEGACY_PLAN, (PLAN_TRACKED_LINE,): SPLIT_PLAN,
+            (GENERAL_TRACKED_LINE,): GENERAL_PLAN}[tuple(lines)]
 
 
 def source_bound_plan(root, requested):
@@ -81,8 +95,15 @@ def group_for(identifier, plan=LEGACY_PLAN):
     # modules. Discovery and actual start/finish records remain mandatory.
     if identifier.startswith(RESEARCH_MODULE_PREFIX):
         return "research"
-    if plan == SPLIT_PLAN and identifier.split(".")[2].startswith("test_bench_"):
+    module = identifier.split(".")[2]
+    if plan != LEGACY_PLAN and module.startswith("test_bench_"):
         return "bench"
+    if plan == GENERAL_PLAN:
+        if module <= GENERAL_A_LAST:
+            return "general-a"
+        if module <= GENERAL_B_LAST:
+            return "general-b"
+        return "general-c"
     return "general"
 
 
@@ -98,7 +119,8 @@ def descriptor(identifiers, group, plan=LEGACY_PLAN):
          "All complete component partitions are required")
     selected = [identifier for identifier in ordered
                 if group == "all" or group_for(identifier, plan) == group]
-    return {"schema": SCHEMA if plan == LEGACY_PLAN else SPLIT_SCHEMA,
+    return {"schema": {LEGACY_PLAN: SCHEMA, SPLIT_PLAN: SPLIT_SCHEMA,
+                       GENERAL_PLAN: GENERAL_SCHEMA}[plan],
             "group": group, "groups": list(groups),
             "discovered_tests": ordered, "discovered_sha256": object_hash(ordered),
             "selected_tests": selected, "selected_sha256": object_hash(selected)}
