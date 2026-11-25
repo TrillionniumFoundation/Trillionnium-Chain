@@ -1,3 +1,50 @@
+# 2026-11-25 — Current PQ declared-source correspondence, independent V2
+
+The current engineering parent is Chain commit
+`92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7`, tree
+`7118a8748cfaa2a580e703afd6090eee559a9a58`. Its actual CPQ1 ARM command in run
+45644157214 / job 139310473789 refused at the first changed frozen source,
+`.github/workflows/chain-hepta-closure-candidate.yml`. The original source
+receipt and log are retained under
+`evidence/pq-corpus-current-source-20261125-v2/`. The command's 7.470137729-second
+observation remains a failure. Later CPQ native commands did not execute.
+
+The immutable V1 corpus, its checker, negative controls, descriptor reader and
+four original workflow callers are unchanged. The frozen V1 entry must continue
+to reject source outside its original pin set. No result here substitutes for
+that entry, replays its campaign, or grants its old qualification to new source.
+
+This current-only namespace checks all 2,613 original declared paths, preserving
+each old blob identity while naming exactly 30 reviewed replacements. It adds
+the separately reviewed `pon_work/noise_frame.rs` and witness
+`development_observation.rs` modules, yielding 2,615 current declared paths.
+Both the delta map and canonical current blob snapshot have independent pins in
+the new reader. The original bounded PQ coverage traversal and canonical-provider
+constraints remain active. Separate descriptor reads are not an immutable Git
+snapshot or a complete Rust dependency graph; the new reader, control roster,
+workflow and all other committed bytes need independent exact-head CI binding.
+
+The embedded native source inventory receives only the two missing module paths
+and the new current-map configuration path. Its expected count changes from
+1,747 to 1,750 under the original generator policy. This repairs the observed
+repository inventory gap without changing that generator or any frozen pin.
+
+The proposed metadata lane records 18 new current-entry controls and all 113
+unchanged V1 controls (99 direct methods and 14 inherited descriptor controls),
+requiring every exact name once and no skips. It separately checks current source
+correspondence and the original inventory policy between complete clean-source
+observations. Before actual execution these are required controls, not results.
+The root owns the isolated bounded engineering launch; no old E1–E6 allocation
+is reset, reused or relabeled. Every original failed attempt and its cost remains.
+
+All outputs retain HOLD, false native/security/deployment/campaign qualification
+and a null actual lifetime failure bound. This source change does not establish
+cryptographic soundness, the 250 ms witness objective, pressure performance,
+full dependency coverage, learning efficacy, CodeQL acceptance or production
+activation. Each of those retains its own original evidence and unresolved gate.
+
+The complete preceding sole plan follows without deletion or amendment.
+
 **Witness completion and current W1 source bindings, 2026-11-25 UTC — HOLD:**
 
 This isolated review candidate is based on #1000 at `6b851bc64db9d87db1bae083654902846f14c275`. Its 20 source

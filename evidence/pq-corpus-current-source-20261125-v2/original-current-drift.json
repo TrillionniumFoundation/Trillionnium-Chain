@@ -1,0 +1,310 @@
+{
+  "schema": "chain-1001-static-current-consumer-drift-v1",
+  "source_commit": "92ec9b983dfd7a9194c3c1e2dd75076a1e1b4cf7",
+  "source_tree": "7118a8748cfaa2a580e703afd6090eee559a9a58",
+  "tracked_count": 41971,
+  "corpus_pinned_count": 2613,
+  "corpus_top_fields": [
+    "assertions",
+    "candidate_source_inputs",
+    "deadline_native_crypto_refinement",
+    "native_account_owner_slice_v1",
+    "native_network_owner_slice_v2",
+    "native_tpq1_canonical_pem",
+    "native_tpq1_crypto_oracle",
+    "native_wire_preflight",
+    "overwrites",
+    "parent_profile",
+    "pinned_blobs",
+    "pql11b_module_ancestry",
+    "purpose",
+    "required_paths",
+    "schema",
+    "source_composition",
+    "status",
+    "superseded_native_network_owner_slice_v1",
+    "unresolved_blockers",
+    "upstream_heads"
+  ],
+  "drift": [
+    {
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "pinned": "6c4bf041a0aa20182caba8ce00490be4a845e3f3",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "49d03a4929d707c27c1e9ea8d071025c7a58ab65"
+      }
+    },
+    {
+      "path": "config/pon/hash-use-contract-v1.json",
+      "pinned": "20edf2ad65dd2e2b1feb0e8eb3b9bce197d8cebd",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "34b1ea97f9321a8dac083bf25acb2581213ee51c"
+      }
+    },
+    {
+      "path": "config/pon/joint-consensus-qualification-v1.json",
+      "pinned": "96ce001f29a6f3028b8d50a3517c28c8346d2beb",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "7b01ef46852207238cf9830ee83b0e95049f4728"
+      }
+    },
+    {
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "pinned": "73a8b3943bbe2a3a77e1a181bc2116ec85c0301e",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "fbfce48ddf7404b750ac253f5eb10ce130e07e23"
+      }
+    },
+    {
+      "path": "config/pon/pq128-source-correspondence-current-v2.json",
+      "pinned": "7692d1ad8f1aba6b8ed0b544da52fb304dee65ca",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "b8db4cf0bb1226bee3e7a3cb8df21db66de918e7"
+      }
+    },
+    {
+      "path": "config/pon/w1-lifetime-current-source-v2.json",
+      "pinned": "a99ff2b27da05f4abfcfa84998e6bd22cfd3bf14",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "00affb7fa177f3ab9eb4ec4f7ae37aed84bfb83e"
+      }
+    },
+    {
+      "path": "config/pon/w1-qrom-implementation-current-v2.json",
+      "pinned": "bfbf323770e927a06f2bb9151a0c7cdebce8605a",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "d33375350c30f1e025856141db5e5bf2cb90410d"
+      }
+    },
+    {
+      "path": "config/pon/w1-stark-route-registry-v1.json",
+      "pinned": "1a4b7beb4afb1dd30b2aae5a0a36e12f02de0070",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "bc02e0ab4c581cba934f0e19bd7291ce283391d1"
+      }
+    },
+    {
+      "path": "config/pon/w1-upstream-security-v1.json",
+      "pinned": "f326b9fe18a1b273c4de0e485d8363eab158b1ff",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "a6a241a4b57d891f82a2569deec46ff0c35b9358"
+      }
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "pinned": "a80c2c3157f6c55e7e9583d4f71ae7b5abe72432",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "456a2c517d7cc52b05bd751ec6c0e5b3cfad6c0f"
+      }
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "pinned": "8c4526887aeb2d731ae76035b3fa13e380505b05",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "f02fe18c690a6c2417ea457417fac0c22181033b"
+      }
+    },
+    {
+      "path": "scripts/ci/hash_use_contract.py",
+      "pinned": "bfe426e42fb0010e9a3febbfccee973029336d56",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "774e6b0ad66efbac9483e4e77c5a735a9bb2feb0"
+      }
+    },
+    {
+      "path": "scripts/ci/pq_lifetime_current_v2.py",
+      "pinned": "82468a45e454928dbe9b16eb38fa7e77feeefcbe",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "d8ccc5614b1350762e0b7cd623e89dd6c705165f"
+      }
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "pinned": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "7aaa475388104cbd644d3c2928b5cbae3954b340"
+      }
+    },
+    {
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "pinned": "b94e9f0427980d2e401a24f7fb9c6adb4c9f22d8",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "040ec51a49400285abf8786d176d461678905bc3"
+      }
+    },
+    {
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "pinned": "66733f08afcc667baedaafcdbc74660fa5c90891",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "d34c102695806e17533b2fb017463eb84a0d9256"
+      }
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_current_ci.py",
+      "pinned": "172c14f5c7b55bc35ae1b73248fa0971217561f2",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "dd93f5ff8c6b76e122411057491832cbb1f4b0a1"
+      }
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+      "pinned": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "60b60ff9be2f4af70b7099d5fa76dfb4bf184bf2"
+      }
+    },
+    {
+      "path": "scripts/w1_lifetime_current_observation.py",
+      "pinned": "b7f0125d9736b30d3c4d420780435845dc85ad11",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "44ee5d9c401588ddd042448b977d7c6c54b42695"
+      }
+    },
+    {
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "pinned": "5a95bf69cb6d383d0418ec1096703607ea7984d7",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "d7d0af955c1290d1e7b3135b2fa495efff205d12"
+      }
+    },
+    {
+      "path": "scripts/w1_stark_route_audit.py",
+      "pinned": "c295217c30cae549a4658e092528115cac400400",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "fc2b46c9668239cfbbdd605509e2baa000dd7ba1"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "pinned": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "c8a18f75782430f72a4f9f06d42524a124faabec"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "pinned": "2fcc8124549bc94a237f4d84194b5e44d28a0182",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "a6194b606d34243930200b091a2a5ca4517584f4"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "pinned": "8d3773f7d4cd73b2a9ee7b6b236ac46d306947f1",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "b9d6866a9c0dce22cdb8f0bdced65bfd5676fbe3"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
+      "pinned": "25e776f78ed8e6843d4bc53c15433108823dfa86",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "dc9240bd2441441a12edbab3dc5e49ad0a80e1e2"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs",
+      "pinned": "fb37302bce9b0c771314bcee49fd85be933f76f7",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "0377c1c156f4135c7e4ef6fa90d2fcf3ec9a83c8"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs",
+      "pinned": "7d27c2e45b51b8d3baa6206398c2cc434d51d902",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "3993823ae2632b3a5cbd654fd26ef7cbada29ce1"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs",
+      "pinned": "5eea5cad9f13b21eb20944d36cf30655e45dd292",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "93d557343477b1c6cb3f8d4871ef5b52b18e5293"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs",
+      "pinned": "ac389ebc3e45ba21ceaf08bafaf4d720d10ac9bd",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "f667741bf7078d0269fa45ecbd276e3ce0f414ef"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+      "pinned": "5cfbc87f1aa76c0db8cd6dd08c25f6294a6844b8",
+      "actual": {
+        "mode": "100644",
+        "kind": "blob",
+        "oid": "68b90d7166a48f8c314169023ead3e4943a113af"
+      }
+    }
+  ],
+  "inventory_current_count": 1747,
+  "inventory_required_count": 1749,
+  "missing_inventory": [
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs"
+  ],
+  "extra_inventory": [],
+  "not_reader_execution": true,
+  "no_test_execution": true
+}
