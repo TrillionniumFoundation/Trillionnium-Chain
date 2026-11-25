@@ -1,3 +1,41 @@
+**W1 per-expansion noise framing, 2026-11-25 UTC — HOLD:**
+
+Prepare the exact 66-byte `noise` hash frame once per expansion in the default
+full-limb replay path. Only the four counter bytes change between iterations.
+Each original Noise callback still runs before hashing all 66 bytes, and the
+counter cap, rejection sampling, output words, cancellation result, dynamic
+Host checks, CPU accounting, public deadline and 4-second confirmation target
+remain unchanged. The scalar and other retained reference paths keep the
+original generic framed hash. No hash state, computed result or authority is
+cached across callbacks or invocations.
+
+Three new Rust controls compare the original hash domain and length framing,
+complete outputs and callback sequences (including the fixed 128-counter
+refusal), and cancellation at every observed noise boundary followed by a fresh
+retry. Their execution is pending. An isolated engineering capsule with exact
+`sha2 = 0.10.9` and lockfile SHA-256
+`de58c8a873a42edf3031b90fb518af5309cc1e6044222991e9ae5bc098005bf5`
+did not reach Rust compilation: the first attempt hit its dependency-acquisition
+timeout after 60.008960125 seconds including cleanup; the second offline attempt
+failed in 0.047445084 seconds because locked `libc 0.2.191` was absent. A separately
+bounded request for only that official crate timed out after receiving
+220643 of 855401 bytes and used 10.074985083 seconds. The partial download was
+not accepted into the cache, checksum verification was not reached, and no
+third test command was started. All three failures remain failures; their
+cumulative measured wall time is 70.131390292 seconds within the separately
+authorized 90-second engineering bound. The first attempt's CPU cost was not
+measured and remains unknown.
+
+The engineering capsule is not the repository Cargo graph or an original E1-E6
+qualification. No original budget, frozen source, test roster, Host check or
+pressure criterion was changed. This patch has no measured performance claim;
+the original 16-worker 0/1 timely-confirmation result and pending native
+integration gates remain open. The existing #983 integration candidate remains
+the route to main; any additional main-base Draft is review-only.
+
+
+Retained attempt records: [engineering attempts](../../evidence/w1-noise-frame-20261125/engineering-attempts.json).
+
 
 **Original four-second pressure failure readback, 2026-11-25 — HOLD:**
 
