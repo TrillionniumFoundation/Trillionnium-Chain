@@ -56,27 +56,8 @@ block saved(raw_7:readbuf,out_7:mutbuf,arena_7:mutbuf,n_7:u64,remaining_7:u64,re
 block leaf_refusal(code:u32)
   ret(code)
 block layer(raw_9:readbuf,n_9:u64,layer_out:mutbuf,layer_work:mutbuf,layer_base:u64,layer_end:u64)
-  first_width:u64 = const() {"value":32}
-  single_end:u64 = int.add.wrap(layer_base,first_width)
-  one_node:bool = compare.eq(layer_end,single_end)
-  branch one_node final_digest(raw_9,layer_out,layer_work,n_9,layer_base) pair(raw_9,n_9,layer_out,layer_work,layer_base,layer_end,layer_base,layer_base)
-block pair(raw_10:readbuf,n_10:u64,pair_out:mutbuf,pair_work:mutbuf,pair_base:u64,pair_end:u64,left_10:u64,next_dst:u64)
-  leaf_bytes:u64 = const() {"value":32}
-  maybe_right:u64 = int.add.wrap(left_10,leaf_bytes)
-  right_exists:bool = compare.lt(maybe_right,pair_end)
-  branch right_exists hash(raw_10,n_10,pair_out,pair_work,pair_base,pair_end,left_10,maybe_right,next_dst) hash(raw_10,n_10,pair_out,pair_work,pair_base,pair_end,left_10,left_10,next_dst)
-block hash(raw_11:readbuf,n_11:u64,hash_out:mutbuf,hash_work:mutbuf,hash_base:u64,hash_end:u64,hash_left:u64,hash_right:u64,hash_dst:u64)
-  pair_hashed:bool = call(hash_work,hash_left,hash_right) {"function":"dc_pair"}
-  branch pair_hashed save(raw_11,n_11,hash_out,hash_work,hash_base,hash_end,hash_left,hash_dst) internal()
-block save(raw_12:readbuf,n_12:u64,save_out:mutbuf,save_work:mutbuf,save_base:u64,save_end:u64,save_l:u64,save_dst:u64)
-  digest_at_12:u64 = const() {"value":1168}
-  _save:u64 = call(save_work,digest_at_12,save_dst) {"function":"dc_copy"}
-  node_bytes:u64 = const() {"value":32}
-  pair_bytes:u64 = const() {"value":64}
-  saved_to:u64 = int.add.wrap(save_dst,node_bytes)
-  read_to:u64 = int.add.wrap(save_l,pair_bytes)
-  is_last:bool = compare.ge(read_to,save_end)
-  branch is_last layer(raw_12,n_12,save_out,save_work,save_base,saved_to) pair(raw_12,n_12,save_out,save_work,save_base,save_end,read_to,saved_to)
+  tree:bool = call(layer_work,layer_base,layer_end) {"function":"dc_tree"}
+  branch tree final_digest(raw_9,layer_out,layer_work,n_9,layer_base) internal()
 block final_digest(raw_13:readbuf,out_13:mutbuf,arena_13:mutbuf,count_13:u64,root:u64)
   hashed_13:bool = call(raw_13,arena_13,count_13,root) {"function":"dc_header"}
   start_13:u64 = const() {"value":0}
@@ -196,27 +177,7 @@ end
 
 fn dc_header(raw:readbuf,work:mutbuf,count:u64,root:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,work:mutbuf,count:u64,root:u64)
-  root_staged:u64 = const() {"value":1680}
-  _root:u64 = call(work,root,root_staged) {"function":"dc_copy"}
-  init:u64 = call(work) {"function":"tr_sha_init"}
-  at0:u64 = const() {"value":1208}
-  val0:u64 = const() {"value":2522015791327477760}
-  _domain0:u64 = call(work,at0,val0) {"function":"tr_put"}
-  at1:u64 = const() {"value":1216}
-  val1:u64 = const() {"value":7451607104633074292}
-  _domain1:u64 = call(work,at1,val1) {"function":"tr_put"}
-  at2:u64 = const() {"value":1224}
-  val2:u64 = const() {"value":7579116647700783474}
-  _domain2:u64 = call(work,at2,val2) {"function":"tr_put"}
-  at3:u64 = const() {"value":1232}
-  val3:u64 = const() {"value":8389754676365648750}
-  _domain3:u64 = call(work,at3,val3) {"function":"tr_put"}
-  at4:u64 = const() {"value":1240}
-  val4:u64 = const() {"value":7022356901705641057}
-  _domain4:u64 = call(work,at4,val4) {"function":"tr_put"}
-  at5:u64 = const() {"value":1248}
-  val5:u64 = const() {"value":3175982}
-  _domain5:u64 = call(work,at5,val5) {"function":"tr_put"}
+  _dom:u64 = call(work) {"function":"dc_header_domain"}
   src0:u64 = const() {"value":0}
   pos0:u64 = const() {"value":1251}
   len0:u64 = const() {"value":32}
@@ -257,6 +218,39 @@ block entry(raw:readbuf,work:mutbuf,count:u64,root:u64)
   pos9:u64 = const() {"value":1587}
   len9:u64 = const() {"value":8}
   _f9:u64 = call(raw,work,src9,pos9,len9) {"function":"dc_field"}
+  ok:bool = call(work,count,root) {"function":"dc_finish_header"}
+  ret(ok)
+end
+
+fn dc_header_domain(work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf)
+  at0:u64 = const() {"value":1208}
+  val0:u64 = const() {"value":2522015791327477760}
+  _domain0:u64 = call(work,at0,val0) {"function":"tr_put"}
+  at1:u64 = const() {"value":1216}
+  val1:u64 = const() {"value":7451607104633074292}
+  _domain1:u64 = call(work,at1,val1) {"function":"tr_put"}
+  at2:u64 = const() {"value":1224}
+  val2:u64 = const() {"value":7579116647700783474}
+  _domain2:u64 = call(work,at2,val2) {"function":"tr_put"}
+  at3:u64 = const() {"value":1232}
+  val3:u64 = const() {"value":8389754676365648750}
+  _domain3:u64 = call(work,at3,val3) {"function":"tr_put"}
+  at4:u64 = const() {"value":1240}
+  val4:u64 = const() {"value":7022356901705641057}
+  _domain4:u64 = call(work,at4,val4) {"function":"tr_put"}
+  at5:u64 = const() {"value":1248}
+  val5:u64 = const() {"value":3175982}
+  _domain5:u64 = call(work,at5,val5) {"function":"tr_put"}
+  good:u64 = const() {"value":0}
+  ret(good)
+end
+
+fn dc_finish_header(work:mutbuf,count:u64,root:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,count:u64,root:u64)
+  root_staged:u64 = const() {"value":1680}
+  _root:u64 = call(work,root,root_staged) {"function":"dc_copy"}
+  init:u64 = call(work) {"function":"tr_sha_init"}
   root_len_pos:u64 = const() {"value":1603}
   root_len_be:u64 = const() {"value":2305843009213693952}
   root_data_pos:u64 = const() {"value":1611}
@@ -314,8 +308,18 @@ block entry(raw_1:readbuf,work_1:mutbuf,record_1:u64,target_1:u64)
   key_ok:bool = bool.and(bounds1,bounds2)
   val_ok:bool = bool.and(bounds3,compatible)
   valid:bool = bool.and(key_ok,val_ok)
-  branch valid compute(raw_1,work_1,record_1,target_1,ns_1,key_1,value_1,kind_1) malformed()
-block compute(raw_2:readbuf,work_2:mutbuf,record_2:u64,target_2:u64,ns_2:u64,key_2:u64,value_2:u64,kind_2:u64)
+  branch valid pure_leaf(raw_1,work_1,record_1,target_1,ns_1,key_1,value_1,kind_1) malformed()
+block pure_leaf(raw:readbuf,work:mutbuf,record:u64,target:u64,ns:u64,key:u64,value:u64,kind:u64)
+  value_from:u64 = const() {"value":152}
+  result:u32 = call(raw,work,record,target,ns,key,value,kind,value_from) {"function":"dc_leaf_at"}
+  ret(result)
+block malformed()
+  rejected:u32 = const() {"value":100}
+  ret(rejected)
+end
+
+fn dc_leaf_at(raw_2:readbuf,work_2:mutbuf,record_2:u64,target_2:u64,ns_2:u64,key_2:u64,value_2:u64,kind_2:u64,value_from:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw_2:readbuf,work_2:mutbuf,record_2:u64,target_2:u64,ns_2:u64,key_2:u64,value_2:u64,kind_2:u64,value_from:u64)
   init:u64 = call(work_2) {"function":"tr_sha_init"}
   at0:u64 = const() {"value":1208}
   val0:u64 = const() {"value":2810246167479189504}
@@ -338,7 +342,6 @@ block compute(raw_2:readbuf,work_2:mutbuf,record_2:u64,target_2:u64,ns_2:u64,key
   first:u64 = const() {"value":1255}
   ns_from:u64 = const() {"value":24}
   key_from:u64 = const() {"value":88}
-  value_from:u64 = const() {"value":152}
   ns_src:u64 = int.add.wrap(record_2,ns_from)
   key_src:u64 = int.add.wrap(record_2,key_from)
   value_src:u64 = int.add.wrap(record_2,value_from)
@@ -368,9 +371,6 @@ block retain(work_3:mutbuf,target_3:u64)
   _clone:u64 = call(work_3,start_3,target_3) {"function":"dc_copy"}
   ok_3:u32 = const() {"value":0}
   ret(ok_3)
-block malformed()
-  rejected_4:u32 = const() {"value":100}
-  ret(rejected_4)
 block internal()
   rejected_5:u32 = const() {"value":103}
   ret(rejected_5)
@@ -399,4 +399,36 @@ block copy(raw_2:readbuf,work_2:mutbuf,src:u64,dst_2:u64,left:u64)
   branch done finished(next_dst) copy(raw_2,work_2,next_src,next_dst,remaining)
 block finished(next:u64)
   ret(next)
+end
+
+fn dc_tree(work:mutbuf,base:u64,end:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,base:u64,end:u64)
+  jump layer(work,base,end)
+block layer(layer_work:mutbuf,layer_base:u64,layer_end:u64)
+  first_width:u64 = const() {"value":32}
+  single_end:u64 = int.add.wrap(layer_base,first_width)
+  one_node:bool = compare.eq(layer_end,single_end)
+  branch one_node success() pair(layer_work,layer_base,layer_end,layer_base,layer_base)
+block pair(pair_work:mutbuf,pair_base:u64,pair_end:u64,pair_left:u64,next_dst:u64)
+  leaf_bytes:u64 = const() {"value":32}
+  maybe_right:u64 = int.add.wrap(pair_left,leaf_bytes)
+  right_exists:bool = compare.lt(maybe_right,pair_end)
+  right:u64 = select(right_exists,maybe_right,pair_left)
+  pair_hashed:bool = call(pair_work,pair_left,right) {"function":"dc_pair"}
+  branch pair_hashed save(pair_work,pair_base,pair_end,pair_left,next_dst) failure()
+block save(save_work:mutbuf,save_base:u64,save_end:u64,save_left:u64,save_dst:u64)
+  digest_at:u64 = const() {"value":1168}
+  _save:u64 = call(save_work,digest_at,save_dst) {"function":"dc_copy"}
+  node_bytes:u64 = const() {"value":32}
+  pair_bytes:u64 = const() {"value":64}
+  saved_to:u64 = int.add.wrap(save_dst,node_bytes)
+  read_to:u64 = int.add.wrap(save_left,pair_bytes)
+  is_last:bool = compare.ge(read_to,save_end)
+  branch is_last layer(save_work,save_base,saved_to) pair(save_work,save_base,save_end,read_to,saved_to)
+block success()
+  good:bool = const() {"value":true}
+  ret(good)
+block failure()
+  refused:bool = const() {"value":false}
+  ret(refused)
 end

@@ -318,6 +318,76 @@
           "bm_kind",
           "bm_vector"
         ]
+      },
+      {
+        "source": "platform/state_import_sqlite/vector_admission.hepta",
+        "functions": [
+          "vd_verify",
+          "vd_fields",
+          "vd_sql_binding",
+          "vd_count_equal",
+          "vd_equal",
+          "vd_hex_field",
+          "vd_plan_schema",
+          "vd_equal_ascii64"
+        ]
+      },
+      {
+        "source": "src/state_import/incremental_delta_commitment.hepta",
+        "functions": [
+          "dc_copy",
+          "dc_pair",
+          "dc_header_domain",
+          "dc_finish_header",
+          "dc_leaf_at",
+          "dc_field",
+          "dc_tree"
+        ]
+      }
+    ],
+    "platform/state_import_sqlite/vector_admission.hepta": [
+      {
+        "source": "src/state_import/incremental_delta_commitment.hepta",
+        "functions": [
+          "dc_copy",
+          "dc_pair",
+          "dc_header_domain",
+          "dc_finish_header",
+          "dc_leaf_at",
+          "dc_field",
+          "dc_tree"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_nibble",
+          "rc_octet"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/mixed_batch.hepta",
+        "functions": [
+          "bm_kind"
+        ]
       }
     ],
     "platform/state_import_sqlite/mixed_batch.hepta": [

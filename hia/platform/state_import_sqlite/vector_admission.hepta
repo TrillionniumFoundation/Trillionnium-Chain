@@ -1,0 +1,295 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_vector_delta_admission
+fn vd_verify(raw:readbuf,work:mutbuf,count:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,count:u64)
+  record:u64 = const() {"value":16}
+  base:u64 = const() {"value":1760}
+  jump leaves(raw,work,count,count,record,base)
+block leaves(lraw:readbuf,lwork:mutbuf,total:u64,left:u64,lrecord:u64,slot:u64)
+  offns:u64 = const() {"value":8}
+  offkey:u64 = const() {"value":16}
+  offval:u64 = const() {"value":256}
+  nsat:u64 = int.add.wrap(lrecord,offns)
+  keyat:u64 = int.add.wrap(lrecord,offkey)
+  valat:u64 = int.add.wrap(lrecord,offval)
+  ns:u64 = call(lraw,nsat) {"function":"tr_read"}
+  key:u64 = call(lraw,keyat) {"function":"tr_read"}
+  value:u64 = call(lraw,valat) {"function":"tr_read"}
+  tag:u64 = call(lraw,lrecord) {"function":"tr_read"}
+  mode:u64 = call(tag) {"function":"bm_kind"}
+  delete:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  absent:bool = compare.eq(mode,delete)
+  kind:u64 = select(absent,zero,delete)
+  actual_value:u64 = select(absent,zero,value)
+  offset:u64 = const() {"value":264}
+  leaf:u32 = call(lraw,lwork,lrecord,slot,ns,key,actual_value,kind,offset) {"function":"dc_leaf_at"}
+  good:u32 = const() {"value":0}
+  hashed:bool = compare.eq(leaf,good)
+  branch hashed advance(lraw,lwork,total,left,lrecord,slot) refuse()
+block advance(araw:readbuf,awork:mutbuf,acount:u64,aleft:u64,last_record:u64,used_slot:u64)
+  stride:u64 = const() {"value":392}
+  next_record:u64 = int.add.wrap(last_record,stride)
+  width:u64 = const() {"value":32}
+  next_slot:u64 = int.add.wrap(used_slot,width)
+  one:u64 = const() {"value":1}
+  rem:u64 = int.sub.wrap(aleft,one)
+  finished:bool = compare.eq(aleft,one)
+  branch finished fold(araw,awork,acount,last_record,next_record,next_slot) leaves(araw,awork,acount,rem,next_record,next_slot)
+block fold(fraw:readbuf,fwork:mutbuf,fcount:u64,flast:u64,meta:u64,extent:u64)
+  fbase:u64 = const() {"value":1760}
+  rooted:bool = call(fwork,fbase,extent) {"function":"dc_tree"}
+  branch rooted finish(fraw,fwork,fcount,flast,meta,fbase) refuse()
+block finish(raw_f:readbuf,work_f:mutbuf,count_f:u64,last_f:u64,old_meta:u64,root:u64)
+  new_meta_off:u64 = const() {"value":489}
+  new_meta:u64 = int.add.wrap(old_meta,new_meta_off)
+  fields_ok:bool = call(raw_f,work_f,old_meta,new_meta) {"function":"vd_fields"}
+  plan_schema:bool = call(raw_f,old_meta,new_meta) {"function":"vd_plan_schema"}
+  consistent_fields:bool = bool.and(fields_ok,plan_schema)
+  branch consistent_fields commitments(raw_f,work_f,count_f,last_f,new_meta,root) refuse()
+block commitments(craw:readbuf,cwork:mutbuf,ccount:u64,clast:u64,cmeta:u64,croot:u64)
+  bound:bool = call(craw,cwork,clast,cmeta) {"function":"vd_sql_binding"}
+  branch bound canon(craw,cwork,ccount,cmeta,croot) refuse()
+block canon(hraw:readbuf,hwork:mutbuf,hcount:u64,hmeta:u64,hroot:u64)
+  digest_valid:bool = call(hwork,hcount,hroot) {"function":"dc_finish_header"}
+  branch digest_valid compare_digest(hraw,hwork,hmeta) refuse()
+block compare_digest(draw:readbuf,dwork:mutbuf,dmeta:u64)
+  supplied_off:u64 = const() {"value":521}
+  supplied:u64 = int.add.wrap(dmeta,supplied_off)
+  computed:u64 = const() {"value":1712}
+  decoded:u64 = const() {"value":2016}
+  bytes:u64 = const() {"value":32}
+  matches_raw:bool = call(draw,dwork,supplied,computed,bytes) {"function":"vd_equal"}
+  matches_projection:bool = call(draw,dwork,supplied,decoded,bytes) {"function":"vd_equal"}
+  consistent:bool = bool.and(matches_raw,matches_projection)
+  ret(consistent)
+block refuse()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn vd_fields(raw:readbuf,work:mutbuf,before:u64,after:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,before:u64,after:u64)
+  _domain:u64 = call(work) {"function":"dc_header_domain"}
+  offset0:u64 = const() {"value":0}
+  field0:u64 = int.add.wrap(before,offset0)
+  dest0:u64 = const() {"value":1251}
+  width0:u64 = const() {"value":32}
+  valid0:bool = call(raw,work,field0,dest0,width0) {"function":"vd_hex_field"}
+  offset1:u64 = const() {"value":65}
+  field1:u64 = int.add.wrap(before,offset1)
+  dest1:u64 = const() {"value":1291}
+  width1:u64 = const() {"value":32}
+  valid1:bool = call(raw,work,field1,dest1,width1) {"function":"vd_hex_field"}
+  all1:bool = bool.and(valid1,valid0)
+  offset2:u64 = const() {"value":195}
+  field2:u64 = int.add.wrap(before,offset2)
+  dest2:u64 = const() {"value":1331}
+  width2:u64 = const() {"value":32}
+  valid2:bool = call(raw,work,field2,dest2,width2) {"function":"vd_hex_field"}
+  all2:bool = bool.and(valid2,all1)
+  offset3:u64 = const() {"value":195}
+  field3:u64 = int.add.wrap(after,offset3)
+  dest3:u64 = const() {"value":1371}
+  width3:u64 = const() {"value":32}
+  valid3:bool = call(raw,work,field3,dest3,width3) {"function":"vd_hex_field"}
+  all3:bool = bool.and(valid3,all2)
+  offset4:u64 = const() {"value":260}
+  field4:u64 = int.add.wrap(before,offset4)
+  dest4:u64 = const() {"value":1411}
+  width4:u64 = const() {"value":32}
+  valid4:bool = call(raw,work,field4,dest4,width4) {"function":"vd_hex_field"}
+  all4:bool = bool.and(valid4,all3)
+  offset5:u64 = const() {"value":325}
+  field5:u64 = int.add.wrap(before,offset5)
+  dest5:u64 = const() {"value":1451}
+  width5:u64 = const() {"value":32}
+  valid5:bool = call(raw,work,field5,dest5,width5) {"function":"vd_hex_field"}
+  all5:bool = bool.and(valid5,all4)
+  offset6:u64 = const() {"value":260}
+  field6:u64 = int.add.wrap(after,offset6)
+  dest6:u64 = const() {"value":1491}
+  width6:u64 = const() {"value":32}
+  valid6:bool = call(raw,work,field6,dest6,width6) {"function":"vd_hex_field"}
+  all6:bool = bool.and(valid6,all5)
+  offset7:u64 = const() {"value":325}
+  field7:u64 = int.add.wrap(after,offset7)
+  dest7:u64 = const() {"value":1531}
+  width7:u64 = const() {"value":32}
+  valid7:bool = call(raw,work,field7,dest7,width7) {"function":"vd_hex_field"}
+  all7:bool = bool.and(valid7,all6)
+  offset8:u64 = const() {"value":390}
+  field8:u64 = int.add.wrap(before,offset8)
+  dest8:u64 = const() {"value":1571}
+  width8:u64 = const() {"value":8}
+  valid8:bool = call(raw,work,field8,dest8,width8) {"function":"vd_hex_field"}
+  all8:bool = bool.and(valid8,all7)
+  offset9:u64 = const() {"value":390}
+  field9:u64 = int.add.wrap(after,offset9)
+  dest9:u64 = const() {"value":1587}
+  width9:u64 = const() {"value":8}
+  valid9:bool = call(raw,work,field9,dest9,width9) {"function":"vd_hex_field"}
+  all9:bool = bool.and(valid9,all8)
+  offset10:u64 = const() {"value":424}
+  field10:u64 = int.add.wrap(after,offset10)
+  dest10:u64 = const() {"value":2008}
+  width10:u64 = const() {"value":32}
+  valid10:bool = call(raw,work,field10,dest10,width10) {"function":"vd_hex_field"}
+  all10:bool = bool.and(valid10,all9)
+  ret(all10)
+end
+
+fn vd_sql_binding(raw:readbuf,work:mutbuf,last:u64,after:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,last:u64,after:u64)
+  context_off:u64 = const() {"value":489}
+  ctx_at:u64 = int.add.wrap(after,context_off)
+  rows_off:u64 = const() {"value":184}
+  rows_at:u64 = int.add.wrap(last,rows_off)
+  root_off:u64 = const() {"value":216}
+  root_at:u64 = int.add.wrap(last,root_off)
+  count_off:u64 = const() {"value":248}
+  count_at:u64 = int.add.wrap(last,count_off)
+  canon_context:u64 = const() {"value":1379}
+  canon_rows:u64 = const() {"value":1499}
+  canon_root:u64 = const() {"value":1539}
+  canon_count:u64 = const() {"value":1595}
+  width:u64 = const() {"value":32}
+  ctx_ok:bool = call(raw,work,ctx_at,canon_context,width) {"function":"vd_equal"}
+  rows_ok:bool = call(raw,work,rows_at,canon_rows,width) {"function":"vd_equal"}
+  root_ok:bool = call(raw,work,root_at,canon_root,width) {"function":"vd_equal"}
+  count_ok:bool = call(raw,work,count_at,canon_count) {"function":"vd_count_equal"}
+  first:bool = bool.and(ctx_ok,rows_ok)
+  second:bool = bool.and(root_ok,count_ok)
+  all:bool = bool.and(first,second)
+  ret(all)
+end
+
+fn vd_count_equal(raw:readbuf,work:mutbuf,a:u64,b:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,a:u64,b:u64)
+  seven:u64 = const() {"value":7}
+  high:u64 = int.add.wrap(b,seven)
+  width:u64 = const() {"value":8}
+  jump count_byte(raw,work,a,high,width)
+block count_byte(cr:readbuf,cw:mutbuf,ci:u64,cj:u64,left:u64)
+  ri:usize = int.cast(ci) {"mode":"wrap"}
+  wi:usize = int.cast(cj) {"mode":"wrap"}
+  rb:u8 = buffer.load(cr,ri)
+  wb:u8 = buffer.load(cw,wi)
+  equal:bool = compare.eq(rb,wb)
+  branch equal next(cr,cw,ci,cj,left) failure()
+block next(nraw:readbuf,nwork:mutbuf,ni:u64,nj:u64,nleft:u64)
+  one:u64 = const() {"value":1}
+  ai:u64 = int.add.wrap(ni,one)
+  bj:u64 = int.sub.wrap(nj,one)
+  remaining:u64 = int.sub.wrap(nleft,one)
+  done:bool = compare.eq(nleft,one)
+  branch done success() count_byte(nraw,nwork,ai,bj,remaining)
+block success()
+  good:bool = const() {"value":true}
+  ret(good)
+block failure()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn vd_equal(raw:readbuf,work:mutbuf,a:u64,b:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,a:u64,b:u64,n:u64)
+  jump word(raw,work,a,b,n)
+block word(wraw:readbuf,wwork:mutbuf,wi:u64,wj:u64,left:u64)
+  ra:u64 = call(wraw,wi) {"function":"tr_read"}
+  wb:u64 = call(wwork,wj) {"function":"tr_get"}
+  equal:bool = compare.eq(ra,wb)
+  branch equal next(wraw,wwork,wi,wj,left) failure()
+block next(nraw:readbuf,nwork:mutbuf,ni:u64,nj:u64,nleft:u64)
+  eight:u64 = const() {"value":8}
+  nai:u64 = int.add.wrap(ni,eight)
+  nbj:u64 = int.add.wrap(nj,eight)
+  remaining:u64 = int.sub.wrap(nleft,eight)
+  done:bool = compare.eq(nleft,eight)
+  branch done success() word(nraw,nwork,nai,nbj,remaining)
+block success()
+  good:bool = const() {"value":true}
+  ret(good)
+block failure()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn vd_hex_field(raw:readbuf,work:mutbuf,start:u64,dest:u64,bytes:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,start:u64,dest:u64,bytes:u64)
+  shift:u64 = const() {"value":56}
+  eight:u64 = const() {"value":8}
+  width:u64 = int.shl.checked(bytes,shift)
+  _size:u64 = call(work,dest,width) {"function":"tr_put"}
+  position:u64 = int.add.wrap(dest,eight)
+  jump decode(raw,work,start,position,bytes)
+block decode(ir:readbuf,iw:mutbuf,src:u64,dst:u64,pending:u64)
+  one:u64 = const() {"value":1}
+  second:u64 = int.add.wrap(src,one)
+  position1:usize = int.cast(src) {"mode":"wrap"}
+  position2:usize = int.cast(second) {"mode":"wrap"}
+  hi:u8 = buffer.load(ir,position1)
+  lo:u8 = buffer.load(ir,position2)
+  byte:u64 = call(hi,lo) {"function":"rc_octet"}
+  limit:u64 = const() {"value":255}
+  valid:bool = compare.le(byte,limit)
+  branch valid save(ir,iw,second,dst,pending,byte) bad()
+block save(sr:readbuf,sw:mutbuf,si:u64,sj:u64,left:u64,packed:u64)
+  output:usize = int.cast(sj) {"mode":"wrap"}
+  encoded:u8 = int.cast(packed) {"mode":"wrap"}
+  _ = buffer.store(sw,output,encoded)
+  step:u64 = const() {"value":1}
+  after_i:u64 = int.add.wrap(si,step)
+  after_j:u64 = int.add.wrap(sj,step)
+  after_n:u64 = int.sub.wrap(left,step)
+  done:bool = compare.eq(left,step)
+  branch done good() decode(sr,sw,after_i,after_j,after_n)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn vd_plan_schema(raw:readbuf,before:u64,after:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,before:u64,after:u64)
+  binding_off:u64 = const() {"value":553}
+  binding:u64 = int.add.wrap(after,binding_off)
+  second_in_line:u64 = const() {"value":65}
+  pre_schema:u64 = int.add.wrap(before,second_in_line)
+  post_schema:u64 = int.add.wrap(after,second_in_line)
+  second_in_binding:u64 = const() {"value":64}
+  binding_schema:u64 = int.add.wrap(binding,second_in_binding)
+  pre_plan_ok:bool = call(raw,before,binding) {"function":"vd_equal_ascii64"}
+  post_plan_ok:bool = call(raw,after,binding) {"function":"vd_equal_ascii64"}
+  pre_schema_ok:bool = call(raw,pre_schema,binding_schema) {"function":"vd_equal_ascii64"}
+  post_schema_ok:bool = call(raw,post_schema,binding_schema) {"function":"vd_equal_ascii64"}
+  a:bool = bool.and(pre_plan_ok,post_plan_ok)
+  b:bool = bool.and(pre_schema_ok,post_schema_ok)
+  consistent:bool = bool.and(a,b)
+  ret(consistent)
+end
+
+fn vd_equal_ascii64(raw:readbuf,a:u64,b:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,a:u64,b:u64)
+  span:u64 = const() {"value":64}
+  jump word(raw,a,b,span)
+block word(r:readbuf,i:u64,j:u64,n:u64)
+  ai:u64 = call(r,i) {"function":"tr_read"}
+  bj:u64 = call(r,j) {"function":"tr_read"}
+  matches:bool = compare.eq(ai,bj)
+  branch matches advance(r,i,j,n) refuse()
+block advance(rr:readbuf,ii:u64,jj:u64,nn:u64)
+  eight:u64 = const() {"value":8}
+  ni:u64 = int.add.wrap(ii,eight)
+  nj:u64 = int.add.wrap(jj,eight)
+  remaining:u64 = int.sub.wrap(nn,eight)
+  done:bool = compare.eq(nn,eight)
+  branch done accept() word(rr,ni,nj,remaining)
+block accept()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block refuse()
+  no:bool = const() {"value":false}
+  ret(no)
+end

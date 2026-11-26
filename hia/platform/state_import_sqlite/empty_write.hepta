@@ -152,8 +152,11 @@ block vector_extent(ve_raw:readbuf,ve_mem:mutbuf,ve_work:mutbuf,ve_n:usize,ve_co
   branch fits_vec vector_order(ve_raw,ve_mem,ve_work,ve_n,ve_count) bad()
 block vector_order(vo_raw:readbuf,vo_mem:mutbuf,vo_work:mutbuf,vo_n:usize,vo_count:u64)
   sorted_vec:bool = call(vo_raw,vo_count) {"function":"bm_vector"}
+  branch sorted_vec vector_admit(vo_raw,vo_mem,vo_work,vo_n,vo_count) bad()
+block vector_admit(va_raw:readbuf,va_mem:mutbuf,va_work:mutbuf,va_size:usize,va_count:u64)
+  committed:bool = call(va_raw,va_work,va_count) {"function":"vd_verify"}
   offset_start:u64 = const() {"value":16}
-  branch sorted_vec stage_batch(vo_raw,vo_mem,vo_work,vo_n,offset_start,vo_count) bad()
+  branch committed stage_batch(va_raw,va_mem,va_work,va_size,offset_start,va_count) bad()
 block batch_frame(bf_raw:readbuf,bf_mem:mutbuf,bf_work:mutbuf,bf_len:usize)
   min_batch:usize = const() {"value":2355}
   max_batch:usize = const() {"value":2866}

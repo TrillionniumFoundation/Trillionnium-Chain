@@ -239,3 +239,24 @@ metadata update. Earlier single and fixed mixed tests are also retained.
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_sqlite_vector_write -v
 ```
+
+### Original canonical commitment before a vector opens SQLite
+
+The private `VEC1M13!` mode now derives the original ordered operation leaves,
+incremental Merkle root and canonical delta digest directly from its one existing
+proposal. It parses the reviewed predecessor target context, successor target
+context, row commitments, application root fields and counts from that
+proposal's metadata; the predecessor metadata must still exactly match the
+actual held database. It binds the successor context, rows digest, root and
+count to the raw typed fields the writer will use. The calculated digest must
+match both the raw last-delta binding and its reviewed metadata projection.
+A mismatch refuses before the native worker can issue provider OPEN.
+
+The separate, existing typed-row validation, held-before checks, native
+post-write row commitment and complete successor comparison remain necessary:
+a correctly framed commitment to an incorrect successor is still rolled back.
+The original fixtures and process-interruption controls exercise this distinction.
+No second request format or host-computed digest is authoritative. Empty, single
+and fixed three-record fixture modes are unchanged. These checks establish
+commitment consistency only; they do not verify checkpoint finality, sign or
+authenticate contexts, recompute application roots, or route production writes.
