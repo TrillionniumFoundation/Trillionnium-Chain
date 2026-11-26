@@ -3355,6 +3355,22 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-state-shape",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held SQLite read-only original typed state shape and root through original metadata checksum, exact raw state collection and close ordering. No state replay or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_state_shape.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_state_shape.py",
+        "hia/tests/test_settlement_kernel_state_shape.py",
+        "hia/tests/test_settlement_state_root_read.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/platform/service_settlement/schema_fixture_host.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-kernel-state-shape",
       "node_integration_complete": false,
       "retirement_accepted": false,

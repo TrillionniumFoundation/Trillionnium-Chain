@@ -230,6 +230,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             io::stdout().write_all(&root.0)?;
             io::stdout().write_all(&state)?;
         }
+        "fixture-noncanonical-state" => {
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            verify_schema(&db)?;
+            let (conf, seq, height, block, state, root, journal, fenced, old_sum):
+                (Vec<u8>, u64, u64, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, bool, Vec<u8>) =
+                db.query_row("SELECT config,sequence,height,block_id,state,state_root,journal_root,fenced,checksum FROM metadata WHERE singleton=1", [],
+                             |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?, r.get(8)?)))?;
+            let block = Hash32V1(array32(block, "block")?);
+            let root = Hash32V1(array32(root, "state root")?);
+            let journal = Hash32V1(array32(journal, "journal root")?);
+            let original: ConsumptionSettlementKernelStateV1 = strict_decode(&state)?;
+            let domain = "trnm.portable.v2.consumption-settlement-state-root.candidate.v1";
+            assert_eq!(state_root(&original)?, root);
+            assert_eq!(codec::digest_encoded(domain, &state)?, root);
+            assert_eq!(metadata_checksum(&conf, seq, height, block, &state, root, journal, fenced).0.as_slice(), old_sum);
+            let mut changed = state;
+            match args[4].to_str() {
+                Some("tail") => changed.push(0),
+                Some("option") => {
+                    assert!(original.receipts.is_empty() && original.rollup.is_none() && changed[4] == 0);
+                    changed[4] = 2;
+                }
+                _ => return Err("unknown test-owned state variant".into()),
+            };
+            assert!(strict_decode::<ConsumptionSettlementKernelStateV1>(&changed).is_err());
+            let raw_root = codec::digest_encoded(domain, &changed)?;
+            assert_ne!(raw_root, root);
+            let row_sum = metadata_checksum(&conf, seq, height, block, &changed, raw_root, journal, fenced);
+            assert_eq!(db.execute("UPDATE metadata SET state=?1,state_root=?2,checksum=?3 WHERE singleton=1",
+                                  params![changed, raw_root.0.to_vec(), row_sum.0.to_vec()])?, 1);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&raw_root.0)?;
+            io::stdout().write_all(&row_sum.0)?;
+        }
         "fixture-state-root-drift" => {
             let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
             verify_schema(&db)?;

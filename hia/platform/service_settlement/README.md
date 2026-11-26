@@ -298,3 +298,14 @@ The original Rust store and typed codec are independent differential
 oracles at genesis, after actual receipt commits, after rollup, and after
 settlement. This standalone mode neither opens a database nor proves an
 authorized transition, semantic validity, or a replayed state.
+
+The separate `held_state_shape.hepta` mode runs that same strict parser on
+the exact state frame at phase 27 of the held metadata read. It clears its
+private copy and passes the original frame unchanged to the existing hash
+and checksum logic. It never issues a second query for state. The original
+root check, ordered field reads, finalize, and close still gate publication
+of the same 147-byte diagnostic. Actual Rust-written stores cover four
+stages, including a held reader with an original competing writer. On
+separate disposable stores, malformed tags and trailing data are refused
+before publication even when both the raw root and metadata checksum match
+those bytes exactly. This does not execute or replay Settlement commands.
