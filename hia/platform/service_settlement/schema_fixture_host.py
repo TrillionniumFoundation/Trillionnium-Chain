@@ -35,9 +35,11 @@ def run(request, uri_image, reader, provider):
     replay_control = request.get("first_replay_fixture_control")
     replay = replay_image is not None
     replay_limit = request.get("receipt_replay_limit", 1)
+    same_block = request.get("same_block_fixture", False)
     replay_control_step = request.get("first_replay_fixture_control_step", replay_limit)
     if ((replay and (not journal or len(replay_image) != 2))
             or type(replay_limit) is not int or replay_limit not in (1, 2, 3, 4)
+            or type(same_block) is not bool or (same_block and (not replay or replay_limit != 2))
             or type(replay_control_step) is not int or not 1 <= replay_control_step <= replay_limit
             or (replay_control is None and replay_control_step != replay_limit)
             or (not replay and (replay_control is not None or replay_limit != 1))
@@ -130,13 +132,14 @@ def run(request, uri_image, reader, provider):
                     replay_locks += 1
                 from hia.platform.service_settlement.first_replay_fixture_engine import FixtureReplay
                 size, = struct.unpack_from("<Q", state, 349016)
-                if size != (1921, 1953, 3742, 1293)[requested_replay - 1]:
+                lane_widths = (1921, 2811) if same_block else (1921, 1953, 3742, 1293)
+                if size != lane_widths[requested_replay - 1]:
                     raise ValueError("Native continuation returned a different request shape")
                 payload = ctypes.string_at(ctypes.addressof(state) + 360000, size)
                 if engine is None:
-                    engine = FixtureReplay.open(replay_owners, *replay_image)
+                    engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block)
                 raw = engine.apply(payload)
-                if raw and replay_limit == 4:
+                if raw and (replay_limit == 4 or same_block):
                     if engine.last_parent_root is None:
                         raise ValueError("Missing observed native predecessor root")
                     raw += engine.last_parent_root

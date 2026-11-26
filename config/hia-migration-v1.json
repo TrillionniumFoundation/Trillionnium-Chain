@@ -3407,6 +3407,23 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-same-block-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 original same-block receipt and rollup replay in one held SQLite snapshot, exact source range 0 and target 2 with native state and original prefix roots. No general batching, external Order authority or production.",
+      "sources": [
+        "hia/platform/service_settlement/held_same_block_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_same_block_replay.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_schema_read.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-settle-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

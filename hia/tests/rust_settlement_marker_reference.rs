@@ -114,7 +114,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let context = trust.context.clone();
     let config = ConsumptionSettlementStoreConfigV1 {path: path.clone(), store_id: word_hash(60), trust_bundle: trust};
     match operation {
-        "seed" | "seed-receipts" => {
+        "seed" | "seed-receipts" | "seed-same-block" => {
             let owner = ConsumptionSettlementStoreV1::open(config.clone())?;
             let genesis = owner.fresh_readback()?;
             let mut binding = Vec::new();
@@ -123,8 +123,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             binding.extend(genesis.durable_state_root().0);
             binding.extend(genesis.durable_journal_root().0);
             binding.extend(config_bytes(&config)?);
-            for file in &args[5..] {
-                let height = last_height + 1;
+            if operation == "seed-same-block" {
+                assert_eq!(args.len(), 7);
+            }
+            for (index, file) in args[5..].iter().enumerate() {
+                let height = if operation == "seed-same-block" && index == 1 {
+                    last_height
+                } else {
+                    last_height + 1
+                };
                 let block = word_hash(1_000 + height);
                 let execution = ConsumptionCommittedExecutionContextV1 {
                     schema_version: 1, context: context.clone(), expected_order_height: last_height,
@@ -134,6 +141,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     owner.advance_empty_committed_execution_v1(&execution)?;
                 } else {
                     let command: ConsumptionSettlementCommandV1 = strict_decode(&fs::read(file)?)?;
+                    if operation == "seed-same-block" {
+                        assert_eq!(command.operation_kind(), [24, 25][index]);
+                    }
                     assert!(!owner.execute_committed_execution(&execution, &command)?.replay);
                 }
                 (last_height, last_block) = (height, block);

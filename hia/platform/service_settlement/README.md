@@ -427,3 +427,15 @@ advance either root or the operation sequence. The readback diagnostic
 bytes remain unchanged; no new authority or write surface is exposed.
 This fixed witness does not qualify arbitrary marker intervals or the
 production Store/VFS.
+
+`held_same_block_replay.hepta` covers a separate original Store history:
+the first AdmitReceipt and a native-replayed AdmitRollup share exactly the
+same Order coordinates. Only the original block marker's operation target
+advances, from the previous sequence zero to two. HIA checks the first
+intermediate state against its own receipt without treating it as the block
+marker target, then checks the final transition and both original marker
+intervals against the full native state and receipt prefix commitments.
+The independent original harness generates the test keys and two commands
+from unchanged Rust methods. The actual original writer remains blocked
+at both replay calls. This finite mode is not generalized batching or
+production confirmation.

@@ -251,3 +251,79 @@ block bad()
   no:bool = const() {"value":false}
   ret(no)
 end
+
+fn hfs_sameblock_receipt(r:readbuf,m:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,n:u64)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  two:u64 = const() {"value":2}
+  actual:bool = compare.eq(count,two)
+  branch actual match_coords(r,m,n) bad()
+block match_coords(cr:readbuf,cm:mutbuf,cn:u64)
+  current:usize = const() {"value":100}
+  marker_current:usize = const() {"value":420304}
+  coords:u64 = const() {"value":40}
+  same:bool = call(cr,cm,current,marker_current,coords) {"function":"smr_eq_bound"}
+  end:u64 = const() {"value":2}
+  final_row:bool = compare.eq(cn,end)
+  branch same tail(cr,cm,final_row) bad()
+block tail(tr:readbuf,tm:mutbuf,tlast:bool)
+  branch tlast check(tr,tm) good()
+block check(rr:readbuf,rm:mutbuf)
+  receipt:usize = const() {"value":140}
+  marker:usize = const() {"value":420432}
+  w:u64 = const() {"value":32}
+  okay:bool = call(rr,rm,receipt,marker,w) {"function":"smr_eq_bound"}
+  ret(okay)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_sameblock_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf)
+  source:usize = const() {"value":430000}
+  to_work:usize = const() {"value":4100}
+  len:u64 = const() {"value":306}
+  located:u64 = call(m,w,source,to_work,len) {"function":"sscid_copy"}
+  start:u64 = const() {"value":4100}
+  zero:u64 = const() {"value":0}
+  first:bool = call(w,start,start,zero) {"function":"jph_hash"}
+  branch first save0(m,w,start) bad()
+block save0(sm:mutbuf,sw:mutbuf,base:u64)
+  orig:usize = const() {"value":1168}
+  root_out:usize = const() {"value":440000}
+  n:u64 = const() {"value":32}
+  copied:u64 = call(sw,sm,orig,root_out,n) {"function":"sscid_copy"}
+  two:u64 = const() {"value":2}
+  end:u64 = const() {"value":4406}
+  both:bool = call(sw,base,end,two) {"function":"jph_hash"}
+  branch both save2(sm,sw,orig,n) bad()
+block save2(pm:mutbuf,pw:mutbuf,digest_at:usize,length:u64)
+  root2:usize = const() {"value":440064}
+  saved:u64 = call(pw,pm,digest_at,root2,length) {"function":"sscid_copy"}
+  n0:u64 = const() {"value":0}
+  n1:u64 = const() {"value":1}
+  n2:u64 = const() {"value":2}
+  m0:u64 = const() {"value":420000}
+  m1:u64 = const() {"value":420296}
+  initial:bool = call(pm,m0,n0,n0,n0) {"function":"hfs_check_marker"}
+  final:bool = call(pm,m1,n1,n0,n2) {"function":"hfs_check_marker"}
+  both_roots:bool = bool.and(initial,final)
+  ret(both_roots)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_limit(profile:u64) -> (u64) effects() entry(entry)
+block entry(profile:u64)
+  same:u64 = const() {"value":5}
+  pair:u64 = const() {"value":2}
+  need_pair:bool = compare.eq(profile,same)
+  limit:u64 = select(need_pair,pair,profile)
+  ret(limit)
+end

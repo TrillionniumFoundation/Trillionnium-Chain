@@ -27,7 +27,7 @@ def execute(argv, *, timeout=30, **kwargs):
     return answer
 
 
-def original_adapter(out, *, metadata=False, operation=False, marker=False):
+def original_adapter(out, *, metadata=False, operation=False, marker=False, same_block=False):
     source = (STORE / "src/store.rs").read_bytes()
     pieces = []
     for name in (b"META_SQL", b"OP_SQL", b"COMMITTED_BLOCKS_SQL"):
@@ -138,6 +138,38 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
                              "TRNM_SETTLEMENT_EXECUTION_VALIDATE": str(out / "execution_static.rs"),
                              "TRNM_SETTLEMENT_STATE_ROOT_SELECTED": str(out / "state_root.rs"),
                              "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
+    if same_block:
+        fixture_source = OWNER / "qualification/reference.rs"
+        recorded = {
+            fixture_source: "3ca09c00c6f061a09417e44a33ad68748322f6bc75301c460deb64938cab7182",
+            OWNER / "qualification/errors.json": "633574e4874b7c736290eac3ba1ddb2e8dd2b8f6fef6fbd9d74ef6ab448fcfcb",
+            STORE / "src/types.rs": "002c1fd3fdc7f04e63d30cde86bd3ca60c87d30c1b0f616e3f64a1fd886a6992",
+            STORE / "src/engine.rs": "bbec1ec6d64e7eb5d4806634a43656e2510b34cd4ee278aef179a84ed6d666f6",
+            STORE / "src/codec.rs": "4b275a3d30792c12983036df46ef2320eaa4ce23dd30e5eaa11037847e7f01db",
+            STORE / "src/error.rs": "342c4fc091387732c8bdd1fee6b7a46c19d62c2173f40499c45c39654fac842f",
+        }
+        seen = {file: file.read_bytes() for file in recorded}
+        if not marker or any(hashlib.sha256(seen[file]).hexdigest() != digest for file, digest in recorded.items()):
+            raise ValueError("Exact original same-block harness inputs differ")
+        origin_rust = out / "same_block_fixture.rs"
+        source_bytes = seen[fixture_source]
+        if source_bytes.count(b"fn main(){") != 1:
+            raise ValueError("Unexpected original harness entry")
+        origin_rust.write_bytes(source_bytes.replace(b"fn main(){", b"fn original_corpus_entry(){")
+                               + Path(__file__).with_name("rust_settlement_same_block_fixture.rs").read_bytes())
+        origin_extern = []
+        for libname in ("borsh", "ed25519_dalek", "serde_json", "sha2", "trnm_task_kernel"):
+            [event] = [entry for entry in events if entry.get("reason") == "compiler-artifact"
+                       and entry["target"]["name"] == libname
+                       and (libname != "sha2" or entry["package_id"].endswith("sha2@0.10.9"))]
+            [library] = [unlinked_path(path) for path in event["filenames"] if path.endswith(".rlib")]
+            origin_extern.extend(["--extern", f"{libname}={library}"])
+        execute([rustc, "--edition=2024", "-A", "dead_code", "-O", *origin_extern,
+                 "--extern", f"rusqlite={rust}", "-L", f"dependency={rust.parent}",
+                 "-L", f"native={native[7:]}", origin_rust, "-o", out / "same-block-fixture"],
+                timeout=60, env={**os.environ, "CARGO_MANIFEST_DIR": str(STORE),
+                                 "TRNM_SETTLEMENT_ORIGINAL": str(STORE / "src"),
+                                 "TRNM_SETTLEMENT_ERROR_TABLE": str(OWNER / "qualification/errors.json")})
     return binary, unlinked_path(provider_source["manifest_path"]).parent
 
 

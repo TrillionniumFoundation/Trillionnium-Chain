@@ -27,12 +27,13 @@ class _Calls:
 class FixtureReplay:
     engine: PublicEngine
     calls: _Calls
+    same_block: bool = False
     parent: int | None = None
     trust: bytes | None = None
     last_parent_root: bytes | None = None
 
     @classmethod
-    def open(cls, stack, build, digest):
+    def open(cls, stack, build, digest, *, same_block=False):
         build = Path(build)
         meta = json.loads((build / "build.json").read_bytes())
         if meta["artifact"]["sha256"] != digest:
@@ -40,7 +41,7 @@ class FixtureReplay:
         calls = _Calls()
         image = stack.enter_context(sealed_library(build / "settlement-engine.so", digest))
         engine = PublicEngine(build, calls, observed_image=(image._name, meta["artifact"]))
-        session = cls(engine, calls)
+        session = cls(engine, calls, same_block)
         stack.callback(session.close)
         return session
 
@@ -49,15 +50,16 @@ class FixtureReplay:
             self.engine.drop(pointer)
 
     def apply(self, request):
-        widths = (1921, 1953, 3742, 1293)
+        widths = (1921, 2811) if self.same_block else (1921, 1953, 3742, 1293)
         if len(request) not in widths:
             raise ValueError("Wrong bounded replay input")
         before = self.calls.applies
         seq, = struct.unpack_from("<Q", request)
-        if seq not in (1, 2, 3, 4) or seq != before + 1 or len(request) != widths[seq - 1]:
+        if not 1 <= seq <= len(widths) or seq != before + 1 or len(request) != widths[seq - 1]:
             raise ValueError("Noncontiguous sealed Engine request")
         trust, execution, command = request[8:890], request[890:1053], request[1053:]
-        if command[0] != (0, 0, 1, 2)[seq - 1]:
+        kinds = (0, 1) if self.same_block else (0, 0, 1, 2)
+        if command[0] != kinds[seq - 1]:
             raise ValueError("Request does not follow the admitted receipt/rollup/settle profile")
         height, = struct.unpack_from("<Q", execution, 123)
         if self.parent is None:
@@ -99,7 +101,8 @@ class FixtureReplay:
                 if self.engine.kind(copied) != 3:
                     return b""
                 state = self.engine.view("bytes_view", copied)
-                if (len(operation_id), len(root), len(state)) != (32, 32, (1196, 2145, 3185, 4870)[seq - 1]):
+                expected_state = (1196, 2172) if self.same_block else (1196, 2145, 3185, 4870)
+                if (len(operation_id), len(root), len(state)) != (32, 32, expected_state[seq - 1]):
                     return b""
                 if state != self.engine.view("engine_state", successor):
                     return b""

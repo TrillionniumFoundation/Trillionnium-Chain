@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_same_block_replay
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  same:u64 = const() {"value":5}
+  code:u32 = call(raw,mem,work,same) {"function":"hfr_read"}
+  ret(code)
+end
