@@ -171,6 +171,60 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             verify_schema(&db)?;
             io::stdout().write_all(&operation_journal_root_through(&db, u64::MAX)?.0)?;
         }
+        "fixture-rebind-mutated-receipt" => {
+            // Owned disposable fixture only. Make the untyped journal-root
+            // commitments internally consistent with changed receipt bytes.
+            let mut db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            let markers = load_committed_block_markers(&db, &config)?;
+            let tx = db.transaction()?;
+            let (seq, id, context, command, mut raw) = tx.query_row(
+                "SELECT sequence,operation_id,execution,command,receipt FROM operations WHERE sequence=4", [],
+                |row| Ok((row.get::<_, u64>(0)?, row.get::<_, Vec<u8>>(1)?,
+                          row.get::<_, Vec<u8>>(2)?, row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?)),
+            )?;
+            let id = ConsumptionOperationIdV1(id.try_into().expect("exact fixture ID"));
+            let decoded: ConsumptionTransitionReceiptV1 = strict_decode(&raw)?;
+            assert!(decoded.settlement_id.is_some());
+            match args[4].to_str().unwrap() {
+                "trailing" => raw.push(0),
+                "id" => raw[42] ^= 1,
+                "sequence" => raw[34] ^= 1,
+                _ => panic!("unknown disposable receipt mutation"),
+            }
+            let sum = operation_checksum(seq, id, &context, &command, &raw);
+            assert_eq!(tx.execute(
+                "UPDATE operations SET receipt=?1,checksum=?2 WHERE sequence=?3",
+                params![raw, sum.0.to_vec(), seq],
+            )?, 1);
+            let mut previous = markers.first().ok_or("empty marker fixture")?.previous_marker_checksum;
+            for mut marker in markers {
+                marker.source_operation_root = operation_journal_root_through(&tx, marker.source_operation_sequence)?;
+                marker.target_operation_root = operation_journal_root_through(&tx, marker.target_operation_sequence)?;
+                marker.previous_marker_checksum = previous;
+                marker.checksum = committed_block_marker_checksum(&config, &marker)?;
+                previous = marker.checksum;
+                assert_eq!(tx.execute(
+                    "UPDATE committed_blocks SET source_operation_root=?1,target_operation_root=?2,previous_marker_checksum=?3,checksum=?4 WHERE marker_sequence=?5",
+                    params![marker.source_operation_root.0.to_vec(), marker.target_operation_root.0.to_vec(),
+                            marker.previous_marker_checksum.0.to_vec(), marker.checksum.0.to_vec(), marker.marker_sequence],
+                )?, 1);
+            }
+            let (sequence, height, block, state, root, fenced) = tx.query_row(
+                "SELECT sequence,height,block_id,state,state_root,fenced FROM metadata WHERE singleton=1", [],
+                |row| Ok((row.get::<_, u64>(0)?, row.get::<_, u64>(1)?, row.get::<_, Vec<u8>>(2)?,
+                          row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?, row.get::<_, bool>(5)?)),
+            )?;
+            let journal = operation_journal_root_through(&tx, sequence)?;
+            let sum = metadata_checksum(
+                &config_bytes(&config)?, sequence, height, Hash32V1(block.try_into().expect("fixture block ID")),
+                &state, Hash32V1(root.try_into().expect("fixture state root")), journal, fenced,
+            );
+            assert_eq!(tx.execute("UPDATE metadata SET journal_root=?1,checksum=?2 WHERE singleton=1",
+                                  params![journal.0.to_vec(), sum.0.to_vec()])?, 1);
+            load_committed_block_markers(&tx, &config)?;
+            tx.commit()?;
+            io::stdout().write_all(&journal.0)?;
+        }
         "fixture-same-count-receipt-drift" => {
             // Disposable fixture: reuse another genuine receipt and update
             // the exact original row checksum. The original Borsh/replay

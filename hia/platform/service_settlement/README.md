@@ -176,3 +176,15 @@ Store comparison uses retained receipt, rollup, and settlement commands, and
 consumes their actual persisted receipts with the original strict decoder. This
 standalone fixture does not yet run inside the native held journal stream,
 derive the operation ID from the command, or authorize replay or publication.
+
+The opt-in M12 `identity_journal_read.hepta` adds strict receipt shape and
+typed SQLite sequence and operation-ID checks to the existing held journal
+stream. It requires the actual row sequence to be the next contiguous sequence
+and compares both actual row fields to the canonical receipt before streaming
+that receipt into the same original journal root. It neither treats the receipt's
+kind as independently validated nor derives a command ID. Both private read
+routes retain the existing 219-byte diagnostic, compare original root bytes, and
+publish it only after closing the held snapshot; the earlier raw route keeps
+its original scope. The original-Store differential includes actual Some
+settlement receipts and uses original checksum/root routines on disposable
+negative fixtures to distinguish Borsh/identity refusal from hash mismatch.

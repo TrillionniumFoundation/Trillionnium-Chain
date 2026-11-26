@@ -3196,6 +3196,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-identity-journal-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held original receipt stream checked with strict Borsh wire and typed SQLite sequence and operation ID, before canonical journal-root agreement and snapshot close. No command-derived kind, command digest recomputation, full replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/identity_journal_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_identity_journal_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-journal-read",
       "node_integration_complete": false,
       "retirement_accepted": false,
