@@ -85,7 +85,7 @@ def sources():
                  "trnm-worker-agent", "trnm-control-plane", "trnm-escrow-vault",
                  "trnm-governance-guard",
                  "trnm-peer-lease", "trnm-oracle", "trnm-research-protocol", "trnm-bench",
-                 "trnm-service-settlement", "trnm-task-kernel"):
+                 "trnm-service-settlement", "trnm-task-kernel", "trnm-sqlite-io-boundary"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths += sorted((crate / "tests").rglob("*.rs"))
@@ -94,6 +94,7 @@ def sources():
     paths += sorted((ROOT / "config/pon").rglob("*.json"))
     paths += [ROOT / name for name in (
         "hia/platform/task_kernel/provider_abi.json",
+        "hia/src/sqlite_io_boundary/README.md",
         "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
         "trillionnium/crates/trnm-state-import/Cargo.toml",
         "trillionnium/crates/trnm-state-import/src/lib.rs",

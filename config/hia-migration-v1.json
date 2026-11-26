@@ -148,6 +148,17 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/reservation_replay",
+      "node_integration_complete": false,
+      "scope": "M15 finite logical bound-slot growth reservation and sticky-error replay for the original ledger V1 and V2. No inode discovery, VFS, actual IO, runtime budget or authority.",
+      "source": "hia/src/sqlite_io_boundary/reservation_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_reservation_replay.py",
+        "hia/tests/rust_sqlite_reservation_replay_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/handoff_commitments",
       "node_integration_complete": false,
       "scope": "M13 exact original finalized-source binding and projection digest framing, with a read-only comparison to an already verified export projection. No real authorization, finality or genesis installation.",
@@ -2407,12 +2418,14 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "sqlite_io_boundary/reservation_replay"
+      ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",
       "package": "trnm-sqlite-io-boundary",
       "retirement_accepted": false,
-      "state": "not-ported"
+      "state": "partially-ported"
     }
   ],
   "native_foundations": [
