@@ -6,7 +6,7 @@ use std::{env, fs, ffi::OsString, io::{self, Read, Write}, path::{Path, PathBuf}
 use trnm_service_settlement::{
     ConsumptionCommittedExecutionContextV1, ConsumptionOperationIdV1, ConsumptionSettlementCommandV1,
     ConsumptionSettlementFreshGenesisTrustBundleV1, ConsumptionSettlementStoreConfigV1,
-    ConsumptionSettlementStoreV1, Hash32V1,
+    ConsumptionSettlementStoreV1, ConsumptionTransitionReceiptV1, Hash32V1,
 };
 mod error { include!(env!("TRNM_SETTLEMENT_SCHEMA_ERROR")); }
 mod codec { include!(env!("TRNM_SETTLEMENT_OPERATION_CODEC")); }
@@ -19,6 +19,14 @@ fn word_hash(value: u64) -> Hash32V1 {
     let mut bytes = [0_u8; 32];
     bytes[..8].copy_from_slice(&value.to_le_bytes());
     Hash32V1(bytes)
+}
+
+fn receipt_identity(receipt: &ConsumptionTransitionReceiptV1) -> [u8; 42] {
+    let mut identity = [0; 42];
+    identity[..8].copy_from_slice(&receipt.sequence.to_le_bytes());
+    identity[8..40].copy_from_slice(&receipt.operation_id.0);
+    identity[40..].copy_from_slice(&receipt.operation_kind.to_le_bytes());
+    identity
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -39,13 +47,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             result => panic!("unexpected SQLite write-transaction result: {result:?}"),
         };
     }
+    if operation == "decode-receipt-fixture" {
+        let framed = fs::read(&path)?;
+        let (identity, raw) = framed.split_at_checked(42).ok_or("missing fixture identity")?;
+        let parsed: ConsumptionTransitionReceiptV1 = strict_decode(raw)?;
+        let actual = receipt_identity(&parsed);
+        if actual != identity {
+            return Err("fixture receipt identity differs".into());
+        }
+        io::stdout().write_all(&canonical_bytes(&parsed)?)?;
+        return Ok(());
+    }
     let trust: ConsumptionSettlementFreshGenesisTrustBundleV1 = strict_decode(&fs::read(&args[3])?)?;
     let mut last_height = trust.initial_order_height;
     let mut last_block = trust.initial_order_block_id;
     let context = trust.context.clone();
     let config = ConsumptionSettlementStoreConfigV1 {path: path.clone(), store_id: word_hash(60), trust_bundle: trust};
     match operation {
-        "seed" => {
+        "seed" | "seed-receipts" => {
             let owner = ConsumptionSettlementStoreV1::open(config.clone())?;
             let genesis = owner.fresh_readback()?;
             let mut binding = Vec::new();
@@ -55,14 +74,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             binding.extend(genesis.durable_journal_root().0);
             binding.extend(config_bytes(&config)?);
             for file in &args[5..] {
-                let command: ConsumptionSettlementCommandV1 = strict_decode(&fs::read(file)?)?;
                 let height = last_height + 1;
                 let block = word_hash(1_000 + height);
                 let execution = ConsumptionCommittedExecutionContextV1 {
                     schema_version: 1, context: context.clone(), expected_order_height: last_height,
                     expected_order_block_id: last_block, order_height: height, order_block_id: block,
                 };
-                assert!(!owner.execute_committed_execution(&execution, &command)?.replay);
+                if operation == "seed-receipts" && file == "-" {
+                    owner.advance_empty_committed_execution_v1(&execution)?;
+                } else {
+                    let command: ConsumptionSettlementCommandV1 = strict_decode(&fs::read(file)?)?;
+                    assert!(!owner.execute_committed_execution(&execution, &command)?.replay);
+                }
                 (last_height, last_block) = (height, block);
             }
             for _ in 0..args[4].to_str().unwrap().parse::<usize>()? {
@@ -109,6 +132,38 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 diagnostic.extend(raw.0);
             }
             drop(db);
+            io::stdout().write_all(&diagnostic)?;
+        }
+        "original-receipt-fixtures" => {
+            // Retained owner audits actual committed operations before exporting
+            // original typed Borsh data from a separate read-only fixture snapshot.
+            let owner = ConsumptionSettlementStoreV1::open_existing(config)?;
+            owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let mut stmt = db.prepare("SELECT sequence,operation_id,command,receipt FROM operations ORDER BY sequence")?;
+            let mut rows = stmt.query([])?;
+            let mut diagnostic = Vec::new();
+            while let Some(row) = rows.next()? {
+                let sequence: i64 = row.get(0)?;
+                let id: Vec<u8> = row.get(1)?;
+                let command: ConsumptionSettlementCommandV1 = strict_decode(&row.get::<_, Vec<u8>>(2)?)?;
+                let raw: Vec<u8> = row.get(3)?;
+                let receipt: ConsumptionTransitionReceiptV1 = strict_decode(&raw)?;
+                let mut expected = u64::try_from(sequence)?.to_le_bytes().to_vec();
+                assert_eq!(id.len(), 32);
+                expected.extend(id);
+                expected.extend(command.operation_kind().to_le_bytes());
+                assert_eq!(receipt_identity(&receipt).as_slice(), expected);
+                let canonical = canonical_bytes(&receipt)?;
+                assert_eq!(canonical, raw);
+                diagnostic.extend(u16::try_from(canonical.len())?.to_le_bytes());
+                diagnostic.extend(expected);
+                diagnostic.extend(canonical);
+            }
+            drop(rows);
+            drop(stmt);
+            db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
         }
         "inspect-journal-root" => {

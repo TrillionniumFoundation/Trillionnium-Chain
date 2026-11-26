@@ -1,5 +1,13 @@
 {
   "includes": {
+    "platform/service_settlement/transition_receipt_decode.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_copy"
+        ]
+      }
+    ],
     "platform/service_settlement/journal_read.hepta": [
       {
         "source": "src/control_plane/core.hepta",

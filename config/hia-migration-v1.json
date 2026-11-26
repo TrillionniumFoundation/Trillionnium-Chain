@@ -3183,6 +3183,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-transition-receipt-decode",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite standalone M12 original strict Borsh transition receipt wire and fixture-bound sequence, operation ID and kind. No command digest recomputation, held read integration, replay, production ownership or authority.",
+      "sources": [
+        "hia/platform/service_settlement/transition_receipt_decode.hepta"
+      ],
+      "tests": [
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_transition_receipt_decode.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-journal-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

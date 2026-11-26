@@ -164,3 +164,15 @@ or authority. On a disposable genuine original Store, substituting a raw
 receipt while preserving row count and its exact original row checksum
 still changes the actual ordered original root; the previous terminal join
 alone passes, while this read refuses before publication.
+
+The standalone M12 `transition_receipt_decode.hepta` accepts the entire
+canonical Borsh transition receipt, not just its identity range. Its private
+input is an independently supplied 42-byte sequence/operation-ID/kind binding
+followed by the receipt. The fixed-width fields have no noncanonical encodings.
+The settlement-ID option requires tag 0 with exactly 149 receipt bytes or tag 1
+with exactly 181 bytes. Only after validating that complete shape and all three
+identity fields does it output the complete canonical receipt. The original
+Store comparison uses retained receipt, rollup, and settlement commands, and
+consumes their actual persisted receipts with the original strict decoder. This
+standalone fixture does not yet run inside the native held journal stream,
+derive the operation ID from the command, or authorize replay or publication.

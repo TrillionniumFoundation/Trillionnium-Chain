@@ -1,0 +1,62 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_transition_receipt_decode
+fn f0(r:readbuf,m:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,w:mutbuf)
+  n:usize = buffer.len(r)
+  small:usize = const() {"value":191}
+  large:usize = const() {"value":223}
+  low:bool = compare.eq(n,small)
+  high:bool = compare.eq(n,large)
+  sized:bool = bool.or(low,high)
+  branch sized option(r,m,n,low) malformed()
+block option(a:readbuf,o:mutbuf,an:usize,none:bool)
+  tag_at:usize = const() {"value":190}
+  tag:u8 = buffer.load(a,tag_at)
+  zero:u8 = const() {"value":0}
+  one:u8 = const() {"value":1}
+  tag0:bool = compare.eq(tag,zero)
+  tag1:bool = compare.eq(tag,one)
+  tag0_fits:bool = bool.and(none,tag0)
+  false_flag:bool = const() {"value":false}
+  not_none:bool = compare.eq(none,false_flag)
+  tag1_fits:bool = bool.and(not_none,tag1)
+  canon:bool = bool.or(tag0_fits,tag1_fits)
+  branch canon identity(a,o,an) malformed()
+block identity(i:readbuf,j:mutbuf,sz:usize)
+  offset:usize = const() {"value":0}
+  branch_loop:usize = const() {"value":76}
+  identity_end:usize = const() {"value":42}
+  jump equal(i,j,sz,offset,branch_loop,identity_end)
+block equal(er:readbuf,em:mutbuf,en:usize,k:usize,from:usize,until:usize)
+  done:bool = compare.eq(k,until)
+  branch done capacity(er,em,en) pair(er,em,en,k,from,until)
+block pair(pr:readbuf,pm:mutbuf,pn:usize,pi:usize,pfrom:usize,pend:usize)
+  source_at:usize = int.add.wrap(pfrom,pi)
+  want:u8 = buffer.load(pr,pi)
+  have:u8 = buffer.load(pr,source_at)
+  same:bool = compare.eq(want,have)
+  step:usize = const() {"value":1}
+  next:usize = int.add.wrap(pi,step)
+  branch same equal(pr,pm,pn,next,pfrom,pend) different()
+block capacity(cap_r:readbuf,cap_m:mutbuf,cap_n:usize)
+  prefix:usize = const() {"value":42}
+  body:usize = int.sub.wrap(cap_n,prefix)
+  output:usize = buffer.len(cap_m)
+  fit:bool = compare.ge(output,body)
+  branch fit publish(cap_r,cap_m,body) extent()
+block publish(pub_r:readbuf,pub_m:mutbuf,pub_n:usize)
+  start:u64 = const() {"value":42}
+  dest:u64 = const() {"value":0}
+  count:u64 = int.cast(pub_n) {"mode":"wrap"}
+  end:u64 = call(pub_r,start,pub_m,dest,count) {"function":"cp_copy"}
+  result:u32 = int.cast(end) {"mode":"wrap"}
+  ret(result)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block different()
+  mismatch:u32 = const() {"value":101}
+  ret(mismatch)
+block extent()
+  nofit:u32 = const() {"value":102}
+  ret(nofit)
+end
