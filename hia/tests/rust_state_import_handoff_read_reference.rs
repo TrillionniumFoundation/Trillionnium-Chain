@@ -12,6 +12,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
+    if mode == "fence" {
+        let owner = SqliteMigrationHandoffStoreV0::open_existing(path)?;
+        let prior = owner.readback_v0()?;
+        let reason = Digest32V0::hash(b"test.disposable-handoff-fence", &[&prior.record_digest.0]);
+        let fenced = owner.fence_v0(reason)?;
+        assert_eq!(fenced.fence_reason_digest, Some(reason));
+        assert_eq!(fenced.revision, prior.revision + 1);
+        return Ok(());
+    }
+
     // The fixture types and authority admission are extracted byte-for-byte
     // from the original crate's own cfg(test) module by the test builder.
     let (rows, mut export, mut plan) = verified_fixture();

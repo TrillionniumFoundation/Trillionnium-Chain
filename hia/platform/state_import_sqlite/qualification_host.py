@@ -93,7 +93,7 @@ def run(message, reader, provider):
             status = step(argument, len(raw), state, EXTENT, hash_work, EXTENT)
             phase, op, length, published = struct.unpack_from("<QQQQ", state)
             if status != 198:
-                if handoff and status == 0 and phase == 18 and published in (423, 799):
+                if handoff and status == 0 and phase == 18 and published in (423, 455, 799, 831):
                     result = ctypes.string_at(ctypes.addressof(state) + 4096, published).hex()
                 elif not handoff and status == 0 and phase == 18 and 489 <= published <= EXTENT - 4096:
                     result = ctypes.string_at(ctypes.addressof(state) + 4096, published).decode("ascii")
@@ -105,7 +105,7 @@ def run(message, reader, provider):
             advance_mode = "advance"
             if handoff:
                 advance_mode = message.get("handoff_advance", "project")
-                if advance_mode not in ("project", "install-installed", "cas-installed"):
+                if advance_mode not in ("project", "install-installed", "cas-installed", "fence"):
                     raise ValueError("Expected a retained fixed disposable handoff fixture")
             advance_cut = (7, 8) if handoff else (11, 5)
             if message["advance"] and (phase, op) == advance_cut:

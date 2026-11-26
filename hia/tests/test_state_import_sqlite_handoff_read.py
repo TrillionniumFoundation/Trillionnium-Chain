@@ -76,7 +76,7 @@ class StateImportSqliteHandoffRead(unittest.TestCase):
                 observation = _run([original, "read", db]).stdout
                 data = actual_raw(db)
                 self.assertEqual(observation, data[:40])
-                self.assertIn(len(data), (423, 799))
+                self.assertIn(len(data), (423, 455, 799, 831))
                 self.assertEqual(data[8:40], data[-32:])
                 return data
 
@@ -165,6 +165,46 @@ class StateImportSqliteHandoffRead(unittest.TestCase):
                 alter(db, "UPDATE migration_handoff_record_v0 SET record_digest=?, record=?",
                       checksum, body + checksum)
                 self.assertEqual(actual_raw(db)[8:40], checksum)
+
+            # Each fence is an actual original transaction against its own DB.
+            for prior_phase in (1, 2, 3, 4):
+                fenced_db = initialize(f"fence-from-{prior_phase}", installed_profile=prior_phase >= 3)
+                if prior_phase >= 2:
+                    _run([original, "project-installed" if prior_phase >= 3 else "project", fenced_db])
+                if prior_phase >= 3:
+                    _run([original, "install-installed", fenced_db])
+                if prior_phase >= 4:
+                    _run([original, "cas-installed", fenced_db])
+                prior = read_original(fenced_db)
+                self.assertEqual(prior[46], prior_phase)
+                fence_held = invoke(fenced_db, advance=True, mode="fence")
+                self.assertEqual((fence_held["status"], fence_held["result"], fence_held["advanced"],
+                                  fence_held["released"]), (0, prior.hex(), True, 0))
+                result = read_original(fenced_db)
+                self.assertEqual((int.from_bytes(result[:8], "big"), result[46], len(result)),
+                                 (prior_phase, 255, len(prior) + 32))
+                self.assertEqual(result[40+343:-65], prior[40+343:-33])  # options preserved
+                self.assertEqual(result[-65], 1)
+                self.assertNotEqual(result[-64:-32], bytes(32))
+                fenced_cold = invoke(fenced_db)
+                self.assertEqual((fenced_cold["status"], fenced_cold["result"], fenced_cold["released"]),
+                                 (0, result.hex(), 0))
+
+                if prior_phase in (1, 4):
+                    old_body = result[40:-32]
+                    zeroed = bytearray(old_body)
+                    zeroed[-32:] = bytes(32)
+                    domain = b"trnm.migration.handoff-record.v0"
+                    digest = hashlib.sha256(struct.pack(">Q", len(domain)) + domain
+                                            + struct.pack(">Q", len(zeroed)) + zeroed).digest()
+                    alter(fenced_db, "UPDATE migration_handoff_record_v0 SET record_digest=?, record=?",
+                          digest, zeroed + digest)
+                    old_refusal = subprocess.run([original, "read", fenced_db], capture_output=True, timeout=15)
+                    self.assertNotEqual(old_refusal.returncode, 0)
+                    fence_denial = invoke(fenced_db)
+                    self.assertEqual((fence_denial["status"], fence_denial["result"]),
+                                     (100, None))
+                    self.assertNotIn([18, 3, 24], fence_denial["transcript"])
 
             wrong_profile = initialize("installed-tag-missing-options")
             recommit(wrong_profile, old, 6, 3)

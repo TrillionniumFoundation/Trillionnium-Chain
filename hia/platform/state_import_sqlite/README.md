@@ -288,8 +288,11 @@ application ID, version, schema object and singleton row in one held
 snapshot, and refuses missing or duplicate rows. Its bounded profile
 covers the original 383-byte MHOF v1 no-option VerifiedSource and
 ProjectedDelta records, and the 759-byte DurableInstall and ReadbackCas
-records with store identity, install receipt and readback present. Cutover,
-readiness and fenced records remain outside this profile.
+records with store identity, install receipt and readback present. It also
+covers Fenced records produced by those four phases: the 415-byte compact
+and 791-byte installed shapes keep the original options and add one
+nonzero 32-byte reason. Cutover and readiness records, including fences
+carrying those extra options, remain outside this profile.
 
 The continuation checks the stored revision against the record header,
 checks required fixed fields and empty option tags, and recomputes the
@@ -310,6 +313,8 @@ an original delta inserts one row into a separate disposable SQLite state,
 and the unchanged original owner supplies its real apply receipt and cold
 readback to the original handoff transition. Native snapshots held across
 each original WAL transition are compared with both the prior exact record
-and a separate new cold read. Corruption checks include correctly rehashed
-records with invalid phase options or inconsistent receipt fields. This diagnostic does not install or activate a handoff,
+and a separate new cold read. Original fence transactions run only against
+these disposable copies; native execution remains read-only. Corruption
+checks include correctly rehashed records with invalid phase options,
+inconsistent receipt fields, or a zero fence reason. This diagnostic does not install or activate a handoff,
 verify production finality or implement the original VFS/path authority.

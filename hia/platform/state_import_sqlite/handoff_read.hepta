@@ -172,22 +172,28 @@ block column(col_r:readbuf,col_s:mutbuf,col_w:mutbuf)
   installed_column:usize = const() {"value":1622}
   small_exact:bool = compare.eq(col_extent,small_column)
   installed_exact:bool = compare.eq(col_extent,installed_column)
-  exact_col:bool = bool.or(small_exact,installed_exact)
+  fenced_small:usize = const() {"value":934}
+  fenced_installed:usize = const() {"value":1686}
+  fence_small_ok:bool = compare.eq(col_extent,fenced_small)
+  fence_install_ok:bool = compare.eq(col_extent,fenced_installed)
+  old_profiles:bool = bool.or(small_exact,installed_exact)
+  fence_profiles:bool = bool.or(fence_small_ok,fence_install_ok)
+  exact_col:bool = bool.or(old_profiles,fence_profiles)
   branch exact_col column_type(col_r,col_s,col_w,col_extent) bad()
 block column_type(ct_r:readbuf,ct_s:mutbuf,ct_w:mutbuf,ct_n:usize)
   kind_c:u64 = const() {"value":3}
   confirmed:bool = call(ct_r,ct_n,kind_c) {"function":"sr_value"}
   branch confirmed decode(ct_r,ct_s,ct_w,ct_n) bad()
 block decode(dr:readbuf,dm:mutbuf,dw:mutbuf,dn:usize)
-  small_db_extent:usize = const() {"value":870}
-  small:bool = compare.eq(dn,small_db_extent)
-  small_record:u64 = const() {"value":423}
-  full_record:u64 = const() {"value":799}
-  count_d:u64 = select(small,small_record,full_record)
+  reply_head:u64 = const() {"value":24}
+  reply_size:u64 = int.cast(dn) {"mode":"wrap"}
+  hex_bytes:u64 = int.sub.wrap(reply_size,reply_head)
+  factor:u64 = const() {"value":2}
+  count_d:u64 = int.div.checked(hex_bytes,factor)
   parsed:bool = call(dr,dm,count_d) {"function":"hf_decode"}
-  branch parsed validate(dm,dw,small,count_d) bad()
-block validate(vm:mutbuf,vw:mutbuf,is_small:bool,staged_bytes:u64)
-  compared:bool = call(vm,vw,is_small) {"function":"hf_record"}
+  branch parsed validate(dm,dw,count_d) bad()
+block validate(vm:mutbuf,vw:mutbuf,staged_bytes:u64)
+  compared:bool = call(vm,vw,staged_bytes) {"function":"hf_record"}
   branch compared remember(vm,staged_bytes) bad()
 block remember(rm:mutbuf,rn:u64)
   staged_length_at:u64 = const() {"value":64}
@@ -284,7 +290,7 @@ block entry(mem:mutbuf)
   len_at:u64 = const() {"value":264}
   db:u64 = call(mem,from) {"function":"cp_get"}
   _handle:u64 = call(mem,to,db) {"function":"cp_put"}
-  bytes:u64 = const() {"value":573}
+  bytes:u64 = const() {"value":581}
   _len:u64 = call(mem,len_at,bytes) {"function":"cp_put"}
   pos0:u64 = const() {"value":272}
   word0:u64 = const() {"value":8079550379404838227}
@@ -389,123 +395,125 @@ block entry(mem:mutbuf)
   word264:u64 = const() {"value":5641075370409226083}
   _cell264:u64 = call(mem,pos264,word264) {"function":"cp_put"}
   pos272:u64 = const() {"value":544}
-  word272:u64 = const() {"value":3834582206227097632}
+  word272:u64 = const() {"value":3545507405145253920}
   _cell272:u64 = call(mem,pos272,word272) {"function":"cp_put"}
   pos280:u64 = const() {"value":552}
-  word280:u64 = const() {"value":2891386063662623033}
+  word280:u64 = const() {"value":4122812608098544693}
   _cell280:u64 = call(mem,pos280,word280) {"function":"cp_put"}
   pos288:u64 = const() {"value":560}
-  word288:u64 = const() {"value":6998686468835919187}
+  word288:u64 = const() {"value":2891386063662623025}
   _cell288:u64 = call(mem,pos288,word288) {"function":"cp_put"}
   pos296:u64 = const() {"value":568}
-  word296:u64 = const() {"value":7598805550879240304}
+  word296:u64 = const() {"value":6998686468835919187}
   _cell296:u64 = call(mem,pos296,word296) {"function":"cp_put"}
   pos304:u64 = const() {"value":576}
-  word304:u64 = const() {"value":5928461575116516975}
+  word304:u64 = const() {"value":7598805550879240304}
   _cell304:u64 = call(mem,pos304,word304) {"function":"cp_put"}
   pos312:u64 = const() {"value":584}
-  word312:u64 = const() {"value":7883376816870673743}
+  word312:u64 = const() {"value":5928461575116516975}
   _cell312:u64 = call(mem,pos312,word312) {"function":"cp_put"}
   pos320:u64 = const() {"value":592}
-  word320:u64 = const() {"value":7163375912487051105}
+  word320:u64 = const() {"value":7883376816870673743}
   _cell320:u64 = call(mem,pos320,word320) {"function":"cp_put"}
   pos328:u64 = const() {"value":600}
-  word328:u64 = const() {"value":7235419204267635809}
+  word328:u64 = const() {"value":7163375912487051105}
   _cell328:u64 = call(mem,pos328,word328) {"function":"cp_put"}
   pos336:u64 = const() {"value":608}
-  word336:u64 = const() {"value":3832901044257504553}
+  word336:u64 = const() {"value":7235419204267635809}
   _cell336:u64 = call(mem,pos336,word336) {"function":"cp_put"}
   pos344:u64 = const() {"value":616}
-  word344:u64 = const() {"value":4921943049333258292}
+  word344:u64 = const() {"value":3832901044257504553}
   _cell344:u64 = call(mem,pos344,word344) {"function":"cp_put"}
   pos352:u64 = const() {"value":624}
-  word352:u64 = const() {"value":6071772916508469280}
+  word352:u64 = const() {"value":4921943049333258292}
   _cell352:u64 = call(mem,pos352,word352) {"function":"cp_put"}
   pos360:u64 = const() {"value":632}
-  word360:u64 = const() {"value":7311135990015554848}
+  word360:u64 = const() {"value":6071772916508469280}
   _cell360:u64 = call(mem,pos360,word360) {"function":"cp_put"}
   pos368:u64 = const() {"value":640}
-  word368:u64 = const() {"value":5928461618167509874}
+  word368:u64 = const() {"value":7311135990015554848}
   _cell368:u64 = call(mem,pos368,word368) {"function":"cp_put"}
   pos376:u64 = const() {"value":648}
-  word376:u64 = const() {"value":7883376816870673743}
+  word376:u64 = const() {"value":5928461618167509874}
   _cell376:u64 = call(mem,pos376,word376) {"function":"cp_put"}
   pos384:u64 = const() {"value":656}
-  word384:u64 = const() {"value":8529661999317344097}
+  word384:u64 = const() {"value":7883376816870673743}
   _cell384:u64 = call(mem,pos384,word384) {"function":"cp_put"}
   pos392:u64 = const() {"value":664}
-  word392:u64 = const() {"value":4407175135148339813}
+  word392:u64 = const() {"value":8529661999317344097}
   _cell392:u64 = call(mem,pos392,word392) {"function":"cp_put"}
   pos400:u64 = const() {"value":672}
-  word400:u64 = const() {"value":5992074781959200817}
+  word400:u64 = const() {"value":4407175135148339813}
   _cell400:u64 = call(mem,pos400,word400) {"function":"cp_put"}
   pos408:u64 = const() {"value":680}
-  word408:u64 = const() {"value":8026294507182312517}
+  word408:u64 = const() {"value":5992074781959200817}
   _cell408:u64 = call(mem,pos408,word408) {"function":"cp_put"}
   pos416:u64 = const() {"value":688}
-  word416:u64 = const() {"value":5053084042953780853}
+  word416:u64 = const() {"value":8026294507182312517}
   _cell416:u64 = call(mem,pos416,word416) {"function":"cp_put"}
   pos424:u64 = const() {"value":696}
-  word424:u64 = const() {"value":7596571410744299346}
+  word424:u64 = const() {"value":5053084042953780853}
   _cell424:u64 = call(mem,pos424,word424) {"function":"cp_put"}
   pos432:u64 = const() {"value":704}
-  word432:u64 = const() {"value":7882821499128604020}
+  word432:u64 = const() {"value":7596571410744299346}
   _cell432:u64 = call(mem,pos432,word432) {"function":"cp_put"}
   pos440:u64 = const() {"value":712}
-  word440:u64 = const() {"value":2325355240126619745}
+  word440:u64 = const() {"value":7882821499128604020}
   _cell440:u64 = call(mem,pos440,word440) {"function":"cp_put"}
   pos448:u64 = const() {"value":720}
-  word448:u64 = const() {"value":6075160323393675630}
+  word448:u64 = const() {"value":2325355240126619745}
   _cell448:u64 = call(mem,pos448,word448) {"function":"cp_put"}
   pos456:u64 = const() {"value":728}
-  word456:u64 = const() {"value":8297636320441355296}
+  word456:u64 = const() {"value":6075160323393675630}
   _cell456:u64 = call(mem,pos456,word456) {"function":"cp_put"}
   pos464:u64 = const() {"value":736}
-  word464:u64 = const() {"value":2820765630966885489}
+  word464:u64 = const() {"value":8297636320441355296}
   _cell464:u64 = call(mem,pos464,word464) {"function":"cp_put"}
   pos472:u64 = const() {"value":744}
-  word472:u64 = const() {"value":2325069349249957161}
+  word472:u64 = const() {"value":2820765630966885489}
   _cell472:u64 = call(mem,pos472,word472) {"function":"cp_put"}
   pos480:u64 = const() {"value":752}
-  word480:u64 = const() {"value":5992130925856118853}
+  word480:u64 = const() {"value":2325069349249957161}
   _cell480:u64 = call(mem,pos480,word480) {"function":"cp_put"}
   pos488:u64 = const() {"value":760}
-  word488:u64 = const() {"value":2319670829350472773}
+  word488:u64 = const() {"value":5992130925856118853}
   _cell488:u64 = call(mem,pos488,word488) {"function":"cp_put"}
   pos496:u64 = const() {"value":768}
-  word496:u64 = const() {"value":7814153411037712966}
+  word496:u64 = const() {"value":2319670829350472773}
   _cell496:u64 = call(mem,pos496,word496) {"function":"cp_put"}
   pos504:u64 = const() {"value":776}
-  word504:u64 = const() {"value":7307199742581503081}
+  word504:u64 = const() {"value":7814153411037712966}
   _cell504:u64 = call(mem,pos504,word504) {"function":"cp_put"}
   pos512:u64 = const() {"value":784}
-  word512:u64 = const() {"value":4995131113709003117}
+  word512:u64 = const() {"value":7307199742581503081}
   _cell512:u64 = call(mem,pos512,word512) {"function":"cp_put"}
   pos520:u64 = const() {"value":792}
-  word520:u64 = const() {"value":7865322780061953568}
+  word520:u64 = const() {"value":4995131113709003117}
   _cell520:u64 = call(mem,pos520,word520) {"function":"cp_put"}
   pos528:u64 = const() {"value":800}
-  word528:u64 = const() {"value":7957695015158966121}
+  word528:u64 = const() {"value":7865322780061953568}
   _cell528:u64 = call(mem,pos528,word528) {"function":"cp_put"}
   pos536:u64 = const() {"value":808}
-  word536:u64 = const() {"value":7378707516632426591}
+  word536:u64 = const() {"value":7957695015158966121}
   _cell536:u64 = call(mem,pos536,word536) {"function":"cp_put"}
   pos544:u64 = const() {"value":816}
-  word544:u64 = const() {"value":6873744754008748639}
+  word544:u64 = const() {"value":7378707516632426591}
   _cell544:u64 = call(mem,pos544,word544) {"function":"cp_put"}
   pos552:u64 = const() {"value":824}
-  word552:u64 = const() {"value":2325069349249298550}
+  word552:u64 = const() {"value":6873744754008748639}
   _cell552:u64 = call(mem,pos552,word552) {"function":"cp_put"}
   pos560:u64 = const() {"value":832}
-  word560:u64 = const() {"value":7022280863625804148}
+  word560:u64 = const() {"value":2325069349249298550}
   _cell560:u64 = call(mem,pos560,word560) {"function":"cp_put"}
   pos568:u64 = const() {"value":840}
-  word568:u64 = const() {"value":176754617442}
+  word568:u64 = const() {"value":7022280863625804148}
   _cell568:u64 = call(mem,pos568,word568) {"function":"cp_put"}
+  pos576:u64 = const() {"value":848}
+  word576:u64 = const() {"value":176754617442}
+  _cell576:u64 = call(mem,pos576,word576) {"function":"cp_put"}
   phase:u64 = const() {"value":5}
   opcode:u64 = const() {"value":5}
-  request_len:u64 = const() {"value":589}
-
+  request_len:u64 = const() {"value":597}
   prepared:u32 = call(mem,phase,opcode,request_len) {"function":"sr_issue"}
   ret(prepared)
 end
@@ -544,8 +552,8 @@ block failure()
   ret(no)
 end
 
-fn hf_record(state:mutbuf,work:mutbuf,small:bool) -> (bool) effects(read,write,trap) entry(entry)
-block entry(state:mutbuf,work:mutbuf,small:bool)
+fn hf_record(state:mutbuf,work:mutbuf,extent:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(state:mutbuf,work:mutbuf,extent:u64)
   magic_at:u64 = const() {"value":4136}
   header:u64 = call(state,magic_at) {"function":"cp_get"}
   mask:u64 = const() {"value":281474976710655}
@@ -558,15 +566,46 @@ block entry(state:mutbuf,work:mutbuf,small:bool)
   bound:bool = compare.eq(rev_sql,rev_raw)
   header_ok:bool = compare.eq(prefix,magic)
   framed:bool = bool.and(bound,header_ok)
-  branch framed profile(state,work,small) bad()
-block profile(ps:mutbuf,pw:mutbuf,compact:bool)
-  branch compact shape(ps,pw) installed(ps,pw)
-block installed(ins:mutbuf,inw:mutbuf)
-  shape_ok_installed:bool = call(ins) {"function":"hf_installed_shape"}
+  branch framed profile(state,work,extent) bad()
+block profile(ps:mutbuf,pw:mutbuf,n:u64)
+  compact_width:u64 = const() {"value":423}
+  compact:bool = compare.eq(n,compact_width)
+  branch compact shape(ps,pw,n) noncompact(ps,pw,n)
+block noncompact(ncs:mutbuf,ncw:mutbuf,ncn:u64)
+  installed_width:u64 = const() {"value":799}
+  installed_record:bool = compare.eq(ncn,installed_width)
+  branch installed_record installed(ncs,ncw,ncn) fenced(ncs,ncw,ncn)
+block installed(ins:mutbuf,inw:mutbuf,inn:u64)
+  unfenced:bool = const() {"value":false}
+  shape_ok_installed:bool = call(ins,unfenced) {"function":"hf_installed_shape"}
   yes_o:bool = const() {"value":true}
-  no_o:bool = const() {"value":false}
-  branch shape_ok_installed phase_fields(ins,inw,yes_o,no_o) bad()
-block shape(ss:mutbuf,sw:mutbuf)
+  branch shape_ok_installed phase_fields(ins,inw,yes_o,inn) bad()
+block fenced(fs:mutbuf,fw:mutbuf,fnn:u64)
+  state_at_f:usize = const() {"value":4142}
+  state_f:u8 = buffer.load(fs,state_at_f)
+  fence_tag:u8 = const() {"value":255}
+  is_fenced:bool = compare.eq(state_f,fence_tag)
+  branch is_fenced fence_profile(fs,fw,fnn) bad()
+block fence_profile(fps:mutbuf,fpw:mutbuf,fpn:u64)
+  fence_small:u64 = const() {"value":455}
+  is_fence_small:bool = compare.eq(fpn,fence_small)
+  branch is_fence_small fenced_compact(fps,fpw,fpn) fenced_install(fps,fpw,fpn)
+block fenced_compact(fcs:mutbuf,fcw:mutbuf,fcn:u64)
+  valid_shape:bool = call(fcs) {"function":"hf_fenced_compact"}
+  branch valid_shape fence_target(fcs,fcw,fcn) bad()
+block fence_target(fts:mutbuf,ftw:mutbuf,ftn:u64)
+  target_at:u64 = const() {"value":4311}
+  has_target:bool = call(fts,target_at) {"function":"hf_nonzero"}
+  jump phase_fields(fts,ftw,has_target,ftn)
+block fenced_install(fis:mutbuf,fiw:mutbuf,fin:u64)
+  width_fi:u64 = const() {"value":831}
+  valid_fi_extent:bool = compare.eq(fin,width_fi)
+  branch valid_fi_extent fenced_install_fields(fis,fiw,fin) bad()
+block fenced_install_fields(fisf:mutbuf,fiwf:mutbuf,finf:u64)
+  yes_f:bool = const() {"value":true}
+  shape_fi:bool = call(fisf,yes_f) {"function":"hf_installed_shape"}
+  branch shape_fi phase_fields(fisf,fiwf,yes_f,finf) bad()
+block shape(ss:mutbuf,sw:mutbuf,ssn:u64)
   state_at:usize = const() {"value":4142}
   state_code:u8 = buffer.load(ss,state_at)
   verified:u8 = const() {"value":1}
@@ -579,12 +618,11 @@ block shape(ss:mutbuf,sw:mutbuf)
   zero:u64 = const() {"value":0}
   no_options:bool = compare.eq(options,zero)
   shape_ok:bool = bool.and(known,no_options)
-  small_s:bool = const() {"value":true}
-  branch shape_ok phase_fields(ss,sw,is_projected,small_s) bad()
-block phase_fields(ms:mutbuf,mw:mutbuf,require_target:bool,sized:bool)
+  branch shape_ok phase_fields(ss,sw,is_projected,ssn) bad()
+block phase_fields(ms:mutbuf,mw:mutbuf,require_target:bool,sized:u64)
   checked:bool = call(ms,require_target) {"function":"hf_fields"}
   branch checked commit(ms,mw,sized) bad()
-block commit(cs:mutbuf,cw:mutbuf,sized_c:bool)
+block commit(cs:mutbuf,cw:mutbuf,sized_c:u64)
   valid:bool = call(cs,cw,sized_c) {"function":"hf_digest"}
   ret(valid)
 block bad()
@@ -655,8 +693,8 @@ block entry(state:mutbuf,source:u64)
   ret(present)
 end
 
-fn hf_digest(state:mutbuf,work:mutbuf,short:bool) -> (bool) effects(read,write,trap) entry(entry)
-block entry(state:mutbuf,work:mutbuf,short:bool)
+fn hf_digest(state:mutbuf,work:mutbuf,projected_bytes:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(state:mutbuf,work:mutbuf,projected_bytes:u64)
   init:u64 = call(work) {"function":"tr_sha_init"}
   pos0:u64 = const() {"value":1208}
   word0:u64 = const() {"value":2305843009213693952}
@@ -677,15 +715,20 @@ block entry(state:mutbuf,work:mutbuf,short:bool)
   word40:u64 = const() {"value":6845752908579864576}
   _write40:u64 = call(work,pos40,word40) {"function":"tr_put"}
   length_position:u64 = const() {"value":1248}
-  small_length_be:u64 = const() {"value":6845752908579864576}
-  full_length_be:u64 = const() {"value":15492945668107927552}
-  encoded_length:u64 = select(short,small_length_be,full_length_be)
+  outer_fields:u64 = const() {"value":72}
+  record_len:u64 = int.sub.wrap(projected_bytes,outer_fields)
+  low_mask:u64 = const() {"value":255}
+  eight_prefix:u64 = const() {"value":8}
+  low_shift:u64 = const() {"value":56}
+  high_shift:u64 = const() {"value":48}
+  low_len:u64 = bit.and(record_len,low_mask)
+  high_len:u64 = int.shr.checked(record_len,eight_prefix)
+  low_be:u64 = int.shl.checked(low_len,low_shift)
+  high_be:u64 = int.shl.checked(high_len,high_shift)
+  encoded_length:u64 = bit.or(low_be,high_be)
   _record_len:u64 = call(work,length_position,encoded_length) {"function":"tr_put"}
   record:u64 = const() {"value":4136}
   payload:u64 = const() {"value":1256}
-  small_n:u64 = const() {"value":351}
-  full_n:u64 = const() {"value":727}
-  record_len:u64 = select(short,small_n,full_n)
   start:u64 = const() {"value":1208}
   prefix_n:u64 = const() {"value":48}
   total:u64 = int.add.wrap(prefix_n,record_len)
@@ -729,15 +772,18 @@ block bad()
   ret(no)
 end
 
-fn hf_installed_shape(state:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
-block entry(state:mutbuf)
+fn hf_installed_shape(state:mutbuf,fenced:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(state:mutbuf,fenced:bool)
   state_at:usize = const() {"value":4142}
   phase:u8 = buffer.load(state,state_at)
   installed:u8 = const() {"value":3}
   cas:u8 = const() {"value":4}
   is_install:bool = compare.eq(phase,installed)
   is_cas:bool = compare.eq(phase,cas)
-  valid_phase:bool = bool.or(is_install,is_cas)
+  standard_phase:bool = bool.or(is_install,is_cas)
+  fenced_tag:u8 = const() {"value":255}
+  fenced_phase:bool = compare.eq(phase,fenced_tag)
+  valid_phase:bool = select(fenced,fenced_phase,standard_phase)
   flag_at0:usize = const() {"value":4479}
   flag_val0:u8 = buffer.load(state,flag_at0)
   expected0:u8 = const() {"value":1}
@@ -775,10 +821,18 @@ block entry(state:mutbuf)
   conjunction6:bool = bool.and(exact_flag6,conjunction5)
   flag_at7:usize = const() {"value":4862}
   flag_val7:u8 = buffer.load(state,flag_at7)
-  expected7:u8 = const() {"value":0}
+  has_reason:u8 = const() {"value":1}
+  no_reason:u8 = const() {"value":0}
+  expected7:u8 = select(fenced,has_reason,no_reason)
   exact_flag7:bool = compare.eq(flag_val7,expected7)
   conjunction7:bool = bool.and(exact_flag7,conjunction6)
-  branch conjunction7 link(state) bad()
+  branch conjunction7 reason(state,fenced) bad()
+block reason(rs:mutbuf,rf:bool)
+  branch rf nonzero_reason(rs) link(rs)
+block nonzero_reason(nrs:mutbuf)
+  reason_at:u64 = const() {"value":4863}
+  nonzero:bool = call(nrs,reason_at) {"function":"hf_nonzero"}
+  branch nonzero link(nrs) bad()
 block link(fs:mutbuf)
   okay:bool = call(fs) {"function":"hf_installed_fields"}
   ret(okay)
@@ -865,4 +919,16 @@ block good()
 block bad()
   no:bool = const() {"value":false}
   ret(no)
+end
+
+fn hf_fenced_compact(state:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(state:mutbuf)
+  options_at:u64 = const() {"value":4479}
+  flags:u64 = call(state,options_at) {"function":"cp_get"}
+  desired:u64 = const() {"value":72057594037927936}
+  options:bool = compare.eq(flags,desired)
+  reason_at:u64 = const() {"value":4487}
+  reason:bool = call(state,reason_at) {"function":"hf_nonzero"}
+  valid:bool = bool.and(options,reason)
+  ret(valid)
 end
