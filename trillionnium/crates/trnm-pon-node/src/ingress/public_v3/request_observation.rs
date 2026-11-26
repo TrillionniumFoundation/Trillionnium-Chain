@@ -1223,6 +1223,13 @@ impl Drop for ConnectionObservation {
     }
 }
 
+/// Explicit optional local phase diagnostics. Callback outcomes never replace
+/// the original action, deadline, resource decision or native error.
+pub(in crate::ingress) trait PhaseBoundaryObserver: Send + Sync {
+    fn begin(&self, phase: SubmitPhase) -> bool;
+    fn end(&self, phase: SubmitPhase, accepted: Option<bool>);
+}
+
 /// The same bounded phase recorder serves a network task and an explicitly
 /// observed local History packet. Local packets create no connection or CPU
 /// account and do not enter the listener's accepted-connection denominator.
@@ -1237,6 +1244,15 @@ impl TaskObservation {
             phases: PhaseRecorder::new(epoch),
         }
     }
+    pub(in crate::ingress) fn set_boundary_observer(
+        &self,
+        observer: Arc<dyn PhaseBoundaryObserver>,
+    ) -> bool {
+        // Explicit local History diagnostics only; never attach to a network
+        // task or replace an already installed sidecar.
+        self.network.is_none() && self.phases.0.boundary.set(observer).is_ok()
+    }
+
     pub(in crate::ingress) fn phase_snapshot(&self) -> ([SubmitPhaseObservation; 19], u64) {
         self.phases.snapshot()
     }
@@ -1358,6 +1374,7 @@ struct PhaseRecorderInner {
     rows: Mutex<[SubmitPhaseObservation; 19]>,
     active: AtomicU32,
     failures: AtomicU64,
+    boundary: OnceLock<Arc<dyn PhaseBoundaryObserver>>,
 }
 impl PhaseRecorder {
     fn new(epoch: Instant) -> Self {
@@ -1366,6 +1383,7 @@ impl PhaseRecorder {
             rows: Mutex::new(submit_phases()),
             active: AtomicU32::new(0),
             failures: AtomicU64::new(0),
+            boundary: OnceLock::new(),
         }))
     }
     fn failed(&self) {
@@ -1448,7 +1466,7 @@ impl PhaseRecorder {
         if recordable {
             self.0.active.fetch_or(1 << phase as u32, Ordering::Release);
         }
-        SubmitPhaseGuard {
+        let mut guard = SubmitPhaseGuard {
             observation: self,
             phase,
             started,
@@ -1456,7 +1474,14 @@ impl PhaseRecorder {
             accepted: None,
             error_code: None,
             recordable,
+            boundary_recorded: false,
+        };
+        // The optional sampler runs AFTER the original wall/CPU clocks start.
+        // It cannot grant authority and none of its errors replace the action.
+        if let Some(boundary) = self.0.boundary.get().filter(|_| recordable) {
+            guard.boundary_recorded = boundary.begin(phase);
         }
+        guard
     }
 }
 
@@ -1470,6 +1495,7 @@ pub(in crate::ingress) struct SubmitPhaseGuard<'a> {
     accepted: Option<bool>,
     error_code: Option<&'static str>,
     recordable: bool,
+    boundary_recorded: bool,
 }
 impl SubmitPhaseGuard<'_> {
     pub(in crate::ingress) fn finish(mut self, accepted: bool) {
@@ -1488,6 +1514,17 @@ impl Drop for SubmitPhaseGuard<'_> {
     fn drop(&mut self) {
         if !self.recordable {
             return;
+        }
+        // End sampling is also inside the original phase clocks. Drop during
+        // unwind retains unknown native completion without a fallback success.
+        if let Some(boundary) = self
+            .observation
+            .0
+            .boundary
+            .get()
+            .filter(|_| self.boundary_recorded)
+        {
+            boundary.end(self.phase, self.accepted);
         }
         self.observation
             .0

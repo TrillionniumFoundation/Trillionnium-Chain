@@ -1444,7 +1444,7 @@ fn signed_confirmation_phase_with_builder(
         if row["status"] == "ok" && row["returned_after_window"] == false {
             let replay_started_ns = ns(epoch);
             let page_cpu = ThreadCpuStamp::start();
-            let import_observer = ingress::HistoryImportObserver::new();
+            let import_observer = ingress::HistoryImportObserver::new_with_kernel_cpu_observation();
             let imported =
                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                     .map_err(|error| error.to_string())

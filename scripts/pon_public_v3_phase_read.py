@@ -305,6 +305,279 @@ def validate_history_import_observation(value: dict) -> None:
             require(native['ended_ns'] <= host[3]['first_started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
     if host[0]['last_ended_ns'] is not None and host[1]['first_started_ns'] is not None:
         require(host[0]['last_ended_ns'] <= host[1]['first_started_ns'], 'IMPORT_OBSERVATION_HOST_ORDER')
+    validate_history_kernel_cpu_observation(value)
+
+
+
+HISTORY_KERNEL_CPU_SCHEMA = 'pon-local-history-kernel-cpu-phase-observation-v1'
+HISTORY_KERNEL_CPU_PHASES = ('work', 'admission_prepare', 'cpu_wait')
+HISTORY_KERNEL_CPU_FIELDS = ('usage_usec', 'user_usec', 'system_usec',
+                            'nr_periods', 'nr_throttled', 'throttled_usec')
+HISTORY_KERNEL_CPU_CLOCK_SCOPE = (
+    'same History observer-local monotonic epoch; every counter read is bracketed by sample '
+    'start/end; missing or reversed clocks never become zero elapsed')
+HISTORY_KERNEL_CPU_COUNTER_SCOPE = (
+    'raw cumulative cpu.stat for the entire original fixed parent and all descendant processes, '
+    'including attack and honest work; group deltas are not importer-thread CPU, per-worker CPU, '
+    'exclusive phase costs, or causal proof of a particular delay; selected intervals may overlap '
+    'other observations and must not be summed')
+HISTORY_KERNEL_CPU_COST_SCOPE = (
+    'each optional sample performs fresh Host validation before and after a fresh cpu.stat '
+    'open/full EOF read; all sampling/parsing/bookkeeping remains inside the original phase '
+    'and business clocks; original 4s deadline, CPU reserve/rate, workers, work callbacks and '
+    'gates remain unchanged')
+
+
+def parse_history_kernel_cpu_stat(text):
+    """Independent bounded raw-data parser; no kernel access or authority."""
+    require(type(text) is str, 'KERNEL_CPU_RAW_TEXT')
+    try:
+        size = len(text.encode('utf-8'))
+    except UnicodeError as error:
+        raise ValueError('KERNEL_CPU_RAW_TEXT') from error
+    if size > 2048:
+        return None, 'cpu_stat_too_large'
+    lines = text.split('\n') if text else []
+    if text.endswith('\n'):
+        lines.pop()
+    fields = {}
+    for line in lines:
+        words = re.split(r'[ \t\r\v\f]+', line.strip(' \t\r\v\f'))
+        if (len(words) != 2 or not re.fullmatch('[a-z0-9_]+', words[0])
+                or not re.fullmatch('[0-9]+', words[1])):
+            return None, 'malformed_cpu_stat'
+        key, raw = words
+        # Bound before int conversion, including malicious extremely long digits.
+        significant = raw.lstrip('0') or '0'
+        if len(significant) > 20:
+            return None, 'cpu_stat_counter_overflow'
+        value = int(significant)
+        if value >= 1 << 64:
+            return None, 'cpu_stat_counter_overflow'
+        if key in fields:
+            return None, 'duplicate_cpu_stat_counter'
+        fields[key] = value
+    if any(key not in fields for key in HISTORY_KERNEL_CPU_FIELDS):
+        return None, 'missing_cpu_stat_counter'
+    return {key: fields[key] for key in HISTORY_KERNEL_CPU_FIELDS}, None
+
+
+def validate_history_kernel_cpu_observation(native):
+    """Validate an optional local sidecar, preserving valid failed observations.
+
+    This is data consistency, not proof of actual kernel execution/source,
+    per-task CPU ownership, service delivery or a passed four-second target.
+    """
+    if 'kernel_cpu_observation' not in native:
+        return None
+
+    def u64(value):
+        require(type(value) is int and 0 <= value < 1 << 64, 'KERNEL_CPU_U64')
+        return value
+
+    def optional_u64(value):
+        return None if value is None else u64(value)
+
+    def identity(value):
+        fields = {'parent', 'device', 'inode', 'uid', 'boot_id',
+                  'cpu_quota_us', 'cpu_period_us', 'memory_max_bytes', 'pids_max'}
+        require(type(value) is dict and set(value) == fields, 'KERNEL_CPU_PARENT_SHAPE')
+        require(value['parent'] == '/sys/fs/cgroup/trnmponpublic.slice'
+                and value['uid'] == 0 and type(value['uid']) is int,
+                'KERNEL_CPU_FIXED_PARENT')
+        require(type(value['boot_id']) is str and 0 < len(value['boot_id']) <= 4096,
+                'KERNEL_CPU_PARENT_BOOT')
+        for key in fields - {'parent', 'boot_id'}:
+            u64(value[key])
+
+    def counters(value):
+        require(type(value) is dict and set(value) == set(HISTORY_KERNEL_CPU_FIELDS),
+                'KERNEL_CPU_COUNTER_SHAPE')
+        for key in HISTORY_KERNEL_CPU_FIELDS:
+            u64(value[key])
+
+    def sample(value):
+        if value is None:
+            return None
+        keys = {'sample_started_ns', 'sample_ended_ns', 'sample_wall_ns',
+                'sample_calling_thread_cpu_ns', 'expected_parent_identity',
+                'raw_cpu_stat', 'counters', 'observation_error', 'original_read_error_code'}
+        require(type(value) is dict and set(value) == keys, 'KERNEL_CPU_SAMPLE_SHAPE')
+        clocks = ('sample_started_ns', 'sample_ended_ns', 'sample_wall_ns',
+                  'sample_calling_thread_cpu_ns')
+        for key in clocks:
+            optional_u64(value[key])
+        code = value['original_read_error_code']
+        require(code is None or (type(code) is str and len(code) <= 128
+                and re.fullmatch('[A-Z][A-Z0-9_]*', code)), 'KERNEL_CPU_ORIGINAL_ERROR')
+        error = value['observation_error']
+        allowed = {'native_parent_not_bound', 'parent_or_cpu_stat_unavailable',
+                   'sample_clock_unavailable', 'cpu_stat_too_large', 'malformed_cpu_stat',
+                   'cpu_stat_counter_overflow', 'duplicate_cpu_stat_counter',
+                   'missing_cpu_stat_counter'}
+        require(error is None or (type(error) is str and error in allowed), 'KERNEL_CPU_SAMPLE_ERROR')
+        raw = value['raw_cpu_stat']
+        if raw is None:
+            require(value['counters'] is None and value['expected_parent_identity'] is None
+                    and error in {'native_parent_not_bound', 'parent_or_cpu_stat_unavailable'},
+                    'KERNEL_CPU_MISSING_RAW')
+        else:
+            identity(value['expected_parent_identity'])
+            require(type(raw) is str, 'KERNEL_CPU_RAW_TEXT')
+            try:
+                raw_size = len(raw.encode('utf-8'))
+            except UnicodeError as error:
+                raise ValueError('KERNEL_CPU_RAW_TEXT') from error
+            require(raw_size <= 2048, 'KERNEL_CPU_RAW_BOUND')
+            parsed, parse_error = parse_history_kernel_cpu_stat(raw)
+            require(value['counters'] == parsed, 'KERNEL_CPU_RAW_COUNTER_MISMATCH')
+            if parsed is not None:
+                counters(value['counters'])
+                require(error in (None, 'sample_clock_unavailable'), 'KERNEL_CPU_PARSE_STATUS')
+            else:
+                require(error == parse_error, 'KERNEL_CPU_PARSE_STATUS')
+            require(code is None, 'KERNEL_CPU_PARSE_READ_ERROR')
+        require(code is None or error == 'parent_or_cpu_stat_unavailable',
+                'KERNEL_CPU_ORIGINAL_ERROR')
+        begin, end, wall = (value[k] for k in
+                           ('sample_started_ns', 'sample_ended_ns', 'sample_wall_ns'))
+        if begin is not None and end is not None and begin <= end:
+            require(wall == end - begin, 'KERNEL_CPU_SAMPLE_WALL')
+        if error is None:
+            require(all(value[k] is not None for k in clocks)
+                    and begin <= end, 'KERNEL_CPU_QUALIFIED_SAMPLE_CLOCK')
+        elif any(value[k] is None for k in clocks):
+            # Missing clocks never authorize a zero observation, even when an
+            # earlier read/parse error retains its original diagnostic priority.
+            require(error is not None, 'KERNEL_CPU_MISSING_CLOCK')
+        return value
+
+    def delta(row):
+        if not row['native_returned']:
+            return None, 'phase_unfinished_or_unwound'
+        before, after = row['before'], row['after']
+        if before is None:
+            return None, 'start_sample_missing'
+        if after is None:
+            return None, 'end_sample_missing'
+        if before['observation_error'] is not None or after['observation_error'] is not None:
+            return None, 'boundary_sample_unqualified'
+        if (before['expected_parent_identity'] is None
+                or before['expected_parent_identity'] != after['expected_parent_identity']):
+            return None, 'parent_identity_changed_or_missing'
+        a, b = before['sample_started_ns'], before['sample_ended_ns']
+        c, d = after['sample_started_ns'], after['sample_ended_ns']
+        if any(value is None for value in (a, b, c, d)):
+            return None, 'sample_clock_unavailable'
+        if not a <= b <= c <= d:
+            return None, 'sample_clock_order'
+        if after['counters'] is None:
+            return None, 'end_counters_missing'
+        if before['counters'] is None:
+            return None, 'start_counters_missing'
+        diff = {key: after['counters'][key] - before['counters'][key]
+                for key in HISTORY_KERNEL_CPU_FIELDS}
+        if any(value < 0 for value in diff.values()):
+            return None, 'counter_rewind_or_reset'
+        return {'counters': diff, 'minimum_elapsed_ns': c - b,
+                'maximum_elapsed_ns': d - a}, None
+
+    value = native['kernel_cpu_observation']
+    keys = {'schema', 'selected_phases', 'native_parent_identity_bound', 'interval_capacity',
+            'sample_capacity', 'raw_cpu_stat_capacity_bytes', 'records', 'measurement_failures',
+            'original_phase_measurement_failures', 'native_phase_snapshot_coherent',
+            'all_observed_intervals_qualified',
+            'has_control_authority', 'clock_scope', 'counter_scope', 'cost_scope'}
+    require(type(value) is dict and set(value) == keys
+            and value['schema'] == HISTORY_KERNEL_CPU_SCHEMA, 'KERNEL_CPU_SCHEMA')
+    require(value['selected_phases'] == list(HISTORY_KERNEL_CPU_PHASES)
+            and value['interval_capacity'] == 51 and type(value['interval_capacity']) is int
+            and value['sample_capacity'] == 102 and type(value['sample_capacity']) is int
+            and value['raw_cpu_stat_capacity_bytes'] == 2048
+            and type(value['raw_cpu_stat_capacity_bytes']) is int
+            and value['has_control_authority'] is False, 'KERNEL_CPU_SCOPE')
+    require(value['clock_scope'] == HISTORY_KERNEL_CPU_CLOCK_SCOPE
+            and value['counter_scope'] == HISTORY_KERNEL_CPU_COUNTER_SCOPE
+            and value['cost_scope'] == HISTORY_KERNEL_CPU_COST_SCOPE, 'KERNEL_CPU_SCOPE')
+    require(type(value['native_parent_identity_bound']) is bool
+            and type(value['native_phase_snapshot_coherent']) is bool
+            and type(value['all_observed_intervals_qualified']) is bool, 'KERNEL_CPU_FLAGS')
+    failures = u64(value['measurement_failures'])
+    original_failures = u64(value['original_phase_measurement_failures'])
+    require(original_failures == u64(native['measurement_failures']), 'KERNEL_CPU_FAILURE_BINDING')
+    native_phases = {(None, row['phase']): row for row in native['phases']}
+    for packet in native['packets']:
+        for phase in packet['phases']:
+            native_phases[(packet['packet_index'], phase['phase'])] = phase
+    records = value['records']
+    require(type(records) is list and len(records) <= 51, 'KERNEL_CPU_RECORD_BOUND')
+    seen, order, invalid_samples, identities = set(), [], 0, []
+    coherent = True
+    for row in records:
+        require(type(row) is dict and set(row) == {'packet_index', 'phase', 'native_returned',
+                'native_accepted', 'before', 'after', 'whole_parent_delta', 'qualification_error'},
+                'KERNEL_CPU_RECORD_SHAPE')
+        index, phase = row['packet_index'], row['phase']
+        require(index is None or (type(index) is int and 0 <= index < 16), 'KERNEL_CPU_PACKET_INDEX')
+        require(phase in HISTORY_KERNEL_CPU_PHASES, 'KERNEL_CPU_PHASE')
+        key = (index, phase)
+        require(key not in seen, 'KERNEL_CPU_PHASE_BINDING')
+        seen.add(key)
+        order.append((-1 if index is None else index, HISTORY_KERNEL_CPU_PHASES.index(phase)))
+        original = native_phases.get(key)
+        require(type(row['native_returned']) is bool
+                and (row['native_accepted'] is None or type(row['native_accepted']) is bool)
+                and row['native_returned'] is (row['native_accepted'] is not None),
+                'KERNEL_CPU_NATIVE_RESULT')
+        matches_native = (original is not None and original['started'] is True
+                          and row['native_returned'] == original['completed']
+                          and row['native_accepted'] == original['accepted']
+                          and original['started_ns'] is not None and original['ended_ns'] is not None)
+        for edge in ('before', 'after'):
+            observed = sample(row[edge])
+            if observed is not None:
+                invalid_samples += observed['observation_error'] is not None
+                if observed['expected_parent_identity'] is not None:
+                    identities.append(observed['expected_parent_identity'])
+                if matches_native:
+                    matches_native = (observed['sample_started_ns'] is not None
+                                      and observed['sample_ended_ns'] is not None
+                                      and original['started_ns'] <= observed['sample_started_ns']
+                                      and observed['sample_ended_ns'] <= original['ended_ns'])
+        proposed_delta = row['whole_parent_delta']
+        if proposed_delta is not None:
+            require(type(proposed_delta) is dict and set(proposed_delta) ==
+                    {'counters', 'minimum_elapsed_ns', 'maximum_elapsed_ns'},
+                    'KERNEL_CPU_DELTA_SHAPE')
+            counters(proposed_delta['counters'])
+            u64(proposed_delta['minimum_elapsed_ns'])
+            u64(proposed_delta['maximum_elapsed_ns'])
+        coherent = coherent and matches_native
+        calculated, error = delta(row) if matches_native else (None, 'native_phase_snapshot_incomplete')
+        require(row['whole_parent_delta'] == calculated and row['qualification_error'] == error,
+                'KERNEL_CPU_DELTA_MISMATCH')
+    require(order == sorted(order), 'KERNEL_CPU_RECORD_ORDER')
+    require(failures >= invalid_samples, 'KERNEL_CPU_SAMPLE_FAILURE_COUNT')
+    expected = {key for key, phase in native_phases.items()
+                if key[1] in HISTORY_KERNEL_CPU_PHASES and phase['started']}
+    coherent = coherent and seen == expected
+    require(value['native_phase_snapshot_coherent'] is coherent, 'KERNEL_CPU_SNAPSHOT_COHERENCE')
+    qualified = (value['native_parent_identity_bound'] and coherent and failures == 0
+                 and original_failures == 0 and bool(records)
+                 and all(row['whole_parent_delta'] is not None for row in records))
+    require(value['all_observed_intervals_qualified'] is qualified, 'KERNEL_CPU_QUALIFICATION_FLAG')
+    if qualified:
+        require(identities and all(item == identities[0] for item in identities),
+                'KERNEL_CPU_PARENT_BINDING_CHANGED')
+    return {'schema': HISTORY_KERNEL_CPU_SCHEMA, 'observed_intervals': len(records),
+            'qualified_intervals': sum(row['whole_parent_delta'] is not None for row in records),
+            'all_observed_intervals_qualified': qualified,
+            'native_parent_identity_bound': value['native_parent_identity_bound'],
+            'native_phase_snapshot_coherent': coherent,
+            'measurement_failures': failures, 'original_phase_measurement_failures': original_failures,
+            'has_service_or_consensus_authority': False,
+            'scope': 'independent raw-text/count/time consistency only; same-head original artifact '
+                     'and source evidence remain necessary; whole-parent CPU is not per-task CPU'}
 
 
 def validate_request_error_diagnostics(row):

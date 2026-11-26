@@ -1346,7 +1346,7 @@
     "scripts/ci/pq_lifetime_budget.py": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e",
     "scripts/ci/pq_source_reader.py": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
     "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
-    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.toml": "97991c11716c0c7216fad54239e897016ef1ceeb614ef2c5bfb46a6841e11032",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "5ab0c24b08430a326f58c9ce3aa4a85eef538c4b11b2cb08287e5201b41892de",
     "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb",
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",

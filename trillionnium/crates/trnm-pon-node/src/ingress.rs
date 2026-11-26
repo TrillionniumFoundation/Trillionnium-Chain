@@ -2688,6 +2688,9 @@ pub fn receive_public_page_from_before_observed(
         .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
     })?;
     observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;
+    if let Some(observer) = observation {
+        observer.bind_kernel_cpu(&kernel);
+    }
     let native = history_import::receive_observed(
         history_import::Owner::Exclusive(node),
         page,

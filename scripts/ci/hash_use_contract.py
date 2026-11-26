@@ -38,7 +38,7 @@ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa6
 # This literal binds the same 31-path map; inspect never regenerates it.
 # New exported APIs remain outside these declared uses and do not acquire
 # whole-callgraph coverage. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "cf4db5e45b5c4f20db2f09604d39a428fc73042a934a1be6b3269e80c2a8fdc8"
+REVIEWED_SOURCE_MAP_SHA256 = "3a35d2a99315a66bdc7f66cb405d990b2829c502e3ca85556c412cda28491c1d"
 
 USES = {
     "model-legacy-root": "model",
