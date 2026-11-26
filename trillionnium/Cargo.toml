@@ -76,3 +76,26 @@ overflow-checks = true
 opt-level = 3
 debug-assertions = true
 overflow-checks = true
+# Test-profile experiment: optimize the pinned ML-DSA arithmetic dependency chain.
+# Keep all assertions, security parameters, original controls and time limits.
+# This alone does not establish a runtime improvement or qualification.
+
+[profile.test.package."ml-dsa:0.1.1"]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package."module-lattice:0.2.3"]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package."shake:0.1.0"]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package."keccak:0.2.2"]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
