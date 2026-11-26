@@ -186,8 +186,11 @@ block stage_batch(bg_raw:readbuf,bg_mem:mutbuf,bg_work:mutbuf,bg_len:usize,body_
 block format_empty(ei:readbuf,em:mutbuf,ew:mutbuf,en:usize)
   max_req:usize = const() {"value":1682}
   fits_empty:bool = compare.le(en,max_req)
+  branch fits_empty admit_empty(ei,em,ew,en) bad()
+block admit_empty(eai:readbuf,eam:mutbuf,eaw:mutbuf,ean:usize)
+  committed_empty:bool = call(eai,eaw) {"function":"vd_verify_empty"}
   zero_offset:u64 = const() {"value":0}
-  branch fits_empty open_request(ei,em,ew,en,zero_offset) bad()
+  branch committed_empty open_request(eai,eam,eaw,ean,zero_offset) bad()
 block format_delete(fi:readbuf,fm:mutbuf,fw:mutbuf,fl:usize)
   dl:u64 = const() {"value":256}
   dmin:usize = const() {"value":1427}
@@ -332,7 +335,24 @@ block ok14(sql_reply:readbuf,check_mem:mutbuf,check_work:mutbuf)
 block before(before_mem:mutbuf,before_work:mutbuf)
   expected_before:u64 = const() {"value":900000}
   before_matches:bool = call(before_mem,before_work,expected_before) {"function":"ew_match"}
-  branch before_matches before_batch(before_mem,before_work) bad()
+  branch before_matches before_batch(before_mem,before_work) possible_empty_replay(before_mem,before_work)
+block possible_empty_replay(rem:mutbuf,rew:mutbuf)
+  batch_at:u64 = const() {"value":136}
+  mode_at_replay:u64 = const() {"value":96}
+  batch:u64 = call(rem,batch_at) {"function":"cp_get"}
+  write_mode_at_replay:u64 = call(rem,mode_at_replay) {"function":"cp_get"}
+  zero_replay:u64 = const() {"value":0}
+  single:bool = compare.eq(batch,zero_replay)
+  is_empty_replay:bool = compare.eq(write_mode_at_replay,zero_replay)
+  empty_only:bool = bool.and(single,is_empty_replay)
+  branch empty_only replay_after(rem,rew) bad()
+block replay_after(ram:mutbuf,raw_replay:mutbuf)
+  expected_successor:u64 = const() {"value":900489}
+  already_applied:bool = call(ram,raw_replay,expected_successor) {"function":"ew_match"}
+  branch already_applied replay_commit(ram) bad()
+block replay_commit(rcm:mutbuf)
+  done:u32 = call(rcm) {"function":"sr_commit"}
+  ret(done)
 block before_batch(batch_mem:mutbuf,batch_work:mutbuf)
   has_batch_at:u64 = const() {"value":136}
   has_batch:u64 = call(batch_mem,has_batch_at) {"function":"cp_get"}

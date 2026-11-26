@@ -15,7 +15,7 @@ from hia.tests.test_state_import_sqlite_cold_read import EXPECTED, OWNER, ROOT, 
 
 
 class StateImportSqliteEmptyWrite(unittest.TestCase):
-    def test_native_empty_delta_commit_stale_refusal_and_actual_process_rollback(self):
+    def test_native_empty_applies_once_and_exact_original_replay_has_no_sql_changes(self):
         with tempfile.TemporaryDirectory(prefix="m13-sqlite-empty-delta-") as tmp, NativeModule(
             OWNER / "empty_write.hepta", byte_exports=("f0",), backend="selfhost",
         ) as reader:
@@ -37,18 +37,19 @@ class StateImportSqliteEmptyWrite(unittest.TestCase):
             def export(db):
                 return _run([writer, "export", db]).stdout
 
-            def call(db, proposal, kill=False):
+            def call(db, proposal, kill=False, kill_replay=False):
                 message = {
                     "reader": [str(reader.library), reader.artifact_sha256],
                     "provider": [str(provider), provider_digest], "directory": str(cases),
                     "database": str(db), "expected": EXPECTED, "empty_delta": proposal.hex(),
                     "advance": None, "kill_after_update": kill,
+                    "kill_before_empty_readback_commit": kill_replay,
                 }
                 child = subprocess.run(
                     [sys.executable, "-I", "-S", "-B", str(OWNER / "qualification_host.py")],
                     input=json.dumps(message), text=True, timeout=45, capture_output=True, check=False,
                 )
-                if kill:
+                if kill or kill_replay:
                     self.assertEqual((child.returncode, child.stdout, child.stderr), (-signal.SIGKILL, "", ""))
                     return None
                 self.assertEqual(child.returncode, 0, child.stderr)
@@ -59,7 +60,7 @@ class StateImportSqliteEmptyWrite(unittest.TestCase):
                 with self.subTest(count=count):
                     oracle_db = seed(f"original-{count}", count)
                     before = export(oracle_db)
-                    _run([writer, "empty-advance", oracle_db])
+                    receipt = _run([writer, "empty-receipt", oracle_db]).stdout
                     after = export(oracle_db)
                     self.assertEqual((before[200:208], after[200:208]), (bytes(8), bytes(7) + b"\1"))
                     self.assertEqual(before[128:200], after[128:200])  # rows, root and count
@@ -78,15 +79,36 @@ class StateImportSqliteEmptyWrite(unittest.TestCase):
                     committed = export(candidate)
                     self.assertEqual(committed, after)
 
-                    # The original owner treats its exact immutable replay as
-                    # idempotent. This one-generation staging proposal refuses
-                    # stale reuse instead; it cannot create a second generation.
-                    _run([writer, "empty-advance", oracle_db])
+                    self.assertEqual(receipt, after[200:208] + after[208:240])
+                    replay_receipt = _run([writer, "empty-receipt", oracle_db]).stdout
+                    self.assertEqual(replay_receipt, receipt)
                     self.assertEqual(export(oracle_db), after)
-                    stale = call(candidate, proposal)
-                    self.assertEqual((stale["status"], stale["result"]), (100, None))
-                    self.assertNotIn([28, 10, 24], stale["transcript"])
+
+                    replay = call(candidate, proposal)
+                    self.assertEqual((replay["status"], replay["result"], replay["released"]),
+                                     (0, projection(after), 0))
+                    self.assertEqual(replay["transcript"][-1], [18, 3, 24])
+                    self.assertIn([15, 5, 24], replay["transcript"])
+                    self.assertNotIn([23, 5, 24], replay["transcript"])
+                    self.assertNotIn([28, 10, 24], replay["transcript"])
+                    self.assertNotIn([35, 10, 24], replay["transcript"])
                     self.assertEqual(export(candidate), committed)
+                    call(candidate, proposal, kill_replay=True)
+                    self.assertEqual(export(candidate), committed)
+
+                    different = bytes((after[208] ^ 1,)) + after[209:240]
+                    forged = proposal[:(489+424)] + different.hex().upper().encode() + proposal[(489+488):1010] + different
+                    wrong_context = proposal[:978] + bytes((proposal[978] ^ 0x80,)) + proposal[979:]
+                    wrong_source = proposal[:130] + bytes((proposal[130] ^ 1,)) + proposal[131:]
+                    wrong_pre_fields = proposal[:195] + bytes((proposal[195] ^ 1,)) + proposal[196:]
+                    before_gen_off = 407
+                    wrong_generation = (proposal[:before_gen_off] + b"0000000000000001"
+                                        + proposal[before_gen_off + 16:])
+                    for wrong in (forged, wrong_context, wrong_source, wrong_pre_fields, wrong_generation):
+                        denied = call(candidate, wrong)
+                        self.assertEqual((denied["status"], denied["result"], denied["transcript"]),
+                                         (100, None, []))
+                        self.assertEqual(export(candidate), committed)
 
                     interrupted = seed(f"killed-{count}", count)
                     call(interrupted, proposal, kill=True)
@@ -96,6 +118,6 @@ class StateImportSqliteEmptyWrite(unittest.TestCase):
                     changed_expected = proposal[:489] + b"F" + proposal[490:]
                     rejected = call(incorrect, changed_expected)
                     self.assertEqual((rejected["status"], rejected["result"]), (100, None))
-                    self.assertIn([28, 10, 24], rejected["transcript"])
+                    self.assertEqual(rejected["transcript"], [])
                     self.assertNotIn([15, 5, 24], rejected["transcript"])
                     self.assertEqual(export(incorrect), before)

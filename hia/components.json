@@ -329,13 +329,17 @@
           "vd_equal",
           "vd_hex_field",
           "vd_plan_schema",
-          "vd_equal_ascii64"
+          "vd_equal_ascii64",
+          "vd_verify_empty",
+          "vd_empty_state",
+          "vd_load_be64"
         ]
       },
       {
         "source": "src/state_import/incremental_delta_commitment.hepta",
         "functions": [
           "dc_copy",
+          "dc_empty",
           "dc_pair",
           "dc_header_domain",
           "dc_finish_header",
@@ -350,6 +354,7 @@
         "source": "src/state_import/incremental_delta_commitment.hepta",
         "functions": [
           "dc_copy",
+          "dc_empty",
           "dc_pair",
           "dc_header_domain",
           "dc_finish_header",

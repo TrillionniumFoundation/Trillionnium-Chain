@@ -268,7 +268,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             store.apply_delta_v0(&delta, &FixtureRoot)?;
         }
-        ("empty-advance", 3) => {
+        ("empty-advance" | "empty-receipt", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let rows = store.read_rows_v0()?;
             let delta = derive_incremental_delta_v0(
@@ -278,14 +278,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if !delta.entries.is_empty() {
                 return Err("reference should contain no row mutations".into());
             }
-            store.apply_delta_v0(&delta, &FixtureRoot)?;
+            let receipt = store.apply_delta_v0(&delta, &FixtureRoot)?;
+            if args[1] == "empty-receipt" {
+                let mut out = io::stdout().lock();
+                out.write_all(&receipt.generation.to_be_bytes())?;
+                out.write_all(&receipt.delta_digest.0)?;
+            }
         }
         ("export", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/export on disposable staging only".into()),
+        _ => return Err("scope is seed/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/empty-receipt/export on disposable staging only".into()),
     }
     Ok(())
 }

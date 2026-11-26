@@ -293,3 +293,115 @@ block refuse()
   no:bool = const() {"value":false}
   ret(no)
 end
+
+fn vd_verify_empty(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  before:u64 = const() {"value":0}
+  after:u64 = const() {"value":489}
+  zero_root:bool = call(work) {"function":"dc_empty"}
+  plan_schema:bool = call(raw,before,after) {"function":"vd_plan_schema"}
+  fields:bool = call(raw,work,before,after) {"function":"vd_fields"}
+  fields_bound:bool = bool.and(fields,plan_schema)
+  equal_state:bool = call(raw,work) {"function":"vd_empty_state"}
+  ok1:bool = bool.and(zero_root,equal_state)
+  ok2:bool = bool.and(ok1,fields_bound)
+  branch ok2 target_context(raw,work) refuse()
+block target_context(r:readbuf,w:mutbuf)
+  supplied:u64 = const() {"value":978}
+  decoded:u64 = const() {"value":1379}
+  width:u64 = const() {"value":32}
+  bound:bool = call(r,w,supplied,decoded,width) {"function":"vd_equal"}
+  branch bound commit(r,w) refuse()
+block commit(cr:readbuf,cw:mutbuf)
+  count:u64 = const() {"value":0}
+  root:u64 = const() {"value":1168}
+  digest_valid:bool = call(cw,count,root) {"function":"dc_finish_header"}
+  branch digest_valid binding(cr,cw) refuse()
+block binding(br:readbuf,bw:mutbuf)
+  baked:u64 = const() {"value":1712}
+  parsed:u64 = const() {"value":2016}
+  requested:u64 = const() {"value":1010}
+  width_b:u64 = const() {"value":32}
+  native_match:bool = call(br,bw,requested,baked,width_b) {"function":"vd_equal"}
+  metadata_match:bool = call(br,bw,requested,parsed,width_b) {"function":"vd_equal"}
+  both:bool = bool.and(native_match,metadata_match)
+  ret(both)
+block refuse()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn vd_empty_state(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  before_rows:u64 = const() {"value":260}
+  after_rows:u64 = const() {"value":749}
+  before_root:u64 = const() {"value":325}
+  after_root:u64 = const() {"value":814}
+  before_count:u64 = const() {"value":390}
+  after_count:u64 = const() {"value":879}
+  same_rows:bool = call(raw,before_rows,after_rows) {"function":"vd_equal_ascii64"}
+  same_root:bool = call(raw,before_root,after_root) {"function":"vd_equal_ascii64"}
+  ac0:u64 = call(raw,before_count) {"function":"tr_read"}
+  bc0:u64 = call(raw,after_count) {"function":"tr_read"}
+  next:u64 = const() {"value":8}
+  before_count_hi:u64 = int.add.wrap(before_count,next)
+  after_count_hi:u64 = int.add.wrap(after_count,next)
+  ac1:u64 = call(raw,before_count_hi) {"function":"tr_read"}
+  bc1:u64 = call(raw,after_count_hi) {"function":"tr_read"}
+  count_low:bool = compare.eq(ac0,bc0)
+  count_high:bool = compare.eq(ac1,bc1)
+  same_count:bool = bool.and(count_low,count_high)
+  original_source:u64 = const() {"value":130}
+  retained_source:u64 = const() {"value":619}
+  same_source:bool = call(raw,original_source,retained_source) {"function":"vd_equal_ascii64"}
+  unchanged:bool = bool.and(same_rows,same_root)
+  stable_identity:bool = bool.and(same_source,same_count)
+  same_state:bool = bool.and(unchanged,stable_identity)
+  branch same_state generations(raw,work) refuse()
+block generations(gr:readbuf,gw:mutbuf)
+  old:u64 = const() {"value":407}
+  new:u64 = const() {"value":896}
+  old_stage:u64 = const() {"value":2048}
+  new_stage:u64 = const() {"value":2064}
+  eight:u64 = const() {"value":8}
+  old_ok:bool = call(gr,gw,old,old_stage,eight) {"function":"vd_hex_field"}
+  new_ok:bool = call(gr,gw,new,new_stage,eight) {"function":"vd_hex_field"}
+  valid_hex:bool = bool.and(old_ok,new_ok)
+  branch valid_hex one_generation(gw) refuse()
+block one_generation(g:mutbuf)
+  old_val:u64 = const() {"value":2056}
+  new_val:u64 = const() {"value":2072}
+  before:u64 = call(g,old_val) {"function":"vd_load_be64"}
+  after:u64 = call(g,new_val) {"function":"vd_load_be64"}
+  one:u64 = const() {"value":1}
+  max_before:u64 = const() {"value":9223372036854775806}
+  possible:bool = compare.le(before,max_before)
+  expected:u64 = int.add.wrap(before,one)
+  next_generation:bool = compare.eq(expected,after)
+  ok:bool = bool.and(possible,next_generation)
+  ret(ok)
+block refuse()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn vd_load_be64(work:mutbuf,at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,at:u64)
+  zero:u64 = const() {"value":0}
+  bytes:u64 = const() {"value":8}
+  jump word(work,at,zero,bytes)
+block word(w:mutbuf,pos:u64,value:u64,left:u64)
+  idx:usize = int.cast(pos) {"mode":"wrap"}
+  loaded:u8 = buffer.load(w,idx)
+  wide:u64 = int.cast(loaded) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  shifted:u64 = int.shl.checked(value,eight)
+  accumulated:u64 = bit.or(shifted,wide)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(pos,one)
+  remaining:u64 = int.sub.wrap(left,one)
+  done:bool = compare.eq(left,one)
+  branch done finish(accumulated) word(w,next,accumulated,remaining)
+block finish(v:u64)
+  ret(v)
+end

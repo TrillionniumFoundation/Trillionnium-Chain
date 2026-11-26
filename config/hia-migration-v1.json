@@ -2472,7 +2472,7 @@
       "id": "state_import/sqlite-empty-delta-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "M13 native BEGIN IMMEDIATE empty, single operations, fixed three-record mixed and variable 1–8 ordered DELETE/INSERT/UPDATE transitions for reviewed disposable local staging; exact preimages, persisted digests and original Rust cold reopen differential; variable route verifies original canonical delta before OPEN; no production authority or application-root recomputation",
+      "scope": "M13 native BEGIN IMMEDIATE empty, single operations, fixed three-record mixed and variable 1–8 ordered DELETE/INSERT/UPDATE transitions for reviewed disposable local staging; exact preimages, persisted digests and original Rust cold reopen differential; variable and empty routes verify original canonical delta before OPEN, exact empty retry is idempotent; no production authority or application-root recomputation",
       "sources": [
         "hia/platform/state_import_sqlite/empty_write.hepta",
         "hia/platform/state_import_sqlite/delete_delta.hepta",

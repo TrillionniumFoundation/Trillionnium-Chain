@@ -103,6 +103,12 @@ def run(message, reader, provider):
                 if child.stdout or child.stderr:
                     raise ValueError("Original writer did not finish cleanly")
                 advanced = True
+            if message.get("kill_before_empty_readback_commit") and (phase, op) == (15, 5):
+                if not writes or mode != "m13-sqlite-empty-delta-" or row_changes_seen or any(
+                    (p, code) == (28, 10) for p, code, _ in transcript
+                ):
+                    raise ValueError("Expected a held empty replay without writes before termination")
+                os.kill(os.getpid(), signal.SIGKILL)
             call = ctypes.addressof(state) + 256
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))

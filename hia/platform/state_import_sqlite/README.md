@@ -77,13 +77,13 @@ verification in its still-held transaction and compares the full reviewed
 successor metadata. Any refusal has no published output and closes the
 uncommitted transaction. Only successful commit, finalize and physical
 connection close permit the successor projection to leave the continuation.
-A repeated proposal bound to the old predecessor is refused. The retained
-Rust owner still supplies its distinct idempotent replay receipt.
+An exact empty replay of the already committed successor uses the readback
+branch below, with no second metadata write or generation increase.
 
 The test runs the original full locked Rust crate on separate SQLite files
 for zero rows and nonempty state. It compares complete cold exports after
-a real native write, verifies stale and wrong-postcondition refusals, and
-kills the native process only after the provider observes one actual updated
+a real native write, verifies exact replay and wrong-binding refusals, and
+kills the native process after the provider observes one actual updated
 metadata row, then cold reopens the exact original predecessor in Rust.
 There is no HIA app-root recomputation, production write path, signed
 finality validation, or support for applying row mutations.
@@ -256,7 +256,25 @@ The separate, existing typed-row validation, held-before checks, native
 post-write row commitment and complete successor comparison remain necessary:
 a correctly framed commitment to an incorrect successor is still rolled back.
 The original fixtures and process-interruption controls exercise this distinction.
-No second request format or host-computed digest is authoritative. Empty, single
-and fixed three-record fixture modes are unchanged. These checks establish
+No second request format or host-computed digest is authoritative. Single and
+fixed three-record fixture modes are unchanged. These checks establish
 commitment consistency only; they do not verify checkpoint finality, sign or
 authenticate contexts, recompute application roots, or route production writes.
+
+### Exact empty replay
+
+The private empty lane now derives the original empty incremental Merkle root
+and canonical delta digest before opening SQLite. Its reviewed source/target
+identities, plan/schema and unchanged row/root/count fields bind the
+transition; the successor generation must be exactly one greater than the
+reviewed predecessor. The raw successor bindings must match the reviewed
+projection and computed digest.
+
+If the held and row-digest-verified snapshot already equals the reviewed
+successor in full, the empty replay skips all row and metadata mutation and
+reports that actual unchanged generation only after COMMIT and CLOSE.
+The nonempty replay rules are unchanged. The disposable Rust fixture tests
+the real original apply and replay receipts, original cold reopen after each
+branch and OS process termination before both initial metadata commit and
+the replay's readback-only commit. This does not authenticate checkpoint
+authorities or activate production writes.
