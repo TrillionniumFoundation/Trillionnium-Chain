@@ -13,16 +13,16 @@
       "current_sha256": "cc1919286ec56532089024f0ac95017fffcb79e4540b4bc8105dd7adcabd9b3c"
     },
     "scripts/test_pon_history_kernel_cpu_observation.py": {
-      "current_git_blob": "70735d906bc77d609f07d5772f6fc0e814b58cd2",
-      "current_sha256": "2b294b24a61d1412ac24c5c3e650d28961378ae1fbe4c6793a2c9949d4c48bf7"
+      "current_git_blob": "01ab8e6cd88d90790ab80b01902c5302c19a8dda",
+      "current_sha256": "ce8e010162664e1fbd398db877c539094a42bd0a1d7fbff5c144f825d840ff68"
     },
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs": {
       "current_git_blob": "64d25d7f0a266998e7422de017d3a67dd32abf20",
       "current_sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc"
     },
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import/kernel_cpu_observation.rs": {
-      "current_git_blob": "3b780f01c7d27372a456e66fc47d573bbf4fe8fb",
-      "current_sha256": "5e869c55f198fede0fc5d6082eb01bd9fc4f48c495cd128dc2532f92dacd32f7"
+      "current_git_blob": "7003cde98f6d2e6fed7ff592419317acf483ebfb",
+      "current_sha256": "61f4dff2333adaa8183e5778b295d84774d4758859f27eab3a3c88522e02ba9a"
     },
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/response_signing_tests.rs": {
       "current_git_blob": "835028986a063a102b9bdcb0d4e2912f205f85fb",
@@ -37,7 +37,7 @@
       "current_sha256": "dfff162c0ef6346ef0be260accb76f9f5487b8968d064f29cfe8371b0e326c3c"
     }
   },
-  "current_git_blob_map_sha256": "bd84b3290e99fd791af46f9cac45e097d52eac0d4621ac177937c4ffe4113a2e",
+  "current_git_blob_map_sha256": "29643e949ba36f62f0eeae4ac7e987c8b3ea61f604a5f3b0a4c0b8a277bb3b3e",
   "frozen_inputs_sha256": {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -181,8 +181,8 @@
       "frozen_git_blob": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda"
     },
     "scripts/pon_public_v3_phase_read.py": {
-      "current_git_blob": "b726fec9677678085f81c9dc0115a829986c87fd",
-      "current_sha256": "8079ff6f078761b042946dc38d57b25de9902569ee88a31e4cc0d28d524d5bac",
+      "current_git_blob": "df3675b862e0b335a11d3fe8d768e76cf63990f5",
+      "current_sha256": "13716cafe28a6ecda2eafe0173566f38841e2da890bb68dfe67a0ef14f482e8d",
       "frozen_git_blob": "4bb2f24c599f4a4fc64248f24fc2066753ddb966"
     },
     "scripts/w1_lifetime_current_observation.py": {

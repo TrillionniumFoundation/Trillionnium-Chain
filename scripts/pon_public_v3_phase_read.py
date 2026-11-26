@@ -343,7 +343,10 @@ def parse_history_kernel_cpu_stat(text):
     fields = {}
     for line in lines:
         words = re.split(r'[ \t\r\v\f]+', line.strip(' \t\r\v\f'))
-        if (len(words) != 2 or not re.fullmatch('[a-z0-9_]+', words[0])
+        # Linux emits this one dotted key; unknown dotted names stay invalid.
+        if (len(words) != 2
+                or not (re.fullmatch('[a-z0-9_]+', words[0])
+                        or words[0] == 'core_sched.force_idle_usec')
                 or not re.fullmatch('[0-9]+', words[1])):
             return None, 'malformed_cpu_stat'
         key, raw = words

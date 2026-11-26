@@ -61,10 +61,13 @@ fn parse_cpu_stat(text: &str) -> Result<CpuCounters, &'static str> {
         let mut words = line.split_ascii_whitespace();
         let key = words.next().ok_or("malformed_cpu_stat")?;
         let raw = words.next().ok_or("malformed_cpu_stat")?;
+        // Linux emits this exact dotted counter under CONFIG_SCHED_CORE.
+        // Other dotted spellings remain malformed rather than being ignored.
         if words.next().is_some()
-            || !key
-                .bytes()
-                .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
+            || !(key == "core_sched.force_idle_usec"
+                || key
+                    .bytes()
+                    .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_'))
             || !raw.bytes().all(|b| b.is_ascii_digit())
         {
             return Err("malformed_cpu_stat");
@@ -542,6 +545,90 @@ mod tests {
         );
         let raw = sample(CPU, 1, 2);
         assert_eq!(raw.raw_cpu_stat.as_deref(), Some(CPU));
+    }
+
+    #[test]
+    fn cpu_stat_accepts_the_observed_linux_core_sched_field() {
+        // Original run45757278209 head artifact15090531717, first pressure
+        // History page/cpu_wait before sample. This is a parser fixture only.
+        let raw = concat!(
+            "usage_usec 18393406\n",
+            "user_usec 12013212\n",
+            "system_usec 6380194\n",
+            "nice_usec 0\n",
+            "core_sched.force_idle_usec 0\n",
+            "nr_periods 749\n",
+            "nr_throttled 730\n",
+            "throttled_usec 67260306\n",
+            "nr_bursts 0\n",
+            "burst_usec 0\n",
+        );
+        assert_eq!(
+            parse_cpu_stat(raw).unwrap(),
+            CpuCounters {
+                usage_usec: 18_393_406,
+                user_usec: 12_013_212,
+                system_usec: 6_380_194,
+                nr_periods: 749,
+                nr_throttled: 730,
+                throttled_usec: 67_260_306,
+            }
+        );
+        let observed = sample(raw, 1, 2);
+        assert_eq!(observed.raw_cpu_stat.as_deref(), Some(raw));
+        assert_eq!(observed.observation_error, None);
+    }
+
+    #[test]
+    fn cpu_stat_rejects_unknown_or_malformed_dotted_field_names() {
+        for key in [
+            "future.counter",
+            ".core_sched.force_idle_usec",
+            "core_sched.force_idle_usec.",
+            "core_sched..force_idle_usec",
+            "core_sched.force.idle_usec",
+            "core_sched.force_idle_usec_extra",
+            "core_sched.force_idle_usec/",
+            "Core_sched.force_idle_usec",
+            "core_sched\u{ff0e}force_idle_usec",
+            "core_sched.\0force_idle_usec",
+        ] {
+            assert_eq!(
+                parse_cpu_stat(&format!("{CPU}{key} 0\n")),
+                Err("malformed_cpu_stat"),
+                "{key:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn cpu_stat_core_sched_field_preserves_duplicate_and_u64_refusals() {
+        let raw = format!("{CPU}core_sched.force_idle_usec 0\n");
+        assert_eq!(
+            parse_cpu_stat(&format!("{raw}core_sched.force_idle_usec 1\n")),
+            Err("duplicate_cpu_stat_counter")
+        );
+        for value in ["+1", "-1", "1.0", "0x10", "1e3", "١", "1 2"] {
+            assert_eq!(
+                parse_cpu_stat(&format!("{CPU}core_sched.force_idle_usec {value}\n")),
+                Err("malformed_cpu_stat"),
+                "{value}"
+            );
+        }
+        assert_eq!(
+            parse_cpu_stat(&format!(
+                "{CPU}core_sched.force_idle_usec 18446744073709551616\n"
+            )),
+            Err("cpu_stat_counter_overflow")
+        );
+        assert_eq!(
+            parse_cpu_stat(&format!("{CPU}core_sched.force_idle_usec {}\n", u64::MAX)).unwrap(),
+            parse_cpu_stat(CPU).unwrap()
+        );
+        assert_eq!(
+            parse_cpu_stat(&raw.replace("usage_usec 600\n", "")),
+            Err("missing_cpu_stat_counter")
+        );
     }
 
     #[test]

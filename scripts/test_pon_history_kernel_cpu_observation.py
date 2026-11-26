@@ -74,6 +74,55 @@ class KernelCpuReadbackControls(unittest.TestCase):
         self.assertEqual(out['qualified_intervals'], 1)
         self.assertFalse(out['has_service_or_consensus_authority'])
 
+    def test_observed_linux_core_sched_field_preserves_raw_counters_and_delta(self):
+        # Original run45757278209 head artifact15090531717, first pressure
+        # History page/cpu_wait before sample. This is a parser fixture only.
+        raw = ('usage_usec 18393406\nuser_usec 12013212\nsystem_usec 6380194\n'
+               'nice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 749\n'
+               'nr_throttled 730\nthrottled_usec 67260306\nnr_bursts 0\nburst_usec 0\n')
+        expected = {'usage_usec': 18_393_406, 'user_usec': 12_013_212,
+                    'system_usec': 6_380_194, 'nr_periods': 749,
+                    'nr_throttled': 730, 'throttled_usec': 67_260_306}
+        self.assertEqual(parse_history_kernel_cpu_stat(raw), (expected, None))
+        value = fixture()
+        row = value['kernel_cpu_observation']['records'][0]
+        row['before'] = sample(raw, 10, 20)
+        row['after'] = sample(raw.replace('18393406', '18393426'), 90, 100)
+        out = validate_history_kernel_cpu_observation(value)
+        self.assertEqual(row['before']['raw_cpu_stat'], raw)
+        self.assertEqual(out['qualified_intervals'], 1)
+        self.assertTrue(out['all_observed_intervals_qualified'])
+        self.assertFalse(out['has_service_or_consensus_authority'])
+
+    def test_only_exact_core_sched_dotted_field_name_is_supported(self):
+        for key in ('future.counter', '.core_sched.force_idle_usec',
+                    'core_sched.force_idle_usec.', 'core_sched..force_idle_usec',
+                    'core_sched.force.idle_usec', 'core_sched.force_idle_usec_extra',
+                    'core_sched.force_idle_usec/', 'Core_sched.force_idle_usec',
+                    'core_sched\uff0eforce_idle_usec', 'core_sched.\0force_idle_usec'):
+            with self.subTest(key=key):
+                self.assertEqual(parse_history_kernel_cpu_stat(CPU + f'{key} 0\n'),
+                                 (None, 'malformed_cpu_stat'))
+
+    def test_core_sched_field_keeps_duplicate_unsigned_and_required_refusals(self):
+        raw = CPU + 'core_sched.force_idle_usec 0\n'
+        self.assertEqual(
+            parse_history_kernel_cpu_stat(raw + 'core_sched.force_idle_usec 1\n'),
+            (None, 'duplicate_cpu_stat_counter'))
+        for number in ('+1', '-1', '1.0', '0x10', '1e3', '١', '1 2'):
+            with self.subTest(number=number):
+                self.assertEqual(
+                    parse_history_kernel_cpu_stat(CPU + f'core_sched.force_idle_usec {number}\n'),
+                    (None, 'malformed_cpu_stat'))
+        self.assertEqual(
+            parse_history_kernel_cpu_stat(CPU + 'core_sched.force_idle_usec 18446744073709551616\n'),
+            (None, 'cpu_stat_counter_overflow'))
+        self.assertEqual(
+            parse_history_kernel_cpu_stat(CPU + 'core_sched.force_idle_usec 18446744073709551615\n'),
+            parse_history_kernel_cpu_stat(CPU))
+        self.assertEqual(parse_history_kernel_cpu_stat(raw.replace('usage_usec 600\n', '')),
+                         (None, 'missing_cpu_stat_counter'))
+
     def test_historical_absence_does_not_create_zero_cost_or_qualification(self):
         value = fixture()
         del value['kernel_cpu_observation']
