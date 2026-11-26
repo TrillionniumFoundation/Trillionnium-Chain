@@ -199,3 +199,14 @@ frame. The private reader bounds the chain ID to 4096 bytes and refuses every
 other command tag; neither the private cap nor encoding validation is a
 protocol acceptance rule. It does not validate trust, apply a settlement,
 own the Receipt or Rollup commands, or yet run inside the held journal.
+
+The standalone M12 `receipt_command_id.hepta` similarly owns the complete
+original kind-24 `AdmitReceipt` Borsh frame. It traverses both nested usage
+vectors (each entry has two byte vectors), the prior-receipt option, both
+signature entries, the UTF-8 protocol context, and every remaining fixed-width
+field. It reconstructs canonical length encodings before calculating the
+exact original operation-ID digest and publishes the whole canonical command.
+Private limits are 65536 command bytes, 4096 bytes per dynamic byte vector or
+context string, and 64 entries per usage vector. The underlying signature
+bytes are parsed as Borsh data, not verified; policy, authorization, the held
+command stream and replay are outside this slice.
