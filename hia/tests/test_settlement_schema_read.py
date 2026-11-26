@@ -116,6 +116,11 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
         if hashlib.sha256(marker_src).hexdigest() != "a481ceb50fd0a575621dd3b11226c558ec65467b52b701432c35cbafcadaa780":
             raise ValueError("Exact retained M12 committed-block marker source differs")
         (out / "markers.rs").write_bytes(marker_src)
+        [execution_static] = re.findall(
+            rb"(?ms)^pub\(crate\) fn validate_execution_static\(.*?^\}\n", engine)
+        if hashlib.sha256(execution_static).hexdigest() != "e4ebe15ca1b9b60280aabbc886dac4bf1cf1dbb9e917429eae37406db643e6fb":
+            raise ValueError("Exact retained M12 static execution validator source differs")
+        (out / "execution_static.rs").write_bytes(execution_static)
         adapter = "rust_settlement_marker_reference.rs"
     execute([rustc, "--edition=2024", "-Dwarnings", "--extern", f"rusqlite={rust}", *extra,
              "-L", f"dependency={rust.parent}", "-L", f"native={native[7:]}",
@@ -125,6 +130,7 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
                              "TRNM_SETTLEMENT_OPERATION_SELECTED": str(out / "operation.rs"),
                              "TRNM_SETTLEMENT_COMMAND_IDENTITY": str(out / "command_identity.rs"),
                              "TRNM_SETTLEMENT_MARKERS_SELECTED": str(out / "markers.rs"),
+                             "TRNM_SETTLEMENT_EXECUTION_VALIDATE": str(out / "execution_static.rs"),
                              "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
     return binary, unlinked_path(provider_source["manifest_path"]).parent
 

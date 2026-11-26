@@ -3317,6 +3317,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-execution-context",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 original complete committed-execution Borsh framing, byte-exact trusted context and original local order-coordinate checks. No Order authority, signature, replay or integration.",
+      "sources": [
+        "hia/platform/service_settlement/execution_context.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_execution_context.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_schema_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-settle-command-id",
       "node_integration_complete": false,
       "retirement_accepted": false,

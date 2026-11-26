@@ -1,0 +1,104 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_committed_execution
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  size_us:usize = buffer.len(raw)
+  size:u64 = int.cast(size_us) {"mode":"wrap"}
+  min:u64 = const() {"value":230}
+  max:u64 = const() {"value":8422}
+  mn:bool = compare.ge(size,min)
+  mx:bool = compare.le(size,max)
+  bounded:bool = bool.and(mn,mx)
+  branch bounded work_bound(raw,out,w,size) malformed()
+block work_bound(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64)
+  blen_us:usize = buffer.len(bw)
+  blen:u64 = int.cast(blen_us) {"mode":"wrap"}
+  bfit:bool = compare.ge(blen,bn)
+  branch bfit stage(br,bo,bw,bn) capacity()
+block stage(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64)
+  z:u64 = const() {"value":0}
+  moved:u64 = call(sr,z,sw,z,sn) {"function":"cp_copy"}
+  wn:u64 = call(sw,z,sn) {"function":"srci_u32"}
+  min_context:u64 = const() {"value":72}
+  max_context:u64 = const() {"value":4168}
+  small:bool = compare.ge(wn,min_context)
+  large:bool = compare.le(wn,max_context)
+  valid:bool = bool.and(small,large)
+  branch valid expected_shape(so,sw,sn,wn) malformed()
+block expected_shape(eo:mutbuf,ew:mutbuf,en:u64,et:u64)
+  e4:u64 = const() {"value":4}
+  e154:u64 = const() {"value":154}
+  estart:u64 = int.add.wrap(e4,et)
+  emin:u64 = int.add.wrap(estart,e154)
+  eok:bool = compare.ge(en,emin)
+  branch eok both(eo,ew,en,estart,et) malformed()
+block both(ao:mutbuf,aw:mutbuf,an:u64,astart:u64,at:u64)
+  a4:u64 = const() {"value":4}
+  a2:u64 = const() {"value":2}
+  a80:u64 = const() {"value":80}
+  trusted:u64 = call(aw,a4,astart) {"function":"srci_context"}
+  trusted_exact:bool = compare.eq(trusted,astart)
+  context_start:u64 = int.add.wrap(astart,a2)
+  context_end:u64 = int.sub.wrap(an,a80)
+  execution:u64 = call(aw,context_start,context_end) {"function":"srci_context"}
+  execution_exact:bool = compare.eq(execution,context_end)
+  all_shapes:bool = bool.and(trusted_exact,execution_exact)
+  branch all_shapes policy(ao,aw,an,astart,at,context_start,context_end) malformed()
+block policy(po:mutbuf,pw:mutbuf,pn:u64,ps:u64,pt:u64,pcs:u64,pce:u64)
+  pwire:u64 = call(pw,ps) {"function":"cp_get"}
+  pmask:u64 = const() {"value":65535}
+  pschema:u64 = bit.and(pwire,pmask)
+  pone:u64 = const() {"value":1}
+  pschema_ok:bool = compare.eq(pschema,pone)
+  plen:u64 = int.sub.wrap(pce,pcs)
+  plen_ok:bool = compare.eq(plen,pt)
+  pfit:bool = bool.and(pschema_ok,plen_ok)
+  branch pfit context_eq(po,pw,pn,ps,pt,pcs,pce) context()
+block context_eq(co:mutbuf,cw:mutbuf,cn:u64,cs:u64,ct:u64,ccs:u64,cce:u64)
+  c4:usize = const() {"value":4}
+  cpos:usize = int.cast(ccs) {"mode":"wrap"}
+  cfit:bool = call(cw,c4,cpos,ct) {"function":"smk_eq"}
+  branch cfit height(co,cw,cn,cs,cce) context()
+block height(ho:mutbuf,hw:mutbuf,hn:u64,hs:u64,ht:u64)
+  h40:u64 = const() {"value":40}
+  hcur_pos:u64 = int.add.wrap(ht,h40)
+  hprev:u64 = call(hw,ht) {"function":"cp_get"}
+  hcur:u64 = call(hw,hcur_pos) {"function":"cp_get"}
+  hhigh:bool = compare.gt(hcur,hprev)
+  branch hhigh output(ho,hw,hn,hs) same_height(ho,hw,hn,hs,ht,hprev,hcur)
+block same_height(eho:mutbuf,ehw:mutbuf,ehn:u64,ehs:u64,eht:u64,ehp:u64,ehc:u64)
+  ehsame:bool = compare.eq(ehc,ehp)
+  branch ehsame block_eq(eho,ehw,ehn,ehs,eht) stale()
+block block_eq(qo:mutbuf,qw:mutbuf,qn:u64,qs:u64,qt:u64)
+  q8:u64 = const() {"value":8}
+  q48:u64 = const() {"value":48}
+  q32:u64 = const() {"value":32}
+  qpa:u64 = int.add.wrap(qt,q8)
+  qca:u64 = int.add.wrap(qt,q48)
+  qprev:usize = int.cast(qpa) {"mode":"wrap"}
+  qcur:usize = int.cast(qca) {"mode":"wrap"}
+  qmatch:bool = call(qw,qprev,qcur,q32) {"function":"smk_eq"}
+  branch qmatch output(qo,qw,qn,qs) stale()
+block output(oo:mutbuf,ow:mutbuf,on:u64,os:u64)
+  width:u64 = int.sub.wrap(on,os)
+  have_us:usize = buffer.len(oo)
+  have:u64 = int.cast(have_us) {"mode":"wrap"}
+  fits:bool = compare.ge(have,width)
+  branch fits emit(oo,ow,os,width) capacity()
+block emit(no:mutbuf,nw:mutbuf,ns:u64,nn:u64)
+  dst:u64 = const() {"value":0}
+  result:u64 = call(nw,ns,no,dst,nn) {"function":"cp_wout"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  m:u32 = const() {"value":100}
+  ret(m)
+block context()
+  i:u32 = const() {"value":101}
+  ret(i)
+block capacity()
+  c:u32 = const() {"value":102}
+  ret(c)
+block stale()
+  s:u32 = const() {"value":103}
+  ret(s)
+end

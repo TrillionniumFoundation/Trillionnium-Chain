@@ -15,6 +15,8 @@ use error::{ConsumptionSettlementErrorCodeV1, ConsumptionSettlementResultV1, err
 include!(env!("TRNM_SETTLEMENT_SCHEMA_SOURCE"));
 include!(env!("TRNM_SETTLEMENT_MARKERS_SELECTED"));
 include!(env!("TRNM_SETTLEMENT_COMMAND_IDENTITY"));
+use trnm_service_settlement::SCHEMA_VERSION_V1;
+include!(env!("TRNM_SETTLEMENT_EXECUTION_VALIDATE"));
 
 fn word_hash(value: u64) -> Hash32V1 {
     let mut bytes = [0_u8; 32];
@@ -171,6 +173,66 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(diagnostic[2..34], recorded_id);
             db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
+        }
+        "original-execution-fixtures" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let mut diag = Vec::new();
+            let bound = canonical_bytes(&config.trust_bundle.context)?;
+            diag.extend(u32::try_from(bound.len())?.to_le_bytes());
+            diag.extend(bound);
+            let mut statement = db.prepare("SELECT execution FROM operations ORDER BY sequence")?;
+            let mut rows = statement.query([])?;
+            while let Some(row) = rows.next()? {
+                let raw: Vec<u8> = row.get(0)?;
+                let parsed: ConsumptionCommittedExecutionContextV1 = strict_decode(&raw)?;
+                validate_execution_static(&config.trust_bundle, &parsed)?;
+                let canonical = canonical_bytes(&parsed)?;
+                assert_eq!(raw, canonical);
+                diag.extend(u32::try_from(canonical.len())?.to_le_bytes());
+                diag.extend(canonical);
+            }
+            drop(rows);
+            drop(statement);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&diag)?;
+        }
+        "classify-execution-fixtures" => {
+            let source = fs::read(&args[4])?;
+            let mut scan = source.as_slice();
+            let mut diag = Vec::new();
+            while !scan.is_empty() {
+                let span = u32::from_le_bytes(scan[..4].try_into()?) as usize;
+                let frame = &scan[4..4 + span];
+                scan = &scan[4 + span..];
+                let mut result = 100u8;
+                if let Some(width) = frame.get(..4) {
+                    let n = u32::from_le_bytes(width.try_into()?) as usize;
+                    if let Some((expected, raw)) = frame[4..].split_at_checked(n) {
+                        if let (Ok(ctx), Ok(ex)) = (
+                            strict_decode::<trnm_service_settlement::ProtocolContextV1>(expected),
+                            strict_decode::<ConsumptionCommittedExecutionContextV1>(raw),
+                        ) {
+                            let canonical = canonical_bytes(&ex)?;
+                            assert_eq!(canonical, raw);
+                            let mut trusted = config.trust_bundle.clone();
+                            trusted.context = ctx;
+                            result = match validate_execution_static(&trusted, &ex) {
+                                Ok(()) => 0,
+                                Err(err) => match err.code() {
+                                    ConsumptionSettlementErrorCodeV1::InvalidContext => 101,
+                                    ConsumptionSettlementErrorCodeV1::StaleVersion => 103,
+                                    _ => panic!("Unexpected original execution code: {err}"),
+                                },
+                            };
+                        }
+                    }
+                }
+                diag.push(result);
+            }
+            io::stdout().write_all(&diag)?;
         }
         "original-receipt-command-fixtures" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config)?;

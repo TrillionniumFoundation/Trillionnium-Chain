@@ -245,3 +245,14 @@ checksum and extent mismatches before any projection and keeps the unchanged
 limit and the existing provider-call cap are not coverage claims for larger
 valid stores. Execution remains opaque Borsh bytes for this checksum owner:
 no execution decoding, authority, signatures, policy or replay is implied.
+
+The standalone M12 `execution_context.hepta` validates the original complete
+Borsh committed-execution form and an independently supplied canonical
+ProtocolContext. It checks the original schema version and full context
+bytes, then compares unsigned previous and current order heights; equal
+height requires equal block IDs, while higher height does not. It publishes
+only the canonical execution bytes after validation. Both contexts share
+the private 4,096-byte string ceiling. Differential fixtures include actual
+retained Rust Store commits and separate structural boundary controls.
+This is a local invariant check, not externally granted Order authority,
+state replay, or original production Store ownership.
