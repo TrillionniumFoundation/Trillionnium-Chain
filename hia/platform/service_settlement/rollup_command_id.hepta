@@ -162,7 +162,14 @@ block invalid()
   ret(invalid_bad)
 end
 
-fn srli_command(entry_w:mutbuf,entry_p:u64,entry_end:u64) -> (u64) effects(read,write,trap) entry(entry)
+fn srli_command(w:mutbuf,p:u64,finish:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,finish:u64)
+  start:u64 = call(w,p,finish) {"function":"srli_inner"}
+  result:u64 = call(w,start,finish) {"function":"srli_receipts"}
+  ret(result)
+end
+
+fn srli_inner(entry_w:mutbuf,entry_p:u64,entry_end:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(entry_w:mutbuf,entry_p:u64,entry_end:u64)
   entry_contextwidth:u64 = const() {"value":2}
   entry_context:u64 = call(entry_p,entry_end,entry_contextwidth) {"function":"srci_take"}
@@ -181,6 +188,5 @@ block entry(entry_w:mutbuf,entry_p:u64,entry_end:u64)
   entry_provider:u64 = call(entry_usage_tail,entry_end,entry_providerwidth) {"function":"srci_take"}
   entry_consumer:u64 = call(entry_w,entry_provider,entry_end) {"function":"srci_signature"}
   entry_array:u64 = call(entry_w,entry_consumer,entry_end) {"function":"srci_signature"}
-  entry_finish:u64 = call(entry_w,entry_array,entry_end) {"function":"srli_receipts"}
-  ret(entry_finish)
+  ret(entry_array)
 end

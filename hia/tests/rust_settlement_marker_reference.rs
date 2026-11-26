@@ -86,6 +86,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         io::stdout().write_all(&canonical_bytes(&parsed)?)?;
         return Ok(());
     }
+    if operation == "classify-kernel-state-fixtures" {
+        let source = fs::read(&path)?;
+        let mut scan = source.as_slice();
+        let mut diagnostic = Vec::new();
+        while !scan.is_empty() {
+            let (width, rest) = scan.split_at_checked(4).ok_or("missing frame length")?;
+            let n = u32::from_le_bytes(width.try_into()?) as usize;
+            let (raw, remainder) = rest.split_at_checked(n).ok_or("short frame")?;
+            scan = remainder;
+            if let Ok(parsed) = strict_decode::<ConsumptionSettlementKernelStateV1>(raw) {
+                let encoded = canonical_bytes(&parsed)?;
+                assert_eq!(encoded, raw);
+                diagnostic.extend(u32::try_from(encoded.len() + 32)?.to_le_bytes());
+                diagnostic.extend(state_root(&parsed)?.0);
+                diagnostic.extend(encoded);
+            } else {
+                diagnostic.extend(0u32.to_le_bytes());
+            }
+        }
+        io::stdout().write_all(&diagnostic)?;
+        return Ok(());
+    }
     let trust: ConsumptionSettlementFreshGenesisTrustBundleV1 = strict_decode(&fs::read(&args[3])?)?;
     let mut last_height = trust.initial_order_height;
     let mut last_block = trust.initial_order_block_id;
@@ -176,7 +198,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
         }
-        "observe-actual-state-root" => {
+        "observe-actual-state-root" | "observe-kernel-state-shape" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let observation = owner.fresh_readback()?;
             let db = open_read_snapshot(&path)?;
@@ -190,6 +212,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(observation.durable_state_root(), root);
             assert_eq!(stored_root, root.0);
             db.close().map_err(|(_, err)| err)?;
+            if operation == "observe-kernel-state-shape" {
+                let evidence = [
+                    u8::try_from(parsed.receipts.len())?,
+                    u8::try_from(parsed.receipts.iter().filter(|r| r.assigned_rollup_id.is_some()).count())?,
+                    u8::from(parsed.rollup.is_some()),
+                    u8::from(parsed.rollup.as_ref().is_some_and(|r| r.consumed_by_settlement_id.is_some())),
+                    u8::from(parsed.settlement.is_some()),
+                    u8::from(parsed.escrow.closed),
+                    u8::from(parsed.escrow.last_settlement_id.is_some()),
+                    u8::from(parsed.result.settlement_id.is_some()),
+                    u8::try_from(parsed.accounts.len())?,
+                ];
+                io::stdout().write_all(&observation.order_height().to_le_bytes())?;
+                io::stdout().write_all(&evidence)?;
+            }
             io::stdout().write_all(&root.0)?;
             io::stdout().write_all(&state)?;
         }

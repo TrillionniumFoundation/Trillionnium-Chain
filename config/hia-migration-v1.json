@@ -3355,6 +3355,22 @@
       ]
     },
     {
+      "id": "platform/service-settlement-kernel-state-shape",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 standalone strict original Borsh kernel state layout and state root across genuine committed stages. Private input/vector bounds; no authorized transition, held read integration, semantic state replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/kernel_state_shape.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_kernel_state_shape.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_schema_read.py",
+        "hia/tests/test_settlement_rollup_command_id.py",
+        "hia/tests/test_settlement_state_root_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-state-root-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

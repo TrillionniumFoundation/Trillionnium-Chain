@@ -276,3 +276,25 @@ uses canonical Borsh state; a disposable typed-state change with a freshly
 valid metadata checksum but an unchanged stored root is refused. This
 verifies the bytes' root, not strict state decoding, execution replay, or
 order/production authority. The earlier metadata-only mode is unchanged.
+
+The independent M12 `kernel_state_shape.hepta` mode decodes the complete
+Borsh state layout in a finite private profile. It traverses receipt states,
+the optional rollup and settlement (including intent and applied receipt),
+escrow and result state, and account balances. It reuses the signed rollup
+body parser without the command-only trailing receipt vector. Options and
+the escrow Boolean accept only tags 0 and 1; status and maturity octets stay
+opaque. The mode accepts at most 65,536 input bytes, caps vectors of state
+records at 64, and inherits the individual receipt/rollup string, byte-vector
+and usage-vector bounds. These are private diagnostic limits, not new
+protocol constraints or eligibility rules.
+
+Call `f0(raw, output, scratch)` with disjoint buffers; output needs 32 bytes
+plus the input length and scratch needs 4,096 bytes plus the input length.
+Success (0) writes the original state root followed by the strict canonical
+bytes and does not touch later output bytes. Malformed, incomplete, trailing,
+or out-of-profile input returns 100; short output or scratch returns 102;
+an internal digest failure returns 103. No output is published on refusal.
+The original Rust store and typed codec are independent differential
+oracles at genesis, after actual receipt commits, after rollup, and after
+settlement. This standalone mode neither opens a database nor proves an
+authorized transition, semantic validity, or a replayed state.

@@ -1,5 +1,67 @@
 {
   "includes": {
+    "platform/service_settlement/kernel_state_shape.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "srci_bytes",
+          "srci_canon_len",
+          "srci_context",
+          "srci_optional_id",
+          "srci_receipt",
+          "srci_signature",
+          "srci_take",
+          "srci_u32",
+          "srci_usage",
+          "srci_usages"
+        ],
+        "source": "platform/service_settlement/receipt_command_id.hepta"
+      },
+      {
+        "functions": [
+          "srli_inner",
+          "srli_receipt_ids"
+        ],
+        "source": "platform/service_settlement/rollup_command_id.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      }
+    ],
     "platform/service_settlement/state_root_read.hepta": [
       {
         "functions": [
@@ -195,6 +257,7 @@
       {
         "functions": [
           "srli_command",
+          "srli_inner",
           "srli_receipt_ids",
           "srli_receipts"
         ],
@@ -370,6 +433,7 @@
       {
         "functions": [
           "srli_command",
+          "srli_inner",
           "srli_receipt_ids",
           "srli_receipts"
         ],
@@ -513,6 +577,7 @@
       {
         "functions": [
           "srli_command",
+          "srli_inner",
           "srli_receipt_ids",
           "srli_receipts"
         ],
@@ -771,6 +836,7 @@
       {
         "functions": [
           "srli_command",
+          "srli_inner",
           "srli_receipt_ids",
           "srli_receipts"
         ],
@@ -922,6 +988,7 @@
       {
         "functions": [
           "srli_command",
+          "srli_inner",
           "srli_receipt_ids",
           "srli_receipts"
         ],
