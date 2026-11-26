@@ -29,6 +29,7 @@ class FixtureReplay:
     calls: _Calls
     parent: int | None = None
     trust: bytes | None = None
+    last_parent_root: bytes | None = None
 
     @classmethod
     def open(cls, stack, build, digest):
@@ -82,6 +83,9 @@ class FixtureReplay:
             operation_id = self.engine.view("bytes_view", identity)
         finally:
             self.engine.drop(identity)
+        self.last_parent_root = self.engine.view("engine_state_root", self.parent)
+        if len(self.last_parent_root) != 32:
+            return b""
         successor = self.engine.owned("engine_apply", self.parent, body=command, height=height)
         try:
             if self.engine.kind(successor) != 1:

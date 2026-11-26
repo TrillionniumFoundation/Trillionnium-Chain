@@ -30,7 +30,93 @@ block routes(rr:readbuf,rm:mutbuf,rw:mutbuf,rp:u64)
   current:u64 = call(rm,zero_segment3) {"function":"cp_get"}
   state:u64 = const() {"value":27}
   is_state:bool = compare.eq(current,state)
-  branch is_state check_stage(rr,rm,rw,rp,current) route_row(rr,rm,rw,rp,current)
+  branch is_state check_stage(rr,rm,rw,rp,current) special(rr,rm,rw,rp,current)
+block special(sp_r:readbuf,sp_m:mutbuf,sp_w:mutbuf,sp_p:u64,sp_phase:u64)
+  sp_at:u64 = const() {"value":349024}
+  sp_f:u64 = const() {"value":4}
+  sp_mode:u64 = call(sp_m,sp_at) {"function":"cp_get"}
+  sp_settled:bool = compare.eq(sp_mode,sp_f)
+  branch sp_settled intercept(sp_r,sp_m,sp_w,sp_p,sp_phase) route_row(sp_r,sp_m,sp_w,sp_p,sp_phase)
+block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
+  it_marker:u64 = const() {"value":22}
+  it_step:u64 = const() {"value":52}
+  it_stage_at:u64 = const() {"value":96}
+  it_field_at:u64 = const() {"value":80}
+  it_verified_at:u64 = const() {"value":349032}
+  it_stage:u64 = call(it_m,it_stage_at) {"function":"cp_get"}
+  it_field:u64 = call(it_m,it_field_at) {"function":"cp_get"}
+  it_verified:u64 = call(it_m,it_verified_at) {"function":"cp_get"}
+  it_mark_stage:u64 = const() {"value":3}
+  it_last_field:u64 = const() {"value":12}
+  it_four:u64 = const() {"value":4}
+  it_a:bool = compare.eq(it_ph,it_marker)
+  it_b:bool = compare.eq(it_stage,it_mark_stage)
+  it_c:bool = compare.eq(it_field,it_last_field)
+  it_ab:bool = bool.and(it_a,it_b)
+  it_capture:bool = bool.and(it_ab,it_c)
+  it_d:bool = compare.eq(it_ph,it_step)
+  it_e:bool = compare.eq(it_verified,it_four)
+  it_complete:bool = bool.and(it_d,it_e)
+  branch it_capture marker(it_r,it_m,it_w) post(it_r,it_m,it_w,it_p,it_ph,it_complete)
+block marker(ma_r:readbuf,ma_m:mutbuf,ma_w:mutbuf)
+  ma_count_pos:u64 = const() {"value":88}
+  ma_count:u64 = call(ma_m,ma_count_pos) {"function":"cp_get"}
+  ma_seven:u64 = const() {"value":7}
+  ma_room:bool = compare.lt(ma_count,ma_seven)
+  branch ma_room verified_marker(ma_r,ma_m,ma_w,ma_count) refused()
+block verified_marker(vm_r:readbuf,vm_m:mutbuf,vm_w:mutbuf,vm_count:u64)
+  vm_mode:u64 = const() {"value":4}
+  vm_composed:u32 = call(vm_r,vm_m,vm_w,vm_mode) {"function":"sjr_reader"}
+  vm_pending:u32 = const() {"value":198}
+  vm_zero_off:u64 = const() {"value":0}
+  vm8:u64 = const() {"value":8}
+  vm16:u64 = const() {"value":16}
+  vm88:u64 = const() {"value":88}
+  vm_ph:u64 = call(vm_m,vm_zero_off) {"function":"cp_get"}
+  vm_op:u64 = call(vm_m,vm8) {"function":"cp_get"}
+  vm_len:u64 = call(vm_m,vm16) {"function":"cp_get"}
+  vm_now:u64 = call(vm_m,vm88) {"function":"cp_get"}
+  vm1:u64 = const() {"value":1}
+  vm21:u64 = const() {"value":21}
+  vm7:u64 = const() {"value":7}
+  vm_expected:u64 = int.add.wrap(vm_count,vm1)
+  vm_a:bool = compare.eq(vm_composed,vm_pending)
+  vm_b:bool = compare.eq(vm_ph,vm21)
+  vm_c:bool = compare.eq(vm_op,vm7)
+  vm_d:bool = compare.eq(vm_len,vm8)
+  vm_e:bool = compare.eq(vm_now,vm_expected)
+  vm_ab:bool = bool.and(vm_a,vm_b)
+  vm_cd:bool = bool.and(vm_c,vm_d)
+  vm_abcd:bool = bool.and(vm_ab,vm_cd)
+  vm_good:bool = bool.and(vm_abcd,vm_e)
+  branch vm_good keep_marker(vm_m,vm_count,vm_pending) refused()
+block keep_marker(km_m:mutbuf,km_idx:u64,km_rc:u32)
+  km_slot:u64 = call(km_idx) {"function":"hfs_marker_offset"}
+  km_proved:u64 = const() {"value":5000}
+  km_width:u64 = const() {"value":296}
+  km_saved:u64 = call(km_m,km_proved,km_slot,km_width) {"function":"cp_wcopy"}
+  ret(km_rc)
+block post(pt_r:readbuf,pt_m:mutbuf,pt_w:mutbuf,pt_p:u64,pt_ph:u64,pt_yes:bool)
+  branch pt_yes complete(pt_r,pt_m,pt_w) route_row(pt_r,pt_m,pt_w,pt_p,pt_ph)
+block complete(co_r:readbuf,co_m:mutbuf,co_w:mutbuf)
+  co_mode:u64 = const() {"value":4}
+  co_done:u32 = call(co_r,co_m,co_w,co_mode) {"function":"sjr_reader"}
+  co_next:u32 = const() {"value":198}
+  co0:u64 = const() {"value":0}
+  co8:u64 = const() {"value":8}
+  co_phase:u64 = call(co_m,co0) {"function":"cp_get"}
+  co_op:u64 = call(co_m,co8) {"function":"cp_get"}
+  co_finalize:u64 = const() {"value":55}
+  co_finalize_op:u64 = const() {"value":9}
+  co_a:bool = compare.eq(co_done,co_next)
+  co_b:bool = compare.eq(co_phase,co_finalize)
+  co_c:bool = compare.eq(co_op,co_finalize_op)
+  co_bc:bool = bool.and(co_b,co_c)
+  co_ok:bool = bool.and(co_a,co_bc)
+  branch co_ok compare_intervals(co_m,co_w,co_next) refused()
+block compare_intervals(cv_m:mutbuf,cv_w:mutbuf,cv_next:u32)
+  cv_exact:bool = call(cv_m,cv_w) {"function":"hfs_roots"}
+  branch cv_exact reply(cv_next) refused()
 block check_stage(cs_r:readbuf,cs_m:mutbuf,cs_w:mutbuf,cs_p:u64,cs_c:u64)
   sub_at:u64 = const() {"value":96}
   sub:u64 = call(cs_m,sub_at) {"function":"cp_get"}
@@ -48,7 +134,11 @@ block state_frame(sf_r:readbuf,sf_m:mutbuf,sf_w:mutbuf,sf_p:u64)
   sf_2:u64 = const() {"value":2}
   sf_pair:bool = compare.eq(sf_cap,sf_2)
   sf_third:usize = const() {"value":3209}
-  sf_rest:usize = select(sf_pair,sf_second,sf_third)
+  sf_3:u64 = const() {"value":3}
+  sf_three:bool = compare.eq(sf_cap,sf_3)
+  sf_fourth:usize = const() {"value":4894}
+  sf_late:usize = select(sf_three,sf_third,sf_fourth)
+  sf_rest:usize = select(sf_pair,sf_second,sf_late)
   sf_req:usize = select(sf_single,sf_first,sf_rest)
   sf_fit:bool = compare.eq(sf_n,sf_req)
   sf_width:u64 = int.cast(sf_n) {"mode":"wrap"}
@@ -61,7 +151,7 @@ block read_state(rs_r:readbuf,rs_m:mutbuf,rs_w:mutbuf,rs_p:u64,rs_total:u64)
   branch rs_valid persist(rs_r,rs_m,rs_w,rs_p,rs_body) refused()
 block persist(ps_r:readbuf,ps_m:mutbuf,ps_w:mutbuf,ps_p:u64,ps_n:u64)
   start:u64 = const() {"value":24}
-  base:u64 = const() {"value":350000}
+  base:u64 = const() {"value":400000}
   last:u64 = call(ps_r,start,ps_m,base,ps_n) {"function":"cp_copy"}
   parsed:u64 = call(ps_m,base,last) {"function":"sks_state"}
   same:bool = compare.eq(parsed,last)
@@ -82,7 +172,18 @@ block row_frame(rf_r:readbuf,rf_m:mutbuf,rf_w:mutbuf,rf_p:u64)
   branch ours row_length(rf_r,rf_m,rf_w,rf_p) delegate(rf_r,rf_m,rf_w,rf_p)
 block row_length(rl_r:readbuf,rl_m:mutbuf,rl_w:mutbuf,rl_p:u64)
   total:usize = buffer.len(rl_r)
-  wire:usize = const() {"value":173}
+  rl_verified_at:u64 = const() {"value":349032}
+  rl_cap_at:u64 = const() {"value":349024}
+  rl_old:u64 = call(rl_m,rl_verified_at) {"function":"cp_get"}
+  rl_cap:u64 = call(rl_m,rl_cap_at) {"function":"cp_get"}
+  rl_three:u64 = const() {"value":3}
+  rl_four:u64 = const() {"value":4}
+  rl_at_last:bool = compare.eq(rl_old,rl_three)
+  rl_settle:bool = compare.eq(rl_cap,rl_four)
+  rl_has:bool = bool.and(rl_at_last,rl_settle)
+  rl_nil:usize = const() {"value":173}
+  rl_some:usize = const() {"value":205}
+  wire:usize = select(rl_has,rl_some,rl_nil)
   correct:bool = compare.eq(total,wire)
   zero_segment11:u64 = const() {"value":0}
   first:bool = compare.eq(rl_p,zero_segment11)
@@ -121,13 +222,19 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   last_rollup:bool = compare.eq(processed,w_third)
   w_rcpt:u64 = const() {"value":24}
   w_roll:u64 = const() {"value":25}
-  right_kind:u64 = select(last_rollup,w_roll,w_rcpt)
+  w_four:u64 = const() {"value":4}
+  w_final:bool = compare.eq(processed,w_four)
+  w_set:u64 = const() {"value":26}
+  w_middle:u64 = select(last_rollup,w_roll,w_rcpt)
+  right_kind:u64 = select(w_final,w_set,w_middle)
   right_cfg:u64 = const() {"value":914}
   right_exec:u64 = const() {"value":163}
   cmd_first:u64 = const() {"value":868}
   cmd_second:u64 = const() {"value":900}
   cmd_third:u64 = const() {"value":2689}
-  cmd_later:u64 = select(w_second,cmd_second,cmd_third)
+  cmd_fourth:u64 = const() {"value":240}
+  cmd_late:u64 = select(w_final,cmd_fourth,cmd_third)
+  cmd_later:u64 = select(w_second,cmd_second,cmd_late)
   right_cmd:u64 = select(first_width,cmd_first,cmd_later)
   a:bool = compare.eq(processed,wanted_count)
   not_over:bool = compare.le(processed,cap)
@@ -156,13 +263,37 @@ block correlate(cc_r:readbuf,cc_m:mutbuf,cc_w:mutbuf,cc_row:u64,cc_first:bool,cc
   commit_id:u8 = buffer.load(cc_r,opt)
   none:u8 = const() {"value":0}
   absent:bool = compare.eq(commit_id,none)
-  okay_receipt:bool = bool.and(store_match,absent)
+  cc1:u8 = const() {"value":1}
+  true_tag:bool = compare.eq(commit_id,cc1)
+  cc4:u64 = const() {"value":4}
+  cc_is_settle:bool = compare.eq(cc_row,cc4)
+  cc_option:bool = select(cc_is_settle,true_tag,absent)
+  okay_receipt:bool = bool.and(store_match,cc_option)
   enough_witness:bool = bool.and(state_seen,okay_receipt)
-  branch enough_witness parent(cc_r,cc_m,cc_w,cc_row,cc_first,cc_last,cc_len) refused()
+  branch enough_witness profiled(cc_r,cc_m,cc_w,cc_row,cc_first,cc_last,cc_len) refused()
+block profiled(pf_r:readbuf,pf_m:mutbuf,pf_w:mutbuf,pf_row:u64,pf_first:bool,pf_last:bool,pf_len:u64)
+  pf_cap_at:u64 = const() {"value":349024}
+  pf_cap:u64 = call(pf_m,pf_cap_at) {"function":"cp_get"}
+  pf4:u64 = const() {"value":4}
+  pf_mode:bool = compare.eq(pf_cap,pf4)
+  branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) parent(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len)
+block prove_slot(pr_r:readbuf,pr_m:mutbuf,pr_w:mutbuf,pr_row:u64,pr_first:bool,pr_last:bool,pr_len:u64)
+  pr_good:bool = call(pr_r,pr_m,pr_row) {"function":"hfs_receipt_mark"}
+  branch pr_good save_witness(pr_r,pr_m,pr_w,pr_row,pr_first,pr_last,pr_len) refused()
+block save_witness(sw_r:readbuf,sw_m:mutbuf,sw_w:mutbuf,sw_row:u64,sw_first:bool,sw_last:bool,sw_len:u64)
+  sw_written:u64 = call(sw_r,sw_m,sw_row) {"function":"hfs_save_receipt"}
+  branch sw_last prove_id(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len) parent(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len)
+block prove_id(pi_r:readbuf,pi_m:mutbuf,pi_w:mutbuf,pi_row:u64,pi_first:bool,pi_last:bool,pi_len:u64)
+  pi_valid:bool = call(pi_r,pi_m) {"function":"hfs_install_id"}
+  branch pi_valid parent(pi_r,pi_m,pi_w,pi_row,pi_first,pi_last,pi_len) refused()
 block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_last:bool,pa_len:u64)
   pa_cfg:usize = const() {"value":8307}
   pa_previous:usize = const() {"value":354000}
-  pa_parent:usize = select(pa_first,pa_cfg,pa_previous)
+  pa_four:u64 = const() {"value":4}
+  pa_final:bool = compare.eq(pa_row,pa_four)
+  pa_empty:usize = const() {"value":421488}
+  pa_non_first:usize = select(pa_final,pa_empty,pa_previous)
+  pa_parent:usize = select(pa_first,pa_cfg,pa_non_first)
   pa_exec:usize = const() {"value":140083}
   pa_copy:usize = const() {"value":354080}
   pa_n:u64 = const() {"value":40}
@@ -227,11 +358,27 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_two:u64 = const() {"value":2}
   vh_second:bool = compare.eq(vh_count,vh_two)
   vh_third_width:usize = const() {"value":3257}
-  vh_later_width:usize = select(vh_second,vh_second_width,vh_third_width)
+  vh_three:u64 = const() {"value":3}
+  vh_is_third:bool = compare.eq(vh_count,vh_three)
+  vh_fourth_width:usize = const() {"value":4942}
+  vh_late_width:usize = select(vh_is_third,vh_third_width,vh_fourth_width)
+  vh_later_width:usize = select(vh_second,vh_second_width,vh_late_width)
   vh_width:usize = select(vh_first,vh_first_width,vh_later_width)
+  vh_limit_at:u64 = const() {"value":349024}
+  vh_limit:u64 = call(vm0,vh_limit_at) {"function":"cp_get"}
+  vh_four:u64 = const() {"value":4}
+  vh_extra:usize = const() {"value":32}
+  vh_profile:bool = compare.eq(vh_limit,vh_four)
+  vh_plus:usize = int.add.wrap(vh_width,vh_extra)
+  vh_need:usize = select(vh_profile,vh_plus,vh_width)
   vh_actual:usize = buffer.len(vr0)
-  vh_shaped:bool = compare.eq(vh_actual,vh_width)
-  branch vh_shaped compare_replay(vr0,vm0,va0,vh_count) refused()
+  vh_shaped:bool = compare.eq(vh_actual,vh_need)
+  branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_width,vh_profile) refused()
+block replay_shape(vs_r:readbuf,vs_m:mutbuf,vs_a:u64,vs_n:u64,vs_len:usize,vs_ex:bool)
+  branch vs_ex compare_engine_parent(vs_r,vs_m,vs_a,vs_n,vs_len) compare_replay(vs_r,vs_m,vs_a,vs_n)
+block compare_engine_parent(ve_r:readbuf,ve_m:mutbuf,ve_a:u64,ve_n:u64,ve_len:usize)
+  ve_valid:bool = call(ve_r,ve_m,ve_n,ve_len) {"function":"hfs_capture_engine"}
+  branch ve_valid compare_replay(ve_r,ve_m,ve_a,ve_n) refused()
 block compare_replay(kr:readbuf,km:mutbuf,ka:u64,kh:u64)
   zero_k:u64 = const() {"value":0}
   hist:u64 = call(kr,zero_k) {"function":"tr_read"}
@@ -253,7 +400,7 @@ block compare_tail(ct_r:readbuf,ct_m:mutbuf,ct_a:u64,ct_h:u64)
   branch ct_is_last compare_state(ct_r,ct_m,ct_a,ct_h) resume(ct_m,ct_a,ct_h)
 block compare_state(cs2_r:readbuf,cs2_m:mutbuf,cs2_a:u64,cs2_h:u64)
   ks:usize = const() {"value":72}
-  ms:usize = const() {"value":350000}
+  ms:usize = const() {"value":400000}
   cs2_size_at:u64 = const() {"value":349008}
   size_s:u64 = call(cs2_m,cs2_size_at) {"function":"cp_get"}
   state_ok:bool = call(cs2_r,cs2_m,ks,ms,size_s) {"function":"smr_eq_bound"}

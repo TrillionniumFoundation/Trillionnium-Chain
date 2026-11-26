@@ -408,3 +408,22 @@ source and target roots for all seven original markers, including the
 two consecutive empty committed blocks. This standalone raw hashing
 diagnostic does not decode receipt semantics or execute within the
 held reader.
+
+The finite `held_settle_replay.hepta` lane uses one original SQLite
+snapshot for the actual four commands and seven actual committed block
+markers (including two consecutive empty blocks before Settle). It
+retains markers only after the same typed native column, row checksum
+and predecessor checks as the earlier reader. It chronologically binds
+each original command to its checked marker and uses the checked second
+empty marker as the Settle execution parent.
+
+The sealed Engine runs only for the four operation rows. HIA compares
+each original receipt, operation ID and predecessor/successor state root
+to that history, and compares the complete final state and typed
+settlement ID. Before original SQLite finalization and close, HIA
+independently hashes all five receipt prefixes and compares both ends of
+each marker's operation and state intervals. Empty markers must not
+advance either root or the operation sequence. The readback diagnostic
+bytes remain unchanged; no new authority or write surface is exposed.
+This fixed witness does not qualify arbitrary marker intervals or the
+production Store/VFS.

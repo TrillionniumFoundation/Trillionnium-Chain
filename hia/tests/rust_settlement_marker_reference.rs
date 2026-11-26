@@ -295,6 +295,51 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 stdout.write_all(piece)?;
             }
         }
+        "fixture-empty-marker-interval-drift" => {
+            let original = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            assert_eq!(original.fresh_readback()?.sequence(), 4);
+            let mut db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            verify_schema(&db)?;
+            let mut original_rows = load_committed_block_markers(&db, &config)?;
+            assert_eq!(original_rows.len(), 7);
+            assert_eq!((original_rows[4].source_operation_sequence, original_rows[4].target_operation_sequence), (3, 3));
+            let replacement = Hash32V1([0x91; 32]);
+            let tx = db.transaction()?;
+            let mut predecessor = original_rows[2].checksum;
+            for (i, marker) in original_rows.iter_mut().enumerate().skip(3) {
+                match args[4].to_str() {
+                    Some("prefix") => {
+                        if i > 3 {
+                            marker.source_operation_root = replacement;
+                        }
+                        if i < 6 {
+                            marker.target_operation_root = replacement;
+                        }
+                    }
+                    Some("interval") => {
+                        if i > 4 {
+                            marker.source_operation_sequence = 4;
+                        }
+                        if i == 4 || i == 5 {
+                            marker.target_operation_sequence = 4;
+                        }
+                    }
+                    _ => return Err("unknown owned empty-marker fixture".into()),
+                }
+                marker.previous_marker_checksum = predecessor;
+                marker.checksum = committed_block_marker_checksum(&config, marker)?;
+                predecessor = marker.checksum;
+                assert_eq!(tx.execute(
+                    "UPDATE committed_blocks SET source_operation_sequence=?1,target_operation_sequence=?2,source_operation_root=?3,target_operation_root=?4,previous_marker_checksum=?5,checksum=?6 WHERE marker_sequence=?7",
+                    params![marker.source_operation_sequence, marker.target_operation_sequence,
+                            marker.source_operation_root.0.to_vec(), marker.target_operation_root.0.to_vec(),
+                            marker.previous_marker_checksum.0.to_vec(), marker.checksum.0.to_vec(),
+                            marker.marker_sequence],
+                )?, 1);
+            }
+            tx.commit()?;
+            db.close().map_err(|(_, err)| err)?;
+        }
         "observe-actual-journal-prefixes" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let observed = owner.fresh_readback()?;

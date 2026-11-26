@@ -2,6 +2,7 @@
 from contextlib import ExitStack
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -9,6 +10,7 @@ import unittest
 from hia.platform.task_kernel.build_provider import ProviderBuild
 from hia.platform.task_kernel.readback_provider import Reader, check_provider
 from hia.tests.native_support import NativeModule
+from hia.tests.test_settlement_kernel_state_shape import frames
 from hia.tests.test_settlement_schema_read import execute, original_adapter
 from hia.tests.test_settlement_transition_receipt_decode import retained_commands
 
@@ -28,6 +30,7 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     "replay": OWNER / "held_first_replay.hepta",
                     "pair": OWNER / "held_pair_replay.hepta",
                     "rollup": OWNER / "held_rollup_replay.hepta",
+                    "settle": OWNER / "held_settle_replay.hepta",
                 }.items()
             }
             original, source = original_adapter(root, marker=True)
@@ -44,8 +47,8 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
             self.assertEqual(json.loads((public / "build.json").read_bytes())["artifact"], report["artifact"])
             owned = root / "owned"
             owned.mkdir(mode=0o700)
-            files = [root / f"retained-{i}" for i in range(4)]
-            for file, data in zip(files, list(retained_commands())[:4], strict=True):
+            files = [root / f"retained-{i}" for i in range(5)]
+            for file, data in zip(files, list(retained_commands()), strict=True):
                 file.write_bytes(data)
             uri = modules["uri"]
 
@@ -56,9 +59,9 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                        "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                        "directory": str(owned), "database": str(store),
                        "writer": str(original) if lock else None, "journal_binding": binder.hex()}
-                if lane in ("replay", "pair", "rollup"):
+                if lane in ("replay", "pair", "rollup", "settle"):
                     req["first_replay_engine"] = [str(public), report["artifact"]["sha256"]]
-                    req["receipt_replay_limit"] = {"replay": 1, "pair": 2, "rollup": 3}[lane]
+                    req["receipt_replay_limit"] = {"replay": 1, "pair": 2, "rollup": 3, "settle": 4}[lane]
                 if control:
                     req["first_replay_fixture_control"] = control
                 if step is not None:
@@ -101,7 +104,7 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
 
             for label, commands, empty_tail in (
                 ("one", files[1:2], "0"), ("two", files[1:3], "0"),
-                ("two-with-empty-tail", files[1:3], "1"), ("rollup", files[1:], "0"),
+                ("two-with-empty-tail", files[1:3], "1"), ("rollup", files[1:4], "0"),
             ):
                 with self.subTest(pair_fixture=label):
                     store = owned / f"actual pair {label}?.db"
@@ -130,8 +133,8 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     self.assertFalse(store.with_name(store.name + "-journal").exists())
 
             for label, commands, empty_tail in (
-                ("two", files[1:3], "0"), ("three", files[1:], "0"),
-                ("rollup-with-empty-tail", files[1:], "1"),
+                ("two", files[1:3], "0"), ("three", files[1:4], "0"),
+                ("rollup-with-empty-tail", files[1:4], "1"),
             ):
                 with self.subTest(rollup_fixture=label):
                     store = owned / f"original rollup {label}?.db"
@@ -158,5 +161,46 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                         self.assertEqual((result["status"], result["projection"], result["replay_calls"]),
                                          (100, None, 2 if empty_tail == "1" else 0), result)
                         self.assertGreater(result["released"], 0)
+                    self.assertEqual(store.read_bytes(), before)
+                    self.assertFalse(store.with_name(store.name + "-journal").exists())
+
+            for label in ("real-settle", "prefix", "interval"):
+                with self.subTest(settle_fixture=label):
+                    store = owned / f"original settle {label}?.db"
+                    binding = execute([original, "seed-receipts", store, files[0], "0",
+                                       *files[1:4], "-", "-", files[4]]).stdout
+                    expected = execute([original, "verify-journal", store, files[0]]).stdout
+                    witness = execute([original, "observe-settled-state-id", store, files[0]]).stdout
+                    settle_id, final_root, canonical, *operations = frames(witness)
+                    self.assertEqual((len(canonical), len(operations), len(operations[-1]), settle_id[0]),
+                                     (4870, 12, 181, 1))
+                    self.assertEqual(operations[-1][148:], settle_id)
+                    self.assertEqual(expected[90:122], final_root)
+                    if label != "real-settle":
+                        execute([original, "fixture-empty-marker-interval-drift", store, files[0], label])
+                        refusal = subprocess.run([original, "verify-journal", store, files[0]],
+                                                 capture_output=True, check=False, timeout=30)
+                        self.assertNotEqual(refusal.returncode, 0)
+                        self.assertEqual(refusal.stdout, b"")
+                    before = store.read_bytes()
+                    former = invoke(store, binding, lane="execution")
+                    self.assertEqual(former["status"], 0, former)
+                    original_read = invoke(store, binding, lane="settle", lock=label == "real-settle")
+                    if label == "real-settle":
+                        self.assertEqual((original_read["status"], original_read["replay_calls"],
+                                          original_read["replay_locks"], original_read["released"]),
+                                         (0, 4, 4, 0), original_read)
+                        self.assertEqual(bytes.fromhex(original_read["projection"]), expected)
+                        self.assertEqual(original_read["transcript"], former["transcript"])
+                        self.assertEqual(original_read["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        refused = invoke(store, binding, lane="settle", control="state", step=4)
+                        self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                         (100, None, 4), refused)
+                        self.assertGreater(refused["released"], 0)
+                    else:
+                        self.assertEqual((original_read["status"], original_read["projection"],
+                                          original_read["replay_calls"]), (100, None, 4), original_read)
+                        self.assertGreater(original_read["released"], 0)
+                        self.assertEqual(original_read["transcript"][-1], [52, 7, 24])
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())
