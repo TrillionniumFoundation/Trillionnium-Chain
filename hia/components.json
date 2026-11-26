@@ -1,5 +1,35 @@
 {
   "includes": {
+    "platform/service_settlement/settle_command_id.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_copy",
+          "cp_put"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_utf8_step"
+        ]
+      }
+    ],
     "platform/service_settlement/identity_journal_read.hepta": [
       {
         "source": "src/control_plane/core.hepta",

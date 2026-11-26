@@ -14,6 +14,7 @@ use codec::{canonical_bytes, checksum, digest_value, strict_decode};
 use error::{ConsumptionSettlementErrorCodeV1, ConsumptionSettlementResultV1, error};
 include!(env!("TRNM_SETTLEMENT_SCHEMA_SOURCE"));
 include!(env!("TRNM_SETTLEMENT_MARKERS_SELECTED"));
+include!(env!("TRNM_SETTLEMENT_COMMAND_IDENTITY"));
 
 fn word_hash(value: u64) -> Hash32V1 {
     let mut bytes = [0_u8; 32];
@@ -27,6 +28,17 @@ fn receipt_identity(receipt: &ConsumptionTransitionReceiptV1) -> [u8; 42] {
     identity[8..40].copy_from_slice(&receipt.operation_id.0);
     identity[40..].copy_from_slice(&receipt.operation_kind.to_le_bytes());
     identity
+}
+
+fn settle_diagnostic(raw: &[u8]) -> ConsumptionSettlementResultV1<Vec<u8>> {
+    let command: ConsumptionSettlementCommandV1 = strict_decode(raw)?;
+    if !matches!(command, ConsumptionSettlementCommandV1::Settle { .. }) {
+        return Err(error(ConsumptionSettlementErrorCodeV1::InvalidBounds, "not the finite Settle variant"));
+    }
+    let mut diagnostic = command.operation_kind().to_le_bytes().to_vec();
+    diagnostic.extend(operation_id(&command)?.0);
+    diagnostic.extend(canonical_bytes(&command)?);
+    Ok(diagnostic)
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -46,6 +58,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             result => panic!("unexpected SQLite write-transaction result: {result:?}"),
         };
+    }
+    if operation == "decode-settle-command-fixture" {
+        io::stdout().write_all(&settle_diagnostic(&fs::read(&path)?)?)?;
+        return Ok(());
     }
     if operation == "decode-receipt-fixture" {
         let framed = fs::read(&path)?;
@@ -132,6 +148,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 diagnostic.extend(raw.0);
             }
             drop(db);
+            io::stdout().write_all(&diagnostic)?;
+        }
+        "original-settle-command-fixture" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config)?;
+            owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let (raw, recorded_id): (Vec<u8>, Vec<u8>) = db.query_row(
+                "SELECT command,operation_id FROM operations WHERE sequence=4", [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            let diagnostic = settle_diagnostic(&raw)?;
+            assert_eq!(diagnostic[2..34], recorded_id);
+            db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
         }
         "original-receipt-fixtures" => {

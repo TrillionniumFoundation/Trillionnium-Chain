@@ -92,6 +92,7 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
         engine = (STORE / "src/engine.rs").read_bytes()
         [identity] = re.findall(rb"(?ms)^pub\(crate\) fn operation_id\(.*?^\}\n", engine)
         parts.append(identity)
+        (out / "command_identity.rs").write_bytes(identity)
         lookup = b"\n".join(parts)
         if hashlib.sha256(lookup).hexdigest() != "396a5426b2ca2ae6c52090eb4e5dcae8f89d85e845a5961054b6dd5f23d8635f":
             raise ValueError("Exact retained M12 operation lookup source differs")
@@ -122,6 +123,7 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
             timeout=60, env={**os.environ, "TRNM_SETTLEMENT_SCHEMA_SOURCE": str(section),
                              "TRNM_SETTLEMENT_SCHEMA_ERROR": str(STORE / "src/error.rs"),
                              "TRNM_SETTLEMENT_OPERATION_SELECTED": str(out / "operation.rs"),
+                             "TRNM_SETTLEMENT_COMMAND_IDENTITY": str(out / "command_identity.rs"),
                              "TRNM_SETTLEMENT_MARKERS_SELECTED": str(out / "markers.rs"),
                              "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
     return binary, unlinked_path(provider_source["manifest_path"]).parent

@@ -188,3 +188,14 @@ publish it only after closing the held snapshot; the earlier raw route keeps
 its original scope. The original-Store differential includes actual Some
 settlement receipts and uses original checksum/root routines on disposable
 negative fixtures to distinguish Borsh/identity refusal from hash mismatch.
+
+The standalone M12 `settle_command_id.hepta` fully traverses the original
+`Settle` Borsh command. The enum tag, fixed fields, exact-length UTF-8
+`ProtocolContextV1.chain_id`, and complete suffix are checked before digest
+publication. It reconstructs the canonical Borsh frame in work memory,
+derives the original SHA-256 operation ID over the length-prefixed domain and
+that frame, and emits little-endian kind 26, the ID, and the full canonical
+frame. The private reader bounds the chain ID to 4096 bytes and refuses every
+other command tag; neither the private cap nor encoding validation is a
+protocol acceptance rule. It does not validate trust, apply a settlement,
+own the Receipt or Rollup commands, or yet run inside the held journal.
