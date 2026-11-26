@@ -160,6 +160,18 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/release_pending_replay",
+      "node_integration_complete": false,
+      "scope": "M15 finite original ledger pending cancellation and root-wide logical collection for the two exact cleanup actions, while preserving actual handles. No physical open/close, serialized cleanup failure, live VFS or production owner.",
+      "source": "hia/src/sqlite_io_boundary/release_pending_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_release_pending_replay.py",
+        "hia/tests/rust_sqlite_release_pending_reference.rs",
+        "hia/tests/test_sqlite_close_collect_replay.py"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/close_collect_replay",
       "node_integration_complete": false,
       "scope": "M15 finite original ledger replay after a known successful underlying close with available cleanup evidence, computes local close observation and root-wide retained logical charge. No underlying close, production authority or VFS.",
@@ -2458,7 +2470,8 @@
         "sqlite_io_boundary/reservation_replay",
         "sqlite_io_boundary/observed_bind_replay",
         "sqlite_io_boundary/close_collect_replay",
-        "sqlite_io_boundary/handle_replay"
+        "sqlite_io_boundary/handle_replay",
+        "sqlite_io_boundary/release_pending_replay"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

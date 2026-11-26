@@ -89,3 +89,19 @@ precedence. The private input admits at most 1,017 existing ordinary
 events and assumes the retained short event will fit the original
 serialized budget. It does not model failure to serialize after mutation,
 perform a physical open, or provide VFS authority.
+
+## Canceling a pending handle
+
+`release_pending_replay.hepta` reuses the same three-row logical state
+checks as close/collect but withdraws a positive pending count and leaves
+actual handles unchanged. Its input extends the 240-byte close packet by
+one u64 action: 1 for `unpublished-actual-close`, 2 for
+`failed-open-no-methods`. The 112-byte output uses the same accounting
+layout and appends the actual cleanup action. A main pending withdrawal
+decrements the root count before collection. Actual handles, SHM and
+unbound reservations block a refund. A second main generation can defer
+the old generation's refund. Both original growth policies and both
+cleanup actions are compared against the unchanged Rust ledger, including
+original cleanup after an earlier open failure. This private observation
+does not open or close a file, certify any existing sticky failure, or
+model a cleanup event that would itself fail to serialize.
