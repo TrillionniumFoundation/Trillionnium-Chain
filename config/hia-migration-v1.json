@@ -3156,6 +3156,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-terminal-join",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 original-backed read-only join: schema, checksum-checked metadata and committed-marker linkage, tail agreement and actual operation count in one held rollback snapshot. No canonical Borsh state-root recomputation, operation replay, production owner or authority.",
+      "sources": [
+        "hia/platform/service_settlement/terminal_join.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_terminal_join.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-marker-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

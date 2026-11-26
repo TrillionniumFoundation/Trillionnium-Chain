@@ -26,9 +26,11 @@ def run(request, uri_image, reader, provider):
     operation = operation_hex is not None
     marker_hex = request.get("marker_binding")
     marker = marker_hex is not None
-    if int(metadata) + int(operation) + int(marker) > 1:
+    terminal_hex = request.get("terminal_binding")
+    terminal = terminal_hex is not None
+    if int(metadata) + int(operation) + int(marker) + int(terminal) > 1:
         raise ValueError("Choose one private continuation")
-    projected = metadata or operation or marker
+    projected = metadata or operation or marker or terminal
     with db.open("rb") as stream:
         header = stream.read(20)
     if len(header) != 20:
@@ -56,10 +58,17 @@ def run(request, uri_image, reader, provider):
     initial = header + encoded.raw[:n]
     state, response = (ctypes.create_string_buffer(EXTENT) for _ in range(2))
     if projected:
-        expected = bytes.fromhex(expected_hex if metadata else operation_hex if operation else marker_hex)
+        expected = bytes.fromhex(
+            expected_hex if metadata else operation_hex if operation else marker_hex if marker else terminal_hex
+        )
         config = ctypes.create_string_buffer(expected)
-        if step(config, len(expected), state, EXTENT, work, EXTENT) != 196:
+        if step(config, len(expected), state, EXTENT, work, EXTENT) != (195 if terminal else 196):
             raise ValueError("Native fixture did not accept the private binding")
+        if terminal:
+            config_bytes = expected[104:]
+            config = ctypes.create_string_buffer(config_bytes)
+            if step(config, len(config_bytes), state, EXTENT, work, EXTENT) != 196:
+                raise ValueError("Native joined fixture did not bind expected configuration")
     raw = initial
     owner = make()
     if not owner:
@@ -67,12 +76,12 @@ def run(request, uri_image, reader, provider):
     transcript = []
     held = False
     projection = None
-    end_phase = 34 if metadata else 31 if operation else 25 if marker else 15
-    hold_phase = 21 if metadata or marker else 22 if operation else 7
-    sizes = (147,) if metadata else (8, 80) if operation else (40,) if marker else (0,)
+    end_phase = 45 if terminal else 34 if metadata else 31 if operation else 25 if marker else 15
+    hold_phase = 21 if metadata or marker or terminal else 22 if operation else 7
+    sizes = (187,) if terminal else (147,) if metadata else (8, 80) if operation else (40,) if marker else (0,)
     allowed_ops = (2, 3, 4, 5, 6, 7, 8, 9) if operation else (2, 3, 4, 5, 7, 8, 9)
     try:
-        for _ in range(1024 if marker else 64 if projected else 32):
+        for _ in range(1056 if terminal else 1024 if marker else 64 if projected else 32):
             borrowed = ctypes.create_string_buffer(raw)
             status = step(borrowed, len(raw), state, EXTENT, work, EXTENT)
             phase, op, length, publication = struct.unpack_from("<QQQQ", state)

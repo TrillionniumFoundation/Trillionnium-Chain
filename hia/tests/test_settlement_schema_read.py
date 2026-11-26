@@ -105,11 +105,12 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
         [record] = re.findall(rb"(?ms)^struct CommittedBlockMarkerV1 \{.*?^\}\n", source)
         parts.append(record)
         for name in (b"load_committed_block_markers", b"load_committed_block_markers_with_limit",
-                     b"committed_block_marker_checksum", b"config_bytes", b"from_sqlite", b"array32"):
+                     b"committed_block_marker_checksum", b"config_bytes", b"from_sqlite", b"array32",
+                     b"metadata_checksum"):
             [part] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
             parts.append(part)
         marker_src = b"\n".join(parts)
-        if hashlib.sha256(marker_src).hexdigest() != "7b0ff70ff09fd2298fea8a4efa5949e79df4bbb2416d099bf527e1537b6f5664":
+        if hashlib.sha256(marker_src).hexdigest() != "c359d94116a79d99b75702abc2e5402cc9aa108a11423708e718c963f732badf":
             raise ValueError("Exact retained M12 committed-block marker source differs")
         (out / "markers.rs").write_bytes(marker_src)
         adapter = "rust_settlement_marker_reference.rs"

@@ -77,7 +77,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             io::stdout().write_all(&binding)?;
         }
-        "verify" => {
+        "verify" | "verify-join" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let head = owner.fresh_readback()?;
             let db = open_read_snapshot(&path)?;
@@ -85,10 +85,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let tail = markers.last().expect("original marker journal cannot be empty");
             assert_eq!(tail.checksum, head.durable_committed_block_root());
             let count = u64::try_from(markers.len())?;
+            let mut diagnostic = Vec::new();
+            diagnostic.extend(count.to_le_bytes());
+            diagnostic.extend(tail.checksum.0);
+            if operation == "verify-join" {
+                let sum: Vec<u8> = db.query_row(
+                    "SELECT checksum FROM metadata WHERE singleton=1", [], |row| row.get(0),
+                )?;
+                assert_eq!(sum.len(), 32);
+                diagnostic.extend(head.store_schema_version().to_le_bytes());
+                diagnostic.extend(head.sequence().to_le_bytes());
+                diagnostic.extend(head.order_height().to_le_bytes());
+                diagnostic.extend(head.order_block_id().0);
+                diagnostic.extend(head.durable_state_root().0);
+                diagnostic.extend(head.durable_journal_root().0);
+                diagnostic.extend([0]); // Original public readback rejects a fenced store.
+                diagnostic.extend(sum);
+            }
             drop(db);
-            let mut stdout = io::stdout().lock();
-            stdout.write_all(&count.to_le_bytes())?;
-            stdout.write_all(&tail.checksum.0)?;
+            io::stdout().write_all(&diagnostic)?;
+        }
+        "fixture-metadata-height-drift" => {
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            let (seq, height, block, state, root, journal, fenced) = db.query_row(
+                "SELECT sequence,height,block_id,state,state_root,journal_root,fenced FROM metadata WHERE singleton=1",
+                [],
+                |row| Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, Vec<u8>>(2)?,
+                         row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?, row.get::<_, Vec<u8>>(5)?,
+                         row.get::<_, bool>(6)?)),
+            )?;
+            let next_height = u64::try_from(height)?.checked_add(1).expect("bounded owned fixture");
+            let sum = metadata_checksum(
+                &config_bytes(&config)?, u64::try_from(seq)?, next_height,
+                Hash32V1(block.try_into().expect("32-byte fixture ID")), &state,
+                Hash32V1(root.try_into().expect("32-byte fixture state root")),
+                Hash32V1(journal.try_into().expect("32-byte fixture journal root")), fenced,
+            );
+            assert_eq!(db.execute(
+                "UPDATE metadata SET height=?1, checksum=?2 WHERE singleton=1",
+                params![i64::try_from(next_height)?, sum.0.to_vec()],
+            )?, 1);
         }
         "fixture-parent-height-drift" => {
             // On the disposable original test database only: establish that

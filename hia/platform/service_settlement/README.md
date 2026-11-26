@@ -122,3 +122,22 @@ head, and all production Store and authority rules. The original differential
 uses its public Store API to create the anchor, commit commands and advance
 empty blocks, and its exact retained Rust marker loader and public readback
 for comparison, including a checksum-valid but invalid direct-parent fixture.
+
+### Joined read-only terminal comparison
+
+`terminal_join.hepta` checks the original schema, checksum-checked metadata,
+and the ordered checksum-checked marker chain in a single provider read
+transaction. Both checks must use exactly the same fixture configuration.
+Without reopening the database, HIA compares the terminal marker's target
+sequence, height, block ID, state-root field and journal-root field with
+the metadata and reads the actual operation count. It refuses fenced
+metadata as the original public readback does. Only after finalization and
+close does it return the marker and metadata diagnostics together (187 bytes).
+
+This covers a bounded terminal consistency check, not canonical state-root
+or operation-journal root recomputation, per-operation replay, or authority.
+The original differential includes a held read with actual operations and
+empty committed blocks. Checksum-valid components can each be read alone,
+yet the joined check will reject disagreement with the marker or with the
+actual operation count. The previous standalone readers continue to close
+after their own observations.
