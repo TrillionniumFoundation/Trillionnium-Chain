@@ -3210,6 +3210,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-rollup-command-id",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 native complete original AdmitRollup command: canonical UTF-8 context, receipt IDs, usage and signatures, fully traversed nested Receipt vector, and exact original operation ID. No signature or policy verification, live held command decode, replay or authority.",
+      "sources": [
+        "hia/platform/service_settlement/rollup_command_id.hepta"
+      ],
+      "tests": [
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_rollup_command_id.py",
+        "hia/tests/test_settlement_schema_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-receipt-command-id",
       "node_integration_complete": false,
       "retirement_accepted": false,

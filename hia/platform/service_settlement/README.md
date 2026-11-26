@@ -210,3 +210,14 @@ Private limits are 65536 command bytes, 4096 bytes per dynamic byte vector or
 context string, and 64 entries per usage vector. The underlying signature
 bytes are parsed as Borsh data, not verified; policy, authorization, the held
 command stream and replay are outside this slice.
+
+The standalone M12 `rollup_command_id.hepta` strictly traverses the complete
+original kind-25 `AdmitRollup` Borsh command, including the rollup body,
+receipt-ID vector, usage vector, UTF-8 context, and both signature entries.
+Each nested receipt is parsed with the same HIA walker as kind 24, including
+each receipt's own independent UTF-8, usage vectors, option and signatures.
+It re-encodes canonical lengths and emits kind, original operation ID, and the
+complete canonical command. The finite caps are 65536 command bytes, 64
+rollup receipt IDs, 32 nested receipts and the existing dynamic-field caps.
+No comparison of receipt IDs to nested receipts, signature validation,
+settlement policy, held command execution, replay or authority is implied.

@@ -59,6 +59,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             result => panic!("unexpected SQLite write-transaction result: {result:?}"),
         };
     }
+    if operation == "decode-rollup-command-fixture" {
+        io::stdout().write_all(&command_diagnostic(&fs::read(&path)?, 25)?)?;
+        return Ok(());
+    }
     if operation == "decode-receipt-command-fixture" {
         io::stdout().write_all(&command_diagnostic(&fs::read(&path)?, 24)?)?;
         return Ok(());
@@ -152,6 +156,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 diagnostic.extend(raw.0);
             }
             drop(db);
+            io::stdout().write_all(&diagnostic)?;
+        }
+        "original-rollup-command-fixture" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config)?;
+            owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let (raw, recorded_id): (Vec<u8>, Vec<u8>) = db.query_row(
+                "SELECT command,operation_id FROM operations WHERE sequence=3", [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            let diagnostic = command_diagnostic(&raw, 25)?;
+            assert_eq!(diagnostic[2..34], recorded_id);
+            db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
         }
         "original-receipt-command-fixtures" => {
