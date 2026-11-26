@@ -309,3 +309,24 @@ stages, including a held reader with an original competing writer. On
 separate disposable stores, malformed tags and trailing data are refused
 before publication even when both the raw root and metadata checksum match
 those bytes exactly. This does not execute or replay Settlement commands.
+
+`first_replay_receipt_join.hepta` is an independent finite diagnostic for
+the first original AdmitReceipt only. Its 285-byte request holds the actual
+149-byte original receipt followed by store ID, operation ID, little-endian
+order height, order block ID and the native successor root. It reconstructs
+the exact receipt (schema 1, sequence 1, kind 24, absent settlement ID) and
+compares every byte before copying it to output. Both output and scratch
+must hold at least 149 bytes. Refusal (100) and insufficient capacity (102)
+leave output untouched. This join is not an accepted receipt or an authority
+to dispatch an operation.
+
+The companion witness creates real original SQLite genesis and committed
+stores, checks the original full durable audit and read-only preview from
+genesis, and takes the typed execution, command, receipt and state from
+those stores. A freshly built and sealed native Engine starts from the
+identical trust, validates the exact execution, calls `engine_apply`
+(not the idempotent `engine_replay` lookup), and checks immutable parent
+history and complete successor bytes and root. The native join checks that
+root against the original full receipt. This is a standalone comparison
+against real data, not execution inside the native SQLite read lock, later
+operation replay, or production authorization.

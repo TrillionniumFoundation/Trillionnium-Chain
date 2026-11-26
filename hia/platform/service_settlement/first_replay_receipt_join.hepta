@@ -1,0 +1,65 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_first_receipt_join
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  expected:usize = const() {"value":285}
+  extent:usize = buffer.len(raw)
+  framed:bool = compare.eq(extent,expected)
+  branch framed capacity(raw,out,w) refuse()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf)
+  width:usize = const() {"value":149}
+  olen:usize = buffer.len(co)
+  wlen:usize = buffer.len(cw)
+  enough:bool = compare.ge(olen,width)
+  scratch:bool = compare.ge(wlen,width)
+  ready:bool = bool.and(enough,scratch)
+  branch ready build(cr,co,cw) short()
+block build(br:readbuf,bo:mutbuf,bw:mutbuf)
+  schema_at:u64 = const() {"value":0}
+  schema_version:u64 = const() {"value":1}
+  schema:u64 = call(bw,schema_at,schema_version) {"function":"cp_put"}
+  store_in:u64 = const() {"value":149}
+  store_at:u64 = const() {"value":2}
+  id_width:u64 = const() {"value":32}
+  store:u64 = call(br,store_in,bw,store_at,id_width) {"function":"cp_copy"}
+  seq_at:u64 = const() {"value":34}
+  first:u64 = const() {"value":1}
+  seq:u64 = call(bw,seq_at,first) {"function":"cp_put"}
+  id_in:u64 = const() {"value":181}
+  id_at:u64 = const() {"value":42}
+  id:u64 = call(br,id_in,bw,id_at,id_width) {"function":"cp_copy"}
+  kind_at:u64 = const() {"value":74}
+  admit_receipt:u64 = const() {"value":24}
+  kind:u64 = call(bw,kind_at,admit_receipt) {"function":"cp_put"}
+  join_in:u64 = const() {"value":213}
+  join_at:u64 = const() {"value":76}
+  join_width:u64 = const() {"value":72}
+  values:u64 = call(br,join_in,bw,join_at,join_width) {"function":"cp_copy"}
+  option_at:usize = const() {"value":148}
+  none:u8 = const() {"value":0}
+  _ = buffer.store(bw,option_at,none)
+  start:u64 = const() {"value":0}
+  jump scan(br,bo,bw,start)
+block scan(sr:readbuf,so:mutbuf,sw:mutbuf,si:u64)
+  length:u64 = const() {"value":149}
+  done:bool = compare.eq(si,length)
+  branch done publish(so,sw,length) byte(sr,so,sw,si)
+block byte(gr:readbuf,go:mutbuf,gw:mutbuf,gi:u64)
+  at:usize = int.cast(gi) {"mode":"wrap"}
+  actual:u8 = buffer.load(gr,at)
+  computed:u8 = buffer.load(gw,at)
+  equal:bool = compare.eq(actual,computed)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(gi,one)
+  branch equal scan(gr,go,gw,next) refuse()
+block publish(po:mutbuf,pw:mutbuf,pn:u64)
+  zero:u64 = const() {"value":0}
+  copied:u64 = call(pw,zero,po,zero,pn) {"function":"cp_wout"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block refuse()
+  failed:u32 = const() {"value":100}
+  ret(failed)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+end

@@ -3368,6 +3368,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-first-replay-receipt-join",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 standalone differential of the first actual original AdmitReceipt using the existing HIA Engine and a strict native transition receipt join. No held replay, later operations, production authority or node integration.",
+      "sources": [
+        "hia/platform/service_settlement/first_replay_receipt_join.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_first_native_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_transition_receipt_decode.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-state-shape",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -1,5 +1,15 @@
 {
   "includes": {
+    "platform/service_settlement/first_replay_receipt_join.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_put",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/close_collect_replay.hepta": [
       {
         "functions": [

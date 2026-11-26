@@ -230,6 +230,71 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             io::stdout().write_all(&root.0)?;
             io::stdout().write_all(&state)?;
         }
+        "observe-first-native-replay-witness" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let observation = owner.fresh_readback()?;  // Original durable audit replays every operation.
+            if observation.sequence() != 1 {
+                return Err("witness restricted to one real transition".into());
+            }
+            let genesis_path = PathBuf::from(&args[4]);
+            let genesis_config = ConsumptionSettlementStoreConfigV1 {
+                path: genesis_path.clone(), ..config.clone()
+            };
+            let genesis_owner = ConsumptionSettlementStoreV1::open_existing(genesis_config)?;
+            let genesis = genesis_owner.fresh_readback()?;
+            assert_eq!(genesis.sequence(), 0);
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let operations: u64 = db.query_row("SELECT COUNT(*) FROM operations", [], |r| r.get(0))?;
+            assert_eq!(operations, 1);
+            let (seq, id, execution, command, receipt, sum):
+                (u64, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) = db.query_row(
+                    "SELECT sequence,operation_id,execution,command,receipt,checksum FROM operations WHERE sequence=1",
+                    [], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?)),
+                )?;
+            let opid = ConsumptionOperationIdV1(array32(id, "operation id")?);
+            assert_eq!(sum, operation_checksum(seq, opid, &execution, &command, &receipt).0);
+            let typed_execution: ConsumptionCommittedExecutionContextV1 = strict_decode(&execution)?;
+            validate_execution_static(&config.trust_bundle, &typed_execution)?;
+            let typed_command: ConsumptionSettlementCommandV1 = strict_decode(&command)?;
+            if typed_command.operation_kind() != 24 {
+                return Err("witness restricted to original AdmitReceipt".into());
+            }
+            assert_eq!(operation_id(&typed_command)?, opid);
+            let typed_receipt: ConsumptionTransitionReceiptV1 = strict_decode(&receipt)?;
+            assert_eq!(typed_execution.expected_order_height, genesis.order_height());
+            assert_eq!(typed_execution.expected_order_block_id, genesis.order_block_id());
+            assert_eq!(typed_execution.order_height, observation.order_height());
+            assert_eq!(typed_execution.order_block_id, observation.order_block_id());
+            assert_eq!(typed_receipt.settlement_id, None);
+            let preview = genesis_owner.preview_before_vote_v1(
+                &genesis, typed_execution.order_height, typed_execution.order_block_id, &[typed_command],
+            )?;
+            assert_eq!(preview.candidate_receipts(), &[typed_receipt]);
+            assert_eq!(preview.candidate_post_state_root(), observation.durable_state_root());
+            assert_eq!(preview.source_state_root(), genesis.durable_state_root());
+            let state: Vec<u8> = db.query_row("SELECT state FROM metadata WHERE singleton=1", [], |r| r.get(0))?;
+            let parsed: ConsumptionSettlementKernelStateV1 = strict_decode(&state)?;
+            assert_eq!(state_root(&parsed)?, observation.durable_state_root());
+            let source_db = open_read_snapshot(&genesis_path)?;
+            let before: Vec<u8> = source_db.query_row(
+                "SELECT state FROM metadata WHERE singleton=1", [], |r| r.get(0),
+            )?;
+            let parsed: ConsumptionSettlementKernelStateV1 = strict_decode(&before)?;
+            assert_eq!(state_root(&parsed)?, genesis.durable_state_root());
+            source_db.close().map_err(|(_, err)| err)?;
+            db.close().map_err(|(_, err)| err)?;
+            let trust = canonical_bytes(&config.trust_bundle)?;
+            let mut stdout = io::stdout().lock();
+            for piece in [
+                &trust[..], &config.store_id.0, &typed_execution.order_height.to_le_bytes(),
+                &typed_execution.order_block_id.0, &opid.0, &execution, &command, &receipt,
+                &genesis.durable_state_root().0, &before, &observation.durable_state_root().0, &state,
+            ] {
+                stdout.write_all(&u32::try_from(piece.len())?.to_le_bytes())?;
+                stdout.write_all(piece)?;
+            }
+        }
         "fixture-noncanonical-state" => {
             let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
             verify_schema(&db)?;
