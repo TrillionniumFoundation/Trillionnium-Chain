@@ -1,6 +1,7 @@
 """Execute the actual native SQLite read continuation against the original owner."""
 import hashlib
 import json
+import re
 from pathlib import Path
 import sqlite3
 import struct
@@ -89,6 +90,14 @@ class StateImportSqliteColdRead(unittest.TestCase):
                 else:
                     self.assertEqual(db.read_bytes(), before)
 
+            rich = cases / "boundary-prefix-and-binary.db"
+            _run([writer, "seed-rich", rich])
+            rich_expected = original(rich)
+            rich_read = invoke(rich)
+            self.assertEqual((rich_read["status"], rich_read["result"], rich_read["released"]),
+                             (0, rich_expected, 0))
+            self.assertEqual(len(rich_expected.splitlines()), 9)
+
             def refusal(db, **kwargs):
                 got = invoke(db, **kwargs)
                 self.assertEqual((got["status"], got["result"]), (100, None))
@@ -124,3 +133,55 @@ class StateImportSqliteColdRead(unittest.TestCase):
                         self.assertEqual(got["transcript"][-1], [12, 7, 24])
                         self.assertNotIn([15, 5, 24], got["transcript"])
                     self.assertEqual(invalid.read_bytes(), before)
+
+            def recompute_rows(connection):
+                """Make only the checksum coherent, not the invalid row."""
+                rows = connection.execute(
+                    "SELECT namespace,key,value FROM migration_delta_rows_v0 ORDER BY namespace,key"
+                ).fetchall()
+                framed = lambda b: struct.pack(">Q", len(b)) + b
+                domain = framed(b"trnm.migration.export-row.v0")
+                leaves = [hashlib.sha256(domain + b"".join(framed(v) for v in row)).digest()
+                          for row in rows]
+                digest = hashlib.sha256(b"trnm.migration.target-rows.v0" + b"".join(leaves)).digest()
+                connection.execute("UPDATE migration_delta_meta_v0 SET rows_digest=?,row_count=?",
+                                   (digest, len(leaves)))
+
+            # Bind coverage to all original exact case-sensitive prefixes.
+            raw_source = (ROOT / "trillionnium/crates/trnm-state-import/src/lib.rs").read_bytes()
+            predicate = raw_source.split(b"pub fn forbidden_authority_namespace", 1)[1].split(b"];")[0]
+            prefixes = re.findall(rb'b"([a-z_]+)"', predicate)
+            self.assertEqual(len(prefixes), 7)
+            cases_bad = [("reserved-" + str(i), "namespace", name + bytes((0, 255)))
+                         for i, name in enumerate(prefixes)]
+            cases_bad += [("empty-namespace", "namespace", b""), ("empty-key", "key", b""),
+                          ("wide-namespace", "namespace", bytes(129)),
+                          ("wide-key", "key", bytes(65537))]
+            for label, field, value in cases_bad:
+                with self.subTest(row=label):
+                    corrupt = cases / (label + ".db")
+                    _run([writer, "seed", corrupt, "1"])
+                    with sqlite3.connect(corrupt) as connection:
+                        connection.execute(f"UPDATE migration_delta_rows_v0 SET {field}=?", (value,))
+                        recompute_rows(connection)
+                    denied = subprocess.run([writer, "export", corrupt], capture_output=True, timeout=30)
+                    self.assertNotEqual(denied.returncode, 0)
+                    self.assertEqual(denied.stdout, b"")
+                    halted = refusal(corrupt)
+                    self.assertEqual(halted["transcript"][-1][:2], [13, 8])
+                    self.assertNotIn([15, 5, 24], halted["transcript"])
+
+            duplicate = cases / "matching-digest-duplicate.db"
+            _run([writer, "seed", duplicate, "1"])
+            with sqlite3.connect(duplicate) as connection:
+                [one] = connection.execute("SELECT namespace,key,value FROM migration_delta_rows_v0").fetchall()
+                connection.execute("DROP TABLE migration_delta_rows_v0")
+                connection.execute("CREATE TABLE migration_delta_rows_v0 (namespace BLOB, key BLOB, value BLOB) STRICT")
+                connection.executemany("INSERT INTO migration_delta_rows_v0 VALUES(?,?,?)", (one, one))
+                recompute_rows(connection)
+            original_denied = subprocess.run([writer, "export", duplicate], capture_output=True, timeout=30)
+            self.assertNotEqual(original_denied.returncode, 0)
+            self.assertEqual(original_denied.stdout, b"")
+            second_denied = refusal(duplicate)
+            self.assertEqual([e[:2] for e in second_denied["transcript"]].count([13, 8]), 2)
+            self.assertEqual(second_denied["transcript"][-1][:2], [13, 8])

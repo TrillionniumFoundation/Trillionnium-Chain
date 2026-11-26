@@ -318,3 +318,25 @@ these disposable copies; native execution remains read-only. Corruption
 checks include correctly rehashed records with invalid phase options,
 inconsistent receipt fields, or a zero fence reason. This diagnostic does not install or activate a handoff,
 verify production finality or implement the original VFS/path authority.
+
+### Original target-row validation in the held scan
+
+The shared native cold and write readback scanner requires the original
+typed BLOB namespace/key/value limits and independently checks the decoded
+namespace and key sizes. It refuses the original seven case-sensitive
+reserved namespace prefixes and requires strictly increasing unsigned-byte
+`(namespace, key)` tuples, with a shorter equal-prefix byte string ordered
+first. It retains only the preceding namespace and key in private scratch
+and resets that state when a held scan begins. The original 100 million-row
+limit remains an upper bound; the existing 1 MiB provider text and projection
+extents still impose the smaller practical qualification scope, so this does
+not add full-size SQLite transport for the original 16 MiB row value.
+
+A row must pass validation before its leaf enters the actual persisted-rows
+commitment. The original Rust fixture supplies binary and empty values,
+case and namespace/key prefix ties, the 128-byte namespace and 65,536-byte
+key boundaries, and valid manual checksum controls in separate disposable
+databases. Even when corrupted rows have a matching persisted SHA and row
+count, native HIA and original Rust refuse reserved prefixes, malformed
+fields and duplicate tuples before releasing a projection. The read and
+write ownership, production paths and finality are unchanged.

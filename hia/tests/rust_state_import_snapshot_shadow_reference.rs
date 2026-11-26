@@ -97,6 +97,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 path, d(10), d(11), context(&rows, 5), &rows, &FixtureRoot,
             )?;
         }
+        ("seed-rich", 3) => {
+            let mut rows = vec![
+                (vec![0], vec![0], Vec::new()),
+                (vec![0], vec![0, 0], vec![0, 128, 255]),
+                (vec![0], vec![255], vec![1]),
+                (vec![0, 255], vec![0], vec![58]),
+                (b"Signer_journal".to_vec(), vec![128], vec![0]),
+                (b"signer_journa".to_vec(), vec![1], vec![42]),
+                (b"xsigner_journal".to_vec(), vec![255], vec![10]),
+                (vec![255; 128], vec![255; 65536], vec![255, 0]),
+            ].into_iter().map(|(namespace, key, value)| TargetRowV0 { namespace, key, value })
+                .collect::<Vec<_>>();
+            rows.sort();
+            SqliteIncrementalStateStoreV0::initialize(
+                path, d(10), d(11), context(&rows, 5), &rows, &FixtureRoot,
+            )?;
+        }
         ("advance", 3) => {
             let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
             let before = store.read_rows_v0()?;
@@ -290,7 +307,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/empty-receipt/export on disposable staging only".into()),
+        _ => return Err("scope is seed/seed-rich/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/empty-receipt/export on disposable staging only".into()),
     }
     Ok(())
 }

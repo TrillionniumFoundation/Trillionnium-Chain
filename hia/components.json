@@ -474,7 +474,12 @@
           "rc_octet",
           "rc_field",
           "rc_hash_field",
-          "rc_finish"
+          "rc_finish",
+          "rc_extent",
+          "rc_tuple",
+          "rc_retain_tuple",
+          "rc_lex",
+          "rc_reserved"
         ]
       },
       {
@@ -763,7 +768,12 @@
           "rc_octet",
           "rc_field",
           "rc_hash_field",
-          "rc_finish"
+          "rc_finish",
+          "rc_extent",
+          "rc_tuple",
+          "rc_retain_tuple",
+          "rc_lex",
+          "rc_reserved"
         ]
       }
     ],
