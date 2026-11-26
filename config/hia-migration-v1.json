@@ -3224,6 +3224,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-command-journal-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held read-only journal: canonical native Borsh decoding of all three command variants and original SHA operation identity matched to actual typed SQLite row and receipt kind, plus raw root agreement and close. No operation row checksum ownership, signature or policy verification, full replay or authority.",
+      "sources": [
+        "hia/platform/service_settlement/command_journal_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_command_journal_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-rollup-command-id",
       "node_integration_complete": false,
       "retirement_accepted": false,

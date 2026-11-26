@@ -221,3 +221,15 @@ complete canonical command. The finite caps are 65536 command bytes, 64
 rollup receipt IDs, 32 nested receipts and the existing dynamic-field caps.
 No comparison of receipt IDs to nested receipts, signature validation,
 settlement policy, held command execution, replay or authority is implied.
+
+The opt-in M12 `command_journal_read.hepta` adds actual typed SQLite command
+length and blob reads to the held canonical receipt stream. All three original
+Borsh command forms are walked in native code, with the same receipt/rollup
+walkers and context validation as the standalone checks. It derives the
+original domain-separated SHA-256 command ID and kind, compares the ID to the
+actual operation row, and compares the kind to the strictly parsed receipt.
+It preserves and resumes the in-progress journal-root digest, uses the same
+private 219-byte output only after close, and leaves raw and receipt-only
+entry points available. The existing fixture provider-call limit still applies;
+the result does not validate the row checksum, signatures, policy, replay,
+or production authority.

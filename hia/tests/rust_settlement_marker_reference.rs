@@ -242,6 +242,44 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             verify_schema(&db)?;
             io::stdout().write_all(&operation_journal_root_through(&db, u64::MAX)?.0)?;
         }
+        "fixture-command-identity-drift" => {
+            // Only the test-created Store is touched. Keeps the independently
+            // stored receipt/marker roots and recomputes the exact row checksum.
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            let control = args[4].to_str().unwrap();
+            let seq = if control == "nested-option" { 3_u64 } else { 4 };
+            let (id, execution, mut command, receipt): (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) =
+                db.query_row("SELECT operation_id,execution,command,receipt FROM operations WHERE sequence=?1",
+                             [seq], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?;
+            let id = ConsumptionOperationIdV1(id.try_into().expect("fixture operation ID"));
+            let valid: ConsumptionSettlementCommandV1 = strict_decode(&command)?;
+            assert_eq!(id, operation_id(&valid)?);
+            match control {
+                "changed-id" => {
+                    // A fixed-width field remains Borsh canonical but changes the operation ID.
+                    *command.last_mut().ok_or("missing settlement policy hash")? ^= 1;
+                    let different: ConsumptionSettlementCommandV1 = strict_decode(&command)?;
+                    assert_ne!(id, operation_id(&different)?);
+                }
+                "trailing" => command.push(0),
+                "oversized" => command.resize(65537, 0),
+                "nested-option" => {
+                    // Mutate a structurally typed nested Receipt option, using
+                    // lengths proven independently by the exact frozen fixture.
+                    assert_eq!((valid.operation_kind(), command.len()), (25, 2689));
+                    assert_eq!(command[923 + 361 - 1], 0);
+                    command[923 + 361 - 1] = 2;
+                }
+                _ => panic!("unrecognized disposable command drift"),
+            }
+            if control != "changed-id" {
+                assert!(strict_decode::<ConsumptionSettlementCommandV1>(&command).is_err());
+            }
+            let sum = operation_checksum(seq, id, &execution, &command, &receipt);
+            assert_eq!(db.execute("UPDATE operations SET command=?1,checksum=?2 WHERE sequence=?3",
+                                  params![command, sum.0.to_vec(), seq])?, 1);
+            db.close().map_err(|(_, err)| err)?;
+        }
         "fixture-rebind-mutated-receipt" => {
             // Owned disposable fixture only. Make the untyped journal-root
             // commitments internally consistent with changed receipt bytes.
@@ -260,6 +298,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "trailing" => raw.push(0),
                 "id" => raw[42] ^= 1,
                 "sequence" => raw[34] ^= 1,
+                "kind" => raw[74] ^= 1,
                 _ => panic!("unknown disposable receipt mutation"),
             }
             let sum = operation_checksum(seq, id, &context, &command, &raw);
