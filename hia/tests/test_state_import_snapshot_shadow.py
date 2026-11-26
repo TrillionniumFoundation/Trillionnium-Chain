@@ -25,7 +25,7 @@ def _run(command, *, timeout=30, **kwargs):
     return out
 
 
-def _build_original(directory, adapter=ADAPTER):
+def _build_original(directory, adapter=ADAPTER, extra_externs=()):
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
     cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
     version = _run([rustc, "--version"]).stdout.decode().split()[1]
@@ -55,8 +55,14 @@ def _build_original(directory, adapter=ADAPTER):
     [rust_artifact] = [unlinked_path(n) for n in library["filenames"] if n.endswith(".rlib")]
     deps = rust_artifact.parent / "deps"
     binary = directory / "snapshot-owner"
+    extra = []
+    for name in extra_externs:
+        [artifact] = [e for e in events if e.get("reason") == "compiler-artifact"
+                      and e["target"]["name"] == name]
+        [rlib] = [unlinked_path(f) for f in artifact["filenames"] if f.endswith(".rlib")]
+        extra.extend(("--extern", f"{name}={rlib}"))
     _run([rustc, "--edition=2024", "-O", "--extern", f"trnm_state_import={rust_artifact}",
-          "-L", f"dependency={deps}", "-L", f"native={native_path}", str(adapter), "-o", str(binary)],
+          "-L", f"dependency={deps}", "-L", f"native={native_path}", *extra, str(adapter), "-o", str(binary)],
          timeout=60)
     return binary, sqlite_dependency
 

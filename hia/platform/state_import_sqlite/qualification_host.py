@@ -56,9 +56,14 @@ def run(message, reader, provider):
     state = ctypes.create_string_buffer(EXTENT)
     response = ctypes.create_string_buffer(EXTENT)
     hash_work = ctypes.create_string_buffer(EXTENT)
-    raw = bytes.fromhex(message["expected"]).hex().upper().encode() + os.fsencode(db)
+    handoff = message.get("handoff") is True
+    if handoff and (not directory.parent.name.startswith("m13-sqlite-handoff-") or directory.name != "owned"):
+        raise ValueError("Handoff qualification only uses its own named disposable directory")
+    raw = os.fsencode(db) if handoff else bytes.fromhex(message["expected"]).hex().upper().encode() + os.fsencode(db)
     proposal_hex = message.get("empty_delta")
     writes = proposal_hex is not None
+    if handoff and writes:
+        raise ValueError("Handoff qualification is read only")
     if writes:
         proposal = bytes.fromhex(proposal_hex)
         mode = {
@@ -88,17 +93,21 @@ def run(message, reader, provider):
             status = step(argument, len(raw), state, EXTENT, hash_work, EXTENT)
             phase, op, length, published = struct.unpack_from("<QQQQ", state)
             if status != 198:
-                if status == 0 and phase == 18 and 489 <= published <= EXTENT - 4096:
+                if handoff and status == 0 and phase == 18 and published == 423:
+                    result = ctypes.string_at(ctypes.addressof(state) + 4096, published).hex()
+                elif not handoff and status == 0 and phase == 18 and 489 <= published <= EXTENT - 4096:
                     result = ctypes.string_at(ctypes.addressof(state) + 4096, published).decode("ascii")
                 elif status != 100 or published:
                     raise ValueError("Unexpected terminal status or private-output publication")
                 break
             if published or op not in ops or not 8 <= length <= 1544:
                 raise ValueError("Native request escaped the private mechanical ABI")
-            if message["advance"] and phase == 11 and op == 5:
+            advance_mode = "project" if handoff else "advance"
+            advance_cut = (7, 8) if handoff else (11, 5)
+            if message["advance"] and (phase, op) == advance_cut:
                 if advanced:
                     raise ValueError("Unexpected duplicate qualification interleave")
-                child = subprocess.run([message["advance"], "advance", str(db)],
+                child = subprocess.run([message["advance"], advance_mode, str(db)],
                                        capture_output=True, check=True, timeout=25)
                 if child.stdout or child.stderr:
                     raise ValueError("Original writer did not finish cleanly")

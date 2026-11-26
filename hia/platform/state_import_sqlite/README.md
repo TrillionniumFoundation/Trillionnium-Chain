@@ -278,3 +278,29 @@ the real original apply and replay receipts, original cold reopen after each
 branch and OS process termination before both initial metadata commit and
 the replay's readback-only commit. This does not authenticate checkpoint
 authorities or activate production writes.
+
+## Held handoff-record readback
+
+`handoff_read.hepta` is a separate read-only fixture continuation for the
+original `SqliteMigrationHandoffStoreV0` database. It opens the disposable
+file read-only and with NOFOLLOW, takes BEGIN DEFERRED, reads the original
+application ID, version, schema object and singleton row in one held
+snapshot, and refuses missing or duplicate rows. Its bounded profile
+covers only the 383-byte MHOF v1 **no-option** records for the original
+VerifiedSource and ProjectedDelta states; later records with install,
+readiness, authority or fence fields are outside this profile.
+
+The continuation checks the stored revision against the record header,
+checks required fixed fields and empty option tags, and recomputes the
+original framed handoff-record digest over the private canonical bytes.
+Both the SQL digest column and the embedded digest must equal that
+calculation. It publishes only after real finalize, commit and close.
+The private 423-byte projection carries an 8-byte big-endian revision,
+the 32-byte SQL digest and the 383-byte original raw record.
+
+The disposable fixture uses the original crate's retained test-only authority
+and actual initialize/readback/projection calls. It compares a native reader
+held across the original WAL transition with both the old exact record and a
+separate new cold read, and compares original refusals after local metadata or
+record corruption. This diagnostic does not install or activate a handoff,
+verify production finality or implement the original VFS/path authority.

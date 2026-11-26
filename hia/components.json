@@ -426,6 +426,52 @@
         ]
       }
     ],
+    "platform/state_import_sqlite/handoff_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_copy",
+          "cp_wout"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_begin",
+          "sr_commit",
+          "sr_issue",
+          "sr_handle",
+          "sr_col",
+          "sr_status",
+          "sr_value"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_nibble",
+          "rc_octet"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      }
+    ],
     "platform/state_import_sqlite/vector_admission.hepta": [
       {
         "source": "src/state_import/incremental_delta_commitment.hepta",

@@ -2469,6 +2469,20 @@
       ]
     },
     {
+      "id": "state_import/sqlite-handoff-read-staging",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "M13 original SQLite handoff VerifiedSource and ProjectedDelta no-option record readback from owned disposable databases: one native held read transaction, exact revision and checked canonical record commitment; no authority, install, VFS or production claims",
+      "sources": [
+        "hia/platform/state_import_sqlite/handoff_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/state_import_sqlite/qualification_host.py",
+        "hia/tests/test_state_import_sqlite_handoff_read.py",
+        "hia/tests/rust_state_import_handoff_read_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/sqlite-empty-delta-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,
