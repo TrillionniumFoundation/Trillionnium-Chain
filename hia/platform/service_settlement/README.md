@@ -266,3 +266,13 @@ checksum-only and other held readers keep their previous behavior. Successful
 publication still follows the verified close and uses the same 219-byte
 diagnostic. This does not establish Order proof authority, replay commands,
 or independently derive Settlement state.
+
+The separate M12 `state_root_read.hepta` reads the same actual metadata row
+and independently hashes its raw state BLOB using the original state-root
+u32 domain length and domain. It preserves the running metadata checksum,
+compares the computed result with the actual stored root, and publishes
+only the fixed diagnostic after the original close. The original fixture
+uses canonical Borsh state; a disposable typed-state change with a freshly
+valid metadata checksum but an unchanged stored root is refused. This
+verifies the bytes' root, not strict state decoding, execution replay, or
+order/production authority. The earlier metadata-only mode is unchanged.

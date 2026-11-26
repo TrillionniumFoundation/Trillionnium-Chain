@@ -3342,6 +3342,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-state-root-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 native held raw state root exactly matching original Borsh commitment framing for already canonical bytes. Checks hash of actual stored state, not native strict state decode, state transition replay, order authority or production.",
+      "sources": [
+        "hia/platform/service_settlement/state_root_read.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_state_root_read.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_schema_read.py",
+        "hia/platform/service_settlement/schema_fixture_host.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-execution-journal",
       "node_integration_complete": false,
       "retirement_accepted": false,

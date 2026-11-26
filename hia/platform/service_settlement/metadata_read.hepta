@@ -388,7 +388,16 @@ block v27(v27_r:readbuf,v27_m:mutbuf,v27_w:mutbuf,v27_n:u64)
   v27_base:u64 = const() {"value":24}
   v27_len:u64 = int.sub.wrap(v27_n,v27_base)
   v27_hashed:bool = call(v27_r,v27_w,v27_len) {"function":"smr_append"}
-  branch v27_hashed put27(v27_r,v27_m) bad()
+  branch v27_hashed root_mode(v27_r,v27_m,v27_w,v27_len) bad()
+block root_mode(rmr:readbuf,rmm:mutbuf,rmw:mutbuf,rmn:u64)
+  rma:u64 = const() {"value":130000}
+  rmv:u64 = call(rmm,rma) {"function":"cp_get"}
+  rm1:u64 = const() {"value":1}
+  rmy:bool = compare.eq(rmv,rm1)
+  branch rmy root_hash(rmr,rmm,rmw,rmn) put27(rmr,rmm)
+block root_hash(rhr:readbuf,rhm:mutbuf,rhw:mutbuf,rhn:u64)
+  rh_ok:bool = call(rhr,rhm,rhw,rhn) {"function":"smr_state_digest"}
+  branch rh_ok put27(rhr,rhm) bad()
 block put27(put27_r:readbuf,put27_m:mutbuf)
   put27_stmta:u64 = const() {"value":40}
   put27_stmt:u64 = call(put27_m,put27_stmta) {"function":"cp_get"}
@@ -407,7 +416,19 @@ block a28(a28_r:readbuf,a28_m:mutbuf,a28_w:mutbuf,a28_n:usize)
   a28_bound:u64 = const() {"value":32}
   a28_wide:u64 = int.cast(a28_n) {"mode":"wrap"}
   a28_valid:bool = call(a28_r,a28_wide,a28_kind,a28_bound) {"function":"smr_field"}
-  branch a28_valid v28(a28_r,a28_m,a28_w,a28_wide) bad()
+  branch a28_valid check_state_mode(a28_r,a28_m,a28_w,a28_wide) bad()
+block check_state_mode(cmr:readbuf,cmm:mutbuf,cmw:mutbuf,cmn:u64)
+  cma:u64 = const() {"value":130000}
+  cmv:u64 = call(cmm,cma) {"function":"cp_get"}
+  cm1:u64 = const() {"value":1}
+  cmy:bool = compare.eq(cmv,cm1)
+  branch cmy check_state_root(cmr,cmm,cmw,cmn) v28(cmr,cmm,cmw,cmn)
+block check_state_root(srr:readbuf,srm:mutbuf,srw:mutbuf,srn:u64)
+  sr_pos:usize = const() {"value":24}
+  sr_seen:usize = const() {"value":7800}
+  sr_width:u64 = const() {"value":32}
+  sr_good:bool = call(srr,srm,sr_pos,sr_seen,sr_width) {"function":"smr_eq_bound"}
+  branch sr_good v28(srr,srm,srw,srn) bad()
 block v28(v28_r:readbuf,v28_m:mutbuf,v28_w:mutbuf,v28_n:u64)
   v28_len:u64 = const() {"value":32}
   v28_hashed:bool = call(v28_r,v28_w,v28_len) {"function":"smr_append"}
@@ -697,4 +718,63 @@ block entry(entry_m:mutbuf)
   entry_pn:u64 = const() {"value":147}
   entry_pr:u32 = call(entry_m,entry_pp,entry_po,entry_pn) {"function":"ssr_issue"}
   ret(entry_pr)
+end
+
+
+fn smr_state_digest(raw:readbuf,mem:mutbuf,work:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf,n:u64)
+  origin:u64 = const() {"value":0}
+  backup:u64 = const() {"value":500000}
+  state_width:u64 = const() {"value":1208}
+  saved:u64 = call(work,origin,backup,state_width) {"function":"cp_wcopy"}
+  initial:u64 = call(work) {"function":"tr_sha_init"}
+  head_at_0:u64 = const() {"value":2048}
+  head_word_0:u64 = const() {"value":7885365840114090047}
+  head_store_0:u64 = call(work,head_at_0,head_word_0) {"function":"cp_put"}
+  head_at_8:u64 = const() {"value":2056}
+  head_word_8:u64 = const() {"value":7809911856577867822}
+  head_store_8:u64 = call(work,head_at_8,head_word_8) {"function":"cp_put"}
+  head_at_16:u64 = const() {"value":2064}
+  head_word_16:u64 = const() {"value":7957688116653207141}
+  head_store_16:u64 = call(work,head_at_16,head_word_16) {"function":"cp_put"}
+  head_at_24:u64 = const() {"value":2072}
+  head_word_24:u64 = const() {"value":7957695015410300275}
+  head_store_24:u64 = call(work,head_at_24,head_word_24) {"function":"cp_put"}
+  head_at_32:u64 = const() {"value":2080}
+  head_word_32:u64 = const() {"value":7882825970206733101}
+  head_store_32:u64 = call(work,head_at_32,head_word_32) {"function":"cp_put"}
+  head_at_40:u64 = const() {"value":2088}
+  head_word_40:u64 = const() {"value":8386112019173240421}
+  head_store_40:u64 = call(work,head_at_40,head_word_40) {"function":"cp_put"}
+  head_at_48:u64 = const() {"value":2096}
+  head_word_48:u64 = const() {"value":7146777680643501413}
+  head_store_48:u64 = call(work,head_at_48,head_word_48) {"function":"cp_put"}
+  head_at_56:u64 = const() {"value":2104}
+  head_word_56:u64 = const() {"value":7310575179021971041}
+  head_store_56:u64 = call(work,head_at_56,head_word_56) {"function":"cp_put"}
+  head_at_64:u64 = const() {"value":2112}
+  head_word_64:u64 = const() {"value":3241518}
+  head_store_64:u64 = call(work,head_at_64,head_word_64) {"function":"cp_put"}
+  head_n:u64 = const() {"value":67}
+  head_p:u64 = const() {"value":2048}
+  head_hash:u64 = call(work,head_p,head_n) {"function":"tr_sha_update_work_full"}
+  body_p:u64 = const() {"value":24}
+  body_hash:u64 = call(raw,body_p,n,work) {"function":"tr_sha_update_full"}
+  finished:u64 = call(work) {"function":"tr_sha_final"}
+  prefix_ok:u64 = bit.or(initial,head_hash)
+  body_ok:u64 = bit.or(body_hash,finished)
+  status:u64 = bit.or(prefix_ok,body_ok)
+  matches:bool = compare.eq(status,origin)
+  branch matches restore(mem,work,origin,backup,state_width) bad()
+block restore(rm:mutbuf,rw:mutbuf,ro:u64,rb:u64,rs:u64)
+  digest:usize = const() {"value":1168}
+  dest:usize = const() {"value":7800}
+  span:u64 = const() {"value":32}
+  published:u64 = call(rw,rm,digest,dest,span) {"function":"sscid_copy"}
+  restored:u64 = call(rw,rb,ro,rs) {"function":"cp_wcopy"}
+  ok:bool = const() {"value":true}
+  ret(ok)
+block bad()
+  failed:bool = const() {"value":false}
+  ret(failed)
 end

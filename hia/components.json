@@ -1,5 +1,67 @@
 {
   "includes": {
+    "platform/service_settlement/state_root_read.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ssr_begin",
+          "ssr_exact_text",
+          "ssr_issue",
+          "ssr_prepared",
+          "ssr_read",
+          "ssr_schema",
+          "ssr_status",
+          "ssr_table_value",
+          "ssr_tables",
+          "ssr_triggers"
+        ],
+        "source": "platform/service_settlement/schema_read.hepta"
+      },
+      {
+        "functions": [
+          "smr_append",
+          "smr_eq_bound",
+          "smr_field",
+          "smr_held",
+          "smr_reader",
+          "smr_start",
+          "smr_state_digest"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/reservation_replay.hepta": [
       {
         "functions": [
@@ -66,7 +128,8 @@
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
+          "smr_start",
+          "smr_state_digest"
         ],
         "source": "platform/service_settlement/metadata_read.hepta"
       },
@@ -240,7 +303,8 @@
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
+          "smr_start",
+          "smr_state_digest"
         ],
         "source": "platform/service_settlement/metadata_read.hepta"
       },
@@ -382,7 +446,8 @@
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
+          "smr_start",
+          "smr_state_digest"
         ],
         "source": "platform/service_settlement/metadata_read.hepta"
       },
@@ -639,7 +704,8 @@
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
+          "smr_start",
+          "smr_state_digest"
         ],
         "source": "platform/service_settlement/metadata_read.hepta"
       },
@@ -789,7 +855,8 @@
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
+          "smr_start",
+          "smr_state_digest"
         ],
         "source": "platform/service_settlement/metadata_read.hepta"
       },
@@ -860,22 +927,22 @@
     ],
     "platform/service_settlement/terminal_join.hepta": [
       {
-        "source": "src/control_plane/core.hepta",
         "functions": [
           "cp_copy",
           "cp_get",
           "cp_put",
           "cp_wcopy"
-        ]
+        ],
+        "source": "src/control_plane/core.hepta"
       },
       {
-        "source": "src/crypto/sha256_stream.hepta",
         "functions": [
           "tr_get",
           "tr_put",
           "tr_read",
           "tr_sha_compress",
           "tr_sha_feed_limit",
+          "tr_sha_final",
           "tr_sha_final_full",
           "tr_sha_final_limit",
           "tr_sha_init",
@@ -883,10 +950,10 @@
           "tr_sha_update_limit",
           "tr_sha_update_work_full",
           "tr_sha_update_work_limit"
-        ]
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       },
       {
-        "source": "platform/service_settlement/schema_read.hepta",
         "functions": [
           "ssr_begin",
           "ssr_exact_text",
@@ -898,21 +965,22 @@
           "ssr_table_value",
           "ssr_tables",
           "ssr_triggers"
-        ]
+        ],
+        "source": "platform/service_settlement/schema_read.hepta"
       },
       {
-        "source": "platform/service_settlement/metadata_read.hepta",
         "functions": [
           "smr_append",
           "smr_eq_bound",
           "smr_field",
           "smr_held",
           "smr_reader",
-          "smr_start"
-        ]
+          "smr_start",
+          "smr_state_digest"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
       },
       {
-        "source": "platform/service_settlement/marker_read.hepta",
         "functions": [
           "smk_anchor",
           "smk_begin_hash",
@@ -923,7 +991,14 @@
           "smk_reader",
           "smk_segment",
           "smk_start"
-        ]
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
       }
     ],
     "platform/service_settlement/marker_read.hepta": [
@@ -1030,21 +1105,22 @@
     ],
     "platform/service_settlement/metadata_read.hepta": [
       {
-        "source": "src/control_plane/core.hepta",
         "functions": [
           "cp_copy",
           "cp_get",
-          "cp_put"
-        ]
+          "cp_put",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
       },
       {
-        "source": "src/crypto/sha256_stream.hepta",
         "functions": [
           "tr_get",
           "tr_put",
           "tr_read",
           "tr_sha_compress",
           "tr_sha_feed_limit",
+          "tr_sha_final",
           "tr_sha_final_full",
           "tr_sha_final_limit",
           "tr_sha_init",
@@ -1052,10 +1128,10 @@
           "tr_sha_update_limit",
           "tr_sha_update_work_full",
           "tr_sha_update_work_limit"
-        ]
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
       },
       {
-        "source": "platform/service_settlement/schema_read.hepta",
         "functions": [
           "ssr_begin",
           "ssr_exact_text",
@@ -1067,7 +1143,14 @@
           "ssr_table_value",
           "ssr_tables",
           "ssr_triggers"
-        ]
+        ],
+        "source": "platform/service_settlement/schema_read.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
       }
     ],
     "platform/service_settlement/schema_read.hepta": [

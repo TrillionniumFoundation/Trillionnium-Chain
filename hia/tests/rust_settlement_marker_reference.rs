@@ -17,6 +17,8 @@ include!(env!("TRNM_SETTLEMENT_MARKERS_SELECTED"));
 include!(env!("TRNM_SETTLEMENT_COMMAND_IDENTITY"));
 use trnm_service_settlement::SCHEMA_VERSION_V1;
 include!(env!("TRNM_SETTLEMENT_EXECUTION_VALIDATE"));
+use trnm_service_settlement::ConsumptionSettlementKernelStateV1;
+include!(env!("TRNM_SETTLEMENT_STATE_ROOT_SELECTED"));
 
 fn word_hash(value: u64) -> Hash32V1 {
     let mut bytes = [0_u8; 32];
@@ -173,6 +175,50 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(diagnostic[2..34], recorded_id);
             db.close().map_err(|(_, err)| err)?;
             io::stdout().write_all(&diagnostic)?;
+        }
+        "observe-actual-state-root" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let observation = owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let (state, stored_root): (Vec<u8>, Vec<u8>) =
+                db.query_row("SELECT state,state_root FROM metadata WHERE singleton=1", [],
+                             |r| Ok((r.get(0)?, r.get(1)?)))?;
+            let parsed: ConsumptionSettlementKernelStateV1 = strict_decode(&state)?;
+            assert_eq!(state, canonical_bytes(&parsed)?);
+            let root = state_root(&parsed)?;
+            assert_eq!(observation.durable_state_root(), root);
+            assert_eq!(stored_root, root.0);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&root.0)?;
+            io::stdout().write_all(&state)?;
+        }
+        "fixture-state-root-drift" => {
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            verify_schema(&db)?;
+            let (conf, seq, height, block, state, root, journal, fenced, old_sum):
+                (Vec<u8>, u64, u64, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, bool, Vec<u8>) =
+                db.query_row("SELECT config,sequence,height,block_id,state,state_root,journal_root,fenced,checksum FROM metadata WHERE singleton=1", [],
+                             |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?, r.get(8)?)))?;
+            let block = Hash32V1(array32(block, "block")?);
+            let root = Hash32V1(array32(root, "state root")?);
+            let journal = Hash32V1(array32(journal, "journal root")?);
+            let mut parsed: ConsumptionSettlementKernelStateV1 = strict_decode(&state)?;
+            assert_eq!(state_root(&parsed)?, root);
+            assert_eq!(metadata_checksum(&conf, seq, height, block, &state, root, journal, fenced).0.as_slice(), old_sum);
+            // Owned disposable fixture only: retain canonical typed Borsh and
+            // the original field widths, but keep the old separately stored root.
+            parsed.escrow.version ^= 1;
+            let changed = canonical_bytes(&parsed)?;
+            let changed_root = state_root(&parsed)?;
+            assert_ne!(changed_root, root);
+            let new_sum = metadata_checksum(&conf, seq, height, block, &changed, root, journal, fenced);
+            assert_eq!(db.execute("UPDATE metadata SET state=?1,checksum=?2 WHERE singleton=1",
+                                  params![changed, new_sum.0.to_vec()])?, 1);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&root.0)?;
+            io::stdout().write_all(&changed_root.0)?;
+            io::stdout().write_all(&changed)?;
         }
         "original-execution-fixtures" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
