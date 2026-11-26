@@ -69,7 +69,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual(result['curated_routes_checked'], 7)
         self.assertEqual(len(result['source_files_sha256']), 44)
         self.assertEqual(result['reviewed_source_lock_sha256'],
-                         '67583ec38887eabe00536dc4cd5ec7cc7fd48acc4397a52165bf4f591c9fa4a7')
+                         '3f2f2c8e07f5bbb1db252e9611667da3aff7eccafb5ccd73d9407b90bddfeee3')
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
@@ -239,6 +239,13 @@ class AuthorityEffectTests(unittest.TestCase):
         self.data['source_files_sha256'][
             'trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs'
         ] = 'e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554'
+        self.refused('fixed reviewed lock')
+
+        # The pre-observation ingress pin is a distinct reviewed source identity.
+        self.data = deepcopy(self.original)
+        self.data['source_files_sha256'][
+            'trillionnium/crates/trnm-pon-node/src/ingress.rs'
+        ] = 'b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f'
         self.refused('fixed reviewed lock')
 
     def test_unreviewed_files_do_not_make_the_partial_register_complete(self):
