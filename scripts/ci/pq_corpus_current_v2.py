@@ -26,8 +26,8 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 MAX_MAP_BYTES = 64 * 1024
 MAX_REPORT_BYTES = 64 * 1024
 EXPECTED_FROZEN_PIN_COUNT = 2613
-EXPECTED_MAP_SHA256 = "8ce4d6540347e1fdfd605ab6f2ba42805ed82f7392ba0758876f2f6170a5d03a"
-EXPECTED_CURRENT_BLOBS_SHA256 = "e1a647e0b5aa643ea50f4cf1ad871443994e278973cbf53a843118c635d23a12"
+EXPECTED_MAP_SHA256 = "7bcdba9e051bf64cf5b7b9aef378b0e5f4fe87e590d304af1e13942d2598cb8c"
+EXPECTED_CURRENT_BLOBS_SHA256 = "bd84b3290e99fd791af46f9cac45e097d52eac0d4621ac177937c4ffe4113a2e"
 FROZEN_INPUTS_SHA256 = {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -36,6 +36,8 @@ FROZEN_INPUTS_SHA256 = {
 }
 EXPECTED_REPLACEMENT_PATHS = frozenset((
     ".github/workflows/chain-hepta-closure-candidate.yml",
+    ".github/workflows/cpq1-full-content.yml",
+    ".github/workflows/pon-pq-system-continuation.yml",
     "config/pon/hash-use-contract-v1.json",
     "config/pon/joint-consensus-qualification-v1.json",
     "config/pon/pq-proof-profile-binding-v1.json",
@@ -83,6 +85,9 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
 ))
 EXPECTED_ADDED_PATHS = frozenset((
+    ".github/workflows/pon-throughput-evidence.yml",
+    "scripts/ci/cpq1_current_gate.py",
+    "scripts/ci/test_cpq1_current_gate.py",
     "scripts/test_pon_history_kernel_cpu_observation.py",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import/kernel_cpu_observation.rs",

@@ -21,6 +21,10 @@ on:
       - scripts/ci/hash_use_contract.py
       - scripts/ci/test_hash_use_contract.py
       - docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md
+      - scripts/ci/cpq1_current_gate.py
+      - scripts/ci/test_cpq1_current_gate.py
+      - scripts/ci/pq_corpus_current_v2.py
+      - config/pon/pq-corpus-current-source-v2.json
       - .github/workflows/cpq1-full-content.yml
 permissions:
   contents: read
@@ -76,7 +80,8 @@ jobs:
           record graph-vectors python3 scripts/ci/check_cell_content_graph_vectors_v3.py
           record hash-purpose-controls python3 scripts/ci/test_hash_use_contract.py
           record hash-purpose-source python3 scripts/ci/hash_use_contract.py
-          record source-integrity python3 scripts/ci/check_pq_research_integration.py
+          record current-source-contract-controls python3 -B scripts/ci/test_cpq1_current_gate.py -v
+          record source-integrity python3 -B scripts/ci/cpq1_current_gate.py
           record source-controls python3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py -v
           record recorder-controls python3 -m unittest discover -s scripts/ci -p test_record_pq_native_command.py -v
           record repository python3 scripts/ci/check_repository.py
