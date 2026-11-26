@@ -148,6 +148,17 @@
       ]
     },
     {
+      "id": "state_import/handoff_commitments",
+      "node_integration_complete": false,
+      "scope": "M13 exact original finalized-source binding and projection digest framing, with a read-only comparison to an already verified export projection. No real authorization, finality or genesis installation.",
+      "source": "hia/src/state_import/handoff_commitments.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_handoff_commitments.py",
+        "hia/tests/rust_state_import_handoff_commitments_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/checkpoint_context",
       "node_integration_complete": false,
       "scope": "M13 exact original source checkpoint context commitment and local structural predicate; does not call a finality owner, mint a verified context, or authorize use.",
@@ -2237,7 +2248,8 @@
         "state_import/durable_snapshot_shadow",
         "state_import/incremental_delta_commitment",
         "state_import/migration_plan",
-        "state_import/checkpoint_context"
+        "state_import/checkpoint_context",
+        "state_import/handoff_commitments"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

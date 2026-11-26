@@ -295,3 +295,15 @@ The scratch capacity is 1,572 bytes, and successful output is exactly a
 callback that always refuses and counts its invocations, so no test path
 mints a verified context. This kernel verifies only byte structure, not
 finality, proof content, checkpoint ownership, or migration permission.
+
+### Finalized-source binding and migration projection commitments
+
+`handoff_commitments.hepta` computes the original source-binding and
+projection domains over the exact original length-framed fields. The two
+standalone shapes are 272 and 200 bytes. The 576-byte private binding form
+also checks the supplied source digest and exact equality to a separate
+272-byte projection from the already verified export. It returns only the
+32-byte digest after success. Tests obtain actual original Rust projections
+and source bindings with the retained disposable fixture owner and compare
+all pairwise binding outcomes. The native code does not create a verified
+export, derive an application state root, perform a cutover, or install data.
