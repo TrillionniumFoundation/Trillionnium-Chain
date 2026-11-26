@@ -105,3 +105,23 @@ cleanup actions are compared against the unchanged Rust ledger, including
 original cleanup after an earlier open failure. This private observation
 does not open or close a file, certify any existing sticky failure, or
 model a cleanup event that would itself fail to serialize.
+
+## Shared memory reference accounting
+
+`shm_replay.hepta` replays original logical shared-memory references, not
+a memory map or VFS operation. Its 280-byte packet extends the three-slot
+close/collect input with action (1 add, 2 close), ordinary event count,
+denial count, sticky reason and first SQLite code. The 144-byte output
+contains active-main count, cleanup length, retained slot bitmap and
+logical charge, chosen row, ordinary length, denials, first error and
+original event tag. The active-main count does not change on either action.
+
+An add does not repeat ordinary admission. It checks the 32-reference
+limit before the evidence limit; with 32 existing references and 1,024
+ordinary events, the original reference-limit failure wins. A close,
+including a saturating close at zero, appends the scoped cleanup event
+then sweeps the three slots. A linked slot, another retained root
+generation, a pending open, or actual handles can prevent release.
+Tests run original V1/V2 ledger methods to reach both full conditions
+and the final successful cleanup event. Event serialization failure,
+real SHM mappings, and production ownership remain outside this mode.

@@ -1,5 +1,30 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/shm_replay.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_put"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "mcc_bit",
+          "mcc_claim",
+          "mcc_field",
+          "mcc_offset",
+          "mcc_valid"
+        ],
+        "source": "src/sqlite_io_boundary/close_collect_replay.hepta"
+      }
+    ],
     "platform/service_settlement/journal_prefix_hashes.hepta": [
       {
         "source": "src/control_plane/core.hepta",
