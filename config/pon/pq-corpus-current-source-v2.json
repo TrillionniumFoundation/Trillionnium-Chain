@@ -37,7 +37,7 @@
       "current_sha256": "dfff162c0ef6346ef0be260accb76f9f5487b8968d064f29cfe8371b0e326c3c"
     }
   },
-  "current_git_blob_map_sha256": "29643e949ba36f62f0eeae4ac7e987c8b3ea61f604a5f3b0a4c0b8a277bb3b3e",
+  "current_git_blob_map_sha256": "a17255da424849bb88945a3550065c60478a2b6a1c2187e190ad9b788b18830d",
   "frozen_inputs_sha256": {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -79,6 +79,11 @@
       "current_git_blob": "7b01ef46852207238cf9830ee83b0e95049f4728",
       "current_sha256": "3a13b8f0c8ec84a4753e8230ff20341a2043b2d77c421d67998b2551c7ced1e1",
       "frozen_git_blob": "96ce001f29a6f3028b8d50a3517c28c8346d2beb"
+    },
+    "config/pon/pq-authority-effects-v1.json": {
+      "current_git_blob": "5b0836530651a63f850c1dd983bed44dac8cd3e8",
+      "current_sha256": "f7afab2ec467ca9cf468d9a74eba08308dc4b03acfc397f1a0bebfaad5458dae",
+      "frozen_git_blob": "d58899deac0685d9a7049bc6ba4cdfa274539ec9"
     },
     "config/pon/pq-proof-profile-binding-v1.json": {
       "current_git_blob": "37d3436a1bef051a88aadd913a903c4dc81ddc8a",
@@ -125,6 +130,11 @@
       "current_sha256": "03f325fbde4f22d65a41c0cf9b6a8e1b8b8994c0f5f4574ea7452a274defee4c",
       "frozen_git_blob": "a80c2c3157f6c55e7e9583d4f71ae7b5abe72432"
     },
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": {
+      "current_git_blob": "8d98432af37e565a4e6bc0d3668753648a82ccf3",
+      "current_sha256": "9dd2e271c566bbc8e385f448be92a49247ee0cb4d64ee390557b98671706a48d",
+      "frozen_git_blob": "94a921086fd5136ae12e3308b7017d6bfc226a40"
+    },
     "formal/pon-nakamoto-v1/joint_consensus_qualification.py": {
       "current_git_blob": "f02fe18c690a6c2417ea457417fac0c22181033b",
       "current_sha256": "4093899036bd905062d569c5eea5052c966bc2254f2fb0eacfd11b32e6962e73",
@@ -134,6 +144,11 @@
       "current_git_blob": "83ef0cd0171c916ddcd11e17c3746b374e6f361c",
       "current_sha256": "930c3d1c7f763e9e68f2077310e4b4d7db9088cb37a1d025e9c7619d73e4006f",
       "frozen_git_blob": "bfe426e42fb0010e9a3febbfccee973029336d56"
+    },
+    "scripts/ci/pq_authority_effect_register.py": {
+      "current_git_blob": "b1b1e54bfa4e444f6304f78d4869da8800cfab2a",
+      "current_sha256": "d23a409e56b8976b8ec3b40bd2eef6ce85b1685dae870b259ca33e73083b365d",
+      "frozen_git_blob": "d982a13f36afdd35c1b0cb00db769f8ad656bcd6"
     },
     "scripts/ci/pq_lifetime_composition.py": {
       "current_git_blob": "e1602ca4fcb96bf46083dc7869647a9ac2c5f14b",
@@ -154,6 +169,11 @@
       "current_git_blob": "e62ddc1279e165af0a5313dbd6474fd69a898ce4",
       "current_sha256": "6bba9289e6f12cc48979d926fca5e513b546057c47893be0240f4e71825e681e",
       "frozen_git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd"
+    },
+    "scripts/ci/test_pq_authority_effect_register.py": {
+      "current_git_blob": "875ff81d8890234049b841502b0c5a9f60ea73b2",
+      "current_sha256": "b91f3ad441cf178c6bfb4f64ae8d2e01bbd6ae2e102e7dc8b4f71fba3e7e53f3",
+      "frozen_git_blob": "153472d17cfbf978a418771f0796778072606c8a"
     },
     "scripts/ci/test_pq_proof_profile_binding.py": {
       "current_git_blob": "a4be4ba2e6770ad19935fcec02c4ef8b85bddb34",

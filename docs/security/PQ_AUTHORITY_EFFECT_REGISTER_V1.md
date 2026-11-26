@@ -2,6 +2,51 @@
 
 **HOLD. Curated source consistency only; incomplete authority coverage.**
 
+## Reviewed current observation binding, 2026-11-26
+
+The current 44-file byte review uses source commit
+`b14a7b18b54ca8cad439d632b4cd1e38d5fd0e7f`, tree
+`eb616e9146dd11fe72413980a3ac9d43ce0f93cd`. The retained
+`source_revision` value `5c04c60e463462d9df8884786e0d5bb32af08a64`
+is a historical review anchor; it does not claim that these current bytes
+already existed at that revision. Earlier dated sections below retain their
+original source and execution context.
+
+Forty-three registered source digests are unchanged. Only
+`trillionnium/crates/trnm-pon-node/src/ingress.rs` changes from 221,433 bytes /
+`b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f` to
+221,524 bytes /
+`27558e289630cd9692006a4f13f4bcbf4558ddf258414ebb08ede4096f3c82b1`.
+The complete old bytes were recovered at
+`59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88` and matched the old digest;
+this does not authenticate the historical anchor's Git object.
+
+The complete source delta is three lines that bind an explicitly enabled
+CPU observation sidecar after the original fixed Host parent's initial
+verification. The bind copies the existing immutable expected identity into
+the diagnostic reader. The original admission checks, signed bytes, account
+authority, CPU credit, absolute deadline, native arguments, checkpoint checks,
+final checks and persistent effects remain unchanged. Diagnostic overhead
+is not a runtime speedup or new execution qualification. The supporting
+observer modules were read for this delta and remain outside the curated
+44-path coverage claim.
+
+The new canonical revision-plus-file lock is
+`3f2f2c8e07f5bbb1db252e9611667da3aff7eccafb5ccd73d9407b90bddfeee3`.
+The manifest, reader constant and independent positive assertion select it.
+The existing changed-hash refusal test now also rejects the old ingress pin;
+all 18 test entrypoints and every previous refusal remain. Current-corpus
+replacement entries bind the revised manifest, reader, test and this note;
+the frozen corpus, its guards and all nine existing additions are unchanged.
+
+The original #1012 repository-truth head and prospective-merge failures
+remain failures: 18 test entrypoints reported 23 failures including subtests
+and three errors under the old lock. This source update supplies no new
+execution result. Seven routes, 44 paths, their effect scopes, `HOLD` and all
+false qualification fields remain unchanged. No historical native result,
+whole-chain security, complete call graph or production authority transfers
+through this correspondence update.
+
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
 `5c04c60e463462d9df8884786e0d5bb32af08a64`. The

@@ -26,8 +26,8 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 MAX_MAP_BYTES = 64 * 1024
 MAX_REPORT_BYTES = 64 * 1024
 EXPECTED_FROZEN_PIN_COUNT = 2613
-EXPECTED_MAP_SHA256 = "566ea22d4f92a035834ae15d6b7955e1396b4a60adea058de9e5c81d6bbea15b"
-EXPECTED_CURRENT_BLOBS_SHA256 = "29643e949ba36f62f0eeae4ac7e987c8b3ea61f604a5f3b0a4c0b8a277bb3b3e"
+EXPECTED_MAP_SHA256 = "6b474507caabe94a5f08543e273cdd43cb2052c90ec8db3aa932830061aaf53e"
+EXPECTED_CURRENT_BLOBS_SHA256 = "a17255da424849bb88945a3550065c60478a2b6a1c2187e190ad9b788b18830d"
 FROZEN_INPUTS_SHA256 = {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -40,6 +40,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     ".github/workflows/pon-pq-system-continuation.yml",
     "config/pon/hash-use-contract-v1.json",
     "config/pon/joint-consensus-qualification-v1.json",
+    "config/pon/pq-authority-effects-v1.json",
     "config/pon/pq-proof-profile-binding-v1.json",
     "config/pon/pq-root-dependency-register-v3.json",
     "config/pon/pq128-lifetime-composition-current-v3.json",
@@ -49,12 +50,15 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "config/pon/w1-stark-route-registry-v1.json",
     "config/pon/w1-upstream-security-v1.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
     "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
     "scripts/ci/hash_use_contract.py",
+    "scripts/ci/pq_authority_effect_register.py",
     "scripts/ci/pq_lifetime_composition.py",
     "scripts/ci/pq_lifetime_current_v2.py",
     "scripts/ci/pq_root_dependency_register.py",
     "scripts/ci/run_from_zero_native.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
     "scripts/ci/test_pq_proof_profile_binding.py",
     "scripts/ci/test_pq_root_dependency_register.py",
     "scripts/ci/test_run_from_zero_native.py",
