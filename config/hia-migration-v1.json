@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/incremental_delta_commitment",
+      "node_integration_complete": false,
+      "scope": "M13 original bounded pure ordered delta operation root and canonical digest from reviewed context identities and ordered records; no finality, root policy, SQL or production routing",
+      "source": "hia/src/state_import/incremental_delta_commitment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_incremental_delta_commitment.py",
+        "hia/tests/rust_state_import_incremental_delta_commitment_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/finalized_export_header_digest",
       "node_integration_complete": false,
       "scope": "M13 exact original length-coded finalized-export header SHA-256 commitment; no header admission, finality verification, durable owner or Node qualification",
@@ -2201,7 +2212,8 @@
         "state_import/export_ordered_root_join",
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
-        "state_import/durable_snapshot_shadow"
+        "state_import/durable_snapshot_shadow",
+        "state_import/incremental_delta_commitment"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

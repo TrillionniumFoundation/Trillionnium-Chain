@@ -25,7 +25,7 @@ def _run(command, *, timeout=30, **kwargs):
     return out
 
 
-def _build_original(directory):
+def _build_original(directory, adapter=ADAPTER):
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
     cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
     version = _run([rustc, "--version"]).stdout.decode().split()[1]
@@ -56,7 +56,7 @@ def _build_original(directory):
     deps = rust_artifact.parent / "deps"
     binary = directory / "snapshot-owner"
     _run([rustc, "--edition=2024", "-O", "--extern", f"trnm_state_import={rust_artifact}",
-          "-L", f"dependency={deps}", "-L", f"native={native_path}", str(ADAPTER), "-o", str(binary)],
+          "-L", f"dependency={deps}", "-L", f"native={native_path}", str(adapter), "-o", str(binary)],
          timeout=60)
     return binary, sqlite_dependency
 

@@ -237,3 +237,34 @@ and a populated locked Cargo cache:
 ```sh
 python3 -B -m unittest hia.tests.test_state_import_snapshot_shadow -v
 ```
+
+## Bounded incremental-delta commitment
+
+`incremental_delta_commitment.hepta` computes the original ordered
+`incremental_delta_root_v0` and `IncrementalStateDeltaV0::canonical_digest`
+together. Its first 272 input bytes are eight 32-byte digests (plan, target
+schema, source context identity, target context identity, base rows, base
+state root, target rows, target state root), then two big-endian u64 counts
+(base, target). The remainder contains zero to eight 280-byte operation slots
+in caller-supplied order:
+
+- A little-endian u64 descriptor: low byte `0` for absent value (delete) or
+  `1` for present value (insert or update); the upper bits are the value
+  byte count, which must be zero for delete.
+- Little-endian u64 namespace and key lengths, each 1–64.
+- Fixed slots of 64 bytes for the namespace, 64 for the key and 128 for the
+  value. Only each declared span is hashed; slot padding is ignored.
+
+The call requires 2,016 bytes of independent private scratch and 64 bytes
+of output, in which it publishes the delta root followed by the delta digest
+only on success. A malformed frame returns 100, insufficient capacity 102,
+and an internal hashing failure 103. Input is untouched; scratch is private
+and unspecified after use.
+
+This computes an ordered commitment, not `IncrementalStateDeltaV0`
+admission. It does not sort, validate namespace policy, verify context
+authority, recompute an application state root or open SQLite. Its original
+Rust oracle links the unchanged locked crate, computes context identities
+from actual `SourceCheckpointContextV0` values, and consumes its actual
+operation, Merkle and final canonical digest methods. Both stock native ELF
+backends independently match those observations.
