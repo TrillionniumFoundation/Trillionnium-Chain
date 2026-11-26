@@ -148,6 +148,17 @@
       ]
     },
     {
+      "id": "state_import/checkpoint_context",
+      "node_integration_complete": false,
+      "scope": "M13 exact original source checkpoint context commitment and local structural predicate; does not call a finality owner, mint a verified context, or authorize use.",
+      "source": "hia/src/state_import/checkpoint_context.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_checkpoint_context.py",
+        "hia/tests/rust_state_import_checkpoint_context_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/migration_plan",
       "node_integration_complete": false,
       "scope": "M13 original fixed MigrationPlanV0 canonical digest and deterministic admission against an already verified export projection. No finality, signing, durable owner or Node integration.",
@@ -2225,7 +2236,8 @@
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
         "state_import/incremental_delta_commitment",
-        "state_import/migration_plan"
+        "state_import/migration_plan",
+        "state_import/checkpoint_context"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

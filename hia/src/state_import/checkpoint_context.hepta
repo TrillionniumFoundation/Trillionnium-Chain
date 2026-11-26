@@ -1,0 +1,216 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_checkpoint_context
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  size:usize = buffer.len(raw)
+  pure_n:usize = const() {"value":240}
+  checked_n:usize = const() {"value":241}
+  pure:bool = compare.eq(size,pure_n)
+  checked:bool = compare.eq(size,checked_n)
+  valid:bool = bool.or(pure,checked)
+  branch valid capacity(raw,out,work,checked) malformed()
+block capacity(ar:readbuf,ao:mutbuf,aw:mutbuf,ag:bool)
+  out_n:usize = buffer.len(ao)
+  work_n:usize = buffer.len(aw)
+  out_min:usize = const() {"value":32}
+  work_min:usize = const() {"value":1572}
+  out_ok:bool = compare.ge(out_n,out_min)
+  work_ok:bool = compare.ge(work_n,work_min)
+  ready:bool = bool.and(out_ok,work_ok)
+  branch ready route(ar,ao,aw,ag) short()
+block route(rr:readbuf,ro:mutbuf,rw:mutbuf,rg:bool)
+  branch rg checked_tag(rr,ro,rw,rg) hash(rr,ro,rw,rg)
+block checked_tag(tr:readbuf,to:mutbuf,tw:mutbuf,tg:bool)
+  off:usize = const() {"value":240}
+  one:u8 = const() {"value":1}
+  mode:u8 = buffer.load(tr,off)
+  okay:bool = compare.eq(mode,one)
+  branch okay shape(tr,to,tw,tg) malformed()
+block shape(sr:readbuf,so:mutbuf,sw:mutbuf,sg:bool)
+  fields:bool = call(sr) {"function":"mcc_shape"}
+  branch fields hash(sr,so,sw,sg) invalid()
+block hash(hr:readbuf,ho:mutbuf,hw:mutbuf,hg:bool)
+  good:bool = call(hr,hw) {"function":"mcc_hash"}
+  branch good report(hr,ho,hw,hg) internal()
+block report(br:readbuf,bo:mutbuf,bw:mutbuf,bg:bool)
+  branch bg reject_zero(bo,bw) publish(bo,bw)
+block reject_zero(zo:mutbuf,zw:mutbuf)
+  p0:u64 = const() {"value":1168}
+  p1:u64 = const() {"value":1176}
+  p2:u64 = const() {"value":1184}
+  p3:u64 = const() {"value":1192}
+  x0:u64 = call(zw,p0) {"function":"tr_get"}
+  x1:u64 = call(zw,p1) {"function":"tr_get"}
+  x2:u64 = call(zw,p2) {"function":"tr_get"}
+  x3:u64 = call(zw,p3) {"function":"tr_get"}
+  xa:u64 = bit.or(x0,x1)
+  xb:u64 = bit.or(x2,x3)
+  xc:u64 = bit.or(xa,xb)
+  z:u64 = const() {"value":0}
+  nz:bool = compare.ne(xc,z)
+  branch nz publish(zo,zw) invalid()
+block publish(po:mutbuf,pw:mutbuf)
+  src:u64 = const() {"value":1168}
+  dst:u64 = const() {"value":0}
+  len:u64 = const() {"value":32}
+  copied:u64 = call(pw,src,po,dst,len) {"function":"cp_wout"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block invalid()
+  invalid_status:u32 = const() {"value":101}
+  ret(invalid_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+block internal()
+  internal_status:u32 = const() {"value":103}
+  ret(internal_status)
+end
+
+fn mcc_shape(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  ht:u64 = const() {"value":128}
+  h:u64 = call(raw,ht) {"function":"tr_read"}
+  zero:u64 = const() {"value":0}
+  nonzero_height:bool = compare.ne(h,zero)
+  p0:u64 = const() {"value":0}
+  nz0:bool = call(raw,p0) {"function":"mcc_nonzero"}
+  all0:bool = bool.and(nonzero_height,nz0)
+  p1:u64 = const() {"value":32}
+  nz1:bool = call(raw,p1) {"function":"mcc_nonzero"}
+  all1:bool = bool.and(all0,nz1)
+  p2:u64 = const() {"value":64}
+  nz2:bool = call(raw,p2) {"function":"mcc_nonzero"}
+  all2:bool = bool.and(all1,nz2)
+  p3:u64 = const() {"value":96}
+  nz3:bool = call(raw,p3) {"function":"mcc_nonzero"}
+  all3:bool = bool.and(all2,nz3)
+  p4:u64 = const() {"value":144}
+  nz4:bool = call(raw,p4) {"function":"mcc_nonzero"}
+  all4:bool = bool.and(all3,nz4)
+  p5:u64 = const() {"value":176}
+  nz5:bool = call(raw,p5) {"function":"mcc_nonzero"}
+  all5:bool = bool.and(all4,nz5)
+  p6:u64 = const() {"value":208}
+  nz6:bool = call(raw,p6) {"function":"mcc_nonzero"}
+  all6:bool = bool.and(all5,nz6)
+  ret(all6)
+end
+
+fn mcc_nonzero(raw:readbuf,at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64)
+  eight:u64 = const() {"value":8}
+  off1:u64 = int.add.wrap(at,eight)
+  off2:u64 = int.add.wrap(off1,eight)
+  off3:u64 = int.add.wrap(off2,eight)
+  w0:u64 = call(raw,at) {"function":"tr_read"}
+  w1:u64 = call(raw,off1) {"function":"tr_read"}
+  w2:u64 = call(raw,off2) {"function":"tr_read"}
+  w3:u64 = call(raw,off3) {"function":"tr_read"}
+  left:u64 = bit.or(w0,w1)
+  right:u64 = bit.or(w2,w3)
+  all:u64 = bit.or(left,right)
+  zero:u64 = const() {"value":0}
+  some:bool = compare.ne(all,zero)
+  ret(some)
+end
+
+fn mcc_hash(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  init:u64 = call(work) {"function":"tr_sha_init"}
+  d0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":3098476543630901248}
+  dput0:u64 = call(work,d0,v0) {"function":"tr_put"}
+  d8:u64 = const() {"value":1216}
+  v8:u64 = const() {"value":7451607104633074292}
+  dput8:u64 = call(work,d8,v8) {"function":"tr_put"}
+  d16:u64 = const() {"value":1224}
+  v16:u64 = const() {"value":8299692588080062834}
+  dput16:u64 = call(work,d16,v16) {"function":"tr_put"}
+  d24:u64 = const() {"value":1232}
+  v24:u64 = const() {"value":7521905716122252655}
+  dput24:u64 = call(work,d24,v24) {"function":"tr_put"}
+  d32:u64 = const() {"value":1240}
+  v32:u64 = const() {"value":8389759083186185061}
+  dput32:u64 = call(work,d32,v32) {"function":"tr_put"}
+  d40:u64 = const() {"value":1248}
+  v40:u64 = const() {"value":8392569456348324653}
+  dput40:u64 = call(work,d40,v40) {"function":"tr_put"}
+  d48:u64 = const() {"value":1256}
+  v48:u64 = const() {"value":3175982}
+  dput48:u64 = call(work,d48,v48) {"function":"tr_put"}
+  a0:u64 = const() {"value":0}
+  b0:u64 = const() {"value":1259}
+  w0:u64 = const() {"value":32}
+  n0:u64 = const() {"value":2305843009213693952}
+  z0:u64 = const() {"value":1267}
+  frame0:u64 = call(work,b0,n0) {"function":"tr_put"}
+  copy0:u64 = call(raw,a0,work,z0,w0) {"function":"cp_copy"}
+  a1:u64 = const() {"value":32}
+  b1:u64 = const() {"value":1299}
+  w1:u64 = const() {"value":32}
+  n1:u64 = const() {"value":2305843009213693952}
+  z1:u64 = const() {"value":1307}
+  frame1:u64 = call(work,b1,n1) {"function":"tr_put"}
+  copy1:u64 = call(raw,a1,work,z1,w1) {"function":"cp_copy"}
+  a2:u64 = const() {"value":64}
+  b2:u64 = const() {"value":1339}
+  w2:u64 = const() {"value":32}
+  n2:u64 = const() {"value":2305843009213693952}
+  z2:u64 = const() {"value":1347}
+  frame2:u64 = call(work,b2,n2) {"function":"tr_put"}
+  copy2:u64 = call(raw,a2,work,z2,w2) {"function":"cp_copy"}
+  a3:u64 = const() {"value":96}
+  b3:u64 = const() {"value":1379}
+  w3:u64 = const() {"value":32}
+  n3:u64 = const() {"value":2305843009213693952}
+  z3:u64 = const() {"value":1387}
+  frame3:u64 = call(work,b3,n3) {"function":"tr_put"}
+  copy3:u64 = call(raw,a3,work,z3,w3) {"function":"cp_copy"}
+  a4:u64 = const() {"value":128}
+  b4:u64 = const() {"value":1419}
+  w4:u64 = const() {"value":8}
+  n4:u64 = const() {"value":576460752303423488}
+  z4:u64 = const() {"value":1427}
+  frame4:u64 = call(work,b4,n4) {"function":"tr_put"}
+  copy4:u64 = call(raw,a4,work,z4,w4) {"function":"cp_copy"}
+  a5:u64 = const() {"value":136}
+  b5:u64 = const() {"value":1435}
+  w5:u64 = const() {"value":8}
+  n5:u64 = const() {"value":576460752303423488}
+  z5:u64 = const() {"value":1443}
+  frame5:u64 = call(work,b5,n5) {"function":"tr_put"}
+  copy5:u64 = call(raw,a5,work,z5,w5) {"function":"cp_copy"}
+  a6:u64 = const() {"value":144}
+  b6:u64 = const() {"value":1451}
+  w6:u64 = const() {"value":32}
+  n6:u64 = const() {"value":2305843009213693952}
+  z6:u64 = const() {"value":1459}
+  frame6:u64 = call(work,b6,n6) {"function":"tr_put"}
+  copy6:u64 = call(raw,a6,work,z6,w6) {"function":"cp_copy"}
+  a7:u64 = const() {"value":176}
+  b7:u64 = const() {"value":1491}
+  w7:u64 = const() {"value":32}
+  n7:u64 = const() {"value":2305843009213693952}
+  z7:u64 = const() {"value":1499}
+  frame7:u64 = call(work,b7,n7) {"function":"tr_put"}
+  copy7:u64 = call(raw,a7,work,z7,w7) {"function":"cp_copy"}
+  a8:u64 = const() {"value":208}
+  b8:u64 = const() {"value":1531}
+  w8:u64 = const() {"value":32}
+  n8:u64 = const() {"value":2305843009213693952}
+  z8:u64 = const() {"value":1539}
+  frame8:u64 = call(work,b8,n8) {"function":"tr_put"}
+  copy8:u64 = call(raw,a8,work,z8,w8) {"function":"cp_copy"}
+  begin:u64 = const() {"value":1208}
+  width:u64 = const() {"value":363}
+  feed:u64 = call(work,begin,width) {"function":"tr_sha_update_work"}
+  seal:u64 = call(work) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,feed)
+  all:u64 = bit.or(a,seal)
+  z:u64 = const() {"value":0}
+  good:bool = compare.eq(all,z)
+  ret(good)
+end

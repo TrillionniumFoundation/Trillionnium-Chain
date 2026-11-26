@@ -282,3 +282,16 @@ Only successful requests publish the 32-byte digest. Differential tests use
 the locked original Rust crate on both pinned x86-64 native backends.
 This is a pure predicate. It does not verify source finality, establish the
 authority of the supplied binding, or install a migration.
+
+### Source checkpoint context commitment and structural check
+
+`checkpoint_context.hepta` hashes the original nine length-framed
+`SourceCheckpointContextV0` fields. The 240-byte canonical lane hashes the
+full fixed layout; the 241-byte structural lane appends mode byte 1 and also
+requires the same seven nonzero identities, nonzero height, and nonzero
+result as the original. Epoch zero and equal digest fields are valid.
+The scratch capacity is 1,572 bytes, and successful output is exactly a
+32-byte raw context digest. The locked Rust comparison uses an owner
+callback that always refuses and counts its invocations, so no test path
+mints a verified context. This kernel verifies only byte structure, not
+finality, proof content, checkpoint ownership, or migration permission.
