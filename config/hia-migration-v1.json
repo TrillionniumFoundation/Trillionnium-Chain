@@ -3427,7 +3427,7 @@
       "id": "platform/service-settlement-held-settle-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Finite M12 four actual original command rows including Settle and two actual empty markers in one held SQLite snapshot. Native exact source/target interval roots, typed identity and final bytes. Not general marker replay, node integration, external order authority or production.",
+      "scope": "Finite M12 four actual original command rows including Settle and two through four actual empty markers in one held SQLite snapshot. Native exact source/target interval roots, typed identity and final bytes. Not general marker replay, node integration, external order authority or production.",
       "sources": [
         "hia/platform/service_settlement/held_settle_replay.hepta",
         "hia/platform/service_settlement/held_settle_interval_helpers.hepta"

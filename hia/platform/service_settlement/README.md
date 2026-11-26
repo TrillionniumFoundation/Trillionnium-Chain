@@ -439,3 +439,11 @@ The independent original harness generates the test keys and two commands
 from unchanged Rust methods. The actual original writer remains blocked
 at both replay calls. This finite mode is not generalized batching or
 production confirmation.
+
+The same Settle lane also accepts three or four original empty blocks
+before the last operation. The native reader takes the terminal index
+and actual Settle parent from the proved marker count, then checks every
+source/target interval. The extended original fixtures verify distinct
+canonical terminal states at heights 16 and 17. More than four leading
+empty blocks or extra empty blocks after the final command remain outside
+this finite profile.

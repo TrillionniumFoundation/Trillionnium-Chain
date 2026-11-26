@@ -66,13 +66,13 @@ block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
 block marker(ma_r:readbuf,ma_m:mutbuf,ma_w:mutbuf)
   ma_count_pos:u64 = const() {"value":88}
   ma_count:u64 = call(ma_m,ma_count_pos) {"function":"cp_get"}
-  ma_seven:u64 = const() {"value":7}
+  ma_nine:u64 = const() {"value":9}
   ma_at:u64 = const() {"value":349024}
   ma_cap:u64 = call(ma_m,ma_at) {"function":"cp_get"}
   ma_five:u64 = const() {"value":5}
   ma_two:u64 = const() {"value":2}
   ma_same:bool = compare.eq(ma_cap,ma_five)
-  ma_high:u64 = select(ma_same,ma_two,ma_seven)
+  ma_high:u64 = select(ma_same,ma_two,ma_nine)
   ma_room:bool = compare.lt(ma_count,ma_high)
   branch ma_room verified_marker(ma_r,ma_m,ma_w,ma_count) refused()
 block verified_marker(vm_r:readbuf,vm_m:mutbuf,vm_w:mutbuf,vm_count:u64)
@@ -332,7 +332,14 @@ block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_la
   pa_previous:usize = const() {"value":354000}
   pa_four:u64 = const() {"value":4}
   pa_final:bool = compare.eq(pa_row,pa_four)
-  pa_empty:usize = const() {"value":421488}
+  pa_marker_count_at:u64 = const() {"value":88}
+  pa_marker_count:u64 = call(pa_m,pa_marker_count_at) {"function":"cp_get"}
+  pa_count_delta:u64 = const() {"value":2}
+  pa_gap_index:u64 = int.sub.wrap(pa_marker_count,pa_count_delta)
+  pa_marker_base:u64 = call(pa_gap_index) {"function":"hfs_marker_offset"}
+  pa_field:u64 = const() {"value":8}
+  pa_coord:u64 = int.add.wrap(pa_marker_base,pa_field)
+  pa_empty:usize = int.cast(pa_coord) {"mode":"wrap"}
   pa_non_first:usize = select(pa_final,pa_empty,pa_previous)
   pa_parent:usize = select(pa_first,pa_cfg,pa_non_first)
   pa_exec:usize = const() {"value":140083}

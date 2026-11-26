@@ -204,3 +204,33 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                         self.assertEqual(original_read["transcript"][-1], [52, 7, 24])
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())
+
+            roots = set()
+            for empty_count, trailing in ((3, "0"), (4, "0"), (5, "0"), (2, "1")):
+                with self.subTest(actual_empty_before_settle=empty_count, trailing=trailing):
+                    store = owned / f"delayed settle {empty_count}+{trailing}?.db"
+                    binding = execute([original, "seed-receipts", store, files[0], trailing,
+                                       *files[1:4], *(["-"] * empty_count), files[4]]).stdout
+                    expected = execute([original, "verify-journal", store, files[0]]).stdout
+                    self.assertEqual(int.from_bytes(expected[:8], "little"), empty_count + 5 + int(trailing))
+                    _, terminal_root, canonical, *ops = frames(
+                        execute([original, "observe-settled-state-id", store, files[0]]).stdout)
+                    self.assertEqual((len(canonical), len(ops)), (4870, 12))
+                    self.assertEqual(int.from_bytes(ops[-3][123:131], "little"), 13 + empty_count)
+                    self.assertEqual(expected[90:122], terminal_root)
+                    before = store.read_bytes()
+                    guarded = invoke(store, binding, lane="settle", lock=empty_count == 4)
+                    if empty_count <= 4 and trailing == "0":
+                        self.assertEqual((guarded["status"], guarded["replay_calls"], guarded["released"]),
+                                         (0, 4, 0), guarded)
+                        self.assertEqual(guarded["replay_locks"], 4 if empty_count == 4 else 0)
+                        self.assertEqual(bytes.fromhex(guarded["projection"]), expected)
+                        self.assertEqual(guarded["transcript"], invoke(store, binding, lane="execution")["transcript"])
+                        self.assertNotIn(terminal_root, roots)
+                        roots.add(terminal_root)
+                    else:
+                        self.assertEqual((guarded["status"], guarded["projection"], guarded["replay_calls"]),
+                                         (100, None, 3 if trailing == "1" else 0), guarded)
+                        self.assertGreater(guarded["released"], 0)
+                    self.assertEqual(store.read_bytes(), before)
+                    self.assertFalse(store.with_name(store.name + "-journal").exists())

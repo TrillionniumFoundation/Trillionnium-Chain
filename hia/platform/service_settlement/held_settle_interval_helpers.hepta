@@ -13,13 +13,17 @@ block entry(r:readbuf,m:mutbuf,seq:u64)
   marker_count_at:u64 = const() {"value":88}
   actual:u64 = call(m,marker_count_at) {"function":"cp_get"}
   seven:u64 = const() {"value":7}
-  all:bool = compare.eq(actual,seven)
-  branch all route(r,m,seq) bad()
-block route(rr:readbuf,rm:mutbuf,rseq:u64)
+  nine:u64 = const() {"value":9}
+  room:bool = compare.le(actual,nine)
+  complete:bool = compare.ge(actual,seven)
+  all:bool = bool.and(room,complete)
+  branch all route(r,m,seq,actual) bad()
+block route(rr:readbuf,rm:mutbuf,rseq:u64,rlen:u64)
   four:u64 = const() {"value":4}
-  six:u64 = const() {"value":6}
+  one:u64 = const() {"value":1}
+  final_index:u64 = int.sub.wrap(rlen,one)
   last:bool = compare.eq(rseq,four)
-  idx:u64 = select(last,six,rseq)
+  idx:u64 = select(last,final_index,rseq)
   base:u64 = call(idx) {"function":"hfs_marker_offset"}
   eight:u64 = const() {"value":8}
   state_field:u64 = const() {"value":136}
@@ -128,16 +132,23 @@ end
 
 fn hfs_compare_markers(m:mutbuf,start:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,start:u64)
-  jump one(m,start)
-block one(om:mutbuf,oi:u64)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  lo:u64 = const() {"value":7}
+  hi:u64 = const() {"value":9}
+  fit_lo:bool = compare.ge(count,lo)
+  fit_hi:bool = compare.le(count,hi)
+  fit:bool = bool.and(fit_lo,fit_hi)
+  branch fit one(m,start,count) bad()
+block one(om:mutbuf,oi:u64,oc:u64)
   zero:u64 = const() {"value":0}
   unit:u64 = const() {"value":1}
   three:u64 = const() {"value":3}
   four:u64 = const() {"value":4}
-  six:u64 = const() {"value":6}
+  terminal:u64 = int.sub.wrap(oc,unit)
   is_genesis:bool = compare.eq(oi,zero)
   max_normal:bool = compare.le(oi,three)
-  last_marker:bool = compare.eq(oi,six)
+  last_marker:bool = compare.eq(oi,terminal)
   prev:u64 = int.sub.wrap(oi,unit)
   start_min:u64 = select(is_genesis,zero,prev)
   source:u64 = select(max_normal,start_min,three)
@@ -145,13 +156,12 @@ block one(om:mutbuf,oi:u64)
   target:u64 = select(max_normal,oi,target_other)
   base:u64 = call(oi) {"function":"hfs_marker_offset"}
   sure:bool = call(om,base,oi,source,target) {"function":"hfs_check_marker"}
-  branch sure cycle(om,oi) bad()
-block cycle(cm:mutbuf,ci:u64)
-  limit:u64 = const() {"value":7}
+  branch sure cycle(om,oi,oc) bad()
+block cycle(cm:mutbuf,ci:u64,limit:u64)
   c1:u64 = const() {"value":1}
   next:u64 = int.add.wrap(ci,c1)
   more:bool = compare.lt(next,limit)
-  branch more one(cm,next) good()
+  branch more one(cm,next,limit) good()
 block good()
   yes:bool = const() {"value":true}
   ret(yes)
