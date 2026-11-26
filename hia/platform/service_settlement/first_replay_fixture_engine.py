@@ -1,5 +1,5 @@
-"""Sealed public Engine for the one-row read-only SQLite fixture, not a Store owner."""
-from contextlib import ExitStack
+"""Sealed public Engine used only by the finite read-only SQLite replay fixtures."""
+from dataclasses import dataclass
 import json
 from pathlib import Path
 import struct
@@ -23,53 +23,89 @@ class _Calls:
             self.applies += 1
 
 
-def apply_first_fixture(build, digest, request):
-    if len(request) != 1913:
-        raise ValueError("Wrong bounded replay input")
-    build = Path(build)
-    meta = json.loads((build / "build.json").read_bytes())
-    if meta["artifact"]["sha256"] != digest:
-        raise ValueError("Unexpected Settlement Engine identity")
-    trust, execution, command = request[:882], request[882:1045], request[1045:]
-    if command[0] != 0:
-        raise ValueError("First replay witness only admits an AdmitReceipt")
-    height, = struct.unpack_from("<Q", execution, 123)
-    seen = _Calls()
-    with sealed_library(build / "settlement-engine.so", digest) as sealed:
-        engine = PublicEngine(build, seen, observed_image=(sealed._name, meta["artifact"]))
-        with ExitStack() as stack:
-            def owned(*args, **kwargs):
-                token = engine.owned(*args, **kwargs)
-                stack.callback(engine.drop, token)
-                return token
+@dataclass
+class FixtureReplay:
+    engine: PublicEngine
+    calls: _Calls
+    parent: int | None = None
+    trust: bytes | None = None
 
-            parent = owned("engine_new", body=trust)
-            if engine.kind(parent) != 1 or engine.scalar("engine_history_count", parent) != 0:
-                return 0, b""
-            if engine.view("engine_trust", parent) != trust:
-                return 0, b""
-            proven = owned("engine_validate_execution", parent, body=execution)
-            if (engine.kind(proven), engine.view("bytes_view", proven)) != (4, b""):
-                return 0, b""
-            identity = owned("operation_id", body=command)
-            if engine.kind(identity) != 2:
-                return 0, b""
-            operation_id = engine.view("bytes_view", identity)
-            successor = owned("engine_apply", parent, body=command, height=height)
-            if engine.kind(successor) != 1:
-                return seen.applies, b""
-            count = engine.scalar("engine_history_count", successor)
-            if engine.scalar("engine_history_count", parent) != 0:
-                return seen.applies, b""
-            root = engine.view("engine_state_root", successor)
-            copied = owned("engine_state_copy", successor)
-            if engine.kind(copied) != 3:
-                return seen.applies, b""
-            state = engine.view("bytes_view", copied)
-            if (len(operation_id), len(root), len(state)) != (32, 32, 1196):
-                return seen.applies, b""
-            if state != engine.view("engine_state", successor):
-                return seen.applies, b""
-        if engine.live or seen.applies != 1:
-            raise ValueError("Native witness did not reap all private Engine owners")
-        return seen.applies, struct.pack("<Q", count) + operation_id + root + state
+    @classmethod
+    def open(cls, stack, build, digest):
+        build = Path(build)
+        meta = json.loads((build / "build.json").read_bytes())
+        if meta["artifact"]["sha256"] != digest:
+            raise ValueError("Unexpected Settlement Engine identity")
+        calls = _Calls()
+        image = stack.enter_context(sealed_library(build / "settlement-engine.so", digest))
+        engine = PublicEngine(build, calls, observed_image=(image._name, meta["artifact"]))
+        session = cls(engine, calls)
+        stack.callback(session.close)
+        return session
+
+    def close(self):
+        for pointer in tuple(self.engine.live):
+            self.engine.drop(pointer)
+
+    def apply(self, request):
+        if len(request) not in (1921, 1953):
+            raise ValueError("Wrong bounded replay input")
+        before = self.calls.applies
+        seq, = struct.unpack_from("<Q", request)
+        if seq not in (1, 2) or seq != before + 1 or len(request) != 1921 + 32 * (seq - 1):
+            raise ValueError("Noncontiguous sealed Engine request")
+        trust, execution, command = request[8:890], request[890:1053], request[1053:]
+        if command[0] != 0:
+            raise ValueError("Receipt replay only admits AdmitReceipt")
+        height, = struct.unpack_from("<Q", execution, 123)
+        if self.parent is None:
+            if seq != 1:
+                raise ValueError("Missing private immutable predecessor")
+            self.parent = self.engine.owned("engine_new", body=trust)
+            self.trust = trust
+        if (self.trust != trust or self.engine.kind(self.parent) != 1
+                or self.engine.scalar("engine_history_count", self.parent) != seq - 1
+                or self.engine.view("engine_trust", self.parent) != trust):
+            return b""
+
+        validated = self.engine.owned("engine_validate_execution", self.parent, body=execution)
+        try:
+            if (self.engine.kind(validated), self.engine.view("bytes_view", validated)) != (4, b""):
+                return b""
+        finally:
+            self.engine.drop(validated)
+        identity = self.engine.owned("operation_id", body=command)
+        try:
+            if self.engine.kind(identity) != 2:
+                return b""
+            operation_id = self.engine.view("bytes_view", identity)
+        finally:
+            self.engine.drop(identity)
+        successor = self.engine.owned("engine_apply", self.parent, body=command, height=height)
+        try:
+            if self.engine.kind(successor) != 1:
+                return b""
+            count = self.engine.scalar("engine_history_count", successor)
+            if self.engine.scalar("engine_history_count", self.parent) != seq - 1:
+                return b""
+            root = self.engine.view("engine_state_root", successor)
+            copied = self.engine.owned("engine_state_copy", successor)
+            try:
+                if self.engine.kind(copied) != 3:
+                    return b""
+                state = self.engine.view("bytes_view", copied)
+                if (len(operation_id), len(root), len(state)) != (32, 32, (1196, 2145)[seq - 1]):
+                    return b""
+                if state != self.engine.view("engine_state", successor):
+                    return b""
+            finally:
+                self.engine.drop(copied)
+            if self.calls.applies != seq:
+                return b""
+            reply = struct.pack("<Q", count) + operation_id + root + state
+            self.engine.drop(self.parent)
+            self.parent, successor = successor, None
+            return reply
+        finally:
+            if successor is not None:
+                self.engine.drop(successor)

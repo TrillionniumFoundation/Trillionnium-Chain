@@ -3381,6 +3381,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-receipt-pair",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 ordered actual consecutive pair of original AdmitReceipt transitions with one sealed HIA Engine inside the same held SQLite snapshot and actual intermediate/final commitments. No gaps, later kinds, production Store, or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_pair_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_first_replay.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-first-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -26,6 +26,7 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     "uri": ROOT / "hia/src/service_settlement/read_only_store_uri.hepta",
                     "execution": OWNER / "execution_journal_read.hepta",
                     "replay": OWNER / "held_first_replay.hepta",
+                    "pair": OWNER / "held_pair_replay.hepta",
                 }.items()
             }
             original, source = original_adapter(root, marker=True)
@@ -42,22 +43,25 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
             self.assertEqual(json.loads((public / "build.json").read_bytes())["artifact"], report["artifact"])
             owned = root / "owned"
             owned.mkdir(mode=0o700)
-            files = [root / f"retained-{i}" for i in range(3)]
-            for file, data in zip(files, list(retained_commands())[:3], strict=True):
+            files = [root / f"retained-{i}" for i in range(4)]
+            for file, data in zip(files, list(retained_commands())[:4], strict=True):
                 file.write_bytes(data)
             uri = modules["uri"]
 
-            def invoke(store, binder, *, lane="replay", lock=False, control=None):
+            def invoke(store, binder, *, lane="replay", lock=False, control=None, step=None):
                 module = modules[lane]
                 req = {"reader": [str(module.library), module.artifact_sha256],
                        "uri": [str(uri.library), uri.artifact_sha256],
                        "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                        "directory": str(owned), "database": str(store),
                        "writer": str(original) if lock else None, "journal_binding": binder.hex()}
-                if lane == "replay":
+                if lane in ("replay", "pair"):
                     req["first_replay_engine"] = [str(public), report["artifact"]["sha256"]]
+                    req["receipt_replay_limit"] = 1 if lane == "replay" else 2
                 if control:
                     req["first_replay_fixture_control"] = control
+                if step is not None:
+                    req["first_replay_fixture_control_step"] = step
                 result = execute([sys.executable, "-I", "-S", "-B", OWNER / "schema_fixture_host.py"],
                                  input=json.dumps(req).encode(), timeout=60)
                 self.assertEqual(result.stderr, b"")
@@ -90,5 +94,36 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                             self.assertEqual(refused["transcript"][-1][:2], [54, 8])
                             self.assertGreater(refused["released"], 0)
                             self.assertFalse(any(op == 3 for _, op, _ in refused["transcript"]))
+                    self.assertEqual(store.read_bytes(), before)
+                    self.assertFalse(store.with_name(store.name + "-journal").exists())
+
+
+            for label, commands, empty_tail in (
+                ("one", files[1:2], "0"), ("two", files[1:3], "0"),
+                ("two-with-empty-tail", files[1:3], "1"), ("rollup", files[1:], "0"),
+            ):
+                with self.subTest(pair_fixture=label):
+                    store = owned / f"actual pair {label}?.db"
+                    binding = execute([original, "seed-receipts", store, files[0], empty_tail, *commands]).stdout
+                    before = store.read_bytes()
+                    result = invoke(store, binding, lane="pair", lock=label == "two")
+                    if label == "two":
+                        expected = execute([original, "verify-journal", store, files[0]]).stdout
+                        control = invoke(store, binding, lane="execution")
+                        self.assertEqual((result["status"], result["replay_calls"], result["replay_locks"],
+                                          result["released"]), (0, 2, 2, 0))
+                        self.assertEqual(bytes.fromhex(result["projection"]), expected)
+                        self.assertEqual(result["transcript"], control["transcript"])
+                        self.assertEqual(result["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        for ordinal, control in ((1, "root"), (2, "state"), (2, "count")):
+                            refused = invoke(store, binding, lane="pair", control=control, step=ordinal)
+                            self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                             (100, None, ordinal))
+                            self.assertGreater(refused["released"], 0)
+                            self.assertEqual(refused["transcript"][-1][:2], [54, 8])
+                    else:
+                        self.assertEqual((result["status"], result["projection"], result["replay_calls"]),
+                                         (100, None, 1 if empty_tail == "1" else 0))
+                        self.assertGreater(result["released"], 0)
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())

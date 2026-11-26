@@ -351,3 +351,22 @@ original one-operation store, result disturbances in any of the four
 native observations give no projection and release the held provider.
 This does not yet replay subsequent operations, historical interval roots,
 or supply production Store or order authority.
+
+The opt-in `held_pair_replay.hepta` lane applies two original consecutive
+AdmitReceipt commands with one sealed Engine and immutable successors
+inside the same read transaction. Both lanes share one HIA continuation.
+It binds the first row's parent coordinates to trusted genesis and each
+subsequent row to the previous checked receipt. The two-row lane checks
+the first successor root against the actual first receipt before fetching
+the second row, then compares the second successor root and complete state
+against checked durable metadata and both history counts and operation
+IDs against their rows. It also requires the final receipt's order
+coordinates to equal terminal metadata. The fixture host reuses one Engine
+owner chain and releases all private handles on success and refusal.
+
+An original competing writer is blocked at both replay calls. An actual
+one-row store, an actual later rollup, and a two-row store with a trailing
+empty block are outside this finite lane. Intermediate root, terminal
+state and history-result controls refuse without publishing. No general
+handling of empty committed blocks, signatures beyond the original/Engine
+checks, later operation kinds, or production admission is claimed.
