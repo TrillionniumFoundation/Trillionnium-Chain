@@ -1,5 +1,147 @@
 {
   "includes": {
+    "platform/service_settlement/execution_journal_read.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "ssr_begin",
+          "ssr_exact_text",
+          "ssr_issue",
+          "ssr_prepared",
+          "ssr_read",
+          "ssr_schema",
+          "ssr_status",
+          "ssr_table_value",
+          "ssr_tables",
+          "ssr_triggers"
+        ],
+        "source": "platform/service_settlement/schema_read.hepta"
+      },
+      {
+        "functions": [
+          "smr_append",
+          "smr_eq_bound",
+          "smr_field",
+          "smr_held",
+          "smr_reader",
+          "smr_start"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
+      },
+      {
+        "functions": [
+          "smk_anchor",
+          "smk_begin_hash",
+          "smk_eq",
+          "smk_held",
+          "smk_init",
+          "smk_links",
+          "smk_reader",
+          "smk_segment",
+          "smk_start"
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
+          "stj_count",
+          "stj_held",
+          "stj_link",
+          "stj_reader"
+        ],
+        "source": "platform/service_settlement/terminal_join.hepta"
+      },
+      {
+        "functions": [
+          "strd_shape"
+        ],
+        "source": "platform/service_settlement/transition_receipt_decode.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      },
+      {
+        "functions": [
+          "srci_bytes",
+          "srci_canon_len",
+          "srci_context",
+          "srci_optional_id",
+          "srci_receipt",
+          "srci_signature",
+          "srci_take",
+          "srci_u32",
+          "srci_usage",
+          "srci_usages"
+        ],
+        "source": "platform/service_settlement/receipt_command_id.hepta"
+      },
+      {
+        "functions": [
+          "srli_command",
+          "srli_receipt_ids",
+          "srli_receipts"
+        ],
+        "source": "platform/service_settlement/rollup_command_id.hepta"
+      },
+      {
+        "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
+      },
+      {
+        "functions": [
+          "sjr_command_id",
+          "sjr_execution_context",
+          "sjr_prefix",
+          "sjr_reader",
+          "sjr_receipt",
+          "sjr_row_checksum",
+          "sjr_row_work_part",
+          "sjr_start",
+          "sjr_start_checked_rows",
+          "sjr_start_commands",
+          "sjr_start_strict"
+        ],
+        "source": "platform/service_settlement/journal_read.hepta"
+      }
+    ],
     "platform/service_settlement/execution_context.hepta": [
       {
         "functions": [
@@ -17,6 +159,12 @@
       },
       {
         "functions": [
+          "smk_eq"
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
           "srci_bytes",
           "srci_canon_len",
           "srci_context",
@@ -24,12 +172,6 @@
           "srci_u32"
         ],
         "source": "platform/service_settlement/receipt_command_id.hepta"
-      },
-      {
-        "functions": [
-          "smk_eq"
-        ],
-        "source": "platform/service_settlement/marker_read.hepta"
       }
     ],
     "platform/service_settlement/checksum_journal_read.hepta": [
@@ -153,7 +295,14 @@
       },
       {
         "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
+      },
+      {
+        "functions": [
           "sjr_command_id",
+          "sjr_execution_context",
           "sjr_prefix",
           "sjr_reader",
           "sjr_receipt",
@@ -288,7 +437,14 @@
       },
       {
         "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
+      },
+      {
+        "functions": [
           "sjr_command_id",
+          "sjr_execution_context",
           "sjr_prefix",
           "sjr_reader",
           "sjr_receipt",
@@ -538,7 +694,14 @@
       },
       {
         "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
+      },
+      {
+        "functions": [
           "sjr_command_id",
+          "sjr_execution_context",
           "sjr_prefix",
           "sjr_reader",
           "sjr_receipt",
@@ -678,6 +841,12 @@
           "srli_receipts"
         ],
         "source": "platform/service_settlement/rollup_command_id.hepta"
+      },
+      {
+        "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
       }
     ],
     "platform/service_settlement/terminal_join.hepta": [

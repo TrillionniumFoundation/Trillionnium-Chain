@@ -304,6 +304,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             verify_schema(&db)?;
             io::stdout().write_all(&operation_journal_root_through(&db, u64::MAX)?.0)?;
         }
+        "fixture-execution-context-drift" => {
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            verify_schema(&db)?;
+            let (seq, id, execution, command, receipt): (u64, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) =
+                db.query_row("SELECT sequence,operation_id,execution,command,receipt FROM operations WHERE sequence=4", [],
+                             |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)))?;
+            let id = ConsumptionOperationIdV1(id.try_into().expect("exact original physical ID"));
+            let mut frame: ConsumptionCommittedExecutionContextV1 = strict_decode(&execution)?;
+            validate_execution_static(&config.trust_bundle, &frame)?;
+            let mode = args[4].to_str().ok_or("fixture mutation label")?;
+            match mode {
+                "schema" => frame.schema_version = 2,
+                "old-height" => frame.expected_order_height = frame.order_height.checked_add(1).ok_or("height bound")?,
+                "coordinate" => {
+                    assert!(frame.order_height > frame.expected_order_height);
+                    frame.order_block_id.0[0] ^= 1;
+                    validate_execution_static(&config.trust_bundle, &frame)?;
+                }
+                "context" => frame.context.genesis_hash.0[0] ^= 1,
+                "trailing" => (),
+                _ => panic!("unrecognized disposable execution mutation"),
+            }
+            let mut changed = canonical_bytes(&frame)?;
+            if mode == "trailing" {
+                changed.push(0);
+            }
+            let sum = operation_checksum(seq, id, &changed, &command, &receipt);
+            let original = operation_checksum(seq, id, &execution, &command, &receipt);
+            assert_ne!(sum, original);
+            assert_eq!(db.execute("UPDATE operations SET execution=?1,checksum=?2 WHERE sequence=?3",
+                                  params![changed, sum.0.to_vec(), seq])?, 1);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&sum.0)?;
+        }
         "inspect-operation-checksums" | "fixture-row-checksum-drift" => {
             let drift = operation == "fixture-row-checksum-drift";
             let db = if drift {

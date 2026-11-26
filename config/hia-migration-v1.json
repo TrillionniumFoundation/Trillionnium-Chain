@@ -3329,6 +3329,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-execution-journal",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held original committed-execution and receipt coordinates, against already bound actual SQLite config, command/receipt identities, per-row checksum and journal root. No Order authority, replay or production owner.",
+      "sources": [
+        "hia/platform/service_settlement/execution_journal_read.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_execution_journal_read.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/platform/service_settlement/schema_fixture_host.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-execution-context",
       "node_integration_complete": false,
       "retirement_accepted": false,

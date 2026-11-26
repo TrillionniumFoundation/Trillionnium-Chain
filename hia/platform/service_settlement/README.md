@@ -256,3 +256,13 @@ the private 4,096-byte string ceiling. Differential fixtures include actual
 retained Rust Store commits and separate structural boundary controls.
 This is a local invariant check, not externally granted Order authority,
 state replay, or original production Store ownership.
+
+The opt-in M12 `execution_journal_read.hepta` checks the same actual execution
+bytes already bound by the raw row checksum. It reads the trusted context
+from the exact configuration bytes previously matched to the held metadata,
+uses the same strict context and local order rules, and compares the actual
+execution's current height and block ID with the strict receipt. The prior
+checksum-only and other held readers keep their previous behavior. Successful
+publication still follows the verified close and uses the same 219-byte
+diagnostic. This does not establish Order proof authority, replay commands,
+or independently derive Settlement state.

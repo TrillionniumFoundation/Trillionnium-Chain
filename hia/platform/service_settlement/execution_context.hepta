@@ -42,42 +42,15 @@ block both(ao:mutbuf,aw:mutbuf,an:u64,astart:u64,at:u64)
   execution:u64 = call(aw,context_start,context_end) {"function":"srci_context"}
   execution_exact:bool = compare.eq(execution,context_end)
   all_shapes:bool = bool.and(trusted_exact,execution_exact)
-  branch all_shapes policy(ao,aw,an,astart,at,context_start,context_end) malformed()
-block policy(po:mutbuf,pw:mutbuf,pn:u64,ps:u64,pt:u64,pcs:u64,pce:u64)
-  pwire:u64 = call(pw,ps) {"function":"cp_get"}
-  pmask:u64 = const() {"value":65535}
-  pschema:u64 = bit.and(pwire,pmask)
-  pone:u64 = const() {"value":1}
-  pschema_ok:bool = compare.eq(pschema,pone)
-  plen:u64 = int.sub.wrap(pce,pcs)
-  plen_ok:bool = compare.eq(plen,pt)
-  pfit:bool = bool.and(pschema_ok,plen_ok)
-  branch pfit context_eq(po,pw,pn,ps,pt,pcs,pce) context()
-block context_eq(co:mutbuf,cw:mutbuf,cn:u64,cs:u64,ct:u64,ccs:u64,cce:u64)
-  c4:usize = const() {"value":4}
-  cpos:usize = int.cast(ccs) {"mode":"wrap"}
-  cfit:bool = call(cw,c4,cpos,ct) {"function":"smk_eq"}
-  branch cfit height(co,cw,cn,cs,cce) context()
-block height(ho:mutbuf,hw:mutbuf,hn:u64,hs:u64,ht:u64)
-  h40:u64 = const() {"value":40}
-  hcur_pos:u64 = int.add.wrap(ht,h40)
-  hprev:u64 = call(hw,ht) {"function":"cp_get"}
-  hcur:u64 = call(hw,hcur_pos) {"function":"cp_get"}
-  hhigh:bool = compare.gt(hcur,hprev)
-  branch hhigh output(ho,hw,hn,hs) same_height(ho,hw,hn,hs,ht,hprev,hcur)
-block same_height(eho:mutbuf,ehw:mutbuf,ehn:u64,ehs:u64,eht:u64,ehp:u64,ehc:u64)
-  ehsame:bool = compare.eq(ehc,ehp)
-  branch ehsame block_eq(eho,ehw,ehn,ehs,eht) stale()
-block block_eq(qo:mutbuf,qw:mutbuf,qn:u64,qs:u64,qt:u64)
-  q8:u64 = const() {"value":8}
-  q48:u64 = const() {"value":48}
-  q32:u64 = const() {"value":32}
-  qpa:u64 = int.add.wrap(qt,q8)
-  qca:u64 = int.add.wrap(qt,q48)
-  qprev:usize = int.cast(qpa) {"mode":"wrap"}
-  qcur:usize = int.cast(qca) {"mode":"wrap"}
-  qmatch:bool = call(qw,qprev,qcur,q32) {"function":"smk_eq"}
-  branch qmatch output(qo,qw,qn,qs) stale()
+  branch all_shapes validated(ao,aw,an,astart,at,context_end) malformed()
+block validated(vo:mutbuf,vw:mutbuf,vn:u64,vs:u64,vt:u64,ve:u64)
+  trust_start:u64 = const() {"value":4}
+  v_policy_status:u32 = call(vw,trust_start,vt,vs,ve) {"function":"sex_policy"}
+  v_policy_ok:u32 = const() {"value":0}
+  accepted:bool = compare.eq(v_policy_status,v_policy_ok)
+  branch accepted output(vo,vw,vn,vs) relay(v_policy_status)
+block relay(code:u32)
+  ret(code)
 block output(oo:mutbuf,ow:mutbuf,on:u64,os:u64)
   width:u64 = int.sub.wrap(on,os)
   have_us:usize = buffer.len(oo)
@@ -92,13 +65,57 @@ block emit(no:mutbuf,nw:mutbuf,ns:u64,nn:u64)
 block malformed()
   m:u32 = const() {"value":100}
   ret(m)
-block context()
-  i:u32 = const() {"value":101}
-  ret(i)
 block capacity()
   c:u32 = const() {"value":102}
   ret(c)
+end
+
+
+fn sex_policy(mem:mutbuf,trusted:u64,width:u64,execution:u64,tail:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,trusted:u64,width:u64,execution:u64,tail:u64)
+  encoded:u64 = call(mem,execution) {"function":"cp_get"}
+  low:u64 = const() {"value":65535}
+  version:u64 = bit.and(encoded,low)
+  v1:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  start:u64 = int.add.wrap(execution,two)
+  length:u64 = int.sub.wrap(tail,start)
+  equal_width:bool = compare.eq(length,width)
+  equal_schema:bool = compare.eq(version,v1)
+  admissible:bool = bool.and(equal_width,equal_schema)
+  branch admissible context(mem,trusted,width,start,tail) wrong()
+block context(cm:mutbuf,ct:u64,cn:u64,cs:u64,cz:u64)
+  ca:usize = int.cast(ct) {"mode":"wrap"}
+  cb:usize = int.cast(cs) {"mode":"wrap"}
+  ce:bool = call(cm,ca,cb,cn) {"function":"smk_eq"}
+  branch ce height(cm,cz) wrong()
+block height(hm:mutbuf,ht:u64)
+  h40:u64 = const() {"value":40}
+  hp:u64 = int.add.wrap(ht,h40)
+  hprev:u64 = call(hm,ht) {"function":"cp_get"}
+  hcur:u64 = call(hm,hp) {"function":"cp_get"}
+  hmore:bool = compare.gt(hcur,hprev)
+  branch hmore okay() tie(hm,ht,hprev,hcur)
+block tie(tm:mutbuf,tt:u64,tp:u64,tc:u64)
+  teq:bool = compare.eq(tp,tc)
+  branch teq blocks(tm,tt) stale()
+block blocks(bm:mutbuf,bt:u64)
+  b8:u64 = const() {"value":8}
+  b48:u64 = const() {"value":48}
+  b32:u64 = const() {"value":32}
+  bpa:u64 = int.add.wrap(bt,b8)
+  bca:u64 = int.add.wrap(bt,b48)
+  bp:usize = int.cast(bpa) {"mode":"wrap"}
+  bc:usize = int.cast(bca) {"mode":"wrap"}
+  beq:bool = call(bm,bp,bc,b32) {"function":"smk_eq"}
+  branch beq okay() stale()
+block okay()
+  good:u32 = const() {"value":0}
+  ret(good)
+block wrong()
+  mismatch:u32 = const() {"value":101}
+  ret(mismatch)
 block stale()
-  s:u32 = const() {"value":103}
-  ret(s)
+  old:u32 = const() {"value":103}
+  ret(old)
 end

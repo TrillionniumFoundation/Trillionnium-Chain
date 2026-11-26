@@ -50,8 +50,8 @@ block prepare_variant(prepare_variant_m:mutbuf,prepare_variant_strict:u64)
   branch prepare_variant_latest prepare_commands(prepare_variant_m) prepare_checksum_mode(prepare_variant_m,prepare_variant_strict)
 block prepare_checksum_mode(pcm:mutbuf,pcs:u64)
   pcm3:u64 = const() {"value":3}
-  pcmy:bool = compare.eq(pcs,pcm3)
-  branch pcmy prepare_checked_rows(pcm,pcm3) prepare_previous(pcm,pcs)
+  pcmy:bool = compare.ge(pcs,pcm3)
+  branch pcmy prepare_checked_rows(pcm,pcs) prepare_previous(pcm,pcs)
 block prepare_checked_rows(prm:mutbuf,prf:u64)
   pra:u64 = const() {"value":160}
   prx:u64 = call(prm,pra,prf) {"function":"cp_put"}
@@ -365,7 +365,7 @@ block command_raw_mode(crr:readbuf,crm:mutbuf,crw:mutbuf,crn:u64)
   cra:u64 = const() {"value":160}
   crv:u64 = call(crm,cra) {"function":"cp_get"}
   cr3:u64 = const() {"value":3}
-  cry:bool = compare.eq(crv,cr3)
+  cry:bool = compare.ge(crv,cr3)
   branch cry copy_command_bytes(crr,crm,crw,crn) derive_command(crr,crm,crw,crn)
 block copy_command_bytes(ccr:readbuf,ccm:mutbuf,ccw:mutbuf,ccn:u64)
   ccs:u64 = const() {"value":24}
@@ -398,7 +398,7 @@ block restore_journal(restore_journal_m:mutbuf,restore_journal_w:mutbuf,restore_
   rjma:u64 = const() {"value":160}
   rjmv:u64 = call(restore_journal_m,rjma) {"function":"cp_get"}
   rjm3:u64 = const() {"value":3}
-  rjmy:bool = compare.eq(rjmv,rjm3)
+  rjmy:bool = compare.ge(rjmv,rjm3)
   branch rjmy execution_length_column(restore_journal_m) raw_receipt_column(restore_journal_m)
 block execution_length_column(execution_length_columnm:mutbuf)
   execution_length_columna:u64 = const() {"value":40}
@@ -534,7 +534,7 @@ block row_checksum_mode(rmr:readbuf,rmm:mutbuf,rmw:mutbuf,rmn:u64)
   rma:u64 = const() {"value":160}
   rmv:u64 = call(rmm,rma) {"function":"cp_get"}
   rm3:u64 = const() {"value":3}
-  rmy:bool = compare.eq(rmv,rm3)
+  rmy:bool = compare.ge(rmv,rm3)
   branch rmy row_checksum(rmr,rmm,rmw,rmn) hash_row(rmr,rmm,rmw,rmn)
 block row_checksum(rcr:readbuf,rcm:mutbuf,rcw:mutbuf,rcn:u64)
   rcz:u64 = const() {"value":0}
@@ -548,7 +548,14 @@ block row_checksum_restore(rrr:readbuf,rrm:mutbuf,rrw:mutbuf,rrn:u64)
   rrb:u64 = const() {"value":69632}
   rrs:u64 = const() {"value":1208}
   rrx:u64 = call(rrw,rrb,rrz,rrs) {"function":"cp_wcopy"}
-  jump hash_row(rrr,rrm,rrw,rrn)
+  exec_mode_a:u64 = const() {"value":160}
+  exec_mode:u64 = call(rrm,exec_mode_a) {"function":"cp_get"}
+  exec_four:u64 = const() {"value":4}
+  exec_verify:bool = compare.eq(exec_mode,exec_four)
+  branch exec_verify execution_check(rrr,rrm,rrw,rrn) hash_row(rrr,rrm,rrw,rrn)
+block execution_check(exr:readbuf,exm:mutbuf,exw:mutbuf,exn:u64)
+  execution_matches:bool = call(exr,exm,exw) {"function":"sjr_execution_context"}
+  branch execution_matches hash_row(exr,exm,exw,exn) bad()
 block hash_row(hash_row_r:readbuf,hash_row_m:mutbuf,hash_row_w:mutbuf,hash_row_len:u64)
   hash_row_hash:bool = call(hash_row_r,hash_row_w,hash_row_len) {"function":"sjr_receipt"}
   branch hash_row_hash advance(hash_row_m) bad()
@@ -1146,4 +1153,63 @@ block entry(cr:readbuf,cm:mutbuf,cw:mutbuf,cn:u64)
   cequal:bool = call(cm,ctmp,cknown,c32) {"function":"smk_eq"}
   cpass:bool = bool.and(cgood,cequal)
   ret(cpass)
+end
+
+
+fn sjr_execution_context(rr:readbuf,mem:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(rr:readbuf,mem:mutbuf,w:mutbuf)
+  config_base:u64 = const() {"value":8192}
+  config_width_at:u64 = const() {"value":104}
+  config_width:u64 = call(mem,config_width_at) {"function":"cp_get"}
+  config_min:u64 = const() {"value":106}
+  config_max:u64 = const() {"value":65536}
+  config_le:bool = compare.le(config_width,config_max)
+  config_ge:bool = compare.ge(config_width,config_min)
+  config_ok:bool = bool.and(config_le,config_ge)
+  branch config_ok trust(rr,mem,w,config_base,config_width) bad()
+block trust(tr:readbuf,tm:mutbuf,tw:mutbuf,tb:u64,tn:u64)
+  t34:u64 = const() {"value":34}
+  tstart:u64 = int.add.wrap(tb,t34)
+  tend:u64 = int.add.wrap(tb,tn)
+  tce:u64 = call(tm,tstart,tend) {"function":"srci_context"}
+  tgood:bool = compare.le(tce,tend)
+  branch tgood check_width(tr,tm,tw,tstart,tce) bad()
+block check_width(wr:readbuf,wm:mutbuf,ww:mutbuf,ws:u64,we:u64)
+  wlen:u64 = int.sub.wrap(we,ws)
+  wa:u64 = const() {"value":248}
+  wn:u64 = call(wm,wa) {"function":"cp_get"}
+  wmin:u64 = const() {"value":154}
+  wmax:u64 = const() {"value":4250}
+  wge:bool = compare.ge(wn,wmin)
+  wle:bool = compare.le(wn,wmax)
+  wfit:bool = bool.and(wge,wle)
+  branch wfit parse(wr,wm,ww,ws,wlen,wn) bad()
+block parse(pr:readbuf,pm:mutbuf,pw:mutbuf,ps:u64,pt:u64,pn:u64)
+  p_exec:u64 = const() {"value":140000}
+  p_context:u64 = const() {"value":140002}
+  p_tail:u64 = const() {"value":80}
+  p_end:u64 = int.add.wrap(p_exec,pn)
+  p_expect:u64 = int.sub.wrap(p_end,p_tail)
+  p_seen:u64 = call(pw,p_context,p_expect) {"function":"srci_context"}
+  p_fit:bool = compare.eq(p_seen,p_expect)
+  branch p_fit policy(pr,pm,pw,ps,pt,p_exec,p_expect) bad()
+block policy(vr:readbuf,vm:mutbuf,vw:mutbuf,vs:u64,vt:u64,vx:u64,ve:u64)
+  v_target:u64 = const() {"value":210000}
+  v_src:usize = int.cast(vs) {"mode":"wrap"}
+  v_dst:usize = const() {"value":210000}
+  v_copy:u64 = call(vm,vw,v_src,v_dst,vt) {"function":"sscid_copy"}
+  v_status:u32 = call(vw,v_target,vt,vx,ve) {"function":"sex_policy"}
+  v_zero:u32 = const() {"value":0}
+  v_ok:bool = compare.eq(v_status,v_zero)
+  branch v_ok coords(vr,vw,ve) bad()
+block coords(kr:readbuf,kw:mutbuf,kt:u64)
+  k40:u64 = const() {"value":40}
+  kfield:u64 = int.add.wrap(kt,k40)
+  kexec:usize = int.cast(kfield) {"mode":"wrap"}
+  kreceipt:usize = const() {"value":100}
+  kfit:bool = call(kr,kw,kreceipt,kexec,k40) {"function":"smr_eq_bound"}
+  ret(kfit)
+block bad()
+  failed:bool = const() {"value":false}
+  ret(failed)
 end
