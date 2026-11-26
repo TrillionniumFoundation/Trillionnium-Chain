@@ -125,3 +125,24 @@ generation, a pending open, or actual handles can prevent release.
 Tests run original V1/V2 ledger methods to reach both full conditions
 and the final successful cleanup event. Event serialization failure,
 real SHM mappings, and production ownership remain outside this mode.
+
+## Retention of a measured event
+
+`record_evidence.hepta` models the original recorder after the caller
+has measured one actual compact JSON event. The 80-byte input includes
+class (1 ordinary, 2 cleanup), measured byte count, both vector counts,
+next sequence, retained byte total, completeness, denial count and first
+error. The 72-byte output carries both counts, sequence, total,
+completeness, denials, first error and whether the event was retained.
+Reason 1 represents recorder pressure and reason 2 represents some
+earlier original failure.
+
+Exactly 512 bytes fit. The ordinary and cleanup vectors have independent
+1,024 and 256 record limits. Pressure is SQLite FULL and does not consume
+sequence or retained bytes; it marks incomplete evidence, increments
+denials and preserves the first failure. An event in the other class can
+still be retained without clearing the incomplete flag. Tests use the
+unchanged Rust recorder and real compact JSON byte lengths, including
+escaping and non-ASCII content. Native serialization, live vectors,
+underlying operation mutations, and unreachable sequence overflow remain
+outside this finite comparison.
