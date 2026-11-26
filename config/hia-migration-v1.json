@@ -3169,6 +3169,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-journal-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held read-only original ordered receipt-journal root, joined to checked metadata and marker tail from one SQLite rollback snapshot. No receipt semantic identity, Borsh state-root recomputation, operation replay, production owner or authority.",
+      "sources": [
+        "hia/platform/service_settlement/journal_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_journal_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-terminal-join",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -1,5 +1,37 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_terminal_join
-fn f0(entry_r:readbuf,entry_m:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+
+fn f0(input:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,work:mutbuf)
+  close:bool = const() {"value":false}
+  status:u32 = call(input,mem,work,close) {"function":"stj_held"}
+  ret(status)
+end
+
+fn stj_held(r:readbuf,m:mutbuf,w:mutbuf,hold:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,w:mutbuf,hold:bool)
+  length:usize = buffer.len(m)
+  required:usize = const() {"value":1048576}
+  width:bool = compare.eq(length,required)
+  check:bool = bool.and(width,hold)
+  branch check inspect(r,m,w) relay(r,m,w)
+block inspect(in_r:readbuf,in_m:mutbuf,in_w:mutbuf)
+  zero:u64 = const() {"value":0}
+  phase:u64 = call(in_m,zero) {"function":"cp_get"}
+  finalize:u64 = const() {"value":44}
+  reached:bool = compare.eq(phase,finalize)
+  n:usize = buffer.len(in_r)
+  okay:bool = call(in_r,n,zero) {"function":"ssr_status"}
+  ready:bool = bool.and(reached,okay)
+  branch ready held() relay(in_r,in_m,in_w)
+block held()
+  intermediate:u32 = const() {"value":197}
+  ret(intermediate)
+block relay(raw:readbuf,mem:mutbuf,work:mutbuf)
+  normal:u32 = call(raw,mem,work) {"function":"stj_reader"}
+  ret(normal)
+end
+
+fn stj_reader(entry_r:readbuf,entry_m:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(entry_r:readbuf,entry_m:mutbuf,entry_w:mutbuf)
   entry_mlen:usize = buffer.len(entry_m)
   entry_wlen:usize = buffer.len(entry_w)

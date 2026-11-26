@@ -141,3 +141,26 @@ empty committed blocks. Checksum-valid components can each be read alone,
 yet the joined check will reject disagreement with the marker or with the
 actual operation count. The previous standalone readers continue to close
 after their own observations.
+
+### Ordered receipt journal root in the held terminal snapshot
+
+`journal_read.hepta` continues the checked terminal snapshot without
+reopening SQLite. It binds the original signed SQLite upper sequence bound
+and streams the exact original `length(receipt), receipt` query in sequence
+order. Native SHA-256 consumes the original little-endian u32 domain framing,
+Borsh vector count, and each receipt's little-endian u32 length and raw bytes.
+It checks actual typed lengths, exact row count and original aggregate byte
+bound. The fixture envelope additionally caps receipts at 256 rows and each
+response at 1 MiB including provider framing, without changing production
+limits. Oversized receipt length refuses before asking the provider for
+the BLOB.
+
+The recomputed journal root must equal both the checked metadata root field
+and marker tail target operation root. The diagnostic appends the result
+to the earlier terminal observation only after final statement and physical
+connection close. Raw receipts are not published. This is not semantic
+receipt verification, state-root recomputation, operation execution replay,
+or authority. On a disposable genuine original Store, substituting a raw
+receipt while preserving row count and its exact original row checksum
+still changes the actual ordered original root; the previous terminal join
+alone passes, while this read refuses before publication.

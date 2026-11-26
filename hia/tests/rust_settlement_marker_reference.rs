@@ -4,13 +4,13 @@
 use rusqlite::{Connection, ErrorCode, OpenFlags, params};
 use std::{env, fs, ffi::OsString, io::{self, Read, Write}, path::{Path, PathBuf}, time::Duration};
 use trnm_service_settlement::{
-    ConsumptionCommittedExecutionContextV1, ConsumptionSettlementCommandV1,
+    ConsumptionCommittedExecutionContextV1, ConsumptionOperationIdV1, ConsumptionSettlementCommandV1,
     ConsumptionSettlementFreshGenesisTrustBundleV1, ConsumptionSettlementStoreConfigV1,
     ConsumptionSettlementStoreV1, Hash32V1,
 };
 mod error { include!(env!("TRNM_SETTLEMENT_SCHEMA_ERROR")); }
 mod codec { include!(env!("TRNM_SETTLEMENT_OPERATION_CODEC")); }
-use codec::{canonical_bytes, checksum, strict_decode};
+use codec::{canonical_bytes, checksum, digest_value, strict_decode};
 use error::{ConsumptionSettlementErrorCodeV1, ConsumptionSettlementResultV1, error};
 include!(env!("TRNM_SETTLEMENT_SCHEMA_SOURCE"));
 include!(env!("TRNM_SETTLEMENT_MARKERS_SELECTED"));
@@ -77,7 +77,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             io::stdout().write_all(&binding)?;
         }
-        "verify" | "verify-join" => {
+        "verify" | "verify-join" | "verify-journal" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let head = owner.fresh_readback()?;
             let db = open_read_snapshot(&path)?;
@@ -88,7 +88,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let mut diagnostic = Vec::new();
             diagnostic.extend(count.to_le_bytes());
             diagnostic.extend(tail.checksum.0);
-            if operation == "verify-join" {
+            if operation != "verify" {
                 let sum: Vec<u8> = db.query_row(
                     "SELECT checksum FROM metadata WHERE singleton=1", [], |row| row.get(0),
                 )?;
@@ -102,8 +102,47 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 diagnostic.extend([0]); // Original public readback rejects a fenced store.
                 diagnostic.extend(sum);
             }
+            if operation == "verify-journal" {
+                let bound = head.durable_journal_root();
+                let raw = operation_journal_root_through(&db, u64::MAX)?;
+                assert_eq!(raw, bound);
+                diagnostic.extend(raw.0);
+            }
             drop(db);
             io::stdout().write_all(&diagnostic)?;
+        }
+        "inspect-journal-root" => {
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            io::stdout().write_all(&operation_journal_root_through(&db, u64::MAX)?.0)?;
+        }
+        "fixture-same-count-receipt-drift" => {
+            // Disposable fixture: reuse another genuine receipt and update
+            // the exact original row checksum. The original Borsh/replay
+            // identity and the committed journal root still must reject it.
+            let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            let first: Vec<u8> = db.query_row(
+                "SELECT receipt FROM operations WHERE sequence=1", [], |row| row.get(0),
+            )?;
+            let (id, execution, command, second) = db.query_row(
+                "SELECT operation_id,execution,command,receipt FROM operations WHERE sequence=2",
+                [], |row| Ok((row.get::<_,Vec<u8>>(0)?,row.get::<_,Vec<u8>>(1)?,
+                              row.get::<_,Vec<u8>>(2)?,row.get::<_,Vec<u8>>(3)?)),
+            )?;
+            assert_ne!(first, second);
+            let identity = ConsumptionOperationIdV1(id.try_into().expect("exact fixture ID"));
+            let sum = operation_checksum(2, identity, &execution, &command, &first);
+            assert_eq!(db.execute(
+                "UPDATE operations SET receipt=?1, checksum=?2 WHERE sequence=2",
+                params![first, sum.0.to_vec()],
+            )?, 1);
+            let (stored, checksum): (Vec<u8>,Vec<u8>) = db.query_row(
+                "SELECT receipt,checksum FROM operations WHERE sequence=2", [],
+                |row| Ok((row.get(0)?,row.get(1)?)),
+            )?;
+            assert_eq!(checksum, operation_checksum(2, identity, &execution, &command, &stored).0);
+            let count: u64 = db.query_row("SELECT count(*) FROM operations", [], |row| row.get(0))?;
+            assert_eq!(count, 2);
         }
         "fixture-metadata-height-drift" => {
             let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;

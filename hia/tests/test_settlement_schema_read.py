@@ -99,18 +99,20 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False):
         adapter = "rust_settlement_operation_reference.rs"
     if marker:
         parts = []
-        for name in (b"JOURNAL_SCHEMA_VERSION_V1", b"MAX_OPERATION_ROWS_V1", b"MAX_COMMITTED_BLOCK_ROWS_V1"):
+        for name in (b"JOURNAL_SCHEMA_VERSION_V1", b"MAX_OPERATION_ROWS_V1", b"MAX_COMMITTED_BLOCK_ROWS_V1",
+                     b"MAX_OPERATION_FIELD_BYTES_V1", b"MAX_OPERATION_JOURNAL_BYTES_V1"):
             [part] = re.findall(rb"(?m)^const " + name + rb": [^\n]*;\n", source)
             parts.append(part)
         [record] = re.findall(rb"(?ms)^struct CommittedBlockMarkerV1 \{.*?^\}\n", source)
         parts.append(record)
         for name in (b"load_committed_block_markers", b"load_committed_block_markers_with_limit",
                      b"committed_block_marker_checksum", b"config_bytes", b"from_sqlite", b"array32",
-                     b"metadata_checksum"):
+                     b"metadata_checksum", b"operation_journal_root_through", b"checked_operation_field_len_v1",
+                     b"account_operation_bytes_v1", b"to_sqlite", b"operation_checksum"):
             [part] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
             parts.append(part)
         marker_src = b"\n".join(parts)
-        if hashlib.sha256(marker_src).hexdigest() != "c359d94116a79d99b75702abc2e5402cc9aa108a11423708e718c963f732badf":
+        if hashlib.sha256(marker_src).hexdigest() != "a481ceb50fd0a575621dd3b11226c558ec65467b52b701432c35cbafcadaa780":
             raise ValueError("Exact retained M12 committed-block marker source differs")
         (out / "markers.rs").write_bytes(marker_src)
         adapter = "rust_settlement_marker_reference.rs"
