@@ -93,7 +93,7 @@ def run(message, reader, provider):
             status = step(argument, len(raw), state, EXTENT, hash_work, EXTENT)
             phase, op, length, published = struct.unpack_from("<QQQQ", state)
             if status != 198:
-                if handoff and status == 0 and phase == 18 and published == 423:
+                if handoff and status == 0 and phase == 18 and published in (423, 799):
                     result = ctypes.string_at(ctypes.addressof(state) + 4096, published).hex()
                 elif not handoff and status == 0 and phase == 18 and 489 <= published <= EXTENT - 4096:
                     result = ctypes.string_at(ctypes.addressof(state) + 4096, published).decode("ascii")
@@ -102,7 +102,11 @@ def run(message, reader, provider):
                 break
             if published or op not in ops or not 8 <= length <= 1544:
                 raise ValueError("Native request escaped the private mechanical ABI")
-            advance_mode = "project" if handoff else "advance"
+            advance_mode = "advance"
+            if handoff:
+                advance_mode = message.get("handoff_advance", "project")
+                if advance_mode not in ("project", "install-installed", "cas-installed"):
+                    raise ValueError("Expected a retained fixed disposable handoff fixture")
             advance_cut = (7, 8) if handoff else (11, 5)
             if message["advance"] and (phase, op) == advance_cut:
                 if advanced:

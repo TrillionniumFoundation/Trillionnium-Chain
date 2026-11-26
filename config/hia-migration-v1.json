@@ -2472,7 +2472,7 @@
       "id": "state_import/sqlite-handoff-read-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "M13 original SQLite handoff VerifiedSource and ProjectedDelta no-option record readback from owned disposable databases: one native held read transaction, exact revision and checked canonical record commitment; no authority, install, VFS or production claims",
+      "scope": "M13 original SQLite handoff VerifiedSource, ProjectedDelta, DurableInstall and ReadbackCas readback from owned disposable databases: held native reads, exact bounded option profiles, checked canonical receipt and record linkage; no authority, native installation, VFS or production claims",
       "sources": [
         "hia/platform/state_import_sqlite/handoff_read.hepta"
       ],

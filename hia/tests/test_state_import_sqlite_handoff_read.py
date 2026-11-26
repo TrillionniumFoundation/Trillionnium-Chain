@@ -67,24 +67,25 @@ class StateImportSqliteHandoffRead(unittest.TestCase):
             owned = directory / "owned"
             owned.mkdir(mode=0o700)
 
-            def initialize(name):
+            def initialize(name, *, installed_profile=False):
                 db = owned / (name + ".db")
-                _run([original, "init", db])
+                _run([original, "init-installed" if installed_profile else "init", db])
                 return db
 
             def read_original(db):
                 observation = _run([original, "read", db]).stdout
                 data = actual_raw(db)
-                self.assertEqual((observation, len(data)), (data[:40], 423))
+                self.assertEqual(observation, data[:40])
+                self.assertIn(len(data), (423, 799))
                 self.assertEqual(data[8:40], data[-32:])
                 return data
 
-            def invoke(db, *, advance=False):
+            def invoke(db, *, advance=False, mode="project"):
                 msg = {
                     "reader": [str(native.library), native.artifact_sha256],
                     "provider": [str(provider), provider_digest],
                     "directory": str(owned), "database": str(db), "handoff": True,
-                    "advance": str(original) if advance else None,
+                    "advance": str(original) if advance else None, "handoff_advance": mode,
                 }
                 child = subprocess.run(
                     [sys.executable, "-I", "-S", "-B", str(OWNER / "qualification_host.py")],
@@ -131,4 +132,54 @@ class StateImportSqliteHandoffRead(unittest.TestCase):
                     denied = invoke(bad)
                     self.assertEqual((denied["status"], denied["result"], denied["released"]), (100, None, 2))  # reset reclaimed the statement and connection
                     self.assertNotIn([18, 3, 24], denied["transcript"])
+
+            installed_db = initialize("installed", installed_profile=True)
+            _run([original, "project-installed", installed_db])
+            projected = read_original(installed_db)
+            held_projection = invoke(installed_db, advance=True, mode="install-installed")
+            self.assertEqual((held_projection["status"], held_projection["result"],
+                              held_projection["advanced"], held_projection["released"]),
+                             (0, projected.hex(), True, 0))
+            installed = read_original(installed_db)
+            self.assertEqual((installed[:8], installed[46], len(installed)), (struct.pack(">Q", 2), 3, 799))
+            installed_cold = invoke(installed_db)
+            self.assertEqual((installed_cold["status"], installed_cold["result"]), (0, installed.hex()))
+            held_installed = invoke(installed_db, advance=True, mode="cas-installed")
+            self.assertEqual((held_installed["status"], held_installed["result"],
+                              held_installed["advanced"], held_installed["released"]),
+                             (0, installed.hex(), True, 0))
+            cas = read_original(installed_db)
+            self.assertEqual((cas[:8], cas[46], len(cas)), (struct.pack(">Q", 3), 4, 799))
+            self.assertEqual(cas[40+343:40+727], installed[40+343:40+727])
+            self.assertNotEqual(cas[8:40], installed[8:40])
+            new_cold = invoke(installed_db)
+            self.assertEqual((new_cold["status"], new_cold["result"], new_cold["released"]),
+                             (0, cas.hex(), 0))
+
+            def recommit(db, data, offset, byte):
+                body = bytearray(data[40:-32])
+                body[offset] = byte
+                domain = b"trnm.migration.handoff-record.v0"
+                checksum = hashlib.sha256(struct.pack(">Q", len(domain)) + domain
+                                          + struct.pack(">Q", len(body)) + body).digest()
+                alter(db, "UPDATE migration_handoff_record_v0 SET record_digest=?, record=?",
+                      checksum, body + checksum)
+                self.assertEqual(actual_raw(db)[8:40], checksum)
+
+            wrong_profile = initialize("installed-tag-missing-options")
+            recommit(wrong_profile, old, 6, 3)
+            original_denied = subprocess.run([original, "read", wrong_profile], capture_output=True, timeout=15)
+            self.assertNotEqual(original_denied.returncode, 0)
+            denial = invoke(wrong_profile)
+            self.assertEqual((denial["status"], denial["result"]), (100, None))
+
+            # A recanonicalized corruption can still satisfy Rust's generic cold
+            # codec; the native bounded installed profile additionally enforces
+            # the original transition's cross-field install predicate.
+            recommit(installed_db, cas, 449, cas[40+449] ^ 1)
+            self.assertEqual(_run([original, "read", installed_db]).stdout, actual_raw(installed_db)[:40])
+            denied_cas = invoke(installed_db)
+            self.assertEqual((denied_cas["status"], denied_cas["result"], denied_cas["released"]),
+                             (100, None, 2))
+            self.assertNotIn([18, 3, 24], denied_cas["transcript"])
         self.assertEqual(hashlib.sha256(source.read_bytes()).digest(), source_before)
