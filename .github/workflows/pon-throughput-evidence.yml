@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - .github/workflows/pon-throughput-evidence.yml
+      - scripts/ci/cpq1_current_gate.py
+      - scripts/ci/test_cpq1_current_gate.py
+      - scripts/ci/pq_corpus_current_v2.py
+      - config/pon/pq-corpus-current-source-v2.json
       - formal/throughput-v1/**
       - formal/pon-native-fullpath-v1/**
       - scripts/run_smollm_cell_replica_research.py
@@ -63,7 +67,7 @@ jobs:
       - name: Verify unchanged source guards and original resource controls
         run: |
           set -euo pipefail
-          python3 scripts/ci/check_pq_research_integration.py
+          python3 -B scripts/ci/cpq1_current_gate.py
           python3 scripts/refresh_distributed_source_inventory.py --check
           python3 scripts/ci/check_ci_contract.py
           python3 scripts/ci/check_repository.py

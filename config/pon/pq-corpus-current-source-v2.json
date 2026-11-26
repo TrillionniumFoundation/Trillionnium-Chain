@@ -1,5 +1,17 @@
 {
   "additions": {
+    ".github/workflows/pon-throughput-evidence.yml": {
+      "current_git_blob": "91fe3f694376dca8161615a96d98d99d74894b31",
+      "current_sha256": "a3dfdaac60a0687b1eb4529df957ddd85f37791bfc766a0f60647308d88bbff4"
+    },
+    "scripts/ci/cpq1_current_gate.py": {
+      "current_git_blob": "0a0f0bb036aa329613cc1761a97ec6ff4801ee43",
+      "current_sha256": "e65f5ed81577e311c1525f567aa38553a8597a11862a77082ff91b9fb4a05d75"
+    },
+    "scripts/ci/test_cpq1_current_gate.py": {
+      "current_git_blob": "55084d04af18f3a70496ddc34bb8ef225686e21b",
+      "current_sha256": "cc1919286ec56532089024f0ac95017fffcb79e4540b4bc8105dd7adcabd9b3c"
+    },
     "scripts/test_pon_history_kernel_cpu_observation.py": {
       "current_git_blob": "70735d906bc77d609f07d5772f6fc0e814b58cd2",
       "current_sha256": "2b294b24a61d1412ac24c5c3e650d28961378ae1fbe4c6793a2c9949d4c48bf7"
@@ -25,7 +37,7 @@
       "current_sha256": "dfff162c0ef6346ef0be260accb76f9f5487b8968d064f29cfe8371b0e326c3c"
     }
   },
-  "current_git_blob_map_sha256": "e1a647e0b5aa643ea50f4cf1ad871443994e278973cbf53a843118c635d23a12",
+  "current_git_blob_map_sha256": "bd84b3290e99fd791af46f9cac45e097d52eac0d4621ac177937c4ffe4113a2e",
   "frozen_inputs_sha256": {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -47,6 +59,16 @@
       "current_git_blob": "d482f4d0087f02f33e733833d100da52c8624a84",
       "current_sha256": "a2fac8c327d2730e1db3f59834f65a66fd0ddacdd78da1e7bd8bf2aa7f9e2866",
       "frozen_git_blob": "6c4bf041a0aa20182caba8ce00490be4a845e3f3"
+    },
+    ".github/workflows/cpq1-full-content.yml": {
+      "current_git_blob": "b43d8861a4fd38e9f0ed0f78bcfebd8e2bf0a715",
+      "current_sha256": "9ed66362ce3576b568ebfff7df8a6a8e81c2bba4af7b41742ce228c68950fc1b",
+      "frozen_git_blob": "d942705a245ed392e1dcb186bd2c1899f04b9d4f"
+    },
+    ".github/workflows/pon-pq-system-continuation.yml": {
+      "current_git_blob": "44b7631f543a9f90c29ef55fa369995acabc608a",
+      "current_sha256": "f9febd55fc8416ace730988f54ee711a1ca9f99b680601ac67f7ba9362db0934",
+      "frozen_git_blob": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e"
     },
     "config/pon/hash-use-contract-v1.json": {
       "current_git_blob": "7d8d392afbb52ea36e5e6f4f5a0ed0243935bee0",
@@ -134,8 +156,8 @@
       "frozen_git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd"
     },
     "scripts/ci/test_pq_proof_profile_binding.py": {
-      "current_git_blob": "75c728ab4d2f77096cd5112fdb176802ec0af9c2",
-      "current_sha256": "0eb46503ee7c8856963c68e816bc4abc9c4faa4de9b1a26b9d021998999c8863",
+      "current_git_blob": "a4be4ba2e6770ad19935fcec02c4ef8b85bddb34",
+      "current_sha256": "5b511de0fb524ed0bbecbdb6d66cbfa55f6cfe90fea34cbef921a8c8df70955c",
       "frozen_git_blob": "b94e9f0427980d2e401a24f7fb9c6adb4c9f22d8"
     },
     "scripts/ci/test_pq_root_dependency_register.py": {

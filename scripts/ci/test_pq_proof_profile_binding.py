@@ -160,7 +160,7 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
         result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
-                                 'fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3')
+                                 'd2ad5721d68b59eda720e7cef7647d34eb25d6ec74cecb69f0314426bc8ed012')
         for row in self.mapping['audit_helpers']:
             self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
         self.assertEqual(result['selected_input_observation_count'], len(self.paths))
@@ -378,7 +378,8 @@ class ProofProfileBindingTests(unittest.TestCase):
                        '2b107d47346897e951fe690b154ec6e927ce22de5b422fc52379df48fdd15cb4',
                        '9e5766a7eb14cb972531e12aa0be6d21a1e545400d89add72656b63c0f6407ad',
                        'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c',
-                       '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69'):
+                       '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69',
+                       'fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3'):
             with self.subTest(digest=digest), self.assertRaisesRegex(
                     binding.ProfileError, 'candidate proof profile descriptor mismatch'):
                 binding.inspect(ROOT, expected_profile_descriptor_sha256=digest)

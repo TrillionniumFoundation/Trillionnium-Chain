@@ -25,6 +25,10 @@ on:
       - scripts/ci/test_cpq1_parameter_observation.py
       - scripts/ci/check_sqlite_build_requalification.py
       - .github/workflows/pon-pq-system-continuation.yml
+      - scripts/ci/cpq1_current_gate.py
+      - scripts/ci/test_cpq1_current_gate.py
+      - scripts/ci/pq_corpus_current_v2.py
+      - config/pon/pq-corpus-current-source-v2.json
 permissions:
   contents: read
 jobs:
@@ -418,7 +422,7 @@ jobs:
           for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
             bash "$PQ_OUT/run-command.sh" "${test_file%.py}" python3 -m unittest discover -s scripts/ci -p "$test_file" -v
           done
-          bash "$PQ_OUT/run-command.sh" pq-source python3 scripts/ci/check_pq_research_integration.py
+          bash "$PQ_OUT/run-command.sh" pq-source python3 -B scripts/ci/cpq1_current_gate.py
           bash "$PQ_OUT/run-command.sh" pq-hold python3 scripts/ci/pq_chain_claim_guard.py
           bash "$PQ_OUT/run-command.sh" repository python3 scripts/ci/check_repository.py
           bash "$PQ_OUT/run-command.sh" inventory python3 scripts/refresh_distributed_source_inventory.py --check
