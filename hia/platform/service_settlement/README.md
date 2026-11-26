@@ -380,3 +380,19 @@ and must match the original 3,185-byte typed state exactly. The rollup
 receipt's absent settlement ID is checked separately from the state.
 The fixture proves the original SQLite read lock across all three
 callbacks; it does not support later settlement or empty-block intervals.
+
+`settlement_state_id.hepta` fully checks the finite Borsh state before
+locating the typed settlement option. It skips the receipts vector and
+the independently checked rollup option. A 33-byte diagnostic contains
+tag 0 followed by zeros or tag 1 followed by the nested SettlementState
+ID; it is not read from the caller's receipt. Scratch must fit the state,
+and refusal leaves the output untouched.
+
+The standalone Rust differential observes genesis, post-rollup and
+post-settlement states and compares the exact ID with the genuine
+181-byte committed receipt. The sealed native Engine also applies all
+four actual journal commands at original heights 10, 11, 12 and 15 and
+reproduces the full 4,870-byte final state, root and identity. The Engine
+runs after the original record export. This does not prove that the
+intervening empty committed markers are preserved inside one native
+SQLite snapshot and does not confer production authority.

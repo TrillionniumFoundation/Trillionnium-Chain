@@ -295,6 +295,64 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 stdout.write_all(piece)?;
             }
         }
+        "observe-settled-state-id" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let observation = owner.fresh_readback()?;
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let state: Vec<u8> = db.query_row("SELECT state FROM metadata WHERE singleton=1", [], |r| r.get(0))?;
+            let typed: ConsumptionSettlementKernelStateV1 = strict_decode(&state)?;
+            let root = state_root(&typed)?;
+            assert_eq!(observation.durable_state_root(), root);
+            let setting = typed.settlement.as_ref().map(|value| value.settlement_id);
+            assert_eq!(typed.escrow.last_settlement_id, setting);
+            assert_eq!(typed.result.settlement_id, setting);
+            assert_eq!(typed.rollup.as_ref().and_then(|row| row.consumed_by_settlement_id), setting);
+            let mut proof = [0u8; 33];
+            if let Some(id) = setting {
+                proof[0] = 1;
+                proof[1..].copy_from_slice(&id.0);
+            }
+            let mut framed = Vec::new();
+            let mut frame = |piece: &[u8]| -> Result<(), Box<dyn std::error::Error>> {
+                framed.extend(u32::try_from(piece.len())?.to_le_bytes());
+                framed.extend(piece);
+                Ok(())
+            };
+            frame(&proof)?;
+            frame(&root.0)?;
+            frame(&state)?;
+            let mut statement = db.prepare("SELECT sequence,operation_id,execution,command,receipt,checksum FROM operations ORDER BY sequence")?;
+            let mut rows = statement.query([])?;
+            let mut count = 0u64;
+            while let Some(row) = rows.next()? {
+                count += 1;
+                let seq: u64 = row.get(0)?;
+                assert_eq!(seq, count);
+                let id = ConsumptionOperationIdV1(array32(row.get(1)?, "operation id")?);
+                let execution: Vec<u8> = row.get(2)?;
+                let command: Vec<u8> = row.get(3)?;
+                let receipt: Vec<u8> = row.get(4)?;
+                let sum: Vec<u8> = row.get(5)?;
+                assert_eq!(operation_checksum(seq, id, &execution, &command, &receipt).0.as_slice(), sum);
+                let parsed_execution: ConsumptionCommittedExecutionContextV1 = strict_decode(&execution)?;
+                validate_execution_static(&config.trust_bundle, &parsed_execution)?;
+                let parsed_command: ConsumptionSettlementCommandV1 = strict_decode(&command)?;
+                let parsed_receipt: ConsumptionTransitionReceiptV1 = strict_decode(&receipt)?;
+                assert_eq!(id, operation_id(&parsed_command)?);
+                assert_eq!(parsed_receipt.operation_id, id);
+                assert_eq!(parsed_receipt.order_height, parsed_execution.order_height);
+                assert_eq!(parsed_receipt.settlement_id, if parsed_command.operation_kind() == 26 { setting } else { None });
+                frame(&execution)?;
+                frame(&command)?;
+                frame(&receipt)?;
+            }
+            assert_eq!(count, observation.sequence());
+            drop(rows);
+            drop(statement);
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&framed)?;
+        }
         "fixture-noncanonical-state" => {
             let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
             verify_schema(&db)?;

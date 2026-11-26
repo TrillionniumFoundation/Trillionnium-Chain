@@ -3394,6 +3394,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-state-id",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite standalone M12 optional settlement identity from the strict decoded nested original state and the actual sealed native apply successor, compared to the original committed receipt. No live held settle or empty interval authority.",
+      "sources": [
+        "hia/platform/service_settlement/settlement_state_id.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_state_id.py",
+        "hia/tests/test_settlement_kernel_state_shape.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-rollup-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

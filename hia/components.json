@@ -1,5 +1,65 @@
 {
   "includes": {
+    "platform/service_settlement/settlement_state_id.hepta": [
+      {
+        "functions": [
+          "sks_bool",
+          "sks_fixed_vec",
+          "sks_optional",
+          "sks_receipt_state",
+          "sks_receipt_states",
+          "sks_rollup_state",
+          "sks_settlement_intent",
+          "sks_settlement_receipt",
+          "sks_settlement_state",
+          "sks_state"
+        ],
+        "source": "platform/service_settlement/kernel_state_shape.hepta"
+      },
+      {
+        "functions": [
+          "srci_bytes",
+          "srci_canon_len",
+          "srci_context",
+          "srci_optional_id",
+          "srci_receipt",
+          "srci_signature",
+          "srci_take",
+          "srci_u32",
+          "srci_usage",
+          "srci_usages"
+        ],
+        "source": "platform/service_settlement/receipt_command_id.hepta"
+      },
+      {
+        "functions": [
+          "srli_inner",
+          "srli_receipt_ids"
+        ],
+        "source": "platform/service_settlement/rollup_command_id.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/release_pending_replay.hepta": [
       {
         "functions": [
