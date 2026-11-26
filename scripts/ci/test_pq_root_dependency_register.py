@@ -35,6 +35,8 @@ PREVIOUS_SOURCE_SNAPSHOT_SHA256 = (
     "844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe"
 )
 PREVIOUS_SOURCE_PINS = {
+    "trillionnium/Cargo.toml":
+        "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py":
         "b163c732775bcd79a132462782609fd81008ac30df3b03c5201996411bfc3519",
     "trillionnium/Cargo.lock":
@@ -60,6 +62,8 @@ PREVIOUS_SOURCE_PINS = {
 
 # Exact preceding 975af9eb values; preserve its 45-input canonical identity.
 PREVIOUS_CURRENT_SOURCE_PINS = {
+    "trillionnium/Cargo.toml":
+        "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":
         "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs":
@@ -533,7 +537,7 @@ class ReviewedSourceTests(ContractCase):
         self.assertEqual(len(report["source_files_sha256"]), 46)
         self.assertEqual(report["review_base_revision"], "5c04c60e463462d9df8884786e0d5bb32af08a64")
         self.assertEqual(report["declared_source_snapshot_sha256"],
-                         "c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec")
+                         "b2d8f037a5f8da1812b8033e48779cb0191dbf7e7488d5d2f160bd157f978dd4")
         self.assertIn(NATIVE_OWNER, report["source_files_sha256"])
         self.assertIn("formal/pon-nakamoto-v1/pq_root_effect_readback_v2.py", report["source_files_sha256"])
         self.remains_unqualified(report)
@@ -622,6 +626,20 @@ class ReviewedSourceTests(ContractCase):
 
     def test_each_superseded_source_pin_is_refused_under_the_current_review(self):
         current = deepcopy(self.data)
+        # Preserve the exact preceding 46-input identity as a refused input.
+        previous = deepcopy(current)
+        previous["source_files_sha256"]["trillionnium/Cargo.toml"] = (
+            PREVIOUS_SOURCE_PINS["trillionnium/Cargo.toml"])
+        canonical = json.dumps({
+            "review_base_revision": previous["review_base_revision"],
+            "source_files_sha256": previous["source_files_sha256"],
+        }, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual(len(previous["source_files_sha256"]), 46)
+        self.assertEqual(hashlib.sha256(canonical).hexdigest(),
+                         "c6366414d2ecc0bc598a2a4143be69ceb5091555a70dd50dfb94a04b35fb69ec")
+        self.data = previous
+        self.write()
+        self.inspect_refuses("frozen reviewed snapshot")
         superseded = list(PREVIOUS_SOURCE_PINS.items())
         superseded.append((
             "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",

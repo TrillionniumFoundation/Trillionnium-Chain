@@ -343,3 +343,81 @@ fn resource_sampling_final_check_refuses_replacement_permissions_and_limit_chang
         );
     }
 }
+
+#[test]
+fn diagnostic_cpu_raw_sample_keeps_two_fresh_checks_and_reopens_the_counter() {
+    let (_temporary, parent, directory, limits) = fixture();
+    let checks = Cell::new(0);
+    let check = || {
+        checks.set(checks.get() + 1);
+        checked_directory(&directory, &parent, limits)
+    };
+    assert_eq!(sample_cpu_stat_raw(check).unwrap(), CPU);
+    assert_eq!(checks.get(), 2);
+    let changed = CPU.replace("usage_usec 10", "usage_usec 11");
+    fs::write(parent.join("cpu.stat"), &changed).unwrap();
+    assert_eq!(sample_cpu_stat_raw(check).unwrap(), changed);
+    assert_eq!(checks.get(), 4);
+}
+
+#[test]
+fn diagnostic_cpu_raw_sample_preserves_early_read_and_host_errors() {
+    let (_temporary, parent, directory, limits) = fixture();
+    let checks = Cell::new(0);
+    let check = || {
+        checks.set(checks.get() + 1);
+        checked_directory(&directory, &parent, limits)
+    };
+    fs::remove_file(parent.join("cpu.stat")).unwrap();
+    assert_eq!(
+        sample_cpu_stat_raw(check).unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_COUNTERS"
+    );
+    assert_eq!(checks.get(), 1);
+    fs::write(parent.join("pids.max"), "64").unwrap();
+    checks.set(0);
+    assert_eq!(
+        sample_cpu_stat_raw(check).unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+    );
+    assert_eq!(checks.get(), 1);
+}
+
+#[test]
+fn diagnostic_cpu_final_check_refuses_replacement_permissions_and_limit_changes() {
+    for change in [
+        LateChange::Parent,
+        LateChange::Permissions,
+        LateChange::Limits,
+    ] {
+        let (temporary, parent, directory, limits) = fixture();
+        let detached = temporary.path().join("detached-observation-parent");
+        let checked = Cell::new(false);
+        let result = sample_cpu_stat_raw(|| {
+            let current = checked_directory(&directory, &parent, limits)?;
+            if !checked.replace(true) {
+                match change {
+                    LateChange::Parent => {
+                        fs::rename(&parent, &detached).unwrap();
+                        fs::create_dir(&parent).unwrap();
+                        write_fixture(&parent);
+                    }
+                    LateChange::Permissions => {
+                        fs::set_permissions(&parent, fs::Permissions::from_mode(0o777)).unwrap();
+                    }
+                    LateChange::Limits => {
+                        fs::write(parent.join("memory.max"), "536870912").unwrap();
+                    }
+                }
+            }
+            Ok(current)
+        });
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            match change {
+                LateChange::Parent | LateChange::Permissions => "PUBLIC_HOST_KERNEL_REPLACED",
+                LateChange::Limits => "PUBLIC_HOST_KERNEL_LIMITS_CHANGED",
+            }
+        );
+    }
+}

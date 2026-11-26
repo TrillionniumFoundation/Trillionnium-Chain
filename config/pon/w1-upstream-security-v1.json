@@ -41,7 +41,7 @@
   "mapping_contract": {
     "path": "config/pon/w1-qrom-implementation-current-v2.json",
     "bytes": 51950,
-    "sha256": "4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427"
+    "sha256": "cdeb71748f624e6270eb3dad4e1e2d61619ef6f9d6beaab3bf082c1c38fb5939"
   },
   "approved_current_profile_ids": []
 }

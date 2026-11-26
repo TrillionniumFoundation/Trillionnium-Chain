@@ -18,6 +18,10 @@ on:
       - scripts/ci/test_w1_upstream_security.py
       - scripts/ci/audit_native_campaign_outcomes.py
       - scripts/ci/test_audit_native_campaign_outcomes.py
+      - scripts/test_pon_history_kernel_cpu_observation.py
+      - scripts/pon_public_v3_phase_read.py
+      - scripts/pon_public_v3_policy_read.py
+      - scripts/ci/run_from_zero_native.py
       - config/pon/pq-proof-profile-binding-v1.json
       - config/pon/w1-upstream-security-v1.json
       - config/pon/w1-qrom-implementation-current-v2.json
@@ -70,10 +74,11 @@ jobs:
             proof-profile)
               python3 scripts/ci/test_pq_proof_profile_binding.py -v
               python3 scripts/ci/pq_proof_profile_binding.py \
-                --expected-profile-descriptor-sha256 fe1a4857ed68738cfa126fb7d63657f62fdf916fd5c424db5b16fe317db3a7c3
+                --expected-profile-descriptor-sha256 d2ad5721d68b59eda720e7cef7647d34eb25d6ec74cecb69f0314426bc8ed012
               ;;
             campaign-reader)
               python3 scripts/ci/test_audit_native_campaign_outcomes.py -v
+              python3 -B scripts/test_pon_history_kernel_cpu_observation.py -v
               ;;
             *) exit 2 ;;
           esac

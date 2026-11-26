@@ -1,8 +1,16 @@
 {
   "additions": {
+    "scripts/test_pon_history_kernel_cpu_observation.py": {
+      "current_git_blob": "70735d906bc77d609f07d5772f6fc0e814b58cd2",
+      "current_sha256": "2b294b24a61d1412ac24c5c3e650d28961378ae1fbe4c6793a2c9949d4c48bf7"
+    },
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs": {
       "current_git_blob": "64d25d7f0a266998e7422de017d3a67dd32abf20",
       "current_sha256": "5efc10dbb10209fcb3d460dee5c89febe89bda5c870e61e7564ca1268d3da0cc"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import/kernel_cpu_observation.rs": {
+      "current_git_blob": "3b780f01c7d27372a456e66fc47d573bbf4fe8fb",
+      "current_sha256": "5e869c55f198fede0fc5d6082eb01bd9fc4f48c495cd128dc2532f92dacd32f7"
     },
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/response_signing_tests.rs": {
       "current_git_blob": "835028986a063a102b9bdcb0d4e2912f205f85fb",
@@ -11,9 +19,13 @@
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs": {
       "current_git_blob": "85d9c7897fafa8186c4ccf155f7e8754a59427d6",
       "current_sha256": "c59bbcb151b95ca6149a3ce768e69c60f4c9f1aeb2334efbbd71ada5a3dd15d4"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests/failure_observation.rs": {
+      "current_git_blob": "b3db82784edcc3c19f33d69bc28eb8ed2f0e7025",
+      "current_sha256": "dfff162c0ef6346ef0be260accb76f9f5487b8968d064f29cfe8371b0e326c3c"
     }
   },
-  "current_git_blob_map_sha256": "0be38de4e47025d72bd203c931c0a10d0c7cbe1940db73b20556c3f7bfad9219",
+  "current_git_blob_map_sha256": "e1a647e0b5aa643ea50f4cf1ad871443994e278973cbf53a843118c635d23a12",
   "frozen_inputs_sha256": {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -32,13 +44,13 @@
   },
   "replacements": {
     ".github/workflows/chain-hepta-closure-candidate.yml": {
-      "current_git_blob": "49d03a4929d707c27c1e9ea8d071025c7a58ab65",
-      "current_sha256": "6048e3fd296cf7f8aa6c5936b0345501bd361f4a69be18dd610be041cb2a539d",
+      "current_git_blob": "d482f4d0087f02f33e733833d100da52c8624a84",
+      "current_sha256": "a2fac8c327d2730e1db3f59834f65a66fd0ddacdd78da1e7bd8bf2aa7f9e2866",
       "frozen_git_blob": "6c4bf041a0aa20182caba8ce00490be4a845e3f3"
     },
     "config/pon/hash-use-contract-v1.json": {
-      "current_git_blob": "34b1ea97f9321a8dac083bf25acb2581213ee51c",
-      "current_sha256": "c6b233fbde9776448895708836cf6850b3792391b758308d284953026fdd222e",
+      "current_git_blob": "7d8d392afbb52ea36e5e6f4f5a0ed0243935bee0",
+      "current_sha256": "3bfeaf67dbdf158b865547ad87b053290521061c1ebda6b1c0426b48e50aa9a4",
       "frozen_git_blob": "20edf2ad65dd2e2b1feb0e8eb3b9bce197d8cebd"
     },
     "config/pon/joint-consensus-qualification-v1.json": {
@@ -47,13 +59,18 @@
       "frozen_git_blob": "96ce001f29a6f3028b8d50a3517c28c8346d2beb"
     },
     "config/pon/pq-proof-profile-binding-v1.json": {
-      "current_git_blob": "fbfce48ddf7404b750ac253f5eb10ce130e07e23",
-      "current_sha256": "5361d6ec8f42d0172d8c1345e64a32748a89db3f614d34ce34b48b9e12beb81d",
+      "current_git_blob": "37d3436a1bef051a88aadd913a903c4dc81ddc8a",
+      "current_sha256": "08d2072f3c926499291297280a8baa2e7d2fb33af843201d83aa2c30a72a4d2c",
       "frozen_git_blob": "73a8b3943bbe2a3a77e1a181bc2116ec85c0301e"
     },
+    "config/pon/pq-root-dependency-register-v3.json": {
+      "current_git_blob": "5718506bdb8294394262c7657ebea3634b71b39d",
+      "current_sha256": "22974a3dce32c94f29c6961aec48b2a10de6edcb5d0b68df6bb246147adef60e",
+      "frozen_git_blob": "1e59559f598ed1935432b81eb00419f604341dba"
+    },
     "config/pon/pq128-lifetime-composition-current-v3.json": {
-      "current_git_blob": "d06145b8cf457938508645107846af5b67306c36",
-      "current_sha256": "6ecb10ff3e61894b0e60eb2a1235257dd565d89651bfe70c9c56ab84ab1ff473",
+      "current_git_blob": "3f1898a5f031a6fb4b7d7819ed8659e4d99a811a",
+      "current_sha256": "5ab4f3ce0c8da496c33277163e31fd750b9e3d2d01d36ca8e68d0a8ded34c4cf",
       "frozen_git_blob": "9a82a3cb4538a8c3c28b356faf0b51356237491a"
     },
     "config/pon/pq128-source-correspondence-current-v2.json": {
@@ -67,18 +84,18 @@
       "frozen_git_blob": "a99ff2b27da05f4abfcfa84998e6bd22cfd3bf14"
     },
     "config/pon/w1-qrom-implementation-current-v2.json": {
-      "current_git_blob": "d33375350c30f1e025856141db5e5bf2cb90410d",
-      "current_sha256": "4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427",
+      "current_git_blob": "7eeed37aaa0bf87131b6b15164dcc21926aa8192",
+      "current_sha256": "cdeb71748f624e6270eb3dad4e1e2d61619ef6f9d6beaab3bf082c1c38fb5939",
       "frozen_git_blob": "bfbf323770e927a06f2bb9151a0c7cdebce8605a"
     },
     "config/pon/w1-stark-route-registry-v1.json": {
-      "current_git_blob": "bc02e0ab4c581cba934f0e19bd7291ce283391d1",
-      "current_sha256": "eaac9ffd5ac8663fd7c80da4ff81155414cd5f2431ad0986defe2c9850fd5c9c",
+      "current_git_blob": "f3f4d33942f97015bed2f582ee38dfd5b4a86025",
+      "current_sha256": "296bbd3b504ec71bc25710cddf10a1cd556d4e94115c32de1c7f9ebf99dc5bfc",
       "frozen_git_blob": "1a4b7beb4afb1dd30b2aae5a0a36e12f02de0070"
     },
     "config/pon/w1-upstream-security-v1.json": {
-      "current_git_blob": "a6a241a4b57d891f82a2569deec46ff0c35b9358",
-      "current_sha256": "3dcc4c724b6d2f4a4087e0490ef1afd20f4cc741d55d8ddb59e28cf7efd5b06a",
+      "current_git_blob": "6ea89141c7261ba501823bab9d0d7dd03ea29bbb",
+      "current_sha256": "cc09be9e4f238a56b99016630944c132758588c52f1e1477a034bb00bc4ba7e4",
       "frozen_git_blob": "f326b9fe18a1b273c4de0e485d8363eab158b1ff"
     },
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
@@ -92,13 +109,13 @@
       "frozen_git_blob": "8c4526887aeb2d731ae76035b3fa13e380505b05"
     },
     "scripts/ci/hash_use_contract.py": {
-      "current_git_blob": "774e6b0ad66efbac9483e4e77c5a735a9bb2feb0",
-      "current_sha256": "bb97be040f871f1d71331b015b988cd0339c79e1d805c7cd54ff3f6a9493b533",
+      "current_git_blob": "83ef0cd0171c916ddcd11e17c3746b374e6f361c",
+      "current_sha256": "930c3d1c7f763e9e68f2077310e4b4d7db9088cb37a1d025e9c7619d73e4006f",
       "frozen_git_blob": "bfe426e42fb0010e9a3febbfccee973029336d56"
     },
     "scripts/ci/pq_lifetime_composition.py": {
-      "current_git_blob": "f8ca29c43943893b6602026686560617ec0c3855",
-      "current_sha256": "faf6885438ff5dce08f86e37a333fb6ab4f9e35292111e4fb30ee93d4300525b",
+      "current_git_blob": "e1602ca4fcb96bf46083dc7869647a9ac2c5f14b",
+      "current_sha256": "c2df946ff75dd71346e02f02e0aad10de38f565476fcebce8f3fbd345dd963c8",
       "frozen_git_blob": "68a224ef3de327a8a86df1f2327e925cb690610f"
     },
     "scripts/ci/pq_lifetime_current_v2.py": {
@@ -106,15 +123,25 @@
       "current_sha256": "c9eb1e93ced257e8ec1dfa043ba8033b4cf4e723f1551b2a7df5a45dc96282cf",
       "frozen_git_blob": "82468a45e454928dbe9b16eb38fa7e77feeefcbe"
     },
+    "scripts/ci/pq_root_dependency_register.py": {
+      "current_git_blob": "c797eb3d4b4ade5baa49fefaf84c563b1465006c",
+      "current_sha256": "d58ca2c08a8c089c032be329078f5cf9fb0d9d485ccd070d8fc712953cbe713f",
+      "frozen_git_blob": "34b793d911762e9564dfd58e417fc47de1f97f31"
+    },
     "scripts/ci/run_from_zero_native.py": {
-      "current_git_blob": "7aaa475388104cbd644d3c2928b5cbae3954b340",
-      "current_sha256": "059ee69d8648481ce012245b67bf4b7656b1425d4592f8d3cc6a2a4f81dab2d1",
+      "current_git_blob": "e62ddc1279e165af0a5313dbd6474fd69a898ce4",
+      "current_sha256": "6bba9289e6f12cc48979d926fca5e513b546057c47893be0240f4e71825e681e",
       "frozen_git_blob": "2aba481576bc5a09a2d546e467e1b19d6e9de7bd"
     },
     "scripts/ci/test_pq_proof_profile_binding.py": {
-      "current_git_blob": "040ec51a49400285abf8786d176d461678905bc3",
-      "current_sha256": "009a4425345db193ba08638ce80b95c26e421e275d8cf631052459df6a57711c",
+      "current_git_blob": "75c728ab4d2f77096cd5112fdb176802ec0af9c2",
+      "current_sha256": "0eb46503ee7c8856963c68e816bc4abc9c4faa4de9b1a26b9d021998999c8863",
       "frozen_git_blob": "b94e9f0427980d2e401a24f7fb9c6adb4c9f22d8"
+    },
+    "scripts/ci/test_pq_root_dependency_register.py": {
+      "current_git_blob": "e05c89b2dfa61c83152a719438fe81698ae52a33",
+      "current_sha256": "345ec384dbd137a5e913e13d60db70bf4d7ee7a0b0814b4be1f8cbfeaa1dbc0d",
+      "frozen_git_blob": "928d33061719e3545a95f63d0bba3dddc2ce941d"
     },
     "scripts/ci/test_run_from_zero_native.py": {
       "current_git_blob": "d34c102695806e17533b2fb017463eb84a0d9256",
@@ -131,20 +158,30 @@
       "current_sha256": "b67779f5f9ba436639a9f44d882af78ccd4aacfb649da1b452d67b8d99d961bf",
       "frozen_git_blob": "78d9a03447febd05b4e5ee35a4a60dfdbe7b2cda"
     },
+    "scripts/pon_public_v3_phase_read.py": {
+      "current_git_blob": "b726fec9677678085f81c9dc0115a829986c87fd",
+      "current_sha256": "8079ff6f078761b042946dc38d57b25de9902569ee88a31e4cc0d28d524d5bac",
+      "frozen_git_blob": "4bb2f24c599f4a4fc64248f24fc2066753ddb966"
+    },
     "scripts/w1_lifetime_current_observation.py": {
       "current_git_blob": "44ee5d9c401588ddd042448b977d7c6c54b42695",
       "current_sha256": "a73bfd46f8cb9a88cecb616ad81d397955fa697d9aa90e6295d83b4c9496ca47",
       "frozen_git_blob": "b7f0125d9736b30d3c4d420780435845dc85ad11"
     },
     "scripts/w1_qrom_current_implementation_audit.py": {
-      "current_git_blob": "d7d0af955c1290d1e7b3135b2fa495efff205d12",
-      "current_sha256": "98d64e337d28f38d879a1294df5ba11b88ecc78febf80dc45729e3ac8ef16050",
+      "current_git_blob": "3ce1542f63efcbe4990450531842ffb3f70976bb",
+      "current_sha256": "39df668ae09c0603211987512026f98eb6f0046c2a7e260f6006e9db6060e5d5",
       "frozen_git_blob": "5a95bf69cb6d383d0418ec1096703607ea7984d7"
     },
     "scripts/w1_stark_route_audit.py": {
-      "current_git_blob": "fc2b46c9668239cfbbdd605509e2baa000dd7ba1",
-      "current_sha256": "318ba714fe5c43d12cda1c3a06b08ba132d04bb176b7d4f9bbd0861652934a57",
+      "current_git_blob": "f38b8ec47d26a57416525c0ac9ea2657cb9a11cd",
+      "current_sha256": "0f96bc7d9dc61d2592b9bbfe858f13de03225bed3f0103d19e5bf61f2bf762b1",
       "frozen_git_blob": "c295217c30cae549a4658e092528115cac400400"
+    },
+    "trillionnium/Cargo.toml": {
+      "current_git_blob": "cfa08f8838b0a80f915a3d90ced1d3ae98fc791d",
+      "current_sha256": "97991c11716c0c7216fad54239e897016ef1ceeb614ef2c5bfb46a6841e11032",
+      "frozen_git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
     },
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
       "current_git_blob": "c8a18f75782430f72a4f9f06d42524a124faabec",
@@ -152,14 +189,44 @@
       "frozen_git_blob": "b89112abb32b692c83cf94a3e85fce58c5798628"
     },
     "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
-      "current_git_blob": "e0ff754713e23acb8ae62d1a50c8dffdd8cec406",
-      "current_sha256": "d962e6a3db3a2608ec5f6979b300e9d5903c29e1b6ce3a0b4fe214f5429c9fb6",
+      "current_git_blob": "01932b40b2e7801a24ad82cae1f6fbd097f21908",
+      "current_sha256": "e994821f28b826e2af6ae04c307c7e50110d0964224b4cad2238f81cf74921a6",
       "frozen_git_blob": "2fcc8124549bc94a237f4d84194b5e44d28a0182"
+    },
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": {
+      "current_git_blob": "bb8906796d51a8fc96b2365fd5378bc012fd31bc",
+      "current_sha256": "3f0b0929ae15607b0bcbc9e2fb54591f5639890e1e3920d13f12ec28735a2873",
+      "frozen_git_blob": "c70b9948f48d8349f63420b6c82d70ef9cf2afa6"
+    },
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs": {
+      "current_git_blob": "824598abfcce09f0e8190776c5e9e70c0c551edf",
+      "current_sha256": "af793392a6840be4cc39bac2eb624564587958a2c6dfdf0629c98a4d92495e9f",
+      "frozen_git_blob": "77deace0b5f56d960ff3314909254a18bc4d100b"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": {
+      "current_git_blob": "dfcf7456e4548dd687cfea67e6c17a97c78a5495",
+      "current_sha256": "27558e289630cd9692006a4f13f4bcbf4558ddf258414ebb08ede4096f3c82b1",
+      "frozen_git_blob": "a9aef9689af378bd115a54c25a076941ef2cbb96"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": {
+      "current_git_blob": "1325fec215e12a32856a93a55a07dfc3377d100a",
+      "current_sha256": "482c885a38af8c38f86a43ac97f7beeded9d17a39edab1b1ec1e5da7de67a614",
+      "frozen_git_blob": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs": {
+      "current_git_blob": "5f0ef618735f83ebeb195f41a3e330be4c6c51ae",
+      "current_sha256": "5f11c8e9b290538900b885dbb64efba5b01976d5d516ec8061425b33f427d7e5",
+      "frozen_git_blob": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b"
     },
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
       "current_git_blob": "90335b04efaddd304b8c1e38e1485d22a71c5b34",
       "current_sha256": "adcb9ecd12ad17c885c44f987c6f3bf885a23d7aeb18729ef2fddcb30f86e89c",
       "frozen_git_blob": "00bcc318245ef6548054b3be352f7ee13eefe183"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "current_git_blob": "a87f5368127fb755ba88e5ff2e87e2ec324795b7",
+      "current_sha256": "505f8e016684a7867bffb4487181c152d1c90429ac865c240e3293e4cacea056",
+      "frozen_git_blob": "7919f646c4fd9f44000b0f59493fa71e84f991ea"
     },
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
       "current_git_blob": "b9d6866a9c0dce22cdb8f0bdced65bfd5676fbe3",
@@ -175,6 +242,11 @@
       "current_git_blob": "0377c1c156f4135c7e4ef6fa90d2fcf3ec9a83c8",
       "current_sha256": "7efcdb101607c7f5814f4dc6bb93523fd441227652110c272872ca700462d7ea",
       "frozen_git_blob": "fb37302bce9b0c771314bcee49fd85be933f76f7"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": {
+      "current_git_blob": "81b832ba1d30f895fafb821e6297418a8a5adc64",
+      "current_sha256": "80ef640c1fb0187070f28e87a99e354bd23b6aab3f2cfc48167ad4b5b7d07488",
+      "frozen_git_blob": "17b55a5edc0c48e08d324be9fc69aa060b7bafc4"
     },
     "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs": {
       "current_git_blob": "3993823ae2632b3a5cbd654fd26ef7cbada29ce1",
@@ -195,6 +267,11 @@
       "current_git_blob": "68b90d7166a48f8c314169023ead3e4943a113af",
       "current_sha256": "f4932665e94c142a7fabffd9f4d728dd0e95a41b17c3fcf948fb7316d1a48777",
       "frozen_git_blob": "5cfbc87f1aa76c0db8cd6dd08c25f6294a6844b8"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": {
+      "current_git_blob": "6cd8669f962f1d6dc2e6cc5d189114a335683721",
+      "current_sha256": "fe281e79c9b5ba6a6796e31ce20d05d6ad1d87e36668e7f0579d56ad4fb7524c",
+      "frozen_git_blob": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933"
     }
   },
   "schema": "trnm-pq-corpus-current-source-v2",

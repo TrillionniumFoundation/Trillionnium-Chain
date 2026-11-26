@@ -20,7 +20,7 @@ from types import ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = 'config/pon/w1-qrom-implementation-current-v2.json'
-CONTRACT_SHA256 = '4d8289806c4d3b349e171bbbb93fe6376d4de3408c71b196b70302f8aef09427'
+CONTRACT_SHA256 = 'cdeb71748f624e6270eb3dad4e1e2d61619ef6f9d6beaab3bf082c1c38fb5939'
 SOURCE = '6b851bc64db9d87db1bae083654902846f14c275'
 LEGACY_READER = 'scripts/w1_qrom_implementation_audit.py'
 LEGACY_READER_SHA256 = 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354'

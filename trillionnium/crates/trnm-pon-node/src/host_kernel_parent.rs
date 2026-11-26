@@ -55,9 +55,29 @@ impl KernelResourceSample {
     }
 }
 
+/// Diagnostic-only identity copied from the original native Host handle.
+/// Every sample still validates this identity against freshly opened paths.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub(crate) struct KernelCpuStatIdentity {
+    pub parent: String,
+    pub device: u64,
+    pub inode: u64,
+    pub uid: u32,
+    pub boot_id: String,
+    pub cpu_quota_us: u64,
+    pub cpu_period_us: u64,
+    pub memory_max_bytes: u64,
+    pub pids_max: u64,
+}
+
+pub(crate) struct KernelCpuStatObservation {
+    pub identity: KernelCpuStatIdentity,
+    pub cpu_stat: String,
+}
+
 #[cfg(target_os = "linux")]
 mod kernel_parent {
-    use super::KernelResourceSample;
+    use super::{KernelCpuStatIdentity, KernelCpuStatObservation, KernelResourceSample};
     use std::{
         borrow::Cow,
         ffi::CStr,
@@ -401,6 +421,16 @@ mod kernel_parent {
         Ok(sample)
     }
 
+    fn sample_cpu_stat_raw(check: impl Fn() -> Result<ScopedParentDirectory>) -> Result<String> {
+        let raw = {
+            let current = check()?;
+            let mut bytes = [0; MAX_CPU_COUNTER_BYTES + 1];
+            current.read_counter(c"cpu.stat", &mut bytes)?.to_owned()
+        };
+        check()?;
+        Ok(raw)
+    }
+
     // This is a common-case stack size, NOT a new limit on boot or membership
     // text. Longer input continues from the same stream on the original heap
     // path. Unlike read_to_string(File), the short path needs no size metadata.
@@ -638,6 +668,39 @@ mod kernel_parent {
         /// counter is unavailable or malformed, never issue a qualified receipt.
         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
             sample_counters(|| self.checked_parent())
+        }
+
+        /// Copy immutable expected identity only; no descriptor, authorization
+        /// verdict, resource text or budget is retained for the sidecar.
+        pub(crate) fn reader_for_observation(&self) -> Self {
+            Self {
+                parent: self.parent.clone(),
+                parent_relative: self.parent_relative.clone(),
+                identity: self.identity,
+                boot_id: self.boot_id.clone(),
+                limits: self.limits,
+            }
+        }
+
+        /// An optional raw counter sample, with the SAME complete fresh Host
+        /// checks before and after. It cannot replace the caller's original
+        /// verification, grant service credit, or alter a native result.
+        pub(crate) fn cpu_stat_for_observation(&self) -> Result<KernelCpuStatObservation> {
+            let cpu_stat = sample_cpu_stat_raw(|| self.checked_parent())?;
+            Ok(KernelCpuStatObservation {
+                identity: KernelCpuStatIdentity {
+                    parent: self.parent.to_string_lossy().into_owned(),
+                    device: self.identity.0,
+                    inode: self.identity.1,
+                    uid: 0,
+                    boot_id: self.boot_id.clone(),
+                    cpu_quota_us: self.limits.cpu_quota_us,
+                    cpu_period_us: self.limits.cpu_period_us,
+                    memory_max_bytes: self.limits.memory_bytes,
+                    pids_max: self.limits.tasks,
+                },
+                cpu_stat,
+            })
         }
     }
 
@@ -1552,6 +1615,12 @@ impl HostKernelBudget {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
     pub fn resource_sample(&self) -> crate::Result<KernelResourceSample> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
+    pub(crate) fn reader_for_observation(&self) -> Self {
+        Self
+    }
+    pub(crate) fn cpu_stat_for_observation(&self) -> crate::Result<KernelCpuStatObservation> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
 }

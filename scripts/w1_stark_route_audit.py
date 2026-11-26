@@ -42,7 +42,7 @@ MAX_SOURCE_BYTES = 2 * 1024 * 1024
 # Its 146 selected local inputs retain all prior roots, locks and literal includes.
 # BASE_COMMIT remains the retained historical/literature baseline. Route
 # parameters, literature identities and security qualification are unchanged.
-FROZEN_SOURCE_SET_SHA256 = "a0159bd0daec19af3ed4c9e2bc869cdb01c7bb614ab053c3a9eabf543ee62655"
+FROZEN_SOURCE_SET_SHA256 = "f3bf25a50849c091bc80fba12600fefa2c3088d1fe0d31ef7e83cd170c673505"
 SOURCE_SCOPE = "selected_route_inputs_not_full_repository_or_dependency_closure"
 ROUTE_IDS = ("risc0_poseidon2_fixed_v2", "plonky3_poseidon2_w1_r1",
              "plonky3_tagged_sha3_512_w1_r1")

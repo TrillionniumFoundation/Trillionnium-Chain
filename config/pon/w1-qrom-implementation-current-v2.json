@@ -371,8 +371,8 @@
       },
       {
         "path": "trillionnium/Cargo.toml",
-        "bytes": 2204,
-        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        "bytes": 2845,
+        "sha256": "97991c11716c0c7216fad54239e897016ef1ceeb614ef2c5bfb46a6841e11032"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",

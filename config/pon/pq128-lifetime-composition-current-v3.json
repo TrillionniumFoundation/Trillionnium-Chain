@@ -153,7 +153,7 @@
       "declared_revision": "5c04c60e463462d9df8884786e0d5bb32af08a64",
       "path": "config/pon/pq-root-dependency-register-v3.json",
       "revision_semantics": "review-base-context-not-all-source-revision",
-      "sha256": "2b641a5e2e1bf66ad924e17d85da21c8cf76d7431fe35c8f448ab921659ba725"
+      "sha256": "22974a3dce32c94f29c6961aec48b2a10de6edcb5d0b68df6bb246147adef60e"
     }
   },
   "primitive_scope_bridge": {

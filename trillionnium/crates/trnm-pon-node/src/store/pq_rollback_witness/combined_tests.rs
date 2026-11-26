@@ -35,6 +35,9 @@ const TIME_ENV: &str = "TRNM_PQ_WITNESS_PROCESS_GENESIS";
 const SEQUENCE_ENV: &str = "TRNM_PQ_WITNESS_RECOVERY_SEQUENCE";
 const ROOT_ENV: &str = "TRNM_PQ_WITNESS_RECOVERY_ROOT";
 
+#[path = "combined_tests/failure_observation.rs"]
+mod failure_observation;
+
 fn settings_and_policy(genesis: u64) -> (Settings, Arc<PqNetworkPolicy>) {
     let seeded: Vec<_> = [1, 2, 3]
         .into_iter()
@@ -445,9 +448,11 @@ fn preserve_send_error<T>(
     result: Result<T>,
     worker: &mut Worker,
     external: &mut Process,
+    diagnostics: &test_observation::Scope,
 ) -> Result<T> {
     if result.is_err() {
         let (joined, stopped) = cleanup(worker, external);
+        failure_observation::emit(diagnostics, worker, external);
         eprintln!(
             "TRNM_PQ_FIXTURE_CLEANUP {}",
             serde_json::json!({
@@ -582,6 +587,7 @@ fn submit_replay_restart(control: SubmitControl) {
         sender.send(address, &prepared, Duration::from_secs(10)),
         &mut worker,
         &mut external,
+        &diagnostics,
     )
     .unwrap();
     assert!(first.ok, "{:?}", first.value);
@@ -591,7 +597,8 @@ fn submit_replay_restart(control: SubmitControl) {
         // transport and triggers no further witness request or request retry.
         let primary = crate::Error::from("VALID_FIXTURE_CLEANUP_SENTINEL");
         let expected = format!("{primary:?}");
-        let result: Result<()> = preserve_send_error(Err(primary), &mut worker, &mut external);
+        let result: Result<()> =
+            preserve_send_error(Err(primary), &mut worker, &mut external, &diagnostics);
         let error = result.unwrap_err();
         assert_eq!(format!("{error:?}"), expected);
         assert_eq!(error.to_string(), "VALID_FIXTURE_CLEANUP_SENTINEL");
@@ -633,6 +640,7 @@ fn submit_replay_restart(control: SubmitControl) {
         sender.send(address, &prepared, Duration::from_secs(10)),
         &mut worker,
         &mut external,
+        &diagnostics,
     )
     .unwrap();
     assert_eq!(first, replay);

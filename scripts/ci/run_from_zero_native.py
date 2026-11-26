@@ -1589,6 +1589,7 @@ def summarize_confirmation_report(path: Path, *, observation_version: int = 2) -
             require(isinstance(replays, list) and len(replays) <= 16, 'CONFIRMATION_REPLAY_STAGES')
             walls, failures, cpus, missing_cpu = [], [], [], 0
             native_observed = 0
+            kernel_phase_observations = []
             for row in replays:
                 require(isinstance(row, dict) and type(row.get('replay_accepted')) is bool,
                         'CONFIRMATION_REPLAY_STAGES')
@@ -1605,6 +1606,19 @@ def summarize_confirmation_report(path: Path, *, observation_version: int = 2) -
                 if 'native_import_observation' in row:
                     validate_history_import_observation(row['native_import_observation'])
                     native_observed += 1
+                    kernel = row['native_import_observation'].get('kernel_cpu_observation')
+                    if kernel is not None:
+                        # The shared reader has independently checked raw text,
+                        # exact phase/result binding and each proposed delta.
+                        # Preserve failed observations; do not replace the
+                        # original service result or raise a business gate.
+                        kernel_phase_observations.append({
+                            'history_call_index': row['history_call_index'],
+                            'all_observed_intervals_qualified': kernel['all_observed_intervals_qualified'],
+                            'observed_intervals': len(kernel['records']),
+                            'measurement_failures': kernel['measurement_failures'],
+                            'original_phase_measurement_failures': kernel['original_phase_measurement_failures'],
+                        })
             replay_summary = {'attempts': len(replays), 'accepted_in_original_window': len(walls),
                               'failed_or_late': len(failures),
                               'accepted_wall': distribution(walls),
@@ -1615,6 +1629,14 @@ def summarize_confirmation_report(path: Path, *, observation_version: int = 2) -
                               'native_stage_snapshots_retained': native_observed,
                               'native_stage_snapshots_missing': len(replays) - native_observed,
                               'native_stage_scope': 'optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU'}
+            if kernel_phase_observations:
+                replay_summary['kernel_cpu_phase_observations'] = {
+                    'schema': 'pon-local-history-kernel-cpu-phase-readback-v1',
+                    'records': kernel_phase_observations,
+                    'raw_text_and_all_deltas_retained_in_original_report': True,
+                    'has_service_or_consensus_authority': False,
+                    'scope': 'whole fixed-parent cumulative counters at original selected phase boundaries; raw report digest and source identity remain mandatory; no counter sum is importer-thread CPU or proof of a four-second confirmation',
+                }
 
         count = phase.get('client_confirmed_transactions')
         latency = None

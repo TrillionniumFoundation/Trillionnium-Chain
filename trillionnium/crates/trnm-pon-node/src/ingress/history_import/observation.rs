@@ -1,5 +1,6 @@
 //! Optional local import measurements. No resource, proof or owner authority.
 use super::attribution::{HistoryNativeAttributionSnapshot, NativeAttribution};
+use super::kernel_cpu_observation::{HistoryKernelCpuObservationSnapshot, KernelCpuSidecar};
 use crate::ingress::public_v3::{
     request_observation::{TaskObservation, ThreadCpuStamp},
     SubmitPhase, SubmitPhaseObservation,
@@ -129,6 +130,7 @@ pub struct HistoryImportObserver {
     host: Mutex<HostRecords>,
     page_attribution: NativeAttribution,
     packet_attribution: [NativeAttribution; MAX_HISTORY_IMPORT_OBSERVATION_PACKETS],
+    kernel_cpu: Option<KernelCpuSidecar>,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -164,6 +166,8 @@ pub struct HistoryImportObservationSnapshot {
     pub phases: [SubmitPhaseObservation; 19],
     #[serde(skip_serializing_if = "Option::is_none")]
     pub native_attribution: Option<HistoryImportNativeAttribution>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub kernel_cpu_observation: Option<HistoryKernelCpuObservationSnapshot>,
     pub packets: Vec<HistoryPacketObservation>,
     pub measurement_failures: u64,
     pub host_checks: [HistoryHostObservation; 4],
@@ -184,19 +188,46 @@ impl Default for HistoryImportObserver {
 }
 impl HistoryImportObserver {
     pub fn new() -> Self {
+        Self::with_kernel_cpu(false)
+    }
+
+    /// Explicit local diagnostics, using the original native fixed parent.
+    /// This does not enable a new service path, budget, deadline or authority.
+    pub fn new_with_kernel_cpu_observation() -> Self {
+        Self::with_kernel_cpu(true)
+    }
+
+    fn with_kernel_cpu(enabled: bool) -> Self {
         let epoch = Instant::now();
+        let page = TaskObservation::local(epoch);
+        let packets = std::array::from_fn(|_| TaskObservation::local(epoch));
+        let kernel_cpu = enabled.then(|| KernelCpuSidecar::new(epoch));
+        if let Some(sidecar) = &kernel_cpu {
+            sidecar.attach(&page, &packets);
+        }
         Self {
             epoch,
-            page: TaskObservation::local(epoch),
-            packets: std::array::from_fn(|_| TaskObservation::local(epoch)),
+            page,
+            packets,
             active_packet: AtomicUsize::new(MAX_HISTORY_IMPORT_OBSERVATION_PACKETS),
             context: Mutex::new(Context::default()),
             failures: AtomicU64::new(0),
             host: Mutex::new(HostRecords::new()),
             page_attribution: NativeAttribution::new(epoch),
             packet_attribution: std::array::from_fn(|_| NativeAttribution::new(epoch)),
+            kernel_cpu,
         }
     }
+
+    pub(in crate::ingress) fn bind_kernel_cpu(
+        &self,
+        kernel: &crate::host_kernel_parent::HostKernelBudget,
+    ) {
+        if let Some(sidecar) = &self.kernel_cpu {
+            sidecar.bind(kernel);
+        }
+    }
+
     fn fail(&self) {
         let _ = self
             .failures
@@ -327,7 +358,7 @@ impl HistoryImportObserver {
                 page: page_attribution,
                 packets: packet_attributions,
             });
-        HistoryImportObservationSnapshot {
+        let mut snapshot = HistoryImportObservationSnapshot {
             schema: "pon-local-history-import-observation-v1",
             tip: context.tip,
             after: context.after,
@@ -335,6 +366,7 @@ impl HistoryImportObserver {
             packet_capacity: MAX_HISTORY_IMPORT_OBSERVATION_PACKETS,
             phases,
             native_attribution,
+            kernel_cpu_observation: None,
             packets,
             measurement_failures: failures,
             host_checks,
@@ -359,7 +391,11 @@ impl HistoryImportObserver {
             host_cpu_is_full_worker_cpu: false,
             observation_has_consensus_authority: false,
             clock_scope: "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+        };
+        if let Some(sidecar) = &self.kernel_cpu {
+            snapshot.kernel_cpu_observation = Some(sidecar.snapshot(&snapshot));
         }
+        snapshot
     }
 }
 

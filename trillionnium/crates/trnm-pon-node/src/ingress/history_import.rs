@@ -9,6 +9,7 @@ use super::{
 use public_v3::{request_observation::TaskObservation, SubmitPhase};
 mod attribution;
 use attribution::{observe_epoch, CpuWaitGuard, HistoryEpochSubstep, NativeAttribution};
+mod kernel_cpu_observation;
 mod observation;
 pub(super) use observation::{observe_host, HistoryHostPhase};
 pub use observation::{HistoryImportObservationSnapshot, HistoryImportObserver};
