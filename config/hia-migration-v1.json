@@ -148,6 +148,18 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/handle_replay",
+      "node_integration_complete": false,
+      "scope": "M15 finite original ledger reserve_handle and opened accounting: actual/pending and root active counts, bounded ordinary evidence and original sticky admission/error precedence. No file open, live VFS or production owner.",
+      "source": "hia/src/sqlite_io_boundary/handle_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_handle_replay.py",
+        "hia/tests/rust_sqlite_handle_reference.rs",
+        "hia/tests/test_sqlite_close_collect_replay.py"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/close_collect_replay",
       "node_integration_complete": false,
       "scope": "M15 finite original ledger replay after a known successful underlying close with available cleanup evidence, computes local close observation and root-wide retained logical charge. No underlying close, production authority or VFS.",
@@ -2445,7 +2457,8 @@
       "components": [
         "sqlite_io_boundary/reservation_replay",
         "sqlite_io_boundary/observed_bind_replay",
-        "sqlite_io_boundary/close_collect_replay"
+        "sqlite_io_boundary/close_collect_replay",
+        "sqlite_io_boundary/handle_replay"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

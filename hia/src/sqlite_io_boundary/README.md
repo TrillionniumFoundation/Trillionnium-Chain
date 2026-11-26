@@ -66,3 +66,26 @@ the last of the 256 cleanup events and a close in slot 2. Status 100
 refuses malformed or out-of-profile input, and 102 refuses short output;
 neither publishes any bytes. This mode does not close an FD, evaluate a
 failed cleanup record, serialize the original event, or own live VFS state.
+
+## Pending handle accounting
+
+`handle_replay.hepta` compares the ledger transitions for reserving a
+handle and confirming an already successful open. Its 80-byte input
+is ten little-endian words: action (reserve 0, opened 1), main flag,
+actual and pending handle counts, root active-main count, ordinary
+event count, operation and denial counters, sticky reason and first
+SQLite error code. It returns the eight updated observations and an
+event tag in 72 bytes. Tags 0, 1 and 2 mean no event, reserve-handle
+and opened. Reasons 0–4 mean no error, evidence margin, handle cap,
+missing pending handle and earlier pre-growth extent cap. The return
+status is the current original SQLite status, not the sticky code.
+
+Reserve increments the original admission counter before checking sticky
+failure or evidence margin, then checks the 32-handle cap. Opened does
+not repeat admission: it consumes the earlier pending count without
+changing root active-main accounting, even if a first error was saved
+in the meantime. Original V1/V2 observations cover both limits and
+precedence. The private input admits at most 1,017 existing ordinary
+events and assumes the retained short event will fit the original
+serialized budget. It does not model failure to serialize after mutation,
+perform a physical open, or provide VFS authority.

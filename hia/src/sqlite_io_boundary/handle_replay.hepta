@@ -1,0 +1,161 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_pending_handle_replay
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  n:usize = buffer.len(input)
+  exact:usize = const() {"value":80}
+  fit:bool = compare.eq(n,exact)
+  branch fit capacity(input,output) malformed()
+block capacity(r0:readbuf,o0:mutbuf)
+  out_n:usize = buffer.len(o0)
+  need:usize = const() {"value":72}
+  enough:bool = compare.ge(out_n,need)
+  branch enough parse(r0,o0) short()
+block parse(r1:readbuf,o1:mutbuf)
+  c0:u64 = const() {"value":0}
+  c1:u64 = const() {"value":8}
+  c2:u64 = const() {"value":16}
+  c3:u64 = const() {"value":24}
+  c4:u64 = const() {"value":32}
+  c5:u64 = const() {"value":40}
+  c6:u64 = const() {"value":48}
+  c7:u64 = const() {"value":56}
+  c8:u64 = const() {"value":64}
+  c9:u64 = const() {"value":72}
+  action:u64 = call(r1,c0) {"function":"tr_read"}
+  main:u64 = call(r1,c1) {"function":"tr_read"}
+  h:u64 = call(r1,c2) {"function":"tr_read"}
+  p:u64 = call(r1,c3) {"function":"tr_read"}
+  active:u64 = call(r1,c4) {"function":"tr_read"}
+  events:u64 = call(r1,c5) {"function":"tr_read"}
+  ops:u64 = call(r1,c6) {"function":"tr_read"}
+  denied:u64 = call(r1,c7) {"function":"tr_read"}
+  reason:u64 = call(r1,c8) {"function":"tr_read"}
+  code:u64 = call(r1,c9) {"function":"tr_read"}
+  one:u64 = const() {"value":1}
+  max_h:u64 = const() {"value":32}
+  max_a:u64 = const() {"value":96}
+  max_events:u64 = const() {"value":1017}
+  max_reason:u64 = const() {"value":4}
+  mode_ok:bool = compare.le(action,one)
+  main_ok:bool = compare.le(main,one)
+  h_ok:bool = compare.le(h,max_h)
+  p_ok:bool = compare.le(p,max_h)
+  r_ok:bool = compare.le(reason,max_reason)
+  a_ok:bool = compare.le(active,max_a)
+  e_ok:bool = compare.le(events,max_events)
+  hp:u64 = int.add.wrap(h,p)
+  sum_ok:bool = compare.le(hp,max_h)
+  zero:u64 = const() {"value":0}
+  io:u64 = const() {"value":10}
+  full:u64 = const() {"value":13}
+  miss:u64 = const() {"value":3}
+  no_fail:bool = compare.eq(reason,zero)
+  missing:bool = compare.eq(reason,miss)
+  expect_when_failed:u64 = select(missing,io,full)
+  expect_code:u64 = select(no_fail,zero,expect_when_failed)
+  diag_ok:bool = compare.eq(code,expect_code)
+  is_main:bool = compare.eq(main,one)
+  relevant:u64 = select(is_main,hp,zero)
+  other_slots:u64 = const() {"value":64}
+  scope_max:u64 = int.add.wrap(relevant,other_slots)
+  active_min:bool = compare.ge(active,relevant)
+  active_max:bool = compare.le(active,scope_max)
+  active_ok:bool = bool.and(active_min,active_max)
+  b0:bool = bool.and(mode_ok,main_ok)
+  b1:bool = bool.and(h_ok,p_ok)
+  b2:bool = bool.and(a_ok,e_ok)
+  b3:bool = bool.and(sum_ok,r_ok)
+  b4:bool = bool.and(diag_ok,active_ok)
+  b5:bool = bool.and(b0,b1)
+  b6:bool = bool.and(b2,b3)
+  b7:bool = bool.and(b5,b6)
+  valid:bool = bool.and(b7,b4)
+  branch valid route(o1,action,main,h,p,active,events,ops,denied,reason,code,hp) malformed()
+block route(o2:mutbuf,x2:u64,m2:u64,h2:u64,p2:u64,a2:u64,e2:u64,t2:u64,d2:u64,r2:u64,c_2:u64,n2:u64)
+  z2:u64 = const() {"value":0}
+  is_reserve:bool = compare.eq(x2,z2)
+  branch is_reserve admit(o2,m2,h2,p2,a2,e2,t2,d2,r2,c_2,n2) opened(o2,h2,p2,a2,e2,t2,d2,r2,c_2)
+block admit(o3:mutbuf,m3:u64,h3:u64,p3:u64,a3:u64,e3:u64,t3:u64,d3:u64,r3:u64,c_3:u64,n3:u64)
+  t3x:u64 = call(t3) {"function":"hr_sat"}
+  z3:u64 = const() {"value":0}
+  sticky:bool = compare.ne(r3,z3)
+  ioerr:u32 = const() {"value":10}
+  branch sticky emit(o3,h3,p3,a3,e3,t3x,d3,r3,c_3,z3,ioerr) margin(o3,m3,h3,p3,a3,e3,t3x,d3,r3,c_3,n3)
+block margin(o4:mutbuf,m4:u64,h4:u64,p4:u64,a4:u64,e4:u64,t4:u64,d4:u64,r4:u64,c_4:u64,n4:u64)
+  last:u64 = const() {"value":1016}
+  high:bool = compare.gt(e4,last)
+  why_margin:u64 = const() {"value":1}
+  sqlite_full:u64 = const() {"value":13}
+  branch high fail(o4,h4,p4,a4,e4,t4,d4,r4,c_4,why_margin,sqlite_full) handle_cap(o4,m4,h4,p4,a4,e4,t4,d4,r4,c_4,n4)
+block handle_cap(o5:mutbuf,m5:u64,h5:u64,p5:u64,a5:u64,e5:u64,t5:u64,d5:u64,r5:u64,c_5:u64,n5:u64)
+  cap5:u64 = const() {"value":32}
+  full_h:bool = compare.ge(n5,cap5)
+  why_handles:u64 = const() {"value":2}
+  sql_full_h:u64 = const() {"value":13}
+  branch full_h fail(o5,h5,p5,a5,e5,t5,d5,r5,c_5,why_handles,sql_full_h) reserve(o5,m5,h5,p5,a5,e5,t5,d5,r5,c_5)
+block reserve(o6:mutbuf,m6:u64,h6:u64,p6:u64,a6:u64,e6:u64,t6:u64,d6:u64,r6:u64,c_6:u64)
+  ev_r:u64 = const() {"value":1}
+  pending_next:u64 = int.add.wrap(p6,ev_r)
+  active_next:u64 = int.add.wrap(a6,m6)
+  event_next:u64 = int.add.wrap(e6,ev_r)
+  success_reserve:u32 = const() {"value":0}
+  jump emit(o6,h6,pending_next,active_next,event_next,t6,d6,r6,c_6,ev_r,success_reserve)
+block opened(o7:mutbuf,h7:u64,p7:u64,a7:u64,e7:u64,t7:u64,d7:u64,r7:u64,c_7:u64)
+  z7:u64 = const() {"value":0}
+  pending_empty:bool = compare.eq(p7,z7)
+  why_missing:u64 = const() {"value":3}
+  current_io:u64 = const() {"value":10}
+  branch pending_empty fail(o7,h7,p7,a7,e7,t7,d7,r7,c_7,why_missing,current_io) transfer(o7,h7,p7,a7,e7,t7,d7,r7,c_7)
+block transfer(o8:mutbuf,h8:u64,p8:u64,a8:u64,e8:u64,t8:u64,d8:u64,r8:u64,c_8:u64)
+  unit8:u64 = const() {"value":1}
+  ev8:u64 = const() {"value":2}
+  h_new:u64 = int.add.wrap(h8,unit8)
+  p_new:u64 = int.sub.wrap(p8,unit8)
+  e_new:u64 = int.add.wrap(e8,unit8)
+  opened_ok:u32 = const() {"value":0}
+  jump emit(o8,h_new,p_new,a8,e_new,t8,d8,r8,c_8,ev8,opened_ok)
+block fail(of:mutbuf,hf:u64,pf:u64,af:u64,ef:u64,tf:u64,df:u64,rf:u64,cf:u64,why:u64,current:u64)
+  zf:u64 = const() {"value":0}
+  first:bool = compare.eq(rf,zf)
+  retain_reason:u64 = select(first,why,rf)
+  retain_code:u64 = select(first,current,cf)
+  denied_next:u64 = call(df) {"function":"hr_sat"}
+  current_status:u32 = int.cast(current) {"mode":"wrap"}
+  jump emit(of,hf,pf,af,ef,tf,denied_next,retain_reason,retain_code,zf,current_status)
+block emit(oe:mutbuf,he:u64,pe:u64,ae:u64,ee:u64,te:u64,de:u64,re:u64,ce:u64,ev:u64,status:u32)
+  b_0:u64 = const() {"value":0}
+  b_1:u64 = const() {"value":8}
+  b_2:u64 = const() {"value":16}
+  b_3:u64 = const() {"value":24}
+  b_4:u64 = const() {"value":32}
+  b_5:u64 = const() {"value":40}
+  b_6:u64 = const() {"value":48}
+  b_7:u64 = const() {"value":56}
+  b_8:u64 = const() {"value":64}
+  r_h:u64 = call(oe,b_0,he) {"function":"tr_put"}
+  r_p:u64 = call(oe,b_1,pe) {"function":"tr_put"}
+  r_a:u64 = call(oe,b_2,ae) {"function":"tr_put"}
+  r_e:u64 = call(oe,b_3,ee) {"function":"tr_put"}
+  r_t:u64 = call(oe,b_4,te) {"function":"tr_put"}
+  r_d:u64 = call(oe,b_5,de) {"function":"tr_put"}
+  r_r:u64 = call(oe,b_6,re) {"function":"tr_put"}
+  r_c:u64 = call(oe,b_7,ce) {"function":"tr_put"}
+  r_v:u64 = call(oe,b_8,ev) {"function":"tr_put"}
+  ret(status)
+block malformed()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+end
+
+fn hr_sat(v:u64) -> (u64) effects() entry(entry)
+block entry(v:u64)
+  max:u64 = const() {"value":18446744073709551615}
+  one:u64 = const() {"value":1}
+  at_cap:bool = compare.eq(v,max)
+  wrapped:u64 = int.add.wrap(v,one)
+  result:u64 = select(at_cap,max,wrapped)
+  ret(result)
+end
