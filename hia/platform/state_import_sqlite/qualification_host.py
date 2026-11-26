@@ -50,19 +50,28 @@ def run(message, reader, provider):
     free = bind(provider, "trnm_task_provider_free", None, ptr)
     reset = bind(provider, "trnm_task_provider_reset", u64, ptr)
     directory, db = Path(message["directory"]), Path(message["database"])
-    if (directory.resolve(strict=True) != directory or db.parent != directory
-            or db.is_symlink() or not db.is_file() or directory.stat().st_mode & 0o077):
+    checked_digest = message.get("checked_digest") is True
+    if directory.resolve(strict=True) != directory or directory.stat().st_mode & 0o077:
+        raise ValueError("Owned canonical disposable test directory required")
+    if checked_digest:
+        if (not directory.parent.name.startswith("m13-sqlite-checked-digest-") or directory.name != "owned"
+                or not db.is_absolute() or not db.is_relative_to(directory) or db == directory
+                or ".." in db.parts):
+            raise ValueError("Owned checked-digest fixture required")
+    elif db.parent != directory or db.is_symlink() or not db.is_file():
         raise ValueError("Owned canonical disposable test database required")
     state = ctypes.create_string_buffer(EXTENT)
     response = ctypes.create_string_buffer(EXTENT)
     hash_work = ctypes.create_string_buffer(EXTENT)
     handoff = message.get("handoff") is True
+    if checked_digest and handoff:
+        raise ValueError("Separate read profiles are not interchangeable")
     if handoff and (not directory.parent.name.startswith("m13-sqlite-handoff-") or directory.name != "owned"):
         raise ValueError("Handoff qualification only uses its own named disposable directory")
     raw = os.fsencode(db) if handoff else bytes.fromhex(message["expected"]).hex().upper().encode() + os.fsencode(db)
     proposal_hex = message.get("empty_delta")
     writes = proposal_hex is not None
-    if handoff and writes:
+    if (handoff or checked_digest) and writes:
         raise ValueError("Handoff qualification is read only")
     if writes:
         proposal = bytes.fromhex(proposal_hex)
@@ -82,6 +91,13 @@ def run(message, reader, provider):
             raise ValueError("Write qualification only uses its own named disposable directory")
         raw = proposal + raw
     ops = (2, 3, 5, 6, 7, 8, 9, 10) if writes else (2, 3, 5, 7, 8, 9)
+    wire_db = os.fsencode(db)
+    path_calls = []
+    open_calls = 0
+    if checked_digest:
+        ops += (15,)
+        allowed = ({wire_db, *(os.fsencode(parent) for parent in db.parents)}
+                   | {wire_db + suffix for suffix in (b"-wal", b"-shm", b"-journal")})
     owner = make()
     if not owner:
         raise MemoryError("Provider allocation failed")
@@ -123,6 +139,20 @@ def run(message, reader, provider):
                     raise ValueError("Expected a held empty replay without writes before termination")
                 os.kill(os.getpid(), signal.SIGKILL)
             call = ctypes.addressof(state) + 256
+            if checked_digest and op == 15:
+                follow, unused, span = struct.unpack_from("<QQQ", state, 256)
+                path = ctypes.string_at(call + 24, span) if 0 < span <= 520 else b""
+                if follow or unused or length != 24 + span or path not in allowed or open_calls:
+                    raise ValueError("Checked-digest fixture lstat scope escaped")
+                path_calls.append((op, path.hex()))
+            if checked_digest and op == 2:
+                flags, span = struct.unpack_from("<QQ", state, 256)
+                path = ctypes.string_at(call + 16, span) if 0 < span <= 512 else b""
+                if flags != 16777217 or length != 16 + span or path != wire_db or open_calls:
+                    raise ValueError("Checked-digest fixture SQLite OPEN scope escaped")
+                # No host policy decision: this confines the native request to its owned input.
+                path_calls.append((op, path.hex()))
+                open_calls += 1
             amount = fetch(owner, op, call, length, response, EXTENT)
             transcript.append((phase, op, amount))
             stopped_after_metadata = message.get("kill_after_update") and (phase, op) == (28, 10)
@@ -146,8 +176,11 @@ def run(message, reader, provider):
         else:
             raise ValueError("Bounded qualification loop did not terminate")
         resources = reset(owner)
-        return {"status": status, "result": result, "advanced": advanced,
-                "transcript": transcript, "released": resources}
+        result_data = {"status": status, "result": result, "advanced": advanced,
+                       "transcript": transcript, "released": resources}
+        if checked_digest:
+            result_data["path_calls"] = path_calls
+        return result_data
     finally:
         free(owner)
 

@@ -1,0 +1,85 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_sqlite_checked_digest_scan
+fn f0(input:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,work:mutbuf)
+  a:usize = buffer.len(mem)
+  b:usize = buffer.len(work)
+  size:usize = const() {"value":1048576}
+  enough:bool = compare.eq(a,size)
+  paired:bool = compare.eq(b,size)
+  right_size:bool = bool.and(enough,paired)
+  branch right_size choose(input,mem,work) refuse()
+block choose(raw:readbuf,st:mutbuf,hash:mutbuf)
+  stage_at:u64 = const() {"value":88}
+  stage:u64 = call(st,stage_at) {"function":"cp_get"}
+  zero:u64 = const() {"value":0}
+  fresh:bool = compare.eq(stage,zero)
+  progress:u64 = const() {"value":1}
+  checking:bool = compare.eq(stage,progress)
+  branch fresh start(raw,st) onward(raw,st,hash,checking,stage)
+block start(sr:readbuf,sm:mutbuf)
+  skip:usize = const() {"value":128}
+  n:usize = buffer.len(sr)
+  enough_input:bool = compare.gt(n,skip)
+  branch enough_input check_first(sr,sm,skip) refuse()
+block check_first(cr:readbuf,cm:mutbuf,base:usize)
+  status:u32 = call(cr,cm,base) {"function":"pf_start"}
+  requested:u32 = const() {"value":198}
+  started:bool = compare.eq(status,requested)
+  branch started save_binding(cr,cm,status) forward(status)
+block save_binding(br:readbuf,bm:mutbuf,next:u32)
+  zero_idx:u64 = const() {"value":0}
+  dest:u64 = const() {"value":1800}
+  limit:u64 = const() {"value":128}
+  _binding:u64 = call(br,zero_idx,bm,dest,limit) {"function":"cp_copy"}
+  guard_at:u64 = const() {"value":88}
+  walking:u64 = const() {"value":1}
+  _guard:u64 = call(bm,guard_at,walking) {"function":"cp_put"}
+  ret(next)
+block onward(nr:readbuf,nm:mutbuf,nw:mutbuf,pending:bool,current:u64)
+  branch pending check_result(nr,nm,nw) allowed_scan(nr,nm,nw,current)
+block allowed_scan(ar:readbuf,am:mutbuf,aw:mutbuf,c:u64)
+  accepted:u64 = const() {"value":2}
+  okay_scan:bool = compare.eq(c,accepted)
+  branch okay_scan sqlite(ar,am,aw) refuse()
+block check_result(rr:readbuf,rm:mutbuf,rw:mutbuf)
+  observed:u32 = call(rr,rm) {"function":"pf_resume"}
+  okay:u32 = const() {"value":0}
+  admitted:bool = compare.eq(observed,okay)
+  branch admitted begin_open(rm,rw) forward(observed)
+block begin_open(om:mutbuf,ow:mutbuf)
+  begin:bool = call(om,ow) {"function":"rc_begin"}
+  branch begin retained_open(om) refuse()
+block retained_open(stored:mutbuf)
+  saved_len_at:u64 = const() {"value":72}
+  saved_len:u64 = call(stored,saved_len_at) {"function":"cp_get"}
+  saved_path:u64 = const() {"value":4096}
+  open_path:u64 = const() {"value":272}
+  _same_path:u64 = call(stored,saved_path,open_path,saved_len) {"function":"cp_wcopy"}
+  flag_at:u64 = const() {"value":256}
+  open_flags:u64 = const() {"value":16777217}
+  _flags:u64 = call(stored,flag_at,open_flags) {"function":"cp_put"}
+  len_at:u64 = const() {"value":264}
+  _len:u64 = call(stored,len_at,saved_len) {"function":"cp_put"}
+  output_at:u64 = const() {"value":56}
+  _out:u64 = call(stored,output_at,saved_path) {"function":"cp_put"}
+  partial_at:u64 = const() {"value":80}
+  empty:u64 = const() {"value":0}
+  _partial:u64 = call(stored,partial_at,empty) {"function":"cp_put"}
+  guard_at_open:u64 = const() {"value":88}
+  allowed:u64 = const() {"value":2}
+  _admit:u64 = call(stored,guard_at_open,allowed) {"function":"cp_put"}
+  over:u64 = const() {"value":16}
+  width:u64 = int.add.wrap(saved_len,over)
+  phase:u64 = const() {"value":1}
+  opcode:u64 = const() {"value":2}
+  ask:u32 = call(stored,phase,opcode,width) {"function":"sr_issue"}
+  ret(ask)
+block sqlite(qr:readbuf,qm:mutbuf,qw:mutbuf)
+  reopened:u32 = call(qr,qm,qw) {"function":"ds_scan"}
+  ret(reopened)
+block forward(code:u32)
+  ret(code)
+block refuse()
+  deny:u32 = const() {"value":100}
+  ret(deny)
+end

@@ -2483,6 +2483,19 @@
       ]
     },
     {
+      "id": "state_import/sqlite-checked-digest-staging",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "M13 native original path check sequenced before held digest-only read-only SQLite OPEN, with one private immutable path source; no descriptor identity, race claim or production activation",
+      "sources": [
+        "hia/platform/state_import_sqlite/checked_digest_scan.hepta"
+      ],
+      "tests": [
+        "hia/platform/state_import_sqlite/qualification_host.py",
+        "hia/tests/test_state_import_sqlite_checked_digest.py"
+      ]
+    },
+    {
       "id": "state_import/sqlite-existing-path-observation",
       "node_integration_complete": false,
       "retirement_accepted": false,

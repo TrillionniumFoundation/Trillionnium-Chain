@@ -383,3 +383,20 @@ fixture transport allows only its owned input, that path's exact lexical
 ancestors, and its three corresponding sidecar names. This is not a
 descriptor check, a race-free binding to a later open, or an activation of
 any production filesystem or SQLite route.
+
+### Checked digest-only admission
+
+`checked_digest_scan.hepta` runs that original-style path observation and the
+read-only digest scan in one private HIA continuation. The initial request
+has the usual expected plan/schema bytes followed by one normalized path.
+HIA retains the path once, uses its bytes for all path observations, and
+issues SQLite OPEN from the same retained path bytes only after the final
+sidecar reply was accepted. A refused path produces no SQLite operation,
+descriptor or published projection. The fixture transport checks only the
+scope of actual requested bytes; it does not decide file type or sidecar
+policy.
+
+A successful path still does not bind a descriptor or guard against path
+replacement between lstat and OPEN. Separate production VFS and path
+ownership remain out of scope. This diagnostic leaves the legacy raw and
+ungated digest-only entry points unchanged.

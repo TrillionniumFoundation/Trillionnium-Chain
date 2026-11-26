@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_m13_sqlite_digest_scan
 fn f0(input:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,mem:mutbuf,work:mutbuf)
+  digest:u32 = call(input,mem,work) {"function":"ds_scan"}
+  ret(digest)
+end
+
+fn ds_scan(input:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,mem:mutbuf,work:mutbuf)
   mlen:usize = buffer.len(mem)
   wlen:usize = buffer.len(work)
   cap:usize = const() {"value":1048576}
