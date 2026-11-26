@@ -1,5 +1,20 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/close_collect_replay.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_put"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "platform/service_settlement/held_state_shape.hepta": [
       {
         "functions": [

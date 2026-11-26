@@ -42,3 +42,27 @@ despite prior sticky failure; an immediate failure does not overwrite the
 first error. Tests reach the 1,016/1,017 evidence boundary through actual
 original ledger operations. This is not a filesystem identity proof,
 serialized receipt capacity, or live version of the original VFS.
+
+## Close and collection replay
+
+`close_collect_replay.hepta` models the accounting after a successful
+underlying close that the caller has already observed. A 240-byte input
+contains the selected slot, active main-handle count, cleanup-event count
+and all three pre-close slot rows as little-endian u64 words. Each row
+contains presence/main/linked/reserved flags, actual handle count, pending
+open count, SHM references, high-water bytes, actual observed bytes,
+generation, device and inode. Absent rows are entirely zero. The closed
+slot has at least one open handle, the main count includes pending opens,
+and cleanup evidence must have room for one short event.
+
+The 104-byte output gives the new main count, new cleanup count, retained
+slot mask, retained high-water total and the selected row after close
+but before collection. An unlinked main object's charge remains until
+the last main handle completes, including when a different retained
+generation still has a main handle. Pending opens, reserved slots and
+SHM references also prevent refunds. Two native backends compare all
+fields with original Rust ledger observations under V1 and V2, including
+the last of the 256 cleanup events and a close in slot 2. Status 100
+refuses malformed or out-of-profile input, and 102 refuses short output;
+neither publishes any bytes. This mode does not close an FD, evaluate a
+failed cleanup record, serialize the original event, or own live VFS state.
