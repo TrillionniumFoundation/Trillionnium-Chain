@@ -2469,6 +2469,20 @@
       ]
     },
     {
+      "id": "state_import/sqlite-streaming-digest-staging",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "M13 native SQLite held digest-only scan of original full-value extent through bounded BLOB chunks and exact row commitments; no raw value publication or production authority",
+      "sources": [
+        "hia/platform/state_import_sqlite/digest_scan.hepta"
+      ],
+      "tests": [
+        "hia/platform/state_import_sqlite/qualification_host.py",
+        "hia/tests/test_state_import_sqlite_digest_scan.py",
+        "hia/tests/rust_state_import_snapshot_shadow_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/sqlite-handoff-read-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,

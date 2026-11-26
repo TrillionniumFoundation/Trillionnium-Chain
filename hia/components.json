@@ -510,6 +510,9 @@
           "rc_field",
           "rc_hash_field",
           "rc_finish",
+          "rc_row_prefix",
+          "rc_hash_length",
+          "rc_accumulate",
           "rc_extent",
           "rc_tuple",
           "rc_retain_tuple",
@@ -804,11 +807,83 @@
           "rc_field",
           "rc_hash_field",
           "rc_finish",
+          "rc_row_prefix",
+          "rc_hash_length",
+          "rc_accumulate",
           "rc_extent",
           "rc_tuple",
           "rc_retain_tuple",
           "rc_lex",
           "rc_reserved"
+        ]
+      }
+    ],
+    "platform/state_import_sqlite/digest_scan.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_copy",
+          "cp_wcopy"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_begin",
+          "rc_row",
+          "rc_context",
+          "rc_nibble",
+          "rc_octet",
+          "rc_field",
+          "rc_hash_field",
+          "rc_finish",
+          "rc_row_prefix",
+          "rc_hash_length",
+          "rc_accumulate",
+          "rc_extent",
+          "rc_tuple",
+          "rc_retain_tuple",
+          "rc_lex",
+          "rc_reserved"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_cold",
+          "sr_projection",
+          "sr_begin",
+          "sr_meta",
+          "sr_rows",
+          "sr_commit",
+          "sr_issue",
+          "sr_handle",
+          "sr_col",
+          "sr_status",
+          "sr_value",
+          "sr_expected",
+          "sr_match64",
+          "sr_append"
         ]
       }
     ],

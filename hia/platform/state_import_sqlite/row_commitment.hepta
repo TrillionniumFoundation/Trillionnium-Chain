@@ -30,6 +30,34 @@ end
 
 fn rc_row(input:readbuf,state:mutbuf,work:mutbuf,end_at:usize) -> (bool) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,state:mutbuf,work:mutbuf,end_at:usize)
+  value_start:usize = call(input,work,end_at) {"function":"rc_row_prefix"}
+  invalid:usize = const() {"value":0}
+  prefix_ok:bool = compare.ne(value_start,invalid)
+  branch prefix_ok val(input,state,work,end_at,value_start) bad()
+block val(vr:readbuf,vm:mutbuf,vw:mutbuf,ve:usize,vs:usize)
+  lf:u8 = const() {"value":10}
+  after_value:usize = call(vr,vw,vs,ve,lf) {"function":"rc_field"}
+  value_ok:bool = compare.eq(after_value,ve)
+  branch value_ok value_check(vm,vw,after_value,vs) bad()
+block value_check(vcm:mutbuf,vcw:mutbuf,vcn:usize,vcs:usize)
+  val_bytes:u64 = call(vcn,vcs) {"function":"rc_extent"}
+  max_val:u64 = const() {"value":16777216}
+  fits_val:bool = compare.le(val_bytes,max_val)
+  branch fits_val value_hash(vcm,vcw,val_bytes) bad()
+block value_hash(vhm:mutbuf,vhw:mutbuf,vlen:u64)
+  val_hash:bool = call(vhw,vlen) {"function":"rc_hash_field"}
+  branch val_hash leaf(vhm,vhw) bad()
+block leaf(lm:mutbuf,lw:mutbuf)
+  sealed:u64 = call(lw) {"function":"tr_sha_final"}
+  okay:bool = call(lm,lw,sealed) {"function":"rc_accumulate"}
+  ret(okay)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rc_row_prefix(input:readbuf,work:mutbuf,end_at:usize) -> (usize) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,end_at:usize)
   init:u64 = call(work) {"function":"tr_sha_init"}
   at0:u64 = const() {"value":1208}
   word0:u64 = const() {"value":2017612633061982208}
@@ -51,68 +79,63 @@ block entry(input:readbuf,state:mutbuf,work:mutbuf,end_at:usize)
   status:u64 = bit.or(init,update)
   zero:u64 = const() {"value":0}
   ok:bool = compare.eq(status,zero)
-  branch ok ns(input,state,work,end_at) bad()
-block ns(raw:readbuf,mem:mutbuf,w:mutbuf,end_ns:usize)
+  branch ok ns(input,work,end_at) bad()
+block ns(raw:readbuf,w:mutbuf,end_ns:usize)
   start_ns:usize = const() {"value":24}
   colon:u8 = const() {"value":58}
   after_ns:usize = call(raw,w,start_ns,end_ns,colon) {"function":"rc_field"}
   fail_ns:usize = const() {"value":0}
   ns_ok:bool = compare.ne(after_ns,fail_ns)
-  branch ns_ok namespace_check(raw,mem,w,end_ns,after_ns,start_ns) bad()
-block namespace_check(nr:readbuf,nm:mutbuf,nw:mutbuf,ne:usize,nn:usize,nb:usize)
+  branch ns_ok namespace_check(raw,w,end_ns,after_ns,start_ns) bad()
+block namespace_check(nr:readbuf,nw:mutbuf,ne:usize,nn:usize,nb:usize)
   ns_bytes:u64 = call(nn,nb) {"function":"rc_extent"}
   min_ns:u64 = const() {"value":1}
   max_ns:u64 = const() {"value":128}
   enough_ns:bool = compare.ge(ns_bytes,min_ns)
   fits_ns:bool = compare.le(ns_bytes,max_ns)
   valid_ns:bool = bool.and(enough_ns,fits_ns)
-  branch valid_ns namespace_policy(nr,nm,nw,ne,nn,ns_bytes) bad()
-block namespace_policy(npr:readbuf,npm:mutbuf,npw:mutbuf,npe:usize,npn:usize,np_size:u64)
+  branch valid_ns namespace_policy(nr,nw,ne,nn,ns_bytes) bad()
+block namespace_policy(npr:readbuf,npw:mutbuf,npe:usize,npn:usize,np_size:u64)
   forbidden:bool = call(npw,np_size) {"function":"rc_reserved"}
-  branch forbidden bad() namespace_hash(npr,npm,npw,npe,npn,np_size)
-block namespace_hash(nhr:readbuf,nhm:mutbuf,nhw:mutbuf,nhe:usize,nhn:usize,nh_size:u64)
+  branch forbidden bad() namespace_hash(npr,npw,npe,npn,np_size)
+block namespace_hash(nhr:readbuf,nhw:mutbuf,nhe:usize,nhn:usize,nh_size:u64)
   ns_src:u64 = const() {"value":1280}
   current_ns:u64 = const() {"value":826000}
   _stage_ns:u64 = call(nhw,ns_src,current_ns,nh_size) {"function":"cp_wcopy"}
   ns_hash:bool = call(nhw,nh_size) {"function":"rc_hash_field"}
-  branch ns_hash key(nhr,nhm,nhw,nhe,nhn,nh_size) bad()
-block key(kr:readbuf,km:mutbuf,kw:mutbuf,ke:usize,ks:usize,current_ns_size:u64)
+  branch ns_hash key(nhr,nhw,nhe,nhn,nh_size) bad()
+block key(kr:readbuf,kw:mutbuf,ke:usize,ks:usize,current_ns_size:u64)
   key_colon:u8 = const() {"value":58}
   after_key:usize = call(kr,kw,ks,ke,key_colon) {"function":"rc_field"}
   fail_key:usize = const() {"value":0}
   key_ok:bool = compare.ne(after_key,fail_key)
-  branch key_ok key_check(kr,km,kw,ke,after_key,ks,current_ns_size) bad()
-block key_check(kcr:readbuf,kcm:mutbuf,kcw:mutbuf,kce:usize,kcn:usize,kcs:usize,nsize:u64)
+  branch key_ok key_check(kr,kw,ke,after_key,ks,current_ns_size) bad()
+block key_check(kcr:readbuf,kcw:mutbuf,kce:usize,kcn:usize,kcs:usize,nsize:u64)
   key_bytes:u64 = call(kcn,kcs) {"function":"rc_extent"}
   min_key:u64 = const() {"value":1}
   max_key:u64 = const() {"value":65536}
   nonempty_key:bool = compare.ge(key_bytes,min_key)
   fits_key:bool = compare.le(key_bytes,max_key)
   valid_key:bool = bool.and(nonempty_key,fits_key)
-  branch valid_key key_order(kcr,kcm,kcw,kce,kcn,nsize,key_bytes) bad()
-block key_order(kor:readbuf,kom:mutbuf,kow:mutbuf,koe:usize,kon:usize,ns_n:u64,key_n:u64)
+  branch valid_key key_order(kcr,kcw,kce,kcn,nsize,key_bytes) bad()
+block key_order(kor:readbuf,kow:mutbuf,koe:usize,kon:usize,ns_n:u64,key_n:u64)
   ordered:bool = call(kow,ns_n,key_n) {"function":"rc_tuple"}
-  branch ordered key_hash(kor,kom,kow,koe,kon,ns_n,key_n) bad()
-block key_hash(khr:readbuf,khm:mutbuf,khw:mutbuf,khe:usize,khn:usize,nh_width:u64,kh_width:u64)
+  branch ordered key_hash(kor,kow,koe,kon,ns_n,key_n) bad()
+block key_hash(khr:readbuf,khw:mutbuf,khe:usize,khn:usize,nh_width:u64,kh_width:u64)
   saved:bool = call(khw,nh_width,kh_width) {"function":"rc_retain_tuple"}
   hash_key:bool = call(khw,kh_width) {"function":"rc_hash_field"}
   valid_and_hashed:bool = bool.and(saved,hash_key)
-  branch valid_and_hashed val(khr,khm,khw,khe,khn) bad()
-block val(vr:readbuf,vm:mutbuf,vw:mutbuf,ve:usize,vs:usize)
-  lf:u8 = const() {"value":10}
-  after_value:usize = call(vr,vw,vs,ve,lf) {"function":"rc_field"}
-  value_ok:bool = compare.eq(after_value,ve)
-  branch value_ok value_check(vm,vw,after_value,vs) bad()
-block value_check(vcm:mutbuf,vcw:mutbuf,vcn:usize,vcs:usize)
-  val_bytes:u64 = call(vcn,vcs) {"function":"rc_extent"}
-  max_val:u64 = const() {"value":16777216}
-  fits_val:bool = compare.le(val_bytes,max_val)
-  branch fits_val value_hash(vcm,vcw,val_bytes) bad()
-block value_hash(vhm:mutbuf,vhw:mutbuf,vlen:u64)
-  val_hash:bool = call(vhw,vlen) {"function":"rc_hash_field"}
-  branch val_hash leaf(vhm,vhw) bad()
-block leaf(lm:mutbuf,lw:mutbuf)
-  sealed:u64 = call(lw) {"function":"tr_sha_final"}
+  branch valid_and_hashed good(khn) bad()
+block good(next:usize)
+  ret(next)
+block bad()
+  no:usize = const() {"value":0}
+  ret(no)
+end
+
+
+fn rc_accumulate(lm:mutbuf,lw:mutbuf,sealed:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(lm:mutbuf,lw:mutbuf,sealed:u64)
   literal_leaf:u64 = const() {"value":1168}
   staged_leaf:u64 = const() {"value":1216}
   width:u64 = const() {"value":32}
@@ -125,9 +148,6 @@ block leaf(lm:mutbuf,lw:mutbuf)
   errors:u64 = bit.or(sealed,accumulate)
   ok_leaf:bool = compare.eq(errors,start)
   ret(ok_leaf)
-block bad()
-  no:bool = const() {"value":false}
-  ret(no)
 end
 
 fn rc_context(src:mutbuf,from:u64,dst:mutbuf,to:u64) -> (u64) effects(read,write,trap) entry(entry)
@@ -235,10 +255,25 @@ end
 
 fn rc_hash_field(work:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(work:mutbuf,n:u64)
+  prefix:bool = call(work,n) {"function":"rc_hash_length"}
+  branch prefix body(work,n) bad()
+block body(w:mutbuf,extent:u64)
+  data_at:u64 = const() {"value":1280}
+  result:u64 = call(w,data_at,extent) {"function":"tr_sha_update_work"}
+  zero:u64 = const() {"value":0}
+  ok:bool = compare.eq(result,zero)
+  ret(ok)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rc_hash_length(work:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,n:u64)
   length_end:usize = const() {"value":1215}
   length_start:usize = const() {"value":1208}
-  jump big(work,n,n,length_end,length_start)
-block big(w:mutbuf,orig:u64,left:u64,at:usize,first:usize)
+  jump big(work,n,length_end,length_start)
+block big(w:mutbuf,left:u64,at:usize,first:usize)
   low:u8 = int.cast(left) {"mode":"wrap"}
   _ = buffer.store(w,at,low)
   one:usize = const() {"value":1}
@@ -246,14 +281,11 @@ block big(w:mutbuf,orig:u64,left:u64,at:usize,first:usize)
   done:bool = compare.eq(at,first)
   more:u64 = int.shr.checked(left,eight)
   previous:usize = int.sub.wrap(at,one)
-  branch done update(w,orig) big(w,orig,more,previous,first)
-block update(data:mutbuf,extent:u64)
+  branch done update(w) big(w,more,previous,first)
+block update(data:mutbuf)
   split:u64 = const() {"value":1208}
   len_bytes:u64 = const() {"value":8}
-  data_at:u64 = const() {"value":1280}
-  a:u64 = call(data,split,len_bytes) {"function":"tr_sha_update_work"}
-  b:u64 = call(data,data_at,extent) {"function":"tr_sha_update_work"}
-  status:u64 = bit.or(a,b)
+  status:u64 = call(data,split,len_bytes) {"function":"tr_sha_update_work"}
   zero:u64 = const() {"value":0}
   ok:bool = compare.eq(status,zero)
   ret(ok)

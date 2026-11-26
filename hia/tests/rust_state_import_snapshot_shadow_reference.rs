@@ -97,6 +97,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 path, d(10), d(11), context(&rows, 5), &rows, &FixtureRoot,
             )?;
         }
+        ("seed-stream", 3) => {
+            let sizes = [0usize, 1, 65535, 65536, 65537, 16777216];
+            let rows = sizes.iter().enumerate().map(|(i, n)| TargetRowV0 {
+                namespace: b"ordinary-stream".to_vec(),
+                key: vec![i as u8, 0, 255],
+                value: (0..*n).map(|position| {
+                    ((position * 37 + position / 65536 * 23 + i) & 255) as u8
+                }).collect(),
+            }).collect::<Vec<_>>();
+            SqliteIncrementalStateStoreV0::initialize(
+                path, d(10), d(11), context(&rows, 5), &rows, &FixtureRoot,
+            )?;
+        }
+        ("read-digest", 3) => {
+            let store = SqliteIncrementalStateStoreV0::open_existing(path, d(10), d(11))?;
+            let read = store.readback_v0()?;
+            let mut out = io::stdout().lock();
+            for field in [read.plan_digest, read.target_schema_digest, read.source_context_digest,
+                          read.target_context_digest, read.rows_digest, read.state_root] {
+                out.write_all(&field.0)?;
+            }
+            out.write_all(&read.row_count.to_be_bytes())?;
+            out.write_all(&read.generation.to_be_bytes())?;
+            out.write_all(&read.last_delta_digest.0)?;
+        }
         ("seed-rich", 3) => {
             let mut rows = vec![
                 (vec![0], vec![0], Vec::new()),
@@ -307,7 +332,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let snapshot = store.export_snapshot_v0(&FixtureRoot)?;
             io::stdout().write_all(&private_frame(snapshot))?;
         }
-        _ => return Err("scope is seed/seed-rich/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/empty-receipt/export on disposable staging only".into()),
+        _ => return Err("scope is seed/seed-rich/seed-stream/read-digest/advance/vector-advance/mixed-advance/update-advance/insert-advance/delete-advance/empty-advance/empty-receipt/export on disposable staging only".into()),
     }
     Ok(())
 }

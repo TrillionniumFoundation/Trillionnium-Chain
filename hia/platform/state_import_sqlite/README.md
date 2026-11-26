@@ -340,3 +340,26 @@ databases. Even when corrupted rows have a matching persisted SHA and row
 count, native HIA and original Rust refuse reserved prefixes, malformed
 fields and duplicate tuples before releasing a projection. The read and
 write ownership, production paths and finality are unchanged.
+
+## Digest-only full-value held scan
+
+`digest_scan.hepta` is a separate disposable read-only continuation. It reuses
+the ordinary held metadata/schema checks, typed tuple limits and reserved
+namespace validation. A fixed SQLite statement emits each tuple and declared
+value length first, followed by its value in BLOB chunks of at most 65,536
+bytes. The native continuation checks each response's type and exact current
+extent, hashes the original field-length frame once, and streams the complete
+value into the actual canonical row digest. Checked rows and count contribute
+to the persisted outer SHA before finalize, commit and close. The only
+published output is the 489-byte metadata projection; no raw values or chunk
+data are published. SQLite may use its existing sort/cache mechanisms and
+the general provider and its memory limits are unchanged. The legacy raw
+projection continues to refuse rows it cannot represent.
+
+The original Rust fixture creates real rows spanning empty, one byte, both
+sides of the chunk boundary and the exact 16 MiB original value maximum.
+Qualification counts actual bounded provider reads, compares its metadata
+to original Rust, holds the old snapshot through an original WAL advance,
+and checks new cold readback. Oversized, corrupted and duplicate persisted
+rows refuse without a published result. This is not a production mode or a
+new storage or authority contract.
