@@ -2483,6 +2483,20 @@
       ]
     },
     {
+      "id": "state_import/sqlite-existing-path-observation",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "M13 defensive original existing SQLite path-only lstat preflight on bounded normalized absolute paths under disposable fixture ownership; no file open, descriptor identity, race guarantee or production activation",
+      "sources": [
+        "hia/platform/state_import_sqlite/path_preflight.hepta"
+      ],
+      "tests": [
+        "hia/platform/state_import_sqlite/qualification_host.py",
+        "hia/tests/test_state_import_sqlite_path_preflight.py",
+        "hia/tests/rust_state_import_sqlite_path_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/sqlite-handoff-read-staging",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -868,6 +868,20 @@
         ]
       }
     ],
+    "platform/state_import_sqlite/path_preflight.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": ["cp_get", "cp_put", "cp_copy", "cp_wcopy"]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": ["tr_read"]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": ["sr_issue"]
+      }
+    ],
     "platform/state_import_sqlite/digest_scan.hepta": [
       {
         "source": "src/control_plane/core.hepta",

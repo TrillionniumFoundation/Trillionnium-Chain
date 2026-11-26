@@ -363,3 +363,23 @@ to original Rust, holds the old snapshot through an original WAL advance,
 and checks new cold readback. Oversized, corrupted and duplicate persisted
 rows refuse without a published result. This is not a production mode or a
 new storage or authority contract.
+
+## Existing-path lstat preflight
+
+`path_preflight.hepta` is a separate defensive observation of the original
+existing-DB path predicate. On normalized, NUL-free absolute Linux paths of
+2–512 bytes it asks the retained mechanical provider for real **lstat**, never
+stat or open. It first requires a regular final file, then walks its lexical
+ancestors from the nearest parent through root and requires directories, and
+finally checks `-wal`, `-shm`, and `-journal` in that order. In the last
+stage the original rejects only a successfully observed symlink; missing or
+other unsuccessful sidecar lookups do not fail the preflight. Ordinary
+non-symlink sidecars are not judged suitable for SQLite by this check.
+
+The only result is a status, with no descriptor or other published data. The
+test calls the exact original Rust path helpers on the same owned fixtures,
+and observes the actual native syscall requests and responses. The native
+fixture transport allows only its owned input, that path's exact lexical
+ancestors, and its three corresponding sidecar names. This is not a
+descriptor check, a race-free binding to a later open, or an activation of
+any production filesystem or SQLite route.

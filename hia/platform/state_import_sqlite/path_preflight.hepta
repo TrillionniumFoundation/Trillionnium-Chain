@@ -1,0 +1,252 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_existing_path_preflight
+fn f0(input:readbuf,state:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,state:mutbuf,work:mutbuf)
+  n:usize = buffer.len(state)
+  available:usize = const() {"value":8192}
+  storage:bool = compare.ge(n,available)
+  branch storage dispatch(input,state) refuse()
+block dispatch(raw:readbuf,mem:mutbuf)
+  phase_at:u64 = const() {"value":0}
+  phase:u64 = call(mem,phase_at) {"function":"cp_get"}
+  fresh:bool = compare.eq(phase,phase_at)
+  branch fresh bounds(raw,mem) response(raw,mem,phase)
+block bounds(br:readbuf,bm:mutbuf)
+  n_in:usize = buffer.len(br)
+  min_in:usize = const() {"value":2}
+  max_in:usize = const() {"value":512}
+  enough:bool = compare.ge(n_in,min_in)
+  bounded:bool = compare.le(n_in,max_in)
+  sized:bool = bool.and(enough,bounded)
+  branch sized header(br,bm,n_in) refuse()
+block header(hr:readbuf,hm:mutbuf,hn:usize)
+  first:usize = const() {"value":0}
+  root:u8 = buffer.load(hr,first)
+  slash:u8 = const() {"value":47}
+  absolute:bool = compare.eq(root,slash)
+  branch absolute valid_path(hr,hm,hn) refuse()
+block valid_path(vr:readbuf,vm:mutbuf,vn:usize)
+  valid:bool = call(vr,vn) {"function":"pf_path"}
+  branch valid retain(vr,vm,vn) refuse()
+block retain(rr:readbuf,rm:mutbuf,rn:usize)
+  from:u64 = const() {"value":0}
+  saved_at:u64 = const() {"value":4096}
+  raw_n:u64 = int.cast(rn) {"mode":"wrap"}
+  _copy:u64 = call(rr,from,rm,saved_at,raw_n) {"function":"cp_copy"}
+  wire_path_len:u64 = const() {"value":72}
+  _save_len:u64 = call(rm,wire_path_len,raw_n) {"function":"cp_put"}
+  first_phase:u64 = const() {"value":1}
+  issued:u32 = call(rm,raw_n,first_phase) {"function":"pf_issue"}
+  ret(issued)
+block response(ar:readbuf,am:mutbuf,aph:u64)
+  reply:usize = buffer.len(ar)
+  reply_len:usize = const() {"value":24}
+  exact:bool = compare.eq(reply,reply_len)
+  branch exact fields(ar,am,aph) refuse()
+block fields(fr:readbuf,fm:mutbuf,fph:u64)
+  zero:u64 = const() {"value":0}
+  mode_at:u64 = const() {"value":8}
+  errno:u64 = call(fr,zero) {"function":"tr_read"}
+  mode:u64 = call(fr,mode_at) {"function":"tr_read"}
+  mode_mask:u64 = const() {"value":61440}
+  kind:u64 = bit.and(mode,mode_mask)
+  successful:bool = compare.eq(errno,zero)
+  db_phase:u64 = const() {"value":1}
+  is_db:bool = compare.eq(fph,db_phase)
+  branch is_db db(fm,successful,kind) later(fm,fph,successful,kind)
+block db(dm:mutbuf,success_db:bool,type_db:u64)
+  regular:u64 = const() {"value":32768}
+  is_file:bool = compare.eq(type_db,regular)
+  okay_db:bool = bool.and(success_db,is_file)
+  branch okay_db start_ancestors(dm) refuse()
+block start_ancestors(sm:mutbuf)
+  len_at:u64 = const() {"value":72}
+  first_n:u64 = call(sm,len_at) {"function":"cp_get"}
+  jump parent(sm,first_n)
+block later(lm:mutbuf,lph:u64,success_later:bool,type_later:u64)
+  ancestor_phase:u64 = const() {"value":2}
+  ancestor:bool = compare.eq(lph,ancestor_phase)
+  branch ancestor ancestor_result(lm,success_later,type_later) sidecar_result(lm,lph,success_later,type_later)
+block ancestor_result(arm:mutbuf,succeeded:bool,found_type:u64)
+  directory:u64 = const() {"value":16384}
+  is_directory:bool = compare.eq(found_type,directory)
+  legal_dir:bool = bool.and(succeeded,is_directory)
+  branch legal_dir ascend(arm) refuse()
+block ascend(asm:mutbuf)
+  parent_len:u64 = const() {"value":80}
+  current_parent:u64 = call(asm,parent_len) {"function":"cp_get"}
+  linux_root:u64 = const() {"value":1}
+  root_checked:bool = compare.eq(current_parent,linux_root)
+  branch root_checked begin_sidecars(asm) parent(asm,current_parent)
+block parent(pm:mutbuf,pn:u64)
+  size:u64 = call(pm,pn) {"function":"pf_parent"}
+  parent_at:u64 = const() {"value":80}
+  _parent:u64 = call(pm,parent_at,size) {"function":"cp_put"}
+  phase_parent:u64 = const() {"value":2}
+  status_p:u32 = call(pm,size,phase_parent) {"function":"pf_issue"}
+  ret(status_p)
+block begin_sidecars(bsm:mutbuf)
+  wal_phase:u64 = const() {"value":3}
+  jump sidecar(bsm,wal_phase)
+block sidecar_result(sc_rm:mutbuf,sc_phase:u64,sc_found:bool,sc_kind:u64)
+  symlink:u64 = const() {"value":40960}
+  is_link:bool = compare.eq(sc_kind,symlink)
+  reject_link:bool = bool.and(sc_found,is_link)
+  branch reject_link refuse() sidecar_continue(sc_rm,sc_phase)
+block sidecar_continue(scm:mutbuf,scp:u64)
+  first_sc:u64 = const() {"value":3}
+  last_sc:u64 = const() {"value":5}
+  reached_last:bool = compare.eq(scp,last_sc)
+  lower_ok:bool = compare.ge(scp,first_sc)
+  upper_ok:bool = compare.lt(scp,last_sc)
+  has_next:bool = bool.and(lower_ok,upper_ok)
+  branch reached_last success() advance(scm,scp,has_next)
+block advance(adv_m:mutbuf,adv_phase:u64,adv_valid:bool)
+  step:u64 = const() {"value":1}
+  next_phase:u64 = int.add.wrap(adv_phase,step)
+  branch adv_valid sidecar(adv_m,next_phase) refuse()
+block sidecar(side_m:mutbuf,side_ph:u64)
+  result_sc:u32 = call(side_m,side_ph) {"function":"pf_sidecar"}
+  ret(result_sc)
+block success()
+  accepted:u32 = const() {"value":0}
+  ret(accepted)
+block refuse()
+  nope:u32 = const() {"value":100}
+  ret(nope)
+end
+
+fn pf_path(raw:readbuf,end:usize) -> (bool) effects(read,trap) entry(entry)
+block entry(raw:readbuf,end:usize)
+  one:usize = const() {"value":1}
+  jump scan(raw,end,one,one)
+block scan(r:readbuf,n:usize,start:usize,at:usize)
+  more:bool = compare.lt(at,n)
+  branch more byte(r,n,start,at) final(r,start,at)
+block byte(b:readbuf,bn:usize,bs:usize,bi:usize)
+  value:u8 = buffer.load(b,bi)
+  zero:u8 = const() {"value":0}
+  none:bool = compare.eq(value,zero)
+  branch none bad() delimiter(b,bn,bs,bi,value)
+block delimiter(d:readbuf,dn:usize,ds:usize,di:usize,dv:u8)
+  slash:u8 = const() {"value":47}
+  is_slash:bool = compare.eq(dv,slash)
+  one_d:usize = const() {"value":1}
+  next:usize = int.add.wrap(di,one_d)
+  branch is_slash segment(d,dn,ds,di,next) scan(d,dn,ds,next)
+block segment(g:readbuf,gn:usize,gs:usize,ge:usize,gx:usize)
+  checked:bool = call(g,gs,ge) {"function":"pf_segment"}
+  branch checked scan(g,gn,gx,gx) bad()
+block final(f:readbuf,fs:usize,fe:usize)
+  legal:bool = call(f,fs,fe) {"function":"pf_segment"}
+  ret(legal)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn pf_segment(raw:readbuf,start:usize,end:usize) -> (bool) effects(read,trap) entry(entry)
+block entry(raw:readbuf,start:usize,end:usize)
+  n:usize = int.sub.wrap(end,start)
+  empty_at:usize = const() {"value":0}
+  zero:bool = compare.eq(n,empty_at)
+  branch zero bad() small(raw,start,n)
+block small(rr:readbuf,ss:usize,nn:usize)
+  two:usize = const() {"value":2}
+  long:bool = compare.gt(nn,two)
+  branch long good() first(rr,ss,nn)
+block first(fr:readbuf,fs:usize,fnn:usize)
+  first_byte:u8 = buffer.load(fr,fs)
+  dot:u8 = const() {"value":46}
+  is_dot:bool = compare.eq(first_byte,dot)
+  branch is_dot dot_first(fr,fs,fnn) good()
+block dot_first(dr:readbuf,ds:usize,dn:usize)
+  one:usize = const() {"value":1}
+  single:bool = compare.eq(dn,one)
+  following:usize = int.add.wrap(ds,one)
+  branch single bad() second(dr,following)
+block second(sr:readbuf,si:usize)
+  second_byte:u8 = buffer.load(sr,si)
+  second_dot:u8 = const() {"value":46}
+  both_dots:bool = compare.eq(second_byte,second_dot)
+  branch both_dots bad() good()
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn pf_parent(mem:mutbuf,len:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,len:u64)
+  one:u64 = const() {"value":1}
+  last:u64 = int.sub.wrap(len,one)
+  jump look(mem,last)
+block look(m:mutbuf,index:u64)
+  base:u64 = const() {"value":4096}
+  absolute:u64 = int.add.wrap(base,index)
+  position:usize = int.cast(absolute) {"mode":"wrap"}
+  byte:u8 = buffer.load(m,position)
+  slash:u8 = const() {"value":47}
+  split:bool = compare.eq(byte,slash)
+  zero:u64 = const() {"value":0}
+  at_root:bool = compare.eq(index,zero)
+  one_l:u64 = const() {"value":1}
+  chosen:u64 = select(at_root,one_l,index)
+  back:u64 = int.sub.wrap(index,one_l)
+  branch split done(chosen) look(m,back)
+block done(width:u64)
+  ret(width)
+end
+
+fn pf_issue(mem:mutbuf,len:u64,phase:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,len:u64,phase:u64)
+  src:u64 = const() {"value":4096}
+  dst:u64 = const() {"value":280}
+  _path:u64 = call(mem,src,dst,len) {"function":"cp_wcopy"}
+  status:u32 = call(mem,len,phase) {"function":"pf_request"}
+  ret(status)
+end
+
+fn pf_sidecar(mem:mutbuf,phase:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,phase:u64)
+  len_at:u64 = const() {"value":72}
+  path_n:u64 = call(mem,len_at) {"function":"cp_get"}
+  src:u64 = const() {"value":4096}
+  dst:u64 = const() {"value":280}
+  _path:u64 = call(mem,src,dst,path_n) {"function":"cp_wcopy"}
+  off:u64 = int.add.wrap(dst,path_n)
+  wal_phase:u64 = const() {"value":3}
+  shm_phase:u64 = const() {"value":4}
+  wal:bool = compare.eq(phase,wal_phase)
+  shm:bool = compare.eq(phase,shm_phase)
+  wal_word:u64 = const() {"value":1818326829}
+  shm_word:u64 = const() {"value":1835561773}
+  journal_word:u64 = const() {"value":7809644666712713773}
+  alt:u64 = select(shm,shm_word,journal_word)
+  suffix:u64 = select(wal,wal_word,alt)
+  _suffix:u64 = call(mem,off,suffix) {"function":"cp_put"}
+  short:bool = bool.or(wal,shm)
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  extra:u64 = select(short,four,eight)
+  length:u64 = int.add.wrap(path_n,extra)
+  code:u32 = call(mem,length,phase) {"function":"pf_request"}
+  ret(code)
+end
+
+fn pf_request(mem:mutbuf,len:u64,phase:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,len:u64,phase:u64)
+  mode_at:u64 = const() {"value":256}
+  unused_at:u64 = const() {"value":264}
+  size_at:u64 = const() {"value":272}
+  nofollow:u64 = const() {"value":0}
+  _mode:u64 = call(mem,mode_at,nofollow) {"function":"cp_put"}
+  _unused:u64 = call(mem,unused_at,nofollow) {"function":"cp_put"}
+  _size:u64 = call(mem,size_at,len) {"function":"cp_put"}
+  header:u64 = const() {"value":24}
+  total:u64 = int.add.wrap(len,header)
+  operation:u64 = const() {"value":15}
+  next:u32 = call(mem,phase,operation,total) {"function":"sr_issue"}
+  ret(next)
+end

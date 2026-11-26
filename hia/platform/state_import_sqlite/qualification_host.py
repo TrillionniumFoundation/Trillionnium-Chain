@@ -152,6 +152,55 @@ def run(message, reader, provider):
         free(owner)
 
 
+
+def path_preflight(message, reader, provider):
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    step = bind(reader, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    fetch = bind(provider, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
+    make = bind(provider, "trnm_task_provider_new", ptr)
+    free = bind(provider, "trnm_task_provider_free", None, ptr)
+    reset = bind(provider, "trnm_task_provider_reset", u64, ptr)
+    directory, path = Path(message["directory"]), Path(message["database"])
+    if (directory.name != "owned" or not directory.parent.name.startswith("m13-sqlite-path-")
+            or directory.resolve(strict=True) != directory or directory.stat().st_mode & 0o077
+            or not path.is_absolute() or not path.is_relative_to(directory) or path == directory
+            or ".." in path.parts):
+        raise ValueError("Expected a normalized path in an owned disposable fixture")
+    path_raw = os.fsencode(path)
+    allowed = ({path_raw, *(os.fsencode(parent) for parent in path.parents)}
+               | {path_raw + suffix for suffix in (b"-wal", b"-shm", b"-journal")})
+    mem = ctypes.create_string_buffer(8192)
+    work = ctypes.create_string_buffer(1)
+    response = ctypes.create_string_buffer(32)
+    owner = make()
+    if not owner:
+        raise MemoryError("Provider allocation failed")
+    raw, observations = path_raw, []
+    try:
+        for _ in range(520):
+            argument = ctypes.create_string_buffer(raw)
+            status = step(argument, len(raw), mem, 8192, work, 1)
+            phase, op, length, published = struct.unpack_from("<QQQQ", mem)
+            if published:
+                raise ValueError("Path check has no data publication")
+            if status in (0, 100):
+                return {"status": status, "released": reset(owner), "observations": observations}
+            if status != 198 or op != 15 or not 25 <= length <= 544 or not 1 <= phase <= 5:
+                raise ValueError("Unexpected native lstat request")
+            follow, unused, size = struct.unpack_from("<QQQ", mem, 256)
+            path_bytes = ctypes.string_at(ctypes.addressof(mem) + 280, size) if 0 < size <= 520 else b""
+            if (follow or unused or length != 24 + size or not path_bytes or path_bytes not in allowed):
+                raise ValueError("Refusing any path outside the exact owned fixture and its ancestors")
+            count = fetch(owner, op, ctypes.addressof(mem) + 256, length, response, 32)
+            if count != 24:
+                raise ValueError("Incomplete native provider lstat response")
+            raw = ctypes.string_at(response, count)
+            errno, mode, _ = struct.unpack("<QQQ", raw)
+            observations.append((phase, path_bytes.hex(), errno, mode))
+        raise ValueError("Bounded lstat qualification did not terminate")
+    finally:
+        free(owner)
+
 def main():
     if len(sys.argv) != 1:
         raise SystemExit("Expected private request on stdin")
@@ -159,7 +208,8 @@ def main():
     resource.setrlimit(resource.RLIMIT_AS, (256 << 20, 256 << 20))
     request = json.load(sys.stdin)
     with sealed_library(*request["reader"]) as reader, sealed_library(*request["provider"]) as provider:
-        result = run(request, reader, provider)
+        worker = path_preflight if request.get("path_preflight") is True else run
+        result = worker(request, reader, provider)
     print(json.dumps(result))
 
 
