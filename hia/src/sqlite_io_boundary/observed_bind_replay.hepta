@@ -1,0 +1,393 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_observed_bind_replay
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  n:usize = buffer.len(raw)
+  n_need:usize = const() {"value":200}
+  exact:bool = compare.eq(n,n_need)
+  branch exact capacity(raw,out) malformed()
+block capacity(cr:readbuf,co:mutbuf)
+  cap:usize = buffer.len(co)
+  need:usize = const() {"value":112}
+  fits:bool = compare.ge(cap,need)
+  branch fits private_shape(cr,co) short()
+block private_shape(sr:readbuf,so:mutbuf)
+  policy_at:u64 = const() {"value":0}
+  policy:u64 = call(sr,policy_at) {"function":"tr_read"}
+  action_at:u64 = const() {"value":8}
+  action:u64 = call(sr,action_at) {"function":"tr_read"}
+  flags_at:u64 = const() {"value":16}
+  flags:u64 = call(sr,flags_at) {"function":"tr_read"}
+  high_at:u64 = const() {"value":40}
+  high:u64 = call(sr,high_at) {"function":"tr_read"}
+  last_at:u64 = const() {"value":48}
+  last:u64 = call(sr,last_at) {"function":"tr_read"}
+  active_at:u64 = const() {"value":64}
+  active:u64 = call(sr,active_at) {"function":"tr_read"}
+  events_at:u64 = const() {"value":104}
+  events:u64 = call(sr,events_at) {"function":"tr_read"}
+  sticky_at:u64 = const() {"value":128}
+  sticky:u64 = call(sr,sticky_at) {"function":"tr_read"}
+  first_at:u64 = const() {"value":136}
+  first:u64 = call(sr,first_at) {"function":"tr_read"}
+  sum_at:u64 = const() {"value":144}
+  sum:u64 = call(sr,sum_at) {"function":"tr_read"}
+  peak_at:u64 = const() {"value":152}
+  peak:u64 = call(sr,peak_at) {"function":"tr_read"}
+  linked_at:u64 = const() {"value":160}
+  linked:u64 = call(sr,linked_at) {"function":"tr_read"}
+  policy_limit:u64 = const() {"value":1}
+  policy_within:bool = compare.le(policy,policy_limit)
+  action_limit:u64 = const() {"value":1}
+  action_within:bool = compare.le(action,action_limit)
+  flags_limit:u64 = const() {"value":7}
+  flags_within:bool = compare.le(flags,flags_limit)
+  high_limit:u64 = const() {"value":16777216}
+  high_within:bool = compare.le(high,high_limit)
+  last_limit:u64 = const() {"value":16777216}
+  last_within:bool = compare.le(last,last_limit)
+  active_limit:u64 = const() {"value":3}
+  active_within:bool = compare.le(active,active_limit)
+  events_limit:u64 = const() {"value":1017}
+  events_within:bool = compare.le(events,events_limit)
+  sticky_limit:u64 = const() {"value":7}
+  sticky_within:bool = compare.le(sticky,sticky_limit)
+  sum_limit:u64 = const() {"value":50331648}
+  sum_within:bool = compare.le(sum,sum_limit)
+  peak_limit:u64 = const() {"value":50331648}
+  peak_within:bool = compare.le(peak,peak_limit)
+  linked_limit:u64 = const() {"value":1}
+  linked_within:bool = compare.le(linked,linked_limit)
+  sz:u64 = const() {"value":0}
+  sinone:bool = compare.eq(sticky,sz)
+  sc0:bool = compare.eq(first,sz)
+  sc10:u64 = const() {"value":10}
+  sc13:u64 = const() {"value":13}
+  sic:bool = compare.eq(first,sc10)
+  sfc:bool = compare.eq(first,sc13)
+  sc_present:bool = bool.or(sic,sfc)
+  sc_ok:bool = select(sinone,sc0,sc_present)
+  sl_sum:bool = compare.le(high,sum)
+  sl_peak:bool = compare.le(sum,peak)
+  sl_fits:bool = bool.and(sl_sum,sl_peak)
+  sl_allowed:bool = bool.and(sc_ok,sl_fits)
+  pass_0:bool = bool.and(sl_allowed,policy_within)
+  pass_1:bool = bool.and(pass_0,action_within)
+  pass_2:bool = bool.and(pass_1,flags_within)
+  pass_3:bool = bool.and(pass_2,high_within)
+  pass_4:bool = bool.and(pass_3,last_within)
+  pass_5:bool = bool.and(pass_4,active_within)
+  pass_6:bool = bool.and(pass_5,events_within)
+  pass_7:bool = bool.and(pass_6,sticky_within)
+  pass_8:bool = bool.and(pass_7,sum_within)
+  pass_9:bool = bool.and(pass_8,peak_within)
+  pass_10:bool = bool.and(pass_9,linked_within)
+  branch pass_10 checks(sr,so) malformed()
+block checks(kr:readbuf,ko:mutbuf)
+  reason:u64 = call(kr) {"function":"sib_precheck"}
+  kops_a:u64 = const() {"value":112}
+  kops:u64 = call(kr,kops_a) {"function":"tr_read"}
+  kzero:u64 = const() {"value":0}
+  kpass:bool = compare.eq(reason,kzero)
+  branch kpass admission(kr,ko,kops) fail(kr,ko,kops,reason)
+block admission(ar:readbuf,ao:mutbuf,ap:u64)
+  initial:bool = call(ar) {"function":"sib_initial"}
+  branch initial v2_admission(ar,ao,ap) success(ar,ao,ap)
+block v2_admission(ir:readbuf,io:mutbuf,ip:u64)
+  op_next:u64 = call(ip) {"function":"sib_sat"}
+  is_a:u64 = const() {"value":128}
+  is:u64 = call(ir,is_a) {"function":"tr_read"}
+  iz:u64 = const() {"value":0}
+  ino:bool = compare.eq(is,iz)
+  branch ino margin(ir,io,op_next) sticky_denial(ir,io,op_next)
+block margin(mr:readbuf,mo:mutbuf,mp:u64)
+  em_a:u64 = const() {"value":104}
+  em:u64 = call(mr,em_a) {"function":"tr_read"}
+  em_max:u64 = const() {"value":1016}
+  em_ok:bool = compare.le(em,em_max)
+  em_reason:u64 = const() {"value":6}
+  branch em_ok success(mr,mo,mp) fail(mr,mo,mp,em_reason)
+block sticky_denial(dr:readbuf,do:mutbuf,dp:u64)
+  d_denials_at:u64 = const() {"value":120}
+  d_denials:u64 = call(dr,d_denials_at) {"function":"tr_read"}
+  d_sticky_at:u64 = const() {"value":128}
+  d_sticky:u64 = call(dr,d_sticky_at) {"function":"tr_read"}
+  d_code_at:u64 = const() {"value":136}
+  d_code:u64 = call(dr,d_code_at) {"function":"tr_read"}
+  dkeep:bool = const() {"value":false}
+  d_io:u32 = const() {"value":10}
+  d_wrote:u64 = call(dr,do,dp,d_denials,d_sticky,d_code,dkeep) {"function":"sib_observe"}
+  ret(d_io)
+block fail(fr:readbuf,fo:mutbuf,fp:u64,why:u64)
+  f_denials_at:u64 = const() {"value":120}
+  f_denials:u64 = call(fr,f_denials_at) {"function":"tr_read"}
+  f_sticky_at:u64 = const() {"value":128}
+  f_sticky:u64 = call(fr,f_sticky_at) {"function":"tr_read"}
+  f_code_at:u64 = const() {"value":136}
+  f_code:u64 = call(fr,f_code_at) {"function":"tr_read"}
+  f_zero:u64 = const() {"value":0}
+  f_new:bool = compare.eq(f_sticky,f_zero)
+  f_margin:u64 = const() {"value":6}
+  f_cap:u64 = const() {"value":2}
+  f_prior:u64 = const() {"value":5}
+  fm:bool = compare.eq(why,f_margin)
+  fc:bool = compare.eq(why,f_cap)
+  fp_bad:bool = compare.eq(why,f_prior)
+  full1:bool = bool.or(fm,fc)
+  full:bool = bool.or(full1,fp_bad)
+  code_full:u64 = const() {"value":13}
+  code_io:u64 = const() {"value":10}
+  live_code:u64 = select(full,code_full,code_io)
+  final_reason:u64 = select(f_new,why,f_sticky)
+  final_code:u64 = select(f_new,live_code,f_code)
+  final_denials:u64 = call(f_denials) {"function":"sib_sat"}
+  fkeep:bool = const() {"value":false}
+  fresult:u64 = call(fr,fo,fp,final_denials,final_reason,final_code,fkeep) {"function":"sib_observe"}
+  fstatus:u32 = int.cast(live_code) {"mode":"wrap"}
+  ret(fstatus)
+block success(pr:readbuf,po:mutbuf,pp:u64)
+  p_denials_at:u64 = const() {"value":120}
+  p_denials:u64 = call(pr,p_denials_at) {"function":"tr_read"}
+  p_sticky_at:u64 = const() {"value":128}
+  p_sticky:u64 = call(pr,p_sticky_at) {"function":"tr_read"}
+  p_code_at:u64 = const() {"value":136}
+  p_code:u64 = call(pr,p_code_at) {"function":"tr_read"}
+  pkeep:bool = const() {"value":true}
+  presult:u64 = call(pr,po,pp,p_denials,p_sticky,p_code,pkeep) {"function":"sib_observe"}
+  pstatus:u32 = const() {"value":0}
+  ret(pstatus)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+end
+
+fn sib_sat(old:u64) -> (u64) effects() entry(entry)
+block entry(old:u64)
+  mx:u64 = const() {"value":18446744073709551615}
+  one:u64 = const() {"value":1}
+  atmax:bool = compare.eq(old,mx)
+  added:u64 = int.add.wrap(old,one)
+  value:u64 = select(atmax,mx,added)
+  ret(value)
+end
+
+fn sib_initial(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  ipolicy_at:u64 = const() {"value":0}
+  ipolicy:u64 = call(raw,ipolicy_at) {"function":"tr_read"}
+  iaction_at:u64 = const() {"value":8}
+  iaction:u64 = call(raw,iaction_at) {"function":"tr_read"}
+  iflags_at:u64 = const() {"value":16}
+  iflags:u64 = call(raw,iflags_at) {"function":"tr_read"}
+  i1:u64 = const() {"value":1}
+  i0:u64 = const() {"value":0}
+  iv2:bool = compare.eq(ipolicy,i1)
+  ibefore:bool = compare.eq(iaction,i1)
+  ipresent:u64 = bit.and(iflags,i1)
+  ifirst:bool = compare.eq(ipresent,i0)
+  itrue:bool = bool.and(iv2,ibefore)
+  res:bool = bool.and(itrue,ifirst)
+  ret(res)
+end
+
+fn sib_precheck(raw:readbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  ppolicy_at:u64 = const() {"value":0}
+  ppolicy:u64 = call(raw,ppolicy_at) {"function":"tr_read"}
+  paction_at:u64 = const() {"value":8}
+  paction:u64 = call(raw,paction_at) {"function":"tr_read"}
+  plinked_at:u64 = const() {"value":160}
+  plinked:u64 = call(raw,plinked_at) {"function":"tr_read"}
+  p1:u64 = const() {"value":1}
+  p0:u64 = const() {"value":0}
+  pv2:bool = compare.eq(ppolicy,p1)
+  prep:bool = compare.eq(paction,p1)
+  unlinked:bool = compare.eq(plinked,p0)
+  pre_v2:bool = bool.and(pv2,prep)
+  badlink:bool = bool.and(pre_v2,unlinked)
+  branch badlink link_error() extent(raw,pv2)
+block extent(er:readbuf,ev:bool)
+  observed_len_at:u64 = const() {"value":184}
+  observed_len:u64 = call(er,observed_len_at) {"function":"tr_read"}
+  limit:u64 = const() {"value":16777216}
+  fit:bool = compare.le(observed_len,limit)
+  branch fit aliases(er,ev,observed_len) length_error()
+block aliases(ar:readbuf,av:bool,al:u64)
+  bitmap_at:u64 = const() {"value":64}
+  bitmap:u64 = call(ar,bitmap_at) {"function":"tr_read"}
+  first_dev_at:u64 = const() {"value":72}
+  first_dev:u64 = call(ar,first_dev_at) {"function":"tr_read"}
+  first_ino_at:u64 = const() {"value":80}
+  first_ino:u64 = call(ar,first_ino_at) {"function":"tr_read"}
+  second_dev_at:u64 = const() {"value":88}
+  second_dev:u64 = call(ar,second_dev_at) {"function":"tr_read"}
+  second_ino_at:u64 = const() {"value":96}
+  second_ino:u64 = call(ar,second_ino_at) {"function":"tr_read"}
+  new_dev_at:u64 = const() {"value":168}
+  new_dev:u64 = call(ar,new_dev_at) {"function":"tr_read"}
+  new_ino_at:u64 = const() {"value":176}
+  new_ino:u64 = call(ar,new_ino_at) {"function":"tr_read"}
+  b1:u64 = const() {"value":1}
+  b2:u64 = const() {"value":2}
+  b0:u64 = const() {"value":0}
+  pfirst:u64 = bit.and(bitmap,b1)
+  psecond:u64 = bit.and(bitmap,b2)
+  have_a:bool = compare.ne(pfirst,b0)
+  have_b:bool = compare.ne(psecond,b0)
+  a_dev:bool = compare.eq(first_dev,new_dev)
+  a_ino:bool = compare.eq(first_ino,new_ino)
+  b_dev:bool = compare.eq(second_dev,new_dev)
+  b_ino:bool = compare.eq(second_ino,new_ino)
+  a_equal:bool = bool.and(a_dev,a_ino)
+  b_equal:bool = bool.and(b_dev,b_ino)
+  a_alias:bool = bool.and(have_a,a_equal)
+  b_alias:bool = bool.and(have_b,b_equal)
+  alias:bool = bool.or(a_alias,b_alias)
+  branch alias alias_error() replacement(ar,av,al,new_dev,new_ino)
+block replacement(rr:readbuf,rv:bool,rl:u64,rd:u64,ri:u64)
+  old_flags_at:u64 = const() {"value":16}
+  old_flags:u64 = call(rr,old_flags_at) {"function":"tr_read"}
+  old_dev_at:u64 = const() {"value":24}
+  old_dev:u64 = call(rr,old_dev_at) {"function":"tr_read"}
+  old_ino_at:u64 = const() {"value":32}
+  old_ino:u64 = call(rr,old_ino_at) {"function":"tr_read"}
+  s1:u64 = const() {"value":1}
+  s0:u64 = const() {"value":0}
+  has:u64 = bit.and(old_flags,s1)
+  old_covered:bool = compare.ne(has,s0)
+  same_dev:bool = compare.eq(old_dev,rd)
+  same_ino:bool = compare.eq(old_ino,ri)
+  same_pair:bool = bool.and(same_dev,same_ino)
+  new_pair:bool = bool.not(same_pair)
+  replaced:bool = bool.and(old_covered,new_pair)
+  branch replaced replacement_error() prior(rr,rv,rl)
+block prior(tr:readbuf,tv:bool,tl:u64)
+  prior_high_at:u64 = const() {"value":40}
+  prior_high:u64 = call(tr,prior_high_at) {"function":"tr_read"}
+  expanded:bool = compare.gt(tl,prior_high)
+  first_pre:bool = call(tr) {"function":"sib_initial"}
+  no_credit:bool = bool.not(first_pre)
+  v2_expanded:bool = bool.and(tv,expanded)
+  bad_growth:bool = bool.and(v2_expanded,no_credit)
+  branch bad_growth unreserved_error() okay()
+block okay()
+  good:u64 = const() {"value":0}
+  ret(good)
+block link_error()
+  r_link:u64 = const() {"value":1}
+  ret(r_link)
+block length_error()
+  r_cap:u64 = const() {"value":2}
+  ret(r_cap)
+block alias_error()
+  r_alias:u64 = const() {"value":3}
+  ret(r_alias)
+block replacement_error()
+  r_changed:u64 = const() {"value":4}
+  ret(r_changed)
+block unreserved_error()
+  r_unreserved:u64 = const() {"value":5}
+  ret(r_unreserved)
+end
+
+fn sib_observe(raw:readbuf,out:mutbuf,ops:u64,denied:u64,why:u64,first:u64,changed:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,ops:u64,denied:u64,why:u64,first:u64,changed:bool)
+  mode_at:u64 = const() {"value":0}
+  mode:u64 = call(raw,mode_at) {"function":"tr_read"}
+  oldflag_at:u64 = const() {"value":16}
+  oldflag:u64 = call(raw,oldflag_at) {"function":"tr_read"}
+  olddev_at:u64 = const() {"value":24}
+  olddev:u64 = call(raw,olddev_at) {"function":"tr_read"}
+  oldino_at:u64 = const() {"value":32}
+  oldino:u64 = call(raw,oldino_at) {"function":"tr_read"}
+  oldhigh_at:u64 = const() {"value":40}
+  oldhigh:u64 = call(raw,oldhigh_at) {"function":"tr_read"}
+  oldlen_at:u64 = const() {"value":48}
+  oldlen:u64 = call(raw,oldlen_at) {"function":"tr_read"}
+  oldblocks_at:u64 = const() {"value":56}
+  oldblocks:u64 = call(raw,oldblocks_at) {"function":"tr_read"}
+  events_at:u64 = const() {"value":104}
+  events:u64 = call(raw,events_at) {"function":"tr_read"}
+  total_at:u64 = const() {"value":144}
+  total:u64 = call(raw,total_at) {"function":"tr_read"}
+  oldpeak_at:u64 = const() {"value":152}
+  oldpeak:u64 = call(raw,oldpeak_at) {"function":"tr_read"}
+  newlinked_at:u64 = const() {"value":160}
+  newlinked:u64 = call(raw,newlinked_at) {"function":"tr_read"}
+  newdev_at:u64 = const() {"value":168}
+  newdev:u64 = call(raw,newdev_at) {"function":"tr_read"}
+  newino_at:u64 = const() {"value":176}
+  newino:u64 = call(raw,newino_at) {"function":"tr_read"}
+  newlen_at:u64 = const() {"value":184}
+  newlen:u64 = call(raw,newlen_at) {"function":"tr_read"}
+  newblocks_at:u64 = const() {"value":192}
+  newblocks:u64 = call(raw,newblocks_at) {"function":"tr_read"}
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  q_add:u64 = const() {"value":65535}
+  q_mask:u64 = const() {"value":18446744073709486080}
+  v2:bool = compare.eq(mode,one)
+  v1:bool = bool.not(v2)
+  initial:bool = call(raw) {"function":"sib_initial"}
+  recompute:bool = bool.or(v1,initial)
+  should_recompute:bool = bool.and(recompute,changed)
+  credit_add:u64 = int.add.wrap(newlen,q_add)
+  credit_round:u64 = bit.and(credit_add,q_mask)
+  credit:u64 = select(v2,credit_round,newlen)
+  credit_more:bool = compare.gt(credit,oldhigh)
+  increased:bool = bool.and(credit_more,should_recompute)
+  water:u64 = select(increased,credit,oldhigh)
+  linked_mask:u64 = int.mul.wrap(newlinked,two)
+  newflag:u64 = bit.or(one,linked_mask)
+  outflag:u64 = select(changed,newflag,oldflag)
+  outdev:u64 = select(changed,newdev,olddev)
+  outino:u64 = select(changed,newino,oldino)
+  outlen:u64 = select(changed,newlen,oldlen)
+  outblocks:u64 = select(changed,newblocks,oldblocks)
+  observed:u64 = bit.and(oldflag,one)
+  was_unbound:bool = compare.eq(observed,zero)
+  has_event:bool = bool.and(was_unbound,changed)
+  kind_if_event:u64 = select(initial,two,one)
+  kind:u64 = select(has_event,kind_if_event,zero)
+  event_flag:u64 = select(has_event,one,zero)
+  out_count:u64 = int.add.wrap(events,event_flag)
+  request_exists:bool = bool.and(has_event,initial)
+  event_request:u64 = select(request_exists,newlen,zero)
+  remainder:u64 = int.sub.wrap(total,oldhigh)
+  out_sum:u64 = int.add.wrap(remainder,water)
+  grows_peak:bool = compare.gt(out_sum,oldpeak)
+  should_peak:bool = bool.and(grows_peak,changed)
+  out_peak:u64 = select(should_peak,out_sum,oldpeak)
+  wr_at0:u64 = const() {"value":0}
+  wr0:u64 = call(out,wr_at0,outflag) {"function":"tr_put"}
+  wr_at1:u64 = const() {"value":8}
+  wr1:u64 = call(out,wr_at1,outdev) {"function":"tr_put"}
+  wr_at2:u64 = const() {"value":16}
+  wr2:u64 = call(out,wr_at2,outino) {"function":"tr_put"}
+  wr_at3:u64 = const() {"value":24}
+  wr3:u64 = call(out,wr_at3,water) {"function":"tr_put"}
+  wr_at4:u64 = const() {"value":32}
+  wr4:u64 = call(out,wr_at4,outlen) {"function":"tr_put"}
+  wr_at5:u64 = const() {"value":40}
+  wr5:u64 = call(out,wr_at5,outblocks) {"function":"tr_put"}
+  wr_at6:u64 = const() {"value":48}
+  wr6:u64 = call(out,wr_at6,out_count) {"function":"tr_put"}
+  wr_at7:u64 = const() {"value":56}
+  wr7:u64 = call(out,wr_at7,ops) {"function":"tr_put"}
+  wr_at8:u64 = const() {"value":64}
+  wr8:u64 = call(out,wr_at8,denied) {"function":"tr_put"}
+  wr_at9:u64 = const() {"value":72}
+  wr9:u64 = call(out,wr_at9,why) {"function":"tr_put"}
+  wr_at10:u64 = const() {"value":80}
+  wr10:u64 = call(out,wr_at10,first) {"function":"tr_put"}
+  wr_at11:u64 = const() {"value":88}
+  wr11:u64 = call(out,wr_at11,out_peak) {"function":"tr_put"}
+  wr_at12:u64 = const() {"value":96}
+  wr12:u64 = call(out,wr_at12,kind) {"function":"tr_put"}
+  wr_at13:u64 = const() {"value":104}
+  wr13:u64 = call(out,wr_at13,event_request) {"function":"tr_put"}
+  ret(zero)
+end

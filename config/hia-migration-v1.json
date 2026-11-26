@@ -148,6 +148,18 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/observed_bind_replay",
+      "node_integration_complete": false,
+      "scope": "M15 finite original logical observation/bind replay and error precedence over externally observed identities, existing slots and short retained lifecycle evidence. No real inode authority, VFS or live filesystem ownership.",
+      "source": "hia/src/sqlite_io_boundary/observed_bind_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_observed_bind_replay.py",
+        "hia/tests/rust_sqlite_observed_bind_reference.rs",
+        "hia/tests/test_sqlite_reservation_replay.py"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/reservation_replay",
       "node_integration_complete": false,
       "scope": "M15 finite logical bound-slot growth reservation and sticky-error replay for the original ledger V1 and V2. No inode discovery, VFS, actual IO, runtime budget or authority.",
@@ -2419,7 +2431,8 @@
     },
     {
       "components": [
-        "sqlite_io_boundary/reservation_replay"
+        "sqlite_io_boundary/reservation_replay",
+        "sqlite_io_boundary/observed_bind_replay"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

@@ -22,7 +22,7 @@ BOUND = 16 * 1024 * 1024
 Q = 64 * 1024
 
 
-def original_adapter(owned):
+def original_adapter(owned, adapter=ADAPTER):
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
     cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
     pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
@@ -37,7 +37,7 @@ def original_adapter(owned):
         [declaration] = re.findall(rb"^pub const " + name + rb": [^\n]+;\n", lib, re.M)
         constants.append(declaration)
     reference = owned / "original-ledger-reference.rs"
-    reference.write_bytes(b"#![allow(dead_code)]\n" + b"".join(constants) + ADAPTER.read_bytes())
+    reference.write_bytes(b"#![allow(dead_code)]\n" + b"".join(constants) + adapter.read_bytes())
     res = execute([cargo, "build", "--locked", "--offline",
                    "--manifest-path", ROOT / "trillionnium/Cargo.toml",
                    "--target-dir", owned / "target", "-p", "trnm-sqlite-io-boundary", "--message-format=json"],

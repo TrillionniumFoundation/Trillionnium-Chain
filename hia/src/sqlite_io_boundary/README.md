@@ -22,3 +22,23 @@ test states, V1 exact reservations, V2 64 KiB rounding and full 4 KiB step
 coverage to 16 MiB, original evidence margin and sticky-error precedence.
 The original VFS owns serialized evidence, residency, all live file and
 sidecar identities, cleanup, and actual I/O.
+
+## Existing-slot observation replay
+
+`observed_bind_replay.hepta` models the original logical observation for a
+known retained slot with short ordinary evidence and at most 1,017 existing
+records. It consumes observed lengths, link state and identities; it does
+not acquire, bind, or attest to a real file. Its private 25-word LE input
+contains policy/action, six prior object words, the other-slot identity
+bitmap and two pairs, five original counters/failure words, prior sum and
+peak, then the five observed object words. Its 14-word output contains the
+six resulting object words, five counters/failure words, updated peak,
+event kind and optional actual request.
+
+The original precedence distinguishes linked observation, extent, other
+identity alias, replacement and existing reservation. Only the first V2
+pre-I/O observation calls original admission. An ordinary bind can pass
+despite prior sticky failure; an immediate failure does not overwrite the
+first error. Tests reach the 1,016/1,017 evidence boundary through actual
+original ledger operations. This is not a filesystem identity proof,
+serialized receipt capacity, or live version of the original VFS.

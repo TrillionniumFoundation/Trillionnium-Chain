@@ -62,6 +62,15 @@
         "source": "platform/service_settlement/settle_command_id.hepta"
       }
     ],
+    "src/sqlite_io_boundary/observed_bind_replay.hepta": [
+      {
+        "functions": [
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/reservation_replay.hepta": [
       {
         "functions": [
