@@ -1,0 +1,278 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_migration_plan
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  canonical_n:usize = const() {"value":266}
+  guarded_n:usize = const() {"value":434}
+  canonical:bool = compare.eq(size,canonical_n)
+  guarded:bool = compare.eq(size,guarded_n)
+  exact:bool = bool.or(canonical,guarded)
+  branch exact capacity(input,output,scratch,guarded) malformed()
+block capacity(ir:readbuf,io:mutbuf,iw:mutbuf,is_guarded:bool)
+  need_out:usize = const() {"value":32}
+  need_work:usize = const() {"value":1592}
+  have_out:usize = buffer.len(io)
+  have_work:usize = buffer.len(iw)
+  out_ok:bool = compare.ge(have_out,need_out)
+  work_ok:bool = compare.ge(have_work,need_work)
+  fits:bool = bool.and(out_ok,work_ok)
+  branch fits bits(ir,io,iw,is_guarded) short()
+block bits(br:readbuf,bo:mutbuf,bw:mutbuf,bg:bool)
+  a:usize = const() {"value":264}
+  b:usize = const() {"value":265}
+  fallback:u8 = buffer.load(br,a)
+  downgrade:u8 = buffer.load(br,b)
+  bit:u8 = const() {"value":1}
+  f_ok:bool = compare.le(fallback,bit)
+  d_ok:bool = compare.le(downgrade,bit)
+  both_bits:bool = bool.and(f_ok,d_ok)
+  branch both_bits mode(br,bo,bw,bg,fallback,downgrade) malformed()
+block mode(mr:readbuf,mo:mutbuf,mw:mutbuf,mg:bool,fb:u8,dg:u8)
+  branch mg check_flags(mr,mo,mw,fb,dg) hash(mr,mo,mw,mg)
+block check_flags(cr:readbuf,co:mutbuf,cw:mutbuf,cf:u8,cd:u8)
+  true_byte:u8 = const() {"value":1}
+  permitted_f:bool = compare.eq(cf,true_byte)
+  permitted_d:bool = compare.eq(cd,true_byte)
+  both_flags:bool = bool.and(permitted_f,permitted_d)
+  branch both_flags check_fields(cr,co,cw) invalid()
+block check_fields(fr:readbuf,fo:mutbuf,fw:mutbuf)
+  safe:bool = call(fr) {"function":"mp_admit"}
+  yes:bool = const() {"value":true}
+  branch safe hash(fr,fo,fw,yes) invalid()
+block hash(hr:readbuf,ho:mutbuf,hw:mutbuf,hg:bool)
+  computed:bool = call(hr,hw) {"function":"mp_hash"}
+  branch computed finish(hr,ho,hw,hg) internal()
+block finish(er:readbuf,eo:mutbuf,ew:mutbuf,eg:bool)
+  branch eg check_digest(er,eo,ew) output(eo,ew)
+block check_digest(dr:readbuf,do:mutbuf,dw:mutbuf)
+  match_digest:bool = call(dr,dw) {"function":"mp_match_digest"}
+  branch match_digest output(do,dw) invalid()
+block output(po:mutbuf,pw:mutbuf)
+  from:u64 = const() {"value":1168}
+  dest:u64 = const() {"value":0}
+  len:u64 = const() {"value":32}
+  _out:u64 = call(pw,from,po,dest,len) {"function":"cp_wout"}
+  status:u32 = const() {"value":0}
+  ret(status)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block invalid()
+  invalid_code:u32 = const() {"value":101}
+  ret(invalid_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block internal()
+  sha_error:u32 = const() {"value":103}
+  ret(sha_error)
+end
+
+fn mp_admit(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  a0:u64 = const() {"value":0}
+  nonzero0:bool = call(raw,a0) {"function":"mp_nonzero"}
+  a1:u64 = const() {"value":32}
+  nonzero1:bool = call(raw,a1) {"function":"mp_nonzero"}
+  required1:bool = bool.and(nonzero1,nonzero0)
+  a2:u64 = const() {"value":64}
+  nonzero2:bool = call(raw,a2) {"function":"mp_nonzero"}
+  required2:bool = bool.and(nonzero2,required1)
+  a3:u64 = const() {"value":136}
+  nonzero3:bool = call(raw,a3) {"function":"mp_nonzero"}
+  required3:bool = bool.and(nonzero3,required2)
+  a4:u64 = const() {"value":168}
+  nonzero4:bool = call(raw,a4) {"function":"mp_nonzero"}
+  required4:bool = bool.and(nonzero4,required3)
+  a5:u64 = const() {"value":200}
+  nonzero5:bool = call(raw,a5) {"function":"mp_nonzero"}
+  required5:bool = bool.and(nonzero5,required4)
+  a6:u64 = const() {"value":232}
+  nonzero6:bool = call(raw,a6) {"function":"mp_nonzero"}
+  required6:bool = bool.and(nonzero6,required5)
+  a7:u64 = const() {"value":266}
+  nonzero7:bool = call(raw,a7) {"function":"mp_nonzero"}
+  required7:bool = bool.and(nonzero7,required6)
+  plan_fields:u64 = const() {"value":0}
+  verified_fields:u64 = const() {"value":298}
+  words:u64 = const() {"value":17}
+  chain_words:u64 = const() {"value":4}
+  export_matches:bool = call(raw,plan_fields,verified_fields,words) {"function":"mp_same"}
+  same_chain:bool = call(raw,a0,a3,chain_words) {"function":"mp_same"}
+  different_chain:bool = bool.not(same_chain)
+  matched:bool = bool.and(export_matches,required7)
+  acceptable:bool = bool.and(matched,different_chain)
+  ret(acceptable)
+end
+
+fn mp_nonzero(raw:readbuf,at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64)
+  eight:u64 = const() {"value":8}
+  off1:u64 = int.add.wrap(at,eight)
+  off2:u64 = int.add.wrap(off1,eight)
+  off3:u64 = int.add.wrap(off2,eight)
+  w0:u64 = call(raw,at) {"function":"tr_read"}
+  w1:u64 = call(raw,off1) {"function":"tr_read"}
+  w2:u64 = call(raw,off2) {"function":"tr_read"}
+  w3:u64 = call(raw,off3) {"function":"tr_read"}
+  left:u64 = bit.or(w0,w1)
+  right:u64 = bit.or(w2,w3)
+  all:u64 = bit.or(left,right)
+  zero:u64 = const() {"value":0}
+  some:bool = compare.ne(all,zero)
+  ret(some)
+end
+
+fn mp_same(raw:readbuf,first:u64,second:u64,count:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,first:u64,second:u64,count:u64)
+  jump inspect(raw,first,second,count)
+block inspect(ir:readbuf,a:u64,b:u64,left:u64)
+  x:u64 = call(ir,a) {"function":"tr_read"}
+  y:u64 = call(ir,b) {"function":"tr_read"}
+  equal:bool = compare.eq(x,y)
+  branch equal advance(ir,a,b,left) mismatch()
+block advance(ar:readbuf,aa:u64,ab:u64,al:u64)
+  eight:u64 = const() {"value":8}
+  a_next:u64 = int.add.wrap(aa,eight)
+  b_next:u64 = int.add.wrap(ab,eight)
+  one:u64 = const() {"value":1}
+  pending:u64 = int.sub.wrap(al,one)
+  done:bool = compare.eq(al,one)
+  branch done matched() inspect(ar,a_next,b_next,pending)
+block matched()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block mismatch()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn mp_hash(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  init:u64 = call(work) {"function":"tr_sha_init"}
+  offset0:u64 = const() {"value":1208}
+  const0:u64 = const() {"value":1585267068834414592}
+  _d0:u64 = call(work,offset0,const0) {"function":"tr_put"}
+  offset8:u64 = const() {"value":1216}
+  const8:u64 = const() {"value":7451607104633074292}
+  _d8:u64 = call(work,offset8,const8) {"function":"tr_put"}
+  offset16:u64 = const() {"value":1224}
+  const16:u64 = const() {"value":8083519805966279026}
+  _d16:u64 = call(work,offset16,const16) {"function":"tr_put"}
+  offset24:u64 = const() {"value":1232}
+  const24:u64 = const() {"value":53284143260012}
+  _d24:u64 = call(work,offset24,const24) {"function":"tr_put"}
+  field0:u64 = const() {"value":0}
+  start0:u64 = const() {"value":1238}
+  n0:u64 = const() {"value":32}
+  be0:u64 = const() {"value":2305843009213693952}
+  payload0:u64 = const() {"value":1246}
+  _framed0:u64 = call(work,start0,be0) {"function":"tr_put"}
+  _copied0:u64 = call(raw,field0,work,payload0,n0) {"function":"cp_copy"}
+  field1:u64 = const() {"value":32}
+  start1:u64 = const() {"value":1278}
+  n1:u64 = const() {"value":32}
+  be1:u64 = const() {"value":2305843009213693952}
+  payload1:u64 = const() {"value":1286}
+  _framed1:u64 = call(work,start1,be1) {"function":"tr_put"}
+  _copied1:u64 = call(raw,field1,work,payload1,n1) {"function":"cp_copy"}
+  field2:u64 = const() {"value":64}
+  start2:u64 = const() {"value":1318}
+  n2:u64 = const() {"value":32}
+  be2:u64 = const() {"value":2305843009213693952}
+  payload2:u64 = const() {"value":1326}
+  _framed2:u64 = call(work,start2,be2) {"function":"tr_put"}
+  _copied2:u64 = call(raw,field2,work,payload2,n2) {"function":"cp_copy"}
+  field3:u64 = const() {"value":96}
+  start3:u64 = const() {"value":1358}
+  n3:u64 = const() {"value":8}
+  be3:u64 = const() {"value":576460752303423488}
+  payload3:u64 = const() {"value":1366}
+  _framed3:u64 = call(work,start3,be3) {"function":"tr_put"}
+  _copied3:u64 = call(raw,field3,work,payload3,n3) {"function":"cp_copy"}
+  field4:u64 = const() {"value":104}
+  start4:u64 = const() {"value":1374}
+  n4:u64 = const() {"value":32}
+  be4:u64 = const() {"value":2305843009213693952}
+  payload4:u64 = const() {"value":1382}
+  _framed4:u64 = call(work,start4,be4) {"function":"tr_put"}
+  _copied4:u64 = call(raw,field4,work,payload4,n4) {"function":"cp_copy"}
+  field5:u64 = const() {"value":136}
+  start5:u64 = const() {"value":1414}
+  n5:u64 = const() {"value":32}
+  be5:u64 = const() {"value":2305843009213693952}
+  payload5:u64 = const() {"value":1422}
+  _framed5:u64 = call(work,start5,be5) {"function":"tr_put"}
+  _copied5:u64 = call(raw,field5,work,payload5,n5) {"function":"cp_copy"}
+  field6:u64 = const() {"value":168}
+  start6:u64 = const() {"value":1454}
+  n6:u64 = const() {"value":32}
+  be6:u64 = const() {"value":2305843009213693952}
+  payload6:u64 = const() {"value":1462}
+  _framed6:u64 = call(work,start6,be6) {"function":"tr_put"}
+  _copied6:u64 = call(raw,field6,work,payload6,n6) {"function":"cp_copy"}
+  field7:u64 = const() {"value":200}
+  start7:u64 = const() {"value":1494}
+  n7:u64 = const() {"value":32}
+  be7:u64 = const() {"value":2305843009213693952}
+  payload7:u64 = const() {"value":1502}
+  _framed7:u64 = call(work,start7,be7) {"function":"tr_put"}
+  _copied7:u64 = call(raw,field7,work,payload7,n7) {"function":"cp_copy"}
+  field8:u64 = const() {"value":232}
+  start8:u64 = const() {"value":1534}
+  n8:u64 = const() {"value":32}
+  be8:u64 = const() {"value":2305843009213693952}
+  payload8:u64 = const() {"value":1542}
+  _framed8:u64 = call(work,start8,be8) {"function":"tr_put"}
+  _copied8:u64 = call(raw,field8,work,payload8,n8) {"function":"cp_copy"}
+  field9:u64 = const() {"value":264}
+  start9:u64 = const() {"value":1574}
+  n9:u64 = const() {"value":1}
+  be9:u64 = const() {"value":72057594037927936}
+  payload9:u64 = const() {"value":1582}
+  _framed9:u64 = call(work,start9,be9) {"function":"tr_put"}
+  _copied9:u64 = call(raw,field9,work,payload9,n9) {"function":"cp_copy"}
+  field10:u64 = const() {"value":265}
+  start10:u64 = const() {"value":1583}
+  n10:u64 = const() {"value":1}
+  be10:u64 = const() {"value":72057594037927936}
+  payload10:u64 = const() {"value":1591}
+  _framed10:u64 = call(work,start10,be10) {"function":"tr_put"}
+  _copied10:u64 = call(raw,field10,work,payload10,n10) {"function":"cp_copy"}
+  begin:u64 = const() {"value":1208}
+  transcript:u64 = const() {"value":384}
+  feed:u64 = call(work,begin,transcript) {"function":"tr_sha_update_work"}
+  sealed:u64 = call(work) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,feed)
+  b:u64 = bit.or(a,sealed)
+  zero:u64 = const() {"value":0}
+  good:bool = compare.eq(b,zero)
+  ret(good)
+end
+
+fn mp_match_digest(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  given:u64 = const() {"value":266}
+  computed:u64 = const() {"value":1168}
+  count:u64 = const() {"value":4}
+  jump compare_words(raw,work,given,computed,count)
+block compare_words(cr:readbuf,cw:mutbuf,cp:u64,cq:u64,cnt:u64)
+  supplied:u64 = call(cr,cp) {"function":"tr_read"}
+  hashed:u64 = call(cw,cq) {"function":"tr_get"}
+  same:bool = compare.eq(supplied,hashed)
+  branch same next(cr,cw,cp,cq,cnt) bad()
+block next(nr:readbuf,nw:mutbuf,np:u64,nq:u64,left:u64)
+  eight:u64 = const() {"value":8}
+  p2:u64 = int.add.wrap(np,eight)
+  q2:u64 = int.add.wrap(nq,eight)
+  one:u64 = const() {"value":1}
+  remaining:u64 = int.sub.wrap(left,one)
+  done:bool = compare.eq(left,one)
+  branch done good() compare_words(nr,nw,p2,q2,remaining)
+block good()
+  matched:bool = const() {"value":true}
+  ret(matched)
+block bad()
+  refused:bool = const() {"value":false}
+  ret(refused)
+end

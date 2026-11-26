@@ -148,6 +148,17 @@
       ]
     },
     {
+      "id": "state_import/migration_plan",
+      "node_integration_complete": false,
+      "scope": "M13 original fixed MigrationPlanV0 canonical digest and deterministic admission against an already verified export projection. No finality, signing, durable owner or Node integration.",
+      "source": "hia/src/state_import/migration_plan.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_migration_plan.py",
+        "hia/tests/rust_state_import_migration_plan_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/finalized_export_header_digest",
       "node_integration_complete": false,
       "scope": "M13 exact original length-coded finalized-export header SHA-256 commitment; no header admission, finality verification, durable owner or Node qualification",
@@ -2213,7 +2224,8 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
-        "state_import/incremental_delta_commitment"
+        "state_import/incremental_delta_commitment",
+        "state_import/migration_plan"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",

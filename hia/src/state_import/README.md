@@ -268,3 +268,17 @@ Rust oracle links the unchanged locked crate, computes context identities
 from actual `SourceCheckpointContextV0` values, and consumes its actual
 operation, Merkle and final canonical digest methods. Both stock native ELF
 backends independently match those observations.
+
+### Migration plan commitment and deterministic admission
+
+`migration_plan.hepta` computes the original `MigrationPlanV0` SHA-256
+commitment over its domain and eleven length-framed fields. The private
+266-byte canonical form supplies the exact fixed fields and two boolean
+octets. Its separate 434-byte admission form also supplies the submitted
+digest and 136 bytes of already verified export binding. Native admission
+checks both flags, the required nonzero identities, equality to the supplied
+source binding, the different target chain and the recomputed digest.
+Only successful requests publish the 32-byte digest. Differential tests use
+the locked original Rust crate on both pinned x86-64 native backends.
+This is a pure predicate. It does not verify source finality, establish the
+authority of the supplied binding, or install a migration.
