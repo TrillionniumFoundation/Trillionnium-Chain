@@ -30,6 +30,13 @@ def run(request, uri_image, reader, provider):
     terminal = terminal_hex is not None
     journal_hex = request.get("journal_binding")
     journal = journal_hex is not None
+    replay_image = request.get("first_replay_engine")
+    replay_control = request.get("first_replay_fixture_control")
+    replay = replay_image is not None
+    if ((replay and (not journal or len(replay_image) != 2))
+            or (replay_control is not None and not replay)
+            or replay_control not in (None, "count", "id", "root", "state")):
+        raise ValueError("Wrong finite first replay fixture profile")
     joined = terminal or journal
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
@@ -79,6 +86,9 @@ def run(request, uri_image, reader, provider):
     transcript = []
     held = False
     projection = None
+    replay_calls = 0
+    replay_held = False
+    requested_replay = False
     end_phase = 56 if journal else 45 if terminal else 34 if metadata else 31 if operation else 25 if marker else 15
     hold_phase = 21 if metadata or marker or joined else 22 if operation else 7
     sizes = (219,) if journal else (187,) if terminal else (147,) if metadata else (8, 80) if operation else (40,) if marker else (0,)
@@ -98,6 +108,23 @@ def run(request, uri_image, reader, provider):
                 raise ValueError("Early or refused metadata must never be published")
             if status == 100:
                 break
+            if status == 199:
+                if not replay or requested_replay or (phase, op, length) != (52, 7, 8):
+                    raise ValueError("Unexpected exact Engine continuation")
+                requested_replay = True
+                if request.get("writer"):
+                    check = subprocess.run([request["writer"], "try-write", str(db)],
+                                           capture_output=True, check=True, timeout=15)
+                    if (check.stdout, check.stderr) != (b"BUSY\n", b""):
+                        raise ValueError("The actual journal snapshot was not held during replay")
+                    replay_held = True
+                from hia.platform.service_settlement.first_replay_fixture_engine import apply_first_fixture
+                payload = ctypes.string_at(ctypes.addressof(state) + 352000, 1913)
+                replay_calls, raw = apply_first_fixture(*replay_image, payload)
+                if replay_control is not None and len(raw) == 1268:
+                    where = {"count": 0, "id": 8, "root": 40, "state": 72}[replay_control]
+                    raw = raw[:where] + bytes([raw[where] ^ 1]) + raw[where + 1:]
+                continue
             if status != 198 or op not in allowed_ops or not 8 <= length <= 1552:
                 raise ValueError("Unexpected read-only request")
             payload = ctypes.addressof(state) + 256
@@ -118,6 +145,10 @@ def run(request, uri_image, reader, provider):
         else:
             raise ValueError("Bounded schema check did not finish")
         result = {"status": status, "transcript": transcript, "held": held, "released": reset(owner)}
+        if replay:
+            result.update(replay_calls=replay_calls, replay_held=replay_held)
+            if status == 0 and replay_calls != 1:
+                raise ValueError("Success without exact Engine observation")
         if projected:
             result["projection"] = projection
         return result

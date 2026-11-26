@@ -3368,6 +3368,22 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-first-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 one exact-width original committed AdmitReceipt replay through a sealed HIA Engine in the same held typed SQLite snapshot, with exact original state/receipt/root comparisons. No later commands, production Store or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_first_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_first_replay.py",
+        "hia/tests/test_settlement_first_native_replay.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-first-replay-receipt-join",
       "node_integration_complete": false,
       "retirement_accepted": false,

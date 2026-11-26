@@ -330,3 +330,24 @@ history and complete successor bytes and root. The native join checks that
 root against the original full receipt. This is a standalone comparison
 against real data, not execution inside the native SQLite read lock, later
 operation replay, or production authorization.
+
+The opt-in `held_first_replay.hepta` test path extends the checksum- and
+execution-checked journal with one sealed Engine call in the same SQLite
+snapshot. It admits only one original AdmitReceipt in the fixed witness
+profile (914-byte configuration, 163-byte execution, 868-byte command,
+149-byte receipt and 1,196-byte state). The HIA reader checks state shape
+and root in the original metadata stream, verifies the actual journal row
+before requesting replay, and checks native successor history, operation
+ID, root and complete state bytes before it resumes the pending SQLite
+step. The original journal completion, finalize and physical close still
+gate the unchanged 219-byte readback. The sealed Engine and adapter are
+test-only; the host cannot pass an arbitrary command pointer or publish a
+production receipt.
+
+An original competing writer cannot commit while the replay request is
+outstanding. The actual original empty and two-operation stores are
+outside this lane and never dispatch the Engine. With the same actual
+original one-operation store, result disturbances in any of the four
+native observations give no projection and release the held provider.
+This does not yet replay subsequent operations, historical interval roots,
+or supply production Store or order authority.
