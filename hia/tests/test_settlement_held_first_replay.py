@@ -27,6 +27,7 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     "execution": OWNER / "execution_journal_read.hepta",
                     "replay": OWNER / "held_first_replay.hepta",
                     "pair": OWNER / "held_pair_replay.hepta",
+                    "rollup": OWNER / "held_rollup_replay.hepta",
                 }.items()
             }
             original, source = original_adapter(root, marker=True)
@@ -55,9 +56,9 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                        "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                        "directory": str(owned), "database": str(store),
                        "writer": str(original) if lock else None, "journal_binding": binder.hex()}
-                if lane in ("replay", "pair"):
+                if lane in ("replay", "pair", "rollup"):
                     req["first_replay_engine"] = [str(public), report["artifact"]["sha256"]]
-                    req["receipt_replay_limit"] = 1 if lane == "replay" else 2
+                    req["receipt_replay_limit"] = {"replay": 1, "pair": 2, "rollup": 3}[lane]
                 if control:
                     req["first_replay_fixture_control"] = control
                 if step is not None:
@@ -124,6 +125,38 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     else:
                         self.assertEqual((result["status"], result["projection"], result["replay_calls"]),
                                          (100, None, 1 if empty_tail == "1" else 0))
+                        self.assertGreater(result["released"], 0)
+                    self.assertEqual(store.read_bytes(), before)
+                    self.assertFalse(store.with_name(store.name + "-journal").exists())
+
+            for label, commands, empty_tail in (
+                ("two", files[1:3], "0"), ("three", files[1:], "0"),
+                ("rollup-with-empty-tail", files[1:], "1"),
+            ):
+                with self.subTest(rollup_fixture=label):
+                    store = owned / f"original rollup {label}?.db"
+                    binding = execute([original, "seed-receipts", store, files[0], empty_tail, *commands]).stdout
+                    before = store.read_bytes()
+                    result = invoke(store, binding, lane="rollup", lock=label == "three")
+                    if label == "three":
+                        expected = execute([original, "verify-journal", store, files[0]]).stdout
+                        root_and_state = execute([original, "observe-actual-state-root", store, files[0]]).stdout
+                        self.assertEqual(len(root_and_state), 32 + 3185)
+                        self.assertEqual((result["status"], result["replay_calls"], result["replay_locks"],
+                                          result["released"]), (0, 3, 3, 0), result)
+                        self.assertEqual(bytes.fromhex(result["projection"]), expected)
+                        self.assertEqual(result["transcript"], invoke(store, binding, lane="execution")["transcript"])
+                        self.assertEqual(result["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        self.assertEqual(expected[90:122], root_and_state[:32])
+                        for ordinal, control in ((2, "root"), (3, "state"), (3, "id")):
+                            refused = invoke(store, binding, lane="rollup", control=control, step=ordinal)
+                            self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                             (100, None, ordinal))
+                            self.assertGreater(refused["released"], 0)
+                            self.assertEqual(refused["transcript"][-1][:2], [54, 8])
+                    else:
+                        self.assertEqual((result["status"], result["projection"], result["replay_calls"]),
+                                         (100, None, 2 if empty_tail == "1" else 0), result)
                         self.assertGreater(result["released"], 0)
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())

@@ -3381,6 +3381,22 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-rollup-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 ordered source-checked two AdmitReceipt and one AdmitRollup execution through a single sealed HIA Engine inside one original typed held SQLite snapshot, with exact intermediate and final roots. No later settlement, empty blocks, production Store, or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_rollup_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_first_replay.py",
+        "hia/tests/test_settlement_rollup_command_id.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-receipt-pair",
       "node_integration_complete": false,
       "retirement_accepted": false,

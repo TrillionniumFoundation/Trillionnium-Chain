@@ -48,15 +48,16 @@ class FixtureReplay:
             self.engine.drop(pointer)
 
     def apply(self, request):
-        if len(request) not in (1921, 1953):
+        widths = (1921, 1953, 3742)
+        if len(request) not in widths:
             raise ValueError("Wrong bounded replay input")
         before = self.calls.applies
         seq, = struct.unpack_from("<Q", request)
-        if seq not in (1, 2) or seq != before + 1 or len(request) != 1921 + 32 * (seq - 1):
+        if seq not in (1, 2, 3) or seq != before + 1 or len(request) != widths[seq - 1]:
             raise ValueError("Noncontiguous sealed Engine request")
         trust, execution, command = request[8:890], request[890:1053], request[1053:]
-        if command[0] != 0:
-            raise ValueError("Receipt replay only admits AdmitReceipt")
+        if command[0] != (1 if seq == 3 else 0):
+            raise ValueError("Request does not follow the admitted receipt/rollup profile")
         height, = struct.unpack_from("<Q", execution, 123)
         if self.parent is None:
             if seq != 1:
@@ -94,7 +95,7 @@ class FixtureReplay:
                 if self.engine.kind(copied) != 3:
                     return b""
                 state = self.engine.view("bytes_view", copied)
-                if (len(operation_id), len(root), len(state)) != (32, 32, (1196, 2145)[seq - 1]):
+                if (len(operation_id), len(root), len(state)) != (32, 32, (1196, 2145, 3185)[seq - 1]):
                     return b""
                 if state != self.engine.view("engine_state", successor):
                     return b""

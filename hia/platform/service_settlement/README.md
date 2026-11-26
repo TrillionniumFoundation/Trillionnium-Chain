@@ -370,3 +370,13 @@ empty block are outside this finite lane. Intermediate root, terminal
 state and history-result controls refuse without publishing. No general
 handling of empty committed blocks, signatures beyond the original/Engine
 checks, later operation kinds, or production admission is claimed.
+
+A separate `held_rollup_replay.hepta` lane continues the two original
+receipt admissions with the genuine 2,689-byte AdmitRollup command. It
+accepts only the exact three-step consecutive profile and checks the
+same sealed successor owner and row commitments each time. The last
+complete state includes both receipts assigned to the persisted rollup
+and must match the original 3,185-byte typed state exactly. The rollup
+receipt's absent settlement ID is checked separately from the state.
+The fixture proves the original SQLite read lock across all three
+callbacks; it does not support later settlement or empty-block intervals.

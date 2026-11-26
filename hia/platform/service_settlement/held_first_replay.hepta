@@ -45,7 +45,11 @@ block state_frame(sf_r:readbuf,sf_m:mutbuf,sf_w:mutbuf,sf_p:u64)
   sf_n:usize = buffer.len(sf_r)
   sf_first:usize = const() {"value":1220}
   sf_second:usize = const() {"value":2169}
-  sf_req:usize = select(sf_single,sf_first,sf_second)
+  sf_2:u64 = const() {"value":2}
+  sf_pair:bool = compare.eq(sf_cap,sf_2)
+  sf_third:usize = const() {"value":3209}
+  sf_rest:usize = select(sf_pair,sf_second,sf_third)
+  sf_req:usize = select(sf_single,sf_first,sf_rest)
   sf_fit:bool = compare.eq(sf_n,sf_req)
   sf_width:u64 = int.cast(sf_n) {"mode":"wrap"}
   branch sf_fit read_state(sf_r,sf_m,sf_w,sf_p,sf_width) refused()
@@ -111,12 +115,20 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   wanted_count:u64 = int.add.wrap(prev_count,one_width)
   first_width:bool = compare.eq(processed,one_width)
   last_width:bool = compare.eq(processed,cap)
-  right_kind:u64 = const() {"value":24}
+  w_pair:u64 = const() {"value":2}
+  w_second:bool = compare.eq(processed,w_pair)
+  w_third:u64 = const() {"value":3}
+  last_rollup:bool = compare.eq(processed,w_third)
+  w_rcpt:u64 = const() {"value":24}
+  w_roll:u64 = const() {"value":25}
+  right_kind:u64 = select(last_rollup,w_roll,w_rcpt)
   right_cfg:u64 = const() {"value":914}
   right_exec:u64 = const() {"value":163}
   cmd_first:u64 = const() {"value":868}
   cmd_second:u64 = const() {"value":900}
-  right_cmd:u64 = select(first_width,cmd_first,cmd_second)
+  cmd_third:u64 = const() {"value":2689}
+  cmd_later:u64 = select(w_second,cmd_second,cmd_third)
+  right_cmd:u64 = select(first_width,cmd_first,cmd_later)
   a:bool = compare.eq(processed,wanted_count)
   not_over:bool = compare.le(processed,cap)
   b:bool = compare.eq(expected_count,cap)
@@ -212,7 +224,11 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_first:bool = compare.eq(vh_count,vh_one)
   vh_first_width:usize = const() {"value":1268}
   vh_second_width:usize = const() {"value":2217}
-  vh_width:usize = select(vh_first,vh_first_width,vh_second_width)
+  vh_two:u64 = const() {"value":2}
+  vh_second:bool = compare.eq(vh_count,vh_two)
+  vh_third_width:usize = const() {"value":3257}
+  vh_later_width:usize = select(vh_second,vh_second_width,vh_third_width)
+  vh_width:usize = select(vh_first,vh_first_width,vh_later_width)
   vh_actual:usize = buffer.len(vr0)
   vh_shaped:bool = compare.eq(vh_actual,vh_width)
   branch vh_shaped compare_replay(vr0,vm0,va0,vh_count) refused()
