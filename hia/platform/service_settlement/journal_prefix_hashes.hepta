@@ -1,0 +1,114 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_journal_prefix_hashes
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  n:usize = buffer.len(raw)
+  low:usize = const() {"value":4}
+  high:usize = const() {"value":744}
+  entry_min:bool = compare.ge(n,low)
+  entry_max:bool = compare.le(n,high)
+  fits:bool = bool.and(entry_min,entry_max)
+  branch fits capacity(raw,out,w,n) malformed()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:usize)
+  need:usize = const() {"value":8192}
+  have:usize = buffer.len(cw)
+  pass:bool = compare.ge(have,need)
+  branch pass move(cr,co,cw,cn) short()
+block move(mr:readbuf,mo:mutbuf,mw:mutbuf,mn:usize)
+  ulen:u64 = int.cast(mn) {"mode":"wrap"}
+  base:u64 = const() {"value":4096}
+  zero:u64 = const() {"value":0}
+  last:u64 = call(mr,zero,mw,base,ulen) {"function":"cp_copy"}
+  count:u64 = call(mw,base,last) {"function":"jph_read_u32"}
+  maximum:u64 = const() {"value":4}
+  bounded:bool = compare.le(count,maximum)
+  branch bounded plan(mo,mw,last,count) malformed()
+block plan(po:mutbuf,pw:mutbuf,pe:u64,pc:u64)
+  length:usize = buffer.len(po)
+  have_u64:u64 = int.cast(length) {"mode":"wrap"}
+  p1:u64 = const() {"value":1}
+  width:u64 = const() {"value":32}
+  total:u64 = int.add.wrap(pc,p1)
+  need_o:u64 = int.mul.wrap(total,width)
+  ready:bool = compare.ge(have_u64,need_o)
+  branch ready calc(po,pw,pe,pc,need_o) short()
+block calc(xo:mutbuf,xw:mutbuf,xe:u64,xc:u64,xn:u64)
+  first:u64 = const() {"value":4100}
+  zero_idx:u64 = const() {"value":0}
+  jump loop(xo,xw,xe,xc,xn,first,zero_idx)
+block loop(lo:mutbuf,lw:mutbuf,le:u64,lc:u64,ln:u64,lp:u64,li:u64)
+  frame:u64 = const() {"value":4100}
+  good:bool = call(lw,frame,lp,li) {"function":"jph_hash"}
+  branch good put(lo,lw,le,lc,ln,lp,li) internal()
+block put(so:mutbuf,sw:mutbuf,se:u64,sc:u64,sn:u64,sp:u64,si:u64)
+  root:u64 = const() {"value":1168}
+  stride:u64 = const() {"value":32}
+  roots:u64 = const() {"value":3000}
+  offset:u64 = int.mul.wrap(si,stride)
+  at_s:u64 = int.add.wrap(roots,offset)
+  saved:u64 = call(sw,root,at_s,stride) {"function":"cp_wcopy"}
+  done:bool = compare.eq(si,sc)
+  branch done ending(so,sw,se,sn,sp) receipt(so,sw,se,sc,sn,sp,si)
+block receipt(ro:mutbuf,rw:mutbuf,re:u64,rc:u64,rn:u64,rp:u64,ri:u64)
+  row_n:u64 = call(rw,rp,re) {"function":"jph_read_u32"}
+  normal:u64 = const() {"value":149}
+  settled:u64 = const() {"value":181}
+  a:bool = compare.eq(row_n,normal)
+  b:bool = compare.eq(row_n,settled)
+  recognized:bool = bool.or(a,b)
+  branch recognized advance(ro,rw,re,rc,rn,rp,ri,row_n) malformed()
+block advance(ao:mutbuf,aw:mutbuf,ae:u64,ac:u64,an:u64,ap:u64,ai:u64,ar:u64)
+  one_a:u64 = const() {"value":1}
+  four_a:u64 = const() {"value":4}
+  row_w:u64 = int.add.wrap(ar,four_a)
+  next:u64 = int.add.wrap(ap,row_w)
+  i_next:u64 = int.add.wrap(ai,one_a)
+  in_scope:bool = compare.le(next,ae)
+  branch in_scope loop(ao,aw,ae,ac,an,next,i_next) malformed()
+block ending(eo:mutbuf,ew:mutbuf,ee:u64,en:u64,ep:u64)
+  exact:bool = compare.eq(ee,ep)
+  branch exact publish(eo,ew,en) malformed()
+block publish(out_s:mutbuf,work_s:mutbuf,size_s:u64)
+  off_s:u64 = const() {"value":3000}
+  zero_s:u64 = const() {"value":0}
+  issued:u64 = call(work_s,off_s,out_s,zero_s,size_s) {"function":"cp_wout"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  tight:u32 = const() {"value":102}
+  ret(tight)
+block internal()
+  unexpected:u32 = const() {"value":103}
+  ret(unexpected)
+end
+
+fn jph_read_u32(w:mutbuf,p:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,end:u64)
+  four:u64 = const() {"value":4}
+  next:u64 = int.add.wrap(p,four)
+  legal:bool = compare.le(next,end)
+  branch legal valid(w,p) bad()
+block valid(vw:mutbuf,vp:u64)
+  raw:u64 = call(vw,vp) {"function":"cp_get"}
+  mask:u64 = const() {"value":4294967295}
+  word:u64 = bit.and(raw,mask)
+  ret(word)
+block bad()
+  sentinel:u64 = const() {"value":18446744073709551615}
+  ret(sentinel)
+end
+
+fn jph_hash(w:mutbuf,from:u64,until:u64,count:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,from:u64,until:u64,count:u64)
+  prefix:bool = call(w,count) {"function":"sjr_prefix"}
+  length:u64 = int.sub.wrap(until,from)
+  body:u64 = call(w,from,length) {"function":"tr_sha_update_work_full"}
+  hash:u64 = call(w) {"function":"tr_sha_final_full"}
+  zero:u64 = const() {"value":0}
+  errors:u64 = bit.or(body,hash)
+  okay:bool = compare.eq(errors,zero)
+  pass:bool = bool.and(prefix,okay)
+  ret(pass)
+end

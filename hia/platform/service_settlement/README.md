@@ -396,3 +396,15 @@ reproduces the full 4,870-byte final state, root and identity. The Engine
 runs after the original record export. This does not prove that the
 intervening empty committed markers are preserved inside one native
 SQLite snapshot and does not confer production authority.
+
+`journal_prefix_hashes.hepta` computes every original receipt-journal
+prefix commitment for a private 0–4 row Borsh vector of raw 149- or
+181-byte receipts. It hashes the original domain and the actual count
+of each prefix, rather than using the terminal digest's running state.
+The output contains consecutive 32-byte values starting at the empty
+prefix and leaves later bytes untouched. Both native backends match
+the unchanged original `operation_journal_root_through` and the actual
+source and target roots for all seven original markers, including the
+two consecutive empty committed blocks. This standalone raw hashing
+diagnostic does not decode receipt semantics or execute within the
+held reader.

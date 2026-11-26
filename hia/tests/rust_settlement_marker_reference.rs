@@ -295,6 +295,52 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 stdout.write_all(piece)?;
             }
         }
+        "observe-actual-journal-prefixes" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let observed = owner.fresh_readback()?;
+            let count = u32::try_from(observed.sequence())?;
+            assert!(count <= 4);
+            let db = open_read_snapshot(&path)?;
+            verify_schema(&db)?;
+            let mut actual = count.to_le_bytes().to_vec();
+            {
+                let mut stmt = db.prepare("SELECT receipt FROM operations ORDER BY sequence")?;
+                let mut rows = stmt.query([])?;
+                let mut seen = 0u32;
+                while let Some(row) = rows.next()? {
+                    let raw: Vec<u8> = row.get(0)?;
+                    let receipt: ConsumptionTransitionReceiptV1 = strict_decode(&raw)?;
+                    assert_eq!(receipt.sequence, u64::from(seen + 1));
+                    assert!(matches!(raw.len(), 149 | 181));
+                    actual.extend(u32::try_from(raw.len())?.to_le_bytes());
+                    actual.extend(raw);
+                    seen += 1;
+                }
+                assert_eq!(seen, count);
+            }
+            let markers = load_committed_block_markers(&db, &config)?;
+            let mut roots = Vec::new();
+            for seq in 0..=count {
+                roots.push(operation_journal_root_through(&db, u64::from(seq))?);
+            }
+            assert_eq!(roots.last(), Some(&observed.durable_journal_root()));
+            let mut proof = Vec::new();
+            for m in &markers {
+                assert_eq!(roots[usize::try_from(m.source_operation_sequence)?], m.source_operation_root);
+                assert_eq!(roots[usize::try_from(m.target_operation_sequence)?], m.target_operation_root);
+                proof.extend(m.source_operation_sequence.to_le_bytes());
+                proof.extend(m.target_operation_sequence.to_le_bytes());
+                proof.extend(m.source_operation_root.0);
+                proof.extend(m.target_operation_root.0);
+            }
+            db.close().map_err(|(_, err)| err)?;
+            let all_roots: Vec<u8> = roots.into_iter().flat_map(|r| r.0).collect();
+            let mut stdout = io::stdout().lock();
+            for piece in [&actual, &all_roots, &proof] {
+                stdout.write_all(&u32::try_from(piece.len())?.to_le_bytes())?;
+                stdout.write_all(piece)?;
+            }
+        }
         "observe-settled-state-id" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let observation = owner.fresh_readback()?;

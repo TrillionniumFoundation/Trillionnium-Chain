@@ -3394,6 +3394,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-journal-prefix-hashes",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite standalone M12 exact original Borsh raw operation receipt prefix roots zero through four and actual committed interval comparisons, including actual original empty markers. No held apply, semantics, receipt authority or production.",
+      "sources": [
+        "hia/platform/service_settlement/journal_prefix_hashes.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_journal_prefix_hashes.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_terminal_join.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-state-id",
       "node_integration_complete": false,
       "retirement_accepted": false,
