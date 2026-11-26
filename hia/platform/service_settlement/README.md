@@ -233,3 +233,15 @@ private 219-byte output only after close, and leaves raw and receipt-only
 entry points available. The existing fixture provider-call limit still applies;
 the result does not validate the row checksum, signatures, policy, replay,
 or production authority.
+
+The separate M12 `checksum_journal_read.hepta` additionally reads the
+actual typed SQLite execution length, raw execution BLOB and 32-byte stored
+checksum. It computes the original checksum over the exact domain followed
+by the five length-prefixed fields: sequence (little endian), row operation
+ID, raw execution, raw command and raw receipt. The running journal-root hash
+is saved and restored around the independent row hash. This route refuses
+checksum and extent mismatches before any projection and keeps the unchanged
+219-byte diagnostic after a real close. Its 65536-byte private execution
+limit and the existing provider-call cap are not coverage claims for larger
+valid stores. Execution remains opaque Borsh bytes for this checksum owner:
+no execution decoding, authority, signatures, policy or replay is implied.

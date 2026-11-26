@@ -242,6 +242,54 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             verify_schema(&db)?;
             io::stdout().write_all(&operation_journal_root_through(&db, u64::MAX)?.0)?;
         }
+        "inspect-operation-checksums" | "fixture-row-checksum-drift" => {
+            let drift = operation == "fixture-row-checksum-drift";
+            let db = if drift {
+                Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?
+            } else {
+                open_read_snapshot(&path)?
+            };
+            verify_schema(&db)?;
+            let mut statement = db.prepare("SELECT sequence,operation_id,execution,command,receipt,checksum FROM operations ORDER BY sequence")?;
+            let mut rows = statement.query([])?;
+            let mut projection = Vec::new();
+            let mut control = None;
+            while let Some(row) = rows.next()? {
+                let sequence: u64 = row.get(0)?;
+                let id = ConsumptionOperationIdV1(row.get::<_, Vec<u8>>(1)?.try_into().expect("fixture ID width"));
+                let mut context: Vec<u8> = row.get(2)?;
+                let command: Vec<u8> = row.get(3)?;
+                let receipt: Vec<u8> = row.get(4)?;
+                let mut checksum: Vec<u8> = row.get(5)?;
+                let original = operation_checksum(sequence, id, &context, &command, &receipt);
+                assert_eq!(original.0.as_slice(), checksum);
+                projection.extend(u64::try_from(context.len())?.to_le_bytes());
+                projection.extend(original.0);
+                if drift && sequence == 4 {
+                    match args[4].to_str().unwrap() {
+                        "checksum" => checksum[0] ^= 1,
+                        "checksum-width" => { checksum.pop(); }
+                        "raw-execution" => *context.last_mut().ok_or("empty fixture execution")? ^= 1,
+                        "oversized-execution" => context.resize(65537, 0),
+                        _ => panic!("unrecognized disposable row mutation"),
+                    }
+                    let changed = operation_checksum(sequence, id, &context, &command, &receipt);
+                    assert_ne!(changed.0.as_slice(), checksum);
+                    control = Some((sequence, context, checksum));
+                }
+            }
+            drop(rows);
+            drop(statement);
+            if drift {
+                let (sequence, context, checksum) = control.ok_or("missing original row")?;
+                assert_eq!(db.execute(
+                    "UPDATE operations SET execution=?1,checksum=?2 WHERE sequence=?3",
+                    params![context, checksum, sequence],
+                )?, 1);
+            }
+            db.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&projection)?;
+        }
         "fixture-command-identity-drift" => {
             // Only the test-created Store is touched. Keeps the independently
             // stored receipt/marker roots and recomputes the exact row checksum.

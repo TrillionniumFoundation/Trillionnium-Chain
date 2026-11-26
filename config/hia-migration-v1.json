@@ -3249,6 +3249,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-checksum-journal-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite M12 held ordered operation row checksums, exact original SHA domain/framing of typed sequence and ID, raw execution, command, receipt, and actual stored checksum, joined to original held command/receipt/journal diagnostics. No canonical execution decode, signature policy, replay or authority.",
+      "sources": [
+        "hia/platform/service_settlement/checksum_journal_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_checksum_journal_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-command-journal-read",
       "node_integration_complete": false,
       "retirement_accepted": false,
