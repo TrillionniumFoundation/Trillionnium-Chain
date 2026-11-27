@@ -158,7 +158,7 @@ def native_open_lifecycle(path, image, open_sqlite, fetch, owner):
     raise ValueError("Bounded native ownership continuation did not terminate")
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None, genesis_preview=None):
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None, genesis_preview=None, closed_hook=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -512,12 +512,75 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             result["genesis_preview"] = [code, final.raw.hex() if code == 0 else None, calls]
         if projected:
             result["projection"] = projection
+        if closed_hook is not None and status == 0:
+            if (not journal or replay or result["released"] != 0
+                    or transcript[-1] != [56, 3, 24]):
+                raise ValueError("Double-read preview requires real native journal closure")
+            closed_hook(path, state, result)
         return result
     finally:
         try:
             replay_owners.close()
         finally:
             free(owner)
+
+
+def two_native_heads(request, coordinator, uri, reader, provider, gate, header_reader, post_open, lifecycle,
+                     genesis_preview):
+    """Private fixed owned pathname relay: native custody chooses whether to request and publish."""
+    if genesis_preview is None or "writer" in request:
+        raise ValueError("Double-read preview requires the sealed prospective genesis owner")
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    call = bind(coordinator, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    retained = ctypes.create_string_buffer(16384)
+
+    def relay(opcode, path, state, staged=b""):
+        frame = struct.pack("<Q", opcode) + staged + path
+        raw = ctypes.create_string_buffer(frame, len(frame))
+        return call(raw, len(frame), state, EXTENT, retained, len(retained))
+
+    source_request = dict(request)
+    source_request.pop("between_native_audits", None)
+
+    def first(path, state, result):
+        code, staged, calls = result.pop("genesis_preview")
+        if code:
+            return
+        if calls != 1 or relay(0, path, state, bytes.fromhex(staged)) != 199:
+            raise ValueError("Only the completed actual candidate may request another audit")
+
+    source = run(source_request, uri, reader, provider, gate, header_reader, post_open, lifecycle,
+                 genesis_preview=genesis_preview, closed_hook=first)
+    phase, width = struct.unpack_from("<QQ", retained)
+    if phase != 1 or not 1 <= width <= 1536:
+        return {"first": source, "second": None, "preview": None, "decision": "first-refused"}
+    reopen_path = bytes(retained[512:512 + width])
+    if reopen_path != os.fsencode(source_request["database"]):
+        raise ValueError("Native request did not retain the actual first pathname")
+    if "between_native_audits" in request:
+        # Independent benign original fixture control, only after first real close.
+        action, trust = request["between_native_audits"]
+        advanced = subprocess.run([action, "advance-preview-fixture", os.fsdecode(reopen_path), trust],
+                                  capture_output=True, timeout=15, check=True)
+        if advanced.stdout or advanced.stderr:
+            raise ValueError("Original owned fixture writer diagnostics were unexpected")
+    cold_request = dict(source_request, database=os.fsdecode(reopen_path))
+    final = None
+
+    def second(path, state, result):
+        nonlocal final
+        final = relay(1, path, state)
+
+    cold = run(cold_request, uri, reader, provider, gate, header_reader, post_open, lifecycle,
+               closed_hook=second)
+    phase, = struct.unpack_from("<Q", retained)
+    if (final, phase) == (0, 2):
+        return {"first": source, "second": cold, "preview": retained[32:293].hex(), "decision": "equal"}
+    if (final, phase) == (104, 3):
+        return {"first": source, "second": cold, "preview": None, "decision": "stale"}
+    if final is None or (final, phase) == (102, 1):
+        return {"first": source, "second": cold, "preview": None, "decision": "second-refused"}
+    raise ValueError("Unexpected native two-audit response")
 
 
 def main():
@@ -536,8 +599,16 @@ def main():
         if "genesis_preview" in message:
             genesis_preview = tuple(owners.enter_context(sealed_library(*message[key]))
                                     for key in ("genesis_preview", "genesis_receipt_command"))
-        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview,
-                             genesis_preview)))
+        if "two_native_heads" in message:
+            coordinator = owners.enter_context(sealed_library(*message["two_native_heads"]))
+            if preview is not None:
+                raise ValueError("Separate mixed preview may not replace the genesis stage")
+            result = two_native_heads(message, coordinator, uri, reader, provider, gate, header_reader,
+                                      post_open, lifecycle, genesis_preview)
+        else:
+            result = run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview,
+                         genesis_preview)
+        print(json.dumps(result))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 """Check one actual original SQLite AdmitReceipt against a fresh HIA Engine."""
 from contextlib import ExitStack
 import json
+import struct
 from pathlib import Path
 import subprocess
 import sys
@@ -161,8 +162,8 @@ class SettlementFirstNativeReplayTests(unittest.TestCase):
                     req = dict(uri=image(uri), reader=image(reader),
                                provider=[str(provider), check.checked[str(provider)]["sha256"]],
                                directory=str(owned_dir), database=str(source_db), journal_binding=binding.hex())
-                    def invoke(source, candidate=None, cmd=command):
-                        args = dict(source)
+                    def invoke(source, candidate=None, cmd=command, **extras):
+                        args = dict(source, **extras)
                         if candidate is not None:
                             args.update(genesis_preview=image(pre), genesis_receipt_command=image(codec),
                                         genesis_engine=[str(public), report["artifact"]["sha256"]],
@@ -180,6 +181,34 @@ class SettlementFirstNativeReplayTests(unittest.TestCase):
                                              (frame[:8]+bytes(32)+frame[40:], command),
                                              (frame, command+b"\0")):
                         self.assertEqual(invoke(req, bad, bad_command)["genesis_preview"], [100, None, 0])
+                    ruler = stack.enter_context(NativeModule(
+                        OWNER/"preview_two_native_heads.hepta", byte_exports=("f0",), backend=backend))
+                    compared = invoke(req, frame, two_native_heads=image(ruler))
+                    self.assertEqual(compared, {
+                        "first": got, "second": got, "preview": expected.hex(), "decision": "equal"})
+                    advancing = owned_dir/f"same path actual original advance {backend} #?.db"
+                    cold_ref = owned_dir/f"independent original terminal {backend}.db"
+                    for target in (advancing, cold_ref):
+                        actual = execute([original, "seed-receipts", target, inputs[0], "0"]).stdout
+                        self.assertEqual(actual, binding)
+                    execute([original, "advance-preview-fixture", cold_ref, inputs[0]])
+                    original_after = execute([original, "verify-journal", cold_ref, inputs[0]]).stdout
+                    self.assertEqual(original_after[:8], struct.pack("<Q", 2))
+                    self.assertEqual(original_after[42:50], bytes(8))
+                    result = invoke(dict(req, database=str(advancing)), frame,
+                                    two_native_heads=image(ruler),
+                                    between_native_audits=[str(original), str(inputs[0])])
+                    self.assertEqual((result["decision"], result["preview"]), ("stale", None))
+                    for slot, need in (("first", exact_original), ("second", original_after)):
+                        native_head = result[slot]
+                        self.assertEqual(bytes.fromhex(native_head["projection"]), need)
+                        self.assertEqual((native_head["status"], native_head["released"],
+                                          native_head["transcript"][-1]), (0, 0, [56,3,24]))
+                        self.assertEqual(sum(op == 2 for _, op, _ in native_head["transcript"]), 1)
+                        self.assertEqual(sum(op == 3 for _, op, _ in native_head["transcript"]), 1)
+                    self.assertEqual(execute([original, "verify-journal", advancing, inputs[0]]).stdout,
+                                     original_after)
+                    self.assertFalse(advancing.with_name(advancing.name+"-journal").exists())
             self.assertEqual(source_db.read_bytes(), source_before)
             self.assertFalse(source_db.with_name(source_db.name+"-journal").exists())
             for store in stores:

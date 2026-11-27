@@ -4180,6 +4180,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-two-native-heads",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private genesis preview publication conditioned on same exact owned pathname and two actual closed zero-operation native journal observations. A benign original intervening empty advance is detected; no VFS inode equivalence, arbitrary command or voting/production ownership.",
+      "sources": [
+        "hia/platform/service_settlement/preview_two_native_heads.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_first_native_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

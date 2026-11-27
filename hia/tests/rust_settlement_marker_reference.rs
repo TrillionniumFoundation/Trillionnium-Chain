@@ -182,6 +182,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             io::stdout().write_all(&binding)?;
         }
+        "advance-preview-fixture" => {
+            assert_eq!(args.len(), 4);
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let source = owner.fresh_readback()?;
+            assert_eq!(source.sequence(), 0);
+            assert_eq!((source.order_height(), source.order_block_id()),
+                       (config.trust_bundle.initial_order_height, config.trust_bundle.initial_order_block_id));
+            let height = source.order_height().checked_add(1).unwrap();
+            let event = ConsumptionCommittedExecutionContextV1 {
+                schema_version: 1, context: context.clone(),
+                expected_order_height: source.order_height(), expected_order_block_id: source.order_block_id(),
+                order_height: height, order_block_id: word_hash(4001),
+            };
+            owner.advance_empty_committed_execution_v1(&event)?;
+            let after = owner.fresh_readback()?;
+            assert_eq!(after.sequence(), source.sequence());
+            assert_eq!(after.order_height(), height);
+            assert_eq!(after.durable_state_root(), source.durable_state_root());
+            assert_eq!(after.durable_journal_root(), source.durable_journal_root());
+            assert_ne!(after.durable_committed_block_root(), source.durable_committed_block_root());
+        }
         "observe-preview-empty" => {
             assert_eq!(args.len(), 6);
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
