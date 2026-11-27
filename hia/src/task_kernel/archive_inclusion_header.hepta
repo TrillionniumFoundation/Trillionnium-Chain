@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_archive_inclusion_header_v1
 fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  status:u32 = call(raw,w) {"function":"archive_header_verify"}
+  ret(status)
+end
+
+fn archive_header_verify(raw:readbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf)
   n:usize = buffer.len(raw)
   len:u64 = int.cast(n) {"mode":"wrap"}
   min:u64 = const() {"value":602}

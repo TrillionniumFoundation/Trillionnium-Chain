@@ -121,4 +121,28 @@ fn main() {
     row(&mut w, &too_wide, fact, &out_of_range); // 1, count before depth
     out_of_range.leaf_index = too_wide.record_count;
     row(&mut w, &too_wide, fact, &out_of_range); // 13, index before count
+    for (width, chain_id) in [(1u32, String::new()), (8, "八".repeat(100)), (4096, "z".repeat(512))] {
+        let mut new_policy = policy.clone();
+        new_policy.context.chain_id = chain_id;
+        new_policy.maximum_archive_batch_records = width;
+        new_policy.maximum_archive_batch_bytes = u64::from(width) * 100;
+        let records: Vec<_> = (0..=width)
+            .rev()
+            .map(|i| shared::record(&new_policy.context, i))
+            .collect();
+        let plan = plan_task_archive_pruning_v1(
+            &new_policy,
+            &records,
+            &BTreeSet::new(),
+            20_000,
+            2,
+            Hash32V1([7; 32]),
+        )
+        .unwrap();
+        let batch = plan.archive_batch().unwrap();
+        assert_eq!(batch.seal.record_count, width);
+        let terminal = batch.records.last().unwrap();
+        let proof = batch.inclusion_proof(&new_policy, terminal.task_id).unwrap();
+        row(&mut w, &batch.seal, terminal, &proof);
+    }
 }

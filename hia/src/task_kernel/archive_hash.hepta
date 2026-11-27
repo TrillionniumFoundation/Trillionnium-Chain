@@ -90,53 +90,9 @@ block capacity(dr:readbuf,do:mutbuf,dw:mutbuf,de:u64,dp:bool)
   all:bool = bool.and(sufficient,working)
   branch all hash(dr,do,dw,de,dp) capacity_bad()
 block hash(hr:readbuf,ho:mutbuf,hw:mutbuf,he:u64,hp:bool)
-  init:u64 = call(hw) {"function":"tr_sha_init"}
-  off0:u64 = const() {"value":1208}
-  a0:u64 = const() {"value":7885365840114090033}
-  c0:u64 = const() {"value":7885365840114090033}
-  v0:u64 = select(hp,a0,c0)
-  _store0:u64 = call(hw,off0,v0) {"function":"tr_put"}
-  off8:u64 = const() {"value":1216}
-  a8:u64 = const() {"value":7809911856577867822}
-  c8:u64 = const() {"value":7809911856577867822}
-  v8:u64 = select(hp,a8,c8)
-  _store8:u64 = call(hw,off8,v8) {"function":"tr_put"}
-  off16:u64 = const() {"value":1224}
-  a16:u64 = const() {"value":8314054128866569829}
-  c16:u64 = const() {"value":8314054128866569829}
-  v16:u64 = select(hp,a16,c16)
-  _store16:u64 = call(hw,off16,v16) {"function":"tr_put"}
-  off24:u64 = const() {"value":1232}
-  a24:u64 = const() {"value":8532465745360137579}
-  c24:u64 = const() {"value":8532465745360137579}
-  v24:u64 = select(hp,a24,c24)
-  _store24:u64 = call(hw,off24,v24) {"function":"tr_put"}
-  off32:u64 = const() {"value":1240}
-  a32:u64 = const() {"value":8746950815730642277}
-  c32:u64 = const() {"value":7237970023832235365}
-  v32:u64 = select(hp,a32,c32)
-  _store32:u64 = call(hw,off32,v32) {"function":"tr_put"}
-  off40:u64 = const() {"value":1248}
-  a40:u64 = const() {"value":7017849999419597614}
-  c40:u64 = const() {"value":7017849999419597614}
-  v40:u64 = select(hp,a40,c40)
-  _store40:u64 = call(hw,off40,v40) {"function":"tr_put"}
-  off48:u64 = const() {"value":1256}
-  a48:u64 = const() {"value":212436149620}
-  c48:u64 = const() {"value":212436149620}
-  v48:u64 = select(hp,a48,c48)
-  _store48:u64 = call(hw,off48,v48) {"function":"tr_put"}
-  domain_len:u64 = const() {"value":53}
-  dom:u64 = call(hw,off0,domain_len) {"function":"tr_sha_update_work"}
-  payload_start:u64 = const() {"value":1}
-  payload_len:u64 = int.sub.wrap(he,payload_start)
-  data:u64 = call(hr,payload_start,payload_len,hw) {"function":"tr_sha_update"}
-  fin:u64 = call(hw) {"function":"tr_sha_final"}
-  lr:u64 = bit.or(init,dom)
-  rr:u64 = bit.or(data,fin)
-  status:u64 = bit.or(lr,rr)
-  clear:u64 = const() {"value":0}
-  good:bool = compare.eq(status,clear)
+  payload_base:u64 = const() {"value":1}
+  remaining:u64 = int.sub.wrap(he,payload_base)
+  good:bool = call(hr,hw,payload_base,remaining,hp) {"function":"archive_value_digest"}
   branch good publish(ho,hw) hash_bad()
 block publish(po:mutbuf,pw:mutbuf)
   src0:u64 = const() {"value":1168}
@@ -185,4 +141,55 @@ block entry(raw:readbuf,offset:u64,width:u64)
   mask:u64 = int.shr.checked(full,bits)
   value:u64 = bit.and(word,mask)
   ret(value)
+end
+
+
+fn archive_value_digest(hr:readbuf,hw:mutbuf,payload_start:u64,payload_len:u64,hp:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(hr:readbuf,hw:mutbuf,payload_start:u64,payload_len:u64,hp:bool)
+  init:u64 = call(hw) {"function":"tr_sha_init"}
+  off0:u64 = const() {"value":1208}
+  a0:u64 = const() {"value":7885365840114090033}
+  c0:u64 = const() {"value":7885365840114090033}
+  v0:u64 = select(hp,a0,c0)
+  _store0:u64 = call(hw,off0,v0) {"function":"tr_put"}
+  off8:u64 = const() {"value":1216}
+  a8:u64 = const() {"value":7809911856577867822}
+  c8:u64 = const() {"value":7809911856577867822}
+  v8:u64 = select(hp,a8,c8)
+  _store8:u64 = call(hw,off8,v8) {"function":"tr_put"}
+  off16:u64 = const() {"value":1224}
+  a16:u64 = const() {"value":8314054128866569829}
+  c16:u64 = const() {"value":8314054128866569829}
+  v16:u64 = select(hp,a16,c16)
+  _store16:u64 = call(hw,off16,v16) {"function":"tr_put"}
+  off24:u64 = const() {"value":1232}
+  a24:u64 = const() {"value":8532465745360137579}
+  c24:u64 = const() {"value":8532465745360137579}
+  v24:u64 = select(hp,a24,c24)
+  _store24:u64 = call(hw,off24,v24) {"function":"tr_put"}
+  off32:u64 = const() {"value":1240}
+  a32:u64 = const() {"value":8746950815730642277}
+  c32:u64 = const() {"value":7237970023832235365}
+  v32:u64 = select(hp,a32,c32)
+  _store32:u64 = call(hw,off32,v32) {"function":"tr_put"}
+  off40:u64 = const() {"value":1248}
+  a40:u64 = const() {"value":7017849999419597614}
+  c40:u64 = const() {"value":7017849999419597614}
+  v40:u64 = select(hp,a40,c40)
+  _store40:u64 = call(hw,off40,v40) {"function":"tr_put"}
+  off48:u64 = const() {"value":1256}
+  a48:u64 = const() {"value":212436149620}
+  c48:u64 = const() {"value":212436149620}
+  v48:u64 = select(hp,a48,c48)
+  _store48:u64 = call(hw,off48,v48) {"function":"tr_put"}
+  domain_len:u64 = const() {"value":53}
+  dom:u64 = call(hw,off0,domain_len) {"function":"tr_sha_update_work"}
+  data:u64 = call(hr,payload_start,payload_len,hw) {"function":"tr_sha_update"}
+  fin:u64 = call(hw) {"function":"tr_sha_final"}
+  lr:u64 = bit.or(init,dom)
+  rr:u64 = bit.or(data,fin)
+  status:u64 = bit.or(lr,rr)
+  clear:u64 = const() {"value":0}
+  good:bool = compare.eq(status,clear)
+  ret(good)
 end

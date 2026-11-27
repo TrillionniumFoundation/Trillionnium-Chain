@@ -1,5 +1,55 @@
 {
   "includes": {
+    "src/task_kernel/archive_inclusion_verify.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_header.hepta",
+        "functions": [
+          "archive_header_verify",
+          "archive_u32",
+          "archive_equal",
+          "archive_seal_hash",
+          "archive_digest_match"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_hash.hepta",
+        "functions": [
+          "archive_value_digest"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_fold.hepta",
+        "functions": [
+          "archive_fold_to_root",
+          "archive_stage_node",
+          "archive_node_digest"
+        ]
+      }
+    ],
     "src/task_kernel/archive_inclusion_header.hepta": [
       {
         "functions": [

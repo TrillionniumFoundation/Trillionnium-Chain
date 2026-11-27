@@ -217,3 +217,20 @@ original public API and exercises both stock backends. This test composition
 is not a public or installed dispatcher and does not replace an authority
 that selects the seal or verifies its policy, receipt, terminality, or
 deletion; actual batch validation is separate.
+
+### One-call typed archive inclusion verification
+
+`src/task_kernel/archive_inclusion_verify.hepta` takes the same immutable
+complete typed packet as the header and executes the header, record digest
+and ordered proof fold within one native call. A single scratch extent of
+1,344 bytes is checked before any work; the output buffer is never changed.
+The three independent native entries remain available with their original
+contracts. The combined entry calls their shared verifier/hash/fold bodies:
+the record and siblings are read directly from the already-admitted immutable
+packet, and the computed leaf and intermediate roots remain in private
+scratch. No caller-supplied intermediate hashes or mutable-to-read buffer
+coercions are used.
+
+This mirrors the public `verify_task_archive_inclusion_v1` result on the
+bounded typed input. It does not validate a batch, decide which seal to trust,
+or supply policy, receipt, terminality, deletion or production authority.

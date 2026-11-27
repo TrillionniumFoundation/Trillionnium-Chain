@@ -64,12 +64,31 @@ block seed(lr:readbuf,lw:mutbuf,li:u64,ld:u64)
   value3:u64 = call(lr,src3) {"function":"tr_read"}
   _seed3:u64 = call(lw,dst3,value3) {"function":"tr_put"}
   first:u64 = const() {"value":80}
-  jump fold(lr,lw,li,ld,first)
-block fold(fr:readbuf,fw:mutbuf,fi:u64,fd:u64,fa:u64)
+  root_at:u64 = const() {"value":16}
+  status:u32 = call(lr,lw,root_at,li,ld,first) {"function":"archive_fold_to_root"}
+  ret(status)
+block malformed()
+  status100:u32 = const() {"value":100}
+  ret(status100)
+block bounds()
+  status1:u32 = const() {"value":1}
+  ret(status1)
+block invalid()
+  status13:u32 = const() {"value":13}
+  ret(status13)
+block short()
+  status102:u32 = const() {"value":102}
+  ret(status102)
+end
+
+fn archive_fold_to_root(raw:readbuf,w:mutbuf,root:u64,index:u64,depth:u64,first:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,root:u64,index:u64,depth:u64,first:u64)
+  jump fold(raw,w,root,index,depth,first)
+block fold(fr:readbuf,fw:mutbuf,frt:u64,fi:u64,fd:u64,fa:u64)
   fold_zero:u64 = const() {"value":0}
   done:bool = compare.eq(fd,fold_zero)
-  branch done compare_root(fr,fw) step(fr,fw,fi,fd,fa)
-block step(pr:readbuf,pw:mutbuf,pi:u64,pd:u64,pa:u64)
+  branch done compare_root(fr,fw,frt) step(fr,fw,frt,fi,fd,fa)
+block step(pr:readbuf,pw:mutbuf,prt:u64,pi:u64,pd:u64,pa:u64)
   step_one:u64 = const() {"value":1}
   step_zero:u64 = const() {"value":0}
   odd:u64 = bit.and(pi,step_one)
@@ -84,24 +103,28 @@ block step(pr:readbuf,pw:mutbuf,pi:u64,pd:u64,pa:u64)
   next_at:u64 = int.add.wrap(pa,siblings_width)
   next_level:u64 = int.sub.wrap(pd,step_one)
   next_index:u64 = int.shr.checked(pi,step_one)
-  branch hashed fold(pr,pw,next_index,next_level,next_at) internal()
-block compare_root(rr:readbuf,rw:mutbuf)
-  exp0:u64 = const() {"value":16}
+  branch hashed fold(pr,pw,prt,next_index,next_level,next_at) internal()
+block compare_root(rr:readbuf,rw:mutbuf,rrt:u64)
+  exp_bias0:u64 = const() {"value":0}
+  exp0:u64 = int.add.wrap(rrt,exp_bias0)
   got0:u64 = const() {"value":1168}
   a0:u64 = call(rr,exp0) {"function":"tr_read"}
   b0:u64 = call(rw,got0) {"function":"tr_get"}
   eq0:bool = compare.eq(a0,b0)
-  exp1:u64 = const() {"value":24}
+  exp_bias1:u64 = const() {"value":8}
+  exp1:u64 = int.add.wrap(rrt,exp_bias1)
   got1:u64 = const() {"value":1176}
   a1:u64 = call(rr,exp1) {"function":"tr_read"}
   b1:u64 = call(rw,got1) {"function":"tr_get"}
   eq1:bool = compare.eq(a1,b1)
-  exp2:u64 = const() {"value":32}
+  exp_bias2:u64 = const() {"value":16}
+  exp2:u64 = int.add.wrap(rrt,exp_bias2)
   got2:u64 = const() {"value":1184}
   a2:u64 = call(rr,exp2) {"function":"tr_read"}
   b2:u64 = call(rw,got2) {"function":"tr_get"}
   eq2:bool = compare.eq(a2,b2)
-  exp3:u64 = const() {"value":40}
+  exp_bias3:u64 = const() {"value":24}
+  exp3:u64 = int.add.wrap(rrt,exp_bias3)
   got3:u64 = const() {"value":1192}
   a3:u64 = call(rr,exp3) {"function":"tr_read"}
   b3:u64 = call(rw,got3) {"function":"tr_get"}
@@ -110,18 +133,6 @@ block compare_root(rr:readbuf,rw:mutbuf)
   right:bool = bool.and(eq2,eq3)
   all:bool = bool.and(left,right)
   branch all accepted() tamper()
-block malformed()
-  status100:u32 = const() {"value":100}
-  ret(status100)
-block bounds()
-  status1:u32 = const() {"value":1}
-  ret(status1)
-block invalid()
-  status13:u32 = const() {"value":13}
-  ret(status13)
-block short()
-  status102:u32 = const() {"value":102}
-  ret(status102)
 block internal()
   status103:u32 = const() {"value":103}
   ret(status103)
