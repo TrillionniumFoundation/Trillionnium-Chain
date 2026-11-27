@@ -280,8 +280,10 @@ def run(suite):
             peer = Responder(path, schedule)
             value = p.call(34, cp0[16:48], label=label)
             if label == "partial-deadline":
-                need(value[0][0] == 1 and all(.17 < ns / 1e9 < .32 for ns in (p.a.last_elapsed_ns, p.b.last_elapsed_ns)),
-                     "Client restarted partial read budget")
+                need(value[0][0] == 1, "Partial-frame read did not return the expected timeout error")
+                elapsed = (p.a.last_elapsed_ns, p.b.last_elapsed_ns)
+                need(all(.17 < ns / 1e9 < .32 for ns in elapsed),
+                     ("Partial-frame round trip outside the unchanged wall bound", elapsed))
             peer.close(suite, label)
         p.call(38)
         for pathbytes in (bytes(root / "missing"), bytes(root) + b"/nul\0tail", b"/" + b"x" * 108):

@@ -29,6 +29,13 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
 
 
+def append_raw(path, fragment):
+    # Each API process owns a fresh evidence directory. Append only newly
+    # transferred bytes, so a timed call never rewrites its prior transcript.
+    with path.open("ab", buffering=0) as stream:
+        need(stream.write(fragment) == len(fragment), ("Incomplete raw API evidence", path))
+
+
 def error_code(kind, text):
     kinds = {"config": 1, "log": 2, "io": 3, "protocol": 4,
              "compare": 5, "unavailable": 6, "ledger_path": 7,
@@ -79,7 +86,7 @@ class API:
             need(bool(part), ("API response EOF", self.label, self.p.poll()))
             result.extend(part)
             self.stdout.extend(part)
-            (self.path / "stdout.raw").write_bytes(self.stdout)
+            append_raw(self.path / "stdout.raw", part)
         return bytes(result)
 
     def call(self, op, body=b""):
@@ -87,7 +94,7 @@ class API:
         self.calls += 1
         raw = b"HCSAPI01" + struct.pack("<QQQ", op, len(body), 0) + body
         self.stdin.extend(raw)
-        (self.path / "stdin.raw").write_bytes(self.stdin)
+        append_raw(self.path / "stdin.raw", raw)
         self.p.stdin.write(raw)
         self.p.stdin.flush()
         header = self.read(48)
