@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_hash",
+      "node_integration_complete": false,
+      "scope": "Bounded canonical Borsh TaskArchivePolicyV1 and inert TerminalTaskArchiveRecordV1 hash admission using original validation and SHA-256 domains. Does not grant terminality, pruning, deletion or production authority.",
+      "source": "hia/src/task_kernel/archive_hash.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_hash.py",
+        "hia/tests/rust_task_archive_hash_reference.rs"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/handle_replay",
       "node_integration_complete": false,
       "scope": "M15 finite original ledger reserve_handle and opened accounting: actual/pending and root active counts, bounded ordinary evidence and original sticky admission/error precedence. No file open, live VFS or production owner.",
@@ -2605,7 +2616,9 @@
       "state": "partially-ported"
     },
     {
-      "components": [],
+      "components": [
+        "task_kernel/archive_hash"
+      ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",
       "package": "trnm-task-kernel",

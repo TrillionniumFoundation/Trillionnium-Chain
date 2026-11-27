@@ -144,3 +144,29 @@ substitute a different SHA-2 version.
 Passing the original archive tests only preserves the original implementation;
 it does not establish native archive behavior. Whole-crate and whole-chain
 completion remain false until those distinct runtime obligations are completed.
+
+### Terminal archive typed hashes
+
+`src/task_kernel/archive_hash.hepta` is separate from the archive planner and
+durable store. Selector 0 hashes a canonical Borsh `TaskArchivePolicyV1`,
+including the original schema, positive bounds and maximum 4,096 batch record
+checks. Selector 1 hashes a canonical inert `TerminalTaskArchiveRecordV1`;
+only its schema is checked by the original hash method. It does not validate
+retention, terminality, outside evidence or a pruning decision.
+
+The private request is one selector byte and the exact Borsh body; the UTF-8
+chain ID is bounded to 512 bytes by this ABI, not by the Rust method. It
+publishes only a 32-byte digest and uses 1,264 scratch bytes. Both digests bind
+the original little-endian u32 domain length, exact candidate domain string
+and unchanged Borsh body. Statuses 1 and 22 reflect this route's original
+InvalidBounds and SchemaMismatch codes; 100 is malformed private input, 102
+is insufficient caller capacity, and 103 is internal hash refusal. It writes
+no digest on refusal.
+
+```sh
+python3 -B -m unittest -v hia.tests.test_task_archive_hash
+```
+
+The test uses the original locked Rust crate and its two public hash methods,
+plus stock Direct and Selfhost execution. It does not exercise archive
+selection, inclusion, filesystem mutation, consensus, or node routing.
