@@ -258,3 +258,28 @@ the fixed 112-byte output stay untouched. Malformed and short output
 cases publish nothing. The differential uses the original real ledger
 operations under both policies, but does not map shared memory, write
 vectors, own VFS callbacks, or inspect real files.
+
+## Handle transitions when recording cannot retain an event
+
+`handle_record_replay.hepta` uses the same typed receipt, prior evidence
+and three ledger rows as SHM replay, with the observed basename at
+offset 392. Action 6 transfers one positive pending open to actual
+handles; action 10 closes one positive actual handle. The native entry
+computes the two resulting counts, binds the prospective typed event
+to the selected slot, and applies the original record limits.
+
+The 120-byte fixed output is the 72-byte evidence diagnostic followed
+by the new actual and pending counts, retained slot mask and charge,
+recorder status and active main count. Only recorded success includes
+a JSON length at offset 120 and exact original event bytes at offset
+128. If the ordinary vector is full, opened returns SQLite FULL
+after transferring its handle, preserving earlier failure evidence.
+A close still decrements a main handle and sweeps all slots if the
+cleanup vector is full; the outer return reflects the original unit
+return while the recorder diagnostic retains SQLite FULL. Pressure
+leaves the suffix untouched. Invalid or short packets write nothing.
+
+Actual original V1 and V2 Ledger operations reproduce both cases and
+successful controls on generated in-process fixtures. This does not
+open or close a physical descriptor, own linked VFS vectors or change
+the earlier admission checks.

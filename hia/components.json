@@ -1,5 +1,100 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/handle_record_replay.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_utf8",
+          "value_word"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "je_string_size"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "mcc_bit",
+          "mcc_claim",
+          "mcc_field",
+          "mcc_keep",
+          "mcc_valid"
+        ],
+        "source": "src/sqlite_io_boundary/close_collect_replay.hepta"
+      },
+      {
+        "functions": [
+          "mje_action",
+          "mje_bool",
+          "mje_counters",
+          "mje_emit",
+          "mje_escape",
+          "mje_finish",
+          "mje_head",
+          "mje_hex_digit",
+          "mje_identity",
+          "mje_optional",
+          "mje_sizes",
+          "mje_string"
+        ],
+        "source": "src/sqlite_io_boundary/lifecycle_json_emit.hepta"
+      },
+      {
+        "functions": [
+          "mlj_action_size",
+          "mlj_counts",
+          "mlj_measure",
+          "mlj_opt",
+          "mlj_options",
+          "mlj_tail"
+        ],
+        "source": "src/sqlite_io_boundary/lifecycle_json_size.hepta"
+      },
+      {
+        "functions": [
+          "evidence_apply",
+          "evidence_first_valid"
+        ],
+        "source": "src/sqlite_io_boundary/record_evidence.hepta"
+      },
+      {
+        "functions": [
+          "msp_offset",
+          "msp_pair"
+        ],
+        "source": "src/sqlite_io_boundary/shm_record_replay.hepta"
+      },
+      {
+        "functions": [
+          "msh_keep"
+        ],
+        "source": "src/sqlite_io_boundary/shm_replay.hepta"
+      },
+      {
+        "functions": [
+          "mte_apply",
+          "mte_ordinary"
+        ],
+        "source": "src/sqlite_io_boundary/typed_record_evidence.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
     "platform/service_settlement/held_variable_pair_replay.hepta": [
       {
         "functions": [

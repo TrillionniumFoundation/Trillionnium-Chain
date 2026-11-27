@@ -1,0 +1,217 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_handle_record_replay
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  count:usize = buffer.len(raw)
+  low:usize = const() {"value":392}
+  high:usize = const() {"value":904}
+  sufficient:bool = compare.ge(count,low)
+  bounded:bool = compare.le(count,high)
+  framed:bool = bool.and(sufficient,bounded)
+  branch framed capacity(raw,out,count) malformed()
+block capacity(cr:readbuf,co:mutbuf,cn:usize)
+  extent:usize = buffer.len(co)
+  need:usize = const() {"value":120}
+  room:bool = compare.ge(extent,need)
+  branch room measure(cr,co,cn) short()
+block measure(mr:readbuf,mo:mutbuf,mn:usize)
+  last:u64 = int.cast(mn) {"mode":"wrap"}
+  start:u64 = const() {"value":392}
+  size:u64 = call(mr,start,last) {"function":"mlj_measure"}
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.ne(size,zero)
+  branch valid header(mr,mo,last,size) malformed()
+block header(hr:readbuf,ho:mutbuf,hl:u64,hs:u64)
+  z:u64 = const() {"value":0}
+  p160:u64 = const() {"value":160}
+  p168:u64 = const() {"value":168}
+  three:u64 = const() {"value":3}
+  chosen:u64 = call(hr,p160) {"function":"tr_read"}
+  active:u64 = call(hr,p168) {"function":"tr_read"}
+  tag:u64 = call(hr,z) {"function":"tr_read"}
+  open_tag:u64 = const() {"value":6}
+  close_tag:u64 = const() {"value":10}
+  slotok:bool = compare.lt(chosen,three)
+  is_add:bool = compare.eq(tag,open_tag)
+  is_close:bool = compare.eq(tag,close_tag)
+  scoped:bool = bool.or(is_add,is_close)
+  ok:bool = bool.and(slotok,scoped)
+  branch ok census(hr,ho,hl,hs,chosen,active,is_close,z,z) malformed()
+block census(vr:readbuf,vo:mutbuf,vl:u64,vs:u64,vc:u64,va:u64,vclose:bool,vi:u64,vt:u64)
+  row:u64 = call(vi) {"function":"msp_offset"}
+  valid_row:bool = call(vr,row) {"function":"mcc_valid"}
+  branch valid_row sum(vr,vo,vl,vs,vc,va,vclose,vi,vt,row) malformed()
+block sum(sr:readbuf,so:mutbuf,sl:u64,sbytes:u64,sc:u64,sa:u64,sclose:bool,si:u64,st:u64,srow:u64)
+  claim:u64 = call(sr,srow) {"function":"mcc_claim"}
+  active_sum:u64 = int.add.wrap(st,claim)
+  one:u64 = const() {"value":1}
+  three_more:u64 = const() {"value":3}
+  next:u64 = int.add.wrap(si,one)
+  more:bool = compare.lt(next,three_more)
+  branch more census(sr,so,sl,sbytes,sc,sa,sclose,next,active_sum) select_row(sr,so,sl,sbytes,sc,sa,sclose,active_sum)
+block select_row(rr:readbuf,ro:mutbuf,rl:u64,rb:u64,rc:u64,ra:u64,rclose:bool,rsum:u64)
+  coherent:bool = compare.eq(ra,rsum)
+  selected:u64 = call(rc) {"function":"msp_offset"}
+  branch coherent refcount(rr,ro,rl,rb,rc,ra,rclose,selected) malformed()
+block refcount(fr:readbuf,fo:mutbuf,fl:u64,fb:u64,fc:u64,fa:u64,fclose:bool,frow:u64)
+  zf:u64 = const() {"value":0}
+  of:u64 = const() {"value":1}
+  k8:u64 = const() {"value":8}
+  k16:u64 = const() {"value":16}
+  flags:u64 = call(fr,frow) {"function":"tr_read"}
+  prior:u64 = call(fr,frow,k8) {"function":"mcc_field"}
+  pending:u64 = call(fr,frow,k16) {"function":"mcc_field"}
+  some:bool = compare.ne(flags,zf)
+  counter:u64 = select(fclose,prior,pending)
+  positive:bool = compare.ne(counter,zf)
+  good:bool = bool.and(some,positive)
+  branch good adjust(fr,fo,fl,fb,fc,fa,fclose,frow,flags,prior,pending) malformed()
+block adjust(ar:readbuf,ao:mutbuf,al:u64,ab:u64,ac:u64,aa:u64,aclose:bool,arow:u64,af:u64,ah:u64,ap:u64)
+  az:u64 = const() {"value":0}
+  aone:u64 = const() {"value":1}
+  atwo:u64 = const() {"value":2}
+  down:u64 = int.sub.wrap(ah,aone)
+  up:u64 = int.add.wrap(ah,aone)
+  pending_down:u64 = int.sub.wrap(ap,aone)
+  handles:u64 = select(aclose,down,up)
+  pending_after:u64 = select(aclose,ap,pending_down)
+  flag:u64 = bit.and(af,atwo)
+  main:bool = compare.ne(flag,az)
+  dec:bool = bool.and(aclose,main)
+  num:u64 = call(dec) {"function":"mcc_bit"}
+  active_after:u64 = int.sub.wrap(aa,num)
+  jump bind(ar,ao,al,ab,ac,active_after,aclose,arow,handles,pending_after)
+block bind(br:readbuf,bo:mutbuf,bl:u64,bb:u64,bc:u64,ba:u64,bclose:bool,brow:u64,bref:u64,bpending:u64)
+  match:bool = call(br,brow,bref,bpending) {"function":"mhp_bound"}
+  branch match evidence(br,bo,bl,bb,bc,ba,bclose,bref,bpending) malformed()
+block evidence(er:readbuf,eo:mutbuf,el:u64,eb:u64,ec:u64,ea:u64,eclose:bool,eref:u64,epend:u64)
+  byte_base:u64 = const() {"value":128}
+  need_all:u64 = int.add.wrap(eb,byte_base)
+  status:u32 = call(er,eo,eb,need_all) {"function":"mte_apply"}
+  z2:u32 = const() {"value":0}
+  full:u32 = const() {"value":13}
+  e0:u64 = const() {"value":0}
+  success:bool = compare.eq(status,z2)
+  pressure:bool = compare.eq(status,full)
+  diagnostic:bool = bool.or(success,pressure)
+  branch diagnostic sweep(er,eo,el,eb,ec,ea,eclose,eref,epend,status,e0,e0,e0) done(status)
+block sweep(wr:readbuf,wo:mutbuf,wl:u64,wb:u64,wc:u64,wa:u64,wclose:bool,wref:u64,wpend:u64,wstatus:u32,wi:u64,wm:u64,wt:u64)
+  wrow:u64 = call(wi) {"function":"msp_offset"}
+  is_chosen:bool = compare.eq(wi,wc)
+  keep:bool = call(wr,wrow,wa,is_chosen,wref,wclose) {"function":"mhp_keep"}
+  bit:u64 = call(keep) {"function":"mcc_bit"}
+  moved:u64 = int.shl.checked(bit,wi)
+  mask:u64 = bit.or(wm,moved)
+  k32:u64 = const() {"value":32}
+  size_hi:u64 = call(wr,wrow,k32) {"function":"mcc_field"}
+  charged:u64 = int.mul.wrap(size_hi,bit)
+  total:u64 = int.add.wrap(wt,charged)
+  once:u64 = const() {"value":1}
+  wk:u64 = const() {"value":3}
+  step:u64 = int.add.wrap(wi,once)
+  in_loop:bool = compare.lt(step,wk)
+  branch in_loop sweep(wr,wo,wl,wb,wc,wa,wclose,wref,wpend,wstatus,step,mask,total) publish(wr,wo,wl,wb,wa,wclose,wref,wpend,wstatus,mask,total)
+block publish(pr:readbuf,po:mutbuf,pl:u64,pb:u64,pa:u64,pclose:bool,pref:u64,ppend:u64,ps:u32,pm:u64,pt:u64)
+  p72:u64 = const() {"value":72}
+  p80:u64 = const() {"value":80}
+  p88:u64 = const() {"value":88}
+  p96:u64 = const() {"value":96}
+  p104:u64 = const() {"value":104}
+  p112:u64 = const() {"value":112}
+  code64:u64 = int.cast(ps) {"mode":"wrap"}
+  put_ref:u64 = call(po,p72,pref) {"function":"tr_put"}
+  put_pending:u64 = call(po,p80,ppend) {"function":"tr_put"}
+  put_mask:u64 = call(po,p88,pm) {"function":"tr_put"}
+  put_charge:u64 = call(po,p96,pt) {"function":"tr_put"}
+  put_code:u64 = call(po,p104,code64) {"function":"tr_put"}
+  put_active:u64 = call(po,p112,pa) {"function":"tr_put"}
+  goodcode:u32 = const() {"value":0}
+  recorded:bool = compare.eq(ps,goodcode)
+  outer:u32 = select(pclose,goodcode,ps)
+  branch recorded json(pr,po,pl,pb) done(outer)
+block json(jr:readbuf,jo:mutbuf,jl:u64,jb:u64)
+  start_in:u64 = const() {"value":392}
+  start_out:u64 = const() {"value":128}
+  length_pos:u64 = const() {"value":120}
+  final:u64 = call(jr,jo,start_out,jl,start_in) {"function":"mje_emit"}
+  len:u64 = call(jo,length_pos,jb) {"function":"tr_put"}
+  ok_status:u32 = const() {"value":0}
+  ret(ok_status)
+block done(code:u32)
+  ret(code)
+block malformed()
+  status_bad:u32 = const() {"value":100}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":102}
+  ret(status_short)
+end
+
+fn mhp_keep(r:readbuf,p:u64,a:u64,chosen:bool,actual:u64,sweep:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,a:u64,chosen:bool,actual:u64,sweep:bool)
+  branch sweep close(r,p,a,chosen,actual) presence(r,p)
+block close(cr:readbuf,cp:u64,ca:u64,cc:bool,ch:u64)
+  keep:bool = call(cr,cp,ca,cc,ch) {"function":"mcc_keep"}
+  ret(keep)
+block presence(pr:readbuf,pp:u64)
+  z:u64 = const() {"value":0}
+  flags:u64 = call(pr,pp) {"function":"tr_read"}
+  exists:bool = compare.ne(flags,z)
+  ret(exists)
+end
+
+fn mhp_bound(r:readbuf,row:u64,count:u64,pends:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,row:u64,count:u64,pends:u64)
+  geni:u64 = const() {"value":16}
+  genj:u64 = const() {"value":48}
+  gen:bool = call(r,row,geni,genj) {"function":"msp_pair"}
+  devi:u64 = const() {"value":24}
+  devj:u64 = const() {"value":56}
+  dev:bool = call(r,row,devi,devj) {"function":"msp_pair"}
+  inoi:u64 = const() {"value":32}
+  inoj:u64 = const() {"value":64}
+  ino:bool = call(r,row,inoi,inoj) {"function":"msp_pair"}
+  handlesi:u64 = const() {"value":48}
+  pendingi:u64 = const() {"value":56}
+  handles0:u64 = call(r,handlesi) {"function":"tr_read"}
+  pending0:u64 = call(r,pendingi) {"function":"tr_read"}
+  handles:bool = compare.eq(handles0,count)
+  pending:bool = compare.eq(pending0,pends)
+  highi:u64 = const() {"value":72}
+  highj:u64 = const() {"value":32}
+  high:bool = call(r,row,highi,highj) {"function":"msp_pair"}
+  actuali:u64 = const() {"value":80}
+  actualj:u64 = const() {"value":40}
+  actual:bool = call(r,row,actuali,actualj) {"function":"msp_pair"}
+
+  shot:u64 = const() {"value":64}
+  shm_offset:u64 = const() {"value":24}
+  refs:bool = call(r,row,shot,shm_offset) {"function":"msp_pair"}
+  lk:u64 = const() {"value":40}
+  op:u64 = const() {"value":96}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  three:u64 = const() {"value":3}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  flags:u64 = call(r,row) {"function":"tr_read"}
+  actual_lk:u64 = call(r,lk) {"function":"tr_read"}
+  bits:u64 = call(r,op) {"function":"tr_read"}
+  lf:u64 = bit.and(flags,four)
+  rf:u64 = bit.and(flags,eight)
+  is_linked:bool = compare.ne(lf,zero)
+  is_reserved:bool = compare.ne(rf,zero)
+  linked0:u64 = select(is_linked,one,zero)
+  opt:u64 = select(is_reserved,zero,three)
+  linked:bool = compare.eq(actual_lk,linked0)
+  options:bool = compare.eq(bits,opt)
+  ok0:bool = bool.and(gen,dev)
+  ok1:bool = bool.and(ok0,ino)
+  ok2:bool = bool.and(ok1,handles)
+  ok3:bool = bool.and(ok2,pending)
+  ok4:bool = bool.and(ok3,high)
+  ok5:bool = bool.and(ok4,actual)
+  ok6:bool = bool.and(ok5,refs)
+  ok7:bool = bool.and(ok6,linked)
+  ok8:bool = bool.and(ok7,options)
+  ret(ok8)
+end
