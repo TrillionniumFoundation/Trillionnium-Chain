@@ -155,3 +155,19 @@ output untouched; extra capacity and scratch are untouched on success too.
 No cryptographic, availability, membership or storage authority follows from
 a matching value. Original Rust and both pinned HIA backends are compared by
 [test_da_protocol_context](../../tests/test_da_protocol_context.py).
+
+## Typed data-availability object identity
+
+The [private constructor](typed_object_id.hepta) takes exactly
+`namespace:u8 || kind:u16 LE || digest:32`. It admits the original
+TransactionBatch namespace (0) and the six typed object kinds. It distinguishes
+the original explicit ArtifactEvidence exclusion (status 2) from any unknown
+namespace (3), before checking the private typed kind domain (4). A wrong
+extent (100) or insufficient output (102) cannot publish a partial result.
+Success emits the exact original 35-byte Borsh value. The digest is opaque;
+this does not verify that an object exists, is stored, or is certified.
+
+The [differential](../../tests/test_da_typed_object_id.py) checks all 256
+namespace tags and every original kind against the locked Rust library and both
+native backends. Out-of-domain raw kind codes are private ABI refusals, not
+fabricated calls with a Rust typed kind.

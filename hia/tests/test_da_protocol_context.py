@@ -27,10 +27,10 @@ def _run(argv, data=None, timeout=180, env=None):
                           timeout=timeout, env=env)
 
 
-def locked_reference(directory, stream):
+def locked_reference(directory, stream, caller=CALLER):
     bound = (MANIFEST, WORKSPACE / "Cargo.lock", CRATE / "Cargo.toml",
              CRATE / "src/types.rs", CRATE / "src/lib.rs", CRATE / "src/error.rs",
-             ROOT / "rust-toolchain.toml", CALLER)
+             ROOT / "rust-toolchain.toml", caller)
 
     def identities():
         return [hashlib.sha256(path.read_bytes()).digest() for path in bound]
@@ -77,7 +77,7 @@ def locked_reference(directory, stream):
     exe = directory / "original-da-context"
     _run([rustc, "--edition=2021", "--extern", f"trnm_data_availability={da}",
           "--extern", f"borsh={borsh}", "-L", f"dependency={target / 'debug/deps'}",
-          "-L", f"native={native}", str(CALLER), "-o", str(exe)], timeout=60)
+          "-L", f"native={native}", str(caller), "-o", str(exe)], timeout=60)
     result = _run([str(exe)], stream, timeout=30)
     if result.stderr or before != identities():
         raise ValueError("Original comparison did not retain unchanged source and stderr")

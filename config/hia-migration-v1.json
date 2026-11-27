@@ -1062,6 +1062,18 @@
       ]
     },
     {
+      "id": "data-availability/typed-object-id",
+      "node_integration_complete": false,
+      "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
+      "source": "hia/src/data_availability/typed_object_id.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_typed_object_id.py",
+        "hia/tests/rust_da_typed_object_id_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/cache-capacity",
       "node_integration_complete": false,
       "scope": "Pure CellCacheConfigV4 conservative SQLite WAL and shared-memory byte estimates, with full original numeric configuration validation; legacy cache callers, SQL, storage custody and admission remain unchanged",
@@ -2439,6 +2451,7 @@
       "components": [
         "data-availability/rs46",
         "data-availability/protocol-context",
+        "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
