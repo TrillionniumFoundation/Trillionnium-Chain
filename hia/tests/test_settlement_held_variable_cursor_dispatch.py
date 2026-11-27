@@ -82,7 +82,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         request["mixed_plan_fixture"] = True
                     else:
                         request["cursor_stream_fixture"] = True
-                if lane != "execution" and failed is None:
+                if lane != "execution" and (failed is None or lane.startswith("mixed-")):
                     request["writer"] = str(original)
                 if failed is not None:
                     request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
@@ -164,7 +164,8 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                             drift = invoke(db, held, "mixed-selfhost", failed="root", ordinal=3)
                             self.assertEqual((drift["status"], drift["projection"], drift["replay_calls"]),
                                              (100, None, 3))
-                            self.assertGreater(drift["released"], 0)
+                            self.assertEqual(drift["released"], 0)
+                            self.assertEqual(drift["transcript"][-2:], [[57, 9, 24], [58, 3, 24]])
                             later = owned / "mixed after original trailing checkpoint.db"
                             trailing_binding = execute([original, "seed-receipts", later, paths[0], "0",
                                                         *(paths[i] if i != "-" else "-" for i in indices), "-"]).stdout
@@ -220,6 +221,9 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                              case_paths[1], case_paths[4], case_paths[6], "-", "-", case_paths[8]]).stdout
             reference = execute([original, "verify-journal", case, case_paths[0]]).stdout
             before = case.read_bytes()
+            original_release = execute([original, "observe-snapshot-release", case])
+            self.assertEqual((original_release.stdout, original_release.stderr), (b"BUSY\nROLLED_BACK\n", b""))
+            self.assertEqual(execute([original, "verify-journal", case, case_paths[0]]).stdout, reference)
             _, _, markers = frames(execute([original, "observe-actual-journal-prefixes", case, case_paths[0]]).stdout)
             self.assertEqual([item[:2] for item in struct.iter_unpack("<QQ32s32s", markers)],
                              [(0, 0), (0, 1), (1, 3), (3, 3), (3, 3), (3, 4)])
@@ -242,6 +246,11 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                     self.assertEqual(native["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
                     wrong = invoke(case, bound, lane, failed="parent", ordinal=3)
                     self.assertEqual((wrong["status"], wrong["projection"], wrong["replay_calls"]), (100, None, 3))
-                    self.assertGreater(wrong["released"], 0)
+                    self.assertEqual((wrong["replay_locks"], wrong["released"]), (3, 0))
+                    self.assertEqual(wrong["transcript"][-2:], [[57, 9, 24], [58, 3, 24]])
+                    released = execute([original, "try-exclusive", case])
+                    self.assertEqual((released.stdout, released.stderr), (b"ROLLED_BACK\n", b""))
+                    cold = execute([original, "verify-journal", case, case_paths[0]])
+                    self.assertEqual((cold.stdout, cold.stderr), (reference, b""))
             self.assertEqual(case.read_bytes(), before)
             self.assertFalse(case.with_name(case.name + "-journal").exists())

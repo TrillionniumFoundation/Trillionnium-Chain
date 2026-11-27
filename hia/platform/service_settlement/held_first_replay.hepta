@@ -24,7 +24,10 @@ block handoff(hr:readbuf,hm:mutbuf,hw:mutbuf,requested_cap:u64)
   phase_at:u64 = const() {"value":349000}
   phase:u64 = call(hm,phase_at) {"function":"cp_get"}
   outstanding:bool = compare.eq(phase,one)
-  branch outstanding verify(hr,hm,phase_at) routes(hr,hm,hw,phase)
+  cleanup_pending:bool = compare.gt(phase,one)
+  branch outstanding verify(hr,hm,phase_at) handoff_cleanup(hr,hm,hw,phase,cleanup_pending)
+block handoff_cleanup(hcr:readbuf,hcm:mutbuf,hcw:mutbuf,hcp:u64,hcc:bool)
+  branch hcc cleanup_response(hcr,hcm,hcp) routes(hcr,hcm,hcw,hcp)
 block routes(rr:readbuf,rm:mutbuf,rw:mutbuf,rp:u64)
   zero_segment3:u64 = const() {"value":0}
   current:u64 = call(rm,zero_segment3) {"function":"cp_get"}
@@ -596,12 +599,12 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_new_parent:bool = bool.or(vh_var_settle,vh_measured_same)
   vh_dynamic_parent:bool = bool.or(vh_new_parent,vh_linear)
   vh_parent_off:usize = select(vh_dynamic_parent,vh_actual_core,vh_width)
-  branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_parent_off,vh_profile) refused()
+  branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_parent_off,vh_profile) engine_refused(vm0)
 block replay_shape(vs_r:readbuf,vs_m:mutbuf,vs_a:u64,vs_n:u64,vs_len:usize,vs_ex:bool)
   branch vs_ex compare_engine_parent(vs_r,vs_m,vs_a,vs_n,vs_len) compare_replay(vs_r,vs_m,vs_a,vs_n)
 block compare_engine_parent(ve_r:readbuf,ve_m:mutbuf,ve_a:u64,ve_n:u64,ve_len:usize)
   ve_valid:bool = call(ve_r,ve_m,ve_n,ve_len) {"function":"hfs_capture_engine"}
-  branch ve_valid compare_replay(ve_r,ve_m,ve_a,ve_n) refused()
+  branch ve_valid compare_replay(ve_r,ve_m,ve_a,ve_n) engine_refused(ve_m)
 block compare_replay(kr:readbuf,km:mutbuf,ka:u64,kh:u64)
   zero_k:u64 = const() {"value":0}
   hist:u64 = call(kr,zero_k) {"function":"tr_read"}
@@ -615,7 +618,7 @@ block compare_replay(kr:readbuf,km:mutbuf,ka:u64,kh:u64)
   root_ok:bool = call(kr,km,rk,mk,bytes32) {"function":"smr_eq_bound"}
   first_pair:bool = bool.and(hist_ok,kid)
   k_all:bool = bool.and(first_pair,root_ok)
-  branch k_all compare_tail(kr,km,ka,kh) refused()
+  branch k_all compare_tail(kr,km,ka,kh) engine_refused(km)
 block compare_tail(ct_r:readbuf,ct_m:mutbuf,ct_a:u64,ct_h:u64)
   ct_at:u64 = const() {"value":349024}
   ct_profile:u64 = call(ct_m,ct_at) {"function":"cp_get"}
@@ -628,7 +631,7 @@ block compare_state(cs2_r:readbuf,cs2_m:mutbuf,cs2_a:u64,cs2_h:u64)
   cs2_size_at:u64 = const() {"value":349008}
   size_s:u64 = call(cs2_m,cs2_size_at) {"function":"cp_get"}
   state_ok:bool = call(cs2_r,cs2_m,ks,ms,size_s) {"function":"smr_eq_bound"}
-  branch state_ok resume(cs2_m,cs2_a,cs2_h) refused()
+  branch state_ok resume(cs2_m,cs2_a,cs2_h) engine_refused(cs2_m)
 block resume(um:mutbuf,ua:u64,uh:u64)
   verified_count_at:u64 = const() {"value":349032}
   count_saved:u64 = call(um,verified_count_at,uh) {"function":"cp_put"}
@@ -650,6 +653,102 @@ block delegate(dr:readbuf,dm:mutbuf,dw:mutbuf,dp:u64)
   pending_bad:bool = bool.not(verified)
   unsafe_result:bool = bool.and(complete,pending_bad)
   branch unsafe_result refused() reply(rc)
+block engine_refused(ecm:mutbuf)
+  ep_at:u64 = const() {"value":349024}
+  ep:u64 = call(ecm,ep_at) {"function":"cp_get"}
+  native_cleanup:bool = call(ep) {"function":"hfs_mixed_plan_profile"}
+  branch native_cleanup check_live_row(ecm) refused()
+block check_live_row(lcm:mutbuf)
+  lc0:u64 = const() {"value":0}
+  lc8:u64 = const() {"value":8}
+  lc16:u64 = const() {"value":16}
+  lc24:u64 = const() {"value":24}
+  lc32:u64 = const() {"value":32}
+  lc40:u64 = const() {"value":40}
+  lc_phase:u64 = call(lcm,lc0) {"function":"cp_get"}
+  lc_op:u64 = call(lcm,lc8) {"function":"cp_get"}
+  lc_size:u64 = call(lcm,lc16) {"function":"cp_get"}
+  lc_publication:u64 = call(lcm,lc24) {"function":"cp_get"}
+  lc_db:u64 = call(lcm,lc32) {"function":"cp_get"}
+  lc_stmt:u64 = call(lcm,lc40) {"function":"cp_get"}
+  row_wait:u64 = const() {"value":52}
+  row_op:u64 = const() {"value":7}
+  a_l:bool = compare.eq(lc_phase,row_wait)
+  b_l:bool = compare.eq(lc_op,row_op)
+  c_l:bool = compare.eq(lc_size,lc8)
+  d_l:bool = compare.eq(lc_publication,lc0)
+  live_d:bool = compare.ne(lc_db,lc0)
+  live_s:bool = compare.ne(lc_stmt,lc0)
+  distinct:bool = compare.ne(lc_db,lc_stmt)
+  ab_l:bool = bool.and(a_l,b_l)
+  cd_l:bool = bool.and(c_l,d_l)
+  both_l:bool = bool.and(ab_l,cd_l)
+  handles_l:bool = bool.and(live_d,live_s)
+  live_l:bool = bool.and(handles_l,distinct)
+  exact_l:bool = bool.and(both_l,live_l)
+  branch exact_l finalize_refused(lcm,lc_stmt) refused()
+block finalize_refused(frm:mutbuf,frs:u64)
+  fr_at:u64 = const() {"value":349000}
+  fr_pending:u64 = const() {"value":2}
+  fr_saved:u64 = call(frm,fr_at,fr_pending) {"function":"cp_put"}
+  fra:u64 = const() {"value":256}
+  fr_payload:u64 = call(frm,fra,frs) {"function":"cp_put"}
+  fr_phase:u64 = const() {"value":57}
+  fr_op:u64 = const() {"value":9}
+  fr_size:u64 = const() {"value":8}
+  fr_requested:u32 = call(frm,fr_phase,fr_op,fr_size) {"function":"ssr_issue"}
+  ret(fr_requested)
+block cleanup_response(crr:readbuf,crm:mutbuf,crp:u64)
+  exact_r:usize = const() {"value":24}
+  actual_r:usize = buffer.len(crr)
+  sane_r:bool = compare.eq(actual_r,exact_r)
+  branch sane_r cleanup_scalar(crr,crm,crp) refused()
+block cleanup_scalar(csr:readbuf,csm:mutbuf,csp:u64)
+  zero_cor:u64 = const() {"value":0}
+  cs_at8:u64 = const() {"value":8}
+  cs_at16:u64 = const() {"value":16}
+  result_cor:u64 = call(csr,zero_cor) {"function":"tr_read"}
+  reserved_8:u64 = call(csr,cs_at8) {"function":"tr_read"}
+  reserved_16:u64 = call(csr,cs_at16) {"function":"tr_read"}
+  reserved_all:u64 = bit.or(reserved_8,reserved_16)
+  zero_code:u64 = const() {"value":0}
+  exact_cor:bool = compare.eq(reserved_all,zero_code)
+  branch exact_cor cleanup_phase(csm,csp,result_cor) refused()
+block cleanup_phase(cpm:mutbuf,cpp:u64,cpr:u64)
+  cp2:u64 = const() {"value":2}
+  cp3:u64 = const() {"value":3}
+  finalize_ack:bool = compare.eq(cpp,cp2)
+  close_ack:bool = compare.eq(cpp,cp3)
+  cp0:u64 = const() {"value":0}
+  successful_close:bool = compare.eq(cpr,cp0)
+  done_cleanup:bool = bool.and(close_ack,successful_close)
+  branch finalize_ack close_refused(cpm) cleanup_last(cpm,done_cleanup)
+block close_refused(cfm:mutbuf)
+  cf0:u64 = const() {"value":0}
+  cf32:u64 = const() {"value":32}
+  cf40:u64 = const() {"value":40}
+  cleared_stmt:u64 = call(cfm,cf40,cf0) {"function":"cp_put"}
+  current_db:u64 = call(cfm,cf32) {"function":"cp_get"}
+  close_pending_at:u64 = const() {"value":349000}
+  close_pending:u64 = const() {"value":3}
+  close_saved:u64 = call(cfm,close_pending_at,close_pending) {"function":"cp_put"}
+  cfarm:u64 = const() {"value":256}
+  cf_payload:u64 = call(cfm,cfarm,current_db) {"function":"cp_put"}
+  cf_phase:u64 = const() {"value":58}
+  cf_op:u64 = const() {"value":3}
+  cf_size:u64 = const() {"value":8}
+  cf_req:u32 = call(cfm,cf_phase,cf_op,cf_size) {"function":"ssr_issue"}
+  ret(cf_req)
+block cleanup_last(clm:mutbuf,cl_ok:bool)
+  branch cl_ok cleanup_complete(clm) refused()
+block cleanup_complete(ccm:mutbuf)
+  end_pending_at:u64 = const() {"value":349000}
+  end_pending:u64 = const() {"value":4}
+  end_saved:u64 = call(ccm,end_pending_at,end_pending) {"function":"cp_put"}
+  clean_db_at:u64 = const() {"value":32}
+  clean_zero:u64 = const() {"value":0}
+  clean_db:u64 = call(ccm,clean_db_at,clean_zero) {"function":"cp_put"}
+  jump refused()
 block reply(status:u32)
   ret(status)
 block refused()

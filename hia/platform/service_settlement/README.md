@@ -566,7 +566,12 @@ native SHA prefixes; repeats share a hash and an interior operation that
 ends no marker allocates no prefix context. A marker's first operation
 uses its checked parent; later rows use its own coordinate. Actual held
 original cases include challenge and trailing empties and a coalesced
-1-to-3 interval, without rereading receipts. Other bounded entries stand.
+1-to-3 interval, without rereading receipts. If the Engine reply is refused while a
+verified operation row is outstanding, the native mixed reader explicitly
+finalizes that statement and closes the SQLite handle before returning the
+refusal. The original disposable writer can then take an exclusive lock
+and roll back; cold readback must still match the original. Other errors
+continue using the existing transport cleanup. Other bounded entries stand.
 
 One opt-in native cursor dispatcher now chooses the existing three-row
 Rollup, four-row mixed, or bounded linear receipt lane from original verified

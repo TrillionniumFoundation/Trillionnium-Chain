@@ -50,6 +50,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = env::args_os().collect::<Vec<_>>();
     let path = PathBuf::from(&args[2]);
     let operation = args[1].to_str().unwrap();
+    if operation == "try-exclusive" || operation == "observe-snapshot-release" {
+        assert_eq!(args.len(), 3);
+        let writer = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+        writer.busy_timeout(Duration::ZERO)?;
+        if operation == "observe-snapshot-release" {
+            let reader = open_read_snapshot(&path)?;
+            let observed: u64 = reader.query_row("SELECT count(*) FROM operations", [], |row| row.get(0))?;
+            assert!(observed > 0);
+            match writer.execute_batch("BEGIN EXCLUSIVE") {
+                Err(rusqlite::Error::SqliteFailure(code, _)) if code.code == ErrorCode::DatabaseBusy => {
+                    println!("BUSY");
+                }
+                result => panic!("unexpected original snapshot lock result: {result:?}"),
+            }
+            drop(reader);
+        }
+        writer.execute_batch("BEGIN EXCLUSIVE; ROLLBACK")?;
+        println!("ROLLED_BACK");
+        return Ok(());
+    }
     if operation == "try-write" {
         assert_eq!(args.len(), 3);
         let db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
