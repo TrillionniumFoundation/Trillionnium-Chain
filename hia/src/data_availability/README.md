@@ -584,3 +584,20 @@ uses the original Rust constructor and actual `policy_hash()` and checks
 exact Borsh bytes against both pinned HIA backends. This ports a bounded
 value constructor, not vote handling, signing, authorization, network
 admission or production activation.
+
+
+### Attestation conflict coordinate
+
+`attestation_coordinate.hepta` reproduces the original public
+`DaAttestationBodyV1::conflict_coordinate` over a single canonical Borsh body.
+The original hash identity is the context, namespace, epoch, attestor,
+author and author sequence. Batch, storage and attestation-sequence fields
+are intentionally outside the conflict coordinate. This computation neither
+qualifies an attestation nor grants signing or voting authority.
+
+The private byte profile admits bodies up to 1 MiB, a 32-byte output and
+1,280 bytes of independent scratch. It verifies full framing and chain string
+UTF-8 before hashing the two exact immutable field ranges, rejects malformed
+or short loans without publishing a result, and leaves the output suffix
+unchanged. The pinned original Rust library is the public method oracle;
+Direct and Selfhost also exercise the exact extent and atomicity controls.
