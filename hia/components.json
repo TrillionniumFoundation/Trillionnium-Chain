@@ -1,5 +1,38 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/lifecycle_json_size.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "je_string_size"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "cp_put"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/record_evidence.hepta": [
       {
         "functions": [

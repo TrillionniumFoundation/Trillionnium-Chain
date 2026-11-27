@@ -146,3 +146,29 @@ unchanged Rust recorder and real compact JSON byte lengths, including
 escaping and non-ASCII content. Native serialization, live vectors,
 underlying operation mutations, and unreachable sequence overflow remain
 outside this finite comparison.
+
+## Compact lifecycle event byte measurement
+
+`lifecycle_json_size.hepta` measures the original compact
+`serde_json::to_vec(LifecycleReceipt)` length without emitting JSON. Its
+104-byte fixed prefix contains, in order, the action tag, sequence,
+generation, device, inode, linked bit, actual handles, pending opens,
+SHM references, high-water bytes, actual bytes, requested endpoint and
+option bits. Each field is little-endian u64; the three reference counts
+must fit u32. Bits 0, 1 and 2 denote device, inode and endpoint presence,
+respectively; an absent payload must be zero. The remaining 0–512 bytes
+are one valid UTF-8 basename. The 8-byte output is the number of bytes,
+including results above 512; retention is a separate decision.
+
+The twelve fixture action tags are original retained literals, ordered
+as reserve-open, bind-existing-before-io-v2, bind-real-inode,
+reserve-growth, reserve-handle, opened, unpublished-actual-close,
+failed-open-no-methods, shm-reference, underlying-close,
+underlying-shm-unmap and unlinked. Device and inode None each serialize
+as null. Endpoint None omits its key; Some(0) includes it. Shared HIA
+UTF-8, escape and unsigned-decimal helpers measure compact widths. The
+Rust differential includes actual V1/V2 ledger receipts and actual
+cleanup retention at 511, 512 and 513 bytes, alongside separate typed
+encoder fixtures for numeric, escaping, and option extremes. Neither
+entry point creates a file, retains a record, or routes production VFS
+work.
