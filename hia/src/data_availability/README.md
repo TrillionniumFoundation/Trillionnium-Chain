@@ -137,3 +137,21 @@ all comparison inputs/outputs, compiler events and unchanged source inventories.
 
 These checks qualify the native byte codec. They do not retire the complete
 data-availability package or complete its integration into a running HIA Node.
+
+## Typed transaction-batch protocol context
+
+The private [constructor](protocol_context.hepta) implements the retained
+`trnm_data_availability::ProtocolContextV1::new` boundary and emits the
+original Borsh value. It takes two opaque 32-byte hashes in genesis/stack order,
+followed by all chain-ID bytes. It accepts exactly 1–128 ASCII bytes, including
+control bytes and NUL, as the original does. Zero hashes are valid here:
+construction establishes only a typed value, not protection or identity.
+
+The successful output is `schema:u16 LE || genesis:32 || chain_len:u32 LE ||
+chain || protocol:u32 LE || stack:32`; both versions are fixed to 1.
+Status 100 means fewer than 64 bytes, 2 means the chain is outside the
+constructor's typed domain, and 102 means insufficient output. All three leave
+output untouched; extra capacity and scratch are untouched on success too.
+No cryptographic, availability, membership or storage authority follows from
+a matching value. Original Rust and both pinned HIA backends are compared by
+[test_da_protocol_context](../../tests/test_da_protocol_context.py).

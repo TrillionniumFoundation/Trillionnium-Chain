@@ -1029,6 +1029,17 @@
       ]
     },
     {
+      "id": "data-availability/protocol-context",
+      "node_integration_complete": false,
+      "scope": "Original ProtocolContextV1 private constructor with bounded ASCII and exact Borsh bytes; no trust, storage, attestation or authority.",
+      "source": "hia/src/data_availability/protocol_context.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_protocol_context.py",
+        "hia/tests/rust_da_protocol_context_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cache-capacity",
       "node_integration_complete": false,
       "scope": "Pure CellCacheConfigV4 conservative SQLite WAL and shared-memory byte estimates, with full original numeric configuration validation; legacy cache callers, SQL, storage custody and admission remain unchanged",
@@ -2405,6 +2416,7 @@
     {
       "components": [
         "data-availability/rs46",
+        "data-availability/protocol-context",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
