@@ -234,3 +234,28 @@ coercions are used.
 This mirrors the public `verify_task_archive_inclusion_v1` result on the
 bounded typed input. It does not validate a batch, decide which seal to trust,
 or supply policy, receipt, terminality, deletion or production authority.
+
+### Complete singleton archive batch verification
+
+`src/task_kernel/archive_singleton_batch.hepta` mirrors the public
+`verify_task_archive_batch_v1` result for exactly one archived record. Its
+private immutable packet has two little-endian u64 lengths (policy/seal),
+canonical Borsh policy bytes and the complete Borsh batch (seal, u32 record
+count and exactly one record). Chain ID bytes are UTF-8, each bounded to 512
+by this ABI. It publishes no auxiliary outputs and uses 1,360 scratch bytes.
+
+The validator binds the canonical policy digest to the seal, checks context,
+record schema and eligibility, and uses the existing exact checked unsigned
+128-bit product for the charge. Mandatory retention, charged-block count,
+required charge and inclusive expiry overflow retain original precedence.
+It then checks total encoded bytes, full charge, canonical range, and the
+actual native record hash as the singleton Merkle root, with no injected
+trusted digest. For a singleton, order/uniqueness are vacuous and the tree
+has no parent node; multi-record admission and tree reduction are separate
+work. No planner selection, pruning, deletion, database mutation or
+production routing is enabled.
+
+The original Rust planner creates an actual singleton fixture. The unchanged
+public batch verifier judges both that fixture and typed boundary variants,
+including full high-limb charge and failure ordering, before comparison with
+the pinned Direct and Selfhost entries.

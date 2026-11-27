@@ -1,0 +1,414 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_task_archive_singleton_batch_v1
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  extent0:usize = buffer.len(raw)
+  e:u64 = int.cast(extent0) {"mode":"wrap"}
+  lo:u64 = const() {"value":678}
+  hi:u64 = const() {"value":2214}
+  small_ok:bool = compare.ge(e,lo)
+  large_ok:bool = compare.le(e,hi)
+  extent_ok:bool = bool.and(small_ok,large_ok)
+  branch extent_ok shape(raw,w,e) malformed()
+block shape(sr:readbuf,sw:mutbuf,se:u64)
+  z:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  start:u64 = const() {"value":16}
+  pl:u64 = call(sr,z) {"function":"tr_read"}
+  sl:u64 = call(sr,eight) {"function":"tr_read"}
+  pmin:u64 = const() {"value":114}
+  pmax:u64 = const() {"value":626}
+  smin:u64 = const() {"value":294}
+  smax:u64 = const() {"value":806}
+  rmin:u64 = const() {"value":250}
+  rmax:u64 = const() {"value":762}
+  p0:bool = compare.ge(pl,pmin)
+  p1:bool = compare.le(pl,pmax)
+  s0:bool = compare.ge(sl,smin)
+  s1:bool = compare.le(sl,smax)
+  ps:bool = bool.and(p0,p1)
+  ss:bool = bool.and(s0,s1)
+  is_valid:bool = bool.and(ps,ss)
+  sa:u64 = int.add.wrap(start,pl)
+  se_at:u64 = int.add.wrap(sa,sl)
+  four:u64 = const() {"value":4}
+  ra:u64 = int.add.wrap(se_at,four)
+  have_record:bool = compare.le(ra,se)
+  rl:u64 = int.sub.wrap(se,ra)
+  r0:bool = compare.ge(rl,rmin)
+  r1:bool = compare.le(rl,rmax)
+  rs:bool = bool.and(r0,r1)
+  good_extent:bool = bool.and(rs,have_record)
+  whole:bool = bool.and(good_extent,is_valid)
+  branch whole count(sr,sw,se,sa,se_at,ra,pl,sl,rl) malformed()
+block count(cr:readbuf,cw:mutbuf,ce:u64,cs:u64,cb:u64,ca:u64,cpl:u64,csl:u64,crl:u64)
+  one:u64 = const() {"value":1}
+  wire_count:u64 = call(cr,cb) {"function":"archive_u32"}
+  singleton:bool = compare.eq(wire_count,one)
+  branch singleton typed(cr,cw,ce,cs,cb,ca,cpl,csl,crl) malformed()
+block typed(tr:readbuf,tw:mutbuf,te:u64,ts:u64,tb:u64,ta:u64,tpl:u64,tsl:u64,trl:u64)
+  l_base:u64 = const() {"value":34}
+  pl_at:u64 = const() {"value":50}
+  sl_at:u64 = int.add.wrap(ts,l_base)
+  rl_at:u64 = int.add.wrap(ta,l_base)
+  pc:u64 = call(tr,pl_at) {"function":"archive_u32"}
+  sc:u64 = call(tr,sl_at) {"function":"archive_u32"}
+  rc:u64 = call(tr,rl_at) {"function":"archive_u32"}
+  p_base:u64 = const() {"value":114}
+  s_base:u64 = const() {"value":294}
+  r_base:u64 = const() {"value":250}
+  want_p:u64 = int.add.wrap(pc,p_base)
+  want_s:u64 = int.add.wrap(sc,s_base)
+  want_r:u64 = int.add.wrap(rc,r_base)
+  ep:bool = compare.eq(want_p,tpl)
+  es:bool = compare.eq(want_s,tsl)
+  er:bool = compare.eq(want_r,trl)
+  typed1:bool = bool.and(ep,es)
+  typed2:bool = bool.and(typed1,er)
+  branch typed2 utf(tr,tw,te,ts,tb,ta,tpl,trl,pc,sc,rc) malformed()
+block utf(ur:readbuf,uw:mutbuf,ue:u64,us:u64,ub:u64,ua:u64,upl:u64,url:u64,up:u64,un:u64,um:u64)
+  p_at:u64 = const() {"value":54}
+  str_bias:u64 = const() {"value":38}
+  s_at:u64 = int.add.wrap(us,str_bias)
+  r_at:u64 = int.add.wrap(ua,str_bias)
+  p_utf:u64 = call(ur,p_at,up) {"function":"value_utf8"}
+  s_utf:u64 = call(ur,s_at,un) {"function":"value_utf8"}
+  r_utf:u64 = call(ur,r_at,um) {"function":"value_utf8"}
+  joined:u64 = bit.and(p_utf,s_utf)
+  joined2:u64 = bit.and(joined,r_utf)
+  yes:u64 = const() {"value":1}
+  good_utf:bool = compare.eq(joined2,yes)
+  branch good_utf policy_schema(ur,uw,ue,us,ub,ua,upl,url,up,un,um) malformed()
+block policy_schema(yr:readbuf,yw:mutbuf,ye:u64,ys:u64,yb:u64,ya:u64,ypl:u64,yrl:u64,yp:u64,yn:u64,ym:u64)
+  ppos:u64 = const() {"value":16}
+  p_v:bool = call(yr,ppos) {"function":"archive_batch_schema"}
+  branch p_v policy_bounds(yr,yw,ye,ys,yb,ya,ypl,yrl,yp,yn,ym) schema_bad()
+block policy_bounds(pr:readbuf,pw:mutbuf,pe:u64,psa:u64,pb:u64,pa:u64,ppl:u64,prl:u64,pp:u64,pn:u64,pm:u64)
+  p_ok:bool = call(pr,psa) {"function":"archive_batch_policy_bounds"}
+  branch p_ok capacity(pr,pw,pe,psa,pb,pa,ppl,prl,pp,pn,pm) bounds()
+block capacity(ar:readbuf,aw:mutbuf,ae:u64,asa:u64,ab:u64,aa:u64,apl:u64,arl:u64,ap:u64,an:u64,am:u64)
+  have:usize = buffer.len(aw)
+  need:usize = const() {"value":1360}
+  enough:bool = compare.ge(have,need)
+  branch enough seal(ar,aw,ae,asa,ab,aa,apl,arl,ap,an,am) short()
+block seal(kr:readbuf,kw:mutbuf,ke:u64,ks:u64,kb:u64,ka:u64,kpl:u64,krl:u64,kp:u64,kn:u64,km:u64)
+  s_code:u32 = call(kr,kw,ks,kb,kpl,kp,kn) {"function":"archive_batch_seal"}
+  clear:u32 = const() {"value":0}
+  accepted_s:bool = compare.eq(s_code,clear)
+  branch accepted_s row(kr,kw,ke,ks,kb,ka,krl,kp,km) propagate(s_code)
+block row(rr:readbuf,rw:mutbuf,re:u64,rsa:u64,rb:u64,ra0:u64,rrlen:u64,rp:u64,rm:u64)
+  r_code:u32 = call(rr,rw,re,rsa,rb,ra0,rp,rm) {"function":"archive_batch_record"}
+  clear_r:u32 = const() {"value":0}
+  accepted_r:bool = compare.eq(r_code,clear_r)
+  branch accepted_r totals(rr,rw,re,rsa,rb,ra0,rrlen) propagate(r_code)
+block totals(fr:readbuf,fw:mutbuf,fe:u64,fsa:u64,fb:u64,fa:u64,flen:u64)
+  status:u32 = call(fr,fw,fe,fsa,fb,fa,flen) {"function":"archive_batch_singleton_totals"}
+  ret(status)
+block propagate(p:u32)
+  ret(p)
+block malformed()
+  code100:u32 = const() {"value":100}
+  ret(code100)
+block schema_bad()
+  code22:u32 = const() {"value":22}
+  ret(code22)
+block bounds()
+  code1:u32 = const() {"value":1}
+  ret(code1)
+block short()
+  code102:u32 = const() {"value":102}
+  ret(code102)
+end
+
+fn archive_batch_schema(raw:readbuf,offset:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,offset:u64)
+  data:u64 = call(raw,offset) {"function":"tr_read"}
+  mask:u64 = const() {"value":65535}
+  schema:u64 = bit.and(data,mask)
+  one:u64 = const() {"value":1}
+  valid:bool = compare.eq(schema,one)
+  ret(valid)
+end
+
+fn archive_batch_policy_bounds(raw:readbuf,end:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,end:u64)
+  zero:u64 = const() {"value":0}
+  b0:u64 = const() {"value":40}
+  a0:u64 = int.sub.wrap(end,b0)
+  field0:u64 = call(raw,a0) {"function":"tr_read"}
+  live0:bool = compare.ne(field0,zero)
+  b1:u64 = const() {"value":32}
+  a1:u64 = int.sub.wrap(end,b1)
+  field1:u64 = call(raw,a1) {"function":"archive_u32"}
+  live1:bool = compare.ne(field1,zero)
+  guard1:bool = bool.and(live0,live1)
+  b2:u64 = const() {"value":28}
+  a2:u64 = int.sub.wrap(end,b2)
+  field2:u64 = call(raw,a2) {"function":"tr_read"}
+  live2:bool = compare.ne(field2,zero)
+  guard2:bool = bool.and(guard1,live2)
+  b3:u64 = const() {"value":20}
+  a3:u64 = int.sub.wrap(end,b3)
+  field3:u64 = call(raw,a3) {"function":"archive_u32"}
+  live3:bool = compare.ne(field3,zero)
+  guard3:bool = bool.and(guard2,live3)
+  b4:u64 = const() {"value":16}
+  a4:u64 = int.sub.wrap(end,b4)
+  field4:u64 = call(raw,a4) {"function":"tr_read"}
+  live4:bool = compare.ne(field4,zero)
+  guard4:bool = bool.and(guard3,live4)
+  b5:u64 = const() {"value":8}
+  a5:u64 = int.sub.wrap(end,b5)
+  field5:u64 = call(raw,a5) {"function":"tr_read"}
+  live5:bool = compare.ne(field5,zero)
+  guard5:bool = bool.and(guard4,live5)
+  max:u64 = const() {"value":4096}
+  valid_max:bool = compare.le(field3,max)
+  result:bool = bool.and(guard5,valid_max)
+  ret(result)
+end
+
+fn archive_batch_seal(raw:readbuf,w:mutbuf,seal:u64,seal_end:u64,pl:u64,pc:u64,sc:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,seal:u64,seal_end:u64,pl:u64,pc:u64,sc:u64)
+  ok_ver:bool = call(raw,seal) {"function":"archive_batch_schema"}
+  size_match:bool = compare.eq(pc,sc)
+  yes:bool = bool.and(ok_ver,size_match)
+  branch yes ctx(raw,w,seal,seal_end,pl,pc) invalid()
+block ctx(cr:readbuf,cw:mutbuf,cs:u64,ce:u64,cp:u64,cn:u64)
+  two:u64 = const() {"value":2}
+  cbase:u64 = const() {"value":72}
+  original_at:u64 = const() {"value":18}
+  c_at:u64 = int.add.wrap(cs,two)
+  c_n:u64 = int.add.wrap(cn,cbase)
+  same:bool = call(cr,original_at,c_at,c_n) {"function":"archive_equal"}
+  branch same digest(cr,cw,ce,cp) invalid()
+block digest(dr:readbuf,dw:mutbuf,de:u64,dp:u64)
+  at:u64 = const() {"value":16}
+  policy:bool = const() {"value":true}
+  hash_ok:bool = call(dr,dw,at,dp,policy) {"function":"archive_value_digest"}
+  branch hash_ok compare(dr,dw,de) internal()
+block compare(mr:readbuf,mw:mutbuf,me:u64)
+  hash_back:u64 = const() {"value":220}
+  reference:u64 = int.sub.wrap(me,hash_back)
+  same_hash:bool = call(mr,mw,reference) {"function":"archive_digest_match"}
+  seq_back:u64 = const() {"value":180}
+  count_back:u64 = const() {"value":60}
+  seq_at:u64 = int.sub.wrap(me,seq_back)
+  count_at:u64 = int.sub.wrap(me,count_back)
+  sequence:u64 = call(mr,seq_at) {"function":"tr_read"}
+  record_count:u64 = call(mr,count_at) {"function":"archive_u32"}
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  seq_ok:bool = compare.ne(sequence,zero)
+  same_count:bool = compare.eq(record_count,one)
+  both:bool = bool.and(same_hash,seq_ok)
+  match_all:bool = bool.and(both,same_count)
+  branch match_all accepted() invalid()
+block accepted()
+  code0:u32 = const() {"value":0}
+  ret(code0)
+block invalid()
+  code13:u32 = const() {"value":13}
+  ret(code13)
+block internal()
+  code103:u32 = const() {"value":103}
+  ret(code103)
+end
+
+fn archive_batch_record(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,seal_end:u64,record:u64,pc:u64,rc:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,seal_end:u64,record:u64,pc:u64,rc:u64)
+  ver:bool = call(raw,record) {"function":"archive_batch_schema"}
+  branch ver ctx(raw,w,end,seal_at,seal_end,record,pc,rc) schema_bad()
+block ctx(cr:readbuf,cw:mutbuf,ce:u64,cs:u64,cb:u64,ca:u64,cp:u64,cn:u64)
+  same_size:bool = compare.eq(cp,cn)
+  branch same_size compare_ctx(cr,cw,ce,cs,cb,ca,cp) context_bad()
+block compare_ctx(dr:readbuf,dw:mutbuf,de:u64,ds:u64,db:u64,da:u64,dp:u64)
+  two:u64 = const() {"value":2}
+  ctx_base:u64 = const() {"value":72}
+  policy_ctx:u64 = const() {"value":18}
+  row_ctx:u64 = int.add.wrap(da,two)
+  n:u64 = int.add.wrap(dp,ctx_base)
+  same:bool = call(dr,policy_ctx,row_ctx,n) {"function":"archive_equal"}
+  branch same heights(dr,dw,de,ds,db) context_bad()
+block heights(hr:readbuf,hw:mutbuf,he:u64,hs:u64,hb:u64)
+  current_back:u64 = const() {"value":188}
+  terminal_back:u64 = const() {"value":144}
+  bytes_back:u64 = const() {"value":32}
+  current_at:u64 = int.sub.wrap(hb,current_back)
+  terminal_at:u64 = int.sub.wrap(he,terminal_back)
+  nbytes_at:u64 = int.sub.wrap(he,bytes_back)
+  current:u64 = call(hr,current_at) {"function":"tr_read"}
+  terminal:u64 = call(hr,terminal_at) {"function":"tr_read"}
+  nbytes:u64 = call(hr,nbytes_at) {"function":"tr_read"}
+  not_future:bool = compare.le(terminal,current)
+  z:u64 = const() {"value":0}
+  nonzero:bool = compare.gt(nbytes,z)
+  height_ok:bool = bool.and(not_future,nonzero)
+  branch height_ok required(hr,hw,he,hs,current,terminal,nbytes) bounds()
+block required(rr:readbuf,rw:mutbuf,re:u64,rs:u64,r_cur:u64,r_term:u64,r_bytes:u64)
+  min_back:u64 = const() {"value":40}
+  paid_back:u64 = const() {"value":24}
+  min_at:u64 = int.sub.wrap(rs,min_back)
+  paid_at:u64 = int.sub.wrap(re,paid_back)
+  min:u64 = call(rr,min_at) {"function":"tr_read"}
+  paid:u64 = call(rr,paid_at) {"function":"tr_read"}
+  one:u64 = const() {"value":1}
+  block_sub:u64 = int.sub.wrap(min,one)
+  min_paid:u64 = int.add.wrap(r_term,block_sub)
+  fits:bool = compare.ge(min_paid,r_term)
+  branch fits prepay(rr,rw,re,rs,r_cur,r_term,r_bytes,paid,min_paid) overflow()
+block prepay(pr:readbuf,pw:mutbuf,pe:u64,ps:u64,p_cur:u64,p_term:u64,p_bytes:u64,p_paid:u64,p_min:u64)
+  funded:bool = compare.ge(p_paid,p_min)
+  branch funded charge(pr,pw,pe,ps,p_cur,p_term,p_bytes,p_paid) bounds()
+block charge(gr:readbuf,gw:mutbuf,ge:u64,gs:u64,g_cur:u64,g_term:u64,g_bytes:u64,g_paid:u64)
+  one_c:u64 = const() {"value":1}
+  elapsed:u64 = int.sub.wrap(g_paid,g_term)
+  charged:u64 = int.add.wrap(elapsed,one_c)
+  clear:u64 = const() {"value":0}
+  valid_count:bool = compare.ne(charged,clear)
+  branch valid_count cost(gr,gw,ge,gs,g_cur,g_bytes,g_paid,charged) overflow()
+block cost(ir:readbuf,iw:mutbuf,ie:u64,is:u64,i_cur:u64,i_bytes:u64,i_paid:u64,i_count:u64)
+  rate_back:u64 = const() {"value":8}
+  rate_at:u64 = int.sub.wrap(is,rate_back)
+  rate:u64 = call(ir,rate_at) {"function":"tr_read"}
+  good:u32 = call(ir,iw,ie,i_bytes,i_count,rate) {"function":"archive_batch_charge"}
+  ok:u32 = const() {"value":0}
+  charged_ok:bool = compare.eq(good,ok)
+  branch charged_ok expiry(i_cur,i_paid) propagate(good)
+block expiry(ex_cur:u64,ex_paid:u64)
+  max:u64 = const() {"value":18446744073709551615}
+  can_advance:bool = compare.ne(ex_paid,max)
+  branch can_advance elapsed_out(ex_cur,ex_paid) overflow()
+block elapsed_out(f_cur:u64,f_paid:u64)
+  beyond:bool = compare.gt(f_cur,f_paid)
+  branch beyond accepted() invalid()
+block propagate(g:u32)
+  ret(g)
+block accepted()
+  code0:u32 = const() {"value":0}
+  ret(code0)
+block context_bad()
+  bad_context:u32 = const() {"value":200}
+  ret(bad_context)
+block schema_bad()
+  code22:u32 = const() {"value":22}
+  ret(code22)
+block bounds()
+  code1:u32 = const() {"value":1}
+  ret(code1)
+block overflow()
+  code20:u32 = const() {"value":20}
+  ret(code20)
+block invalid()
+  code13:u32 = const() {"value":13}
+  ret(code13)
+end
+
+fn archive_batch_charge(raw:readbuf,w:mutbuf,end:u64,size:u64,blocks:u64,rate:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,end:u64,size:u64,blocks:u64,rate:u64)
+  a:u64 = const() {"value":1264}
+  ha:u64 = const() {"value":1272}
+  b:u64 = const() {"value":1280}
+  hb:u64 = const() {"value":1288}
+  c:u64 = const() {"value":1296}
+  d:u64 = const() {"value":1312}
+  tmp:u64 = const() {"value":1328}
+  z:u64 = const() {"value":0}
+  _1:u64 = call(w,a,size) {"function":"tr_put"}
+  _2:u64 = call(w,ha,z) {"function":"tr_put"}
+  _3:u64 = call(w,b,blocks) {"function":"tr_put"}
+  _4:u64 = call(w,hb,z) {"function":"tr_put"}
+  first:u64 = call(w,a,b,c,tmp) {"function":"ss_u128_mul"}
+  _5:u64 = call(w,b,rate) {"function":"tr_put"}
+  second:u64 = call(w,c,b,d,tmp) {"function":"ss_u128_mul"}
+  combine:u64 = bit.or(first,second)
+  ok:bool = compare.eq(combine,z)
+  branch ok compare(raw,w,end,d) overflow()
+block compare(cr:readbuf,cw:mutbuf,ce:u64,cd:u64)
+  l_back:u64 = const() {"value":16}
+  h_back:u64 = const() {"value":8}
+  l_at:u64 = int.sub.wrap(ce,l_back)
+  h_at:u64 = int.sub.wrap(ce,h_back)
+  need_at:u64 = int.add.wrap(cd,h_back)
+  paid_l:u64 = call(cr,l_at) {"function":"tr_read"}
+  paid_h:u64 = call(cr,h_at) {"function":"tr_read"}
+  need_l:u64 = call(cw,cd) {"function":"tr_get"}
+  need_h:u64 = call(cw,need_at) {"function":"tr_get"}
+  high_more:bool = compare.gt(paid_h,need_h)
+  high_eq:bool = compare.eq(paid_h,need_h)
+  low_ok:bool = compare.ge(paid_l,need_l)
+  eq_high_valid:bool = bool.and(high_eq,low_ok)
+  funded:bool = bool.or(high_more,eq_high_valid)
+  branch funded accepted() underfunded()
+block accepted()
+  code0:u32 = const() {"value":0}
+  ret(code0)
+block overflow()
+  code20:u32 = const() {"value":20}
+  ret(code20)
+block underfunded()
+  code15:u32 = const() {"value":15}
+  ret(code15)
+end
+
+fn archive_batch_singleton_totals(raw:readbuf,w:mutbuf,end:u64,seal:u64,seal_end:u64,record:u64,len:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,end:u64,seal:u64,seal_end:u64,record:u64,len:u64)
+  role:bool = const() {"value":false}
+  hashed:bool = call(raw,w,record,len,role) {"function":"archive_value_digest"}
+  branch hashed totals(raw,w,end,seal,seal_end) internal()
+block totals(tr:readbuf,tw:mutbuf,te:u64,ts:u64,tb:u64)
+  policy_b:u64 = const() {"value":16}
+  bytes_b:u64 = const() {"value":32}
+  seal_bytes_b:u64 = const() {"value":56}
+  seal_charge_b:u64 = const() {"value":48}
+  p_at:u64 = int.sub.wrap(ts,policy_b)
+  bytes_at:u64 = int.sub.wrap(te,bytes_b)
+  s_at:u64 = int.sub.wrap(tb,seal_bytes_b)
+  ch_at:u64 = int.sub.wrap(tb,seal_charge_b)
+  c_at:u64 = int.sub.wrap(te,policy_b)
+  max:u64 = call(tr,p_at) {"function":"tr_read"}
+  observed:u64 = call(tr,bytes_at) {"function":"tr_read"}
+  expected:u64 = call(tr,s_at) {"function":"tr_read"}
+  valid_max:bool = compare.le(observed,max)
+  equal_b:bool = compare.eq(observed,expected)
+  equal_charge:bool = call(tr,ch_at,c_at,policy_b) {"function":"archive_equal"}
+  r_at:u64 = int.sub.wrap(tb,bytes_b)
+  equal_root:bool = call(tr,tw,r_at) {"function":"archive_digest_match"}
+  both:bool = bool.and(valid_max,equal_b)
+  joined:bool = bool.and(equal_charge,equal_root)
+  total:bool = bool.and(both,joined)
+  branch total ranges(tr,te,tb) invalid()
+block ranges(rr:readbuf,re:u64,rb:u64)
+  row_height_back:u64 = const() {"value":144}
+  first_height_back:u64 = const() {"value":140}
+  last_height_back:u64 = const() {"value":132}
+  first_id_back:u64 = const() {"value":124}
+  last_id_back:u64 = const() {"value":92}
+  row_id_back:u64 = const() {"value":176}
+  h_at:u64 = int.sub.wrap(re,row_height_back)
+  f_at:u64 = int.sub.wrap(rb,first_height_back)
+  l_at:u64 = int.sub.wrap(rb,last_height_back)
+  i_at:u64 = int.sub.wrap(re,row_id_back)
+  f_id:u64 = int.sub.wrap(rb,first_id_back)
+  l_id:u64 = int.sub.wrap(rb,last_id_back)
+  h:u64 = call(rr,h_at) {"function":"tr_read"}
+  f:u64 = call(rr,f_at) {"function":"tr_read"}
+  l:u64 = call(rr,l_at) {"function":"tr_read"}
+  f_eq:bool = compare.eq(h,f)
+  l_eq:bool = compare.eq(h,l)
+  ids:u64 = const() {"value":32}
+  first_ok:bool = call(rr,i_at,f_id,ids) {"function":"archive_equal"}
+  last_ok:bool = call(rr,i_at,l_id,ids) {"function":"archive_equal"}
+  heights:bool = bool.and(f_eq,l_eq)
+  names:bool = bool.and(first_ok,last_ok)
+  combined:bool = bool.and(heights,names)
+  branch combined accepted() invalid()
+block accepted()
+  code0:u32 = const() {"value":0}
+  ret(code0)
+block invalid()
+  code13:u32 = const() {"value":13}
+  ret(code13)
+block internal()
+  code103:u32 = const() {"value":103}
+  ret(code103)
+end

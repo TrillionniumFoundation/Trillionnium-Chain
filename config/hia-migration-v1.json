@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_singleton_batch",
+      "node_integration_complete": false,
+      "scope": "Complete public read-only archive batch validation for one typed record, including exact policy seal digest, checked prepaid charge, inclusive expiry, singleton commitment and seal range. No pruning, deletion or production authority.",
+      "source": "hia/src/task_kernel/archive_singleton_batch.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_singleton_batch.py",
+        "hia/tests/rust_task_archive_singleton_batch_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_inclusion_verify",
       "node_integration_complete": false,
       "scope": "One-call bounded native public archive inclusion validation semantics from one immutable typed input; no trust establishment, storage or deletion authority.",
@@ -2692,7 +2703,8 @@
         "task_kernel/archive_hash",
         "task_kernel/archive_inclusion_fold",
         "task_kernel/archive_inclusion_header",
-        "task_kernel/archive_inclusion_verify"
+        "task_kernel/archive_inclusion_verify",
+        "task_kernel/archive_singleton_batch"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",
