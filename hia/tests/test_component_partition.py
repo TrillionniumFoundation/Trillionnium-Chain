@@ -32,8 +32,13 @@ GENERAL_IDS = SPLIT_IDS + [
     "hia.tests.test_control_guard.Example.test_a",
     "hia.tests.test_sha256_words.Example.test_c",
 ]
+SETTLEMENT_IDS = GENERAL_IDS + [
+    "hia.tests.test_settlement_held_variable_stream_replay.Example.test_actual_original",
+    "hia.tests.test_settlement_held_variable_stream_replay.Example.test_companion",
+    "hia.tests.test_settlement_read_only_uri.Example.test_original_uri",
+]
 PLAN_FIXTURES = {part.LEGACY_PLAN: IDS, part.SPLIT_PLAN: SPLIT_IDS,
-                 part.GENERAL_PLAN: GENERAL_IDS}
+                 part.GENERAL_PLAN: GENERAL_IDS, part.SETTLEMENT_PLAN: SETTLEMENT_IDS}
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 SOURCES.update(word_fixture.fixture()[2])
@@ -228,14 +233,14 @@ class ComponentPartitions(unittest.TestCase):
         ):
             self.assertIn("hia.tests." + identity, general)
 
-    def test_workflow_wires_six_exact_jobs_with_unchanged_deadlines(self):
+    def test_workflow_wires_ten_exact_jobs_with_unchanged_deadlines(self):
         root = Path(__file__).resolve().parents[2]
         text = (root / ".github/workflows/hia-native-migration.yml").read_text().split("jobs:\n", 1)[1]
         headers = list(re.finditer(r"(?m)^  ([a-z][a-z0-9-]*):\n", text))
         jobs = {match[1]: text[match.start():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
                 for index, match in enumerate(headers)}
         expected = {group: "native-components" + ("-" + group if group != "general-a" else "")
-                    for group in part.GENERAL_GROUPS}
+                    for group in part.SETTLEMENT_GROUPS}
         for group, name in expected.items():
             job = jobs[name]
             self.assertEqual(re.findall(r"(?m)^    timeout-minutes: ([0-9]+)$", job), ["20"])
@@ -254,8 +259,9 @@ class ComponentPartitions(unittest.TestCase):
         general = jobs["native-components"]
         general_b = jobs["native-components-general-b"]
         general_c = jobs["native-components-general-c"]
+        settlement = jobs["native-components-general-settlement"]
         bench = jobs["native-components-bench"]
-        for shard in (general, general_b, general_c):
+        for shard in (general, general_b, general_c, settlement):
             self.assertNotIn("HIA_BENCH_PROFILE_OBSERVATIONS:", shard)
             self.assertNotIn("hia-bench-${{", shard)
             self.assertNotIn("archive_ci_evidence.py", shard)
@@ -266,6 +272,14 @@ class ComponentPartitions(unittest.TestCase):
         self.assertNotIn("prepare_original_m06_m09_oracles", general_c)
         self.assertIn("TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR", general_c)
         self.assertIn("TRNM_HIA_TASK_METADATA_ARTIFACT_DIR", general_c)
+        self.assertNotIn("TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR", settlement)
+        self.assertNotIn("TRNM_HIA_TASK_METADATA_ARTIFACT_DIR", settlement)
+        self.assertNotIn("hia-task-metadata-boundaries", settlement)
+        self.assertNotIn("prepare_original_m06_m09_oracles", settlement)
+        c_base = general_c.split("      - name: Execute every assigned native HIA", 1)[0]
+        settlement_base = settlement.split("      - name: Execute every assigned native HIA", 1)[0]
+        self.assertEqual(c_base.replace("  native-components-general-c:",
+                                        "  native-components-general-settlement:", 1), settlement_base)
         self.assertIn("HIA_CONTROL_GUARD_OUTPUT", general)
         for variable in ("HIA_CONTROL_PLANE_OUTPUT", "TRNM_HIA_ESCROW_OUTPUT",
                          "TRNM_HIA_GOVERNANCE_OUTPUT", "HIA_PEER_LEASE_OUTPUT"):
@@ -286,11 +300,12 @@ class ComponentPartitions(unittest.TestCase):
         reader = jobs["native-components-readback"]
         needs = re.search(r"(?m)^    needs: \[(.*)\]$", reader)[1].split(", ")
         self.assertEqual(set(needs), set(expected.values()))
-        self.assertEqual(len(needs), 9)
-        self.assertIn(" --partition-plan split-general-v1 ", reader)
-        self.assertEqual(part.source_plan(root), part.GENERAL_PLAN)
-        with self.assertRaisesRegex(ValueError, "differs from tracked source"):
-            part.source_bound_plan(root, part.SPLIT_PLAN)
+        self.assertEqual(len(needs), 10)
+        self.assertIn(" --partition-plan split-general-settlement-v1 ", reader)
+        self.assertEqual(part.source_plan(root), part.SETTLEMENT_PLAN)
+        for historical in (part.SPLIT_PLAN, part.GENERAL_PLAN):
+            with self.assertRaisesRegex(ValueError, "differs from tracked source"):
+                part.source_bound_plan(root, historical)
         for group, producer in expected.items():
             variable = "TRNM_COMPONENT_" + group.upper().replace("-", "_") + "_RESULT"
             self.assertIn(variable + ": ${{ needs." + producer + ".result }}", reader)
@@ -625,6 +640,79 @@ class ComponentReadback(unittest.TestCase):
             for result in ("cancelled", "skipped", "failure"):
                 with self.assertRaisesRegex(ValueError, "must succeed: general-b"):
                     ci.validate_job_results({**env, "TRNM_COMPONENT_GENERAL_B_RESULT": result}, plan)
+
+    def test_settlement_split_reassigns_only_whole_costed_c_modules(self):
+        root = Path(__file__).resolve().parents[2]
+        raw_suite = unittest.defaultTestLoader.discover(str(root / "hia/tests"),
+                    pattern="test_*.py", top_level_dir=str(root))
+        ids = [case.id() for case in part.flatten(raw_suite)]
+        old = {g: part.descriptor(ids, g, part.GENERAL_PLAN)["selected_tests"] for g in part.GENERAL_GROUPS}
+        plan = part.SETTLEMENT_PLAN
+        new = {g: part.descriptor(ids, g, plan)["selected_tests"] for g in part.SETTLEMENT_GROUPS}
+        moved = new["general-settlement"]
+        self.assertEqual(set(x.split(".")[2] for x in moved), {
+            "test_settlement_checksum_journal_read", "test_settlement_command_journal_read",
+            "test_settlement_execution_context", "test_settlement_execution_journal_read",
+            "test_settlement_first_native_replay", "test_settlement_held_first_replay",
+            "test_settlement_held_same_block_replay", "test_settlement_held_state_shape",
+            "test_settlement_held_variable_first_replay", "test_settlement_held_variable_pair_replay",
+            "test_settlement_held_variable_settle_replay", "test_settlement_held_variable_stream_replay"})
+        self.assertEqual(sorted(ids), sorted(i for selected in new.values() for i in selected))
+        self.assertEqual(sorted(old["general-c"]), sorted(new["general-c"] + moved))
+        self.assertFalse(set(new["general-c"]) & set(moved))
+        for group in set(old) - {"general-c"}:
+            self.assertEqual(old[group], new[group])
+        for module in {i.split(".")[2] for i in ids}:
+            self.assertEqual(len({part.group_for(i, plan) for i in ids if i.split(".")[2] == module}), 1)
+        c_modules = {x.split(".")[2] for x in new["general-c"]}
+        self.assertTrue({"test_sha256_word_evidence", "test_task_metadata_initializer",
+                         "test_settlement_read_only_uri"} <= c_modules)
+        from hia.tools import qualify
+        self.assertEqual(qualify.rust_oracle_names("general-c"), qualify.rust_oracle_names("general-settlement"))
+
+    def test_ten_way_readback_refuses_missing_duplicate_stale_and_nine_way_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = part.SETTLEMENT_PLAN
+            bundles = {g: self.make_bundle(root / "current", g, plan) for g in part.SETTLEMENT_GROUPS}
+            def verify(inputs):
+                return ci.verify_all(inputs, LINEAGE, SOURCES, SETTLEMENT_IDS, COMPILER, "f" * 40, plan)
+            result = verify(bundles)
+            self.assertEqual((result["schema"], result["tests"]), (ci.SETTLEMENT_SCHEMA, len(SETTLEMENT_IDS)))
+            self.assertIsNotNone(result["partitions"]["general-c"]["sha256_word_evidence"])
+            self.assertIsNone(result["partitions"]["general-settlement"]["sha256_word_evidence"])
+            old = self.make_bundle(root / "old-partition", "general-c", part.GENERAL_PLAN)
+            stale = self.make_bundle(root / "stale", "general-settlement", plan)
+            path = stale / "hia-observations/qualification.json"
+            value = json.loads(path.read_text())
+            value["lineage"]["attempt"] += 1
+            path.write_text(json.dumps(value))
+            repeated = self.make_bundle(root / "repeated", "general-settlement", plan)
+            path = repeated / "hia-observations/qualification.json"
+            value = json.loads(path.read_text())
+            actual = value["test_partition"]["finished_tests"]
+            self.assertEqual(len(actual), 2)
+            actual[1] = actual[0]
+            path.write_text(json.dumps(value))
+            for inputs in ({g: p for g, p in bundles.items() if g != "general-settlement"},
+                           {**bundles, "general-settlement": bundles["general-c"]},
+                           {**bundles, "general-c": old},
+                           {**bundles, "general-settlement": old}):
+                with self.assertRaises(ValueError):
+                    verify(inputs)
+            with self.assertRaisesRegex(ValueError, "Different component head, run or attempt"):
+                verify({**bundles, "general-settlement": stale})
+            with self.assertRaisesRegex(ValueError, "Missing, repeated or unassigned actual component execution"):
+                verify({**bundles, "general-settlement": repeated})
+            env = {"TRNM_COMPONENT_" + g.upper().replace("-", "_") + "_RESULT": "success"
+                   for g in part.SETTLEMENT_GROUPS}
+            ci.validate_job_results(env, plan)
+            key = "TRNM_COMPONENT_GENERAL_SETTLEMENT_RESULT"
+            for bad in ("cancelled", "skipped", "failure", ""):
+                with self.assertRaisesRegex(ValueError, "must succeed: general-settlement"):
+                    ci.validate_job_results({**env, key: bad}, plan)
+            with self.assertRaisesRegex(ValueError, "must succeed: general-settlement"):
+                ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
 
     def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
         with tempfile.TemporaryDirectory() as tmp:

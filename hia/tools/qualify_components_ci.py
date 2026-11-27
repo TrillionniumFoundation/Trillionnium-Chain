@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from hia.tools import qualify, sha256_word_evidence
 from hia.tools.component_partition import (
-    GENERAL_PLAN, LEGACY_PLAN, PLANS, SHA_WORD_GROUPS, SPLIT_PLAN, canonical, descriptor,
+    GENERAL_PLAN, LEGACY_PLAN, PLANS, SETTLEMENT_PLAN, SHA_WORD_GROUPS, SPLIT_PLAN, canonical, descriptor,
     flatten, groups_for, lineage, need, object_hash, same, source_bound_plan,
     validate_completion, validate_lineage,
 )
@@ -26,8 +26,9 @@ from hia.tools.component_partition import (
 SCHEMA = "trnm.hia.component-ci-readback.v6"
 SPLIT_SCHEMA = "trnm.hia.component-ci-readback.v7"
 GENERAL_SCHEMA = "trnm.hia.component-ci-readback.v8"
+SETTLEMENT_SCHEMA = "trnm.hia.component-ci-readback.v9"
 READBACK_SCHEMAS = {LEGACY_PLAN: SCHEMA, SPLIT_PLAN: SPLIT_SCHEMA,
-                    GENERAL_PLAN: GENERAL_SCHEMA}
+                    GENERAL_PLAN: GENERAL_SCHEMA, SETTLEMENT_PLAN: SETTLEMENT_SCHEMA}
 FILES = {
     "hia-observations/source.json", "hia-observations/source-after.json",
     "hia-observations/qualification.json", "hia-observations/qualification.log",
