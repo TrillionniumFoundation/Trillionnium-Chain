@@ -283,3 +283,31 @@ Actual original V1 and V2 Ledger operations reproduce both cases and
 successful controls on generated in-process fixtures. This does not
 open or close a physical descriptor, own linked VFS vectors or change
 the earlier admission checks.
+
+## Unified typed mutation and retention
+
+`mutation_record_replay.hepta` dispatches on the same bounded typed
+receipt and prior state as handle and SHM recording. It accepts actions
+6–12: opened, both exact pending cancellations, SHM add, actual close,
+SHM close and unlinked. It binds the original post-mutation handle,
+pending, SHM and linked fields on a selected existing row before the
+shared recorder. Close and cancellation require a positive source
+counter. SHM add accepts at most 31 prior references, and SHM close
+saturates at zero. These are post-admission logical transitions, not
+admission or underlying I/O.
+
+The fixed 128-byte output adds actual handles, pending opens, SHM
+references, retained mask and charge, internal recorder status and
+active main count to the 72-byte record diagnostic. If recording
+succeeds, a length at offset 128 and JSON bytes at offset 136 complete
+the result. Ordinary failures propagate the recorder code even though
+the in-scope mutation already happened. Cleanup operations still sweep
+the original three slots and report a unit-equivalent success while
+retaining the internal recorder status. Pressure omits the byte suffix;
+invalid input or insufficient capacity publishes nothing.
+
+The unchanged Rust ledger is exercised for successful emission and
+actual full ordinary and cleanup evidence under both policies. The
+original pending cancellation and unlink cases include pressure where
+the held object is collected despite no retained event. This entry
+does not execute production VFS callbacks or own physical files.
