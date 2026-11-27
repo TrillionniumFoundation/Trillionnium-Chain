@@ -93,5 +93,24 @@ fn original_fd_and_held_name_observation() {
         // With --nocapture, downstream isolated qualification can consume both
         // observed tuples. No handle or pathname escapes the owning process.
         println!("owner-stat-v1|{len}|{:?}|{:?}", fields(&fd), fields(&named));
+        if let Some(image) = std::env::var_os("TRNM_TEST_OWNED_STAT_IMAGE") {
+            let result = std::process::Command::new(image)
+                .current_dir(lease.directory())
+                .env_clear()
+                .stdin(std::process::Stdio::null())
+                .output()
+                .unwrap();
+            assert!(result.status.success());
+            assert!(result.stderr.is_empty());
+            assert_eq!(result.stdout.len(), 112);
+            for (word, expected) in result
+                .stdout
+                .chunks_exact(8)
+                .zip(fields(&fd).into_iter().chain(fields(&named)))
+            {
+                assert_eq!(u64::from_le_bytes(word.try_into().unwrap()), expected);
+            }
+            println!("owner-stat-native-v1|{len}|paired-112");
+        }
     }
 }

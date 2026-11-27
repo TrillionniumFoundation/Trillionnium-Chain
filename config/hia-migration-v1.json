@@ -3025,6 +3025,19 @@
       ]
     },
     {
+      "id": "platform/sqlite-owner-stat",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Fixed Linux x86-64 descriptor-relative stat relay on fresh owned ordinary files, comparing both complete observations on the same inode with the unchanged original helpers. No production VFS, descriptor authority or routing.",
+      "sources": [
+        "hia/platform/sqlite_owner_stat/emit.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_sqlite_owner_stat_reference.py",
+        "hia/tests/rust_sqlite_owner_stat_reference.rs"
+      ]
+    },
+    {
       "id": "platform/host-checkpoint",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -5,14 +5,17 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import subprocess
 import tomllib
 import unittest
 
 from hia.tests.test_settlement_schema_read import execute
+from hia.platform.build import Build, inspect_executable
 
 ROOT = Path(__file__).resolve().parents[2]
 MAP = ROOT / "hia/platform/service_settlement/qualification/original_sources.json"
 WITNESS = ROOT / "hia/tests/rust_sqlite_owner_stat_reference.rs"
+EMITTER = ROOT / "hia/platform/sqlite_owner_stat/emit.hepta"
 TOOLCHAIN = ROOT / "rust-toolchain.toml"
 LIB = Path("trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs")
 TEST = LIB.with_name("owner_stat_witness.rs")
@@ -70,11 +73,22 @@ def tool_environment():
 
 class SqliteOwnerStatReferenceTests(unittest.TestCase):
     def test_original_held_stat_and_bind(self):
+        self.check_held_stat(native=False)
+
+    def test_pinned_native_and_original_same_inode_stat(self):
+        self.check_held_stat(native=True)
+
+    def check_held_stat(self, *, native):
         originals = checked_original()
-        witness = pinned(WITNESS, "67df8e9a3588daf2166e019a955d483d5398bb6451edb1146ae09049787e5eac")
+        witness = pinned(WITNESS, "cbfa1d2703ce4d355119a39c836e975959b774e6423cbf13d08e433c1a3a0870")
         cargo, env = tool_environment()
+        env.pop("TRNM_TEST_OWNED_STAT_IMAGE", None)
         with tempfile.TemporaryDirectory(prefix="m15-stat-") as directory:
             root = Path(directory)
+            if native:
+                image = self.native_image(root)
+                env["TRNM_TEST_OWNED_STAT_IMAGE"] = str(image)
+                self.check_native_refusals(root, image)
             self.assertNotIn(TEST, originals)
             for rel, (data, mode) in originals.items():
                 path = root / rel
@@ -103,9 +117,49 @@ class SqliteOwnerStatReferenceTests(unittest.TestCase):
                     rows.append(fd)
             self.assertEqual([row[5] for row in rows], [0, 3, 8193])
             self.assertTrue(all(row[:5] == rows[0][:5] for row in rows))
+            pairs = [s for s in run.splitlines() if s.startswith(b"owner-stat-native-v1|")]
+            self.assertEqual(pairs, [f"owner-stat-native-v1|{n}|paired-112".encode()
+                                     for n in (0, 3, 8193)] if native else [])
             self.assertIn(b"1 passed; 0 failed", run)
             full = execute([cargo, "test", *args], env=env, cwd=root, timeout=160).stdout
             self.assertIn(b"24 passed; 0 failed; 0 ignored", full)
             execute([cargo, "build", *args], env=env, cwd=root, timeout=160)
             self.assertNotIn(MARKER, (root / "target/debug/libtrnm_sqlite_io_boundary.rlib").read_bytes())
         self.assertEqual(checked_original(), originals)
+
+    def native_image(self, root):
+        native = Build(root / "native-build")
+        source = pinned(EMITTER, "5114c59dab5ba5191e3038a70f26faa67ca01188cf14fe057033d6eb52fc99d6")
+        emitter = native.stage(native.compiler, source, "compile-stat-emitter")
+        inspect_executable(emitter)
+        image = native.stage(emitter, b"", "emit-owned-stat-v1")
+        inspect_executable(image)
+        self.assertEqual(len(image), 684)
+        self.assertEqual(hashlib.sha256(image).hexdigest(),
+                         "092f350e2169ab37df0d15871e37922c4c691acd197eeb243a8868766039332f")
+        self.assertTrue(image.endswith(b".\0native.sqlite\0"))
+        native.check_pin()
+        path = root / "owned-stat-linux-x86-64"
+        path.write_bytes(image)
+        path.chmod(0o500)
+        return path
+
+    def check_native_refusals(self, root, image):
+        directory = root / "native-refusals"
+        directory.mkdir(mode=0o700)
+        leaf = directory / "native.sqlite"
+
+        def refuse(*extra):
+            result = subprocess.run([image, *extra], cwd=directory, env={},
+                                    input=b"", capture_output=True, timeout=3)
+            self.assertEqual((result.returncode, result.stdout, result.stderr), (70, b"", b""))
+
+        refuse()  # no file
+        leaf.write_bytes(b"")
+        leaf.chmod(0o640)
+        refuse()  # not the fixture's private mode
+        leaf.chmod(0o600)
+        refuse("unexpected")
+        leaf.write_bytes(bytes(8194))
+        refuse()  # exceeds the closed fixture profile
+        self.assertEqual(leaf.read_bytes(), bytes(8194))
