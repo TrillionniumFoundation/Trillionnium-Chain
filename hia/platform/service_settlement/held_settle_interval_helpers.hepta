@@ -61,7 +61,9 @@ end
 fn hfs_install_id(r:readbuf,m:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,m:mutbuf)
   base:u64 = const() {"value":400000}
-  end:u64 = const() {"value":404870}
+  len_at:u64 = const() {"value":349008}
+  extent:u64 = call(m,len_at) {"function":"cp_get"}
+  end:u64 = int.add.wrap(base,extent)
   pos:u64 = call(m,base,end) {"function":"ssi_settlement_option"}
   count:u64 = const() {"value":33}
   readable:u64 = call(pos,end,count) {"function":"srci_take"}
@@ -221,7 +223,12 @@ end
 
 fn hfs_check_marker(m:mutbuf,base:u64,index:u64,source:u64,target:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,base:u64,index:u64,source:u64,target:u64)
-  gen_at:u64 = const() {"value":8307}
+  fixed_at:u64 = const() {"value":8307}
+  measured_at:u64 = const() {"value":349040}
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  measured:bool = call(profile) {"function":"hfs_variable"}
+  gen_at:u64 = select(measured,measured_at,fixed_at)
   prior:u64 = call(m,gen_at) {"function":"cp_get"}
   height:u64 = int.add.wrap(prior,index)
   eight:u64 = const() {"value":8}
@@ -391,7 +398,11 @@ block entry(profile:u64)
   var_pair:u64 = const() {"value":7}
   is_var_pair:bool = compare.eq(profile,var_pair)
   result:u64 = select(is_var_pair,pair,rows)
-  ret(result)
+  var_settle:u64 = const() {"value":8}
+  four:u64 = const() {"value":4}
+  is_var_settle:bool = compare.eq(profile,var_settle)
+  final:u64 = select(is_var_settle,four,result)
+  ret(final)
 end
 
 fn hfs_variable(profile:u64) -> (bool) effects() entry(entry)
@@ -400,6 +411,19 @@ block entry(profile:u64)
   pair:u64 = const() {"value":7}
   is_one:bool = compare.eq(profile,single)
   is_two:bool = compare.eq(profile,pair)
-  variable:bool = bool.or(is_one,is_two)
+  mixed:u64 = const() {"value":8}
+  is_mixed:bool = compare.eq(profile,mixed)
+  old:bool = bool.or(is_one,is_two)
+  variable:bool = bool.or(old,is_mixed)
   ret(variable)
+end
+
+fn hfs_settled(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  fixed:u64 = const() {"value":4}
+  measured:u64 = const() {"value":8}
+  is_fixed:bool = compare.eq(profile,fixed)
+  is_measured:bool = compare.eq(profile,measured)
+  proof:bool = bool.or(is_fixed,is_measured)
+  ret(proof)
 end

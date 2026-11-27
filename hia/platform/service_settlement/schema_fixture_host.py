@@ -38,12 +38,14 @@ def run(request, uri_image, reader, provider):
     same_block = request.get("same_block_fixture", False)
     variable_first = request.get("variable_first_fixture", False)
     variable_pair = request.get("variable_pair_fixture", False)
-    variable_rows = 1 if variable_first else 2 if variable_pair else 0
+    variable_settle = request.get("variable_settle_fixture", False)
+    variable_rows = 1 if variable_first else 2 if variable_pair else 4 if variable_settle else 0
     replay_control_step = request.get("first_replay_fixture_control_step", replay_limit)
     if ((replay and (not journal or len(replay_image) != 2))
             or type(replay_limit) is not int or replay_limit not in (1, 2, 3, 4)
             or type(variable_first) is not bool or type(variable_pair) is not bool
-            or (variable_first and variable_pair)
+            or type(variable_settle) is not bool
+            or sum((bool(variable_first), bool(variable_pair), bool(variable_settle))) > 1
             or (variable_rows and (not replay or replay_limit != variable_rows or same_block))
             or type(same_block) is not bool or (same_block and (not replay or replay_limit != 2))
             or type(replay_control_step) is not int or not 1 <= replay_control_step <= replay_limit

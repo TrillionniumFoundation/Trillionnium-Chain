@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_variable_settle_replay
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  profile:u64 = const() {"value":8}
+  result:u32 = call(raw,mem,work,profile) {"function":"hfr_read"}
+  ret(result)
+end

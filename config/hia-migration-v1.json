@@ -3623,6 +3623,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-variable-settle-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite held measured-width replay of actual original AdmitReceipt, AdmitReceipt, AdmitRollup, and Settle across proved original empty challenge blocks. Exact per-operation and committed interval roots and final typed original state/settlement ID through one sealed Engine. No general replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_variable_settle_replay.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/test_settlement_held_variable_settle_replay.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-variable-pair-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

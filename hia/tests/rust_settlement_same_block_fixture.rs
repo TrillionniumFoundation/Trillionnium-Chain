@@ -4,9 +4,12 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut fixture = Harness::new();
     if let Some(profile) = std::env::args().nth(1) {
-        let (name, pair) = match profile.strip_suffix("-pair") {
-            Some(name) => (name, true),
-            None => (profile.as_str(), false),
+        let (name, rows) = if let Some(name) = profile.strip_suffix("-settle") {
+            (name, 4)
+        } else if let Some(name) = profile.strip_suffix("-pair") {
+            (name, 2)
+        } else {
+            (profile.as_str(), 1)
         };
         fixture.trust.context.chain_id = match name {
             "short" => "m12".into(),
@@ -20,13 +23,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let (state, no_id) = engine::apply_transition(&fixture.trust, &initial, 10, &command)?;
         assert!(no_id.is_none());
         let mut fields = vec![bytes(&fixture.trust), bytes(&command), bytes(&initial), bytes(&state)];
-        if pair {
+        if rows >= 2 {
             let second = ConsumptionSettlementCommandV1::AdmitReceipt {
                 receipt: fixture.receipt(state.receipts.last(), 11, 50),
             };
             let (successor, no_id) = engine::apply_transition(&fixture.trust, &state, 11, &second)?;
             assert!(no_id.is_none());
             fields.extend([bytes(&second), bytes(&successor)]);
+            if rows == 4 {
+                let third = ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup: fixture.rollup(&successor, 12),
+                    receipts: successor.receipts.iter().map(|r| r.receipt.clone()).collect(),
+                };
+                let (rolled, no_id) = engine::apply_transition(&fixture.trust, &successor, 12, &third)?;
+                assert!(no_id.is_none());
+                let fourth = fixture.settle(&rolled);
+                assert!(engine::apply_transition(&fixture.trust, &rolled, 14, &fourth).is_err());
+                let (settled, final_id) = engine::apply_transition(&fixture.trust, &rolled, 15, &fourth)?;
+                assert!(final_id.is_some());
+                fields.extend([bytes(&third), bytes(&rolled), bytes(&fourth), bytes(&settled),
+                               bytes(&final_id.unwrap())]);
+            }
         }
         let mut out = std::io::stdout().lock();
         for field in fields {

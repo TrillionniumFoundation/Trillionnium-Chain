@@ -477,3 +477,11 @@ intermediate Engine root must match that receipt before the next SQLite row.
 After the second step the complete canonical Engine state must equal the
 typed, root-checked durable state. This profile does not allow an empty
 interval, same-block commits, another command kind or production authority.
+
+The separate measured-width mixed profile runs two AdmitReceipt commands,
+AdmitRollup, and Settle on actual typed original rows in one held snapshot.
+It retains the existing committed empty-interval and original prefix-root
+checks; Settle follows the last proved empty marker, not the Rollup block.
+It checks the typed final settlement ID and complete durable state before
+publishing after SQLite close. This does not generalize the admitted
+schedule, replace the writer, or confer external Order authority.
