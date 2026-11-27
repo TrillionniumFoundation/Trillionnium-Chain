@@ -282,3 +282,30 @@ database mutation or routing.
 The locked original public planner and verifier drive actual valid 1/2/3/5/8
 records and layered bad values, including global nonadjacent duplicate,
 same-height lexicographic order, overflow, limb carry and odd-tail root.
+
+### Archive planner selection projection
+
+`src/task_kernel/archive_selection.hepta` is the original deterministic
+selection and retained-order stage for at most eight **already typed-admitted**
+terminal facts and eight supplied hold IDs. It does not itself prove facts,
+create a hold, verify original billing/context, generate seal bytes, or
+authorize deletion. The locked original public planner supplies statuses and
+ordered outputs for the genuine generated cases. No production code calls
+this diagnostic entry.
+
+The exact private input is eight little-endian u64s (fact count, hold count,
+current height, sequence, live count cap, live byte cap, batch count cap,
+batch byte cap), then 72 bytes per fact (TaskId32, terminal height, inclusive
+paid-through height, encoded byte count, u128 prepaid charge), then 32 bytes
+per hold. The initial authoritative policy and row checks remain separate.
+Native logic sorts the supplied original indexes by terminal height and
+bytewise Task ID, rejects duplicates/checked live total overflow, checks
+hold membership, then handles live pressure, holds, maturity and batch
+caps in original order. It computes checked selected charge only after
+resolving pressure.
+
+Scratch is 216 bytes. On success the 168-byte projection contains
+selected count, selected bytes, selected charge (two words), retained count,
+then eight selected and eight retained canonical original indexes (unused
+slots are u64 max). Errors publish no output or partial selection. The result
+does not provide a seal root or authority to install/prune/delete records.

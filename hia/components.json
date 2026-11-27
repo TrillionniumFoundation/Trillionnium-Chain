@@ -1,5 +1,27 @@
 {
   "includes": {
+    "src/task_kernel/archive_selection.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_header.hepta",
+        "functions": [
+          "archive_equal"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_variable_batch.hepta",
+        "functions": [
+          "ar_multi_lex"
+        ]
+      }
+    ],
     "src/task_kernel/archive_variable_batch.hepta": [
       {
         "functions": [

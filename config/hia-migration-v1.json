@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_selection",
+      "node_integration_complete": false,
+      "scope": "Deterministic exact archive candidate selection and retained order after typed admission, with inward hold subset validation, byte/count caps and prepaid maturity. No authoritative hold admission, root, pruning, deletion or storage.",
+      "source": "hia/src/task_kernel/archive_selection.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_selection.py",
+        "hia/tests/rust_task_archive_selection_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_variable_batch",
       "node_integration_complete": false,
       "scope": "Complete read-only native canonical Task archive batch verification for one to eight real records: policy/seal, per-record retention, unique order, checked sums, odd-tail Merkle and seal range. No deletion, storage or production authority.",
@@ -2729,7 +2740,8 @@
         "task_kernel/archive_inclusion_header",
         "task_kernel/archive_inclusion_verify",
         "task_kernel/archive_singleton_batch",
-        "task_kernel/archive_variable_batch"
+        "task_kernel/archive_variable_batch",
+        "task_kernel/archive_selection"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",
