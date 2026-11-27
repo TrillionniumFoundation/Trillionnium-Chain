@@ -35,6 +35,7 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                           "path_gate": OWNER / "store_path_preflight.hepta",
                           "header_reader": OWNER / "store_header_read.hepta",
                           "post_open_path": OWNER / "store_post_open_path.hepta",
+                          "open_lifecycle": OWNER / "store_open_lifecycle.hepta",
                       }.items()}
             owned = tmp / "owned"
             owned.mkdir(mode=0o700)
@@ -42,10 +43,14 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             execute([original, "seed", db])
             prior = db.read_bytes()
 
-            def observed(path, *, hold=False, header=False, post_open=False):
-                request = {name: [str(module.library), module.artifact_sha256]
-                           for name, module in images.items()
-                           if (name != "header_reader" or header) and (name != "post_open_path" or post_open)}
+            def observed(path, *, hold=False, header=False, post_open=False, lifecycle=False):
+                selected = {"uri", "reader"}
+                selected.add("open_lifecycle" if lifecycle else "path_gate")
+                if header:
+                    selected.add("header_reader")
+                if post_open:
+                    selected.add("post_open_path")
+                request = {name: [str(images[name].library), images[name].artifact_sha256] for name in selected}
                 request.update(database=str(path), directory=str(owned),
                                provider=[str(provider), proof.checked[str(provider)]["sha256"]],
                                writer=str(original) if hold else None)
@@ -66,6 +71,9 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                 self.assertEqual((actual["status"], actual["held"], actual["released"], actual["transcript"]),
                                  (code, False, 0, []), actual)
                 self.assertEqual(actual["path_checks"], [[i, 15, 24] for i in range(1, examined+1)])
+                composed = observed(path, lifecycle=True)
+                self.assertEqual(composed, {"status": code, "transcript": [], "held": False, "released": 0,
+                                            "open_lifecycle": [[1, 15, 24]] * examined})
 
             self.assertEqual(original_result(db), b"VALID")
             # The real provider must transfer all 20 bytes, not merely matching the
@@ -141,6 +149,10 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                     self.assertEqual((actual["status"], actual["transcript"], actual["released"]), (100, [], 0))
                     reads = [[29, 24 + width]] if width else []
                     self.assertEqual(actual["header_checks"], [[17, 24], *reads, [29, 24], [18, 24]])
+                    composed = observed(short, lifecycle=True)
+                    self.assertEqual(composed, {"status": 100, "transcript": [], "held": False, "released": 0,
+                                                "open_lifecycle": [[1, 15, 24]] * 4
+                                                + [[3, op, amount] for op, amount in actual["header_checks"]]})
                     self.assertEqual(short.read_bytes(), prior[:width])
                     short.unlink()
             wal = owned / "actual closed WAL.db"
@@ -151,6 +163,10 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             actual = observed(wal, header=True)
             self.assertEqual((actual["status"], actual["transcript"], actual["released"]), (100, [], 0))
             self.assertEqual(actual["header_checks"], [[17, 24], [29, 44], [18, 24]])
+            composed = observed(wal, lifecycle=True)
+            self.assertEqual(composed, {"status": 100, "transcript": [], "held": False, "released": 0,
+                                        "open_lifecycle": [[1, 15, 24]] * 4
+                                        + [[3, op, amount] for op, amount in actual["header_checks"]]})
             self.assertEqual(wal.read_bytes(), wal_bytes)
             wal.unlink()
             self.assertEqual(db.read_bytes(), prior)

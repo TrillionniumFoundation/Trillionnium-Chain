@@ -121,12 +121,49 @@ def native_post_open_path(path, image, fetch, owner, open_response):
     return status, observations
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None):
+def native_open_lifecycle(path, image, open_sqlite, fetch, owner):
+    """Broker only the sealed private lifecycle requests for one provider owner."""
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    step = bind(image, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    state, work = (ctypes.create_string_buffer(8192) for _ in range(2))
+    response = ctypes.create_string_buffer(44)
+    trace, raw, opened = [], path, None
+    for _ in range(76):
+        borrowed = ctypes.create_string_buffer(raw)
+        status = step(borrowed, len(raw), state, len(state), work, len(work))
+        phase, _, op = struct.unpack_from("<QQQ", state, 4400)
+        size, = struct.unpack_from("<Q", state, 8)
+        if phase == 7 and status in (0, 100, 101):
+            if status == 0 and (opened is None or not trace or trace[-1] != [6, 15, 24]):
+                raise ValueError("A successful native lifecycle must retain the checked SQLite open")
+            return status, opened, trace
+        if status == 196 and phase in (2, 4) and op == 0:
+            raw = path
+            continue
+        if status == 197 and phase == 5 and op == 2 and opened is None:
+            opened = open_sqlite(state.raw[128:148])
+            trace.append([phase, op, len(opened)])
+            raw = opened
+            continue
+        extent_ok = (25 <= size <= 4128 if op in (15, 17)
+                     else size == 16 if op == 29 else size == 8)
+        if (status != 198 or not extent_ok
+                or (phase, op) not in ((1, 15), (3, 17), (3, 29), (3, 18), (6, 15), (6, 3))):
+            raise ValueError("Unexpected native ownership continuation")
+        amount = fetch(owner, op, ctypes.addressof(state) + 256, size, response, len(response))
+        if not 24 <= amount <= (44 if op == 29 else 24):
+            raise ValueError("Malformed native lifecycle provider result")
+        trace.append([phase, op, amount])
+        raw = response.raw[:amount]
+    raise ValueError("Bounded native ownership continuation did not terminate")
+
+
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
             or directory.stat().st_mode & 0o077
-            or (gate is None and (db.is_symlink() or not db.is_file()))):
+            or (gate is None and lifecycle is None and (db.is_symlink() or not db.is_file()))):
         raise ValueError("Only owned disposable databases are allowed")
     expected_hex = request.get("metadata_config")
     metadata = expected_hex is not None
@@ -172,6 +209,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
     projected = metadata or operation or marker or joined
+    if lifecycle is not None and any(image is not None for image in (gate, header_reader, post_open)):
+        raise ValueError("Do not combine independent and composed native open ownership")
     if post_open is not None and (gate is None or header_reader is None):
         raise ValueError("Post-open path requires the sealed native pre-open gate and header")
     if header_reader is not None and gate is None:
@@ -182,12 +221,14 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
         if gate_status:
             return {"status": gate_status, "path_checks": path_checks, "held": False,
                     "released": 0, "transcript": [], **({"projection": None} if projected else {})}
-    if header_reader is None:
+    if lifecycle is not None:
+        header = b""
+    elif header_reader is None:
         with db.open("rb") as header_file:
             header = header_file.read(20)
     else:
         header, header_checks = native_store_header(os.fsencode(db), header_reader, provider)
-    if len(header) != 20:
+    if lifecycle is None and len(header) != 20:
         # Preserve the actual short header without treating pathname bytes as header.
         refused = {"status": 100, "transcript": [], "released": 0, "held": False}
         if projected:
@@ -232,7 +273,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     if not owner:
         raise MemoryError("Provider allocation failed")
     transcript = []
-    post_open_checks = None
+    post_open_checks = lifecycle_checks = None
     held = False
     projection = None
     replay_calls = 0
@@ -248,6 +289,25 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     sizes = (219,) if journal else (187,) if terminal else (147,) if metadata else (8, 80) if operation else (40,) if marker else (0,)
     allowed_ops = (2, 3, 4, 5, 6, 7, 8, 9) if operation or journal else (2, 3, 4, 5, 7, 8, 9)
     try:
+        if lifecycle is not None:
+            def open_sqlite(original_header):
+                frame = original_header + encoded.raw[:n]
+                payload = ctypes.create_string_buffer(frame)
+                result = step(payload, len(frame), state, EXTENT, work, EXTENT)
+                phase, op, length, publication = struct.unpack_from("<QQQQ", state)
+                if result != 198 or (phase, op, publication) != (1, 2, 0) or length != 16 + n:
+                    raise ValueError("Native held reader must issue the original open exactly once")
+                amount = fetch(owner, op, ctypes.addressof(state) + 256, length, response, EXTENT)
+                if amount != 24:
+                    raise ValueError("Original SQLite open scalar is malformed")
+                transcript.append([phase, op, amount])
+                return response.raw[:amount]
+
+            status, raw, lifecycle_checks = native_open_lifecycle(path, lifecycle, open_sqlite, fetch, owner)
+            transcript.extend([1, opcode, amount] for phase, opcode, amount in lifecycle_checks if phase == 6)
+            if status:
+                return {"status": status, "transcript": transcript, "held": False, "released": reset(owner),
+                        "open_lifecycle": lifecycle_checks, **({"projection": None} if projected else {})}
         for _ in range(2000 if journal else 1056 if terminal else 1024 if marker else 64 if projected else 32):
             borrowed = ctypes.create_string_buffer(raw)
             status = step(borrowed, len(raw), state, EXTENT, work, EXTENT)
@@ -353,6 +413,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             result["header_checks"] = header_checks
         if post_open_checks is not None:
             result["post_open_checks"] = post_open_checks
+        if lifecycle_checks is not None:
+            result["open_lifecycle"] = lifecycle_checks
         if replay:
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
@@ -379,7 +441,8 @@ def main():
         gate = owners.enter_context(sealed_library(*message["path_gate"])) if "path_gate" in message else None
         header_reader = owners.enter_context(sealed_library(*message["header_reader"])) if "header_reader" in message else None
         post_open = owners.enter_context(sealed_library(*message["post_open_path"])) if "post_open_path" in message else None
-        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open)))
+        lifecycle = owners.enter_context(sealed_library(*message["open_lifecycle"])) if "open_lifecycle" in message else None
+        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle)))
 
 
 if __name__ == "__main__":

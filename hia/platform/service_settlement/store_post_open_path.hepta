@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_store_post_open_path
 fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  result:u32 = call(raw,mem,work) {"function":"spo_read"}
+  ret(result)
+end
+
+fn spo_read(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
   extent:usize = buffer.len(mem)
   required:usize = const() {"value":8192}
   sized:bool = compare.eq(extent,required)

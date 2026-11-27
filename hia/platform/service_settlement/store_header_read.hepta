@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_store_header_read
 fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  result:u32 = call(raw,mem,work) {"function":"sph_read"}
+  ret(result)
+end
+
+fn sph_read(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
   b1_n:usize = buffer.len(mem)
   b1_extent:usize = const() {"value":8192}
   b1_sized:bool = compare.eq(b1_n,b1_extent)

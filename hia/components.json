@@ -26,6 +26,36 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "platform/service_settlement/store_open_lifecycle.hepta": [
+      {
+        "functions": [
+          "spp_preflight",
+          "spp_regular"
+        ],
+        "source": "platform/service_settlement/store_path_preflight.hepta"
+      },
+      {
+        "functions": [
+          "sph_read"
+        ],
+        "source": "platform/service_settlement/store_header_read.hepta"
+      },
+      {
+        "functions": [
+          "spo_read",
+          "spp_post_finished"
+        ],
+        "source": "platform/service_settlement/store_post_open_path.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put"
+        ],
+        "source": "src/control_plane/core.hepta"
+      }
+    ],
     "platform/service_settlement/store_post_open_path.hepta": [
       {
         "functions": [

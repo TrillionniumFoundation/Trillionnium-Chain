@@ -1,0 +1,214 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_store_open_lifecycle
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  nm:usize = buffer.len(mem)
+  nw:usize = buffer.len(work)
+  required:usize = const() {"value":8192}
+  mm:bool = compare.eq(nm,required)
+  ww:bool = compare.eq(nw,required)
+  safe:bool = bool.and(mm,ww)
+  branch safe route(raw,mem,work) refused()
+block route(r:readbuf,m:mutbuf,w:mutbuf)
+  control:u64 = const() {"value":4400}
+  phase:u64 = call(m,control) {"function":"cp_get"}
+  zero:u64 = const() {"value":0}
+  fresh:bool = compare.eq(phase,zero)
+  branch fresh start(r,m,w) later(r,m,w,phase)
+block start(sr:readbuf,sm:mutbuf,sw:mutbuf)
+  n:usize = buffer.len(sr)
+  min:usize = const() {"value":1}
+  max:usize = const() {"value":4096}
+  ge:bool = compare.ge(n,min)
+  le:bool = compare.le(n,max)
+  okay:bool = bool.and(ge,le)
+  branch okay capture(sr,sm,sw,n) refused()
+block capture(cr:readbuf,cm:mutbuf,cw:mutbuf,cn:usize)
+  extent:u64 = int.cast(cn) {"mode":"wrap"}
+  zero_c:u64 = const() {"value":0}
+  path_n:u64 = const() {"value":4408}
+  frozen:u64 = call(cr,zero_c,cw,zero_c,extent) {"function":"cp_copy"}
+  n_saved:u64 = call(cm,path_n,extent) {"function":"cp_put"}
+  jump path(cr,cm,cw)
+block later(lr:readbuf,lm:mutbuf,lw:mutbuf,lp:u64)
+  one:u64 = const() {"value":1}
+  in_path:bool = compare.eq(lp,one)
+  branch in_path path(lr,lm,lw) further(lr,lm,lw,lp)
+block further(fr:readbuf,fm:mutbuf,fw:mutbuf,fp:u64)
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  six:u64 = const() {"value":6}
+  to_header:bool = compare.eq(fp,two)
+  to_post:bool = compare.eq(fp,four)
+  needs_path:bool = bool.or(to_header,to_post)
+  is_header:bool = compare.eq(fp,three)
+  is_sqlite:bool = compare.eq(fp,five)
+  is_post:bool = compare.eq(fp,six)
+  captures:bool = bool.or(is_sqlite,is_post)
+  branch needs_path replay_path(fr,fm,fw,to_header) remaining(fr,fm,fw,is_header,is_sqlite,captures)
+block remaining(rr:readbuf,rm:mutbuf,rw:mutbuf,rh:bool,rs:bool,rc:bool)
+  branch rh header(rr,rm,rw) post_mode(rr,rm,rw,rs,rc)
+block post_mode(mr:readbuf,mm2:mutbuf,mw:mutbuf,ms:bool,mc:bool)
+  branch mc post(mr,mm2,mw,ms) refused()
+block path(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  code_p:u32 = call(pr,pm,pw) {"function":"spp_preflight"}
+  zero_p:u32 = const() {"value":0}
+  waiting_p:u32 = const() {"value":198}
+  complete_p:bool = compare.eq(code_p,zero_p)
+  pending_p:bool = compare.eq(code_p,waiting_p)
+  branch complete_p to_header(pm) path_pending(pm,code_p,pending_p)
+block path_pending(ppm:mutbuf,pc:u32,ppending:bool)
+  branch ppending path_request(ppm) path_failed(ppm,pc)
+block path_request(pqm:mutbuf)
+  stage_p:u64 = const() {"value":1}
+  op_p:u64 = const() {"value":15}
+  pending_r:u32 = const() {"value":198}
+  out_p:u32 = call(pqm,stage_p,op_p,pending_r) {"function":"sol_yield"}
+  ret(out_p)
+block path_failed(pfm:mutbuf,pfc:u32)
+  out_f:u32 = call(pfm,pfc) {"function":"sol_end"}
+  ret(out_f)
+block to_header(thm:mutbuf)
+  zero_th:u64 = const() {"value":0}
+  remaining_th:u64 = call(thm,zero_th,zero_th) {"function":"cp_put"}
+  next_th:u64 = const() {"value":2}
+  path_th:u32 = const() {"value":196}
+  out_th:u32 = call(thm,next_th,zero_th,path_th) {"function":"sol_yield"}
+  ret(out_th)
+block replay_path(rpr:readbuf,rpm:mutbuf,rpw:mutbuf,rph:bool)
+  n_at:u64 = const() {"value":4408}
+  stored:u64 = call(rpm,n_at) {"function":"cp_get"}
+  original:usize = int.cast(stored) {"mode":"wrap"}
+  actual:usize = buffer.len(rpr)
+  exact:bool = compare.eq(original,actual)
+  zero_rp:usize = const() {"value":0}
+  branch exact unchanged(rpr,rpm,rpw,rph,actual,zero_rp) refused()
+block unchanged(ur:readbuf,um:mutbuf,uw:mutbuf,uh:bool,un:usize,ui:usize)
+  a:u8 = buffer.load(ur,ui)
+  b:u8 = buffer.load(uw,ui)
+  same:bool = compare.eq(a,b)
+  branch same advance(ur,um,uw,uh,un,ui) refused()
+block advance(ar:readbuf,am:mutbuf,aw:mutbuf,ah:bool,an:usize,ai:usize)
+  one_a:usize = const() {"value":1}
+  more:usize = int.add.wrap(ai,one_a)
+  done:bool = compare.eq(more,an)
+  branch done same_path(ar,am,aw,ah) unchanged(ar,am,aw,ah,an,more)
+block same_path(yr:readbuf,ym:mutbuf,yw:mutbuf,yh:bool)
+  branch yh header(yr,ym,yw) prepare_sql(yr,ym,yw)
+block header(hr:readbuf,hm:mutbuf,hw:mutbuf)
+  status_h:u32 = call(hr,hm,hw) {"function":"sph_read"}
+  zero_h:u32 = const() {"value":0}
+  issued_h:u32 = const() {"value":198}
+  ready_h:bool = compare.eq(status_h,zero_h)
+  pending_h:bool = compare.eq(status_h,issued_h)
+  branch ready_h header_ready(hm) header_pending(hm,status_h,pending_h)
+block header_pending(hpm:mutbuf,hpc:u32,hpp:bool)
+  branch hpp header_request(hpm) path_failed(hpm,hpc)
+block header_request(hqm:mutbuf)
+  origin:u64 = const() {"value":0}
+  step:u64 = call(hqm,origin) {"function":"cp_get"}
+  open_header:u64 = const() {"value":1}
+  read_header:u64 = const() {"value":2}
+  op_open:u64 = const() {"value":17}
+  op_read:u64 = const() {"value":29}
+  op_close:u64 = const() {"value":18}
+  is_open:bool = compare.eq(step,open_header)
+  is_read:bool = compare.eq(step,read_header)
+  read_close:u64 = select(is_read,op_read,op_close)
+  op_h:u64 = select(is_open,op_open,read_close)
+  phase_h:u64 = const() {"value":3}
+  io_h:u32 = const() {"value":198}
+  out_h:u32 = call(hqm,phase_h,op_h,io_h) {"function":"sol_yield"}
+  ret(out_h)
+block header_ready(hym:mutbuf)
+  at18:usize = const() {"value":146}
+  at19:usize = const() {"value":147}
+  wal:u8 = const() {"value":2}
+  byte18:u8 = buffer.load(hym,at18)
+  byte19:u8 = buffer.load(hym,at19)
+  w18:bool = compare.eq(byte18,wal)
+  w19:bool = compare.eq(byte19,wal)
+  has_wal:bool = bool.or(w18,w19)
+  branch has_wal bad_header(hym) to_post(hym)
+block bad_header(bhm:mutbuf)
+  status_bh:u32 = const() {"value":100}
+  out_bh:u32 = call(bhm,status_bh) {"function":"sol_end"}
+  ret(out_bh)
+block to_post(tpm:mutbuf)
+  zero_tp:u64 = const() {"value":0}
+  cleared:u64 = call(tpm,zero_tp,zero_tp) {"function":"cp_put"}
+  next_tp:u64 = const() {"value":4}
+  ask_path:u32 = const() {"value":196}
+  out_tp:u32 = call(tpm,next_tp,zero_tp,ask_path) {"function":"sol_yield"}
+  ret(out_tp)
+block prepare_sql(qr:readbuf,qm:mutbuf,qw:mutbuf)
+  status_q:u32 = call(qr,qm,qw) {"function":"spo_read"}
+  request_q:u32 = const() {"value":196}
+  ready_q:bool = compare.eq(status_q,request_q)
+  branch ready_q sql_open(qm) refused()
+block sql_open(som:mutbuf)
+  phase_so:u64 = const() {"value":5}
+  sqlite_open:u64 = const() {"value":2}
+  sql_wait:u32 = const() {"value":197}
+  out_so:u32 = call(som,phase_so,sqlite_open,sql_wait) {"function":"sol_yield"}
+  ret(out_so)
+block post(por:readbuf,pom:mutbuf,pow:mutbuf,from_sql:bool)
+  branch from_sql sqlite_status(por,pom,pow) post_step(por,pom,pow)
+block sqlite_status(sqr:readbuf,sqm:mutbuf,sqw:mutbuf)
+  exact_sq:usize = const() {"value":24}
+  n_sq:usize = buffer.len(sqr)
+  sized_sq:bool = compare.eq(exact_sq,n_sq)
+  branch sized_sq check_sqlite(sqr,sqm,sqw) refused()
+block check_sqlite(xr:readbuf,xm:mutbuf,xw:mutbuf)
+  zero_x:u64 = const() {"value":0}
+  scratch_x:u64 = const() {"value":104}
+  n_x:u64 = const() {"value":8}
+  copied_x:u64 = call(xr,zero_x,xm,scratch_x,n_x) {"function":"cp_copy"}
+  code_x:u64 = call(xm,scratch_x) {"function":"cp_get"}
+  accepted_x:bool = compare.eq(code_x,zero_x)
+  branch accepted_x post_step(xr,xm,xw) bad_header(xm)
+block post_step(psr:readbuf,psm:mutbuf,psw:mutbuf)
+  status_ps:u32 = call(psr,psm,psw) {"function":"spo_read"}
+  issued_ps:u32 = const() {"value":198}
+  wants_ps:bool = compare.eq(status_ps,issued_ps)
+  branch wants_ps post_request(psm) post_done(psm,status_ps)
+block post_request(pom2:mutbuf)
+  zero_po:u64 = const() {"value":0}
+  child:u64 = call(pom2,zero_po) {"function":"cp_get"}
+  expected_po:u64 = const() {"value":2}
+  is_stat:bool = compare.eq(child,expected_po)
+  stat_po:u64 = const() {"value":15}
+  close_po:u64 = const() {"value":3}
+  op_po:u64 = select(is_stat,stat_po,close_po)
+  phase_po:u64 = const() {"value":6}
+  pending_po:u32 = const() {"value":198}
+  out_po:u32 = call(pom2,phase_po,op_po,pending_po) {"function":"sol_yield"}
+  ret(out_po)
+block post_done(pdm:mutbuf,pdc:u32)
+  zero_pd:u64 = const() {"value":0}
+  done_pd:u64 = const() {"value":4}
+  child_pd:u64 = call(pdm,zero_pd) {"function":"cp_get"}
+  finished_pd:bool = compare.eq(child_pd,done_pd)
+  branch finished_pd path_failed(pdm,pdc) refused()
+block refused()
+  denied:u32 = const() {"value":100}
+  ret(denied)
+end
+
+fn sol_end(m:mutbuf,status:u32) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,status:u32)
+  terminal:u64 = const() {"value":7}
+  no_op:u64 = const() {"value":0}
+  result:u32 = call(m,terminal,no_op,status) {"function":"sol_yield"}
+  ret(result)
+end
+
+fn sol_yield(m:mutbuf,stage:u64,op:u64,status:u32) -> (u32) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,stage:u64,op:u64,status:u32)
+  stage_at:u64 = const() {"value":4400}
+  op_at:u64 = const() {"value":4416}
+  stored_stage:u64 = call(m,stage_at,stage) {"function":"cp_put"}
+  stored_op:u64 = call(m,op_at,op) {"function":"cp_put"}
+  ret(status)
+end

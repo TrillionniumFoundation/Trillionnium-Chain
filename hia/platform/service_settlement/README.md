@@ -583,5 +583,9 @@ before the busy timeout or transaction. Its refusal must receive an
 acknowledged native-requested close of that SQLite handle, without SQL.
 The private transport only forwards these operations; the complete
 sequence is compared against the original mixed history in one held
-replay. Stable ancestor and cross-open descriptor identity and production
-Store ownership are not established.
+replay. The composed native lifecycle additionally chooses the order of all
+three open guards and issues the handoff to the existing native SQLite
+reader. That reader's actual single open response is held in the same
+provider context and delivered back only after the final path check.
+No second SQLite open is used. Stable ancestor and cross-open descriptor
+identity and production Store ownership are not established.

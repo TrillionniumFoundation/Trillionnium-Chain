@@ -43,6 +43,11 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 }
                 for backend in ("direct", "selfhost")
             }
+            lifecycle_images = {
+                backend: stack.enter_context(NativeModule(
+                    OWNER / "store_open_lifecycle.hepta", byte_exports=("f0",), backend=backend))
+                for backend in ("direct", "selfhost")
+            }
             out = tmp / "engine"
             engine = json.loads(execute([sys.executable, "-B", "-m", "hia.platform.service_settlement.build",
                                         "--output", out], timeout=200).stdout)
@@ -51,7 +56,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             owned = tmp / "owned"
             owned.mkdir(mode=0o700)
 
-            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None):
+            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None, lifecycle=None):
                 def image(name):
                     module = images[name]
                     return [str(module.library), module.artifact_sha256]
@@ -63,6 +68,9 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 if physical is not None:
                     request.update({name: [str(module.library), module.artifact_sha256]
                                     for name, module in physical_images[physical].items()})
+                if lifecycle is not None:
+                    module = lifecycle_images[lifecycle]
+                    request["open_lifecycle"] = [str(module.library), module.artifact_sha256]
                 if lane in ("cursor", "cursor-direct"):
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
@@ -148,6 +156,15 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                                     self.assertEqual(fully_held, {
                                         **cursor, "path_checks": [[i, 15, 24] for i in range(1, 5)],
                                         "header_checks": [[17, 24], [29, 44], [18, 24]], "post_open_checks": [[15, 24]],
+                                        "transcript": [cursor["transcript"][0], [1, 15, 24], *cursor["transcript"][1:]],
+                                    })
+                            for backend in lifecycle_images:
+                                with self.subTest(composed=backend):
+                                    composed = invoke(db, held, "cursor", lifecycle=backend)
+                                    trace = [[1, 15, 24]] * 4 + [[3, 17, 24], [3, 29, 44], [3, 18, 24],
+                                                               [5, 2, 24], [6, 15, 24]]
+                                    self.assertEqual(composed, {
+                                        **cursor, "open_lifecycle": trace,
                                         "transcript": [cursor["transcript"][0], [1, 15, 24], *cursor["transcript"][1:]],
                                     })
                         refused = invoke(db, held, "cursor", failed="root", ordinal=count)
