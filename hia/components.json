@@ -1,5 +1,14 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/physical_wal_observation.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "platform/service_settlement/marker_dispatch_plan.hepta": [
       {
         "functions": [

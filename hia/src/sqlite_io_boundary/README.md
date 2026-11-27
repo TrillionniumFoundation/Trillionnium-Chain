@@ -385,3 +385,30 @@ snapshot, passive checkpoint and final close phases. The native fold is checked
 against actual serde event widths and the original root aggregate; it
 does not reconstruct silent inter-event descriptor observations, own
 a physical file, prove evidence provenance, or alter callback routing.
+
+## Successive physical WAL observations
+
+`physical_wal_observation.hepta` compares three quiescent snapshots of
+one fixture WAL before and after two real small commits. The little-endian
+440-byte input begins with the original policy tag (1 or 2). Every
+18-word observation carries root device/inode, object generation,
+independent owned-name device/inode/length/512-byte blocks, the
+corresponding four public original object values, high water, ordinary
+and cleanup counts, operations, the selected bind and growth counts,
+and a regular linked fixture tag.
+
+The native validator requires one stable root and real object identity,
+matches actual size and block observations, and independently checks
+chronology and reservation policy. V1 grows exact logical high water;
+V2 retains one fixed 64 KiB reserve in this fixture despite growing
+actual bytes. Both keep the original one binding record. The 112-byte
+output reports the selected generation and inode identity, all three
+length, block and high-water observations, and the selected growth and
+operation deltas. An invalid or short request publishes nothing.
+
+The original Rust public owner runs on fresh generated roots and owns
+all writes and physical checks. The witness uses read-only named
+metadata at single-process, dormant phase boundaries, not by opening
+another descriptor. Allocated blocks are observed, not treated as a
+quota. The native validator does not independently own an FD, identify
+a path race, verify provenance, or recover the raw VFS slot ledger.

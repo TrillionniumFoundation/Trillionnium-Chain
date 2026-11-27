@@ -24,7 +24,7 @@ PINNED = {
 }
 
 
-def original_owner(owned):
+def original_owner(owned, adapter=ADAPTER):
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
     pin = tomllib.loads((ROOT/"rust-toolchain.toml").read_text())["toolchain"]["channel"]
     if execute([rustc, "--version"]).stdout.decode().split()[1] != pin:
@@ -69,7 +69,7 @@ def original_owner(owned):
         raise ValueError("Exact bundled SQLite required")
     output = owned/"native-owner"
     execute([canonical,"--edition=2024","-O",*externs,"-L",f"dependency={target/'debug/deps'}",
-             "-L",link,ADAPTER,"-o",output],timeout=60)
+             "-L",link,adapter,"-o",output],timeout=60)
     return output
 
 
