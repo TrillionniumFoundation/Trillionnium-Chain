@@ -1234,6 +1234,20 @@
       ]
     },
     {
+      "id": "data-availability/unsigned-batch-build",
+      "node_integration_complete": false,
+      "scope": "Bounded one-call unsigned transaction-batch construction: original typed committee-policy coherence, full author set and sequence validation, derived contents and chunk commitments, canonical envelope, BatchId and exact Borsh chunks; no live policy, signing or production.",
+      "source": "hia/src/data_availability/unsigned_batch_build.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_unsigned_batch_build.py",
+        "hia/tests/rust_da_unsigned_batch_build_reference.rs",
+        "hia/tests/test_da_policy_value.py",
+        "hia/tests/test_da_batch_content_root.py",
+        "hia/tests/test_da_batch_chunk_root.py"
+      ]
+    },
+    {
       "id": "data-availability/chunk-commitments",
       "node_integration_complete": false,
       "scope": "Original DA chunk identity and exact Borsh payload hash from one immutable bounded loan; evidenced by public Rust unsigned batch chunk construction and original serialization only, no Merkle, storage, repair, or authority.",

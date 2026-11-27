@@ -298,6 +298,43 @@ count and root to both pinned HIA backends, and reconstructs them
 independently. This is not admission, policy/committee coherence,
 signature, erasure coding, or production authority.
 
+## DA one-call unsigned transaction batch
+
+The [bounded unsigned builder](unsigned_batch_build.hepta) reads the
+original Borsh committee, typed policy, author byte vector and LE
+`u64` sequence, and typed transaction vector from one immutable loan.
+Three LE `u32` values at the end give the committee, policy and
+transaction-vector extents. Native code revalidates the committee,
+derives its ID, binds the policy's schema, context, epoch, ID and
+batch bounds, then checks policy limits and the whole author set before
+resolving the requested author and sequence.
+
+The call derives both roots, codec ID, profile, concrete ordered
+chunk bytes and coordinates, and the retention end. It outputs
+`Vec<u8>(Borsh envelope) || BatchId || Vec<u8>(contents) || Vec<DaChunkV1>`.
+A private native buffer contains canonical content and the coordinate
+prefix the builder derives; the caller cannot supply a prefix,
+digest, commitment, envelope or prevalidation verdict. All output
+is staged before publishing, so failures leave the output unchanged.
+
+The private profile allows a 256 KiB complete loan, at most 32
+members, authors, items and chunks, and uses 757,760 scratch bytes.
+The stable committee digest and metadata are stored above the
+reused lower SHA, curve and Merkle scratch. The staged result
+starts at byte 160,000 and cannot exceed 544,999 bytes in this
+profile. Statuses 40–44 distinguish original count, noncanonical
+row, chunk count, byte limit and retention checks; 219/220 distinguish
+a missing author from sequence conflict. Private framing, bounds
+and capacity are not failures claimed for the original typed API.
+
+The [locked comparison](../../tests/test_da_unsigned_batch_build.py)
+calls the original public Rust unsigned constructor and compares
+each real serialized byte against both pinned HIA backends. An
+independent verification also checks the canonical envelope,
+hashes, order and full chunk bytes. This is an offline unsigned
+constructor, not live policy adoption, signatures, storage,
+erasure parity or production activation.
+
 ## DA chunk coordinate and byte commitments
 
 The [private chunk commitment](chunk_commitments.hepta) accepts an

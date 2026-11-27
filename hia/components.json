@@ -20486,6 +20486,158 @@
         ],
         "source": "src/data_availability/chunk_bound_inclusion.hepta"
       }
+    ],
+    "src/data_availability/unsigned_batch_build.hepta": [
+      {
+        "functions": [
+          "dai_bounds",
+          "dai_domain"
+        ],
+        "source": "src/data_availability/committee_id.hepta"
+      },
+      {
+        "functions": [
+          "dac_lex_less",
+          "dac_member",
+          "dac_member_extent",
+          "dac_same32",
+          "dac_store_unique",
+          "dac_threshold"
+        ],
+        "source": "src/data_availability/committee_definition.hepta"
+      },
+      {
+        "functions": [
+          "dam_domain"
+        ],
+        "source": "src/data_availability/member_definition.hepta"
+      },
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "daav_copy",
+          "daav_u32"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "dab_ascii",
+          "dab_copy32",
+          "dab_domain",
+          "dab_number"
+        ],
+        "source": "src/data_availability/batch_author_transcript.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "dap_digest",
+          "dap_inner",
+          "dap_outer"
+        ],
+        "source": "src/data_availability/chunk_inclusion_path.hepta"
+      },
+      {
+        "functions": [
+          "dc_copy"
+        ],
+        "source": "src/state_import/incremental_delta_commitment.hepta"
+      },
+      {
+        "functions": [
+          "dct_distinct",
+          "dct_equal",
+          "dct_inner",
+          "dct_item_domain",
+          "dct_leaf",
+          "dct_leaf_domain",
+          "dct_leaves",
+          "dct_parent",
+          "dct_reduce",
+          "dct_shape",
+          "dct_unique"
+        ],
+        "source": "src/data_availability/batch_content_root.hepta"
+      },
+      {
+        "functions": [
+          "dach_domain"
+        ],
+        "source": "src/data_availability/chunk_commitments.hepta"
+      },
+      {
+        "functions": [
+          "dax_leaf_domain"
+        ],
+        "source": "src/data_availability/chunk_bound_inclusion.hepta"
+      },
+      {
+        "functions": [
+          "dpp_author",
+          "dpp_committee",
+          "dpp_id_less",
+          "dpp_move",
+          "dpp_publish"
+        ],
+        "source": "src/data_availability/policy_value.hepta"
+      },
+      {
+        "functions": [
+          "dcr_coordinate",
+          "dcr_leaf",
+          "dcr_parent",
+          "dcr_payload",
+          "dcr_profile",
+          "dcr_profile_domain",
+          "dcr_reduce"
+        ],
+        "source": "src/data_availability/batch_chunk_root.hepta"
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"
