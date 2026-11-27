@@ -372,22 +372,22 @@ block overflow()
   ret(v72_st20)
 end
 
-fn as_project(r:readbuf,o:mutbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64)
+fn as_sum_charge(r:readbuf,w:mutbuf,n:u64) -> (u64,u64,bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64)
   zero:u64 = const() {"value":0}
-  jump sum(r,o,w,n,zero,zero,zero)
-block sum(v75_sr:readbuf,v75_so:mutbuf,v75_sw:mutbuf,v75_sn:u64,v75_si:u64,v75_sl:u64,v75_sh:u64)
+  jump sum(r,w,n,zero,zero,zero)
+block sum(v75_sr:readbuf,v75_sw:mutbuf,v75_sn:u64,v75_si:u64,v75_sl:u64,v75_sh:u64)
   v75_more:bool = compare.lt(v75_si,v75_sn)
-  branch v75_more row(v75_sr,v75_so,v75_sw,v75_sn,v75_si,v75_sl,v75_sh) head(v75_so,v75_sw,v75_sn,v75_sl,v75_sh)
-block row(v76_rr:readbuf,v76_ro:mutbuf,v76_rw:mutbuf,v76_rn:u64,v76_ri:u64,v76_rl:u64,v76_rh:u64)
+  branch v75_more row(v75_sr,v75_sw,v75_sn,v75_si,v75_sl,v75_sh) charged(v75_sl,v75_sh)
+block row(v76_rr:readbuf,v76_rw:mutbuf,v76_rn:u64,v76_ri:u64,v76_rl:u64,v76_rh:u64)
   v76_spot:u64 = call(v76_ri) {"function":"as_selected"}
   v76_chosen:u64 = call(v76_rw,v76_spot) {"function":"tr_get"}
   v76_positive:u64 = const() {"value":1}
   v76_picked:bool = compare.eq(v76_chosen,v76_positive)
   v76_nextb:u64 = const() {"value":1}
   v76_next:u64 = int.add.wrap(v76_ri,v76_nextb)
-  branch v76_picked charge(v76_rr,v76_ro,v76_rw,v76_rn,v76_next,v76_ri,v76_rl,v76_rh) sum(v76_rr,v76_ro,v76_rw,v76_rn,v76_next,v76_rl,v76_rh)
-block charge(v77_cr:readbuf,v77_co:mutbuf,v77_cw:mutbuf,v77_cn:u64,v77_ci:u64,v77_cp:u64,v77_cl:u64,v77_ch:u64)
+  branch v76_picked charge(v76_rr,v76_rw,v76_rn,v76_next,v76_ri,v76_rl,v76_rh) sum(v76_rr,v76_rw,v76_rn,v76_next,v76_rl,v76_rh)
+block charge(v77_cr:readbuf,v77_cw:mutbuf,v77_cn:u64,v77_ci:u64,v77_cp:u64,v77_cl:u64,v77_ch:u64)
   v77_at:u64 = call(v77_cw,v77_cp) {"function":"as_offset"}
   v77_lowatb:u64 = const() {"value":56}
   v77_lowat:u64 = int.add.wrap(v77_at,v77_lowatb)
@@ -405,7 +405,20 @@ block charge(v77_cr:readbuf,v77_co:mutbuf,v77_cw:mutbuf,v77_cn:u64,v77_ci:u64,v7
   v77_limb_fit:bool = compare.ge(v77_sum_hi0,v77_ch)
   v77_carry_fit:bool = compare.ge(v77_sum_hi,v77_sum_hi0)
   v77_fit0:bool = bool.and(v77_limb_fit,v77_carry_fit)
-  branch v77_fit0 sum(v77_cr,v77_co,v77_cw,v77_cn,v77_ci,v77_sum_lo,v77_sum_hi) overflow()
+  branch v77_fit0 sum(v77_cr,v77_cw,v77_cn,v77_ci,v77_sum_lo,v77_sum_hi) overflow()
+block charged(l:u64,h:u64)
+  ok:bool = const() {"value":true}
+  ret(l,h,ok)
+block overflow()
+  z:u64 = const() {"value":0}
+  bad:bool = const() {"value":false}
+  ret(z,z,bad)
+end
+
+fn as_project(r:readbuf,o:mutbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64)
+  lo:u64,hi:u64,ok:bool = call(r,w,n) {"function":"as_sum_charge"}
+  branch ok head(o,w,n,lo,hi) overflow()
 block head(v78_ho:mutbuf,v78_hw:mutbuf,v78_hn:u64,v78_hl:u64,v78_hh:u64)
   v78_cat:u64 = const() {"value":200}
   v78_c:u64 = call(v78_hw,v78_cat) {"function":"tr_get"}
@@ -470,28 +483,36 @@ block overflow()
   ret(v83_st20)
 end
 
-fn as_run(v8_orr:readbuf,v8_ow:mutbuf,v8_os:mutbuf,v8_oc:u64,v8_oh:u64,v8_oa:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(v8_orr:readbuf,v8_ow:mutbuf,v8_os:mutbuf,v8_oc:u64,v8_oh:u64,v8_oa:u64)
-  v8__sort:u64 = call(v8_orr,v8_os,v8_oc) {"function":"as_sort"}
-  v8_v:u32 = call(v8_orr,v8_os,v8_oc) {"function":"as_validate"}
-  v8_szero:u32 = const() {"value":0}
-  v8_admitted:bool = compare.eq(v8_v,v8_szero)
-  branch v8_admitted hold_map(v8_orr,v8_ow,v8_os,v8_oc,v8_oh,v8_oa) return_status(v8_v)
-block hold_map(v9_mr:readbuf,v9_mo:mutbuf,v9_mw:mutbuf,v9_mn:u64,v9_mh:u64,v9_ma:u64)
-  v9_held:bool = call(v9_mr,v9_mw,v9_mn,v9_mh,v9_ma) {"function":"as_mark_holds"}
-  branch v9_held choose(v9_mr,v9_mo,v9_mw,v9_mn) notfound()
-block choose(v10_cr:readbuf,v10_co:mutbuf,v10_cw:mutbuf,v10_cn:u64)
-  v10_decision:u32 = call(v10_cr,v10_cw,v10_cn) {"function":"as_choose"}
-  v10_czero:u32 = const() {"value":0}
-  v10_pass:bool = compare.eq(v10_decision,v10_czero)
-  branch v10_pass project(v10_cr,v10_co,v10_cw,v10_cn) return_status(v10_decision)
-block project(v11_pr:readbuf,v11_po:mutbuf,v11_pw:mutbuf,v11_pn:u64)
-  v11_plan:u32 = call(v11_pr,v11_po,v11_pw,v11_pn) {"function":"as_project"}
-  ret(v11_plan)
-block return_status(v12_rs:u32)
-  ret(v12_rs)
+fn as_plan(r:readbuf,w:mutbuf,n:u64,h:u64,a:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,h:u64,a:u64)
+  _sort:u64 = call(r,w,n) {"function":"as_sort"}
+  code:u32 = call(r,w,n) {"function":"as_validate"}
+  z:u32 = const() {"value":0}
+  valid:bool = compare.eq(code,z)
+  branch valid hold_map(r,w,n,h,a) done(code)
+block hold_map(r1:readbuf,w1:mutbuf,n1:u64,h1:u64,a1:u64)
+  held:bool = call(r1,w1,n1,h1,a1) {"function":"as_mark_holds"}
+  branch held choose(r1,w1,n1) notfound()
+block choose(r2:readbuf,w2:mutbuf,n2:u64)
+  result:u32 = call(r2,w2,n2) {"function":"as_choose"}
+  ret(result)
+block done(error:u32)
+  ret(error)
 block notfound()
-  code:u32 = const() {"value":19}
+  absent:u32 = const() {"value":19}
+  ret(absent)
+end
+
+fn as_run(r:readbuf,o:mutbuf,w:mutbuf,n:u64,h:u64,a:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64,h:u64,a:u64)
+  status:u32 = call(r,w,n,h,a) {"function":"as_plan"}
+  zero:u32 = const() {"value":0}
+  good:bool = compare.eq(status,zero)
+  branch good project(r,o,w,n) done(status)
+block project(r1:readbuf,o1:mutbuf,w1:mutbuf,n1:u64)
+  out:u32 = call(r1,o1,w1,n1) {"function":"as_project"}
+  ret(out)
+block done(code:u32)
   ret(code)
 end
 

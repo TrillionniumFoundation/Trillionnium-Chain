@@ -236,6 +236,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_sealed_plan",
+      "node_integration_complete": false,
+      "scope": "One-call bounded original typed archive planner to exact TaskArchiveBatchV1 Borsh bytes, including policy, height, sequence, prior seal hash, checked totals and original Merkle root. Private read-only candidate only; no installation, storage or deletion authority.",
+      "source": "hia/src/task_kernel/archive_sealed_plan.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_sealed_plan.py",
+        "hia/tests/rust_task_archive_selection_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_typed_selection",
       "node_integration_complete": false,
       "scope": "One-call bounded original canonical typed Borsh policy, record and hold admission and archive selection, with exact selected original record bytes. No seal/root, storage or deletion authority.",
@@ -2778,7 +2789,8 @@
         "task_kernel/archive_singleton_batch",
         "task_kernel/archive_variable_batch",
         "task_kernel/archive_selection",
-        "task_kernel/archive_typed_selection"
+        "task_kernel/archive_typed_selection",
+        "task_kernel/archive_sealed_plan"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",

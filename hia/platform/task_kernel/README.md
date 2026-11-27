@@ -333,3 +333,24 @@ a u64 byte length, and the exact Borsh Vec of chosen original records
 (canonical u32 count and directly copied original bodies). Unused output
 remains unchanged. This is not a complete seal/root or storage pipeline and
 does not confer node, pruning or deletion authority.
+
+### Original sealed archive planner projection
+
+`src/task_kernel/archive_sealed_plan.hepta` privately admits the same bounded
+canonical typed Borsh policy, unordered records and legal holds as the typed
+selector. Its separate input profile appends the exact 32-byte previous seal
+hash to that packet; the archive height and sequence stay in the original
+header. It builds the original candidate `TaskArchiveBatchV1` in one call,
+using selected record bytes from native-owned selection state and the original
+policy and record hash transcripts, checked charge total and odd-tail Merkle
+fold. The original planner returns no batch when there is no surplus.
+
+The output is a little-endian u64 length followed by the exact Borsh
+`TaskArchiveBatchV1` (zero length for no batch). The caller supplies a
+disjoint 6,914-byte output region and 1,824-byte scratch region. Admission,
+selection, the checked total, and hashing complete before any output is
+published. Existing selected/retained projections keep their separate ABI.
+The unchanged public Rust planner supplies exact byte and status fixtures on
+both native backends. The resulting batch is only a candidate: production
+authorization, applying pruning, retention/durability, storage and runtime
+routing remain with the original owner.

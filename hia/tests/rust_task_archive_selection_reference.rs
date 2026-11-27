@@ -11,13 +11,26 @@ use trnm_task_kernel::{
 
 fn row(w: &mut impl Write, p: &TaskArchivePolicyV1, facts: &[TerminalTaskArchiveRecordV1],
        holds: BTreeSet<TaskIdV1>, height: u64, sequence: u64) {
-    let typed = std::env::args_os().nth(1).is_some_and(|v| v == "typed");
+    let sealed = std::env::args_os().nth(1).is_some_and(|v| v == "sealed");
+    let typed = sealed || std::env::args_os().nth(1).is_some_and(|v| v == "typed");
+    let mut archive = Vec::new();
+    let mut previous = [7; 32];
+    if sealed {
+        for (i, byte) in previous.iter_mut().enumerate() {
+            *byte = (height as u8).wrapping_add(sequence as u8).wrapping_add(i as u8);
+        }
+    }
     let mut selected_borsh = Vec::new();
-    let result = plan_task_archive_pruning_v1(p, facts, &holds, height, sequence, Hash32V1([7;32]));
+    let result = plan_task_archive_pruning_v1(p, facts, &holds, height, sequence, Hash32V1(previous));
     let mut output = [u64::MAX;21];
     let status = match result {
         Ok(plan) => {
             let selected = plan.archive_batch().map(|b| b.records.as_slice()).unwrap_or(&[]);
+            if sealed {
+                if let Some(batch) = plan.archive_batch() {
+                    archive = borsh::to_vec(batch).unwrap();
+                }
+            }
             if typed { selected_borsh = borsh::to_vec(&selected.to_vec()).unwrap(); }
             let sums = selected.iter().map(|x| x.retention_charge_paid).sum::<u128>();
             output[..5].copy_from_slice(&[
@@ -66,9 +79,15 @@ fn row(w: &mut impl Write, p: &TaskArchivePolicyV1, facts: &[TerminalTaskArchive
         }
     }
     for id in holds { raw.extend(id.0); }
+    if sealed { raw.extend(previous); }
     w.write_all(&status.to_le_bytes()).unwrap();
     w.write_all(&(raw.len() as u32).to_le_bytes()).unwrap();
     w.write_all(&raw).unwrap();
+    if sealed {
+        w.write_all(&(archive.len() as u64).to_le_bytes()).unwrap();
+        w.write_all(&archive).unwrap();
+        return;
+    }
     for x in output { w.write_all(&x.to_le_bytes()).unwrap(); }
     if typed {
         w.write_all(&(selected_borsh.len() as u64).to_le_bytes()).unwrap();
@@ -96,6 +115,24 @@ fn main() {
         t
     }).collect();
     let mut w = io::stdout().lock();
+    if std::env::args_os().nth(1).is_some_and(|v| v == "sealed") {
+        for selected in 1..=7u32 {
+            let mut shape = p.clone();
+            shape.maximum_live_terminal_records = 8 - selected;
+            row(&mut w,&shape,&facts,BTreeSet::new(),21+u64::from(selected),u64::from(selected));
+        }
+        // Byte pressure can select all eight even though the original live count cap is positive.
+        // Exercise the entire private output extent, UTF-8/admitted NUL bytes and u128 carry.
+        let mut full = p.clone();
+        full.maximum_live_terminal_bytes = 1;
+        full.context.chain_id = "四\0".repeat(128);
+        let mut wide = facts.clone();
+        for (i, fact) in wide.iter_mut().enumerate() {
+            fact.context = full.context.clone();
+            fact.retention_charge_paid = (1u128 << 64) + u128::from(u64::MAX) - i as u128;
+        }
+        row(&mut w,&full,&wide,BTreeSet::new(),u64::MAX,8);
+    }
     row(&mut w,&p,&[],BTreeSet::new(),20,0); // empty, no sequence needed.
     row(&mut w,&p,&facts,BTreeSet::new(),20,0); // native sort + no pressure.
     row(&mut w,&p,&facts,BTreeSet::from([TaskIdV1([0xee;32])]),20,0); // subset before no pressure.
@@ -141,7 +178,7 @@ fn main() {
     let id = frozen.task_id;
     row(&mut w,&p,&[other.clone(),frozen.clone()],BTreeSet::new(),20,1); // expiry overflows.
     row(&mut w,&p,&[other,frozen],BTreeSet::from([id]),20,1); // held row skips expiry.
-    if std::env::args_os().nth(1).is_some_and(|v| v == "typed") {
+    if std::env::args_os().nth(1).is_some_and(|v| v == "typed" || v == "sealed") {
         let canonical = fixture::record(&context, 4);
         let mut earlier = fixture::record(&context, 0);
         let mut later = canonical.clone();
