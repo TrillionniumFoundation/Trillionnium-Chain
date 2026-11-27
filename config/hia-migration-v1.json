@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/target_delta_row_validate",
+      "node_integration_complete": false,
+      "scope": "M13 original per-operation TargetDeltaRowV0 shape, reserved namespace and exact stored operation digest equality on stock 1 MiB borrowed inputs; no context, delta admission, SQLite or production routing",
+      "source": "hia/src/state_import/target_delta_row_validate.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_target_delta_row.py",
+        "hia/tests/rust_state_import_target_delta_row_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/incremental_delta_commitment",
       "node_integration_complete": false,
       "scope": "M13 original bounded pure ordered delta operation root and canonical digest from reviewed context identities and ordered records; no finality, root policy, SQL or production routing",
@@ -2373,6 +2384,7 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
+        "state_import/target_delta_row_validate",
         "state_import/incremental_delta_commitment",
         "state_import/migration_plan",
         "state_import/checkpoint_context",

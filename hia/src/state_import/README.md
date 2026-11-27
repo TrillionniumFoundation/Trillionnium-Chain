@@ -307,3 +307,32 @@ also checks the supplied source digest and exact equality to a separate
 and source bindings with the retained disposable fixture owner and compare
 all pairwise binding outcomes. The native code does not create a verified
 export, derive an application state root, perform a cutover, or install data.
+
+### Per-operation target delta row
+
+`target_delta_row_validate.hepta` qualifies the original
+`TargetDeltaRowV0::validate` on one immutable operation in a shared stock
+1 MiB Direct/Selfhost envelope. The private borrowed frame is the namespace,
+key and optional value byte spans, followed by four little-endian `u32`
+words (namespace, key and value lengths, then the option tag) and the
+stored 32-byte operation digest. Tag 0 requires zero value length;
+tag 1 permits a present empty value. The two forms hash differently.
+The namespace/key nonempty and original width checks and the same
+reserved-prefix checks precede a real framed SHA-256 computation and
+comparison against the stored digest. The envelope is narrower than
+the original Rust 16 MiB per-value limit; the shared native maximum is
+1 MiB minus the 48-byte trailer and the namespace/key spans.
+
+The entry never writes the second ABI span. The scratch span must be
+disjoint and supply 1,256 bytes; only those bytes can change. Status 101
+represents the original `InvalidDeltaRow` result without distinguishing its
+causes. Private framing, scratch or internal hashing refusals (100, 102,
+103) are not protocol errors. The locked Rust witness invokes the genuine
+typed `TargetDeltaRowV0` implementation and tests the same typed inputs
+against both stock native machines, including the full shared envelope
+and one Rust-only value just outside it.
+
+This is not whole-delta validation: ordered replay, context checks,
+resulting rows and application root computation, durable CAS and cutover
+remain with the current owner. No production caller or SQLite route uses
+this qualification entry.
