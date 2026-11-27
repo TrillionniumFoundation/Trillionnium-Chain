@@ -49,6 +49,28 @@ fn create(root: &Path) {
     }
 }
 
+fn create_inventory(root: &Path) {
+    create(root);
+    let p = policy();
+    TaskArchiveStoreV1::initialize(root.join("inventory-empty.sqlite"), p.clone()).unwrap();
+    let store = TaskArchiveStoreV1::initialize(root.join("inventory-full.sqlite"), p.clone()).unwrap();
+    let facts: Vec<_> = (0..16).map(|i| shared::record(&p.context, i)).collect();
+    store.install_live_records_v1(&facts, 50).unwrap();
+    let mut offset = 0;
+    let mut previous = Hash32V1([0; 32]);
+    for (i, size) in [3, 2, 1, 1, 1, 1, 1, 1].into_iter().enumerate() {
+        let seq = i as u64 + 1;
+        let plan = plan_task_archive_pruning_v1(&p, &facts[offset..offset+size+1],
+                    &BTreeSet::new(), 51+seq, seq, previous).unwrap();
+        let batch = plan.archive_batch().unwrap();
+        let receipt = store.archive_and_delete_v1(batch).unwrap();
+        assert_eq!(receipt.deleted_record_count as usize, size);
+        assert_eq!(store.read_archive_batch_v1(seq).unwrap(), *batch);
+        previous = receipt.seal_hash;
+        offset += size;
+    }
+}
+
 fn read(path: &Path, count: u64) {
     let mut out = io::stdout().lock();
     match TaskArchiveStoreV1::open_existing(path, policy()) {
@@ -70,6 +92,8 @@ fn read(path: &Path, count: u64) {
             let status: u32 = match err.code() {
                 AgentMarketErrorCodeV1::TamperDetected => 23,
                 AgentMarketErrorCodeV1::SchemaMismatch => 22,
+                AgentMarketErrorCodeV1::InvalidBounds => 1,
+                AgentMarketErrorCodeV1::InvalidState => 13,
                 other => panic!("unexpected original archive store admission: {other:?}"),
             };
             out.write_all(&status.to_le_bytes()).unwrap();
@@ -92,6 +116,7 @@ fn main() {
     let args: Vec<_> = std::env::args_os().collect();
     match args[1].to_str().unwrap() {
         "wrong-link" => wrong_link(),
+        "create-inventory" => create_inventory(Path::new(&args[2])),
         "create" => create(Path::new(&args[2])),
         "read" => read(Path::new(&args[2]), args[3].to_str().unwrap().parse().unwrap()),
         _ => unreachable!(),

@@ -247,6 +247,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_store_inventory",
+      "node_integration_complete": false,
+      "scope": "Private bounded original archive live-row and archive-row key/hash binding with canonical sorted inventory-root reconstruction at every historical before/after and current metadata boundary. Uses actual held disposable original store bytes; no SQLite ownership, full sealed-batch equality, mutation or production authority.",
+      "source": "hia/src/task_kernel/archive_store_inventory.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_store_inventory.py",
+        "hia/tests/rust_task_archive_store_seal_chain_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_store_seal_chain",
       "node_integration_complete": false,
       "scope": "Private read-only bounded persisted archive seal chain: exact native seal digests, contiguous sequence/generation, predecessor and live-root linkage, and terminal metadata identity from a held original SQLite readback. No SQL, full inventory audit, deletion, durability or production ownership.",
@@ -2813,7 +2824,8 @@
         "task_kernel/archive_selection",
         "task_kernel/archive_typed_selection",
         "task_kernel/archive_sealed_plan",
-        "task_kernel/archive_store_seal_chain"
+        "task_kernel/archive_store_seal_chain",
+        "task_kernel/archive_store_inventory"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",

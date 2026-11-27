@@ -377,3 +377,26 @@ transaction captures the exact same held rows, including generated benign
 mismatch controls. The HIA stage does not open SQLite, validate schema or
 record blobs, reconstruct the inventory roots, replace the full store audit,
 repair durability, perform deletion, or authorize production use.
+
+### Original persisted inventory-root reconstruction
+
+`src/task_kernel/archive_store_inventory.hepta` verifies original typed live
+and archived record bytes, their stored task-ID keys and recomputed record
+hashes, and the absence of duplicate task IDs across both tables. It sorts
+the validated record hashes and replays the original Borsh vector digest
+for each historical inventory, removing exactly the recorded membership
+from each generation. The stage compares every before/after root and the
+final metadata root before publishing that root. Unlike the separate seal
+link checker, it refuses coherently linked but incorrect historical roots.
+
+The packet carries a little-endian u64 total record count and generation,
+the 32-byte current root, then one 64-byte before/after root pair per
+generation, followed by immutable row frames:
+`{archive_sequence: u64, Borsh_record_length: u64, task_id[32],
+record_hash[32], original_Borsh_record_bytes}`. Sequence 0 denotes a live row.
+This profile bounds the snapshot to 16 total rows, eight generations and
+512 context bytes. It takes a disjoint 32-byte output and 1,488-byte scratch
+region; a refusal does not publish. The test harness captures all columns
+from one read-only SQLite transaction on genuine original disposable stores.
+This does not check sealed-batch equality, operate SQLite, replace the full
+store audit, mutate state, or establish production authority.
