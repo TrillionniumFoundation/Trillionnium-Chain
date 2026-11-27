@@ -358,3 +358,30 @@ Malformed or short packets write nothing. Tests use actual successive
 original Rust Ledger operations in both policies, including cross-class
 pressure and collection after two failed cleanup records. This private
 scope does not take custody of real SHM, vectors, callbacks, or paths.
+
+## Real original VFS evidence streams
+
+`real_vfs_receipt_fold.hepta` accepts two separately retained,
+internally ordered event streams. The 24-byte header is the ordinary
+count, cleanup count and absolute cleanup-stream start (three
+little-endian u64 values). Each event begins with a little-endian u64
+wire-body extent, followed by the same 104-byte typed receipt prefix
+and its UTF-8 basename. This extent is not a purported JSON width.
+The entry verifies the exact division and consumption of the streams,
+original action/class, and every global sequence from zero. It measures
+the compact width natively and enforces the original retained vector
+and per-event limits.
+
+Its 40-byte output is the two retained counts, next sequence, total
+compact bytes and an ordered width/class checksum, all little-endian
+u64. The checksum is a non-authoritative diagnostic. Malformed and
+short inputs publish no output.
+
+The test runs the unchanged locked public Rust `NativeIoOwner` and
+its original SQLite VFS in fresh process-owned roots for each policy.
+The receipts are captured through both the held lease and registered
+VFS name across initialized, rollback-mode, WAL, overlapping held read
+snapshot, passive checkpoint and final close phases. The native fold is checked
+against actual serde event widths and the original root aggregate; it
+does not reconstruct silent inter-event descriptor observations, own
+a physical file, prove evidence provenance, or alter callback routing.

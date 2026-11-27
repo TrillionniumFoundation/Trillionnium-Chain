@@ -1,5 +1,51 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/real_vfs_receipt_fold.hepta": [
+      {
+        "functions": [
+          "value_integer_size",
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "functions": [
+          "je_string_size"
+        ],
+        "source": "src/codec/json_value_encode.hepta"
+      },
+      {
+        "functions": [
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "mlj_action_size",
+          "mlj_counts",
+          "mlj_measure_at",
+          "mlj_fixed",
+          "mlj_opt",
+          "mlj_options",
+          "mlj_tail"
+        ],
+        "source": "src/sqlite_io_boundary/lifecycle_json_size.hepta"
+      },
+      {
+        "functions": [
+          "mte_ordinary"
+        ],
+        "source": "src/sqlite_io_boundary/typed_record_evidence.hepta"
+      },
+      {
+        "functions": [
+          "json_short_escape"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
+    ],
     "platform/service_settlement/checked_committed_interval_codec.hepta": [
       {
         "functions": [
@@ -125,6 +171,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -224,6 +272,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -508,6 +558,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -805,6 +857,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -1101,6 +1155,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -1181,6 +1237,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -1436,6 +1494,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"
@@ -1475,6 +1535,8 @@
           "mlj_action_size",
           "mlj_counts",
           "mlj_measure",
+          "mlj_measure_at",
+          "mlj_fixed",
           "mlj_opt",
           "mlj_options",
           "mlj_tail"

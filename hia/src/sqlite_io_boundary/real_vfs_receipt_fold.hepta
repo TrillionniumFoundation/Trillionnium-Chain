@@ -1,0 +1,155 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_real_vfs_receipt_fold
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  extent:usize = buffer.len(raw)
+  lower_bound:usize = const() {"value":24}
+  hi:usize = const() {"value":798744}
+  low:bool = compare.ge(extent,lower_bound)
+  high:bool = compare.le(extent,hi)
+  shape:bool = bool.and(low,high)
+  branch shape capacity(raw,out,extent) malformed()
+block capacity(cr:readbuf,co:mutbuf,cn:usize)
+  o:usize = buffer.len(co)
+  need:usize = const() {"value":40}
+  enough:bool = compare.ge(o,need)
+  branch enough header(cr,co,cn) short()
+block header(hr:readbuf,ho:mutbuf,hn:usize)
+  z:u64 = const() {"value":0}
+  p8:u64 = const() {"value":8}
+  p16:u64 = const() {"value":16}
+  p24:u64 = const() {"value":24}
+  end:u64 = int.cast(hn) {"mode":"wrap"}
+  ord:u64 = call(hr,z) {"function":"tr_read"}
+  clean:u64 = call(hr,p8) {"function":"tr_read"}
+  split:u64 = call(hr,p16) {"function":"tr_read"}
+  max_o:u64 = const() {"value":1024}
+  max_c:u64 = const() {"value":256}
+  o_ok:bool = compare.le(ord,max_o)
+  c_ok:bool = compare.le(clean,max_c)
+  from:bool = compare.ge(split,p24)
+  split_inside:bool = compare.le(split,end)
+  counts:bool = bool.and(o_ok,c_ok)
+  spans:bool = bool.and(from,split_inside)
+  ready:bool = bool.and(counts,spans)
+  seed:u64 = const() {"value":14695981039346656037}
+  branch ready loop(hr,ho,p24,split,split,end,ord,clean,z,z,z,seed) malformed()
+block loop(lr:readbuf,lo:mutbuf,lp:u64,lq:u64,ls:u64,le:u64,lon:u64,lcn:u64,lseq:u64,lsum:u64,ldone_o:u64,lh:u64)
+  z_l:u64 = const() {"value":0}
+  combined:u64 = int.add.wrap(lon,lcn)
+  remain:bool = compare.ne(combined,z_l)
+  branch remain select_head(lr,lo,lp,lq,ls,le,lon,lcn,lseq,lsum,ldone_o,lh) finished(lr,lo,lp,lq,ls,le,lseq,lsum,ldone_o,lh)
+block select_head(sr:readbuf,so:mutbuf,sp:u64,sq:u64,ss:u64,se:u64,son:u64,scn:u64,ssq:u64,ssum:u64,sdone:u64,sh:u64)
+  sq_o:u64 = call(sr,sp,ss,son) {"function":"mrf_peek"}
+  ordinary:bool = compare.eq(sq_o,ssq)
+  branch ordinary visit(sr,so,sp,sq,ss,se,son,scn,ssq,ssum,sdone,sh,ordinary) check_cleanup(sr,so,sp,sq,ss,se,son,scn,ssq,ssum,sdone,sh)
+block check_cleanup(kr:readbuf,ko:mutbuf,kp:u64,kq:u64,ks:u64,ke:u64,kon:u64,kcn:u64,ksq:u64,ksum:u64,kdone:u64,kh:u64)
+  sq_c:u64 = call(kr,kq,ke,kcn) {"function":"mrf_peek"}
+  same:bool = compare.eq(sq_c,ksq)
+  not_o:bool = const() {"value":false}
+  branch same visit(kr,ko,kp,kq,ks,ke,kon,kcn,ksq,ksum,kdone,kh,not_o) malformed()
+block visit(vr:readbuf,vo:mutbuf,vp:u64,vq:u64,vs:u64,ve:u64,von:u64,vcn:u64,vseq:u64,vsum:u64,vdone:u64,vh:u64,vord:bool)
+  from_at:u64 = select(vord,vp,vq)
+  until:u64 = select(vord,vs,ve)
+  next:u64,bytes:u64 = call(vr,from_at,until,vord) {"function":"mrf_receipt"}
+  zero_v:u64 = const() {"value":0}
+  good:bool = compare.ne(next,zero_v)
+  branch good tally(vr,vo,vp,vq,vs,ve,von,vcn,vseq,vsum,vdone,vh,vord,next,bytes) malformed()
+block tally(tr:readbuf,to:mutbuf,tp:u64,tq:u64,ts:u64,te:u64,ton:u64,tcn:u64,tseq:u64,tsum:u64,tdone:u64,th:u64,tord:bool,tn:u64,tbytes:u64)
+  pnext:u64 = select(tord,tn,tp)
+  qnext:u64 = select(tord,tq,tn)
+  one:u64 = const() {"value":1}
+  zero_t:u64 = const() {"value":0}
+  o_step:u64 = select(tord,one,zero_t)
+  c_step:u64 = select(tord,zero_t,one)
+  o_left:u64 = int.sub.wrap(ton,o_step)
+  c_left:u64 = int.sub.wrap(tcn,c_step)
+  next_seq:u64 = int.add.wrap(tseq,one)
+  counted_o:u64 = int.add.wrap(tdone,o_step)
+  total:u64 = int.add.wrap(tsum,tbytes)
+  prime:u64 = const() {"value":1099511628211}
+  two:u64 = const() {"value":2}
+  up:u64 = int.mul.wrap(tbytes,two)
+  tagged:u64 = int.add.wrap(up,c_step)
+  mixed:u64 = bit.xor(th,tagged)
+  stamp:u64 = int.mul.wrap(mixed,prime)
+  jump loop(tr,to,pnext,qnext,ts,te,o_left,c_left,next_seq,total,counted_o,stamp)
+block finished(fr:readbuf,fo:mutbuf,fp:u64,fq:u64,fs:u64,fe:u64,fseq:u64,fsum:u64,fdone:u64,fh:u64)
+  hit_o:bool = compare.eq(fp,fs)
+  hit_c:bool = compare.eq(fq,fe)
+  exact:bool = bool.and(hit_o,hit_c)
+  branch exact publish(fo,fseq,fsum,fdone,fh) malformed()
+block publish(po:mutbuf,pseq:u64,psum:u64,pord:u64,ph:u64)
+  clean_done:u64 = int.sub.wrap(pseq,pord)
+  o0:u64 = const() {"value":0}
+  o8:u64 = const() {"value":8}
+  o16:u64 = const() {"value":16}
+  o24:u64 = const() {"value":24}
+  o32:u64 = const() {"value":32}
+  w0:u64 = call(po,o0,pord) {"function":"tr_put"}
+  w1:u64 = call(po,o8,clean_done) {"function":"tr_put"}
+  w2:u64 = call(po,o16,pseq) {"function":"tr_put"}
+  w3:u64 = call(po,o24,psum) {"function":"tr_put"}
+  w4:u64 = call(po,o32,ph) {"function":"tr_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+end
+
+fn mrf_peek(r:readbuf,p:u64,end:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,end:u64,n:u64)
+  zero:u64 = const() {"value":0}
+  full:u64 = const() {"value":24}
+  header_end:u64 = int.add.wrap(p,full)
+  safe:bool = compare.le(header_end,end)
+  some:bool = compare.ne(n,zero)
+  allowed:bool = bool.and(safe,some)
+  branch allowed read(r,p) unavailable()
+block read(rr:readbuf,rp:u64)
+  at:u64 = const() {"value":16}
+  seq:u64 = call(rr,rp,at) {"function":"mlj_fixed"}
+  ret(seq)
+block unavailable()
+  none:u64 = const() {"value":1281}
+  ret(none)
+end
+
+fn mrf_receipt(r:readbuf,p:u64,limit:u64,is_o:bool) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,limit:u64,is_o:bool)
+  width:u64 = call(r,p) {"function":"tr_read"}
+  lo:u64 = const() {"value":104}
+  hi:u64 = const() {"value":616}
+  eight:u64 = const() {"value":8}
+  base:u64 = int.add.wrap(p,eight)
+  a:bool = compare.ge(width,lo)
+  b:bool = compare.le(width,hi)
+  valid:bool = bool.and(a,b)
+  branch valid place(r,base,width,limit,is_o,lo) invalid()
+block place(pr:readbuf,pb:u64,pw:u64,pl:u64,pc:bool,plo:u64)
+  end:u64 = int.add.wrap(pb,pw)
+  within:bool = compare.le(end,pl)
+  head:u64 = int.add.wrap(pb,plo)
+  branch within classify(pr,pb,head,end,pc) invalid()
+block classify(cr:readbuf,cb:u64,ch:u64,ce:u64,cc:bool)
+  tag:u64 = call(cr,cb) {"function":"tr_read"}
+  mode:bool = call(tag) {"function":"mte_ordinary"}
+  same:bool = compare.eq(mode,cc)
+  branch same measure(cr,cb,ch,ce) invalid()
+block measure(mr:readbuf,mb:u64,mh:u64,me:u64)
+  bound:u64 = const() {"value":512}
+  z:u64 = const() {"value":0}
+  bcount:u64 = call(mr,mb,mh,me) {"function":"mlj_measure_at"}
+  nonzero:bool = compare.gt(bcount,z)
+  issue:bool = compare.le(bcount,bound)
+  ok:bool = bool.and(nonzero,issue)
+  branch ok good(me,bcount) invalid()
+block good(ge:u64,gb:u64)
+  ret(ge,gb)
+block invalid()
+  unusable:u64 = const() {"value":0}
+  ret(unusable,unusable)
+end

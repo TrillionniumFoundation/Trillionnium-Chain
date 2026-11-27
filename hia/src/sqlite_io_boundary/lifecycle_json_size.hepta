@@ -33,30 +33,37 @@ block short()
   ret(shortcode)
 end
 
-fn mlj_measure(mr:readbuf,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(measure)
-block measure(mr:readbuf,head:u64,len:u64)
+fn mlj_measure(r:readbuf,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,head:u64,len:u64)
+  zero:u64 = const() {"value":0}
+  bytes:u64 = call(r,zero,head,len) {"function":"mlj_measure_at"}
+  ret(bytes)
+end
+
+fn mlj_measure_at(mr:readbuf,origin:u64,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(measure)
+block measure(mr:readbuf,origin:u64,head:u64,len:u64)
   tail:u64 = int.sub.wrap(len,head)
   namebytes:u64 = call(mr,head,tail) {"function":"je_string_size"}
   utf8error:u64 = const() {"value":4294967280}
   utf8ok:bool = compare.ne(namebytes,utf8error)
-  branch utf8ok fields(mr,namebytes) malformed()
-block fields(fr:readbuf,nb:u64)
+  branch utf8ok fields(mr,origin,namebytes) malformed()
+block fields(fr:readbuf,fb:u64,nb:u64)
   attag:u64 = const() {"value":0}
-  tag:u64 = call(fr,attag) {"function":"tr_read"}
+  tag:u64 = call(fr,fb,attag) {"function":"mlj_fixed"}
   ab:u64 = call(tag) {"function":"mlj_action_size"}
   zero:u64 = const() {"value":0}
   known:bool = compare.gt(ab,zero)
-  option:u64 = call(fr) {"function":"mlj_options"}
+  option:u64 = call(fr,fb) {"function":"mlj_options"}
   valid_option:bool = compare.ne(option,zero)
   good:bool = bool.and(known,valid_option)
-  branch good lower(fr,nb,ab,option) malformed()
-block lower(lr:readbuf,ln:u64,la:u64,lp:u64)
-  counts:u64 = call(lr) {"function":"mlj_counts"}
+  branch good lower(fr,fb,nb,ab,option) malformed()
+block lower(lr:readbuf,lb:u64,ln:u64,la:u64,lp:u64)
+  counts:u64 = call(lr,lb) {"function":"mlj_counts"}
   zero_l:u64 = const() {"value":0}
   valid_l:bool = compare.ne(counts,zero_l)
-  branch valid_l total(lr,ln,la,lp,counts) malformed()
-block total(tr:readbuf,tn:u64,ta:u64,tp:u64,tc:u64)
-  ds:u64 = call(tr) {"function":"mlj_tail"}
+  branch valid_l total(lr,lb,ln,la,lp,counts) malformed()
+block total(tr:readbuf,tb:u64,tn:u64,ta:u64,tp:u64,tc:u64)
+  ds:u64 = call(tr,tb) {"function":"mlj_tail"}
   base:u64 = const() {"value":165}
   sum0:u64 = int.add.wrap(base,tn)
   sum1:u64 = int.add.wrap(sum0,ta)
@@ -67,6 +74,13 @@ block total(tr:readbuf,tn:u64,ta:u64,tp:u64,tc:u64)
 block malformed()
   invalid:u64 = const() {"value":0}
   ret(invalid)
+end
+
+fn mlj_fixed(r:readbuf,base:u64,rel:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,base:u64,rel:u64)
+  position:u64 = int.add.wrap(base,rel)
+  value:u64 = call(r,position) {"function":"tr_read"}
+  ret(value)
 end
 
 fn mlj_action_size(id:u64) -> (u64) effects(trap) entry(entry)
@@ -102,24 +116,24 @@ block unknown()
   ret(uz)
 end
 
-fn mlj_options(r:readbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf)
+fn mlj_options(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
   atflags:u64 = const() {"value":96}
-  flags:u64 = call(r,atflags) {"function":"tr_read"}
+  flags:u64 = call(r,origin,atflags) {"function":"mlj_fixed"}
   seven:u64 = const() {"value":7}
   legal:bool = compare.le(flags,seven)
-  branch legal size(r,flags) bad()
-block size(br:readbuf,bf:u64)
+  branch legal size(r,origin,flags) bad()
+block size(br:readbuf,bb:u64,bf:u64)
   one:u64 = const() {"value":1}
   two:u64 = const() {"value":2}
   four:u64 = const() {"value":4}
   key:u64 = const() {"value":22}
   deviceoff:u64 = const() {"value":24}
-  device:u64 = call(br,deviceoff,bf,one) {"function":"mlj_opt"}
+  device:u64 = call(br,bb,deviceoff,bf,one) {"function":"mlj_opt"}
   inodeoff:u64 = const() {"value":32}
-  inode:u64 = call(br,inodeoff,bf,two) {"function":"mlj_opt"}
+  inode:u64 = call(br,bb,inodeoff,bf,two) {"function":"mlj_opt"}
   requestoff:u64 = const() {"value":88}
-  request:u64 = call(br,requestoff,bf,four) {"function":"mlj_opt"}
+  request:u64 = call(br,bb,requestoff,bf,four) {"function":"mlj_opt"}
   zero:u64 = const() {"value":0}
   deviceok:bool = compare.ne(device,zero)
   inodeok:bool = compare.ne(inode,zero)
@@ -150,9 +164,9 @@ block bad()
   ret(badzero)
 end
 
-fn mlj_opt(r:readbuf,at:u64,flags:u64,bit:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,at:u64,flags:u64,bit:u64)
-  value:u64 = call(r,at) {"function":"tr_read"}
+fn mlj_opt(r:readbuf,origin:u64,at:u64,flags:u64,bit:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64,at:u64,flags:u64,bit:u64)
+  value:u64 = call(r,origin,at) {"function":"mlj_fixed"}
   current:u64 = bit.and(flags,bit)
   zero:u64 = const() {"value":0}
   has:bool = compare.ne(current,zero)
@@ -171,16 +185,16 @@ block absent(av:u64)
   ret(valid)
 end
 
-fn mlj_counts(r:readbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf)
+fn mlj_counts(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
   atlinked:u64 = const() {"value":40}
-  linked:u64 = call(r,atlinked) {"function":"tr_read"}
+  linked:u64 = call(r,origin,atlinked) {"function":"mlj_fixed"}
   athandle:u64 = const() {"value":48}
-  handle:u64 = call(r,athandle) {"function":"tr_read"}
+  handle:u64 = call(r,origin,athandle) {"function":"mlj_fixed"}
   atpending:u64 = const() {"value":56}
-  pending:u64 = call(r,atpending) {"function":"tr_read"}
+  pending:u64 = call(r,origin,atpending) {"function":"mlj_fixed"}
   atshm:u64 = const() {"value":64}
-  shm:u64 = call(r,atshm) {"function":"tr_read"}
+  shm:u64 = call(r,origin,atshm) {"function":"mlj_fixed"}
   one:u64 = const() {"value":1}
   cap:u64 = const() {"value":4294967295}
   linkedok:bool = compare.le(linked,one)
@@ -209,23 +223,23 @@ block bad()
   ret(bz)
 end
 
-fn mlj_tail(r:readbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf)
+fn mlj_tail(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
   zero:u64 = const() {"value":0}
   atseq:u64 = const() {"value":8}
-  seq:u64 = call(r,atseq) {"function":"tr_read"}
+  seq:u64 = call(r,origin,atseq) {"function":"mlj_fixed"}
   seqdigits:u64 = call(seq,zero) {"function":"value_integer_size"}
   seqsum:u64 = int.add.wrap(zero,seqdigits)
   atgen:u64 = const() {"value":16}
-  gen:u64 = call(r,atgen) {"function":"tr_read"}
+  gen:u64 = call(r,origin,atgen) {"function":"mlj_fixed"}
   gendigits:u64 = call(gen,zero) {"function":"value_integer_size"}
   gensum:u64 = int.add.wrap(seqsum,gendigits)
   athigh:u64 = const() {"value":72}
-  high:u64 = call(r,athigh) {"function":"tr_read"}
+  high:u64 = call(r,origin,athigh) {"function":"mlj_fixed"}
   highdigits:u64 = call(high,zero) {"function":"value_integer_size"}
   highsum:u64 = int.add.wrap(gensum,highdigits)
   atactual:u64 = const() {"value":80}
-  actual:u64 = call(r,atactual) {"function":"tr_read"}
+  actual:u64 = call(r,origin,atactual) {"function":"mlj_fixed"}
   actualdigits:u64 = call(actual,zero) {"function":"value_integer_size"}
   actualsum:u64 = int.add.wrap(highsum,actualdigits)
   ret(actualsum)
