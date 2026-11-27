@@ -1166,6 +1166,18 @@
       ]
     },
     {
+      "id": "data-availability/committee-definition",
+      "node_integration_complete": false,
+      "scope": "Original public DA transaction-batch committee descriptor construction on a bounded immutable typed frame; recomputed member definitions, exact key/order and checked u128 threshold; no committee ID, votes, authorization or production.",
+      "source": "hia/src/data_availability/committee_definition.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_committee_definition.py",
+        "hia/tests/rust_da_committee_definition_reference.rs",
+        "hia/tests/test_da_member_definition.py"
+      ]
+    },
+    {
       "id": "data-availability/member-definition",
       "node_integration_complete": false,
       "scope": "Original public DA member value constructor, full native u128 bounds, Dalek predicate and canonical Borsh definition hash; no membership, quorum, credentials or authorization.",
@@ -2572,6 +2584,7 @@
         "data-availability/chunk-commitments",
         "data-availability/chunk-inclusion-path",
         "data-availability/chunk-bound-inclusion",
+        "data-availability/committee-definition",
         "data-availability/member-definition",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",

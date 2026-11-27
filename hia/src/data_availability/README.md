@@ -381,3 +381,43 @@ uses the actual frozen DA constructor and Borsh library with public-only
 fixture keys, `None` and `Some(empty)`, upper-half and maximum weights,
 over-field encodings, and the exact shared 1 MiB result. The one-byte-larger
 Rust result is not a native-capability claim.
+
+## DA transaction-batch committee descriptor value
+
+The [bounded constructor](committee_definition.hepta) mirrors the public
+`DaCommitteeDescriptorV1::new_transaction_batch` on an immutable private loan.
+The loan is the original Borsh `ProtocolContextV1`, LE `u64` epoch, Borsh
+`Vec<DaMemberV1>`, and the original five bounds (`u32,u64,u64,u32,u32`).
+The descriptor's schema 1, transaction namespace 0 and `u128` threshold
+are supplied by the native constructor, never taken from the caller.
+
+For each member the native code validates the scheme and nonzero weight,
+recomputes the exact Borsh body hash, then checks the actual compressed
+Ed25519 point and weak-point predicate. Only then does it compare the
+computed-and-matched definition hash to the preceding hash in byte order,
+check key uniqueness by the complete raw public key, and checked-add the
+member's weight. It never sorts the input. After all rows it separately
+checks doubling, then computes `floor(2W/3)+1` from the full-width total.
+An immutable frame makes the original repeat validation deterministic;
+context version, context chain ID, then nonzero descriptor bounds are
+checked in original order after the member pass and doubling check.
+
+The profile accepts up to 32 members and 1,048,557 input bytes;
+the original Borsh descriptor is 19 bytes longer, within the shared
+1 MiB result loan. The call reserves 141,536 bytes of scratch (the
+existing point/hash work followed by the raw-key uniqueness table). In
+this private scope, 100/102/103 are framing, capacity and internal
+failures; 201–210 distinguish original invalid definition, invalid
+point, weak point, empty committee, order/duplicate, sum overflow,
+doubling overflow, context version, chain ID, and descriptor bounds.
+Failure never publishes result bytes. Input, spare output and scratch
+tail remain unchanged.
+
+[The offline differential](../../tests/test_da_committee_definition.py)
+compares the unchanged locked Rust constructor and Borsh serialization
+and typed results with both stock native emitters, including deterministic
+public-only generated encodings, fault ordering and a saturated 1 MiB
+result. Rust also runs the 33-member and one-byte-larger result controls
+outside this private native profile. This component does not compute
+committee ID, validate an externally supplied threshold, authenticate a
+committee or check votes, signatures, authorization, or production state.
