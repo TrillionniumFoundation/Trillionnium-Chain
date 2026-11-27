@@ -1,0 +1,40 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_store_post_open_path
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  extent:usize = buffer.len(mem)
+  required:usize = const() {"value":8192}
+  sized:bool = compare.eq(extent,required)
+  branch sized route(raw,mem,work) refused()
+block route(rr:readbuf,rm:mutbuf,rw:mutbuf)
+  zero:u64 = const() {"value":0}
+  stage:u64 = call(rm,zero) {"function":"cp_get"}
+  initial:bool = compare.eq(stage,zero)
+  branch initial request(rr,rm,rw) response(rr,rm,stage)
+block request(qr:readbuf,qm:mutbuf,qw:mutbuf)
+  status:u32 = call(qr,qm,qw) {"function":"spp_preflight"}
+  ret(status)
+block response(sr:readbuf,sm:mutbuf,ss:u64)
+  expected:usize = const() {"value":24}
+  actual:usize = buffer.len(sr)
+  scalar:bool = compare.eq(actual,expected)
+  one:u64 = const() {"value":1}
+  pending:bool = compare.eq(ss,one)
+  valid:bool = bool.and(scalar,pending)
+  branch valid observed(sr,sm) refused()
+block observed(oraw:readbuf,om:mutbuf)
+  from:u64 = const() {"value":0}
+  scratch:u64 = const() {"value":64}
+  width:u64 = const() {"value":24}
+  copied:u64 = call(oraw,from,om,scratch,width) {"function":"cp_copy"}
+  err:u64 = call(om,scratch) {"function":"cp_get"}
+  accepted:bool = call(om,err) {"function":"spp_regular"}
+  terminal:u64 = const() {"value":2}
+  flag:u64 = call(om,from,terminal) {"function":"cp_put"}
+  branch accepted okay() refused()
+block okay()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block refused()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+end

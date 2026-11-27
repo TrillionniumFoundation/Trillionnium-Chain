@@ -3847,6 +3847,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-native-post-open-path",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private native original final regular-file lstat after actual successful read-only SQLite open and before busy timeout or transaction. Refusal closes the retained SQLite handle without issuing SQL. No post-open sidecar check, pathname/descriptor identity, production ownership, or rollout.",
+      "sources": [
+        "hia/platform/service_settlement/store_post_open_path.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_store_path_preflight.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_schema_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

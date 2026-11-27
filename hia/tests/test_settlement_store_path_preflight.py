@@ -1,14 +1,16 @@
 """Original and native final-file/sidecar gate against owned disposable paths."""
 from contextlib import ExitStack
+import ctypes
 import json
 import os
+import struct
 from pathlib import Path
 import sys
 import tempfile
 import unittest
 
-from hia.platform.service_settlement.schema_fixture_host import native_store_header
-from hia.platform.state_import_sqlite.qualification_host import sealed_library
+from hia.platform.service_settlement.schema_fixture_host import native_post_open_path, native_store_header
+from hia.platform.state_import_sqlite.qualification_host import bind, sealed_library
 from hia.platform.task_kernel.build_provider import ProviderBuild
 from hia.platform.task_kernel.readback_provider import Reader, check_provider
 from hia.tests.native_support import NativeModule
@@ -32,6 +34,7 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                           "reader": OWNER / "schema_read.hepta",
                           "path_gate": OWNER / "store_path_preflight.hepta",
                           "header_reader": OWNER / "store_header_read.hepta",
+                          "post_open_path": OWNER / "store_post_open_path.hepta",
                       }.items()}
             owned = tmp / "owned"
             owned.mkdir(mode=0o700)
@@ -39,9 +42,10 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             execute([original, "seed", db])
             prior = db.read_bytes()
 
-            def observed(path, *, hold=False, header=False):
+            def observed(path, *, hold=False, header=False, post_open=False):
                 request = {name: [str(module.library), module.artifact_sha256]
-                           for name, module in images.items() if name != "header_reader" or header}
+                           for name, module in images.items()
+                           if (name != "header_reader" or header) and (name != "post_open_path" or post_open)}
                 request.update(database=str(path), directory=str(owned),
                                provider=[str(provider), proof.checked[str(provider)]["sha256"]],
                                writer=str(original) if hold else None)
@@ -56,8 +60,9 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                 return result.stdout.strip()
 
             def refusals(path, code, examined):
-                actual = observed(path, header=True)
+                actual = observed(path, header=True, post_open=True)
                 self.assertNotIn("header_checks", actual)
+                self.assertNotIn("post_open_checks", actual)
                 self.assertEqual((actual["status"], actual["held"], actual["released"], actual["transcript"]),
                                  (code, False, 0, []), actual)
                 self.assertEqual(actual["path_checks"], [[i, 15, 24] for i in range(1, examined+1)])
@@ -65,10 +70,14 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             self.assertEqual(original_result(db), b"VALID")
             # The real provider must transfer all 20 bytes, not merely matching the
             # two format bytes that the retained HIA reader interprets.
-            head_image = images["header_reader"]
-            with sealed_library(str(head_image.library), head_image.artifact_sha256) as header_image:
-                with sealed_library(str(provider), proof.checked[str(provider)]["sha256"]) as header_provider:
-                    actual_header, header_trace = native_store_header(os.fsencode(db), header_image, header_provider)
+            def loaded(name):
+                image = images[name]
+                return stack.enter_context(sealed_library(str(image.library), image.artifact_sha256))
+
+            # Keep all sealed descriptors distinct and alive across these direct calls.
+            header_image, post_gate = loaded("header_reader"), loaded("post_open_path")
+            lib = stack.enter_context(sealed_library(str(provider), proof.checked[str(provider)]["sha256"]))
+            actual_header, header_trace = native_store_header(os.fsencode(db), header_image, lib)
             self.assertEqual(actual_header, prior[:20])
             self.assertEqual(header_trace, [[17, 24], [29, 44], [18, 24]])
             native = observed(db, hold=True, header=True)
@@ -78,6 +87,10 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             self.assertEqual(native["path_checks"], [[i, 15, 24] for i in range(1, 5)])
             self.assertEqual(native["transcript"][0], [1, 2, 24])
             self.assertEqual(native["transcript"][-1], [15, 3, 24])
+            post = observed(db, hold=True, header=True, post_open=True)
+            self.assertEqual(native["transcript"][1][:2], [2, 4])  # original sqlite3_busy_timeout
+            self.assertEqual(post, {**native, "post_open_checks": [[15, 24]],
+                                    "transcript": [native["transcript"][0], [1, 15, 24], *native["transcript"][1:]]})
 
             for stage, suffix in enumerate(("-wal", "-shm", "-journal"), 2):
                 with self.subTest(suffix=suffix):
@@ -93,6 +106,27 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             for case in (missing, not_file):
                 self.assertEqual(original_result(case), b"StoreFailure")
                 refusals(case, 100, 1)
+            # Isolated refusal cleanup: use a separate real read-only SQLite handle
+            # and observe two independent static paths. The end-to-end fixture
+            # always passes its own original database path. No pathname changes.
+            ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+            fetch = bind(lib, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
+            make = bind(lib, "trnm_task_provider_new", ptr)
+            reset = bind(lib, "trnm_task_provider_reset", u64, ptr)
+            free = bind(lib, "trnm_task_provider_free", None, ptr)
+            uri = (db.as_uri() + "?mode=ro").encode("ascii")
+            opening = ctypes.create_string_buffer(struct.pack("<QQ", 16810049, len(uri)) + uri)
+            for case in (missing, not_file):
+                owner = make()
+                self.assertTrue(owner)
+                try:
+                    response = ctypes.create_string_buffer(24)
+                    self.assertEqual(fetch(owner, 2, opening, len(opening) - 1, response, 24), 24)
+                    self.assertEqual(native_post_open_path(os.fsencode(case), post_gate, fetch, owner, response.raw),
+                                     (100, [[15, 24], [3, 24]]))
+                    self.assertEqual(reset(owner), 0)
+                finally:
+                    free(owner)
             for width in (0, 1, 19):
                 with self.subTest(short=width):
                     short = owned / f"short-{width}.db"

@@ -90,7 +90,39 @@ def native_store_header(path, image, provider):
         free(owner)
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None):
+def native_post_open_path(path, image, fetch, owner, open_response):
+    # Consume the actual successful scalar from this retained SQLite owner.
+    if len(open_response) != 24:
+        raise ValueError("Post-open observation needs an exact SQLite response")
+    code, capability, spare = struct.unpack("<QQQ", open_response)
+    if code or not capability or spare:
+        raise ValueError("Post-open observation needs an actual live SQLite capability")
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    step = bind(image, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    state, work = (ctypes.create_string_buffer(8192) for _ in range(2))
+    response = ctypes.create_string_buffer(24)
+    borrowed = ctypes.create_string_buffer(path)
+    status = step(borrowed, len(path), state, len(state), work, len(work))
+    phase, size = struct.unpack_from("<QQ", state)
+    if status != 198 or phase != 1 or not 25 <= size <= 4120:
+        raise ValueError("Post-open gate requires one native lstat request")
+    amount = fetch(owner, 15, ctypes.addressof(state) + 256, size, response, len(response))
+    if amount != 24:
+        raise ValueError("Post-open lstat response has inconsistent framing")
+    decision = step(response, amount, state, len(state), work, len(work))
+    if decision not in (0, 100) or struct.unpack_from("<Q", state)[0] != 2:
+        raise ValueError("Unexpected result of native post-open lstat")
+    observations = [[15, amount]]
+    if decision:
+        handle = ctypes.create_string_buffer(struct.pack("<Q", capability))
+        closed = fetch(owner, 3, handle, 8, response, len(response))
+        if closed != 24 or response.raw != bytes(24):
+            raise ValueError("SQLite close on post-open refusal did not succeed")
+        observations.append([3, closed])
+    return decision, observations
+
+
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -141,6 +173,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None):
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
     projected = metadata or operation or marker or joined
+    if post_open is not None and (gate is None or header_reader is None):
+        raise ValueError("Post-open path requires the sealed native pre-open gate and header")
     if header_reader is not None and gate is None:
         raise ValueError("Native store header requires original pathname admission")
     path_checks = header_checks = None
@@ -199,6 +233,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None):
     if not owner:
         raise MemoryError("Provider allocation failed")
     transcript = []
+    post_open_checks = None
     held = False
     projection = None
     replay_calls = 0
@@ -294,6 +329,14 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None):
                 raw = b""
             else:
                 raw = response.raw[:amount]
+            if post_open is not None and (phase, op) == (1, 2):
+                if len(raw) != 24:
+                    raise ValueError("Post-open path needs exact SQLite open framing")
+                if struct.unpack_from("<Q", raw)[0] == 0:
+                    status, post_open_checks = native_post_open_path(path, post_open, fetch, owner, raw)
+                    transcript.extend([phase, opcode, size] for opcode, size in post_open_checks)
+                    if status:
+                        break
             if request.get("writer") and not held and (phase, op) == (hold_phase, 7):
                 if len(raw) != 24 or struct.unpack_from("<Q", raw)[0] != 100:
                     raise ValueError("Original writer must interleave after actual SQLite ROW")
@@ -309,6 +352,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None):
             result["path_checks"] = path_checks
         if header_checks is not None:
             result["header_checks"] = header_checks
+        if post_open_checks is not None:
+            result["post_open_checks"] = post_open_checks
         if replay:
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
@@ -332,7 +377,8 @@ def main():
                                  for key in ("uri", "reader", "provider"))
         gate = owners.enter_context(sealed_library(*message["path_gate"])) if "path_gate" in message else None
         header_reader = owners.enter_context(sealed_library(*message["header_reader"])) if "header_reader" in message else None
-        print(json.dumps(run(message, uri, reader, provider, gate, header_reader)))
+        post_open = owners.enter_context(sealed_library(*message["post_open_path"])) if "post_open_path" in message else None
+        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open)))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_store_path_preflight
 fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  status:u32 = call(raw,mem,work) {"function":"spp_preflight"}
+  ret(status)
+end
+
+fn spp_preflight(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
   mlen:usize = buffer.len(mem)
   required:usize = const() {"value":8192}
   enough:bool = compare.eq(mlen,required)
@@ -29,15 +35,7 @@ block response(sr:readbuf,sm:mutbuf,ss:u64)
   main:bool = compare.eq(ss,one)
   branch main initial(sm,errno) sidecar(sm,ss,errno)
 block initial(im:mutbuf,ie:u64)
-  ok:u64 = const() {"value":0}
-  mode_at:u64 = const() {"value":72}
-  mode:u64 = call(im,mode_at) {"function":"cp_get"}
-  mask:u64 = const() {"value":61440}
-  regular:u64 = const() {"value":32768}
-  kind:u64 = bit.and(mode,mask)
-  exists:bool = compare.eq(ie,ok)
-  file:bool = compare.eq(kind,regular)
-  accepted:bool = bool.and(exists,file)
+  accepted:bool = call(im,ie) {"function":"spp_regular"}
   side:u64 = const() {"value":2}
   branch accepted suffix(im,side) refused()
 block sidecar(cm:mutbuf,cs:u64,ce:u64)
@@ -129,4 +127,18 @@ block occupied()
 block refused()
   failed:u32 = const() {"value":100}
   ret(failed)
+end
+
+fn spp_regular(mem:mutbuf,errno:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,errno:u64)
+  ok:u64 = const() {"value":0}
+  mode_at:u64 = const() {"value":72}
+  mode:u64 = call(mem,mode_at) {"function":"cp_get"}
+  mask:u64 = const() {"value":61440}
+  regular:u64 = const() {"value":32768}
+  kind:u64 = bit.and(mode,mask)
+  exists:bool = compare.eq(errno,ok)
+  file:bool = compare.eq(kind,regular)
+  accepted:bool = bool.and(exists,file)
+  ret(accepted)
 end
