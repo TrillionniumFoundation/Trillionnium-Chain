@@ -388,5 +388,18 @@ block entry(profile:u64)
   one:u64 = const() {"value":1}
   is_variable:bool = compare.eq(profile,variable)
   rows:u64 = select(is_variable,one,limit)
-  ret(rows)
+  var_pair:u64 = const() {"value":7}
+  is_var_pair:bool = compare.eq(profile,var_pair)
+  result:u64 = select(is_var_pair,pair,rows)
+  ret(result)
+end
+
+fn hfs_variable(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  single:u64 = const() {"value":6}
+  pair:u64 = const() {"value":7}
+  is_one:bool = compare.eq(profile,single)
+  is_two:bool = compare.eq(profile,pair)
+  variable:bool = bool.or(is_one,is_two)
+  ret(variable)
 end

@@ -28,13 +28,13 @@ class FixtureReplay:
     engine: PublicEngine
     calls: _Calls
     same_block: bool = False
-    variable_first: bool = False
+    variable_rows: int = 0
     parent: int | None = None
     trust: bytes | None = None
     last_parent_root: bytes | None = None
 
     @classmethod
-    def open(cls, stack, build, digest, *, same_block=False, variable_first=False):
+    def open(cls, stack, build, digest, *, same_block=False, variable_rows=0):
         build = Path(build)
         meta = json.loads((build / "build.json").read_bytes())
         if meta["artifact"]["sha256"] != digest:
@@ -42,7 +42,7 @@ class FixtureReplay:
         calls = _Calls()
         image = stack.enter_context(sealed_library(build / "settlement-engine.so", digest))
         engine = PublicEngine(build, calls, observed_image=(image._name, meta["artifact"]))
-        session = cls(engine, calls, same_block, variable_first)
+        session = cls(engine, calls, same_block, variable_rows)
         stack.callback(session.close)
         return session
 
@@ -52,11 +52,11 @@ class FixtureReplay:
 
     def apply(self, request):
         before = self.calls.applies
-        if self.variable_first:
+        if self.variable_rows:
             if not 40 <= len(request) <= 20642:
                 raise ValueError("Wrong bounded variable replay input")
             seq, trust_n, execution_n, command_n, height = struct.unpack_from("<5Q", request)
-            if (seq != 1 or before != 0 or not 74 <= trust_n <= 8160
+            if (not 1 <= seq <= self.variable_rows or seq != before + 1 or not 74 <= trust_n <= 8160
                     or not 154 <= execution_n <= 4250 or not 1 <= command_n <= 8192
                     or len(request) != 40 + trust_n + execution_n + command_n):
                 raise ValueError("Invalid length-delimited variable replay request")
@@ -117,7 +117,7 @@ class FixtureReplay:
                     return b""
                 state = self.engine.view("bytes_view", copied)
                 expected_state = (1196, 2172) if self.same_block else (1196, 2145, 3185, 4870)
-                state_extent = (111 <= len(state) <= 16384 if self.variable_first
+                state_extent = (111 <= len(state) <= 16384 if self.variable_rows
                                 else len(state) == expected_state[seq - 1])
                 if (len(operation_id), len(root)) != (32, 32) or not state_extent:
                     return b""

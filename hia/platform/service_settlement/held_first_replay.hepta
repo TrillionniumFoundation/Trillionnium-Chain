@@ -165,8 +165,7 @@ block state_frame(sf_r:readbuf,sf_m:mutbuf,sf_w:mutbuf,sf_p:u64)
   sf_norm:usize = select(sf_single,sf_first,sf_rest)
   sf_req:usize = select(sf_same,sf_same_extent,sf_norm)
   sf_fixed:bool = compare.eq(sf_n,sf_req)
-  sf6:u64 = const() {"value":6}
-  sf_variable:bool = compare.eq(sf_cap,sf6)
+  sf_variable:bool = call(sf_cap) {"function":"hfs_variable"}
   sf_lo:usize = const() {"value":135}
   sf_hi:usize = const() {"value":16408}
   sf_ge:bool = compare.ge(sf_n,sf_lo)
@@ -283,8 +282,7 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   e:bool = compare.eq(en,right_exec)
   f:bool = compare.eq(an,right_cmd)
   ab:bool = bool.and(a,b)
-  w6:u64 = const() {"value":6}
-  variable:bool = compare.eq(cap_wire,w6)
+  variable:bool = call(cap_wire) {"function":"hfs_variable"}
   fixed:bool = bool.and(d,e)
   exact:bool = bool.and(fixed,f)
   bounded:bool = call(cn,en,an) {"function":"hfv_width"}
@@ -379,13 +377,12 @@ block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_la
   pa_normal:bool = bool.and(pa_step,pa_progress)
   pa_exact:bool = select(pa_same,pa_equal,pa_normal)
   pa_good:bool = bool.and(pa_match,pa_exact)
-  pa6:u64 = const() {"value":6}
-  pa_var:bool = compare.eq(pa_mode,pa6)
-  branch pa_var variable_parent(pa_r,pa_m,pa_w,pa_row,pa_last,pa_len) fixed_parent(pa_r,pa_m,pa_w,pa_row,pa_last,pa_len,pa_good)
+  pa_var:bool = call(pa_mode) {"function":"hfs_variable"}
+  branch pa_var variable_parent(pa_r,pa_m,pa_w,pa_row,pa_first,pa_last,pa_len) fixed_parent(pa_r,pa_m,pa_w,pa_row,pa_last,pa_len,pa_good)
 block fixed_parent(fp_r:readbuf,fp_m:mutbuf,fp_w:mutbuf,fp_row:u64,fp_last:bool,fp_len:u64,fp_good:bool)
   branch fp_good terminal(fp_r,fp_m,fp_w,fp_row,fp_last,fp_len) refused()
-block variable_parent(vp_r:readbuf,vp_m:mutbuf,vp_w:mutbuf,vp_row:u64,vp_last:bool,vp_len:u64)
-  vp_good:bool = call(vp_r,vp_m,vp_w) {"function":"hfv_parent"}
+block variable_parent(vp_r:readbuf,vp_m:mutbuf,vp_w:mutbuf,vp_row:u64,vp_first:bool,vp_last:bool,vp_len:u64)
+  vp_good:bool = call(vp_r,vp_m,vp_w,vp_first) {"function":"hfv_parent"}
   branch vp_good terminal(vp_r,vp_m,vp_w,vp_row,vp_last,vp_len) refused()
 block terminal(te_r:readbuf,te_m:mutbuf,te_w:mutbuf,te_row:u64,te_last:bool,te_len:u64)
   branch te_last tail(te_r,te_m,te_w,te_row,te_len) save(te_r,te_m,te_w,te_row,te_len)
@@ -414,8 +411,7 @@ block save(sv_r:readbuf,sv_m:mutbuf,sv_w:mutbuf,sv_row:u64,sv_len:u64)
 block request(req_m:mutbuf,req_w:mutbuf,req_row:u64,req_len:u64)
   req_profile_at:u64 = const() {"value":349024}
   req_profile:u64 = call(req_m,req_profile_at) {"function":"cp_get"}
-  req6:u64 = const() {"value":6}
-  req_variable:bool = compare.eq(req_profile,req6)
+  req_variable:bool = call(req_profile) {"function":"hfs_variable"}
   branch req_variable variable_request(req_m,req_w,req_row,req_len) fixed_request(req_m,req_w,req_row,req_len)
 block variable_request(vq_m:mutbuf,vq_w:mutbuf,vq_row:u64,vq_len:u64)
   vq_status:u32 = call(vq_m,vq_w,vq_row,vq_len) {"function":"hfv_request"}
@@ -474,8 +470,7 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_profile:bool = bool.or(vh_fourcase,vh_same)
   vh_plus:usize = int.add.wrap(vh_width,vh_extra)
   vh_fixed:usize = select(vh_profile,vh_plus,vh_width)
-  vh6:u64 = const() {"value":6}
-  vh_variable:bool = compare.eq(vh_mode,vh6)
+  vh_variable:bool = call(vh_mode) {"function":"hfs_variable"}
   vh_state_at:u64 = const() {"value":349008}
   vh_state:u64 = call(vm0,vh_state_at) {"function":"cp_get"}
   vh_head:u64 = const() {"value":72}
@@ -483,7 +478,16 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_dynamic:usize = int.cast(vh_total) {"mode":"wrap"}
   vh_need:usize = select(vh_variable,vh_dynamic,vh_fixed)
   vh_actual:usize = buffer.len(vr0)
-  vh_shaped:bool = compare.eq(vh_actual,vh_need)
+  vh_exact:bool = compare.eq(vh_actual,vh_need)
+  vh_var_pair:u64 = const() {"value":7}
+  vh_pair:bool = compare.eq(vh_mode,vh_var_pair)
+  vh_intermediate:bool = bool.and(vh_pair,vh_first)
+  vh_min:usize = const() {"value":183}
+  vh_max:usize = const() {"value":16456}
+  vh_above:bool = compare.ge(vh_actual,vh_min)
+  vh_below:bool = compare.le(vh_actual,vh_max)
+  vh_bounded:bool = bool.and(vh_above,vh_below)
+  vh_shaped:bool = select(vh_intermediate,vh_bounded,vh_exact)
   branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_width,vh_profile) refused()
 block replay_shape(vs_r:readbuf,vs_m:mutbuf,vs_a:u64,vs_n:u64,vs_len:usize,vs_ex:bool)
   branch vs_ex compare_engine_parent(vs_r,vs_m,vs_a,vs_n,vs_len) compare_replay(vs_r,vs_m,vs_a,vs_n)
@@ -566,20 +570,27 @@ block entry(c:u64,e:u64,a:u64)
   ret(allowed)
 end
 
-fn hfv_parent(r:readbuf,m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,m:mutbuf,w:mutbuf)
+fn hfv_parent(r:readbuf,m:mutbuf,w:mutbuf,first:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,w:mutbuf,first:bool)
+  branch first genesis(r,m,w) preceding(r,m,w)
+block preceding(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  previous:u64 = const() {"value":354000}
+  exec_len_at:u64 = const() {"value":248}
+  extent:u64 = call(pm,exec_len_at) {"function":"cp_get"}
+  jump compare(pr,pm,pw,previous,extent)
+block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf)
   cbase:u64 = const() {"value":8192}
   cb:u64 = const() {"value":8226}
   cn_at:u64 = const() {"value":104}
   en_at:u64 = const() {"value":248}
-  cn:u64 = call(m,cn_at) {"function":"cp_get"}
-  en:u64 = call(m,en_at) {"function":"cp_get"}
+  cn:u64 = call(gm,cn_at) {"function":"cp_get"}
+  en:u64 = call(gm,en_at) {"function":"cp_get"}
   ce:u64 = int.add.wrap(cbase,cn)
-  ge:u64 = call(m,cb,ce) {"function":"srci_context"}
+  ge:u64 = call(gm,cb,ce) {"function":"srci_context"}
   size:u64 = const() {"value":40}
   avail:u64 = call(ge,ce,size) {"function":"srci_take"}
   valid:bool = compare.le(avail,ce)
-  branch valid compare(r,m,w,ge,en) bad()
+  branch valid compare(gr,gm,gw,ge,en) bad()
 block compare(cr:readbuf,cm:mutbuf,cw:mutbuf,cg:u64,cn2:u64)
   exec:u64 = const() {"value":140000}
   ext:u64 = const() {"value":80}

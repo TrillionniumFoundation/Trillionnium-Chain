@@ -469,3 +469,11 @@ and command to the same sealed Engine. HIA compares complete state, actual
 receipt fields and original roots before SQLite close. Earlier profiles
 keep their original contracts. This finite test does not establish external
 Order authority or general native replay.
+
+The separate two-row variable-width profile advances the same sealed Engine
+through two actual consecutive original AdmitReceipt operations. Its second
+execution references the proved first receipt's height and block ID, and the
+intermediate Engine root must match that receipt before the next SQLite row.
+After the second step the complete canonical Engine state must equal the
+typed, root-checked durable state. This profile does not allow an empty
+interval, same-block commits, another command kind or production authority.

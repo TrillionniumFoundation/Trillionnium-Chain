@@ -3587,6 +3587,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-variable-pair-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite two-successor held replay of genuine original consecutive AdmitReceipt transitions with bounded measured configuration/execution/command/state widths, exact original per-row coordinates/IDs/roots and final canonical original state through one sealed Engine. No general replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_variable_pair_replay.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/test_settlement_held_variable_pair_replay.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-variable-first-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,
