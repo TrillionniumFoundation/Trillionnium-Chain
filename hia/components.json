@@ -19008,6 +19008,50 @@
         ],
         "source": "src/state_import/incremental_delta_commitment.hepta"
       }
+    ],
+    "src/data_availability/chunk_commitments.hepta": [
+      {
+        "functions": [
+          "research_utf8"
+        ],
+        "source": "src/research_protocol/canonical.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "dc_copy"
+        ],
+        "source": "src/state_import/incremental_delta_commitment.hepta"
+      },
+      {
+        "functions": [
+          "dab_copy32"
+        ],
+        "source": "src/data_availability/batch_author_transcript.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"

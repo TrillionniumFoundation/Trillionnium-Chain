@@ -238,3 +238,37 @@ with generated synthetic item bytes and a public-only fixture key. It
 does not sign or verify signatures, interpret statement hashes as trust,
 validate membership or quota on a supplied envelope, or activate a node
 or storage path.
+
+## DA chunk coordinate and byte commitments
+
+The [private chunk commitment](chunk_commitments.hepta) accepts an
+original Borsh `DaChunkCoordinateV1` followed immediately by the
+Borsh byte vector (`u32` little-endian length and its exact bytes).
+Both length-prefixed fields in the coordinate and the trailing vector
+must fit the loan exactly. The chain text must be well-formed UTF-8
+for typed Borsh decoding; no context, namespace, policy or membership
+validation is inferred from these bytes. Chunk bytes must be nonempty,
+and the coordinate's actual `u64` byte-length claim must equal the
+vector payload length.
+
+The native call computes SHA-256 with the original Borsh string
+domain prefix for each digest. For ChunkId it hashes the exact coordinate
+under `trnm.portable.v2.da-chunk-id.v1`; for bytes it hashes the vector,
+including the vector's length, under
+`trnm.portable.v2.da-chunk-bytes.v1`. It writes the two 32-byte
+commitments in that order only once both are computed. No externally
+checked digest is used. The fixed profile permits a complete loan of
+at most 1 MiB, requires 1,296 scratch bytes and 64 result bytes, and
+leaves the immutable input and spare result bytes untouched. Status
+6 is the length/empty-chunk refusal; 100/102/103 are private frame,
+capacity and hash failure. Refusal makes no result write.
+
+[Independent original comparisons](../../tests/test_da_chunk_commitments.py)
+build real unsigned batches in the frozen Rust crate, obtain each chunk
+from its public accessor, and compare native ChunkId to the public Rust
+value and native byte digest to Rust's original serialized field. The
+private original constructor is not exposed to the test caller; malformed
+and capacity probes are explicitly native-only controls. Exact 1 MiB
+is compared under both fixed emitters; 1 MiB plus one is an original-only
+control. This surface does not validate any Merkle path, certificate,
+signature, storage, retrieval, repair right, or node-accepted authority.

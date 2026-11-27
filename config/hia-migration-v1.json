@@ -1131,6 +1131,18 @@
       ]
     },
     {
+      "id": "data-availability/chunk-commitments",
+      "node_integration_complete": false,
+      "scope": "Original DA chunk identity and exact Borsh payload hash from one immutable bounded loan; evidenced by public Rust unsigned batch chunk construction and original serialization only, no Merkle, storage, repair, or authority.",
+      "source": "hia/src/data_availability/chunk_commitments.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_chunk_commitments.py",
+        "hia/tests/rust_da_chunk_commitments_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2522,6 +2534,7 @@
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",
+        "data-availability/chunk-commitments",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",
