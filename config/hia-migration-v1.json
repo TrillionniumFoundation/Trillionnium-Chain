@@ -3781,6 +3781,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-live-variable-linear-cursor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Actual original linear measured-width AdmitReceipt stream with a verified bounded row and marker count, generic cursor, exact per-operation prefix/Engine roots and close-before-output. No other commands, generic recovery or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_cursor_variable_linear_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_linear_replay.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-rollup-cursor",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -4,7 +4,12 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut fixture = Harness::new();
     if let Some(profile) = std::env::args().nth(1) {
-        if profile == "six-admits" {
+        if ["six-admits", "short-linear-admits", "utf8-linear-admits"].contains(&profile.as_str()) {
+            match profile.as_str() {
+                "short-linear-admits" => fixture.trust.context.chain_id = "x".into(),
+                "utf8-linear-admits" => fixture.trust.context.chain_id = "原生區塊🧪".into(),
+                _ => (),
+            }
             let mut state = engine::initial_state(&fixture.trust);
             let mut out = std::io::stdout().lock();
             let mut frame = |field: Vec<u8>| -> Result<(), Box<dyn std::error::Error>> {

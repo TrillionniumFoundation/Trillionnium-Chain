@@ -537,3 +537,9 @@ interval against independently recomputed original receipt-prefix and
 sealed Engine state roots, then checks complete terminal state and closes
 before exposing output. This does not broaden the older finite profiles
 or confer replay or production authority.
+
+The separate measured linear replay entry uses the verified original row
+count and admits only consecutive AdmitReceipt operations in its bounded
+5–8 capacity. Marker count and state/journal prefixes are checked before
+close, including the ordinary fourth receipt (not a Settle). It leaves the
+shorter and mixed entries, and all writer and recovery authority, unchanged.

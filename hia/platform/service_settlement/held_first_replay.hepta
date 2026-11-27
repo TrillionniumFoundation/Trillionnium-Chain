@@ -37,7 +37,7 @@ block special(sp_r:readbuf,sp_m:mutbuf,sp_w:mutbuf,sp_p:u64,sp_phase:u64)
   sp_five:u64 = const() {"value":5}
   sp_driven:bool = call(sp_mode) {"function":"hfs_settled"}
   sp_same:bool = compare.eq(sp_mode,sp_five)
-  sp_linear:bool = call(sp_mode) {"function":"hfs_linear3"}
+  sp_linear:bool = call(sp_mode) {"function":"hfs_linear_profile"}
   sp_legacy:bool = bool.or(sp_driven,sp_same)
   sp_settled:bool = bool.or(sp_legacy,sp_linear)
   branch sp_settled intercept(sp_r,sp_m,sp_w,sp_p,sp_phase) route_row(sp_r,sp_m,sp_w,sp_p,sp_phase)
@@ -54,7 +54,7 @@ block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
   it_last_field:u64 = const() {"value":12}
   it_limit_at:u64 = const() {"value":349024}
   it_limit_raw:u64 = call(it_m,it_limit_at) {"function":"cp_get"}
-  it_limit:u64 = call(it_limit_raw) {"function":"hfs_limit"}
+  it_limit:u64 = call(it_m,it_limit_raw) {"function":"hfs_actual_limit"}
   it_a:bool = compare.eq(it_ph,it_marker)
   it_b:bool = compare.eq(it_stage,it_mark_stage)
   it_c:bool = compare.eq(it_field,it_last_field)
@@ -133,10 +133,12 @@ block compare_intervals(cv_m:mutbuf,cv_w:mutbuf,cv_next:u32)
   cv_same:bool = compare.eq(cv_cap,cv_five)
   branch cv_same compare_same(cv_m,cv_w,cv_next) choose_interval(cv_m,cv_w,cv_next,cv_cap)
 block choose_interval(ci_m:mutbuf,ci_w:mutbuf,ci_next:u32,ci_cap:u64)
-  ci_linear:bool = call(ci_cap) {"function":"hfs_linear3"}
+  ci_linear:bool = call(ci_cap) {"function":"hfs_linear_profile"}
   branch ci_linear compare_three(ci_m,ci_w,ci_next) compare_four(ci_m,ci_w,ci_next)
 block compare_three(cz_m:mutbuf,cz_w:mutbuf,cz_next:u32)
-  cz_exact:bool = call(cz_m,cz_w) {"function":"hfs_linear_roots"}
+  rows_at:u64 = const() {"value":7002}
+  rows:u64 = call(cz_m,rows_at) {"function":"cp_get"}
+  cz_exact:bool = call(cz_m,cz_w,rows) {"function":"hfs_linear_roots"}
   branch cz_exact close_cursor(cz_m,cz_next) refused()
 block compare_four(cf_m:mutbuf,cf_w:mutbuf,cf_next:u32)
   cf_exact:bool = call(cf_m,cf_w) {"function":"hfs_roots"}
@@ -257,7 +259,7 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   processed:u64 = call(wm,count_at) {"function":"cp_get"}
   expected_count:u64 = call(wm,expected_at) {"function":"cp_get"}
   cap_wire:u64 = call(wm,maximum_at) {"function":"cp_get"}
-  cap:u64 = call(cap_wire) {"function":"hfs_limit"}
+  cap:u64 = call(wm,cap_wire) {"function":"hfs_actual_limit"}
   widths_same_profile:u64 = const() {"value":5}
   widths_same:bool = compare.eq(cap_wire,widths_same_profile)
   prev_count:u64 = call(wm,verified_at) {"function":"cp_get"}
@@ -281,7 +283,9 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   w_same_roll:bool = bool.and(widths_same,w_second)
   w_is_roll:bool = bool.or(last_rollup,w_same_roll)
   w_middle:u64 = select(w_is_roll,w_roll,w_rcpt)
-  right_kind:u64 = select(w_final,w_set,w_middle)
+  legacy_kind:u64 = select(w_final,w_set,w_middle)
+  long_only:bool = call(cap_wire) {"function":"hfs_long"}
+  right_kind:u64 = select(long_only,w_rcpt,legacy_kind)
   right_cfg:u64 = const() {"value":914}
   right_exec:u64 = const() {"value":163}
   cmd_first:u64 = const() {"value":868}
@@ -326,7 +330,11 @@ block correlate(cc_r:readbuf,cc_m:mutbuf,cc_w:mutbuf,cc_row:u64,cc_first:bool,cc
   cc1:u8 = const() {"value":1}
   true_tag:bool = compare.eq(commit_id,cc1)
   cc4:u64 = const() {"value":4}
-  cc_is_settle:bool = compare.eq(cc_row,cc4)
+  cc_fourth:bool = compare.eq(cc_row,cc4)
+  cc_profile_at:u64 = const() {"value":349024}
+  cc_profile:u64 = call(cc_m,cc_profile_at) {"function":"cp_get"}
+  cc_settled:bool = call(cc_profile) {"function":"hfs_settled"}
+  cc_is_settle:bool = bool.and(cc_fourth,cc_settled)
   cc_option:bool = select(cc_is_settle,true_tag,absent)
   okay_receipt:bool = bool.and(store_match,cc_option)
   enough_witness:bool = bool.and(state_seen,okay_receipt)
@@ -337,7 +345,7 @@ block profiled(pf_r:readbuf,pf_m:mutbuf,pf_w:mutbuf,pf_row:u64,pf_first:bool,pf_
   pf_mode:bool = call(pf_cap) {"function":"hfs_settled"}
   pf5:u64 = const() {"value":5}
   pf_same:bool = compare.eq(pf_cap,pf5)
-  pf_linear:bool = call(pf_cap) {"function":"hfs_linear3"}
+  pf_linear:bool = call(pf_cap) {"function":"hfs_linear_profile"}
   branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) maybe_linear(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_same,pf_linear)
 block maybe_linear(mj_r:readbuf,mj_m:mutbuf,mj_w:mutbuf,mj_row:u64,mj_first:bool,mj_last:bool,mj_len:u64,mj_same:bool,mj_linear:bool)
   branch mj_linear cursor_mode(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len) maybe_same(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len,mj_same)
@@ -359,10 +367,14 @@ block prove_slot(pr_r:readbuf,pr_m:mutbuf,pr_w:mutbuf,pr_row:u64,pr_first:bool,p
   pr_good:bool = call(pr_r,pr_m,pr_row) {"function":"hfs_receipt_mark"}
   branch pr_good cursor_mode(pr_r,pr_m,pr_w,pr_row,pr_first,pr_last,pr_len) refused()
 block save_witness(sw_r:readbuf,sw_m:mutbuf,sw_w:mutbuf,sw_row:u64,sw_first:bool,sw_last:bool,sw_len:u64)
-  sw_written:u64 = call(sw_r,sw_m,sw_row) {"function":"hfs_save_receipt"}
+  sw_profile_at:u64 = const() {"value":349024}
+  sw_profile:u64 = call(sw_m,sw_profile_at) {"function":"cp_get"}
+  sw_written:u64 = call(sw_r,sw_m,sw_row,sw_profile) {"function":"hfs_save_receipt"}
   sw_four:u64 = const() {"value":4}
   sw_settle:bool = compare.eq(sw_row,sw_four)
-  sw_final:bool = bool.and(sw_settle,sw_last)
+  sw_settle_profile:bool = call(sw_profile) {"function":"hfs_settled"}
+  sw_tail:bool = bool.and(sw_settle,sw_last)
+  sw_final:bool = bool.and(sw_tail,sw_settle_profile)
   branch sw_final prove_id(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len) parent(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len)
 block prove_id(pi_r:readbuf,pi_m:mutbuf,pi_w:mutbuf,pi_row:u64,pi_first:bool,pi_last:bool,pi_len:u64)
   pi_valid:bool = call(pi_r,pi_m) {"function":"hfs_install_id"}
@@ -371,7 +383,11 @@ block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_la
   pa_cfg:usize = const() {"value":8307}
   pa_previous:usize = const() {"value":354000}
   pa_four:u64 = const() {"value":4}
-  pa_final:bool = compare.eq(pa_row,pa_four)
+  pa_final_row:bool = compare.eq(pa_row,pa_four)
+  pa_profile_at:u64 = const() {"value":349024}
+  pa_profile:u64 = call(pa_m,pa_profile_at) {"function":"cp_get"}
+  pa_settled:bool = call(pa_profile) {"function":"hfs_settled"}
+  pa_final:bool = bool.and(pa_final_row,pa_settled)
   pa_settle_index:u64 = call(pa_m) {"function":"hfs_settle_index"}
   pa_one:u64 = const() {"value":1}
   pa_valid_index:bool = compare.ge(pa_settle_index,pa_one)
@@ -496,7 +512,7 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_limit:u64 = call(vm0,vh_limit_at) {"function":"cp_get"}
   vh_extra:usize = const() {"value":32}
   vh_fourcase:bool = call(vh_limit) {"function":"hfs_settled"}
-  vh_linear:bool = call(vh_limit) {"function":"hfs_linear3"}
+  vh_linear:bool = call(vh_limit) {"function":"hfs_linear_profile"}
   vh_old_profile:bool = bool.or(vh_fourcase,vh_same)
   vh_profile:bool = bool.or(vh_old_profile,vh_linear)
   vh_plus:usize = int.add.wrap(vh_width,vh_extra)
@@ -519,8 +535,9 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_not_last:bool = compare.lt(vh_count,vh_limit4)
   vh_before_settle:bool = bool.and(vh_var_settle,vh_not_last)
   vh_before_pair:bool = bool.and(vh_pair,vh_first)
-  vh_second_or_first:bool = bool.or(vh_first,vh_second)
-  vh_before_linear:bool = bool.and(vh_linear,vh_second_or_first)
+  vh_expected:u64 = call(vm0,vh_limit) {"function":"hfs_actual_limit"}
+  vh_more:bool = compare.lt(vh_count,vh_expected)
+  vh_before_linear:bool = bool.and(vh_linear,vh_more)
   vh_old_interm:bool = bool.or(vh_before_pair,vh_before_settle)
   vh_intermediate:bool = bool.or(vh_old_interm,vh_before_linear)
   vh_min_raw:usize = const() {"value":183}
@@ -559,7 +576,7 @@ block compare_replay(kr:readbuf,km:mutbuf,ka:u64,kh:u64)
 block compare_tail(ct_r:readbuf,ct_m:mutbuf,ct_a:u64,ct_h:u64)
   ct_at:u64 = const() {"value":349024}
   ct_profile:u64 = call(ct_m,ct_at) {"function":"cp_get"}
-  ct_limit:u64 = call(ct_profile) {"function":"hfs_limit"}
+  ct_limit:u64 = call(ct_m,ct_profile) {"function":"hfs_actual_limit"}
   ct_is_last:bool = compare.eq(ct_h,ct_limit)
   branch ct_is_last compare_state(ct_r,ct_m,ct_a,ct_h) resume(ct_m,ct_a,ct_h)
 block compare_state(cs2_r:readbuf,cs2_m:mutbuf,cs2_a:u64,cs2_h:u64)
@@ -585,7 +602,7 @@ block delegate(dr:readbuf,dm:mutbuf,dw:mutbuf,dp:u64)
   vl_at:u64 = const() {"value":349024}
   verified_count:u64 = call(dm,vg_at) {"function":"cp_get"}
   exit_profile:u64 = call(dm,vl_at) {"function":"cp_get"}
-  limit:u64 = call(exit_profile) {"function":"hfs_limit"}
+  limit:u64 = call(dm,exit_profile) {"function":"hfs_actual_limit"}
   verified:bool = compare.eq(verified_count,limit)
   pending_bad:bool = bool.not(verified)
   unsafe_result:bool = bool.and(complete,pending_bad)

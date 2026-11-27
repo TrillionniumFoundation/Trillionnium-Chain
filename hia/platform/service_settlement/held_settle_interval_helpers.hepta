@@ -38,8 +38,8 @@ block bad()
   ret(no)
 end
 
-fn hfs_save_receipt(r:readbuf,m:mutbuf,seq:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,m:mutbuf,seq:u64)
+fn hfs_save_receipt(r:readbuf,m:mutbuf,seq:u64,profile:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,seq:u64,profile:u64)
   one:u64 = const() {"value":1}
   four:u64 = const() {"value":4}
   stride:u64 = const() {"value":153}
@@ -51,7 +51,9 @@ block entry(r:readbuf,m:mutbuf,seq:u64)
   moved:u64 = int.mul.wrap(index,stride)
   record:u64 = int.add.wrap(base,moved)
   payload:u64 = int.add.wrap(record,four)
-  at_tail:bool = compare.eq(seq,four)
+  fourth:bool = compare.eq(seq,four)
+  settled_profile:bool = call(profile) {"function":"hfs_settled"}
+  at_tail:bool = bool.and(fourth,settled_profile)
   width:u64 = select(at_tail,settled,earlier)
   stored:u64 = call(m,record,width) {"function":"cp_put"}
   end:u64 = call(r,head,m,payload,width) {"function":"cp_copy"}
@@ -418,7 +420,7 @@ block entry(profile:u64)
   is_mixed:bool = compare.eq(profile,mixed)
   old:bool = bool.or(is_one,is_two)
   measured:bool = bool.or(old,is_mixed)
-  linear:bool = call(profile) {"function":"hfs_linear3"}
+  linear:bool = call(profile) {"function":"hfs_linear_profile"}
   variable:bool = bool.or(measured,linear)
   ret(variable)
 end
@@ -440,28 +442,36 @@ block entry(profile:u64)
   ret(measured)
 end
 
-fn hfs_linear_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
-block entry(m:mutbuf,w:mutbuf)
+fn hfs_linear_roots(m:mutbuf,w:mutbuf,rows:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,rows:u64)
   count_at:u64 = const() {"value":88}
   count:u64 = call(m,count_at) {"function":"cp_get"}
-  four:u64 = const() {"value":4}
-  exact:bool = compare.eq(count,four)
-  branch exact setup(m,w) bad()
-block setup(sm:mutbuf,sw:mutbuf)
+  one_c:u64 = const() {"value":1}
+  cap_c:u64 = const() {"value":8}
+  floor:u64 = const() {"value":3}
+  extent:u64 = int.add.wrap(rows,one_c)
+  exact:bool = compare.eq(count,extent)
+  below:bool = compare.le(rows,cap_c)
+  above:bool = compare.ge(rows,floor)
+  limits:bool = bool.and(below,above)
+  safe:bool = bool.and(exact,limits)
+  branch safe setup(m,w,rows) bad()
+block setup(sm:mutbuf,sw:mutbuf,sn:u64)
   receipts:usize = const() {"value":430000}
   slot:usize = const() {"value":4100}
-  size:u64 = const() {"value":459}
+  initial_stride:u64 = const() {"value":153}
+  size:u64 = int.mul.wrap(sn,initial_stride)
   moved:u64 = call(sm,sw,receipts,slot,size) {"function":"sscid_copy"}
   zero:u64 = const() {"value":0}
-  jump hashes(sm,sw,zero)
-block hashes(hm:mutbuf,hw:mutbuf,hi:u64)
+  jump hashes(sm,sw,zero,sn)
+block hashes(hm:mutbuf,hw:mutbuf,hi:u64,hn:u64)
   at:u64 = const() {"value":4100}
   width:u64 = const() {"value":153}
   len:u64 = int.mul.wrap(hi,width)
   end:u64 = int.add.wrap(at,len)
   hashed:bool = call(hw,at,end,hi) {"function":"jph_hash"}
-  branch hashed save(hm,hw,hi) bad()
-block save(am:mutbuf,aw:mutbuf,ai:u64)
+  branch hashed save(hm,hw,hi,hn) bad()
+block save(am:mutbuf,aw:mutbuf,ai:u64,an:u64)
   from:usize = const() {"value":1168}
   root_base:u64 = const() {"value":440000}
   width_a:u64 = const() {"value":32}
@@ -469,16 +479,14 @@ block save(am:mutbuf,aw:mutbuf,ai:u64)
   slot_a:u64 = int.add.wrap(root_base,rel)
   to:usize = int.cast(slot_a) {"mode":"wrap"}
   saved:u64 = call(aw,am,from,to,width_a) {"function":"sscid_copy"}
-  three:u64 = const() {"value":3}
-  done:bool = compare.eq(ai,three)
+  done:bool = compare.eq(ai,an)
   one:u64 = const() {"value":1}
   next:u64 = int.add.wrap(ai,one)
   zero_a:u64 = const() {"value":0}
-  branch done walk(am,zero_a) hashes(am,aw,next)
-block walk(vm:mutbuf,vi:u64)
+  branch done walk(am,zero_a,an) hashes(am,aw,next,an)
+block walk(vm:mutbuf,vi:u64,max:u64)
   first:u64 = const() {"value":0}
   unit:u64 = const() {"value":1}
-  max:u64 = const() {"value":3}
   genesis:bool = compare.eq(vi,first)
   predecessor:u64 = int.sub.wrap(vi,unit)
   src:u64 = select(genesis,first,predecessor)
@@ -488,11 +496,36 @@ block walk(vm:mutbuf,vi:u64)
 block continue(cm:mutbuf,ci:u64,cl:u64,cu:u64)
   end_c:bool = compare.eq(ci,cl)
   step:u64 = int.add.wrap(ci,cu)
-  branch end_c good() walk(cm,step)
+  branch end_c good() walk(cm,step,cl)
 block good()
   verified:bool = const() {"value":true}
   ret(verified)
 block bad()
   refused:bool = const() {"value":false}
   ret(refused)
+end
+
+fn hfs_long(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  bound:u64 = const() {"value":10}
+  long:bool = compare.eq(profile,bound)
+  ret(long)
+end
+
+fn hfs_linear_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  three:bool = call(profile) {"function":"hfs_linear3"}
+  linear:bool = call(profile) {"function":"hfs_long"}
+  either:bool = bool.or(three,linear)
+  ret(either)
+end
+
+fn hfs_actual_limit(m:mutbuf,profile:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,profile:u64)
+  legal:bool = call(profile) {"function":"hfs_long"}
+  prior:u64 = call(profile) {"function":"hfs_limit"}
+  at:u64 = const() {"value":7002}
+  rows:u64 = call(m,at) {"function":"cp_get"}
+  choose:u64 = select(legal,rows,prior)
+  ret(choose)
 end

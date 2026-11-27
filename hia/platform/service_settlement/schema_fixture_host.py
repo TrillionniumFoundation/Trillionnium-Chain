@@ -35,7 +35,8 @@ def run(request, uri_image, reader, provider):
     replay_control = request.get("first_replay_fixture_control")
     replay = replay_image is not None
     stream = request.get("variable_stream_fixture", False)
-    replay_limit = request.get("receipt_replay_limit", 4 if stream else 1)
+    linear_stream = request.get("linear_stream_fixture", False)
+    replay_limit = request.get("receipt_replay_limit", 8 if linear_stream else 4 if stream else 1)
     same_block = request.get("same_block_fixture", False)
     variable_first = request.get("variable_first_fixture", False)
     variable_pair = request.get("variable_pair_fixture", False)
@@ -43,7 +44,8 @@ def run(request, uri_image, reader, provider):
     variable_rows = 1 if variable_first else 2 if variable_pair else 4 if variable_settle else 0
     replay_control_step = request.get("first_replay_fixture_control_step", replay_limit)
     if ((replay and (not journal or len(replay_image) != 2))
-            or type(replay_limit) is not int or replay_limit not in (1, 2, 3, 4)
+            or type(replay_limit) is not int or replay_limit not in ((8,) if linear_stream else (1, 2, 3, 4))
+            or type(linear_stream) is not bool or (linear_stream and not stream)
             or type(stream) is not bool
             or (stream and (not replay or "receipt_replay_limit" in request or variable_rows or same_block))
             or type(variable_first) is not bool or type(variable_pair) is not bool
@@ -137,7 +139,11 @@ def run(request, uri_image, reader, provider):
                 requested_replay += 1
                 if stream:
                     profile, = struct.unpack_from("<Q", state, 349024)
-                    rows = {6: 1, 7: 2, 8: 4, 9: 3}.get(profile)
+                    if linear_stream:
+                        native_rows, = struct.unpack_from("<Q", state, 7002)
+                        rows = native_rows if profile == 10 and 5 <= native_rows <= 8 else None
+                    else:
+                        rows = {6: 1, 7: 2, 8: 4, 9: 3}.get(profile)
                     if (rows is None or requested_replay > rows
                             or selected_rows not in (None, rows)):
                         raise ValueError("Unexpected verified native stream selection")
@@ -163,7 +169,7 @@ def run(request, uri_image, reader, provider):
                     engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block,
                                                 variable_rows=active_rows if stream else variable_rows)
                 raw = engine.apply(payload)
-                if raw and (active_rows == 4 or same_block or (stream and active_rows == 3)):
+                if raw and (active_rows == 4 or same_block or linear_stream or (stream and active_rows == 3)):
                     if engine.last_parent_root is None:
                         raise ValueError("Missing observed native predecessor root")
                     raw += engine.last_parent_root
