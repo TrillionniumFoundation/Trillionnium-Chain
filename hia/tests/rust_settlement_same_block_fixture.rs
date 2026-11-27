@@ -18,7 +18,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Ok(())
             };
             frame(bytes(&fixture.trust))?;
-            for height in 10..16 {
+            // Preserve the earlier exact six-command fixture; long variants
+            // also cover the new upper-bound original read-only control.
+            let end = if profile == "six-admits" { 16 } else { 19 };
+            for height in 10..end {
                 let cmd = ConsumptionSettlementCommandV1::AdmitReceipt {
                     receipt: fixture.receipt(state.receipts.last(), height, 1),
                 };

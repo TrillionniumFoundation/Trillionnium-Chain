@@ -18,7 +18,7 @@ OWNER = ROOT / "hia/platform/service_settlement"
 
 
 class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
-    def test_actual_five_and_six_row_linear_receipt_replay(self):
+    def test_actual_linear_receipt_capacity_and_outside_refusal(self):
         with ExitStack() as stack:
             tmp = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="trnm-m12-var-linear-")))
             original, source = original_adapter(tmp, marker=True, same_block=True)
@@ -63,10 +63,10 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                 self.assertEqual(answer.stderr, b"")
                 return json.loads(answer.stdout)
 
-            for mode, count in (("short", 5), ("utf8", 6)):
-                with self.subTest(fixture=mode):
+            for mode, count in (("short", 5), ("utf8", 6), ("short", 7), ("utf8", 8), ("utf8", 9)):
+                with self.subTest(fixture=mode, rows=count):
                     trust, *signed = frames(execute([tmp/"same-block-fixture", mode+"-linear-admits"]).stdout)
-                    self.assertEqual(len(signed), 6)
+                    self.assertEqual(len(signed), 9)
                     commands = signed[:count]
                     paths = [tmp/f"{mode}-{i}" for i in range(count+1)]
                     for path, raw in zip(paths, (trust, *commands), strict=True):
@@ -90,16 +90,24 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                                      (100, None, 0), denied)
                     cursor = invoke(db, held, "cursor")
                     independent = invoke(db, held, "execution")
-                    self.assertEqual((cursor["status"], cursor["replay_calls"], cursor["replay_locks"],
-                                      cursor["released"]), (0, count, count, 0), cursor)
+                    self.assertEqual(independent["status"], 0, independent)
+                    self.assertEqual(bytes.fromhex(independent["projection"]), actual)
                     self.assertTrue(cursor["held"])
-                    self.assertEqual(bytes.fromhex(cursor["projection"]), actual)
-                    self.assertEqual(cursor["transcript"], independent["transcript"])
-                    self.assertEqual(cursor["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
-                    for ordinal, control in ((1, "root"), (4, "id"), (count, "state")):
-                        refused = invoke(db, held, "cursor", failed=control, ordinal=ordinal)
-                        self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
-                                         (100, None, ordinal), refused)
-                        self.assertGreater(refused["released"], 0)
+                    if count == 9:
+                        self.assertEqual((cursor["status"], cursor["projection"], cursor["replay_calls"],
+                                          cursor["replay_locks"]), (100, None, 0, 0), cursor)
+                        self.assertGreater(cursor["released"], 0)
+                        self.assertNotIn(50, [phase for phase, _, _ in cursor["transcript"]])
+                    else:
+                        self.assertEqual((cursor["status"], cursor["replay_calls"], cursor["replay_locks"],
+                                          cursor["released"]), (0, count, count, 0), cursor)
+                        self.assertEqual(bytes.fromhex(cursor["projection"]), actual)
+                        self.assertEqual(cursor["transcript"], independent["transcript"])
+                        self.assertEqual(cursor["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        for ordinal, control in ((1, "root"), (4, "id"), (count, "state")):
+                            refused = invoke(db, held, "cursor", failed=control, ordinal=ordinal)
+                            self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                             (100, None, ordinal), refused)
+                            self.assertGreater(refused["released"], 0)
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
