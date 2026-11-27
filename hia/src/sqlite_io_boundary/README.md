@@ -438,3 +438,16 @@ The original fixture creates disposable roots and observes names read-only
 at quiescent boundaries. This does not establish FD or race authority,
 physical block refunds, generic close ordering, or production callback
 ownership.
+
+### Original-side held stat witness
+
+`python3 -B -m unittest -v hia.tests.test_sqlite_owner_stat_reference`
+checks the complete immutable original Rust source map and composes it in a
+fresh private workspace with one disclosed `cfg(test)` sibling module.
+The witness uses the original `Root::stat_name`, `stat_fd` and
+`Root::bind_fd` on a newly created owned ordinary file at three lengths,
+emitting both seven-field stat tuples without exporting any descriptor or
+path. It also runs the complete unit suite and checks that a normal library
+build does not contain the witness. No tracked Rust file, existing provider,
+or production route changes. This is the original side of a future
+differential, not a native syscall or descriptor authority claim.
