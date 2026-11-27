@@ -60,6 +60,17 @@
   ],
   "components": [
     {
+      "id": "data-availability/attestation-context-binding",
+      "node_integration_complete": false,
+      "scope": "Bounded original typed DA body context/committee prefix, before any member lookup, signature or vote. No production role.",
+      "source": "hia/src/data_availability/attestation_context_binding.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_attestation_context_binding.py",
+        "hia/tests/rust_da_attestation_context_binding_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/attestation-coordinate",
       "node_integration_complete": false,
       "scope": "Bounded typed DA attestation conflict coordinate over the original canonical body and six selected fields. No credential, attestation eligibility, signature, vote or production authority.",

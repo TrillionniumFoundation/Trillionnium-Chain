@@ -601,3 +601,18 @@ UTF-8 before hashing the two exact immutable field ranges, rejects malformed
 or short loans without publishing a result, and leaves the output suffix
 unchanged. The pinned original Rust library is the public method oracle;
 Direct and Selfhost also exercise the exact extent and atomicity controls.
+
+
+### Attestation body context binding
+
+The private `attestation_context_binding.hepta` profile takes one immutable
+loan as canonical Borsh committee bytes, canonical attestation-body bytes and
+a trailing little-endian u32 committee extent. It preserves the original
+body context and namespace checks before committee identity, then checks
+the body committee ID, author ID and sequences and retention. It shares the
+verified native committee validator and limits the frame to 1 MiB, the
+committee profile to 32 members, and independent scratch to 141,536 bytes.
+The original source comparison enters the public attestation constructor
+with a known nonmember and observes only the body-validation prefix. No
+signature path is reached; success of this private stage does not admit
+an attestation, grant membership, or authorize a vote.
