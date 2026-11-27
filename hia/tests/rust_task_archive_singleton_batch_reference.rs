@@ -10,12 +10,13 @@ use trnm_task_kernel::{
     Hash32V1, ProtocolContextV1, TaskArchiveBatchV1, TaskArchivePolicyV1,
 };
 
-fn emit(out: &mut impl Write, policy: &TaskArchivePolicyV1, batch: &TaskArchiveBatchV1) {
+pub(crate) fn emit(out: &mut impl Write, policy: &TaskArchivePolicyV1, batch: &TaskArchiveBatchV1) {
     let status = match verify_task_archive_batch_v1(policy, batch) {
         Ok(()) => 0u32,
         Err(err) => match err.code() {
             AgentMarketErrorCodeV1::InvalidContext => 200,
             AgentMarketErrorCodeV1::InvalidBounds => 1,
+            AgentMarketErrorCodeV1::NonCanonical => 2,
             AgentMarketErrorCodeV1::InvalidState => 13,
             AgentMarketErrorCodeV1::ConservationViolation => 15,
             AgentMarketErrorCodeV1::ArithmeticOverflow => 20,

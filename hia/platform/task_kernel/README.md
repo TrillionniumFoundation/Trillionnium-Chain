@@ -259,3 +259,26 @@ The original Rust planner creates an actual singleton fixture. The unchanged
 public batch verifier judges both that fixture and typed boundary variants,
 including full high-limb charge and failure ordering, before comparison with
 the pinned Direct and Selfhost entries.
+
+### Variable archive batch verification
+
+`src/task_kernel/archive_variable_batch.hepta` uses the same private
+canonical packet as the singleton for exactly one to eight actual Borsh Vec
+records. The original singleton entry and ABI remain unchanged. The variable
+entry first validates all typed extents and UTF-8 contexts (each chain ID at
+most 512 bytes), then uses the same exact policy/seal and per-record prepaid
+checks. In original order it refuses any repeated Task ID, checks strict
+(terminal height, bytewise Task ID) order, adds checked u64 and u128 totals,
+and hashes each original record from the admitted immutable packet.
+
+The node hash helper reduces the ordered leaves in private scratch, duplicating
+odd tails as the original planner does. Both actual sums, the computed root,
+and exact first/last ranges must match the bound seal. The scratch prefix is
+1,720 bytes; output is always unchanged. Vec count outside the private
+profile returns 100 and is not reclassified as an original public decision.
+The native result does not authorize archive selection, deletion, ownership,
+database mutation or routing.
+
+The locked original public planner and verifier drive actual valid 1/2/3/5/8
+records and layered bad values, including global nonadjacent duplicate,
+same-height lexicographic order, overflow, limb carry and odd-tail root.

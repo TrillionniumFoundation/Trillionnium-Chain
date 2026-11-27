@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_variable_batch",
+      "node_integration_complete": false,
+      "scope": "Complete read-only native canonical Task archive batch verification for one to eight real records: policy/seal, per-record retention, unique order, checked sums, odd-tail Merkle and seal range. No deletion, storage or production authority.",
+      "source": "hia/src/task_kernel/archive_variable_batch.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_variable_batch.py",
+        "hia/tests/rust_task_archive_variable_batch_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_singleton_batch",
       "node_integration_complete": false,
       "scope": "Complete public read-only archive batch validation for one typed record, including exact policy seal digest, checked prepaid charge, inclusive expiry, singleton commitment and seal range. No pruning, deletion or production authority.",
@@ -2717,7 +2728,8 @@
         "task_kernel/archive_inclusion_fold",
         "task_kernel/archive_inclusion_header",
         "task_kernel/archive_inclusion_verify",
-        "task_kernel/archive_singleton_batch"
+        "task_kernel/archive_singleton_batch",
+        "task_kernel/archive_variable_batch"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",

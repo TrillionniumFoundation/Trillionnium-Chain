@@ -1,5 +1,78 @@
 {
   "includes": {
+    "src/task_kernel/archive_variable_batch.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_header.hepta",
+        "functions": [
+          "archive_u32",
+          "archive_equal",
+          "archive_digest_match"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_hash.hepta",
+        "functions": [
+          "archive_value_digest"
+        ]
+      },
+      {
+        "source": "src/service_settlement/arithmetic.hepta",
+        "functions": [
+          "ss_u128_mul",
+          "ss_disjoint",
+          "ss_range"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_get",
+          "cs_put",
+          "cs_put_integer",
+          "cs_zero"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_singleton_batch.hepta",
+        "functions": [
+          "archive_batch_schema",
+          "archive_batch_policy_bounds",
+          "archive_batch_seal",
+          "archive_batch_record",
+          "archive_batch_charge"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_fold.hepta",
+        "functions": [
+          "archive_node_digest"
+        ]
+      }
+    ],
     "src/task_kernel/archive_singleton_batch.hepta": [
       {
         "functions": [
