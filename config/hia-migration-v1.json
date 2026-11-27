@@ -1119,6 +1119,18 @@
       ]
     },
     {
+      "id": "data-availability/batch-author-transcript",
+      "node_integration_complete": false,
+      "scope": "Original DA Borsh envelope shape and internal BatchId and author transcript SHA-256, one immutable bounded loan; no signing, verification, policy, credentials or storage.",
+      "source": "hia/src/data_availability/batch_author_transcript.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_batch_author_transcript.py",
+        "hia/tests/rust_da_batch_author_transcript_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2509,6 +2521,7 @@
         "data-availability/rs46",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
+        "data-availability/batch-author-transcript",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",

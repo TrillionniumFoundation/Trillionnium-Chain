@@ -203,3 +203,38 @@ verification, storage, or any node policy effect.
 
 [Locked original and both stock HIA backends](../../tests/test_da_author_authority_value.py)
 compare exact status, bytes, and buffer boundaries.
+
+## DA author transcript from an unsigned batch envelope
+
+The [private transcript constructor](batch_author_transcript.hepta) takes
+one exact Borsh `DaBatchEnvelopeV1` loan. It first checks typed framing and
+UTF-8, then performs the original context version and chain checks,
+namespace check and envelope shape checks in that order. The valid
+input's envelope schema and the author statement schema are both 1.
+
+The first SHA-256 computes `BatchIdV1` from the complete original Borsh
+envelope. The second uses the schema/context/namespace/epoch/committee/
+author/sequence prefix of those same bytes, then appends the BatchId
+computed in this call. Both SHA-256 inputs begin with the original
+domain's little-endian `u32` byte length and exact ASCII domain. No
+external digest, pre-checked flag, signature or key is accepted. A
+successful call writes the two actual 32-byte hashes in BatchId,
+author-transcript order. No result is written on refusal, and the
+input and output tail are unchanged.
+
+The private profile admits at most 1 MiB for the complete byte loan and
+requires 1,296 disjoint scratch bytes and at least 64 disjoint result bytes.
+It does not impose the authority constructor's separate 256-byte author
+ID limit; the original envelope method only requires a nonempty ID.
+Statuses 2/3 distinguish unsupported context versions and invalid chains,
+4/5 preserve explicit ArtifactEvidence vs unknown namespace, and 6 is an
+invalid envelope. 100/102/103 are private frame/capacity/internal codes.
+The exact 1 MiB fixture is compared on both stock emitters and the
+unchanged Rust; its one-byte-larger counterpart is only a Rust control.
+
+The [original comparison](../../tests/test_da_batch_author_transcript.py)
+uses real `UnsignedTransactionBatchV1::build` in the unchanged crate
+with generated synthetic item bytes and a public-only fixture key. It
+does not sign or verify signatures, interpret statement hashes as trust,
+validate membership or quota on a supplied envelope, or activate a node
+or storage path.
