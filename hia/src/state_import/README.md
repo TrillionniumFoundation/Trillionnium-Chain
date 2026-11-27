@@ -365,3 +365,33 @@ once, where the test owner always refuses. Earlier errors never reach the
 owner. The native root comparison does not authenticate its supplied root,
 verify header/context, compute an application root, authorize replay, or
 change SQLite/production routing.
+
+### Incremental delta header and paired checkpoint context
+
+`incremental_delta_header_validate.hepta` covers the pure header prefix of
+`IncrementalStateDeltaV0::validate`. It checks the two original typed
+checkpoint contexts in source/target order and computes both of their
+original framed SHA-256 identities. It then checks the header's nonzero
+fields and original row-count bounds, compares the genuine canonical delta
+digest with the stored value, and enforces the original chain, protocol,
+height, epoch and state-root relationships. The epoch comparison retains the
+allowed equal or next epoch, including saturation at `u64::MAX`.
+
+The private borrowed 760-byte frame contains two 240-byte checkpoint
+context values, six 32-byte digests in order (plan, target schema, base
+rows, base state root, target rows, target state root), two big-endian
+`u64` base/target row counts, the 32-byte delta root and stored 32-byte delta
+digest, then one big-endian `u64` observed operation count. This stock
+profile is restricted to zero through eight operations and uses 1,808 bytes
+of disjoint private scratch; the second ABI span is never changed.
+Original invalid context and invalid header are represented by 113 and 114;
+private 100, 102, and 103 denote exact-frame, capacity, and internal-hash
+refusals. A successful header is not an operation/root validation.
+
+The independent locked Rust witness exercises the original
+`apply_incremental_delta_v0` with owned synthetic values. It records
+whether the original call rejected a context, rejected the header, or
+proceeded to the separate rows/root/base stage. Its fixture root owner
+always refuses and never returns application state. The HIA call issues no
+verified source context, trusts no external signer, and never changes any
+database, application state, or production route.

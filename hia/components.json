@@ -10824,6 +10824,59 @@
         "source": "src/state_import/export_row_validate.hepta"
       }
     ],
+    "src/state_import/incremental_delta_header_validate.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "mcc_nonzero"
+        ],
+        "source": "src/state_import/checkpoint_context.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "dc_copy",
+          "dc_field",
+          "dc_header_domain",
+          "dc_finish_header"
+        ],
+        "source": "src/state_import/incremental_delta_commitment.hepta"
+      },
+      {
+        "functions": [
+          "mhc_equal_pack"
+        ],
+        "source": "src/state_import/handoff_commitments.hepta"
+      },
+      {
+        "functions": [
+          "batch_equal"
+        ],
+        "source": "src/state_import/target_delta_rows_root.hepta"
+      }
+    ],
     "src/state_import/target_delta_rows_root.hepta": [
       {
         "functions": [
