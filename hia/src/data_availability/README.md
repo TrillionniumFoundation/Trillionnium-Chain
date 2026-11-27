@@ -313,3 +313,35 @@ any non-test rebuild. It compares the two clean non-test libraries
 from the same path byte for byte and checks for marker absence. No
 production Rust file is modified and the offline witness does not
 sign, open a database, access a network or obtain certified state.
+
+## DA chunk-bound inclusion comparison
+
+The [private composition](chunk_bound_inclusion.hepta) has no supplied
+leaf, ChunkId, byte digest or prior result. One immutable loan contains
+`HCD1` followed by 28 zero bytes, the supplied expected root hash32,
+the exact Borsh proof above, then the exact Borsh coordinate and byte vector.
+The proof vector count determines its only boundary; both typed chunk
+sections must consume the remainder exactly. The native comparison
+requires that the proof and actual chunk use the same index (status 56,
+a composition guard). It also checks nonempty bytes and exact coordinate
+length (status 6). It checks typed UTF-8 but derives no context, namespace
+or policy authority from the coordinate.
+
+The composition calls the existing pinned chunk digest helper over each
+same-loan subspan, uses both resulting commitments and the original
+little-endian chunk index to compute the actual `chunk_leaf_v1` domain
+hash, then continues into the unchanged Merkle scan. Status values 50–55
+retain the original path observations. The complete loan is capped at
+1 MiB, needs 1,472 disjoint scratch bytes and produces no byte output.
+The HIA call never modifies input or the caller result buffer.
+
+[Original comparisons](../../tests/test_da_chunk_bound_inclusion.py)
+run the actual private Rust chunk constructor, leaf, generator and
+verification in the same isolated test-only mechanism as the standalone
+comparator. They include a real same-coordinate chunk-byte change that
+alters the root comparison, exact 1 MiB through both stock emitters,
+and the one-byte-larger original-only contrast. The unchanged ordinary
+Rust library is independently rebuilt and compared before and after
+the test-only fixture is installed and removed. This comparison is not
+a signed message, trusted certificate root, retrieval authority, or
+a storage/repair approval.

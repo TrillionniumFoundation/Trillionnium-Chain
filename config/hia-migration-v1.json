@@ -1154,6 +1154,18 @@
       ]
     },
     {
+      "id": "data-availability/chunk-bound-inclusion",
+      "node_integration_complete": false,
+      "scope": "Original DA chunk coordinate/content commitment and computed leaf bound to one immutable Borsh Merkle path, matching a supplied root only; no certificate, signature, authorization, repair or storage.",
+      "source": "hia/src/data_availability/chunk_bound_inclusion.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_chunk_bound_inclusion.py",
+        "hia/tests/rust_da_chunk_bound_inclusion_harness.rs",
+        "hia/tests/test_da_chunk_inclusion_path.py"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2547,6 +2559,7 @@
         "data-availability/batch-author-transcript",
         "data-availability/chunk-commitments",
         "data-availability/chunk-inclusion-path",
+        "data-availability/chunk-bound-inclusion",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",

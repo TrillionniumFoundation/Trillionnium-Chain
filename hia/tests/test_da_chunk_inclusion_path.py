@@ -87,7 +87,10 @@ def observed_artifact(build, temporary, testing):
     return actual_path
 
 
-def unchanged_original_observation(directory):
+def unchanged_original_observation(directory, *, harness=HARNESS, marker=MARKER, test=TEST,
+                                   capture_limit=65536):
+    if not 0 < capture_limit <= 4 * 1024 * 1024:
+        raise ValueError("Invalid private synthetic capture bound")
     cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
     version = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
@@ -109,7 +112,7 @@ def unchanged_original_observation(directory):
               "--lib", "--target-dir", str(directory / "target"), "--message-format=json"]
     clean = observed_artifact(_run([cargo, "build", *common], env=env), directory, False)
     original_rlib = clean.read_bytes()
-    fixture = unlinked_path(HARNESS).read_bytes()
+    fixture = unlinked_path(harness).read_bytes()
     retrieval = directory / ORIGINAL
     original = retrieval.read_bytes()
     private_fixture = retrieval.parent / "hia_da_chunk_path_fixture.rs"
@@ -122,11 +125,11 @@ def unchanged_original_observation(directory):
             raise ValueError("Private original retrieval body changed")
         executable = observed_artifact(_run([cargo, "test", *common, "--no-run"], env=env),
                                        directory, True)
-        if MARKER not in executable.read_bytes() or clean.read_bytes() != original_rlib:
+        if marker not in executable.read_bytes() or clean.read_bytes() != original_rlib:
             raise ValueError("Test marker missing or non-test artifact changed in place")
-        result = _run([str(executable), TEST, "--exact", "--test-threads=1"],
+        result = _run([str(executable), test, "--exact", "--test-threads=1"],
                       env={**env, "TRNM_DA_PRIVATE_PATH_FIXTURE": str(capture)}, timeout=30)
-        if result.stderr or b"1 passed" not in result.stdout or TEST.encode() not in result.stdout:
+        if result.stderr or b"1 passed" not in result.stdout or test.encode() not in result.stdout:
             raise ValueError("No actual private original Rust call")
         if retrieval.read_bytes() != original + APPEND or private_fixture.read_bytes() != fixture:
             raise ValueError("Private test copy changed during the exact selector")
@@ -137,19 +140,22 @@ def unchanged_original_observation(directory):
     # a non-test Cargo invocation with the temporary test fixture installed.
     clean.unlink()
     after = observed_artifact(_run([cargo, "build", *common], env=env), directory, False)
-    if after.read_bytes() != original_rlib or MARKER in original_rlib or private_fixture.exists():
+    if after.read_bytes() != original_rlib or marker in original_rlib or private_fixture.exists():
         raise ValueError("Non-test Rust library changed or captured the fixture")
     for relative, expected in blobs.items():
         physical = unlinked_path(ROOT / relative).read_bytes()
         private = unlinked_path(directory / relative).read_bytes()
         if git_blob(physical) != expected or private != physical:
             raise ValueError("Original production source changed during qualification")
-    if unlinked_path(HARNESS).read_bytes() != fixture:
+    if unlinked_path(harness).read_bytes() != fixture:
         raise ValueError("Harness changed during qualification")
-    wire = unlinked_path(capture).read_bytes()
-    if not wire.startswith(MARKER) or len(wire) > 65536:
+    capture = unlinked_path(capture)
+    if capture.stat().st_size > capture_limit:
+        raise ValueError("Oversized original witness capture")
+    wire = capture.read_bytes()
+    if not wire.startswith(marker) or len(wire) > capture_limit:
         raise ValueError("Missing or oversized original witness capture")
-    return wire[len(MARKER):], hashlib.sha256(original_rlib).hexdigest()
+    return wire[len(marker):], hashlib.sha256(original_rlib).hexdigest()
 
 
 def records(raw):
