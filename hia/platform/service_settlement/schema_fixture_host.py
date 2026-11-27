@@ -60,8 +60,8 @@ def run(request, uri_image, reader, provider):
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
     projected = metadata or operation or marker or joined
-    with db.open("rb") as stream:
-        header = stream.read(20)
+    with db.open("rb") as header_file:
+        header = header_file.read(20)
     if len(header) != 20:
         # Preserve the actual short header without treating pathname bytes as header.
         refused = {"status": 100, "transcript": [], "released": 0, "held": False}
