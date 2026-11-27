@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/target_delta_rows_root",
+      "node_integration_complete": false,
+      "scope": "M13 bounded post-header ordered typed delta rows and observed delta Merkle root equality, preserving per-row, order and root failure priority; no context admission, state root, SQLite or production routing",
+      "source": "hia/src/state_import/target_delta_rows_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_target_delta_rows_root.py",
+        "hia/tests/rust_state_import_target_delta_rows_root_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/target_delta_row_validate",
       "node_integration_complete": false,
       "scope": "M13 original per-operation TargetDeltaRowV0 shape, reserved namespace and exact stored operation digest equality on stock 1 MiB borrowed inputs; no context, delta admission, SQLite or production routing",
@@ -2395,6 +2406,7 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
+        "state_import/target_delta_rows_root",
         "state_import/target_delta_row_validate",
         "state_import/incremental_delta_commitment",
         "state_import/migration_plan",

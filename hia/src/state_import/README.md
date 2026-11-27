@@ -336,3 +336,32 @@ This is not whole-delta validation: ordered replay, context checks,
 resulting rows and application root computation, durable CAS and cutover
 remain with the current owner. No production caller or SQLite route uses
 this qualification entry.
+
+### Ordered target delta rows and Merkle equality
+
+`target_delta_rows_root.hepta` is the next pure substage of
+`IncrementalStateDeltaV0::validate` after the original header and context
+checks. Within one immutable, disjoint stock 1 MiB input it parses zero to
+eight operation rows, validates each actual stored operation SHA-256
+against its own bytes, requires strict unsigned namespace/key order, then
+computes the actual empty or odd-layer delta Merkle root. An invalid row
+wins over a tuple-order failure on the same row, and the first row/order
+failure wins over root mismatch. It stores computed leaves only in
+2,016 bytes of private scratch and never changes the second ABI span.
+
+The private frame is little-endian `u32` row count, a 32-byte expected
+delta root, and concatenated row frames. Each row begins with four
+little-endian `u32` words (namespace, key, value widths, and optional-value
+tag), its stored 32-byte operation digest, and the declared fields. Status
+101 is the original invalid row, 109 order failure, and 112 delta root
+mismatch. Private extent/framing status 100, capacity 102, and hash 103
+are not original protocol errors. The cap of eight rows and the shared
+envelope are narrower than the original Rust format.
+
+The original locked Rust witness canonicalizes the enclosing pure synthetic
+delta and calls the real `apply_incremental_delta_v0`. Accepted HIA status
+corresponds to that call reaching its fixture root-owner boundary exactly
+once, where the test owner always refuses. Earlier errors never reach the
+owner. The native root comparison does not authenticate its supplied root,
+verify header/context, compute an application root, authorize replay, or
+change SQLite/production routing.
