@@ -549,3 +549,9 @@ Rollup, four-row mixed, or bounded linear receipt lane from original verified
 metadata, and each lane still enforces original typed command and committed
 marker shapes. A valid original history never qualifies merely by having
 the expected number of rows. No capacity, recovery or permission changes.
+
+The measured dispatcher also admits the original one- and two-receipt
+linear routes, without a caller-provided expected count. It does not
+reinterpret same-block receipt/Rollup as a linear pair: the existing
+same-block entry still uses its separately qualified fixed request/reply
+ABI and original marker checks.

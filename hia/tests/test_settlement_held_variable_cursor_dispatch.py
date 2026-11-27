@@ -18,7 +18,7 @@ OWNER = ROOT / "hia/platform/service_settlement"
 
 
 class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
-    def test_actual_original_rollup_mixed_and_linear_cursor_dispatch(self):
+    def test_actual_original_short_rollup_mixed_and_linear_cursor_dispatch(self):
         with ExitStack() as stack:
             tmp = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="trnm-m12-var-dispatch-")))
             original, source = original_adapter(tmp, marker=True, same_block=True)
@@ -63,6 +63,9 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 return json.loads(answer.stdout)
 
             specs = (
+                ("one", "short", (1,), True, None),
+                ("linear-two", "utf8-pair", (1, 4), True, None),
+                ("same-block-pair-not-linear", None, (1, 2), False, 1),
                 ("rollup", "short-rollup", (1, 4, 6), True, None),
                 ("settle", "utf8-settle", (1, 4, 6, "-", "-", 8), True, None),
                 ("linear-six", "utf8-linear-admits", (1, 2, 3, 4, 5, 6), True, None),
@@ -71,14 +74,16 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             )
             for name, fixture, indices, accepted, denied_after in specs:
                 with self.subTest(fixture=name):
-                    fields = list(frames(execute([tmp/"same-block-fixture", fixture]).stdout))
+                    fixture_cmd = [tmp/"same-block-fixture"] + ([fixture] if fixture else [])
+                    fields = list(frames(execute(fixture_cmd).stdout))
                     trust = fields[0]
                     paths = {}
                     for index in (0, *(i for i in indices if i != "-")):
                         paths[index] = tmp/f"{name}-{index}"
                         paths[index].write_bytes(fields[index])
                     db = owned/f"actual {name} checked dispatch #?.db"
-                    held = execute([original, "seed-receipts", db, paths[0], "0",
+                    seed = "seed-same-block" if fixture is None else "seed-receipts"
+                    held = execute([original, seed, db, paths[0], "0",
                                     *(paths[i] if i != "-" else "-" for i in indices)]).stdout
                     pristine = db.read_bytes()
                     original_out = execute([original, "verify-journal", db, paths[0]]).stdout

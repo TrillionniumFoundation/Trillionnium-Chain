@@ -18,7 +18,7 @@ block provisional(pr:readbuf,pm:mutbuf,pw:mutbuf)
 block bounds(br:readbuf,bm:mutbuf,bw:mutbuf)
   at:u64 = const() {"value":7002}
   count:u64 = call(bm,at) {"function":"cp_get"}
-  floor:u64 = const() {"value":3}
+  floor:u64 = const() {"value":1}
   ceiling:u64 = const() {"value":8}
   lo:bool = compare.ge(count,floor)
   hi:bool = compare.le(count,ceiling)
@@ -35,8 +35,16 @@ block cursor(cr:readbuf,cm:mutbuf,cw:mutbuf,cn:u64)
   rule3:u64 = const() {"value":9}
   rule4:u64 = const() {"value":8}
   linear:u64 = const() {"value":10}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  first:bool = compare.eq(cn,one)
+  pair:bool = compare.eq(cn,two)
+  profile1:u64 = const() {"value":6}
+  profile2:u64 = const() {"value":7}
   later:u64 = select(mixed,rule4,linear)
-  rule:u64 = select(tri,rule3,later)
+  complete:u64 = select(tri,rule3,later)
+  with_pair:u64 = select(pair,profile2,complete)
+  rule:u64 = select(first,profile1,with_pair)
   result:u32 = call(cr,cm,cw,rule) {"function":"hfr_read"}
   ret(result)
 block bad()

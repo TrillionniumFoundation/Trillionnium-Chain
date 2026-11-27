@@ -146,7 +146,7 @@ def run(request, uri_image, reader, provider):
                         native_rows, = struct.unpack_from("<Q", state, 7002)
                         if profile == 10 and 5 <= native_rows <= 8:
                             rows = native_rows
-                        elif cursor_stream and (profile, native_rows) in ((9, 3), (8, 4)):
+                        elif cursor_stream and (profile, native_rows) in ((6, 1), (7, 2), (9, 3), (8, 4)):
                             rows = native_rows
                         else:
                             rows = None
@@ -177,7 +177,10 @@ def run(request, uri_image, reader, provider):
                     engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block,
                                                 variable_rows=active_rows if stream else variable_rows)
                 raw = engine.apply(payload)
-                if raw and (active_rows == 4 or same_block or wide_stream or (stream and active_rows == 3)):
+                predecessor_root = (active_rows == 4 or same_block or linear_stream
+                                    or (cursor_stream and active_rows >= 3)
+                                    or (stream and active_rows == 3))
+                if raw and predecessor_root:
                     if engine.last_parent_root is None:
                         raise ValueError("Missing observed native predecessor root")
                     raw += engine.last_parent_root
