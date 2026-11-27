@@ -3,7 +3,14 @@
 // original business methods, never keys or data from a deployment.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut fixture = Harness::new();
-    if let Some(profile) = std::env::args().nth(1) {
+    let mode = std::env::args().nth(1);
+    let mode = if mode.as_deref() == Some("short-same-block") {
+        fixture.trust.context.chain_id = "m12".into();
+        None
+    } else {
+        mode
+    };
+    if let Some(profile) = mode {
         if ["six-admits", "short-linear-admits", "utf8-linear-admits"].contains(&profile.as_str()) {
             match profile.as_str() {
                 "short-linear-admits" => fixture.trust.context.chain_id = "x".into(),

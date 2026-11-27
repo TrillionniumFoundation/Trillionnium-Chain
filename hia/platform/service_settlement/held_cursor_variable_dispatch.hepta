@@ -43,9 +43,50 @@ block cursor(cr:readbuf,cm:mutbuf,cw:mutbuf,cn:u64)
   profile2:u64 = const() {"value":7}
   later:u64 = select(mixed,rule4,linear)
   complete:u64 = select(tri,rule3,later)
-  with_pair:u64 = select(pair,profile2,complete)
-  rule:u64 = select(first,profile1,with_pair)
-  result:u32 = call(cr,cm,cw,rule) {"function":"hfr_read"}
+  rule:u64 = select(first,profile1,complete)
+  branch pair two_stage(cr,cm,cw,profile2) apply_profile(cr,cm,cw,rule)
+block two_stage(tr:readbuf,tm:mutbuf,tw:mutbuf,tp:u64)
+  stage_at2:u64 = const() {"value":96}
+  stage2:u64 = call(tm,stage_at2) {"function":"cp_get"}
+  open:u64 = const() {"value":3}
+  collecting:bool = compare.eq(stage2,open)
+  branch collecting request_markers(tr,tm,tw,tp) decide_pair(tr,tm,tw,tp)
+block request_markers(rr:readbuf,rm:mutbuf,rw:mutbuf,rp:u64)
+  on_at:u64 = const() {"value":349072}
+  enable:u64 = const() {"value":1}
+  requested:u64 = call(rm,on_at,enable) {"function":"cp_put"}
+  jump apply_profile(rr,rm,rw,rp)
+block decide_pair(dr:readbuf,dm:mutbuf,dw:mutbuf,dl:u64)
+  mark_count_at:u64 = const() {"value":88}
+  markers:u64 = call(dm,mark_count_at) {"function":"cp_get"}
+  exact2:u64 = const() {"value":2}
+  count_is_two:bool = compare.eq(markers,exact2)
+  branch count_is_two geometry(dr,dm,dw,dl) apply_profile(dr,dm,dw,dl)
+block geometry(gr:readbuf,gm:mutbuf,gw:mutbuf,gl:u64)
+  source_at:u64 = const() {"value":420384}
+  target_at:u64 = const() {"value":420392}
+  source:u64 = call(gm,source_at) {"function":"cp_get"}
+  target:u64 = call(gm,target_at) {"function":"cp_get"}
+  zero:u64 = const() {"value":0}
+  two_op:u64 = const() {"value":2}
+  begins:bool = compare.eq(source,zero)
+  ends:bool = compare.eq(target,two_op)
+  whole_block:bool = bool.and(begins,ends)
+  branch whole_block fixed_shape(gr,gm,gw) apply_profile(gr,gm,gw,gl)
+block fixed_shape(fr:readbuf,fm:mutbuf,fw:mutbuf)
+  config_at:u64 = const() {"value":104}
+  state_at:u64 = const() {"value":349008}
+  config:u64 = call(fm,config_at) {"function":"cp_get"}
+  state:u64 = call(fm,state_at) {"function":"cp_get"}
+  cfg:u64 = const() {"value":914}
+  body:u64 = const() {"value":2172}
+  equal_cfg:bool = compare.eq(config,cfg)
+  equal_state:bool = compare.eq(state,body)
+  fixed:bool = bool.and(equal_cfg,equal_state)
+  five:u64 = const() {"value":5}
+  branch fixed apply_profile(fr,fm,fw,five) bad()
+block apply_profile(ar:readbuf,am:mutbuf,aw:mutbuf,ap:u64)
+  result:u32 = call(ar,am,aw,ap) {"function":"hfr_read"}
   ret(result)
 block bad()
   denied:u32 = const() {"value":100}

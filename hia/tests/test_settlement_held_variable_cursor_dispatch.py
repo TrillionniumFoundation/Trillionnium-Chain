@@ -65,7 +65,8 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             specs = (
                 ("one", "short", (1,), True, None),
                 ("linear-two", "utf8-pair", (1, 4), True, None),
-                ("same-block-pair-not-linear", None, (1, 2), False, 1),
+                ("fixed-same-block", None, (1, 2), True, None),
+                ("unsupported-same-block-width", "short-same-block", (1, 2), False, 0),
                 ("rollup", "short-rollup", (1, 4, 6), True, None),
                 ("settle", "utf8-settle", (1, 4, 6, "-", "-", 8), True, None),
                 ("linear-six", "utf8-linear-admits", (1, 2, 3, 4, 5, 6), True, None),
@@ -82,7 +83,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         paths[index] = tmp/f"{name}-{index}"
                         paths[index].write_bytes(fields[index])
                     db = owned/f"actual {name} checked dispatch #?.db"
-                    seed = "seed-same-block" if fixture is None else "seed-receipts"
+                    seed = "seed-same-block" if "same-block" in name else "seed-receipts"
                     held = execute([original, seed, db, paths[0], "0",
                                     *(paths[i] if i != "-" else "-" for i in indices)]).stdout
                     pristine = db.read_bytes()
@@ -95,6 +96,15 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                     self.assertEqual(len(rows), 3*count)
                     self.assertEqual(expected_root, raw_digest(terminal))
                     self.assertEqual(settled[0], int(name == "settle"))
+                    if "same-block" in name:
+                        first, second = rows[0], rows[3]
+                        self.assertEqual(first[-40:], second[-40:])
+                        self.assertEqual(second[-80:-40], first[-40:])
+                        dimensions = (len(held) - 104, len(first), len(terminal))
+                        if accepted:
+                            self.assertEqual(dimensions, (914, 163, 2172))
+                        else:
+                            self.assertNotEqual(dimensions, (914, 163, 2172))
                     cursor = invoke(db, held, "cursor")
                     independent = invoke(db, held, "execution")
                     self.assertEqual(independent["status"], 0, independent)

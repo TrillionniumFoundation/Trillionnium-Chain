@@ -114,6 +114,7 @@ def run(request, uri_image, reader, provider):
     replay_held = False
     requested_replay = 0
     selected_rows = None
+    selected_profile = None
     engine = None
     replay_owners = ExitStack()
     replay_locks = 0
@@ -146,16 +147,19 @@ def run(request, uri_image, reader, provider):
                         native_rows, = struct.unpack_from("<Q", state, 7002)
                         if profile == 10 and 5 <= native_rows <= 8:
                             rows = native_rows
-                        elif cursor_stream and (profile, native_rows) in ((6, 1), (7, 2), (9, 3), (8, 4)):
+                        elif cursor_stream and (profile, native_rows) in ((6, 1), (5, 2), (7, 2), (9, 3), (8, 4)):
                             rows = native_rows
                         else:
                             rows = None
                     else:
                         rows = {6: 1, 7: 2, 8: 4, 9: 3}.get(profile)
                     if (rows is None or requested_replay > rows
-                            or selected_rows not in (None, rows)):
+                            or selected_rows not in (None, rows)
+                            or selected_profile not in (None, profile)):
                         raise ValueError("Unexpected verified native stream selection")
                     selected_rows = rows
+                    selected_profile = profile
+                active_same = same_block or (cursor_stream and selected_profile == 5)
                 active_rows = selected_rows if stream else replay_limit
                 if request.get("writer"):
                     check = subprocess.run([request["writer"], "try-write", str(db)],
@@ -166,18 +170,19 @@ def run(request, uri_image, reader, provider):
                     replay_locks += 1
                 from hia.platform.service_settlement.first_replay_fixture_engine import FixtureReplay
                 size, = struct.unpack_from("<Q", state, 349016)
-                lane_widths = (1921, 2811) if same_block else (1921, 1953, 3742, 1293)
-                if stream or variable_rows:
+                lane_widths = (1921, 2811) if active_same else (1921, 1953, 3742, 1293)
+                measured = (stream and not active_same) or variable_rows
+                if measured:
                     if not 40 <= size <= 20642:
                         raise ValueError("Native continuation returned an unbounded variable request")
                 elif size != lane_widths[requested_replay - 1]:
                     raise ValueError("Native continuation returned a different request shape")
                 payload = ctypes.string_at(ctypes.addressof(state) + 360000, size)
                 if engine is None:
-                    engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block,
-                                                variable_rows=active_rows if stream else variable_rows)
+                    engine = FixtureReplay.open(replay_owners, *replay_image, same_block=active_same,
+                                                variable_rows=active_rows if measured and stream else variable_rows)
                 raw = engine.apply(payload)
-                predecessor_root = (active_rows == 4 or same_block or linear_stream
+                predecessor_root = (active_rows == 4 or active_same or linear_stream
                                     or (cursor_stream and active_rows >= 3)
                                     or (stream and active_rows == 3))
                 if raw and predecessor_root:

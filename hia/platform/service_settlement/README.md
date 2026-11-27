@@ -555,3 +555,9 @@ linear routes, without a caller-provided expected count. It does not
 reinterpret same-block receipt/Rollup as a linear pair: the existing
 same-block entry still uses its separately qualified fixed request/reply
 ABI and original marker checks.
+
+The unified two-row selector now waits for the held original marker proof.
+A verified single committed interval covering both rows enters the existing
+same-block sealed fixed ABI only when its full fixed-width admission checks
+pass. The request and reply formats are unchanged. A genuine same-block
+snapshot with different widths is refused, not treated as a linear pair.

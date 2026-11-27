@@ -40,7 +40,21 @@ block special(sp_r:readbuf,sp_m:mutbuf,sp_w:mutbuf,sp_p:u64,sp_phase:u64)
   sp_linear:bool = call(sp_mode) {"function":"hfs_linear_profile"}
   sp_legacy:bool = bool.or(sp_driven,sp_same)
   sp_settled:bool = bool.or(sp_legacy,sp_linear)
-  branch sp_settled intercept(sp_r,sp_m,sp_w,sp_p,sp_phase) route_row(sp_r,sp_m,sp_w,sp_p,sp_phase)
+  branch sp_settled intercept(sp_r,sp_m,sp_w,sp_p,sp_phase) provisional_pair(sp_r,sp_m,sp_w,sp_p,sp_phase,sp_mode)
+block provisional_pair(pp_r:readbuf,pp_m:mutbuf,pp_w:mutbuf,pp_p:u64,pp_phase:u64,pp_mode:u64)
+  pair_profile:u64 = const() {"value":7}
+  pp_stage_at:u64 = const() {"value":96}
+  pp_opt_at:u64 = const() {"value":349072}
+  pp_stage:u64 = call(pp_m,pp_stage_at) {"function":"cp_get"}
+  pp_opt:u64 = call(pp_m,pp_opt_at) {"function":"cp_get"}
+  pp_three:u64 = const() {"value":3}
+  pp_one:u64 = const() {"value":1}
+  pp_pair:bool = compare.eq(pp_mode,pair_profile)
+  pp_on:bool = compare.eq(pp_opt,pp_one)
+  pp_marker:bool = compare.eq(pp_stage,pp_three)
+  pp_mode_on:bool = bool.and(pp_pair,pp_on)
+  pp_actual:bool = bool.and(pp_mode_on,pp_marker)
+  branch pp_actual intercept(pp_r,pp_m,pp_w,pp_p,pp_phase) route_row(pp_r,pp_m,pp_w,pp_p,pp_phase)
 block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
   it_marker:u64 = const() {"value":22}
   it_step:u64 = const() {"value":52}
