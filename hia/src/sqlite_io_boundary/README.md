@@ -412,3 +412,29 @@ metadata at single-process, dormant phase boundaries, not by opening
 another descriptor. Allocated blocks are observed, not treated as a
 quota. The native validator does not independently own an FD, identify
 a path race, verify provenance, or recover the raw VFS slot ledger.
+
+## Actual last close of one held owned WAL
+
+`owned_last_close.hepta` checks a bounded healthy last-close path from
+the original locked Rust public owner. Its fixed 568-byte prefix contains
+15 little-endian u64 words (policy, both root identities, before/after
+ordinary/cleanup/byte totals, and physical/receipt presence masks) and
+four 14-word rows (held main, WAL, SHM, then final main). Each row carries
+generation, independently observed name device/inode/length/blocks,
+the matching four original receipt fields, high water, handle/pending/
+SHM counts and linked bit. Only the main identity remains after close.
+
+The original retained event tail uses the existing bounded receipt
+frame. Native validation shares exact compact width and binds each
+event to the original role, observed identity and expected state.
+V1 records main growth first; V2 already holds the reservation. Both
+require the observed SHM unlink then unmap, WAL close then unlink and
+final main close. The 56-byte output reports next sequence, newly
+retained compact bytes, remaining main high water, released WAL+SHM
+logical charge and main generation/device/inode. Invalid or short
+requests publish nothing.
+
+The original fixture creates disposable roots and observes names read-only
+at quiescent boundaries. This does not establish FD or race authority,
+physical block refunds, generic close ordering, or production callback
+ownership.

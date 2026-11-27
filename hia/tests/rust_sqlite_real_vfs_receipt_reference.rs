@@ -8,7 +8,7 @@ use trnm_sqlite_io_boundary::{
 };
 
 fn word(out: &mut impl Write, v:u64) {out.write_all(&v.to_le_bytes()).unwrap();}
-fn typed(out:&mut Vec<u8>, e:&LifecycleReceipt, ordinary:bool) {
+pub(crate) fn typed(out:&mut Vec<u8>, e:&LifecycleReceipt, ordinary:bool) {
     let tag=match e.action {
         "reserve-open"=>1,"bind-existing-before-io-v2"=>2,"bind-real-inode"=>3,
         "reserve-growth"=>4,"reserve-handle"=>5,"opened"=>6,
