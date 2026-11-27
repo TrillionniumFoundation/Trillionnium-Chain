@@ -461,3 +461,30 @@ passes the larger loan to the unchanged native cap and confirms
 refusal. The direct ordinary test runner does not provision a read
 loan above 1 MiB. This is a value commitment only: a valid ID does not
 authorize a committee, policy, signature, or vote.
+
+## DA policy value
+
+The [private policy constructor](policy_value.hepta) takes one immutable
+loan: canonical Borsh committee, canonical Borsh author vector, proposed
+`u32,u32,u32,u64,u64,u64` limits in little-endian order, then the
+committee byte extent as LE `u32`. It validates and hashes the committee
+from that same loan before policy checks. It then checks the six proposed
+limits and the chunk-to-batch relation before each author's original typed
+predicate, strict raw ID order, raw key uniqueness and committee bounds.
+It does not sort, trust a caller-supplied hash or infer authorization.
+
+The private profile has a 1 MiB total input limit, at most 32 committee
+members and 32 authors. The widest body requires 152,104 scratch bytes. It stages the
+whole original Borsh policy in scratch, then hashes the staged bytes
+under the original policy domain. On success it writes the policy and
+its following 32-byte digest to the output; errors leave output unchanged.
+Status 3/6/7 reports the original author predicate, 201–214 retain the
+committee-ID distinctions (207 is unused), and 215–218 distinguish policy
+limits, chunk bounds, the author set rule and an empty author set.
+100/102/103 denote private framing, capacity and internal failures.
+
+The [locked original differential](../../tests/test_da_policy_value.py)
+uses the original Rust constructor and actual `policy_hash()` and checks
+exact Borsh bytes against both pinned HIA backends. This ports a bounded
+value constructor, not vote handling, signing, authorization, network
+admission or production activation.

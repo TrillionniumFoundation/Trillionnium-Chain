@@ -1223,6 +1223,19 @@
       ]
     },
     {
+      "id": "data-availability/policy-value",
+      "node_integration_complete": false,
+      "scope": "Original DaPolicyV1 bounded private transaction-batch value construction, same-loan committee validation and hash, ordered typed authors, canonical Borsh and original policy hash; no authority, signing, network or production.",
+      "source": "hia/src/data_availability/policy_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_policy_value.py",
+        "hia/tests/rust_da_policy_value_reference.rs",
+        "hia/tests/test_da_committee_id.py",
+        "hia/tests/test_da_author_authority_value.py"
+      ]
+    },
+    {
       "id": "data-availability/member-definition",
       "node_integration_complete": false,
       "scope": "Original public DA member value constructor, full native u128 bounds, Dalek predicate and canonical Borsh definition hash; no membership, quorum, credentials or authorization.",
