@@ -198,15 +198,22 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                                          (100, None, 4), refused)
                         self.assertGreater(refused["released"], 0)
                     else:
+                        # Missing valid Settle interval now refuses before an Engine
+                        # call. A root mismatch still needs the replayed root table.
+                        early = label == "interval"
                         self.assertEqual((original_read["status"], original_read["projection"],
-                                          original_read["replay_calls"]), (100, None, 4), original_read)
+                                          original_read["replay_calls"]),
+                                         (100, None, 0 if early else 4), original_read)
                         self.assertGreater(original_read["released"], 0)
-                        self.assertEqual(original_read["transcript"][-1], [52, 7, 24])
+                        self.assertEqual(original_read["transcript"][-1],
+                                         [54, 8, 173] if early else [52, 7, 24])
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())
 
-            roots = set()
-            for empty_count, trailing in ((3, "0"), (4, "0"), (5, "0"), (2, "1")):
+            roots = {}
+            cases = [(before, str(after)) for before in (2, 3, 4) for after in range(3)]
+            cases += [(5, "0"), (2, "3"), (4, "3")]
+            for empty_count, trailing in cases:
                 with self.subTest(actual_empty_before_settle=empty_count, trailing=trailing):
                     store = owned / f"delayed settle {empty_count}+{trailing}?.db"
                     binding = execute([original, "seed-receipts", store, files[0], trailing,
@@ -219,18 +226,56 @@ class SettlementHeldFirstReplayTests(unittest.TestCase):
                     self.assertEqual(int.from_bytes(ops[-3][123:131], "little"), 13 + empty_count)
                     self.assertEqual(expected[90:122], terminal_root)
                     before = store.read_bytes()
-                    guarded = invoke(store, binding, lane="settle", lock=empty_count == 4)
-                    if empty_count <= 4 and trailing == "0":
+                    competing = empty_count == 4 and trailing == "2"
+                    guarded = invoke(store, binding, lane="settle", lock=competing)
+                    if empty_count <= 4 and int(trailing) <= 2:
                         self.assertEqual((guarded["status"], guarded["replay_calls"], guarded["released"]),
                                          (0, 4, 0), guarded)
-                        self.assertEqual(guarded["replay_locks"], 4 if empty_count == 4 else 0)
+                        self.assertEqual(guarded["replay_locks"], 4 if competing else 0)
                         self.assertEqual(bytes.fromhex(guarded["projection"]), expected)
                         self.assertEqual(guarded["transcript"], invoke(store, binding, lane="execution")["transcript"])
-                        self.assertNotIn(terminal_root, roots)
-                        roots.add(terminal_root)
+                        self.assertEqual(int.from_bytes(expected[50:58], "little"),
+                                         13 + empty_count + int(trailing))
+                        _, prefixes, markers = frames(execute(
+                            [original, "observe-actual-journal-prefixes", store, files[0]]).stdout)
+                        self.assertEqual(len(prefixes), 160)
+                        self.assertEqual(len(markers), (empty_count + 5 + int(trailing)) * 80)
+                        settle_at = (4 + empty_count) * 80
+                        self.assertEqual(markers[settle_at:settle_at+16],
+                                         (3).to_bytes(8, "little") + (4).to_bytes(8, "little"))
+                        for at in range(settle_at+80, len(markers), 80):
+                            self.assertEqual(markers[at:at+80],
+                                             (4).to_bytes(8, "little") * 2 + prefixes[-32:] * 2)
+                        if empty_count in roots:
+                            self.assertEqual(roots[empty_count], (terminal_root, prefixes[-32:]))
+                        else:
+                            self.assertNotIn((terminal_root, prefixes[-32:]), roots.values())
+                            roots[empty_count] = terminal_root, prefixes[-32:]
                     else:
                         self.assertEqual((guarded["status"], guarded["projection"], guarded["replay_calls"]),
-                                         (100, None, 3 if trailing == "1" else 0), guarded)
+                                         (100, None, 0), guarded)
                         self.assertGreater(guarded["released"], 0)
                     self.assertEqual(store.read_bytes(), before)
                     self.assertFalse(store.with_name(store.name + "-journal").exists())
+
+            store = owned / "owned trailing state drift.db"
+            binding = execute([original, "seed-receipts", store, files[0], "2",
+                               *files[1:4], "-", "-", files[4]]).stdout
+            before = execute([original, "verify-journal", store, files[0]]).stdout
+            execute([original, "fixture-trailing-empty-state-drift", store, files[0]])
+            immutable = store.read_bytes()
+            retained = subprocess.run([original, "verify-journal", store, files[0]],
+                                      capture_output=True, timeout=30, check=False)
+            self.assertNotEqual(retained.returncode, 0)
+            self.assertIn(b"committed-block marker target state differs from its operation range",
+                          retained.stderr)
+            weaker = invoke(store, binding, lane="execution")
+            self.assertEqual((weaker["status"], weaker["released"]), (0, 0), weaker)
+            self.assertEqual(bytes.fromhex(weaker["projection"])[40:], before[40:])
+            denied = invoke(store, binding, lane="settle")
+            self.assertEqual((denied["status"], denied["projection"], denied["replay_calls"]),
+                             (100, None, 4), denied)
+            self.assertEqual(denied["transcript"][-1], [52, 7, 24])
+            self.assertGreater(denied["released"], 0)
+            self.assertEqual(store.read_bytes(), immutable)
+            self.assertFalse(store.with_name(store.name + "-journal").exists())

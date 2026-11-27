@@ -214,7 +214,8 @@
           "hfs_roots",
           "hfs_sameblock_receipt",
           "hfs_sameblock_roots",
-          "hfs_save_receipt"
+          "hfs_save_receipt",
+          "hfs_settle_index"
         ],
         "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
       },
@@ -408,7 +409,8 @@
           "hfs_roots",
           "hfs_sameblock_receipt",
           "hfs_sameblock_roots",
-          "hfs_save_receipt"
+          "hfs_save_receipt",
+          "hfs_settle_index"
         ],
         "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
       },
@@ -605,7 +607,8 @@
           "hfs_roots",
           "hfs_sameblock_receipt",
           "hfs_sameblock_roots",
-          "hfs_save_receipt"
+          "hfs_save_receipt",
+          "hfs_settle_index"
         ],
         "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
       },
@@ -15150,7 +15153,8 @@
           "hfs_roots",
           "hfs_sameblock_receipt",
           "hfs_sameblock_roots",
-          "hfs_save_receipt"
+          "hfs_save_receipt",
+          "hfs_settle_index"
         ],
         "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
       },
@@ -15344,7 +15348,8 @@
           "hfs_roots",
           "hfs_sameblock_receipt",
           "hfs_sameblock_roots",
-          "hfs_save_receipt"
+          "hfs_save_receipt",
+          "hfs_settle_index"
         ],
         "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
       },

@@ -350,6 +350,38 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             tx.commit()?;
             db.close().map_err(|(_, err)| err)?;
         }
+        "fixture-trailing-empty-state-drift" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            assert_eq!(owner.fresh_readback()?.sequence(), 4);
+            drop(owner);
+            let mut db = Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+            verify_schema(&db)?;
+            let mut rows = load_committed_block_markers(&db, &config)?;
+            assert_eq!(rows.len(), 9);
+            let mut second = rows.pop().ok_or("missing second trailing marker")?;
+            let mut first = rows.pop().ok_or("missing first trailing marker")?;
+            for row in [&first, &second] {
+                assert_eq!((row.source_operation_sequence, row.target_operation_sequence), (4, 4));
+            }
+            let replacement = Hash32V1([0x9d; 32]);
+            assert_ne!(first.target_state_root, replacement);
+            assert_eq!(first.target_state_root, second.source_state_root);
+            first.target_state_root = replacement;
+            second.source_state_root = replacement;
+            first.checksum = committed_block_marker_checksum(&config, &first)?;
+            second.previous_marker_checksum = first.checksum;
+            second.checksum = committed_block_marker_checksum(&config, &second)?;
+            let tx = db.transaction()?;
+            for row in [&first, &second] {
+                assert_eq!(tx.execute(
+                    "UPDATE committed_blocks SET source_state_root=?1,target_state_root=?2,previous_marker_checksum=?3,checksum=?4 WHERE marker_sequence=?5",
+                    params![row.source_state_root.0.to_vec(), row.target_state_root.0.to_vec(),
+                            row.previous_marker_checksum.0.to_vec(), row.checksum.0.to_vec(), row.marker_sequence],
+                )?, 1);
+            }
+            tx.commit()?;
+            db.close().map_err(|(_, err)| err)?;
+        }
         "observe-actual-journal-prefixes" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let observed = owner.fresh_readback()?;

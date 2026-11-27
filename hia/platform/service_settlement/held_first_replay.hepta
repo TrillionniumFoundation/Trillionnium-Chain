@@ -66,13 +66,13 @@ block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
 block marker(ma_r:readbuf,ma_m:mutbuf,ma_w:mutbuf)
   ma_count_pos:u64 = const() {"value":88}
   ma_count:u64 = call(ma_m,ma_count_pos) {"function":"cp_get"}
-  ma_nine:u64 = const() {"value":9}
+  ma_eleven:u64 = const() {"value":11}
   ma_at:u64 = const() {"value":349024}
   ma_cap:u64 = call(ma_m,ma_at) {"function":"cp_get"}
   ma_five:u64 = const() {"value":5}
   ma_two:u64 = const() {"value":2}
   ma_same:bool = compare.eq(ma_cap,ma_five)
-  ma_high:u64 = select(ma_same,ma_two,ma_nine)
+  ma_high:u64 = select(ma_same,ma_two,ma_eleven)
   ma_room:bool = compare.lt(ma_count,ma_high)
   branch ma_room verified_marker(ma_r,ma_m,ma_w,ma_count) refused()
 block verified_marker(vm_r:readbuf,vm_m:mutbuf,vm_w:mutbuf,vm_count:u64)
@@ -332,10 +332,11 @@ block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_la
   pa_previous:usize = const() {"value":354000}
   pa_four:u64 = const() {"value":4}
   pa_final:bool = compare.eq(pa_row,pa_four)
-  pa_marker_count_at:u64 = const() {"value":88}
-  pa_marker_count:u64 = call(pa_m,pa_marker_count_at) {"function":"cp_get"}
-  pa_count_delta:u64 = const() {"value":2}
-  pa_gap_index:u64 = int.sub.wrap(pa_marker_count,pa_count_delta)
+  pa_settle_index:u64 = call(pa_m) {"function":"hfs_settle_index"}
+  pa_one:u64 = const() {"value":1}
+  pa_valid_index:bool = compare.ge(pa_settle_index,pa_one)
+  pa_safe_index:u64 = select(pa_valid_index,pa_settle_index,pa_one)
+  pa_gap_index:u64 = int.sub.wrap(pa_safe_index,pa_one)
   pa_marker_base:u64 = call(pa_gap_index) {"function":"hfs_marker_offset"}
   pa_field:u64 = const() {"value":8}
   pa_coord:u64 = int.add.wrap(pa_marker_base,pa_field)
@@ -373,7 +374,17 @@ block tail(ta_r:readbuf,ta_m:mutbuf,ta_w:mutbuf,ta_row:u64,ta_len:u64)
   ta_receipt:usize = const() {"value":100}
   ta_metadata:usize = const() {"value":7010}
   ta_all:u64 = const() {"value":72}
-  ta_same:bool = call(ta_r,ta_m,ta_receipt,ta_metadata,ta_all) {"function":"smr_eq_bound"}
+  ta_mode_at:u64 = const() {"value":349024}
+  ta_cap:u64 = call(ta_m,ta_mode_at) {"function":"cp_get"}
+  ta_four:u64 = const() {"value":4}
+  ta_settle:bool = compare.eq(ta_cap,ta_four)
+  ta_state_receipt:usize = const() {"value":140}
+  ta_state_metadata:usize = const() {"value":7050}
+  ta_state_n:u64 = const() {"value":32}
+  ta_compare_r:usize = select(ta_settle,ta_state_receipt,ta_receipt)
+  ta_compare_m:usize = select(ta_settle,ta_state_metadata,ta_metadata)
+  ta_compare_n:u64 = select(ta_settle,ta_state_n,ta_all)
+  ta_same:bool = call(ta_r,ta_m,ta_compare_r,ta_compare_m,ta_compare_n) {"function":"smr_eq_bound"}
   branch ta_same save(ta_r,ta_m,ta_w,ta_row,ta_len) refused()
 block save(sv_r:readbuf,sv_m:mutbuf,sv_w:mutbuf,sv_row:u64,sv_len:u64)
   sv_src:u64 = const() {"value":100}

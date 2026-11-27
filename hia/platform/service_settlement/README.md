@@ -447,3 +447,14 @@ source/target interval. The extended original fixtures verify distinct
 canonical terminal states at heights 16 and 17. More than four leading
 empty blocks or extra empty blocks after the final command remain outside
 this finite profile.
+
+The private held Settle profile accepts two through four actual empty
+markers before Settle (heights 15–17) and zero through two trailing empty
+markers. HIA locates the unique checked interval 3→4 independently of
+the terminal marker and uses the immediately preceding marker as the
+typed Settle parent. Trailing intervals must leave both the verified
+state and original receipt prefix 4 unchanged. Only the four committed
+operation rows call the sealed Engine. A later terminal checkpoint must
+still match checked SQLite metadata before publication, so the Settle
+receipt need not share its final height. This is a finite original
+differential, not generalized replay or Order authority.

@@ -10,20 +10,14 @@ end
 
 fn hfs_receipt_mark(r:readbuf,m:mutbuf,seq:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,m:mutbuf,seq:u64)
-  marker_count_at:u64 = const() {"value":88}
-  actual:u64 = call(m,marker_count_at) {"function":"cp_get"}
-  seven:u64 = const() {"value":7}
-  nine:u64 = const() {"value":9}
-  room:bool = compare.le(actual,nine)
-  complete:bool = compare.ge(actual,seven)
-  all:bool = bool.and(room,complete)
-  branch all route(r,m,seq,actual) bad()
-block route(rr:readbuf,rm:mutbuf,rseq:u64,rlen:u64)
+  checked:u64 = call(m) {"function":"hfs_settle_index"}
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.gt(checked,zero)
+  branch valid route(r,m,seq,checked) bad()
+block route(rr:readbuf,rm:mutbuf,rseq:u64,settle_index:u64)
   four:u64 = const() {"value":4}
-  one:u64 = const() {"value":1}
-  final_index:u64 = int.sub.wrap(rlen,one)
   last:bool = compare.eq(rseq,four)
-  idx:u64 = select(last,final_index,rseq)
+  idx:u64 = select(last,settle_index,rseq)
   base:u64 = call(idx) {"function":"hfs_marker_offset"}
   eight:u64 = const() {"value":8}
   state_field:u64 = const() {"value":136}
@@ -130,38 +124,93 @@ block bad()
   ret(no)
 end
 
+fn hfs_settle_index(m:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  lo:u64 = const() {"value":7}
+  hi:u64 = const() {"value":11}
+  lower:bool = compare.ge(count,lo)
+  upper:bool = compare.le(count,hi)
+  safe:bool = bool.and(lower,upper)
+  branch safe begin(m,count) bad()
+block begin(bm:mutbuf,limit:u64)
+  start:u64 = const() {"value":6}
+  prior:u64 = const() {"value":0}
+  jump scan(bm,limit,start,prior)
+block scan(sm:mutbuf,sl:u64,si:u64,sp:u64)
+  within:bool = compare.lt(si,sl)
+  eight:u64 = const() {"value":8}
+  allowed:bool = compare.le(si,eight)
+  present:bool = bool.and(within,allowed)
+  branch present examine(sm,sl,si,sp) finish(sl,sp)
+block examine(em:mutbuf,el:u64,ei:u64,ep:u64)
+  row:u64 = call(ei) {"function":"hfs_marker_offset"}
+  fsource:u64 = const() {"value":88}
+  ftarget:u64 = const() {"value":96}
+  asource:u64 = int.add.wrap(row,fsource)
+  atarget:u64 = int.add.wrap(row,ftarget)
+  src:u64 = call(em,asource) {"function":"cp_get"}
+  dest:u64 = call(em,atarget) {"function":"cp_get"}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  a:bool = compare.eq(src,three)
+  b:bool = compare.eq(dest,four)
+  same:bool = bool.and(a,b)
+  zero:u64 = const() {"value":0}
+  already:bool = compare.gt(ep,zero)
+  twice:bool = bool.and(same,already)
+  next_witness:u64 = select(same,ei,ep)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ei,one)
+  branch twice bad() scan(em,el,next,next_witness)
+block finish(fl:u64,fp:u64)
+  zero_f:u64 = const() {"value":0}
+  one_f:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  tail:u64 = int.sub.wrap(fl,one_f)
+  trailing:u64 = int.sub.wrap(tail,fp)
+  present_f:bool = compare.gt(fp,zero_f)
+  fewer:bool = compare.le(trailing,two)
+  fit:bool = bool.and(present_f,fewer)
+  answer:u64 = select(fit,fp,zero_f)
+  ret(answer)
+block bad()
+  no:u64 = const() {"value":0}
+  ret(no)
+end
+
 fn hfs_compare_markers(m:mutbuf,start:u64) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,start:u64)
   count_at:u64 = const() {"value":88}
   count:u64 = call(m,count_at) {"function":"cp_get"}
-  lo:u64 = const() {"value":7}
-  hi:u64 = const() {"value":9}
-  fit_lo:bool = compare.ge(count,lo)
-  fit_hi:bool = compare.le(count,hi)
-  fit:bool = bool.and(fit_lo,fit_hi)
-  branch fit one(m,start,count) bad()
-block one(om:mutbuf,oi:u64,oc:u64)
+  settle:u64 = call(m) {"function":"hfs_settle_index"}
+  zero_entry:u64 = const() {"value":0}
+  fit:bool = compare.gt(settle,zero_entry)
+  branch fit one(m,start,count,settle) bad()
+block one(om:mutbuf,oi:u64,oc:u64,os:u64)
   zero:u64 = const() {"value":0}
   unit:u64 = const() {"value":1}
   three:u64 = const() {"value":3}
   four:u64 = const() {"value":4}
-  terminal:u64 = int.sub.wrap(oc,unit)
   is_genesis:bool = compare.eq(oi,zero)
   max_normal:bool = compare.le(oi,three)
-  last_marker:bool = compare.eq(oi,terminal)
+  after:bool = compare.gt(oi,os)
+  settled:bool = compare.ge(oi,os)
   prev:u64 = int.sub.wrap(oi,unit)
   start_min:u64 = select(is_genesis,zero,prev)
-  source:u64 = select(max_normal,start_min,three)
-  target_other:u64 = select(last_marker,four,three)
+  start_other:u64 = select(after,four,three)
+  source:u64 = select(max_normal,start_min,start_other)
+  target_other:u64 = select(settled,four,three)
   target:u64 = select(max_normal,oi,target_other)
   base:u64 = call(oi) {"function":"hfs_marker_offset"}
   sure:bool = call(om,base,oi,source,target) {"function":"hfs_check_marker"}
-  branch sure cycle(om,oi,oc) bad()
-block cycle(cm:mutbuf,ci:u64,limit:u64)
+  branch sure cycle(om,oi,oc,os) bad()
+block cycle(cm:mutbuf,ci:u64,limit:u64,settle_i:u64)
   c1:u64 = const() {"value":1}
   next:u64 = int.add.wrap(ci,c1)
   more:bool = compare.lt(next,limit)
-  branch more one(cm,next,limit) good()
+  branch more one(cm,next,limit,settle_i) good()
 block good()
   yes:bool = const() {"value":true}
   ret(yes)
