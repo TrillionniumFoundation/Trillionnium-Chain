@@ -147,3 +147,47 @@ class SettlementHeldVariableFirstReplayTests(unittest.TestCase):
                     self.assertEqual(execute([original, "verify-journal", db, bundle]).stdout, source_bytes)
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
+
+            for backend in ("direct", "selfhost"):
+                pre, reader, codec = [stack.enter_context(NativeModule(
+                    OWNER/name, byte_exports=("f0",), backend=backend))
+                    for name in ("preview_live_rollup.hepta", "held_variable_first_replay.hepta",
+                                 "rollup_command_id.hepta")]
+                for mode, tag, expected in (("preview-rollup", "rollup", 0),
+                                            ("preview-unfinishable-rollup", "rollup-unfinishable", 101)):
+                    with self.subTest(backend=backend, prospective=mode):
+                        trust, first, rollup = frames(execute([tmp/"same-block-fixture", mode]).stdout)
+                        files = [tmp/f"{backend}-{mode}-{i}" for i in range(3)]
+                        for file, data in zip(files, (trust, first, rollup), strict=True):
+                            file.write_bytes(data)
+                        bundle, receipt_file, rollup_file = files
+                        db = owned/f"original mixed prospective {backend} {mode} #?.db"
+                        binding = execute([original, "seed-receipts", db, bundle, "0", receipt_file]).stdout
+                        pristine = db.read_bytes()
+                        source_bytes = execute([original, "verify-journal", db, bundle]).stdout
+                        frame, command, value = frames(execute(
+                            [original, "observe-held-perspective-receipt", db, bundle, rollup_file, tag]).stdout)
+                        self.assertEqual((struct.unpack_from("<I", value)[0], command), (expected, rollup))
+
+                        def seal(module):
+                            return [str(module.library), module.artifact_sha256]
+
+                        request = dict(reader=seal(reader), uri=seal(images["uri"]),
+                                       provider=[str(provider), proof.checked[str(provider)]["sha256"]],
+                                       directory=str(owned), database=str(db), journal_binding=binding.hex(),
+                                       first_replay_engine=[str(out/"public"), engine["artifact"]["sha256"]],
+                                       variable_first_fixture=True, writer=str(original),
+                                       live_rollup_preview=seal(pre), live_preview_codec=seal(codec),
+                                       live_preview_frame=frame.hex(), live_preview_command=command.hex())
+                        got = execute([sys.executable, "-I", "-S", "-B", OWNER/"schema_fixture_host.py"],
+                                      input=json.dumps(request).encode(), timeout=60)
+                        self.assertEqual(got.stderr, b"")
+                        answer = json.loads(got.stdout)
+                        self.assertEqual(answer.pop("live_preview"),
+                                         [expected, value[4:].hex() if expected == 0 else None, 1])
+                        self.assertEqual(bytes.fromhex(answer["projection"]), source_bytes)
+                        self.assertEqual((answer["status"], answer["released"], answer["transcript"][-2:]),
+                                         (0, 0, [[55, 9, 24], [56, 3, 24]]))
+                        self.assertEqual(execute([original, "verify-journal", db, bundle]).stdout, source_bytes)
+                        self.assertEqual(db.read_bytes(), pristine)
+                        self.assertFalse(db.with_name(db.name+"-journal").exists())

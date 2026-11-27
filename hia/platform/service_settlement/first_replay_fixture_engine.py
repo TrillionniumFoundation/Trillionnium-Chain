@@ -63,7 +63,13 @@ class FixtureReplay:
             raise ValueError("Exactly one held original AdmitReceipt predecessor is required")
         return self._prospective_receipt(self.trust, expected_root, height, command, 1)
 
-    def _prospective_receipt(self, trust, expected_root, height, command, prior_count):
+    def preview_replayed_rollup(self, expected_root, height, command):
+        if (self.parent is None or self.variable_rows != 1 or self.calls.applies != 1
+                or not 112 <= len(command) <= 8192 or command[0] != 1):
+            raise ValueError("Rollup preview requires one actual immutable admitted predecessor")
+        return self._prospective_receipt(self.trust, expected_root, height, command, 1, include_state=True)
+
+    def _prospective_receipt(self, trust, expected_root, height, command, prior_count, *, include_state=False):
         if (self.engine.kind(self.parent) != 1
                 or self.engine.view("engine_trust", self.parent) != trust
                 or self.engine.scalar("engine_history_count", self.parent) != prior_count):
@@ -88,6 +94,11 @@ class FixtureReplay:
             root = self.engine.view("engine_state_root", successor)
             if (len(parent_root), len(identity), len(root), self.calls.applies) != (32, 32, 32, prior_count + 1):
                 raise ValueError("Sealed Engine returned a malformed prospective result")
+            if include_state:
+                state = self.engine.view("engine_state", successor)
+                if not 111 <= len(state) <= 16384:
+                    return None
+                return parent_root, identity, root, state
             return parent_root, identity, root
         finally:
             self.engine.drop(successor)

@@ -39,6 +39,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             return Ok(());
         }
+        if matches!(profile.as_str(), "preview-rollup" | "preview-unfinishable-rollup") {
+            if profile == "preview-unfinishable-rollup" {
+                fixture.trust.settlement_policy.minimum_rollup_challenge_blocks = (i64::MAX as u64) - 11;
+            }
+            let source = engine::initial_state(&fixture.trust);
+            let admitted = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: fixture.receipt(None, 10, 100),
+            };
+            let (state, no_id) = engine::apply_transition(&fixture.trust, &source, 10, &admitted)?;
+            assert!(no_id.is_none());
+            let rollup = ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: fixture.rollup(&state, 11),
+                receipts: state.receipts.iter().map(|row| row.receipt.clone()).collect(),
+            };
+            let (prepared, no_id) = engine::apply_transition(&fixture.trust, &state, 11, &rollup)?;
+            assert!(no_id.is_none());
+            let close = prepared.rollup.as_ref().unwrap().challenge_close_height;
+            if profile == "preview-unfinishable-rollup" {
+                assert_eq!(close, i64::MAX as u64);
+            }
+            let mut out = std::io::stdout().lock();
+            for data in [bytes(&fixture.trust), bytes(&admitted), bytes(&rollup)] {
+                out.write_all(&u32::try_from(data.len())?.to_le_bytes())?;
+                out.write_all(&data)?;
+            }
+            return Ok(());
+        }
         let coalesced = profile.ends_with("-same-settle");
         let (name, rows) = if let Some(name) = profile.strip_suffix("-same-settle") {
             (name, 4)

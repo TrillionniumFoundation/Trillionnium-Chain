@@ -217,7 +217,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             };
             let cmd = fs::read(&args[4])?;
             let command: ConsumptionSettlementCommandV1 = strict_decode(&cmd)?;
-            assert_eq!(command.operation_kind(), 24);
+            assert_eq!(command.operation_kind(), if mode.starts_with("rollup") { 25 } else { 24 });
             let mut frame = height.to_le_bytes().to_vec();
             frame.extend(id.0);
             frame.extend(parent.store_schema_version().to_le_bytes());
@@ -233,7 +233,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             use trnm_service_settlement::ConsumptionSettlementErrorCodeV1;
             match owner.preview_before_vote_v1(&parent, height, id, &[command]) {
                 Ok(preview) => {
-                    assert_eq!(mode, "success");
+                    assert!(matches!(mode, "success" | "rollup"));
                     value.extend(0_u32.to_le_bytes());
                     value.extend(preview.source_sequence().to_le_bytes());
                     value.extend(preview.source_state_root().0);
@@ -247,6 +247,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Err(err) if err.code() == ConsumptionSettlementErrorCodeV1::InvalidContext => {
                     assert_eq!(mode, "old-genesis");
                     value.extend(100_u32.to_le_bytes());
+                }
+                Err(err) if err.code() == ConsumptionSettlementErrorCodeV1::ArithmeticOverflow => {
+                    assert_eq!(mode, "rollup-unfinishable");
+                    value.extend(101_u32.to_le_bytes());
                 }
                 Err(err) if err.code() == ConsumptionSettlementErrorCodeV1::Conflict => {
                     assert_eq!(mode, "duplicate");

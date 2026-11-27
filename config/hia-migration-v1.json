@@ -4228,6 +4228,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-live-rollup",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private live one-committed-Receipt to prospective AdmitRollup on one already replayed native Engine, original typed successor and exact SQLite maturity domain check before a close-gated result; no general mixed route, public voting, production ownership or stale re-audit.",
+      "sources": [
+        "hia/platform/service_settlement/preview_live_rollup.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_first_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-preview-two-native-heads",
       "node_integration_complete": false,
       "retirement_accepted": false,

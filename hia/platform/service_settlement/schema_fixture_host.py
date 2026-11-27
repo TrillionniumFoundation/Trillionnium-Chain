@@ -550,8 +550,9 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
 def held_prospective_receipt(images, signature, snapshot, frame, command, engine):
     """Consume one native-prepared prospective operation without reconstructing its held Engine."""
     ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
-    native = bind(images[0], "f0", u64, *signature)
-    strict = bind(images[1], "f0", u64, *signature)
+    owner, codec, kind = images
+    native = bind(owner, "f0", u64, *signature)
+    strict = bind(codec, "f0", u64, *signature)
 
     def buf(raw):
         return ctypes.create_string_buffer(raw, len(raw))
@@ -564,8 +565,8 @@ def held_prospective_receipt(images, signature, snapshot, frame, command, engine
         raise ValueError("Unexpected original command codec outcome")
     if code != len(checked):
         return [code, None, 0]
-    if checked.raw[:2] != b"\x18\0" or checked.raw[34:] != command:
-        raise ValueError("Prospective command is not canonical AdmitReceipt")
+    if checked.raw[:2] != struct.pack("<H", kind) or checked.raw[34:] != command:
+        raise ValueError("Prospective command is not original canonical command")
     candidate = buf(frame + checked.raw[2:34])
     pending = buf(b"\xa5" * 112)
     code = native(candidate, len(candidate), snapshot, EXTENT, pending, len(pending))
@@ -574,16 +575,17 @@ def held_prospective_receipt(images, signature, snapshot, frame, command, engine
             raise ValueError("Native held preview leaked or returned unknown refusal")
         return [code, None, 0]
     before = engine.calls.applies
-    actual = engine.preview_replayed_receipt(pending.raw[8:40], struct.unpack_from("<Q", frame)[0], command)
+    apply = engine.preview_replayed_receipt if kind == 24 else engine.preview_replayed_rollup
+    actual = apply(pending.raw[8:40], struct.unpack_from("<Q", frame)[0], command)
     calls = engine.calls.applies - before
     if actual is None:
         return [103, None, calls]
-    root, identity, next_root = actual
+    root, identity, next_root, *state_data = actual
     if identity != checked.raw[2:34]:
         raise ValueError("Held Engine and typed command identity differ")
-    report = buf(pending.raw + root + identity + frame[42:74] + frame[:40] + next_root)
+    report = buf(pending.raw + root + identity + frame[42:74] + frame[:40] + next_root + b"".join(state_data))
     output = buf(b"\xa5" * 261)
-    work = buf(b"\xc3" * 261)
+    work = buf(b"\xc3" * (261 if kind == 24 else 20480))
     code = native(report, len(report), output, len(output), work, len(work))
     if code and output.raw != b"\xa5" * 261:
         raise ValueError("Native held publication leaked rejected bytes")
@@ -665,9 +667,12 @@ def main():
             genesis_preview = tuple(owners.enter_context(sealed_library(*message[key]))
                                     for key in ("genesis_preview", "genesis_receipt_command"))
         live_preview = None
-        if "live_preview" in message:
-            live_preview = tuple(owners.enter_context(sealed_library(*message[key]))
-                                 for key in ("live_preview", "live_preview_codec"))
+        if "live_preview" in message or "live_rollup_preview" in message:
+            if "live_preview" in message and "live_rollup_preview" in message:
+                raise ValueError("Only one bounded prospective transition is allowed")
+            label, kind = ("live_rollup_preview", 25) if "live_rollup_preview" in message else ("live_preview", 24)
+            live_preview = (*(owners.enter_context(sealed_library(*message[key]))
+                              for key in (label, "live_preview_codec")), kind)
         if "two_native_heads" in message:
             coordinator = owners.enter_context(sealed_library(*message["two_native_heads"]))
             if preview is not None or live_preview is not None:
