@@ -425,3 +425,35 @@ fixture corresponds to the original reaching its owner boundary, where
 the witness refuses. The native code never calls that owner, recomputes
 an application root, returns applied rows, verifies checkpoint authority,
 opens a database, or changes production routing.
+
+### Outer base-row witness before the application root owner
+
+`incremental_delta_base_witness.hepta` covers the read-only stage after
+pure delta validation but before the first root-owner callback in
+`apply_incremental_delta_v0`. It checks full equality between the two
+embedded and two separately supplied raw typed contexts. It then checks
+every base row's shape and reserved prefix, and compares strict unsigned
+namespace/key order. Only after that pass does it compare the original
+base row count and compute and compare the genuine ordered
+`trnm.migration.target-rows.v0` digest over the canonical row hashes.
+It has no root-builder callback or writable result buffer.
+
+The private 1,008-byte prefix is four 240-byte raw contexts (embedded
+source, embedded target, supplied source, supplied target), the
+big-endian `u64` declared base row count, its 32-byte digest, and the
+big-endian `u64` count of actual row frames. Each row frame has four
+little-endian `u32` values (namespace, key and value byte lengths,
+then zero), then the declared payloads. The profile permits zero through
+eight rows and a 1 MiB total loan, with 1,656 disjoint private scratch
+bytes. Status 117 means original context mismatch, 118 invalid base
+row, 109 row order failure, and 115 base count or digest mismatch.
+Private frame, capacity and hashing statuses 100, 102, 103 are not
+original errors. The native call never changes the second ABI span.
+
+The locked Rust witness uses real `derive_incremental_delta_v0` values to
+bind the expected count and digest, then calls the unchanged
+`apply_incremental_delta_v0`. When the matching synthetic base reaches
+the first root callback, the witness checks the actual ordered rows and
+always refuses. This does not verify opaque contexts, recheck pure delta
+validation, compute application state, apply a delta, or write to SQLite
+or any production owner.

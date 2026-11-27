@@ -11211,6 +11211,77 @@
         "source": "src/state_import/incremental_delta_header_validate.hepta"
       }
     ],
+    "src/state_import/incremental_delta_base_witness.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "dh_be"
+        ],
+        "source": "src/state_import/incremental_delta_header_validate.hepta"
+      },
+      {
+        "functions": [
+          "batch_strict_before",
+          "batch_prefix",
+          "batch_reserved"
+        ],
+        "source": "src/state_import/target_delta_rows_root.hepta"
+      },
+      {
+        "functions": [
+          "step_lex"
+        ],
+        "source": "src/state_import/export_order_step.hepta"
+      },
+      {
+        "functions": [
+          "mhc_equal_pack"
+        ],
+        "source": "src/state_import/handoff_commitments.hepta"
+      },
+      {
+        "functions": [
+          "dc_copy"
+        ],
+        "source": "src/state_import/incremental_delta_commitment.hepta"
+      },
+      {
+        "functions": [
+          "r_digest_match",
+          "r_part"
+        ],
+        "source": "src/state_import/export_row_validate.hepta"
+      },
+      {
+        "functions": [
+          "bf_row_hash"
+        ],
+        "source": "src/state_import/export_post_finality_fold.hepta"
+      },
+      {
+        "functions": [
+          "snap_target_hash"
+        ],
+        "source": "src/state_import/durable_snapshot_shadow.hepta"
+      }
+    ],
     "src/state_import/incremental_delta_header_validate.hepta": [
       {
         "functions": [
