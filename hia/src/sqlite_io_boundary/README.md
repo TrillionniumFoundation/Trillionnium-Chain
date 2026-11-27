@@ -311,3 +311,25 @@ actual full ordinary and cleanup evidence under both policies. The
 original pending cancellation and unlink cases include pressure where
 the held object is collected despite no retained event. This entry
 does not execute production VFS callbacks or own physical files.
+
+## Cumulative recording
+
+`cumulative_record_replay.hepta` runs exactly two original recording
+attempts on one stable typed row/action. It takes the same 160-byte
+typed receipt and evidence prefix as retained JSON, plus the basename.
+The second record has no caller-supplied sequence, prior state or
+measured length. It reads forward the first diagnostic; the first
+record's acceptance determines the next sequence and its decimal
+width. The original class capacity and 512-byte limit apply to each
+attempt, including the case where one extra sequence digit is the
+only reason the second attempt cannot retain its event.
+
+The output starts with two 72-byte post-attempt diagnostics, then
+two little-endian u64 SQLite recorder codes. Successful attempts add
+a little-endian u64 length and exact JSON bytes in order at offset 160;
+failed attempts add no suffix. A completed pair returns 0 even when a
+record was refused, so the recorder codes remain separate. Malformed
+or short output does not publish anything. Rust comparisons apply
+both attempts to the same actual ledger and verify the retained
+bytes and cumulative failures. No object mutation or physical I/O
+occurs in this entry.

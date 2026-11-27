@@ -39,7 +39,15 @@ end
 
 fn mje_emit(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64)
-  part1:u64 = call(er,eo,ep,el,es) {"function":"mje_head"}
+  seq_at:u64 = const() {"value":8}
+  seq:u64 = call(er,seq_at) {"function":"tr_read"}
+  byte_end:u64 = call(er,eo,ep,el,es,seq) {"function":"mje_emit_sequence"}
+  ret(byte_end)
+end
+
+fn mje_emit_sequence(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64)
+  part1:u64 = call(er,eo,ep,el,es,seq) {"function":"mje_head"}
   part2:u64 = call(er,eo,part1) {"function":"mje_identity"}
   part3:u64 = call(er,eo,part2) {"function":"mje_counters"}
   part4:u64 = call(er,eo,part3) {"function":"mje_sizes"}
@@ -47,8 +55,8 @@ block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64)
   ret(part5)
 end
 
-fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64)
+fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64)
   seq0n:u64 = const() {"value":8}
   seq0w:u64 = const() {"value":7954893446713647739}
   seq0len:u64 = call(w,p,seq0n,seq0w) {"function":"value_word"}
@@ -57,10 +65,8 @@ block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64)
   seq8w:u64 = const() {"value":975332707}
   seq8len:u64 = call(w,seq0end,seq8n,seq8w) {"function":"value_word"}
   seq8end:u64 = int.add.wrap(seq0end,seq8len)
-  seqoffset:u64 = const() {"value":8}
-  seqx:u64 = call(r,seqoffset) {"function":"tr_read"}
   seqzero:u64 = const() {"value":0}
-  seqsize:u64 = call(w,seq8end,seqx,seqzero) {"function":"value_integer_write"}
+  seqsize:u64 = call(w,seq8end,sequence,seqzero) {"function":"value_integer_write"}
   seqdone:u64 = int.add.wrap(seq8end,seqsize)
   act0n:u64 = const() {"value":8}
   act0w:u64 = const() {"value":7957695015191388716}
