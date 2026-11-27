@@ -3807,6 +3807,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-native-path-preflight",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private native original final regular-file and sidecar admission using real provider lstat prior to any SQLite operation. No stable owned directory/descriptor binding, cross-open identity, native header read, or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/store_path_preflight.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_store_path_preflight.py",
+        "hia/tests/rust_settlement_schema_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

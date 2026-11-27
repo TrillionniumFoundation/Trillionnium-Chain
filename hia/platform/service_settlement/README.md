@@ -561,3 +561,12 @@ A verified single committed interval covering both rows enters the existing
 same-block sealed fixed ABI only when its full fixed-width admission checks
 pass. The request and reply formats are unchanged. A genuine same-block
 snapshot with different widths is refused, not treated as a linear pair.
+
+The optional native path preflight owns the original final regular-file
+and sidecar admission for generated owned fixtures. It composes exact
+pathname bytes with -wal, -shm, and -journal and evaluates real
+provider lstat results before invoking SQLite. The same existing schema
+gate then holds the original rollback read and closes before return.
+Parent-directory authorization and header reading remain in the private
+transport; stable ancestor/descriptor identity, original post-open path
+verification, and production Store ownership are not established.

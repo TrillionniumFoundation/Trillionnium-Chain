@@ -15,11 +15,47 @@ from hia.platform.state_import_sqlite.qualification_host import bind, sealed_lib
 EXTENT = 1 << 20
 
 
-def run(request, uri_image, reader, provider):
+def native_path_preflight(path, image, provider):
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    step = bind(image, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    fetch = bind(provider, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
+    make = bind(provider, "trnm_task_provider_new", ptr)
+    free = bind(provider, "trnm_task_provider_free", None, ptr)
+    state, work = (ctypes.create_string_buffer(8192) for _ in range(2))
+    response = ctypes.create_string_buffer(24)
+    checks = []
+    owner = make()
+    if not owner:
+        raise ValueError("Cannot allocate owned native path observer")
+    raw = path
+    try:
+        for _ in range(5):
+            inp = ctypes.create_string_buffer(raw)
+            status = step(inp, len(raw), state, len(state), work, len(work))
+            if status in (0, 100, 101):
+                if status == 0 and len(checks) != 4:
+                    raise ValueError("Original path admission needs all four real lstat calls")
+                return status, checks
+            stage, length = struct.unpack_from("<QQ", state)
+            if (status != 198 or stage != len(checks) + 1
+                    or stage > 4 or not 25 <= length <= 4128):
+                raise ValueError("Unexpected exact native lstat continuation")
+            amount = fetch(owner, 15, ctypes.addressof(state) + 256, length, response, len(response))
+            if amount != 24:
+                raise ValueError("Original lstat response has inconsistent framing")
+            checks.append([stage, 15, amount])
+            raw = response.raw
+        raise ValueError("Original native path preflight did not terminate")
+    finally:
+        free(owner)
+
+
+def run(request, uri_image, reader, provider, gate=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
-            or directory.stat().st_mode & 0o077 or db.is_symlink() or not db.is_file()):
+            or directory.stat().st_mode & 0o077
+            or (gate is None and (db.is_symlink() or not db.is_file()))):
         raise ValueError("Only owned disposable databases are allowed")
     expected_hex = request.get("metadata_config")
     metadata = expected_hex is not None
@@ -65,6 +101,12 @@ def run(request, uri_image, reader, provider):
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
     projected = metadata or operation or marker or joined
+    path_checks = None
+    if gate is not None:
+        gate_status, path_checks = native_path_preflight(os.fsencode(db), gate, provider)
+        if gate_status:
+            return {"status": gate_status, "path_checks": path_checks, "held": False,
+                    "released": 0, "transcript": [], **({"projection": None} if projected else {})}
     with db.open("rb") as header_file:
         header = header_file.read(20)
     if len(header) != 20:
@@ -72,6 +114,8 @@ def run(request, uri_image, reader, provider):
         refused = {"status": 100, "transcript": [], "released": 0, "held": False}
         if projected:
             refused["projection"] = None
+        if path_checks is not None:
+            refused["path_checks"] = path_checks
         return refused
     ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
     signature = (ptr, u64, ptr, u64, ptr, u64)
@@ -214,6 +258,8 @@ def run(request, uri_image, reader, provider):
         else:
             raise ValueError("Bounded schema check did not finish")
         result = {"status": status, "transcript": transcript, "held": held, "released": reset(owner)}
+        if path_checks is not None:
+            result["path_checks"] = path_checks
         if replay:
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
@@ -232,9 +278,11 @@ def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     resource.setrlimit(resource.RLIMIT_AS, (256 << 20, 256 << 20))
     message = json.load(sys.stdin)
-    with sealed_library(*message["uri"]) as uri, sealed_library(*message["reader"]) as reader, \
-            sealed_library(*message["provider"]) as provider:
-        print(json.dumps(run(message, uri, reader, provider)))
+    with ExitStack() as owners:
+        uri, reader, provider = (owners.enter_context(sealed_library(*message[key]))
+                                 for key in ("uri", "reader", "provider"))
+        gate = owners.enter_context(sealed_library(*message["path_gate"])) if "path_gate" in message else None
+        print(json.dumps(run(message, uri, reader, provider, gate)))
 
 
 if __name__ == "__main__":

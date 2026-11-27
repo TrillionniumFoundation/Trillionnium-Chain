@@ -1,5 +1,15 @@
 {
   "includes": {
+    "platform/service_settlement/store_path_preflight.hepta": [
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put"
+        ],
+        "source": "src/control_plane/core.hepta"
+      }
+    ],
     "platform/service_settlement/held_cursor_variable_dispatch.hepta": [
       {
         "functions": [
