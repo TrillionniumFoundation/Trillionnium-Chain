@@ -1,0 +1,416 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_batch_chunk_root
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  raw:usize = buffer.len(r)
+  n:u64 = int.cast(raw) {"mode":"wrap"}
+  min:u64 = const() {"value":147}
+  max:u64 = const() {"value":1048576}
+  low:bool = compare.ge(n,min)
+  high:bool = compare.le(n,max)
+  fits:bool = bool.and(low,high)
+  branch fits lengths(r,o,w,n) malformed()
+block lengths(r1:readbuf,o1:mutbuf,w1:mutbuf,n1:u64)
+  a:u64 = const() {"value":12}
+  b:u64 = const() {"value":8}
+  c:u64 = const() {"value":4}
+  z:u64 = const() {"value":0}
+  hdr:u64 = const() {"value":131}
+  size_at:u64 = int.sub.wrap(n1,a)
+  max_at:u64 = int.sub.wrap(n1,b)
+  content_at:u64 = int.sub.wrap(n1,c)
+  space:u64 = int.sub.wrap(size_at,hdr)
+  cap1:u64 = call(r1,max_at) {"function":"daav_u32"}
+  step:u64 = call(r1,size_at) {"function":"daav_u32"}
+  body:u64 = call(r1,content_at) {"function":"daav_u32"}
+  has_footer:bool = compare.ne(cap1,z)
+  has_step:bool = compare.ne(step,z)
+  has_size:bool = bool.and(has_footer,has_step)
+  min1:bool = compare.ge(body,c)
+  max1:bool = compare.le(body,space)
+  body_ok:bool = bool.and(min1,max1)
+  fits1:bool = bool.and(body_ok,has_size)
+  branch fits1 structure(r1,o1,w1,body,size_at,step,cap1) malformed()
+block structure(r2:readbuf,o2:mutbuf,w2:mutbuf,n2:u64,p2:u64,s2:u64,c2:u64)
+  extent:u64 = int.sub.wrap(p2,n2)
+  bound:u64 = const() {"value":32}
+  zero2:u64 = const() {"value":0}
+  rows2:u64 = call(r2,zero2) {"function":"daav_u32"}
+  enough2:bool = compare.le(rows2,bound)
+  branch enough2 verify(r2,o2,w2,n2,extent,s2,c2,rows2) malformed()
+block verify(r3:readbuf,o3:mutbuf,w3:mutbuf,n3:u64,p3:u64,s3:u64,c3:u64,t3:u64)
+  canonical:bool = call(r3,n3,t3) {"function":"dct_shape"}
+  prefix:bool = call(r3,n3,p3) {"function":"dcr_prefix"}
+  valid3:bool = bool.and(canonical,prefix)
+  branch valid3 count(r3,o3,w3,n3,p3,s3,c3,t3) malformed()
+block count(r4:readbuf,o4:mutbuf,w4:mutbuf,n4:u64,p4:u64,s4:u64,c4:u64,t4:u64)
+  z4:u64 = const() {"value":0}
+  nonempty:bool = compare.ne(t4,z4)
+  branch nonempty capacity(r4,o4,w4,n4,p4,s4,c4,t4) count_error()
+block capacity(r5:readbuf,o5:mutbuf,w5:mutbuf,n5:u64,p5:u64,s5:u64,c5:u64,t5:u64)
+  wo:usize = const() {"value":3264}
+  oo:usize = const() {"value":68}
+  actual_w:usize = buffer.len(w5)
+  actual_o:usize = buffer.len(o5)
+  w_ok:bool = compare.ge(actual_w,wo)
+  o_ok:bool = compare.ge(actual_o,oo)
+  both:bool = bool.and(w_ok,o_ok)
+  branch both rows(r5,o5,w5,n5,p5,s5,c5,t5) short()
+block rows(r6:readbuf,o6:mutbuf,w6:mutbuf,n6:u64,p6:u64,s6:u64,c6:u64,t6:u64)
+  distinct:bool = call(r6,w6,t6) {"function":"dct_unique"}
+  branch distinct chunks(r6,o6,w6,n6,p6,s6,c6) row_error()
+block chunks(r7:readbuf,o7:mutbuf,w7:mutbuf,n7:u64,p7:u64,s7:u64,c7:u64)
+  one7:u64 = const() {"value":1}
+  less7:u64 = int.sub.wrap(n7,one7)
+  quotient:u64 = int.div.checked(less7,s7)
+  chunk_count:u64 = int.add.wrap(quotient,one7)
+  fits7:bool = compare.le(chunk_count,c7)
+  branch fits7 cap(r7,o7,w7,n7,p7,s7,chunk_count) chunk_count_error()
+block cap(r8:readbuf,o8:mutbuf,w8:mutbuf,n8:u64,p8:u64,s8:u64,k8:u64)
+  max8:u64 = const() {"value":32}
+  within8:bool = compare.le(k8,max8)
+  branch within8 profile(r8,o8,w8,n8,p8,s8,k8) malformed()
+block profile(r9:readbuf,o9:mutbuf,w9:mutbuf,n9:u64,p9:u64,s9:u64,k9:u64)
+  valid9:bool = call(w9,s9) {"function":"dcr_profile"}
+  branch valid9 leaf_table(r9,o9,w9,n9,p9,s9,k9) internal()
+block leaf_table(ra:readbuf,oa:mutbuf,wa:mutbuf,na:u64,pa:u64,sa:u64,ka:u64)
+  leaf_ok:bool = call(ra,wa,na,pa,sa,ka) {"function":"dcr_leaves"}
+  branch leaf_ok reduce(oa,wa,ka) internal()
+block reduce(ob:mutbuf,wb:mutbuf,kb:u64)
+  ready:bool = call(wb,kb) {"function":"dcr_reduce"}
+  branch ready root(ob,wb,kb) internal()
+block root(oc:mutbuf,wc:mutbuf,kc:u64)
+  from:u64 = const() {"value":2048}
+  target:u64 = const() {"value":1315}
+  extent_c:u64 = const() {"value":83}
+  mode:bool = const() {"value":false}
+  _head:u64 = call(wc,kc) {"function":"dap_inner"}
+  _leaf:u64 = call(wc,from,target) {"function":"dc_copy"}
+  good_c:bool = call(wc,mode,extent_c) {"function":"dap_digest"}
+  branch good_c publish(oc,wc,kc) internal()
+block publish(od:mutbuf,wd:mutbuf,kd:u64)
+  profile_at:u64 = const() {"value":1472}
+  root_at:u64 = const() {"value":1168}
+  zero_d:u64 = const() {"value":0}
+  second:u64 = const() {"value":32}
+  at_count:usize = const() {"value":64}
+  n_pub:u8 = int.cast(kd) {"mode":"wrap"}
+  _profile:u64 = call(wd,profile_at,od,zero_d) {"function":"dab_copy32"}
+  _root:u64 = call(wd,root_at,od,second) {"function":"dab_copy32"}
+  _ = buffer.store(od,at_count,n_pub)
+  b_pub:usize = const() {"value":65}
+  c_pub:usize = const() {"value":66}
+  d:usize = const() {"value":67}
+  z_pub:u8 = const() {"value":0}
+  _ = buffer.store(od,b_pub,z_pub)
+  _ = buffer.store(od,c_pub,z_pub)
+  _ = buffer.store(od,d,z_pub)
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+block internal()
+  failure:u32 = const() {"value":103}
+  ret(failure)
+block count_error()
+  empty:u32 = const() {"value":40}
+  ret(empty)
+block row_error()
+  invalid:u32 = const() {"value":41}
+  ret(invalid)
+block chunk_count_error()
+  too_many:u32 = const() {"value":42}
+  ret(too_many)
+end
+
+fn dcr_prefix(r:readbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,n:u64)
+  c36:u64 = const() {"value":36}
+  head:u64 = const() {"value":130}
+  one:u64 = const() {"value":1}
+  max:u64 = const() {"value":128}
+  at:u64 = int.add.wrap(p,c36)
+  c:u64 = call(r,at) {"function":"daav_u32"}
+  remaining:u64 = int.sub.wrap(n,head)
+  nonzero:bool = compare.ge(c,one)
+  bounded:bool = compare.le(c,max)
+  enough:bool = compare.le(c,remaining)
+  limits:bool = bool.and(nonzero,bounded)
+  okay:bool = bool.and(limits,enough)
+  branch okay author(r,p,n,c) fail()
+block author(ra:readbuf,pa:u64,na:u64,ca:u64)
+  bias:u64 = const() {"value":117}
+  fixed:u64 = const() {"value":129}
+  min_a:u64 = const() {"value":1}
+  max_a:u64 = const() {"value":256}
+  offset:u64 = int.add.wrap(bias,ca)
+  absolute:u64 = int.add.wrap(pa,offset)
+  extent:u64 = call(ra,absolute) {"function":"daav_u32"}
+  base:u64 = int.add.wrap(fixed,ca)
+  actual:u64 = int.sub.wrap(na,base)
+  exact:bool = compare.eq(extent,actual)
+  min_ok:bool = compare.ge(extent,min_a)
+  max_ok:bool = compare.le(extent,max_a)
+  limits_a:bool = bool.and(min_ok,max_ok)
+  fit:bool = bool.and(exact,limits_a)
+  branch fit fields(ra,pa,na,ca) fail()
+block fields(rr:readbuf,pp:u64,nn:u64,cc:u64)
+  zero:u64 = const() {"value":0}
+  schema_pair:u64 = const() {"value":65537}
+  twenty:u64 = const() {"value":40}
+  ns_off:u64 = const() {"value":76}
+  eight:u64 = const() {"value":8}
+  one_f:u64 = const() {"value":1}
+  start:u64 = int.add.wrap(pp,twenty)
+  protocol_at:u64 = int.add.wrap(start,cc)
+  ns_0:u64 = int.add.wrap(ns_off,cc)
+  ns_1:u64 = int.add.wrap(pp,ns_0)
+  ns_2:usize = int.cast(ns_1) {"mode":"wrap"}
+  extent_f:u64 = int.add.wrap(pp,nn)
+  seq_at:u64 = int.sub.wrap(extent_f,eight)
+  format:u64 = call(rr,pp) {"function":"daav_u32"}
+  protocol:u64 = call(rr,protocol_at) {"function":"daav_u32"}
+  namespace_b:u8 = buffer.load(rr,ns_2)
+  namespace:u64 = int.cast(namespace_b) {"mode":"wrap"}
+  sequence:u64 = call(rr,seq_at) {"function":"tr_read"}
+  okay_one:bool = compare.eq(format,schema_pair)
+  okay_two:bool = compare.eq(protocol,one_f)
+  okay_three:bool = compare.eq(namespace,zero)
+  okay_four:bool = compare.ne(sequence,zero)
+  ascii:bool = call(rr,start,cc) {"function":"dab_ascii"}
+  q1:bool = bool.and(okay_one,okay_two)
+  q2:bool = bool.and(okay_three,okay_four)
+  all:bool = bool.and(q1,q2)
+  ok:bool = bool.and(all,ascii)
+  ret(ok)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dcr_profile(w:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  init:u64 = call(w) {"function":"tr_sha_init"}
+  d:u64 = call(w) {"function":"dcr_profile_domain"}
+  tuple:u64 = const() {"value":3240}
+  max_at:u64 = const() {"value":3243}
+  seven:u64 = const() {"value":7}
+  version:u64 = const() {"value":1}
+  _prefix:u64 = call(w,tuple,version) {"function":"tr_put"}
+  _maximum:u64 = call(w,max_at,n) {"function":"tr_put"}
+  updated:u64 = call(w,tuple,seven) {"function":"tr_sha_update_work"}
+  seal:u64 = call(w) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,d)
+  b:u64 = bit.or(updated,seal)
+  all:u64 = bit.or(a,b)
+  zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(all,zero)
+  branch okay save(w) fail()
+block save(ws:mutbuf)
+  at:u64 = const() {"value":1168}
+  to:u64 = const() {"value":1472}
+  _profile:u64 = call(ws,at,to) {"function":"dc_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dcr_leaves(r:readbuf,w:mutbuf,n:u64,p:u64,s:u64,k:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,p:u64,s:u64,k:u64)
+  zero:u64 = const() {"value":0}
+  root:u64 = const() {"value":2048}
+  jump visit(r,w,n,p,s,k,zero,zero,root)
+block visit(rr:readbuf,ww:mutbuf,nn:u64,pp:u64,ss:u64,kk:u64,at:u64,i:u64,dst:u64)
+  rem:u64 = int.sub.wrap(nn,at)
+  tail:bool = compare.lt(rem,ss)
+  width:u64 = select(tail,rem,ss)
+  okay:bool = call(rr,ww,nn,pp,at,width,i) {"function":"dcr_leaf"}
+  branch okay save(rr,ww,nn,pp,ss,kk,at,width,i,dst) fail()
+block save(rs:readbuf,ws:mutbuf,ns:u64,ps:u64,ss1:u64,ks:u64,as:u64,bs:u64,is:u64,ds:u64)
+  from:u64 = const() {"value":1168}
+  _hash:u64 = call(ws,from,ds) {"function":"dc_copy"}
+  one:u64 = const() {"value":1}
+  stride:u64 = const() {"value":32}
+  next:u64 = int.add.wrap(as,bs)
+  j:u64 = int.add.wrap(is,one)
+  out:u64 = int.add.wrap(ds,stride)
+  more:bool = compare.lt(j,ks)
+  branch more visit(rs,ws,ns,ps,ss1,ks,next,j,out) exact(next,ns)
+block exact(a:u64,b:u64)
+  complete:bool = compare.eq(a,b)
+  ret(complete)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dcr_leaf(r:readbuf,w:mutbuf,p:u64,np:u64,o:u64,n:u64,i:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,np:u64,o:u64,n:u64,i:u64)
+  coordinate:bool = call(r,w,p,np,n,i) {"function":"dcr_coordinate"}
+  branch coordinate bytes(r,w,o,n,i) fail()
+block bytes(rb:readbuf,wb:mutbuf,ob:u64,nb:u64,ib:u64)
+  hash_at:u64 = const() {"value":1168}
+  coord_at:u64 = const() {"value":1364}
+  index_at:u64 = const() {"value":1360}
+  _index:u64 = call(wb,index_at,ib) {"function":"tr_put"}
+  _copy:u64 = call(wb,hash_at,coord_at) {"function":"dc_copy"}
+  payload:bool = call(rb,wb,ob,nb) {"function":"dcr_payload"}
+  branch payload hash(wb) fail()
+block hash(wh:mutbuf)
+  from:u64 = const() {"value":1168}
+  bytes_at:u64 = const() {"value":1396}
+  body:u64 = const() {"value":1360}
+  width:u64 = const() {"value":68}
+  _data:u64 = call(wh,from,bytes_at) {"function":"dc_copy"}
+  i_h:u64 = call(wh) {"function":"tr_sha_init"}
+  d_h:u64 = call(wh) {"function":"dax_leaf_domain"}
+  b_h:u64 = call(wh,body,width) {"function":"tr_sha_update_work"}
+  s_h:u64 = call(wh) {"function":"tr_sha_final"}
+  a:u64 = bit.or(i_h,d_h)
+  b:u64 = bit.or(b_h,s_h)
+  all:u64 = bit.or(a,b)
+  z:u64 = const() {"value":0}
+  okay:bool = compare.eq(all,z)
+  ret(okay)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dcr_coordinate(r:readbuf,w:mutbuf,p:u64,np:u64,n:u64,i:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,np:u64,n:u64,i:u64)
+  coord:bool = const() {"value":false}
+  profile_at:u64 = const() {"value":1472}
+  suffix:u64 = const() {"value":3152}
+  index_at:u64 = const() {"value":3184}
+  length_at:u64 = const() {"value":3188}
+  width:u64 = const() {"value":44}
+  _profile:u64 = call(w,profile_at,suffix) {"function":"dc_copy"}
+  _index:u64 = call(w,index_at,i) {"function":"tr_put"}
+  _length:u64 = call(w,length_at,n) {"function":"tr_put"}
+  init:u64 = call(w) {"function":"tr_sha_init"}
+  domain:u64 = call(w,coord) {"function":"dach_domain"}
+  pre:u64 = call(r,p,np,w) {"function":"tr_sha_update"}
+  post:u64 = call(w,suffix,width) {"function":"tr_sha_update_work"}
+  seal:u64 = call(w) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,domain)
+  b:u64 = bit.or(pre,post)
+  c:u64 = bit.or(a,b)
+  all:u64 = bit.or(c,seal)
+  z:u64 = const() {"value":0}
+  okay:bool = compare.eq(all,z)
+  ret(okay)
+end
+
+fn dcr_payload(r:readbuf,w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64)
+  bytes:bool = const() {"value":true}
+  length_at:u64 = const() {"value":3232}
+  width:u64 = const() {"value":4}
+  _length:u64 = call(w,length_at,n) {"function":"tr_put"}
+  init:u64 = call(w) {"function":"tr_sha_init"}
+  domain:u64 = call(w,bytes) {"function":"dach_domain"}
+  pre:u64 = call(w,length_at,width) {"function":"tr_sha_update_work"}
+  payload:u64 = call(r,p,n,w) {"function":"tr_sha_update"}
+  seal:u64 = call(w) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,domain)
+  b:u64 = bit.or(pre,payload)
+  c:u64 = bit.or(a,b)
+  all:u64 = bit.or(c,seal)
+  zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(zero,all)
+  ret(okay)
+end
+
+fn dcr_reduce(w:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  zero:u64 = const() {"value":0}
+  jump level(w,n,zero)
+block level(wl:mutbuf,k:u64,l:u64)
+  one:u64 = const() {"value":1}
+  done:bool = compare.eq(k,one)
+  branch done pass() start(wl,k,l)
+block start(ws:mutbuf,ks:u64,ls:u64)
+  zero_s:u64 = const() {"value":0}
+  jump pair(ws,ks,ls,zero_s,zero_s)
+block pair(wp:mutbuf,kp:u64,lp:u64,i:u64,out:u64)
+  one_p:u64 = const() {"value":1}
+  two_p:u64 = const() {"value":2}
+  next:u64 = int.add.wrap(i,one_p)
+  exists:bool = compare.lt(next,kp)
+  right:u64 = select(exists,next,i)
+  step:u64 = int.add.wrap(i,two_p)
+  okay:bool = call(wp,i,right,out,lp) {"function":"dcr_parent"}
+  branch okay advance(wp,kp,lp,step,out) fail()
+block advance(wa:mutbuf,ka:u64,la:u64,ia:u64,oa:u64)
+  one_a:u64 = const() {"value":1}
+  next_out:u64 = int.add.wrap(oa,one_a)
+  next_level:u64 = int.add.wrap(la,one_a)
+  remains:bool = compare.lt(ia,ka)
+  branch remains pair(wa,ka,la,ia,next_out) level(wa,next_out,next_level)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dcr_parent(w:mutbuf,left:u64,right:u64,dst:u64,level:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,left:u64,right:u64,dst:u64,level:u64)
+  width:u64 = const() {"value":32}
+  start:u64 = const() {"value":2048}
+  first:u64 = const() {"value":1315}
+  second:u64 = const() {"value":1347}
+  size:u64 = const() {"value":115}
+  parent:bool = const() {"value":true}
+  a:u64 = int.mul.wrap(left,width)
+  b:u64 = int.mul.wrap(right,width)
+  c:u64 = int.mul.wrap(dst,width)
+  at:u64 = int.add.wrap(a,start)
+  bt:u64 = int.add.wrap(b,start)
+  out:u64 = int.add.wrap(c,start)
+  _inner:u64 = call(w,level) {"function":"dap_inner"}
+  _left:u64 = call(w,at,first) {"function":"dc_copy"}
+  _right:u64 = call(w,bt,second) {"function":"dc_copy"}
+  good:bool = call(w,parent,size) {"function":"dap_digest"}
+  branch good save(w,out) fail()
+block save(ws:mutbuf,dst_s:u64)
+  digest:u64 = const() {"value":1168}
+  _hash:u64 = call(ws,digest,dst_s) {"function":"dc_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dcr_profile_domain(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  p0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":7885365840114090023}
+  _stage0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":1216}
+  v1:u64 = const() {"value":7809911856577867822}
+  _stage1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":1224}
+  v2:u64 = const() {"value":3270004954025569893}
+  _stage2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":1232}
+  v3:u64 = const() {"value":7453010343480354915}
+  _stage3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":1240}
+  v4:u64 = const() {"value":7308332183992823853}
+  _stage4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":1248}
+  v5:u64 = const() {"value":3241518}
+  _stage5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  size:u64 = const() {"value":43}
+  verdict:u64 = call(w,p0,size) {"function":"tr_sha_update_work"}
+  ret(verdict)
+end

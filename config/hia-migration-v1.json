@@ -1199,6 +1199,19 @@
       ]
     },
     {
+      "id": "data-availability/batch-chunk-root",
+      "node_integration_complete": false,
+      "scope": "Original unsigned transaction batch chunk partition/profile and ordered complete chunk commitment from one canonical Borsh content list and typed coordinate prefix; no caller-supplied digest result, policy coherence, signing or authority.",
+      "source": "hia/src/data_availability/batch_chunk_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_batch_chunk_root.py",
+        "hia/tests/rust_da_batch_chunk_root_reference.rs",
+        "hia/tests/test_da_batch_content_root.py",
+        "hia/tests/test_da_chunk_commitments.py"
+      ]
+    },
+    {
       "id": "data-availability/chunk-commitments",
       "node_integration_complete": false,
       "scope": "Original DA chunk identity and exact Borsh payload hash from one immutable bounded loan; evidenced by public Rust unsigned batch chunk construction and original serialization only, no Merkle, storage, repair, or authority.",

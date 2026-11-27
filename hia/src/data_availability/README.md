@@ -265,6 +265,39 @@ fields and compares both pinned HIA backends. This checks only the
 content projection, not an envelope's authority, chunk roots or
 membership, policy bounds, signature or production path.
 
+## DA unsigned batch chunk projection
+
+The [private chunk projection](batch_chunk_root.hepta) reads one
+immutable loan: the original Borsh `Vec<Vec<u8>>` content, the original
+Borsh coordinate prefix through author sequence, followed by three
+LE `u32` values (chunk size, maximum chunk count, content extent).
+The prefix must be locally well-formed. Its context and committee ID
+are data for the coordinate, not a proof of policy or authorization.
+
+The kernel checks full content framing and original nonempty,
+byte-distinct transaction semantics before the configured chunk count.
+It computes the original chunking profile itself. It splits the
+canonical contents in order without changing bytes, creates each
+coordinate suffix from its concrete index and actual tail size, and
+hashes both the original coordinate and the Borsh chunk byte vector.
+It then reduces the original chunk leaves at their original levels,
+duplicates the last leaf at each odd level, and hashes the original
+root wrapper. No caller supplies a profile, leaf, expected root or
+per-chunk digest.
+
+The output is `chunking_profile_id:32 || chunk_root:32 ||
+chunk_count:u32 LE`. The private profile allows up to 32 items and 32
+chunks in a 1 MiB loan with 3,264 scratch and 68 result bytes.
+Status 40 is empty content count, 41 empty or duplicate transaction,
+and 42 the original configured chunk-count check. 100/102/103 are
+private frame/capacity/internal statuses. Refusal does not change
+the result. [The original differential](../../tests/test_da_batch_chunk_root.py)
+calls actual original unsigned construction, observes the original
+chunk bytes/order and serialized coordinates, compares its profile,
+count and root to both pinned HIA backends, and reconstructs them
+independently. This is not admission, policy/committee coherence,
+signature, erasure coding, or production authority.
+
 ## DA chunk coordinate and byte commitments
 
 The [private chunk commitment](chunk_commitments.hepta) accepts an
