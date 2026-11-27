@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v7
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v8
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -110,12 +110,10 @@ block free_long_head(i_fh:readbuf,o_fh:mutbuf,p_fh:u64,e_fh:u64)
   byte_fh:u8 = buffer.load(i_fh,at_fh)
   dash_fh:u8 = const() {"value":45}
   double_dash:bool = compare.eq(byte_fh,dash_fh)
-  branch double_dash free_no_tip(i_fh,o_fh,start_fh,e_fh) fail()
-block free_no_tip(i_fn:readbuf,o_fn:mutbuf,p_fn:u64,e_fn:u64)
-  len_fn:u64 = int.sub.wrap(e_fn,p_fn)
-  safe_fn:bool = call(i_fn,p_fn,len_fn) {"function":"bc_no_flag_tip"}
-  kind_fn:u64 = const() {"value":91}
-  branch safe_fn free_echo(i_fn,o_fn,p_fn,e_fn,kind_fn) fail()
+  branch double_dash free_flag(i_fh,o_fh,start_fh,e_fh) fail()
+block free_flag(i_ff:readbuf,o_ff:mutbuf,p_ff:u64,e_ff:u64)
+  kind_ff:u64 = const() {"value":91}
+  jump free_echo(i_ff,o_ff,p_ff,e_ff,kind_ff)
 block free_plain(i_fp:readbuf,o_fp:mutbuf,p_fp:u64,e_fp:u64)
   kind_fp:u64 = const() {"value":90}
   jump free_echo(i_fp,o_fp,p_fp,e_fp,kind_fp)
@@ -1087,85 +1085,6 @@ block bad()
 end
 
 
-fn bc_no_flag_tip(i:readbuf,p:u64,n:u64) -> (bool) effects(read,trap) entry(entry)
-block entry(i:readbuf,p:u64,n:u64)
-  span0:u64 = const() {"value":3}
-  word0_0:u64 = const() {"value":7567476}
-  word0_1:u64 = const() {"value":0}
-  word0_2:u64 = const() {"value":0}
-  safe0:bool = call(i,p,n,span0,word0_0,word0_1,word0_2) {"function":"bc_tip_upper"}
-  branch safe0 check1(i,p,n) no()
-block check1(i1:readbuf,p1:u64,n1:u64)
-  span1:u64 = const() {"value":15}
-  word1_0:u64 = const() {"value":3275369725750830448}
-  word1_1:u64 = const() {"value":28548172593721968}
-  word1_2:u64 = const() {"value":0}
-  safe1:bool = call(i1,p1,n1,span1,word1_0,word1_1,word1_2) {"function":"bc_tip_upper"}
-  branch safe1 check2(i1,p1,n1) no()
-block check2(i2:readbuf,p2:u64,n2:u64)
-  span2:u64 = const() {"value":4}
-  word2_0:u64 = const() {"value":1937335659}
-  word2_1:u64 = const() {"value":0}
-  word2_2:u64 = const() {"value":0}
-  safe2:bool = call(i2,p2,n2,span2,word2_0,word2_1,word2_2) {"function":"bc_tip_upper"}
-  branch safe2 check3(i2,p2,n2) no()
-block check3(i3:readbuf,p3:u64,n3:u64)
-  span3:u64 = const() {"value":8}
-  word3_0:u64 = const() {"value":7233184987983540087}
-  word3_1:u64 = const() {"value":0}
-  word3_2:u64 = const() {"value":0}
-  safe3:bool = call(i3,p3,n3,span3,word3_0,word3_1,word3_2) {"function":"bc_tip_upper"}
-  branch safe3 check4(i3,p3,n3) no()
-block check4(i4:readbuf,p4:u64,n4:u64)
-  span4:u64 = const() {"value":8}
-  word4_0:u64 = const() {"value":8748072351715980403}
-  word4_1:u64 = const() {"value":0}
-  word4_2:u64 = const() {"value":0}
-  safe4:bool = call(i4,p4,n4,span4,word4_0,word4_1,word4_2) {"function":"bc_tip_upper"}
-  branch safe4 check5(i4,p4,n4) no()
-block check5(i5:readbuf,p5:u64,n5:u64)
-  span5:u64 = const() {"value":11}
-  word5_0:u64 = const() {"value":7953750762056672626}
-  word5_1:u64 = const() {"value":7632239}
-  word5_2:u64 = const() {"value":0}
-  safe5:bool = call(i5,p5,n5,span5,word5_0,word5_1,word5_2) {"function":"bc_tip_upper"}
-  branch safe5 check6(i5,p5,n5) no()
-block check6(i6:readbuf,p6:u64,n6:u64)
-  span6:u64 = const() {"value":11}
-  word6_0:u64 = const() {"value":8531274982891287159}
-  word6_1:u64 = const() {"value":7959141}
-  word6_2:u64 = const() {"value":0}
-  safe6:bool = call(i6,p6,n6,span6,word6_0,word6_1,word6_2) {"function":"bc_tip_upper"}
-  branch safe6 check7(i6,p6,n6) no()
-block check7(i7:readbuf,p7:u64,n7:u64)
-  span7:u64 = const() {"value":7}
-  word7_0:u64 = const() {"value":28548172593721968}
-  word7_1:u64 = const() {"value":0}
-  word7_2:u64 = const() {"value":0}
-  safe7:bool = call(i7,p7,n7,span7,word7_0,word7_1,word7_2) {"function":"bc_tip_upper"}
-  branch safe7 check8(i7,p7,n7) no()
-block check8(i8:readbuf,p8:u64,n8:u64)
-  span8:u64 = const() {"value":19}
-  word8_0:u64 = const() {"value":7956010554822518116}
-  word8_1:u64 = const() {"value":7309453736285139817}
-  word8_2:u64 = const() {"value":7566433}
-  safe8:bool = call(i8,p8,n8,span8,word8_0,word8_1,word8_2) {"function":"bc_tip_upper"}
-  branch safe8 check9(i8,p8,n8) no()
-block check9(i9:readbuf,p9:u64,n9:u64)
-  span9:u64 = const() {"value":4}
-  word9_0:u64 = const() {"value":1886152040}
-  word9_1:u64 = const() {"value":0}
-  word9_2:u64 = const() {"value":0}
-  safe9:bool = call(i9,p9,n9,span9,word9_0,word9_1,word9_2) {"function":"bc_tip_upper"}
-  branch safe9 yes() no()
-block yes()
-  ok:bool = const() {"value":true}
-  ret(ok)
-block no()
-  cannot_prove:bool = const() {"value":false}
-  ret(cannot_prove)
-end
-
 fn bc_free_grammar(i:readbuf,p:u64,e:u64) -> (bool) effects(read,trap) entry(entry)
 block entry(i:readbuf,p:u64,e:u64)
   jump scan(i,p,p,e)
@@ -1209,79 +1128,4 @@ block yes()
 block no()
   invalid:bool = const() {"value":false}
   ret(invalid)
-end
-
-fn bc_tip_upper(i:readbuf,p:u64,a:u64,b:u64,w0:u64,w1:u64,w2:u64) -> (bool) effects(read,trap) entry(entry)
-block entry(i:readbuf,p:u64,a:u64,b:u64,w0:u64,w1:u64,w2:u64)
-  zero:u64 = const() {"value":0}
-  one:u64 = const() {"value":1}
-  a_larger:bool = compare.ge(a,b)
-  widest:u64 = select(a_larger,a,b)
-  half:u64 = int.shr.checked(widest,one)
-  nonzero:bool = compare.ne(half,zero)
-  minus:u64 = int.sub.wrap(half,one)
-  window:u64 = select(nonzero,minus,zero)
-  jump scan(i,p,a,b,w0,w1,w2,window,zero,zero)
-block scan(i_s:readbuf,p_s:u64,a_s:u64,b_s:u64,w0_s:u64,w1_s:u64,w2_s:u64,range_s:u64,j_s:u64,m_s:u64)
-  done:bool = compare.eq(j_s,a_s)
-  branch done upper(a_s,b_s,m_s) count(i_s,p_s,a_s,b_s,w0_s,w1_s,w2_s,range_s,j_s,m_s)
-block count(i_c:readbuf,p_c:u64,a_c:u64,b_c:u64,w0_c:u64,w1_c:u64,w2_c:u64,range_c:u64,j_c:u64,m_c:u64)
-  k:u64 = int.add.wrap(p_c,j_c)
-  at:usize = int.cast(k) {"mode":"wrap"}
-  byte:u8 = buffer.load(i_c,at)
-  zero_c:u64 = const() {"value":0}
-  one_c:u64 = const() {"value":1}
-  has_low:bool = compare.gt(j_c,range_c)
-  sub:u64 = int.sub.wrap(j_c,range_c)
-  lo:u64 = select(has_low,sub,zero_c)
-  hi:u64 = int.add.wrap(j_c,range_c)
-  found:bool = call(byte,lo,hi,b_c,w0_c,w1_c,w2_c) {"function":"bc_tip_in_window"}
-  inc:u64 = select(found,one_c,zero_c)
-  nxt:u64 = int.add.wrap(j_c,one_c)
-  m_nxt:u64 = int.add.wrap(m_c,inc)
-  jump scan(i_c,p_c,a_c,b_c,w0_c,w1_c,w2_c,range_c,nxt,m_nxt)
-block upper(a_u:u64,b_u:u64,m_u:u64)
-  ten:u64 = const() {"value":10}
-  eleven:u64 = const() {"value":11}
-  b_cap:bool = compare.gt(m_u,b_u)
-  matches:u64 = select(b_cap,b_u,m_u)
-  sum:u64 = int.add.wrap(a_u,b_u)
-  prod:u64 = int.mul.wrap(a_u,b_u)
-  msum:u64 = int.mul.wrap(matches,sum)
-  left:u64 = int.mul.wrap(ten,msum)
-  right:u64 = int.mul.wrap(eleven,prod)
-  strict:bool = compare.lt(left,right)
-  ret(strict)
-end
-
-fn bc_tip_in_window(byte:u8,lo:u64,hi:u64,b:u64,w0:u64,w1:u64,w2:u64) -> (bool) effects(trap) entry(entry)
-block entry(byte:u8,lo:u64,hi:u64,b:u64,w0:u64,w1:u64,w2:u64)
-  jump window(byte,lo,hi,b,w0,w1,w2)
-block window(byte_w:u8,lo_w:u64,hi_w:u64,b_w:u64,w0_w:u64,w1_w:u64,w2_w:u64)
-  within:bool = compare.le(lo_w,hi_w)
-  candidate:bool = compare.lt(lo_w,b_w)
-  check:bool = bool.and(within,candidate)
-  branch check probe(byte_w,lo_w,hi_w,b_w,w0_w,w1_w,w2_w) absent()
-block probe(byte_p:u8,j:u64,hi_p:u64,b_p:u64,w0_p:u64,w1_p:u64,w2_p:u64)
-  eight:u64 = const() {"value":8}
-  sixteen:u64 = const() {"value":16}
-  seven:u64 = const() {"value":7}
-  first:bool = compare.lt(j,eight)
-  last:bool = compare.ge(j,sixteen)
-  late_word:u64 = select(last,w2_p,w1_p)
-  word:u64 = select(first,w0_p,late_word)
-  index:u64 = bit.and(j,seven)
-  shift:u64 = int.mul.wrap(index,eight)
-  shifted:u64 = int.shr.checked(word,shift)
-  letter:u8 = int.cast(shifted) {"mode":"wrap"}
-  equal:bool = compare.eq(byte_p,letter)
-  one:u64 = const() {"value":1}
-  next:u64 = int.add.wrap(j,one)
-  branch equal present() window(byte_p,next,hi_p,b_p,w0_p,w1_p,w2_p)
-block present()
-  yes:bool = const() {"value":true}
-  ret(yes)
-block absent()
-  no:bool = const() {"value":false}
-  ret(no)
 end

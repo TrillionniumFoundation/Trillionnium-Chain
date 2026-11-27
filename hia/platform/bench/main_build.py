@@ -75,7 +75,8 @@ def diagnostics_catalog(raw: bytes) -> bytes:
     enums = {102, 103}
     unexpected_arguments = {90, 91}
     reflected = numeric | enums | unexpected_arguments
-    if (set(source) != {"schema", "entries", "suggestions"} or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v2"
+    if (set(source) != {"schema", "entries", "suggestions", "long_options"}
+            or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v3"
             or set(source["entries"]) != {str(code) for code in existing | reflected}):
         raise ValueError("Incorrect diagnostic text roster")
     words = source["suggestions"]
@@ -84,7 +85,24 @@ def diagnostics_catalog(raw: bytes) -> bytes:
                    or not all(ch.isascii() and (ch.islower() or ch == "-") for ch in word) for word in words[:10])
             or words[10] != "\n\n  tip: a similar value exists: '"):
         raise ValueError("Incorrect source text for enum suggestions")
-    table = bytearray(104 * 8 + 11 * 4)
+    long_options = source["long_options"]
+    if type(long_options) is not list or len(long_options) != 10:
+        raise ValueError("Incorrect long-option diagnostic roster")
+    for row in long_options:
+        if type(row) is not list or len(row) != 2 or any(type(text) is not str for text in row):
+            raise ValueError("Incorrect long-option diagnostic descriptor")
+        name, metavar = row
+        if (not 1 <= len(name) <= 21 or not name[0].isascii() or not name[0].islower()
+                or any(ch not in "abcdefghijklmnopqrstuvwxyz-" for ch in name)
+                or metavar not in ("", name.upper().replace("-", "_"))):
+            raise ValueError("Out-of-domain long-option diagnostic descriptor")
+    if len({name for name, _ in long_options}) != 10:
+        raise ValueError("Duplicate long-option diagnostic descriptor")
+    tip_leader = "' found\n\n  tip: a similar argument exists: '--"
+    tails = [f"{name}'\n\nUsage: trnm-bench --{name}" + (f" <{value}>" if value else "")
+             for name, value in long_options]
+    words = words + [name for name, _ in long_options] + tails + [tip_leader]
+    table = bytearray(104 * 8 + len(words) * 4)
     payload = bytearray()
     for code in sorted(existing | reflected):
         row = source["entries"][str(code)]

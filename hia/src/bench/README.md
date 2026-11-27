@@ -153,16 +153,14 @@ and additions in the same order. The best score must be strictly greater than
 A single free-standing positional identifier or unrecognized, bare long option
 can emit the original unexpected-argument diagnostic. The token (including
 an option's leading `--`) must fit 127 bytes; the identifier is
-`[A-Za-z0-9_][A-Za-z0-9_-]*`. Long names are admitted only when the locked
-Clap roster cannot produce a Jaro suggestion: the HIA parser counts a generous
-upper bound on matches inside the original match window, independently of
-transpositions. For lengths `a` and `b` and bound `m`, it checks
-`10*m*(a+b) < 11*a*b` for every long name. This bounds
-`(m/a + m/b + 1)/3` strictly below 0.7, with a gap greater than binary64
-rounding can bridge in this domain. Inconclusive bounds, suggestions,
-attached values, short unknowns, combined arguments, control bytes and
-invalid UTF-8 remain refused. The HIA renderer reads a packed
-[literal catalog](main_diagnostics.json) instead of
+`[A-Za-z0-9_][A-Za-z0-9_-]*`. The long-option diagnostic uses the same
+Jaro scorer over the locked command's ten long options in parser order,
+including the automatic help flag. When it selects an option, the diagnostic
+adds the original suggestion and that flag's specific usage, with a value
+placeholder only for an option that takes a value. This does not execute or
+accept the suggested option. Attached values, short unknowns, combined
+arguments, control bytes and invalid UTF-8 remain refused. The HIA renderer
+reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted
 prefix and takes precedence over later arguments.

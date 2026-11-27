@@ -1,5 +1,5 @@
 {
-  "schema": "trnm.hia.bench-plain-diagnostic-text.v2",
+  "schema": "trnm.hia.bench-plain-diagnostic-text.v3",
   "entries": {
     "3": [
       "TRNM load bench with configurable conflict rate\n\nUsage: trnm-bench [OPTIONS]\n\nOptions:\n      --txs <TXS>\n          Number of transactions [default: 20000]\n      --persist-profile\n          Persist profile output under run/bench (enabled by default when --profile is set)\n      --keys <KEYS>\n          Number of hot keys (smaller = higher conflict) [default: 2000]\n      --workload <WORKLOAD>\n          Workload model [default: classic] [possible values: classic, mixed, hot-streak]\n      --strategy <STRATEGY>\n          Grouping strategy [default: original] [possible values: original, footprint-desc, write-first, write-last, hot-bucket-interleave, auto-adaptive, aggressive-greedy]\n      --read-fanout <READ_FANOUT>\n          Read-set fanout for mixed workload [default: 3]\n      --write-every <WRITE_EVERY>\n          Write every N txs for mixed workload (1 = write every tx) [default: 1]\n      --profile\n          Print executor profiling stats\n      --determinism-repeats <DETERMINISM_REPEATS>\n          Repeat the exact deterministic grouping input in-process and fail if any replay produces a different ordered group assignment. This checks scheduler determinism only; it is not a throughput or consensus claim [default: 0]\n  -h, --help\n          Print help\n",
@@ -146,6 +146,18 @@
       "' for '--strategy <STRATEGY>'\n  [possible values: original, footprint-desc, write-first, write-last, hot-bucket-interleave, auto-adaptive, aggressive-greedy]\n\nFor more information, try '--help'.\n"
     ]
   },
+  "long_options": [
+    ["txs", "TXS"],
+    ["persist-profile", ""],
+    ["keys", "KEYS"],
+    ["workload", "WORKLOAD"],
+    ["strategy", "STRATEGY"],
+    ["read-fanout", "READ_FANOUT"],
+    ["write-every", "WRITE_EVERY"],
+    ["profile", ""],
+    ["determinism-repeats", "DETERMINISM_REPEATS"],
+    ["help", ""]
+  ],
   "suggestions": [
     "classic",
     "mixed",

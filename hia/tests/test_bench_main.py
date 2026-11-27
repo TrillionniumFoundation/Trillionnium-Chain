@@ -376,7 +376,7 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
 
-    def test_actual_free_standing_no_tip_cli_diagnostic(self):
+    def test_actual_free_standing_cli_diagnostic(self):
         # Full locked Bench and sealed standalone HIA processes, not parser adapters.
         suffix = (b"' found\n\nUsage: trnm-bench [OPTIONS]\n\n"
                   b"For more information, try '--help'.\n")
@@ -388,33 +388,41 @@ class NativeBenchMain(unittest.TestCase):
                 (b"read-fanut", b"read-fanout"), (b"write-evry", b"write-every"),
                 (b"profil", b"profile"), (b"determinis-repeats", b"determinism-repeats"),
                 (b"hel", b"help"))
-        option_roster = re.findall(rb"(?m)^ +(?:-h, )?--([a-z-]+)(?: |$)", help_result.stdout)
-        self.assertEqual(option_roster, [arg for _, arg in tips])
+        help_descriptors = re.findall(rb"(?m)^ +(?:-h, )?--([a-z-]+)(?: <([A-Z_]+)>)?$",
+                                      help_result.stdout)
+        self.assertEqual([arg for arg, _ in help_descriptors], [arg for _, arg in tips])
+        # These ties exercise exact binary64 order, including the automatic help key.
+        ties = ((b"re", b"write-every"), (b"els", b"help"), (b"etsy", b"keys"), (b"osra", b"strategy"))
+        # Jaro's binary64 result for this total stripped length of 30 is
+        # 0.7000000000000001, not the exact-rational 0.7.
+        cutoff_above = b"txs" + b"Z" * 27
+        cutoff_below = b"--txs" + b"Z" * 28
+        metavar = dict(help_descriptors)
         for idx, token in enumerate((b"x", b"logfile", b"_name-12", b"MyWorkload_01-1",
                                      b"0", b"A" * 127, b"--unknown", b"--unknown-switch",
-                                     b"--typo", b"--TXS", b"--404", b"--x", b"--" + b"Z" * 125)):
+                                     b"--typo", b"--TXS", b"--404", b"--x", b"--" + b"Z" * 125,
+                                     b"--not-a-bench-switch", cutoff_below)):
             exact = b"error: unexpected argument '" + token + suffix
             for owner, image in (("rust", self.original), ("hia", self.native)):
                 result, _ = self.actual(f"free-arg-{idx}-{owner}", image, (token,))
                 self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", exact), token)
-        for idx, (typo, option) in enumerate(tips):
+        for idx, (typo, option) in enumerate(tips + ties + ((cutoff_above, b"txs"),)):
             args = (b"--" + typo,)
-            old, _ = self.actual(f"free-arg-tip-{idx}-rust", self.original, args)
-            new, _ = self.actual(f"free-arg-tip-{idx}-hia", self.native, args)
-            self.assertEqual((old.returncode, old.stdout), (2, b""))
-            self.assertIn(b"tip: a similar argument exists: '--" + option + b"'", old.stderr)
-            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE))
-        # Being actually tip-free is insufficient where the bound is inconclusive.
-        conservative = (b"--not-a-bench-switch",)
-        old, _ = self.actual("free-arg-conservative-rust", self.original, conservative)
-        self.assertEqual((old.returncode, old.stdout, old.stderr),
-                         (2, b"", b"error: unexpected argument '" + conservative[0] + suffix))
-        for idx, args in enumerate((conservative, (b"A" * 128,), (b"--" + b"Z" * 126,),
+            display = (b" <" + metavar[option] + b">") if metavar[option] else b""
+            exact = (b"error: unexpected argument '" + args[0] + b"' found\n\n"
+                     b"  tip: a similar argument exists: '--" + option + b"'\n\n"
+                     b"Usage: trnm-bench --" + option + display
+                     + b"\n\nFor more information, try '--help'.\n")
+            for owner, image in (("rust", self.original), ("hia", self.native)):
+                result, _ = self.actual(f"free-arg-flag-tip-{idx}-{owner}", image, args)
+                self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", exact), args)
+        for idx, args in enumerate(((b"A" * 128,), (b"--" + b"Z" * 126,),
                                     (b"",), (b"two words",), (b"two\nlines",), (b"bad\xff",),
-                                    (b"--unknown=ignored",), (b"---unknown",), (b"-x",),
-                                    (b"--", b"logfile"), (b"--unknown", b"--help"),
-                                    (b"--profile", b"logfile"), (b"--profile", b"--unknown"),
-                                    (b"--reader-high-water-v1", b"logfile"))):
+                                    (b"--unknown=ignored",), (b"--tx=4",), (b"---unknown",), (b"-x",),
+                                    (b"--", b"logfile"), (b"--", b"--tx"), (b"--unknown", b"--help"),
+                                    (b"--hel", b"--help"), (b"--txs=4", b"--worklod"),
+                                    (b"--txs", b"--worklod"), (b"--profile", b"logfile"),
+                                    (b"--profile", b"--unknown"), (b"--reader-high-water-v1", b"logfile"))):
             rejected, _ = self.actual(f"free-arg-outside-{idx}", self.native, args)
             self.assertEqual((rejected.returncode, rejected.stdout, rejected.stderr), (2, b"", OUTSIDE), args)
         refused, _ = self.actual("free-arg-env-refused", self.native, (b"--unknown",),
