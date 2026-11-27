@@ -4155,6 +4155,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-genesis-receipt",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private one-command genesis AdmitReceipt preview from a checked original empty journal and a sealed native Engine; creates the exact original result bytes with no committed output supplied, no cross-open atomicity, voting, deployment or Node authority.",
+      "sources": [
+        "hia/platform/service_settlement/preview_genesis_receipt.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_first_native_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

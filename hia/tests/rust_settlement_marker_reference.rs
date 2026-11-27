@@ -319,7 +319,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             io::stdout().write_all(&root.0)?;
             io::stdout().write_all(&state)?;
         }
-        "observe-first-native-replay-witness" => {
+        "observe-first-native-replay-witness" | "observe-genesis-receipt-preview" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let observation = owner.fresh_readback()?;  // Original durable audit replays every operation.
             if observation.sequence() != 1 {
@@ -373,6 +373,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(state_root(&parsed)?, genesis.durable_state_root());
             source_db.close().map_err(|(_, err)| err)?;
             db.close().map_err(|(_, err)| err)?;
+            if operation == "observe-genesis-receipt-preview" {
+                let mut frame = typed_execution.order_height.to_le_bytes().to_vec();
+                frame.extend(typed_execution.order_block_id.0);
+                frame.extend(genesis.store_schema_version().to_le_bytes());
+                frame.extend(genesis.store_id().0);
+                frame.extend(genesis.sequence().to_le_bytes());
+                frame.extend(genesis.order_height().to_le_bytes());
+                frame.extend(genesis.order_block_id().0);
+                frame.extend(genesis.durable_state_root().0);
+                frame.extend(genesis.durable_journal_root().0);
+                frame.extend(genesis.durable_committed_block_root().0);
+                frame.extend(canonical_bytes(genesis.context())?);
+                let mut value = preview.source_sequence().to_le_bytes().to_vec();
+                value.extend(preview.source_state_root().0);
+                value.extend(preview.source_journal_root().0);
+                value.extend(preview.candidate_post_state_root().0);
+                value.extend(u64::try_from(preview.candidate_receipts().len())?.to_le_bytes());
+                value.extend(canonical_bytes(&preview.candidate_receipts()[0])?);
+                assert_eq!(value.len(), 261);
+                let mut stdout = io::stdout().lock();
+                for piece in [&frame, &command, &value] {
+                    stdout.write_all(&u32::try_from(piece.len())?.to_le_bytes())?;
+                    stdout.write_all(piece)?;
+                }
+                return Ok(());
+            }
             let trust = canonical_bytes(&config.trust_bundle)?;
             let mut stdout = io::stdout().lock();
             for piece in [

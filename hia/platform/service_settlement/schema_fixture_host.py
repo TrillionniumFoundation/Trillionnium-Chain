@@ -158,7 +158,7 @@ def native_open_lifecycle(path, image, open_sqlite, fetch, owner):
     raise ValueError("Bounded native ownership continuation did not terminate")
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None):
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None, genesis_preview=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -229,6 +229,15 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
         preview_frames = [bytes.fromhex(frame) for frame in frames]
         if any(not 219 <= len(frame) <= 8410 for frame in preview_frames):
             raise ValueError("Original preview decision frame exceeded the fixture domain")
+    genesis_inputs = None
+    if genesis_preview is not None:
+        if not journal or replay or preview is not None:
+            raise ValueError("Prospective genesis preview requires the independently audited empty journal")
+        frame, command = (bytes.fromhex(request[k]) for k in ("genesis_frame", "genesis_command"))
+        engine_image = request["genesis_engine"]
+        if not (219 <= len(frame) <= 8410 and 112 <= len(command) <= 8192 and len(engine_image) == 2):
+            raise ValueError("Wrong bounded genesis preview request")
+        genesis_inputs = frame, command, engine_image
     path_checks = header_checks = None
     if gate is not None:
         gate_status, path_checks = native_path_preflight(os.fsencode(db), gate, provider)
@@ -454,6 +463,53 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                     raise ValueError("Native preview decision leaked or lacked exact live custody")
                 decisions.append([code, output.raw.hex() if code == 0 else None])
             result["preview_decisions"] = decisions
+        if genesis_inputs is not None and status == 0:
+            if result["released"] != 0:
+                raise ValueError("Genesis preview requires explicit native SQLite close")
+            from hia.platform.service_settlement.first_replay_fixture_engine import FixtureReplay
+
+            def buffer(raw):
+                return ctypes.create_string_buffer(raw, len(raw))
+
+            frame, command, engine_image = genesis_inputs
+            receipt_image, command_image = genesis_preview
+            native_preview = bind(receipt_image, "f0", u64, *signature)
+            strict = bind(command_image, "f0", u64, *signature)
+            pending = buffer(b"\xa5" * 112)
+            final = buffer(b"\xa5" * 261)
+            candidate = buffer(frame)
+            code = native_preview(candidate, len(frame), state, EXTENT, pending, len(pending))
+            calls = 0
+            if code == 0:
+                command_frame = buffer(command)
+                checked = buffer(b"\xa5" * (34 + len(command)))
+                scratch = buffer(b"\xa5" * (2304 + len(command)))
+                code = strict(command_frame, len(command), checked, len(checked), scratch, len(scratch))
+                if code == len(checked):
+                    if checked.raw[:2] != b"\x18\0" or checked.raw[34:] != command:
+                        raise ValueError("Prospective command changed in strict native traversal")
+                    trust = bytes.fromhex(journal_hex)[104 + 32:]
+                    engine = FixtureReplay.open(replay_owners, *engine_image)
+                    actual = engine.preview_genesis_receipt(
+                        trust, pending.raw[8:40], struct.unpack_from("<Q", frame)[0], command)
+                    calls = engine.calls.applies
+                    if actual is None:
+                        code = 103
+                    else:
+                        parent, identity, root = actual
+                        if identity != checked.raw[2:34]:
+                            raise ValueError("Engine and strict native command disagree")
+                        packed = pending.raw + parent + identity + frame[42:74] + frame[:40] + root
+                        finish_input = buffer(packed)
+                        work = buffer(b"\xc3" * 261)
+                        code = native_preview(finish_input, len(packed), final, len(final), work, len(work))
+                elif code == 0:
+                    raise ValueError("Strict prospective command returned invalid success width")
+            elif pending.raw != b"\xa5" * 112:
+                raise ValueError("Genesis precheck leaked a rejected diagnostic")
+            if code and final.raw != b"\xa5" * 261:
+                raise ValueError("Genesis preview leaked a rejected diagnostic")
+            result["genesis_preview"] = [code, final.raw.hex() if code == 0 else None, calls]
         if projected:
             result["projection"] = projection
         return result
@@ -476,7 +532,12 @@ def main():
         post_open = owners.enter_context(sealed_library(*message["post_open_path"])) if "post_open_path" in message else None
         lifecycle = owners.enter_context(sealed_library(*message["open_lifecycle"])) if "open_lifecycle" in message else None
         preview = owners.enter_context(sealed_library(*message["preview_decision"])) if "preview_decision" in message else None
-        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview)))
+        genesis_preview = None
+        if "genesis_preview" in message:
+            genesis_preview = tuple(owners.enter_context(sealed_library(*message[key]))
+                                    for key in ("genesis_preview", "genesis_receipt_command"))
+        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview,
+                             genesis_preview)))
 
 
 if __name__ == "__main__":

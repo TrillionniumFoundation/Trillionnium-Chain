@@ -9,6 +9,8 @@ import unittest
 
 from hia.platform.service_settlement.qualification.native import Capture, PublicEngine
 from hia.platform.state_import_sqlite.qualification_host import sealed_library
+from hia.platform.task_kernel.build_provider import ProviderBuild
+from hia.platform.task_kernel.readback_provider import Reader, check_provider
 from hia.tests.native_support import NativeModule
 from hia.tests.test_settlement_kernel_state_shape import frames
 from hia.tests.test_settlement_schema_read import execute, original_adapter
@@ -24,7 +26,7 @@ class SettlementFirstNativeReplayTests(unittest.TestCase):
             root = Path(tmp)
             original_dir = root / "original"
             original_dir.mkdir()
-            original, _ = original_adapter(original_dir, marker=True)
+            original, dependency = original_adapter(original_dir, marker=True)
             inputs = [root / f"original-input-{i}" for i in range(3)]
             for path, body in zip(inputs, list(retained_commands())[:3], strict=True):
                 path.write_bytes(body)
@@ -129,5 +131,56 @@ class SettlementFirstNativeReplayTests(unittest.TestCase):
                         args = [raw, b"\x92"*osize, b"\x93"*wsize]
                         r = join.call("f0", args).require_returned()
                         self.assertEqual((r.value, r.arguments), (code, args))
+            raw = execute([original, "observe-genesis-receipt-preview", stores[1], inputs[0], stores[0]]).stdout
+            frame, original_command, expected = frames(raw)
+            self.assertEqual((original_command, expected[112:]), (command, receipt))
+            provider = ProviderBuild(dependency, root/"provider").run()
+            check = Reader()
+            check_provider(check.read, provider.parent, ROOT)
+            owned_dir = root/"owned"
+            owned_dir.mkdir(mode=0o700)
+            source_db = owned_dir/"actual pristine genesis #?.db"
+            binding = execute([original, "seed-receipts", source_db, inputs[0], "0"]).stdout
+            exact_original = execute([original, "verify-journal", source_db, inputs[0]]).stdout
+            self.assertEqual(exact_original[42:50], bytes(8))
+            source_before = source_db.read_bytes()
+            def image(module):
+                return [str(module.library), module.artifact_sha256]
+
+            for backend in ("direct", "selfhost"):
+                with ExitStack() as stack, self.subTest(genesis_preview=backend):
+                    uri = stack.enter_context(NativeModule(
+                        ROOT/"hia/src/service_settlement/read_only_store_uri.hepta", byte_exports=("f0",),
+                        backend=backend))
+                    reader = stack.enter_context(NativeModule(
+                        OWNER/"journal_read.hepta", byte_exports=("f0",), backend=backend))
+                    pre = stack.enter_context(NativeModule(
+                        OWNER/"preview_genesis_receipt.hepta", byte_exports=("f0",), backend=backend))
+                    codec = stack.enter_context(NativeModule(
+                        OWNER/"receipt_command_id.hepta", byte_exports=("f0",), backend=backend))
+                    req = dict(uri=image(uri), reader=image(reader),
+                               provider=[str(provider), check.checked[str(provider)]["sha256"]],
+                               directory=str(owned_dir), database=str(source_db), journal_binding=binding.hex())
+                    def invoke(source, candidate=None, cmd=command):
+                        args = dict(source)
+                        if candidate is not None:
+                            args.update(genesis_preview=image(pre), genesis_receipt_command=image(codec),
+                                        genesis_engine=[str(public), report["artifact"]["sha256"]],
+                                        genesis_frame=candidate.hex(), genesis_command=cmd.hex())
+                        rt = execute([sys.executable, "-B", "-I", "-S", OWNER/"schema_fixture_host.py"],
+                                     input=json.dumps(args).encode(), timeout=45)
+                        self.assertEqual(rt.stderr, b"")
+                        return json.loads(rt.stdout)
+                    got = invoke(req, frame)
+                    self.assertEqual(got.pop("genesis_preview"), [0, expected.hex(), 1])
+                    self.assertEqual(bytes.fromhex(got["projection"]), exact_original)
+                    self.assertEqual((got["status"], got["released"], got["transcript"][-1]), (0, 0, [56,3,24]))
+                    self.assertEqual(invoke(req), got)
+                    for bad, bad_command in ((bytes([frame[0]+1])+frame[1:], command),
+                                             (frame[:8]+bytes(32)+frame[40:], command),
+                                             (frame, command+b"\0")):
+                        self.assertEqual(invoke(req, bad, bad_command)["genesis_preview"], [100, None, 0])
+            self.assertEqual(source_db.read_bytes(), source_before)
+            self.assertFalse(source_db.with_name(source_db.name+"-journal").exists())
             for store in stores:
                 self.assertEqual(store.read_bytes(), fixtures_before[store])

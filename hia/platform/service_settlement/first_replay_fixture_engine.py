@@ -50,6 +50,39 @@ class FixtureReplay:
         for pointer in tuple(self.engine.live):
             self.engine.drop(pointer)
 
+    def preview_genesis_receipt(self, trust, expected_root, height, command):
+        """One private prospective call; no original execution context or receipt is supplied."""
+        if self.parent is not None or self.calls.applies or not 112 <= len(command) <= 8192 or command[0]:
+            raise ValueError("One exact genesis AdmitReceipt prospective command is required")
+        self.parent = self.engine.owned("engine_new", body=trust)
+        if (self.engine.kind(self.parent) != 1
+                or self.engine.view("engine_trust", self.parent) != trust
+                or self.engine.scalar("engine_history_count", self.parent) != 0):
+            return None
+        parent_root = self.engine.view("engine_state_root", self.parent)
+        if len(parent_root) != 32 or parent_root != expected_root:
+            return None
+        op = self.engine.owned("operation_id", body=command)
+        try:
+            if self.engine.kind(op) != 2:
+                return None
+            identity = self.engine.view("bytes_view", op)
+        finally:
+            self.engine.drop(op)
+        successor = self.engine.owned("engine_apply", self.parent, body=command, height=height)
+        try:
+            if (self.engine.kind(successor) != 1
+                    or self.engine.scalar("engine_history_count", successor) != 1
+                    or self.engine.scalar("engine_history_count", self.parent) != 0
+                    or self.engine.view("engine_state_root", self.parent) != parent_root):
+                return None
+            root = self.engine.view("engine_state_root", successor)
+            if (len(parent_root), len(identity), len(root), self.calls.applies) != (32, 32, 32, 1):
+                raise ValueError("Sealed Engine returned a malformed prospective result")
+            return parent_root, identity, root
+        finally:
+            self.engine.drop(successor)
+
     def apply(self, request):
         before = self.calls.applies
         if self.variable_rows:

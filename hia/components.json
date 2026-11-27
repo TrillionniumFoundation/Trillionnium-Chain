@@ -500,6 +500,51 @@
         "source": "src/service_settlement/codec.hepta"
       }
     ],
+    "platform/service_settlement/preview_genesis_receipt.hepta": [
+      {
+        "functions": [
+          "smr_eq_bound"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
+      },
+      {
+        "functions": [
+          "srci_bytes",
+          "srci_canon_len",
+          "srci_context",
+          "srci_take",
+          "srci_u32"
+        ],
+        "source": "platform/service_settlement/receipt_command_id.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      }
+    ],
     "platform/service_settlement/store_open_lifecycle.hepta": [
       {
         "functions": [
