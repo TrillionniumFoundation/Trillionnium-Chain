@@ -1175,6 +1175,19 @@
       ]
     },
     {
+      "id": "data-availability/batch-content-root",
+      "node_integration_complete": false,
+      "scope": "Original unsigned transaction-batch content projection from a bounded canonical Borsh vector of nonempty byte-distinct items; ordered item and level-aware Merkle commitments, exact content root, count and length; no chunk, policy, signature, admission or authority.",
+      "source": "hia/src/data_availability/batch_content_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_batch_content_root.py",
+        "hia/tests/rust_da_batch_content_root_reference.rs",
+        "hia/tests/test_da_batch_author_transcript.py",
+        "hia/tests/test_da_chunk_commitments.py"
+      ]
+    },
+    {
       "id": "data-availability/chunk-commitments",
       "node_integration_complete": false,
       "scope": "Original DA chunk identity and exact Borsh payload hash from one immutable bounded loan; evidenced by public Rust unsigned batch chunk construction and original serialization only, no Merkle, storage, repair, or authority.",

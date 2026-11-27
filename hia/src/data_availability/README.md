@@ -239,6 +239,32 @@ does not sign or verify signatures, interpret statement hashes as trust,
 validate membership or quota on a supplied envelope, or activate a node
 or storage path.
 
+## DA unsigned batch content projection
+
+The [bounded content kernel](batch_content_root.hepta) reads the exact
+Borsh `Vec<Vec<u8>>` from the unsigned batch. It confirms full framing
+before checking empty or duplicate rows, preserving original order and
+comparing candidate duplicates byte for byte. A digest is not used to
+decide uniqueness.
+
+For each item it hashes the original Borsh byte vector under the item
+domain and combines its index and both original copies of the item
+digest in the content leaf. It reduces ordered pairs using the original
+parent transcript and level, duplicates the last node at each odd
+level, and wraps the final node with the exact leaf count and root
+domain. The output is `content_root:32 || item_count:u32 LE ||
+uncompressed_bytes:u64 LE`, the three observed original envelope fields.
+
+The private profile accepts up to 32 items and 1 MiB total, requires
+3,072 scratch bytes and 44 result bytes, and leaves the complete result
+unchanged on refusal. Status 40 is the original empty count check and
+41 the original empty/duplicate element check; 100/102/103 are private
+frame/capacity/internal codes. The [locked differential](../../tests/test_da_batch_content_root.py)
+calls the unchanged original unsigned builder for genuine envelope
+fields and compares both pinned HIA backends. This checks only the
+content projection, not an envelope's authority, chunk roots or
+membership, policy bounds, signature or production path.
+
 ## DA chunk coordinate and byte commitments
 
 The [private chunk commitment](chunk_commitments.hepta) accepts an
