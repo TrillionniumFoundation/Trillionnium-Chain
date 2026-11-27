@@ -1,6 +1,7 @@
 """Actual held original Store replay with measured, bounded widths."""
 from contextlib import ExitStack
 import json
+import struct
 from pathlib import Path
 import sys
 import tempfile
@@ -103,3 +104,46 @@ class SettlementHeldVariableFirstReplayTests(unittest.TestCase):
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
             self.assertEqual(len(extents), 2)
+
+            for backend, mode in (("direct", "short"), ("selfhost", "utf8")):
+                with self.subTest(prospective=mode, backend=backend):
+                    trust, first, _, _, second, _ = frames(execute(
+                        [tmp/"same-block-fixture", mode+"-pair"]).stdout)
+                    bundle, cmd1, cmd2 = (tmp/f"later-{mode}-{i}" for i in range(3))
+                    for f, body in zip((bundle, cmd1, cmd2), (trust, first, second), strict=True):
+                        f.write_bytes(body)
+                    db = owned/f"actual later prospective {mode} #?.db"
+                    binding = execute([original, "seed-receipts", db, bundle, "0", cmd1]).stdout
+                    pristine = db.read_bytes()
+                    source_bytes = execute([original, "verify-journal", db, bundle]).stdout
+                    pre, reader, codec = [stack.enter_context(NativeModule(
+                        OWNER/name, byte_exports=("f0",), backend=backend))
+                        for name in ("preview_live_receipt.hepta", "held_variable_first_replay.hepta",
+                                     "receipt_command_id.hepta")]
+
+                    def image(module):
+                        return [str(module.library), module.artifact_sha256]
+
+                    req = dict(reader=image(reader), uri=image(images["uri"]),
+                               provider=[str(provider), proof.checked[str(provider)]["sha256"]],
+                               directory=str(owned), database=str(db), journal_binding=binding.hex(),
+                               first_replay_engine=[str(out/"public"), engine["artifact"]["sha256"]],
+                               variable_first_fixture=True, writer=str(original))
+                    for tag, cmd in (("success", cmd2), ("duplicate", cmd1), ("old-genesis", cmd2)):
+                        frame, command, witnessed = frames(execute(
+                            [original, "observe-held-perspective-receipt", db, bundle, cmd, tag]).stdout)
+                        status, = struct.unpack_from("<I", witnessed)
+                        attempt = dict(req, live_preview=image(pre), live_preview_codec=image(codec),
+                                       live_preview_frame=frame.hex(), live_preview_command=command.hex())
+                        answer = execute([sys.executable, "-I", "-S", "-B", OWNER/"schema_fixture_host.py"],
+                                         input=json.dumps(attempt).encode(), timeout=60)
+                        self.assertEqual(answer.stderr, b"")
+                        result = json.loads(answer.stdout)
+                        self.assertEqual(result.pop("live_preview"),
+                                         [status, witnessed[4:].hex() if status == 0 else None, int(status == 0)])
+                        self.assertEqual(bytes.fromhex(result["projection"]), source_bytes)
+                        self.assertEqual((result["status"], result["replay_calls"], result["released"],
+                                          result["transcript"][-2:]), (0, 1, 0, [[55, 9, 24], [56, 3, 24]]))
+                    self.assertEqual(execute([original, "verify-journal", db, bundle]).stdout, source_bytes)
+                    self.assertEqual(db.read_bytes(), pristine)
+                    self.assertFalse(db.with_name(db.name+"-journal").exists())

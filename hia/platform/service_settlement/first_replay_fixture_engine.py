@@ -55,9 +55,18 @@ class FixtureReplay:
         if self.parent is not None or self.calls.applies or not 112 <= len(command) <= 8192 or command[0]:
             raise ValueError("One exact genesis AdmitReceipt prospective command is required")
         self.parent = self.engine.owned("engine_new", body=trust)
+        return self._prospective_receipt(trust, expected_root, height, command, 0)
+
+    def preview_replayed_receipt(self, expected_root, height, command):
+        if (self.parent is None or self.variable_rows != 1 or self.calls.applies != 1
+                or not 112 <= len(command) <= 8192 or command[0]):
+            raise ValueError("Exactly one held original AdmitReceipt predecessor is required")
+        return self._prospective_receipt(self.trust, expected_root, height, command, 1)
+
+    def _prospective_receipt(self, trust, expected_root, height, command, prior_count):
         if (self.engine.kind(self.parent) != 1
                 or self.engine.view("engine_trust", self.parent) != trust
-                or self.engine.scalar("engine_history_count", self.parent) != 0):
+                or self.engine.scalar("engine_history_count", self.parent) != prior_count):
             return None
         parent_root = self.engine.view("engine_state_root", self.parent)
         if len(parent_root) != 32 or parent_root != expected_root:
@@ -72,12 +81,12 @@ class FixtureReplay:
         successor = self.engine.owned("engine_apply", self.parent, body=command, height=height)
         try:
             if (self.engine.kind(successor) != 1
-                    or self.engine.scalar("engine_history_count", successor) != 1
-                    or self.engine.scalar("engine_history_count", self.parent) != 0
+                    or self.engine.scalar("engine_history_count", successor) != prior_count + 1
+                    or self.engine.scalar("engine_history_count", self.parent) != prior_count
                     or self.engine.view("engine_state_root", self.parent) != parent_root):
                 return None
             root = self.engine.view("engine_state_root", successor)
-            if (len(parent_root), len(identity), len(root), self.calls.applies) != (32, 32, 32, 1):
+            if (len(parent_root), len(identity), len(root), self.calls.applies) != (32, 32, 32, prior_count + 1):
                 raise ValueError("Sealed Engine returned a malformed prospective result")
             return parent_root, identity, root
         finally:

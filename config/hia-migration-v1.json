@@ -4203,6 +4203,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-live-receipt",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private one-command preview over an actually held non-genesis original SQLite head and the exact already replayed native Engine. Uses checked typed duplicate, historical and candidate successor controls; publishes only after acknowledged close. No voting, arbitrary scope, production authority or native post-close re-audit guarantee.",
+      "sources": [
+        "hia/platform/service_settlement/preview_live_receipt.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_first_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-preview-two-native-heads",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -158,7 +158,7 @@ def native_open_lifecycle(path, image, open_sqlite, fetch, owner):
     raise ValueError("Bounded native ownership continuation did not terminate")
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None, genesis_preview=None, closed_hook=None):
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None, genesis_preview=None, closed_hook=None, live_preview=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -238,6 +238,15 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
         if not (219 <= len(frame) <= 8410 and 112 <= len(command) <= 8192 and len(engine_image) == 2):
             raise ValueError("Wrong bounded genesis preview request")
         genesis_inputs = frame, command, engine_image
+    live_inputs, live_pending = None, None
+    if live_preview is not None:
+        if (not journal or not replay or not variable_first or preview is not None
+                or genesis_preview is not None or replay_control is not None):
+            raise ValueError("Later preview requires exactly one unmodified original held replay")
+        frame, command = (bytes.fromhex(request[k]) for k in ("live_preview_frame", "live_preview_command"))
+        if not (219 <= len(frame) <= 8410 and 112 <= len(command) <= 8192):
+            raise ValueError("Wrong bounded original later preview request")
+        live_inputs = frame, command
     path_checks = header_checks = None
     if gate is not None:
         gate_status, path_checks = native_path_preflight(os.fsencode(db), gate, provider)
@@ -410,6 +419,15 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                 continue
             if status != 198 or op not in allowed_ops or not 8 <= length <= 1552:
                 raise ValueError("Unexpected read-only request")
+            if live_inputs is not None and (phase, op) == (55, 9):
+                if live_pending is not None or not replay_held or engine is None or replay_calls != 1:
+                    raise ValueError("Prospective use requires the same retained original replay owner")
+                check = subprocess.run([request["writer"], "try-write", str(db)],
+                                       capture_output=True, check=True, timeout=15)
+                if (check.stdout, check.stderr) != (b"BUSY\n", b""):
+                    raise ValueError("The prospective operation is not under the original held snapshot")
+                frame, command = live_inputs
+                live_pending = held_prospective_receipt(live_preview, signature, state, frame, command, engine)
             payload = ctypes.addressof(state) + 256
             amount = fetch(owner, op, payload, length, response, EXTENT)
             transcript.append([phase, op, amount])
@@ -463,6 +481,10 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                     raise ValueError("Native preview decision leaked or lacked exact live custody")
                 decisions.append([code, output.raw.hex() if code == 0 else None])
             result["preview_decisions"] = decisions
+        if live_inputs is not None and status == 0:
+            if live_pending is None or result["released"] or transcript[-2:] != [[55, 9, 24], [56, 3, 24]]:
+                raise ValueError("A later preview may only publish after actual SQLite close")
+            result["live_preview"] = live_pending
         if genesis_inputs is not None and status == 0:
             if result["released"] != 0:
                 raise ValueError("Genesis preview requires explicit native SQLite close")
@@ -523,6 +545,49 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             replay_owners.close()
         finally:
             free(owner)
+
+
+def held_prospective_receipt(images, signature, snapshot, frame, command, engine):
+    """Consume one native-prepared prospective operation without reconstructing its held Engine."""
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    native = bind(images[0], "f0", u64, *signature)
+    strict = bind(images[1], "f0", u64, *signature)
+
+    def buf(raw):
+        return ctypes.create_string_buffer(raw, len(raw))
+
+    source = buf(command)
+    checked = buf(b"\xa5" * (34 + len(command)))
+    scratch = buf(b"\xa5" * (2304 + len(command)))
+    code = strict(source, len(source), checked, len(checked), scratch, len(scratch))
+    if code not in (100, 101, 102, len(checked)):
+        raise ValueError("Unexpected original command codec outcome")
+    if code != len(checked):
+        return [code, None, 0]
+    if checked.raw[:2] != b"\x18\0" or checked.raw[34:] != command:
+        raise ValueError("Prospective command is not canonical AdmitReceipt")
+    candidate = buf(frame + checked.raw[2:34])
+    pending = buf(b"\xa5" * 112)
+    code = native(candidate, len(candidate), snapshot, EXTENT, pending, len(pending))
+    if code:
+        if pending.raw != b"\xa5" * 112 or code not in (100, 101, 102, 104):
+            raise ValueError("Native held preview leaked or returned unknown refusal")
+        return [code, None, 0]
+    before = engine.calls.applies
+    actual = engine.preview_replayed_receipt(pending.raw[8:40], struct.unpack_from("<Q", frame)[0], command)
+    calls = engine.calls.applies - before
+    if actual is None:
+        return [103, None, calls]
+    root, identity, next_root = actual
+    if identity != checked.raw[2:34]:
+        raise ValueError("Held Engine and typed command identity differ")
+    report = buf(pending.raw + root + identity + frame[42:74] + frame[:40] + next_root)
+    output = buf(b"\xa5" * 261)
+    work = buf(b"\xc3" * 261)
+    code = native(report, len(report), output, len(output), work, len(work))
+    if code and output.raw != b"\xa5" * 261:
+        raise ValueError("Native held publication leaked rejected bytes")
+    return [code, output.raw.hex() if code == 0 else None, calls]
 
 
 def two_native_heads(request, coordinator, uri, reader, provider, gate, header_reader, post_open, lifecycle,
@@ -599,15 +664,19 @@ def main():
         if "genesis_preview" in message:
             genesis_preview = tuple(owners.enter_context(sealed_library(*message[key]))
                                     for key in ("genesis_preview", "genesis_receipt_command"))
+        live_preview = None
+        if "live_preview" in message:
+            live_preview = tuple(owners.enter_context(sealed_library(*message[key]))
+                                 for key in ("live_preview", "live_preview_codec"))
         if "two_native_heads" in message:
             coordinator = owners.enter_context(sealed_library(*message["two_native_heads"]))
-            if preview is not None:
-                raise ValueError("Separate mixed preview may not replace the genesis stage")
+            if preview is not None or live_preview is not None:
+                raise ValueError("A different preview cannot replace the genesis stage")
             result = two_native_heads(message, coordinator, uri, reader, provider, gate, header_reader,
                                       post_open, lifecycle, genesis_preview)
         else:
             result = run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview,
-                         genesis_preview)
+                         genesis_preview, live_preview=live_preview)
         print(json.dumps(result))
 
 
