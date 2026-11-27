@@ -451,3 +451,23 @@ path. It also runs the complete unit suite and checks that a normal library
 build does not contain the witness. No tracked Rust file, existing provider,
 or production route changes. This is the original side of a future
 differential, not a native syscall or descriptor authority claim.
+
+### Fixed same-inode stat-to-bind replay
+
+The private `stat_bound_replay.hepta` route accepts exactly 312 bytes:
+the existing 25-word observed-bind frame followed by the two 7-word stat
+tuples emitted by the fixed Linux relay. It requires both full tuples to
+match, the closed regular-file profile, and all five legacy observation words
+to match the derived linked state, device, inode, size and physical block
+count. Only conventional V1 bind is admitted by this route. After these
+guards it uses the same existing native bind body and 112-byte output; an
+inconsistent frame refuses before changing output or scratch. It does not
+establish authenticity of caller-generated matching tuples.
+
+The source-pinned original witness holds the same private ordinary file and
+captures actual pre-bind ledger words and original `Root::bind_fd` results
+while the fixed HIA child reads its separately opened file and directory
+descriptors. Direct and Selfhost replay the recorded pre-bind words plus
+the child's immutable-by-capture output and compare all status/result words,
+including the first-bind event and later observations without a new event.
+No production capability or routing is granted.

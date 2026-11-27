@@ -6,15 +6,18 @@ import os
 from pathlib import Path
 import tempfile
 import subprocess
+import struct
 import tomllib
 import unittest
 
 from hia.tests.test_settlement_schema_read import execute
 from hia.platform.build import Build, inspect_executable
+from hia.tests.native_support import NativeModule
 
 ROOT = Path(__file__).resolve().parents[2]
 MAP = ROOT / "hia/platform/service_settlement/qualification/original_sources.json"
 WITNESS = ROOT / "hia/tests/rust_sqlite_owner_stat_reference.rs"
+BOUND_REPLAY = ROOT / "hia/src/sqlite_io_boundary/stat_bound_replay.hepta"
 EMITTER = ROOT / "hia/platform/sqlite_owner_stat/emit.hepta"
 TOOLCHAIN = ROOT / "rust-toolchain.toml"
 LIB = Path("trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs")
@@ -80,7 +83,7 @@ class SqliteOwnerStatReferenceTests(unittest.TestCase):
 
     def check_held_stat(self, *, native):
         originals = checked_original()
-        witness = pinned(WITNESS, "cbfa1d2703ce4d355119a39c836e975959b774e6423cbf13d08e433c1a3a0870")
+        witness = pinned(WITNESS, "7b185db6540d5fbf8aedacba53871f98a1dd0359c3edd8d9cbf5195918e7c677")
         cargo, env = tool_environment()
         env.pop("TRNM_TEST_OWNED_STAT_IMAGE", None)
         with tempfile.TemporaryDirectory(prefix="m15-stat-") as directory:
@@ -120,6 +123,11 @@ class SqliteOwnerStatReferenceTests(unittest.TestCase):
             pairs = [s for s in run.splitlines() if s.startswith(b"owner-stat-native-v1|")]
             self.assertEqual(pairs, [f"owner-stat-native-v1|{n}|paired-112".encode()
                                      for n in (0, 3, 8193)] if native else [])
+            binds = [s for s in run.splitlines() if s.startswith(b"owner-stat-bind-v1|")]
+            if native:
+                self.check_native_bind(binds)
+            else:
+                self.assertEqual(binds, [])
             self.assertIn(b"1 passed; 0 failed", run)
             full = execute([cargo, "test", *args], env=env, cwd=root, timeout=160).stdout
             self.assertIn(b"24 passed; 0 failed; 0 ignored", full)
@@ -163,3 +171,43 @@ class SqliteOwnerStatReferenceTests(unittest.TestCase):
         leaf.write_bytes(bytes(8194))
         refuse()  # exceeds the closed fixture profile
         self.assertEqual(leaf.read_bytes(), bytes(8194))
+
+
+    def check_native_bind(self, binds):
+        frames = []
+        for row in binds:
+            _, raw, expected = row.split(b"|")
+            frames.append((json.loads(raw), json.loads(expected)))
+        self.assertEqual([raw[23] for raw, _ in frames], [0, 3, 8193])
+        self.assertEqual([reply[13] for _, reply in frames], [1, 0, 0])
+        for backend in ("direct", "selfhost"):
+            with self.subTest(backend=backend), NativeModule(BOUND_REPLAY, byte_exports=("f0",),
+                                                            backend=backend) as module:
+                for request, reply in frames:
+                    payload = struct.pack("<39Q", *request)
+                    expected = struct.pack("<14Q", *reply[1:])
+                    scratch = b"Q" * 9
+                    output = b"X" * 120
+                    value = module.call("f0", [payload, output, scratch]).require_returned()
+                    self.assertEqual((value.value, value.arguments),
+                                     (reply[0], [payload, expected + output[112:], scratch]))
+                original = frames[-1][0]
+                refusals = []
+                for index in list(range(20, 39)) + [0, 1]:
+                    altered = original.copy()
+                    altered[index] ^= 1
+                    refusals.append((struct.pack("<39Q", *altered), 120, 100))
+                # Both physical tuples agreeing is insufficient if the
+                # values are outside the closed profile or stale physically.
+                for indexes, new in [((27,34), 0o100640), ((28,35), 1 << 32),
+                                     ((29,36), 2), ((30,37,23), 8194), ((31,38,24), 1 << 63)]:
+                    altered = original.copy()
+                    for index in indexes:
+                        altered[index] = new
+                    refusals.append((struct.pack("<39Q", *altered), 120, 100))
+                raw = struct.pack("<39Q", *original)
+                refusals.extend([(raw[:-1], 120, 100), (raw+b"0", 120, 100), (raw, 111, 102)])
+                for request, capacity, status in refusals:
+                    args = [request, b"X"*capacity, b"Q"*9]
+                    result = module.call("f0", args).require_returned()
+                    self.assertEqual((result.value, result.arguments), (status, args))

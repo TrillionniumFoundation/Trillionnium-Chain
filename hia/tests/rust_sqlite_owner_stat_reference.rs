@@ -48,6 +48,27 @@ fn fields(s: &libc::stat) -> [u64; 7] {
     ]
 }
 
+// Bind replay's published private record, from the live original ledger only.
+fn object_words(l: &crate::ledger::Ledger, slot: usize) -> [u64; 6] {
+    let object = l.slots[slot].as_ref().unwrap();
+    let r = &object.receipt;
+    [
+        u64::from(object.identity.is_some())
+            | (u64::from(r.linked) << 1)
+            | (u64::from(r.reserved_pending_open) << 2),
+        r.device.unwrap_or(0),
+        r.inode.unwrap_or(0),
+        r.high_water_bytes,
+        r.actual_last_bytes,
+        r.actual_last_allocated_blocks_512,
+    ]
+}
+
+fn counters(l: &crate::ledger::Ledger) -> [u64; 5] {
+    assert!(l.failed.is_none() && l.first_failure_code.is_none());
+    [l.lifecycle.len() as u64, l.operations, l.denied, 0, 0]
+}
+
 #[test]
 fn original_fd_and_held_name_observation() {
     let fixture = Fixture::new();
@@ -80,6 +101,10 @@ fn original_fd_and_held_name_observation() {
         assert_eq!(fd.st_nlink, 1);
         assert_eq!(fd.st_size, len as i64);
 
+        assert_eq!(ledger.slots.iter().flatten().count(), 1);
+        let old = object_words(&ledger, slot);
+        let before = counters(&ledger);
+        let peak_before = ledger.retained_logical_bytes_peak;
         root.bind_fd(&mut ledger, slot, file.as_raw_fd()).unwrap();
         let object = &ledger.slots[slot].as_ref().unwrap().receipt;
         assert_eq!(object.device, Some(fd.st_dev));
@@ -111,6 +136,31 @@ fn original_fd_and_held_name_observation() {
                 assert_eq!(u64::from_le_bytes(word.try_into().unwrap()), expected);
             }
             println!("owner-stat-native-v1|{len}|paired-112");
+            // Policy V1, conventional bind, no other slots. Original ledger
+            // contributes its old state, not a guessed replay observation.
+            let mut request = vec![0, 0];
+            request.extend(old);
+            request.extend([0; 5]);
+            request.extend(before);
+            request.extend([old[3], peak_before]);
+            request.extend([1, fd.st_dev, fd.st_ino, len as u64, fields(&fd)[6]]);
+            request.extend(result.stdout.chunks_exact(8).map(|w| {
+                u64::from_le_bytes(w.try_into().unwrap())
+            }));
+            let after = counters(&ledger);
+            let event = if after[0] != before[0] {
+                assert_eq!(after[0], before[0] + 1);
+                assert_eq!(ledger.lifecycle.last().unwrap().action, "bind-real-inode");
+                assert_eq!(ledger.lifecycle.last().unwrap().requested_endpoint, None);
+                1
+            } else {
+                0
+            };
+            let mut expected = vec![0]; // actual original bind succeeded
+            expected.extend(object_words(&ledger, slot));
+            expected.extend(after);
+            expected.extend([ledger.retained_logical_bytes_peak, event, 0]);
+            println!("owner-stat-bind-v1|{request:?}|{expected:?}");
         }
     }
 }

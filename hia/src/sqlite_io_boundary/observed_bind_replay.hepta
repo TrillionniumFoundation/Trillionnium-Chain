@@ -9,7 +9,19 @@ block capacity(cr:readbuf,co:mutbuf)
   cap:usize = buffer.len(co)
   need:usize = const() {"value":112}
   fits:bool = compare.ge(cap,need)
-  branch fits private_shape(cr,co) short()
+  branch fits replay(cr,co) short()
+block replay(rr:readbuf,ro:mutbuf)
+  rc:u32 = call(rr,ro) {"function":"sib_replay_body"}
+  ret(rc)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+end
+
+fn sib_replay_body(sr:readbuf,so:mutbuf) -> (u32) effects(read,write,trap) entry(private_shape)
 block private_shape(sr:readbuf,so:mutbuf)
   policy_at:u64 = const() {"value":0}
   policy:u64 = call(sr,policy_at) {"function":"tr_read"}
@@ -158,9 +170,6 @@ block success(pr:readbuf,po:mutbuf,pp:u64)
 block malformed()
   malformed_status:u32 = const() {"value":100}
   ret(malformed_status)
-block short()
-  short_status:u32 = const() {"value":102}
-  ret(short_status)
 end
 
 fn sib_sat(old:u64) -> (u64) effects() entry(entry)

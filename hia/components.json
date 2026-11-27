@@ -1,5 +1,24 @@
 {
   "includes": {
+    "src/sqlite_io_boundary/stat_bound_replay.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "sib_replay_body",
+          "sib_sat",
+          "sib_initial",
+          "sib_precheck",
+          "sib_observe"
+        ],
+        "source": "src/sqlite_io_boundary/observed_bind_replay.hepta"
+      }
+    ],
     "platform/service_settlement/held_cursor_variable_linear_replay.hepta": [
       {
         "functions": [

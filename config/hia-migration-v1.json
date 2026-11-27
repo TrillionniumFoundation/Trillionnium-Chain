@@ -325,6 +325,18 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/stat_bound_replay",
+      "node_integration_complete": false,
+      "scope": "Fixed pair of original-compatible physical stat tuples bound to the existing native conventional V1 logical observation on one generated owned ordinary file. No external attestation, VFS authority or routing.",
+      "source": "hia/src/sqlite_io_boundary/stat_bound_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_owner_stat_reference.py",
+        "hia/tests/rust_sqlite_owner_stat_reference.rs",
+        "hia/tests/test_sqlite_observed_bind_replay.py"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/retained_lifecycle_json",
       "node_integration_complete": false,
       "scope": "Finite original SQLite ledger evidence transition and exact compact JSON emitted only on native retention success. No physical vector ownership, filesystem, production VFS or callback routing.",
@@ -2750,7 +2762,8 @@
         "sqlite_io_boundary/two_shm_replay",
         "sqlite_io_boundary/real_vfs_receipt_fold",
         "sqlite_io_boundary/physical_wal_observation",
-        "sqlite_io_boundary/owned_last_close"
+        "sqlite_io_boundary/owned_last_close",
+        "sqlite_io_boundary/stat_bound_replay"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

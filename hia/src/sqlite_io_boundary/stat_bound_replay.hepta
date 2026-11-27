@@ -1,0 +1,108 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_stat_bound_replay_v1
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  n:usize = buffer.len(raw)
+  expected:usize = const() {"value":312}
+  exact:bool = compare.eq(n,expected)
+  branch exact capacity(raw,out) malformed()
+block capacity(cr:readbuf,co:mutbuf)
+  cap:usize = buffer.len(co)
+  need:usize = const() {"value":112}
+  fits:bool = compare.ge(cap,need)
+  branch fits validate(cr,co) short()
+block validate(vr:readbuf,vo:mutbuf)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  mode:u64 = const() {"value":33152}
+  maxlen:u64 = const() {"value":8193}
+  maxblocks:u64 = const() {"value":9223372036854775807}
+  maxuid:u64 = const() {"value":4294967295}
+  policy:u64 = call(vr,zero) {"function":"tr_read"}
+  action_at:u64 = const() {"value":8}
+  action:u64 = call(vr,action_at) {"function":"tr_read"}
+  policy_ok:bool = compare.eq(policy,zero)
+  action_ok:bool = compare.eq(action,zero)
+  both:bool = bool.and(policy_ok,action_ok)
+  fd_dev_at:u64 = const() {"value":200}
+  nm_dev_at:u64 = const() {"value":256}
+  fd_dev:u64 = call(vr,fd_dev_at) {"function":"tr_read"}
+  nm_dev:u64 = call(vr,nm_dev_at) {"function":"tr_read"}
+  paired_dev:bool = compare.eq(fd_dev,nm_dev)
+  fd_ino_at:u64 = const() {"value":208}
+  nm_ino_at:u64 = const() {"value":264}
+  fd_ino:u64 = call(vr,fd_ino_at) {"function":"tr_read"}
+  nm_ino:u64 = call(vr,nm_ino_at) {"function":"tr_read"}
+  paired_ino:bool = compare.eq(fd_ino,nm_ino)
+  fd_mode_at:u64 = const() {"value":216}
+  nm_mode_at:u64 = const() {"value":272}
+  fd_mode:u64 = call(vr,fd_mode_at) {"function":"tr_read"}
+  nm_mode:u64 = call(vr,nm_mode_at) {"function":"tr_read"}
+  paired_mode:bool = compare.eq(fd_mode,nm_mode)
+  fd_uid_at:u64 = const() {"value":224}
+  nm_uid_at:u64 = const() {"value":280}
+  fd_uid:u64 = call(vr,fd_uid_at) {"function":"tr_read"}
+  nm_uid:u64 = call(vr,nm_uid_at) {"function":"tr_read"}
+  paired_uid:bool = compare.eq(fd_uid,nm_uid)
+  fd_nlink_at:u64 = const() {"value":232}
+  nm_nlink_at:u64 = const() {"value":288}
+  fd_nlink:u64 = call(vr,fd_nlink_at) {"function":"tr_read"}
+  nm_nlink:u64 = call(vr,nm_nlink_at) {"function":"tr_read"}
+  paired_nlink:bool = compare.eq(fd_nlink,nm_nlink)
+  fd_len_at:u64 = const() {"value":240}
+  nm_len_at:u64 = const() {"value":296}
+  fd_len:u64 = call(vr,fd_len_at) {"function":"tr_read"}
+  nm_len:u64 = call(vr,nm_len_at) {"function":"tr_read"}
+  paired_len:bool = compare.eq(fd_len,nm_len)
+  fd_blocks_at:u64 = const() {"value":248}
+  nm_blocks_at:u64 = const() {"value":304}
+  fd_blocks:u64 = call(vr,fd_blocks_at) {"function":"tr_read"}
+  nm_blocks:u64 = call(vr,nm_blocks_at) {"function":"tr_read"}
+  paired_blocks:bool = compare.eq(fd_blocks,nm_blocks)
+  regular:bool = compare.eq(fd_mode,mode)
+  link:bool = compare.eq(fd_nlink,one)
+  uid_width:bool = compare.le(fd_uid,maxuid)
+  bounded_len:bool = compare.le(fd_len,maxlen)
+  positive_blocks:bool = compare.le(fd_blocks,maxblocks)
+  obs_nlink_at:u64 = const() {"value":160}
+  obs_nlink:u64 = call(vr,obs_nlink_at) {"function":"tr_read"}
+  bind_nlink:bool = compare.eq(obs_nlink,fd_nlink)
+  obs_dev_at:u64 = const() {"value":168}
+  obs_dev:u64 = call(vr,obs_dev_at) {"function":"tr_read"}
+  bind_dev:bool = compare.eq(obs_dev,fd_dev)
+  obs_ino_at:u64 = const() {"value":176}
+  obs_ino:u64 = call(vr,obs_ino_at) {"function":"tr_read"}
+  bind_ino:bool = compare.eq(obs_ino,fd_ino)
+  obs_len_at:u64 = const() {"value":184}
+  obs_len:u64 = call(vr,obs_len_at) {"function":"tr_read"}
+  bind_len:bool = compare.eq(obs_len,fd_len)
+  obs_blocks_at:u64 = const() {"value":192}
+  obs_blocks:u64 = call(vr,obs_blocks_at) {"function":"tr_read"}
+  bind_blocks:bool = compare.eq(obs_blocks,fd_blocks)
+  guard0:bool = bool.and(both,paired_dev)
+  guard1:bool = bool.and(guard0,paired_ino)
+  guard2:bool = bool.and(guard1,paired_mode)
+  guard3:bool = bool.and(guard2,paired_uid)
+  guard4:bool = bool.and(guard3,paired_nlink)
+  guard5:bool = bool.and(guard4,paired_len)
+  guard6:bool = bool.and(guard5,paired_blocks)
+  guard7:bool = bool.and(guard6,regular)
+  guard8:bool = bool.and(guard7,link)
+  guard9:bool = bool.and(guard8,uid_width)
+  guard10:bool = bool.and(guard9,bounded_len)
+  guard11:bool = bool.and(guard10,positive_blocks)
+  guard12:bool = bool.and(guard11,bind_nlink)
+  guard13:bool = bool.and(guard12,bind_dev)
+  guard14:bool = bool.and(guard13,bind_ino)
+  guard15:bool = bool.and(guard14,bind_len)
+  guard16:bool = bool.and(guard15,bind_blocks)
+  branch guard16 replay(vr,vo) malformed()
+block replay(rr:readbuf,ro:mutbuf)
+  rc:u32 = call(rr,ro) {"function":"sib_replay_body"}
+  ret(rc)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  badcap:u32 = const() {"value":102}
+  ret(badcap)
+end
