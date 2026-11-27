@@ -103,6 +103,10 @@ class NativeModule:
         return self.call_many([(function, arguments)], timeout=timeout)[0]
 
     def call_many(self, cases, *, timeout=30):
+        return self._run_cases(cases, timeout=timeout)
+
+    def _run_cases(self, cases, *, timeout):
+        """Run the worker protocol; qualification wraps the public call boundary."""
         if not 0 < timeout <= 60:
             raise ValueError("Test process timeout must be in (0,60] seconds")
         rows = []

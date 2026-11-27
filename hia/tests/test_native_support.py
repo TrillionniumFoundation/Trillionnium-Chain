@@ -21,8 +21,14 @@ class PrelinkedNativeExtentTests(unittest.TestCase):
                                       "returns": ["u32"]}}
             shim.library = "unused.so"
             shim.artifact_sha256 = "0" * 64
+            # The subprocess is mocked below. Exercise the same request and
+            # timeout path without presenting this shim as a native build to
+            # the qualification observer wrapped around call_many.
+            shim.call_many = shim._run_cases
 
-            with self.subTest(owner=owner.__name__):
+            with self.subTest(owner=owner.__name__), patch.object(
+                    NativeModule, "call_many", side_effect=AssertionError("mocked worker entered native evidence")
+            ) as qualification:
                 with patch("hia.tests.native_support.subprocess.run",
                            side_effect=subprocess.TimeoutExpired("fixture worker", 1)) as worker:
                     for lengths in ((MAX_EXTENT + 1, 1), (1, MAX_EXTENT + 1)):
@@ -39,3 +45,4 @@ class PrelinkedNativeExtentTests(unittest.TestCase):
                     self.assertEqual([x["type"] for x in case["arguments"]], ["readbuf", "mutbuf"])
                     self.assertEqual([len(base64.b64decode(x["bytes"], validate=True))
                                       for x in case["arguments"]], [MAX_EXTENT, MAX_EXTENT])
+                qualification.assert_not_called()
