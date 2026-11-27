@@ -458,3 +458,14 @@ operation rows call the sealed Engine. A later terminal checkpoint must
 still match checked SQLite metadata before publication, so the Settle
 receipt need not share its final height. This is a finite original
 differential, not generalized replay or Order authority.
+
+The separate private one-row variable-width held replay profile accepts an
+actual original AdmitReceipt without the fixed fixture's trust, execution,
+command or final-state widths. It uses the checked canonical configuration
+and context cursor to find genesis coordinates, and the actual typed
+execution extent to locate the expected coordinates. A bounded
+length-delimited frame passes the measured trusted suffix, raw execution
+and command to the same sealed Engine. HIA compares complete state, actual
+receipt fields and original roots before SQLite close. Earlier profiles
+keep their original contracts. This finite test does not establish external
+Order authority or general native replay.

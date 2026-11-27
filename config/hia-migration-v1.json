@@ -3551,6 +3551,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-variable-first-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite one-row held actual original AdmitReceipt with original configuration/execution/command/state measured widths, sealed Engine replay and deterministic original receipt checks. No general replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_variable_first_replay.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/test_settlement_held_variable_first_replay.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-first-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

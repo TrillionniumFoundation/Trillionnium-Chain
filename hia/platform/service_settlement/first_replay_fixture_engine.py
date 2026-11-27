@@ -28,12 +28,13 @@ class FixtureReplay:
     engine: PublicEngine
     calls: _Calls
     same_block: bool = False
+    variable_first: bool = False
     parent: int | None = None
     trust: bytes | None = None
     last_parent_root: bytes | None = None
 
     @classmethod
-    def open(cls, stack, build, digest, *, same_block=False):
+    def open(cls, stack, build, digest, *, same_block=False, variable_first=False):
         build = Path(build)
         meta = json.loads((build / "build.json").read_bytes())
         if meta["artifact"]["sha256"] != digest:
@@ -41,7 +42,7 @@ class FixtureReplay:
         calls = _Calls()
         image = stack.enter_context(sealed_library(build / "settlement-engine.so", digest))
         engine = PublicEngine(build, calls, observed_image=(image._name, meta["artifact"]))
-        session = cls(engine, calls, same_block)
+        session = cls(engine, calls, same_block, variable_first)
         stack.callback(session.close)
         return session
 
@@ -50,18 +51,32 @@ class FixtureReplay:
             self.engine.drop(pointer)
 
     def apply(self, request):
-        widths = (1921, 2811) if self.same_block else (1921, 1953, 3742, 1293)
-        if len(request) not in widths:
-            raise ValueError("Wrong bounded replay input")
         before = self.calls.applies
-        seq, = struct.unpack_from("<Q", request)
-        if not 1 <= seq <= len(widths) or seq != before + 1 or len(request) != widths[seq - 1]:
-            raise ValueError("Noncontiguous sealed Engine request")
-        trust, execution, command = request[8:890], request[890:1053], request[1053:]
-        kinds = (0, 1) if self.same_block else (0, 0, 1, 2)
-        if command[0] != kinds[seq - 1]:
-            raise ValueError("Request does not follow the admitted receipt/rollup/settle profile")
-        height, = struct.unpack_from("<Q", execution, 123)
+        if self.variable_first:
+            if not 40 <= len(request) <= 20642:
+                raise ValueError("Wrong bounded variable replay input")
+            seq, trust_n, execution_n, command_n, height = struct.unpack_from("<5Q", request)
+            if (seq != 1 or before != 0 or not 74 <= trust_n <= 8160
+                    or not 154 <= execution_n <= 4250 or not 1 <= command_n <= 8192
+                    or len(request) != 40 + trust_n + execution_n + command_n):
+                raise ValueError("Invalid length-delimited variable replay request")
+            boundary = 40 + trust_n
+            ending = boundary + execution_n
+            trust, execution, command = request[40:boundary], request[boundary:ending], request[ending:]
+            if command[0] != 0 or struct.unpack_from("<Q", execution, execution_n - 40)[0] != height:
+                raise ValueError("Wrong actual variable AdmitReceipt coordinates")
+        else:
+            widths = (1921, 2811) if self.same_block else (1921, 1953, 3742, 1293)
+            if len(request) not in widths:
+                raise ValueError("Wrong bounded replay input")
+            seq, = struct.unpack_from("<Q", request)
+            if not 1 <= seq <= len(widths) or seq != before + 1 or len(request) != widths[seq - 1]:
+                raise ValueError("Noncontiguous sealed Engine request")
+            trust, execution, command = request[8:890], request[890:1053], request[1053:]
+            kinds = (0, 1) if self.same_block else (0, 0, 1, 2)
+            if command[0] != kinds[seq - 1]:
+                raise ValueError("Request does not follow the admitted receipt/rollup/settle profile")
+            height, = struct.unpack_from("<Q", execution, 123)
         if self.parent is None:
             if seq != 1:
                 raise ValueError("Missing private immutable predecessor")
@@ -102,7 +117,9 @@ class FixtureReplay:
                     return b""
                 state = self.engine.view("bytes_view", copied)
                 expected_state = (1196, 2172) if self.same_block else (1196, 2145, 3185, 4870)
-                if (len(operation_id), len(root), len(state)) != (32, 32, expected_state[seq - 1]):
+                state_extent = (111 <= len(state) <= 16384 if self.variable_first
+                                else len(state) == expected_state[seq - 1])
+                if (len(operation_id), len(root)) != (32, 32) or not state_extent:
                     return b""
                 if state != self.engine.view("engine_state", successor):
                     return b""

@@ -2,7 +2,26 @@
 // harness. This test-only entry reuses its fixed signer keys and unchanged
 // original business methods, never keys or data from a deployment.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let fixture = Harness::new();
+    let mut fixture = Harness::new();
+    if let Some(profile) = std::env::args().nth(1) {
+        fixture.trust.context.chain_id = match profile.as_str() {
+            "short" => "m12".into(),
+            "utf8" => "結算鏈🌱 native fixture".into(),
+            _ => return Err("unrecognized owned sizing fixture".into()),
+        };
+        let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+            receipt: fixture.receipt(None, 10, 100),
+        };
+        let initial = engine::initial_state(&fixture.trust);
+        let (state, no_id) = engine::apply_transition(&fixture.trust, &initial, 10, &command)?;
+        assert!(no_id.is_none());
+        let mut out = std::io::stdout().lock();
+        for field in [bytes(&fixture.trust), bytes(&command), bytes(&initial), bytes(&state)] {
+            out.write_all(&u32::try_from(field.len())?.to_le_bytes())?;
+            out.write_all(&field)?;
+        }
+        return Ok(());
+    }
     let first = ConsumptionSettlementCommandV1::AdmitReceipt {
         receipt: fixture.receipt(None, 10, 100),
     };

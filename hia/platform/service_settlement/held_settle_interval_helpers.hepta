@@ -384,5 +384,9 @@ block entry(profile:u64)
   pair:u64 = const() {"value":2}
   need_pair:bool = compare.eq(profile,same)
   limit:u64 = select(need_pair,pair,profile)
-  ret(limit)
+  variable:u64 = const() {"value":6}
+  one:u64 = const() {"value":1}
+  is_variable:bool = compare.eq(profile,variable)
+  rows:u64 = select(is_variable,one,limit)
+  ret(rows)
 end
