@@ -47,16 +47,26 @@ end
 
 fn mje_emit_sequence(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64)
-  part1:u64 = call(er,eo,ep,el,es,seq) {"function":"mje_head"}
+  tag_at:u64 = const() {"value":0}
+  shm_at:u64 = const() {"value":64}
+  tag:u64 = call(er,tag_at) {"function":"tr_read"}
+  refs:u64 = call(er,shm_at) {"function":"tr_read"}
+  end_at:u64 = call(er,eo,ep,el,es,seq,tag,refs) {"function":"mje_emit_event"}
+  ret(end_at)
+end
+
+fn mje_emit_event(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64,tag:u64,refs:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64,seq:u64,tag:u64,refs:u64)
+  part1:u64 = call(er,eo,ep,el,es,seq,tag) {"function":"mje_head"}
   part2:u64 = call(er,eo,part1) {"function":"mje_identity"}
-  part3:u64 = call(er,eo,part2) {"function":"mje_counters"}
+  part3:u64 = call(er,eo,part2,refs) {"function":"mje_counters"}
   part4:u64 = call(er,eo,part3) {"function":"mje_sizes"}
   part5:u64 = call(er,eo,part4) {"function":"mje_finish"}
   ret(part5)
 end
 
-fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64)
+fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64,action:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64,action:u64)
   seq0n:u64 = const() {"value":8}
   seq0w:u64 = const() {"value":7954893446713647739}
   seq0len:u64 = call(w,p,seq0n,seq0w) {"function":"value_word"}
@@ -76,9 +86,7 @@ block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64,sequence:u64)
   act8w:u64 = const() {"value":14882}
   act8len:u64 = call(w,act0end,act8n,act8w) {"function":"value_word"}
   act8end:u64 = int.add.wrap(act0end,act8len)
-  actoffset:u64 = const() {"value":0}
-  actx:u64 = call(r,actoffset) {"function":"tr_read"}
-  actsize:u64 = call(w,act8end,actx) {"function":"mje_action"}
+  actsize:u64 = call(w,act8end,action) {"function":"mje_action"}
   actdone:u64 = int.add.wrap(act8end,actsize)
   gen0n:u64 = const() {"value":8}
   gen0w:u64 = const() {"value":7021786293846090284}
@@ -150,8 +158,8 @@ block entry(r:readbuf,w:mutbuf,p:u64)
   ret(linkdone)
 end
 
-fn mje_counters(r:readbuf,w:mutbuf,p:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64)
+fn mje_counters(r:readbuf,w:mutbuf,p:u64,refs:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,refs:u64)
   hh0n:u64 = const() {"value":8}
   hh0w:u64 = const() {"value":7308326720558866988}
   hh0len:u64 = call(w,p,hh0n,hh0w) {"function":"value_word"}
@@ -194,10 +202,8 @@ block entry(r:readbuf,w:mutbuf,p:u64)
   ss16w:u64 = const() {"value":14882}
   ss16len:u64 = call(w,ss8end,ss16n,ss16w) {"function":"value_word"}
   ss16end:u64 = int.add.wrap(ss8end,ss16len)
-  ssoffset:u64 = const() {"value":64}
-  ssx:u64 = call(r,ssoffset) {"function":"tr_read"}
   sszero:u64 = const() {"value":0}
-  sssize:u64 = call(w,ss16end,ssx,sszero) {"function":"value_integer_write"}
+  sssize:u64 = call(w,ss16end,refs,sszero) {"function":"value_integer_write"}
   ssdone:u64 = int.add.wrap(ss16end,sssize)
   ret(ssdone)
 end

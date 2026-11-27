@@ -333,3 +333,28 @@ or short output does not publish anything. Rust comparisons apply
 both attempts to the same actual ledger and verify the retained
 bytes and cumulative failures. No object mutation or physical I/O
 occurs in this entry.
+
+## Two successive SHM transitions
+
+`two_shm_replay.hepta` accepts the 392-byte typed SHM-record prefix and
+observed basename. Action 9 performs add then close; action 11 performs
+two closes. An add requires fewer than 32 prior references. Two closes
+require at least two prior references so the selected object remains
+through the intermediate step. The second close has no caller-provided
+state, sequence, class, width or reference count. The first native
+mutation supplies its new counter even on pressure; the first recorder
+result supplies the successor evidence counters. The second compact
+event uses the derived reference count, sequence and original close
+action. A final sweep uses the updated selected count; any peers
+removed by an earlier close cannot become retained again.
+
+The fixed 192-byte output contains two 72-byte evidence diagnostics,
+their recorder codes, both resulting SHM counts, retained slot mask
+and logical charge. Only successfully recorded events add an
+eight-byte length and exact JSON, in order. A completed pair returns
+0 with separate recorder results (including an add's SQLite FULL);
+the original unit-equivalent closes still run on recorder pressure.
+Malformed or short packets write nothing. Tests use actual successive
+original Rust Ledger operations in both policies, including cross-class
+pressure and collection after two failed cleanup records. This private
+scope does not take custody of real SHM, vectors, callbacks, or paths.
