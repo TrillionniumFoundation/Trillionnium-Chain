@@ -29,6 +29,7 @@ class SettlementHeldVariableSettleReplayTests(unittest.TestCase):
                       for name, path in {
                           "uri": ROOT / "hia/src/service_settlement/read_only_store_uri.hepta",
                           "variable": OWNER / "held_variable_settle_replay.hepta",
+                          "cursor": OWNER / "held_cursor_variable_settle_replay.hepta",
                           "fixed": OWNER / "held_settle_replay.hepta",
                           "execution": OWNER / "execution_journal_read.hepta",
                       }.items()}
@@ -49,11 +50,14 @@ class SettlementHeldVariableSettleReplayTests(unittest.TestCase):
                            "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                            "directory": str(owned), "database": str(path),
                            "journal_binding": binding.hex()}
-                if lane in ("fixed", "variable"):
+                if lane in ("fixed", "variable", "cursor"):
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
-                    request["variable_settle_fixture"] = lane == "variable"
-                    request["receipt_replay_limit"] = 4
-                if lane == "variable" and failed is None:
+                    if lane == "cursor":
+                        request["variable_stream_fixture"] = True
+                    else:
+                        request["variable_settle_fixture"] = lane == "variable"
+                        request["receipt_replay_limit"] = 4
+                if lane in ("variable", "cursor") and failed is None:
                     request["writer"] = str(original)
                 if failed is not None:
                     request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
@@ -103,12 +107,27 @@ class SettlementHeldVariableSettleReplayTests(unittest.TestCase):
                     self.assertEqual(bytes.fromhex(native["projection"]), actual)
                     self.assertEqual(native["transcript"], independent["transcript"])
                     self.assertEqual(native["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                    # Native mode derives count from original checked metadata, not the host.
+                    cursor = invoke(db, held, "cursor")
+                    self.assertEqual(cursor, native)
                     # Corrupt actual sealed replies after the observed engine call, not any Store bytes.
-                    for ordinal, control in ((1, "root"), (3, "id"), (4, "state")):
-                        refused = invoke(db, held, "variable", failed=control, ordinal=ordinal)
-                        self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
-                                         (100, None, ordinal), refused)
-                        self.assertGreater(refused["released"], 0)
+                    for lane in ("variable", "cursor"):
+                        for ordinal, control in ((1, "root"), (3, "id"), (4, "state")):
+                            refused = invoke(db, held, lane, failed=control, ordinal=ordinal)
+                            self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                             (100, None, ordinal), refused)
+                            self.assertGreater(refused["released"], 0)
+                    if mode == "short":
+                        short = owned/"actual three short mixed operations.db"
+                        anchored = execute([original, "seed-receipts", short, paths[0],
+                                            "0", *paths[1:4]]).stdout
+                        independent_three = execute([original, "verify-journal", short, paths[0]]).stdout
+                        read_three = invoke(short, anchored, "execution")
+                        self.assertEqual(bytes.fromhex(read_three["projection"]), independent_three)
+                        denied_three = invoke(short, anchored, "cursor")
+                        self.assertEqual((denied_three["status"], denied_three["projection"],
+                                          denied_three["replay_calls"]), (100, None, 0), denied_three)
+                        self.assertGreater(denied_three["released"], 0)
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
             self.assertEqual(len(extents), 2)

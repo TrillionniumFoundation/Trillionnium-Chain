@@ -523,3 +523,10 @@ marker before the actual sealed Engine call. Ordinary state and root
 checks and SQLite close-before-output still apply. The live entry
 retains the original fixed two-operation qualification; six-step
 planning does not imply six-step live Engine replay.
+
+The variable-width mixed live cursor entry selects its finite four-row
+route from checked original metadata, without a host-provided operation
+count. The real receipt, rollup and Settle coordinates must agree with the
+digest-verified interval cursor, including Settle's parent after actual
+empty challenge blocks. Old finite paths and the six-row planning evidence
+remain separate from this four-row live qualification.

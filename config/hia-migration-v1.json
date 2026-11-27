@@ -3756,6 +3756,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-live-variable-mixed-cursor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Bounded genuine variable-width original mixed held replay selects the admission route from checked metadata and verifies every typed receipt/execution against the generic native cursor, including the proved empty challenge interval before Settle. Preserves original close and trust/policy. No generic live count, recovery, or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_cursor_variable_settle_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_settle_replay.py",
+        "hia/tests/test_settlement_held_same_block_replay.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-marker-cursor",
       "node_integration_complete": false,
       "retirement_accepted": false,
