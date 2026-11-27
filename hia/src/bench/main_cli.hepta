@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v9
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v10
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -85,11 +85,23 @@ block free_arg(i_fa:readbuf,o_fa:mutbuf,n_fa:u64,p_fa:u64,k_fa:u64,e_fa:u64,eq_f
   exact_end:bool = compare.eq(past_fa,n_fa)
   has_token:bool = compare.ge(span_fa,one_fa)
   bounded_tok:bool = compare.le(span_fa,cap_fa)
-  alone:bool = bool.and(first_tok,one_tok)
-  valid_layout:bool = bool.and(alone,exact_end)
+  zero_fa:u64 = const() {"value":0}
+  uncertain:u64 = const() {"value":255}
+  prior:u64 = call(o_fa) {"function":"bc_prior_usage"}
+  no_prior:bool = compare.eq(prior,zero_fa)
+  valid_prior:bool = compare.ne(prior,uncertain)
+  agrees:bool = compare.eq(first_tok,no_prior)
+  tail_only:bool = bool.and(one_tok,exact_end)
+  bounded_scope:bool = bool.and(valid_prior,agrees)
+  valid_layout:bool = bool.and(tail_only,bounded_scope)
   valid_span:bool = bool.and(has_token,bounded_tok)
   finite:bool = bool.and(valid_layout,valid_span)
-  branch finite free_kind(i_fa,o_fa,p_fa,e_fa,eq_fa) fail()
+  branch finite save_prior(i_fa,o_fa,p_fa,e_fa,eq_fa,prior) fail()
+block save_prior(i_sr:readbuf,o_sr:mutbuf,p_sr:u64,e_sr:u64,eq_sr:u64,prior_sr:u64)
+  at_sr:usize = const() {"value":223}
+  order_sr:u8 = int.cast(prior_sr) {"mode":"wrap"}
+  _ = buffer.store(o_sr,at_sr,order_sr)
+  jump free_kind(i_sr,o_sr,p_sr,e_sr,eq_sr)
 block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   at_fk:usize = int.cast(p_fk) {"mode":"wrap"}
   lead_fk:u8 = buffer.load(i_fk,at_fk)
@@ -98,7 +110,9 @@ block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   branch starts_dash free_long(i_fk,o_fk,p_fk,e_fk,eq_fk) free_positional(i_fk,o_fk,p_fk,e_fk,eq_fk)
 block free_positional(i_px:readbuf,o_px:mutbuf,p_px:u64,e_px:u64,eq_px:u64)
   bare_px:bool = compare.eq(e_px,eq_px)
-  branch bare_px free_plain(i_px,o_px,p_px,e_px) fail()
+  alone_px:bool = call(o_px) {"function":"bc_no_usage_prior"}
+  valid_px:bool = bool.and(bare_px,alone_px)
+  branch valid_px free_plain(i_px,o_px,p_px,e_px) fail()
 block free_long(i_fl:readbuf,o_fl:mutbuf,p_fl:u64,e_fl:u64,eq_fl:u64)
   two_fl:u64 = const() {"value":2}
   name_size_fl:u64 = int.sub.wrap(eq_fl,p_fl)
@@ -123,7 +137,9 @@ block free_assignment(i_fx:readbuf,o_fx:mutbuf,p_fx:u64,name_fx:u64,e_fx:u64,eq_
   tail_fx:u64 = int.add.wrap(eq_fx,one_fx)
   unknown_fx:bool = compare.eq(special_fx,zero_fx)
   tail_ascii:bool = call(i_fx,tail_fx,e_fx) {"function":"bc_ascii_assignment"}
-  assignment_ok:bool = bool.and(unknown_fx,tail_ascii)
+  sane_fx:bool = bool.and(unknown_fx,tail_ascii)
+  alone_fx:bool = call(o_fx) {"function":"bc_no_usage_prior"}
+  assignment_ok:bool = bool.and(sane_fx,alone_fx)
   branch assignment_ok free_flag(i_fx,o_fx,name_fx,eq_fx) fail()
 block free_flag(i_ff:readbuf,o_ff:mutbuf,p_ff:u64,e_ff:u64)
   kind_ff:u64 = const() {"value":91}
@@ -1168,4 +1184,47 @@ block ok()
 block fail()
   no:bool = const() {"value":false}
   ret(no)
+end
+
+fn bc_no_usage_prior(o:mutbuf) -> (bool) effects(read,trap) entry(entry)
+block entry(o:mutbuf)
+  pos:usize = const() {"value":223}
+  zero:u8 = const() {"value":0}
+  prior:u8 = buffer.load(o,pos)
+  alone:bool = compare.eq(prior,zero)
+  ret(alone)
+end
+
+fn bc_prior_usage(o:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf)
+  seen_at:u64 = const() {"value":24}
+  seen:u64 = call(o,seen_at) {"function":"bench_get"}
+  zero:u64 = const() {"value":0}
+  empty:bool = compare.eq(seen,zero)
+  branch empty result(zero) only_one(seen)
+block only_one(bits:u64)
+  zero_b:u64 = const() {"value":0}
+  one_b:u64 = const() {"value":1}
+  max_bit:u64 = const() {"value":256}
+  roster:u64 = const() {"value":22086584625}
+  no_later:bool = compare.le(bits,max_bit)
+  rest:u64 = int.sub.wrap(bits,one_b)
+  other:u64 = bit.and(bits,rest)
+  singular:bool = compare.eq(other,zero_b)
+  valid:bool = bool.and(no_later,singular)
+  branch valid lookup(bits,roster) fail()
+block lookup(b_l:u64,r_l:u64)
+  one_l:u64 = const() {"value":1}
+  four_l:u64 = const() {"value":4}
+  mask_l:u64 = const() {"value":15}
+  there:bool = compare.eq(b_l,one_l)
+  bit_next:u64 = int.shr.checked(b_l,one_l)
+  roster_next:u64 = int.shr.checked(r_l,four_l)
+  found:u64 = bit.and(r_l,mask_l)
+  branch there result(found) lookup(bit_next,roster_next)
+block fail()
+  invalid:u64 = const() {"value":255}
+  ret(invalid)
+block result(prior_result:u64)
+  ret(prior_result)
 end

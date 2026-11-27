@@ -162,8 +162,17 @@ accept the suggested option. For an unknown long option with an attached
 `=value`, the complete token must still fit 127 bytes and the attached value
 must be empty or printable ASCII. Only the name before the first `=` is
 scored and printed, as in the locked CLI. This does not admit attached values
-on boolean flags, help or the corrected-mode marker. Short unknowns,
-combined arguments, control bytes and invalid UTF-8 remain refused.
+on boolean flags, help or the corrected-mode marker. A final bare unknown
+long option also has an exact diagnostic after one completed original option
+(an ordinary flag or a recognized value in either existing spelling).
+Its usage shows the completed option before any different suggested option
+and never repeats the same option. Errors or help already selected earlier
+keep their existing precedence. The parser passes the prior option's one-based
+catalog index in the unused last byte of the diagnostic token slot (at most
+127 token bytes in the existing 128-byte copy). The renderer reuses the
+catalog's option-usage fragments; neither the machine adapter nor the
+catalog changes. Other combinations, attached unknown values after a
+completed option, control bytes and invalid UTF-8 remain refused.
 The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

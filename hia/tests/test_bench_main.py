@@ -420,9 +420,8 @@ class NativeBenchMain(unittest.TestCase):
                                     (b"",), (b"two words",), (b"two\nlines",), (b"bad\xff",),
                                     (b"---unknown",), (b"-x",),
                                     (b"--", b"logfile"), (b"--", b"--tx"), (b"--unknown", b"--help"),
-                                    (b"--hel", b"--help"), (b"--txs=4", b"--worklod"),
-                                    (b"--txs", b"--worklod"), (b"--profile", b"logfile"),
-                                    (b"--profile", b"--unknown"), (b"--reader-high-water-v1", b"logfile"))):
+                                    (b"--hel", b"--help"), (b"--txs", b"--worklod"),
+                                    (b"--profile", b"logfile"), (b"--reader-high-water-v1", b"logfile"))):
             rejected, _ = self.actual(f"free-arg-outside-{idx}", self.native, args)
             self.assertEqual((rejected.returncode, rejected.stdout, rejected.stderr), (2, b"", OUTSIDE), args)
         refused, _ = self.actual("free-arg-env-refused", self.native, (b"--unknown",),
@@ -461,6 +460,71 @@ class NativeBenchMain(unittest.TestCase):
             new, _ = self.actual(f"assign-{idx}-outside", self.native, args)
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE), args)
         denied, _ = self.actual("assign-env-outside", self.native, (b"--tx=4",),
+                                env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
+        self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_unknown_long_usage_after_one_completed_original_option(self):
+        options = (
+            (b"txs", b"TXS", b"1", b"tx"),
+            (b"keys", b"KEYS", b"2", b"key"),
+            (b"determinism-repeats", b"DETERMINISM_REPEATS", b"1001", b"determinis-repeats"),
+            (b"profile", b"", b"", b"profil"),
+            (b"read-fanout", b"READ_FANOUT", b"3", b"read-fanut"),
+            (b"write-every", b"WRITE_EVERY", b"1", b"write-evry"),
+            (b"workload", b"WORKLOAD", b"classic", b"worklod"),
+            (b"persist-profile", b"", b"", b"persist-profil"),
+            (b"strategy", b"STRATEGY", b"original", b"stratgy"))
+        displays = {name: b"--" + name + (b" <" + meta + b">" if meta else b"")
+                    for name, meta, _, _ in options}
+        displays[b"help"] = b"--help"
+        failures = [(b"--unknown", None), (b"--" + b"Z" * 125, None), (b"--hel", b"help")]
+        failures.extend((b"--" + typo, name) for name, _, _, typo in options)
+        count = 0
+        for name, metavar, value, _ in options:
+            option = b"--" + name
+            prefixes = ((option + b"=" + value,), (option, value)) if metavar else ((option,),)
+            for prefix in prefixes:
+                for unknown, suggestion in failures:
+                    args = (*prefix, unknown)
+                    usage = b"Usage: trnm-bench " + displays[name]
+                    if suggestion is not None and suggestion != name:
+                        usage += b" " + displays[suggestion]
+                    exact = b"error: unexpected argument '" + unknown + b"' found\n\n"
+                    if suggestion is not None:
+                        exact += b"  tip: a similar argument exists: '--" + suggestion + b"'\n\n"
+                    exact += usage + b"\n\nFor more information, try '--help'.\n"
+                    for owner, image in (("rust", self.original), ("hia", self.native)):
+                        result, _ = self.actual(f"prior-cli-{count}-{owner}", image, args)
+                        self.assertEqual((result.returncode, result.stdout, result.stderr),
+                                         (2, b"", exact), args)
+                    count += 1
+        self.assertEqual(count, 192)
+        early = (
+            ((b"--txs=bad", b"--unknown"), b"invalid digit found in string"),
+            ((b"--keys=2", b"--keys=3", b"--tx"), b"cannot be used multiple times"),
+            ((b"--txs", b"--help", b"--unknown"), b"a value is required"),
+            ((b"--workload=Mixed", b"--unknown"), b"[possible values:"))
+        for idx, (args, reason) in enumerate(early):
+            old, _ = self.actual(f"prior-early-{idx}-rust", self.original, args)
+            new, _ = self.actual(f"prior-early-{idx}-hia", self.native, args)
+            self.assertIn(reason, old.stderr)
+            self.assertEqual((old.returncode, old.stdout), (2, b""))
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr))
+        args = (b"--profile", b"--help", b"--unknown")
+        old, _ = self.actual("prior-early-help-rust", self.original, args)
+        new, _ = self.actual("prior-early-help-hia", self.native, args)
+        self.assertEqual((old.returncode, old.stderr), (0, b""))
+        self.assertEqual((new.returncode, new.stdout, new.stderr), (0, old.stdout, b""))
+        for idx, args in enumerate((
+                (b"--profile", b"--unknown=x"), (b"--profile", b"positional"),
+                (b"--profile", b"--unknown", b"--help"), (b"--profile", b"--", b"--unknown"),
+                (b"--txs=4", b"--keys=2", b"--unknown"), (b"--txs", b"--worklod"),
+                (b"--reader-high-water-v1", b"--unknown"), (b"--profile", b"--" + b"Z"*126),
+                (b"--profile", b"--unknown\xff"))):
+            new, _ = self.actual(f"prior-cli-outside-{idx}", self.native, args)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE), args)
+        denied, _ = self.actual("prior-env-outside", self.native, (b"--profile", b"--tx"),
                                 env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
