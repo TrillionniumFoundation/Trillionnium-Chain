@@ -27,6 +27,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 db.execute_batch(sql)?;
             }
         }
+        "seed-wal" => {
+            let db = Connection::open(&path)?;
+            let mode: String = db.query_row("PRAGMA journal_mode=WAL", [], |row| row.get(0))?;
+            assert_eq!(mode, "wal");
+            for sql in [META_SQL, OP_SQL, COMMITTED_BLOCKS_SQL] {
+                db.execute_batch(sql)?;
+            }
+        }
         "verify" => match open_read_snapshot(&path).and_then(|db| verify_schema(&db)) {
             Ok(()) => println!("VALID"),
             Err(e) => println!("{:?}", e.code()),

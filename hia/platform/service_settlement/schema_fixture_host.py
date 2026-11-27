@@ -50,7 +50,47 @@ def native_path_preflight(path, image, provider):
         free(owner)
 
 
-def run(request, uri_image, reader, provider, gate=None):
+def native_store_header(path, image, provider):
+    ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+    step = bind(image, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
+    fetch = bind(provider, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
+    make = bind(provider, "trnm_task_provider_new", ptr)
+    reset = bind(provider, "trnm_task_provider_reset", u64, ptr)
+    free = bind(provider, "trnm_task_provider_free", None, ptr)
+    state, work = (ctypes.create_string_buffer(8192) for _ in range(2))
+    response = ctypes.create_string_buffer(44)
+    owner = make()
+    if not owner:
+        raise ValueError("Cannot allocate owned native header observer")
+    trace, raw, previous = [], path, 0
+    try:
+        for _ in range(67):  # open, at most 64 reads, close, terminal
+            inp = ctypes.create_string_buffer(raw)
+            status = step(inp, len(raw), state, len(state), work, len(work))
+            stage, length = struct.unpack_from("<QQ", state)
+            if status in (0, 100):
+                leaked = reset(owner)
+                if ((status == 0 and stage != 4)
+                        or (stage == 4 and (previous != 3 or leaked))):
+                    raise ValueError("Native store header requires actual descriptor close")
+                return (state.raw[128:148] if status == 0 else b""), trace
+            if (status != 198 or stage not in ({1} if previous == 0 else
+                                              {2} if previous == 1 else
+                                              {2, 3} if previous == 2 else set())
+                    or not ({1: 25 <= length <= 4120, 2: length == 16, 3: length == 8}[stage])):
+                raise ValueError("Unexpected native store header continuation")
+            op = {1: 17, 2: 29, 3: 18}[stage]
+            amount = fetch(owner, op, ctypes.addressof(state) + 256, length, response, len(response))
+            if not 24 <= amount <= (44 if op == 29 else 24):
+                raise ValueError("Native store header provider returned invalid framing")
+            trace.append([op, amount])
+            raw, previous = response.raw[:amount], stage
+        raise ValueError("Bounded native store header read did not terminate")
+    finally:
+        free(owner)
+
+
+def run(request, uri_image, reader, provider, gate=None, header_reader=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -101,14 +141,19 @@ def run(request, uri_image, reader, provider, gate=None):
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
         raise ValueError("Choose one private continuation")
     projected = metadata or operation or marker or joined
-    path_checks = None
+    if header_reader is not None and gate is None:
+        raise ValueError("Native store header requires original pathname admission")
+    path_checks = header_checks = None
     if gate is not None:
         gate_status, path_checks = native_path_preflight(os.fsencode(db), gate, provider)
         if gate_status:
             return {"status": gate_status, "path_checks": path_checks, "held": False,
                     "released": 0, "transcript": [], **({"projection": None} if projected else {})}
-    with db.open("rb") as header_file:
-        header = header_file.read(20)
+    if header_reader is None:
+        with db.open("rb") as header_file:
+            header = header_file.read(20)
+    else:
+        header, header_checks = native_store_header(os.fsencode(db), header_reader, provider)
     if len(header) != 20:
         # Preserve the actual short header without treating pathname bytes as header.
         refused = {"status": 100, "transcript": [], "released": 0, "held": False}
@@ -116,6 +161,8 @@ def run(request, uri_image, reader, provider, gate=None):
             refused["projection"] = None
         if path_checks is not None:
             refused["path_checks"] = path_checks
+        if header_checks is not None:
+            refused["header_checks"] = header_checks
         return refused
     ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
     signature = (ptr, u64, ptr, u64, ptr, u64)
@@ -260,6 +307,8 @@ def run(request, uri_image, reader, provider, gate=None):
         result = {"status": status, "transcript": transcript, "held": held, "released": reset(owner)}
         if path_checks is not None:
             result["path_checks"] = path_checks
+        if header_checks is not None:
+            result["header_checks"] = header_checks
         if replay:
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
@@ -282,7 +331,8 @@ def main():
         uri, reader, provider = (owners.enter_context(sealed_library(*message[key]))
                                  for key in ("uri", "reader", "provider"))
         gate = owners.enter_context(sealed_library(*message["path_gate"])) if "path_gate" in message else None
-        print(json.dumps(run(message, uri, reader, provider, gate)))
+        header_reader = owners.enter_context(sealed_library(*message["header_reader"])) if "header_reader" in message else None
+        print(json.dumps(run(message, uri, reader, provider, gate, header_reader)))
 
 
 if __name__ == "__main__":

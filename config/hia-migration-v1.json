@@ -3820,6 +3820,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-native-store-header-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private native read_exact of 20 original SQLite header bytes using retained read-only open/read/close after native path and sidecar admission. Bounded interruption retries, successful close before handoff, original reader WAL refusal before SQLite. No ancestor/descriptor identity binding, post-SQLite path custody, production authority, or rollout.",
+      "sources": [
+        "hia/platform/service_settlement/store_header_read.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_store_path_preflight.py",
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/tests/rust_settlement_schema_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,
