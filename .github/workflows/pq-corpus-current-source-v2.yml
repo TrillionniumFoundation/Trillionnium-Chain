@@ -11,6 +11,38 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
     steps:
+      - name: Start the original job clock before checkout
+        id: job_clock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, time
+          started = time.monotonic_ns()
+          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / (
+              "pq-corpus-current-v2-" + os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"])
+          if not out.is_absolute():
+              raise SystemExit("original output directory must be absolute")
+          out.mkdir()
+          clock = {
+              "schema": "trnm-pq-current-source-job-clock-v1",
+              "source_head": os.environ["EXPECTED_HEAD"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "boot_id": pathlib.Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+              "started_monotonic_ns": started,
+              "operation_deadline_monotonic_ns": started + 540 * 10**9,
+              "full_deadline_monotonic_ns": started + 600 * 10**9,
+              "original_job_timeout_seconds": 600,
+              "operation_budget_seconds": 540,
+              "retention_reserve_seconds": 60,
+              "clock_excludes_platform_setup": True,
+          }
+          with (out / "job-clock.json").open("x", encoding="utf-8") as stream:
+              stream.write(json.dumps(clock, sort_keys=True, indent=2) + "\n")
+          with pathlib.Path(os.environ["GITHUB_ENV"]).open("a", encoding="utf-8") as stream:
+              stream.write("CURRENT_CORPUS_OUT=" + str(out) + "\n")
+          PY
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           ref: ${{ env.EXPECTED_HEAD }}
@@ -21,9 +53,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          export CURRENT_CORPUS_OUT="$RUNNER_TEMP/pq-corpus-current-v2-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          printf 'CURRENT_CORPUS_OUT=%s\n' "$CURRENT_CORPUS_OUT" >> "$GITHUB_ENV"
-          mkdir "$CURRENT_CORPUS_OUT"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" \
             --output "$CURRENT_CORPUS_OUT/source-before.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/source-before.log"
       - name: Check the original maintenance boundary
@@ -33,7 +62,7 @@ jobs:
           set -euo pipefail
           python3 --version 2>&1 | tee "$CURRENT_CORPUS_OUT/python-version.log"
           bash scripts/project-preflight.sh --audit 2>&1 | tee "$CURRENT_CORPUS_OUT/preflight.log"
-      - name: Observe every current and retained V1 control by exact name
+      - name: Observe the unchanged 131 controls in two owned serial workers
         id: controls
         if: always() && steps.preflight.outcome == 'success'
         shell: bash
@@ -41,7 +70,8 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/run_pq_fixture_tmpfs_v1.py \
             --output "$CURRENT_CORPUS_OUT/named-controls.json" \
-            --fixture-receipt "$CURRENT_CORPUS_OUT/fixture-tmpfs.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/named-controls.log"
+            --fixture-receipt "$CURRENT_CORPUS_OUT/fixture-tmpfs.json" \
+            --job-clock "$CURRENT_CORPUS_OUT/job-clock.json" 2>&1 | tee "$CURRENT_CORPUS_OUT/named-controls.log"
       - name: Inspect the separate current source correspondence
         id: correspondence
         if: always() && steps.preflight.outcome == 'success'
@@ -76,14 +106,26 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json, os, pathlib, sys
+          import json, os, pathlib, sys, time
           sys.path.insert(0, 'scripts/ci')
           import pq_corpus_current_v2 as current
           steps = json.loads(os.environ['CURRENT_CORPUS_STEPS'])
-          required = ('source_before', 'preflight', 'controls', 'correspondence', 'inventory', 'source_after')
+          required = ('job_clock', 'source_before', 'preflight', 'controls', 'correspondence', 'inventory', 'source_after')
           if any(steps.get(name, {}).get('outcome') != 'success' for name in required):
               raise SystemExit('all source and metadata stages must actually succeed')
           out = pathlib.Path(os.environ['CURRENT_CORPUS_OUT'])
+          clock = json.loads((out / "job-clock.json").read_bytes())
+          checked = time.monotonic_ns()
+          observation = {
+              "first_step_elapsed_seconds": (checked - clock["started_monotonic_ns"]) / 10**9,
+              "original_job_timeout_seconds": 600,
+              "platform_setup_and_final_upload_require_original_job_readback": True,
+              "within_first_step_deadline": checked <= clock["full_deadline_monotonic_ns"],
+          }
+          with (out / "pre-upload-clock.json").open("x", encoding="utf-8") as stream:
+              stream.write(json.dumps(observation, sort_keys=True, indent=2) + "\n")
+          if not observation["within_first_step_deadline"]:
+              raise SystemExit("original job deadline exhausted before final artifact retention")
           result = current.verify_report(pathlib.Path.cwd(), (out / 'current-source.json').read_bytes())
           if result['status'] != 'HOLD' or result['source_revision_bound'] is not False:
               raise SystemExit('source-only result cannot acquire qualification')
