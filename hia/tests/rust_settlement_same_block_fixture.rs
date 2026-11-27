@@ -39,7 +39,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             return Ok(());
         }
-        let (name, rows) = if let Some(name) = profile.strip_suffix("-settle") {
+        let coalesced = profile.ends_with("-same-settle");
+        let (name, rows) = if let Some(name) = profile.strip_suffix("-same-settle") {
+            (name, 4)
+        } else if let Some(name) = profile.strip_suffix("-settle") {
             (name, 4)
         } else if let Some(name) = profile.strip_suffix("-rollup") {
             (name, 3)
@@ -69,16 +72,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             fields.extend([bytes(&second), bytes(&successor)]);
             if rows >= 3 {
                 let third = ConsumptionSettlementCommandV1::AdmitRollup {
-                    rollup: fixture.rollup(&successor, 12),
+                    rollup: fixture.rollup(&successor, if coalesced { 11 } else { 12 }),
                     receipts: successor.receipts.iter().map(|r| r.receipt.clone()).collect(),
                 };
-                let (rolled, no_id) = engine::apply_transition(&fixture.trust, &successor, 12, &third)?;
+                let rollup_height = if coalesced { 11 } else { 12 };
+                let (rolled, no_id) = engine::apply_transition(&fixture.trust, &successor, rollup_height, &third)?;
                 assert!(no_id.is_none());
                 fields.extend([bytes(&third), bytes(&rolled)]);
                 if rows == 4 {
                     let fourth = fixture.settle(&rolled);
-                    assert!(engine::apply_transition(&fixture.trust, &rolled, 14, &fourth).is_err());
-                    let (settled, final_id) = engine::apply_transition(&fixture.trust, &rolled, 15, &fourth)?;
+                    assert!(engine::apply_transition(&fixture.trust, &rolled, rollup_height + 2, &fourth).is_err());
+                    let (settled, final_id) = engine::apply_transition(&fixture.trust, &rolled, rollup_height + 3, &fourth)?;
                     assert!(final_id.is_some());
                     fields.extend([bytes(&fourth), bytes(&settled), bytes(&final_id.unwrap())]);
                 }

@@ -115,7 +115,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let context = trust.context.clone();
     let config = ConsumptionSettlementStoreConfigV1 {path: path.clone(), store_id: word_hash(60), trust_bundle: trust};
     match operation {
-        "seed" | "seed-receipts" | "seed-same-block" => {
+        "seed" | "seed-receipts" | "seed-same-block" | "seed-mixed-same-block" => {
             let owner = ConsumptionSettlementStoreV1::open(config.clone())?;
             let genesis = owner.fresh_readback()?;
             let mut binding = Vec::new();
@@ -128,7 +128,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 assert_eq!(args.len(), 7);
             }
             for (index, file) in args[5..].iter().enumerate() {
-                let height = if operation == "seed-same-block" && index == 1 {
+                let height = if (operation == "seed-same-block" && index == 1)
+                    || (operation == "seed-mixed-same-block" && index == 2) {
                     last_height
                 } else {
                     last_height + 1
@@ -138,7 +139,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     schema_version: 1, context: context.clone(), expected_order_height: last_height,
                     expected_order_block_id: last_block, order_height: height, order_block_id: block,
                 };
-                if operation == "seed-receipts" && file == "-" {
+                if (operation == "seed-receipts" || operation == "seed-mixed-same-block") && file == "-" {
                     owner.advance_empty_committed_execution_v1(&execution)?;
                 } else {
                     let command: ConsumptionSettlementCommandV1 = strict_decode(&fs::read(file)?)?;

@@ -208,7 +208,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             or type(replay_control_step) is not int or not 1 <= replay_control_step <= replay_limit
             or (replay_control is None and replay_control_step != replay_limit)
             or (not replay and (replay_control is not None or replay_limit != 1))
-            or replay_control not in (None, "count", "id", "root", "state")):
+            or (replay_control == "parent" and not mixed_plan)
+            or replay_control not in (None, "count", "id", "root", "state", "parent")):
         raise ValueError("Wrong finite first replay fixture profile")
     joined = terminal or journal
     if int(metadata) + int(operation) + int(marker) + int(terminal) + int(journal) > 1:
@@ -385,7 +386,9 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                     raw += engine.last_parent_root
                 replay_calls = engine.calls.applies
                 if replay_control is not None and raw and requested_replay == replay_control_step:
-                    where = {"count": 0, "id": 8, "root": 40, "state": 72}[replay_control]
+                    if replay_control == "parent" and not predecessor_root:
+                        raise ValueError("Missing native Engine parent-root observation")
+                    where = {"count": 0, "id": 8, "root": 40, "state": 72, "parent": len(raw) - 32}[replay_control]
                     raw = raw[:where] + bytes([raw[where] ^ 1]) + raw[where + 1:]
                 continue
             if status != 198 or op not in allowed_ops or not 8 <= length <= 1552:

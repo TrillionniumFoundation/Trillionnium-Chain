@@ -215,6 +215,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -457,6 +458,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -680,6 +682,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -903,6 +906,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -1178,6 +1182,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -1401,6 +1406,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -1651,6 +1657,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -2240,6 +2247,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -2562,6 +2570,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -2884,6 +2893,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -3274,6 +3284,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -3776,6 +3787,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -3999,6 +4011,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -4222,6 +4235,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -19275,6 +19289,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",
@@ -19498,6 +19513,7 @@
       {
         "functions": [
           "hfs_actual_limit",
+          "hfs_bank_endpoint",
           "hfs_bank_feed",
           "hfs_bank_finish",
           "hfs_bank_offset",

@@ -448,7 +448,19 @@ block marker_parent(mp_r:readbuf,mp_m:mutbuf,mp_w:mutbuf,mp_i:u64,mp_f:bool,mp_l
   mp_at:u64 = const() {"value":349056}
   mp_slot:u64 = call(mp_m,mp_at) {"function":"cp_get"}
   mp_base:u64 = call(mp_slot) {"function":"hfs_marker_offset"}
-  mp_field:u64 = const() {"value":48}
+  source_at:u64 = const() {"value":88}
+  source_col:u64 = int.add.wrap(mp_base,source_at)
+  marker_source:u64 = call(mp_m,source_col) {"function":"cp_get"}
+  mp_one:u64 = const() {"value":1}
+  first_in_marker:u64 = int.add.wrap(marker_source,mp_one)
+  starts_marker:bool = compare.eq(mp_i,first_in_marker)
+  prior_field:u64 = const() {"value":48}
+  current_field:u64 = const() {"value":8}
+  mp_field:u64 = select(starts_marker,prior_field,current_field)
+  same_flag_at:u64 = const() {"value":349080}
+  same_zero:u64 = const() {"value":0}
+  same_flag:u64 = select(starts_marker,same_zero,mp_one)
+  same_saved:u64 = call(mp_m,same_flag_at,same_flag) {"function":"cp_put"}
   mp_coord:u64 = int.add.wrap(mp_base,mp_field)
   mp_p:usize = int.cast(mp_coord) {"mode":"wrap"}
   jump variable_parent(mp_r,mp_m,mp_w,mp_i,mp_f,mp_l,mp_n,mp_p)
@@ -674,7 +686,14 @@ block preceding(pr:readbuf,pm:mutbuf,pw:mutbuf,previous:u64)
   extent:u64 = call(pm,exec_len_at) {"function":"cp_get"}
   pp_at:u64 = const() {"value":349024}
   pp_profile:u64 = call(pm,pp_at) {"function":"cp_get"}
-  same_predecessor:bool = call(pp_profile) {"function":"hfs_same_profile"}
+  fixed_same:bool = call(pp_profile) {"function":"hfs_same_profile"}
+  mixed_plan:bool = call(pp_profile) {"function":"hfs_mixed_plan_profile"}
+  same_mode_at:u64 = const() {"value":349080}
+  same_mode:u64 = call(pm,same_mode_at) {"function":"cp_get"}
+  mode_one:u64 = const() {"value":1}
+  within_marker:bool = compare.eq(same_mode,mode_one)
+  mixed_same:bool = bool.and(mixed_plan,within_marker)
+  same_predecessor:bool = bool.or(fixed_same,mixed_same)
   jump compare(pr,pm,pw,previous,extent,same_predecessor)
 block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf)
   cbase:u64 = const() {"value":8192}

@@ -1,6 +1,7 @@
 """Actual held original Store replay with measured, bounded widths."""
 from contextlib import ExitStack
 import json
+import struct
 from pathlib import Path
 import sys
 import tempfile
@@ -209,3 +210,38 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         self.assertNotIn(56, [phase for phase, _, _ in cursor["transcript"]])
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
+
+            fields = list(frames(execute([tmp/"same-block-fixture", "utf8-same-settle"]).stdout))
+            case_paths = {i: tmp / f"coalesced-{i}" for i in (0, 1, 4, 6, 8)}
+            for i, path in case_paths.items():
+                path.write_bytes(fields[i])
+            case = owned / "real mixed same-block range #?.db"
+            bound = execute([original, "seed-mixed-same-block", case, case_paths[0], "0",
+                             case_paths[1], case_paths[4], case_paths[6], "-", "-", case_paths[8]]).stdout
+            reference = execute([original, "verify-journal", case, case_paths[0]]).stdout
+            before = case.read_bytes()
+            _, _, markers = frames(execute([original, "observe-actual-journal-prefixes", case, case_paths[0]]).stdout)
+            self.assertEqual([item[:2] for item in struct.iter_unpack("<QQ32s32s", markers)],
+                             [(0, 0), (0, 1), (1, 3), (3, 3), (3, 3), (3, 4)])
+            _, _, _, *rows = frames(execute([original, "observe-settled-state-id", case, case_paths[0]]).stdout)
+            second, third = rows[3], rows[6]
+            self.assertEqual((second[-40:], third[-40:]), (third[-80:-40], third[-80:-40]))
+            self.assertEqual(struct.unpack("<Q", third[-40:-32])[0], 11)
+            prior_cursor = invoke(case, bound, "cursor")
+            self.assertEqual((prior_cursor["status"], prior_cursor["projection"]), (100, None))
+            self.assertLess(prior_cursor["replay_calls"], 4)
+            independent = invoke(case, bound, "execution")
+            self.assertEqual(bytes.fromhex(independent["projection"]), reference)
+            for lane in ("mixed-selfhost", "mixed-direct"):
+                with self.subTest(original_mixed_same_block=lane):
+                    native = invoke(case, bound, lane)
+                    self.assertEqual((native["status"], native["replay_profile"], native["replay_calls"],
+                                      native["replay_locks"], native["released"]), (0, 13, 4, 4, 0))
+                    self.assertEqual(bytes.fromhex(native["projection"]), reference)
+                    self.assertEqual(native["transcript"], independent["transcript"])
+                    self.assertEqual(native["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                    wrong = invoke(case, bound, lane, failed="parent", ordinal=3)
+                    self.assertEqual((wrong["status"], wrong["projection"], wrong["replay_calls"]), (100, None, 3))
+                    self.assertGreater(wrong["released"], 0)
+            self.assertEqual(case.read_bytes(), before)
+            self.assertFalse(case.with_name(case.name + "-journal").exists())

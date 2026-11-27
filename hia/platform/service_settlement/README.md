@@ -560,14 +560,13 @@ checkpoint falls outside this exact linear entry, and the older cursor still
 refuses nine operations. No production ownership or arbitrary history.
 
 A separate mixed replay entry derives the interval plan from the verified
-original marker rows. Ordered intervals abut, each consumes zero or one
-operation, and the anchor and terminal must span the same four-operation
-mixed history. Repeated checkpoint counts use a single independent native
-SHA prefix, not one allocation per marker. The cursor determines the actual
-execution predecessor from the marker, and every checked marker compares
-both state and journal roots. The same original held snapshot includes
-empty challenge intervals and an optional later empty checkpoint, compared
-without a receipt reread. The existing bounded entries are unchanged.
+original marker rows. Ordered intervals abut and span the four-operation
+mixed history. Only referenced endpoint counts allocate independent
+native SHA prefixes; repeats share a hash and an interior operation that
+ends no marker allocates no prefix context. A marker's first operation
+uses its checked parent; later rows use its own coordinate. Actual held
+original cases include challenge and trailing empties and a coalesced
+1-to-3 interval, without rereading receipts. Other bounded entries stand.
 
 One opt-in native cursor dispatcher now chooses the existing three-row
 Rollup, four-row mixed, or bounded linear receipt lane from original verified

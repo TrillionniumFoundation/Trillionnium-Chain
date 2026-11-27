@@ -109,7 +109,16 @@ block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64,j_max:u64)
   one_j:u64 = const() {"value":1}
   first:bool = compare.eq(js,one_j)
   zero_index:u64 = const() {"value":0}
-  branch first init(jr,jm,jw,js,zero_index,j_max) feed(jr,jm,jw,js,js,j_max)
+  branch first seed(jr,jm,jw,js,zero_index,j_max) feed(jr,jm,jw,js,js,j_max)
+block seed(ser:readbuf,sem:mutbuf,sew:mutbuf,ses:u64,sei:u64,semx:u64)
+  linear_max:u64 = const() {"value":9}
+  linear_seed:bool = compare.eq(semx,linear_max)
+  branch linear_seed linear_mask(ser,sem,sew,ses,sei,semx) init(ser,sem,sew,ses,sei,semx)
+block linear_mask(lmr:readbuf,lmm:mutbuf,lmw:mutbuf,lms:u64,lmi:u64,lmx:u64)
+  full_mask:u64 = const() {"value":1023}
+  mask_at:u64 = const() {"value":459984}
+  mask_saved:u64 = call(lmm,mask_at,full_mask) {"function":"cp_put"}
+  jump init(lmr,lmm,lmw,lms,lmi,lmx)
 block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64,i_max:u64)
   anchor:u64 = const() {"value":0}
   one_i:u64 = const() {"value":1}
@@ -129,7 +138,10 @@ block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64,i_max:u64)
   four_i:u64 = const() {"value":4}
   planned:bool = compare.eq(i_max,four_i)
   exact:bool = bool.or(linear,planned)
-  branch exact new_context(ir,im,iw,is,ii,start,i_max) bad()
+  branch exact select_context(ir,im,iw,is,ii,start,i_max) bad()
+block select_context(scr:readbuf,scm:mutbuf,scw:mutbuf,scs:u64,sci:u64,scz:bool,scx:u64)
+  active_i:bool = call(scm,sci) {"function":"hfs_bank_endpoint"}
+  branch active_i new_context(scr,scm,scw,scs,sci,scz,scx) next_init(scr,scm,scw,scs,sci,scx)
 block new_context(nr:readbuf,nm:mutbuf,nw:mutbuf,ns:u64,ni:u64,nz:bool,n_max:u64)
   okay:bool = call(nw,ni) {"function":"sjr_prefix"}
   branch okay init_choose(nr,nm,nw,ns,ni,nz,n_max) bad()
@@ -146,7 +158,10 @@ block next_init(nir:readbuf,nim:mutbuf,niw:mutbuf,nis:u64,nii:u64,ni_max:u64)
   by_one:u64 = const() {"value":1}
   next_i:u64 = int.add.wrap(nii,by_one)
   branch done_i feed(nir,nim,niw,nis,nis,ni_max) init(nir,nim,niw,nis,next_i,ni_max)
-block feed(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64,f_max:u64)
+block feed(far:readbuf,fam:mutbuf,faw:mutbuf,fas:u64,fai:u64,fa_max:u64)
+  active_f:bool = call(fam,fai) {"function":"hfs_bank_endpoint"}
+  branch active_f feed_active(far,fam,faw,fas,fai,fa_max) next_row(far,fam,faw,fas,fai,fa_max)
+block feed_active(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64,f_max:u64)
   slot:u64 = call(fi) {"function":"hfs_bank_offset"}
   src:usize = int.cast(slot) {"mode":"wrap"}
   zero_f:usize = const() {"value":0}
@@ -187,6 +202,18 @@ block restore(rsm:mutbuf,rsw:mutbuf,rss:u64)
 block bad()
   no:bool = const() {"value":false}
   ret(no)
+end
+
+fn hfs_bank_endpoint(m:mutbuf,index:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,index:u64)
+  mask_at:u64 = const() {"value":459984}
+  mask:u64 = call(m,mask_at) {"function":"cp_get"}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  flag:u64 = int.shl.checked(one,index)
+  selected:u64 = bit.and(mask,flag)
+  active:bool = compare.ne(selected,zero)
+  ret(active)
 end
 
 fn hfs_bank_offset(index:u64) -> (u64) effects() entry(entry)
@@ -299,13 +326,19 @@ fn hfs_mixed_plan(m:mutbuf,verify:bool) -> (bool) effects(read,write,trap) entry
 block entry(m:mutbuf,verify:bool)
   count_at:u64 = const() {"value":88}
   count:u64 = call(m,count_at) {"function":"cp_get"}
-  lower:u64 = const() {"value":5}
+  lower:u64 = const() {"value":2}
   upper:u64 = const() {"value":11}
   min_ok:bool = compare.ge(count,lower)
   max_ok:bool = compare.le(count,upper)
   sized:bool = bool.and(min_ok,max_ok)
   zero:u64 = const() {"value":0}
-  branch sized read_marker(m,verify,count,zero,zero) bad()
+  branch sized start_plan(m,verify,count,zero) bad()
+block start_plan(stm:mutbuf,stv:bool,stn:u64,stz:u64)
+  branch stv read_marker(stm,stv,stn,stz,stz) clear_plan(stm,stv,stn,stz)
+block clear_plan(cpm:mutbuf,cpv:bool,cpn:u64,cpz:u64)
+  mask_loc:u64 = const() {"value":459984}
+  clear_mask:u64 = call(cpm,mask_loc,cpz) {"function":"cp_put"}
+  jump read_marker(cpm,cpv,cpn,cpz,cpz)
 block read_marker(rm:mutbuf,rv:bool,rn:u64,ri:u64,previous:u64)
   base:u64 = call(ri) {"function":"hfs_marker_offset"}
   source_off:u64 = const() {"value":88}
@@ -316,11 +349,9 @@ block read_marker(rm:mutbuf,rv:bool,rn:u64,ri:u64,previous:u64)
   dst:u64 = call(rm,target_at) {"function":"cp_get"}
   cap:u64 = const() {"value":4}
   no_gap:bool = compare.eq(src,previous)
-  one:u64 = const() {"value":1}
   zero_r:u64 = const() {"value":0}
   first:bool = compare.eq(ri,zero_r)
-  successor:u64 = int.add.wrap(src,one)
-  maximum:u64 = select(first,zero_r,successor)
+  maximum:u64 = select(first,zero_r,cap)
   above:bool = compare.ge(dst,src)
   small:bool = compare.le(dst,cap)
   adj:bool = compare.le(dst,maximum)
@@ -329,7 +360,15 @@ block read_marker(rm:mutbuf,rv:bool,rn:u64,ri:u64,previous:u64)
   valid:bool = bool.and(possible,contiguous)
   branch valid phase(rm,rv,rn,ri,base,src,dst) bad()
 block phase(pm:mutbuf,pv:bool,pn:u64,pi:u64,pb:u64,ps:u64,pt:u64)
-  branch pv roots(pm,pn,pi,pb,ps,pt,pv) advance(pm,pn,pi,pt,pv)
+  branch pv roots(pm,pn,pi,pb,ps,pt,pv) endpoint(pm,pn,pi,pt,pv)
+block endpoint(em:mutbuf,en:u64,ei:u64,et:u64,ev:bool)
+  mask_at:u64 = const() {"value":459984}
+  mask:u64 = call(em,mask_at) {"function":"cp_get"}
+  one_e:u64 = const() {"value":1}
+  bit_e:u64 = int.shl.checked(one_e,et)
+  selected_e:u64 = bit.or(mask,bit_e)
+  saved_e:u64 = call(em,mask_at,selected_e) {"function":"cp_put"}
+  jump advance(em,en,ei,et,ev)
 block roots(mm:mutbuf,mn:u64,mi:u64,mb:u64,ms:u64,mt:u64,mv:bool)
   checked:bool = call(mm,mb,mi,ms,mt) {"function":"hfs_check_marker"}
   branch checked advance(mm,mn,mi,mt,mv) bad()
