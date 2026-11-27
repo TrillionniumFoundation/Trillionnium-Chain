@@ -57,7 +57,7 @@ mod original {
     }
 
     fn witness(out: &mut impl std::io::Write, l: &mut Ledger, slot: usize, action: &'static str,
-               cleanup: bool, request: Option<u64>, typed: bool) {
+               cleanup: bool, request: Option<u64>, typed: bool, include_json: bool) {
         let proposed = event(l, slot, action, request);
         let encoded = serde_json::to_vec(&proposed).unwrap();
         let before = counters(l);
@@ -83,6 +83,12 @@ mod original {
         words(out, &[status as u64]);
         words(out, &after);
         words(out, &[u64::from(status == 0)]);
+        if include_json && status == 0 {
+            let actual = if cleanup { l.cleanup.last() } else { l.lifecycle.last() }.unwrap();
+            let retained = serde_json::to_vec(actual).unwrap();
+            words(out, &[retained.len() as u64]);
+            out.write_all(&retained).unwrap();
+        }
     }
 
     fn exact_name(policy: GrowthPolicy, target: usize, action: &'static str, request: Option<u64>) -> (Ledger, usize) {
@@ -98,7 +104,7 @@ mod original {
         panic!("no reachable exact JSON width {target}");
     }
 
-    pub fn replay_cases(out: &mut impl std::io::Write, typed: bool) {
+    pub fn replay_cases(out: &mut impl std::io::Write, typed: bool, include_json: bool) {
         for policy in [GrowthPolicy::ExactV1, GrowthPolicy::Reserve64KiBV2] {
             let request = if policy == GrowthPolicy::ExactV1 { None } else { Some(65537) };
             for width in [511, 512, 513] {
@@ -109,7 +115,7 @@ mod original {
                         ("reserve-growth", request)
                     };
                     let (mut l, slot) = exact_name(policy, width, action, bound);
-                    witness(out, &mut l, slot, action, cleanup, bound, typed);
+                    witness(out, &mut l, slot, action, cleanup, bound, typed, include_json);
                 }
             }
 
@@ -118,24 +124,24 @@ mod original {
             while ordinary.lifecycle.len() < LIFECYCLE_EVENTS - 1 {
                 ordinary.record(o, "shm-reference", false).unwrap();
             }
-            witness(out, &mut ordinary, o, "shm-reference", false, None, typed);
-            witness(out, &mut ordinary, o, "shm-reference", false, None, typed);
-            witness(out, &mut ordinary, o, "underlying-shm-unmap", true, None, typed);
+            witness(out, &mut ordinary, o, "shm-reference", false, None, typed, include_json);
+            witness(out, &mut ordinary, o, "shm-reference", false, None, typed, include_json);
+            witness(out, &mut ordinary, o, "underlying-shm-unmap", true, None, typed, include_json);
             let mut cleanup = Ledger::with_policy(policy);
             let c = cleanup.reserve_open("cleanup", false).unwrap();
             for _ in 0..CLEANUP_EVENTS - 1 {
                 cleanup.close_shm(c);
             }
-            witness(out, &mut cleanup, c, "underlying-shm-unmap", true, None, typed);
-            witness(out, &mut cleanup, c, "underlying-shm-unmap", true, None, typed);
-            witness(out, &mut cleanup, c, "shm-reference", false, None, typed);
+            witness(out, &mut cleanup, c, "underlying-shm-unmap", true, None, typed, include_json);
+            witness(out, &mut cleanup, c, "underlying-shm-unmap", true, None, typed, include_json);
+            witness(out, &mut cleanup, c, "shm-reference", false, None, typed, include_json);
 
             let (mut failed, n) = exact_name(policy, 513, "underlying-shm-unmap", None);
             assert_eq!(failed.fail::<()>("base xOpen failed; pending reservation retained",
                                          ffi::SQLITE_CANTOPEN), Err(ffi::SQLITE_CANTOPEN));
-            witness(out, &mut failed, n, "underlying-shm-unmap", true, None, typed);
+            witness(out, &mut failed, n, "underlying-shm-unmap", true, None, typed, include_json);
             // Shorter original event still succeeds despite prior failure.
-            witness(out, &mut failed, n, "opened", false, None, typed);
+            witness(out, &mut failed, n, "opened", false, None, typed, include_json);
             if typed {
                 let mut all = Ledger::with_policy(policy);
                 let slot = all.reserve_open(r#"all-é_"_routes"#, true).unwrap();
@@ -147,7 +153,7 @@ mod original {
                     ("unpublished-actual-close", true, None), ("failed-open-no-methods", true, None),
                     ("underlying-close", true, None), ("unlinked", true, None),
                 ] {
-                    witness(out, &mut all, slot, action, cleanup, request, typed);
+                    witness(out, &mut all, slot, action, cleanup, request, typed, include_json);
                 }
             }
         }
@@ -155,5 +161,8 @@ mod original {
 }
 
 fn main() {
-    original::replay_cases(&mut io::stdout().lock(), std::env::args().any(|x| x == "--typed"));
+    let mode = std::env::args().nth(1);
+    let include_json = mode.as_deref() == Some("--retained-json");
+    let typed = include_json || mode.as_deref() == Some("--typed");
+    original::replay_cases(&mut io::stdout().lock(), typed, include_json);
 }

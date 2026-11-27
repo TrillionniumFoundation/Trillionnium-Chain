@@ -210,3 +210,25 @@ versus omitted options, escaped controls and punctuation, and UTF-8
 through four-byte code points. Widths 511, 512 and 513 are emitted
 without prejudging ledger retention. No event is appended by this
 entry, and it does not own a filesystem or production VFS callback.
+
+## Retained compact JSON in one transition
+
+`retained_lifecycle_json.hepta` accepts the same typed receipt and prior
+state packet as `typed_record_evidence.hepta`. One native call measures
+the bytes, chooses the original vector by action, checks the sequence
+and state bounds, and applies the existing retention predicate.
+
+When retained, the output is the 72-byte diagnostic, an eight-byte
+little-endian JSON length and exact compact bytes from the same input
+receipt. If the entire successful output cannot fit, return 102 and
+leave both mutable spans untouched. Original SQLite FULL publishes only
+the 72-byte pressure diagnostic, even if more output is available.
+Bytes at and beyond offset 72, including any stale caller-provided
+length slot, are unchanged on pressure and must not be read as data
+from this call. Malformed typed state is not reported as original pressure.
+
+The comparison reserializes events actually retained by the locked
+Rust ledger and checks their exact bytes and counters. It also checks
+pressure, exact and short capacity and untouched suffixes. This is a
+private bounded transition; it does not own live SQLite vectors or
+route VFS callbacks.

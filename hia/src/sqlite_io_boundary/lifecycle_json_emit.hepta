@@ -23,11 +23,8 @@ block capacity(cr:readbuf,co:mutbuf,cl:u64,cn:u64)
   fits:bool = compare.ge(have,required)
   branch fits emit(cr,co,cl,cn,prefix) short()
 block emit(er:readbuf,eo:mutbuf,el:u64,en:u64,ep:u64)
-  part1:u64 = call(er,eo,ep,el) {"function":"mje_head"}
-  part2:u64 = call(er,eo,part1) {"function":"mje_identity"}
-  part3:u64 = call(er,eo,part2) {"function":"mje_counters"}
-  part4:u64 = call(er,eo,part3) {"function":"mje_sizes"}
-  part5:u64 = call(er,eo,part4) {"function":"mje_finish"}
+  start_name:u64 = const() {"value":104}
+  final:u64 = call(er,eo,ep,el,start_name) {"function":"mje_emit"}
   zero_out:u64 = const() {"value":0}
   pub:u64 = call(eo,zero_out,en) {"function":"tr_put"}
   ok:u32 = const() {"value":0}
@@ -40,8 +37,18 @@ block short()
   ret(shortcode)
 end
 
-fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64,total:u64)
+fn mje_emit(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(er:readbuf,eo:mutbuf,ep:u64,el:u64,es:u64)
+  part1:u64 = call(er,eo,ep,el,es) {"function":"mje_head"}
+  part2:u64 = call(er,eo,part1) {"function":"mje_identity"}
+  part3:u64 = call(er,eo,part2) {"function":"mje_counters"}
+  part4:u64 = call(er,eo,part3) {"function":"mje_sizes"}
+  part5:u64 = call(er,eo,part4) {"function":"mje_finish"}
+  ret(part5)
+end
+
+fn mje_head(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,total:u64,start:u64)
   seq0n:u64 = const() {"value":8}
   seq0w:u64 = const() {"value":7954893446713647739}
   seq0len:u64 = call(w,p,seq0n,seq0w) {"function":"value_word"}
@@ -88,7 +95,7 @@ block entry(r:readbuf,w:mutbuf,p:u64,total:u64)
   base8w:u64 = const() {"value":975332717}
   base8len:u64 = call(w,base0end,base8n,base8w) {"function":"value_word"}
   base8end:u64 = int.add.wrap(base0end,base8len)
-  nameend:u64 = call(r,w,base8end,total) {"function":"mje_string"}
+  nameend:u64 = call(r,w,base8end,total,start) {"function":"mje_string"}
   ret(nameend)
 end
 
@@ -511,9 +518,8 @@ block impossible()
   ret(none)
 end
 
-fn mje_string(r:readbuf,w:mutbuf,p:u64,last:u64) -> (u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64,last:u64)
-  start:u64 = const() {"value":104}
+fn mje_string(r:readbuf,w:mutbuf,p:u64,last:u64,start:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,last:u64,start:u64)
   qn:u64 = const() {"value":1}
   qw:u64 = const() {"value":34}
   qlen:u64 = call(w,p,qn,qw) {"function":"value_word"}

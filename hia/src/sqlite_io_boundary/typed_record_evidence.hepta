@@ -21,6 +21,19 @@ block measure(mr:readbuf,mo:mutbuf,ms:usize)
   valid:bool = compare.ne(bytes,zero)
   branch valid decode(mr,mo,bytes) malformed()
 block decode(dr:readbuf,do:mutbuf,db:u64)
+  minimum:u64 = const() {"value":72}
+  status:u32 = call(dr,do,db,minimum) {"function":"mte_apply"}
+  ret(status)
+block malformed()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+end
+
+fn mte_apply(dr:readbuf,do:mutbuf,db:u64,mn:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(dr:readbuf,do:mutbuf,db:u64,mn:u64)
   k0:u64 = const() {"value":0}
   k8:u64 = const() {"value":8}
   k104:u64 = const() {"value":104}
@@ -40,14 +53,8 @@ block decode(dr:readbuf,do:mutbuf,db:u64)
   first:u64 = call(dr,k144) {"function":"tr_read"}
   code:u64 = call(dr,k152) {"function":"tr_read"}
   normal:bool = call(action) {"function":"mte_ordinary"}
-  status:u32 = call(do,normal,db,ordered,clean,seq,total,complete,denied,first,code) {"function":"evidence_apply"}
+  status:u32 = call(do,normal,db,ordered,clean,seq,total,complete,denied,first,code,mn) {"function":"evidence_apply"}
   ret(status)
-block malformed()
-  invalid:u32 = const() {"value":100}
-  ret(invalid)
-block short()
-  small:u32 = const() {"value":102}
-  ret(small)
 end
 
 fn mte_ordinary(action:u64) -> (bool) effects() entry(entry)

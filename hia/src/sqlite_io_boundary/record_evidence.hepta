@@ -38,7 +38,8 @@ block header(hr:readbuf,ho:mutbuf)
   action:bool = bool.or(normal,clean)
   branch action apply(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code) invalid()
 block apply(a_ho:mutbuf,a_normal:bool,a_measured:u64,a_ordinary:u64,a_cleanup:u64,a_next_seq:u64,a_total:u64,a_complete:u64,a_denied:u64,a_tag:u64,a_code:u64)
-  applied:u32 = call(a_ho,a_normal,a_measured,a_ordinary,a_cleanup,a_next_seq,a_total,a_complete,a_denied,a_tag,a_code) {"function":"evidence_apply"}
+  minima:u64 = const() {"value":72}
+  applied:u32 = call(a_ho,a_normal,a_measured,a_ordinary,a_cleanup,a_next_seq,a_total,a_complete,a_denied,a_tag,a_code,minima) {"function":"evidence_apply"}
   ret(applied)
 block invalid()
   unusable:u32 = const() {"value":100}
@@ -48,8 +49,8 @@ block short()
   ret(insufficient)
 end
 
-fn evidence_apply(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64)
+fn evidence_apply(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64,minimum:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64,minimum:u64)
   one:u64 = const() {"value":1}
   count_o:u64 = const() {"value":1024}
   count_c:u64 = const() {"value":256}
@@ -72,8 +73,8 @@ block entry(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq
   s3:bool = bool.and(s2,e_ok)
   sx:bool = bool.and(length_good,s1)
   safe:bool = bool.and(sx,s3)
-  branch safe choose(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code) malformed()
-block choose(qo:mutbuf,qnormal:bool,qbytes:u64,qcount_o:u64,qcount_c:u64,qseq:u64,qtotal:u64,qcomplete:u64,qdenied:u64,qtag:u64,qcode:u64)
+  branch safe choose(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code,minimum) malformed()
+block choose(qo:mutbuf,qnormal:bool,qbytes:u64,qcount_o:u64,qcount_c:u64,qseq:u64,qtotal:u64,qcomplete:u64,qdenied:u64,qtag:u64,qcode:u64,qmin:u64)
   qordinary_max:u64 = const() {"value":1024}
   qcleanup_max:u64 = const() {"value":256}
   qrecord_max:u64 = const() {"value":512}
@@ -82,7 +83,15 @@ block choose(qo:mutbuf,qnormal:bool,qbytes:u64,qcount_o:u64,qcount_c:u64,qseq:u6
   full:bool = select(qnormal,qord_full,qcl_full)
   oversized:bool = compare.gt(qbytes,qrecord_max)
   refuse:bool = bool.or(full,oversized)
-  branch refuse failed(qo,qcount_o,qcount_c,qseq,qtotal,qdenied,qtag,qcode) retained(qo,qnormal,qbytes,qcount_o,qcount_c,qseq,qtotal,qcomplete,qdenied,qtag,qcode)
+  branch refuse failed(qo,qcount_o,qcount_c,qseq,qtotal,qdenied,qtag,qcode) capacity(qo,qnormal,qbytes,qcount_o,qcount_c,qseq,qtotal,qcomplete,qdenied,qtag,qcode,qmin)
+block capacity(co:mutbuf,cn:bool,cb:u64,coc:u64,ccc:u64,cs:u64,ct:u64,ccomplete:u64,cd:u64,cg:u64,cc:u64,cmin:u64)
+  extent:usize = buffer.len(co)
+  available:u64 = int.cast(extent) {"mode":"wrap"}
+  fits:bool = compare.ge(available,cmin)
+  branch fits retained(co,cn,cb,coc,ccc,cs,ct,ccomplete,cd,cg,cc) short_success()
+block short_success()
+  tiny:u32 = const() {"value":102}
+  ret(tiny)
 block failed(fo:mutbuf,ford:u64,fcl:u64,fseq:u64,ftotal:u64,fdenied:u64,ftag:u64,fcode:u64)
   f0:u64 = const() {"value":0}
   f1:u64 = const() {"value":1}

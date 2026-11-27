@@ -1,0 +1,44 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_retained_lifecycle_json
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  count:usize = buffer.len(raw)
+  min:usize = const() {"value":160}
+  max:usize = const() {"value":672}
+  low:bool = compare.ge(count,min)
+  high:bool = compare.le(count,max)
+  valid:bool = bool.and(low,high)
+  branch valid capacity(raw,out,count) malformed()
+block capacity(cr:readbuf,co:mutbuf,cn:usize)
+  extent:usize = buffer.len(co)
+  min_out:usize = const() {"value":72}
+  room:bool = compare.ge(extent,min_out)
+  branch room measure(cr,co,cn) short()
+block measure(mr:readbuf,mo:mutbuf,mn:usize)
+  start:u64 = const() {"value":160}
+  last:u64 = int.cast(mn) {"mode":"wrap"}
+  bytes:u64 = call(mr,start,last) {"function":"mlj_measure"}
+  z:u64 = const() {"value":0}
+  sized:bool = compare.ne(bytes,z)
+  branch sized classify(mr,mo,last,bytes,start) malformed()
+block classify(ar:readbuf,ao:mutbuf,al:u64,ab:u64,as:u64)
+  json_offset:u64 = const() {"value":80}
+  need:u64 = int.add.wrap(json_offset,ab)
+  status:u32 = call(ar,ao,ab,need) {"function":"mte_apply"}
+  success:u32 = const() {"value":0}
+  kept:bool = compare.eq(status,success)
+  branch kept emit(ar,ao,al,ab,as,json_offset) done(status)
+block emit(er:readbuf,eo:mutbuf,el:u64,eb:u64,es:u64,ep:u64)
+  final:u64 = call(er,eo,ep,el,es) {"function":"mje_emit"}
+  length_pos:u64 = const() {"value":72}
+  length:u64 = call(eo,length_pos,eb) {"function":"tr_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block done(code:u32)
+  ret(code)
+block malformed()
+  status_bad:u32 = const() {"value":100}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":102}
+  ret(status_short)
+end
