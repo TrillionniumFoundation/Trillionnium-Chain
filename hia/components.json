@@ -1,5 +1,205 @@
 {
   "includes": {
+    "platform/service_settlement/held_variable_stream_replay.hepta": [
+      {
+        "functions": [
+          "sex_policy"
+        ],
+        "source": "platform/service_settlement/execution_context.hepta"
+      },
+      {
+        "functions": [
+          "hfr_read",
+          "hfv_parent",
+          "hfv_request",
+          "hfv_width"
+        ],
+        "source": "platform/service_settlement/held_first_replay.hepta"
+      },
+      {
+        "functions": [
+          "hfs_capture_engine",
+          "hfs_check_marker",
+          "hfs_check_root",
+          "hfs_compare_markers",
+          "hfs_install_id",
+          "hfs_limit",
+          "hfs_marker_offset",
+          "hfs_receipt_mark",
+          "hfs_roots",
+          "hfs_sameblock_receipt",
+          "hfs_sameblock_roots",
+          "hfs_save_receipt",
+          "hfs_settle_index",
+          "hfs_settled",
+          "hfs_variable"
+        ],
+        "source": "platform/service_settlement/held_settle_interval_helpers.hepta"
+      },
+      {
+        "functions": [
+          "jph_hash"
+        ],
+        "source": "platform/service_settlement/journal_prefix_hashes.hepta"
+      },
+      {
+        "functions": [
+          "sjr_command_id",
+          "sjr_execution_context",
+          "sjr_prefix",
+          "sjr_reader",
+          "sjr_receipt",
+          "sjr_row_checksum",
+          "sjr_row_work_part",
+          "sjr_start",
+          "sjr_start_checked_rows",
+          "sjr_start_commands",
+          "sjr_start_strict"
+        ],
+        "source": "platform/service_settlement/journal_read.hepta"
+      },
+      {
+        "functions": [
+          "sks_bool",
+          "sks_fixed_vec",
+          "sks_optional",
+          "sks_receipt_state",
+          "sks_receipt_states",
+          "sks_rollup_state",
+          "sks_settlement_intent",
+          "sks_settlement_receipt",
+          "sks_settlement_state",
+          "sks_state"
+        ],
+        "source": "platform/service_settlement/kernel_state_shape.hepta"
+      },
+      {
+        "functions": [
+          "smk_anchor",
+          "smk_begin_hash",
+          "smk_eq",
+          "smk_held",
+          "smk_init",
+          "smk_links",
+          "smk_reader",
+          "smk_segment",
+          "smk_start"
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
+          "smr_append",
+          "smr_eq_bound",
+          "smr_field",
+          "smr_held",
+          "smr_reader",
+          "smr_start",
+          "smr_state_digest"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
+      },
+      {
+        "functions": [
+          "srci_bytes",
+          "srci_canon_len",
+          "srci_context",
+          "srci_optional_id",
+          "srci_receipt",
+          "srci_signature",
+          "srci_take",
+          "srci_u32",
+          "srci_usage",
+          "srci_usages"
+        ],
+        "source": "platform/service_settlement/receipt_command_id.hepta"
+      },
+      {
+        "functions": [
+          "srli_command",
+          "srli_inner",
+          "srli_receipt_ids",
+          "srli_receipts"
+        ],
+        "source": "platform/service_settlement/rollup_command_id.hepta"
+      },
+      {
+        "functions": [
+          "ssr_begin",
+          "ssr_exact_text",
+          "ssr_issue",
+          "ssr_prepared",
+          "ssr_read",
+          "ssr_schema",
+          "ssr_status",
+          "ssr_table_value",
+          "ssr_tables",
+          "ssr_triggers"
+        ],
+        "source": "platform/service_settlement/schema_read.hepta"
+      },
+      {
+        "functions": [
+          "sscid_copy"
+        ],
+        "source": "platform/service_settlement/settle_command_id.hepta"
+      },
+      {
+        "functions": [
+          "ssi_settlement_option"
+        ],
+        "source": "platform/service_settlement/settlement_state_id.hepta"
+      },
+      {
+        "functions": [
+          "stj_count",
+          "stj_held",
+          "stj_link",
+          "stj_reader"
+        ],
+        "source": "platform/service_settlement/terminal_join.hepta"
+      },
+      {
+        "functions": [
+          "strd_shape"
+        ],
+        "source": "platform/service_settlement/transition_receipt_decode.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wcopy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/mutation_record_replay.hepta": [
       {
         "functions": [

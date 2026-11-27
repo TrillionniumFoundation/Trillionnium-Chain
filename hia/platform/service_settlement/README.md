@@ -485,3 +485,10 @@ checks; Settle follows the last proved empty marker, not the Rollup block.
 It checks the typed final settlement ID and complete durable state before
 publishing after SQLite close. This does not generalize the admitted
 schedule, replace the writer, or confer external Order authority.
+
+The opt-in measured-width stream entry uses the verified original metadata
+operation sequence to select exactly one, two, or four operations. The
+private transport supplies no expected count: unsupported counts refuse
+before dispatching the sealed Engine, and each admitted row still must pass
+the exact command, coordinate, commitment and close checks of its finite
+profile. It is not a general journal codec or a production API.

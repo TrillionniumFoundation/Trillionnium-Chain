@@ -3659,6 +3659,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-variable-stream-replay",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Single finite native held stream selects one, two, or the mixed four original Settlement replay profile from verified original metadata, never a host-supplied expected operation count. Reuses strict original per-row semantics, roots and lifecycle; no other count or history accepted. No general replay or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_variable_stream_replay.hepta"
+      ],
+      "tests": [
+        "hia/platform/service_settlement/schema_fixture_host.py",
+        "hia/platform/service_settlement/first_replay_fixture_engine.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/test_settlement_held_variable_stream_replay.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-variable-settle-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

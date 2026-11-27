@@ -6,6 +6,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(profile) = std::env::args().nth(1) {
         let (name, rows) = if let Some(name) = profile.strip_suffix("-settle") {
             (name, 4)
+        } else if let Some(name) = profile.strip_suffix("-rollup") {
+            (name, 3)
         } else if let Some(name) = profile.strip_suffix("-pair") {
             (name, 2)
         } else {
@@ -30,19 +32,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let (successor, no_id) = engine::apply_transition(&fixture.trust, &state, 11, &second)?;
             assert!(no_id.is_none());
             fields.extend([bytes(&second), bytes(&successor)]);
-            if rows == 4 {
+            if rows >= 3 {
                 let third = ConsumptionSettlementCommandV1::AdmitRollup {
                     rollup: fixture.rollup(&successor, 12),
                     receipts: successor.receipts.iter().map(|r| r.receipt.clone()).collect(),
                 };
                 let (rolled, no_id) = engine::apply_transition(&fixture.trust, &successor, 12, &third)?;
                 assert!(no_id.is_none());
-                let fourth = fixture.settle(&rolled);
-                assert!(engine::apply_transition(&fixture.trust, &rolled, 14, &fourth).is_err());
-                let (settled, final_id) = engine::apply_transition(&fixture.trust, &rolled, 15, &fourth)?;
-                assert!(final_id.is_some());
-                fields.extend([bytes(&third), bytes(&rolled), bytes(&fourth), bytes(&settled),
-                               bytes(&final_id.unwrap())]);
+                fields.extend([bytes(&third), bytes(&rolled)]);
+                if rows == 4 {
+                    let fourth = fixture.settle(&rolled);
+                    assert!(engine::apply_transition(&fixture.trust, &rolled, 14, &fourth).is_err());
+                    let (settled, final_id) = engine::apply_transition(&fixture.trust, &rolled, 15, &fourth)?;
+                    assert!(final_id.is_some());
+                    fields.extend([bytes(&fourth), bytes(&settled), bytes(&final_id.unwrap())]);
+                }
             }
         }
         let mut out = std::io::stdout().lock();

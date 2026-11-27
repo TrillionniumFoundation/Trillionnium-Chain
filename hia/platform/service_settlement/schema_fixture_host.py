@@ -34,7 +34,8 @@ def run(request, uri_image, reader, provider):
     replay_image = request.get("first_replay_engine")
     replay_control = request.get("first_replay_fixture_control")
     replay = replay_image is not None
-    replay_limit = request.get("receipt_replay_limit", 1)
+    stream = request.get("variable_stream_fixture", False)
+    replay_limit = request.get("receipt_replay_limit", 4 if stream else 1)
     same_block = request.get("same_block_fixture", False)
     variable_first = request.get("variable_first_fixture", False)
     variable_pair = request.get("variable_pair_fixture", False)
@@ -43,6 +44,8 @@ def run(request, uri_image, reader, provider):
     replay_control_step = request.get("first_replay_fixture_control_step", replay_limit)
     if ((replay and (not journal or len(replay_image) != 2))
             or type(replay_limit) is not int or replay_limit not in (1, 2, 3, 4)
+            or type(stream) is not bool
+            or (stream and (not replay or "receipt_replay_limit" in request or variable_rows or same_block))
             or type(variable_first) is not bool or type(variable_pair) is not bool
             or type(variable_settle) is not bool
             or sum((bool(variable_first), bool(variable_pair), bool(variable_settle))) > 1
@@ -105,6 +108,7 @@ def run(request, uri_image, reader, provider):
     replay_calls = 0
     replay_held = False
     requested_replay = 0
+    selected_rows = None
     engine = None
     replay_owners = ExitStack()
     replay_locks = 0
@@ -131,6 +135,14 @@ def run(request, uri_image, reader, provider):
                 if not replay or requested_replay >= replay_limit or (phase, op, length) != (52, 7, 8):
                     raise ValueError("Unexpected exact Engine continuation")
                 requested_replay += 1
+                if stream:
+                    profile, = struct.unpack_from("<Q", state, 349024)
+                    rows = {6: 1, 7: 2, 8: 4}.get(profile)
+                    if (rows is None or requested_replay > rows
+                            or selected_rows not in (None, rows)):
+                        raise ValueError("Unexpected verified native stream selection")
+                    selected_rows = rows
+                active_rows = selected_rows if stream else replay_limit
                 if request.get("writer"):
                     check = subprocess.run([request["writer"], "try-write", str(db)],
                                            capture_output=True, check=True, timeout=15)
@@ -141,7 +153,7 @@ def run(request, uri_image, reader, provider):
                 from hia.platform.service_settlement.first_replay_fixture_engine import FixtureReplay
                 size, = struct.unpack_from("<Q", state, 349016)
                 lane_widths = (1921, 2811) if same_block else (1921, 1953, 3742, 1293)
-                if variable_rows:
+                if stream or variable_rows:
                     if not 40 <= size <= 20642:
                         raise ValueError("Native continuation returned an unbounded variable request")
                 elif size != lane_widths[requested_replay - 1]:
@@ -149,9 +161,9 @@ def run(request, uri_image, reader, provider):
                 payload = ctypes.string_at(ctypes.addressof(state) + 360000, size)
                 if engine is None:
                     engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block,
-                                                variable_rows=variable_rows)
+                                                variable_rows=active_rows if stream else variable_rows)
                 raw = engine.apply(payload)
-                if raw and (replay_limit == 4 or same_block):
+                if raw and (active_rows == 4 or same_block):
                     if engine.last_parent_root is None:
                         raise ValueError("Missing observed native predecessor root")
                     raw += engine.last_parent_root
@@ -182,7 +194,7 @@ def run(request, uri_image, reader, provider):
         result = {"status": status, "transcript": transcript, "held": held, "released": reset(owner)}
         if replay:
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
-            if status == 0 and replay_calls != replay_limit:
+            if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
                 raise ValueError("Success without exact Engine observation")
         if projected:
             result["projection"] = projection
