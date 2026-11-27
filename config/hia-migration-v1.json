@@ -247,6 +247,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_store_seal_chain",
+      "node_integration_complete": false,
+      "scope": "Private read-only bounded persisted archive seal chain: exact native seal digests, contiguous sequence/generation, predecessor and live-root linkage, and terminal metadata identity from a held original SQLite readback. No SQL, full inventory audit, deletion, durability or production ownership.",
+      "source": "hia/src/task_kernel/archive_store_seal_chain.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_store_seal_chain.py",
+        "hia/tests/rust_task_archive_store_seal_chain_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_sealed_plan",
       "node_integration_complete": false,
       "scope": "One-call bounded original typed archive planner to exact TaskArchiveBatchV1 Borsh bytes, including policy, height, sequence, prior seal hash, checked totals and original Merkle root. Private read-only candidate only; no installation, storage or deletion authority.",
@@ -2801,7 +2812,8 @@
         "task_kernel/archive_variable_batch",
         "task_kernel/archive_selection",
         "task_kernel/archive_typed_selection",
-        "task_kernel/archive_sealed_plan"
+        "task_kernel/archive_sealed_plan",
+        "task_kernel/archive_store_seal_chain"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",

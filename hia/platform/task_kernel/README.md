@@ -354,3 +354,26 @@ The unchanged public Rust planner supplies exact byte and status fixtures on
 both native backends. The resulting batch is only a candidate: production
 authorization, applying pruning, retention/durability, storage and runtime
 routing remain with the original owner.
+
+### Bounded original archive seal-chain readback
+
+`src/task_kernel/archive_store_seal_chain.hepta` checks one held readback packet
+from the original archive store: a little-endian u64 count followed by
+metadata `{generation: i64, sequence: i64, seal_hash[32], live_root[32]}`, then
+at most eight ordered entries. Each entry is
+`{Borsh_seal_length: u64, sequence: i64, generation: i64, seal_hash[32],
+live_root_before[32], live_root_after[32], original_Borsh_seal_bytes}`. The seal
+bytes are the exact prefix of the persisted complete batch, not re-encoded
+fields. The native stage verifies the typed seal shape, computes the original
+seal digest, binds each sequence and generation, verifies its predecessor
+seal and live-root chain, then publishes the 80-byte metadata tuple only
+after agreement with the final link. The output and scratch regions are
+disjoint, with minima of 80 and 1,264 bytes respectively; a refused call
+never changes the output.
+
+The positive fixtures are genuine disposable databases produced and cold-read
+by the immutable original store. A separate mechanical read-only SQLite
+transaction captures the exact same held rows, including generated benign
+mismatch controls. The HIA stage does not open SQLite, validate schema or
+record blobs, reconstruct the inventory roots, replace the full store audit,
+repair durability, perform deletion, or authorize production use.
