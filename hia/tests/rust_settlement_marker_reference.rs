@@ -14,6 +14,7 @@ use codec::{canonical_bytes, checksum, digest_value, strict_decode};
 use error::{ConsumptionSettlementErrorCodeV1, ConsumptionSettlementResultV1, error};
 include!(env!("TRNM_SETTLEMENT_SCHEMA_SOURCE"));
 include!(env!("TRNM_SETTLEMENT_MARKERS_SELECTED"));
+include!(env!("TRNM_SETTLEMENT_MARKER_ANCHOR"));
 include!(env!("TRNM_SETTLEMENT_COMMAND_IDENTITY"));
 use trnm_service_settlement::SCHEMA_VERSION_V1;
 include!(env!("TRNM_SETTLEMENT_EXECUTION_VALIDATE"));
@@ -381,6 +382,74 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             tx.commit()?;
             db.close().map_err(|(_, err)| err)?;
+        }
+        "observe-committed-interval-codec" => {
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let held = open_read_snapshot(&path)?;
+            verify_schema(&held)?;
+            let head = owner.fresh_readback()?;
+            let count = head.sequence();
+            assert!(count <= 8);
+            let genesis = fs::read(&args[4])?;
+            assert_eq!(genesis.len(), 32);
+            let markers = load_committed_block_markers(&held, &config)?;
+            assert!((1..=16).contains(&markers.len()));
+            let mut packet = Vec::new();
+            let mut words = |data: &[u8]| packet.extend(data);
+            words(&count.to_le_bytes());
+            words(&u64::try_from(markers.len())?.to_le_bytes());
+            words(&config.trust_bundle.initial_order_height.to_le_bytes());
+            words(&config.trust_bundle.initial_order_block_id.0);
+            words(&head.order_height().to_le_bytes());
+            words(&head.order_block_id().0);
+            words(&marker_predecessor_checksum(&config)?.0);
+            words(&head.durable_committed_block_root().0);
+            words(&genesis);
+            words(&operation_journal_root_through(&held, 0)?.0);
+            let mut operations = Vec::new();
+            {
+                let mut stmt = held.prepare("SELECT sequence,execution,receipt FROM operations ORDER BY sequence")?;
+                let mut rows = stmt.query([])?;
+                let mut seen = 0u64;
+                while let Some(row) = rows.next()? {
+                    seen += 1;
+                    let sequence: u64 = row.get(0)?;
+                    assert_eq!(sequence, seen);
+                    let execution: ConsumptionCommittedExecutionContextV1 =
+                        strict_decode(&row.get::<_, Vec<u8>>(1)?)?;
+                    let receipt: ConsumptionTransitionReceiptV1 =
+                        strict_decode(&row.get::<_, Vec<u8>>(2)?)?;
+                    assert_eq!(receipt.sequence, seen);
+                    words(&receipt.post_state_root.0);
+                    words(&operation_journal_root_through(&held, seen)?.0);
+                    operations.extend(execution.expected_order_height.to_le_bytes());
+                    operations.extend(execution.expected_order_block_id.0);
+                    operations.extend(execution.order_height.to_le_bytes());
+                    operations.extend(execution.order_block_id.0);
+                    operations.extend(receipt.order_height.to_le_bytes());
+                    operations.extend(receipt.order_block_id.0);
+                    operations.extend(receipt.post_state_root.0);
+                }
+                assert_eq!(seen, count);
+            }
+            for row in &markers {
+                words(&row.marker_sequence.to_le_bytes());
+                words(&row.order_height.to_le_bytes());
+                words(&row.order_block_id.0);
+                words(&row.parent_order_height.to_le_bytes());
+                words(&row.parent_order_block_id.0);
+                words(&row.source_operation_sequence.to_le_bytes());
+                words(&row.target_operation_sequence.to_le_bytes());
+                words(&row.source_state_root.0);
+                words(&row.target_state_root.0);
+                words(&row.source_operation_root.0);
+                words(&row.target_operation_root.0);
+                words(&row.previous_marker_checksum.0);
+                words(&row.checksum.0);
+            }
+            words(&operations);
+            held.close().map_err(|(_, err)| err)?;
+            io::stdout().write_all(&packet)?;
         }
         "observe-actual-journal-prefixes" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;

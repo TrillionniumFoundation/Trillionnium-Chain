@@ -3719,6 +3719,21 @@
       ]
     },
     {
+      "id": "platform/service-settlement-committed-interval-codec",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite generic original committed-marker range and ordered operation projection validation, including actual same-block multi-operation intervals, arbitrary bounded empty intervals, continuity and terminal equality. Original source-checksum and replay ownership not replaced.",
+      "sources": [
+        "hia/platform/service_settlement/committed_interval_codec.hepta"
+      ],
+      "tests": [
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/rust_settlement_same_block_fixture.rs",
+        "hia/tests/test_settlement_committed_interval_codec.py",
+        "hia/tests/test_settlement_schema_read.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-held-variable-stream-replay",
       "node_integration_complete": false,
       "retirement_accepted": false,

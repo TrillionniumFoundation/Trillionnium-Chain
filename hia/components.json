@@ -1,5 +1,20 @@
 {
   "includes": {
+    "platform/service_settlement/committed_interval_codec.hepta": [
+      {
+        "functions": [
+          "smk_eq"
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get"
+        ],
+        "source": "src/control_plane/core.hepta"
+      }
+    ],
     "src/sqlite_io_boundary/two_shm_replay.hepta": [
       {
         "functions": [

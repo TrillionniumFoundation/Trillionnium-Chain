@@ -4,6 +4,26 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut fixture = Harness::new();
     if let Some(profile) = std::env::args().nth(1) {
+        if profile == "six-admits" {
+            let mut state = engine::initial_state(&fixture.trust);
+            let mut out = std::io::stdout().lock();
+            let mut frame = |field: Vec<u8>| -> Result<(), Box<dyn std::error::Error>> {
+                out.write_all(&u32::try_from(field.len())?.to_le_bytes())?;
+                out.write_all(&field)?;
+                Ok(())
+            };
+            frame(bytes(&fixture.trust))?;
+            for height in 10..16 {
+                let cmd = ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: fixture.receipt(state.receipts.last(), height, 1),
+                };
+                let (next, no_id) = engine::apply_transition(&fixture.trust, &state, height, &cmd)?;
+                assert!(no_id.is_none());
+                state = next;
+                frame(bytes(&cmd))?;
+            }
+            return Ok(());
+        }
         let (name, rows) = if let Some(name) = profile.strip_suffix("-settle") {
             (name, 4)
         } else if let Some(name) = profile.strip_suffix("-rollup") {

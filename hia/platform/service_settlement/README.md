@@ -492,3 +492,13 @@ private transport supplies no expected count: unsupported counts refuse
 before dispatching the sealed Engine, and each admitted row still must pass
 the exact command, coordinate, commitment and close checks of its finite
 profile. It is not a general journal codec or a production API.
+
+The bounded committed interval codec verifies exact projections from
+already checksum-validated markers and independently witnessed ordered
+receipts and original prefix roots. The previous target must equal the next
+source; each marker checks its actual range, with no assumption that it owns
+one operation. Within a same-block range, only the first operation expects
+the marker parent coordinate. Empty intervals preserve both roots, and
+the terminal coordinate, checksum and covered count must agree with the
+independent head. The private codec does not decode raw SQLite rows anew,
+recompute marker checksums, or grant Order authority.

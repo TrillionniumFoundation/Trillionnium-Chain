@@ -113,6 +113,10 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False, same
         if hashlib.sha256(marker_src).hexdigest() != "a481ceb50fd0a575621dd3b11226c558ec65467b52b701432c35cbafcadaa780":
             raise ValueError("Exact retained M12 committed-block marker source differs")
         (out / "markers.rs").write_bytes(marker_src)
+        [anchor_checksum] = re.findall(rb"(?ms)^fn marker_predecessor_checksum\(.*?^\}\n", source)
+        if hashlib.sha256(anchor_checksum).hexdigest() != "e84aefda05782e7b607537e9a41548e2c897862d7ccc4ea19d04709fbd40e1bf":
+            raise ValueError("Exact retained M12 committed-block anchor source differs")
+        (out / "marker_anchor.rs").write_bytes(anchor_checksum)
         [execution_static] = re.findall(
             rb"(?ms)^pub\(crate\) fn validate_execution_static\(.*?^\}\n", engine)
         if hashlib.sha256(execution_static).hexdigest() != "e4ebe15ca1b9b60280aabbc886dac4bf1cf1dbb9e917429eae37406db643e6fb":
@@ -132,6 +136,7 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False, same
                              "TRNM_SETTLEMENT_OPERATION_SELECTED": str(out / "operation.rs"),
                              "TRNM_SETTLEMENT_COMMAND_IDENTITY": str(out / "command_identity.rs"),
                              "TRNM_SETTLEMENT_MARKERS_SELECTED": str(out / "markers.rs"),
+                             "TRNM_SETTLEMENT_MARKER_ANCHOR": str(out / "marker_anchor.rs"),
                              "TRNM_SETTLEMENT_EXECUTION_VALIDATE": str(out / "execution_static.rs"),
                              "TRNM_SETTLEMENT_STATE_ROOT_SELECTED": str(out / "state_root.rs"),
                              "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
