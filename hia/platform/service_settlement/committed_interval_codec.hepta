@@ -1,21 +1,31 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_marker_interval_codec
 fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  offset:u64 = const() {"value":0}
+  checked:u32 = call(raw,w,offset) {"function":"sic_verify"}
+  ret(checked)
+end
+
+fn sic_verify(raw:readbuf,w:mutbuf,offset:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,offset:u64)
   in_len:usize = buffer.len(raw)
+  bytes:u64 = int.cast(in_len) {"mode":"wrap"}
+  remaining:u64 = int.sub.wrap(bytes,offset)
+  can_open:bool = compare.le(offset,bytes)
   work_len:usize = buffer.len(w)
-  min:usize = const() {"value":520}
-  lo:bool = compare.ge(in_len,min)
-  max:usize = const() {"value":6688}
-  hi:bool = compare.le(in_len,max)
+  min:u64 = const() {"value":520}
+  lo:bool = compare.ge(remaining,min)
+  max:u64 = const() {"value":6688}
+  hi:bool = compare.le(remaining,max)
   need:usize = const() {"value":8192}
   work_ok:bool = compare.ge(work_len,need)
   size0:bool = bool.and(lo,hi)
   size1:bool = bool.and(size0,work_ok)
-  branch size1 parse(raw,w,in_len) bad()
-block parse(pr:readbuf,pw:mutbuf,pn:usize)
-  size_in:u64 = int.cast(pn) {"mode":"wrap"}
+  size2:bool = bool.and(size1,can_open)
+  branch size2 parse(raw,w,offset,remaining) bad()
+block parse(pr:readbuf,pw:mutbuf,po:u64,size_in:u64)
   zero:u64 = const() {"value":0}
-  copy:u64 = call(pr,zero,pw,zero,size_in) {"function":"cp_copy"}
+  copy:u64 = call(pr,po,pw,zero,size_in) {"function":"cp_copy"}
   ops:u64 = call(pw,zero) {"function":"cp_get"}
   eight:u64 = const() {"value":8}
   marks:u64 = call(pw,eight) {"function":"cp_get"}

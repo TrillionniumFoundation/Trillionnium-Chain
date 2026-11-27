@@ -502,3 +502,10 @@ the marker parent coordinate. Empty intervals preserve both roots, and
 the terminal coordinate, checksum and covered count must agree with the
 independent head. The private codec does not decode raw SQLite rows anew,
 recompute marker checksums, or grant Order authority.
+
+A separate native checked entry accepts the exact original configuration
+bound by the fixture and independently recomputes every stored marker
+checksum over the original length-framed fields. Only after every digest
+matches does it verify the same immutable interval and operation packet.
+It does not acquire an SQLite connection, qualify arbitrary caller trust
+bytes, or replace the existing retained provider or original Store writer.

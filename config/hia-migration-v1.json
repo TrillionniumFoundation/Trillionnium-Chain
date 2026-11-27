@@ -3732,6 +3732,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-checked-committed-interval-codec",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Finite native recomputation of exact original committed marker row checksums against independently obtained original config bytes before generic interval validation of the same immutable projection. No production, raw SQLite storage or Order authority.",
+      "sources": [
+        "hia/platform/service_settlement/checked_committed_interval_codec.hepta"
+      ],
+      "tests": [
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_committed_interval_codec.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-committed-interval-codec",
       "node_integration_complete": false,
       "retirement_accepted": false,

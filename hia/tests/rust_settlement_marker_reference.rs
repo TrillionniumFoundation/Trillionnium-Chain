@@ -383,7 +383,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             tx.commit()?;
             db.close().map_err(|(_, err)| err)?;
         }
-        "observe-committed-interval-codec" => {
+        "observe-committed-interval-codec" | "observe-checked-committed-interval-codec" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let held = open_read_snapshot(&path)?;
             verify_schema(&held)?;
@@ -448,8 +448,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 words(&row.checksum.0);
             }
             words(&operations);
+            let binding = config_bytes(&config)?;
             held.close().map_err(|(_, err)| err)?;
-            io::stdout().write_all(&packet)?;
+            let mut out = io::stdout().lock();
+            if operation == "observe-checked-committed-interval-codec" {
+                out.write_all(&u64::try_from(binding.len())?.to_le_bytes())?;
+                out.write_all(&binding)?;
+            }
+            out.write_all(&packet)?;
         }
         "observe-actual-journal-prefixes" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;

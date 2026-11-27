@@ -18,6 +18,7 @@ class SettlementCommittedIntervalCodecTests(unittest.TestCase):
             tmp = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="trnm-m12-interval-")))
             original, _ = original_adapter(tmp, marker=True, same_block=True)
             packets = {}
+            checksummed = {}
             patterns = {
                 "empty": ("short", (), ((0, 0), (0, 0))),
                 "same": (None, (1, 2), ((0, 0), (0, 2))),
@@ -53,6 +54,13 @@ class SettlementCommittedIntervalCodecTests(unittest.TestCase):
                     self.assertEqual(tuple(struct.unpack_from("<QQ", packet, marker+296*i+88)
                                            for i in range(m)), intervals)
                     packets[name] = packet, marker, operation
+                    checked = execute([original, "observe-checked-committed-interval-codec",
+                                       db, files[0], actual_genesis]).stdout
+                    extent, = struct.unpack_from("<Q", checked)
+                    cut = 8 + extent
+                    self.assertEqual(checked[8:cut], actual_binding[104:])
+                    self.assertEqual(checked[cut:], packet)
+                    checksummed[name] = checked, cut, marker, operation
 
             for backend in ("direct", "selfhost"):
                 with self.subTest(backend=backend), NativeModule(
@@ -73,3 +81,29 @@ class SettlementCommittedIntervalCodecTests(unittest.TestCase):
                         altered = bytearray(packet)
                         altered[offset] ^= 1
                         check(bytes(altered), 100)
+
+                with self.subTest(checked_backend=backend), NativeModule(
+                        OWNER/"checked_committed_interval_codec.hepta",
+                        byte_exports=("f0",), backend=backend) as checked_native:
+                    def verified(raw, wanted, scratch=32768):
+                        answer = checked_native.call("f0", [raw, bytes([7])*8,
+                                                           bytes([8])*scratch]).require_returned()
+                        self.assertEqual((answer.value, answer.arguments[1]), (wanted, bytes([7])*8))
+
+                    for raw, _, _, _ in checksummed.values():
+                        verified(raw, 0)
+                    raw, cut, marker, operation = checksummed["same"]
+                    verified(raw, 100, 32767)
+                    verified(raw[:-1], 100)
+                    # Mismatch only the fixture config or the stored marker checksum.
+                    # A second malformed field also demonstrates digest preflight wins.
+                    for index in (8, cut+marker+296+264):
+                        bad = bytearray(raw)
+                        bad[index] ^= 1
+                        verified(bytes(bad), 101)
+                        bad[cut+operation+152] ^= 1
+                        verified(bytes(bad), 101)
+                    # Actual marker bytes/checksums stay unchanged; only the row join fails.
+                    bad = bytearray(raw)
+                    bad[cut+operation+152] ^= 1
+                    verified(bytes(bad), 100)
