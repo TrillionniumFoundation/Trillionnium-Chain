@@ -1107,6 +1107,18 @@
       ]
     },
     {
+      "id": "data-availability/author-authority-value",
+      "node_integration_complete": false,
+      "scope": "Original DaAuthorAuthorityV1 constructor bounds, raw Dalek decompression and weak-key distinction, and exact Borsh value; no authorization, signing, or state ownership.",
+      "source": "hia/src/data_availability/author_authority_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_author_authority_value.py",
+        "hia/tests/rust_da_author_authority_value_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2496,6 +2508,7 @@
       "components": [
         "data-availability/rs46",
         "data-availability/protocol-context",
+        "data-availability/author-authority-value",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",

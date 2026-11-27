@@ -171,3 +171,35 @@ The [differential](../../tests/test_da_typed_object_id.py) checks all 256
 namespace tags and every original kind against the locked Rust library and both
 native backends. Out-of-domain raw kind codes are private ABI refusals, not
 fabricated calls with a Rust typed kind.
+
+## DA author value construction
+
+The [private author value constructor](author_authority_value.hepta) accepts
+`public_key:32 || first:u64 LE || maximum:u64 LE || byte_quota:u64 LE ||
+outstanding:u32 LE || author_id`. The ID is arbitrary bytes of length 1–256.
+It checks nonzero first sequence, no inverted interval, and nonzero quotas
+before inspecting the public key, as the unchanged Rust constructor does.
+
+The original uses Dalek's permissive public-point decompression followed
+by its small-order rejection; the strict signature or canonical-hex
+predicate is not interchangeable. The native caller uses the existing
+Research public-Y normalizer and shared group decoder. In scratch only,
+it selects the sign-zero representative: negating the point cannot
+change decompression's existence or point order, and sign-one zero
+still denotes the same weak point under Dalek. Both outcomes are checked
+against the original, including unparseable encodings, weak points, and
+both signs of all 19 over-field values. The return keeps the input public
+key bytes exactly as given, not a normalized encoding.
+
+With 140,512 disjoint scratch bytes and sufficient output, success emits
+`id_len:u32 LE || author_id || public_key || first || maximum ||
+byte_quota || outstanding` (the original derived Borsh bytes). Status 3
+means bad fields; 6 and 7 distinguish the original invalid public point
+and weak point messages under the same Rust error code. Private framing
+and capacity statuses are 100 and 102. Refusals leave output untouched;
+the input and spare output are unchanged in all cases. Matching this
+value does not confer author membership, authorization, signature
+verification, storage, or any node policy effect.
+
+[Locked original and both stock HIA backends](../../tests/test_da_author_authority_value.py)
+compare exact status, bytes, and buffer boundaries.

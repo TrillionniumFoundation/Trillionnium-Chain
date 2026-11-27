@@ -18903,6 +18903,42 @@
         ],
         "source": "src/service_settlement/codec.hepta"
       }
+    ],
+    "src/data_availability/author_authority_value.hepta": [
+      {
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_zero"
+        ],
+        "source": "src/research_protocol/command.hepta"
+      },
+      {
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"
