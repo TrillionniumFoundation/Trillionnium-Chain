@@ -243,8 +243,16 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
         if (not journal or not replay or not variable_first or preview is not None
                 or genesis_preview is not None or replay_control is not None):
             raise ValueError("Later preview requires exactly one unmodified original held replay")
-        frame, command = (bytes.fromhex(request[k]) for k in ("live_preview_frame", "live_preview_command"))
-        if not (219 <= len(frame) <= 8410 and 112 <= len(command) <= 8192):
+        frame = bytes.fromhex(request["live_preview_frame"])
+        if len(live_preview) == 6:
+            cmds = request["live_preview_batch"]
+            if not isinstance(cmds, list) or len(cmds) != 2:
+                raise ValueError("Only the original two-command mixed preview is supported")
+            command = tuple(bytes.fromhex(cmd) for cmd in cmds)
+        else:
+            command = bytes.fromhex(request["live_preview_command"])
+        raw_commands = command if isinstance(command, tuple) else (command,)
+        if not 219 <= len(frame) <= 8410 or any(not 112 <= len(x) <= 8192 for x in raw_commands):
             raise ValueError("Wrong bounded original later preview request")
         live_inputs = frame, command
     path_checks = header_checks = None
@@ -427,7 +435,10 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                 if (check.stdout, check.stderr) != (b"BUSY\n", b""):
                     raise ValueError("The prospective operation is not under the original held snapshot")
                 frame, command = live_inputs
-                live_pending = held_prospective_receipt(live_preview, signature, state, frame, command, engine)
+                if isinstance(command, tuple):
+                    live_pending = held_prospective_batch(live_preview, signature, state, frame, command, engine)
+                else:
+                    live_pending = held_prospective_receipt(live_preview, signature, state, frame, command, engine)
             payload = ctypes.addressof(state) + 256
             amount = fetch(owner, op, payload, length, response, EXTENT)
             transcript.append([phase, op, amount])
@@ -592,6 +603,95 @@ def held_prospective_receipt(images, signature, snapshot, frame, command, engine
     return [code, output.raw.hex() if code == 0 else None, calls]
 
 
+def held_prospective_batch(images, signature, snapshot, frame, commands, engine):
+    """Private original mixed command batch, projected only after both admissions."""
+    u64 = ctypes.c_uint64
+    receipt_image, receipt_codec, rollup_image, rollup_codec, batch_image, _ = images
+    receipt, id24, rollup, id25, batch = [bind(img, "f0", u64, *signature) for img in
+                                         (receipt_image, receipt_codec, rollup_image, rollup_codec, batch_image)]
+
+    def buf(raw):
+        return ctypes.create_string_buffer(raw, len(raw))
+
+    def call(fn, raw, out, work):
+        raw = buf(raw)
+        return fn(raw, len(raw), out, len(out), work, len(work))
+
+    def check(command):
+        tag = command[0]
+        if tag not in (0, 1):
+            return 101, None, None
+        codec = id24 if tag == 0 else id25
+        dest = buf(b"\x93" * (34 + len(command)))
+        scratch = buf(b"\x94" * (2304 + len(command)))
+        status = call(codec, command, dest, scratch)
+        if status != len(dest):
+            if status not in (100, 101, 102) or dest.raw != b"\x93" * len(dest):
+                raise ValueError("Bounded codec returned an unexpected state")
+            return status, None, None
+        if dest.raw[:2] != struct.pack("<H", tag+24) or dest.raw[34:] != command:
+            raise ValueError("Original typed mixed command identity changed")
+        return 0, tag+24, dest.raw[2:34]
+
+    def prepare(identity, native):
+        pending = buf(b"\xa5" * 112)
+        status = call(native, frame+identity, snapshot, pending)
+        if status and (pending.raw != b"\xa5" * len(pending) or status not in (100, 101, 102, 104)):
+            raise ValueError("Held mixed preview leaked a refused precondition")
+        return status, pending.raw
+
+    def stage(engine_step, kind, command, identity, native, source):
+        observed = engine_step(kind, struct.unpack_from("<Q", frame)[0], command)
+        if observed is None:
+            return 103, None
+        parent, op, root, typed = observed
+        if parent != source[8:40] or op != identity:
+            raise ValueError("Actual tentative Engine predecessor/identity diverged")
+        packed = source + parent + op + frame[42:74] + frame[:40] + root + typed
+        out = buf(b"\xa5" * 261)
+        work = buf(b"\x93" * (261 if kind == 24 else 20480))
+        status = call(native, packed, out, work)
+        if status and out.raw != b"\xa5" * len(out):
+            raise ValueError("Any negative native transition must have no output")
+        return status, out.raw if status == 0 else None
+
+    before = engine.calls.applies
+    status, kind, identity1 = check(commands[0])
+    if status or kind != 24:
+        return [status or 101, None, 0]
+    status, start = prepare(identity1, receipt)
+    if status:
+        return [status, None, 0]
+    with engine.prepare_mixed_preview(engine.trust, start[8:40]) as engine_step:
+        status, first = stage(engine_step, kind, commands[0], identity1, receipt, start)
+        if status:
+            return [status, None, engine.calls.applies-before]
+        status, kind, identity2 = check(commands[1])
+        if status:
+            return [status, None, engine.calls.applies-before]
+        native = receipt if kind == 24 else rollup
+        status, checked_parent = prepare(identity2, native)
+        if status:
+            return [status, None, engine.calls.applies-before]
+        if checked_parent != start:
+            raise ValueError("Second command checked a different original source")
+        untouched = buf(b"\xa5" * 410)
+        status = call(batch, identity1+identity2, untouched, buf(b"\x93" * 410))
+        if untouched.raw != b"\xa5" * 410:
+            raise ValueError("Duplicate test exposed tentative candidate data")
+        if status or kind != 25:
+            return [status or 101, None, engine.calls.applies-before]
+        new_parent = start[:8] + first[72:104] + start[40:]
+        status, second = stage(engine_step, kind, commands[1], identity2, native, new_parent)
+        if status:
+            return [status, None, engine.calls.applies-before]
+        out = buf(b"\xa5" * 410)
+        status = call(batch, first+second, out, buf(b"\x93" * 410))
+        if status and out.raw != b"\xa5" * 410:
+            raise ValueError("Mixed preview leaked a failed batch")
+        return [status, out.raw.hex() if status == 0 else None, engine.calls.applies-before]
+
+
 def two_native_heads(request, coordinator, uri, reader, provider, gate, header_reader, post_open, lifecycle,
                      genesis_preview):
     """Private fixed owned pathname relay: native custody chooses whether to request and publish."""
@@ -667,7 +767,13 @@ def main():
             genesis_preview = tuple(owners.enter_context(sealed_library(*message[key]))
                                     for key in ("genesis_preview", "genesis_receipt_command"))
         live_preview = None
-        if "live_preview" in message or "live_rollup_preview" in message:
+        if "live_batch_preview" in message:
+            if "live_preview" in message or "live_rollup_preview" in message:
+                raise ValueError("Only one bounded prospective profile is allowed")
+            labels = ("live_batch_receipt", "live_batch_receipt_codec", "live_batch_rollup",
+                      "live_batch_rollup_codec", "live_batch_preview")
+            live_preview = (*(owners.enter_context(sealed_library(*message[key])) for key in labels), 2)
+        elif "live_preview" in message or "live_rollup_preview" in message:
             if "live_preview" in message and "live_rollup_preview" in message:
                 raise ValueError("Only one bounded prospective transition is allowed")
             label, kind = ("live_rollup_preview", 25) if "live_rollup_preview" in message else ("live_preview", 24)

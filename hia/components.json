@@ -659,6 +659,22 @@
         "source": "src/service_settlement/codec.hepta"
       }
     ],
+    "platform/service_settlement/preview_live_batch.hepta": [
+      {
+        "functions": [
+          "smr_eq_bound"
+        ],
+        "source": "platform/service_settlement/metadata_read.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_put",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      }
+    ],
     "platform/service_settlement/preview_live_receipt.hepta": [
       {
         "functions": [

@@ -1,4 +1,5 @@
 """Sealed public Engine used only by the finite read-only SQLite replay fixtures."""
+from contextlib import contextmanager
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -68,6 +69,58 @@ class FixtureReplay:
                 or not 112 <= len(command) <= 8192 or command[0] != 1):
             raise ValueError("Rollup preview requires one actual immutable admitted predecessor")
         return self._prospective_receipt(self.trust, expected_root, height, command, 1, include_state=True)
+
+    @contextmanager
+    def prepare_mixed_preview(self, trust, expected_root):
+        """Yield ordered detached successors without replacing the audited parent."""
+        if self.parent is None or self.variable_rows != 1 or self.calls.applies != 1 or trust != self.trust:
+            raise ValueError("Missing the exact verified durable parent")
+        parent = self.parent
+        engine = self.engine
+        if (engine.kind(parent) != 1 or engine.view("engine_trust", parent) != trust
+                or engine.view("engine_state_root", parent) != expected_root
+                or engine.scalar("engine_history_count", parent) != 1):
+            raise ValueError("Held native parent changed")
+        initial = parent
+        succ = []
+        next_root = expected_root
+
+        def step(kind, height, command):
+            nonlocal parent, next_root
+            expected = (24, 25)
+            pending = len(succ)
+            if pending >= len(expected) or kind != expected[pending]:
+                raise ValueError("Unsupported genuine mixed prospective order")
+            if not 112 <= len(command) <= 8192 or command[0] != kind-24:
+                raise ValueError("Wrong bounded canonical batch command")
+            op = engine.owned("operation_id", body=command)
+            try:
+                if engine.kind(op) != 2:
+                    return None
+                identity = engine.view("bytes_view", op)
+            finally:
+                engine.drop(op)
+            child = engine.owned("engine_apply", parent, body=command, height=height)
+            succ.append(child)
+            if (engine.kind(child) != 1 or engine.scalar("engine_history_count", child) != pending + 2
+                    or engine.scalar("engine_history_count", initial) != 1
+                    or engine.view("engine_state_root", parent) != next_root):
+                return None
+            root = engine.view("engine_state_root", child)
+            if (len(identity), len(root)) != (32, 32):
+                raise ValueError("Wrong observed ID or next root size")
+            typed = engine.view("engine_state", child) if kind == 25 else b""
+            if kind == 25 and not 111 <= len(typed) <= 16384:
+                return None
+            result = next_root, identity, root, typed
+            parent, next_root = child, root
+            return result
+
+        try:
+            yield step
+        finally:
+            for ptr in reversed(succ):
+                engine.drop(ptr)
 
     def _prospective_receipt(self, trust, expected_root, height, command, prior_count, *, include_state=False):
         if (self.engine.kind(self.parent) != 1

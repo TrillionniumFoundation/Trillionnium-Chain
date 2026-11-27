@@ -66,6 +66,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             return Ok(());
         }
+        if matches!(profile.as_str(), "preview-mixed-batch" | "preview-unfinishable-mixed-batch") {
+            let overflow = profile == "preview-unfinishable-mixed-batch";
+            if overflow {
+                fixture.trust.settlement_policy.minimum_rollup_challenge_blocks = (i64::MAX as u64) - 11;
+            }
+            let fresh = engine::initial_state(&fixture.trust);
+            let first = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: fixture.receipt(None, 10, 100),
+            };
+            let (source, _) = engine::apply_transition(&fixture.trust, &fresh, 10, &first)?;
+            let second = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: fixture.receipt(source.receipts.last(), 11, 50),
+            };
+            let (admitted, _) = engine::apply_transition(&fixture.trust, &source, 11, &second)?;
+            let third = ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: fixture.rollup(&admitted, 11),
+                receipts: admitted.receipts.iter().map(|row| row.receipt.clone()).collect(),
+            };
+            let (rolled, no_id) = engine::apply_transition(&fixture.trust, &admitted, 11, &third)?;
+            assert!(no_id.is_none());
+            if overflow {
+                assert_eq!(rolled.rollup.as_ref().unwrap().challenge_close_height, i64::MAX as u64);
+            }
+            let mut out = std::io::stdout().lock();
+            for data in [bytes(&fixture.trust), bytes(&first), bytes(&second), bytes(&third)] {
+                out.write_all(&u32::try_from(data.len())?.to_le_bytes())?;
+                out.write_all(&data)?;
+            }
+            return Ok(());
+        }
         let coalesced = profile.ends_with("-same-settle");
         let (name, rows) = if let Some(name) = profile.strip_suffix("-same-settle") {
             (name, 4)

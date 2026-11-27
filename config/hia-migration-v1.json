@@ -4215,6 +4215,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-live-batch",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private supported Receipt\u2192Rollup two-command preview over an actual held one-operation original committed head and existing native Engine. Checks each ordered tentative successor and original duplicate/maturity policy; returns neither receipt unless both transitions succeed and SQLite closes. No generic mixed, production, voting, deployment, or post-close reread.",
+      "sources": [
+        "hia/platform/service_settlement/preview_live_batch.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_first_replay.py",
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-preview-live-receipt",
       "node_integration_complete": false,
       "retirement_accepted": false,

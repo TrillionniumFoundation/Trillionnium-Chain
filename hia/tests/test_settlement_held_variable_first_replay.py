@@ -191,3 +191,50 @@ class SettlementHeldVariableFirstReplayTests(unittest.TestCase):
                         self.assertEqual(execute([original, "verify-journal", db, bundle]).stdout, source_bytes)
                         self.assertEqual(db.read_bytes(), pristine)
                         self.assertFalse(db.with_name(db.name+"-journal").exists())
+
+            for backend in ("direct", "selfhost"):
+                modules = [stack.enter_context(NativeModule(OWNER/name, byte_exports=("f0",), backend=backend))
+                           for name in ("held_variable_first_replay.hepta", "preview_live_receipt.hepta",
+                                        "receipt_command_id.hepta", "preview_live_rollup.hepta",
+                                        "rollup_command_id.hepta", "preview_live_batch.hepta")]
+                rdr, pre, c24, roll, c25, pack = [seal(module) for module in modules]
+                for mode, tag, expected, applies in (
+                    ("preview-mixed-batch", "success", 0, 2),
+                    ("preview-mixed-batch", "duplicate", 104, 1),
+                    ("preview-unfinishable-mixed-batch", "late-overflow", 101, 2),
+                ):
+                    with self.subTest(backend=backend, actual_batch=tag):
+                        trust, first, cmd24, cmd25 = frames(execute([tmp/"same-block-fixture", mode]).stdout)
+                        files = [tmp/f"batch-{backend}-{tag}-{i}" for i in range(4)]
+                        for file, data in zip(files, (trust, first, cmd24, cmd25), strict=True):
+                            file.write_bytes(data)
+                        bundle, historical, second, third = files
+                        db = owned/f"actual original mixed batch {backend} {tag} #?.db"
+                        binding = execute([original, "seed-receipts", db, bundle, "0", historical]).stdout
+                        pristine = db.read_bytes()
+                        source_bytes = execute([original, "verify-journal", db, bundle]).stdout
+                        args = (second, second if tag == "duplicate" else third)
+                        frame, a, b, value = frames(execute(
+                            [original, "observe-held-mixed-preview-batch", db, bundle, *args, tag]).stdout)
+                        self.assertEqual(struct.unpack_from("<I", value)[0], expected)
+                        request = dict(reader=rdr, uri=seal(images["uri"]),
+                                       provider=[str(provider), proof.checked[str(provider)]["sha256"]],
+                                       directory=str(owned), database=str(db), journal_binding=binding.hex(),
+                                       first_replay_engine=[str(out/"public"), engine["artifact"]["sha256"]],
+                                       variable_first_fixture=True, writer=str(original),
+                                       live_batch_receipt=pre, live_batch_receipt_codec=c24,
+                                       live_batch_rollup=roll, live_batch_rollup_codec=c25,
+                                       live_batch_preview=pack, live_preview_frame=frame.hex(),
+                                       live_preview_batch=[a.hex(), b.hex()])
+                        got = execute([sys.executable, "-I", "-S", "-B", OWNER/"schema_fixture_host.py"],
+                                      input=json.dumps(request).encode(), timeout=60)
+                        self.assertEqual(got.stderr, b"")
+                        answer = json.loads(got.stdout)
+                        self.assertEqual(answer.pop("live_preview"),
+                                         [expected, value[4:].hex() if expected == 0 else None, applies])
+                        self.assertEqual(bytes.fromhex(answer["projection"]), source_bytes)
+                        self.assertEqual((answer["status"], answer["released"], answer["transcript"][-2:]),
+                                         (0, 0, [[55, 9, 24], [56, 3, 24]]))
+                        self.assertEqual(execute([original, "verify-journal", db, bundle]).stdout, source_bytes)
+                        self.assertEqual(db.read_bytes(), pristine)
+                        self.assertFalse(db.with_name(db.name+"-journal").exists())

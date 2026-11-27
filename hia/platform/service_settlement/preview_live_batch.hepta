@@ -1,0 +1,128 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_preview_live_batch
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  width:usize = const() {"value":64}
+  pair:usize = const() {"value":522}
+  final:usize = const() {"value":410}
+  rn:usize = buffer.len(raw)
+  on:usize = buffer.len(out)
+  wn:usize = buffer.len(w)
+  identifier:bool = compare.eq(rn,width)
+  two:bool = compare.eq(rn,pair)
+  oneout:bool = compare.eq(on,final)
+  onew:bool = compare.eq(wn,final)
+  buffers:bool = bool.and(oneout,onew)
+  exact_pair:bool = bool.and(buffers,two)
+  branch identifier ids(raw,w) shape(raw,out,w,exact_pair)
+block ids(ir:readbuf,iw:mutbuf)
+  ia:u64 = const() {"value":0}
+  in_n:u64 = const() {"value":32}
+  ib:usize = const() {"value":32}
+  ic:usize = const() {"value":0}
+  imi:usize = const() {"value":32}
+  iw_n:usize = buffer.len(iw)
+  iw_ok:bool = compare.ge(iw_n,imi)
+  branch iw_ok compare_ids(ir,iw,ia,in_n,ib,ic) refuse()
+block compare_ids(idr:readbuf,idw:mutbuf,idz:u64,idn:u64,ida:usize,idb:usize)
+  installed:u64 = call(idr,idz,idw,idz,idn) {"function":"cp_copy"}
+  repeated:bool = call(idr,idw,ida,idb,idn) {"function":"smr_eq_bound"}
+  branch repeated conflict() accept()
+block shape(sr:readbuf,so:mutbuf,sw:mutbuf,sok:bool)
+  branch sok proof(sr,so,sw) refuse()
+block proof(pr:readbuf,po:mutbuf,pw:mutbuf)
+  pa0:u64 = const() {"value":72}
+  pd0:usize = const() {"value":269}
+  pn0:u64 = const() {"value":32}
+  pz0:u64 = const() {"value":0}
+  px0:usize = const() {"value":0}
+  copy0:u64 = call(pr,pa0,pw,pz0,pn0) {"function":"cp_copy"}
+  eq0:bool = call(pr,pw,pd0,px0,pn0) {"function":"smr_eq_bound"}
+  pa1:u64 = const() {"value":114}
+  pd1:usize = const() {"value":375}
+  pn1:u64 = const() {"value":32}
+  pz1:u64 = const() {"value":0}
+  px1:usize = const() {"value":0}
+  copy1:u64 = call(pr,pa1,pw,pz1,pn1) {"function":"cp_copy"}
+  eq1:bool = call(pr,pw,pd1,px1,pn1) {"function":"smr_eq_bound"}
+  pa2:u64 = const() {"value":188}
+  pd2:usize = const() {"value":449}
+  pn2:u64 = const() {"value":40}
+  pz2:u64 = const() {"value":0}
+  px2:usize = const() {"value":0}
+  copy2:u64 = call(pr,pa2,pw,pz2,pn2) {"function":"cp_copy"}
+  eq2:bool = call(pr,pw,pd2,px2,pn2) {"function":"smr_eq_bound"}
+  pa3:u64 = const() {"value":154}
+  pd3:usize = const() {"value":415}
+  pn3:u64 = const() {"value":32}
+  pz3:u64 = const() {"value":0}
+  px3:usize = const() {"value":0}
+  copy3:u64 = call(pr,pa3,pw,pz3,pn3) {"function":"cp_copy"}
+  eq3:bool = call(pr,pw,pd3,px3,pn3) {"function":"smr_eq_bound"}
+  ne3:bool = bool.not(eq3)
+  pa4:u64 = const() {"value":72}
+  pd4:usize = const() {"value":228}
+  pn4:u64 = const() {"value":32}
+  pz4:u64 = const() {"value":0}
+  px4:usize = const() {"value":0}
+  copy4:u64 = call(pr,pa4,pw,pz4,pn4) {"function":"cp_copy"}
+  eq4:bool = call(pr,pw,pd4,px4,pn4) {"function":"smr_eq_bound"}
+  pa5:u64 = const() {"value":333}
+  pd5:usize = const() {"value":489}
+  pn5:u64 = const() {"value":32}
+  pz5:u64 = const() {"value":0}
+  px5:usize = const() {"value":0}
+  copy5:u64 = call(pr,pa5,pw,pz5,pn5) {"function":"cp_copy"}
+  eq5:bool = call(pr,pw,pd5,px5,pn5) {"function":"smr_eq_bound"}
+  ka:usize = const() {"value":186}
+  kb:usize = const() {"value":447}
+  admit:u8 = const() {"value":24}
+  rollup:u8 = const() {"value":25}
+  first:u8 = buffer.load(pr,ka)
+  second:u8 = buffer.load(pr,kb)
+  kc:bool = compare.eq(first,admit)
+  kd:bool = compare.eq(second,rollup)
+  kst:bool = bool.and(kc,kd)
+  ev0:bool = bool.and(eq0,eq1)
+  ev1:bool = bool.and(eq2,ne3)
+  ev2:bool = bool.and(eq4,eq5)
+  ev3:bool = bool.and(ev0,ev1)
+  ev4:bool = bool.and(ev2,kst)
+  ev5:bool = bool.and(ev3,ev4)
+  branch ev5 publish(pr,po,pw) refuse()
+block publish(pur:readbuf,puo:mutbuf,puw:mutbuf)
+  u0_0:u64 = const() {"value":0}
+  u0_1:u64 = const() {"value":0}
+  u0_2:u64 = const() {"value":72}
+  write0:u64 = call(pur,u0_0,puw,u0_1,u0_2) {"function":"cp_copy"}
+  u1_0:u64 = const() {"value":333}
+  u1_1:u64 = const() {"value":72}
+  u1_2:u64 = const() {"value":32}
+  write1:u64 = call(pur,u1_0,puw,u1_1,u1_2) {"function":"cp_copy"}
+  u2_0:u64 = const() {"value":104}
+  u2_1:u64 = const() {"value":2}
+  write2:u64 = call(puw,u2_0,u2_1) {"function":"cp_put"}
+  u3_0:u64 = const() {"value":112}
+  u3_1:u64 = const() {"value":112}
+  u3_2:u64 = const() {"value":149}
+  write3:u64 = call(pur,u3_0,puw,u3_1,u3_2) {"function":"cp_copy"}
+  u4_0:u64 = const() {"value":373}
+  u4_1:u64 = const() {"value":261}
+  u4_2:u64 = const() {"value":149}
+  write4:u64 = call(pur,u4_0,puw,u4_1,u4_2) {"function":"cp_copy"}
+  u5_0:u64 = const() {"value":295}
+  u5_1:u64 = const() {"value":3}
+  write5:u64 = call(puw,u5_0,u5_1) {"function":"cp_put"}
+  pu0:u64 = const() {"value":0}
+  pu410:u64 = const() {"value":410}
+  published:u64 = call(puw,pu0,puo,pu0,pu410) {"function":"cp_wout"}
+  jump accept()
+block accept()
+  accept_code:u32 = const() {"value":0}
+  ret(accept_code)
+block conflict()
+  conflict_code:u32 = const() {"value":104}
+  ret(conflict_code)
+block refuse()
+  refuse_code:u32 = const() {"value":102}
+  ret(refuse_code)
+end

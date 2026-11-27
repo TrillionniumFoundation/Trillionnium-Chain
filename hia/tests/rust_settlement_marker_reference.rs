@@ -265,6 +265,64 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 stdout.write_all(piece)?;
             }
         }
+        "observe-held-mixed-preview-batch" => {
+            assert_eq!(args.len(), 7);
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let parent = owner.fresh_readback()?;
+            assert_eq!(parent.sequence(), 1);
+            let height = parent.order_height().checked_add(1).unwrap();
+            let block = word_hash(7000);
+            let a = fs::read(&args[4])?;
+            let b = fs::read(&args[5])?;
+            let commands = [strict_decode(&a)?, strict_decode(&b)?];
+            let mode = args[6].to_str().unwrap();
+            let mut frame = height.to_le_bytes().to_vec();
+            frame.extend(block.0);
+            frame.extend(parent.store_schema_version().to_le_bytes());
+            frame.extend(parent.store_id().0);
+            frame.extend(parent.sequence().to_le_bytes());
+            frame.extend(parent.order_height().to_le_bytes());
+            frame.extend(parent.order_block_id().0);
+            frame.extend(parent.durable_state_root().0);
+            frame.extend(parent.durable_journal_root().0);
+            frame.extend(parent.durable_committed_block_root().0);
+            frame.extend(canonical_bytes(parent.context())?);
+            let mut value = Vec::new();
+            use trnm_service_settlement::ConsumptionSettlementErrorCodeV1;
+            match owner.preview_before_vote_v1(&parent, height, block, &commands) {
+                Ok(preview) => {
+                    assert_eq!(mode, "success");
+                    value.extend(0_u32.to_le_bytes());
+                    value.extend(preview.source_sequence().to_le_bytes());
+                    value.extend(preview.source_state_root().0);
+                    value.extend(preview.source_journal_root().0);
+                    value.extend(preview.candidate_post_state_root().0);
+                    assert_eq!(preview.candidate_receipts().iter().map(|r| (r.sequence, r.operation_kind))
+                               .collect::<Vec<_>>(), [(2, 24), (3, 25)]);
+                    value.extend(u64::try_from(preview.candidate_receipts().len())?.to_le_bytes());
+                    for receipt in preview.candidate_receipts() {
+                        assert_eq!((receipt.order_height, receipt.order_block_id), (height, block));
+                        value.extend(canonical_bytes(receipt)?);
+                    }
+                    assert_eq!(value.len(), 414);
+                }
+                Err(err) if err.code() == ConsumptionSettlementErrorCodeV1::ArithmeticOverflow => {
+                    assert_eq!(mode, "late-overflow");
+                    value.extend(101_u32.to_le_bytes());
+                }
+                Err(err) if err.code() == ConsumptionSettlementErrorCodeV1::Conflict => {
+                    assert_eq!(mode, "duplicate");
+                    value.extend(104_u32.to_le_bytes());
+                }
+                Err(err) => return Err(err.into()),
+            }
+            assert_eq!(owner.fresh_readback()?, parent);
+            let mut stdout = io::stdout().lock();
+            for data in [&frame, &a, &b, &value] {
+                stdout.write_all(&u32::try_from(data.len())?.to_le_bytes())?;
+                stdout.write_all(data)?;
+            }
+        }
         "observe-preview-empty" => {
             assert_eq!(args.len(), 6);
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
