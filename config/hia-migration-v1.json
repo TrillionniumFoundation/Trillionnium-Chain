@@ -4082,7 +4082,7 @@
       "id": "platform/service-settlement-held-mixed-marker-plan",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "Private one-SQL-pass native mixed four-command replay using one checked marker plan from actual empty and nonempty SQLite intervals. Distinct actual marker endpoint counts allocate independent original SHA contexts; interior rows use current rather than parent marker coordinates. Both endpoint roots and terminal snapshot are checked; an actual outstanding Engine row refusal finalizes the SQLite statement and closes the held transaction natively before returning an unpublished refusal. No new authority or production route.",
+      "scope": "Private one-SQL-pass native mixed four-command replay using one checked marker plan from actual empty and nonempty SQLite intervals. Distinct actual marker endpoint counts allocate independent original SHA contexts; interior rows use current rather than parent marker coordinates. Both endpoint roots and terminal snapshot are checked; an outstanding Engine row refusal or a checked pre-Engine receipt-column refusal finalizes the SQLite statement and closes the held transaction natively before returning an unpublished refusal. No new authority or production route.",
       "sources": [
         "hia/platform/service_settlement/held_mixed_plan_replay.hepta"
       ],

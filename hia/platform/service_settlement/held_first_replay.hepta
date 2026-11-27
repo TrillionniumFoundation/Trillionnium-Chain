@@ -260,7 +260,7 @@ block validated(vr:readbuf,vm:mutbuf,vw:mutbuf)
   seen_rc:u32 = call(vr,vm,vw,strict) {"function":"sjr_reader"}
   needs_step:u32 = const() {"value":198}
   check:bool = compare.eq(seen_rc,needs_step)
-  branch check widths(vr,vm,vw) refused()
+  branch check widths(vr,vm,vw) checked_row_refused(vm,seen_rc)
 block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   count_at:u64 = const() {"value":128}
   expected_at:u64 = const() {"value":7002}
@@ -657,8 +657,18 @@ block engine_refused(ecm:mutbuf)
   ep_at:u64 = const() {"value":349024}
   ep:u64 = call(ecm,ep_at) {"function":"cp_get"}
   native_cleanup:bool = call(ep) {"function":"hfs_mixed_plan_profile"}
-  branch native_cleanup check_live_row(ecm) refused()
-block check_live_row(lcm:mutbuf)
+  engine_row:bool = const() {"value":true}
+  branch native_cleanup check_live_row(ecm,engine_row) refused()
+block checked_row_refused(rrm:mutbuf,rrs:u32)
+  rr_profile_at:u64 = const() {"value":349024}
+  rr_profile:u64 = call(rrm,rr_profile_at) {"function":"cp_get"}
+  rr_native:bool = call(rr_profile) {"function":"hfs_mixed_plan_profile"}
+  rr_refused:u32 = const() {"value":100}
+  rr_exact:bool = compare.eq(rrs,rr_refused)
+  rr_allowed:bool = bool.and(rr_native,rr_exact)
+  rr_pre_engine:bool = const() {"value":false}
+  branch rr_allowed check_live_row(rrm,rr_pre_engine) refused()
+block check_live_row(lcm:mutbuf,lce:bool)
   lc0:u64 = const() {"value":0}
   lc8:u64 = const() {"value":8}
   lc16:u64 = const() {"value":16}
@@ -673,9 +683,23 @@ block check_live_row(lcm:mutbuf)
   lc_stmt:u64 = call(lcm,lc40) {"function":"cp_get"}
   row_wait:u64 = const() {"value":52}
   row_op:u64 = const() {"value":7}
-  a_l:bool = compare.eq(lc_phase,row_wait)
-  b_l:bool = compare.eq(lc_op,row_op)
-  c_l:bool = compare.eq(lc_size,lc8)
+  input_phase:u64 = const() {"value":54}
+  input_op:u64 = const() {"value":8}
+  phase_required:u64 = select(lce,row_wait,input_phase)
+  op_required:u64 = select(lce,row_op,input_op)
+  size_required:u64 = select(lce,lc8,lc16)
+  a_l:bool = compare.eq(lc_phase,phase_required)
+  b_l:bool = compare.eq(lc_op,op_required)
+  c_l:bool = compare.eq(lc_size,size_required)
+  row_at_l:u64 = const() {"value":256}
+  receipt_at_l:u64 = const() {"value":264}
+  request_handle:u64 = call(lcm,row_at_l) {"function":"cp_get"}
+  request_column:u64 = call(lcm,receipt_at_l) {"function":"cp_get"}
+  one_l:u64 = const() {"value":1}
+  matches_handle:bool = compare.eq(request_handle,lc_stmt)
+  receipt_l:bool = compare.eq(request_column,one_l)
+  safe_column:bool = bool.or(lce,receipt_l)
+  exact_request:bool = bool.and(matches_handle,safe_column)
   d_l:bool = compare.eq(lc_publication,lc0)
   live_d:bool = compare.ne(lc_db,lc0)
   live_s:bool = compare.ne(lc_stmt,lc0)
@@ -685,7 +709,8 @@ block check_live_row(lcm:mutbuf)
   both_l:bool = bool.and(ab_l,cd_l)
   handles_l:bool = bool.and(live_d,live_s)
   live_l:bool = bool.and(handles_l,distinct)
-  exact_l:bool = bool.and(both_l,live_l)
+  ready_l:bool = bool.and(both_l,live_l)
+  exact_l:bool = bool.and(ready_l,exact_request)
   branch exact_l finalize_refused(lcm,lc_stmt) refused()
 block finalize_refused(frm:mutbuf,frs:u64)
   fr_at:u64 = const() {"value":349000}

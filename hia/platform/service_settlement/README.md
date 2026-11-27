@@ -569,7 +569,9 @@ original cases include challenge and trailing empties and a coalesced
 1-to-3 interval, without rereading receipts. If the Engine reply is refused while a
 verified operation row is outstanding, the native mixed reader explicitly
 finalizes that statement and closes the SQLite handle before returning the
-refusal. The original disposable writer can then take an exclusive lock
+refusal. The same cleanup applies to a typed receipt-column rejection
+before Engine dispatch, only while the exact native column request still
+names the retained statement. The original disposable writer can then take an exclusive lock
 and roll back; cold readback must still match the original. Other errors
 continue using the existing transport cleanup. Other bounded entries stand.
 

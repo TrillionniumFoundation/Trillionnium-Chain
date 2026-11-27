@@ -1,7 +1,9 @@
 """Actual held original Store replay with measured, bounded widths."""
 from contextlib import ExitStack
 import json
+import sqlite3
 import struct
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -254,3 +256,37 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                     self.assertEqual((cold.stdout, cold.stderr), (reference, b""))
             self.assertEqual(case.read_bytes(), before)
             self.assertFalse(case.with_name(case.name + "-journal").exists())
+
+            bad_row = owned / "owned operation checksum drift.db"
+            bad_row.write_bytes(before)
+            checks = execute([original, "inspect-operation-checksums", bad_row, case_paths[0]]).stdout
+            with sqlite3.connect(bad_row) as owned_writer:
+                checksum, = owned_writer.execute("SELECT checksum FROM operations WHERE sequence=1").fetchone()
+                self.assertEqual(checksum, checks[8:40])
+                drift = bytes([checksum[0] ^ 1]) + checksum[1:]
+                altered = owned_writer.execute("UPDATE operations SET checksum=? WHERE sequence=1", (drift,))
+                self.assertEqual(altered.rowcount, 1)
+            owned_writer.close()
+            self.assertEqual(execute([original, "inspect-journal-root", bad_row, case_paths[0]]).stdout,
+                             reference[-32:])
+            drifted = bad_row.read_bytes()
+            inherited = invoke(bad_row, bound, "cursor")
+            self.assertEqual((inherited["status"], inherited["projection"], inherited["replay_calls"]),
+                             (100, None, 0))
+            self.assertGreater(inherited["released"], 0)
+            self.assertEqual(inherited["transcript"][-1][:2], [54, 8])
+            for lane in ("mixed-selfhost", "mixed-direct"):
+                with self.subTest(actual_durable_row_checksum=lane):
+                    native_bad = invoke(bad_row, bound, lane)
+                    self.assertEqual((native_bad["status"], native_bad["projection"], native_bad["held"],
+                                      native_bad["replay_calls"], native_bad["released"]), (100, None, True, 0, 0))
+                    self.assertEqual(native_bad["transcript"][-3:], [[54, 8, 173], [57, 9, 24], [58, 3, 24]])
+                    self.assertEqual(execute([original, "try-exclusive", bad_row]).stdout, b"ROLLED_BACK\n")
+                    cold = subprocess.run([original, "verify-journal", bad_row, case_paths[0]],
+                                          capture_output=True, timeout=45, check=False)
+                    self.assertNotEqual(cold.returncode, 0)
+                    self.assertEqual(cold.stdout, b"")
+                    self.assertIn(b"journal row checksum differs", cold.stderr)
+            self.assertEqual(bad_row.read_bytes(), drifted)
+            self.assertFalse(bad_row.with_name(bad_row.name + "-journal").exists())
+            self.assertEqual(execute([original, "verify-journal", case, case_paths[0]]).stdout, reference)
