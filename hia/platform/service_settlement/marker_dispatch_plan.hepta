@@ -30,25 +30,17 @@ block initialize(oi:mutbuf,wi:mutbuf,ni:u64,mi:u64,size_i:u64)
   empty:bool = compare.eq(ni,zero_i)
   branch empty output(oi,wi,size_i) locate(oi,wi,ni,mi,size_i,first_marker,zero_i,one)
 block locate(ol:mutbuf,wl:mutbuf,nl:u64,ml:u64,size_l:u64,p_l:u64,index_l:u64,seq_l:u64)
-  width_l:u64 = const() {"value":296}
-  jump_l:u64 = int.mul.wrap(index_l,width_l)
-  marker:u64 = int.add.wrap(p_l,jump_l)
-  target_at:u64 = const() {"value":96}
-  offset_l:u64 = int.add.wrap(marker,target_at)
-  target:u64 = call(wl,offset_l) {"function":"cp_get"}
-  contains:bool = compare.ge(target,seq_l)
-  branch contains plan(ol,wl,nl,ml,size_l,p_l,index_l,seq_l,marker) next_marker(ol,wl,nl,ml,size_l,p_l,index_l,seq_l)
-block next_marker(on:mutbuf,wn:mutbuf,nn:u64,mn:u64,size_n:u64,p_n:u64,index_n:u64,seq_n:u64)
-  step_n:u64 = const() {"value":1}
-  next_i:u64 = int.add.wrap(index_n,step_n)
-  inside:bool = compare.lt(next_i,mn)
-  branch inside locate(on,wn,nn,mn,size_n,p_n,next_i,seq_n) bad()
-block plan(op:mutbuf,wp:mutbuf,np:u64,mp:u64,size_p:u64,p_p:u64,index_p:u64,seq_p:u64,marker_p:u64)
+  chosen:u64 = call(wl,p_l,ml,index_l,seq_l) {"function":"sdp_find"}
+  fits_l:bool = compare.lt(chosen,ml)
+  branch fits_l plan(ol,wl,nl,ml,size_l,p_l,chosen,seq_l) bad()
+block plan(op:mutbuf,wp:mutbuf,np:u64,mp:u64,size_p:u64,p_p:u64,index_p:u64,seq_p:u64)
+  width_p:u64 = const() {"value":296}
+  rel_p:u64 = int.mul.wrap(index_p,width_p)
+  marker_p:u64 = int.add.wrap(p_p,rel_p)
   from_at:u64 = const() {"value":88}
   source_slot:u64 = int.add.wrap(marker_p,from_at)
   start:u64 = call(wp,source_slot) {"function":"cp_get"}
-  member:bool = compare.gt(seq_p,start)
-  branch member stage_row(op,wp,np,mp,size_p,p_p,index_p,seq_p,marker_p,start) bad()
+  jump stage_row(op,wp,np,mp,size_p,p_p,index_p,seq_p,marker_p,start)
 block stage_row(os:mutbuf,ws:mutbuf,ns:u64,ms:u64,size_s:u64,p_s:u64,index_s:u64,seq_s:u64,marker_s:u64,from_s:u64)
   unit:u64 = const() {"value":1}
   entry_seq:u64 = int.add.wrap(from_s,unit)

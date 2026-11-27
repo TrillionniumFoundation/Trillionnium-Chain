@@ -135,7 +135,19 @@ block compare_four(cf_m:mutbuf,cf_w:mutbuf,cf_next:u32)
   branch cf_exact reply(cf_next) refused()
 block compare_same(cs_mx:mutbuf,cs_wx:mutbuf,cs_nextx:u32)
   cs_exact:bool = call(cs_mx,cs_wx) {"function":"hfs_sameblock_roots"}
-  branch cs_exact reply(cs_nextx) refused()
+  cs_check_at:u64 = const() {"value":349048}
+  cs_check:u64 = call(cs_mx,cs_check_at) {"function":"cp_get"}
+  cs_one:u64 = const() {"value":1}
+  cs_opt:bool = compare.eq(cs_check,cs_one)
+  cs_old:bool = bool.not(cs_opt)
+  cs_mark_at:u64 = const() {"value":349064}
+  cs_mark:u64 = call(cs_mx,cs_mark_at) {"function":"cp_get"}
+  cs_verified_at:u64 = const() {"value":349032}
+  cs_verified:u64 = call(cs_mx,cs_verified_at) {"function":"cp_get"}
+  cs_all_marked:bool = compare.eq(cs_mark,cs_verified)
+  cs_cursor_checked:bool = bool.or(cs_old,cs_all_marked)
+  cs_done:bool = bool.and(cs_exact,cs_cursor_checked)
+  branch cs_done reply(cs_nextx) refused()
 block check_stage(cs_r:readbuf,cs_m:mutbuf,cs_w:mutbuf,cs_p:u64,cs_c:u64)
   sub_at:u64 = const() {"value":96}
   sub:u64 = call(cs_m,sub_at) {"function":"cp_get"}
@@ -321,7 +333,16 @@ block maybe_same(ms_r:readbuf,ms_m:mutbuf,ms_w:mutbuf,ms_row:u64,ms_first:bool,m
   branch ms_is same_slot(ms_r,ms_m,ms_w,ms_row,ms_first,ms_last,ms_len) parent(ms_r,ms_m,ms_w,ms_row,ms_first,ms_last,ms_len)
 block same_slot(ss_r:readbuf,ss_m:mutbuf,ss_w:mutbuf,ss_row:u64,ss_first:bool,ss_last:bool,ss_len:u64)
   ss_valid:bool = call(ss_r,ss_m,ss_row) {"function":"hfs_sameblock_receipt"}
-  branch ss_valid save_witness(ss_r,ss_m,ss_w,ss_row,ss_first,ss_last,ss_len) refused()
+  branch ss_valid same_cursor_mode(ss_r,ss_m,ss_w,ss_row,ss_first,ss_last,ss_len) refused()
+block same_cursor_mode(sc_r:readbuf,sc_m:mutbuf,sc_w:mutbuf,sc_row:u64,sc_first:bool,sc_last:bool,sc_len:u64)
+  option_at:u64 = const() {"value":349048}
+  enabled:u64 = const() {"value":1}
+  mode:u64 = call(sc_m,option_at) {"function":"cp_get"}
+  opt_in:bool = compare.eq(mode,enabled)
+  branch opt_in generic_cursor(sc_r,sc_m,sc_w,sc_row,sc_first,sc_last,sc_len) save_witness(sc_r,sc_m,sc_w,sc_row,sc_first,sc_last,sc_len)
+block generic_cursor(gc_r:readbuf,gc_m:mutbuf,gc_w:mutbuf,gc_row:u64,gc_first:bool,gc_last:bool,gc_len:u64)
+  matches:bool = call(gc_r,gc_m,gc_w,gc_row) {"function":"slc_matches"}
+  branch matches save_witness(gc_r,gc_m,gc_w,gc_row,gc_first,gc_last,gc_len) refused()
 block prove_slot(pr_r:readbuf,pr_m:mutbuf,pr_w:mutbuf,pr_row:u64,pr_first:bool,pr_last:bool,pr_len:u64)
   pr_good:bool = call(pr_r,pr_m,pr_row) {"function":"hfs_receipt_mark"}
   branch pr_good save_witness(pr_r,pr_m,pr_w,pr_row,pr_first,pr_last,pr_len) refused()

@@ -1,0 +1,94 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_marker_interval_cursor
+fn sdp_find(mem:mutbuf,base:u64,count:u64,index:u64,seq:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,base:u64,count:u64,index:u64,seq:u64)
+  cap:u64 = const() {"value":16}
+  cap_ok:bool = compare.le(count,cap)
+  index_ok:bool = compare.lt(index,count)
+  permitted:bool = bool.and(cap_ok,index_ok)
+  branch permitted locate(mem,base,count,index,seq) bad()
+block locate(m:mutbuf,b:u64,n:u64,i:u64,s:u64)
+  stride:u64 = const() {"value":296}
+  displacement:u64 = int.mul.wrap(i,stride)
+  marker:u64 = int.add.wrap(b,displacement)
+  target_offset:u64 = const() {"value":96}
+  target_at:u64 = int.add.wrap(marker,target_offset)
+  target:u64 = call(m,target_at) {"function":"cp_get"}
+  in_range:bool = compare.ge(target,s)
+  branch in_range source(m,marker,i,s) advance(m,b,n,i,s)
+block source(sm:mutbuf,mp:u64,si:u64,ss:u64)
+  offset:u64 = const() {"value":88}
+  at:u64 = int.add.wrap(mp,offset)
+  first:u64 = call(sm,at) {"function":"cp_get"}
+  contains:bool = compare.gt(ss,first)
+  branch contains selected(si) bad()
+block selected(found:u64)
+  ret(found)
+block advance(am:mutbuf,ab:u64,an:u64,ai:u64,as:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ai,one)
+  allowed:bool = compare.lt(next,an)
+  branch allowed locate(am,ab,an,next,as) bad()
+block bad()
+  none:u64 = const() {"value":16}
+  ret(none)
+end
+
+fn slc_matches(raw:readbuf,m:mutbuf,w:mutbuf,seq:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,m:mutbuf,w:mutbuf,seq:u64)
+  mark_count:u64 = const() {"value":88}
+  cursor_at:u64 = const() {"value":349056}
+  base:u64 = const() {"value":420000}
+  count:u64 = call(m,mark_count) {"function":"cp_get"}
+  old:u64 = call(m,cursor_at) {"function":"cp_get"}
+  selected:u64 = call(m,base,count,old,seq) {"function":"sdp_find"}
+  sentinel:u64 = const() {"value":16}
+  found:bool = compare.lt(selected,sentinel)
+  branch found coords(raw,m,w,seq,selected,cursor_at,base) bad()
+block coords(cr:readbuf,cm:mutbuf,cw:mutbuf,cs:u64,ci:u64,save:u64,cb:u64)
+  stride:u64 = const() {"value":296}
+  rel:u64 = int.mul.wrap(ci,stride)
+  mark:u64 = int.add.wrap(cb,rel)
+  one:u64 = const() {"value":1}
+  source_off:u64 = const() {"value":88}
+  source_at:u64 = int.add.wrap(mark,source_off)
+  source:u64 = call(cm,source_at) {"function":"cp_get"}
+  first:u64 = int.add.wrap(source,one)
+  row_start:bool = compare.eq(cs,first)
+  cur_off:u64 = const() {"value":8}
+  prev_off:u64 = const() {"value":48}
+  cur:u64 = int.add.wrap(mark,cur_off)
+  prev:u64 = int.add.wrap(mark,prev_off)
+  expected:u64 = select(row_start,prev,cur)
+  exec_len_at:u64 = const() {"value":248}
+  exec_len:u64 = call(cm,exec_len_at) {"function":"cp_get"}
+  exec_base:u64 = const() {"value":140000}
+  last:u64 = int.add.wrap(exec_base,exec_len)
+  two_coords:u64 = const() {"value":80}
+  width:u64 = const() {"value":40}
+  exec_parent:u64 = int.sub.wrap(last,two_coords)
+  exec_current:u64 = int.sub.wrap(last,width)
+  ep:usize = int.cast(exec_parent) {"mode":"wrap"}
+  ec:usize = int.cast(exec_current) {"mode":"wrap"}
+  parent_scratch:usize = const() {"value":354080}
+  current_scratch:usize = const() {"value":354120}
+  staged_p:u64 = call(cw,cm,ep,parent_scratch,width) {"function":"sscid_copy"}
+  staged_c:u64 = call(cw,cm,ec,current_scratch,width) {"function":"sscid_copy"}
+  par_at:usize = int.cast(expected) {"mode":"wrap"}
+  cur_at:usize = int.cast(cur) {"mode":"wrap"}
+  receipt_current:usize = const() {"value":100}
+  parent_ok:bool = call(cm,parent_scratch,par_at,width) {"function":"smk_eq"}
+  exec_ok:bool = call(cm,current_scratch,cur_at,width) {"function":"smk_eq"}
+  receipt_ok:bool = call(cr,cm,receipt_current,cur_at,width) {"function":"smr_eq_bound"}
+  pe:bool = bool.and(parent_ok,exec_ok)
+  valid:bool = bool.and(pe,receipt_ok)
+  branch valid remember(cm,save,ci,cs) bad()
+block remember(rm:mutbuf,ra:u64,ri:u64,rs:u64)
+  result:u64 = call(rm,ra,ri) {"function":"cp_put"}
+  proved_at:u64 = const() {"value":349064}
+  proved:u64 = call(rm,proved_at,rs) {"function":"cp_put"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end

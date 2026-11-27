@@ -3756,6 +3756,20 @@
       ]
     },
     {
+      "id": "platform/service-settlement-live-marker-cursor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Generic bounded marker membership shared with read-only interval planner, joined before actual same-block sealed Engine apply. The admitted fixed two-operation fixture, original state/roots and close-before-read remain unchanged; no generic live replay or authority.",
+      "sources": [
+        "hia/platform/service_settlement/marker_interval_cursor.hepta",
+        "hia/platform/service_settlement/held_cursor_same_block_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_same_block_replay.py",
+        "hia/tests/test_settlement_committed_interval_codec.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-marker-dispatch-plan",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -515,3 +515,11 @@ For each operation it emits the actual marker ordinal, expected parent and
 current coordinates and the preceding and resulting state roots. Empty
 intervals yield no rows, and later operations in the same block use that
 block as parent. Planning does not call the Engine or authorize replay.
+
+The exact same bounded interval cursor now has a separate live same-block
+fixture entry. It rechecks each typed SQLite operation's receipt/current
+coordinates and expected parent against the selected digest-verified
+marker before the actual sealed Engine call. Ordinary state and root
+checks and SQLite close-before-output still apply. The live entry
+retains the original fixed two-operation qualification; six-step
+planning does not imply six-step live Engine replay.

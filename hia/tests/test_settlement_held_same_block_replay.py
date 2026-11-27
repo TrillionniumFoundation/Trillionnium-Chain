@@ -58,6 +58,7 @@ class SettlementHeldSameBlockReplayTests(unittest.TestCase):
                         ("old", OWNER / "execution_journal_read.hepta"),
                         ("pair", OWNER / "held_pair_replay.hepta"),
                         ("same", OWNER / "held_same_block_replay.hepta"),
+                        ("cursor", OWNER / "held_cursor_same_block_replay.hepta"),
                       )}
             provider = ProviderBuild(source, root / "provider").run()
             proof = Reader()
@@ -79,7 +80,7 @@ class SettlementHeldSameBlockReplayTests(unittest.TestCase):
                            "writer": str(original) if hold else None}
                 if lane != "old":
                     request.update(first_replay_engine=[str(native / "public"), build["artifact"]["sha256"]],
-                                   receipt_replay_limit=2, same_block_fixture=lane == "same")
+                                   receipt_replay_limit=2, same_block_fixture=lane in ("same", "cursor"))
                 if mode is not None:
                     request.update(first_replay_fixture_control=mode, first_replay_fixture_control_step=ordinal)
                 return json.loads(execute([sys.executable, "-I", "-S", "-B", OWNER / "schema_fixture_host.py"],
@@ -92,11 +93,14 @@ class SettlementHeldSameBlockReplayTests(unittest.TestCase):
             self.assertEqual(bytes.fromhex(observed["projection"]), expected)
             self.assertEqual(observed["transcript"], legacy["transcript"])
             self.assertEqual(observed["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
-            for kind, position in (("root", 1), ("state", 2)):
-                refused = invoke(same, binding, "same", mode=kind, ordinal=position)
-                self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
-                                 (100, None, position), refused)
-                self.assertGreater(refused["released"], 0)
+            cursor = invoke(same, binding, "cursor", hold=True)
+            self.assertEqual(cursor, observed)
+            for lane in ("same", "cursor"):
+                for kind, position in (("root", 1), ("id", 2), ("state", 2)):
+                    refused = invoke(same, binding, lane, mode=kind, ordinal=position)
+                    self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                     (100, None, position), refused)
+                    self.assertGreater(refused["released"], 0)
             self.assertEqual(invoke(same, binding, "pair")["replay_calls"], 0)
             self.assertEqual(same.read_bytes(), before)
 
@@ -105,6 +109,7 @@ class SettlementHeldSameBlockReplayTests(unittest.TestCase):
             for file, raw in zip(ordinary, list(retained_commands())[:3], strict=True):
                 file.write_bytes(raw)
             distinct = execute([original, "seed-receipts", different, ordinary[0], "0", *ordinary[1:]]).stdout
-            rejected = invoke(different, distinct, "same")
-            self.assertEqual((rejected["status"], rejected["replay_calls"], rejected["projection"]),
-                             (100, 0, None))
+            for lane in ("same", "cursor"):
+                rejected = invoke(different, distinct, lane)
+                self.assertEqual((rejected["status"], rejected["replay_calls"], rejected["projection"]),
+                                 (100, 0, None))
