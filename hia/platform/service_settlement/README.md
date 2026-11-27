@@ -530,3 +530,10 @@ count. The real receipt, rollup and Settle coordinates must agree with the
 digest-verified interval cursor, including Settle's parent after actual
 empty challenge blocks. Old finite paths and the six-row planning evidence
 remain separate from this four-row live qualification.
+
+The separate three-row measured native cursor accepts the original
+Receipt, Receipt, Rollup history with no Settle. It verifies each marker
+interval against independently recomputed original receipt-prefix and
+sealed Engine state roots, then checks complete terminal state and closes
+before exposing output. This does not broaden the older finite profiles
+or confer replay or production authority.

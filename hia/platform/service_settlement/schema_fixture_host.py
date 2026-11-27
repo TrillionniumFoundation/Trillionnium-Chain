@@ -137,7 +137,7 @@ def run(request, uri_image, reader, provider):
                 requested_replay += 1
                 if stream:
                     profile, = struct.unpack_from("<Q", state, 349024)
-                    rows = {6: 1, 7: 2, 8: 4}.get(profile)
+                    rows = {6: 1, 7: 2, 8: 4, 9: 3}.get(profile)
                     if (rows is None or requested_replay > rows
                             or selected_rows not in (None, rows)):
                         raise ValueError("Unexpected verified native stream selection")
@@ -163,7 +163,7 @@ def run(request, uri_image, reader, provider):
                     engine = FixtureReplay.open(replay_owners, *replay_image, same_block=same_block,
                                                 variable_rows=active_rows if stream else variable_rows)
                 raw = engine.apply(payload)
-                if raw and (active_rows == 4 or same_block):
+                if raw and (active_rows == 4 or same_block or (stream and active_rows == 3)):
                     if engine.last_parent_root is None:
                         raise ValueError("Missing observed native predecessor root")
                     raw += engine.last_parent_root

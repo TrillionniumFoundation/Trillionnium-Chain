@@ -37,7 +37,9 @@ block special(sp_r:readbuf,sp_m:mutbuf,sp_w:mutbuf,sp_p:u64,sp_phase:u64)
   sp_five:u64 = const() {"value":5}
   sp_driven:bool = call(sp_mode) {"function":"hfs_settled"}
   sp_same:bool = compare.eq(sp_mode,sp_five)
-  sp_settled:bool = bool.or(sp_driven,sp_same)
+  sp_linear:bool = call(sp_mode) {"function":"hfs_linear3"}
+  sp_legacy:bool = bool.or(sp_driven,sp_same)
+  sp_settled:bool = bool.or(sp_legacy,sp_linear)
   branch sp_settled intercept(sp_r,sp_m,sp_w,sp_p,sp_phase) route_row(sp_r,sp_m,sp_w,sp_p,sp_phase)
 block intercept(it_r:readbuf,it_m:mutbuf,it_w:mutbuf,it_p:u64,it_ph:u64)
   it_marker:u64 = const() {"value":22}
@@ -129,7 +131,13 @@ block compare_intervals(cv_m:mutbuf,cv_w:mutbuf,cv_next:u32)
   cv_cap:u64 = call(cv_m,cv_at) {"function":"cp_get"}
   cv_five:u64 = const() {"value":5}
   cv_same:bool = compare.eq(cv_cap,cv_five)
-  branch cv_same compare_same(cv_m,cv_w,cv_next) compare_four(cv_m,cv_w,cv_next)
+  branch cv_same compare_same(cv_m,cv_w,cv_next) choose_interval(cv_m,cv_w,cv_next,cv_cap)
+block choose_interval(ci_m:mutbuf,ci_w:mutbuf,ci_next:u32,ci_cap:u64)
+  ci_linear:bool = call(ci_cap) {"function":"hfs_linear3"}
+  branch ci_linear compare_three(ci_m,ci_w,ci_next) compare_four(ci_m,ci_w,ci_next)
+block compare_three(cz_m:mutbuf,cz_w:mutbuf,cz_next:u32)
+  cz_exact:bool = call(cz_m,cz_w) {"function":"hfs_linear_roots"}
+  branch cz_exact close_cursor(cz_m,cz_next) refused()
 block compare_four(cf_m:mutbuf,cf_w:mutbuf,cf_next:u32)
   cf_exact:bool = call(cf_m,cf_w) {"function":"hfs_roots"}
   branch cf_exact close_cursor(cf_m,cf_next) refused()
@@ -329,7 +337,10 @@ block profiled(pf_r:readbuf,pf_m:mutbuf,pf_w:mutbuf,pf_row:u64,pf_first:bool,pf_
   pf_mode:bool = call(pf_cap) {"function":"hfs_settled"}
   pf5:u64 = const() {"value":5}
   pf_same:bool = compare.eq(pf_cap,pf5)
-  branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) maybe_same(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_same)
+  pf_linear:bool = call(pf_cap) {"function":"hfs_linear3"}
+  branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) maybe_linear(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_same,pf_linear)
+block maybe_linear(mj_r:readbuf,mj_m:mutbuf,mj_w:mutbuf,mj_row:u64,mj_first:bool,mj_last:bool,mj_len:u64,mj_same:bool,mj_linear:bool)
+  branch mj_linear cursor_mode(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len) maybe_same(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len,mj_same)
 block maybe_same(ms_r:readbuf,ms_m:mutbuf,ms_w:mutbuf,ms_row:u64,ms_first:bool,ms_last:bool,ms_len:u64,ms_is:bool)
   branch ms_is same_slot(ms_r,ms_m,ms_w,ms_row,ms_first,ms_last,ms_len) parent(ms_r,ms_m,ms_w,ms_row,ms_first,ms_last,ms_len)
 block same_slot(ss_r:readbuf,ss_m:mutbuf,ss_w:mutbuf,ss_row:u64,ss_first:bool,ss_last:bool,ss_len:u64)
@@ -485,7 +496,9 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_limit:u64 = call(vm0,vh_limit_at) {"function":"cp_get"}
   vh_extra:usize = const() {"value":32}
   vh_fourcase:bool = call(vh_limit) {"function":"hfs_settled"}
-  vh_profile:bool = bool.or(vh_fourcase,vh_same)
+  vh_linear:bool = call(vh_limit) {"function":"hfs_linear3"}
+  vh_old_profile:bool = bool.or(vh_fourcase,vh_same)
+  vh_profile:bool = bool.or(vh_old_profile,vh_linear)
   vh_plus:usize = int.add.wrap(vh_width,vh_extra)
   vh_fixed:usize = select(vh_profile,vh_plus,vh_width)
   vh_variable:bool = call(vh_mode) {"function":"hfs_variable"}
@@ -506,7 +519,10 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_not_last:bool = compare.lt(vh_count,vh_limit4)
   vh_before_settle:bool = bool.and(vh_var_settle,vh_not_last)
   vh_before_pair:bool = bool.and(vh_pair,vh_first)
-  vh_intermediate:bool = bool.or(vh_before_pair,vh_before_settle)
+  vh_second_or_first:bool = bool.or(vh_first,vh_second)
+  vh_before_linear:bool = bool.and(vh_linear,vh_second_or_first)
+  vh_old_interm:bool = bool.or(vh_before_pair,vh_before_settle)
+  vh_intermediate:bool = bool.or(vh_old_interm,vh_before_linear)
   vh_min_raw:usize = const() {"value":183}
   vh_max_raw:usize = const() {"value":16456}
   vh_min_plus:usize = int.add.wrap(vh_min_raw,vh_extra)
@@ -518,7 +534,8 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_bounded:bool = bool.and(vh_above,vh_below)
   vh_shaped:bool = select(vh_intermediate,vh_bounded,vh_exact)
   vh_actual_core:usize = int.sub.wrap(vh_actual,vh_extra)
-  vh_parent_off:usize = select(vh_var_settle,vh_actual_core,vh_width)
+  vh_dynamic_parent:bool = bool.or(vh_var_settle,vh_linear)
+  vh_parent_off:usize = select(vh_dynamic_parent,vh_actual_core,vh_width)
   branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_parent_off,vh_profile) refused()
 block replay_shape(vs_r:readbuf,vs_m:mutbuf,vs_a:u64,vs_n:u64,vs_len:usize,vs_ex:bool)
   branch vs_ex compare_engine_parent(vs_r,vs_m,vs_a,vs_n,vs_len) compare_replay(vs_r,vs_m,vs_a,vs_n)

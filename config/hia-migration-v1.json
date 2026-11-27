@@ -3768,6 +3768,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-live-variable-rollup-cursor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Bounded actual original variable-width Receipt, Receipt, Rollup held replay and typed terminal state without Settle. Native membership selects actual marked intervals and verifies original receipt and state prefixes. No production, general count, write or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_cursor_variable_rollup_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_rollup_replay.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-mixed-cursor",
       "node_integration_complete": false,
       "retirement_accepted": false,
