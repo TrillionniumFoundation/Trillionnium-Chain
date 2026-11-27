@@ -171,6 +171,17 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/shm_record_replay",
+      "node_integration_complete": false,
+      "scope": "Finite original SHM reference mutation and global collection despite loss of the bounded event, with native exact retained JSON only on successful recording. No physical SHM, VFS or live vector ownership.",
+      "source": "hia/src/sqlite_io_boundary/shm_record_replay.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_shm_record_replay.py",
+        "hia/tests/rust_sqlite_shm_record_replay_reference.rs"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/retained_lifecycle_json",
       "node_integration_complete": false,
       "scope": "Finite original SQLite ledger evidence transition and exact compact JSON emitted only on native retention success. No physical vector ownership, filesystem, production VFS or callback routing.",
@@ -2557,7 +2568,8 @@
         "sqlite_io_boundary/lifecycle_json_size",
         "sqlite_io_boundary/typed_record_evidence",
         "sqlite_io_boundary/lifecycle_json_emit",
-        "sqlite_io_boundary/retained_lifecycle_json"
+        "sqlite_io_boundary/retained_lifecycle_json",
+        "sqlite_io_boundary/shm_record_replay"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

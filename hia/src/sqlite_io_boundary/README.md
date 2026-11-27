@@ -232,3 +232,29 @@ Rust ledger and checks their exact bytes and counters. It also checks
 pressure, exact and short capacity and untouched suffixes. This is a
 private bounded transition; it does not own live SQLite vectors or
 route VFS callbacks.
+
+## SHM references when recording cannot retain an event
+
+`shm_record_replay.hepta` composes the original SHM logical mutation,
+cleanup collection, record decision and exact compact event bytes. The
+first 160 bytes match the typed retention prefix; the next words give
+the selected slot and active main count, then the three nine-word
+close/collect rows. One observed UTF-8 basename starts at offset 392.
+The module derives the reference count and binds the typed prospective
+event to the selected row before applying the measured retention step. Action 9
+adds and action 11 closes; this slice covers existing slots and adds
+with at most 31 prior references. The separate SHM replay already
+covers the earlier reference limit at 32.
+
+The output starts with the 72-byte retention diagnostic and then five
+little-endian u64 words: selected reference count after mutation,
+retained slot mask, logical charge, internal recorder status and active
+main count. Only successful recording adds a length at offset 112 and
+the exact JSON bytes at offset 120. Ordinary evidence pressure returns
+SQLite FULL after incrementing the reference count. Cleanup evidence
+pressure still sweeps all slots; the close returns success while its
+explicit recorder status reports pressure. On pressure bytes beyond
+the fixed 112-byte output stay untouched. Malformed and short output
+cases publish nothing. The differential uses the original real ledger
+operations under both policies, but does not map shared memory, write
+vectors, own VFS callbacks, or inspect real files.
