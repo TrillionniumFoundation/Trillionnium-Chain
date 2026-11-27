@@ -1166,6 +1166,18 @@
       ]
     },
     {
+      "id": "data-availability/member-definition",
+      "node_integration_complete": false,
+      "scope": "Original public DA member value constructor, full native u128 bounds, Dalek predicate and canonical Borsh definition hash; no membership, quorum, credentials or authorization.",
+      "source": "hia/src/data_availability/member_definition.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_member_definition.py",
+        "hia/tests/rust_da_member_definition_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2560,6 +2572,7 @@
         "data-availability/chunk-commitments",
         "data-availability/chunk-inclusion-path",
         "data-availability/chunk-bound-inclusion",
+        "data-availability/member-definition",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",

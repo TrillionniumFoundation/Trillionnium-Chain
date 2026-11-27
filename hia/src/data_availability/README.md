@@ -345,3 +345,39 @@ Rust library is independently rebuilt and compared before and after
 the test-only fixture is installed and removed. This comparison is not
 a signed message, trusted certificate root, retrieval authority, or
 a storage/repair approval.
+
+## DA member value and definition commitment
+
+The [private constructor](member_definition.hepta) mirrors the public
+`DaMemberV1::new` value operation. Its immutable loan is the raw
+public key (32 bytes), weight (LE `u128`), Borsh optional validator
+bytes, and the two opaque 32-byte storage and bond references, in
+that order. Accepted framing distinguishes `None` from
+`Some(empty)`; arbitrary validator bytes are allowed. The original
+checks a nonzero full-width weight before attempting public-key
+decompression and its weak-point test. The existing shared public
+point helpers use the sign-zero representative only internally to
+preserve Dalek membership and point-order behavior. The exact raw
+key stays in the serialized value, including its sign/encoding.
+
+After checking those fields, the HIA call emits the original
+Borsh body (fixed scheme 0 prepended to the loan), followed by the
+member definition hash. This SHA-256 uses the original
+`trnm.portable.v2.da-member.v1` ASCII domain, its LE `u32` byte
+length, and the complete Borsh body. It does not treat the weight,
+storage or bond reference as authorized or checked. No private key,
+signature, committee membership or quorum operation is involved.
+
+The shared profile reserves a 34-byte result overhead in the
+existing 1 MiB borrowed-result cap: maximum input is 1,048,542 bytes,
+with 140,512 scratch bytes and sufficient result space. Status
+201/202/203 distinguish original weight, invalid point and weak
+point refusals; 100/102/103 are private frame/capacity/internal
+statuses. A refusal never publishes output. The input, spare
+result and scratch tail are unchanged.
+
+[The original and two-backend differential](../../tests/test_da_member_definition.py)
+uses the actual frozen DA constructor and Borsh library with public-only
+fixture keys, `None` and `Some(empty)`, upper-half and maximum weights,
+over-field encodings, and the exact shared 1 MiB result. The one-byte-larger
+Rust result is not a native-capability claim.
