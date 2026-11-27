@@ -76,6 +76,9 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
 
             # Keep all sealed descriptors distinct and alive across these direct calls.
             header_image, post_gate = loaded("header_reader"), loaded("post_open_path")
+            direct_image = stack.enter_context(NativeModule(
+                OWNER / "store_post_open_path.hepta", byte_exports=("f0",), backend="direct"))
+            direct_gate = stack.enter_context(sealed_library(str(direct_image.library), direct_image.artifact_sha256))
             lib = stack.enter_context(sealed_library(str(provider), proof.checked[str(provider)]["sha256"]))
             actual_header, header_trace = native_store_header(os.fsencode(db), header_image, lib)
             self.assertEqual(actual_header, prior[:20])
@@ -116,17 +119,19 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             free = bind(lib, "trnm_task_provider_free", None, ptr)
             uri = (db.as_uri() + "?mode=ro").encode("ascii")
             opening = ctypes.create_string_buffer(struct.pack("<QQ", 16810049, len(uri)) + uri)
-            for case in (missing, not_file):
-                owner = make()
-                self.assertTrue(owner)
-                try:
-                    response = ctypes.create_string_buffer(24)
-                    self.assertEqual(fetch(owner, 2, opening, len(opening) - 1, response, 24), 24)
-                    self.assertEqual(native_post_open_path(os.fsencode(case), post_gate, fetch, owner, response.raw),
-                                     (100, [[15, 24], [3, 24]]))
-                    self.assertEqual(reset(owner), 0)
-                finally:
-                    free(owner)
+            for backend, post_close_gate in (("selfhost", post_gate), ("direct", direct_gate)):
+                for case in (missing, not_file):
+                    with self.subTest(close_after_refused_path=case.name, backend=backend):
+                        owner = make()
+                        self.assertTrue(owner)
+                        try:
+                            response = ctypes.create_string_buffer(24)
+                            self.assertEqual(fetch(owner, 2, opening, len(opening) - 1, response, 24), 24)
+                            self.assertEqual(native_post_open_path(os.fsencode(case), post_close_gate, fetch, owner, response.raw),
+                                             (100, [[15, 24], [3, 24]]))
+                            self.assertEqual(reset(owner), 0)
+                        finally:
+                            free(owner)
             for width in (0, 1, 19):
                 with self.subTest(short=width):
                     short = owned / f"short-{width}.db"

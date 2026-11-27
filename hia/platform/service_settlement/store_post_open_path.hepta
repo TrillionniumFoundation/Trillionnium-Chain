@@ -11,30 +11,93 @@ block route(rr:readbuf,rm:mutbuf,rw:mutbuf)
   initial:bool = compare.eq(stage,zero)
   branch initial request(rr,rm,rw) response(rr,rm,stage)
 block request(qr:readbuf,qm:mutbuf,qw:mutbuf)
-  status:u32 = call(qr,qm,qw) {"function":"spp_preflight"}
-  ret(status)
+  path_status:u32 = call(qr,qm,qw) {"function":"spp_preflight"}
+  preflight_wait:u32 = const() {"value":198}
+  pathname_ok:bool = compare.eq(path_status,preflight_wait)
+  branch pathname_ok need_open() refused()
+block need_open()
+  open_pending:u32 = const() {"value":196}
+  ret(open_pending)
 block response(sr:readbuf,sm:mutbuf,ss:u64)
   expected:usize = const() {"value":24}
   actual:usize = buffer.len(sr)
   scalar:bool = compare.eq(actual,expected)
-  one:u64 = const() {"value":1}
-  pending:bool = compare.eq(ss,one)
-  valid:bool = bool.and(scalar,pending)
-  branch valid observed(sr,sm) refused()
-block observed(oraw:readbuf,om:mutbuf)
-  from:u64 = const() {"value":0}
-  scratch:u64 = const() {"value":64}
-  width:u64 = const() {"value":24}
-  copied:u64 = call(oraw,from,om,scratch,width) {"function":"cp_copy"}
-  err:u64 = call(om,scratch) {"function":"cp_get"}
-  accepted:bool = call(om,err) {"function":"spp_regular"}
-  terminal:u64 = const() {"value":2}
-  flag:u64 = call(om,from,terminal) {"function":"cp_put"}
-  branch accepted okay() refused()
-block okay()
-  ok:u32 = const() {"value":0}
-  ret(ok)
+  branch scalar parse(sr,sm,ss) refused()
+block parse(pr:readbuf,pm:mutbuf,ps:u64)
+  zero_p:u64 = const() {"value":0}
+  scratch_p:u64 = const() {"value":64}
+  width_p:u64 = const() {"value":24}
+  copied:u64 = call(pr,zero_p,pm,scratch_p,width_p) {"function":"cp_copy"}
+  code:u64 = call(pm,scratch_p) {"function":"cp_get"}
+  first_at:u64 = const() {"value":72}
+  first:u64 = call(pm,first_at) {"function":"cp_get"}
+  second_at:u64 = const() {"value":80}
+  second:u64 = call(pm,second_at) {"function":"cp_get"}
+  one_p:u64 = const() {"value":1}
+  is_open:bool = compare.eq(ps,one_p)
+  branch is_open opened(pm,code,first,second) route_after(pm,ps,code,first,second)
+block opened(om:mutbuf,oc:u64,of:u64,os:u64)
+  zero_o:u64 = const() {"value":0}
+  success:bool = compare.eq(oc,zero_o)
+  has_handle:bool = compare.ne(of,zero_o)
+  no_spare:bool = compare.eq(os,zero_o)
+  exact_open:bool = bool.and(success,no_spare)
+  valid_open:bool = bool.and(exact_open,has_handle)
+  branch valid_open lstat_request(om,of) refused()
+block lstat_request(lm:mutbuf,lf:u64)
+  handle_at:u64 = const() {"value":224}
+  handle_saved:u64 = call(lm,handle_at,lf) {"function":"cp_put"}
+  stage_l:u64 = const() {"value":2}
+  phase_loc:u64 = const() {"value":0}
+  phase_saved:u64 = call(lm,phase_loc,stage_l) {"function":"cp_put"}
+  want_l:u32 = const() {"value":198}
+  ret(want_l)
+block route_after(am:mutbuf,ap:u64,ac:u64,af:u64,as:u64)
+  two_a:u64 = const() {"value":2}
+  is_stat:bool = compare.eq(ap,two_a)
+  branch is_stat observed(am,ac) choose_close(am,ap,ac,af,as)
+block observed(bm:mutbuf,be:u64)
+  accepted:bool = call(bm,be) {"function":"spp_regular"}
+  branch accepted terminal(bm) close_request(bm)
+block close_request(qm2:mutbuf)
+  handle_loc:u64 = const() {"value":224}
+  handle_close:u64 = call(qm2,handle_loc) {"function":"cp_get"}
+  payload_at:u64 = const() {"value":256}
+  handle_sent:u64 = call(qm2,payload_at,handle_close) {"function":"cp_put"}
+  payload_n_at:u64 = const() {"value":8}
+  payload_n:u64 = const() {"value":8}
+  payload_saved:u64 = call(qm2,payload_n_at,payload_n) {"function":"cp_put"}
+  phase_request_at:u64 = const() {"value":0}
+  phase_c:u64 = const() {"value":3}
+  phase_c_saved:u64 = call(qm2,phase_request_at,phase_c) {"function":"cp_put"}
+  want_c:u32 = const() {"value":198}
+  ret(want_c)
+block choose_close(cm:mutbuf,cp:u64,cc:u64,cf:u64,cs:u64)
+  three_c:u64 = const() {"value":3}
+  is_close:bool = compare.eq(cp,three_c)
+  zero_c:u64 = const() {"value":0}
+  residual_at:u64 = bit.or(cc,cf)
+  residual:u64 = bit.or(residual_at,cs)
+  clear:bool = compare.eq(residual,zero_c)
+  verified:bool = bool.and(is_close,clear)
+  branch verified closed_refused(cm) refused()
+block closed_refused(dm:mutbuf)
+  completed:u64 = call(dm) {"function":"spp_post_finished"}
+  denied:u32 = const() {"value":100}
+  ret(denied)
+block terminal(tm:mutbuf)
+  finished:u64 = call(tm) {"function":"spp_post_finished"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
 block refused()
   bad:u32 = const() {"value":100}
   ret(bad)
+end
+
+fn spp_post_finished(mem:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf)
+  phase:u64 = const() {"value":0}
+  terminal:u64 = const() {"value":4}
+  result:u64 = call(mem,phase,terminal) {"function":"cp_put"}
+  ret(result)
 end

@@ -31,6 +31,16 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                           "cursor": OWNER / "held_cursor_variable_dispatch.hepta",
                           "execution": OWNER / "execution_journal_read.hepta",
                       }.items()}
+            physical_images = {
+                backend: {
+                    name: stack.enter_context(NativeModule(OWNER / source, byte_exports=("f0",), backend=backend))
+                    for name, source in {
+                        "path_gate": "store_path_preflight.hepta", "header_reader": "store_header_read.hepta",
+                        "post_open_path": "store_post_open_path.hepta",
+                    }.items()
+                }
+                for backend in ("direct", "selfhost")
+            }
             out = tmp / "engine"
             engine = json.loads(execute([sys.executable, "-B", "-m", "hia.platform.service_settlement.build",
                                         "--output", out], timeout=200).stdout)
@@ -39,7 +49,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             owned = tmp / "owned"
             owned.mkdir(mode=0o700)
 
-            def invoke(path, binding, lane, *, failed=None, ordinal=4):
+            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None):
                 def image(name):
                     module = images[name]
                     return [str(module.library), module.artifact_sha256]
@@ -48,6 +58,9 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                            "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                            "directory": str(owned), "database": str(path),
                            "journal_binding": binding.hex()}
+                if physical is not None:
+                    request.update({name: [str(module.library), module.artifact_sha256]
+                                    for name, module in physical_images[physical].items()})
                 if lane == "cursor":
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
@@ -116,6 +129,15 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         self.assertEqual(bytes.fromhex(cursor["projection"]), original_out)
                         self.assertEqual(cursor["transcript"], independent["transcript"])
                         self.assertEqual(cursor["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        if name == "settle":
+                            for backend in physical_images:
+                                with self.subTest(physical=backend):
+                                    fully_held = invoke(db, held, "cursor", physical=backend)
+                                    self.assertEqual(fully_held, {
+                                        **cursor, "path_checks": [[i, 15, 24] for i in range(1, 5)],
+                                        "header_checks": [[17, 24], [29, 44], [18, 24]], "post_open_checks": [[15, 24]],
+                                        "transcript": [cursor["transcript"][0], [1, 15, 24], *cursor["transcript"][1:]],
+                                    })
                         refused = invoke(db, held, "cursor", failed="root", ordinal=count)
                         self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
                                          (100, None, count), refused)

@@ -571,6 +571,13 @@ and sidecar admission for generated owned fixtures. It composes exact
 pathname bytes with -wal, -shm, and -journal and evaluates real
 provider lstat results before invoking SQLite. The same existing schema
 gate then holds the original rollback read and closes before return.
-Parent-directory authorization and header reading remain in the private
-transport; stable ancestor/descriptor identity, original post-open path
-verification, and production Store ownership are not established.
+The optional native header continuation reads the original 20 bytes
+after successful admission and closes its file before opening SQLite.
+After SQLite opens read-only, another sealed native continuation consumes
+the original successful open response and rechecks the final pathname
+before the busy timeout or transaction. Its refusal must receive an
+acknowledged native-requested close of that SQLite handle, without SQL.
+The private transport only forwards these operations; the complete
+sequence is compared against the original mixed history in one held
+replay. Stable ancestor and cross-open descriptor identity and production
+Store ownership are not established.

@@ -91,35 +91,34 @@ def native_store_header(path, image, provider):
 
 
 def native_post_open_path(path, image, fetch, owner, open_response):
-    # Consume the actual successful scalar from this retained SQLite owner.
-    if len(open_response) != 24:
-        raise ValueError("Post-open observation needs an exact SQLite response")
-    code, capability, spare = struct.unpack("<QQQ", open_response)
-    if code or not capability or spare:
-        raise ValueError("Post-open observation needs an actual live SQLite capability")
+    # Forward the successful scalar and only the two permitted native requests
+    # with the same SQLite provider context. Native owns the capability bytes.
     ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
     step = bind(image, "f0", u64, ptr, u64, ptr, u64, ptr, u64)
     state, work = (ctypes.create_string_buffer(8192) for _ in range(2))
     response = ctypes.create_string_buffer(24)
     borrowed = ctypes.create_string_buffer(path)
     status = step(borrowed, len(path), state, len(state), work, len(work))
-    phase, size = struct.unpack_from("<QQ", state)
-    if status != 198 or phase != 1 or not 25 <= size <= 4120:
-        raise ValueError("Post-open gate requires one native lstat request")
-    amount = fetch(owner, 15, ctypes.addressof(state) + 256, size, response, len(response))
-    if amount != 24:
-        raise ValueError("Post-open lstat response has inconsistent framing")
-    decision = step(response, amount, state, len(state), work, len(work))
-    if decision not in (0, 100) or struct.unpack_from("<Q", state)[0] != 2:
-        raise ValueError("Unexpected result of native post-open lstat")
-    observations = [[15, amount]]
-    if decision:
-        handle = ctypes.create_string_buffer(struct.pack("<Q", capability))
-        closed = fetch(owner, 3, handle, 8, response, len(response))
-        if closed != 24 or response.raw != bytes(24):
-            raise ValueError("SQLite close on post-open refusal did not succeed")
-        observations.append([3, closed])
-    return decision, observations
+    if status != 196 or struct.unpack_from("<Q", state)[0] != 1:
+        raise ValueError("Post-open path must request the actual SQLite-open result")
+    borrow_open = ctypes.create_string_buffer(open_response)
+    status = step(borrow_open, len(open_response), state, len(state), work, len(work))
+    observations = []
+    for expected, opcode in ((2, 15), (3, 3)):
+        phase, size = struct.unpack_from("<QQ", state)
+        valid_size = 25 <= size <= 4120 if expected == 2 else size == 8
+        if expected == 3 and status == 0 and phase == 4:
+            return status, observations
+        if status != 198 or phase != expected or not valid_size:
+            raise ValueError("Unexpected native post-open filesystem or SQLite request")
+        amount = fetch(owner, opcode, ctypes.addressof(state) + 256, size, response, len(response))
+        if amount != 24:
+            raise ValueError("Post-open provider response has inconsistent framing")
+        observations.append([opcode, amount])
+        status = step(response, amount, state, len(state), work, len(work))
+    if status != 100 or struct.unpack_from("<Q", state)[0] != 4:
+        raise ValueError("Native post-open refusal must acknowledge explicit SQLite close")
+    return status, observations
 
 
 def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None):
