@@ -1143,6 +1143,17 @@
       ]
     },
     {
+      "id": "data-availability/chunk-inclusion-path",
+      "node_integration_complete": false,
+      "scope": "Original DA typed Merkle path comparison from supplied leaf/root, fixed bounded callback-free HIA; actual private Rust oracle confined to cfg(test), no validation of roots, admission, certification or repair rights.",
+      "source": "hia/src/data_availability/chunk_inclusion_path.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_chunk_inclusion_path.py",
+        "hia/tests/rust_da_chunk_inclusion_path_harness.rs"
+      ]
+    },
+    {
       "id": "data-availability/typed-object-id",
       "node_integration_complete": false,
       "scope": "Original DA transaction-only namespace and six typed Borsh ObjectId kinds with opaque 32-byte digest; no availability, attestation, lookup, signature or storage authority.",
@@ -2535,6 +2546,7 @@
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",
         "data-availability/chunk-commitments",
+        "data-availability/chunk-inclusion-path",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-manifest",

@@ -272,3 +272,44 @@ and capacity probes are explicitly native-only controls. Exact 1 MiB
 is compared under both fixed emitters; 1 MiB plus one is an original-only
 control. This surface does not validate any Merkle path, certificate,
 signature, storage, retrieval, repair right, or node-accepted authority.
+
+## DA chunk inclusion path comparison
+
+The [private path comparator](chunk_inclusion_path.hepta) takes the
+same three values as the original pure `verify_merkle_path_v1`:
+a supplied leaf hash32, a supplied expected root hash32, and one
+complete Borsh `DaChunkInclusionProofV1`. The proof consists of
+little-endian `u32` index, item count and path count, followed by
+`level:u32 LE || sibling_side:u8 || sibling_hash:32` per step.
+Neither external hash is trusted or checked against a certificate.
+
+The comparator preserves the original index/count, truncation,
+level and side, duplicate-final, trailing-step, then root ordering.
+It hashes each parent with the exact Borsh leaf-domain string,
+little-endian level and ordered siblings under the original
+parent domain. Its final root hashes the same leaf-domain string,
+original item count and running hash under the separate root domain.
+A canonical count fits `u32`, so at most 32 sibling steps are visited.
+The private framing cap is 1 MiB total; 1,472 scratch bytes are needed.
+No byte result is produced, and the input, output and scratch canary
+beyond the declared extent are untouched.
+
+Statuses 50–55 respectively preserve the original coordinate,
+truncation, level/side, duplicate-final, trailing-step and root
+mismatch observations. 100/102/103 are private frame, capacity and
+internal errors, not Rust protocol results. An otherwise matching
+proof only establishes equality to the supplied root, not admission,
+membership, authorization, proof of availability or repair right.
+
+[The differential](../../tests/test_da_chunk_inclusion_path.py)
+runs the actual original private generator and comparator on paths
+from frozen Rust unsigned batch construction. It verifies the
+tracked Rust tree, copies it into a fresh test directory and appends
+only one `cfg(test)` module reference whose source is the committed
+fixture. While the fixture is present, it runs only the test build
+and the one exact test selector, rejecting evidence of non-test DA
+compilation at that stage. The original bytes are restored before
+any non-test rebuild. It compares the two clean non-test libraries
+from the same path byte for byte and checks for marker absence. No
+production Rust file is modified and the offline witness does not
+sign, open a database, access a network or obtain certified state.
