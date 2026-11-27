@@ -34,9 +34,8 @@ block routes(rr:readbuf,rm:mutbuf,rw:mutbuf,rp:u64)
 block special(sp_r:readbuf,sp_m:mutbuf,sp_w:mutbuf,sp_p:u64,sp_phase:u64)
   sp_at:u64 = const() {"value":349024}
   sp_mode:u64 = call(sp_m,sp_at) {"function":"cp_get"}
-  sp_five:u64 = const() {"value":5}
   sp_driven:bool = call(sp_mode) {"function":"hfs_settled"}
-  sp_same:bool = compare.eq(sp_mode,sp_five)
+  sp_same:bool = call(sp_mode) {"function":"hfs_same_profile"}
   sp_linear:bool = call(sp_mode) {"function":"hfs_linear_profile"}
   sp_legacy:bool = bool.or(sp_driven,sp_same)
   sp_settled:bool = bool.or(sp_legacy,sp_linear)
@@ -84,9 +83,8 @@ block marker(ma_r:readbuf,ma_m:mutbuf,ma_w:mutbuf)
   ma_eleven:u64 = const() {"value":11}
   ma_at:u64 = const() {"value":349024}
   ma_cap:u64 = call(ma_m,ma_at) {"function":"cp_get"}
-  ma_five:u64 = const() {"value":5}
   ma_two:u64 = const() {"value":2}
-  ma_same:bool = compare.eq(ma_cap,ma_five)
+  ma_same:bool = call(ma_cap) {"function":"hfs_same_profile"}
   ma_high:u64 = select(ma_same,ma_two,ma_eleven)
   ma_room:bool = compare.lt(ma_count,ma_high)
   branch ma_room verified_marker(ma_r,ma_m,ma_w,ma_count) refused()
@@ -143,8 +141,7 @@ block complete(co_r:readbuf,co_m:mutbuf,co_w:mutbuf)
 block compare_intervals(cv_m:mutbuf,cv_w:mutbuf,cv_next:u32)
   cv_at:u64 = const() {"value":349024}
   cv_cap:u64 = call(cv_m,cv_at) {"function":"cp_get"}
-  cv_five:u64 = const() {"value":5}
-  cv_same:bool = compare.eq(cv_cap,cv_five)
+  cv_same:bool = call(cv_cap) {"function":"hfs_same_profile"}
   branch cv_same compare_same(cv_m,cv_w,cv_next) choose_interval(cv_m,cv_w,cv_next,cv_cap)
 block choose_interval(ci_m:mutbuf,ci_w:mutbuf,ci_next:u32,ci_cap:u64)
   ci_linear:bool = call(ci_cap) {"function":"hfs_linear_profile"}
@@ -274,8 +271,7 @@ block widths(wr:readbuf,wm:mutbuf,ww:mutbuf)
   expected_count:u64 = call(wm,expected_at) {"function":"cp_get"}
   cap_wire:u64 = call(wm,maximum_at) {"function":"cp_get"}
   cap:u64 = call(wm,cap_wire) {"function":"hfs_actual_limit"}
-  widths_same_profile:u64 = const() {"value":5}
-  widths_same:bool = compare.eq(cap_wire,widths_same_profile)
+  widths_same:bool = call(cap_wire) {"function":"hfs_same_profile"}
   prev_count:u64 = call(wm,verified_at) {"function":"cp_get"}
   kind:u64 = call(wm,kind_at) {"function":"cp_get"}
   cn:u64 = call(wm,config_at) {"function":"cp_get"}
@@ -357,8 +353,7 @@ block profiled(pf_r:readbuf,pf_m:mutbuf,pf_w:mutbuf,pf_row:u64,pf_first:bool,pf_
   pf_cap_at:u64 = const() {"value":349024}
   pf_cap:u64 = call(pf_m,pf_cap_at) {"function":"cp_get"}
   pf_mode:bool = call(pf_cap) {"function":"hfs_settled"}
-  pf5:u64 = const() {"value":5}
-  pf_same:bool = compare.eq(pf_cap,pf5)
+  pf_same:bool = call(pf_cap) {"function":"hfs_same_profile"}
   pf_linear:bool = call(pf_cap) {"function":"hfs_linear_profile"}
   branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) maybe_linear(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_same,pf_linear)
 block maybe_linear(mj_r:readbuf,mj_m:mutbuf,mj_w:mutbuf,mj_row:u64,mj_first:bool,mj_last:bool,mj_len:u64,mj_same:bool,mj_linear:bool)
@@ -510,8 +505,7 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_same_width:usize = const() {"value":2244}
   vh_mode_at:u64 = const() {"value":349024}
   vh_mode:u64 = call(vm0,vh_mode_at) {"function":"cp_get"}
-  vh_five:u64 = const() {"value":5}
-  vh_same:bool = compare.eq(vh_mode,vh_five)
+  vh_same:bool = call(vh_mode) {"function":"hfs_same_profile"}
   vh_second_width:usize = select(vh_same,vh_same_width,vh_pair_width)
   vh_two:u64 = const() {"value":2}
   vh_second:bool = compare.eq(vh_count,vh_two)
@@ -543,7 +537,9 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_actual:usize = buffer.len(vr0)
   vh_exact:bool = compare.eq(vh_actual,vh_need)
   vh_var_pair:u64 = const() {"value":7}
-  vh_pair:bool = compare.eq(vh_mode,vh_var_pair)
+  vh_normal_pair:bool = compare.eq(vh_mode,vh_var_pair)
+  vh_measured_same:bool = bool.and(vh_variable,vh_same)
+  vh_pair:bool = bool.or(vh_normal_pair,vh_measured_same)
   vh_var_settle:bool = bool.and(vh_variable,vh_fourcase)
   vh_limit4:u64 = const() {"value":4}
   vh_not_last:bool = compare.lt(vh_count,vh_limit4)
@@ -565,7 +561,8 @@ block verify(vr0:readbuf,vm0:mutbuf,va0:u64)
   vh_bounded:bool = bool.and(vh_above,vh_below)
   vh_shaped:bool = select(vh_intermediate,vh_bounded,vh_exact)
   vh_actual_core:usize = int.sub.wrap(vh_actual,vh_extra)
-  vh_dynamic_parent:bool = bool.or(vh_var_settle,vh_linear)
+  vh_new_parent:bool = bool.or(vh_var_settle,vh_measured_same)
+  vh_dynamic_parent:bool = bool.or(vh_new_parent,vh_linear)
   vh_parent_off:usize = select(vh_dynamic_parent,vh_actual_core,vh_width)
   branch vh_shaped replay_shape(vr0,vm0,va0,vh_count,vh_parent_off,vh_profile) refused()
 block replay_shape(vs_r:readbuf,vs_m:mutbuf,vs_a:u64,vs_n:u64,vs_len:usize,vs_ex:bool)
@@ -655,7 +652,10 @@ block entry(r:readbuf,m:mutbuf,w:mutbuf,first:bool,prev:u64)
 block preceding(pr:readbuf,pm:mutbuf,pw:mutbuf,previous:u64)
   exec_len_at:u64 = const() {"value":248}
   extent:u64 = call(pm,exec_len_at) {"function":"cp_get"}
-  jump compare(pr,pm,pw,previous,extent)
+  pp_at:u64 = const() {"value":349024}
+  pp_profile:u64 = call(pm,pp_at) {"function":"cp_get"}
+  same_predecessor:bool = call(pp_profile) {"function":"hfs_same_profile"}
+  jump compare(pr,pm,pw,previous,extent,same_predecessor)
 block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf)
   cbase:u64 = const() {"value":8192}
   cb:u64 = const() {"value":8226}
@@ -673,8 +673,9 @@ block record_genesis(hg_r:readbuf,hg_m:mutbuf,hg_w:mutbuf,hg_pos:u64,hg_extent:u
   hg_exact:u64 = call(hg_m,hg_pos) {"function":"cp_get"}
   hg_slot:u64 = const() {"value":349040}
   hg_saved:u64 = call(hg_m,hg_slot,hg_exact) {"function":"cp_put"}
-  jump compare(hg_r,hg_m,hg_w,hg_pos,hg_extent)
-block compare(cr:readbuf,cm:mutbuf,cw:mutbuf,cg:u64,cn2:u64)
+  same_genesis:bool = const() {"value":false}
+  jump compare(hg_r,hg_m,hg_w,hg_pos,hg_extent,same_genesis)
+block compare(cr:readbuf,cm:mutbuf,cw:mutbuf,cg:u64,cn2:u64,same_coord:bool)
   exec:u64 = const() {"value":140000}
   ext:u64 = const() {"value":80}
   right:u64 = int.add.wrap(exec,cn2)
@@ -693,7 +694,9 @@ block compare(cr:readbuf,cm:mutbuf,cw:mutbuf,cg:u64,cn2:u64)
   step:bool = compare.eq(height,next)
   inc:bool = compare.gt(height,old)
   direct:bool = bool.and(step,inc)
-  good:bool = bool.and(parent_ok,direct)
+  unchanged:bool = compare.eq(height,old)
+  matches:bool = select(same_coord,unchanged,direct)
+  good:bool = bool.and(parent_ok,matches)
   ret(good)
 block bad()
   refuse:bool = const() {"value":false}

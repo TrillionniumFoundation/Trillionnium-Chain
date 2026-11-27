@@ -3929,7 +3929,7 @@
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,
-      "scope": "One native fixture entry selects already qualified measured one/two linear receipts, three-stage Rollup, four-stage mixed and measured linear cursor routes from checked original metadata, then requires each route’s strict original command and marker shapes. Fixed-byte original same-block replay is chosen from checked [0,2] marker geometry only after exact fixed-width admission; unqualified widths refuse without falling back. No new history capacity, production, recovery or authority.",
+      "scope": "One native fixture entry selects already qualified measured one/two linear receipts, three-stage Rollup, four-stage mixed and measured linear cursor routes from checked original metadata, then requires each route’s strict original command and marker shapes. Checked [0,2] original same-block geometry selects the unchanged fixed ABI at exact legacy dimensions or strictly bounded measured same-block framing, without falling back to a linear pair. No new history capacity, production, recovery or authority.",
       "sources": [
         "hia/platform/service_settlement/held_cursor_variable_dispatch.hepta"
       ],

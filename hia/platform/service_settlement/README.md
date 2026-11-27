@@ -562,9 +562,13 @@ ABI and original marker checks.
 
 The unified two-row selector now waits for the held original marker proof.
 A verified single committed interval covering both rows enters the existing
-same-block sealed fixed ABI only when its full fixed-width admission checks
-pass. The request and reply formats are unchanged. A genuine same-block
-snapshot with different widths is refused, not treated as a linear pair.
+same-block sealed fixed ABI when its full fixed-width admission checks pass.
+Its request and reply formats are unchanged. A genuine same-block snapshot
+with other widths uses the bounded measured framing instead of the linear
+pair shape. Both paths require an AdmitReceipt followed by AdmitRollup and
+bind both executions and state roots to the same checked block. The first
+execution uses the checked predecessor; the second stays at that block.
+The measured path does not broaden the two-operation limit.
 
 The optional native path preflight owns the original final regular-file
 and sidecar admission for generated owned fixtures. It composes exact

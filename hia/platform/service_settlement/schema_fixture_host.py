@@ -272,7 +272,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                         native_rows, = struct.unpack_from("<Q", state, 7002)
                         if profile == 10 and 5 <= native_rows <= 8:
                             rows = native_rows
-                        elif cursor_stream and (profile, native_rows) in ((6, 1), (5, 2), (7, 2), (9, 3), (8, 4)):
+                        elif cursor_stream and (profile, native_rows) in ((6, 1), (5, 2), (11, 2), (7, 2), (9, 3), (8, 4)):
                             rows = native_rows
                         else:
                             rows = None
@@ -284,7 +284,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                         raise ValueError("Unexpected verified native stream selection")
                     selected_rows = rows
                     selected_profile = profile
-                active_same = same_block or (cursor_stream and selected_profile == 5)
+                active_same = same_block or (cursor_stream and selected_profile in (5, 11))
                 active_rows = selected_rows if stream else replay_limit
                 if request.get("writer"):
                     check = subprocess.run([request["writer"], "try-write", str(db)],
@@ -296,7 +296,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                 from hia.platform.service_settlement.first_replay_fixture_engine import FixtureReplay
                 size, = struct.unpack_from("<Q", state, 349016)
                 lane_widths = (1921, 2811) if active_same else (1921, 1953, 3742, 1293)
-                measured = (stream and not active_same) or variable_rows
+                measured = (stream and (not active_same or selected_profile == 11)) or variable_rows
                 if measured:
                     if not 40 <= size <= 20642:
                         raise ValueError("Native continuation returned an unbounded variable request")
@@ -357,6 +357,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
                 raise ValueError("Success without exact Engine observation")
+        if cursor_stream:
+            result["replay_profile"] = selected_profile
         if projected:
             result["projection"] = projection
         return result

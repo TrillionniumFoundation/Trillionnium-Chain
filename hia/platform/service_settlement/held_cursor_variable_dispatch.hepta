@@ -84,7 +84,9 @@ block fixed_shape(fr:readbuf,fm:mutbuf,fw:mutbuf)
   equal_state:bool = compare.eq(state,body)
   fixed:bool = bool.and(equal_cfg,equal_state)
   five:u64 = const() {"value":5}
-  branch fixed apply_profile(fr,fm,fw,five) bad()
+  measured_same:u64 = const() {"value":11}
+  selected:u64 = select(fixed,five,measured_same)
+  jump apply_profile(fr,fm,fw,selected)
 block apply_profile(ar:readbuf,am:mutbuf,aw:mutbuf,ap:u64)
   result:u32 = call(ar,am,aw,ap) {"function":"hfr_read"}
   ret(result)

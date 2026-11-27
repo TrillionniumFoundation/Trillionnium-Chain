@@ -31,6 +31,8 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                           "cursor": OWNER / "held_cursor_variable_dispatch.hepta",
                           "execution": OWNER / "execution_journal_read.hepta",
                       }.items()}
+            images["cursor-direct"] = stack.enter_context(NativeModule(
+                OWNER / "held_cursor_variable_dispatch.hepta", byte_exports=("f0",), backend="direct"))
             physical_images = {
                 backend: {
                     name: stack.enter_context(NativeModule(OWNER / source, byte_exports=("f0",), backend=backend))
@@ -61,12 +63,11 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 if physical is not None:
                     request.update({name: [str(module.library), module.artifact_sha256]
                                     for name, module in physical_images[physical].items()})
-                if lane == "cursor":
+                if lane in ("cursor", "cursor-direct"):
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
-                    if lane == "cursor":
-                        request["cursor_stream_fixture"] = True
-                if lane == "cursor" and failed is None:
+                    request["cursor_stream_fixture"] = True
+                if lane in ("cursor", "cursor-direct") and failed is None:
                     request["writer"] = str(original)
                 if failed is not None:
                     request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
@@ -79,7 +80,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 ("one", "short", (1,), True, None),
                 ("linear-two", "utf8-pair", (1, 4), True, None),
                 ("fixed-same-block", None, (1, 2), True, None),
-                ("unsupported-same-block-width", "short-same-block", (1, 2), False, 0),
+                ("measured-same-block", "short-same-block", (1, 2), True, None),
                 ("rollup", "short-rollup", (1, 4, 6), True, None),
                 ("settle", "utf8-settle", (1, 4, 6, "-", "-", 8), True, None),
                 ("linear-six", "utf8-linear-admits", (1, 2, 3, 4, 5, 6), True, None),
@@ -114,15 +115,26 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         self.assertEqual(first[-40:], second[-40:])
                         self.assertEqual(second[-80:-40], first[-40:])
                         dimensions = (len(held) - 104, len(first), len(terminal))
-                        if accepted:
+                        if name == "fixed-same-block":
                             self.assertEqual(dimensions, (914, 163, 2172))
                         else:
-                            self.assertNotEqual(dimensions, (914, 163, 2172))
+                            for actual_width, old_width in zip(dimensions, (914, 163, 2172), strict=True):
+                                self.assertNotEqual(actual_width, old_width)
                     cursor = invoke(db, held, "cursor")
                     independent = invoke(db, held, "execution")
                     self.assertEqual(independent["status"], 0, independent)
                     self.assertEqual(bytes.fromhex(independent["projection"]), original_out)
                     self.assertTrue(cursor["held"])
+                    if name == "fixed-same-block":
+                        self.assertEqual(cursor["replay_profile"], 5)
+                    if name == "measured-same-block":
+                        self.assertEqual(cursor["replay_profile"], 11)
+                        alternate = invoke(db, held, "cursor-direct")
+                        self.assertEqual(alternate, cursor)
+                        bad_parent = invoke(db, held, "cursor", failed="root", ordinal=1)
+                        self.assertEqual((bad_parent["status"], bad_parent["projection"], bad_parent["replay_calls"],
+                                          bad_parent["replay_profile"]), (100, None, 1, 11))
+                        self.assertGreater(bad_parent["released"], 0)
                     if accepted:
                         self.assertEqual((cursor["status"], cursor["replay_calls"], cursor["replay_locks"],
                                           cursor["released"]), (0, count, count, 0), cursor)

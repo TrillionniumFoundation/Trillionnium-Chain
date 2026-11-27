@@ -380,9 +380,8 @@ end
 
 fn hfs_limit(profile:u64) -> (u64) effects() entry(entry)
 block entry(profile:u64)
-  same:u64 = const() {"value":5}
   pair:u64 = const() {"value":2}
-  need_pair:bool = compare.eq(profile,same)
+  need_pair:bool = call(profile) {"function":"hfs_same_profile"}
   limit:u64 = select(need_pair,pair,profile)
   variable:u64 = const() {"value":6}
   one:u64 = const() {"value":1}
@@ -401,6 +400,16 @@ block entry(profile:u64)
   ret(rows3)
 end
 
+fn hfs_same_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  fixed:u64 = const() {"value":5}
+  measured:u64 = const() {"value":11}
+  old:bool = compare.eq(profile,fixed)
+  sized:bool = compare.eq(profile,measured)
+  same:bool = bool.or(old,sized)
+  ret(same)
+end
+
 fn hfs_variable(profile:u64) -> (bool) effects() entry(entry)
 block entry(profile:u64)
   single:u64 = const() {"value":6}
@@ -412,7 +421,10 @@ block entry(profile:u64)
   old:bool = bool.or(is_one,is_two)
   measured:bool = bool.or(old,is_mixed)
   linear:bool = call(profile) {"function":"hfs_linear_profile"}
-  variable:bool = bool.or(measured,linear)
+  original:bool = bool.or(measured,linear)
+  generic_same:u64 = const() {"value":11}
+  is_generic_same:bool = compare.eq(profile,generic_same)
+  variable:bool = bool.or(original,is_generic_same)
   ret(variable)
 end
 

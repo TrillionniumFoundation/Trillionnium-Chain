@@ -63,8 +63,10 @@ class FixtureReplay:
             boundary = 40 + trust_n
             ending = boundary + execution_n
             trust, execution, command = request[40:boundary], request[boundary:ending], request[ending:]
-            variable_kinds = ((0,)*self.variable_rows if self.variable_rows > 4
-                              else (0, 0, 1, 2)[:self.variable_rows])
+            variable_kinds = ((0, 1) if self.same_block else (0,)*self.variable_rows
+                              if self.variable_rows > 4 else (0, 0, 1, 2)[:self.variable_rows])
+            if self.same_block and self.variable_rows != 2:
+                raise ValueError("Same-block replay has two actual operations")
             if (command[0] != variable_kinds[seq - 1]
                     or struct.unpack_from("<Q", execution, execution_n - 40)[0] != height):
                 raise ValueError("Wrong actual variable replay kind or coordinates")
