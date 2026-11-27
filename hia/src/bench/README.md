@@ -150,8 +150,18 @@ possible-value list and optional suggestion. The HIA scorer uses the
 normalization producing the same binary64 round-to-nearest-even divisions
 and additions in the same order. The best score must be strictly greater than
 0.7 after rounding; exact ties favor the later original roster entry.
-Control bytes, invalid UTF-8, free-standing unknown options and other
-unqualified grammar remain refused. The HIA renderer reads a packed
+A single free-standing positional identifier or unrecognized, bare long option
+can emit the original unexpected-argument diagnostic. The token (including
+an option's leading `--`) must fit 127 bytes; the identifier is
+`[A-Za-z0-9_][A-Za-z0-9_-]*`. Long names are admitted only when the locked
+Clap roster cannot produce a Jaro suggestion: the HIA parser counts a generous
+upper bound on matches inside the original match window, independently of
+transpositions. For lengths `a` and `b` and bound `m`, it checks
+`10*m*(a+b) < 11*a*b` for every long name. This bounds
+`(m/a + m/b + 1)/3` strictly below 0.7, with a gap greater than binary64
+rounding can bridge in this domain. Inconclusive bounds, suggestions,
+attached values, short unknowns, combined arguments, control bytes and
+invalid UTF-8 remain refused. The HIA renderer reads a packed
 [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

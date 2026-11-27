@@ -73,7 +73,8 @@ def diagnostics_catalog(raw: bytes) -> bytes:
     existing = {3, *(16+i for i in (*numeric_fields, 6, 8)), *range(32, 41)}
     numeric = {base + i for base in (64, 80, 96) for i in numeric_fields}
     enums = {102, 103}
-    reflected = numeric | enums
+    unexpected_arguments = {90, 91}
+    reflected = numeric | enums | unexpected_arguments
     if (set(source) != {"schema", "entries", "suggestions"} or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v2"
             or set(source["entries"]) != {str(code) for code in existing | reflected}):
         raise ValueError("Incorrect diagnostic text roster")

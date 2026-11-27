@@ -109,6 +109,14 @@
       "error: invalid value '",
       "' for '--write-every <WRITE_EVERY>': invalid digit found in string\n\nFor more information, try '--help'.\n"
     ],
+    "90": [
+      "error: unexpected argument '",
+      "' found\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n"
+    ],
+    "91": [
+      "error: unexpected argument '--",
+      "' found\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n"
+    ],
     "96": [
       "error: invalid value '",
       "' for '--txs <TXS>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
