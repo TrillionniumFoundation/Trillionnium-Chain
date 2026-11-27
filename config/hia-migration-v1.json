@@ -3744,6 +3744,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-marker-dispatch-plan",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Native plan cursor walks bounded exact checked original committed marker intervals and emits per-operation source/current coordinates and previous/current state roots after complete checksum and interval proof. No Engine dispatch, production or authority.",
+      "sources": [
+        "hia/platform/service_settlement/marker_dispatch_plan.hepta"
+      ],
+      "tests": [
+        "hia/tests/rust_settlement_marker_reference.rs",
+        "hia/tests/test_settlement_committed_interval_codec.py"
+      ]
+    },
+    {
       "id": "platform/service-settlement-checked-committed-interval-codec",
       "node_integration_complete": false,
       "retirement_accepted": false,

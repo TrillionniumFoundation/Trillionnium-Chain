@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_settlement_checked_marker_interval_codec
 fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  code:u32 = call(raw,w) {"function":"scc_verify"}
+  ret(code)
+end
+
+fn scc_verify(raw:readbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf)
   total:usize = buffer.len(raw)
   available:usize = buffer.len(w)
   minimum:usize = const() {"value":560}

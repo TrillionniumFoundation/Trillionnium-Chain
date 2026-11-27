@@ -1,5 +1,55 @@
 {
   "includes": {
+    "platform/service_settlement/marker_dispatch_plan.hepta": [
+      {
+        "functions": [
+          "scc_verify"
+        ],
+        "source": "platform/service_settlement/checked_committed_interval_codec.hepta"
+      },
+      {
+        "functions": [
+          "sic_verify"
+        ],
+        "source": "platform/service_settlement/committed_interval_codec.hepta"
+      },
+      {
+        "functions": [
+          "smk_begin_hash",
+          "smk_eq",
+          "smk_init",
+          "smk_segment"
+        ],
+        "source": "platform/service_settlement/marker_read.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy",
+          "cp_get",
+          "cp_put",
+          "cp_wcopy",
+          "cp_wout"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final_full",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update_full",
+          "tr_sha_update_limit",
+          "tr_sha_update_work_full",
+          "tr_sha_update_work_limit"
+        ]
+      }
+    ],
     "src/sqlite_io_boundary/real_vfs_receipt_fold.hepta": [
       {
         "functions": [

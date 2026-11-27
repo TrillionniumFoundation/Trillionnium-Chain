@@ -1,0 +1,102 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_marker_dispatch_plan
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  checked:u32 = call(raw,w) {"function":"scc_verify"}
+  ok:u32 = const() {"value":0}
+  accepted:bool = compare.eq(checked,ok)
+  branch accepted dimensions(out,w) status(checked)
+block dimensions(od:mutbuf,wd:mutbuf)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  rows:u64 = call(wd,zero) {"function":"cp_get"}
+  markers:u64 = call(wd,eight) {"function":"cp_get"}
+  stride:u64 = const() {"value":160}
+  count:u64 = int.mul.wrap(rows,stride)
+  need:u64 = int.add.wrap(count,eight)
+  out_len:usize = buffer.len(od)
+  capacity:u64 = int.cast(out_len) {"mode":"wrap"}
+  fits:bool = compare.le(need,capacity)
+  branch fits initialize(od,wd,rows,markers,need) short()
+block initialize(oi:mutbuf,wi:mutbuf,ni:u64,mi:u64,size_i:u64)
+  one:u64 = const() {"value":1}
+  zero_i:u64 = const() {"value":0}
+  width:u64 = const() {"value":64}
+  head:u64 = const() {"value":160}
+  root_n:u64 = int.add.wrap(ni,one)
+  root_size:u64 = int.mul.wrap(root_n,width)
+  first_marker:u64 = int.add.wrap(head,root_size)
+  stage:u64 = const() {"value":28000}
+  staged:u64 = call(wi,stage,ni) {"function":"cp_put"}
+  empty:bool = compare.eq(ni,zero_i)
+  branch empty output(oi,wi,size_i) locate(oi,wi,ni,mi,size_i,first_marker,zero_i,one)
+block locate(ol:mutbuf,wl:mutbuf,nl:u64,ml:u64,size_l:u64,p_l:u64,index_l:u64,seq_l:u64)
+  width_l:u64 = const() {"value":296}
+  jump_l:u64 = int.mul.wrap(index_l,width_l)
+  marker:u64 = int.add.wrap(p_l,jump_l)
+  target_at:u64 = const() {"value":96}
+  offset_l:u64 = int.add.wrap(marker,target_at)
+  target:u64 = call(wl,offset_l) {"function":"cp_get"}
+  contains:bool = compare.ge(target,seq_l)
+  branch contains plan(ol,wl,nl,ml,size_l,p_l,index_l,seq_l,marker) next_marker(ol,wl,nl,ml,size_l,p_l,index_l,seq_l)
+block next_marker(on:mutbuf,wn:mutbuf,nn:u64,mn:u64,size_n:u64,p_n:u64,index_n:u64,seq_n:u64)
+  step_n:u64 = const() {"value":1}
+  next_i:u64 = int.add.wrap(index_n,step_n)
+  inside:bool = compare.lt(next_i,mn)
+  branch inside locate(on,wn,nn,mn,size_n,p_n,next_i,seq_n) bad()
+block plan(op:mutbuf,wp:mutbuf,np:u64,mp:u64,size_p:u64,p_p:u64,index_p:u64,seq_p:u64,marker_p:u64)
+  from_at:u64 = const() {"value":88}
+  source_slot:u64 = int.add.wrap(marker_p,from_at)
+  start:u64 = call(wp,source_slot) {"function":"cp_get"}
+  member:bool = compare.gt(seq_p,start)
+  branch member stage_row(op,wp,np,mp,size_p,p_p,index_p,seq_p,marker_p,start) bad()
+block stage_row(os:mutbuf,ws:mutbuf,ns:u64,ms:u64,size_s:u64,p_s:u64,index_s:u64,seq_s:u64,marker_s:u64,from_s:u64)
+  unit:u64 = const() {"value":1}
+  entry_seq:u64 = int.add.wrap(from_s,unit)
+  first:bool = compare.eq(seq_s,entry_seq)
+  eight_s:u64 = const() {"value":8}
+  forty:u64 = const() {"value":40}
+  parent_at:u64 = const() {"value":48}
+  current:u64 = int.add.wrap(marker_s,eight_s)
+  parent:u64 = int.add.wrap(marker_s,parent_at)
+  expected:u64 = select(first,parent,current)
+  row_out:u64 = const() {"value":28008}
+  row_extent:u64 = const() {"value":160}
+  last_seq:u64 = int.sub.wrap(seq_s,unit)
+  row_rel:u64 = int.mul.wrap(last_seq,row_extent)
+  row:u64 = int.add.wrap(row_out,row_rel)
+  ord_pos:u64 = int.add.wrap(row,eight_s)
+  coord_offset:u64 = const() {"value":16}
+  parent_dst:u64 = int.add.wrap(row,coord_offset)
+  curr_dst:u64 = int.add.wrap(parent_dst,forty)
+  root_dst:u64 = int.add.wrap(curr_dst,forty)
+  root_width:u64 = const() {"value":32}
+  root_stride:u64 = const() {"value":64}
+  root_base:u64 = const() {"value":160}
+  first_root_rel:u64 = int.mul.wrap(last_seq,root_stride)
+  first_root:u64 = int.add.wrap(root_base,first_root_rel)
+  second_root:u64 = int.add.wrap(first_root,root_stride)
+  second_dst:u64 = int.add.wrap(root_dst,root_width)
+  save_seq:u64 = call(ws,row,seq_s) {"function":"cp_put"}
+  save_ord:u64 = call(ws,ord_pos,index_s) {"function":"cp_put"}
+  save_parent:u64 = call(ws,expected,parent_dst,forty) {"function":"cp_wcopy"}
+  save_current:u64 = call(ws,current,curr_dst,forty) {"function":"cp_wcopy"}
+  save_pre:u64 = call(ws,first_root,root_dst,root_width) {"function":"cp_wcopy"}
+  save_post:u64 = call(ws,second_root,second_dst,root_width) {"function":"cp_wcopy"}
+  done:bool = compare.eq(seq_s,ns)
+  next_seq:u64 = int.add.wrap(seq_s,unit)
+  branch done output(os,ws,size_s) locate(os,ws,ns,ms,size_s,p_s,index_s,next_seq)
+block output(oo:mutbuf,wo:mutbuf,size_o:u64)
+  staged_at:u64 = const() {"value":28000}
+  zero_out:u64 = const() {"value":0}
+  copied:u64 = call(wo,staged_at,oo,zero_out,size_o) {"function":"cp_wout"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block status(code:u32)
+  ret(code)
+block bad()
+  malformed:u32 = const() {"value":100}
+  ret(malformed)
+block short()
+  small_out:u32 = const() {"value":102}
+  ret(small_out)
+end

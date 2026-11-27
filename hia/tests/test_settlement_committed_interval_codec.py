@@ -107,3 +107,39 @@ class SettlementCommittedIntervalCodecTests(unittest.TestCase):
                     bad = bytearray(raw)
                     bad[cut+operation+152] ^= 1
                     verified(bytes(bad), 100)
+
+                with self.subTest(cursor_backend=backend), NativeModule(
+                        OWNER/"marker_dispatch_plan.hepta", byte_exports=("f0",), backend=backend) as cursor:
+                    def plan(raw, capacity=1288):
+                        return cursor.call("f0", [raw, b"q"*capacity, bytes(32768)]).require_returned()
+
+                    indexes = {"empty": [], "same": [1, 1], "rollup": [1, 2, 3],
+                               "settle": [1, 2, 3, 6], "six": [1, 2, 3, 4, 5, 6]}
+                    for name, (raw, cut, marker, operation) in checksummed.items():
+                        answer = plan(raw)
+                        self.assertEqual(answer.value, 0)
+                        actual = answer.arguments[1]
+                        want = indexes[name]
+                        count, = struct.unpack_from("<Q", actual)
+                        self.assertEqual(count, len(want))
+                        for index, marker_ordinal in enumerate(want):
+                            emitted = actual[8+160*index:168+160*index]
+                            seq, chosen = struct.unpack_from("<QQ", emitted)
+                            self.assertEqual((seq, chosen), (index+1, marker_ordinal))
+                            op = cut + operation + 152*index
+                            self.assertEqual(emitted[16:96], raw[op:op+80])
+                            genesis = cut + 160
+                            before = genesis + 64*index
+                            current = before + 64
+                            self.assertEqual(emitted[96:128], raw[before:before+32])
+                            self.assertEqual(emitted[128:160], raw[current:current+32])
+                        used = 8 + 160*len(want)
+                        self.assertEqual(actual[used:], b"q"*(1288-used))
+                    raw, cut, marker, operation = checksummed["same"]
+                    short = plan(raw, 327)
+                    self.assertEqual((short.value, short.arguments[1]), (102, b"q"*327))
+                    for offset, status in ((8, 101), (cut+operation+152, 100)):
+                        changed = bytearray(raw)
+                        changed[offset] ^= 1
+                        rejected = plan(bytes(changed))
+                        self.assertEqual((rejected.value, rejected.arguments[1]), (status, b"q"*1288))

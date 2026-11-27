@@ -509,3 +509,9 @@ checksum over the original length-framed fields. Only after every digest
 matches does it verify the same immutable interval and operation packet.
 It does not acquire an SQLite connection, qualify arbitrary caller trust
 bytes, or replace the existing retained provider or original Store writer.
+
+A private planning entry walks only the checked immutable marker packet.
+For each operation it emits the actual marker ordinal, expected parent and
+current coordinates and the preceding and resulting state roots. Empty
+intervals yield no rows, and later operations in the same block use that
+block as parent. Planning does not call the Engine or authorize replay.
