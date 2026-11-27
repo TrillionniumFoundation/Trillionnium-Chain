@@ -395,3 +395,33 @@ proceeded to the separate rows/root/base stage. Its fixture root owner
 always refuses and never returns application state. The HIA call issues no
 verified source context, trusts no external signer, and never changes any
 database, application state, or production route.
+
+### One-call incremental delta validation
+
+`incremental_delta_validate.hepta` runs the whole **pure**
+`IncrementalStateDeltaV0::validate` sequence in one stock native call
+over the bounded synthetic profile already used by the separate header
+and ordered batch qualification entries. The single immutable input
+starts with the exact 760-byte header frame. The row frames from the
+batch profile follow it, without the batch's separate count and root
+prefix. The header's count is the only count used both for digest and
+row consumption. Its stored root is the only root used both for digest
+and post-row equality. A missing or extra row cannot be accepted.
+The fixed offset adaptations are tested against the older component
+sources, and the earlier two emitted components remain unchanged.
+
+A header/context error precedes an operation or root error on a complete
+typed fixture. Inside the operation stage the current row is validated
+before its tuple order; the first operation error wins over a root error.
+One call compares the real recomputed digests and never receives an
+external validation result. Private malformed frames or trailing bytes
+return 100, and a stock 1 MiB, eight-operation or 2,016-byte scratch
+capacity constraint is not a limit of the original Rust data model.
+The second ABI span is not used or changed.
+
+The locked original witness calls the actual
+`apply_incremental_delta_v0`. A native success on a valid synthetic
+fixture corresponds to the original reaching its owner boundary, where
+the witness refuses. The native code never calls that owner, recomputes
+an application root, returns applied rows, verifies checkpoint authority,
+opens a database, or changes production routing.

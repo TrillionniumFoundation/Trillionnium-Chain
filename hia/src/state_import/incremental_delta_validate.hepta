@@ -1,0 +1,162 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_incremental_delta_validate
+fn f0(input:readbuf,unused:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,work:mutbuf)
+  raw_in_extent:usize = buffer.len(input)
+  checked_extent:u64 = int.cast(raw_in_extent) {"mode":"wrap"}
+  first_row_pos:u64 = const() {"value":760}
+  maximum:u64 = const() {"value":1048576}
+  h1:bool = compare.ge(checked_extent,first_row_pos)
+  h2:bool = compare.le(checked_extent,maximum)
+  frame_fits:bool = bool.and(h1,h2)
+  branch frame_fits bounded(input,work,checked_extent,first_row_pos) malformed()
+block bounded(raw_initial:readbuf,w_initial:mutbuf,total_initial:u64,cursor_initial:u64)
+  scratch_size:usize = buffer.len(w_initial)
+  scratch_min:usize = const() {"value":2016}
+  scratch_fits:bool = compare.ge(scratch_size,scratch_min)
+  count_offset:u64 = const() {"value":752}
+  true_count:u64 = call(raw_initial,count_offset) {"function":"dh_be"}
+  max_count:u64 = const() {"value":8}
+  count_fits:bool = compare.le(true_count,max_count)
+  ready:bool = bool.and(scratch_fits,count_fits)
+  branch ready header_first(raw_initial,w_initial,total_initial,cursor_initial,true_count) short()
+block header_first(raw_header:readbuf,w_header:mutbuf,total_header:u64,cursor_header:u64,true_count_header:u64)
+  header_status:u32 = call(raw_header,w_header,true_count_header) {"function":"same_input_header"}
+  valid_status:u32 = const() {"value":0}
+  header_valid:bool = compare.eq(header_status,valid_status)
+  branch header_valid dispatch(raw_header,w_header,total_header,cursor_header,true_count_header) header_refusal(header_status)
+block header_refusal(rejected_header:u32)
+  ret(rejected_header)
+block dispatch(raw2:readbuf,w2:mutbuf,extent2:u64,cursor2:u64,n2:u64)
+  z2:u64 = const() {"value":0}
+  first_leaf:u64 = const() {"value":1760}
+  has_rows:bool = compare.gt(n2,z2)
+  branch has_rows row(raw2,w2,extent2,cursor2,n2,first_leaf,z2,z2,z2) empty(raw2,w2,extent2,cursor2)
+block empty(raw3:readbuf,w3:mutbuf,extent3:u64,cursor3:u64)
+  no_trailing:bool = compare.eq(extent3,cursor3)
+  branch no_trailing empty_root(raw3,w3) malformed()
+block empty_root(raw4:readbuf,w4:mutbuf)
+  got_empty:bool = call(w4) {"function":"dc_empty"}
+  empty_at:u64 = const() {"value":1168}
+  branch got_empty compare_root(raw4,w4,empty_at) internal()
+block row(raw5:readbuf,w5:mutbuf,extent5:u64,cursor5:u64,remain5:u64,leaf5:u64,prev5:u64,prev_ns5:u64,prev_key5:u64)
+  header5:u64 = const() {"value":48}
+  data5:u64 = int.add.wrap(cursor5,header5)
+  enough5:bool = compare.le(data5,extent5)
+  branch enough5 frame(raw5,w5,extent5,cursor5,remain5,leaf5,prev5,prev_ns5,prev_key5,data5) malformed()
+block frame(raw6:readbuf,w6:mutbuf,extent6:u64,cursor6:u64,remain6:u64,leaf6:u64,prev6:u64,prev_ns6:u64,prev_key6:u64,data6:u64)
+  lens6:u64 = call(raw6,cursor6) {"function":"tr_read"}
+  eight6:u64 = const() {"value":8}
+  descriptor6:u64 = int.add.wrap(cursor6,eight6)
+  desc6:u64 = call(raw6,descriptor6) {"function":"tr_read"}
+  mask6:u64 = const() {"value":4294967295}
+  high6:u64 = const() {"value":32}
+  ns6:u64 = bit.and(lens6,mask6)
+  key6:u64 = int.shr.checked(lens6,high6)
+  val6:u64 = bit.and(desc6,mask6)
+  tag6:u64 = int.shr.checked(desc6,high6)
+  zero6:u64 = const() {"value":0}
+  one6:u64 = const() {"value":1}
+  tag_known:bool = compare.le(tag6,one6)
+  some6:bool = compare.eq(tag6,one6)
+  none6:bool = compare.eq(val6,zero6)
+  tag_valid:bool = bool.or(some6,none6)
+  option_valid:bool = bool.and(tag_known,tag_valid)
+  key_at6:u64 = int.add.wrap(data6,ns6)
+  value_at6:u64 = int.add.wrap(key_at6,key6)
+  next6:u64 = int.add.wrap(value_at6,val6)
+  end_valid:bool = compare.le(next6,extent6)
+  frame_valid:bool = bool.and(option_valid,end_valid)
+  branch frame_valid validate(raw6,w6,extent6,cursor6,remain6,leaf6,prev6,prev_ns6,prev_key6,data6,ns6,key6,val6,next6) malformed()
+block validate(raw7:readbuf,w7:mutbuf,extent7:u64,cursor7:u64,remain7:u64,leaf7:u64,prev7:u64,prev_ns7:u64,prev_key7:u64,data7:u64,ns7:u64,key7:u64,val7:u64,next7:u64)
+  valid7:u32 = call(raw7,w7,cursor7,data7,ns7,key7,val7) {"function":"batch_validate_row"}
+  zero7:u32 = const() {"value":0}
+  ok7:bool = compare.eq(valid7,zero7)
+  branch ok7 order(raw7,w7,extent7,remain7,leaf7,prev7,prev_ns7,prev_key7,data7,ns7,key7,next7) row_result(valid7)
+block row_result(result:u32)
+  ret(result)
+block order(raw8:readbuf,w8:mutbuf,extent8:u64,remain8:u64,leaf8:u64,prev8:u64,prev_ns8:u64,prev_key8:u64,data8:u64,ns8:u64,key8:u64,next8:u64)
+  first8:u64 = const() {"value":1760}
+  have_prev:bool = compare.ne(leaf8,first8)
+  branch have_prev ordering(raw8,w8,extent8,remain8,leaf8,prev8,prev_ns8,prev_key8,data8,ns8,key8,next8) collect(raw8,w8,extent8,remain8,leaf8,data8,ns8,key8,next8)
+block ordering(raw9:readbuf,w9:mutbuf,extent9:u64,remain9:u64,leaf9:u64,prev9:u64,prev_ns9:u64,prev_key9:u64,data9:u64,ns9:u64,key9:u64,next9:u64)
+  ordered:bool = call(raw9,prev9,prev_ns9,prev_key9,data9,ns9,key9) {"function":"batch_strict_before"}
+  branch ordered collect(raw9,w9,extent9,remain9,leaf9,data9,ns9,key9,next9) out_of_order()
+block collect(raw10:readbuf,w10:mutbuf,extent10:u64,remain10:u64,leaf10:u64,data10:u64,ns10:u64,key10:u64,next10:u64)
+  computed10:u64 = const() {"value":1168}
+  _stored10:u64 = call(w10,computed10,leaf10) {"function":"dc_copy"}
+  leaf_size10:u64 = const() {"value":32}
+  after_leaf10:u64 = int.add.wrap(leaf10,leaf_size10)
+  one10:u64 = const() {"value":1}
+  left10:u64 = int.sub.wrap(remain10,one10)
+  last10:bool = compare.eq(remain10,one10)
+  branch last10 trailer(raw10,w10,extent10,next10,after_leaf10) row(raw10,w10,extent10,next10,left10,after_leaf10,data10,ns10,key10)
+block trailer(raw11:readbuf,w11:mutbuf,extent11:u64,next11:u64,tree_end11:u64)
+  exact11:bool = compare.eq(extent11,next11)
+  branch exact11 tree(raw11,w11,tree_end11) malformed()
+block tree(raw12:readbuf,w12:mutbuf,end12:u64)
+  base12:u64 = const() {"value":1760}
+  finished12:bool = call(w12,base12,end12) {"function":"dc_tree"}
+  branch finished12 compare_root(raw12,w12,base12) internal()
+block compare_root(raw13:readbuf,w13:mutbuf,at13:u64)
+  expected13:u64 = const() {"value":688}
+  equal13:bool = call(raw13,w13,expected13,at13) {"function":"batch_equal"}
+  branch equal13 success() bad_root()
+block malformed()
+  code0:u32 = const() {"value":100}
+  ret(code0)
+block short()
+  code1:u32 = const() {"value":102}
+  ret(code1)
+block internal()
+  code2:u32 = const() {"value":103}
+  ret(code2)
+block out_of_order()
+  code3:u32 = const() {"value":109}
+  ret(code3)
+block bad_root()
+  code4:u32 = const() {"value":112}
+  ret(code4)
+block success()
+  code5:u32 = const() {"value":0}
+  ret(code5)
+end
+
+fn same_input_header(raw3:readbuf,w3:mutbuf,n3:u64) -> (u32) effects(read,write,trap) entry(source)
+block source(raw3:readbuf,w3:mutbuf,n3:u64)
+  p3:u64 = const() {"value":0}
+  stage3:u64 = const() {"value":1744}
+  code3:u32 = call(raw3,w3,p3,stage3) {"function":"dh_context"}
+  z3:u32 = const() {"value":0}
+  okay3:bool = compare.eq(code3,z3)
+  branch okay3 target(raw3,w3,n3) refusal(code3)
+block target(raw4:readbuf,w4:mutbuf,n4:u64)
+  p4:u64 = const() {"value":240}
+  stage4:u64 = const() {"value":1776}
+  code4:u32 = call(raw4,w4,p4,stage4) {"function":"dh_context"}
+  z4:u32 = const() {"value":0}
+  okay4:bool = compare.eq(code4,z4)
+  branch okay4 fields(raw4,w4,n4) refusal(code4)
+block fields(raw5:readbuf,w5:mutbuf,n5:u64)
+  structural5:bool = call(raw5) {"function":"dh_fields"}
+  branch structural5 digest(raw5,w5,n5) header_bad()
+block digest(raw6:readbuf,w6:mutbuf,n6:u64)
+  digested6:bool = call(raw6,w6,n6) {"function":"dh_header_digest"}
+  branch digested6 compare_digest(raw6,w6) internal()
+block compare_digest(raw7:readbuf,w7:mutbuf)
+  eq7:bool = call(raw7,w7) {"function":"dh_digest_equal"}
+  branch eq7 relations(raw7) header_bad()
+block relations(raw8:readbuf)
+  equalities8:bool = call(raw8) {"function":"dh_relations"}
+  branch equalities8 success() header_bad()
+block refusal(status:u32)
+  ret(status)
+block internal()
+  code2:u32 = const() {"value":103}
+  ret(code2)
+block header_bad()
+  header_status:u32 = const() {"value":114}
+  ret(header_status)
+block success()
+  success_status:u32 = const() {"value":0}
+  ret(success_status)
+end

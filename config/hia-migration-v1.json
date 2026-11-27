@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/incremental_delta_validate",
+      "node_integration_complete": false,
+      "scope": "M13 complete original pure IncrementalStateDeltaV0 validation in one bounded immutable borrowed 0–8 row frame: both checkpoint contexts, exact header digest, actual rows and Merkle equality; no context authority, application root, SQLite or production routing",
+      "source": "hia/src/state_import/incremental_delta_validate.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_incremental_delta_validate.py",
+        "hia/tests/rust_state_import_incremental_delta_validate_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/incremental_delta_header_validate",
       "node_integration_complete": false,
       "scope": "M13 original paired typed checkpoint context and non-authoritative incremental delta header digest, count and relationship validation for a bounded 0–8 operation header; no operation row replay, verified contexts, application root, SQLite or production routing",
@@ -2428,6 +2439,7 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
+        "state_import/incremental_delta_validate",
         "state_import/incremental_delta_header_validate",
         "state_import/target_delta_rows_root",
         "state_import/target_delta_row_validate",

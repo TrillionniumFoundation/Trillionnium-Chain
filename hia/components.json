@@ -11029,6 +11029,93 @@
         "source": "src/state_import/export_row_validate.hepta"
       }
     ],
+    "src/state_import/incremental_delta_validate.hepta": [
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "r_digest_match",
+          "r_part"
+        ],
+        "source": "src/state_import/export_row_validate.hepta"
+      },
+      {
+        "functions": [
+          "step_lex"
+        ],
+        "source": "src/state_import/export_order_step.hepta"
+      },
+      {
+        "functions": [
+          "dc_copy",
+          "dc_empty",
+          "dc_pair",
+          "dc_tree",
+          "dc_field",
+          "dc_header_domain",
+          "dc_finish_header"
+        ],
+        "source": "src/state_import/incremental_delta_commitment.hepta"
+      },
+      {
+        "functions": [
+          "mcc_nonzero"
+        ],
+        "source": "src/state_import/checkpoint_context.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "mhc_equal_pack"
+        ],
+        "source": "src/state_import/handoff_commitments.hepta"
+      },
+      {
+        "functions": [
+          "batch_equal",
+          "batch_strict_before",
+          "batch_validate_row",
+          "batch_prefix",
+          "batch_reserved",
+          "batch_hash"
+        ],
+        "source": "src/state_import/target_delta_rows_root.hepta"
+      },
+      {
+        "functions": [
+          "dh_be",
+          "dh_context",
+          "dh_context_shape",
+          "dh_context_hash",
+          "dh_fields",
+          "dh_header_digest",
+          "dh_digest_equal",
+          "dh_relations"
+        ],
+        "source": "src/state_import/incremental_delta_header_validate.hepta"
+      }
+    ],
     "src/state_import/incremental_delta_header_validate.hepta": [
       {
         "functions": [
