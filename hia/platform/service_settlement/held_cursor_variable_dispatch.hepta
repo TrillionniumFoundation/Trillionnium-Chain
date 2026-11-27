@@ -1,0 +1,45 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_cursor_variable_dispatch
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  n:usize = buffer.len(mem)
+  expected:usize = const() {"value":1048576}
+  good:bool = compare.eq(n,expected)
+  branch good route(raw,mem,work) bad()
+block route(r:readbuf,m:mutbuf,w:mutbuf)
+  stage_at:u64 = const() {"value":96}
+  verified:u64 = const() {"value":3}
+  stage:u64 = call(m,stage_at) {"function":"cp_get"}
+  checked:bool = compare.ge(stage,verified)
+  branch checked bounds(r,m,w) provisional(r,m,w)
+block provisional(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  measured:u64 = const() {"value":6}
+  code:u32 = call(pr,pm,pw,measured) {"function":"hfr_read"}
+  ret(code)
+block bounds(br:readbuf,bm:mutbuf,bw:mutbuf)
+  at:u64 = const() {"value":7002}
+  count:u64 = call(bm,at) {"function":"cp_get"}
+  floor:u64 = const() {"value":3}
+  ceiling:u64 = const() {"value":8}
+  lo:bool = compare.ge(count,floor)
+  hi:bool = compare.le(count,ceiling)
+  fit:bool = bool.and(lo,hi)
+  branch fit cursor(br,bm,bw,count) bad()
+block cursor(cr:readbuf,cm:mutbuf,cw:mutbuf,cn:u64)
+  enabled_at:u64 = const() {"value":349048}
+  enabled:u64 = const() {"value":1}
+  cursor_mode:u64 = call(cm,enabled_at,enabled) {"function":"cp_put"}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  tri:bool = compare.eq(cn,three)
+  mixed:bool = compare.eq(cn,four)
+  rule3:u64 = const() {"value":9}
+  rule4:u64 = const() {"value":8}
+  linear:u64 = const() {"value":10}
+  later:u64 = select(mixed,rule4,linear)
+  rule:u64 = select(tri,rule3,later)
+  result:u32 = call(cr,cm,cw,rule) {"function":"hfr_read"}
+  ret(result)
+block bad()
+  denied:u32 = const() {"value":100}
+  ret(denied)
+end

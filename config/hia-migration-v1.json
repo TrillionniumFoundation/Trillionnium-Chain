@@ -3794,6 +3794,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-live-variable-cursor-dispatch",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "One native fixture entry selects already qualified three-stage Rollup, four-stage mixed and measured linear cursor routes from checked original metadata, then requires strict original command and marker shapes. No new history capacity, production, recovery or authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_cursor_variable_dispatch.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_cursor_dispatch.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-linear-cursor",
       "node_integration_complete": false,
       "retirement_accepted": false,

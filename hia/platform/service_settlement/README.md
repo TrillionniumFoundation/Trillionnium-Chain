@@ -543,3 +543,9 @@ count and admits only consecutive AdmitReceipt operations in its bounded
 5–8 capacity. Marker count and state/journal prefixes are checked before
 close, including the ordinary fourth receipt (not a Settle). It leaves the
 shorter and mixed entries, and all writer and recovery authority, unchanged.
+
+One opt-in native cursor dispatcher now chooses the existing three-row
+Rollup, four-row mixed, or bounded linear receipt lane from original verified
+metadata, and each lane still enforces original typed command and committed
+marker shapes. A valid original history never qualifies merely by having
+the expected number of rows. No capacity, recovery or permission changes.
