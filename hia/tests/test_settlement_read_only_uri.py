@@ -19,6 +19,7 @@ import sqlite3
 import subprocess
 import tempfile
 import unittest
+from types import SimpleNamespace
 from urllib.parse import quote_from_bytes
 
 from hia.tests.native_support import NativeModule
@@ -51,7 +52,9 @@ class SettlementReadOnlyUriTests(unittest.TestCase):
                        check=True, timeout=30, capture_output=True)
         cls.modules = {}
         for backend in ("direct", "selfhost"):
-            module = NativeModule(SOURCE, byte_exports=("f0",), backend=backend, fixture_owner=Path(__file__))
+            # SOURCE is a canonical tracked HIA entry, not an external
+            # generated fixture. Use the same provenance class as hosted CI.
+            module = NativeModule(SOURCE, byte_exports=("f0",), backend=backend)
             cls.addClassCleanup(module.close)
             cls.modules[backend] = module
 
@@ -65,6 +68,34 @@ class SettlementReadOnlyUriTests(unittest.TestCase):
         if len(rows) != len(paths):
             raise AssertionError("Original pathname output roster differs")
         return rows
+
+    def test_canonical_uri_entry_keeps_actual_ci_build_provenance(self):
+        from hia.tools.qualify import native_build_record
+
+        entry = SOURCE.relative_to(ROOT).as_posix()
+        components = ROOT / "hia/components.json"
+        # Independently enumerate and read this standalone entry's complete
+        # inputs; never build the expected source map from its receipt.
+        tracked_inputs = {entry: hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
+                          "hia/components.json": hashlib.sha256(components.read_bytes()).hexdigest()}
+        self.assertEqual(set(self.modules), {"direct", "selfhost"})
+        for backend, module in self.modules.items():
+            with self.subTest(backend=backend):
+                record = native_build_record(module, tracked_inputs)
+                self.assertEqual(record["source"], entry)
+                self.assertNotIn("generated_fixture", record)
+                expected_exports = ["f0", "suri_hex", "suri_literal"] if backend == "direct" else ["f0"]
+                self.assertEqual(record["exports"], expected_exports)
+                self.assertEqual(record["chain_migration"]["backend"], backend)
+                self.assertEqual(record["artifact_sha256"],
+                                 hashlib.sha256(module.library.read_bytes()).hexdigest())
+                self.assertEqual(record["chain_migration"]["inputs"], [
+                    {"path": path.removeprefix("hia/"), "sha256": digest}
+                    for path, digest in tracked_inputs.items()])
+                ambiguous = SimpleNamespace(**vars(module))
+                ambiguous.fixture_owner = Path(__file__)
+                with self.assertRaisesRegex(ValueError, "Canonical native entry has ambiguous fixture provenance"):
+                    native_build_record(ambiguous, tracked_inputs)
 
     def test_original_exact_bytes_full_output_and_refusals(self):
         rng = random.Random(933)
