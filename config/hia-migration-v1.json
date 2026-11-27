@@ -1189,6 +1189,18 @@
       ]
     },
     {
+      "id": "data-availability/committee-id",
+      "node_integration_complete": false,
+      "scope": "Original DA committee ID over canonical descriptor bytes after whole native typed revalidation; no trust, attestation, signature, policy or production.",
+      "source": "hia/src/data_availability/committee_id.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_committee_id.py",
+        "hia/tests/rust_da_committee_id_reference.rs",
+        "hia/tests/test_da_committee_definition.py"
+      ]
+    },
+    {
       "id": "data-availability/member-definition",
       "node_integration_complete": false,
       "scope": "Original public DA member value constructor, full native u128 bounds, Dalek predicate and canonical Borsh definition hash; no membership, quorum, credentials or authorization.",
@@ -2596,6 +2608,7 @@
         "data-availability/chunk-inclusion-path",
         "data-availability/chunk-bound-inclusion",
         "data-availability/committee-definition",
+        "data-availability/committee-id",
         "data-availability/member-definition",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",

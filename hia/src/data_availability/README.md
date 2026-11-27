@@ -421,3 +421,43 @@ result. Rust also runs the 33-member and one-byte-larger result controls
 outside this private native profile. This component does not compute
 committee ID, validate an externally supplied threshold, authenticate a
 committee or check votes, signatures, authorization, or production state.
+
+## DA committee descriptor identity
+
+The [bounded ID kernel](committee_id.hepta) reads a full immutable
+Borsh `DaCommitteeDescriptorV1`, not the constructor's parameter loan
+or a supplied digest. It checks the context version and nonempty ASCII
+chain ID first, then distinguishes the two unsupported namespace cases,
+then checks the descriptor schema and five nonzero bounds before any
+member semantics. It runs the original check order for member definition
+hashes, usable point encoding, raw key uniqueness, strict input order
+and the checked `u128` total. It subsequently checks the independent
+doubling limit and the supplied threshold against the computed
+`floor(2W/3)+1`. With a positive nonempty total that expression never
+exceeds the total. The member scan and imported checks reuse the frozen
+constructor's semantics; constructor and ID deliberately differ in when
+they validate context and bounds.
+
+On success it hashes the LE `u32` domain length, ASCII
+`trnm.portable.v2.da-committee.v1`, and the whole original Borsh
+descriptor on the same read-only loan. The SHA engine writes only into
+scratch until the final 32-byte digest is copied to the output. No
+output is reborrowed as input; an error leaves the output unchanged.
+The 32-member, 141,536-byte scratch and 1 MiB input limits are private
+qualification bounds, not restrictions on the Rust API. Codes 201–206,
+208–210 retain the original constructor distinctions where applicable;
+211 is multiplication/quorum arithmetic overflow in the ID validator,
+212 a threshold mismatch, and 213/214 the original unsupported
+namespace distinctions. Codes 100/102/103 are private framing,
+capacity and internal errors.
+
+[The original differential](../../tests/test_da_committee_id.py)
+round-trips each typed descriptor with locked Borsh, calls the real
+Rust `committee_id()`, and checks exact digest bytes and refusals
+across both pinned emitters. It includes a canonical 1 MiB descriptor
+and Rust acceptance of 33 members and of a one-byte-larger descriptor.
+Both native kernels refuse 33 rows; the stock selfhost diagnostic also
+passes the larger loan to the unchanged native cap and confirms
+refusal. The direct ordinary test runner does not provision a read
+loan above 1 MiB. This is a value commitment only: a valid ID does not
+authorize a committee, policy, signature, or vote.
