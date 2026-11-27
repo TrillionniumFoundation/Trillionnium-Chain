@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v8
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v9
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -83,26 +83,28 @@ block free_arg(i_fa:readbuf,o_fa:mutbuf,n_fa:u64,p_fa:u64,k_fa:u64,e_fa:u64,eq_f
   first_tok:bool = compare.eq(p_fa,first_fa)
   one_tok:bool = compare.eq(k_fa,one_fa)
   exact_end:bool = compare.eq(past_fa,n_fa)
-  no_equals:bool = compare.eq(e_fa,eq_fa)
   has_token:bool = compare.ge(span_fa,one_fa)
   bounded_tok:bool = compare.le(span_fa,cap_fa)
   alone:bool = bool.and(first_tok,one_tok)
-  exact_tok:bool = bool.and(exact_end,no_equals)
-  valid_layout:bool = bool.and(alone,exact_tok)
+  valid_layout:bool = bool.and(alone,exact_end)
   valid_span:bool = bool.and(has_token,bounded_tok)
   finite:bool = bool.and(valid_layout,valid_span)
-  branch finite free_kind(i_fa,o_fa,p_fa,e_fa,span_fa) fail()
-block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,n_fk:u64)
+  branch finite free_kind(i_fa,o_fa,p_fa,e_fa,eq_fa) fail()
+block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   at_fk:usize = int.cast(p_fk) {"mode":"wrap"}
   lead_fk:u8 = buffer.load(i_fk,at_fk)
   dash_fk:u8 = const() {"value":45}
   starts_dash:bool = compare.eq(lead_fk,dash_fk)
-  branch starts_dash free_long(i_fk,o_fk,p_fk,e_fk,n_fk) free_plain(i_fk,o_fk,p_fk,e_fk)
-block free_long(i_fl:readbuf,o_fl:mutbuf,p_fl:u64,e_fl:u64,n_fl:u64)
+  branch starts_dash free_long(i_fk,o_fk,p_fk,e_fk,eq_fk) free_positional(i_fk,o_fk,p_fk,e_fk,eq_fk)
+block free_positional(i_px:readbuf,o_px:mutbuf,p_px:u64,e_px:u64,eq_px:u64)
+  bare_px:bool = compare.eq(e_px,eq_px)
+  branch bare_px free_plain(i_px,o_px,p_px,e_px) fail()
+block free_long(i_fl:readbuf,o_fl:mutbuf,p_fl:u64,e_fl:u64,eq_fl:u64)
   two_fl:u64 = const() {"value":2}
-  long_enough:bool = compare.gt(n_fl,two_fl)
-  branch long_enough free_long_head(i_fl,o_fl,p_fl,e_fl) fail()
-block free_long_head(i_fh:readbuf,o_fh:mutbuf,p_fh:u64,e_fh:u64)
+  name_size_fl:u64 = int.sub.wrap(eq_fl,p_fl)
+  long_enough:bool = compare.gt(name_size_fl,two_fl)
+  branch long_enough free_long_head(i_fl,o_fl,p_fl,e_fl,eq_fl,name_size_fl) fail()
+block free_long_head(i_fh:readbuf,o_fh:mutbuf,p_fh:u64,e_fh:u64,eq_fh:u64,n_fh:u64)
   one_fh:u64 = const() {"value":1}
   second:u64 = int.add.wrap(p_fh,one_fh)
   start_fh:u64 = int.add.wrap(second,one_fh)
@@ -110,7 +112,19 @@ block free_long_head(i_fh:readbuf,o_fh:mutbuf,p_fh:u64,e_fh:u64)
   byte_fh:u8 = buffer.load(i_fh,at_fh)
   dash_fh:u8 = const() {"value":45}
   double_dash:bool = compare.eq(byte_fh,dash_fh)
-  branch double_dash free_flag(i_fh,o_fh,start_fh,e_fh) fail()
+  branch double_dash free_long_form(i_fh,o_fh,p_fh,start_fh,e_fh,eq_fh,n_fh) fail()
+block free_long_form(i_fm:readbuf,o_fm:mutbuf,p_fm:u64,name_fm:u64,e_fm:u64,eq_fm:u64,n_fm:u64)
+  bare_fm:bool = compare.eq(e_fm,eq_fm)
+  branch bare_fm free_flag(i_fm,o_fm,name_fm,eq_fm) free_assignment(i_fm,o_fm,p_fm,name_fm,e_fm,eq_fm,n_fm)
+block free_assignment(i_fx:readbuf,o_fx:mutbuf,p_fx:u64,name_fx:u64,e_fx:u64,eq_fx:u64,n_fx:u64)
+  special_fx:u64 = call(i_fx,p_fx,n_fx) {"function":"bc_special"}
+  zero_fx:u64 = const() {"value":0}
+  one_fx:u64 = const() {"value":1}
+  tail_fx:u64 = int.add.wrap(eq_fx,one_fx)
+  unknown_fx:bool = compare.eq(special_fx,zero_fx)
+  tail_ascii:bool = call(i_fx,tail_fx,e_fx) {"function":"bc_ascii_assignment"}
+  assignment_ok:bool = bool.and(unknown_fx,tail_ascii)
+  branch assignment_ok free_flag(i_fx,o_fx,name_fx,eq_fx) fail()
 block free_flag(i_ff:readbuf,o_ff:mutbuf,p_ff:u64,e_ff:u64)
   kind_ff:u64 = const() {"value":91}
   jump free_echo(i_ff,o_ff,p_ff,e_ff,kind_ff)
@@ -1128,4 +1142,30 @@ block yes()
 block no()
   invalid:bool = const() {"value":false}
   ret(invalid)
+end
+
+
+fn bc_ascii_assignment(i:readbuf,p:u64,e:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(i:readbuf,p:u64,e:u64)
+  jump next(i,p,e)
+block next(i_n:readbuf,p_n:u64,e_n:u64)
+  done:bool = compare.eq(p_n,e_n)
+  branch done ok() byte_check(i_n,p_n,e_n)
+block byte_check(i_b:readbuf,p_b:u64,e_b:u64)
+  at:usize = int.cast(p_b) {"mode":"wrap"}
+  c:u8 = buffer.load(i_b,at)
+  min_c:u8 = const() {"value":32}
+  max_c:u8 = const() {"value":126}
+  lower:bool = compare.ge(c,min_c)
+  upper:bool = compare.le(c,max_c)
+  ascii:bool = bool.and(lower,upper)
+  one:u64 = const() {"value":1}
+  p_next:u64 = int.add.wrap(p_b,one)
+  branch ascii next(i_b,p_next,e_b) fail()
+block ok()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
 end

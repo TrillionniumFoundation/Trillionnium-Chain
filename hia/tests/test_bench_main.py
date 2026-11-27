@@ -418,7 +418,7 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", exact), args)
         for idx, args in enumerate(((b"A" * 128,), (b"--" + b"Z" * 126,),
                                     (b"",), (b"two words",), (b"two\nlines",), (b"bad\xff",),
-                                    (b"--unknown=ignored",), (b"--tx=4",), (b"---unknown",), (b"-x",),
+                                    (b"---unknown",), (b"-x",),
                                     (b"--", b"logfile"), (b"--", b"--tx"), (b"--unknown", b"--help"),
                                     (b"--hel", b"--help"), (b"--txs=4", b"--worklod"),
                                     (b"--txs", b"--worklod"), (b"--profile", b"logfile"),
@@ -429,6 +429,41 @@ class NativeBenchMain(unittest.TestCase):
                                  env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((refused.returncode, refused.stdout, refused.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.bench_path.exists())
+
+    def test_actual_unknown_long_assignment_elides_attached_value(self):
+        # Clap classifies the name of an unknown standalone long option
+        # before its value. Only the name reaches diagnostics or Jaro scoring.
+        total_127 = (b"--unknown", b"Z" * (127 - len(b"--unknown=")))
+        for idx, (option, value) in enumerate((
+                (b"--unknown", b"ATTACHED_SECRETS_ARE_NOT_AN_ERROR_TOKEN"),
+                (b"--unknown", b""), (b"--unknown", b"=still-attached"),
+                (b"--unknown", b" --help = 'literal' "), (b"--unknown", b"~"),
+                (b"--tx", b"4"), (b"--tx", b"clap-never-parses-this"),
+                (b"--write-evry", b"=40"), (b"--hel", b"yes"), (b"--re", b"abc"),
+                (b"--els", b"--workload"), total_127)):
+            attached = option + b"=" + value
+            bare, _ = self.actual(f"assign-{idx}-bare-rust", self.original, (option,))
+            old, _ = self.actual(f"assign-{idx}-attached-rust", self.original, (attached,))
+            new, _ = self.actual(f"assign-{idx}-attached-hia", self.native, (attached,))
+            self.assertEqual((bare.returncode, bare.stdout), (2, b""))
+            self.assertTrue(bare.stderr.startswith(b"error: unexpected argument '" + option + b"' found"))
+            self.assertEqual((old.returncode, old.stdout, old.stderr), (2, b"", bare.stderr), attached)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", bare.stderr), attached)
+        for idx, args in enumerate((
+                (b"--unknown=" + b"Z" * (128 - len(b"--unknown=")),),
+                (b"--unknown=x\ny",), (b"--unknown=\tfoo",), (b"--unknown=\x7f",),
+                (b"--unknown=\xff",), (b"--=missing-name",), (b"--bad?=name",),
+                (b"logfile=value",), (b"-x=value",), (b"---unknown=value",),
+                (b"--help=value",), (b"--profile=true",), (b"--persist-profile=false",),
+                (b"--reader-high-water-v1=true",),
+                (b"--unknown=1", b"--help"), (b"--profile", b"--unknown=1"),
+                (b"--txs", b"--unknown=1"), (b"--", b"--unknown=1"))):
+            new, _ = self.actual(f"assign-{idx}-outside", self.native, args)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE), args)
+        denied, _ = self.actual("assign-env-outside", self.native, (b"--tx=4",),
+                                env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
+        self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
 
     def test_actual_plain_uint_cli_diagnostics_and_no_unbounded_echo(self):
         # Check every original unsigned field, both spellings, precedence,

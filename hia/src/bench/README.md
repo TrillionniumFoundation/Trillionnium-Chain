@@ -158,9 +158,13 @@ Jaro scorer over the locked command's ten long options in parser order,
 including the automatic help flag. When it selects an option, the diagnostic
 adds the original suggestion and that flag's specific usage, with a value
 placeholder only for an option that takes a value. This does not execute or
-accept the suggested option. Attached values, short unknowns, combined
-arguments, control bytes and invalid UTF-8 remain refused. The HIA renderer
-reads a packed [literal catalog](main_diagnostics.json) instead of
+accept the suggested option. For an unknown long option with an attached
+`=value`, the complete token must still fit 127 bytes and the attached value
+must be empty or printable ASCII. Only the name before the first `=` is
+scored and printed, as in the locked CLI. This does not admit attached values
+on boolean flags, help or the corrected-mode marker. Short unknowns,
+combined arguments, control bytes and invalid UTF-8 remain refused.
+The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted
 prefix and takes precedence over later arguments.
