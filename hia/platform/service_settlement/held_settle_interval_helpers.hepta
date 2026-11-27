@@ -63,7 +63,9 @@ end
 fn hfs_bank_profile(profile:u64) -> (bool) effects() entry(entry)
 block entry(profile:u64)
   bank:u64 = const() {"value":12}
-  enabled:bool = compare.eq(profile,bank)
+  linear:bool = compare.eq(profile,bank)
+  mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  enabled:bool = bool.or(linear,mixed)
   ret(enabled)
 end
 
@@ -77,15 +79,29 @@ block entry(r:readbuf,m:mutbuf,w:mutbuf,seq:u64)
   seen:u64 = call(m,seen_at) {"function":"cp_get"}
   count:u64 = call(m,at) {"function":"cp_get"}
   next:u64 = int.add.wrap(seen,one)
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  four:u64 = const() {"value":4}
+  chosen:u64 = select(mixed,four,nine)
   sequential:bool = compare.eq(seq,next)
   smallest:bool = compare.ge(seq,one)
-  largest:bool = compare.le(seq,nine)
-  markers:bool = compare.eq(count,ten)
-  range:bool = bool.and(smallest,largest)
-  valid_count:bool = bool.and(markers,range)
-  valid:bool = bool.and(sequential,valid_count)
-  branch valid save_journal(r,m,w,seq) bad()
-block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64)
+  largest:bool = compare.le(seq,chosen)
+  exactly_ten:bool = compare.eq(count,ten)
+  first_seq:bool = compare.eq(seq,one)
+  validate_mixed:bool = bool.and(mixed,first_seq)
+  known_linear_or_later:bool = bool.or(exactly_ten,mixed)
+  branch validate_mixed check_plan(r,m,w,seq,chosen,sequential,smallest,largest) bounded(r,m,w,seq,chosen,sequential,smallest,largest,known_linear_or_later)
+block check_plan(p_r:readbuf,p_m:mutbuf,p_w:mutbuf,p_s:u64,p_max:u64,p_seq:bool,p_low:bool,p_high:bool)
+  false_const:bool = const() {"value":false}
+  plan_ok:bool = call(p_m,false_const) {"function":"hfs_mixed_plan"}
+  branch plan_ok bounded(p_r,p_m,p_w,p_s,p_max,p_seq,p_low,p_high,plan_ok) bad()
+block bounded(b_r:readbuf,b_m:mutbuf,b_w:mutbuf,b_s:u64,b_max:u64,b_seq:bool,b_low:bool,b_high:bool,b_mark:bool)
+  range:bool = bool.and(b_low,b_high)
+  valid_count:bool = bool.and(b_mark,range)
+  valid:bool = bool.and(b_seq,valid_count)
+  branch valid save_journal(b_r,b_m,b_w,b_s,b_max) bad()
+block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64,j_max:u64)
   zero_j:usize = const() {"value":0}
   backup:usize = const() {"value":474000}
   sha_extent:u64 = const() {"value":1208}
@@ -93,8 +109,8 @@ block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64)
   one_j:u64 = const() {"value":1}
   first:bool = compare.eq(js,one_j)
   zero_index:u64 = const() {"value":0}
-  branch first init(jr,jm,jw,js,zero_index) feed(jr,jm,jw,js,js)
-block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64)
+  branch first init(jr,jm,jw,js,zero_index,j_max) feed(jr,jm,jw,js,js,j_max)
+block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64,i_max:u64)
   anchor:u64 = const() {"value":0}
   one_i:u64 = const() {"value":1}
   source_off:u64 = const() {"value":88}
@@ -109,49 +125,56 @@ block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64)
   target:u64 = call(im,target_at) {"function":"cp_get"}
   source_ok:bool = compare.eq(source,expected_source)
   target_ok:bool = compare.eq(target,ii)
-  exact:bool = bool.and(source_ok,target_ok)
-  branch exact new_context(ir,im,iw,is,ii,start) bad()
-block new_context(nr:readbuf,nm:mutbuf,nw:mutbuf,ns:u64,ni:u64,nz:bool)
+  linear:bool = bool.and(source_ok,target_ok)
+  four_i:u64 = const() {"value":4}
+  planned:bool = compare.eq(i_max,four_i)
+  exact:bool = bool.or(linear,planned)
+  branch exact new_context(ir,im,iw,is,ii,start,i_max) bad()
+block new_context(nr:readbuf,nm:mutbuf,nw:mutbuf,ns:u64,ni:u64,nz:bool,n_max:u64)
   okay:bool = call(nw,ni) {"function":"sjr_prefix"}
-  branch okay init_choose(nr,nm,nw,ns,ni,nz) bad()
-block init_choose(cr:readbuf,cm:mutbuf,cw:mutbuf,cs:u64,ci:u64,cz:bool)
-  branch cz genesis(cr,cm,cw,cs,ci) keep_init(cr,cm,cw,cs,ci)
-block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf,gs:u64,gi:u64)
+  branch okay init_choose(nr,nm,nw,ns,ni,nz,n_max) bad()
+block init_choose(cr:readbuf,cm:mutbuf,cw:mutbuf,cs:u64,ci:u64,cz:bool,c_max:u64)
+  branch cz genesis(cr,cm,cw,cs,ci,c_max) keep_init(cr,cm,cw,cs,ci,c_max)
+block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf,gs:u64,gi:u64,g_max:u64)
   exact_g:bool = call(gm,gw,gi) {"function":"hfs_bank_finish"}
-  branch exact_g next_init(gr,gm,gw,gs,gi) bad()
-block keep_init(kr:readbuf,km:mutbuf,kw:mutbuf,ks:u64,ki:u64)
+  branch exact_g next_init(gr,gm,gw,gs,gi,g_max) bad()
+block keep_init(kr:readbuf,km:mutbuf,kw:mutbuf,ks:u64,ki:u64,k_max:u64)
   kept:u64 = call(km,kw,ki) {"function":"hfs_bank_store"}
-  jump next_init(kr,km,kw,ks,ki)
-block next_init(nir:readbuf,nim:mutbuf,niw:mutbuf,nis:u64,nii:u64)
-  nine_i:u64 = const() {"value":9}
-  done_i:bool = compare.eq(nii,nine_i)
+  jump next_init(kr,km,kw,ks,ki,k_max)
+block next_init(nir:readbuf,nim:mutbuf,niw:mutbuf,nis:u64,nii:u64,ni_max:u64)
+  done_i:bool = compare.eq(nii,ni_max)
   by_one:u64 = const() {"value":1}
   next_i:u64 = int.add.wrap(nii,by_one)
-  branch done_i feed(nir,nim,niw,nis,nis) init(nir,nim,niw,nis,next_i)
-block feed(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64)
+  branch done_i feed(nir,nim,niw,nis,nis,ni_max) init(nir,nim,niw,nis,next_i,ni_max)
+block feed(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64,f_max:u64)
   slot:u64 = call(fi) {"function":"hfs_bank_offset"}
   src:usize = int.cast(slot) {"mode":"wrap"}
   zero_f:usize = const() {"value":0}
   width_f:u64 = const() {"value":1208}
   loaded_f:u64 = call(fm,fw,src,zero_f,width_f) {"function":"sscid_copy"}
-  receipt_width:u64 = const() {"value":149}
+  ordinary_receipt:u64 = const() {"value":149}
+  settled_receipt:u64 = const() {"value":181}
+  four_f:u64 = const() {"value":4}
+  is_mixed:bool = compare.eq(f_max,four_f)
+  final_row:bool = compare.eq(fs,f_max)
+  settle_row:bool = bool.and(is_mixed,final_row)
+  receipt_width:u64 = select(settle_row,settled_receipt,ordinary_receipt)
   updated:bool = call(fr,fw,receipt_width) {"function":"sjr_receipt"}
   step_finished:bool = compare.eq(fi,fs)
-  branch updated capture(fr,fm,fw,fs,fi,step_finished) bad()
-block capture(car:readbuf,cam:mutbuf,caw:mutbuf,cas:u64,cai:u64,caz:bool)
-  branch caz finish(car,cam,caw,cas,cai) save(car,cam,caw,cas,cai)
-block finish(zr:readbuf,zm:mutbuf,zw:mutbuf,zs:u64,zi:u64)
+  branch updated capture(fr,fm,fw,fs,fi,step_finished,f_max) bad()
+block capture(car:readbuf,cam:mutbuf,caw:mutbuf,cas:u64,cai:u64,caz:bool,ca_max:u64)
+  branch caz finish(car,cam,caw,cas,cai,ca_max) save(car,cam,caw,cas,cai,ca_max)
+block finish(zr:readbuf,zm:mutbuf,zw:mutbuf,zs:u64,zi:u64,z_max:u64)
   valid_z:bool = call(zm,zw,zi) {"function":"hfs_bank_finish"}
-  branch valid_z next_row(zr,zm,zw,zs,zi) bad()
-block save(sr:readbuf,sm:mutbuf,sw:mutbuf,ss:u64,si:u64)
+  branch valid_z next_row(zr,zm,zw,zs,zi,z_max) bad()
+block save(sr:readbuf,sm:mutbuf,sw:mutbuf,ss:u64,si:u64,s_max:u64)
   digest_context:u64 = call(sm,sw,si) {"function":"hfs_bank_store"}
-  jump next_row(sr,sm,sw,ss,si)
-block next_row(qr:readbuf,qm:mutbuf,qw:mutbuf,qs:u64,qi:u64)
-  nine_q:u64 = const() {"value":9}
-  ended:bool = compare.eq(qi,nine_q)
+  jump next_row(sr,sm,sw,ss,si,s_max)
+block next_row(qr:readbuf,qm:mutbuf,qw:mutbuf,qs:u64,qi:u64,q_max:u64)
+  ended:bool = compare.eq(qi,q_max)
   one_q:u64 = const() {"value":1}
   after_q:u64 = int.add.wrap(qi,one_q)
-  branch ended restore(qm,qw,qs) feed(qr,qm,qw,qs,after_q)
+  branch ended restore(qm,qw,qs) feed(qr,qm,qw,qs,after_q,q_max)
 block restore(rsm:mutbuf,rsw:mutbuf,rss:u64)
   backup_r:usize = const() {"value":474000}
   zero_r:usize = const() {"value":0}
@@ -265,12 +288,86 @@ block denied()
   ret(no)
 end
 
+fn hfs_mixed_plan_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  mixed:u64 = const() {"value":13}
+  enabled:bool = compare.eq(profile,mixed)
+  ret(enabled)
+end
+
+fn hfs_mixed_plan(m:mutbuf,verify:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,verify:bool)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  lower:u64 = const() {"value":5}
+  upper:u64 = const() {"value":11}
+  min_ok:bool = compare.ge(count,lower)
+  max_ok:bool = compare.le(count,upper)
+  sized:bool = bool.and(min_ok,max_ok)
+  zero:u64 = const() {"value":0}
+  branch sized read_marker(m,verify,count,zero,zero) bad()
+block read_marker(rm:mutbuf,rv:bool,rn:u64,ri:u64,previous:u64)
+  base:u64 = call(ri) {"function":"hfs_marker_offset"}
+  source_off:u64 = const() {"value":88}
+  target_off:u64 = const() {"value":96}
+  source_at:u64 = int.add.wrap(base,source_off)
+  target_at:u64 = int.add.wrap(base,target_off)
+  src:u64 = call(rm,source_at) {"function":"cp_get"}
+  dst:u64 = call(rm,target_at) {"function":"cp_get"}
+  cap:u64 = const() {"value":4}
+  no_gap:bool = compare.eq(src,previous)
+  one:u64 = const() {"value":1}
+  zero_r:u64 = const() {"value":0}
+  first:bool = compare.eq(ri,zero_r)
+  successor:u64 = int.add.wrap(src,one)
+  maximum:u64 = select(first,zero_r,successor)
+  above:bool = compare.ge(dst,src)
+  small:bool = compare.le(dst,cap)
+  adj:bool = compare.le(dst,maximum)
+  possible:bool = bool.and(above,small)
+  contiguous:bool = bool.and(no_gap,adj)
+  valid:bool = bool.and(possible,contiguous)
+  branch valid phase(rm,rv,rn,ri,base,src,dst) bad()
+block phase(pm:mutbuf,pv:bool,pn:u64,pi:u64,pb:u64,ps:u64,pt:u64)
+  branch pv roots(pm,pn,pi,pb,ps,pt,pv) advance(pm,pn,pi,pt,pv)
+block roots(mm:mutbuf,mn:u64,mi:u64,mb:u64,ms:u64,mt:u64,mv:bool)
+  checked:bool = call(mm,mb,mi,ms,mt) {"function":"hfs_check_marker"}
+  branch checked advance(mm,mn,mi,mt,mv) bad()
+block advance(am:mutbuf,an:u64,ai:u64,at:u64,av:bool)
+  plus:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(ai,plus)
+  done:bool = compare.eq(after,an)
+  branch done terminal(at) read_marker(am,av,an,after,at)
+block terminal(tn:u64)
+  four:u64 = const() {"value":4}
+  full:bool = compare.eq(tn,four)
+  ret(full)
+block bad()
+  refuse:bool = const() {"value":false}
+  ret(refuse)
+end
+
 fn hfs_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,w:mutbuf)
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  bank:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  branch bank finish_bank(m) old_roots(m,w)
+block finish_bank(fm:mutbuf)
+  seen_at:u64 = const() {"value":459992}
+  seen:u64 = call(fm,seen_at) {"function":"cp_get"}
+  four_f:u64 = const() {"value":4}
+  complete:bool = compare.eq(seen,four_f)
+  branch complete verify_bank(fm) bad()
+block verify_bank(vm:mutbuf)
+  truth:bool = const() {"value":true}
+  roots:bool = call(vm,truth) {"function":"hfs_mixed_plan"}
+  ret(roots)
+block old_roots(om:mutbuf,ow:mutbuf)
   rows:u64 = const() {"value":4}
   extent:u64 = const() {"value":644}
-  got:bool = call(m,w,rows,extent) {"function":"hfs_collect_roots"}
-  branch got next_marker(m) bad()
+  got:bool = call(om,ow,rows,extent) {"function":"hfs_collect_roots"}
+  branch got next_marker(om) bad()
 block next_marker(nm:mutbuf)
   start:u64 = const() {"value":0}
   result:bool = call(nm,start) {"function":"hfs_compare_markers"}
@@ -538,7 +635,9 @@ block entry(profile:u64)
   result:u64 = select(is_var_pair,pair,rows)
   var_settle:u64 = const() {"value":8}
   four:u64 = const() {"value":4}
-  is_var_settle:bool = compare.eq(profile,var_settle)
+  old_var_settle:bool = compare.eq(profile,var_settle)
+  plan_mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  is_var_settle:bool = bool.or(old_var_settle,plan_mixed)
   final:u64 = select(is_var_settle,four,result)
   linear:bool = call(profile) {"function":"hfs_linear3"}
   three:u64 = const() {"value":3}
@@ -563,7 +662,9 @@ block entry(profile:u64)
   is_one:bool = compare.eq(profile,single)
   is_two:bool = compare.eq(profile,pair)
   mixed:u64 = const() {"value":8}
-  is_mixed:bool = compare.eq(profile,mixed)
+  legacy_mixed:bool = compare.eq(profile,mixed)
+  is_plan:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  is_mixed:bool = bool.or(legacy_mixed,is_plan)
   old:bool = bool.or(is_one,is_two)
   measured:bool = bool.or(old,is_mixed)
   linear:bool = call(profile) {"function":"hfs_linear_profile"}
@@ -580,7 +681,9 @@ block entry(profile:u64)
   measured:u64 = const() {"value":8}
   is_fixed:bool = compare.eq(profile,fixed)
   is_measured:bool = compare.eq(profile,measured)
-  proof:bool = bool.or(is_fixed,is_measured)
+  known:bool = bool.or(is_fixed,is_measured)
+  is_plan:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  proof:bool = bool.or(known,is_plan)
   ret(proof)
 end
 
@@ -652,7 +755,8 @@ fn hfs_long(profile:u64) -> (bool) effects() entry(entry)
 block entry(profile:u64)
   bound:u64 = const() {"value":10}
   ordinary:bool = compare.eq(profile,bound)
-  bank:bool = call(profile) {"function":"hfs_bank_profile"}
+  bank_no:u64 = const() {"value":12}
+  bank:bool = compare.eq(profile,bank_no)
   long:bool = bool.or(ordinary,bank)
   ret(long)
 end

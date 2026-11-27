@@ -355,7 +355,10 @@ block profiled(pf_r:readbuf,pf_m:mutbuf,pf_w:mutbuf,pf_row:u64,pf_first:bool,pf_
   pf_mode:bool = call(pf_cap) {"function":"hfs_settled"}
   pf_same:bool = call(pf_cap) {"function":"hfs_same_profile"}
   pf_linear:bool = call(pf_cap) {"function":"hfs_linear_profile"}
-  branch pf_mode prove_slot(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) maybe_linear(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_same,pf_linear)
+  pf_plan:bool = call(pf_cap) {"function":"hfs_mixed_plan_profile"}
+  branch pf_plan cursor_mode(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len) legacy_profile(pf_r,pf_m,pf_w,pf_row,pf_first,pf_last,pf_len,pf_mode,pf_same,pf_linear)
+block legacy_profile(lp_r:readbuf,lp_m:mutbuf,lp_w:mutbuf,lp_i:u64,lp_f:bool,lp_l:bool,lp_n:u64,lp_mode:bool,lp_same:bool,lp_linear:bool)
+  branch lp_mode prove_slot(lp_r,lp_m,lp_w,lp_i,lp_f,lp_l,lp_n) maybe_linear(lp_r,lp_m,lp_w,lp_i,lp_f,lp_l,lp_n,lp_same,lp_linear)
 block maybe_linear(mj_r:readbuf,mj_m:mutbuf,mj_w:mutbuf,mj_row:u64,mj_first:bool,mj_last:bool,mj_len:u64,mj_same:bool,mj_linear:bool)
   branch mj_linear cursor_mode(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len) maybe_same(mj_r,mj_m,mj_w,mj_row,mj_first,mj_last,mj_len,mj_same)
 block maybe_same(ms_r:readbuf,ms_m:mutbuf,ms_w:mutbuf,ms_row:u64,ms_first:bool,ms_last:bool,ms_len:u64,ms_is:bool)
@@ -439,7 +442,18 @@ block parent(pa_r:readbuf,pa_m:mutbuf,pa_w:mutbuf,pa_row:u64,pa_first:bool,pa_la
   pa_exact:bool = select(pa_same,pa_equal,pa_normal)
   pa_good:bool = bool.and(pa_match,pa_exact)
   pa_var:bool = call(pa_mode) {"function":"hfs_variable"}
-  branch pa_var variable_parent(pa_r,pa_m,pa_w,pa_row,pa_first,pa_last,pa_len,pa_non_first) fixed_parent(pa_r,pa_m,pa_w,pa_row,pa_last,pa_len,pa_good)
+  pa_plan:bool = call(pa_mode) {"function":"hfs_mixed_plan_profile"}
+  branch pa_plan marker_parent(pa_r,pa_m,pa_w,pa_row,pa_first,pa_last,pa_len) usual_parent(pa_r,pa_m,pa_w,pa_row,pa_first,pa_last,pa_len,pa_non_first,pa_good,pa_var)
+block marker_parent(mp_r:readbuf,mp_m:mutbuf,mp_w:mutbuf,mp_i:u64,mp_f:bool,mp_l:bool,mp_n:u64)
+  mp_at:u64 = const() {"value":349056}
+  mp_slot:u64 = call(mp_m,mp_at) {"function":"cp_get"}
+  mp_base:u64 = call(mp_slot) {"function":"hfs_marker_offset"}
+  mp_field:u64 = const() {"value":48}
+  mp_coord:u64 = int.add.wrap(mp_base,mp_field)
+  mp_p:usize = int.cast(mp_coord) {"mode":"wrap"}
+  jump variable_parent(mp_r,mp_m,mp_w,mp_i,mp_f,mp_l,mp_n,mp_p)
+block usual_parent(up_r:readbuf,up_m:mutbuf,up_w:mutbuf,up_i:u64,up_f:bool,up_l:bool,up_n:u64,up_p:usize,up_ok:bool,up_var:bool)
+  branch up_var variable_parent(up_r,up_m,up_w,up_i,up_f,up_l,up_n,up_p) fixed_parent(up_r,up_m,up_w,up_i,up_l,up_n,up_ok)
 block fixed_parent(fp_r:readbuf,fp_m:mutbuf,fp_w:mutbuf,fp_row:u64,fp_last:bool,fp_len:u64,fp_good:bool)
   branch fp_good terminal(fp_r,fp_m,fp_w,fp_row,fp_last,fp_len) refused()
 block variable_parent(vp_r:readbuf,vp_m:mutbuf,vp_w:mutbuf,vp_row:u64,vp_first:bool,vp_last:bool,vp_len:u64,vp_prev:usize)

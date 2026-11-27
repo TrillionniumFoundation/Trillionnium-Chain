@@ -182,6 +182,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     linear_stream = request.get("linear_stream_fixture", False)
     cursor_stream = request.get("cursor_stream_fixture", False)
     bank_stream = request.get("bank_stream_fixture", False)
+    mixed_plan = request.get("mixed_plan_fixture", False)
     wide_stream = linear_stream or cursor_stream or bank_stream
     wide_limit = 9 if bank_stream else 8
     replay_limit = request.get("receipt_replay_limit", wide_limit if wide_stream else 4 if stream else 1)
@@ -194,7 +195,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     if ((replay and (not journal or len(replay_image) != 2))
             or type(replay_limit) is not int or replay_limit not in ((wide_limit,) if wide_stream else (1, 2, 3, 4))
             or type(linear_stream) is not bool or type(cursor_stream) is not bool
-            or type(bank_stream) is not bool
+            or type(bank_stream) is not bool or type(mixed_plan) is not bool
+            or (mixed_plan and (not stream or wide_stream))
             or (wide_stream and not stream) or sum((bool(linear_stream), bool(cursor_stream), bool(bank_stream))) > 1
             or type(stream) is not bool
             or (stream and (not replay or "receipt_replay_limit" in request or variable_rows or same_block))
@@ -341,6 +343,8 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                             rows = native_rows
                         else:
                             rows = None
+                    elif mixed_plan:
+                        rows = 4 if profile == 13 else None
                     else:
                         rows = {6: 1, 7: 2, 8: 4, 9: 3}.get(profile)
                     if (rows is None or requested_replay > rows
@@ -424,7 +428,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
                 raise ValueError("Success without exact Engine observation")
-        if cursor_stream or bank_stream:
+        if cursor_stream or bank_stream or mixed_plan:
             result["replay_profile"] = selected_profile
         if projected:
             result["projection"] = projection

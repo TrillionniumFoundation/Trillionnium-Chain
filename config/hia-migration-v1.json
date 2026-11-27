@@ -4017,6 +4017,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-mixed-marker-plan",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private one-SQL-pass native mixed four-command replay using one checked marker plan from actual empty and nonempty SQLite intervals. Duplicate endpoint counts share an independently computed original SHA prefix; native picks typed predecessor from the checked marker and compares both ends and the terminal snapshot. No new authority or production route.",
+      "sources": [
+        "hia/platform/service_settlement/held_mixed_plan_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_cursor_dispatch.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

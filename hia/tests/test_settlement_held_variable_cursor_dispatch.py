@@ -33,6 +33,9 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                       }.items()}
             images["cursor-direct"] = stack.enter_context(NativeModule(
                 OWNER / "held_cursor_variable_dispatch.hepta", byte_exports=("f0",), backend="direct"))
+            for backend in ("direct", "selfhost"):
+                images["mixed-" + backend] = stack.enter_context(NativeModule(
+                    OWNER / "held_mixed_plan_replay.hepta", byte_exports=("f0",), backend=backend))
             physical_images = {
                 backend: {
                     name: stack.enter_context(NativeModule(OWNER / source, byte_exports=("f0",), backend=backend))
@@ -71,11 +74,14 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 if lifecycle is not None:
                     module = lifecycle_images[lifecycle]
                     request["open_lifecycle"] = [str(module.library), module.artifact_sha256]
-                if lane in ("cursor", "cursor-direct"):
+                if lane != "execution":
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
-                    request["cursor_stream_fixture"] = True
-                if lane in ("cursor", "cursor-direct") and failed is None:
+                    if lane.startswith("mixed-"):
+                        request["mixed_plan_fixture"] = True
+                    else:
+                        request["cursor_stream_fixture"] = True
+                if lane != "execution" and failed is None:
                     request["writer"] = str(original)
                 if failed is not None:
                     request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
@@ -150,6 +156,27 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                         self.assertEqual(cursor["transcript"], independent["transcript"])
                         self.assertEqual(cursor["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
                         if name == "settle":
+                            for lane in ("mixed-selfhost", "mixed-direct"):
+                                with self.subTest(planned=lane):
+                                    planned = invoke(db, held, lane)
+                                    self.assertEqual(planned, {**cursor, "replay_profile": 13})
+                            drift = invoke(db, held, "mixed-selfhost", failed="root", ordinal=3)
+                            self.assertEqual((drift["status"], drift["projection"], drift["replay_calls"]),
+                                             (100, None, 3))
+                            self.assertGreater(drift["released"], 0)
+                            later = owned / "mixed after original trailing checkpoint.db"
+                            trailing_binding = execute([original, "seed-receipts", later, paths[0], "0",
+                                                        *(paths[i] if i != "-" else "-" for i in indices), "-"]).stdout
+                            trailing_ref = execute([original, "verify-journal", later, paths[0]]).stdout
+                            self.assertNotEqual(trailing_ref, original_out)
+                            trailing_before = later.read_bytes()
+                            for lane in ("mixed-selfhost", "mixed-direct"):
+                                with self.subTest(trailing=lane):
+                                    trailing = invoke(later, trailing_binding, lane)
+                                    self.assertEqual((trailing["status"], trailing["replay_profile"], trailing["replay_calls"],
+                                                      trailing["replay_locks"], trailing["released"]), (0, 13, 4, 4, 0))
+                                    self.assertEqual(bytes.fromhex(trailing["projection"]), trailing_ref)
+                            self.assertEqual(later.read_bytes(), trailing_before)
                             for backend in physical_images:
                                 with self.subTest(physical=backend):
                                     fully_held = invoke(db, held, "cursor", physical=backend)
@@ -172,6 +199,10 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                                          (100, None, count), refused)
                         self.assertGreater(refused["released"], 0)
                     else:
+                        if name == "wrong-four-markers":
+                            rejected_plan = invoke(db, held, "mixed-selfhost")
+                            self.assertEqual((rejected_plan["status"], rejected_plan["projection"]),
+                                             (100, None), rejected_plan)
                         self.assertEqual((cursor["status"], cursor["projection"], cursor["replay_calls"],
                                           cursor["replay_locks"]), (100, None, denied_after, denied_after), cursor)
                         self.assertGreater(cursor["released"], 0)

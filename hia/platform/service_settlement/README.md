@@ -559,6 +559,16 @@ remaining endpoint; hashing work is not constant per receipt. A later empty
 checkpoint falls outside this exact linear entry, and the older cursor still
 refuses nine operations. No production ownership or arbitrary history.
 
+A separate mixed replay entry derives the interval plan from the verified
+original marker rows. Ordered intervals abut, each consumes zero or one
+operation, and the anchor and terminal must span the same four-operation
+mixed history. Repeated checkpoint counts use a single independent native
+SHA prefix, not one allocation per marker. The cursor determines the actual
+execution predecessor from the marker, and every checked marker compares
+both state and journal roots. The same original held snapshot includes
+empty challenge intervals and an optional later empty checkpoint, compared
+without a receipt reread. The existing bounded entries are unchanged.
+
 One opt-in native cursor dispatcher now chooses the existing three-row
 Rollup, four-row mixed, or bounded linear receipt lane from original verified
 metadata, and each lane still enforces original typed command and committed
