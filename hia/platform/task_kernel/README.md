@@ -197,3 +197,23 @@ and actual public verifier status. The already-native archive record hash
 supplies the leaf, not a precomputed comparator result. It covers ordinary
 odd/even ends, capacity and tampering. This route does not plan deletion,
 mutate a store, change CI policy or route production traffic.
+
+### Typed archive inclusion header and prepaid retention
+
+The private native header takes little-endian u64 seal and record byte lengths,
+then the complete Borsh-encoded seal, record, and inclusion-proof values.
+It checks exact object extents and UTF-8 chain IDs (at most 512 bytes), then
+replicates the public `verify_task_archive_inclusion_v1` order: checked
+inclusive retention, proof/seal schema, nonzero seal count, recomputed seal
+hash, exact protocol context, leaf index, protocol count/depth, and record
+schema. This phase reads only the proof vector's length, not its elements.
+It publishes no output and does not import a caller-supplied seal hash
+as trusted. Private transport errors and capacity refusals are distinct.
+
+The qualification test connects accepted headers to the already-native
+record hash and ordered inclusion fold using fields of the *same* validated
+immutable typed packet. It also checks layered failures against the locked
+original public API and exercises both stock backends. This test composition
+is not a public or installed dispatcher and does not replace an authority
+that selects the seal or verifies its policy, receipt, terminality, or
+deletion; actual batch validation is separate.

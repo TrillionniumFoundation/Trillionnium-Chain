@@ -7,7 +7,7 @@ use trnm_task_kernel::{
     TaskArchiveSealV1, TaskIdV1, TerminalTaskArchiveRecordV1,
 };
 
-fn record(context: &ProtocolContextV1, i: u32) -> TerminalTaskArchiveRecordV1 {
+pub(crate) fn record(context: &ProtocolContextV1, i: u32) -> TerminalTaskArchiveRecordV1 {
     let mut name = [0; 32];
     name[..4].copy_from_slice(&i.to_be_bytes());
     let height = u64::from(i) + 1;

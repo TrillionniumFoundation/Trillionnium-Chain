@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_inclusion_header",
+      "node_integration_complete": false,
+      "scope": "Original archive public inclusion verification header and inclusive prepaid-retention precedence on bounded exact typed Borsh frames, including native recomputation of the seal hash and independently native inner verification. No policy or deletion authority.",
+      "source": "hia/src/task_kernel/archive_inclusion_header.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_inclusion_header.py",
+        "hia/tests/rust_task_archive_inclusion_header_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_inclusion_fold",
       "node_integration_complete": false,
       "scope": "Exact ordered archive Merkle proof fold from a separately admitted seal root/count and a native record hash, paired with the original planner and verifier. No seal/prepaid-retention or deletion authority.",
@@ -2642,7 +2653,8 @@
     {
       "components": [
         "task_kernel/archive_hash",
-        "task_kernel/archive_inclusion_fold"
+        "task_kernel/archive_inclusion_fold",
+        "task_kernel/archive_inclusion_header"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",
